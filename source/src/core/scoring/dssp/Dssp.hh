@@ -17,7 +17,6 @@
 //#include <core/scoring/dssp/Dssp.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 
 
 // Project Headers
@@ -25,12 +24,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -51,7 +47,7 @@ namespace core {
 namespace scoring {
 namespace dssp {
 
-///@details Non-protein residues get a DSSP value of ' '
+/// @details Non-protein residues get a DSSP value of ' '
 class Dssp {
 public:
 

@@ -10,7 +10,6 @@
 /// @file src/protocols/comparative_modeling/coord_util.cc
 /// @author James Thompson
 
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/id/SequenceMapping.hh>

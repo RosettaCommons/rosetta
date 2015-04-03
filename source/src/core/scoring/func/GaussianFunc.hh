@@ -79,7 +79,6 @@ private:
 };
 
 
-
 } // constraints
 } // scoring
 } // core

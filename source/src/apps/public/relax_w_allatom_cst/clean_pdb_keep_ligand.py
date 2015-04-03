@@ -113,9 +113,6 @@ count = 1;
 modifiedres = ''
 
 
-
-
-
 residue_buffer = []
 residue_letter = ''
 residue_invalid = False

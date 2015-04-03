@@ -10,7 +10,7 @@
 /// @file JumpSetup
 /// @brief read jump-definition file   setups fold tree an chainbreak variants
 /// loop code didn't work because fold-tree to complicated ( overlapping loops )
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 
@@ -23,25 +23,21 @@
 // Package Headers
 #include <protocols/jumping/PairingLibrary.hh>
 #include <core/scoring/dssp/PairingsList.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/fragment/FrameList.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -51,7 +47,6 @@
 #include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -120,7 +115,6 @@ public:
 		core::fragment::FrameIterator const& begin,
 		core::fragment::FrameIterator const& end
 	) const;
-
 
 
 	//@brief generate list of frames ( one for each jump )
@@ -199,7 +193,7 @@ public:
 
 	core::Size total_residue() const { return total_residue_; }
 
-	///@brief dump file with little pymol script that shows jumps and cuts
+	/// @brief dump file with little pymol script that shows jumps and cuts
 	void
 	dump_pymol( std::string fn ) const;
 

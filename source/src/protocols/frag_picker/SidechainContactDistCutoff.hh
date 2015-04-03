@@ -34,7 +34,7 @@ namespace frag_picker {
 using namespace core;
 
 /// @brief defines sidechain contact distance cutoffs.
-/// @detailed provides amino acid pair specific distance cutoffs.
+/// @details provides amino acid pair specific distance cutoffs.
 class SidechainContactDistCutoff: public utility::pointer::ReferenceCount {
 public:
 

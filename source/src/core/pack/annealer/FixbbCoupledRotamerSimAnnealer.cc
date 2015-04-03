@@ -15,7 +15,6 @@
 #include <core/pack/annealer/FixbbCoupledRotamerSimAnnealer.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -35,7 +34,6 @@
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <iostream>
 
@@ -54,12 +52,11 @@ namespace annealer {
 static thread_local basic::Tracer TR( "core.pack.annealer.FixbbCoupledRotamerSimAnnealer", basic::t_info );
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin FixbbCoupledRotamerSimAnnealer::FixbbCoupledRotamerSimAnnealer()
 ///
 /// @brief
 /// constructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -69,9 +66,8 @@ static thread_local basic::Tracer TR( "core.pack.annealer.FixbbCoupledRotamerSim
 ///
 /// @references
 ///
-/// @authors
-///
-/// @last_modified
+/// @author
+
 
 ////////////////////////////////////////////////////////////////////////////////
 FixbbCoupledRotamerSimAnnealer::FixbbCoupledRotamerSimAnnealer(
@@ -302,7 +298,6 @@ void FixbbCoupledRotamerSimAnnealer::run()
 
 						state_on_node(       moltenres_id ) = rotamer_state_on_moltenres;
 						state_on_node( other_moltenres_id ) = other_rotamer_state;
-
 
 
 						if ( ( prevrotamer_state == 0 ) || ( other_prevrotamer_state == 0 ) || ( currentenergy < bestenergy() )) {

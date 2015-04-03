@@ -20,7 +20,6 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -36,7 +35,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/Methods.hh>
 

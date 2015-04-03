@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ChemicalManager
 ///
 /// @brief
 /// Chemical manager class
 ///
-/// @detailed
+/// @details
 /// The Chemical Manager is a singleton class, which means that it can only been initialized once (exist once in memory). Once initialized,
 /// you can call it by simply access it via:
 ///
@@ -27,12 +26,11 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// Steven Combs - comments
 ///
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -136,7 +134,7 @@ ChemicalManager::atom_type_set( std::string const & tag )
 	return iter->second;
 }
 
-///@details Actually go and create an AtomTypeSet
+/// @details Actually go and create an AtomTypeSet
 AtomTypeSetOP
 ChemicalManager::create_atom_type_set(
 		std::string const & tag
@@ -286,8 +284,7 @@ ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
 }
 
 
-
-///@ details if the tag is not in the map, input it from a database file and add it
+/// @ details if the tag is not in the map, input it from a database file and add it
 ///to the map for future look-up.
 ResidueTypeSetCOP
 ChemicalManager::residue_type_set( std::string tag )
@@ -555,8 +552,8 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 	return new_set;
 }
 
-///@ details if the tag is not in the map, input it from a database file and add it
-///to the map for future look-up.
+/// @details if the tag is not in the map, input it from a database file and add it
+/// to the map for future look-up.
 /// THIS FUNCTION IS DECIDEDLY NOT THREADSAFE!
 ResidueTypeSet &
 ChemicalManager::nonconst_residue_type_set( std::string const & tag )

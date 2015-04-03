@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.fwd.hh>

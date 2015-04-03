@@ -32,16 +32,13 @@
 #include <core/id/SequenceMapping.fwd.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <map>
 #include <set>
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

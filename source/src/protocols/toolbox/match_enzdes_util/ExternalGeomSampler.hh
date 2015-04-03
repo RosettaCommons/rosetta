@@ -25,7 +25,6 @@
 #include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers

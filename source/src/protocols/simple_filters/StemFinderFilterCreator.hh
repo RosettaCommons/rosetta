@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the StemFinderFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_StemFinderFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_StemFinderFilterCreator_hh
 

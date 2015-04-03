@@ -10,15 +10,13 @@
 /// @file   src/basic/unti/tracer.fwd.hh
 /// @brief  Tracer IO system
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_basic_Tracer_fwd_hh
 #define INCLUDED_basic_Tracer_fwd_hh
 
-// AUTO-REMOVED // AUTO-REMOVED #include <basic/OStream.fwd.hh>
 
 #include <ostream>
-
 
 
 namespace basic {

@@ -61,7 +61,6 @@ except ImportError:
 ####
 
 
-
 class Menus():
     def __init__(self, main, toolkit):
 	"""
@@ -412,10 +411,6 @@ class Menus():
 	self.help_menu_scwrl.add_command(label = "GUI Install", command = lambda: help_tools.scwrl())
 	self.help_menu.add_cascade(label = "SCWRL", menu=self.help_menu_scwrl)
 	self.main_menu.add_cascade(label="Help", menu=self.help_menu)
-
-
-
-
 
 
 ##### MENU FUNCTIONS #######

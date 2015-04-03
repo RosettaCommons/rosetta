@@ -19,7 +19,6 @@
 // Utilities
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -58,7 +57,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@details The purpose of TAMinMover is to cause MinMover to respect a PackerTask, and minimize whatever sidechains are packable.  This test sets up three ((TaskFactory, TAMinMover), (MinMover, MoveMap)) quadruplets where the task-aware part should have the same effect as the hard-coded MoveMap part.
+	/// @details The purpose of TAMinMover is to cause MinMover to respect a PackerTask, and minimize whatever sidechains are packable.  This test sets up three ((TaskFactory, TAMinMover), (MinMover, MoveMap)) quadruplets where the task-aware part should have the same effect as the hard-coded MoveMap part.
 	void test_TaskAwareMinMover() {
 
 		core::pose::Pose const backup(create_twores_1ubq_pose());

@@ -11,7 +11,7 @@
 /// @brief  set of fragments
 /// @author Oliver Lange
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_protocols_simple_moves_SymmetricFragmentMover_HH
 #define INCLUDED_protocols_simple_moves_SymmetricFragmentMover_HH
@@ -23,7 +23,6 @@
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/Frame.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.hh>
 
 // Project Headers
@@ -43,10 +42,10 @@ namespace protocols {
 namespace simple_moves {
 // might want to live in protocols::moves
 
-///@brief A SymmetricFragmentMover that applies uniform sampling of fragments
+/// @brief A SymmetricFragmentMover that applies uniform sampling of fragments
 class SymmetricFragmentMover : virtual public ClassicFragmentMover {
 public:
-	///@constructor
+	/// @constructor
 	SymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
@@ -68,7 +67,7 @@ public:
 	virtual std::string get_name() const;
 
 protected:
-	///@brief alternative Constructor to be used by derived classes
+	/// @brief alternative Constructor to be used by derived classes
 	SymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
@@ -84,10 +83,10 @@ private:
 };
 
 
-///@brief A SymmetricFragmentMover that applies uniform sampling of fragments
+/// @brief A SymmetricFragmentMover that applies uniform sampling of fragments
 class SmoothSymmetricFragmentMover : public SymmetricFragmentMover, public SmoothFragmentMover {
 public:
-	///@constructor
+	/// @constructor
 	SmoothSymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
@@ -102,7 +101,7 @@ public:
 	virtual std::string get_name() const { return "SmoothSymmetricFragmentMover"; }
 
 protected:
-	///@brief alternative Constructor to be used by derived classes
+	/// @brief alternative Constructor to be used by derived classes
 	SmoothSymmetricFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,

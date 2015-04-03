@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 
@@ -40,7 +40,6 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace devel {
@@ -128,7 +127,6 @@ private:   // other data
 	core::scoring::sc::ShapeComplementarityCalculatorOP scc_;
 
 };
-
 
 
 } // filters

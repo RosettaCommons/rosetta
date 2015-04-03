@@ -27,8 +27,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueSelector.hh>
@@ -120,7 +118,7 @@ std::string GrowLigand::get_name() const{
 	return "GrowLigand";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 GrowLigand::parse_my_tag(
 		utility::tag::TagCOP tag,

@@ -15,18 +15,14 @@
 #include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/constraints/DihedralPairConstraint.hh>
 #include <core/scoring/constraints/DistancePairConstraint.hh>
@@ -154,7 +150,7 @@ void SetupNCSMover::add_groupD( std::string src, std::string tgt ) {
   tgtD_.push_back( tgt );
 }
 
-//
+
 void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	using namespace std;
 	using namespace utility;
@@ -293,7 +289,7 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 	    runtime_assert( srcD_i.size() == tgtD_i.size() );
 	    runtime_assert( srcD_i.size() % 2 == 0 );
 
-			//
+
 			if ( srcD_i.size() == 0 ) {
 				utility_exit_with_message("Error creating NCS distance pair constraints: " + srcD_[i] + " : " + tgtD_[i] );
 			}

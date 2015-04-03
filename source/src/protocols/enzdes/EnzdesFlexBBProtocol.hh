@@ -13,14 +13,11 @@
 /// @author Florian Richter
 
 
-
-
 #ifndef INCLUDED_protocols_enzdes_EnzdesFlexBBProtocol_hh
 #define INCLUDED_protocols_enzdes_EnzdesFlexBBProtocol_hh
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 
 #include <protocols/backrub/BackrubMover.fwd.hh>
@@ -379,8 +376,6 @@ private:
 
 } //namespace enzdes
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_enzdes_EnzdesFixBBProtocol_HH

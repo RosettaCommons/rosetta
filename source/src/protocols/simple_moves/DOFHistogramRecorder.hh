@@ -22,8 +22,6 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -34,14 +32,12 @@
 
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector0.hh>
 #include <numeric/MultiDimensionalHistogram.fwd.hh>
 #include <numeric/types.hh>
-
 
 
 // Operating system headers
@@ -66,14 +62,10 @@ public: // Types
 private: // Types
 
 
-
-
 public: // Constants
 
 
 private: // Constants
-
-
 
 
 public: // Creation
@@ -94,8 +86,6 @@ public: // Creation
 private: // Creation
 
 
-
-
 public: // Methods: assignment
 
 
@@ -105,7 +95,6 @@ public: // Methods: assignment
 
 
 public: // Methods: comparison
-
 
 
 public: // Methods
@@ -156,10 +145,7 @@ public: // Methods
 private:
 
 
-
 public: // Properties
-
-
 
 
 private: // Fields

@@ -69,17 +69,17 @@ public:
 public:
 
 
-	///@brief main opeartion
+	/// @brief main opeartion
 	void apply( FragSetOP & fragset );
 
 
 private:
 
 
-	///@brief parse tag
+	/// @brief parse tag
 	void parse_tag( TagCOP const & tag );
 
-	///@brief set fragments just for helper function
+	/// @brief set fragments just for helper function
 	void set_fragments( Pose const & pose, FragSetOP const & fragset );
 
 

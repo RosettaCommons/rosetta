@@ -16,7 +16,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentComparatorBase.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 #include <core/types.hh>

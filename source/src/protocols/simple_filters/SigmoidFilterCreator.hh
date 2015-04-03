@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the SigmoidFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_SigmoidFilterCreator_hh
 

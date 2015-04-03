@@ -58,8 +58,6 @@ private:
 };
 
 
-
-
 } //namespace residue_selector
 } //namespace task
 } //namespace pack

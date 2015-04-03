@@ -20,13 +20,11 @@
 #include <core/types.hh>
 
 // project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -34,16 +32,12 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <protocols/jd2/ScoreMap.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
@@ -53,20 +47,17 @@
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_protocols_toolbox_task_operations_ModifyAnnealer_HH
 #define INCLUDED_protocols_toolbox_task_operations_ModifyAnnealer_HH
 

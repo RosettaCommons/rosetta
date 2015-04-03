@@ -63,7 +63,6 @@
 #include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
 #include <core/scoring/mm/MMBondLengthLibrary.fwd.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/nv/NVlookup.fwd.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
 #include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
@@ -80,8 +79,6 @@
 #endif
 
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableOptions.hh>
@@ -214,11 +211,11 @@ public:
 	disulfides::DisulfideMatchingPotential &
 	get_DisulfideMatchingPotential() const;
 
-	///
+
 	bool
 	has_energy_method( ScoreType t ) const;
 
-	///
+
 	methods::EnergyMethodOP
 	energy_method( ScoreType const & t, methods::EnergyMethodOptions const & options ) const;
 

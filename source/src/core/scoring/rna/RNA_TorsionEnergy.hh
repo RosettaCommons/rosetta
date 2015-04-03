@@ -34,13 +34,13 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_TorsionEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
 										 RNA_TorsionPotentialOP rna_torsion_potential = 0 );
 
@@ -63,7 +63,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(

@@ -68,7 +68,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tools/make_vector1.hh>
 
-// AUTO-REMOVED #include <ctime>
 #include <fstream>
 #include <sstream>
 
@@ -81,8 +80,6 @@
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <utility/vector0.hh>
-
-
 
 
 namespace protocols {
@@ -895,7 +892,6 @@ LigandDockProtocol::restrain_ligand_chis(
 		}
 	}
 }
-
 
 
 } // namespace ligand_docking

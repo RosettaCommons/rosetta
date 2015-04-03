@@ -74,7 +74,6 @@ cmd.alter("name Ccod",  "vdw=1.7000")
 cmd.alter("name Ocod",  "vdw=1.6000")
 
 
-
 cmd.select("protein", "all  and not hetatm" )
 cmd.select("surface", "hetatm and not resn doc")
 cmd.disable("surface")
@@ -158,7 +157,6 @@ cmd.color("white",     "name HNbb")
 cmd.color("white",     "name Hice")
 cmd.color("gray",      "name Ccod")
 cmd.color("red",       "name Ocod")
-
 
 
 util.performance(0)
@@ -325,9 +323,5 @@ def load_range(begin, end):
     cmd.set("depth_cue", 0)
 
 cmd.extend('load_range', load_range)
-
-
-
-
 
 

@@ -16,7 +16,6 @@
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 
 #include <protocols/viewer/viewers.hh>

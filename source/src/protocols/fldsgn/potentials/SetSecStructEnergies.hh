@@ -138,7 +138,6 @@ public: // mutators
 	void set_blueprint( BluePrintOP const blp );
 
 
-
 public: // virtual main methods
 
 

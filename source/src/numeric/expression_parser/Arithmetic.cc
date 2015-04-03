@@ -190,7 +190,6 @@ void FunctionToken::nargs( Size setting ) {
 }
 
 
-
 SimpleToken::SimpleToken() : type_( INVALID_TOKEN_TYPE ) {}
 
 SimpleToken::SimpleToken( TokenType type ) : type_( type ) {}
@@ -1401,7 +1400,6 @@ SimpleExpressionCreator::SimpleExpressionCreator(
 }
 
 
-
 void
 SimpleExpressionCreator::add_variable( std::string const & varname )
 {
@@ -1951,7 +1949,6 @@ MetaMinExpression::active_variables() const
 }
 
 
-
 EqualsExpression::EqualsExpression() : BinaryExpression() {}
 EqualsExpression::EqualsExpression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
 EqualsExpression::~EqualsExpression() {}
@@ -1964,15 +1961,12 @@ EqualsExpression::operator() () const
 }
 
 
-
 ExpressionCOP
 EqualsExpression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
 	return 0;
 }
-
-
 
 
 GT_Expression::GT_Expression() : BinaryExpression() {}
@@ -1987,15 +1981,12 @@ GT_Expression::operator() () const
 }
 
 
-
 ExpressionCOP
 GT_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
 	return 0;
 }
-
-
 
 
 GTE_Expression::GTE_Expression() : BinaryExpression() {}
@@ -2010,14 +2001,12 @@ GTE_Expression::operator() () const
 }
 
 
-
 ExpressionCOP
 GTE_Expression::differentiate( std::string const & ) const
 {
 	/// Boolean expressions cannot be differentiated
 	return 0;
 }
-
 
 
 LT_Expression::LT_Expression() : BinaryExpression() {}
@@ -2030,7 +2019,6 @@ LT_Expression::operator() () const
 {
 	return (*e1())() < (*e2())();
 }
-
 
 
 ExpressionCOP
@@ -2051,7 +2039,6 @@ LTE_Expression::operator() () const
 {
 	return (*e1())() <= (*e2())();
 }
-
 
 
 ExpressionCOP
@@ -2083,7 +2070,6 @@ AndExpression::differentiate( std::string const & ) const
 }
 
 
-
 OrExpression::OrExpression() : BinaryExpression() {}
 OrExpression::OrExpression( ExpressionCOP e1, ExpressionCOP e2 ) : BinaryExpression( e1, e2 ) {}
 OrExpression::~OrExpression() {}
@@ -2101,7 +2087,6 @@ OrExpression::differentiate( std::string const & ) const
 	/// Boolean expressions cannot be differentiated
 	return 0;
 }
-
 
 
 NotExpression::NotExpression() : UnaryExpression() {}

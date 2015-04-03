@@ -24,7 +24,7 @@
 namespace numeric {
 namespace fourier {
 
-//
+
 // replace the global variables with classes that protect access to buffer data
 kiss_fft_cpx* get_scratch_buff( size_t nbuf ) {
 	static kiss_fft_cpx *scratchbuf=NULL;

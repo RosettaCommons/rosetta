@@ -17,7 +17,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
@@ -44,7 +43,6 @@ Constraints::Constraints( Constraints const & other ) :
 {
 	copy_from( other );
 }
-
 
 
 ConstraintsOP
@@ -156,7 +154,6 @@ Constraints::eval_ws_atom_derivative(
 }
 
 
-
 /// private
 /// does not zero the emap entries before accumulating
 ///
@@ -199,7 +196,7 @@ Constraints::intra_residue_energy(
 	energy( xyz_func, weights, emap );
 }
 
-///
+
 void
 Constraints::conformation_energy(
 	Conformation const & conformation,
@@ -211,7 +208,7 @@ Constraints::conformation_energy(
 	energy( xyz_func, weights, emap );
 }
 
-///
+
 void
 Constraints::add_constraint( ConstraintCOP cst )
 {

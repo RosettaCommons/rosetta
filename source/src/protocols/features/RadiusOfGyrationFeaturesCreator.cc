@@ -17,7 +17,6 @@
 // Package Headers
 
 #include <protocols/features/FeaturesReporterCreator.hh>
-// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
 
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
 #include <utility/vector1.hh>

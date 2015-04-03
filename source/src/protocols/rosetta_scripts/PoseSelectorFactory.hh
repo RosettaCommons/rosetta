@@ -71,7 +71,7 @@ public:
 	/// @brief Create a PoseSelector given its identifying string
 	PoseSelectorOP newPoseSelector( std::string const & );
 
-	///@brief return new PoseSelector by Tag parsing; the identifying string for the PoseSelector is in the Tag
+	/// @brief return new PoseSelector by Tag parsing; the identifying string for the PoseSelector is in the Tag
 	PoseSelectorOP
 	newPoseSelector(
 		TagCOP,

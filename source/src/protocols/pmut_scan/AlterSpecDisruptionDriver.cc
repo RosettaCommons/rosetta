@@ -34,8 +34,6 @@ namespace pmut_scan {
 static thread_local basic::Tracer TR( "protocols.pmut_scan.AlterSpecDisruptionDriver" );
 
 ///
-/// @begin AlterSpecDisruptionDriver::AlterSpecDisruptionDriver
-///
 /// @brief
 /// Main constructor for the class.
 ///
@@ -65,16 +63,13 @@ AlterSpecDisruptionDriver::AlterSpecDisruptionDriver( utility::vector1< std::str
 
 }
 
-
-///
-/// @begin AlterSpecDisruptionDriver::~AlterSpecDisruptionDriver
 ///
 /// @brief
 /// Destructor.
 ///
 AlterSpecDisruptionDriver::~AlterSpecDisruptionDriver() {}
 
-///@details calculate dG of binding by scoring, separating, repacking, and rescoring
+/// @details calculate dG of binding by scoring, separating, repacking, and rescoring
 
 core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 
@@ -92,7 +87,7 @@ core::Energy AlterSpecDisruptionDriver::score(core::pose::Pose & pose) {
 
 }
 
-///@brief offers a chance for child classes to inject mutant selection logic
+/// @brief offers a chance for child classes to inject mutant selection logic
 bool AlterSpecDisruptionDriver::reject_mutant( Mutant const & mutant, core::pose::Pose const & pose ){
 
 	if(reject_on_chains(mutant)) return true;
@@ -103,7 +98,7 @@ bool AlterSpecDisruptionDriver::reject_mutant( Mutant const & mutant, core::pose
 
 }
 
-///@brief reject Mutant based on chain IDs of constituent mutations
+/// @brief reject Mutant based on chain IDs of constituent mutations
 bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 
 	if(mutant.n_mutations() >= 2){ //if there is more than one mutation, check that they are on the same chain.  Disruptions on different chains are likely unrecoverable clashes.
@@ -121,7 +116,7 @@ bool AlterSpecDisruptionDriver::reject_on_chains( Mutant const & mutant ){
 	return false;
 }
 
-///@brief reject Mutant based on interface-ness of constituent mutations.  This function accumulates state - on first call it determines what the interface is, and assumes that interface is the same for all subsequent calls!  If you are trying to use different Poses this may cause problems.
+/// @brief reject Mutant based on interface-ness of constituent mutations.  This function accumulates state - on first call it determines what the interface is, and assumes that interface is the same for all subsequent calls!  If you are trying to use different Poses this may cause problems.
 bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core::pose::Pose const & pose )
 {
 
@@ -153,7 +148,6 @@ bool AlterSpecDisruptionDriver::reject_on_interface( Mutant const & mutant, core
 
 	return false;
 }
-
 
 
 } // namespace pmut_scan

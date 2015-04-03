@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @brief Lists the atoms that form hydrogen bonds with a constellation of
 /// 	residues--in a wild-type structure--but not with the ligand replacing the
 ///   constellation--in a mutant, holo structure.
@@ -95,7 +95,6 @@ static basic::Tracer TR( "apps.pilot.cnl_env_lost_hbs" );
 typedef std::map<AtomID, vector1<AtomID> > HB_Partners;
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -114,7 +113,6 @@ Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 }
 
 
-///
 /// @brief returns the index in the residue of the atom designated to represent
 /// 	a target atom for hydrogen bonding.
 ///
@@ -154,7 +152,6 @@ Size rep_hb_atom(Size const tgt, Residue const& res) {
 }
 
 
-///
 /// @brief Tells whether two atoms form a hydrogen bond.
 ///
 /// @param[in] don candidate donor atom.
@@ -209,7 +206,6 @@ bool is_hbond(AtomID const& don, AtomID const& acc, Pose const& ps,
 }
 
 
-///
 /// @brief prints an atom's PDB identifier
 ///
 /// param[in] aid atom identifier in the pose
@@ -228,7 +224,6 @@ void print_atom_pdbid(AtomID const& aid, Pose const& ps, std::ostream& os) {
 }
 
 
-///
 /// @brief prints the contents of an HB_Partners instance
 ///
 /// @param[in] ptns the HB_Partners instance
@@ -260,7 +255,6 @@ void print_hb_partners(HB_Partners const& ptns, Pose const& ps, std::ostream& os
 }
 
 
-///
 /// @brief records a donor atom as an hbond partner for each atom accepting
 /// 	hbonds from it
 ///
@@ -306,7 +300,6 @@ void don_store_hbs(AtomID const& don, Pose const& ps,
 }
 
 
-///
 /// @brief records an acceptor atom as an hbond partner for each atom donating
 /// 	hbonds to it.
 ///
@@ -352,7 +345,6 @@ void acc_store_hbs(AtomID const& acc, Pose const& ps,
 }
 
 
-///
 /// @brief stores a residue's constellation atoms as hbond partners of the
 /// 	atoms, if any, with which they form hydrogen bonds.
 ///
@@ -412,7 +404,6 @@ struct CnlRes {
 };
 
 
-///
 /// @brief stores a constellation's atoms as hbond partners of the
 /// 	atoms, if any, with which they form hydrogen bonds.
 ///
@@ -433,7 +424,6 @@ void cnl_store_hbs(vector1<CnlRes> const& cnl, Pose const& ps,
 }
 
 
-///
 /// @brief prints a constellation's description
 ///
 /// @param[in] cnl residue-specific contributions to the constellation
@@ -456,7 +446,6 @@ void cnl_print(vector1<CnlRes> const& cnl, Pose const& ps, std::ostream& os) {
 }
 
 
-///
 /// @brief returns true if atom 'polat' belongs to constellation 'cnl'; returns
 /// 	false otherwise.
 ///
@@ -487,7 +476,6 @@ bool in_cnl(AtomID const& polat, vector1<CnlRes> const& cnl, Pose const& ps) {
 }
 
 
-//
 // @brief deletes from a repository of hbond partners those atoms (keys) that
 // 	belong to a constellation
 //
@@ -516,7 +504,6 @@ void prune_away_cnl(HB_Partners& hbptns, vector1<CnlRes> const& cnl,
 }
 
 
-///
 /// @brief Detects the hbonds between an hbond-representative atom and a partner
 /// 	residue
 ///

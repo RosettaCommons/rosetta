@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -40,7 +39,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/evaluation/util.hh>
 #include <utility/exit.hh>

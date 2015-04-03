@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loop_mover/refine/LoopRefineInnerCycle.cc
 /// @brief Abstract class to define interface for all types of "inner cycle" operations used for loop refinement.
-/// @detailed
+/// @details
 ///
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
@@ -55,19 +55,19 @@ namespace refine {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 RepackTrial::RepackTrial() : LoopRefineInnerCycle()
 {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 RepackTrial::RepackTrial( RepackTrial const & rhs ) : LoopRefineInnerCycle(rhs)
 {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 RepackTrial & RepackTrial::operator=( RepackTrial const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -92,14 +92,14 @@ RepackTrial::clone() const
 	return protocols::moves::MoverOP( new RepackTrial( *this ) );
 }
 
-///@brief fresh_instance returns a default-constructed object for JD2
+/// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 RepackTrial::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new RepackTrial() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool RepackTrial::reinitialize_for_new_input() const
 {
 	return true;

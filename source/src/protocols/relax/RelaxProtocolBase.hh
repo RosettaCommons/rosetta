@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Relax Baseclass
 ///
 ///
@@ -85,8 +85,8 @@ public:
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 
-	///@brief Use cartesian (minimization step)
-	///@details
+	/// @brief Use cartesian (minimization step)
+	/// @details
 	/// Sets to use the lbfgs_armijo_nonmonotone if true or FR default if false
 	/// Recommended to set max_iter to 200.
 	/// Requires scorefunction setup for non-ideal minimization.

@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_CombineLongLoopFilterer
 /// @brief Sets up pose and job parameters for RNA stepwise building.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -271,7 +271,6 @@ namespace rna {
 		Size const reference_res( working_parameters_->working_reference_res() ); //the last static_residues that this attach to the moving residues
 
 
-
 		Size working_last_prepended_res, working_last_appended_res;
 
 		if ( is_prepend ){
@@ -406,14 +405,12 @@ namespace rna {
 		}
 
 
-
 		output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
 
 
 	}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 	bool
@@ -687,7 +684,6 @@ namespace rna {
 		output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering", TR );
 
 
-
 	}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -802,14 +798,12 @@ namespace rna {
 			}
 
 
-
 		}
 		TR << "--------------------------------" << std::endl;
 
 
 		silent_file_stream_ONE_->reset();
 		silent_file_stream_TWO_->reset();
-
 
 
 	}

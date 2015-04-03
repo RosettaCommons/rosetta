@@ -54,7 +54,7 @@ Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
 
 Job::~Job(){}
 
-///@brief returns a copy of this object whose "output fields" are zeroed out.  Used by the JobDistributor in cases where the job fails and must be retried to prevent accumulation of Job state after a failure.  This implementation was chosen over a clear_all_output function to prevent mover A from deleting mover B's hard work!  You probably should not be trying to call this function.
+/// @brief returns a copy of this object whose "output fields" are zeroed out.  Used by the JobDistributor in cases where the job fails and must be retried to prevent accumulation of Job state after a failure.  This implementation was chosen over a clear_all_output function to prevent mover A from deleting mover B's hard work!  You probably should not be trying to call this function.
 JobOP Job::copy_without_output() const{
 	return JobOP( new Job(inner_job_, nstruct_index_) );
 }
@@ -74,28 +74,28 @@ core::Size Job::nstruct_max() const {
 }
 
 //functions for loading output info into the job
-///@brief add an output string
+/// @brief add an output string
 void Job::add_string( std::string const & string_in ){
 	long_strings_.push_back(string_in);
 }
 
-///@brief adds output strings
+/// @brief adds output strings
 void Job::add_strings( Strings const & strings )
 {
 	long_strings_.insert( long_strings_.end(), strings.begin(), strings.end() );
 }
 
-///@brief add a string/string pair
+/// @brief add a string/string pair
 void Job::add_string_string_pair( std::string const & string1, std::string const & string2 ){
 	string_string_pairs_[ string1 ] = string2;
 }
 
-///@brief add a string/real pair
+/// @brief add a string/real pair
 void Job::add_string_real_pair( std::string const & string_in, core::Real const real_in ){
 	string_real_pairs_[ string_in ] = real_in;
 }
 
-///@brief return a COP to the input pose
+/// @brief return a COP to the input pose
 core::pose::PoseCOP Job::get_pose() const {
 	// if pose is loaded into job-object this pose has precedence.
 	if ( inner_job_->get_pose() ) {
@@ -115,7 +115,7 @@ core::pose::PoseCOP Job::get_pose() const {
 }
 
 
-///@brief in-place copy of input pose
+/// @brief in-place copy of input pose
 void Job::get_pose( core::pose::Pose& pose ) const {
 	// if pose is loaded into job-object this pose has precedence.
 	if ( inner_job_->get_pose() ) {

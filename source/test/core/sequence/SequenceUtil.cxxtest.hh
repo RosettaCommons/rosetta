@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/sequence/util.hh>
@@ -25,7 +24,6 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -63,7 +61,6 @@
 #include <string>
 #include <vector>
 #include <boost/functional/hash.hpp>
-
 
 
 static basic::Tracer TR("test.core.sequence.SequenceUtil");

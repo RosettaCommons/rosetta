@@ -15,8 +15,6 @@
 #define INCLUDED_protocols_simple_moves_symmetry_SymShakeStructureMover_fwd_hh
 
 
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/pointer/owning_ptr.hh>
 
 

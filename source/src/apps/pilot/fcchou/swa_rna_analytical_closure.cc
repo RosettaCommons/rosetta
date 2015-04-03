@@ -138,8 +138,6 @@ using io::pdb::dump_pdb;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 
-
-
 OPT_KEY ( Boolean, add_virt_root )
 OPT_KEY ( Boolean, skip_sampling )
 OPT_KEY ( Boolean, skip_clustering )
@@ -507,7 +505,6 @@ setup_rna_working_parameters ( bool check_for_previously_closed_cutpoint_with_in
 }
 
 
-
 void
 setup_copy_DOF_input ( protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ) {
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -801,6 +798,5 @@ main ( int argc, char * argv [] ) {
                                   }
         return 0;
 }
-
 
 

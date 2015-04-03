@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_FragmentMover
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/farna/util.hh>
@@ -53,7 +53,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
-
 
 
 // External library headers
@@ -155,7 +154,6 @@ get_base_pairing_info( pose::Pose const & pose,
 		secstruct = 'P';
 	}
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -376,7 +374,6 @@ create_rna_vall_torsions( pose::Pose & pose,
 	create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
 
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1026,7 +1023,6 @@ remove_cutpoint_closed( pose::Pose & pose, Size const i ){
 	success = f.tree_from_jumps_and_cuts( nres, num_jump-1, jump_point, cuts, 1, false /*verbose*/ );
 
 
-
 	if ( !success ) utility_exit_with_message( "FAIL to remove cutpoint "+string_of( i ) );
 
 	pose.fold_tree( f );
@@ -1233,7 +1229,6 @@ set_output_res_num( pose::Pose & extended_pose,
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 void
 figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partner,
@@ -1420,7 +1415,6 @@ get_default_allowed_bulge_res(
 	}
 
 
-
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
 		//exclude edge residues:
@@ -1451,7 +1445,6 @@ get_default_allowed_bulge_res(
 	}
 
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////

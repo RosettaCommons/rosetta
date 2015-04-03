@@ -15,18 +15,14 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>  // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
-// AUTO-REMOVED #include <core/scoring/packing/HolesEnergy.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/database/open.hh>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
@@ -34,7 +30,6 @@
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <stdlib.h>
 
 #ifndef WIN32
 #ifndef  __native_client__ 

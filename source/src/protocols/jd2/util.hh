@@ -33,26 +33,25 @@
 #endif
 
 
-
 namespace protocols {
 namespace jd2 {
 
-///@brief writes pose to intermediate-scorefile using current Job and JobOutputter ..
-///@detail copy count is used if multiple poses with same job-tag are written as for instance into a trajectory.
+/// @brief writes pose to intermediate-scorefile using current Job and JobOutputter ..
+/// @detail copy count is used if multiple poses with same job-tag are written as for instance into a trajectory.
 ///  -1 indicates no copy count
 ///  >=0 copy_count will be attached as zerofilled postfix to job-tag
 void output_intermediate_pose( core::pose::Pose const& pose, std::string const& stage_tag, int copy_count = -1, bool score_only = false );
 
-///@brief gets used output name of pose
+/// @brief gets used output name of pose
 /// ask jd for current-job ---> ask jobOutputter for name of this job
 std::string current_output_name();
 
-///@brief call the 'filename' accessor of the current job-distributor with the current job
+/// @brief call the 'filename' accessor of the current job-distributor with the current job
 std::string current_output_filename();
 
 std::string current_batch();
 
-///@brief is this application running with jd2 --- used for some code that yields backward compatability with old JobDistributor
+/// @brief is this application running with jd2 --- used for some code that yields backward compatability with old JobDistributor
 bool jd2_used();
 
 core::pose::PoseCOP get_current_jobs_starting_pose();
@@ -64,18 +63,17 @@ void register_options();
 JobOP get_current_job();
 
 
-
 void set_native_in_mover( protocols::moves::Mover &mover );
 
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 
 #ifdef USEMPI
-///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
+/// @brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
 MPI_Comm const& current_mpi_comm();
 #endif
 
-///@brief returns 0 if no replicas (i.e., multiple processes per job )
+/// @brief returns 0 if no replicas (i.e., multiple processes per job )
 /// otherwise it returns the sub-rank of the process within the job starting at 1
 core::Size current_replica();
 

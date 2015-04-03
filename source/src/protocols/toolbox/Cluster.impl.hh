@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_toolbox_Cluster_impl_hh
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <deque>
@@ -25,7 +24,6 @@
 #include <utility/exit.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/toolbox/Cluster.hh>
-// AUTO-REMOVED #include <protocols/toolbox/DecoySetEvaluation.impl.hh>
 #include <core/io/silent/SilentStruct.hh>
 
 #include <protocols/toolbox/DecoySetEvaluation.hh>

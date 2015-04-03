@@ -21,7 +21,6 @@
 #include <boost/pool/pool.hpp>
 
 
-
 namespace core {
 namespace scoring {
 

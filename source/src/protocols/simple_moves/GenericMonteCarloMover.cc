@@ -9,7 +9,7 @@
 
 /// @file src/protocols/moves/GenericMonteCarloMover.cc
 /// @brief perform a given mover and sample structures by MonteCarlo
-/// @detailed The score evaluation of pose during MC after applying mover is done by
+/// @details The score evaluation of pose during MC after applying mover is done by
 /// either FilterOP that can do report_sm() or ScoreFunctionOP.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
@@ -1078,7 +1078,7 @@ GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMa
   initialize();
 }
 
-///@brief parse "task_operations" XML option
+/// @brief parse "task_operations" XML option
 void GenericMonteCarloMover::parse_task_operations(
 	TagCOP const tag,
 	basic::datacache::DataMap const & datamap,

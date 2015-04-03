@@ -18,14 +18,13 @@
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.fwd.hh>
 
-//
+
 #include <core/pose/Pose.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
 
 //Utility headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //C++ headers
 #include <set>
@@ -38,28 +37,28 @@ namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
 
-///@details this calculator determines the number and resids of residues within X angstroms of a group of given residues.  Its intended purpose is the backend for a TaskOperation that allows one to construct a PackerTask based on neighborhoods around a set of particular residues.  It can return its set of central residues, the total count of their neighbors as determined by the sub-calculators (inclusive of the central residues), and the identities of those neighbors.
+/// @details this calculator determines the number and resids of residues within X angstroms of a group of given residues.  Its intended purpose is the backend for a TaskOperation that allows one to construct a PackerTask based on neighborhoods around a set of particular residues.  It can return its set of central residues, the total count of their neighbors as determined by the sub-calculators (inclusive of the central residues), and the identities of those neighbors.
 class NeighborhoodByDistanceCalculator : public core::pose::metrics::StructureDependentCalculator {
 
 public:
 	typedef core::pose::metrics::StructureDependentCalculator parent;
 
-	///@brief ctor for positions, dist_cutoff will be initialized using default value from option system
+	/// @brief ctor for positions, dist_cutoff will be initialized using default value from option system
 	NeighborhoodByDistanceCalculator(std::set< core::Size > central_residues);
 
-	///@brief ctor for positions, with custom dist_cutoff supplied by user
+	/// @brief ctor for positions, with custom dist_cutoff supplied by user
 	NeighborhoodByDistanceCalculator(std::set< core::Size > central_residues, core::Real dist_cutoff);
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	NeighborhoodByDistanceCalculator( NeighborhoodByDistanceCalculator const & calculator );
 
 	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	//accessors for constant/input data
-	///@brief return central residues set
+	/// @brief return central residues set
 	std::set< core::Size > const & central_residues() const { return central_residues_; }
 
-	///@brief return distance cutoff
+	/// @brief return distance cutoff
 	core::Real dist_cutoff() const { return dist_cutoff_; }
 
 protected:
@@ -69,15 +68,15 @@ protected:
 
 private:
 
-  ///@brief whose neighbors are we finding?
+  /// @brief whose neighbors are we finding?
 	std::set< core::Size > central_residues_;
-	///@brief stores the input - how far away is a neighbor?
+	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
-  ///@brief the number of neighbors, INCLUSIVE of central residues
+  /// @brief the number of neighbors, INCLUSIVE of central residues
   core::Size num_neighbors_;
-	///@brief the number of neighbors for each of the central residues
+	/// @brief the number of neighbors for each of the central residues
 	std::map<core::Size, core::Size> num_neighbors_map_;
-  ///@brief the set of neighbors, INCLUSIVE of central_residues
+  /// @brief the set of neighbors, INCLUSIVE of central_residues
   std::set< core::Size > neighbors_;
 
 };

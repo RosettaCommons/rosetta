@@ -46,7 +46,7 @@ public:
 	void bb( bool value ) { bb_ = value; }
 	void reset_from_interface();
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -54,9 +54,9 @@ public:
 		moves::Movers_map const &,
 		core::pose::Pose const & );
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP fresh_instance() const;
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP clone() const;
 
 private:

@@ -27,7 +27,4 @@ typedef utility::pointer::shared_ptr< LayerDesignOperation > LayerDesignOperatio
 } // protocols
 
 
-
-
-
 #endif

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/VectorPoseMover.fwd.hh
-///@brief Used for movers that require multiple poses to act upon
-///@author Alex Sevy (alex.sevy@gmail.com)
+/// @file protocols/simple_moves/VectorPoseMover.fwd.hh
+/// @brief Used for movers that require multiple poses to act upon
+/// @author Alex Sevy (alex.sevy@gmail.com)
 
 #ifndef INCLUDED_PROTOCOLS_MOVES_VectorPoseMover_FWD_HH
 #define INCLUDED_PROTOCOLS_MOVES_VectorPoseMover_FWD_HH

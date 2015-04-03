@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file core/scoring/Interface_/DDPscore.hh
-///@brief Implementation of distance dependent interface score
-///@author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
+/// @file core/scoring/Interface_/DDPscore.hh
+/// @brief Implementation of distance dependent interface score
+/// @author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
 
 #ifndef INCLUDED_core_scoring_interface_DDPscore_hh
 #define INCLUDED_core_scoring_interface_DDPscore_hh

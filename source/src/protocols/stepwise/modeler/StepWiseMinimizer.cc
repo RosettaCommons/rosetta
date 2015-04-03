@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/StepWiseMinimizer.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

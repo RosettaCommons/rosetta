@@ -9,25 +9,21 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
 #include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loops_main.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 
@@ -35,19 +31,16 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 
-// AUTO-REMOVED
 
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 //numeric headers
 
@@ -57,7 +50,6 @@
 
 #include <core/fragment/FragData.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

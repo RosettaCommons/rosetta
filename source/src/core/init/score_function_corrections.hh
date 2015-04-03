@@ -10,7 +10,6 @@
 /// @file   src/core/init/score_function_corrections.hh
 /// @brief  Initialize score function corrections
 /// @author Matthew O'meara
-///
 
 
 #ifndef INCLUDED_core_init_score_function_corrections_hh

@@ -49,7 +49,7 @@
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-//
+
 #include <string>
 
 //Auto Headers
@@ -66,8 +66,7 @@ using namespace core;
 static thread_local basic::Tracer TR( "protocols::moves::RBSegmentMover" );
 
 
-//
-///@brief set up constraints from RB segs
+/// @brief set up constraints from RB segs
 ///       currently uses bounded constraints on each CA ... make CST type flag-selectable????
 void set_rb_constraints(
 	core::pose::Pose & pose,
@@ -93,7 +92,7 @@ void set_rb_constraints(
 				// make ambiguous cst from ( cst_i-cst_seqwidth , cst_i+cst_seqwidth )
 				core::scoring::constraints::ConstraintCOPs CSTs_i;
 
-				//
+
 				for (int cst_ij = std::max(1,cst_i-(int)cst_seqwidth), cst_ij_end=std::min(cst_pose.total_residue(),cst_i+cst_seqwidth);
 				     cst_ij<=cst_ij_end; ++cst_ij) {
 					// only constrain protein residues
@@ -113,7 +112,7 @@ void set_rb_constraints(
 						CSTs_i.push_back( newcst_ij );
 				}
 
-				//
+
 				if ( CSTs_i.size() > 0 ) {
 					TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << resmap[cst_i]
 					   << " (= input " << cst_i << ")" << std::endl;
@@ -127,7 +126,7 @@ void set_rb_constraints(
 }
 
 
-///@brief set up constraints on complete pose (not just RB segments)
+/// @brief set up constraints on complete pose (not just RB segments)
 ///       currently uses bounded constraints ... make CST type flag-selectable????
 void set_constraints(
 	core::pose::Pose & pose,
@@ -170,7 +169,7 @@ void set_constraints(
 				CSTs_i.push_back( newcst_ij );
 		}
 
-		//
+
 		if ( CSTs_i.size() > 0 ) {
 			TR << "Adding " << CSTs_i.size() << " ambiguous constraints for res " << cst_i << std::endl;
 			new_csts->add_constraint( ConstraintCOP( ConstraintOP( new core::scoring::constraints::AmbiguousConstraint( CSTs_i ) ) ) );
@@ -180,8 +179,7 @@ void set_constraints(
 }
 
 
-///
-///@brief Helper function to set up a pose; unlike alt version keep loops (use cutpoint variants)
+/// @brief Helper function to set up a pose; unlike alt version keep loops (use cutpoint variants)
 ///   unlike version in loops_main, this uses RBSegment structure to build multi-level topology
 /// returns jump residues
 utility::vector1< core::Size > setup_pose_rbsegs_keep_loops(
@@ -395,8 +393,7 @@ setup_disconnected( core::pose::Pose & pose ) {
 }
 
 
-///
-///@brief Helper function to set up a loop-removed pose
+/// @brief Helper function to set up a loop-removed pose
 void setup_pose_from_rbsegs(
              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
@@ -513,8 +510,7 @@ void setup_pose_from_rbsegs(
 }
 
 
-
-///@brief Helper function to restore a fully-connected pose
+/// @brief Helper function to restore a fully-connected pose
 void restore_pose_from_rbsegs(
              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
@@ -776,7 +772,6 @@ void remap_rb_segments(
 		rbsegs_remap.push_back( it_remap );
 	}
 }
-
 
 
 }

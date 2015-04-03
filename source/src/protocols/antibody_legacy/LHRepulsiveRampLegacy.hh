@@ -9,18 +9,14 @@
 
 /// @file protocols/antibody/LHRepulsiveRampLegacy.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_antibody_LHRepulsiveRampLegacy_hh
 #define INCLUDED_protocols_antibody_LHRepulsiveRampLegacy_hh
-
-
-
 
 
 #include <protocols/antibody_legacy/LHRepulsiveRampLegacy.fwd.hh>
@@ -33,7 +29,6 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/RepeatMover.fwd.hh>
-
 
 
 using namespace core;
@@ -93,7 +88,6 @@ public:
 	}
 
 
-
 private:
 
 	AntibodyInfoOP ab_info_;
@@ -128,28 +122,15 @@ private:
 	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
 
 
-
-
 	//packer task
 	pack::task::TaskFactoryOP tf_;
 
 };
 
 
-
-
-
-
-
 } // namespace antibody
 } // namespace protocols
 
 #endif
-
-
-
-
-
-
 
 

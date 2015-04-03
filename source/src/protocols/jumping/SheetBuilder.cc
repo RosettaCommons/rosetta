@@ -13,7 +13,7 @@
 ///      - fragments
 ///      - psipred files ? other stuff
 ///
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -149,7 +149,7 @@ SheetBuilder::SheetBuilder( SheetBuilder const& other )
 //d'stor
 SheetBuilder::~SheetBuilder() {}
 
-///@brief simply random choice of pairing from pool
+/// @brief simply random choice of pairing from pool
 void
 SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Size sheet ) const {
   int const	p = static_cast< int >( numeric::random::rg().uniform() * pairings_.size() ) + 1;
@@ -164,7 +164,7 @@ SheetBuilder::choose_next_pairing( FArray3D_int& sheet_pairing, Size pairing, Si
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@detail return true if parings have a strand in common
+/// @detail return true if parings have a strand in common
 bool
 SheetBuilder::check_pairing_intersect (
   FArray1A_int p1,
@@ -214,7 +214,7 @@ SheetBuilder::check_sheet_pairings(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@detail count how many strands are in common : 0, 1, or 2
+/// @detail count how many strands are in common : 0, 1, or 2
 /// if 1 or 2 strands are in common check if pleating of the two pairings is compatible
 bool
 SheetBuilder::check_two_pairings(

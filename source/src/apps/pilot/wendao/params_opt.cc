@@ -290,9 +290,6 @@ do_rtmin(
 }
 
 
-
-
-//
 class RTminOptMultifunc : public core::optimization::Multifunc {
 public:
 	RTminOptMultifunc(
@@ -385,7 +382,6 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::pack::task::TaskFactoryOP task_factory_;
 }; // GradientOptMultifunc
-
 
 
 int main( int argc, char * argv [] ) {

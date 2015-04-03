@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/matdes/StoreTaskMoverCreator.hh
-///@brief DEPRECATED (see .cc file)
-///@author Jacob Bale (balej@uw.edu)
+/// @file protocols/matdes/StoreTaskMoverCreator.hh
+/// @brief DEPRECATED (see .cc file)
+/// @author Jacob Bale (balej@uw.edu)
 
 #ifndef INCLUDED_protocols_moves_StoreCombinedStoredTasksMoverCreator_hh
 #define INCLUDED_protocols_moves_StoreCombinedStoredTasksMoverCreator_hh

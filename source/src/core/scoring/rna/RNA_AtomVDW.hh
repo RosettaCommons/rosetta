@@ -35,7 +35,6 @@
 #include <utility/vector1.fwd.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace rna {
@@ -48,7 +47,7 @@ public:
 	/// @brief ctor, reads data file
 	RNA_AtomVDW();
 
-	///
+
 	utility::vector1 < std::string > const
 	vdw_atom_list( char const which_nucleotide ) const;
 

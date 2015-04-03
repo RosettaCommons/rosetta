@@ -11,22 +11,14 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -44,37 +36,21 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MultiConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -88,8 +64,6 @@
 #include <protocols/moves/MoverStatistics.hh>
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/will_util.ihh>
-
-
 
 
 using core::kinematics::Stub;
@@ -250,7 +224,6 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 }
 
 
-
 void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
   core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
   // core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
@@ -273,7 +246,6 @@ struct Hit : public utility::pointer::ReferenceCount {
   Size ihis,jhis,khis,lhis;
 };
 typedef utility::pointer::shared_ptr<Hit> HitOP;
-
 
 
 vector1<Reals> vecs2vv(Vecs const & v) {
@@ -312,15 +284,6 @@ core::pack::rotamer_set::RotamerSetOP get_rotset(Pose & pose, Size icys) {
   rotset->build_rotamers( pose, dummy_sfxn, *dummy_task, dummy_png );
   return rotset;
 }
-
-
-
-
-
-
-
-
-
 
 
 double
@@ -466,9 +429,6 @@ double isctfast(
   }
   return isctfast( pa, pb, Vec(0,0,1) );
 }
-
-
-
 
 
 core::kinematics::Stub res2stub(core::pose::Pose const & pose, Size rsd, core::kinematics::Stub ref = core::kinematics::Stub()) {
@@ -823,7 +783,6 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
                 }
 
 
-
                 // {
                 //  TR << "output " << rsd1 << " " << rsd2 << " " << rsd3 << " " << imer << " " << hrot << std::endl;
                 //   ozstream out("ikrs_his_clamp_"+lzs(rsd1,3)+"_"+lzs(rsd2,3)+"_"+lzs(blen1,2)+"_"+lzs(blen2,2)+"_"+lzs(bang,3)+"_"+str(isol)+".pdb");
@@ -853,7 +812,6 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
   return mxcb;
 }
 // }}}
-
 
 
 void run(std::string fname) {
@@ -968,7 +926,6 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-
   devel::init(argc,argv);
 
   using basic::options::option;
@@ -982,17 +939,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

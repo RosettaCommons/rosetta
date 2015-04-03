@@ -26,9 +26,7 @@
 #include <core/optimization/types.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/LexicographicalIterator.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -38,7 +36,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace optimize_weights {
 
@@ -46,7 +43,7 @@ namespace optimize_weights {
 class PNatAAOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PNatAAOptERotamerData();
 	typedef core::Real Real;
 	typedef core::chemical::AA AA;
@@ -103,7 +100,7 @@ private:
 class PNatRotOptERotamerData : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PNatRotOptERotamerData();
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -205,7 +202,6 @@ private:
 };
 
 std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1191,7 +1187,7 @@ private:
 class OptEData : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~OptEData();
 	typedef core::Real Real;
 	typedef core::Size Size;

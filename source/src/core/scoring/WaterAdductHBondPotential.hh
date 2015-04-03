@@ -59,7 +59,7 @@ public:
 		Residue const & rsd2
 	) const;
 
-	///
+
 	Real
 	h2o_hbond_score_1way(
 		Residue const & h2o_rsd,
@@ -89,7 +89,6 @@ private:
 	scoring::hbonds::HBondOptionsOP   hbondoptions_;
 	scoring::hbonds::HBondDatabaseCOP hb_database_;
 };
-
 
 
 } // scoring

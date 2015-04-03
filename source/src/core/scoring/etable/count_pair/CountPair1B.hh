@@ -16,7 +16,6 @@
 #ifndef INCLUDED_core_scoring_etable_count_pair_CountPair1B_hh
 #define INCLUDED_core_scoring_etable_count_pair_CountPair1B_hh
 
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 //#include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 
@@ -53,7 +52,7 @@ public:
 
 	virtual ~CountPair1B() {} // inlined when declared on the stack
 
-	///@brief function required by templated functions in atom_pair_energy_inline
+	/// @brief function required by templated functions in atom_pair_energy_inline
 	inline
 	bool
 	operator () (

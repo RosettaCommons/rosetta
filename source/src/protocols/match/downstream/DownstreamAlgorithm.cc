@@ -20,9 +20,7 @@
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh>
 
 //Project header
 #include <core/conformation/Residue.hh>
@@ -82,7 +80,6 @@ DownstreamAlgorithm::build_hits_at_all_positions(
 /// @details no-op
 void
 DownstreamAlgorithm::prepare_for_match_enumeration( Matcher const & ) {}
-
 
 
 /// @details Noop in base class.

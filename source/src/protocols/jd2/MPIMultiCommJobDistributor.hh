@@ -42,31 +42,31 @@
 namespace protocols {
 namespace jd2 {
 
-///@details This JobDistributor is intended for JD2 controlled runs of multiple parallel simulations that use
+/// @details This JobDistributor is intended for JD2 controlled runs of multiple parallel simulations that use
 /// multiple replicas: e.g., N trajectories of M replicas on N*M+2 processes. (2 processes for central JD2 and MPIFileBuf )
 /// derived from MPIFileBufJobDistributor: two dedicated processes are used to handle JobDistribution and File-IO.
 /// all other processes (higher rank ) are used for computation.
 class MPIMultiCommJobDistributor : public MPIFileBufJobDistributor {
 	typedef MPIFileBufJobDistributor Parent;
 protected:
-  ///@brief ctor is protected; singleton pattern
+  /// @brief ctor is protected; singleton pattern
   MPIMultiCommJobDistributor( core::Size sub_size );
 
 	virtual void handle_interrupt() {}
 
 public:
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
   virtual core::Size get_new_job_id();
 
-	///@brief overloaded to suppress message from higher-rank replicas
+	/// @brief overloaded to suppress message from higher-rank replicas
 	virtual	void job_succeeded(core::pose::Pose & pose, core::Real run_timei, std::string const & tag);
 
-	///@brief overloaded to suppress message from higher-rank replicas
+	/// @brief overloaded to suppress message from higher-rank replicas
 	virtual	void job_failed( core::pose::Pose & pose, bool );
 
   #ifdef USEMPI
-	///@brief return current communicator ( or MPI_COMM_WORLD ).
+	/// @brief return current communicator ( or MPI_COMM_WORLD ).
 	/// this inteface could be put into an abstract base derived directly from JobDistributor
 	/// JobDistributor->MPIJobDistributor->MPIXXXJobDistributor
 	/// but for now it is only used by MPIMultiCommJobDistributor...

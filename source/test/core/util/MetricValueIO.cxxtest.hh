@@ -25,7 +25,6 @@
 #include <string>
 
 // C++ headers, for debugging your tests
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 

@@ -293,7 +293,6 @@ class RosettaBackend {
 };
 
 
-
 int
 main( int argc, char * argv [] )
 {

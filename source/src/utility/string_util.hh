@@ -56,10 +56,10 @@ utility::vector1< std::string > split(const std::string &s);
 /// Unlike string_split_multi_delim(), any group of mixed whitespace counts only as a single seperator.
 utility::vector1< std::string > split_whitespace(const std::string &s);
 
-///@brief combine strings with anything
+/// @brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);
 
-///@brief combine vector with anything
+/// @brief combine vector with anything
 template<class T>
 std::string join(utility::vector1<T> const & vector, std::string const & connector)
 {
@@ -72,7 +72,7 @@ std::string join(utility::vector1<T> const & vector, std::string const & connect
 	return os.str();
 }
 
-///@brief combine strings with anything
+/// @brief combine strings with anything
 std::string join(std::vector<std::string> const & s, std::string const & connector);
 
 /// @brief join space separations in a string with a connector such as '_'
@@ -155,7 +155,7 @@ std::string filename(const std::string& path);
 std::string pathname(const std::string& path);
 
 
-///@brief find all environment variables with the form ${VARIABLE}
+/// @brief find all environment variables with the form ${VARIABLE}
 /// and replace with the contents of that environment variable.
 /// if the environment variable does not exist, return string::npos
 std::string replace_environment_variables(std::string input);

@@ -9,7 +9,7 @@
 
 /// @file StepWise_ResidueInfo.cc
 /// @brief Function used by the residue_info data structure
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong
 
 
@@ -149,8 +149,6 @@ namespace rna {
 		TR << "In get_three_letter_name_function, an invalid one_letter_name was passed into the function: " << one_letter_name << std::endl;
 		exit ( 1 );
 	}
-
-
 
 
 	Size

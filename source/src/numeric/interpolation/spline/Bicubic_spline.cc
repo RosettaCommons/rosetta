@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Bicubic_spline
 ///
 /// @brief
 /// read the header file!
@@ -18,9 +17,8 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 ///
-/// @last_modified August 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -40,14 +38,9 @@ namespace interpolation {
 namespace spline {
 
 
-
 ////////////////
 // operations //
 ////////////////
-
-
-
-
 
 
 // BORDER determines the behavior of the spline at the borders (natural, first derivative, periodic)
@@ -135,7 +128,6 @@ void BicubicSpline::train(
 	}
 	return;
 }
-
 
 
 /// @return value at certain (x, y)
@@ -247,7 +239,6 @@ Real BicubicSpline::F( Real x, Real y ) const
 }
 
 
-
 /// @return partial derivative at certain (x, y) for x
 Real BicubicSpline::dFdx( const MathVector< Real> &ARGUMENTS) const
 {
@@ -338,7 +329,6 @@ Real BicubicSpline::dFdx( Real x, Real y ) const
 		- ( 3 * dxm * dxm - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( ( i - 1)%dimx, ( j - 1) % dimy) + dy3p * dsecoxy_( ( i - 1) % dimx, j % dimy))
 		+ ( 3 * dxp * dxp - 1) * delta_[ 0] / 6 *( dy3m*dsecoxy_( i % dimx    , ( j - 1) % dimy) + dy3p * dsecoxy_( i % dimx      , j % dimy));
 }
-
 
 
 /// @return partial derivative at certain (x, y) for y

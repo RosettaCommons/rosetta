@@ -94,10 +94,10 @@ private:
 	/// @brief When making sidechain constraints, should we allow for flipping HNQ residue sidechains?
 	bool amb_hnq_;
 
-	///@brief A loop definition of constrained segments
+	/// @brief A loop definition of constrained segments
 	protocols::loops::LoopsCOP loop_segments_;
 
-	///@brief A task definition of constrained segments
+	/// @brief A task definition of constrained segments
 	core::pack::task::TaskFactoryCOP task_segments_;
 
 };

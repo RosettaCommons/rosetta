@@ -15,11 +15,9 @@
 #ifndef INCLUDED_core_pack_interaction_graph_AdditionalBackgroundNodesInteractionGraph_HH
 #define INCLUDED_core_pack_interaction_graph_AdditionalBackgroundNodesInteractionGraph_HH
 
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 
 //STL Headers
 #include <list>
-// AUTO-REMOVED #include <vector>
 
 #include <iostream>
 
@@ -43,11 +41,9 @@ template < typename V, typename E, typename G > class AdditionalBackgroundNodesI
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin FirstClassNode
-///
 /// @brief
 ///
-/// @detailed
+/// @details
 /// A background node is a node which is not changing type or rotamer throughout a simulation.
 ///
 ///
@@ -123,11 +119,9 @@ class FirstClassNode : public V {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin FirstClassEdge
-///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @remarks
 /// Defines only a constructor and count_dynamic_memory().
@@ -153,15 +147,12 @@ class FirstClassEdge : public E {
 //------------------- Second Class (Background) Node Class -------------------//
 //----------------------------------------------------------------------------//
 
-
 ///
-///
-/// @begin BackgroundNode
 ///
 /// @brief
 /// A node which is not changing type or rotamer throughout a simulation.
 ///
-/// @detailed
+/// @details
 /// In the case of solvent-accessible surface area (SASA) scoring, a background node would be one whose SASA score can
 /// change due to neighboring residues being changed.  It itself will not change residue type or rotamer during a
 /// simulation, but the scores on this residue can change.
@@ -249,12 +240,10 @@ class BackgroundNode {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin BackgroundToFirstClassEdge
-///
 /// @brief
 /// An edge between a background node and a first class node.
 ///
-/// @detailed
+/// @details
 ///
 /// @remarks
 /// Only derived classes can get non-const access to the FirstClassNode and BackgroundNode members.  Const access is
@@ -334,8 +323,6 @@ class BackgroundToFirstClassEdge {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin AdditionalBackgroundNodesInteractionGraph
-///
 /// @brief
 /// Function declarations for the AdditionalBackgroundNodesInteractionGraph.
 ///
@@ -409,14 +396,11 @@ class AdditionalBackgroundNodesInteractionGraph : public G {
 };
 
 
-
 //----------------------------------------------------------------------------//
 //------------------------- First Class Node Class ---------------------------//
 //----------------------------------------------------------------------------//
 
 
-/// @begin FirstClassNode::FirstClassNode
-///
 /// @brief
 /// FirstClassNode constructor
 ///
@@ -433,8 +417,6 @@ FirstClassNode< V, E, G > ::FirstClassNode( G* owner, int node_id, int num_state
 {}
 
 
-/// @begin FirstClassNode::~FirstClassNode
-///
 /// @brief FirstClassNode destructor
 ///
 template < typename V, typename E, typename G >
@@ -442,8 +424,6 @@ FirstClassNode< V, E, G > ::~FirstClassNode()
 {}
 
 
-/// @begin FirstClassNode::add_background_edge
-///
 /// @brief
 /// Adds a BackgroundToFirstClassEdge to the node's list of such edges and returns an iterator to that list position.
 ///
@@ -462,8 +442,6 @@ FirstClassNode< V, E, G >::add_background_edge( BackgroundToFirstClassEdge< V, E
 }
 
 
-/// @begin FirstClassNode::drop_background_edge
-///
 /// @brief
 /// Removes an edge from the node's BackgroundToFirstClassEdge list
 ///
@@ -484,8 +462,6 @@ void FirstClassNode< V, E, G >::drop_background_edge( BackgroundEdgeListIter edg
 }
 
 
-/// @begin FirstClassNode::count_dynamic_memory
-///
 /// @brief
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
@@ -512,12 +488,10 @@ unsigned int FirstClassNode< V, E, G >::count_dynamic_memory() const {
 }
 
 
-/// @begin FirstClassNode::update_bg_edge_vector
-///
 /// @brief
 /// Syncs the background edge vector with the background edge list
 ///
-/// @detailed
+/// @details
 /// Updates the vector of pointers to background edges to correspond to the list of background edges. Informs its
 /// incident edges of their position in its vector.
 ///
@@ -559,12 +533,10 @@ void FirstClassNode< V, E, G >::update_bg_edge_vector() {
 //----------------------------------------------------------------------------//
 
 
-/// @begin FirstClassEdge::FirstClassEdge
-///
 /// @brief
 /// FirstClassEdge constructor
 ///
-/// @detailed
+/// @details
 /// This class is almost empty; a FirstClassEdge connects two first class vertices, and is ignorant of the
 /// existence of both second class nodes (synonymous with BackgroundNode) and second-to-first-class edges
 /// (synonymous with BackgroundToFirstClassEdge).  I (apl) cannot think of any data that a FirstClassEdge should
@@ -582,8 +554,6 @@ FirstClassEdge< V, E, G >::FirstClassEdge( G* owner, int first_node_ind, int sec
 	E ( owner, first_node_ind, second_node_ind ) {}
 
 
-/// @begin FirstClassEdge::~FirstClassEdge
-///
 /// @brief
 /// FirstClassEdge destructor
 ///
@@ -591,18 +561,15 @@ template < typename V, typename E, typename G >
 FirstClassEdge< V, E, G >::~FirstClassEdge() {}
 
 
-
 //----------------------------------------------------------------------------//
 //------------------- Second Class (Background) Node Class -------------------//
 //----------------------------------------------------------------------------//
 
 
-/// @begin BackgroundNode::BackgroundNode
-///
 /// @brief
 /// BackgroundNode constructor - no default or copy constructors; no operator =
 ///
-/// @detailed
+/// @details
 /// I use "background node" synonymously with "second class node".
 /// This kind of node contributes to the energy of the system.  It does not
 /// have any assignable states -- the energy it contributes is a function of
@@ -623,8 +590,6 @@ BackgroundNode< V, E, G >::BackgroundNode( AdditionalBackgroundNodesInteractionG
 }
 
 
-/// @begin BackgroundNode::~BackgroundNode
-///
 /// @brief
 /// BackgroundNode destructor
 ///
@@ -632,8 +597,6 @@ template < typename V, typename E, typename G >
 BackgroundNode< V, E, G >::~BackgroundNode() {}
 
 
-/// @begin BackgroundNode::add_edge
-///
 /// @brief
 /// Adds a BackgroundToFirstClassEdge to the edge list for this node.  Returns an iterator to the new list element.
 ///
@@ -652,8 +615,6 @@ BackgroundNode< V, E, G > ::add_edge( BackgroundToFirstClassEdge< V, E, G > * ed
 }
 
 
-/// @begin BackgroundNode::drop_edge
-///
 /// @brief
 /// removes an edge from the nodes edge list in constant time
 ///
@@ -671,12 +632,10 @@ void BackgroundNode< V, E, G >::drop_edge( BackgroundEdgeListIter edge ) {
 }
 
 
-/// @begin BackgroundNode::update_edge_vector
-///
 /// @brief
 /// Syncs the edge vector with the edge list
 ///
-/// @detailed
+/// @details
 /// Updates the vector of pointers to background edges to correspond to the list of background edges. Informs its
 /// incident edges of their position in its vector.
 ///
@@ -709,8 +668,6 @@ void BackgroundNode< V, E, G >::update_edge_vector() {
 }
 
 
-/// @begin BackgroundNode::find_edge
-///
 /// @brief
 /// Linear time edge lookup function
 ///
@@ -728,8 +685,6 @@ BackgroundToFirstClassEdge< V, E, G >* BackgroundNode< V, E, G >::find_edge( int
 }
 
 
-/// @begin BackgroundNode::count_dynamic_memory
-///
 /// @brief
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
@@ -759,12 +714,10 @@ unsigned int BackgroundNode< V, E, G >::count_dynamic_memory() const {
 //----------------------------------------------------------------------------//
 
 
-/// @begin BackgroundToFirstClassEdge::BackgroundToFirstClassEdge
-///
 /// @brief
 /// BackgroundToFirstClassEdge constructor - no default or copy constructors; no operator =.
 ///
-/// @detailed
+/// @details
 /// This class of edge connects first class and second class nodes.  This class of edge is very unlikely to hold the
 /// same kind of data in a (concrete) derived class.  e.g. The SASABackgroundEdge holds pre-computed rotamer sphere
 /// overlaps for each rotamer-on-a-SASANode and the single-(fixed)-rotamer-on-a-background residue.
@@ -790,8 +743,6 @@ BackgroundToFirstClassEdge< V, E, G >::BackgroundToFirstClassEdge
 }
 
 
-/// @begin BackgroundToFirstClassEdge::~BackgroundToFirstClassEdge
-///
 /// @brief
 /// virtual destructor.  The edge removes itself from the graph by informing the two vertices its incident upon
 /// to drop it from their edge lists.
@@ -805,12 +756,10 @@ BackgroundToFirstClassEdge< V, E, G >::~BackgroundToFirstClassEdge() {
 }
 
 
-/// @begin BackgroundToFirstClassEdge::get_other_ind
-///
 /// @brief
 /// returns the index of the second class node
 ///
-/// @detailed
+/// @details
 /// A first class vertex may request a BackgroundToFirstClassEdge for the index of the background node the edge connects
 /// it to by invoking edge->get_other_ind( this );  The this pointer simply tells the compiler which of the two
 /// overloaded get_other_ind() methods to invoke.
@@ -825,12 +774,10 @@ int BackgroundToFirstClassEdge< V, E, G >::get_other_ind( FirstClassNode< V, E, 
 }
 
 
-/// @begin BackgroundToFirstClassEdge::get_other_ind
-///
 /// @brief
 /// returns the index of the first class node
 ///
-/// @detailed
+/// @details
 /// A second class vertex may request a BackgroundToFirstClassEdge for the index of the first class node the edge connects
 /// it to by invoking edge->get_other_ind( this );  The this pointer simply tells the compiler which of the two
 /// overloaded get_other_ind() methods to invoke.
@@ -845,12 +792,10 @@ int BackgroundToFirstClassEdge< V, E, G >::get_other_ind(  BackgroundNode< V, E,
 }
 
 
-/// @begin BackgroundToFirstClassEdge::get_other_node
-///
 /// @brief
 /// returns a pointer to the second class node
 ///
-/// @detailed
+/// @details
 /// unnamed parameter is usually the this pointer where the method is invoked
 /// inside a method of a first class node.  the pointer type must be resolved
 /// at compile time.  Same ideas here as in get_other_ind()
@@ -861,12 +806,10 @@ BackgroundNode< V, E, G >* BackgroundToFirstClassEdge< V, E, G >::get_other_node
 }
 
 
-/// @begin BackgroundToFirstClassEdge::get_other_node
-///
 /// @brief
 /// returns a pointer to the first class node
 ///
-/// @detailed
+/// @details
 /// unnamed parameter is usually the this pointer where the method is invoked
 /// inside a method of a second class node.  the pointer type must be resolved
 /// at compile time.  Same ideas here as in get_other_ind()
@@ -877,12 +820,10 @@ FirstClassNode< V, E, G >* BackgroundToFirstClassEdge< V, E, G > ::get_other_nod
 }
 
 
-/// @begin BackgroundToFirstClassEdge::set_pos_in_owners_list
-///
 /// @brief
 /// stores the iterator to this edge in the owning graph's list of background-to-first-class edges.
 ///
-/// @detailed
+/// @details
 /// required for constant time edge deletion
 ///
 template < typename V, typename E, typename G >
@@ -892,12 +833,10 @@ BackgroundToFirstClassEdge< V, E, G >::set_pos_in_owners_list( BackgroundEdgeLis
 }
 
 
-/// @begin BackgroundToFirstClassEdge::set_pos_in_node_edgevector
-///
 /// @brief
 /// stores the index of this edge in its first class node's edge vector
 ///
-/// @detailed
+/// @details
 /// again, first (unnamed) parameter is the 'this' pointer where the method has
 /// been invoked inside a method of the first class node.
 ///
@@ -911,12 +850,10 @@ void BackgroundToFirstClassEdge< V, E, G >::set_pos_in_node_edgevector( FirstCla
 }
 
 
-/// @begin BackgroundToFirstClassEdge::set_pos_in_node_edgevector
-///
 /// @brief
 /// stores the index of this edge in its second class node's edge vector
 ///
-/// @detailed
+/// @details
 /// again, first (unnamed) parameter is the this pointer where the method has
 /// been invoked inside a method of the second class node.
 ///
@@ -930,8 +867,6 @@ void BackgroundToFirstClassEdge< V, E, G >::set_pos_in_node_edgevector( Backgrou
 }
 
 
-/// @begin BackgroundToFirstClassEdge::same_edge
-///
 /// @brief
 /// returns true if this node is incident upon the two input vertex indices
 ///
@@ -951,8 +886,6 @@ bool BackgroundToFirstClassEdge< V, E, G >::same_edge( int fc_node_index, int bg
 }
 
 
-/// @begin BackgroundToFirstClassEdge::count_dynamic_memory
-///
 /// @brief
 /// Returns an int representing the amount of memory in bytes used by this node
 ///
@@ -970,8 +903,6 @@ unsigned int BackgroundToFirstClassEdge< V, E, G >::count_dynamic_memory() const
 //----------------------------------------------------------------------------//
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::AdditionalBackgroundNodesInteractionGraph
-///
 /// @brief
 /// AdditionalBackgroundNodesInteractionGraph constructor; no default or copy constructors; no operator =
 ///
@@ -986,12 +917,10 @@ AdditionalBackgroundNodesInteractionGraph< V, E, G >::AdditionalBackgroundNodesI
 {}
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::~AdditionalBackgroundNodesInteractionGraph
-///
 /// @brief
 /// AdditionalBackgroundNodesInteractionGraph destructor
 ///
-/// @detailed
+/// @details
 /// deallocates each BackgroundToFirstClassEdge. Then deallocates each background
 /// node.  Order is important.  The edges assume that its vertices still exist
 /// at the time it is removed.  This destructor enforces that.
@@ -1014,12 +943,10 @@ AdditionalBackgroundNodesInteractionGraph< V, E, G >::~AdditionalBackgroundNodes
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::drop_background_edge
-///
 /// @brief
 /// Constant time edge removal.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// iter - [in] - the iterator to the position in the graph's edge list for the edge that is removing itself.
@@ -1030,13 +957,11 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G > ::drop_background_edge
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::set_num_background_nodes
-///
 /// @brief
 /// sets the number of background nodes in the graph.  Should be called no more than once.
 /// Some problem instances do not require background nodes.
 ///
-/// @detailed
+/// @details
 /// Allocates the background nodes using a factory method.  Their indices start from 1. The create_background_node()
 /// method is virtual.
 ///
@@ -1056,8 +981,6 @@ debug_assert( num_bg_nodes_ == -1 && num_bg_nodes >= 0); //call this method at m
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::add_background_edge
-///
 /// @brief
 /// adds a BackgroundToFirstClassEdge to the graph and performs the requisite bookkeepking.
 ///
@@ -1076,14 +999,12 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G >::add_background_edge( 
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::find_background_edge
-///
 /// @brief
 /// returns a pointer to the background edge, identified by the indices of the first and second class nodes it connects.
 /// Returns the null pointer if the edge does not exist.  Possibly linear time operation (in the number of
 /// BackgroundToFirstClassEdges).
 ///
-/// @detailed
+/// @details
 /// The graph keeps a pointer to a "focused edge" so that repeated requests for the same edge take constant time.
 ///
 /// @param
@@ -1101,13 +1022,11 @@ BackgroundToFirstClassEdge< V, E, G >*
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::prepare_for_simulated_annealing
-///
 /// @brief
 /// invokes prepare_for_simulated_annealing on each of the BackgroundToFirstClassEdges and then invokes
 /// prepare_for_simulated_annealing on each of the BackgroundNodes.
 ///
-/// @detailed
+/// @details
 /// A BackgroundToFirstClassEdges may decide to delete itself before sim annealing begins. Since the second class node
 /// will likely update is edge vector in its (virtual) call to prepare_for_sim_annealing, any edges that should be
 /// should be removed before the second class nodes update their edge vectors.
@@ -1140,8 +1059,6 @@ void AdditionalBackgroundNodesInteractionGraph< V, E, G >::prepare_for_simulated
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::getTotalMemoryUsage
-///
 /// @brief
 /// Returns an int representing the total amount of memory in bytes used by this graph
 ///
@@ -1164,8 +1081,6 @@ unsigned int AdditionalBackgroundNodesInteractionGraph< V, E, G >::getTotalMemor
 }
 
 
-/// @begin AdditionalBackgroundNodesInteractionGraph::count_dynamic_memory
-///
 /// @brief
 /// Returns an int representing the amount of dynamic memory in bytes used by this graph
 ///

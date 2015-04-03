@@ -10,7 +10,7 @@
 /// @file ./src/protocols/toolbox/PoseMetricCalculator/FragQualCalculator.hh
 /// @brief header file for FragQualCalculator class.
 /// Roughly, fragment quality is number of fragments which are close to a pose in rmsd
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

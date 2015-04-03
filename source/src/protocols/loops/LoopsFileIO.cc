@@ -30,8 +30,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-
-
 namespace protocols {
 namespace loops {
 
@@ -642,7 +640,6 @@ PoseNumberedLoopFileReader::hijack_loop_reading_code_set_loop_line_begin_token(
 }
 
 
-
 LoopsFileDataOP
 JSONFormattedLoopsFileReader::read_loop_file(
 	std::istream & is,
@@ -710,7 +707,6 @@ void JSONFormattedLoopsFileReader::set_linecount_offset( core::Size setting )
 {
 	linecount_offset_ = setting;
 }
-
 
 
 ResidueIndexDescriptionFromFile

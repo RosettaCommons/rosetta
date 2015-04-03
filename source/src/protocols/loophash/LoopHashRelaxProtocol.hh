@@ -12,7 +12,6 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_loophash_LoopHashRelaxProtocol_hh
 #define INCLUDED_protocols_loophash_LoopHashRelaxProtocol_hh
 
@@ -30,7 +29,6 @@
 #include <vector>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

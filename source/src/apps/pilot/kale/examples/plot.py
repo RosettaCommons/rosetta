@@ -88,6 +88,3 @@ elif not fork():
     show()
 
 
-
-
-

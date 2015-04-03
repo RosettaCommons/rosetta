@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -33,7 +33,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <protocols/moves/BoolMover.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>

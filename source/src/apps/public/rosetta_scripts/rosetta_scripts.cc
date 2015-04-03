@@ -31,7 +31,6 @@
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>

@@ -53,9 +53,7 @@
 #include <core/scoring/etable/etrie/CountPairData_1_2.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_3.hh>
 #include <core/scoring/etable/etrie/TrieCountPair1BC3.hh>
-// AUTO-REMOVED #include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
-// AUTO-REMOVED #include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 
 //#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
@@ -251,7 +249,7 @@ MMLJEnergyInter::update_residue_for_packing(
 
 }
 
-///
+
 bool
 MMLJEnergyInter::defines_intrares_energy( EnergyMap const & ) const
 {

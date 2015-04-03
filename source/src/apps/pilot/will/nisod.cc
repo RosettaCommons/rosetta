@@ -278,7 +278,6 @@ core::pose::Pose make_coiled_coil(CCParam & p) {
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )

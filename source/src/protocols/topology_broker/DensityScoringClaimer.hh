@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -25,13 +25,12 @@
 #include <protocols/topology_broker/SequenceClaimer.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/jumping/ResiduePairJumpSetup.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/FragSet.hh>
-//
+
 
 // ObjexxFCL Headers
 
@@ -46,7 +45,6 @@
 
 //// C++ headers
 //#include <fstream>
-// AUTO-REMOVED #include <istream>
 #include <string>
 
 #include <core/kinematics/Jump.hh>
@@ -72,7 +70,7 @@ public:
 
 	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

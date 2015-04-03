@@ -29,7 +29,6 @@ class CD:
         return r[:-2]+'|'
 
 
-
 class ReferenceSection:
     def __init__(self, ReferenceSection):
         # do we even need this??? self.ReferenceSection = ReferenceSection
@@ -168,7 +167,6 @@ class CppType_Typedef(CppType_Complex):
         else: return CppType_Complex.T(self)
 
 
-
 class CppNamespace:
     ''' data holder for C++ namespace. name represent namespace name and context is full context in which it recides
     '''
@@ -215,7 +213,6 @@ class CppEnum:
         return [self.file_]
 
 
-
 class CppVariable:
     def __init__(self, node, context, refSection):
         self.name = node.getAttribute('name')
@@ -236,7 +233,6 @@ class CppVariable:
 
         r = '  %sdef_%s("%s", &%s%s);\n' % (wrappingScope, readwrite, self.name, self.context, self.name)
         return  ('\n' + indent).join( r.split('\n') ) + '\n'
-
 
 
 class CppFunction:
@@ -431,7 +427,6 @@ class CppFunction:
             return '    , boost::python::return_value_policy< boost::python::reference_existing_object >()\n'
 
 
-
         return ''
 
 
@@ -562,7 +557,6 @@ class CppFunction:
         return 'CppFunction: %s Context=%s isWrapable=%s, %s %s' % (self.name, self.context, self.isWrapable(), self.returnType, self.argsTypes)
 
 
-
 class CppClass:
     def __init__(self, node, context, refSection):
         self.reference = refSection
@@ -616,7 +610,6 @@ class CppClass:
         return False
 
 
-
     def getChildrenContext(self):  return self.context + self.name + '::'
 
     def getAllVirtualFunctions(self, D, checkAll=True):
@@ -642,7 +635,6 @@ class CppClass:
                 elif not o.getAllVirtualFunctions(D, checkAll=False): return {}
 
         return D
-
 
 
     def isCreatable(self, asBase=False, with_callback_struct=False):
@@ -694,8 +686,6 @@ class CppClass:
         return True
 
 
-
-
     def isCallbackStructNeeded(self):
         ''' Return True if class have public virtual functions, so it make sense to allow callback from Python...
         '''
@@ -722,8 +712,6 @@ class CppClass:
             if f.isCallbackStructNeeded() and f.isWrapable(): return True  # and (not f.const)
 
         return False
-
-
 
 
     def isWrapable(self):
@@ -939,7 +927,6 @@ class CppClass:
                         r += '  %(exposer)s.def( boost::python::init< %(args)s > ( (%(e_args)s) , "%(constr_doc)s" ) );\n' % dict(D.items(), args=c.getSimpleArgsType(constructor=True), e_args=c.getArgTypes(), constr_doc=doxygen.getDoxygenComment(c.file_, c.line))
                     else:
                         r += '  %(exposer)s.def( boost::python::init< %(args)s > () );\n' % dict(D.items(), args=c.getSimpleArgsType() )
-
 
 
         if self.enums:
@@ -1176,8 +1163,6 @@ class GccXML:
                         object_.dataMembers.append( CppVariable(m, ch_context, self) )
 
 
-
-
             if object_:
                 if not self.Contexts.get(context): self.Contexts[context] = [ object_ ]
                 else: self.Contexts[ context ].append( object_ )
@@ -1374,9 +1359,6 @@ def GCC_XML_main(args):
     print wrapModule('test', '::NM::', gxml.Contexts)
 
 
-
-
-
 class ClangXML:
     def __init__(self, dom):
         self.dom = dom  # Do we even need this???
@@ -1386,7 +1368,6 @@ class ClangXML:
         for i in dom.documentElement.childNodes:  # dom.documentElement suppose to be dom.getElementsByTagName('CLANG_XML')
             if i.nodeName == 'TranslationUnit':  self.TranslationUnit = i
             if i.nodeName == 'ReferenceSection':  self.ReferenceSection = ReferenceSection(i)
-
 
 
     def parse(self, node=None, relevantFilesList=None):

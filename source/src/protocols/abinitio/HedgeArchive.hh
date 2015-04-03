@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @author Oliver Lange
 /// Archive class to collect structures such that variances of scores can be computed to determine normalized weights
 
@@ -38,7 +38,6 @@
 #include <set>
 
 
-
 namespace protocols {
 namespace abinitio {
 
@@ -60,13 +59,13 @@ public:
 
 	virtual void rescore() {}; //do nothing since we don't care about scores
 
-	///@brief save and restore status of archive to file-system
+	/// @brief save and restore status of archive to file-system
 	// will also call save_pending_decoys and restore 'incoming_structures_' from the pending-decoy files
   virtual void save_status( std::ostream& ) const;
   virtual void restore_status( std::istream& );
 
 
-  ///@brief overloaded to make input decoys appear the same as decoys coming from batches
+  /// @brief overloaded to make input decoys appear the same as decoys coming from batches
   virtual void init_from_decoy_set( core::io::silent::SilentFileData const& ) {};
 	void collect( jd2::archive::Batch const& batch, core::io::silent::SilentStructOPs& ) const;
 protected:

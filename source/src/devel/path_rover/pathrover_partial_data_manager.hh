@@ -197,9 +197,6 @@ namespace pathways {
 };
 
 
-
-
-
   class Partial_Data{
 
     //MATCH
@@ -226,8 +223,6 @@ namespace pathways {
 	std::vector<std::vector<int> > _dist_line_indices_A;
 	std::vector<std::vector<int> > _dist_line_indices_B;
 	std::vector<double> _line_distances;
-
-
 
 
     //Alpha,Beta
@@ -276,8 +271,6 @@ namespace pathways {
     void set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_recs);
     void set_partial_data();
   };
-
-
 
 
 } // namespace

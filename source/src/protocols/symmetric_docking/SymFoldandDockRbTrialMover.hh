@@ -19,7 +19,6 @@
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>

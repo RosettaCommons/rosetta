@@ -41,7 +41,7 @@ public:
 	virtual std::string get_name() const;
 	virtual void apply( core::pose::Pose & p );
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,

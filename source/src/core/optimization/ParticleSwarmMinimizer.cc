@@ -25,7 +25,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace optimization {
 
@@ -257,7 +256,6 @@ void ParticleSwarmMinimizer::print_particles( ParticleOPs & ps, std::string head
 		std::cout << *p << std::endl;
 	}
 }
-
 
 
 } // namespace optimization

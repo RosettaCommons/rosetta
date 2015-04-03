@@ -14,7 +14,6 @@
 #include <basic/MetricValueIO.hh>
 
 #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <string>
 #include <sstream>

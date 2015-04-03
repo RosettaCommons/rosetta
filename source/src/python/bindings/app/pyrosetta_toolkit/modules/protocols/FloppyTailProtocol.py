@@ -51,8 +51,6 @@ class FloppyTailProtocol(ProtocolBaseClass):
         print "Please see the rosetta user manual for full documentation of this protocol before use. Other options can be set using the options system."
 
 
-
-
         if not self.input_class.regions.get_num_regions():
             print "No regions set.  Returning"
             return
@@ -61,7 +59,6 @@ class FloppyTailProtocol(ProtocolBaseClass):
 
         self.main = Toplevel(main)
         self.main.title("FloppyTail Setup")
-
 
 
         #Set Tk:
@@ -159,7 +156,6 @@ class FloppyTailProtocol(ProtocolBaseClass):
         mover.set_movemap(movemap)
         mover.set_fa_scorefxn(self.score_class.score)
         #Cen Scorefunction - not yet.
-
 
 
         self.run_protocol(mover)

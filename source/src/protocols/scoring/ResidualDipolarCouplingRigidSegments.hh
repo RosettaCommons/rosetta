@@ -15,13 +15,11 @@
 #define INCLUDED_protocols_scoring_ResidualDipolarCouplingRigidSegments_hh
 
 #include <protocols/scoring/ResidualDipolarCouplingRigidSegments.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ResidualDipolarCouplingRigidSegmentsEnergy.fwd.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
 #include <basic/datacache/CacheableData.hh>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>
@@ -35,8 +33,8 @@ void store_RDC_segments_in_pose(ResidualDipolarCouplingRigidSegmentsOP, core::po
 ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(core::pose::Pose&);
 ResidualDipolarCouplingRigidSegmentsCOP retrieve_RDC_segments_from_pose(core::pose::Pose const&);
 
-///@brief ResidualDipolarCouplingRigidSegmentss are mainly handled by this class
-///@detail related classed: RDC --- a single line in an RDC file - representing a single dipolar coupling
+/// @brief ResidualDipolarCouplingRigidSegmentss are mainly handled by this class
+/// @detail related classed: RDC --- a single line in an RDC file - representing a single dipolar coupling
 ///                         ResidualDipolarCouplingRigidSegmentsEnergy -- an energy method which triggers computations handled by this class.
 ///
 ///
@@ -84,11 +82,11 @@ public:
     return basic::datacache::CacheableDataOP( new ResidualDipolarCouplingRigidSegments(*this) );
   }
 
-  ///@brief compute dipolar score for given segment definition
+  /// @brief compute dipolar score for given segment definition
   /// alignment tensor optimization will be performed for each segment individually
 		core::Real compute_total_score(core::pose::Pose const& pose)const;
 		core::Real compute_pairwise_score() const; ///total score must have been evaluated before calls to this method are made.
-  ///@brief read RDC data from file
+  /// @brief read RDC data from file
  //  void read_RDC_file();
 
   // do you need accessor for individual Tensors... do it like this
@@ -97,7 +95,7 @@ public:
 	void show(std::ostream&) const;
 
 private:
-  ///@brief read RDC data from file
+  /// @brief read RDC data from file
   void sort_into_segments(RDC_lines all_rdcs);
   RDC_lines read_RDCs_from_cmdline() const;
   void read_RDC_segment_file_from_cmdline();

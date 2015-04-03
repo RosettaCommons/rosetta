@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/SecondaryStructureFilter.hh
 /// @brief header file for SecondaryStructureFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

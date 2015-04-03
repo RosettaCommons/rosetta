@@ -30,12 +30,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class WaterAdductIntraEnergy : public ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
@@ -54,7 +53,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -64,7 +63,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	Real
 	eval_dof_derivative(

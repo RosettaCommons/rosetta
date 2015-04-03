@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/VDW_BinScreener.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

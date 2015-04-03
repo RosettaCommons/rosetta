@@ -9,7 +9,7 @@
 
 /// @file protocols/farna/BasePairStepLibrary.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

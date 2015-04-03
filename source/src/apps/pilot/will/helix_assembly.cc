@@ -803,9 +803,6 @@ int main(int argc, char *argv[]) {
 }
 
 
-
-
-
 // crap
 
 		// for(    int ir =           1; ir <= (int)pose.n_residue()-refsize-1; ++ir){

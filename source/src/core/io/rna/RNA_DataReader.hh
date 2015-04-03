@@ -30,8 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace core {
 namespace io {
 namespace rna {
@@ -40,7 +38,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////////////////////////
 class RNA_DataReader : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_DataReader();
 
 	//constructor

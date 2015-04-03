@@ -123,7 +123,6 @@ struct PD_match_rmsd{
 std::istream& operator >>(std::istream &is,PD_match_rmsd &p);
 
 
-
 struct DOF_param{
 	std::string s_dof_type;
 	Pdbres_id pdb_res;
@@ -192,7 +191,6 @@ struct Symmetric_param{
 std::istream& operator >>(std::istream &is,Symmetric_param &p);
 
 
-
 /***************************************/
 // main class for reading and handling pathways parameters file
 // information about the running -
@@ -257,7 +255,6 @@ public:
     bool form_beta, form_alpha;
     bool partial_target_available;
     bool full_target_available;
-
 
 
 	// LINES_ANGLE <chain1> <from1> <to1> <chain2> <from2> <to2> = <angle(degree)>

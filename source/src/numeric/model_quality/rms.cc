@@ -11,7 +11,7 @@
 /// @brief  RMS functions imported from rosetta++
 /// @author James Thompson
 /// @date   Wed Aug 22 12:10:37 2007
-///
+
 
 // Rosetta Headers
 
@@ -125,14 +125,13 @@ rms_wrapper(
 } // rms_wrapper
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin calc_rms_fast
 ///
 /// @brief
 /// companion function for findUU ( it is optional ) computes the minimum
 /// RMS deviation beteen XX and YY as though it rotated the arrays, without
 /// actually rotating them.
 ///
-/// @detailed
+/// @details
 ///
 /// @param  rms_out   [in/out]? - the real-valued output value of the rms deviation
 /// @param  XX - [in/out]? - first set of points representing xyz coordinates
@@ -152,9 +151,8 @@ rms_wrapper(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 calc_rms_fast(
@@ -188,13 +186,12 @@ calc_rms_fast(
 } // calc_rms_fast
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin findUU
 ///
 /// @brief
 /// intended to rotate one protein xyz array onto another one such that
 /// the point-by-point rms is minimized.
 ///
-/// @detailed
+/// @details
 ///   1) ORIGINAL PAPER HAD ERROR IN HANDEDNESS OF VECTORS, LEADING
 ///      TO INVERSION MATRICIES ON OCCASION. OOPS. NOW FIXED.
 ///       SEE ACTA CRYST(1978) A34 PAGE 827 FOR REVISED MATH
@@ -238,11 +235,10 @@ calc_rms_fast(
 /// Mathethematical Basis from paper:
 /// (Wolfgang Kabsch) acta Cryst (1976) A32 page 922
 ///
-/// @authors
+/// @author
 ///  Charlie Strauss 1999
 ///  Revised april 22
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 findUU(
@@ -466,16 +462,13 @@ findUU(
 	UU = numeric::FArray_to_xyzmatrix(UU_Farray);
 
 
-
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin BlankMatrixMult
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  A - [in/out]? -
 /// @param  n - [in/out]? -
@@ -494,9 +487,8 @@ findUU(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 BlankMatrixMult(
@@ -521,11 +513,10 @@ BlankMatrixMult(
 } // BlankMatrixMult
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin MatrixMult
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 /// multiplys matrices A (npXn) and B (npXn). results in AxB.out
 /// IF THE MATRICES are SQUARE.  you can also multiply the transposes of these matrices
 /// to do so set the transposeA or transposeB flags to 1, otherwise they should be zero.
@@ -554,10 +545,9 @@ BlankMatrixMult(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 /// charlie strauss 1999
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 MatrixMult(
@@ -574,7 +564,6 @@ MatrixMult(
 	A.dimension( np, n );
 	B.dimension( np, m );
 	AxB_out.dimension( m, n );
-
 
 
 	if ( transposeA == 0 ) {
@@ -617,11 +606,10 @@ MatrixMult(
 } // MatrixMult
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin fixEigenvector
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///       m_v is a 3x3  matrix of 3 eigen vectors
 ///       replaces the third  eigenvector by taking cross product of
 ///       of the first two eigenvectors
@@ -636,9 +624,8 @@ MatrixMult(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 fixEigenvector( FArray2A< numeric::Real > m_v )
@@ -996,7 +983,6 @@ det3( FArray2A< double > m )
 }
 
 
-
 void
 rsym_eigenval(
 	ObjexxFCL::FArray2A< double > m,
@@ -1005,7 +991,6 @@ rsym_eigenval(
 {
 	m.dimension( 3, 3 );
 	ev.dimension( 3 );
-
 
 
 	double xx,yy,zz,xy,xz,yz;

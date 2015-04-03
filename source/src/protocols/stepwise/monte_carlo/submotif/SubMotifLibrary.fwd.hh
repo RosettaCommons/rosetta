@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/monte_carlo/submotif/SubMotifLibrary.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

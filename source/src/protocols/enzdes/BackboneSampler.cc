@@ -31,13 +31,9 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-// AUTO-REMOVED #include <core/pose/datacache/cacheable_observers.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableObserverType.hh>
-// AUTO-REMOVED #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>

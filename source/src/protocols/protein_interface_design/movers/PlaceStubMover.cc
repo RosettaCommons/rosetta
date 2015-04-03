@@ -31,7 +31,6 @@
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -61,7 +60,6 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
-// AUTO-REMOVED #include <protocols/protein_interface_design/util.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 
 #include <numeric/random/random.hh>
@@ -177,7 +175,7 @@ PlaceStubMover::clone() const {
 }
 
 
-/// @detailed utility function that places a stub at an acceptor position and cleans up the pose
+/// @details utility function that places a stub at an acceptor position and cleans up the pose
 void
 PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Size const res_num )
 {

@@ -23,9 +23,6 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/pack/rotamer_set/RotamerSet.hh> // WIN32 INCLUDE
@@ -33,10 +30,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/graph/Graph.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/vector0.hh>

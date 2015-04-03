@@ -41,17 +41,10 @@
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -60,7 +53,6 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <set>
 #include <boost/foreach.hpp>
 
 #include <core/import_pose/import_pose.hh>

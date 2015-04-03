@@ -12,7 +12,6 @@
 /// @author Florian Richter (floric@u.washington.edu), september 2010
 
 
-
 //unit headers
 #include <protocols/enzdes/EnzdesJobOutputter.hh>
 #include <protocols/enzdes/EnzdesJobOutputterCreator.hh>
@@ -45,7 +44,6 @@
 
 namespace protocols {
 namespace enzdes {
-
 
 
 EnzdesJobOutputter::EnzdesJobOutputter()
@@ -147,7 +145,5 @@ EnzdesJobOutputterCreator::create_JobOutputter() const {
 
 }//enzdes
 }//protocols
-
-
 
 

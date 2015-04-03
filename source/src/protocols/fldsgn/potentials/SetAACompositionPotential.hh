@@ -16,7 +16,6 @@
 
 // unit headers
 #include <protocols/fldsgn/potentials/SetAACompositionPotential.fwd.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/potentials/AACompositionEnergy.fwd.hh>
 
 // project headers
 #include <core/chemical/AA.hh>

@@ -152,10 +152,6 @@ namespace motif {
 	};
 
 
-
-
-
-
 }
 }
 }

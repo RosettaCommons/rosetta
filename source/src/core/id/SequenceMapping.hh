@@ -26,7 +26,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1_bool.hh>
@@ -81,10 +80,10 @@ public:
 	/// i.e. smap[j] becomes smap[ smap_to_add[ j ] ]
 	void upstream_combine( core::id::SequenceMapping const & smap_to_add );
 
-	///@brief size of target sequence
+	/// @brief size of target sequence
 	Size size1() const;
 
-	///@brief size of aligned sequence ???
+	/// @brief size of aligned sequence ???
 	Size size2() const;
 
 	//@brief the pose might have a missing N-terminal offset the sequence mapping accordingly

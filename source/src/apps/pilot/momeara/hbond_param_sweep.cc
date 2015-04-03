@@ -13,7 +13,6 @@
 /// @author Matthew O'Meara
 
 
-
 // Unit headers
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/types.hh>
@@ -744,7 +743,6 @@ public:
 		Size hatm( don_res->atom_index( hatm_name ) );  // OH hydrogen
 
 
-
 		string const pose_name_prefix( "hbond");
 		utility::vector1<PoseOP> features
 			(hbond_param_sweep
@@ -857,7 +855,6 @@ main( int argc, char ** argv )
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
-
 
 
 	return 0;

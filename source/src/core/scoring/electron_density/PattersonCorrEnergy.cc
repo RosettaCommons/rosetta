@@ -23,7 +23,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
@@ -32,22 +31,19 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
 // Utility headers
 
-//
+
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AtomType.hh>

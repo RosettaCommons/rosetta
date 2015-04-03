@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Bjorn Wallner
 /// @author Christopher Miles (cmiles@uw.edu)
@@ -105,7 +105,7 @@ BasePairingLibrary::~BasePairingLibrary() {}
 // likewise, multiplication by m^t = m inverse can be thought of
 // as expressing a vector given in absolute coords in terms of the
 // local coordinate system defined by m
-//
+
 
 void
 get_coordinate_system(

@@ -35,23 +35,23 @@
 namespace protocols {
 namespace floppy_tail {
 
-///@brief FloppyTail mover
+/// @brief FloppyTail mover
 class FloppyTailMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief ctor with no arguments
+	/// @brief ctor with no arguments
 	FloppyTailMover();
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	FloppyTailMover( FloppyTailMover const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	FloppyTailMover & operator=( FloppyTailMover const & rhs );
 
 	virtual ~FloppyTailMover();
     
-    ///@brief set the movemap instead of initializing it from cmd-line
+    /// @brief set the movemap instead of initializing it from cmd-line
 	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
     
 	virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
@@ -69,7 +69,7 @@ public:
 	virtual bool reinitialize_for_new_input() const { return true; }
 
 private:
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  The job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply()).
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  The job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply()).
 	virtual void init_on_new_input(core::pose::Pose const & pose);
 
 private:
@@ -82,7 +82,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_lesstail_;
-	///@brief stored so that it can be generated in the init_on_new_input function
+	/// @brief stored so that it can be generated in the init_on_new_input function
 	core::kinematics::FoldTreeOP foldtree_;
 	core::fragment::ConstantLengthFragSetOP fragset3mer_;
 

@@ -19,7 +19,7 @@
 namespace protocols {
 namespace constraints_additional {
 
-///@brief
+/// @brief
 class SequenceCoupling1BDConstraint;
 typedef utility::pointer::shared_ptr< SequenceCoupling1BDConstraint > SequenceCoupling1BDConstraintOP;
 typedef utility::pointer::shared_ptr< SequenceCoupling1BDConstraint const > SequenceCoupling1BDConstraintCOP;

@@ -36,6 +36,5 @@ typedef utility::pointer::shared_ptr< AntibodyDesignModeler const > AntibodyDesi
 } //namespace protocols
 
 
-
 #endif	//INCLUDED_protocols_antibody_design_ANTIBODYDESIGNMODELER_FWD_HH
 

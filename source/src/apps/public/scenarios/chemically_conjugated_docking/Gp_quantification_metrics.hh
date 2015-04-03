@@ -50,7 +50,7 @@ namespace scenarios {
 namespace chemically_conjugated_docking {
 
 
-///@details do ubiquitin-ras pair distance measurement and reporting
+/// @details do ubiquitin-ras pair distance measurement and reporting
 void ubq_ras_distance(core::pose::Pose const & pose, basic::Tracer & /*TR*/, protocols::jd2::JobOP job_me){
 
 	//Generate distance metrics for desired residue pairs
@@ -174,7 +174,7 @@ void ubq_ras_rotation_angle(
 	return;
 }
 
-///@details This function is specific to the original system for which this code
+/// @details This function is specific to the original system for which this code
 ///was written - if you are not trying to duplicate the initial results you
 ///should remove it!
 void create_extra_output(

@@ -498,7 +498,6 @@ FastRelaxOP
 AntibodyDesignMoverGenerator::generate_relax( Pose const & pose ){
 
 
-
 	protocols::relax::FastRelaxOP rel( new protocols::relax::FastRelax() );//Stack construction failed to compile.
 	setup_relax(pose, rel);
 	return rel;

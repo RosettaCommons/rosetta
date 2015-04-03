@@ -30,7 +30,6 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-// AUTO-REMOVED #include <basic/interpolate.hh>
 
 /// Numeric headers
 #include <numeric/random/random.hh>
@@ -43,7 +42,6 @@
 
 #define DEG2RAD (M_PI/180.0)
 #define RAD2DEG (180.0/M_PI)
-
 
 
 namespace devel {

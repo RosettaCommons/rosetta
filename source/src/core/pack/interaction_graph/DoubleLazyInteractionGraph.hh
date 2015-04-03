@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
 
@@ -630,11 +629,10 @@ DoubleLazyEdge::acknowledge_substitution(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::project_deltaE_for_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -646,9 +644,8 @@ DoubleLazyEdge::acknowledge_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 core::PackerEnergy
@@ -704,11 +701,10 @@ DoubleLazyNode::project_deltaE_for_substitution
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::get_sparse_mat_info_for_curr_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -720,9 +716,8 @@ DoubleLazyNode::project_deltaE_for_substitution
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 SparseMatrixIndex const &
@@ -733,11 +728,10 @@ DoubleLazyNode::get_sparse_mat_info_for_curr_state() const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::acknowledge_neighbors_state_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -749,9 +743,8 @@ DoubleLazyNode::get_sparse_mat_info_for_curr_state() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 void

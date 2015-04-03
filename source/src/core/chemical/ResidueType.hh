@@ -316,15 +316,15 @@ public:
 		return attached_H_end_;
 	}
 
-	///@brief Counts the number of virtual atoms and returns the count.
-	///@details The virtual count is not stored in the resiude type.  This count is performed on the fly, and
+	/// @brief Counts the number of virtual atoms and returns the count.
+	/// @details The virtual count is not stored in the resiude type.  This count is performed on the fly, and
 	///can hurt performance if reapeatedly carried out.  Not intended for use in large loops -- instead, call
 	///once and store the value.
-	///@author Vikram K. Mulligan (vmullig@uw.edu)
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	Size
 	n_virtual_atoms () const;
 
-	///@brief indicates how many proton bonded neighbors an atom has
+	/// @brief indicates how many proton bonded neighbors an atom has
 	Size
 	number_bonded_hydrogens( Size const atomno ) const
 	{
@@ -332,7 +332,7 @@ public:
 		else return attached_H_end_[ atomno ] - attached_H_begin_[ atomno ] + 1;
 	}
 
-	///@brief indicates how many heavyatom bonded neighbors an atom has
+	/// @brief indicates how many heavyatom bonded neighbors an atom has
 	Size
 	number_bonded_heavyatoms( Size const atomno ) const;
 
@@ -420,13 +420,13 @@ public:
 		return;
 	}
 
-	///@brief Indices of all backbone atoms, hydrogens and heavyatoms
+	/// @brief Indices of all backbone atoms, hydrogens and heavyatoms
 	AtomIndices const &
 	all_bb_atoms() const {
 		return all_bb_atoms_;
 	}
 
-	///@brief Indices of all sidechain atoms, hydrogens and heavyatoms
+	/// @brief Indices of all sidechain atoms, hydrogens and heavyatoms
 	AtomIndices const &
 	all_sc_atoms() const {
 		return all_sc_atoms_;
@@ -772,7 +772,7 @@ public:
 	ResidueTypeSet const &
 	residue_type_set() const;
 
-	///@brief set the residue type set of origin.
+	/// @brief set the residue type set of origin.
 	void
 	residue_type_set( ResidueTypeSetCAP set_in );
 
@@ -1154,7 +1154,7 @@ public:
 	/// Note that it currently does not obey mainchain designations or cut bonds.
 	void assign_internal_coordinates();
 
-	///@ recursive function to assign internal coordinates
+	/// @ recursive function to assign internal coordinates
 	/// Note that it currently does not work well with polymers.
 	void assign_internal_coordinates(core::chemical::VD new_root );
 
@@ -1189,15 +1189,15 @@ public:
 	/////////////////////////orbitals/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
-	///@brief add an orbital onto a residue based upon atom
+	/// @brief add an orbital onto a residue based upon atom
 	void
 	add_orbital(
 			std::string & orbital_name,
 			std::string & orbital_type_name
 	);
 
-	///@brief add an orbital bond between an atom and an orbital.
-	///@note NOTE!!!!! This is indexed based upon atoms, not orbitals. That means that in your params file
+	/// @brief add an orbital bond between an atom and an orbital.
+	/// @note NOTE!!!!! This is indexed based upon atoms, not orbitals. That means that in your params file
 	/// you must have the atom as the first and orbital as the second.
 	void
 	add_orbital_bond(
@@ -1211,7 +1211,7 @@ public:
 	orbitals::ICoorOrbitalData const &
 	new_orbital_icoor_data(Size const orbital_index) const;
 
-	///@brief set OrbitalICoor for an orbital
+	/// @brief set OrbitalICoor for an orbital
 	void
 	set_orbital_icoor_id(
 			std::string const & orbital,
@@ -1380,10 +1380,10 @@ public:
 	void set_adduct_flag( bool adduct_in );
 
 
-	///@brief Add a numeric property.
+	/// @brief Add a numeric property.
 	void add_numeric_property( std::string const & tag, core::Real value );
 
-	///@brief Add a string property.
+	/// @brief Add a string property.
 	void add_string_property( std::string const & tag, std::string value );
 
 	/// @brief Add a property of this ResidueType.
@@ -1426,7 +1426,7 @@ public:
 	/// @brief is Nucleic Acid?
 	bool is_NA() const;
 
-	///@brief is peptoid?
+	/// @brief is peptoid?
 	bool is_peptoid() const;
 
 	/// @brief is carbohydrate?
@@ -1451,7 +1451,7 @@ public:
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const;
 
-	///@brief does this residue have sidechain orbitals?
+	/// @brief does this residue have sidechain orbitals?
 	bool has_sc_orbitals() const;
 
 	/// @brief is polar?
@@ -1502,10 +1502,10 @@ public:
 	}
 
 
-	///@brief Get a numeric property, if it exists.
+	/// @brief Get a numeric property, if it exists.
 	core::Real get_numeric_property(std::string const & tag) const;
 
-	///@brief Get a string property, if it exists.
+	/// @brief Get a string property, if it exists.
 	std::string get_string_property(std::string const & tag) const;
 
 
@@ -1765,7 +1765,7 @@ public:
 		return dihedral_atom_sets_.size();
 	}
 
-	///
+
 	void
 	print_dihedrals() const; // for debugging
 

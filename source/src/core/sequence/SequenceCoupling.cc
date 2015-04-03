@@ -25,7 +25,6 @@
 
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <iostream>
 #include <string>
 

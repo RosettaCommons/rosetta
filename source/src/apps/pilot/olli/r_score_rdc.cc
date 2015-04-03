@@ -47,18 +47,14 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <utility/excn/EXCN_Base.hh>
 #include <ObjexxFCL/format.hh>
-
 
 
 static thread_local basic::Tracer tr( "main" );

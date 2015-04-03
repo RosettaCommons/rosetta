@@ -47,7 +47,7 @@ private:
 	/// @brief mapping from tags to structure data pointers
 	Structure_Map structure_map_;
 
-	///
+
 	/// @brief mapping from index in a silent file to data pointers, for situations in which the ordering in the file matters.
 	utility::vector1< SilentStructOP > structure_list_;
 
@@ -235,7 +235,7 @@ public:
 		std::string const & filename, utility::vector1< std::string >&
 	) const;
 
-	///@brief return mode=first,last,all matched tags -- currently matching 'expression*' to tags in file, boost::regexp possible later
+	/// @brief return mode=first,last,all matched tags -- currently matching 'expression*' to tags in file, boost::regexp possible later
 	bool matched_tags(
     std::string const& expression,
 		std::string const& mode,
@@ -246,7 +246,7 @@ public:
 
 	/// @brief Returns a boolean indicating whether or not the strict_column_mode
 	/// is turned on when printing scores.
-	/// @detailed If strict_column_mode() is true, then the first SilentStruct
+	/// @details If strict_column_mode() is true, then the first SilentStruct
 	/// printed to this SilentFileData object sets the EnergyNames that will be
 	/// printed for all other SilentStruct objects. Extra EnergyNames in
 	/// subsequent SilentStruct objects are ignored. If new objects are missing
@@ -498,7 +498,6 @@ public:
 		SilentStructOP operator*() const {
 			return it_->second;
 		}
-
 
 
 	private:

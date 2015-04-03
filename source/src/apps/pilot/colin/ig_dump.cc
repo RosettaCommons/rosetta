@@ -10,7 +10,7 @@
 /// @file ig_dump.cc
 /// @brief tool to calculate and dump out an interaction graph
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
-/// @detailed
+/// @details
 /// For every PDB file given as input, a directory is created containing the interaction graph data.
 /// It contains two types of tab-delimited, gzipped files:
 ///
@@ -32,9 +32,7 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -63,8 +61,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
-
-
 
 
 static thread_local basic::Tracer TR( "apps.ig_dump" );

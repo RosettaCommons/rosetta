@@ -22,7 +22,6 @@
 // Unit headers
 #include <core/scoring/EnergyMap.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
@@ -155,7 +154,7 @@ public:
 		TS_ASSERT_EQUALS( emap_citer, emap_cend );
 	}
 
-	/// @breif test that getting a value returns what's expected
+	/// @brief test that getting a value returns what's expected
 	void test_EnergyMap_get() {
 		EnergyMap emap;
 		initialize_energymap_sin( emap );

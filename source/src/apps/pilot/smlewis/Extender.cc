@@ -46,7 +46,7 @@ utility::options::FileOptionKey const extension("extension");
 }}}//basic::options::OptionKeys
 
 
-///@brief helper parses extension file
+/// @brief helper parses extension file
 void read_in_extension(
 											 core::pose::Pose const & pose,
 											 core::Size & loop_start,

@@ -35,7 +35,6 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -249,13 +248,11 @@ public: // Methods
 	}
 
 
-
 	/// @brief swap( AtomID_Map, AtomID_Map )
 	template< typename TF >
 	friend
 	void
 	swap( AtomID_Map<TF> & a, AtomID_Map<TF> & b );
-
 
 
 	/// @brief Clear the map

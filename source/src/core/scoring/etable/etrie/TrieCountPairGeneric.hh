@@ -26,7 +26,6 @@
 #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 //XRW_B_T1
 //#include <core/scoring/etable/CoarseEtableEnergy.fwd.hh>
@@ -1577,7 +1576,6 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector);
 
 };
-
 
 
 } // namespace etrie

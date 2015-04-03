@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loop_mover/refine/ShearMinCCDTrial.cc
 /// @brief Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement.  
-/// @detailed
+/// @details
 ///
 /// @author Michael Pacella (mpacella88@gmail.com)
 
@@ -57,21 +57,21 @@ namespace refine {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 ShearMinCCDTrial::ShearMinCCDTrial() : LoopRefineInnerCycle()
 {
 	init();
 }
 
 
-///@brief copy constructor
+/// @brief copy constructor
 ShearMinCCDTrial::ShearMinCCDTrial( ShearMinCCDTrial const & rhs ) : LoopRefineInnerCycle(rhs)
 {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
 
-///@brief assignment operator
+/// @brief assignment operator
 ShearMinCCDTrial & ShearMinCCDTrial::operator=( ShearMinCCDTrial const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -99,7 +99,7 @@ moves::MoverOP ShearMinCCDTrial::fresh_instance() const
 	return moves::MoverOP( new ShearMinCCDTrial() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool ShearMinCCDTrial::reinitialize_for_new_input() const
 {
 	return true;

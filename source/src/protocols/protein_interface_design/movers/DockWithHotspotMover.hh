@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
@@ -48,7 +47,7 @@ class DockWithHotspotMover : public protocols::moves::Mover
 private:
 	typedef protocols::moves::Mover parent;
 public:
-	///@brief default ctor
+	/// @brief default ctor
 	DockWithHotspotMover();
 	virtual ~DockWithHotspotMover();
 

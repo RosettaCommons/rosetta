@@ -37,7 +37,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
 // Unit headers
 
 namespace protocols {
@@ -50,13 +49,13 @@ class DisulfideMover : public protocols::simple_moves::DesignRepackMover
 private:
 	typedef protocols::simple_moves::DesignRepackMover parent;
 public:
-	///@brief default ctor
+	/// @brief default ctor
 	DisulfideMover();
-	///@brief copy ctor
+	/// @brief copy ctor
 	DisulfideMover(DisulfideMover const& dm);
-	///@brief Constructor with a single target residue
+	/// @brief Constructor with a single target residue
 	DisulfideMover( core::Size targetResidue );
-	///@brief Constructor with multiple target residues
+	/// @brief Constructor with multiple target residues
 	DisulfideMover( utility::vector1<core::Size> const& targetResidues );
 	virtual ~DisulfideMover();
 

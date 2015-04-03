@@ -22,7 +22,6 @@
 #include <core/optimization/types.hh>
 
 #include <core/optimization/AtomTreeMultifunc.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -32,9 +31,9 @@
 namespace core {
 namespace optimization {
 
-///@brief A streamlined AtomTreeMultifunc designed specifically for RTMIN.
+/// @brief A streamlined AtomTreeMultifunc designed specifically for RTMIN.
 ///
-///@details Evaluates only the energies between the specified residue and the rest
+/// @details Evaluates only the energies between the specified residue and the rest
 /// of the Pose, assuming the nbr_atoms do not move (as in rotamer trials and repacking).
 /// Could probably be sped up further with a customized dfunc().
 /// DFPMIN seems to spend most of its time in func() rather than dfunc(),

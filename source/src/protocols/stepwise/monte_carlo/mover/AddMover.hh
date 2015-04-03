@@ -9,7 +9,7 @@
 
 /// @file AddMover.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

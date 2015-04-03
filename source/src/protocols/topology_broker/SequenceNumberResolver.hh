@@ -71,7 +71,6 @@ public:
 	std::pair <core::Size, std::string> terminal_pair() const;
 
 
-
 private:
 
 	// map sequence labels to offsets

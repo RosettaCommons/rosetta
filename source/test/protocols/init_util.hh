@@ -55,7 +55,7 @@ inline void protocols_init_with_additional_options( std::string const & commandl
 	protocols_init_from_string( commandline );
 }*/
 
-//
+
 // @brief Analog of protocols::init::init() for unit test suite.
 //
 inline void protocols_init()

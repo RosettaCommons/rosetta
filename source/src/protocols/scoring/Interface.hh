@@ -27,12 +27,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Symmetry headers
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 
 // Utility headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>

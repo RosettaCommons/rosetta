@@ -154,7 +154,6 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 	}
 
 
-
 	// find all the magnesiums in here.
 	for (Size i = 1; i <= nres; i++) {
 
@@ -267,7 +266,6 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 			}
 
 
-
 		} // loop over RNA residues.
 
 		// info on total number of close (;inner-sphere') ligands for each Mg(2+)
@@ -276,14 +274,11 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 	} // i
 
 
-
-
 	std::cout << "Processed " << res_count <<  std::endl;
 
 	total_residues += res_count;
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

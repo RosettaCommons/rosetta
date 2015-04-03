@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author ora
+/// @author ora
 
 
 // Rosetta Headers
@@ -87,12 +87,11 @@
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_rosetta_options
 ///
 /// @brief
 ///car set command line and mode-specific options
 ///
-/// @detailed
+/// @details
 ///
 /// @param  mode - [in/out]? -
 /// @param  number_of_output - [in/out]? -
@@ -105,9 +104,8 @@
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_rosetta_options(
@@ -449,11 +447,10 @@ get_rosetta_options(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_io_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  mode - [in/out]? -
 /// @param[out]   setup_fa - out - will fullatom functions be used?
@@ -474,9 +471,8 @@ get_rosetta_options(
 ///
 /// @references
 ///
-/// @authors car 10/14/2003
+/// @author car 10/14/2003
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_io_options(
@@ -853,11 +849,10 @@ if (truefalseoption("output_interaction_graph_memory_usage")) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_refine_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -867,9 +862,8 @@ if (truefalseoption("output_interaction_graph_memory_usage")) {
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_refine_options()
@@ -882,11 +876,10 @@ get_refine_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_score_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -896,9 +889,8 @@ get_refine_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_score_options()
@@ -949,11 +941,10 @@ get_score_options()
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-/// @begin get_barcode_stats_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -963,9 +954,8 @@ get_score_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 get_barcode_stats_options()
@@ -1002,11 +992,10 @@ get_featurizer_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_idealize_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1016,9 +1005,8 @@ get_featurizer_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_idealize_options()
@@ -1040,11 +1028,10 @@ get_idealize_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_relax_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1055,9 +1042,8 @@ get_idealize_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_relax_options()
@@ -1132,11 +1118,10 @@ get_relax_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_abrelax_options
 ///
 /// @brief abrelax is a mode where ab initio is run first, then relax.
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1147,9 +1132,8 @@ get_relax_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_abrelax_options()
@@ -1227,12 +1211,11 @@ get_pose1_options()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @begin get_domain_insertion_options
 ///
 /// @brief
 //  options for pose_looping mode
 ///
-/// @detailed
+/// @details
 //  Things to note:
 //  disable filters is true
 //  pose flag is not set!!
@@ -1245,9 +1228,8 @@ get_pose1_options()
 ///
 /// @references
 ///
-/// @authors Monica Berrondo
+/// @author Monica Berrondo
 ///
-/// @last_modified April 19 2006
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_domain_insertion_options()
@@ -1276,12 +1258,11 @@ get_domain_insertion_options()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @begin get_antibody_modeler_options
 ///
 /// @brief
 //  options for antibody modelling mode
 ///
-/// @detailed
+/// @details
 //  Things to note:
 //  disable filters is true
 //  pose flag is not set!!
@@ -1294,9 +1275,8 @@ get_domain_insertion_options()
 ///
 /// @references
 ///
-/// @authors Aroop Sircar
+/// @author Aroop Sircar
 ///
-/// @last_modified October 26 2006
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_antibody_modeler_options()
@@ -1327,12 +1307,11 @@ get_antibody_modeler_options()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @begin get_pose_looping_options
 ///
 /// @brief
 //  options for pose_looping mode
 ///
-/// @detailed
+/// @details
 //  Things to note:
 //  disable filters is true
 //  pose flag is not set!!
@@ -1345,9 +1324,8 @@ get_antibody_modeler_options()
 ///
 /// @references
 ///
-/// @authors Monica Berrondo
+/// @author Monica Berrondo
 ///
-/// @last_modified March 22 2006
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_pose_looping_options()
@@ -1369,11 +1347,10 @@ get_pose_looping_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_loopmode_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1383,9 +1360,8 @@ get_pose_looping_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_loopmode_options()
@@ -1501,12 +1477,11 @@ get_loopmode_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_loop_options
 ///
 /// @brief setup options for building loops for general use
 ///     (not necessarily loop mode)
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read flags from command line
 ///
@@ -1517,9 +1492,8 @@ get_loopmode_options()
 ///
 /// @references
 ///
-/// @authors Jeff Gray 3/11/4
+/// @author Jeff Gray 3/11/4
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_loop_options()
@@ -1544,11 +1518,10 @@ get_loop_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_assemble_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1558,9 +1531,8 @@ get_loop_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_assemble_options()
@@ -1622,11 +1594,10 @@ get_assemble_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_design_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1636,9 +1607,8 @@ get_assemble_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_design_options()
@@ -2099,9 +2069,8 @@ get_design_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_dna_interface_options
 ///
-/// @authors
+/// @author
 /// ashworth
 ///
 ////////////////////////////////////////////////////////////////////////////////
@@ -2121,12 +2090,11 @@ get_dna_interface_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_interface_options
 ///
 /// @brief set options required whenever -int_score is specified, regardless of
 /// mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2136,9 +2104,8 @@ get_dna_interface_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_interface_options()
@@ -2158,11 +2125,10 @@ get_interface_options()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_interface_ddg_options
 ///
 /// @brief set options required for interface_ddg mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2172,9 +2138,8 @@ get_interface_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_interface_ddg_options()
@@ -2339,11 +2304,10 @@ get_interface_ddg_options()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_pdbstats_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2353,9 +2317,8 @@ get_interface_ddg_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_pdbstats_options()
@@ -2474,7 +2437,6 @@ get_pdbstats_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_docking_options
 ///
 /// @brief
 ///jk options related to docking, independent of mode
@@ -2482,7 +2444,7 @@ get_pdbstats_options()
 ///jk to setup minimal amount for a multi_chain system (gaining
 ///jk access to most docking subroutines), use enable_multi_chain
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2492,9 +2454,8 @@ get_pdbstats_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_docking_options()
@@ -2596,11 +2557,10 @@ get_docking_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_dockmode_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2610,9 +2570,8 @@ get_docking_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_dockmode_options()
@@ -2702,15 +2661,13 @@ get_dockmode_options()
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
-/// @begin get_flexpepdock_options
 ///
 /// @brief options for docking of a flexible peptide onto a globular protein
 ///        Note: Perhaps a lot of these flags should be obsolete, examine this later
 ///        Note2: This is the place to add future flags to FlexPepDock
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2720,9 +2677,8 @@ get_dockmode_options()
 ///
 /// @references
 ///
-/// @authors barak
+/// @author barak
 ///
-/// @last_modified 11_Feb_2007
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_flexpepdock_options(){
@@ -2886,11 +2842,6 @@ get_flexpepdock_options(){
 	set_pose_flag(true);
 
 
-
-
-
-
-
 //     packing/fullatom
 	active_rotamer_options.extrachi_cutoff = 0;
 	set_default_atomvdw( "hybrid" );
@@ -2982,11 +2933,10 @@ get_flexpepdock_options(){
 
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @begin get_pathways_options
 ///
 /// @brief options for conformation pathway predictions protocol
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2996,11 +2946,10 @@ get_flexpepdock_options(){
 ///
 /// @references
 ///
-/// @authors Barak Raveh & Angela Enosh
+/// @author Barak Raveh & Angela Enosh
 ///
 /// @created 29/11/2007
 ///
-/// @last_modified 29/11/2007
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_pathways_options(){
@@ -3164,11 +3113,6 @@ get_pathways_options(){
 	set_pose_flag(true);
 
 
-
-
-
-
-
 //     packing/fullatom
 	active_rotamer_options.extrachi_cutoff = 0;
 	set_default_atomvdw( "hybrid" );
@@ -3261,11 +3205,10 @@ get_pathways_options(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin get_membrane_options
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3275,9 +3218,8 @@ get_pathways_options(){
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 get_membrane_options()
@@ -3291,14 +3233,13 @@ get_membrane_options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin setup_runlevel
 ///
 /// @brief
 ///car higher run levels give increasing levels of detailed output
 ///car current keywords:
 ///car verbose > gush > yap > chat > inform > standard > quiet > silent
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3308,9 +3249,8 @@ get_membrane_options()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 setup_runlevel()
@@ -3350,11 +3290,10 @@ setup_runlevel()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin select_default_scorefxns
 ///
 /// @brief select scorefxns to be used as the defaults
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in] fxn   in -
 /// @param[in] fa_fxn   in -
@@ -3367,9 +3306,8 @@ setup_runlevel()
 ///
 /// @references
 ///
-/// @authors car 10/22/03
+/// @author car 10/22/03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 select_default_scorefxns(
@@ -3419,11 +3357,10 @@ select_default_scorefxns(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin setup_default_scorefxn
 ///
 /// @brief  initializes default_scorefxn using values either set on
 ///        command line or by method in options.cc
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3433,9 +3370,8 @@ select_default_scorefxns(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 setup_default_scorefxn( bool & output_fa )
@@ -3492,12 +3428,11 @@ setup_default_scorefxn( bool & output_fa )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin check_options
 ///
 /// @brief
 ///car check for and fix  inconsistent option settings
 ///
-/// @detailed
+/// @details
 ///
 /// @param  mode - [in/out]? -
 /// @param  number_of_output - [in/out]? -
@@ -3510,9 +3445,8 @@ setup_default_scorefxn( bool & output_fa )
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 check_options(
@@ -3676,12 +3610,11 @@ check_options(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin enable_multi_chain
 ///
 /// @brief
 /// jk setup to use (fullatom) docking flags in modes other than docking
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3691,9 +3624,8 @@ check_options(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 enable_multi_chain()
@@ -3732,13 +3664,12 @@ enable_multi_chain()
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-/// @begin adjust_options_protein_prefix_homolog
 ///
 /// @brief
 ///  rosetta will read in fragments, sequence, and native from
 ///   files with prefix specified after protein_name_prefix_homolog and frags_name_prefix_homolog.
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3748,9 +3679,8 @@ enable_multi_chain()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 /// rhiju
-/// @last_modified
 ///////////////////////////////////////////////////////////////////////////////
 void adjust_options_protein_prefix_homolog(){
 	using namespace files_paths;
@@ -3762,13 +3692,12 @@ void adjust_options_protein_prefix_homolog(){
 }
 
 /////////////////////////////////////////////////////////////////////////////
-/// @begin adjust_options_protein_prefix_homolog
 ///
 /// @brief
 ///  rosetta will read in fragments, sequence, and native from
 ///   files with prefix specified after protein_name_prefix_query and frags_name_prefix_query.
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -3778,9 +3707,8 @@ void adjust_options_protein_prefix_homolog(){
 ///
 /// @references
 ///
-/// @authors
+/// @author
 /// rhiju
-/// @last_modified
 ///////////////////////////////////////////////////////////////////////////////
 void adjust_options_protein_prefix_query(){
 	using namespace files_paths;

@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the OperatorFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_OperatorFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_OperatorFilterCreator_hh
 

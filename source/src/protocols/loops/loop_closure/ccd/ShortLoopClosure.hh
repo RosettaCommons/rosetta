@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @author Oliver Lange
 ///
 /// this class replaces the frag_close routines in jumping_pairings.cc
@@ -45,7 +45,7 @@ public:
   //@brief run protocol on pose
   virtual bool apply( core::pose::Pose const& pose );
 
-  ///@brief save the loop-fragment in closure_frames_
+  /// @brief save the loop-fragment in closure_frames_
   // overwritten to realign frames to target sequence
   virtual void catch_fragment( core::pose::Pose const& short_pose );
 private:

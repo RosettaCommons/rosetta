@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftCDRLoopsProtocol.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -28,7 +28,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/antibody/CDRsMinPackMin.fwd.hh>
-
 
 
 using namespace core;
@@ -143,12 +142,7 @@ private:
 	CDRsMinPackMinOP cdrs_min_pack_min_;
 
 
-
-
 }; // class GraftCDRLoopsProtocol
-
-
-
 
 
 } // namespace antibody

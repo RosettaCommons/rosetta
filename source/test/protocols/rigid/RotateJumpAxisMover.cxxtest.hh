@@ -87,7 +87,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief test a RJAMover running in single angle mode
+	/// @brief test a RJAMover running in single angle mode
 	void test_RotateJumpAxisMover_single() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
@@ -103,7 +103,7 @@ public:
 
 	}//end test_RotateJumpAxisMover_single
 
-	///@brief test a RJAMover running in range mode
+	/// @brief test a RJAMover running in range mode
 	void test_RotateJumpAxisMover_range() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
 
 	}//end test_RotateJumpAxisMover_range
 
-	///@brief test a RJAMover running in random mode
+	/// @brief test a RJAMover running in random mode
 	void test_RotateJumpAxisMover_random() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////
@@ -134,7 +134,7 @@ public:
 
 	}//end test_RotateJumpAxisMover_random
 
-	///@brief test a RJAMover with an underspecifed (not atom-to-atom) Jump
+	/// @brief test a RJAMover with an underspecifed (not atom-to-atom) Jump
 	void test_RotateJumpAxisMover_underspecified_jump() {
 
 		////////////////////////RJAmover///////////////////////////////////////////////

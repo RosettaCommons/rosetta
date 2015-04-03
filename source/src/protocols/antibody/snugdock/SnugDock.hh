@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/SnugDock.hh
 /// @brief Dock and antigen to an antibody while optimizing the rigid body orientation of the VH and VL chains and performing CDR loop minimization.
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -42,13 +42,13 @@ using namespace core;
 namespace protocols {
 namespace antibody {
 
-///@brief MoveSet step of Snugdock as described in:
+/// @brief MoveSet step of Snugdock as described in:
 ///
 ///Sircar A, Gray JJ (2010) SnugDock: Paratope Structural Optimization duringAntibody-Antigen Docking Compensates 
 /// for Errors in Antibody Homology Models.
 /// PLoS Comput Biol 6(1): e1000644. doi:10.1371/journal.pcbi.1000644
 ///
-///@details This is the main high resolution step of the overall SnugDock protocol.  See the Show method for a complete description of the algorithm.
+/// @details This is the main high resolution step of the overall SnugDock protocol.  See the Show method for a complete description of the algorithm.
 ///
 class SnugDock: public docking::DockingHighRes {
 public: // boiler plate / virtuals
@@ -70,7 +70,7 @@ public: // boiler plate / virtuals
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	virtual bool reinitialize_for_new_input() const;
 
 	/// @brief Associates relevant options with the SnugDock class

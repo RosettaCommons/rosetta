@@ -20,11 +20,8 @@
 
 #include <core/scoring/ScoringManager.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // Utility header
-// AUTO-REMOVED #include <utility/keys/Key4Tuple.hh>
-// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>

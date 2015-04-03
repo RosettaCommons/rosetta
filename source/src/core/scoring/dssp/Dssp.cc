@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -25,15 +25,12 @@
 #include <core/id/NamedAtomID.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3P.hh>
 
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -42,19 +39,16 @@
 
 // numeric headers
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //// C++ headers
 #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <list>
 #include <vector>
 #include <iostream>
 
 #include <core/id/AtomID.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "core.scoring.dssp" );
@@ -77,11 +71,10 @@ Dssp::Dssp( core::pose::Pose const& pose ) {
 Dssp::~Dssp() {}
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin fill_hbond_bb_pair_score__dssp
 ///
 /// @brief Populates the hbond_bb_pair_score_ array with dssp energies
 ///
-/// @detailed
+/// @details
 /// Uses hydrogen bond energies computed a la dssp to fill the
 /// hbond_bb_pair_score_ array.  Entry (i,j) is the backbone
 /// hydrogen bond energy between residues i (acceptor) and j (donor).
@@ -106,7 +99,6 @@ Dssp::~Dssp() {}
 ///
 /// @author olange: ported from original bblum-rosetta++ version $
 ///
-/// @last_modified
 //////////////////////////////////////////////////////////////////////////////
 void
 fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float &hbond_bb_pair_score ) {
@@ -200,11 +192,10 @@ Dssp::dssp_featurizer( FArray1_char &secstruct ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin dssp_reduced
 ///
 /// @brief Reduces to E/H/L secondary structure alphabet
 ///
-/// @detailed
+/// @details
 /// This function simply reduces dssp's secondary structure alphabet (which
 /// includes 3- and 5-turn helices and various kinds of loop, and
 /// differentiates lone beta bridges from extended beta strand pairings)
@@ -223,7 +214,6 @@ Dssp::dssp_featurizer( FArray1_char &secstruct ) {
 ///
 /// @author olange: ported from original bblum-rosetta++ version $
 ///
-/// @last_modified
 //////////////////////////////////////////////////////////////////////////////
 void
 Dssp::dssp_reduced( FArray1_char &secstruct ) {
@@ -270,11 +260,10 @@ Dssp::dssp_reduced() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin Dssp::compute
 ///
 /// @brief Runs dssp, calculating per-residue secondary structure.
 ///
-/// @detailed
+/// @details
 /// dssp is a standard algorithm for per-residue secondary structure analysis.
 /// It has the following alphabet:
 /// H: 4-turn helix
@@ -305,7 +294,6 @@ Dssp::dssp_reduced() {
 ///
 /// @author olange: ported from original bblum-rosetta++ version $
 ///
-/// @last_modified nobu
 //////////////////////////////////////////////////////////////////////////////
 void
 Dssp::compute( pose::Pose const& pose ) {

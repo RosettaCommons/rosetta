@@ -2392,7 +2392,6 @@ bool
 not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 
 
-
 // PyRosetta work around for templates classes
 //class xyzVector_Double : public xyzVector< double >
 //{};
@@ -2400,7 +2399,6 @@ not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 // we don't need to define it here, it already defined in numeric/xyzVector.io.hh
 // template< typename T >
 // std::ostream & operator <<(std::ostream & os, xyzVector< T > const & v) { os << "[x=" << v.x() << ", y=" << v.y() << ", z=" << v.z() << "]"; }
-
 
 
 } // namespace numeric

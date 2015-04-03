@@ -7,24 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin TwoDHistogram
 ///
 /// @brief
 /// A 2D histogram based upon a map structure
 ///
-/// @detailed
+/// @details
 /// Very simple class for histograms based upon maps. You provide the key, which is templated,
 /// meaning that the two keys can be strings, reals, sizes. It will return a count, if you want it
 ///
 ///
 ///
-/// @authors Steven Combs
+/// @author Steven Combs
 ///
-/// @last_modified November 18 2010
 /////////////////////////////////////////////////////////////////////////
-
-
-
 
 
 #ifndef INCLUDED_numeric_histograms_TwoDHistogram_hh
@@ -48,7 +43,7 @@ public:
 
 	}
 
-	///@brief increase the counts of a histogram using paired keys
+	/// @brief increase the counts of a histogram using paired keys
 	void increase_count(std::pair<key1, key2> paired_keys){
 		if( histogram_.find( paired_keys) != histogram_.end()){
 			++histogram_[ paired_keys];
@@ -58,7 +53,7 @@ public:
 		}
 	}
 
-	///@brief overflow function to increase count taking 2 keys to increment counts of histogram
+	/// @brief overflow function to increase count taking 2 keys to increment counts of histogram
 	void increase_count(key1 key_1, key2 key_2){
 		std::pair<key1, key2> paired_keys(key_1, key_2);
 		if( histogram_.find( paired_keys) != histogram_.end()){
@@ -70,23 +65,18 @@ public:
 	}
 
 
-
-
-
-
-
-	///@brief insert data to the histogram
+	/// @brief insert data to the histogram
 	void insert_data(key1 key_1, key2 key_2, platform::Size counts){
 		std::pair<key1, key2> paired_keys(key_1, key_2);
 		histogram_.insert(std::make_pair(paired_keys, counts));
 	}
 
-	///@brief overload function to insert data to the histogram
+	/// @brief overload function to insert data to the histogram
 	void insert_data(std::pair<key1, key2 > paired_keys, platform::Size counts){
 			histogram_.insert(std::make_pair(paired_keys, counts));
 		}
 
-	///@brief look up data based upon your keys
+	/// @brief look up data based upon your keys
 	platform::Size lookup_counts(key1 key_1, key2 key_2){
 		std::pair<key1, key2> paired_keys(key_1, key_2);
 
@@ -95,7 +85,7 @@ public:
 		return counts;
 	}
 
-	///@brief overload function to lookup counts
+	/// @brief overload function to lookup counts
 	platform::Size lookup_counts(std::pair<key1, key2> paired_keys){
 		platform::Size counts(histogram_.find(paired_keys)->second);
 
@@ -103,21 +93,15 @@ public:
 	}
 
 
-
-
-
 private:
 std::map< std::pair< key1, key2>, platform::Size > histogram_;
-
 
 
 };
 
 
-
 }
 }
-
 
 
 #endif /* INCLUDED_numeric_histograms_TwoDHistogram_hh */

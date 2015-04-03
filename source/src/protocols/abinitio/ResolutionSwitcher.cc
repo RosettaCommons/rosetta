@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -29,7 +29,6 @@
 
 // Project Headers
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
 #include <core/conformation/Conformation.hh>
@@ -50,12 +49,10 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/residues.OptionKeys.gen.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
@@ -63,8 +60,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
 
 
 static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
@@ -211,7 +206,6 @@ std::string
 ResolutionSwitcher::get_name() const {
 	return "ResolutionSwitcher";
 }
-
 
 
 }

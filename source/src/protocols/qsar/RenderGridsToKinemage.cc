@@ -31,9 +31,6 @@
 #include <iostream>
 
 
-
-
-
 namespace protocols {
 namespace qsar {
 

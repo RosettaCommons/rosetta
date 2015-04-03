@@ -215,13 +215,11 @@ public: // Methods
 	}
 
 
-
 	/// @brief swap( NamedAtomID_Map, NamedAtomID_Map )
 	template< typename TF >
 	friend
 	void
 	swap( NamedAtomID_Map<TF> & a, NamedAtomID_Map<TF> & b );
-
 
 
 	/// @brief Clear the map
@@ -471,7 +469,6 @@ swap( NamedAtomID_Map<T> & a, NamedAtomID_Map<T> & b )
 {
 	a.res_map_.swap( b.res_map_ );
 }
-
 
 
 // PyRosetta concrete types

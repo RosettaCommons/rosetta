@@ -37,7 +37,7 @@
 namespace protocols {
 namespace rbsegment_relax {
 
-///@brief set up constraints over RB segments only; allow ambiguity in sequence threading
+/// @brief set up constraints over RB segments only; allow ambiguity in sequence threading
 void set_rb_constraints(
 	core::pose::Pose & pose,
 	core::pose::Pose const &cst_pose,
@@ -47,7 +47,7 @@ void set_rb_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth );
 
-///@brief set up constraints accounting for missing density in start pose
+/// @brief set up constraints accounting for missing density in start pose
 void set_constraints(
 	core::pose::Pose & pose,
 	core::pose::Pose const &cst_pose,
@@ -55,13 +55,13 @@ void set_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth );
 
-///@brief setup star-topology fold tree
+/// @brief setup star-topology fold tree
 void setup_star_topology( core::pose::Pose & pose );
 
-///@brief build a pose where every residue is connected by jumps to vrt
+/// @brief build a pose where every residue is connected by jumps to vrt
 void setup_disconnected( core::pose::Pose & pose );
 
-///@brief remove loops from pose
+/// @brief remove loops from pose
 void setup_pose_from_rbsegs(
              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
@@ -71,7 +71,7 @@ void setup_pose_from_rbsegs(
              bool fixligs=false );
 
 
-///@brief use DSSP and simple rules to guess the asignment of rigid-body segments
+/// @brief use DSSP and simple rules to guess the asignment of rigid-body segments
 void guess_rbsegs_from_pose(
 	core::pose::Pose const & pose,
 	utility::vector1< RBSegment > & rigid_segs,
@@ -79,20 +79,20 @@ void guess_rbsegs_from_pose(
 	protocols::loops::Loops & loops
 );
 
-///@brief
+/// @brief
 utility::vector1<core::Size> setup_pose_rbsegs_keep_loops(
               core::pose::Pose &pose,
               utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
               protocols::loops::Loops const &loops,
               core::kinematics::MoveMapOP mm );
 
-///@brief restore loops from pose
+/// @brief restore loops from pose
 void restore_pose_from_rbsegs(
              utility::vector1< protocols::rbsegment_relax::RBSegment > const &rbsegs ,
              core::pose::Pose const &pose_in ,
              core::pose::Pose &pose_out /* input/output */ );
 
-///@apply res mapping to rbsegments
+/// @apply res mapping to rbsegments
 void remap_rb_segments(
             utility::vector1< RBSegment > const &rbsegs,
             utility::vector1< RBSegment > &rbsegs_remap,

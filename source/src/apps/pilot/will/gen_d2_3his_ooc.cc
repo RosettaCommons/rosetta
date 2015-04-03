@@ -242,7 +242,6 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
 }
 
 
-
 void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
   core::kinematics::MoveMapOP movemap=new core::kinematics::MoveMap;
   // core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
@@ -265,7 +264,6 @@ struct Hit : public utility::pointer::ReferenceCount {
   Size ihis,jhis,khis,lhis;
 };
 typedef utility::pointer::owning_ptr<Hit> HitOP;
-
 
 
 vector1<Reals> vecs2vv(Vecs const & v) {
@@ -316,9 +314,6 @@ core::pack::rotamer_set::RotamerSetOP get_rotset(Pose & pose, Size ir, ScoreFunc
 
   return rotset;
 }
-
-
-
 
 
 double
@@ -464,9 +459,6 @@ double isctfast(
   }
   return isctfast( pa, pb, Vec(0,0,1) );
 }
-
-
-
 
 
 core::kinematics::Stub res2stub(core::pose::Pose const & pose, Size rsd, core::kinematics::Stub ref = core::kinematics::Stub()) {
@@ -865,7 +857,6 @@ Real ik_his_clamp(Pose & pose,
 // }}}
 
 
-
 void run(std::string fname) {
   using namespace std;
   using basic::options::option;
@@ -954,7 +945,6 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-
   devel::init(argc,argv);
 
   using basic::options::option;
@@ -968,17 +958,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

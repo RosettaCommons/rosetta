@@ -25,7 +25,6 @@
 // ObjexxFCL Headers
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {

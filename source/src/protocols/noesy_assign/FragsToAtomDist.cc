@@ -11,7 +11,7 @@
 /// @brief  simulate fragments and recored atom distances
 /// @author Zaiyong Zhang (zaiyong.zhang@tum.de)
 /// @date   Thr NOV 22 13:22:31 2012
-///
+
 
 // Unit Headers
 #include <protocols/noesy_assign/FragsToAtomDist.hh>
@@ -100,8 +100,6 @@ std::map< core::Real,core::Size > simple_histogram ( utility::vector1< core::Rea
 }
 
 
-
-
 using namespace std;
 using namespace core;
 using namespace core::pose;
@@ -117,7 +115,6 @@ typedef utility::vector1< std::pair< std::string, SizeList> > AtomGrps;
 typedef utility::vector1< AtomGrps > GroupList;
 typedef std::map< core::id::AtomID,  FragsToAtomDist::DistanceRecord > InnerMap;
 typedef std::map< core::id::AtomID, InnerMap > DistanceMap;
-
 
 
 // core::Real FragsToAtomDist::DistanceRecord::popular_bin() const {
@@ -312,7 +309,6 @@ void FragsToAtomDist::write_hist_to_stream(std::ostream& output) const {
 }
 
 
-
 void FragsToAtomDist::write_to_file(std::string const& filename) const {
 	utility::io::ozstream output( filename  );
 	write_to_stream(output);
@@ -360,7 +356,6 @@ void FragsToAtomDist::read_from_file(std::string const& filename) {
 	utility::io::izstream input( filename );
 	read_from_stream( input );
 }
-
 
 
 void FragsToAtomDist::generate_from_fragments( FragSetOP fragments, std::string const& sequence, core::Size cycles, core::Size cycle_mod ) {

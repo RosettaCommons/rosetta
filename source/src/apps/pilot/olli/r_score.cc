@@ -13,10 +13,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -27,24 +24,18 @@
 
 // Utility headers
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/io/mpistream.hh>
-
 
 
 static thread_local basic::Tracer tr( "main" );
@@ -55,8 +46,6 @@ using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace scoring;
-
-
 
 
 void register_options() {
@@ -86,7 +75,6 @@ void ScoreMover::apply( core::pose::Pose &pose ) {
 	Real score ( (* score_)( pose ));
 	tr.Info << fname << " " << score << std::endl;
 }
-
 
 
 void run() {

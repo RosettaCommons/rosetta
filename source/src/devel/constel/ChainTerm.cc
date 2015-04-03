@@ -23,7 +23,7 @@ using std::setw;
 namespace devel {
 namespace constel {
 
-///
+
 /// @brief Prints this chain's info to tracer 't'.
 ///
 /// @param[out] t output tracer.
@@ -35,7 +35,6 @@ void ChainTerm::print(basic::Tracer& t) const {
 }
 
 
-///
 /// @brief identifies each chain and its N- and C-terminal residues in a pose.
 ///
 /// @param[in] ps the pose.
@@ -67,7 +66,6 @@ void get_chain_terms(core::pose::Pose const &ps, utility::vector1<ChainTerm> &ch
 }
 
 
-///
 /// @brief Prints the N- and C-terminal residues of all chains.
 ///
 /// @param[in] chains vector of ChainTerm items, each representing a

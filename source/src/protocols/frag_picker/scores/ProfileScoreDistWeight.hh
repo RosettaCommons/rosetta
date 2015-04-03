@@ -122,7 +122,6 @@ public:
 			line_stream >> res1 >> ss1 >> res2 >> ss2 >> dist;
 
 
-
 			Size res_type( 0 );
 			if (ss1 == ss2) {
 				res_type = ss_type_map_.find(ss1)->second;
@@ -131,7 +130,6 @@ public:
 			//std::cout << "AAAA: " << res1 << " " << res2 << " " << ss1 << " " << ss2 << " " << dist << " " << res_type << std::endl;
 
 			if ( res_type != 0 ) {
-
 
 
 				Size i_res1, i_res2;

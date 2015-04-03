@@ -22,14 +22,11 @@
 #include <protocols/match/output/MatchEvaluator.fwd.hh>
 #include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/match/MatcherTask.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/match/output/MatchGrouper.fwd.hh>
 #include <protocols/match/output/OutputWriter.hh>
 #include <protocols/match/output/UpstreamHitCacher.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/output/WriteUpstreamCoordinateKineamge.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -71,7 +68,7 @@ public:
 	void
 	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
 
-	///@brief evaluator and score writer are not passed in because single-downstream-position match
+	/// @brief evaluator and score writer are not passed in because single-downstream-position match
 	///currently have no way of being evaluated
 	virtual
 	void
@@ -159,7 +156,7 @@ private:
 	//needed to build the downstream target for pdb writing
 	utility::vector1< downstream::DownstreamBuilderCOP > dsbuilders_;
 
-	//
+
 	core::pose::PoseCOP orig_upstream_pose_;
 	core::pose::PoseCOP downstream_pose_from_task_;
 

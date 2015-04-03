@@ -24,12 +24,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -44,21 +39,17 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh> // tracer output
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>

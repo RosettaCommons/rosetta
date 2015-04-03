@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/RefineOneCDRLoopCentroid.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -77,8 +77,6 @@ RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_lo
 }
 
 
-
-
 void RefineOneCDRLoopCentroid::set_default() {
 
 	benchmark_          = false;
@@ -90,12 +88,8 @@ void RefineOneCDRLoopCentroid::set_default() {
 }
 
 
-
 // default destructor
 RefineOneCDRLoopCentroid::~RefineOneCDRLoopCentroid() {}
-
-
-
 
 
 std::string RefineOneCDRLoopCentroid::get_name() const {
@@ -107,9 +101,6 @@ void RefineOneCDRLoopCentroid::set_score_function(core::scoring::ScoreFunctionCO
 }
 
 
-
-
-
 void RefineOneCDRLoopCentroid::finalize_setup( core::pose::Pose const & /*pose*/ ) {
 	TR<<"   start finalize_setup function ..."<<std::endl;
 	if (!lowres_scorefxn_) {
@@ -119,7 +110,6 @@ void RefineOneCDRLoopCentroid::finalize_setup( core::pose::Pose const & /*pose*/
 	TR<<"   finish finalize_setup function !!!"<<std::endl;
 
 }
-
 
 
 void RefineOneCDRLoopCentroid::apply( pose::Pose & pose ) {
@@ -138,21 +128,18 @@ void RefineOneCDRLoopCentroid::apply( pose::Pose & pose ) {
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////
-/// @begin loop_centroid_relax
 ///
 /// @brief actually relaxes the region specified
 ///
-/// @detailed This is all done in low resolution. Intention was to give
+/// @details This is all done in low resolution. Intention was to give
 ///           camelid CDR H1 a larger perturbation.
 ///
 /// @param[in] pose, loop begin position, loop end position
 ///
 ///
-/// @authors Aroop 05/07/2010
+/// @author Aroop 05/07/2010
 ///
-/// @last_modified 05/07/2010
 ///////////////////////////////////////////////////////////////////////////
 void RefineOneCDRLoopCentroid::loop_centroid_relax(
 		pose::Pose & pose_in,
@@ -284,11 +271,7 @@ void RefineOneCDRLoopCentroid::loop_centroid_relax(
 } // loop_centroid_relax
 
 
-
-
-
 } // namespace antibody
 } // namespace protocols
-
 
 

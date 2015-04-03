@@ -55,7 +55,6 @@ operator >>( std::istream & stream, xyzTransform< T > & m )
 }
 
 
-
 } // namespace numeric
 
 

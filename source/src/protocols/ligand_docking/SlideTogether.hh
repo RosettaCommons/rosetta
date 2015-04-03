@@ -36,7 +36,7 @@ namespace protocols {
 namespace ligand_docking {
 
 
-///@brief
+/// @brief
 class SlideTogether : public protocols::moves::Mover
 {
 public:

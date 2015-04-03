@@ -17,24 +17,13 @@
 
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/Template.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameList.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
-
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/dssp/PairingsList.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 
 
@@ -46,9 +35,7 @@
 
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 #include <map>
 
 #include <protocols/abinitio/Templates.fwd.hh>

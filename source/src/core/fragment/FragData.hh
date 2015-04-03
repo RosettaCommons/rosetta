@@ -32,7 +32,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C/C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

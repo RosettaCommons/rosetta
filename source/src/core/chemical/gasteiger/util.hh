@@ -124,8 +124,6 @@ std::string compact_enum_set( std::set< T > in, std::string prefix = "xx" ) {
 }
 
 
-
-
 } // namespace gasteiger
 } // namespace core
 } // namespace chemical

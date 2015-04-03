@@ -34,7 +34,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class YHHPlanarityEnergy : public ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
@@ -53,7 +53,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(

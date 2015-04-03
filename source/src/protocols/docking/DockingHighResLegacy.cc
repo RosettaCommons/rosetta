@@ -9,7 +9,7 @@
 
 /// @file DockingHighRes
 /// @brief protocols that are specific to high resolution docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -25,7 +25,6 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/conformation/Interface.hh>
 
 #include <basic/options/option.hh>
 
@@ -36,25 +35,19 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -79,8 +72,6 @@
 #include <string>
 
 //Utility Headers
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
@@ -96,7 +87,6 @@ using basic::T;
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 using basic::Error;
@@ -351,9 +341,8 @@ void DockingHighResLegacy::define_loops( pose::Pose const & pose, loops::LoopsOP
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin docking high resolution apply function
 /// @brief
-/// @detailed
+/// @details
 ///		decides what to call according to options
 void DockingHighResLegacy::apply( core::pose::Pose & pose )
 {
@@ -379,10 +368,9 @@ void DockingHighResLegacy::apply( core::pose::Pose & pose )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin minimize_trial
 ///
 /// @brief main entrance for normal rigid-body minimization
-/// @detailed
+/// @details
 ///		retrieve the structure in the low array and do the normal minimization
 ///		by calling using a min_mover to optimize the score accourding to the
 ///		scorefunction that has been set
@@ -392,9 +380,8 @@ void DockingHighResLegacy::apply( core::pose::Pose & pose )
 /// @references docking_minimize_trial from docking_minimize.cc
 ///				pose_docking_minimize_trial from pose_docking.cc
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified October 15 2007
 /////////////////////////////////////////////////////////////////////////////////
 void DockingHighResLegacy::set_dock_min_protocol() {
 	using namespace moves;
@@ -408,10 +395,9 @@ void DockingHighResLegacy::set_dock_min_protocol() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin dock_mcm_protocol
 ///
 /// @brief main entrance to do monte carlo minimization
-/// @detailed
+/// @details
 ///			a total of 50 cycles of monte-carlo minimization will be
 ///			carried out if the minimized structure can pass the filter
 ///			after the first and fifth cycle.  Then it is rigid-body minimized
@@ -422,9 +408,8 @@ void DockingHighResLegacy::set_dock_min_protocol() {
 /// @references docking_mcm_protocol from docking_minimize.cc
 ///				pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
-/// @authors Sid Chaudhury May 28 2009
+/// @author Sid Chaudhury May 28 2009
 ///
-/// @last_modified April 30 2008
 /////////////////////////////////////////////////////////////////////////////////
 void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace moves;
@@ -595,19 +580,17 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	docking_highres_protocol_mover_->add_mover( minimize_trial );        // JQX: tempoary comment out, doing test on mcm_four_cycles
 }
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin dock_ppk_protocol
 ///
 /// @brief main entrance to prepacking for docking
-/// @detailed
+/// @details
 ///			does a full repack of all sidechains for each partner after moving them
 ///		  away by 500A, then it brings them back together
 /// @remarks
 ///
 /// @references 	pose_docking_prepack_protocol from pose_docking.cc
 ///
-/// @authors Sid Chaudhury October 3 2008
+/// @author Sid Chaudhury October 3 2008
 ///
-/// @last_modified October 3 2008
 /////////////////////////////////////////////////////////////////////////////////
 void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	using namespace moves;

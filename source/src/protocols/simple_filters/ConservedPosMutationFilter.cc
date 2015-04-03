@@ -26,7 +26,6 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -115,7 +114,6 @@ ConservedPosMutationFilterCreator::create_filter() const { return filters::Filte
 
 std::string
 ConservedPosMutationFilterCreator::keyname() const { return "ConservedPosMutationFilter"; }
-
 
 
 } // filters

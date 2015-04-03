@@ -9,63 +9,37 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Grant Murphy
-///
+
 
 // Package Headers
 #include <core/init/init.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-// AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh> //keep first
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED // core::pose::make_pose_from_sequence
 
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>// getting sequence from pose
-// AUTO-REMOVED #include <core/sequence/util.hh>
-
-
-// AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/abinitio/SmoothFragmentMover.hh>
-// AUTO-REMOVED #include <protocols/abinitio/GunnCost.hh>
-
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
 #include <core/scoring/dssp/Dssp.hh>// dssp info
 
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh> //MoverOP
 //#include <protocols/simple_moves/BackboneMover.hh> //Small/ShearMover
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
 #include <basic/options/keys/DenovoProteinDesign.OptionKeys.gen.hh>
 #include <devel/denovo_protein_design/util.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
@@ -77,8 +51,6 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
-// AUTO-REMOVED #include <ctime>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
@@ -465,8 +437,6 @@ char random_helix_position(){
 	core::Size randnum = numeric::random::random_range( 1 , helixposition.size());
   return helixposition[randnum];
 }
-
-
 
 
 }

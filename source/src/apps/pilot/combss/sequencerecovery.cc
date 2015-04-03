@@ -36,8 +36,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 
-
-
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
@@ -119,7 +117,7 @@ void init_usage_prompt( std::string exe ) {
 }
 
 
-///@brief load custom TaskOperations according to an xml-like utility::Tag file
+/// @brief load custom TaskOperations according to an xml-like utility::Tag file
 core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 
 	using namespace core::pack::task::operation;
@@ -140,7 +138,7 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 }
 
 
-///@brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
+/// @brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
 void fill_num_neighbors( pose::Pose & pose, utility::vector1< core::Size > & num_nbs ) {
 
 	using core::conformation::PointGraph;
@@ -165,7 +163,7 @@ void fill_num_neighbors( pose::Pose & pose, utility::vector1< core::Size > & num
 	return;
 }
 
-///@brief return the set of residues that are designable based given pose
+/// @brief return the set of residues that are designable based given pose
 std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactoryOP & tf ) {
 
 	//we need to score the pose for many of the task operations passed from cmd line
@@ -191,7 +189,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 }
 
 
-///@brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
+/// @brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
 void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses ) {
 
 	//set up scoring function
@@ -266,7 +264,6 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 		//score proteins, must be done in order to get packstats
 		(*scorefxn)( native_pose );
 		(*scorefxn)( redesign_pose );
-
 
 
 		//get packstats data
@@ -357,10 +354,6 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 
 		native_unsat.push_back(_native_unsat);
 		design_unsat.push_back(_design_unsat);
-
-
-
-
 
 
 		// figure out the task & neighbor info
@@ -536,7 +529,6 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	}
 
 
-
 	for(core::Size i=1; i <= native_cat_pi.size(); ++i){
 		n_cat_pi_holder+=native_cat_pi[i];
 	}
@@ -544,7 +536,6 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	for(core::Size i=1; i <= design_cat_pi.size(); ++i){
 		d_cat_pi_holder+=design_cat_pi[i];
 	}
-
 
 
 	for(core::Size i=1; i <= native_pi_pi.size(); ++i){
@@ -561,7 +552,6 @@ void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_pose
 	outputFile << "salt bridge" << "\t" << n_sb_holder/native_sb.size() << "\t" << d_sb_holder/design_sb.size() << std::endl;
 	outputFile << "cation pi" << "\t" << n_cat_pi_holder/native_cat_pi.size() << "\t" << d_cat_pi_holder/design_cat_pi.size() << std::endl;
 	outputFile << "pi --- pi" << "\t" << n_pi_pi_holder/native_pi_pi.size() << "\t" << d_pi_pi_holder/design_pi_pi.size() << std::endl;
-
 
 
 	// output the sequence substitution file

@@ -29,7 +29,6 @@
 #include <numeric/conversions.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 //Auto Headers

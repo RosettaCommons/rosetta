@@ -44,9 +44,9 @@ public:
 	typedef TaskOperation parent;
 public:
 	//constructors
-	///@brief empty constructor need to call set_native_task(task) to make it work
+	/// @brief empty constructor need to call set_native_task(task) to make it work
 	ReplicateTask();
-	///@brief actual useful constructors
+	/// @brief actual useful constructors
 	ReplicateTask( core::pack::task::PackerTaskOP  native_task );
 	ReplicateTask( core::pose::Pose & native_pose, core::pack::task::TaskFactoryOP  task_factory );
 

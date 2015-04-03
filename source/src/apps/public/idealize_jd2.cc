@@ -11,13 +11,11 @@
 /// @author Phil bradley
 /// @author Christopher Miles (cmiles@uw.edu)
 /// @brief
-// AUTO-REMOVED #include <protocols/idealize/idealize.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 

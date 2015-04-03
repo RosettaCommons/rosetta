@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the SSMotifFinderFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_SSMotifFinderFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_SSMotifFinderFilterCreator_hh
 

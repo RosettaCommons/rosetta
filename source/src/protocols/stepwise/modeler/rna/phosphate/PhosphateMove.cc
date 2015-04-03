@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/phosphate/PhosphateMove.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

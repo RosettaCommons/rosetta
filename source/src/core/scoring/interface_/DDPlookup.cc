@@ -170,7 +170,6 @@ DDPlookup::DDPlookup(std::string filename)
 }
 
 
-
 core::Real
 DDPlookup::get_potentials( const core::chemical::AA & aa1, const core::chemical::AA & aa2, core::Real distance ) const
 {

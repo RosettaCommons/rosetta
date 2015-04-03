@@ -113,7 +113,7 @@ basic::options::RealOptionKey const ubq_cst_sd("ubq_cst_sd");
 
 }}}//basic::options::OptionKeys
 
-///@brief utility function to register options
+/// @brief utility function to register options
 void register_options(){
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
@@ -140,7 +140,7 @@ void register_options(){
 	return;
 }
 
-///@brief HECT mover
+/// @brief HECT mover
 class HECTMover : public protocols::moves::Mover {
 
 protected: //enum for atomID vector
@@ -160,10 +160,10 @@ protected: //enum for atomID vector
 	//putting the data members first - for ease of organizing ctor
 protected: //protected does not require writing getters/setters for all these members for this use-once code
 
-	///@brief flag for when init function has run.
+	/// @brief flag for when init function has run.
 	bool init_for_input_yet_;
 
-	///@brief variables for points of interest in the protein (brackets for movers) - this may be overkill
+	/// @brief variables for points of interest in the protein (brackets for movers) - this may be overkill
 	char e3chain_, e2chain_, ubqchain_;
 	core::Size e3chain_num_, e3chain_start_, e3chain_end_, e3_hinge_start_, e3_hinge_stop_, e3_catalytic_res_,
 		ubqchain_num_, ubqchain_start_, ubqchain_end_, utail_start_, utail_stop_,
@@ -173,13 +173,13 @@ protected: //protected does not require writing getters/setters for all these me
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP movemap_;
 
-	///@brief fragment sets for hinge region and tail region
+	/// @brief fragment sets for hinge region and tail region
 	core::fragment::FragSetCOP fragset3mer_e3_hinge_, fragset3mer_ubq_tail_;
 
-	///@brief this mover ignores the apply-passed PDB, instead returning to the starting pose set up by the init function.  Under the assumption that the starting pose is not changing this lets up skip running the setup code every time.
+	/// @brief this mover ignores the apply-passed PDB, instead returning to the starting pose set up by the init function.  Under the assumption that the starting pose is not changing this lets up skip running the setup code every time.
 	core::pose::PoseCOP fixed_starting_pose_, xtal_pose_;
 
-	///@brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions - indexed by enum
+	/// @brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions - indexed by enum
 	utility::vector1< core::id::AtomID > atomIDs;
 
 public:
@@ -204,7 +204,7 @@ public:
 		xtal_pose_ = new core::pose::Pose(xtal_pose);
 	}
 
-	///@brief helper code for fragments generation
+	/// @brief helper code for fragments generation
 	core::fragment::FragSetCOP make_frags(core::Size const start, core::Size const stop, std::string const & seq){
 
 		core::Size const frags_length(3); //magic number: 3mer fragments!!
@@ -226,7 +226,7 @@ public:
 		return fragset;
 	}
 
-	///@brief parse_options will grab things from the option system and store them in local data - the stored data are used in the later setup functions
+	/// @brief parse_options will grab things from the option system and store them in local data - the stored data are used in the later setup functions
 	void
 	parse_options(core::pose::Pose const & pose) {
 
@@ -272,7 +272,7 @@ public:
 		return;
 	}
 
-	///@brief set_up_foldtree
+	/// @brief set_up_foldtree
 	void
 	set_up_foldtree(core::pose::Pose & pose) {
 
@@ -295,7 +295,7 @@ public:
 		return;
 	}
 
-	///@brief some shared setup of task factory
+	/// @brief some shared setup of task factory
 	void
 	set_up_taskfactory(){
 		using namespace basic::options;
@@ -369,7 +369,7 @@ public:
 		return;
 	}
 
-	///@brief ubq_constraints will set up some ubiquitin to E3 constraints based on the input crystal structures.  To refresh your memory, this code runs on the PDBs 3JW0 and 3JVZ, from reference Kamadurai HB, Souphron J, Scott DC, Duda DM, Miller DJ, Stringer D, Piper RC, Schulman BA.  Insights into ubiquitin transfer cascades from a structure of a UbcH5B approximately ubiquitin-HECT(NEDD4L) complex.  Mol Cell. 2009 Dec 25;36(6):1095-102.  Anyway, the constraints are drawn from some mutational experiments in the paper, which showed that these interactions matter for functionality.
+	/// @brief ubq_constraints will set up some ubiquitin to E3 constraints based on the input crystal structures.  To refresh your memory, this code runs on the PDBs 3JW0 and 3JVZ, from reference Kamadurai HB, Souphron J, Scott DC, Duda DM, Miller DJ, Stringer D, Piper RC, Schulman BA.  Insights into ubiquitin transfer cascades from a structure of a UbcH5B approximately ubiquitin-HECT(NEDD4L) complex.  Mol Cell. 2009 Dec 25;36(6):1095-102.  Anyway, the constraints are drawn from some mutational experiments in the paper, which showed that these interactions matter for functionality.
 	void
 	ubq_constraints(core::pose::Pose & pose) {
 		using namespace core::scoring::constraints;
@@ -431,7 +431,7 @@ public:
 		return;
 	}
 
-	///@brief build_AtomID_vec builds the atomID vector used for setting up the TorsionDOFMovers and used to calculate atom distances for later scoring
+	/// @brief build_AtomID_vec builds the atomID vector used for setting up the TorsionDOFMovers and used to calculate atom distances for later scoring
 	void
 	build_AtomID_vec(){
 		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
@@ -463,7 +463,7 @@ public:
 	bool
 	reinitialize_for_new_input() const { return true; }
 
-	///@details This function is specific to the original system for which this code was written - if you are not trying to duplicate the initial results you should remove it!
+	/// @details This function is specific to the original system for which this code was written - if you are not trying to duplicate the initial results you should remove it!
 	void create_extra_output( core::pose::Pose const & pose ){
 
 		//find Job
@@ -483,7 +483,7 @@ public:
 		return;
 	}
 
-	///@brief this apply function holds the main apply for BOTH HECT_UBQ and HECT_ALL.  It has a function call to a function which will handle the different aspect for those two peices of code; the remainder of the differences are encoded in the setup function defined by each subclass.
+	/// @brief this apply function holds the main apply for BOTH HECT_UBQ and HECT_ALL.  It has a function call to a function which will handle the different aspect for those two peices of code; the remainder of the differences are encoded in the setup function defined by each subclass.
 	virtual
 	void
 	apply( core::pose::Pose & pose ){
@@ -625,12 +625,12 @@ public:
 		return;
 	}
 
-	///@brief default version does nothing
+	/// @brief default version does nothing
 	virtual
 	void
 	add_frag_mover(protocols::moves::RandomMoverOP /*random_mover*/) {return;}
 
-	///@brief pure virtual version, this is where most differences between ubq and all version lie
+	/// @brief pure virtual version, this is where most differences between ubq and all version lie
 	virtual
 	void
 	init_on_new_input(core::pose::Pose & pose) = 0;

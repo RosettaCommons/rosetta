@@ -19,7 +19,6 @@
 #include <devel/init.hh>
 
 
-
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -40,7 +39,6 @@
 #include <core/chemical/orbitals/OrbitalType.hh>
 
 #include <utility/file/FileName.hh>
-
 
 
 utility::vector1<numeric::histograms::TwoDHistogram<core::Size, core::SSize> > add_histograms_together
@@ -72,7 +70,6 @@ utility::vector1<numeric::histograms::TwoDHistogram<core::Size, core::SSize> > a
 }
 
 
-
 int main( int argc, char * argv [] )
 {
     try {
@@ -99,7 +96,6 @@ int main( int argc, char * argv [] )
 		data.close();
 	}
 	//end parsing proteins from files
-
 
 
 	////////////////////start set up of OrbitalsStatistics  class/////////////////////////////////////////
@@ -163,10 +159,7 @@ int main( int argc, char * argv [] )
 				}
 
 
-
-
 		}//end else statement
-
 
 
 	}

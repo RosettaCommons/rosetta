@@ -49,16 +49,16 @@ public:
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP fresh_instance() const;
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP clone() const;
 
 private: // methods

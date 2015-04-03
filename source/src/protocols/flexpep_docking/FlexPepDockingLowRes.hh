@@ -30,7 +30,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 #include <string>
 
 #include <utility/vector1.hh>

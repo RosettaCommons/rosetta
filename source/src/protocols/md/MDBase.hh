@@ -9,7 +9,7 @@
 
 /// @file    protocols/md/MDBase.hh
 /// @brief   initialization for MD
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 #ifndef INCLUDED_protocols_md_MDBase_hh

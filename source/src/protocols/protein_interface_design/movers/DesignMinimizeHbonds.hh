@@ -17,13 +17,11 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {

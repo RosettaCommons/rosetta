@@ -40,7 +40,6 @@
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 
-
 namespace devel {
 namespace vardist_solaccess {
 

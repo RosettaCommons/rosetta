@@ -220,7 +220,6 @@ ConstraintEdge::res_type_linking_constraint_energy() const
 }
 
 
-
 void ConstraintEdge::energy_computed( bool setting )
 {
 	energy_computed_ = setting;
@@ -293,7 +292,6 @@ ConstraintGraph::create_new_edge( graph::Edge const * example_edge )
 		* ( static_cast< ConstraintEdge const * > (example_edge) )
 	);
 }
-
 
 
 }

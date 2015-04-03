@@ -15,17 +15,14 @@
 #ifndef INCLUDED_core_pack_rotamer_set_WaterPackingInfo_hh
 #define INCLUDED_core_pack_rotamer_set_WaterPackingInfo_hh
 
-// AUTO-REMOVED #include <core/types.hh>
 
 #include <basic/datacache/CacheableData.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.fwd.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.fwd.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1_bool.hh>
 

@@ -92,20 +92,20 @@ typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
 
 // These are here because they depend somewhat on the particular implementation choice of ResidueGraph
 
-///@brief Does a ResidueGraph have a given vertex descriptor?
+/// @brief Does a ResidueGraph have a given vertex descriptor?
 inline bool
 has( ResidueGraph const & graph, VD vd ) {
 	VIterPair iters( boost::vertices(graph) );
 	return std::find( iters.first, iters.second, vd ) != iters.second;
 }
-///@brief Does a ResidueGraph have a given edge descriptor?
+/// @brief Does a ResidueGraph have a given edge descriptor?
 inline bool
 has( ResidueGraph const & graph, ED ed ) {
 	EIterPair iters( boost::edges(graph) );
 	return std::find( iters.first, iters.second, ed ) != iters.second;
 }
     
-///@brief When adding and deleting nodes in a graph, sometimes the inner counting of nodes/edges gets outdated.
+/// @brief When adding and deleting nodes in a graph, sometimes the inner counting of nodes/edges gets outdated.
 ///Run this to fix the problem.
 template <typename Graph>
 void regenerate_graph_vertex_index(Graph & graph){
@@ -258,7 +258,6 @@ typedef boost::graph_traits<HydrogenAtomGraph>::edge_iterator HHydrogenAtomEIter
 typedef boost::graph_traits<HydrogenAtomGraph>::out_edge_iterator HydrogenAtomOutEdgeIter;
 typedef std::pair<HydrogenAtomOutEdgeIter, HydrogenAtomOutEdgeIter> HydrogenAtomOutEdgeIterPair;
 typedef std::pair<HydrogenAtomVIter, HydrogenAtomVIter> HydrogenAtomVIterPair;
-
 
 
 ////////////////////////////////////////////////////////////////

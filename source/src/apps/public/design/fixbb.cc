@@ -22,7 +22,6 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 

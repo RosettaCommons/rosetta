@@ -17,8 +17,6 @@
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -30,7 +28,6 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 

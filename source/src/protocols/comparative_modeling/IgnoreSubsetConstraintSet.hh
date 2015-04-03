@@ -20,14 +20,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <set>
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -96,7 +94,6 @@ public:
 	std::set< int > ignore_list() const;
 
 
-  ///
   bool
   residue_pair_constraint_exists( int const pos1, int const pos2 ) const
   {

@@ -736,12 +736,11 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin hb_energy_deriv
 ///
 /// @brief
 ///car Evaluate the energy and derivative components for a hydrogen bond
 ///
-/// @detailed
+/// @details
 ///car Energy is assumed to be a sum of independent functions of distance,
 ///car angle at the donor atom, and angle at the acceptor atom. This form
 ///car of the hydrogen bond potential was selected by Tanja Kortemme
@@ -773,9 +772,8 @@ debug_assert( use_cosAHD || database.cosAHD_short_poly_lookup(hbe)->geometric_di
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 // Overload to allow non-standard derivative calculations for geometric solvation
 void
@@ -1056,7 +1054,6 @@ hb_energy_deriv_u2(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin hb_energy_deriv
 ///
 /// @remarks See comments on helper function above.
 ///

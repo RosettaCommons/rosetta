@@ -81,7 +81,7 @@ public:
 	/// @brief Create a PosePropertyReporter given its identifying string
 	PosePropertyReporterOP newPosePropertyReporter( std::string const & );
 
-	///@brief return new PosePropertyReporter by Tag parsing; the identifying string for the PosePropertyReporter is in the Tag
+	/// @brief return new PosePropertyReporter by Tag parsing; the identifying string for the PosePropertyReporter is in the Tag
 	PosePropertyReporterOP
 	newPosePropertyReporter(
 		TagCOP,

@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -26,7 +26,6 @@
 #include <protocols/noesy_assign/PeakAssignment.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

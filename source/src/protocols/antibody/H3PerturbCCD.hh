@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/H3PerturbCCD.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #ifndef INCLUDED_protocols_antibody_H3PerturbCCD_hh
@@ -38,7 +37,6 @@ namespace protocols {
 namespace antibody {
 
 
-
 class H3PerturbCCD: public moves::Mover {
 
 
@@ -58,7 +56,6 @@ public:
 
 	/// @brief default destructor
 	~H3PerturbCCD();
-
 
 
 	virtual void apply( core::pose::Pose & pose );
@@ -93,7 +90,6 @@ private:
 	bool is_camelid_;
 
 
-
 	void set_default();
 	void init();
 
@@ -106,7 +102,6 @@ private:
 	void scored_frag_close(
 	    core::pose::Pose & pose_in,
 	    loops::Loop const trimmed_cdr_h3 );
-
 
 
 	/// @brief size of loop above which 9mer frags are used
@@ -139,12 +134,9 @@ private:
 };
 
 
-
 } // namespace antibody
 } // namespace protocols
 
 #endif
-
-
 
 

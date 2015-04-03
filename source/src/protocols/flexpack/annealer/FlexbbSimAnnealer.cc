@@ -24,7 +24,6 @@
 #include <basic/options/keys/flexpack.OptionKeys.gen.hh>
 
 /// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 /// Utility headers
 #include <utility/exit.hh>

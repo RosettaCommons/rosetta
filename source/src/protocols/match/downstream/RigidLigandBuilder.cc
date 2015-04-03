@@ -30,10 +30,8 @@
 #include <basic/Tracer.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.functions.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
@@ -328,7 +326,6 @@ RigidLigandBuilder::coordinates_from_hit(
 }
 
 
-
 core::pose::PoseCOP
 RigidLigandBuilder::downstream_pose_from_hit(
 	Hit const & hit
@@ -359,7 +356,6 @@ RigidLigandBuilder::n_possible_hits_per_at3frame() const
 {
 	return 1;
 }
-
 
 
 void
@@ -510,7 +506,6 @@ RigidLigandBuilder::global_orientation_from_frame3(
 	global_coords[ 4 ] = euler_angles( 1 );
 	global_coords[ 5 ] = euler_angles( 2 );
 	global_coords[ 6 ] = euler_angles( 3 );
-
 
 
 	if ( false ) {

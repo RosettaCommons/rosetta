@@ -11,58 +11,32 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -81,7 +55,6 @@ using protocols::scoring::ImplicitFastClashCheck;
 
 static thread_local basic::Tracer TR( "gentetra" );
 static core::io::silent::SilentFileData sfd;
-
 
 
 int main (int argc, char *argv[]) {
@@ -130,17 +103,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

@@ -24,7 +24,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 
 namespace core {

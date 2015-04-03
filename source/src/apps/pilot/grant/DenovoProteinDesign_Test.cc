@@ -73,8 +73,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
-
 int
 main( int argc, char * argv [] )
 {
@@ -99,7 +97,6 @@ main( int argc, char * argv [] )
 
 	devel::denovo_protein_design::CreateStartingStructureMoverOP myCreateStartingStructureMover ( new devel::denovo_protein_design::CreateStartingStructureMover() );
 	devel::denovo_protein_design::DesignRelaxMoverOP myDesignRelaxMover ( new devel::denovo_protein_design::DesignRelaxMover() );
-
 
 
 	/*

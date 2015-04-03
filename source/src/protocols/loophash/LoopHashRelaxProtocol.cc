@@ -80,8 +80,6 @@
 #endif
 
 
-
-
 static thread_local basic::Tracer TR( "LocalHashRelaxProtocol" );
 
 
@@ -252,7 +250,6 @@ LoopHashRelaxProtocol::manual_call( core::pose::Pose& pose ){
     pose = relax_winner;
 
   }
-
 
 
 void

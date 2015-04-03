@@ -26,14 +26,11 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/kinematics/Jump.hh>

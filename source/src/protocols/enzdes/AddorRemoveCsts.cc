@@ -24,14 +24,12 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -185,7 +183,6 @@ AddOrRemoveMatchCsts::cstfile( std::string const & setting )
 {
 	cstfile_ = setting;
 }
-
 
 
 toolbox::match_enzdes_util::EnzConstraintIOCOP

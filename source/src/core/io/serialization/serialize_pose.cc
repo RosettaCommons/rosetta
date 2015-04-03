@@ -15,18 +15,12 @@
 
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <numeric/xyzVector.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-
-// AUTO-REMOVED #include <cstdio>
-// AUTO-REMOVED #include <cstring>
-// AUTO-REMOVED #include <fstream>
 
 #include <utility/vector1.hh>
 #include <sstream>
@@ -109,7 +103,6 @@ namespace serialization {
 	}
 
 
-
 	/// Read/write a single primitive type to a buf.
 
 	void
@@ -175,7 +168,6 @@ namespace serialization {
 	{
 		read_bytes(x, buf);
 	}
-
 
 
 	/// Read/write simple structure to a buf.
@@ -266,7 +258,6 @@ namespace serialization {
 	}
 
 
-
 	/// Utility read/write.
 
 	void
@@ -303,8 +294,6 @@ namespace serialization {
 			THROW_EXCEPTION("Error reading .\n");
 		}
 	}
-
-
 
 
 	void

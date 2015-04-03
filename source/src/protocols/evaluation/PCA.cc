@@ -97,7 +97,6 @@ void PCA::add_vec( int natoms, rvec *x, rvec transvec ) {
 }
 
 
-
 /// @brief read definition of PCA from file
 void PCA::read_eigvec_file( std::string fn, pose::Pose const& pose,int nvec) {
   utility::io::izstream data( fn.c_str() );
@@ -278,7 +277,6 @@ void PCA::fill_coordinates(
 }
 
 
-
 #define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau);	\
   a[k][l]=h+s*(g-h*tau);
 #define DIM6 6
@@ -292,7 +290,6 @@ void PCA::oprod(const rvec a,const rvec b,rvec c)
   c[YY]=a[ZZ]*b[XX]-a[XX]*b[ZZ];
   c[ZZ]=a[XX]*b[YY]-a[YY]*b[XX];
 }
-
 
 
 void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
@@ -389,7 +386,6 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 	vk[2][r]*vh[2][c];
   dump_matrix( DIM, R, tr );
 }
-
 
 
 void PCA::jacobi(double a[6][6],double d[],double v[6][6],int *nrot)

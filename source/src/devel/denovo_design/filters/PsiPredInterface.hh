@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/PsiPredInterface.hh
 /// @brief Class that interfaces with psipred for secondary structure prediction
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_devel_denovo_design_filters_psipredinterface_hh

@@ -33,7 +33,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.ReplicateFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 ReplicateFilter::ReplicateFilter() :
 	Filter( "ReplicateFilter" ),
   replicates_(1),

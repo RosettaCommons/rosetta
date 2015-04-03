@@ -10,7 +10,7 @@
 /// @file
 /// @brief helper app to convert two-residue pdbs into a MotifLibrary text file
 /// @author sthyme
-///
+
 
 #include <devel/init.hh>
 #include <core/options/option.hh>

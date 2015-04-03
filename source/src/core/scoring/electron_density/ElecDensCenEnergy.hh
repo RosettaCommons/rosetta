@@ -15,23 +15,12 @@
 #define INCLUDED_core_scoring_electron_density_ElecDensCenEnergy_hh
 
 
-// AUTO-REMOVED #include <core/scoring/electron_density/ElecDensEnergies.fwd.hh>
-
 // Unit Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -45,14 +34,14 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
-///
+
 class ElecDensCenEnergy : public methods::ContextDependentLRTwoBodyEnergy  {
 public:
 	typedef methods::ContextDependentLRTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	ElecDensCenEnergy();
 
 	/// clone
@@ -89,7 +78,6 @@ public:
 	) const ;
 
 
-	///
 	virtual void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,

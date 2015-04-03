@@ -26,12 +26,11 @@ namespace interaction_graph {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::(InteractionGraphBase *, int, int)
 ///
 /// @brief
 /// main constructor, no default or copy constructors
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -43,9 +42,8 @@ namespace interaction_graph {
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyNode::LazyNode(
 	InteractionGraphBase * owner,
@@ -65,11 +63,10 @@ LazyNode::LazyNode(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::~LazyNode()
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -81,19 +78,17 @@ LazyNode::LazyNode(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyNode::~LazyNode()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::prepare_for_simulated_annealing
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -105,9 +100,8 @@ LazyNode::~LazyNode()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::prepare_for_simulated_annealing()
@@ -120,11 +114,10 @@ LazyNode::prepare_for_simulated_annealing()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::print
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -136,9 +129,8 @@ LazyNode::prepare_for_simulated_annealing()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::print() const
@@ -168,11 +160,10 @@ LazyNode::print() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::getMemoryUsageInBytes
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -184,9 +175,8 @@ LazyNode::print() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 unsigned int
@@ -221,11 +211,10 @@ LazyNode::aatype_for_state( int state ) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::assign_zero_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -237,9 +226,8 @@ LazyNode::aatype_for_state( int state ) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::assign_zero_state()
@@ -263,11 +251,10 @@ LazyNode::assign_zero_state()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::assign_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -279,9 +266,8 @@ LazyNode::assign_zero_state()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::assign_state(int new_state)
@@ -314,11 +300,10 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::partial_assign_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -330,9 +315,8 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::partial_assign_state( int new_state )
@@ -356,11 +340,10 @@ LazyNode::partial_assign_state( int new_state )
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::complete_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -372,9 +355,8 @@ LazyNode::partial_assign_state( int new_state )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void LazyNode::complete_state_assignment()
 {
@@ -391,13 +373,11 @@ void LazyNode::complete_state_assignment()
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::commit_considered_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -409,9 +389,8 @@ void LazyNode::complete_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::commit_considered_substitution()
@@ -463,11 +442,10 @@ debug_assert( alternate_state_is_being_considered_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::compute_pair_energy_for_current_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -479,9 +457,8 @@ debug_assert( alternate_state_is_being_considered_ );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyNode::compute_pair_energy_for_current_state(
@@ -496,11 +473,10 @@ LazyNode::compute_pair_energy_for_current_state(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::acknowledge_neighbors_partial_state_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -512,9 +488,8 @@ LazyNode::compute_pair_energy_for_current_state(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::acknowledge_neighbors_partial_state_substitution(
@@ -532,11 +507,10 @@ LazyNode::acknowledge_neighbors_partial_state_substitution(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::print_internal_energies
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -548,9 +522,8 @@ LazyNode::acknowledge_neighbors_partial_state_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::print_internal_energies() const
@@ -569,11 +542,10 @@ LazyNode::print_internal_energies() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::update_internal_energy_sums
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -585,9 +557,8 @@ LazyNode::print_internal_energies() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyNode::update_internal_energy_sums()
@@ -603,11 +574,10 @@ debug_assert( get_edge_vector_up_to_date() );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::update_internal_vectors
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -619,9 +589,8 @@ debug_assert( get_edge_vector_up_to_date() );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void LazyNode::update_internal_vectors()
 {
@@ -697,11 +666,10 @@ LazyNode::calc_deltaEpd( int alternate_state )
 core::PackerEnergy const LazyEdge::NOT_YET_COMPUTED_ENERGY = -1234;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::LazyEdge
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -713,9 +681,8 @@ core::PackerEnergy const LazyEdge::NOT_YET_COMPUTED_ENERGY = -1234;
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyEdge::LazyEdge(
 	InteractionGraphBase* owner,
@@ -735,11 +702,10 @@ LazyEdge::LazyEdge(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::~LazyEdge()
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -751,20 +717,18 @@ LazyEdge::LazyEdge(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyEdge::~LazyEdge()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::set_sparse_aa_info
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -776,9 +740,8 @@ LazyEdge::~LazyEdge()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::set_sparse_aa_info(
@@ -823,7 +786,6 @@ void LazyEdge::force_all_aa_neighbors()
 }
 
 
-
 core::PackerEnergy LazyEdge::get_two_body_energy(
 	int const node1state,
 	int const node2state
@@ -844,11 +806,10 @@ core::PackerEnergy LazyEdge::get_two_body_energy(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::declare_energies_final
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -860,20 +821,18 @@ core::PackerEnergy LazyEdge::get_two_body_energy(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::declare_energies_final()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::prepare_for_simulated_annealing
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -885,9 +844,8 @@ LazyEdge::declare_energies_final()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::prepare_for_simulated_annealing()
@@ -913,11 +871,10 @@ LazyEdge::prepare_for_simulated_annealing()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::getMemoryUsageInBytes
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -929,9 +886,8 @@ LazyEdge::prepare_for_simulated_annealing()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 unsigned int
@@ -965,13 +921,11 @@ LazyEdge::set_edge_weight( Real weight )
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_current_two_body_energy
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -983,9 +937,8 @@ LazyEdge::set_edge_weight( Real weight )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyEdge::get_current_two_body_energy() const
@@ -994,11 +947,10 @@ LazyEdge::get_current_two_body_energy() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::acknowledge_state_change
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1010,9 +962,8 @@ LazyEdge::get_current_two_body_energy() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::acknowledge_state_change(
@@ -1051,11 +1002,10 @@ LazyEdge::acknowledge_state_change(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::acknowledge_state_zeroed
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1067,9 +1017,8 @@ LazyEdge::acknowledge_state_change(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::acknowledge_state_zeroed( int node_ind )
@@ -1092,11 +1041,10 @@ LazyEdge::acknowledge_state_zeroed( int node_ind )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::acknowledge_partial_state_change
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1108,9 +1056,8 @@ LazyEdge::acknowledge_state_zeroed( int node_ind )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void LazyEdge::acknowledge_partial_state_change(
 	int node_ind,
@@ -1133,11 +1080,10 @@ void LazyEdge::acknowledge_partial_state_change(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_energy_following_partial_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1149,9 +1095,8 @@ void LazyEdge::acknowledge_partial_state_change(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyEdge::get_energy_following_partial_state_assignment()
@@ -1173,13 +1118,11 @@ LazyEdge::get_energy_following_partial_state_assignment()
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_edge_table_ptr
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1191,9 +1134,8 @@ LazyEdge::get_energy_following_partial_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy & LazyEdge::get_edge_table_ptr()
 {
@@ -1201,11 +1143,10 @@ core::PackerEnergy & LazyEdge::get_edge_table_ptr()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_two_body_table_size
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1217,9 +1158,8 @@ core::PackerEnergy & LazyEdge::get_edge_table_ptr()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int LazyEdge::get_two_body_table_size() const
 {
@@ -1228,11 +1168,10 @@ int LazyEdge::get_two_body_table_size() const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_offsets_for_aatypes
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1244,9 +1183,8 @@ int LazyEdge::get_two_body_table_size() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 ObjexxFCL::FArray2D_int const &
 LazyEdge::get_offsets_for_aatypes( )
@@ -1255,11 +1193,10 @@ LazyEdge::get_offsets_for_aatypes( )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_second_node_num_states_per_aa
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1271,9 +1208,8 @@ LazyEdge::get_offsets_for_aatypes( )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 utility::vector1< int > const &
 LazyEdge::get_second_node_num_states_per_aa()
@@ -1282,11 +1218,10 @@ LazyEdge::get_second_node_num_states_per_aa()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_energy_for_state_pair
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1298,9 +1233,8 @@ LazyEdge::get_second_node_num_states_per_aa()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyEdge::get_energy_for_state_pair(
@@ -1392,11 +1326,10 @@ LazyEdge::print_current_energy() const
 //-------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::LazyInteractionGraph
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1408,9 +1341,8 @@ LazyEdge::print_current_energy() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyInteractionGraph::LazyInteractionGraph(
 	int numNodes
@@ -1419,11 +1351,10 @@ LazyInteractionGraph::LazyInteractionGraph(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::LazyInteractionGraph
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1435,9 +1366,8 @@ LazyInteractionGraph::LazyInteractionGraph(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 LazyInteractionGraph::~LazyInteractionGraph()
 {
@@ -1445,11 +1375,10 @@ LazyInteractionGraph::~LazyInteractionGraph()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::blanket_assign_state_0
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1461,9 +1390,8 @@ LazyInteractionGraph::~LazyInteractionGraph()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyInteractionGraph::blanket_assign_state_0()
@@ -1475,11 +1403,10 @@ LazyInteractionGraph::blanket_assign_state_0()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::set_state_for_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1491,9 +1418,8 @@ LazyInteractionGraph::blanket_assign_state_0()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
@@ -1504,11 +1430,10 @@ LazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::set_network_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1520,9 +1445,8 @@ LazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
@@ -1540,11 +1464,10 @@ LazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::consider_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1556,9 +1479,8 @@ LazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyInteractionGraph::consider_substitution(
@@ -1578,11 +1500,10 @@ LazyInteractionGraph::consider_substitution(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::commit_considered_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1594,9 +1515,8 @@ LazyInteractionGraph::consider_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyInteractionGraph::commit_considered_substitution()
@@ -1615,11 +1535,10 @@ LazyInteractionGraph::commit_considered_substitution()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::get_energy_current_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1631,9 +1550,8 @@ LazyInteractionGraph::commit_considered_substitution()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyInteractionGraph::get_energy_current_state_assignment()
@@ -1646,11 +1564,10 @@ LazyInteractionGraph::get_energy_current_state_assignment()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::get_edge_memory_usage
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1662,9 +1579,8 @@ LazyInteractionGraph::get_energy_current_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int
 LazyInteractionGraph::get_edge_memory_usage() const
@@ -1678,11 +1594,10 @@ LazyInteractionGraph::get_edge_memory_usage() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::print_current_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1694,9 +1609,8 @@ LazyInteractionGraph::get_edge_memory_usage() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyInteractionGraph::print_current_state_assignment() const
@@ -1722,11 +1636,10 @@ core::PackerEnergy LazyInteractionGraph::get_energy_PD_current_state_assignment(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::set_errorfull_deltaE_threshold
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1738,20 +1651,18 @@ core::PackerEnergy LazyInteractionGraph::get_energy_PD_current_state_assignment(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyInteractionGraph::set_errorfull_deltaE_threshold( core::PackerEnergy )
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::get_energy_sum_for_vertex_group
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1763,9 +1674,8 @@ LazyInteractionGraph::set_errorfull_deltaE_threshold( core::PackerEnergy )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 LazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
@@ -1819,11 +1729,10 @@ LazyInteractionGraph::get_aa_submatrix_energies_for_edge(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::getMemoryUsageInBytes()
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1835,9 +1744,8 @@ LazyInteractionGraph::get_aa_submatrix_energies_for_edge(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 unsigned int
@@ -1854,11 +1762,10 @@ LazyInteractionGraph::count_dynamic_memory() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::create_new_node( int node_index, int num_states)
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1870,9 +1777,8 @@ LazyInteractionGraph::count_dynamic_memory() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase*
 LazyInteractionGraph::create_new_node( int node_index, int num_states)
@@ -1881,11 +1787,10 @@ LazyInteractionGraph::create_new_node( int node_index, int num_states)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::create_new_edge( int index1, int index2)
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1897,9 +1802,8 @@ LazyInteractionGraph::create_new_node( int node_index, int num_states)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase*
 LazyInteractionGraph::create_new_edge( int index1, int index2)
@@ -1908,11 +1812,10 @@ LazyInteractionGraph::create_new_edge( int index1, int index2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyInteractionGraph::update_internal_energy_totals
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1924,9 +1827,8 @@ LazyInteractionGraph::create_new_edge( int index1, int index2)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 LazyInteractionGraph::update_internal_energy_totals()

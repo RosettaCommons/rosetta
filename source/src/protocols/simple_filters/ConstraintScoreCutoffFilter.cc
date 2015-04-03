@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/ConstraintScoreCutoffFilter.cc
 /// @brief
-/// @detailed
+/// @details
 ///	  Contains currently:
 ///
 ///
@@ -27,7 +27,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -38,7 +37,6 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/Job.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
@@ -50,7 +48,6 @@
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
-
 
 
 //// C++ headers
@@ -124,7 +121,6 @@ ConstraintScoreCutoffFilterCreator::create_filter() const { return filters::Filt
 
 std::string
 ConstraintScoreCutoffFilterCreator::keyname() const { return "ConstraintScoreCutoffFilter"; }
-
 
 
 } // filters

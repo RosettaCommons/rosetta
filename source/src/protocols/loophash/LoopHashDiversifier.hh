@@ -24,7 +24,6 @@
 #include <protocols/relax/FastRelax.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector1.hh>
 

@@ -16,7 +16,6 @@
 
 // Unit headers
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
-// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>

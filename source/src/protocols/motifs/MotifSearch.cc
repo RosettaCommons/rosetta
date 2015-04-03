@@ -24,7 +24,6 @@
 // Project Headers (protocols)
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
-// AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/simple_moves/MinMover.hh>
 
@@ -36,16 +35,11 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/dna/setup.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.hh>
@@ -56,7 +50,6 @@
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -65,8 +58,6 @@
 
 // Option Key Includes
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>

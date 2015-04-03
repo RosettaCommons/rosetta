@@ -44,9 +44,7 @@
 
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 #include <map>
 
 #include <utility/vector1.hh>
@@ -78,7 +76,7 @@ class StrandConstraints : public utility::pointer::ReferenceCount {
 	typedef utility::vector1< AlternativePairings > FuzzyTopology;
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~StrandConstraints();
 	StrandConstraints( PairingStatistics const& strand_stats_ );
 	void add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );

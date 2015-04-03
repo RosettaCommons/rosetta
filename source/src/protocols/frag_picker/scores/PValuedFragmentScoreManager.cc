@@ -14,20 +14,16 @@
 
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/AdaptiveScoreHistogram.hh>
 #include <protocols/frag_picker/scores/PValuedFragmentScoreManager.hh>
 
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++
 #include <algorithm>
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1.hh>
 

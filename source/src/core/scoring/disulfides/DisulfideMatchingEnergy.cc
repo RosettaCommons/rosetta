@@ -61,7 +61,6 @@ DisulfideMatchingEnergyCreator::score_types_for_method() const {
 static thread_local basic::Tracer TR( "core.scoring.disulfides.DisulfideMatchingEnergy" );
 
 
-
 DisulfideMatchingEnergy::DisulfideMatchingEnergy(
 	DisulfideMatchingPotential const & potential
 ) :
@@ -156,7 +155,6 @@ void DisulfideMatchingEnergy::residue_pair_energy(
 	emap[ dslfc_trans ] += match_trans;
 	emap[ dslfc_RT ]    += match_RT;
 }
-
 
 
 bool DisulfideMatchingEnergy::defines_intrares_energy( EnergyMap const & ) const

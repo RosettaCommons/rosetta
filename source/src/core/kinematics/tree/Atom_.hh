@@ -380,7 +380,6 @@ public: // Properties
 	}
 
 
-	///
 	void
 	parent( AtomAP parent_in )
 	{
@@ -555,13 +554,11 @@ protected: // Methods
 	);
 
 
-	///
 	//virtual
 	void
 	get_path_from_root( utility::vector1< AtomCAP > & path ) const;
 
 
-	///
 	bool
 	atom_is_on_path_from_root( AtomCOP atm ) const;
 

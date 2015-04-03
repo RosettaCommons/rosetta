@@ -8,10 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 // Test headers
 #include <cxxtest/TestSuite.h>
-
 
 
 #include <numeric/histograms/OneDHistogram.hh>
@@ -64,8 +62,6 @@ public:
 
 		TS_ASSERT_EQUALS(counts, histogram_size.lookup_counts(key_values));
 		TS_ASSERT_EQUALS(counts, histogram_real.lookup_counts(key_value_real));
-
-
 
 
 	}

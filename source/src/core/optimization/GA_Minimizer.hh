@@ -17,9 +17,7 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 
-// AUTO-REMOVED #include <vector>
 
 #include <core/optimization/Multifunc.fwd.hh>
 #include <utility/vector1.hh>

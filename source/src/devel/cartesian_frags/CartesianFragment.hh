@@ -36,8 +36,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace devel {
 namespace cartesian_frags {
 
@@ -119,39 +117,39 @@ public:
 	// access
 	/////////
 
-	///
+
 	RT const &
 	stub_transform( int const i ) const
 	{
 		return stub_transforms_[i];
 	}
 
-	///
+
 	RT const &
 	rt( int const i ) const
 	{
 		return stub_transforms_[i];
 	}
 
-	///
+
 	Size
 	has_atom( SafeAtomID const & id ) const
 	{
 		return ( std::find( atom_ids_.begin(), atom_ids_.end(), id ) != atom_ids_.end() );
 	}
 
-	///
+
 	Size
 	atom_index( SafeAtomID id ) const;
 
-	///
+
 	Vector const &
 	xyz( SafeAtomID const & id ) const
 	{
 		return xyz_[ atom_index( id ) ];
 	}
 
-	///
+
 	Size
 	natoms() const
 	{
@@ -177,7 +175,7 @@ public:
 	// modification
 	///////////////
 
-	///
+
 	void
 	set_torsion_angle(
 										SafeAtomID const & id1,
@@ -187,7 +185,7 @@ public:
 										Real const setting
 										);
 
-	///
+
 	void
 	set_bond_angle(
 								 SafeAtomID const & id1,
@@ -196,7 +194,7 @@ public:
 								 Real const setting
 								 );
 
-	///
+
 	Size
 	n_outgoing() const
 	{
@@ -258,7 +256,7 @@ private: // private methods:
 		core::id::AtomID_Mask & added
 	);
 
-	///
+
 	bool
 	skip_bond( AtomID const & id1, AtomID const & id2, utility::vector1< core::id::BondID > const & cuts ) const
 	{
@@ -266,19 +264,18 @@ private: // private methods:
 						 std::find( cuts.begin(), cuts.end(), core::id::BondID( id2, id1 ) ) != cuts.end() );
 	}
 
-	///
+
 	AtomID
 	atom_tree_id( SafeAtomID const & id )
 	{
 		return AtomID( atom_index(id), 1 );
 	}
 
-	///
+
 	void
 	update_xyz_from_tree();
 
 
-	///
 	void
 	setup_atom_tree();
 
@@ -310,7 +307,7 @@ private: // data
 	// private atomtree for kinematic updates, empty until we are asked to modify a dof
 	core::kinematics::AtomTree tree_;
 
-	//
+
 	Size ncomponents_;
 	Size BIG_OFFSET_;
 

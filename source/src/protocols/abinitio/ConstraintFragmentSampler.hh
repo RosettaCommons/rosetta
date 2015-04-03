@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/ConstraintFragmentSampler.hh
 /// @brief header file for ConstraintFragmentSampler protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -102,7 +102,7 @@ typedef FragmentSampler Parent;
 typedef moves::Mover BaseClass; //happens to be same as Parent
 
 public:
-	///@brief This constructor does not work -- Fix it before using it.
+	/// @brief This constructor does not work -- Fix it before using it.
 	// constructor: supply mover classes for Fragment Moves
 	ConstraintFragmentSampler( topology_broker::TopologyBrokerOP broker );
 
@@ -118,7 +118,7 @@ public:
 	static void register_options();
 
 protected:
- ///@brief
+ /// @brief
   void set_constraint_weight( core::Real setting ) {
     constraint_weight_ = setting;
     set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );

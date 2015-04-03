@@ -15,11 +15,8 @@
 #define INCLUDED_core_graph_graph_util_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <platform/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/graph/Graph.fwd.hh>
 #include <utility/vector1_bool.hh>

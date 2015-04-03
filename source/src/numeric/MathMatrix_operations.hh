@@ -8,14 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 //////////////////////////////////////////////////////////////////////
-/// @begin MathMatrix_operations
 ///
 /// @brief
 /// Mathmatical functions for the MathMatrix class
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// The Matrix is construction is found in numeric/MathMatrix.hh. These are mathematical functions
 /// that can be used by the MathMatrix class. ***Note that these are outside of class, but having the
@@ -26,9 +24,8 @@
 /// Nils Woetzl
 /// Jens Meiler
 ///
-/// @authors Steven Combs, Nils Woetzl, Jens Meiler
+/// @author Steven Combs, Nils Woetzl, Jens Meiler
 ///
-/// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -430,7 +427,6 @@ MathMatrix< T> operator / ( const T &SCALAR_LHS, const MathMatrix< T> &MATRIX_RH
 }
 
 }
-
 
 
 #endif /* MATHMATRIX_OPERATIONS_HH_ */

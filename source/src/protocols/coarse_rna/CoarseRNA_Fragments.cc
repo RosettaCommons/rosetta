@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_Fragments
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -30,7 +30,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -294,8 +293,6 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 	////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	CoarseRNA_Fragments::is_fullatom(){ return false; }
-
-
 
 
 } // namespace rna

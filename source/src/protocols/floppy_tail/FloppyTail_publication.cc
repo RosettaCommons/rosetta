@@ -30,7 +30,7 @@
 namespace protocols {
 namespace floppy_tail {
 
-///@details This function is specific to the original system for which this code was written
+/// @details This function is specific to the original system for which this code was written
 void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP score_fxn ){
 
   //score main pose

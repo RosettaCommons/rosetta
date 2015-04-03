@@ -87,8 +87,6 @@ orbital_type_enum OrbitalTypeMapper::get_orbital_enum(std::string & orbital_type
 }
 
 
-
-
 }
 }
 }

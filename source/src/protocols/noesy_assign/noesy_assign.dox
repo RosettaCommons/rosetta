@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author Oliver Lange
+/// @author Oliver Lange
 /*!
 
 last updated 5/31/11
@@ -104,12 +104,10 @@ a  Resonance
 	the PeakAssignments are subsequently created by an all2all combination between the assignments for proton1 and proton2.
 
 
-
 @subsection find_assignments()
 	 generate all possible initial assignments by chemical shift matching
 	 this uses the information about the experiment type:
 	      3D 15N edited, 4D 15N-HN 15N-HN, etc.
-
 
 
 */

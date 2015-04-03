@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_comparative_modeling_RecoverSideChainsMover_hh
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>

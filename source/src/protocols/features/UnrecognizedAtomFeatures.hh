@@ -31,7 +31,6 @@
 #include <string>
 
 
-
 namespace protocols{
 namespace features{
 
@@ -45,35 +44,35 @@ public:
 
 	virtual ~UnrecognizedAtomFeatures();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
 private:
-	///@brief generate the unrecognized_atoms table schema
+	/// @brief generate the unrecognized_atoms table schema
 	virtual void
 	write_unrecognized_atoms_table_schema(
 		utility::sql_database::sessionOP db_session
 	) const;
 
-	///@brief generate the unrecognized_residues table schema
+	/// @brief generate the unrecognized_residues table schema
 	virtual void
 	write_unrecognized_residues_table_schema(
 		utility::sql_database::sessionOP db_session
 	) const;
 
-	///@brief generate the unrecognized_neighbors table schema
+	/// @brief generate the unrecognized_neighbors table schema
 	virtual void
 	write_unrecognized_neighbors_table_schema(
 		utility::sql_database::sessionOP db_session
 	) const;
 
 public:
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
@@ -86,7 +85,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,

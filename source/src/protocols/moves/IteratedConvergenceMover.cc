@@ -15,21 +15,15 @@
 #include <protocols/moves/IteratedConvergenceMover.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -120,7 +114,7 @@ IteratedConvergenceMover::get_name() const {
 	return IteratedConvergenceMoverCreator::mover_name();
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 IteratedConvergenceMover::parse_my_tag(
 	TagCOP const tag,
@@ -158,14 +152,14 @@ IteratedConvergenceMover::parse_my_tag(
 	TR << "Setting IteratedConvergence for "<<cycles()<<" cycles (max "<<maxcycles()<<") with mover '"<<mover_name<<"' and filter '"<<filter_name<<"' and delta tolerance "<<delta()<<std::endl;
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 MoverOP
 IteratedConvergenceMover::fresh_instance() const
 {
 	return MoverOP( new IteratedConvergenceMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 MoverOP
 IteratedConvergenceMover::clone() const
 {

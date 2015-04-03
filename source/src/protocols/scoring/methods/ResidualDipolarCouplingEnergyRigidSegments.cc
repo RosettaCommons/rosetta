@@ -20,19 +20,13 @@
 #include <core/scoring/ScoreType.hh>
 //Package headers
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -42,9 +36,7 @@
 //Objexx headers
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
-// AUTO-REMOVED #include <utility/io/ozstream.hh> //for dump_weights
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
@@ -83,7 +75,6 @@ ResidualDipolarCouplingEnergyRigidSegmentsCreator::score_types_for_method() cons
 	sts.push_back( rdc_segments );
 	return sts;
 }
-
 
 
 //////////////////////////////////////////////////////

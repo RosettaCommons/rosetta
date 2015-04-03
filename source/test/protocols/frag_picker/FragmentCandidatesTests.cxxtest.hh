@@ -26,7 +26,6 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 //#include <utility/stream_util.hh>
 

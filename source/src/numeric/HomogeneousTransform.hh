@@ -631,7 +631,6 @@ private:
 	value_type xz_, yz_, zz_, pz_;
 
 
-
 };
 
 template< typename T >

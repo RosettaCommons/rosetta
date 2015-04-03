@@ -18,8 +18,6 @@
 
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -41,8 +39,6 @@
 #include <numeric/random/random.hh>
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 // Utility Headers

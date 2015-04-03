@@ -191,7 +191,7 @@ void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
  	/// @brief
 	//Next line is to make the function pass the compiler, FixMe
 	pose.n_residue();
-	//
+
 
         if( tag->hasOption("reference_name") ){
 		TR.Warning << "reference_name not implemented yet for SSamountFilter, FixMe if you can!" << std::endl;

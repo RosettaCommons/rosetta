@@ -18,7 +18,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-
 namespace protocols {
 namespace simple_moves {
 

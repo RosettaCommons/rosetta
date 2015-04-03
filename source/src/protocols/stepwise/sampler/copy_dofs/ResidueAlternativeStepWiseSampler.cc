@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

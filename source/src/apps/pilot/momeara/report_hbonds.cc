@@ -19,7 +19,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 
-
 #include <boost/algorithm/string.hpp>
 
 #include <core/chemical/AtomType.hh>
@@ -41,7 +40,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-
 
 
 #include <core/scoring/sasa.hh>
@@ -259,9 +257,6 @@ apply( Pose& pose ){
 //    TR << basic::options::option[ basic::options::OptionKeys::in::file::native ]()<< std::endl;
 
 
-
-
-
   clock_t start_time = clock();
 
   TR<< "getting hbonds for " << pose_name(pose) << std::endl;
@@ -412,7 +407,6 @@ apply( Pose& pose ){
     hbond_energies +=  energy;
 
 
-
     if ( ! donElement.compare( "O" ) ) {
       donElemNum = 8;
     } else if ( ! donElement.compare("N") ) {
@@ -492,7 +486,6 @@ apply( Pose& pose ){
   fout.close();
 
   get_aa_counts( pose );
-
 
 
   TR << "Average hbond energy = " << hbond_energies << "/" << nhbonds_used <<"="<< hbond_energies / nhbonds_used << std::endl;

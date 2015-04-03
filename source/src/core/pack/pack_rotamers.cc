@@ -21,8 +21,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 
 #include <core/pack/annealer/AnnealerFactory.hh>
@@ -32,7 +30,6 @@
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -40,7 +37,6 @@
 #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // util
 #include <basic/prof.hh>
@@ -56,8 +52,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 using namespace ObjexxFCL;
 
 namespace core {
@@ -68,7 +62,6 @@ using core::conformation::symmetry::SymmetricConformation;
 
 static thread_local basic::Tracer tt( "core.pack.pack_rotamers", basic::t_info );
 
-// @begin pack_rotamers
 // @details Wraps the two very distinct and separate stages of rotamer packing, which are factored so that they may be called asynchronously.  Use this wrapper as a base model for higher-level packing routines (such as pack_rotamers_loop)
 void
 pack_rotamers(
@@ -103,7 +96,6 @@ pack_rotamers(
 	PROF_STOP ( basic::PACK_ROTAMERS );
 }
 
-// @begin pack_rotamers_loop
 // @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
 void
 pack_rotamers_loop(
@@ -117,7 +109,6 @@ pack_rotamers_loop(
 	pack_rotamers_loop( pose, scfxn, task, nloop, results );
 }
 
-// @begin pack_rotamers_loop
 // @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
 void
 pack_rotamers_loop(
@@ -132,7 +123,6 @@ pack_rotamers_loop(
 	pack_rotamers_loop( pose, scfxn, task, nloop, results, pose_list );
 }
 
-// @begin pack_rotamers_loop
 // @details run the FixbbSimAnnealer multiple times using the same InteractionGraph, storing the results
 void
 pack_rotamers_loop(
@@ -183,7 +173,6 @@ pack_rotamers_loop(
 	pose = best_pose;
 }
 
-// @begin pack_rotamers_setup
 // @details get rotamers, compute energies
 void
 pack_rotamers_setup(
@@ -279,8 +268,6 @@ setup_IG_res_res_weights(
 }//setup_IG_res_res_weights
 
 
-
-// @begin pack_rotamers_run
 // @details as simple as possible -- runs simulated annealing and then places
 // the optimal rotamers onto the backbone of the input pose.
 Real
@@ -451,7 +438,6 @@ symmetric_pack_rotamers_setup(
 }
 
 
-// @begin pack_rotamers_run
 // @details as simple as possible
 Real
 symmetric_pack_rotamers_run(

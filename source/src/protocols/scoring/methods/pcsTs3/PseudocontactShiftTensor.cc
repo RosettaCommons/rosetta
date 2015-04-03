@@ -8,11 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -22,9 +21,8 @@
  ///
  /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890 
  /// JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  ///
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 
@@ -45,7 +43,6 @@
 // C++ headers
 #include <iostream>
 
-// AUTO-REMOVED #include <iomanip>
 
 namespace protocols{
 namespace scoring{

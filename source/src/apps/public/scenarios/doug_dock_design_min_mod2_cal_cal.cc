@@ -46,18 +46,16 @@
 //   | | deciding to accept or reject the purtubations       | |
 //   | +-----------------------------------------------------+ |
 //   +---------------------------------------------------------+
-//
+
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -79,24 +77,15 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-// AUTO-REMOVED #include <protocols/loops/CCDLoopClosureMover.hh>
-
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 #include <protocols/rigid/RB_geometry.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -105,19 +94,14 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
-// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility headers
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -125,7 +109,6 @@
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
 

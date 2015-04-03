@@ -15,7 +15,6 @@
 #include <core/sequence/PairScoringScheme.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/file/FileName.fwd.hh>
 
 #include <string>

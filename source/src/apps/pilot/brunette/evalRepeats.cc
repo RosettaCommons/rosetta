@@ -246,7 +246,6 @@ Size get_helixCAInContact(const core::pose::Pose& pose,protocols::loops::Loops h
 }
 
 
-
 int main( int argc, char * argv [] ) {
     try {
 	using namespace core::chemical;

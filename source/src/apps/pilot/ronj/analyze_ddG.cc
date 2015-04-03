@@ -89,9 +89,6 @@ namespace analyze_ddG_stability {
 std::string usage_string;
 
 
-///
-/// @begin init_usage_prompt
-///
 /// @brief
 /// the usage prompt that gets printed when the user doesn't enter all the required command line arguments
 ///
@@ -117,9 +114,7 @@ void init_usage_prompt( std::string exe ) {
 
 }
 
-///
-/// @begin print_energies
-///
+
 /// @brief
 /// Helper method for the main function. Takes in a pose, the scorefunction, hpatch energies and weights and prints everything
 /// out in a pretty format.
@@ -177,9 +172,7 @@ void tokenize_string( const std::string & str, std::vector< std::string > & toke
 	}
 }
 
-///
-/// @begin main
-///
+
 /// @brief main method for the ddG protocol
 ///
 int main( int argc, char* argv[] ) {
@@ -281,9 +274,8 @@ int main( int argc, char* argv[] ) {
 	}
 
 
-	//
 	// now make the mutation pose and repack the designed position as well as neighboring positions
-	//
+
 
 	using namespace core::pack::task::operation;
 	using namespace core::pack::task;
@@ -429,7 +421,7 @@ int main( int argc, char* argv[] ) {
 		TR << "Beginning repacking/minimization of wt pose." << std::endl;
 	#endif
 
-	//
+
 	// we need to repack the entire Pose so that when we go to try the desired mutation, we don't get big effects
 	// from the other score terms. but, the energy we want to keep is the average energy of 20 repacked poses.  if we call
 	// pack_rotamers with ndruns 20, that will return only the Pose with the lowest packer energy.  what we need is a
@@ -441,7 +433,7 @@ int main( int argc, char* argv[] ) {
 	// side-chain minimization on those residues.  It's very slow to repack the entire structure and then would be
 	// prohibitively slow to minimize the entire structure.  So instead, what we need to do is make the desired mutation
 	// first and then repack/minimize the same residues that are changed in the mutant structure.
-	//
+
 
 	utility::vector1< pose::Pose > repacked_poses = utility::vector1< pose::Pose >( pack_cycles );
 
@@ -477,7 +469,6 @@ int main( int argc, char* argv[] ) {
 	average_repacked_score_wt = sum_repacked_scores_wt / repacked_poses.size();
 
 
-	//
 	// Now print out all of the score/ddG information.
 	//
 	std::cout << "\nScore summary:" << std::endl;

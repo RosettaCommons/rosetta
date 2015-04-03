@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -64,7 +63,7 @@ public:
 		ScoreFunction const & sfxn, EnergyMap const & weights
 	) const;
 
-	///@brief P_AA_Energy is context independent; indicates that no context graphs are required
+	/// @brief P_AA_Energy is context independent; indicates that no context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 

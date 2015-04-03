@@ -9,7 +9,7 @@
 
 /// @file StepWisePacker
 /// @brief Not particularly fancy, just minimizes a list of poses.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 

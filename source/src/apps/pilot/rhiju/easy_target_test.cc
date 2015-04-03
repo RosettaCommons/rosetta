@@ -186,7 +186,6 @@ OPT_1GRP_KEY(Real, backrub, mc_kt)
 OPT_1GRP_KEY(Real, backrub, mm_bend_weight)
 
 
-
 //////////////////////////////////////////////////////////////////
 Size
 read_alignment_fasta_file(
@@ -514,7 +513,6 @@ prepare_start_model( pose::Pose const & template_pose,
 		}
 
 
-
 //  			//Put on a constraint to lower the probability of this chi2 changing.
 // 			if ( pose.residue(i).nchi() > 1 ) {
 // 				id::TorsionID my_ID( i, id::CHI, 2 );
@@ -546,7 +544,6 @@ prepare_start_model( pose::Pose const & template_pose,
 	}
 
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -633,7 +630,6 @@ check_chi_correct( pose::Pose const & native_pose,
 		}
 
 	}
-
 
 
 }
@@ -1037,7 +1033,6 @@ setup_rhiju_fold_tree( pose::Pose & pose )
 		pose.set_omega( cuts(n),   start_pose.omega( cuts(n) ) );
 		pose.set_phi  ( cuts(n+1), start_pose.phi( cuts(n+1) ) );
 	}
-
 
 
 }
@@ -1805,7 +1800,6 @@ prepare_full_length_start_model(
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -1862,7 +1856,6 @@ easy_loop_model_test(){
 	//	loop_rebuilder.apply( pose );
 
 	//	protocols::LoopRemodelMover loopremodel_mover;
-
 
 
 }

@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace disulfides {
@@ -93,7 +92,6 @@ private:
 virtual
 core::Size version() const;
 };
-
 
 
 } // namespace disulfides

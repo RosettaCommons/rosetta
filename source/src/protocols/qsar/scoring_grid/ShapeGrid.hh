@@ -66,7 +66,7 @@ private:
 	/// @brief the KBP data is stored as a compressed json file in the database.  It is read during construction
 	void load_kbp_data();
 	
-	///@brief data store for the KBP data.  key is the name3 of the amino acid
+	/// @brief data store for the KBP data.  key is the name3 of the amino acid
 	/// This is being done with an unordered map to allow for constant lookup but
 	/// still allow for KBP data about NCAAs to be introduced eventually if needed
 	typedef utility::pointer::shared_ptr< core::grid::CartGrid<core::Real> > KBPGridOP;

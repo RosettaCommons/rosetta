@@ -17,7 +17,6 @@
 #define INCLUDED_core_scoring_packstat_types_hh
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include "utility/vector1.hh"
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
@@ -73,8 +72,6 @@ typedef utility::pointer::shared_ptr<PosePackData> PosePackDataOP;
 } // namespace packstat
 } // namespace scoring
 } // namespace core
-
-
 
 
 #endif

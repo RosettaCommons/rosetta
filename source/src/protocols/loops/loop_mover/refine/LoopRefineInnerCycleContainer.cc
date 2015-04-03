@@ -10,7 +10,7 @@
 /// @file protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainer.cc
 /// @brief This class is a LoopRefineInnerCycle that contains one or more other LoopRefineInnerCycles to allow a developer to
 /// quickly string together existing LoopRefineInnerCycles in new ways to create new loop refinement protocols.
-/// @detailed
+/// @details
 ///
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
@@ -47,19 +47,19 @@ using utility::excn::EXCN_Msg_Exception;
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 LoopRefineInnerCycleContainer::LoopRefineInnerCycleContainer() : LoopRefineInnerCycle()
 {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 LoopRefineInnerCycleContainer::LoopRefineInnerCycleContainer( LoopRefineInnerCycleContainer const & rhs ) : LoopRefineInnerCycle(rhs)
 {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 LoopRefineInnerCycleContainer & LoopRefineInnerCycleContainer::operator=( LoopRefineInnerCycleContainer const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -84,14 +84,14 @@ LoopRefineInnerCycleContainer::clone() const
 	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer( *this ) );
 }
 
-///@brief fresh_instance returns a default-constructed object for JD2
+/// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 LoopRefineInnerCycleContainer::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new LoopRefineInnerCycleContainer() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool LoopRefineInnerCycleContainer::reinitialize_for_new_input() const
 {
 	return true;

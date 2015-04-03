@@ -29,7 +29,6 @@
 //Boost
 
 
-
 namespace devel {
 namespace sewing {
 	

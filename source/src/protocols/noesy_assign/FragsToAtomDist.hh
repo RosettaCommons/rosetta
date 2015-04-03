@@ -11,7 +11,7 @@
 /// @brief  simulate fragments and recored atom distances
 /// @author Zaiyong Zhang (zaiyong.zhang@tum.de)
 /// @date   Thr NOV 22 13:22:31 2012
-///
+
 
 #ifndef INCLUDED_protocols_noesy_assign_FragsToAtomDist_HH
 #define INCLUDED_protocols_noesy_assign_FragsToAtomDist_HH
@@ -114,7 +114,6 @@ public:
 			? distance_record( atom1, atom2 ).average_dist6()
 			: distance_record( atom1, atom2 ).average_dist();
 	}
-
 
 
 	// compare sequence of fragment data

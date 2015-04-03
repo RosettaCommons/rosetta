@@ -18,11 +18,9 @@
 
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -199,7 +197,6 @@ ligand_dock_main_jd1()
 }
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 

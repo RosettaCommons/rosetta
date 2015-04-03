@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin BuriedUnsatisfiedPolarsCalculator
 ///
 /// @brief
 /// How many buried unsatisfied polars are there?
 ///
-/// @detailed
+/// @details
 /// Buried unsatisfied polar hbonds are destabilizing for proteins. It is good to have less.
 /// In a study of 2299 high resolution crystal structures of 1.5A or better, there was an average
 /// 71 unsatisfied buried polar hbonds. The normalized average (normalized against aa #) was 0.30 (unpublished).
@@ -34,7 +33,6 @@
 /// Florian Richter
 /// Steven Combs - comments
 ///
-/// @last_modified November 19 2010
 /////////////////////////////////////////////////////////////////////////
 /// @file   core/pose/metrics/BuriedUnsatisfiedPolarsCalculator.cc
 /// @brief  number of hbonds calculator class
@@ -50,8 +48,6 @@
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 
-
-
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -64,7 +60,6 @@
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-
 
 
 using namespace core;
@@ -165,7 +160,6 @@ BuriedUnsatisfiedPolarsCalculator::lookup(
 } //lookup
 
 
-
 std::string
 BuriedUnsatisfiedPolarsCalculator::print( std::string const & key ) const
 {
@@ -204,7 +198,6 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 
 	basic::MetricValue< id::AtomID_Map< Real > > atom_sasa;
 	basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;
-
 
 
 	this_pose.metric( name_of_hbond_calc_, "atom_Hbonds", atom_hbonds );

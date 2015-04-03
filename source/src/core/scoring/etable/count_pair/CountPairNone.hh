@@ -40,7 +40,7 @@ public:
 	CountPairNone();
 	virtual ~CountPairNone();
 
-	///@brief function required by templated functions in atom_pair_energy_inline
+	/// @brief function required by templated functions in atom_pair_energy_inline
 	// -- those functions are in fact never reached since residue_atom_pair_energy simply returns
 	// without ever doing any work.  This function is merely to mimic the style in the
 	// other count pair classes where the nblist needs to ask which pairs count: the nblist

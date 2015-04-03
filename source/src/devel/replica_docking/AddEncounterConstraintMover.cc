@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @breif  very loose AtomPair cst from the geometry center of docking partner1 to geometry center of docking
+/// @brief  very loose AtomPair cst from the geometry center of docking partner1 to geometry center of docking
 /// partner2, using in replica docking to avoid the two docking partners never meet each other after some move
 
 #include <devel/replica_docking/AddEncounterConstraintMover.hh>

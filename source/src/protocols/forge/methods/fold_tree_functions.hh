@@ -20,19 +20,16 @@
 // project headers
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -434,7 +431,6 @@ replace(
 void make_star_foldtree( core::pose::Pose & pose, protocols::loops::Loops loops);
 
 void jumps_and_cuts_from_pose( core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > & jumps, utility::vector1< core::Size > & cuts);
-
 
 
 } // methods

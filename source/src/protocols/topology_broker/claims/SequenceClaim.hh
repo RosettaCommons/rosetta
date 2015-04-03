@@ -110,7 +110,7 @@ public:
 	//		return pos_;
 	//	}
 
-	///@brief if you want to have a residue (eg., for a new ligand) you will be given a number...
+	/// @brief if you want to have a residue (eg., for a new ligand) you will be given a number...
 	//	void set_offset( core::Size pos ) {
 	//		pos_ = pos;
 	//	}

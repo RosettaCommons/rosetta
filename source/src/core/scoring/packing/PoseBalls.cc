@@ -68,7 +68,6 @@ inline std::string strip_whitespace( std::string const & name )
 }
 
 
-
 PoseBalls::PoseBalls(
 	core::pose::Pose const & pose,
 	core::Size Hmode,
@@ -356,7 +355,6 @@ PoseBalls::output_pdb( std::ostream & out ) const {
 	}
 
 }
-
 
 
 } // namespace packing

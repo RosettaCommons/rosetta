@@ -316,9 +316,9 @@ static uint32_t ini_func2(uint32_t x) {
 }
 
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class mt19937_RG : public uniform_RG
 {
@@ -380,7 +380,7 @@ public:
 		return r - 1.0; // to be on [0,1)
 	}
 
-	///@brief Serializes generator state to stream losslessly.
+	/// @brief Serializes generator state to stream losslessly.
 	virtual void saveState(std::ostream & out)
 	{
 		out << " " << is_sformat_initialized;
@@ -392,7 +392,7 @@ public:
 		}
 	}
 
-	///@brief Deserializes generator state from stream losslessly.
+	/// @brief Deserializes generator state from stream losslessly.
 	virtual void restoreState(std::istream & in)
 	{
 		in >> is_sformat_initialized;

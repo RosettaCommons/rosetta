@@ -13,7 +13,6 @@
 
 
 #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/MixtureFunc.hh>
 
 #include <core/types.hh>
@@ -21,7 +20,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -36,7 +34,6 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

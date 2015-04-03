@@ -36,7 +36,7 @@ typedef utility::pointer::shared_ptr< RamaScore > RamaScoreOP;
 typedef utility::pointer::shared_ptr< RamaScore const > RamaScoreCOP;
 
 /// @brief  RamaScore score counts identical residues
-/// @detailed Resulting score is the number of identical residues
+/// @details Resulting score is the number of identical residues
 /// on corresponding positions in a vall fragment and a query sequence
 class RamaScore: public CachingScoringMethod {
 public:
@@ -54,7 +54,7 @@ public:
 	bool cached_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map);
 
 	/// @brief prints a detailed explanation how a fragment score has been computed
-	/// @detailed besides extensive output, the method should return the same result as score()
+	/// @details besides extensive output, the method should return the same result as score()
 	bool describe_score(FragmentCandidateOP f, FragmentScoreMapOP empty_map,
 			std::ostream& out);
 

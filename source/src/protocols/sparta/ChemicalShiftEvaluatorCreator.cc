@@ -89,7 +89,6 @@ void ChemicalShiftEvaluatorCreator::add_evaluators( protocols::evaluation::MetaP
 	}
 
 
-
 }
 
 std::string ChemicalShiftEvaluatorCreator::type_name() const {

@@ -15,18 +15,14 @@
 #define INCLUDED_protocols_frag_picker_scores_InterbondAngleScore_hh
 
 #include <protocols/frag_picker/scores/InterbondAngleScore.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FourAtomsConstraintData.hh>
 #include <protocols/frag_picker/scores/AtomBasedConstraintsScore.hh>
 
 // package headers
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.fwd.hh>
@@ -42,13 +38,13 @@ class InterbondAngleScore: public AtomBasedConstraintsScore {
 public:
 
 	/// @brief Prepare an atom-based score that utilizes some user-defined atoms
-	/// @detailed User may provide names of atoms that will be cached when a new
+	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	InterbondAngleScore(Size, Real, bool, std::string, Size, utility::vector1<
 			std::string>);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
-	/// @detailed These atoms that will be cached when a new
+	/// @details These atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	InterbondAngleScore(Size, Real, bool, std::string, Size);
 

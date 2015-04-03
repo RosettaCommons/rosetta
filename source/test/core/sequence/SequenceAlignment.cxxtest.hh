@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/sequence/util.hh>
@@ -23,15 +22,10 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
 
-// AUTO-REMOVED #include <core/sequence/NWAligner.hh>
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-
-// AUTO-REMOVED #include <utility/stream_util.hh>
 
 //Auto Headers
 #include <platform/types.hh>

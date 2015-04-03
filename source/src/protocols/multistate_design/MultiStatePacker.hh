@@ -26,7 +26,6 @@
 #include <utility/vector0.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
-// AUTO-REMOVED #include <vector>
 #include <iosfwd>
 
 #include <utility/vector1.hh>

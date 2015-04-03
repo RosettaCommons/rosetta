@@ -30,14 +30,13 @@ namespace scoring {
 namespace hackaro {
 
 
-///
 class HackAroEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	HackAroEnergy();
 
 	/// clone

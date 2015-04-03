@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/SheetTopologyFilter.cc
 /// @brief filter structures by sheet topology
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -20,7 +20,6 @@
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/util.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Project Headers
 #include <core/types.hh>
@@ -33,8 +32,6 @@
 #include <basic/Tracer.hh>
 
 // Parser headers
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 

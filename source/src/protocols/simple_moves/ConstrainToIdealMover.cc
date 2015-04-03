@@ -131,13 +131,13 @@ ConstrainToIdealMover::get_name() const {
 protocols::moves::MoverOP ConstrainToIdealMover::fresh_instance() const { return protocols::moves::MoverOP( new ConstrainToIdealMover ); }
 protocols::moves::MoverOP ConstrainToIdealMover::clone() const { return protocols::moves::MoverOP( new ConstrainToIdealMover( *this ) ); }
 
-///@brief setter for AllowInsert; shallow copy
+/// @brief setter for AllowInsert; shallow copy
 void ConstrainToIdealMover::set_allow_insert( protocols::toolbox::AllowInsertCOP allow_insert ) { allow_insert_ = allow_insert; }
 
-///@brief getter for AllowInsert
+/// @brief getter for AllowInsert
 protocols::toolbox::AllowInsertCOP ConstrainToIdealMover::get_allow_insert() const { return allow_insert_; }
 
-///@details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.
+/// @details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.
 void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 	//handle mm - if we don't have a freshly externally supplied one, throw the old one out.
 	//this is not a clear() operation in case someone is still sharing the old pointer
@@ -147,7 +147,7 @@ void ConstrainToIdealMover::apply( core::pose::Pose & pose ){
 } //apply
 
 
-///@details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.  If you input a movemap via set_movemap, that movemap will be modified to free the same set of bond lengths and angles (needs some testing).
+/// @details This code will modify your input pose by adding constraints which will trend bond lengths and angles towards ideal.  If you input a movemap via set_movemap, that movemap will be modified to free the same set of bond lengths and angles (needs some testing).
 void ConstrainToIdealMover::apply( core::pose::Pose & pose, core::kinematics::MoveMap & mm ){
 	core::pose::Pose pose_reference;
 	create_pose_reference( pose, pose_reference );

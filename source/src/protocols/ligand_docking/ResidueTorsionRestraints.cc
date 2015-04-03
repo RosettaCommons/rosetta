@@ -57,7 +57,7 @@ bool ResidueTorsionRestraints::operator==(const ResidueTorsionRestraints &other)
 	return resid_==other.resid_;
 }
 
-///@details Adds constraints to all rotatable torsions except proton chis.
+/// @details Adds constraints to all rotatable torsions except proton chis.
 /// Conserves all existing constraints except ones previously added by this object.
 void ResidueTorsionRestraints::setup_constraints(core::pose::Pose & pose)
 {

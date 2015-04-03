@@ -9,7 +9,7 @@
 
 /// @file AddOrDeleteMover
 /// @brief AddOrDeletes an RNA residue from a chain terminus.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/mover/AddOrDeleteMover.hh>

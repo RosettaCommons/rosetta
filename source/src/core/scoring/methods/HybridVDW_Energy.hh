@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -37,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class HybridVDW_Energy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;

@@ -61,7 +61,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 OPT_1GRP_KEY( String, measure, D1 )
 OPT_1GRP_KEY( String, measure, D2 )
 OPT_1GRP_KEY( String, measure, D3 )
@@ -241,7 +240,6 @@ int main( int argc, char * argv [] )
 		core::Size d3ind = d3.atomno();
 		std::string d3name = pose.residue( downres ).atom_name( d3ind );
 		*/
-
 
 
 		// find the 3 closest atoms to the upstream residue atoms

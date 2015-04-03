@@ -18,7 +18,6 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/options/util.hh>
 
 #include <protocols/RotamerDump/RotamerDumpMover.hh>
 
@@ -27,13 +26,11 @@
 #include <devel/init.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
-
 
 
 //local options

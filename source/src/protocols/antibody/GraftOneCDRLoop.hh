@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftOneCDRLoop.hh
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
@@ -51,12 +51,12 @@ public:
 		benchmark_ = setting;
 	}
 
-	///@brief users can pass their own scorefunction for packing after grafting
+	/// @brief users can pass their own scorefunction for packing after grafting
 	void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn) {
 		scorefxn_ = scorefxn;
 	}
 
-	///@brief R2 just graft R2 by copying some stem residues, and remove H3 to do
+	/// @brief R2 just graft R2 by copying some stem residues, and remove H3 to do
 	///       H3 loop modeling later. But the terminal has been changed by this
 	///       grafting. Therefore, in R3, an option for not copying h3 stem is
 	///       provided.
@@ -68,10 +68,10 @@ public:
 		flank_size_=setting;
 	}
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	GraftOneCDRLoop( GraftOneCDRLoop const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	GraftOneCDRLoop & operator=( GraftOneCDRLoop const & rhs );
 
 
@@ -102,17 +102,8 @@ private:
 }; // class GraftOneCDRLoop
 
 
-
-
-
 } // antibody
 } // protocols
-
-
-
-
-
-
 
 
 #endif

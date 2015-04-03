@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/SugarInstantiator.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -57,7 +57,6 @@ private:
 }; //periodic func
 
 
-
 } // constraints
 } // scoring
 } // core

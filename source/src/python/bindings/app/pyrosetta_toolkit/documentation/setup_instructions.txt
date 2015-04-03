@@ -9,8 +9,6 @@ Setup:
 	-If sqlite3 does not work, reinstall python
 
 
-
-
 NOTE FOR DEVELOPERS:  More thorough information at: https://wiki.rosettacommons.org/index.php/PyRosetta_Toolkit
 
 Please see full documentation in the Rosetta manual.  

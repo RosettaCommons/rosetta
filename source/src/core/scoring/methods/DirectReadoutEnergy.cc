@@ -14,9 +14,7 @@
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <sstream>
-// AUTO-REMOVED #include <math.h>
 
 // Unit headers
 #include <core/scoring/methods/DirectReadoutEnergy.hh>
@@ -25,15 +23,9 @@
 // Package headers
 #include <core/scoring/dna/DirectReadoutPotential.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 //#include <core/scoring/etable/count_pair/CountPair1BC4.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/types.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
@@ -105,8 +97,6 @@ DirectReadoutEnergy::finalize_total_energy(
 }
 
 
-
-
 /// @details  Unused rsd-pair implementation
 void
 DirectReadoutEnergy::my_residue_pair_energy(
@@ -134,10 +124,6 @@ DirectReadoutEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
-
-
-
 
 
 } // ns methods

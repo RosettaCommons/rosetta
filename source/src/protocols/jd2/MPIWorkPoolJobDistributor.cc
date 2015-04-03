@@ -55,7 +55,7 @@ namespace jd2 {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	JobDistributor(),
@@ -81,13 +81,13 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 #endif
 }
 
-///@brief dtor
+/// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 MPIWorkPoolJobDistributor::~MPIWorkPoolJobDistributor()
 { }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 {
@@ -111,7 +111,7 @@ MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 }
 
 
-///@details This is the heart of the MPIWorkPoolJobDistributor. It consists of two while loops: the job
+/// @details This is the heart of the MPIWorkPoolJobDistributor. It consists of two while loops: the job
 ///distribution loop (JDL) and the node spin down loop (NSDL). The JDL has three functions. The first is to receive and
 ///process messages from the slave nodes requesting new job ids. The second is to receive and process messages from the
 ///slave nodes indicating a bad input. The third is to receive and process job_success messages from the slave nodes and
@@ -286,7 +286,7 @@ MPIWorkPoolJobDistributor::slave_go( protocols::moves::MoverOP mover )
 	go_main( mover );
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 core::Size
 MPIWorkPoolJobDistributor::get_new_job_id()
 {
@@ -352,7 +352,7 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 	return current_job_id_;
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIWorkPoolJobDistributor::mark_current_job_id_for_repetition()
 {
@@ -381,7 +381,7 @@ MPIWorkPoolJobDistributor::slave_mark_current_job_id_for_repetition()
 	repeat_job_ = true;
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIWorkPoolJobDistributor::remove_bad_inputs_from_job_list()
 {
@@ -427,7 +427,7 @@ MPIWorkPoolJobDistributor::slave_remove_bad_inputs_from_job_list()
 #endif
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real /*run_time*/, std::string const & tag)
 {

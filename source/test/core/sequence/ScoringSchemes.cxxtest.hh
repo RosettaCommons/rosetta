@@ -15,10 +15,8 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>

@@ -37,14 +37,13 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
 
 class RNA_PairwiseLowResolutionEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	RNA_PairwiseLowResolutionEnergy();
 
 

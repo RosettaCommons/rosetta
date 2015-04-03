@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 
 
-
 //Objexx headers
 
 
@@ -39,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace packing {
 
-///
+
 class SurfVolEnergy : public methods::WholeStructureEnergy  {
 public:
 	typedef methods::WholeStructureEnergy  parent;

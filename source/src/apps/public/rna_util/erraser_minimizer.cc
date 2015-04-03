@@ -166,7 +166,6 @@ check_in_bonded_list ( core::id::AtomID const & atom_id1,
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 bool
 check_in_bond_angle_list ( core::id::AtomID const & atom_id1,

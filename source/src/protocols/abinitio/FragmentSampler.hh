@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/FragmentSampler.hh
 /// @brief header file for FragmentSampler protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -30,13 +30,11 @@
 //#include <core/io/silent/SilentFileData.fwd.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -45,8 +43,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/abinitio/Protocol.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 // ObjexxFCL Headers
 
@@ -56,7 +52,6 @@
 #include <utility/exit.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -134,7 +129,7 @@ public:
 	//@brief register cmd-line options in option system ( call before core::init::init )
 	static void register_options();
 
-	///@brief This constructor does not work -- Fix it before using it.
+	/// @brief This constructor does not work -- Fix it before using it.
 	// constructor: supply mover classes for Fragment Moves
 	FragmentSampler( topology_broker::TopologyBrokerOP broker );
 
@@ -162,7 +157,7 @@ public:
 	//@brief currently used score function ( depends on stage ) -- publich
 	core::scoring::ScoreFunction const& current_scorefxn() const;
 
-//	///@brief get membrane topology information
+//	/// @brief get membrane topology information
 //	core::scoring::MembraneTopologyCOP get_membrane_topology_from_pose(core::pose::Pose const& pose);
 
 protected:

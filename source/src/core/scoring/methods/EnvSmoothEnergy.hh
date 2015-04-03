@@ -40,7 +40,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class EnvSmoothEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;

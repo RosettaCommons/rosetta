@@ -37,17 +37,17 @@ public:
 
 public:
 
-	///
+
 	ElecDensAtomwiseEnergy();
 
-	///
+
 	virtual ~ElecDensAtomwiseEnergy();
 
 	virtual
 	methods::EnergyMethodOP
 	clone() const;
 
-	///
+
 	virtual
 	void indicate_required_context_graphs ( utility::vector1< bool > & ) const {};
 
@@ -56,7 +56,7 @@ public:
 	methods::LongRangeEnergyType
 	long_range_type() const;
 
-	///
+
 	virtual
 	bool
 	defines_residue_pair_energy (
@@ -66,14 +66,13 @@ public:
 	) const;
 
 
-	///
 	virtual
 	bool
 	defines_intrares_energy ( EnergyMap const & ) const {
 		return true;
 	}
 
-	///
+
 	virtual
 	void
 	residue_pair_energy (
@@ -85,7 +84,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	void
 	eval_intrares_energy (
@@ -98,7 +96,6 @@ public:
 	}
 
 
-	///
 	virtual
 	void
 	eval_atom_derivative (
@@ -111,7 +108,7 @@ public:
 	  Vector & F2
 	) const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring (
@@ -121,7 +118,7 @@ public:
 
 	using parent::finalize_total_energy;
 
-	///
+
 	virtual
 	void
 	finalize_total_energy (

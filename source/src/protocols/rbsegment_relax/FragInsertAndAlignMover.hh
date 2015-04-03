@@ -14,19 +14,12 @@
 #ifndef INCLUDED_protocols_rbsegment_relax_FragInsertAndAlignMover_hh
 #define INCLUDED_protocols_rbsegment_relax_FragInsertAndAlignMover_hh
 
-// AUTO-REMOVED #include <protocols/rbsegment_relaxMover.hh>
 
 // Rosetta Headers
  // FIX THESE #INCLUDES! EVIL!
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <string>
 
@@ -42,7 +35,7 @@ class FragInsertAndAlignMover;
 typedef utility::pointer::shared_ptr< FragInsertAndAlignMover >  FragInsertAndAlignMoverOP;
 
 //////////////////////////////////////////////////////////
-///@brief Performs a rigid-body movement on a segment of a protein
+/// @brief Performs a rigid-body movement on a segment of a protein
 ///       Derived classes must implement 'getCoordinateTransform' and 'apply'
 /////////////////////////////////////////////////////////
 class FragInsertAndAlignMover : public protocols::moves::Mover {

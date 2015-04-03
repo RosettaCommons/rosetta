@@ -34,6 +34,3 @@ typedef utility::pointer::shared_ptr< CDRSetOptionsParser const > CDRSetOptionsP
 #endif	
 
 
-
-
-

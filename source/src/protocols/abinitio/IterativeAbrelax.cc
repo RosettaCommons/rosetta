@@ -9,7 +9,7 @@
 
 /// @file IterativeAbrelax
 /// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
@@ -116,14 +116,14 @@ bool IterativeAbrelax::still_interested( Batch const& batch ) const {
 	return ( centroid_archive_.still_interested( batch ) && ( fullatom_ && fullatom_archive_.still_interested( batch ) ) );
 }
 
-///@details ready for new batch .... if queue is empty batch will be generated any way, but otherwise we only generate if this yields true.
+/// @details ready for new batch .... if queue is empty batch will be generated any way, but otherwise we only generate if this yields true.
 ///  logic here: new batch at beginning, but only if we are in startup phase ( not a reload of a full archive )
 ///              otherwise make new batch if sufficiently many structures have been accepted since last batch
 // bool IterativeAbrelax::ready_for_batch() const {
 // 	return centroid_archive_.ready_for_batch() || ( fullatom_ && fullatom_archive_.ready_for_batch() );
 // }
 
-///@details generate new batch...
+/// @details generate new batch...
 /// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
 /// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
 ///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )
@@ -197,7 +197,6 @@ bool IterativeAbrelax::restore_from_file() {
 void IterativeAbrelax::init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) {
 	centroid_archive_.init_from_decoy_set( sfd );
 }
-
 
 
 } //abinitio

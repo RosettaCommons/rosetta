@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/SugarInstantiator.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -69,7 +69,6 @@ namespace screener {
 			restore_mover->add_mover( 0 );
 		}
 	}
-
 
 
 } //screener

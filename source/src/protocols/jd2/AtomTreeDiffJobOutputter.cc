@@ -26,7 +26,6 @@
 #include <core/svn_version.hh>
 #include <basic/options/option.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
 
 // option key includes
@@ -123,7 +122,7 @@ AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose, 
 
 }
 
-///@brief Appends pose to atom tree diff file
+/// @brief Appends pose to atom tree diff file
 void
 AtomTreeDiffJobOutputter::dump_pose(
 	std::string const & tag,
@@ -218,7 +217,7 @@ AtomTreeDiffJobOutputter::set_precision(int bb_precision, int sc_precision, int 
   bondlen_precision_ = bondlen_precision;
 }
 
-///@brief use input as reference pose?
+/// @brief use input as reference pose?
 void
 AtomTreeDiffJobOutputter::use_input_for_ref(bool use_input) {
 	// Reset reference tag, in case we're changing course midstream

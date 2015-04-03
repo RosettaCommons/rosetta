@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file GridSearchIterator.fwd.hh
  ///
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  /// ,
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs3_GridSearchIterator_fwd_hh

@@ -23,7 +23,6 @@
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 

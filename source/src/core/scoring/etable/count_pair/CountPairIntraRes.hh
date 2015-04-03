@@ -17,7 +17,6 @@
 #define INCLUDED_core_scoring_etable_count_pair_CountPairIntraRes_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -51,7 +50,7 @@ public:
 
 	virtual ~CountPairIntraRes();
 
-	///@brief function required by templated functions in atom_pair_energy_inline
+	/// @brief function required by templated functions in atom_pair_energy_inline
 	inline
 	bool
 	operator () (

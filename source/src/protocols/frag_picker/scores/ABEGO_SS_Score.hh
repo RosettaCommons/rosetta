@@ -18,14 +18,12 @@
 #include <core/types.hh>
 
 // package headers
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 
 #include <protocols/frag_picker/quota/ABEGO_SS_Config.hh>
 #include <protocols/frag_picker/quota/ABEGO_SS_Map.hh>
 
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 #include <utility/vector1.hh>
 

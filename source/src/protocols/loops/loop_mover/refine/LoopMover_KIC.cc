@@ -32,12 +32,11 @@
 // added by Rebecca Alford - fixes the build? 
 #include <core/conformation/ppo_torsion_bin.hh>
 
-//
+
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/optimization/AtomTreeMinimizer.hh>
 //#include <core/optimization/MinimizerOptions.hh>
@@ -49,7 +48,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -81,7 +79,6 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <fstream>
 
 //Auto Headers
@@ -306,7 +303,6 @@ void LoopMover_Refine_KIC::apply(
 	min_mover->cartesian( use_cartmin );
 
 
-
 	// show temps
 	tr() << "refine init temp: " << init_temp << std::endl;
 	tr() << "refine final temp: " << final_temp << std::endl;
@@ -441,7 +437,6 @@ void LoopMover_Refine_KIC::apply(
 			min_scorefxn->set_weight( rama2b, orig_min_rama2b_weight/(outer_cycles + 1) );
 		}
 	}
-
 
 
 	// perform initial repack trial
@@ -718,7 +713,6 @@ void LoopMover_Refine_KIC::apply(
 						pose.update_residue_neighbors(); // to update 10A nbr graph
 					}
 					//pack::pack_rotamers_loop( pose, *local_scorefxn, rottrials_packer_task, num_rot_trials ); // can we use this instead? is this really RT, or actual packing?
-
 
 
 					// AS: for non-legacy-KIC one might consider putting this into an ELSE branch -- however, min_after_repack_ defaults to false, in which case we wouldn't have minimization here, which could strongly affect the likelihood of acceptance

@@ -19,21 +19,16 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/pack/task/ResfileReader.hh>
 
 #include <string>
 #include <sstream> //stringstreams can convert integers into strings type-safely for comparisons en masse
-// AUTO-REMOVED #include <iterator>
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>
@@ -340,7 +335,6 @@ public:
 //			compare_input_output( directory, *input_it );
 //		}
 //	}
-//
 
 
 	void test_resid_parsing(){

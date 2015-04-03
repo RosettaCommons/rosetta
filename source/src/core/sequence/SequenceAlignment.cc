@@ -23,7 +23,6 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <numeric>
 #include <iostream>
 #include <string>
 
@@ -98,7 +97,6 @@ Real SequenceAlignment::score( std::string const & name ) const {
 void SequenceAlignment::score( std::string const & name, Real const value ) {
 	scores_[name] = value;
 }
-
 
 
 std::string SequenceAlignment::to_string() const {

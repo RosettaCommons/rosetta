@@ -30,7 +30,6 @@
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
@@ -59,7 +58,6 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 
@@ -194,8 +192,6 @@ private:
 ////////////////////////////////////////////////////////////////
 
 ///
-/// @begin IterativeOptEDriver::IterativeOptEDriver()
-///
 /// @brief
 /// Main constructor for the IterativeOptEDriver class.  Note that mpi_rank and mpi_nprocs get set even if
 /// USEMPI is not defined.  These values are then used to set MPI_rank_ and MPI_nprocs_.
@@ -281,9 +277,6 @@ IterativeOptEDriver::IterativeOptEDriver() :
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::~IterativeOptEDriver()
 ///
 IterativeOptEDriver::~IterativeOptEDriver() {}
 
@@ -293,8 +286,6 @@ IterativeOptEDriver::task_factory( core::pack::task::TaskFactoryCOP tf )
 	task_factory_ = core::pack::task::TaskFactoryOP( new core::pack::task::TaskFactory( *tf ) );
 }
 
-///
-/// @begin IterativeOptEDriver::read_tagfile_to_taskfactory()
 ///
 /// @brief
 /// Reads in an XML formatted task operation and puts builds a task factory from it.
@@ -312,11 +303,9 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 }
 
 ///
-/// @begin IterativeOptEDriver::load_pose()
-///
 /// @brief
 /// loads structure into pose - decides between silent or pdb
-///
+
 
 // PTC - this is a quick and dirty function to intercept the file name intended for pose_from_pdb and retrieve it from a silent file instead
 // it dramatically speeds up decoy discrimination (more than 70% of the time is spent on loading pdbs!)
@@ -361,8 +350,6 @@ IterativeOptEDriver::load_pose( pose::Pose & pose, std::string const & filename,
 	}
 }
 
-///
-/// @begin IterativeOptEDriver::divide_up_pdbs()
 ///
 /// @brief
 /// The head node has to send out to all the work nodes the list of pdb files they have to do their thing on.
@@ -820,9 +807,6 @@ IterativeOptEDriver::divide_up_pdbs()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_rotamer_energies()
 ///
 /// @brief
 ///
@@ -898,9 +882,6 @@ IterativeOptEDriver::exit_gracefully()
 		exit( 0 );
 }
 
-
-///
-/// @begin IterativeOptEDriver::setup_derived_free_and_fixed_data()
 ///
 /// @brief
 /// include_terms_ is an EnergyMap, as well.  I think this function sets up the free and fixed score lists which are just
@@ -933,9 +914,6 @@ IterativeOptEDriver::setup_derived_free_and_fixed_data()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 ///
 /// @brief
 /// Computes the rotamer energies for all positions for all pdbs given (in the call to get_nat_aa_opte_data()).
@@ -1057,9 +1035,6 @@ IterativeOptEDriver::compute_rotamer_energies_for_assigned_pdbs()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::load_pssm_data
 ///
 void
 IterativeOptEDriver::load_pssm_data(
@@ -1108,7 +1083,6 @@ IterativeOptEDriver::load_pssm_data(
 
 #ifdef USEMPI
 ///
-/// @begin IterativeOptEDriver::send_string_to_node
 ///
 /// @brief
 /// Takes a std::string and a destination and constructs the MPI_Send call.
@@ -1122,8 +1096,6 @@ IterativeOptEDriver::send_string_to_node( int destination, std::string const & s
 	MPI_Send( const_cast< char * > (string_to_send.c_str()), len, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
 }
 
-///
-/// @begin IterativeOptEDriver::receive_string_to_node
 ///
 /// @brief
 /// Receive a string from the master node.  First find out how long the message is, then allocate space for it and
@@ -1147,8 +1119,6 @@ IterativeOptEDriver::receive_string_from_node( int source )
 
 #endif
 
-///
-/// @begin IterativeOptEDriver::send_rotamer_energies_to_master_cpu()
 ///
 /// @brief
 /// Used by all slave nodes; sends the rotamer energies (according to the protocol we've set up here) to the master node.
@@ -1190,9 +1160,6 @@ IterativeOptEDriver::send_rotamer_energies_to_master_cpu()
 #endif
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_rotamer_energies_from_slave_cpus()
 ///
 /// @brief
 /// Helper method for collecting energies. Calls collect_rotamer_energies_from_slave_cpu for all CPU's being used.
@@ -1218,9 +1185,6 @@ void IterativeOptEDriver::collect_rotamer_energies_from_slave_cpus()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_decoy_discrimination_data()
 ///
 /// @brief
 /// Collect optE data for decoy discrimination. Similar to the get_nat_aa_opte_data method.
@@ -1477,9 +1441,6 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::single_structure_data_for_pose()
 ///
 SingleStructureDataOP
 IterativeOptEDriver::single_structure_data_for_pose(
@@ -1506,9 +1467,6 @@ IterativeOptEDriver::single_structure_data_for_pose(
 	return ssd;
 }
 
-
-///
-/// @begin IterativeOptEDriver::add_structure_based_on_rms()
 ///
 /// @details Returns 1 if added as intended, 0 if not added at all, and -1 if added in the opposite of its intention.
 ///
@@ -1578,9 +1536,6 @@ IterativeOptEDriver::add_structure_based_on_rms(
 	return ADDED_STRUCTURE_AS_INTENDED;
 }
 
-
-///
-/// @begin IterativeOptEDriver::compute_rotamers_around_ligands()
 ///
 /// @brief
 /// Ligand stuff.
@@ -1652,9 +1607,6 @@ IterativeOptEDriver::compute_rotamers_around_ligands()
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_ligand_discrimination_data()
 ///
 /// @brief
 /// Ligand stuff.
@@ -1811,8 +1763,6 @@ IterativeOptEDriver::collect_ligand_discrimination_data()
 }
 
 ///
-/// @begin IterativeOptEDriver::score_ligand_interface()
-///
 /// @brief
 /// Ligand stuff.
 ////
@@ -1844,9 +1794,6 @@ IterativeOptEDriver::score_ligand_interface( core::scoring::ScoreFunction const 
 	return emap;
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_rotamer_energies_from_slave_cpu()
 ///
 /// @brief
 /// For a calling master node, collects the rotamer energies that were calculated on a slave CPU.
@@ -1923,9 +1870,6 @@ Size IterativeOptEDriver::num_outer_iterations() const {
 
 Size IterativeOptEDriver::num_inner_iterations() const { return 6; }
 
-
-///
-/// @begin IterativeOptEDriver::intialize_free_and_fixed_energy_terms()
 ///
 /// @brief
 /// Calls the method initialize_free_and_fixed() which reads in the files free and fixed and sets the EnergyMap vectors
@@ -1960,9 +1904,6 @@ void IterativeOptEDriver::intialize_free_and_fixed_energy_terms() {
 	setup_derived_free_and_fixed_data();
 }
 
-
-///
-/// @begin IterativeOptEDriver::optimize_weights()
 ///
 /// @brief
 /// Optimizes weights using either a standard minimizer or a ParticleSwarmMinimizer (which is significantly better!).
@@ -2537,9 +2478,6 @@ IterativeOptEDriver::score_position_data()
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::write_new_scorefile()
 ///
 /// @brief
 /// send new score file via MPI instead of writing to disk.
@@ -2868,8 +2806,6 @@ void IterativeOptEDriver::write_new_scorefile()
 }
 
 ///
-/// @begin IterativeOptEDriver::output_weighted_unfolded_energies
-///
 /// @brief Multiply out the unweighted unfolded energies with the current free and fixed term weights
 ///
 /// @details
@@ -2953,8 +2889,6 @@ IterativeOptEDriver::output_weighted_unfolded_energies() {
 }
 
 ///
-/// @begin IterativeOptEDriver::free_terms_energy_map_from_dofs
-///
 /// @brief Expand free variables and combine with fixed to make an Energy Map
 ///
 /// @details This dofs Multivec is the list of weights that the OptEMultifunc
@@ -2979,9 +2913,6 @@ IterativeOptEDriver::free_terms_energy_map_from_dofs(
 	return return_map;
 }
 
-
-///
-/// @begin IterativeOptEDriver::free_weights_and_refEs_from_vars
 ///
 void
 IterativeOptEDriver::free_weights_and_refEs_from_vars(
@@ -3000,9 +2931,6 @@ IterativeOptEDriver::free_weights_and_refEs_from_vars(
 	weights = free_terms_energy_map_from_dofs( vars );
 }
 
-
-///
-/// @begin IterativeOptEDriver::configure_new_scorefunction
 ///
 /// @brief
 /// Sets functional forms (e.g. soft-rep) but doesn't set any weights.
@@ -3052,9 +2980,6 @@ IterativeOptEDriver::configure_new_scorefunction() const
 	return scorefxn;
 }
 
-
-///
-/// @begin IterativeOptEDriver::create_unweighted_scorefunction
 ///
 /// @brief
 /// Takes a std::string and a destination and constructs the MPI_Send call.  Does this include the reference energy
@@ -3092,9 +3017,6 @@ IterativeOptEDriver::create_weighted_scorefunction() const
 	return sfxn;
 }
 
-
-///
-/// @begin IterativeOptEDriver::get_scorefile_name()
 ///
 /// @remarks
 /// IMPORTANT IMPORTANT IMPORTANT: requires weightdir having been created before launching the program.
@@ -3108,8 +3030,6 @@ IterativeOptEDriver::get_scorefile_name()
 	return scorefile_name;
 }
 
-///
-/// @begin IterativeOptEDriver::test_sequence_recovery()
 ///
 /// @brief
 /// Calls run_design on all pdbs and collects the results from slave cpus if MPI is in use.
@@ -3136,9 +3056,6 @@ void IterativeOptEDriver::test_sequence_recovery()
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus()
 ///
 /// @brief
 /// Helper method for master node.  Calls collect_recovery_data_from_slave_cpu on all slave CPUs.
@@ -3187,9 +3104,6 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpus() {
 	//TR << "Cross Entropy: " << cross_entropy << std::endl;
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpu()
 ///
 void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpu(
 #ifdef USEMPI
@@ -3221,10 +3135,6 @@ void IterativeOptEDriver::collect_sequence_recovery_data_from_slave_cpu(
 #endif
 }
 
-
-
-///
-/// @begin IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpus()
 ///
 /// @brief
 /// Helper method for master node.  Calls collect_rotamer_recovery_data_from_slave_cpu on all slave CPUs.
@@ -3244,9 +3154,6 @@ void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpus()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpu()
 ///
 void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpu(
 #ifdef USEMPI
@@ -3268,9 +3175,6 @@ void IterativeOptEDriver::collect_rotamer_recovery_data_from_slave_cpu(
 #endif
 }
 
-
-///
-/// @begin IterativeOptEDriver::run_design_on_assigned_pdbs()
 ///
 /// @brief
 /// Runs design on the pdbs assigned to this node/cpu.
@@ -3344,9 +3248,6 @@ void IterativeOptEDriver::run_design_on_assigned_pdbs()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::repack_assigned_pdbs()
 ///
 void IterativeOptEDriver::repack_assigned_pdbs()
 {
@@ -3387,9 +3288,6 @@ void IterativeOptEDriver::repack_assigned_pdbs()
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::send_recovery_data_to_master_cpu()
 ///
 void IterativeOptEDriver::send_sequence_recovery_data_to_master_cpu()
 {
@@ -3411,8 +3309,6 @@ void IterativeOptEDriver::send_sequence_recovery_data_to_master_cpu()
 }
 
 ///
-/// @begin IterativeOptEDriver::send_rotamer_recovery_data_to_master_cpu()
-///
 void IterativeOptEDriver::send_rotamer_recovery_data_to_master_cpu()
 {
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::centroid_input ] ) return;
@@ -3423,9 +3319,6 @@ void IterativeOptEDriver::send_rotamer_recovery_data_to_master_cpu()
 #endif
 }
 
-
-///
-/// @begin IterativeOptEDriver::decide_if_sequence_recovery_improved()
 ///
 /// @brief
 /// The final function call of the go() method.  After all the pdbs have been designed and repacked, and the recovery
@@ -3551,8 +3444,6 @@ bool IterativeOptEDriver::decide_if_sequence_recovery_improved()
 }
 
 ///
-/// @begin IterativeOptEDriver::go()
-///
 /// @brief
 /// Main loop for the optE protocol.  This is function the apps call to do optE.
 ///
@@ -3599,9 +3490,6 @@ IterativeOptEDriver::barrier()
 	std::cout.flush();
 }
 
-
-///
-/// @begin IterativeOptEDriver::get_native_pdb_names
 ///
 /// @brief
 /// Reads in the list of pdb file names to use for the optimization. Uses basic::options::start_file which returns a vector1 of strings.
@@ -3629,9 +3517,6 @@ IterativeOptEDriver::get_native_pdb_names()
 	return filenames;
 }
 
-
-///
-/// @begin IterativeOptEDriver::get_nat_aa_opte_data
 ///
 /// @brief
 /// This function is the heart of the optE protocol.
@@ -3816,8 +3701,6 @@ IterativeOptEDriver::get_nat_aa_opte_data(
 }
 
 ///
-/// @begin IterativeOptEDriver::get_nat_rot_opte_data
-///
 /// @brief
 /// Similar to get_nat_aa_opte_data.  See comments there for more info.
 ///
@@ -3986,9 +3869,6 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::set_aa_periodicity
 ///
 /// @remarks Andrew?
 ///
@@ -4034,9 +3914,6 @@ IterativeOptEDriver::set_aa_periodicity( PNatRotOptEPositionDataOP pos_data, cor
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy
 ///
 /// @details Precondition: pose must have been scored
 ///
@@ -4065,9 +3942,6 @@ IterativeOptEDriver::residue_has_unacceptably_bad_dunbrack_energy( core::pose::P
 	return false;
 }
 
-
-///
-/// @begin IterativeOptEDriver::residue_has_bad_bfactor
 ///
 /// @details pose must have been read from a pdb.
 ///
@@ -4088,8 +3962,6 @@ IterativeOptEDriver::residue_has_bad_bfactor( core::pose::Pose const & pose, Siz
 	return false;
 }
 
-///
-/// @begin IterativeOptEDriver::make_simple_ssd_from_pdb()
 ///
 /// @brief
 /// Helper function to reduce code duplication.
@@ -4126,9 +3998,6 @@ IterativeOptEDriver::make_simple_ssd_from_pdb( std::string const & pdb_filename,
 	return ssd;
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_dG_of_binding_data()
 ///
 /// @brief
 /// dG optimization optE data collection.
@@ -4161,9 +4030,6 @@ IterativeOptEDriver::collect_dG_of_binding_data()
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::collect_ddG_of_mutation_data()
 ///
 /// @brief
 /// ddG optimization optE data collection.
@@ -4292,7 +4158,7 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 
 			for ( Size jj = 1; jj <= wt_pdb_names.size(); ++jj ) {
 
-				//
+
 				// since a given wt protein might have a few hundred characterized mutants, there's no point in scoring the
 				// wild type structure for each of those hundred mutants. we can score the wt once and save that score for
 				// all of the mutants of that structure.  ingenious time-saver thanks to APL.  -ronj
@@ -4513,8 +4379,6 @@ IterativeOptEDriver::collect_ddG_of_mutation_data()
 	}
 }
 
-///
-/// @begin IterativeOptEDriver::collect_ddG_of_binding_data()
 ///
 /// @brief
 /// The calculations for ddG of binding for interfaces doesn't really fit with the ddG stability and dG binding
@@ -4830,9 +4694,6 @@ IterativeOptEDriver::collect_ddG_of_binding_data()
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::zero_aa_counts()
 ///
 /// @brief
 /// Set the counts for the amino acid frequencies (observed and expected) to zero.
@@ -4845,9 +4706,6 @@ IterativeOptEDriver::zero_aa_counts() {
 	std::fill( aa_freq_exp_.begin(), aa_freq_exp_.end(), 0.0 );
 }
 
-
-///
-/// @begin IterativeOptEDriver::measure_sequence_recovery()
 ///
 /// @detail iterate across all the native pdbs,
 ///
@@ -4998,9 +4856,6 @@ IterativeOptEDriver::measure_sequence_recovery(
 	return recovery;
 }
 
-
-///
-/// @begin IterativeOptEDriver::measure_rotamer_recovery()
 ///
 Real
 IterativeOptEDriver::measure_rotamer_recovery(
@@ -5102,10 +4957,6 @@ IterativeOptEDriver::measure_rotamer_recovery(
 	return recovery;
 }
 
-
-
-///
-/// @begin IterativeOptEDriver::opte_weight_mixing_factor
 ///
 Real
 IterativeOptEDriver::opte_weight_mixing_factor( Size outer_loop_counter, Size inner_loop_counter )
@@ -5119,8 +4970,6 @@ IterativeOptEDriver::opte_weight_mixing_factor( Size outer_loop_counter, Size in
 	}
 }
 
-///
-/// @begin IterativeOptEDriver::initialize_free_and_fixed()
 ///
 /// @brief
 /// Reads in the files specified by opt_e::free and opt_e::fixed. Figures out what ScoreType the user placed on each line of the file
@@ -5267,9 +5116,6 @@ IterativeOptEDriver::initialize_free_and_fixed( core::scoring::EnergyMap & free_
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::converged
 ///
 /// @brief
 /// This function is not used.
@@ -5331,9 +5177,6 @@ IterativeOptEDriver::write_parameters_to_std_out( core::scoring::EnergyMap & fre
 
 }
 
-
-///
-/// @begin IterativeOptEDriver::setup_pdbnames_next_round
 ///
 /// @detail
 /// This method takes the filenames from the current round and creates new filenames based on what iteration of the
@@ -5393,9 +5236,6 @@ IterativeOptEDriver::repack_and_minimize_pose(
 	( *sfxn )( pose );
 }
 
-
-///
-/// @begin IterativeOptEDriver::load_component_weights()
 ///
 /// @details input file should be white-space delimited component-name/weight pairs.
 ///
@@ -5444,9 +5284,6 @@ load_component_weights(
 	}
 }
 
-
-///
-/// @begin copy_native_packertask_logic
 ///
 /// @brief
 /// Copies the logic in the native task factory from the native_pose
@@ -5471,8 +5308,6 @@ IterativeOptEDriver::copy_native_packertask_logic(core::pose::Pose native_pose,
 }
 
 ///
-/// @begin attach_debugger
-///
 /// @brief for parallel applications.  Wait at a specific point and stay there until
 /// you can attach a gdb process (with the --pid <ID> flag in gdb) and internally
 /// modify the variable "i" to some non-zero value with a "set var i = 7" command.
@@ -5489,9 +5324,6 @@ void attach_debugger()
 #endif
 }
 
-
-///
-/// @begin IterativeOptEDriver::node_name()
 ///
 std::string
 IterativeOptEDriver::node_name( int rank ) {
@@ -5505,9 +5337,6 @@ IterativeOptEDriver::node_name( int rank ) {
 	}
 }
 
-
-///
-/// @begin IterativeOptEDriver::print_energies()
 ///
 void
 IterativeOptEDriver::print_energies(

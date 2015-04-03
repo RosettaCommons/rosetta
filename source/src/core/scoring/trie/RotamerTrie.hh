@@ -44,7 +44,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 // Numeric Headers
@@ -1191,7 +1190,6 @@ private: // Functions
 		trie_[ trie_atom_id ] = TrieNode< AT, CPDATA >( rdatom.atom(), rdatom.cp_data() );
 		return;
 	}
-
 
 
 	void compute_max_branch_depth()

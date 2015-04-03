@@ -10,7 +10,7 @@
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com)
-///
+
 
 // Unit Headers
 #include <protocols/ligand_docking/StartFrom.hh>
@@ -73,7 +73,7 @@ StartFromCreator::mover_name()
 	return "StartFrom";
 }
 
-///@brief
+/// @brief
 StartFrom::StartFrom():
 		//utility::pointer::ReferenceCount(),
 		Mover("StartFrom"),
@@ -104,7 +104,7 @@ std::string StartFrom::get_name() const{
 	return "StartFrom";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 StartFrom::parse_my_tag(
 		utility::tag::TagCOP tag,

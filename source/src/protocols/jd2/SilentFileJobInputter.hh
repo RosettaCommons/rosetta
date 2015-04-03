@@ -32,7 +32,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details This is the simplest implementation of JobInputter, which reads from -s/-l and SilentFile files.
+/// @details This is the simplest implementation of JobInputter, which reads from -s/-l and SilentFile files.
 class SilentFileJobInputter : public protocols::jd2::JobInputter
 {
 public:

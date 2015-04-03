@@ -100,7 +100,7 @@ namespace pockets {
 
 	public:
 
-    ///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+    /// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
     virtual ~FingerprintBase();
 
   };

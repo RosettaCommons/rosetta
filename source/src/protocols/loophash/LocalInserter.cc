@@ -12,11 +12,9 @@
 /// @author Mike Tyka
 
 #include <protocols/loophash/LocalInserter.hh>
-// AUTO-REMOVED #include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/loops/Loop.hh>
@@ -46,7 +44,7 @@ static thread_local basic::Tracer TR( "LocalInserter" );
 LocalInserter::~LocalInserter() {}
 
 
-///@brief set the score function for the first round of minimization
+/// @brief set the score function for the first round of minimization
 ///during a loophash insert
 void
 LocalInserter_SimpleMin::scorefxn_rama_cst(
@@ -55,7 +53,7 @@ LocalInserter_SimpleMin::scorefxn_rama_cst(
 	scorefxn_rama_cst_=scorefxn.clone();
 }
 
-///@brief set the score function for the second round of minimization
+/// @brief set the score function for the second round of minimization
 ///during a loophash insert
 void
 LocalInserter_SimpleMin::scorefxn_cen_cst(
@@ -165,12 +163,10 @@ LocalInserter_SimpleMin::make_local_bb_change_close_gaps(
 	//scorefxn_cen_cst->show( TR.Info, *newpose );
 
 
-
 	// get final RMS
 	// since we're closing gaps, we only want to make sure the rmsd of the non loophash region is under some cutoff
 	core::Real final_rms = core::scoring::CA_rmsd( newpose, original_pose, 1, original_pose.total_residue(), excluded_res );
 	TR.Debug << "Premin RMS: " << premin_rms << "Min Score3 " << "Final RMS: " << final_rms << std::endl;
-
 
 
 	core::Real final_score = scorefxn_cen_cst_->score(newpose);
@@ -243,7 +239,5 @@ LocalInserter_SimpleMin::set_default_score_functions(){
 
 } // namespace loophash
 } // namespace protocols
-
-
 
 

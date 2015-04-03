@@ -24,5 +24,4 @@ class ClassicGrid;
 }
 
 
-
 #endif /* CLASSICGRID_FWD_HH_ */

@@ -10,7 +10,7 @@
 /// @file features_database_schema.cc
 /// @brief simple application for interconverting Rosetta recognized structure formats
 /// @author Matthew O'Meara
-///
+
 
 // Project Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>

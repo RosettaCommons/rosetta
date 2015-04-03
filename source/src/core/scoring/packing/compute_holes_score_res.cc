@@ -12,18 +12,13 @@
 /// @author Will Sheffler
 
 //Unit headers
-// AUTO-REMOVED #include <core/scoring/packing/HolesEnergyRes.hh>
 
 #include <core/scoring/packing/PoseBalls.hh>
 
 //Package headers
 
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/options/option.hh>
 
 #include <core/scoring/packing/compute_holes_score_res.hh>
@@ -35,7 +30,6 @@
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -59,14 +53,9 @@
 #include <core/conformation/Residue.hh>
 
 
-
-
-
-
 namespace core {
 namespace scoring {
 namespace packing {
-
 
 
 Real
@@ -287,7 +276,6 @@ compute_holes_deriv_res(
 ) {
 	return compute_holes_deriv_res( pose, PoseBalls(pose), params, derivs );
 }
-
 
 
 }

@@ -27,7 +27,6 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 
-
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 //#include <protocols/relax/SequenceRelax.hh>
@@ -112,7 +111,6 @@ unsigned int hd(const std::string& s1, const std::string& s2); // hamming distan
 static thread_local basic::Tracer TR( "flexibleLoopDesign" );
 
 
-
 int main( int argc, char * argv[] ) {
     try {
   // init option system
@@ -173,7 +171,6 @@ int main( int argc, char * argv[] ) {
 
 	}
       }
-
 
 
     }
@@ -363,7 +360,6 @@ int main( int argc, char * argv[] ) {
 	  }
 
 
-
 	  // Design/Repack a large number of positions (default 20 outer_iterations, inner_iterations 6443 with 22 designable positions)
 	  pack_mover->apply(pose);
 
@@ -461,7 +457,6 @@ int main( int argc, char * argv[] ) {
                                   }
         return 0;
 }
-
 
 
 double annealTemperature(double initialTemp, double finalTemp, int step, int totalsteps, int numAnnealCycles){

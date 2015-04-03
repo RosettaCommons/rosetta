@@ -166,8 +166,8 @@ outer_product( xyzVector< T > const & a, xyzVector< T > const & b )
 //Averages
 
 
-///@brief geometric center
-///@note compute the geometric center of a list of points
+/// @brief geometric center
+/// @note compute the geometric center of a list of points
 /*
 template<typename T>
 inline
@@ -211,7 +211,6 @@ inverse( xyzMatrix< T > const & a ) {
 		 (a.yx_*a.zy_-a.zx_*a.yy_)/D, -(a.xx_*a.zy_-a.xy_*a.zx_)/D,  (a.xx_*a.yy_-a.xy_*a.yx_)/D
 	);
 }
-
 
 
 // Angles
@@ -480,7 +479,6 @@ inline double dihedral_degrees_double(
 									  ) { return dihedral_degrees(p1, p2, p3, p4); }
 
 
-
 /// @brief Dihedral (torsion) angle in degrees: angle value passed
 /// @note  This is a Rosetta++ compatibility version that operates in degrees
 template< typename T >
@@ -506,7 +504,6 @@ inline void dihedral_double(
 	xyzVector< double > const & p4,
 	double & angle // Angle (degrees)
 									) { dihedral(p1, p2, p3, p4, angle); }
-
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value returned
@@ -1100,7 +1097,7 @@ spherical_to_xyz(sphericalVector<T> const & spherical)
 }
 
 
-///@brief convert a string of comma separated values "0.2,0.4,0.3" to an xyzVector
+/// @brief convert a string of comma separated values "0.2,0.4,0.3" to an xyzVector
 template<typename T>
 inline
 xyzVector<T>
@@ -1117,7 +1114,7 @@ comma_seperated_string_to_xyz(std::string triplet)
 }
 
 
-///@brief convert a vector1 of xyzVectors to an FArray2D
+/// @brief convert a vector1 of xyzVectors to an FArray2D
 template<typename T>
 inline
 ObjexxFCL::FArray2D<T>
@@ -1133,7 +1130,7 @@ vector_of_xyzvectors_to_FArray(utility::vector1< xyzVector<T> > const & input)
 	return output;
 }
 
-///@brief convert an FArray2D to a vector of xyzVectors
+/// @brief convert an FArray2D to a vector of xyzVectors
 template<typename T>
 inline
 utility::vector1< xyzVector<T> >
@@ -1151,7 +1148,7 @@ FArray_to_vector_of_xyzvectors(ObjexxFCL::FArray2D<T> const & input)
 	return output;
 }
 
-///@brief convert a 3x3 FArray 2D to an xyzMatrix
+/// @brief convert a 3x3 FArray 2D to an xyzMatrix
 template<typename T>
 inline
 numeric::xyzMatrix<T>
@@ -1166,7 +1163,7 @@ FArray_to_xyzmatrix(ObjexxFCL::FArray2D<T> const & input)
 	);
 }
 
-///@brief convert an xyzMatrix to a 3x3 FArray 2D
+/// @brief convert an xyzMatrix to a 3x3 FArray 2D
 template<typename T>
 inline
 ObjexxFCL::FArray2D<T> xyzmatrix_to_FArray(numeric::xyzMatrix<T> const & input)
@@ -1187,7 +1184,6 @@ ObjexxFCL::FArray2D<T> xyzmatrix_to_FArray(numeric::xyzMatrix<T> const & input)
 }
 
 } // namespace numeric
-
 
 
 #endif // INCLUDED_numeric_xyz_functions_HH

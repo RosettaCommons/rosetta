@@ -353,7 +353,7 @@ private:
 	core::chemical::ResidueGraph const & graph_;
 	core::chemical::ResidueType const & restype_;
 };
-///@brief
+/// @brief
 /// Doing a depth first search here because that's what molfile_to_params.py does:
 /// "Protein residues appear to go depth first, so that all chi angles ride on each other."
 /// RM: Doing a breadth first search would likely result in a shallower tree, but with possibly

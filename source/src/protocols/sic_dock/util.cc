@@ -235,7 +235,6 @@ int flood_fill3D(int i, int j, int k, ObjexxFCL::FArray3D<double> & grid, double
 }
 
 
-
 // void
 // termini_exposed(
 // 	core::pose::Pose const & pose,
@@ -437,8 +436,6 @@ Vec center_of_geom(core::pose::Pose const & pose, Size str, Size end) {
 	c /= Real(end-str+1);
 	return c;
 }
-
-
 
 
 core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, core::conformation::Residue const & fixd_resi) {

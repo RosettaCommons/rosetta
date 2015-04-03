@@ -26,23 +26,16 @@
 #include <platform/types.hh>
 
 #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/optimization/DOF_Node.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/packer_neighbors.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -50,12 +43,6 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>
 

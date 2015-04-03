@@ -12,7 +12,6 @@
 /// @author TJ Brunette
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_IntraRepeatContactFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_IntraRepeatContactFilter_fwd_hh
 

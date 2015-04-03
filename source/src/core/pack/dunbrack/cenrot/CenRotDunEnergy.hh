@@ -38,13 +38,13 @@ namespace cenrot {
 //using namespace scoring;
 //using namespace scoring::methods;
 
-///
+
 class CenRotDunEnergy : public scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef scoring::methods::ContextIndependentOneBodyEnergy  parent;
 public:
 
-	///
+
 	CenRotDunEnergy();
 
 

@@ -11,7 +11,7 @@
 /// @brief  set of fragments
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_FragID_Iterator_FWD_HH
 #define INCLUDED_core_fragment_FragID_Iterator_FWD_HH

@@ -46,8 +46,6 @@ namespace scoring {
 namespace methods {
 
 
-
-///
 class LK_BallEnergy : public ContextIndependentTwoBodyEnergy {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
@@ -70,12 +68,12 @@ public:
 
 	LK_BallEnergy( LK_BallEnergy const & src );
 
-	///
+
 	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
@@ -185,7 +183,6 @@ public:
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
-
 
 
 	virtual
@@ -327,7 +324,6 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const;
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 // private methods
 //private:
@@ -400,7 +396,6 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const;
-
 
 
 	void

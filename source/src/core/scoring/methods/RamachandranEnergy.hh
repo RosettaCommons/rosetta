@@ -28,12 +28,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class RamachandranEnergy : public ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
@@ -51,7 +50,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(

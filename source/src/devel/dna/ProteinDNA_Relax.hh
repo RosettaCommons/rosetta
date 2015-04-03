@@ -14,11 +14,8 @@
 #ifndef INCLUDED_devel_dna_ProteinDNA_Relax_hh
 #define INCLUDED_devel_dna_ProteinDNA_Relax_hh
 
-// AUTO-REMOVED #include <protocols/dna/typedefs.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -93,7 +90,7 @@ setup_MCM_trial(
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief mover implementation
+/// @brief mover implementation
 
 
 class ProteinDNA_Relax : public protocols::moves::Mover {
@@ -158,7 +155,6 @@ private:
 	Size ramping_cycles_; // this many cycles at lower weight
 
 };
-
 
 
 } // namespace dna

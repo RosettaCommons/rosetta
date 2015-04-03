@@ -18,9 +18,7 @@
 
 // Package headers
 #include <core/scoring/sasa.hh>
-// AUTO-REMOVED #include <core/scoring/packing/surf_vol.hh>
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>

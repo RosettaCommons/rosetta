@@ -181,8 +181,6 @@ ChangeAndResetFoldTreeMover::apply(core::pose::Pose& pose) {
 	}
 
 
-
-
 }
 
 

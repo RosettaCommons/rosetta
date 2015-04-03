@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/optimization/types.hh>
 
-// AUTO-REMOVED #include <fstream>
 
 #include <map>
 

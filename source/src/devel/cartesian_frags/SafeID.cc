@@ -18,13 +18,10 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-
-
 
 
 namespace devel {
@@ -129,7 +126,6 @@ torsion_stub(
 }
 
 
-
 // 	// the coord sys you'd get by building atom1 then atom2 then atom3, BUT centered at atom2 not atom3
 // 	//  NO LONGER CENTERED AT ATOM2
 // 	// ie: origin at atom2 -- no changed to atom3
@@ -151,10 +147,9 @@ torsion_stub(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// orientation of atoms such that atom1 is the first stub atom, atom2 the second
-///
+
 
 id::BondID
 torsion_bond( TorsionStubID const & id, conformation::Conformation const & conf )
@@ -170,8 +165,6 @@ operator << ( std::ostream & os, SafeStubID const & a )
 	os << '(' << a.atom1 << ' ' << a.atom2 << ' ' << a.atom3 << ')';
 	return os;
 }
-
-
 
 
 } // cartesian_frags

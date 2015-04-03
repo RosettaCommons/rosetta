@@ -14,7 +14,6 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -38,7 +37,7 @@ static thread_local basic::Tracer TR( "protocols.jd2.ShuffleFileSystemJobDistrib
 namespace protocols {
 namespace jd2 {
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 ShuffleFileSystemJobDistributor::ShuffleFileSystemJobDistributor() :
   FileSystemJobDistributor()
@@ -47,15 +46,14 @@ ShuffleFileSystemJobDistributor::ShuffleFileSystemJobDistributor() :
 
 }
 
-///@brief dtor
+/// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 ShuffleFileSystemJobDistributor::~ShuffleFileSystemJobDistributor()
 { }
 
 
-
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 core::Size
 ShuffleFileSystemJobDistributor::get_new_job_id()
 {

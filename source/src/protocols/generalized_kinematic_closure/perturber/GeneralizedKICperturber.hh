@@ -25,8 +25,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -100,30 +98,30 @@ public:
 
 	std::string get_name() const;
 
-  ///
+
 	/// @brief Returns the enum type for the effect of this perturber. 
 	perturber_effect get_perturber_effect() const { return effect_; }
 
-  ///
+
 	/// @brief Returns the enum type for the effect of a pertuber based on a perturber name.
 	///        Returns unknown_effect if can't find a match for the name.
 	perturber_effect get_perturber_effect_from_name( std::string const &name ) const;
 
-  ///
+
 	/// @brief Returns the name of a perturber given the enum type.
 	///        Returns "unknown_effect" if no such effect exists.
 	std::string get_perturber_effect_name( core::Size &effect ) const;
 
-  ///
+
 	/// @brief Sets the effect of this perturber. 
 	void set_perturber_effect( perturber_effect const &effect );
 
-  ///
+
 	/// @brief Sets the effect of this perturber using the perturber effect name.
 	///        Exits with an error message if the name is unknown.
 	void set_perturber_effect( std::string const &effectname );
 
-  ///
+
 	/// @brief Adds a real value to the list of real input values.
 	void add_inputvalue (core::Real const &inputvalue) { inputvalues_real_.push_back(inputvalue); return; }
 
@@ -289,7 +287,7 @@ private:
 
 	/// @brief Applies a set_bondangle perturbation to a list of bond angles.
 	///
-	/// @detailed
+	/// @details
 	///
 	/// @param[in] bondanglelist - List of sets of atoms defining bond angles, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
@@ -304,7 +302,7 @@ private:
 
 	/// @brief Applies a set_bondlength perturbation to a list of bond lengths.
 	///
-	/// @detailed
+	/// @details
 	///
 	/// @param[in] bondlengthlist - List of sets of atoms defining bond lengths, indexed based on the loop_pose.
 	/// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).

@@ -33,7 +33,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_BulgeEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
@@ -55,7 +55,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(

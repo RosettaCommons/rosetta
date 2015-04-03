@@ -17,10 +17,8 @@
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 
 #include <utility/vector1_bool.hh>
 
@@ -76,7 +74,6 @@ private:
 	core::Real max_;
 	core::Real stepsize_;
 };
-
 
 
 } // constraints

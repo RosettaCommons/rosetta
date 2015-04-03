@@ -67,10 +67,10 @@ public:
 	/// @brief accessor for Adduct geometric info
 	Real phi() const;
 
-	///
+
 	Real theta() const;
 
-	///
+
 	Real d() const;
 
 	/// accessor to stub_atom1 name string
@@ -103,7 +103,6 @@ private:
 
 } // chemical
 } // core
-
 
 
 #endif

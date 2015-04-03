@@ -35,7 +35,6 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/TemperingBase.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
@@ -44,7 +43,6 @@
 
 // C++ headers
 #include <algorithm>
-// AUTO-REMOVED #include <iomanip>
 #include <sstream>
 
 #include <core/id/TorsionID.hh>

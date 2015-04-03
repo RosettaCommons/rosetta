@@ -35,7 +35,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <list>

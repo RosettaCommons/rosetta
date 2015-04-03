@@ -76,14 +76,6 @@
 // Added 100922
 // Added 101102
 // Added 101103
-// AUTO-REMOVED #include <basic/prof.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <pstream.h>
-// AUTO-REMOVED #include <time.h>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 //Auto Headers
 
 static thread_local basic::Tracer TR( "design_symm" );
@@ -597,6 +589,5 @@ main (int argc, char *argv[])
 	}
 
 }
-
 
 

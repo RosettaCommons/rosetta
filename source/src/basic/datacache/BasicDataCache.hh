@@ -50,7 +50,6 @@
 #include <basic/datacache/DataCache.fwd.hh>
 
 
-
 namespace basic {
 namespace datacache {
 

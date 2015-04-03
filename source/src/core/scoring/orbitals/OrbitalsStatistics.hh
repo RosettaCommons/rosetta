@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin OrbitalStatistics
 ///
 /// @brief
 /// A class for generating statistics from orbitals
 ///
-/// @detailed
+/// @details
 /// This is an attempt to be transparent in how the orbital-hydrogen interactions were converted into
 /// a KBP. In general terms, a set of proteins from PDB were taken and the shortest distance from an
 /// orbital to a polar or aromatic hydrogen was recorded and binned. In addition to the shortest distance,
@@ -37,7 +36,7 @@
 /// convoluted than this because I had no idea how to program. I wrote this piece for clarity. I have tested
 /// it and it produces the same results.
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
@@ -50,10 +49,6 @@
 #include <utility/vector1.hh>
 #include <map>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
-// AUTO-REMOVED #include <core/scoring/orbitals/OrbitalStatistics.fwd.hh>
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <iomanip>
 #include <fstream>
 
 //Auto Headers
@@ -108,9 +103,7 @@ private:
 	std::ofstream statistics_output_;
 
 
-
 };
-
 
 
 }

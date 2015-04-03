@@ -46,7 +46,7 @@ namespace protocols {
 namespace docking {
 
 /// @brief allows docking using simulated or parallel tempering
-/// @detailed
+/// @details
 class DockSetupMover : public moves::Mover
 {
 public:
@@ -56,10 +56,10 @@ public:
 	/// @brief clone
 	virtual protocols::moves::MoverOP clone() const;
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	DockSetupMover( DockSetupMover const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	DockSetupMover & operator=( DockSetupMover const & rhs );
 
 	/// @brief Assigns default values to primitive members
@@ -71,8 +71,8 @@ public:
 
 	virtual std::string get_name() const { return "DockSetupMover"; }
 
-	//	DockJumps & movable_jumps(){ return movable_jumps_;} ///@brief returns ref to the jumps vector for docking
-	//	DockJumps const & movable_jumps() const { return movable_jumps_; } ///@ return const ref to the jumps vector for docking
+	//	DockJumps & movable_jumps(){ return movable_jumps_;} /// @brief returns ref to the jumps vector for docking
+	//	DockJumps const & movable_jumps() const { return movable_jumps_; } /// @ return const ref to the jumps vector for docking
 
 	void set_partners( std::string const& setting ){ partners_=setting; }
 	//	void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }

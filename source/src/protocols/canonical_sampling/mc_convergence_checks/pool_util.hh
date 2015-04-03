@@ -87,7 +87,6 @@ namespace mc_convergence_checks {
 	};
 
 
-
 }
 }
 }

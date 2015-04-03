@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/rigid_body/EulerAngles.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

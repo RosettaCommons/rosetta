@@ -71,7 +71,7 @@ public:
   virtual core::pack::task::operation::TaskOperationOP clone() const;
 
 public:
-  ///@breif parse_tag
+  /// @brief parse_tag
   //parse_tag(
   //  utility::tag::TagCOP tag,
   // core::pose::Pose const & pose);
@@ -79,7 +79,7 @@ public:
   /// @brief apply
   virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
-// ///@brief parse_tag
+// /// @brief parse_tag
 // void parse_tag(utility::tag::TagCOP tag);
 
   /// @brief setters for member data

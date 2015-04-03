@@ -9,7 +9,7 @@
 /// @file metropolis_hastings.cc
 /// @brief Metropolis-Hastings Monte Carlo app
 /// @author
-/// @detailed
+/// @details
 // devel headers
 #include <devel/init.hh>
 // protocols headers

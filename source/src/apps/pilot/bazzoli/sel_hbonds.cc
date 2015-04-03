@@ -97,7 +97,6 @@ using std::setfill;
 using namespace core::scoring::hbonds;
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -116,7 +115,6 @@ Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 }
 
 
-///
 /// @brief Tells whether a hydrogen atom may be an hbond donor.
 ///
 /// @param[in] aid atom identifier in its pose.
@@ -142,7 +140,6 @@ bool is_donor_h(AtomID const& aid, Pose const& ps) {
 }
 
 
-///
 /// @brief Tells whether an atom may be an hbond acceptor.
 ///
 /// @param[in] aid atom identifier in its pose.
@@ -168,7 +165,6 @@ bool is_acceptor(AtomID const& aid, Pose const& ps) {
 }
 
 
-///
 /// @brief Tells whether two atoms form a hydrogen bond.
 ///
 /// @param[in] don candidate donor atom.
@@ -223,7 +219,6 @@ bool is_hbond(AtomID const& don, AtomID const& acc, Pose const& ps,
 }
 
 
-///
 /// @brief Prints an hbond identifier
 ///
 /// @param[in] ndon: name of the donor atom.

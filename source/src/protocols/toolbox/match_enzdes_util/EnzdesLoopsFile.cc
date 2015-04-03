@@ -13,7 +13,6 @@
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 
 
-
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
@@ -28,7 +27,6 @@
 #include <sstream>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.enzdes.EnzdesLoopsFile" );

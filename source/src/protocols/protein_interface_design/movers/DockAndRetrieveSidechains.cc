@@ -27,7 +27,6 @@
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
 

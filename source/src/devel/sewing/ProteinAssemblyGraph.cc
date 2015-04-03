@@ -56,7 +56,6 @@
 //Boost
 
 
-
 namespace devel {
 namespace sewing {
 
@@ -232,7 +231,7 @@ ProteinAssemblyGraph::dump_resfile(
 	resfile.close();
 }
 
-///@brief Create poses for the given EdgeList.
+/// @brief Create poses for the given EdgeList.
 void
 ProteinAssemblyGraph::print_tree(
 	EdgeList visited,

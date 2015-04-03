@@ -56,7 +56,6 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-
 static thread_local basic::Tracer TR( "TryScoreFilter" );
 
 OPT_KEY( String, score_name )
@@ -173,8 +172,6 @@ private:
 	}
     }
 };
-
-
 
 
 ////////////////////////////////////////////////////////

@@ -59,7 +59,6 @@ OmegaTetherEnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// ctor
 OmegaTetherEnergy::OmegaTetherEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new OmegaTetherEnergyCreator ) ),
@@ -77,7 +76,7 @@ OmegaTetherEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 OmegaTetherEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -151,7 +150,7 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
 
-///
+
 Real
 OmegaTetherEnergy::old_eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,

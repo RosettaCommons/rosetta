@@ -878,8 +878,8 @@ SilentStruct::one_letter_sequence() const {
 	return sequence().one_letter_sequence();
 }
 
-///@ brief helper to detect fullatom input
-///@ detail
+/// @ brief helper to detect fullatom input
+/// @ detail
 //* removing dependendence from input flag -in:file:Fullatom which made no sense, since reading inconsistent
 //* will break anyhow... moreover the test was wrong before: GLY and ALA have 7 or 10 atoms respectively.
 // strategy to detect fullatom-ness now:

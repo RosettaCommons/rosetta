@@ -14,14 +14,12 @@
 /// @modified Tom Linsky, tlinsky@uw.edu
 
 
-
 #ifndef INCLUDED_protocols_forge_remodel_RemodelConstraintGenerator_hh
 #define INCLUDED_protocols_forge_remodel_RemodelConstraintGenerator_hh
 
 //unit headers
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
-// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -47,10 +45,10 @@ namespace remodel {
 class RemodelConstraintGenerator : public protocols::moves::Mover
 {
 public: // typedefs
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RemodelConstraintGenerator();
 
-	///@brief generates constraints and adds them to the pose
+	/// @brief generates constraints and adds them to the pose
 	virtual
 	void apply( core::pose::Pose & pose );
 
@@ -148,8 +146,6 @@ private:
 } //namespace remodel
 } //namespace forge
 } //namespace protocols
-
-
 
 
 #endif

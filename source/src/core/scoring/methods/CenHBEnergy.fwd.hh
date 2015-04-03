@@ -19,7 +19,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class CenHBEnergy;
 
 }

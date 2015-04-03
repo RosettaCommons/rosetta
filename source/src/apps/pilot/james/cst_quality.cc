@@ -32,7 +32,6 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>

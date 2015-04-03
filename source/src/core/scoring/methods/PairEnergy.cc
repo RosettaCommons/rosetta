@@ -22,7 +22,6 @@
 #include <core/scoring/PairEPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/chemical/VariantType.hh>
@@ -67,7 +66,6 @@ PairEnergyCreator::score_types_for_method() const {
 }
 
 
-
 PairEnergy::PairEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new PairEnergyCreator ) ),
 	potential_( ScoringManager::get_instance()->get_PairEPotential() )
@@ -81,7 +79,7 @@ PairEnergy::clone() const
 	return EnergyMethodOP( new PairEnergy() );
 }
 
-///
+
 void
 PairEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
@@ -89,7 +87,7 @@ PairEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const
 	// no longer necessary, as of r16937 -- pose.update_actcoords();
 }
 
-///
+
 void
 PairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -97,7 +95,7 @@ PairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 	//pose.update_actcoords();
 }
 
-///
+
 void
 PairEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -130,7 +128,7 @@ PairEnergy::update_residue_for_packing(
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 PairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -279,8 +277,6 @@ PairEnergy::evaluate_rotamer_background_energies(
 		energy_vector[ ii ] += static_cast< core::PackerEnergy > (weights.dot( emap ) );
 	}
 }
-
-
 
 
 void
@@ -518,7 +514,7 @@ PairEnergy::eval_atom_derivative(
 			( pose.energies().tenA_neighbor_graph() );
 		EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-		//
+
 		// NOTE this will not give the right derivatives if bond angles and lenghts are alowed to flex.
 		// This code clearly operates under the assumption that all the act coords are controlled by the
 		// same DOF.  The simple solution is to divide the derivative over all the atoms that define

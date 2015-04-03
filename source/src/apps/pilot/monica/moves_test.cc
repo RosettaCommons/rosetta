@@ -16,17 +16,9 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <devel/init.hh>
 
@@ -34,40 +26,28 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
-
-// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
-
 
 
 using namespace core;

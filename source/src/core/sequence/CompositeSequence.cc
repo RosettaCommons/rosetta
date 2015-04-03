@@ -17,9 +17,7 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/exit.hh>

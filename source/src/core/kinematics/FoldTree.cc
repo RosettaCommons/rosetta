@@ -32,7 +32,6 @@
 
 // C++ Headers
 #include <algorithm>
-// AUTO-REMOVED #include <iostream>
 #include <list>
 #include <sstream>
 #include <string>
@@ -479,7 +478,6 @@ FoldTree::apply_sequence_mapping( id::SequenceMapping const & old2new )
 
 	new_topology = true;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1201,8 +1199,6 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 	new_order = true;
 	return true; // success
 } // FoldTree::reorder(...)
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2632,7 +2628,6 @@ FoldTree::downstream_atom( int const jump_number ) const
 		return "";
 	}
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

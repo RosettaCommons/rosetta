@@ -38,7 +38,6 @@
 #include <basic/prof.hh>
 
 //for DebugArchive
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -155,7 +154,7 @@ void NormalizedEvaluatedArchive::save_to_file( std::string suffix ) {
 	if ( variance_archive_ ) variance_archive_->save_to_file( suffix );
 }
 
-///@detail restore archive and sort
+/// @detail restore archive and sort
 bool NormalizedEvaluatedArchive::restore_from_file() {
 	bool b_have_restored = Parent::restore_from_file();
 	if ( use_variance_archive_ ) {
@@ -167,7 +166,7 @@ bool NormalizedEvaluatedArchive::restore_from_file() {
 }
 // --------------------------- end sort ------------------------------
 
-///@detail determine variations of the non-zero weighted (select_weight_) scores by taking the difference Q3-Q1 (upper / lower quartil)
+/// @detail determine variations of the non-zero weighted (select_weight_) scores by taking the difference Q3-Q1 (upper / lower quartil)
 bool NormalizedEvaluatedArchive::determine_score_variations() const {
 	if ( score_variations_are_clean_ ) return false; //not changed
 	score_variations_are_clean_ = true;
@@ -230,7 +229,7 @@ bool NormalizedEvaluatedArchive::is_start_zero_score( std::string const& str ) c
 	return false;
 }
 
-///@detail rescore and sort archive
+/// @detail rescore and sort archive
 void NormalizedEvaluatedArchive::rescore() {
 	Parent::rescore();
 	score_variations_are_clean_ = false;

@@ -28,13 +28,12 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class GrowLigand : public protocols::moves::Mover{
 
@@ -69,8 +68,6 @@ private:
 	void set_fragments();
 	void fragments_to_string() const;
 	utility::vector1< core::conformation::ResidueCOP> fragments_;
-
-
 
 
 }; // class GrowLigand

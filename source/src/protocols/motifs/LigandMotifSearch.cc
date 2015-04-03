@@ -24,7 +24,6 @@
 // Project Headers (protocols)
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
-// AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/simple_moves/MinMover.hh>
 
@@ -34,24 +33,18 @@
 #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType
 #include <core/chemical/AtomTypeSet.hh> //Need this to get AtomType integers
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/dna/setup.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -59,12 +52,10 @@
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/util.hh>
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <numeric/xyzVector.hh>
@@ -74,8 +65,6 @@
 
 // Option Key Includes
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
@@ -195,7 +184,6 @@ LigandMotifSearch::run(
 			motif_output_file.open_append( output_filename_ );
 
 
-
 			incorporate_motifs( pose );
 		}
 
@@ -251,7 +239,6 @@ LigandMotifSearch::run(
 		else { //If the output file doesn't already exist, let's find some motifs!
 			ms_tr << "Starting motif search" << std::endl;
 			motif_output_file.open_append( output_filename_ );
-
 
 
 			incorporate_motifs( pose );
@@ -425,7 +412,7 @@ LigandMotifSearch::incorporate_motifs(
 					std::string atom_i_name = atom_i_type.atom_type_name();
 					//Size atom_i_int = atset->atom_type_index(atom_i_name);
 				// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
-					//
+
 
 					//std::cout << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << ", ";
 					//std::cout << atom_i_connects[atom_j] << ", type is " << ligres.atom_type(atom_i_connects[atom_j]).atom_type_name() << ", " ;

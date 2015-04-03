@@ -22,41 +22,21 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/OrderedFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/JumpSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/abinitio/ClassicAbinitio.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
-// AUTO-REMOVED #include <protocols/loops/util.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-
-
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 
 #include <basic/options/option.hh>
@@ -64,23 +44,17 @@
 //#include <basic/options/OptionKeys.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/id/types.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 
 static thread_local basic::Tracer tracer( "r_trjconv" );
@@ -91,13 +65,9 @@ using namespace fragment;
 using namespace abinitio;
 
 
-
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
-
 
 
 class ThisApplication {
@@ -133,7 +103,6 @@ void ThisApplication::register_options() {
 	//	NEW_OPT( evaluate::cs_file, "compute a SPARTA chemical shift score for each model", false);
 	//NEW_OPT( tag_selector, "a list of tags to be extracted","");
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,7 +193,6 @@ void ThisApplication::pick_frags()
 }
 
 
-
 // void generate_frames_based_on_ss(
 // 	FrameList& frames,
 // 	core::conformation::SecondaryStructure const& ss
@@ -306,7 +274,6 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 // }
 
 
-
 // void ThisApplication::run()
 // {
 // 	using namespace core;
@@ -340,7 +307,6 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 // 	if ( option[ OptionKeys::evaluation::chemical_shifts ].user() ) {
 // 		evaluator.add_evaluation( new protocols::simple_filters::ChemicalShiftEvaluator( "cs_score", option[  OptionKeys::evaluation::chemical_shifts ]() ) );
 // 	}
-
 
 
 // 	using namespace basic::options::OptionKeys;

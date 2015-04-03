@@ -10,7 +10,7 @@
 /// @file cterdesign.cc
 /// @brief backrub Monte Carlo/small phi/psi move/design protocol
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
-/// @detailed
+/// @details
 
 // Protocols Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
@@ -25,15 +25,11 @@
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
@@ -49,8 +45,6 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers
@@ -72,8 +66,6 @@
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/io/mpistream.hh>
 #include <fstream>
-
-
 
 
 static thread_local basic::Tracer TR( "apps.backrub" );

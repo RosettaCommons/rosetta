@@ -39,8 +39,6 @@
 #include <protocols/filters/ContingentFilter.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -80,7 +78,7 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///
+
 	/// @brief Actually apply the mover to the pose.
 	virtual void apply(core::pose::Pose & pose);
 

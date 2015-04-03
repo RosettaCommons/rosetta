@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to looprelax
-/// @detailed
+/// @details
 /// @author Vatsan Raman
 #include <devel/ssrbrelax/SSrbrelax.hh>
 #include <devel/ssrbrelax/SSRbClass.hh>
@@ -81,8 +81,6 @@
 //Auto Headers
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-
-
 
 
 using basic::T;
@@ -373,7 +371,6 @@ namespace ssrbrelax {
 			rb_move_map.set_jump( flexible_jump, true );
 
 		}
-
 
 
 	///////////////////////////////////////////////////////////////////////

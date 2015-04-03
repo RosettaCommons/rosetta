@@ -25,21 +25,16 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <basic/Tracer.hh>
 #include <string>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #ifndef _WIN32
-// AUTO-REMOVED #include <sys/time.h>
 
 #include <utility/vector1.hh>
 
@@ -225,8 +220,6 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 	}
 
 }
-
-
 
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into

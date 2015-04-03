@@ -11,7 +11,7 @@
 ///
 /// @brief Score a pose!
 ///
-/// @authors (Original) Oliver Lange, Mike Tyka
+/// @author (Original) Oliver Lange, Mike Tyka
 /// @author Adjusted for Membranes - Rebecca Alford
 
 
@@ -38,7 +38,6 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
 
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
@@ -66,14 +65,12 @@
 #include <utility/vector1.hh>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
 // using namespace basic::options;
 // using namespace basic::options::OptionKeys;
-
 
 
 class MyScoreMover : public Mover {

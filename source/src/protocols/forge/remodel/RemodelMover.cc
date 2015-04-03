@@ -31,7 +31,6 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -114,8 +113,6 @@
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
@@ -164,9 +161,6 @@ RemodelMoverCreator::mover_name() {
 	return "RemodelMover";
 }
 
-
-///
-/// @begin RemodelMover::RemodelMover
 ///
 /// @brief
 /// Default constructor. Checks values of options packing::soft_rep_design, and remodel::dr_cycles
@@ -214,8 +208,6 @@ RemodelMover::RemodelMover() :
 }
 
 ///
-/// @begin RemodelMover::RemodelMover( RemodelMover )
-///
 /// @brief
 /// Copy constructor.
 ///
@@ -254,10 +246,6 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	disulf_fa_max_(rval.disulf_fa_max_)
 
 
-
-
-
-
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = VarLengthBuildOP( new VarLengthBuild( *rval.vlb_ ) );
@@ -265,16 +253,11 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 }
 
 ///
-/// @begin RemodelMover::~RemodelMover
-///
 /// @brief
 /// Default destructor. Does this need to free the VarLengthBuild memory?
 ///
 RemodelMover::~RemodelMover() {}
 
-
-///
-/// @begin RemodelMover::register_user_options
 ///
 /// @brief
 /// Checks for presence of any score term weight override options and calls set_weight on the centroid scorefunction.
@@ -450,8 +433,6 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 }
 
 ///
-/// @begin RemodelMover::apply
-///
 /// @brief
 /// Apply method for Mover.
 /// Checks the values of the following options
@@ -467,7 +448,6 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 /// -enzdes::cstfile
 /// -symmetry::symmetry_definition
 /// -run::show_simulation_in_pymol
-///
 ///
 
 bool RemodelMover::SamePose( Pose const & pose1, Pose const & pose2) {
@@ -591,7 +571,6 @@ void RemodelMover::apply( Pose & pose ) {
 			moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
 		}
 		*/
-
 
 
 		/*
@@ -1253,7 +1232,6 @@ void RemodelMover::apply( Pose & pose ) {
 			}
 
 
-
 			Real score = 0.0;
 		
 			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by entropy.
@@ -1325,8 +1303,6 @@ std::string RemodelMover::get_name() const {
 }
 
 ///
-/// @begin RemodelMover::centroid_build
-///
 /// @brief
 /// Does the same as function below, but takes in a BuildManager object.
 /// Also checks the value of the option -remodel::bypass_fragments.
@@ -1349,9 +1325,6 @@ bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildMa
 
 }
 
-
-///
-/// @begin RemodelMover::centroid_build
 ///
 /// @brief
 /// Runs the centroid level build state. Returns true if loop was closed, false if not.
@@ -1525,9 +1498,6 @@ bool RemodelMover::centroid_build( Pose & pose ) {
 	return false; // false if loop not closed
 }
 
-
-///
-/// @begin RemodelMover::design_refine_seq_relax
 ///
 /// @brief
 /// Sets up constraints and a modified scorefunction and run design/relax cycles.
@@ -1583,7 +1553,6 @@ bool RemodelMover::design_refine_seq_relax( Pose & pose, RemodelDesignMover & de
 	} else {
 		asym_length = pose.total_residue();
 	}
-
 
 
 	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
@@ -1858,9 +1827,6 @@ bool RemodelMover::design_refine_cart_relax(
 	return true;
 }
 
-
-///
-/// @begin RemodelMover::design_refine
 ///
 /// @brief
 /// Run the design-refine stage.
@@ -2018,9 +1984,6 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	//return true; //FOR NOW!!  change me back!
 }
 
-
-///
-/// @begin RemodelMover::confirm_sequence
 ///
 /// @brief
 /// As best as I can tell, does some loop closure and calculates RMSD to native. Returns true.
@@ -2160,9 +2123,6 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 
 }
 
-
-///
-/// @begin RemodelMover::generic_taskfactory
 ///
 /// @brief
 /// Returns a TaskFactory useable as a starting point for either design or refinement.
@@ -2193,9 +2153,6 @@ RemodelMover::TaskFactoryOP RemodelMover::generic_taskfactory() {
 	return tf;
 }
 
-
-///
-/// @begin RemodelMover::process_continuous_design_string
 ///
 /// @brief
 /// process a continuous design string, adding appropriate operations to the TaskFactory
@@ -2225,9 +2182,6 @@ void RemodelMover::process_continuous_design_string( Interval const & original_i
 	}
 }
 
-
-///
-/// @begin RemodelMover::process_insert_design_string
 ///
 /// @brief
 /// process a design string containing an insert, adding appropriate operations to the TaskFactory
@@ -2284,9 +2238,6 @@ void RemodelMover::process_insert_design_string( Interval const & original_inter
 	design_tf->push_back( repack_op );
 }
 
-
-///
-/// @begin RemodelMover::process_insert_design_string
 ///
 /// @brief
 /// return a boolean vector specifying allowed a.a. when designing on the surface
@@ -2430,7 +2381,6 @@ RemodelMover::parse_my_tag(
 	}
 	TR << "Setting disulf_fa_max " << disulf_fa_max_ << std::endl;
 }
-
 
 
 } // namespace remodel

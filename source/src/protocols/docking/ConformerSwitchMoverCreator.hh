@@ -8,10 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-///@file protocols/docking/ConformerSwitchMoverConformerSwitchMoverCreator.hh
+/// @file protocols/docking/ConformerSwitchMoverConformerSwitchMoverCreator.hh
 
-///@brief This class will create instances of Mover ConformerSwitchMover for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @brief This class will create instances of Mover ConformerSwitchMover for the MoverFactory
+/// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 
 #ifndef INCLUDED_protocols_docking_ConformerSwitchMoverCreator_hh

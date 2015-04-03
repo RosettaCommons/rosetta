@@ -29,7 +29,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/scoring/Energies.hh>
 

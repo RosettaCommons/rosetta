@@ -33,7 +33,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/izstream.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // numeric headers
 #include <numeric/HomogeneousTransform.fwd.hh>
@@ -123,7 +122,6 @@ public:
 	std::string
 	function_tag() const {
 		return function_tag_; }
-
 
 
 private:
@@ -405,8 +403,6 @@ private:
 }
 } //namespace enzdes
 } //namespace protocols
-
-
 
 
 #endif //

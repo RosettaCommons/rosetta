@@ -24,7 +24,6 @@
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin RotamerRecovery
 ///
 /// @brief
 /// Compare the rotamer recovery between a native protein and a list of other proteins
 ///
-/// @detailed
+/// @details
 /// This is an implementation taken from James Thompson. I am not even sure he knows I stole it
 /// from him. The main function that is called is the get_rotamer_recovery() function. You can
 /// pass this function a native pdb and a list of altered pdbs, or just 1 native and 1
@@ -31,11 +30,10 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// @author James Thompson (original author)
 /// @author Steven Combs (moved it to protocols for general use)
 ///
-/// @last_modified October 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -47,7 +45,6 @@
 
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
 #include <core/pose/Pose.fwd.hh>

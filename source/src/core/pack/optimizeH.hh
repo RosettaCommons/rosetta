@@ -25,7 +25,7 @@
 namespace core {
 namespace pack {
 
-///@brief Call optimizeH and tell the user what chi angles have changed
+/// @brief Call optimizeH and tell the user what chi angles have changed
 void
 optimize_H_and_notify(
 	pose::Pose & pose,

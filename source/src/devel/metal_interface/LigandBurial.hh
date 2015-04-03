@@ -28,7 +28,7 @@ namespace devel {
 namespace metal_interface {
 
 
-///@details
+/// @details
 class LigandBurial : public utility::pointer::ReferenceCount {
 
 public:
@@ -36,7 +36,7 @@ public:
 	typedef core::pose::Pose Pose;
 	//typedef std::set< core::Size > SetSize;
 
-  ///@brief
+  /// @brief
   LigandBurial( Pose const & pose, std::string ligand_3_letter_code );
 
   virtual ~LigandBurial();

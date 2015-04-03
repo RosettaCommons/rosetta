@@ -7,7 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Orbital
 ///
 /// @brief
 /// A class for defining chemical atoms, with properties specific to a ResidueType, not conformation info
@@ -16,7 +15,7 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Gordon Lemmon
 ///
 /////////////////////////////////////////////////////////////////////////
@@ -123,7 +122,6 @@ private:
 
 } // chemical
 } // core
-
 
 
 #endif // INCLUDED_core_chemical_Orbital_HH

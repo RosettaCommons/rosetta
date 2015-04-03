@@ -102,7 +102,6 @@ typedef numeric::xyzVector<Real> Vecf;
 typedef numeric::xyzMatrix<Real> Matf;
 
 
-
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
@@ -123,7 +122,6 @@ struct Hit {
 bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
 
-
 // Pose needs to be scored before this will work.
 void new_sc(core::pose::Pose &pose, int nmono, Real& int_area, Real& sc) {
   using namespace core;
@@ -136,7 +134,6 @@ void new_sc(core::pose::Pose &pose, int nmono, Real& int_area, Real& sc) {
     int_area = scc.GetResults().surface[2].trimmedArea;
   }
 }
-
 
 
 Real
@@ -163,8 +160,6 @@ average_degree (Pose const &pose, Size nmono, vector1<Size> mutalyze_pos, Real d
   return( (Real) count_neighbors / mutalyze_pos.size() );
 
 }
-
-
 
 
 vector1<Size> design(Pose & p, Size nmono, Size nsym) {
@@ -322,7 +317,6 @@ Real get_ddg(Pose p, Size nmono, vector1<Size> const & iface) {
 
   return s1-s0;
 }
-
 
 
 void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<double> > const & ssamp, int iss, int irt, int ic, Real cbc) {

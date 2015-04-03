@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftCDRLoopsProtocol.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -56,7 +56,6 @@
 using namespace ObjexxFCL::format;
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -81,7 +80,6 @@ protocols::moves::MoverOP GraftCDRLoopsProtocol::clone() const {
 }
 
 
-
 void GraftCDRLoopsProtocol::init() {
 	Mover::type( "GraftCDRLoopsProtocol" );
 
@@ -91,7 +89,6 @@ void GraftCDRLoopsProtocol::init() {
 	setup_objects();
 
 }
-
 
 
 void GraftCDRLoopsProtocol::set_default() {
@@ -113,7 +110,6 @@ void GraftCDRLoopsProtocol::set_default() {
 	cst_weight_ = 0.0;
 
 }
-
 
 
 void GraftCDRLoopsProtocol::register_options() {
@@ -138,9 +134,6 @@ void GraftCDRLoopsProtocol::register_options() {
 	//option.add_relevant( OptionKeys::antibody::sc_min);
 	//option.add_relevant( OptionKeys::antibody::rt_min);
 }
-
-
-
 
 
 void GraftCDRLoopsProtocol::init_from_options() {
@@ -192,7 +185,6 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	}
 
 
-
 	if( camelid_ ) {
 		graft_l1_ = false;
 		graft_l2_ = false;
@@ -200,8 +192,6 @@ void GraftCDRLoopsProtocol::init_from_options() {
 	}
 
 }
-
-
 
 
 void GraftCDRLoopsProtocol::setup_objects() {
@@ -220,8 +210,6 @@ void GraftCDRLoopsProtocol::setup_objects() {
 	scorefxn_pack_->set_weight( core::scoring::atom_pair_constraint, 1.00 );
 
 }
-
-
 
 
 void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
@@ -286,8 +274,6 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 //	TR<<" frame_pose.total_residue()  =  "<< frame_pose.total_residue()<<std::endl;
 
 
-
-
 	// Exact match Aroop's old code in Rosetta 2:
 	// graft all CDRs by superimpose stems, then pack the whole new pose
 
@@ -302,9 +288,6 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	cdrs_min_pack_min_->set_turnoff_minimization(packonly_after_graft_);
 
 
-
-
-
 	optimize_sequence_ = protocols::moves::SequenceMoverOP( new moves::SequenceMover() );
 
 	for(CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
@@ -317,9 +300,6 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 
 
 }
-
-
-
 
 
 //APPLY
@@ -374,8 +354,6 @@ void GraftCDRLoopsProtocol::apply( pose::Pose & frame_pose ) {
 		cdrs_min_pack_min_->apply(frame_pose);
 		frame_pose.dump_pdb("grafted_minimized_stem-optimized_minimized.pdb");
 	}
-
-
 
 
 	// Recover secondary structures

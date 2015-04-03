@@ -19,7 +19,6 @@
 // Unit Headers
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
 //pba
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 
 // Package headers
@@ -27,13 +26,9 @@
 #include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
 #include <core/scoring/hbonds/constants.hh>
 //pba
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -56,16 +51,16 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-///
+
 class HBondEnergy : public methods::ContextDependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextDependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	HBondEnergy( HBondOptions const & opts );
 
-	///
+
 	HBondEnergy( HBondEnergy const & src );
 
 	virtual ~HBondEnergy();
@@ -75,7 +70,7 @@ public:
 	methods::EnergyMethodOP
 	clone() const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing(
@@ -97,12 +92,12 @@ public:
 	void
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	/*virtual
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;*/
@@ -273,7 +268,7 @@ public:
 	) const;
 
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -286,7 +281,7 @@ public:
 	) const;
 
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -298,7 +293,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///@brief Evaluates the interaction between the sidechain of rsd1 and the
+	/// @brief Evaluates the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -309,7 +304,6 @@ public:
 		ScoreFunction const & sfxn,
 		EnergyMap & emap
 	) const;
-
 
 
 	virtual
@@ -338,7 +332,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	void
 	finalize_total_energy(
@@ -376,7 +369,7 @@ public:
 	Real
 	hydrogen_interaction_cutoff2() const;
 
-	///@brief HBondEnergy is context sensitive
+	/// @brief HBondEnergy is context sensitive
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;

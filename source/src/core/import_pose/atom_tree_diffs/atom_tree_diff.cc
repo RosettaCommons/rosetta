@@ -229,7 +229,7 @@ void dump_score_line(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Writes out the given pose in PDB format (plus fold tree).
+/// @details Writes out the given pose in PDB format (plus fold tree).
 /// When reading back in, this pose will be used as the reference point for all
 /// subsequent poses, until another reference pose is reached.
 void dump_reference_pose(
@@ -264,7 +264,7 @@ void dump_reference_pose(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Writes out the given pose in a atom_tree_diff-type format by only
+/// @details Writes out the given pose in a atom_tree_diff-type format by only
 /// recording AtomTree DOFs that differ from ref_pose.
 /// Thus pose and ref_pose should have the same sequence and AtomTree topology.
 /// The entry is labeled with the given textual tag and 0+ named numeric scores.
@@ -397,7 +397,7 @@ void dump_atom_tree_diff(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Reads from the current stream position until it finds both a
+/// @details Reads from the current stream position until it finds both a
 /// pose_tag line and a scores line, then extracts the data and returns it.
 /// Returns true on success and false on failure.
 bool header_from_atom_tree_diff(
@@ -434,7 +434,7 @@ bool header_from_atom_tree_diff(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Extracts a pose-diff and sets the DOFs of "pose" accordingly,
+/// @details Extracts a pose-diff and sets the DOFs of "pose" accordingly,
 /// working from the current stream position.  Use header_from_atom_tree_diff()
 /// to locate the pose you wish to extract prior to calling this function.
 /// Returns false if there is some sort of IO or format error.
@@ -592,7 +592,7 @@ bool pose_from_atom_tree_diff(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Helper for dump_atom_tree_diff(), fills map with weighted score terms.
+/// @brief Helper for dump_atom_tree_diff(), fills map with weighted score terms.
 void map_of_weighted_scores(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction const & sfxn,
@@ -621,7 +621,7 @@ void map_of_weighted_scores(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Copies the pose and adds random noise to the AtomTree DOFs
+/// @details Copies the pose and adds random noise to the AtomTree DOFs
 /// in the Nth digit (specified by bb_precision and sc_precision).
 /// This simulates the roundoff error introduced by writing an atom_tree diff
 /// to file and then reconstructing a pose from it.
@@ -688,14 +688,14 @@ void rms_error_with_noise(
 		<< std::endl;
 }
 
-///@brief Test if given file is an atom_tree_diff
+/// @brief Test if given file is an atom_tree_diff
 bool file_is_atom_tree_diff( std::string const & filename ) {
 	utility::io::izstream infile( filename );
 	return file_is_atom_tree_diff( infile );
 }
 
-///@brief Test if given stream is an atom_tree_diff
-///@details If everything goes right, after the call, the read position should be at the same place it was to start with
+/// @brief Test if given stream is an atom_tree_diff
+/// @details If everything goes right, after the call, the read position should be at the same place it was to start with
 bool file_is_atom_tree_diff( std::istream & in ) {
 	bool retval = false;
 	std::streampos startpos(in.tellg());

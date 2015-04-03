@@ -9,7 +9,7 @@
 
 /// @file AbrelaxApplication
 /// @brief Application-level code for Abrelax, fold_cst and JumpingFoldCst protocols
-/// @detailed
+/// @details
 ///	   use -help to see options
 ///    usage of class:
 ///    call AbrelaxApplication::register_options() before core::init::init

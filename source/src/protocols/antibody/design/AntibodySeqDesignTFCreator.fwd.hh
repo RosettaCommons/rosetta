@@ -37,6 +37,3 @@ typedef utility::pointer::shared_ptr< AntibodySeqDesignTFCreator const > Antibod
 #endif	//INCLUDED_ TestClass2.fwd.hh
 
 
-
-
-

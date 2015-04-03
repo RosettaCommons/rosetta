@@ -12,7 +12,7 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @author James Thompson (tex@u.washington.edu)
 /// @author Roland A. Pache, PhD
-///
+
 
 // Unit Headers
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -73,7 +73,7 @@ ConstantLengthFragSet::ConstantLengthFragSet( FragSet const& fragments ) {
 	Parent::add( fragments );
 }
 
-///@brief there is only one Frame per position, end / max_overlap are ignored
+/// @brief there is only one Frame per position, end / max_overlap are ignored
 Size ConstantLengthFragSet::region(
 	MoveMap const& mm,
 	core::Size start,
@@ -95,7 +95,7 @@ Size ConstantLengthFragSet::region(
 	return count;
 }
 
-///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+/// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
 ///(also allows those frames that start before the region and reach into it)
 Size ConstantLengthFragSet::overlapping_with_region(
 		kinematics::MoveMap const& mm,

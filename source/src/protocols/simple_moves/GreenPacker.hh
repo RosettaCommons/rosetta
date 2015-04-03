@@ -46,7 +46,7 @@ namespace simple_moves {
 class MinimalRotamer : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MinimalRotamer();
 	typedef core::chemical::AA          AA;
 	typedef core::chemical::ResidueType ResidueType;

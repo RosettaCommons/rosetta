@@ -9,7 +9,7 @@
 
 /// @file util.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///  @author Parin Sripakdeevong
 

@@ -9,7 +9,7 @@
 
 /// @file AbrelaxMover
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -40,7 +40,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace abinitio {
 
@@ -51,7 +50,7 @@ public:
 
   IterativeFullatom();
 
-///@brief do initializing work that requires fully setup object here
+/// @brief do initializing work that requires fully setup object here
 	virtual void initialize();
 
 	virtual bool ready_for_batch() const;

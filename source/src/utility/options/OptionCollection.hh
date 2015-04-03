@@ -490,19 +490,19 @@ public: // Methods
     bool const free_args // Support free argument (without - prefix)?
 	);
 
-	///@brief Load all options in a flags file
+	/// @brief Load all options in a flags file
 	void load_options_from_file(
 		std::string const & file_string,
 		std::string const & cid=""
 	);
 
-	///@brief same as load_options_from_file, but throws exception instead of call to std::exit
+	/// @brief same as load_options_from_file, but throws exception instead of call to std::exit
 	void load_options_from_file_exception(
 		std::string const & file_string,
 		std::string const & cid=""
 	);
 
-	///@brief Load all options in a flags file
+	/// @brief Load all options in a flags file
 	void load_options_from_stream(
     std::istream& stream,
 		std::string const & file_string="STREAM", //for error msg, set if stream is connected to file_string

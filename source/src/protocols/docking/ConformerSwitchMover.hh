@@ -23,12 +23,9 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/docking/DockingEnsemble.fwd.hh>
-// AUTO-REMOVED #include <protocols/docking/DockFilters.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 //Option key includes
 

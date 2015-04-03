@@ -26,7 +26,7 @@ typedef utility::vector0< std::string> StringList;
 //strings functions
 int contains( const std::string &str, const std::string &c );
 int contains( const std::string &str, const char &c );
-//
+
 
 bool isDigit( const char &c );
 bool isSpace( const char &c );

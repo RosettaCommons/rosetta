@@ -22,11 +22,9 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -67,7 +65,7 @@ WaterAdductIntraEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 WaterAdductIntraEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -82,7 +80,6 @@ WaterAdductIntraEnergy::residue_energy(
 }
 
 
-///
 Real
 WaterAdductIntraEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,

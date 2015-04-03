@@ -53,7 +53,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
@@ -239,7 +238,6 @@ void KinematicMover::set_sfxn(core::scoring::ScoreFunctionCOP sfxn_in)
 {
 	sfxn_ = sfxn_in;
 }
-
 
 
 void KinematicMover::set_sweep_nonpivot_torsions( bool sweep ) {

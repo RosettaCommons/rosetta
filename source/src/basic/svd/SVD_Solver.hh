@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////
-/// @begin
 ///
 /// @file basic/svd/SVD_Solver.hh
 ///
 /// @brief SVD solver class
 ///
-/// @detailed Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
+/// @details Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
 ///
 /// @param
 /// Specify the size of the problem in the constructor (M is the number of equations, N is the number of parameters to fit)
@@ -36,9 +35,8 @@
 ///
 /// @references
 ///
-/// @authorsv Christophe Schmitz
+/// @authorv Christophe Schmitz
 ///
-/// @last_modified February 2010
 ////////////////////////////////////////////////
 
 

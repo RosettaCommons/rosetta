@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -24,13 +23,7 @@
 
 #include <core/kinematics/RT.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> //reading remarks
 
-// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh> // ?
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
 
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
@@ -44,7 +37,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -54,8 +46,6 @@
 
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <numeric/xyzMatrix.io.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
@@ -105,7 +95,6 @@ using ObjexxFCL::FArray2D_float;
 //    CA_posx >> CA_posy >> CA_posz
 
 // CA, N, C
-
 
 
 //    phi1 >> psi1 >> omega1 >>
@@ -294,7 +283,6 @@ main( int argc, char* argv [] )
 		dssp.insert_ss_into_pose( pdb );
 
 
-
 		Epos1(1,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(1);
  		Epos1(2,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(2);
 		Epos1(3,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(3);
@@ -320,7 +308,6 @@ main( int argc, char* argv [] )
 		Epos2(3,4) = pdb.residue(res2).atom(pdb.residue(res2).atom_index("C")).xyz()(3);
 
 		core::kinematics::RT this_rt(RT_from_epos(Epos1,Epos2));
-
 
 
 		std::cout << "DISULF ";

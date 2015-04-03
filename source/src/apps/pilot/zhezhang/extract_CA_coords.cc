@@ -14,7 +14,6 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>
@@ -24,7 +23,6 @@
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/SilentFileJobInputter.hh>
 
-// AUTO-REMOVED #include <protocols/jd2/util.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
 #include <protocols/toolbox/DecoySetEvaluation.impl.hh>
 #include <protocols/toolbox/InteratomicVarianceMatrix.hh>
@@ -36,12 +34,8 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 
 
-// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 #include <core/id/AtomID.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -51,14 +45,11 @@
 // Utility headers
 #include <basic/options/option_macros.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
@@ -69,7 +60,6 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <vector>
 #include <ostream>
-// AUTO-REMOVED #include <iterator>
 #include <algorithm>
 #include <string>
 

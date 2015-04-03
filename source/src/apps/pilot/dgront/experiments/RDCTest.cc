@@ -10,19 +10,16 @@
 /// @file
 /// @brief
 
-// AUTO-REMOVED #include <protocols/Protocol.hh>
 
 //core
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 //
 //#include <core/sequence/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>
@@ -105,9 +102,6 @@ int main(int argc, char * argv[]) {
                                   }
         return 0;
 }
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

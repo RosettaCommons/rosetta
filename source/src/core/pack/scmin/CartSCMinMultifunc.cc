@@ -275,7 +275,6 @@ CartSCMinMultifunc::dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ 
 {}
 
 
-
 } // namespace scmin
 } // namespace pack
 } // namespace core

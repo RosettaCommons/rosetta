@@ -25,7 +25,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief Superimpose pose onto reference pose. 
+/// @brief Superimpose pose onto reference pose. 
 ///  Default CA only.  All residues.  Optionally set to superimpose regions or backbone only (N, C, CA, O)
 class SuperimposeMover : public moves::Mover {
 

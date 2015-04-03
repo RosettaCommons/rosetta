@@ -17,13 +17,8 @@
 
 // Package headers
 #include <protocols/scoring/methods/saxs/PDDFEnergy.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/saxs/FormFactorManager.hh>
-// AUTO-REMOVED #include <core/scoring/saxs/FormFactor.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/saxs/PDDFEnergyCreator.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

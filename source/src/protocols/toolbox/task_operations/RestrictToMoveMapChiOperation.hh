@@ -38,7 +38,7 @@ namespace task_operations {
 	using core::pack::task::PackerTask;
 	
 	
-///@brief A TaskOperation that accepts a movemap and restricts chi that are false to either packing or design.
+/// @brief A TaskOperation that accepts a movemap and restricts chi that are false to either packing or design.
 /// Does not turn anything on, just like the rest of the RestrictTo operations.
 class RestrictToMoveMapChiOperation : public core::pack::task::operation::TaskOperation {
 
@@ -60,15 +60,15 @@ public:
 	void
 	set_movemap( MoveMapCOP movemap );
 	 
-	///@brief Set residues from movemap to designable.  Default false.
+	/// @brief Set residues from movemap to designable.  Default false.
 	void
 	set_design( bool setting );
 
-	///@brief Set to use neighbor residues in vacinity of movemap chi residues for packing.  Default False.
+	/// @brief Set to use neighbor residues in vacinity of movemap chi residues for packing.  Default False.
 	void
 	set_include_neighbors( bool setting );
 	
-	///@brief Cutoff distance for neighbor detection. Default is 10 A.
+	/// @brief Cutoff distance for neighbor detection. Default is 10 A.
 	void
 	set_cutoff_distance( core::Real cutoff );
 	

@@ -27,7 +27,6 @@
 #include <string>
 #include <iostream>
 
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

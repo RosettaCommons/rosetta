@@ -134,7 +134,6 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
 }
 
 
-
 Real
 average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Real distance_threshold=10.0)
 {
@@ -160,7 +159,6 @@ average_degree (Pose const &pose, vector1<Size> mutalyze_pos, Real distance_thre
   return( (Real) count_neighbors / mutalyze_pos.size() );
 
 }
-
 
 
 vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
@@ -264,6 +262,5 @@ main (int argc, char *argv[])
 	}
 
 }
-
 
 

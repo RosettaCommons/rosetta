@@ -52,7 +52,7 @@ namespace generalized_kinematic_closure {
 
 static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.util" );
 
-///
+
 /// @brief Function to determine whether a value is in a list.
 bool is_in_list (core::Size const val, utility::vector1 < core::Size > const &list)
 {
@@ -65,7 +65,7 @@ bool is_in_list (core::Size const val, utility::vector1 < core::Size > const &li
 	return false;
 }
 
-///
+
 /// @brief function to determine whether a residue index from the original pose is in the residue_map list.
 /// @details Returns true if the residue index in the original pose has been mapped to a residue in the loop, false otherwise.
 /// @param[in] residue_index - The index of a residue in the original pose.
@@ -81,7 +81,7 @@ bool original_pose_residue_is_in_residue_map (core::Size const residue_index, ut
 
 
 /// @brief Set the loop pose conformation based on a set of results from kinematic closure.
-/// @detailed
+/// @details
 /// @param[in,out] pose -- A pose consisting of the loop to be closed only.
 /// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
 /// @param[in] t_ang -- The torsion angles values to set.
@@ -147,7 +147,7 @@ void set_loop_pose (
 } //set_loop_pose
 
 /// @brief Set the loop pose conformation based on a set of results from kinematic closure.
-/// @detailed  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
+/// @details  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
 /// @param[in,out] pose -- A pose consisting of the loop to be closed only.
 /// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
 /// @param[in] torsions -- The torsion angles values to set.

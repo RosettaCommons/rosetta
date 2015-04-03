@@ -109,7 +109,6 @@
 #include <boost/function.hpp>
 
 
-
 class BigBinConstraintTests : public CxxTest::TestSuite {
 
 public:

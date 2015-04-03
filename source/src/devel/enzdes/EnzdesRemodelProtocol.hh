@@ -13,8 +13,6 @@
 /// @author Florian Richter, floric@u.washington.edu, march 2009
 
 
-
-
 #ifndef INCLUDED_devel_enzdes_EnzdesRemodelProtocol_hh
 #define INCLUDED_devel_enzdes_EnzdesRemodelProtocol_hh
 
@@ -24,7 +22,6 @@
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 #include <protocols/forge/remodel/ResidueVicinityRCG.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 // utility includes
 #include <utility/tag/Tag.fwd.hh>
@@ -292,8 +289,6 @@ private:
 
 } //namespace enzdes
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_enzdes_EnzdesFixBBProtocol_HH

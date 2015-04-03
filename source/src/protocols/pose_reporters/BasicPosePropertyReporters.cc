@@ -179,7 +179,7 @@ RMSDReporter::RMSDReporter() :
 {
 }
 
-///@brief Report the RMSD between poses p1 and p2
+/// @brief Report the RMSD between poses p1 and p2
 /// Depending on the mode, this can be either all atom or CA RMSD, optionally with residue selection
 core::Real RMSDReporter::report_property( core::pose::Pose & p1, core::pose::Pose & p2 ) const
 {

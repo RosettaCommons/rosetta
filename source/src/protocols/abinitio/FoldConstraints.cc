@@ -9,17 +9,14 @@
 
 /// @file FoldConstraints.cc
 /// @brief ab-initio fragment assembly protocol for proteins under the influence of contraints (e.g., NOE)
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
 #include <protocols/abinitio/FoldConstraints.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/simple_moves/GunnCost.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ConstraintFragmentMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -27,7 +24,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/kinematics/ShortestPathInFoldTree.hh>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
@@ -38,7 +34,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/numeric.functions.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_cst.OptionKeys.gen.hh>
@@ -48,7 +43,6 @@
 //// C++ headers
 #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <fstream>
 
 
 // option key includes
@@ -62,7 +56,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.abinitio.foldconstraints", basic::t_info );
@@ -96,7 +89,7 @@ namespace abinitio {
 
 using namespace core;
 
-///@brief c'stor from Movers
+/// @brief c'stor from Movers
 FoldConstraints::FoldConstraints(
 	 simple_moves::FragmentMoverOP brute_move_small,
 	 simple_moves::FragmentMoverOP brute_move_large,
@@ -109,7 +102,7 @@ FoldConstraints::FoldConstraints(
 	set_default_options();
 }
 
-///@brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
+/// @brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
 FoldConstraints::FoldConstraints(
 	 	core::fragment::FragSetCOP fragset3mer,
 		core::fragment::FragSetCOP fragset9mer,
@@ -145,7 +138,6 @@ FoldConstraints::FoldConstraints( FoldConstraints const & src ) :
 }
 
 FoldConstraints::~FoldConstraints() {}
-
 
 
 moves::MoverOP

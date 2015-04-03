@@ -24,14 +24,12 @@
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Project headers
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #ifdef USEMPI
 #include <utility/exit.hh>
 #endif
@@ -52,16 +50,16 @@ namespace unfolded_state_energy_calculator {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///@brief ctor
+/// @brief ctor
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor() :
   MPIWorkPoolJobDistributor()
 {}
 
-///@brief dtor (don't put anything in here)
+/// @brief dtor (don't put anything in here)
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor()
 {}
 
-///@brief unforntunatly this is pretty much copied from the MPIWorkPoolJobDistributor, I should make that more compartmentalized
+/// @brief unforntunatly this is pretty much copied from the MPIWorkPoolJobDistributor, I should make that more compartmentalized
 void
 UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 {

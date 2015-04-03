@@ -9,7 +9,7 @@
 //
 // This file is based off of code from the Biochemistry Library (BCL).
 // The BCL is copyright Vanderbilt University (Meiler Lab), a Rosetta Commons Member Institution
-//
+
 
 /// @file   core/chemical/gasteiger/GasteigerAtomTyper.cc
 /// @brief  The type assigner for gasteiger type data.

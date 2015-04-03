@@ -609,7 +609,6 @@ public: // Properties: predicate
 	}
 
 
-
 public: // Properties: buffer
 
 
@@ -757,7 +756,7 @@ private: // Fields
 	/// @brief Zip file stream pointer (owning)
 	zlib_stream::zip_ostream *zip_stream_p_;
 
-	///
+
 	mpi_stream::mpi_ostream *mpi_stream_p_;
 
 	static bool bMPI_reroute_stream_;

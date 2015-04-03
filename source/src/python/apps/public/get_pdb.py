@@ -216,7 +216,6 @@ for i in range(len(lines)):
 				line_edit = line_edit[0:21]+' '+line_edit[22:]
 
 
-
 			residue_buffer.append( line_edit )
 
 

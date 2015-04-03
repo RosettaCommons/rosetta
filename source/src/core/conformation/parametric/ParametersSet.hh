@@ -42,7 +42,7 @@ namespace core {
 	namespace conformation {
 		namespace parametric {
 
-			///@brief  ParametersSet class, used to store sets of parameters for parametric backbone generation.
+			/// @brief  ParametersSet class, used to store sets of parameters for parametric backbone generation.
 			///
 			class ParametersSet : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< ParametersSet >
 			{

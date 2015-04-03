@@ -22,7 +22,6 @@ typedef utility::pointer::shared_ptr< LoopBuildMover > LoopBuildMoverOP;
 typedef utility::pointer::shared_ptr< LoopBuildMover const > LoopBuildMoverCOP;
 
 
-
 }//loop_build
 }//protocols
 

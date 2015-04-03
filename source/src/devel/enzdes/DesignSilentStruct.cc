@@ -14,11 +14,8 @@
 /// @author Florian Richter
 
 
-
 // C++ Headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
-// AUTO-REMOVED #include <utility>
 #include <vector>
 #include <map>
 
@@ -26,14 +23,8 @@
 #include <core/pose/Pose.hh>
 
 // mini headers
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
@@ -338,7 +329,6 @@ DesignSilentStruct::sum_constraint_terms( pose::Pose const & pose, int which_res
     scores[ angle_constraint ] * all_weights[ angle_constraint ] + scores[ dihedral_constraint ] * all_weights[ dihedral_constraint ];
 
 }
-
 
 
 } //namespace enzdes

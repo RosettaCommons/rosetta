@@ -24,7 +24,6 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -35,8 +34,6 @@
 
 #include <utility/tag/Tag.hh>
 //#include <core/pack/task/operation/ResLvlTaskOperations.hh>
-// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 //#include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
 
@@ -67,7 +64,7 @@ core::pack::task::operation::TaskOperationOP InteractingRotamerExplosion::clone(
 	return core::pack::task::operation::TaskOperationOP( new InteractingRotamerExplosion( *this ) );
 }
 
-///@brief restricts to repacking all residues outside of design_shell_ around each residue
+/// @brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 InteractingRotamerExplosion::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {

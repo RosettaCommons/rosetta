@@ -74,7 +74,7 @@ private:
 
 	mutable ObjexxFCL::FArray3D< double > rhoC_, rhoMask_;  // temp storage avoids reallocation
 
-	//
+
 	core::Real B_EPS;
 };
 

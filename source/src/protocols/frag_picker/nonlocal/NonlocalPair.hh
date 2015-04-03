@@ -47,7 +47,7 @@ using namespace core;
 using namespace protocols::frag_picker;
 
 /// @brief  represents a nonlocal fragment pair.
-/// @detailed NonlocalPair contains query start positions for each fragment of pair i and j, and their corresponding fragment candidate
+/// @details NonlocalPair contains query start positions for each fragment of pair i and j, and their corresponding fragment candidate
 class NonlocalPair: public utility::pointer::ReferenceCount {
 public:
 	NonlocalPair( Size query_pos_i, Size query_pos_j, Candidate candidate_i, Candidate candidate_j,

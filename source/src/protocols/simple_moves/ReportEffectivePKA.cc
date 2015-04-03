@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-///@author Yifan Song
+/// @author Yifan Song
 
 #include <protocols/simple_moves/ReportEffectivePKA.hh>
 #include <protocols/simple_moves/ReportEffectivePKACreator.hh>
@@ -220,7 +220,7 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 }
 
     
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ReportEffectivePKA::parse_my_tag(
 		TagCOP const tag,

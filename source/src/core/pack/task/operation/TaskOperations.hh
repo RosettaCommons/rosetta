@@ -33,7 +33,6 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
@@ -226,7 +225,7 @@ public:
 
 };
 
-///@details control the extra chi rotamers for all residues
+/// @details control the extra chi rotamers for all residues
 class ExtraRotamersGeneric : public TaskOperation {
 public:
 	typedef TaskOperation parent;
@@ -303,7 +302,7 @@ public:
 
 	void filename( std::string const & filename );
 
-	///@brief queries options system for resfile name
+	/// @brief queries options system for resfile name
 	void default_filename();
 
 	std::string const & filename() const;
@@ -403,7 +402,7 @@ private:
 };
 
 
-///@brief when a PackerTask is created by the Factory, the RotamerOperation will be given to it
+/// @brief when a PackerTask is created by the Factory, the RotamerOperation will be given to it
 class AppendRotamer : public TaskOperation
 {
 public:
@@ -423,8 +422,8 @@ private:
 };
 
 
-///@brief when a PackerTask is created by the Factory, the RotamerSetOperation will be given to it
-///@author Barak Raveh (Dec 2008)
+/// @brief when a PackerTask is created by the Factory, the RotamerSetOperation will be given to it
+/// @author Barak Raveh (Dec 2008)
 class AppendRotamerSet : public TaskOperation
 {
 public:
@@ -442,8 +441,8 @@ private:
 	rotamer_set::RotamerSetOperationOP rotamer_set_operation_;
 };
 
-///@brief Apply rotamerSetOperation to only the rotamerSet for the given residue
-///@author Tim Jacobs (2011)
+/// @brief Apply rotamerSetOperation to only the rotamerSet for the given residue
+/// @author Tim Jacobs (2011)
 class AppendResidueRotamerSet : public TaskOperation
 {
 public:

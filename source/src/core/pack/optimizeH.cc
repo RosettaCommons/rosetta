@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -40,9 +39,6 @@
 #include <core/id/AtomID_Map.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
-
 
 
 namespace core {

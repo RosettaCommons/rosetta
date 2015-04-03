@@ -124,10 +124,8 @@ void ClassicGrid::refresh(core::pose::Pose const & pose, core::Vector const & ce
 }
 
 
-
 }
 }
 }
-
 
 

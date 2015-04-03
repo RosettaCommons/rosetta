@@ -24,7 +24,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 

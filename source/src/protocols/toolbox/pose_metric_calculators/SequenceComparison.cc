@@ -8,12 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 //////////////////////////////////////////////////////////////////////
-/// @begin SequenceComparison
 ///
 /// @brief
 /// Compare the sequences between a native and designed protein
 ///
-/// @detailed
+/// @details
 /// This is an implementation taken from Ron Jacak, Douglas Renfrew, Matt O Mera.
 /// The main function that is called is the get_sequence_recovery() function. You can
 /// pass this function a list of native pdbs and designed pdbs, or just 1 native and 1
@@ -25,12 +24,11 @@
 /// "Native sequences are close to optimal" paper
 ///
 ///
-/// @authors
+/// @author
 /// Ron Jacak,
 /// Douglas Renfrew (renfrew@nyu.edu) ( added rotamer recovery, cleanup )
 /// Steven Combs (moved it into a general use class)
 ///
-/// @last_modified October 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -39,34 +37,19 @@
 //project Headers
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <protocols/toolbox/pose_metric_calculators/SequenceComparison.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <basic/prof.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
-
 
 
 // Numeric Headers
@@ -85,8 +68,6 @@
 #include <utility/vector0.hh>
 
 
-
-
 namespace protocols{
 namespace toolbox{
 namespace pose_metric_calculators{
@@ -101,8 +82,7 @@ using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::format;
 
 
-
-///@brief load custom TaskOperations according to an xml-like utility::tag file
+/// @brief load custom TaskOperations according to an xml-like utility::tag file
 core::pack::task::TaskFactoryOP SequenceComparison::setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 	using namespace core::pack::task::operation;
 
@@ -113,7 +93,7 @@ core::pack::task::TaskFactoryOP SequenceComparison::setup_tf( core::pack::task::
 
 }
 
-///@brief return the set of residues that are designable based given pose
+/// @brief return the set of residues that are designable based given pose
 std::set< core::Size > SequenceComparison::fill_designable_set( core::pose::Pose & pose, core::pack::task::TaskFactoryOP & tf ) {
 
 	//we need to score the pose for many of the task operations passed from cmd line
@@ -135,7 +115,7 @@ std::set< core::Size > SequenceComparison::fill_designable_set( core::pose::Pose
 }
 
 
-///@brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
+/// @brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
 void SequenceComparison::fill_num_neighbors( pose::Pose & pose, utility::vector1< core::Size > & num_nbs ) {
 
 	using core::conformation::PointGraph;
@@ -161,8 +141,7 @@ void SequenceComparison::fill_num_neighbors( pose::Pose & pose, utility::vector1
 }
 
 
-
-///@brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
+/// @brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
 void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses ) {
 
 	// setup main arrays used for calculation
@@ -355,10 +334,6 @@ void SequenceComparison::measure_sequence_recovery( utility::vector1<core::pose:
 }
 
 
-
-
-
-
 void SequenceComparison::get_sequence_recovery(core::pose::Pose & native, core::pose::Pose & designed){
 	utility::vector1<core::pose::Pose> native_poses;
 	utility::vector1<core::pose::Pose> redesign_poses;
@@ -380,8 +355,6 @@ void SequenceComparison::get_sequence_recovery(utility::vector1<core::pose::Pose
 	measure_sequence_recovery( native_poses, redesign_poses );
 
 }
-
-
 
 
 }

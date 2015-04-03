@@ -157,7 +157,6 @@ AtomDistanceSecMatchRPE::print(
 }
 
 
-
 bool
 AtomDistanceSecMatchRPE::require_candidate_residue_atoms_to_lie_near_target_atom(
 	Size target_atom_id
@@ -192,7 +191,6 @@ AtomDistanceSecMatchRPE::max_separation_dist_to_target_atom( Size target_atom_id
 		return -1.0;
 	}
 }
-
 
 
 AtomAngleSecMatchRPE::AtomAngleSecMatchRPE(
@@ -489,7 +487,6 @@ GeometrySecMatchRPE::max_separation_dist_to_target_atom( Size target_atom_id ) c
 	return min_max_dis;
 
 }
-
 
 
 }

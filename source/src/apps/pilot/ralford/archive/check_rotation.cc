@@ -102,7 +102,6 @@ public:
 		transform_memb->apply( pose ); 
 
 
-
 		//MembranePositionFromTopologyMoverOP initialize_memb = new MembranePositionFromTopologyMover(); 
 		//initialize_memb->apply( pose ); 
 

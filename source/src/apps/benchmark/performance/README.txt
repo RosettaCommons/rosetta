@@ -12,7 +12,6 @@ See the performance benchmarks section on RosettaTests
     http://rosettatests.graylab.jhu.edu/analyze
 
 
-
 ##################################
 # To add a performance benchmark #
 ##################################

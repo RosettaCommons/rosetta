@@ -192,7 +192,6 @@ CountPairGeneric::residue_atom_pair_energy_backbone_backbone(
 }
 
 
-
 void
 CountPairGeneric::residue_atom_pair_energy_sidechain_sidechain(
 	conformation::Residue const & res1,

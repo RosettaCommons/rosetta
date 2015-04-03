@@ -60,7 +60,6 @@
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/simple_moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
@@ -159,7 +158,7 @@ public:
 		two_ubiquitins_ = basic::options::option[ basic::options::OptionKeys::chemically_conjugated_docking::two_ubiquitins ].value();
 	}
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 	virtual
 	void
 	init_on_new_input() {
@@ -842,7 +841,7 @@ private:
 
 	protocols::loops::Loop loop_;
 
-	///@brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions
+	/// @brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions
 	utility::vector1< core::id::AtomID > atomIDs;
 
 	core::pose::Pose starting_pose_; //maintained from run to run
@@ -851,13 +850,13 @@ private:
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
-	///@brief used for two-ubiquitins mode
+	/// @brief used for two-ubiquitins mode
 	bool two_ubiquitins_;
 
-	///@brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
+	/// @brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
 	utility::vector1< core::Size > extra_bodies_chains_;
 
-	///@brief the lysine attachment position for the second ubiquitin (the second moving chain), in the whole complex numbering
+	/// @brief the lysine attachment position for the second ubiquitin (the second moving chain), in the whole complex numbering
 	core::Size ubq2_lys_pos_in_complex_;
 
 };

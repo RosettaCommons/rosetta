@@ -103,7 +103,6 @@ main ( int argc, char* argv[] ){
 		SerializablePose p(*pop);
 
 
-
 		TR << "size of pose to flatten " << p.total_residue() << std::endl;
 
 		TR << "ss1:" << p.secstruct() << std::endl;

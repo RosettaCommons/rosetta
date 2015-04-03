@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 
 
-
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
@@ -106,7 +105,6 @@ NumberHBondsCalculator::lookup(
 } //lookup
 
 
-
 std::string
 NumberHBondsCalculator::print( std::string const & key ) const
 {
@@ -127,7 +125,6 @@ NumberHBondsCalculator::print( std::string const & key ) const
   return "";
 
 } //print
-
 
 
 void
@@ -223,7 +220,6 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
   all_Hbonds_ = all_Hbonds_ / 2; //remember not to overcount
 
 } //recompute
-
 
 
 /// @brief function to figure out which residues to recompute the hydrogen bonds for

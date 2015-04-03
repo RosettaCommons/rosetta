@@ -15,8 +15,6 @@
 
 #include <core/optimization/Multifunc.hh>
 #include <protocols/qsar/qsarOptFunc.fwd.hh>
-// AUTO-REMOVED #include <basic/database/sql_utils.hh>
-// AUTO-REMOVED #include <numeric/roc_curve.fwd.hh>
 //external headers
 #include <cppdb/frontend.h>
 

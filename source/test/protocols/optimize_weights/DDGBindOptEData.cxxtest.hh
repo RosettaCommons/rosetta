@@ -26,7 +26,6 @@
 #include <core/chemical/AA.hh> // to get aa_from_oneletter_code()
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
@@ -46,7 +45,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 static basic::Tracer TR("test.protocols.optimize_weights.DDGBindOptEData");
@@ -84,10 +82,10 @@ public:
 		// a mute here because the interaction graphs generate tons of debugging output (in DEBUG mode anyway).
 		core_init_with_additional_options( "-no_optH -mute core.io core.init core.scoring core.mm core.pack.task" );
 
-		//
+
 		// To create a DDGBindOptEDataTests object, we need to create a few other objects like a Pose, a ScoreFunction, etc
 		// Create all of these objects here in the suite-level fixture since they'll get reused throughout the suite.
-		//
+
 
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights
@@ -272,8 +270,8 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///
-	/// @detailed
+
+	/// @details
 	/// Tests the function get_score() in the DDGBindOptEData class.
 	/// get_score() calls process_score() which takes the input array of weights and applies them to the unweighted
 	/// energies for all of the structures contained within.

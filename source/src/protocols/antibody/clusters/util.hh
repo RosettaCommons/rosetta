@@ -29,12 +29,12 @@ namespace clusters {
 std::string
 get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const start, core::Size const end);
 
-///@brief Calculates the dihedral distance used to match cluster centers.
+/// @brief Calculates the dihedral distance used to match cluster centers.
 core::Real
 calculate_dihedral_distance(vector1< Real > cluster_phis, vector1< Real> pose_phis, vector1< Real > cluster_psis, vector1< Real > pose_psis);
 
-///@brief Very basic way to check to make sure pose residues are North_AHO (North, et al) scheme, which allows the clustering.
-///@details If any of these anchor residues that are checked are missing, it will return false.
+/// @brief Very basic way to check to make sure pose residues are North_AHO (North, et al) scheme, which allows the clustering.
+/// @details If any of these anchor residues that are checked are missing, it will return false.
 bool
 check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose);
 

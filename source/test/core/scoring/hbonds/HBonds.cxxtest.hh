@@ -28,13 +28,9 @@
 #include <core/scoring/hbonds/hbonds.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -278,7 +274,6 @@ public:
 			TS_ASSERT( deriv.acc_deriv.f2() == hbond.derivs().acc_deriv.f2() );
 		}
 	}
-
 
 
 	// A tests that can be run if the hbond types might change.  Go

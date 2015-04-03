@@ -16,7 +16,6 @@
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -75,7 +74,6 @@ public:
 
 	virtual bool reinitialize_for_new_input() const { return true; }
 	virtual protocols::moves::MoverOP fresh_instance() const {return protocols::moves::MoverOP( new IAMover );}
-
 
 
 	void assign_IA_mover(core::pose::Pose & pose);

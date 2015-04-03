@@ -9,7 +9,7 @@
 
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -23,7 +23,6 @@
 // Unit Headers
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-// AUTO-REMOVED #include <protocols/docking/DockMCMCycle.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>

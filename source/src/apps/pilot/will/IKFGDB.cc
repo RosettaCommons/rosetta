@@ -11,56 +11,31 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MultiConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
@@ -68,19 +43,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
-// AUTO-REMOVED #include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>
@@ -333,7 +297,6 @@ void run(std::string fname) {
   TR << "stop" << std::endl;
 
 
-
   // utility::io::ozstream out("test.pdb");
   // Pose res;
   // make_pose_from_sequence(res,"N","fa_standard",false);
@@ -360,7 +323,6 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-
   devel::init(argc,argv);
 
   using basic::options::option;
@@ -374,6 +336,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
 
 

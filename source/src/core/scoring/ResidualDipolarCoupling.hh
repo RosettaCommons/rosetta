@@ -15,13 +15,11 @@
 #define INCLUDED_core_scoring_ResidualDipolarCoupling_hh
 
 #include <core/scoring/ResidualDipolarCoupling.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ResidualDipolarCouplingEnergy.fwd.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
 #include <basic/datacache/CacheableData.hh>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -33,8 +31,8 @@ void store_RDC_in_pose(ResidualDipolarCouplingOP, core::pose::Pose&);
 ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose&);
 ResidualDipolarCouplingCOP retrieve_RDC_from_pose(core::pose::Pose const&);
 
-///@brief ResidualDipolarCouplings are mainly handled by this class
-///@detail related classed: RDC --- a single line in an RDC file - representing a single dipolar coupling
+/// @brief ResidualDipolarCouplings are mainly handled by this class
+/// @detail related classed: RDC --- a single line in an RDC file - representing a single dipolar coupling
 ///                         ResidualDipolarCouplingEnergy -- an energy method which triggers computations handled by this class.
 ///
 ///
@@ -89,7 +87,7 @@ public:
 		return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling(*this) );
 	}
 
-	///@brief compute dipolar score for given pose
+	/// @brief compute dipolar score for given pose
 	/// will set alignment tensor and force-fields in RDC
 	core::Real compute_dipscore(core::pose::Pose const& pose);
 
@@ -105,29 +103,29 @@ public:
 
 	void show(std::ostream&) const;
 
-	///@brief read RDC data from file
+	/// @brief read RDC data from file
 	void read_RDC_file();
 
-	///@brief fill internal buffers... call always when RDC lines change.
+	/// @brief fill internal buffers... call always when RDC lines change.
 	void preprocess_data();
 
-	///@brief free memory of buffers
+	/// @brief free memory of buffers
 	void release_buffers();
 
-	///@brief get memory for buffers
+	/// @brief get memory for buffers
 	void reserve_buffers();
 
-	///@brief get the raw RDC data
+	/// @brief get the raw RDC data
 	inline RDC_lines const& get_RDC_data() const {
 		return All_RDC_lines_;
 	}
 
-	///@brief return the Q value ( cornilescu )  --- only valid after compute_dipscore
+	/// @brief return the Q value ( cornilescu )  --- only valid after compute_dipscore
 	Real Q() const {
 		return R() * sqrt(2.0f);
 	}
 
-	///@brief return the R value ( M Clore )  --- only valid after compute_dipscore
+	/// @brief return the R value ( M Clore )  --- only valid after compute_dipscore
 	Real R() const {
 		return R_;
 	}
@@ -135,7 +133,7 @@ public:
   //@brief return the number of experiments
 	core::Size get_n_alignments() const {return nex_;}
 
-	///@brief return tensor of certain experiment... exp_id starts at 1
+	/// @brief return tensor of certain experiment... exp_id starts at 1
 	Tensor* tensor( ) {
 		return S_;
 	}
@@ -167,10 +165,10 @@ public:
 	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const double tensorR, const double *par) const;
 	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const double tensorDa, const double tensorR, const double *par) const;
 private:
-	///@brief read RDC data from file
+	/// @brief read RDC data from file
 	void read_RDC_file( Size nex, std::string const& filename );
 
-	///@brief non-const reference to RDC data     private use only.
+	/// @brief non-const reference to RDC data     private use only.
 	RDC_lines& get_RDC_data_ref();
 
 private:
@@ -234,7 +232,7 @@ public:
 		return type_;
 	}
 
-	///@brief which type of RDC pairing are we dealing with ?
+	/// @brief which type of RDC pairing are we dealing with ?
 	RDC_TYPE get_RDC_data_type(std::string const & atom1,
 			std::string const & atom2);
 

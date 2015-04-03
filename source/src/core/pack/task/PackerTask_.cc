@@ -49,7 +49,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
@@ -63,7 +62,7 @@ namespace task {
 
 static thread_local basic::Tracer T( "core.pack.task", basic::t_info );
 
-///@details ResidueLevelTask constructor has following defaults:
+/// @details ResidueLevelTask constructor has following defaults:
 ///all ex set to false with zero sample level
 ///position is packable and designable to any of the canonical aa's,
 ///with variant matching (for termini, etc)
@@ -622,7 +621,7 @@ bool ResidueLevelTask_::flip_HNQ() const
 	return flip_HNQ_;
 }
 
-///@details this function forces a fixed histidine tautomer by removing the alternate tautomer from the ResidueTypesCAPList.  The fix_his_tautomer_ boolean is maintained for reference that this has been done, but the boolean is not the source of the effect.
+/// @details this function forces a fixed histidine tautomer by removing the alternate tautomer from the ResidueTypesCAPList.  The fix_his_tautomer_ boolean is maintained for reference that this has been done, but the boolean is not the source of the effect.
 void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 {
 	//TODO: Modify this function to allow D-amino acids (particularly D-his)!
@@ -664,7 +663,7 @@ bool ResidueLevelTask_::fix_his_tautomer() const
 }
 
 
-///@details this function samples a protein conformation with a virtualized side chain.
+/// @details this function samples a protein conformation with a virtualized side chain.
 void ResidueLevelTask_::or_include_virtual_side_chain( bool setting )
 {
 	include_virtual_side_chain_ |= setting;
@@ -675,7 +674,7 @@ bool ResidueLevelTask_::include_virtual_side_chain() const
 	return include_virtual_side_chain_;
 }
 
-///@details and operation -- min -- move only toward a lower cutoff for #neighbors w/i 10A that
+/// @details and operation -- min -- move only toward a lower cutoff for #neighbors w/i 10A that
 ///qualify a residue to be considered buried.
 void ResidueLevelTask_::and_extrachi_cutoff( Size num_neighbors_to_be_called_buried )
 {
@@ -701,7 +700,7 @@ void ResidueLevelTask_::prevent_repacking()
 }
 
 
-///@details contract (and) the list of available aas for canonical aa's
+/// @details contract (and) the list of available aas for canonical aa's
 ///if an amino acid is not present (false) in the boolean vector, then do not allow it at this position
 ///boolean vector is based on the aa enum; see another example with PIKAA.
 ///The boolean vector is a 20-length vector in alphabetical order by one-letter code.
@@ -786,7 +785,7 @@ ResidueLevelTask_::restrict_nonnative_canonical_aas( utility::vector1< bool > co
 }
 
 
-///@details contract (and) the list of available nas for canonical na's
+/// @details contract (and) the list of available nas for canonical na's
 ///if a nucleic acid is not present in the vector, then do not allow it at this position
 void
 ResidueLevelTask_::restrict_absent_nas(
@@ -822,7 +821,7 @@ ResidueLevelTask_::restrict_absent_nas(
 
 }
 
-///@details removes all residues from the allowed residue types list, except the one that matches
+/// @details removes all residues from the allowed residue types list, except the one that matches
 ///the original residue; this means only rotameric and not sequence changes are allowed
 ///if the original residue type has been disabled elsewhere, this function will prevent repacking at
 ///that residue.
@@ -1000,7 +999,7 @@ ResidueLevelTask_::print_allowed_types( std::ostream & os ) const
 bool ResidueLevelTask_::being_designed() const { return designing_; } // is this residue up for design?
 bool ResidueLevelTask_::being_packed() const { return repacking_; } // is this residue being modified at all by the packer
 
-///@details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero (AS IT SHOULD!)
+/// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero (AS IT SHOULD!)
 void ResidueLevelTask_::refresh_ex1_sample_levels()
 {
 	if ( ex1_ ) {
@@ -1019,7 +1018,7 @@ void ResidueLevelTask_::refresh_ex1_sample_levels()
 	if ( ex1aro_sample_level_ < ex1aro_exposed_sample_level_ ) ex1aro_sample_level_ = ex1aro_exposed_sample_level_;
 }
 
-///@details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
+/// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
 void ResidueLevelTask_::refresh_ex2_sample_levels()
 {
 	if ( ex2_ ) {
@@ -1036,7 +1035,7 @@ void ResidueLevelTask_::refresh_ex2_sample_levels()
 	if ( ex2aro_sample_level_ < ex2aro_exposed_sample_level_ ) ex2aro_sample_level_ = ex2aro_exposed_sample_level_;
 }
 
-///@details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
+/// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
 void ResidueLevelTask_::refresh_ex3_sample_levels()
 {
 	if ( ex3_ ) {
@@ -1044,7 +1043,7 @@ void ResidueLevelTask_::refresh_ex3_sample_levels()
 	}
 }
 
-///@details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
+/// @details  bookkeeping - increases to EX_ONE_STDDEV if boolean is on, but sample level is zero
 void ResidueLevelTask_::refresh_ex4_sample_levels()
 {
 	if ( ex4_ ) {
@@ -1224,7 +1223,6 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 		}
 	}
 	rotamer_operations_ = new_rotamer_operations;
-
 
 
 	rotamer_set::RotSetOperationList new_rotsetops;
@@ -1535,7 +1533,7 @@ PackerTask_::PackerTask_(
 	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
 }
 
-///@details constructor requires a pose.  most settings are in ResidueLevelTask
+/// @details constructor requires a pose.  most settings are in ResidueLevelTask
 ///nres_ is copied from the pose, all residues are set to be packable by default, and bump_check is true
 ///the constructor reads NEITHER the command line flags NOR a resfile; this must be done after creation!
 PackerTask_::PackerTask_(
@@ -1573,7 +1571,7 @@ PackerTask_::PackerTask_(
 
 PackerTask_::~PackerTask_() {}
 
-///@details uses compiler-generated copy ctor
+/// @details uses compiler-generated copy ctor
 PackerTaskOP
 PackerTask_::clone() const
 {
@@ -1597,7 +1595,7 @@ PackerTask_::clean_residue_task( conformation::Residue const & original_residue,
 	residue_tasks_[seqpos] = ResidueLevelTask_( original_residue );
 }
 
-///@details turn off packing at all positions.
+/// @details turn off packing at all positions.
 ///This does not affect underlying ResidueLevelTasks, but at the moment there is no method for reversing
 void PackerTask_::temporarily_fix_everything()
 {
@@ -1609,7 +1607,7 @@ void PackerTask_::temporarily_fix_everything()
 	n_to_be_packed_up_to_date_ = true;
 }
 
-///@details arbitrarily set the packer mutability for a position
+/// @details arbitrarily set the packer mutability for a position
 ///reverse with same function, opposite bool input
 void PackerTask_::temporarily_set_pack_residue( int resid, bool setting )
 {
@@ -1832,7 +1830,7 @@ Size PackerTask_::double_lazy_ig_memlimit() const
 	return dlig_mem_limit_;
 }
 
-///@brief read only the command line options for extra rotamer building;
+/// @brief read only the command line options for extra rotamer building;
 PackerTask &
 PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 {
@@ -2012,7 +2010,7 @@ PackerTask_::initialize_from_command_line()
 	return *this;
 }
 
-///@details vector boolean is based on residue position, disables packing at false positions
+/// @details vector boolean is based on residue position, disables packing at false positions
 ///does nothing to true positions.  Cannot turn on packing.
 PackerTask &
 PackerTask_::restrict_to_residues(
@@ -2028,7 +2026,7 @@ PackerTask_::restrict_to_residues(
 	return *this;
 }
 
-///@details vector boolean is based on residue position, disables packing at false positions
+/// @details vector boolean is based on residue position, disables packing at false positions
 ///does nothing to true positions.  Cannot turn on packing.  Will prevent packing at false positions
 ///if the original residue type has been otherwise disallowed.
 PackerTask &
@@ -2073,21 +2071,21 @@ PackerTask_::designing_residues() const
 	return being_designed;
 }
 
-///@brief is there at RotamerCouplings object to worry about? (for DNA GC AT pairing, etc)
+/// @brief is there at RotamerCouplings object to worry about? (for DNA GC AT pairing, etc)
 bool
 PackerTask_::rotamer_couplings_exist() const
 {
 	return ( rotamer_couplings_ != 0 );
 }
 
-///@brief const accessor for the RotamerCouplings object
+/// @brief const accessor for the RotamerCouplings object
 PackerTask::RotamerCouplingsCOP
 PackerTask_::rotamer_couplings() const
 {
 	return rotamer_couplings_;
 }
 
-///@brief setter for the RotamerCouplings object
+/// @brief setter for the RotamerCouplings object
 void
 PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 {
@@ -2097,7 +2095,7 @@ PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 	}
 }
 
-///@brief is there at RotamerLinks object to worry about? (for repeat linking
+/// @brief is there at RotamerLinks object to worry about? (for repeat linking
 //equivalent positions, etc)
 bool
 PackerTask_::rotamer_links_exist() const
@@ -2105,14 +2103,14 @@ PackerTask_::rotamer_links_exist() const
 	return ( rotamer_links_ != 0 );
 }
 
-///@brief const accessor for the RotamerCouplings object
+/// @brief const accessor for the RotamerCouplings object
 PackerTask::RotamerLinksCOP
 PackerTask_::rotamer_links() const
 {
 	return rotamer_links_;
 }
 
-///@brief setter for the RotamerCouplings object
+/// @brief setter for the RotamerCouplings object
 void
 PackerTask_::rotamer_links( PackerTask::RotamerLinksCOP setting )
 {
@@ -2279,7 +2277,7 @@ std::string PackerTask_::task_string( pose::Pose const & pose ) const{
 }
 
 
-///@brief output highlights of the internal data of PackerTask_: for
+/// @brief output highlights of the internal data of PackerTask_: for
 ///each residue whether it is to be packed, designed and which amino
 ///acids are allowed.
 

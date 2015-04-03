@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
 
 
@@ -45,13 +44,13 @@ public:
 
 public:
 
-	///
+
 	SequenceDependentRefEnergy();
 
-	///
+
 	SequenceDependentRefEnergy( utility::vector1< utility::vector1< Real > > const & aa_seq_weights_in );
 
-	///
+
 	virtual ~SequenceDependentRefEnergy();
 
 	virtual
@@ -62,7 +61,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -74,7 +73,7 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
-	///
+
 	virtual
 	Real
 	eval_dof_derivative(

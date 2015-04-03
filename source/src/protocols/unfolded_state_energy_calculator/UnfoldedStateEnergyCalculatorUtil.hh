@@ -23,28 +23,26 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace protocols {
 namespace unfolded_state_energy_calculator {
 
-///@brief
+/// @brief
 void
 calc_all_averages( utility::vector1< core::scoring::EMapVector > unweighted_energies, core::scoring::EMapVector energy_terms );
 
-///@brief
+/// @brief
 core::Real
 calc_vector_mean( utility::vector1< core::Real> const & data );
 
-///@brief
+/// @brief
 core::Real
 calc_vector_median( utility::vector1< core::Real> const & data );
 
-///@brief
+/// @brief
 core::Real
 calc_vector_mode( utility::vector1< core::Real> const & data );
 
-///@brief
+/// @brief
 core::Real
 calc_vector_boltzmann( utility::vector1< core::Real> const & data );
 

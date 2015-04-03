@@ -175,7 +175,7 @@ LK_hack::LK_hack( LK_hack const & src ):
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 LK_hack::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -790,7 +790,6 @@ LK_hack::eval_atom_derivative(
 	F1 += atom_f1_f2s_[ id.rsd() ][ id.atomno() ].first;
 	F2 += atom_f1_f2s_[ id.rsd() ][ id.atomno() ].second;
 }
-
 
 
 void

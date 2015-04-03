@@ -82,7 +82,6 @@
 	#define MAX_UINT8    255
 
 
-
 namespace core {
 namespace scoring {
 namespace motif {
@@ -1780,7 +1779,6 @@ namespace motif {
 					///////////////////////////////////////////////////////////////////////////////
 
 
-
 					MotifHit h(pose1cop,pose2cop,ir,jr,*i);
 					if(  opt.match_ss1() && i->type1()!=RM_SC && i->type1()!=RM_PH && i->type1()!=RM_PO && ss1!=i->ss1() ){ /* << "ss mismatch" << endl;*/ continue; };
 					if(  opt.match_ss1() && i->type2()!=RM_SC && i->type2()!=RM_PH && i->type2()!=RM_PO && ss2!=i->ss2() ){ /* << "ss mismatch" << endl;*/ continue; };
@@ -2142,7 +2140,6 @@ namespace motif {
 		TR << endl;
 		return true;
 	 }
-
 
 
 	void XformScore::print_scores(ostream & out, std::string const tag) const {

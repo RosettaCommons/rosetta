@@ -33,13 +33,13 @@ public:
 
 	virtual ~ScreeningJobInputter();
 
-	///@brief Fill the pose reference with the pose indicated by the job
+	/// @brief Fill the pose reference with the pose indicated by the job
 	virtual void pose_from_job(core::pose::Pose & pose, JobOP job);
 
-	///@brief fill the jobs based on the specified json file
+	/// @brief fill the jobs based on the specified json file
 	virtual void fill_jobs(Jobs & jobs);
 
-	///@brief return the input source
+	/// @brief return the input source
 	virtual JobInputterInputSource::Enum input_source() const;
 };
 

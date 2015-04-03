@@ -34,8 +34,6 @@
 /// nat_rot1 = chi 1
 /// pct_rot1 = fraction matching chi bins
 /// If 999 appears, that means that the amino acid does not have that chi angle
-///
-
 
 
 #ifndef INCLUDED_protocols_rotamer_recovery_RRReporterHuman_HH
@@ -62,7 +60,6 @@
 #include <string>
 
 
-
 namespace protocols {
 namespace rotamer_recovery {
 
@@ -82,7 +79,7 @@ public: // public constructors / destructors
 
 private: // private helper functions
 
-	///@brief return one character code for region of Ramachandran plot
+	/// @brief return one character code for region of Ramachandran plot
 	char
 	torsion2big_bin(
 		core::Real const phi,
@@ -126,7 +123,7 @@ private: // private member data
 };
 
 
-///@brief The reporting functionality for the rotamer recovery test in
+/// @brief The reporting functionality for the rotamer recovery test in
 ///a human readable format.
 class RRReporterHuman : public RRReporter {
 

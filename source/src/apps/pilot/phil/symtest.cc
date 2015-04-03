@@ -20,7 +20,6 @@
 
 // #include <protocols/frags/VallData.hh>
 // #include <protocols/frags/TorsionFragment.hh>
-// // AUTO-REMOVED #include <devel/dna/protocols.hh>
 
 // #include <core/scoring/dna/setup.hh>
 // #include <core/scoring/dna/base_geometry.hh>
@@ -61,8 +60,6 @@
 // #include <core/sequence/DerivedSequenceMapping.hh>
 // #include <core/sequence/util.hh>
 
-// // AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// // AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 // #include <core/chemical/AA.hh>
 // #include <core/conformation/Residue.hh>
@@ -77,17 +74,12 @@
 
 // #include <core/chemical/ChemicalManager.hh>
 
-// // AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
-// // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 // #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// // AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 // #include <core/pack/dunbrack/RotamerLibrary.hh>
 // #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 // #include <core/scoring/hbonds/HBondSet.hh>
 // #include <core/scoring/hbonds/hbonds.hh>
-// // AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
-// // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // #include <core/pack/rotamer_trials.hh>
 // #include <core/pack/pack_rotamers.hh>
@@ -98,10 +90,8 @@
 // #include <core/kinematics/FoldTree.hh>
 // #include <protocols/viewer/visualize.hh>
 // #include <core/kinematics/MoveMap.hh>
-// // AUTO-REMOVED #include <core/kinematics/util.hh>
 // #include <core/id/AtomID_Map.hh>
 
-// // AUTO-REMOVED #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 
 // #include <core/optimization/AtomTreeMinimizer.hh>
 // #include <core/optimization/MinimizerOptions.hh>
@@ -114,7 +104,6 @@
 
 // #include <basic/basic.hh>
 
-// // AUTO-REMOVED #include <basic/database/open.hh>
 
 // #include <core/init/init.hh>
 #include <devel/init.hh>
@@ -155,10 +144,6 @@
 // #include <core/pose/util.tmpl.hh>
 
 
-
-
-
-
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
 // using namespace core;
@@ -177,7 +162,6 @@
 // using core::import_pose::pose_from_pdb;
 // using io::pdb::dump_pdb; // deprecated though
 static thread_local basic::Tracer TR( "apps.pilot.phil.symtest" );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

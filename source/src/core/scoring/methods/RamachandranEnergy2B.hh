@@ -26,12 +26,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class RamachandranEnergy2B : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
@@ -78,7 +77,6 @@ public:
 	atomic_interaction_cutoff() const;
 
 
-	///
 	virtual
 	Real
 	eval_dof_derivative(

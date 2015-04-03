@@ -11,7 +11,7 @@
 /// @brief Implementation of a node in a kd-tree. See numeric/kdtree/kdtree.hh
 /// for more information.
 /// @author James Thompson
-//
+
 
 #include <numeric/types.hh>
 

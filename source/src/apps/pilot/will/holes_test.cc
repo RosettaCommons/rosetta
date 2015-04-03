@@ -12,7 +12,6 @@
 
 
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
@@ -30,21 +29,13 @@
 #include <basic/datacache/CacheableString.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <fstream>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/jobdist/not_universal_main.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <pstream.h>
 #include <sstream>
-// AUTO-REMOVED #include <time.h>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
 
@@ -55,7 +46,6 @@
 
 
 static thread_local basic::Tracer TR( "RosettaHoles" );
-
 
 
 using std::string;
@@ -178,8 +168,6 @@ apply(
 
 std::string get_name() const { return "RosettaHolesMover"; }
 }; // end class RosettaHolesMover
-
-
 
 
 int

@@ -13,7 +13,6 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pack/task/ResfileReader.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // Project Headers
 

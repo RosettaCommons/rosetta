@@ -42,7 +42,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class LK_PolarNonPolarEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;

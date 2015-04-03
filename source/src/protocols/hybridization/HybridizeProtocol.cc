@@ -160,7 +160,7 @@ static thread_local basic::Tracer TR( "protocols.hybridization.HybridizeProtocol
 namespace protocols {
 namespace hybridization {
 
-//
+
 using namespace core;
 using namespace kinematics;
 using namespace sequence;
@@ -187,7 +187,6 @@ std::string
 HybridizeProtocolCreator::mover_name() {
 	return "Hybridize";
 }
-
 
 
 /////////////
@@ -650,7 +649,6 @@ HybridizeProtocol::initialize_and_sample_loops(
 		pose.fold_tree( f_in );
 	}
 }
-
 
 
 void HybridizeProtocol::add_template(

@@ -20,19 +20,14 @@
 #include <protocols/optimize_weights/PNatLigPoseOptEData.hh>
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <ObjexxFCL/format.hh>
 
-// AUTO-REMOVED #include <utility/LexicographicalIterator.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector1.functions.hh>
 
-// AUTO-REMOVED #include <fstream>
 #include <ostream>
 #include <sstream>
 #include <string>
-// AUTO-REMOVED #include <cmath>
 
 #include <basic/Tracer.hh>
 

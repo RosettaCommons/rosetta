@@ -31,7 +31,6 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -60,7 +59,6 @@
 #include <core/graph/ArrayPool.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
-
 
 
 static thread_local basic::Tracer tr( "core.scoring.Energies" );
@@ -173,7 +171,7 @@ Energies::operator = ( Energies const & rhs )
 	return *this;
 }
 
-///@details If recurse is true, then this is the first call to same_type_as_me;
+/// @details If recurse is true, then this is the first call to same_type_as_me;
 // determine if the other object is also an Energies object.  If recurse is false
 // then the other object is also of type Energies, so return true.
 bool
@@ -187,13 +185,12 @@ Energies::same_type_as_me( Energies const & other, bool recurse /* = true */ ) c
 }
 
 
-
 Energies::~Energies()
 {
 	//std::cout << "energies dstor" << std::endl;
 }
 
-///@details make a copy of this Energies( allocate actual memory for it )
+/// @details make a copy of this Energies( allocate actual memory for it )
 EnergiesOP
 Energies::clone() const
 {
@@ -219,7 +216,7 @@ Energies::set_owner( pose::Pose * owner ) {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-///
+
 EnergyMap const &
 Energies::total_energies() const
 {
@@ -425,7 +422,6 @@ Energies::owner() const
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -550,7 +546,7 @@ Energies::set_minimization_graph( MinimizationGraphOP mingraph )
 	minimization_graph_ = mingraph;
 }
 
-///
+
 scoring::NeighborList const &
 Energies::nblist( EnergiesCacheableDataType::Enum const & type ) const
 {
@@ -558,7 +554,6 @@ debug_assert( use_nblist_ && nblist_.find( type ) != nblist_.end() );
 	return *( nblist_.find( type )->second );
 }
 
-///
 
 void
 Energies::set_nblist(
@@ -604,7 +599,6 @@ debug_assert( energy_state_ == GOOD ); // we should have just scored
 	// calculating interactions for moving rsd pairs using the atom-atom nblist
 	//
 }
-
 
 
 /// @details  Show the per-residue and total energies, only for scores with a non-zero weight in the last
@@ -913,7 +907,6 @@ Energies::long_range_container( methods::LongRangeEnergyType lrtype ) const
 }
 
 
-
 void
 Energies::internalize_new_domain_map()
 {
@@ -1139,7 +1132,6 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 }
 
 
-
 /// @brief Add edges to the energy_graph and the context graphs according to domain map
 ///
 /// @details Precondition: if the graph contains any edges, then all neighbor relationships between
@@ -1322,7 +1314,7 @@ debug_assert( context_graphs_[ type ] == 0 );
 /// 2. reset some of the cached energies
 /// Expect that Energies::structure_has_moved( ... ) has been called
 /// already if the stucture has changed, ie if domain_map != 1
-///
+
 
 void
 Energies::scoring_begin(
@@ -1388,7 +1380,6 @@ Energies::scoring_begin(
 	scorefxn_weights_ = sfxn.weights();
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1494,7 +1485,6 @@ Energies::res_moved( int const seqpos ) const
 // 		//
 // 		//graph_state_ = BAD;
 // 	}
-
 
 
 // }

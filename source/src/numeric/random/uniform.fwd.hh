@@ -10,7 +10,7 @@
 /// @file   src/basic/unti/tracer.fwd.hh
 /// @brief  Uniform random number generator
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_numeric_random_uniform_fwd_hh
 #define INCLUDED_numeric_random_uniform_fwd_hh

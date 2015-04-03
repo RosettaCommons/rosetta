@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/ParametricSheet.hh
 /// @brief Parametric representation of a beta sheet
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

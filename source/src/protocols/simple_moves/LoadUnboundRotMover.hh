@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /protocols/simple_moves/LoadUnboundRotMover.hh
-///@brief
-///@author Steven Lewis smlewi@gmail.com, Brian Weitzner brian.weitzner@gmail.com
+/// @brief
+/// @author Steven Lewis smlewi@gmail.com, Brian Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_protocols_simple_moves_LoadUnboundRotMover_hh
 #define INCLUDED_protocols_simple_moves_LoadUnboundRotMover_hh
@@ -26,7 +26,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details This BS class exists to route around a hard-coded pseudo-Mover in the APPLY_TO_POSE section of the Parser.  At XRW2 we needed to move junk out of Parser to use the protocols::moves::MoverFactory instead.
+/// @details This BS class exists to route around a hard-coded pseudo-Mover in the APPLY_TO_POSE section of the Parser.  At XRW2 we needed to move junk out of Parser to use the protocols::moves::MoverFactory instead.
 class LoadUnboundRotMover : public protocols::moves::Mover {
 
 public:
@@ -41,7 +41,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		utility::tag::TagCOP,
 		basic::datacache::DataMap &,

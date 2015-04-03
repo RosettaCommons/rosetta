@@ -9,13 +9,12 @@
 
 /// @file
 /// @brief  analyse sets of structures
-/// @detailed This tool allows to superimpose structures using the wRMSD method [ Damm&Carlson, Biophys J (2006) 90:4558-4573 ]
-/// @detailed Superimposed structures can be written as output pdbs and the converged residues can be determined
+/// @details This tool allows to superimpose structures using the wRMSD method [ Damm&Carlson, Biophys J (2006) 90:4558-4573 ]
+/// @details Superimposed structures can be written as output pdbs and the converged residues can be determined
 /// @author Oliver Lange
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>

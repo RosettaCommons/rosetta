@@ -10,7 +10,7 @@
 /// @file JumpSetup
 /// @brief read jump-definition file   setups fold tree an chainbreak variants
 /// loop code didn't work because fold-tree to complicated ( overlapping loops )
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 
@@ -18,13 +18,11 @@
 #define INCLUDED_protocols_jumping_util_hh
 
 // Project Headers
-// AUTO-REMOVED #include <protocols/Protocol.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <core/types.hh>
 #include <core/fragment/JumpingFrame.fwd.hh>
-// AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <utility/vector1.hh>

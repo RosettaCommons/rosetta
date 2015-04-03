@@ -32,7 +32,6 @@ typedef  utility::pointer::shared_ptr< SameStrand >  SameStrandOP;
 typedef  utility::pointer::shared_ptr< SameStrand const >  SameStrandCOP;
 
 
-
 } // namespace jumping
 } // namespace protocols
 

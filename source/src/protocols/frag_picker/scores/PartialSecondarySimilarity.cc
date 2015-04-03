@@ -21,11 +21,9 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/fragment_scoring_utilities.hh>
 
 #include <core/fragment/SecondaryStructure.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // project headers
 #include <basic/Tracer.hh>

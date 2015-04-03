@@ -39,7 +39,6 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 
 
-
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
@@ -120,7 +119,7 @@ MMLJEnergyIntra::setup_for_minimizing(
 	}
 }
 
-///
+
 bool
 MMLJEnergyIntra::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
 {

@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -37,7 +36,6 @@
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -591,12 +589,9 @@ private:
 	);
 
 
-
 } // namespace packstat
 } // namespace scoring
 } // namespace core
-
-
 
 
 #endif

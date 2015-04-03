@@ -20,11 +20,9 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -38,7 +36,6 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // temp
 
 // C++ Headers
 #include <cmath>
@@ -98,9 +95,6 @@ ObjexxFCL::FArray2D_int angles( num_phi, num_theta );
 // line is 21 255's, that means the atom is completely covered by the other atom.
 ObjexxFCL::FArray2D_ubyte masks( num_bytes, num_overlaps * num_orientations );
 
-
-///
-/// @begin sasa.cc::input_sasa_dats
 ///
 /// @brief
 /// Reads in the SASA database files sampling/SASA-angles.dat and sampling/SASA-masks.dat into FArrays above.
@@ -145,15 +139,10 @@ void input_sasa_dats() {
 	angles_stream.close();
 
 
-
-
 }
 
-
 ///
-/// @begin sasa.cc::get_overlap
-///
-/// @detailed
+/// @details
 /// getting overlap from a to b (or i to j, as the atoms are referred to in calc_per_atom_sasa below).
 /// this returns the degree of overlap between two atoms adapted from erics code in area.c GetD2 and returns value
 /// from 1 to 100. This calculation is based on the law of cosines.
@@ -220,14 +209,11 @@ get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz
 	}
 }
 
-
-///
-/// @begin sasa.cc::get_orientation
 ///
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// ronj This function is used to get two indexes (phi and theta) which are used to get the index of a dot on the
 /// ronj surface of the 'a' sphere. When calculating how much surface area sphere b covers on a, we can get the degree
 /// ronj of overlap from the function above, but it's not necessarily the case that the vector that connects the center
@@ -339,14 +325,11 @@ void get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_inde
 #endif
 }
 
-
-///
-/// @begin sasa.cc::get_2way_orientation
 ///
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// ronj This function is the same as the function above but get the orientation of a to b simultaneously with the
 /// ronj orientation of b to a.  The same result could be achieved by making two separate get_2way_orientation() calls
 /// ronj but this method does it more efficiently by avoiding an atan2 and acos call.  Instead, once you compute the
@@ -952,9 +935,6 @@ calc_atom_masks(
 	} // jr
 }
 
-
-///
-/// @begin get_angles
 ///
 /// @brief
 /// Returns the number of bytes the overlap arrays use for tracking SASA.
@@ -962,8 +942,6 @@ calc_atom_masks(
 ///
 int get_num_bytes() { return num_bytes; }
 
-///
-/// @begin get_angles
 ///
 /// @brief
 /// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
@@ -975,8 +953,6 @@ ObjexxFCL::FArray2D_int const & get_angles() {
 }
 
 ///
-/// @begin get_masks
-///
 /// @brief
 /// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
@@ -986,8 +962,6 @@ ObjexxFCL::FArray2D_ubyte const & get_masks() {
 	return masks;
 }
 
-///
-/// @begin sasa.cc::calc_per_atom_hydrophobic_sasa
 ///
 /// @brief
 /// Uses the method above to calculate total SASA and then only looks at the hydrophobic contribution. Returns the total
@@ -1081,7 +1055,6 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 
 #ifdef FILE_DEBUG
 ///
-/// @begin sasa.cc::print_dot_bit_string
 ///
 /// @brief
 /// helper method I was using to try to confirm that the dots are being overlapped and bits are being set correctly (ronj).

@@ -9,7 +9,7 @@
 
 /// @file IterativeAbrelax
 /// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
@@ -35,7 +35,6 @@
 #include <utility/file/FileName.hh>
 
 // Option Headers
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -140,7 +139,7 @@ void IterativeFullatom::initialize() {
  	return ( stage() > LAST_CENTROID_START );
  }
 
-///@details generate new batch...
+/// @details generate new batch...
 /// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
 /// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
 ///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )

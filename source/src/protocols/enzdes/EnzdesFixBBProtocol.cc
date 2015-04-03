@@ -15,16 +15,13 @@
 
 #include <protocols/enzdes/EnzdesFixBBProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ConsensusDesignMover.hh>
 

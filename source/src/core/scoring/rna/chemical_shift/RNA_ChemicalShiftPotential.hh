@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_rna_chemical_shift_RNA_ChemicalShiftPotential_HH
 
 
-
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -179,8 +178,6 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 																							Size const ma_source_atomno,
 																							Vector & f1,
 																							Vector & f2 ) const; 
-
-
 
 
 	public:

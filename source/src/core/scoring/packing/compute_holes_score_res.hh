@@ -15,9 +15,7 @@
 #ifndef INCLUDED_core_scoring_packing_compute_holes_score_res_hh
 #define INCLUDED_core_scoring_packing_compute_holes_score_res_hh
 
-// AUTO-REMOVED #include <core/scoring/packing/HolesEnergyRes.hh>
 #include <core/scoring/packing/PoseBalls.hh>
-// AUTO-REMOVED #include <core/scoring/packing/compute_holes_score.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID_Map.hh>

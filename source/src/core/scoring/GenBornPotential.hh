@@ -18,7 +18,6 @@
 #include <core/scoring/GenBornPotential.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 #include <basic/datacache/CacheableData.hh>
 
@@ -31,7 +30,6 @@
 #include <core/kinematics/DomainMap.fwd.hh>
 //#include <core//.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -74,62 +72,61 @@ public:
 	}
 
 
-	///
 	GenBornResidueInfo( Residue const & rsd )
 	{
 		initialize( rsd );
 	}
 
-	///
+
 	Size
 	size() const
 	{
 		return atomic_radius_.size();
 	}
 
-	///
+
 	Real
 	atomic_radius( Size const atm ) const
 	{
 		return atomic_radius_[ atm ];
 	}
 
-	///
+
 	Real &
 	atomic_radius( Size const atm )
 	{
 		return atomic_radius_[ atm ];
 	}
 
-	///
+
 	Real
 	born_radius( Size const atm ) const
 	{
 		return born_radius_[ atm ];
 	}
 
-	///
+
 	Real &
 	born_radius( Size const atm )
 	{
 		return born_radius_[ atm ];
 	}
 
-	///
+
 	Real
 	scale_factor( Size const atm ) const
 	{
 		return scale_factor_[ atm ];
 	}
 
-	///
+
 	Real &
 	scale_factor( Size const atm )
 	{
 		return scale_factor_[ atm ];
 	}
 
-	///
+
 	void
 	initialize( Residue const & rsd );
 
@@ -164,40 +161,39 @@ public:
 		return basic::datacache::CacheableDataOP( new GenBornPoseInfo( *this ) );
 	}
 
-	///
+
 	Size
 	size() const
 	{
 		return residue_info_.size();
 	}
 
-	///
+
 	GenBornResidueInfo &
 	residue_info( Size const i )
 	{
 		return *residue_info_[i];
 	}
 
-	///
+
 	GenBornResidueInfo const &
 	residue_info( Size const i ) const
 	{
 		return *residue_info_[i];
 	}
 
-	///
+
 	bool
 	being_packed( Size const seqpos ) const
 	{
 		return being_packed_[ seqpos ];
 	}
 
-	///
+
 	void
 	set_placeholder( Size const i, ResidueOP rsd, GenBornResidueInfoOP info );
 
 
-	///
 	GenBornResidueInfo const &
 	placeholder_info( Size const seqpos ) const
 	{
@@ -205,7 +201,7 @@ public:
 		return *placeholder_info_[ seqpos ];
 	}
 
-	///
+
 	Residue const &
 	placeholder_residue( Size const seqpos ) const
 	{
@@ -213,12 +209,11 @@ public:
 		return *placeholder_residue_[ seqpos ];
 	}
 
-	///
+
 	void
 	initialize( pose::Pose const & pose );
 
 
-	///
 	void
 	set_repack_list( utility::vector1< bool > const & repacking_residues );
 
@@ -252,7 +247,7 @@ public:
 
 public:
 
-	///
+
 	GenBornRotamerSetInfo( GenBornRotamerSetInfo const & src ):
 		CacheableData()
 	{
@@ -262,28 +257,28 @@ public:
 		}
 	}
 
-	///
+
 	basic::datacache::CacheableDataOP
 	clone() const
 	{
 		return basic::datacache::CacheableDataOP( new GenBornRotamerSetInfo( *this ) );
 	}
 
-	///
+
 	Size
 	size() const
 	{
 		return residue_info_.size();
 	}
 
-	///
+
 	GenBornResidueInfo &
 	residue_info( Size const i )
 	{
 		return *residue_info_[i];
 	}
 
-	///
+
 	GenBornResidueInfo const &
 	residue_info( Size const i ) const
 	{
@@ -291,7 +286,6 @@ public:
 	}
 
 
-	///
 	GenBornRotamerSetInfo( RotamerSetBase const & rotamer_set )
 	{
 		initialize( rotamer_set );
@@ -346,12 +340,11 @@ public:
 	{}
 
 
-
 	/// called prior to scoring, eg
 	void
 	get_all_born_radii( pose::Pose & pose ) const;
 
-	///
+
 	void
 	setup_for_packing(
 		pose::Pose & pose,
@@ -359,21 +352,20 @@ public:
 	) const;
 
 
-	///
 	void
 	update_residue_for_packing(
 		pose::Pose & pose,
 		Size const seqpos
 	) const;
 
-	///
+
 	void
 	get_rotamers_born_radii(
 		pose::Pose const & pose,
 		conformation::RotamerSetBase & rotamer_set
 	) const;
 
-	///
+
 	Real
 	get_res_res_elecE(
 		Residue const & rsd1,
@@ -382,7 +374,7 @@ public:
 		GenBornResidueInfo const & gb2
 	) const;
 
-	///
+
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
@@ -396,7 +388,7 @@ public:
 
 private: // these dont all *have* to be private, just not called by anyone else right now
 
-	///
+
 	void
 	res_res_burial(
 		Residue const & rsd1,
@@ -409,7 +401,7 @@ private: // these dont all *have* to be private, just not called by anyone else 
 	void
 	finalize_born_radii( GenBornResidueInfo & gb_info ) const;
 
-	///
+
 	Real
 	gb_shell_intxn(
 		Real const qai,
@@ -420,7 +412,6 @@ private: // these dont all *have* to be private, just not called by anyone else 
 	) const;
 
 
-	///
 	Real
 	gb_shell_intxn_deriv(
 		Real const qai,
@@ -431,7 +422,6 @@ private: // these dont all *have* to be private, just not called by anyone else 
 	) const;
 
 
-	///
 	void
 	get_single_rotamer_born_radii(
 		Residue const & rsd1,
@@ -440,14 +430,14 @@ private: // these dont all *have* to be private, just not called by anyone else 
 		GenBornResidueInfo & gb1
 	) const;
 
-	///
+
 	void
 	get_template_born_radii(
 		pose::Pose const & pose,
 		GenBornPoseInfo & gb_info
 	) const;
 
-	///
+
 	void
 	build_placeholders(
 		pose::Pose const & pose,
@@ -483,9 +473,6 @@ private:
 	Real const dummy_distance; // also implicitly defined by the gb placeholder params file
 
 };
-
-
-
 
 
 } // scoring

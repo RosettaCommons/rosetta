@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/ConnectJumps.hh
 /// @brief The ConnectJumps Protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 
@@ -91,8 +91,6 @@ private:   // other data
 	core::Size cached_start_;
 	core::Size cached_end_;
 };
-
-
 
 
 } // denovo_design

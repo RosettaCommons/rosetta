@@ -19,20 +19,17 @@
 #include <protocols/match/upstream/ScaffoldBuildPoint.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.fwd.hh>
 #include <protocols/match/upstream/UpstreamBuilder.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <protocols/match/Hit.fwd.hh>
 #include <utility/vector1.hh>

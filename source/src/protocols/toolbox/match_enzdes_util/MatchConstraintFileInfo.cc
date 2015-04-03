@@ -54,14 +54,9 @@
 
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>// Why was it auto-removed? Can I put it back in?
-
-// AUTO-REMOVED #include <stdlib.h>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.MatchConstraintFileIfo" );
@@ -95,7 +90,6 @@ add_relevant_restypes_to_subset(
 		}
 	}
 }
-
 
 
 GeomSampleInfo::GeomSampleInfo(
@@ -261,7 +255,6 @@ GeomSampleInfo::create_sample_vector() const
 	return samples;
 
 }
-
 
 
 MatchConstraintFileInfo::MatchConstraintFileInfo(
@@ -677,8 +670,6 @@ MatchConstraintFileInfo::process_algorithm_info(
 } //process algorithm_info
 
 
-
-
 ExternalGeomSamplerOP
 MatchConstraintFileInfo::create_exgs() const
 {
@@ -721,7 +712,6 @@ MatchConstraintFileInfo::create_exgs() const
 	return exgs;
 
 }
-
 
 
 MatchConstraintFileInfoList::MatchConstraintFileInfoList(
@@ -855,8 +845,6 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 		upstream_restypes_.push_back( *set_it );
 	}
 }
-
-
 
 
 }

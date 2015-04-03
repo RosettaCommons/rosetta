@@ -10,7 +10,6 @@
 /// @file   test/protocols/abinitio/PseudocontactShiftEnergy.cxxtest.hh
 /// @brief  test suite for protocols/scoring/methods/pcs/* and protocols/topology_broker/PseudocontactShiftEnergyController
 /// @author Christophe Schmitz schmitz@maths.uq.edu.au / cofcof.oz@gmail.com
-/// @last_modified June 2009
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -25,12 +24,9 @@
 #include <test/core/init_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
@@ -182,7 +178,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-
 using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
@@ -229,14 +224,12 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 	}
 
 
-
 	// Shared finalization goes here.
 	void tearDown() {
 		top_bro_OP_.reset();
 		pcs_energy_.reset();
 		the_pose_.reset();
 	}
-
 
 
 	// WARNING this test is a little bit agressive
@@ -272,7 +265,6 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 	}
 
 
-
 	// WARNING This test is really aggressive and might break easily
 	// This test evaluate the pcs energy on the final pdb generated in the test_eval_abinitio_pcs_only() test
 	// If the test_eval_abinitio_pcs_only fails, this test will obviously fail too.
@@ -288,7 +280,6 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 		Tracer_PCS << std::setprecision(10) << "Comparison of 2 values desactivated. The test is not that deterministic, different values on 32 and 64 bit machines?" << std::endl;
 		//		TS_ASSERT_DELTA( pcs_score_total, expected_value, tolerance);
 	}
-
 
 
 	// WARNING This test is very friendly and should NEVER break.

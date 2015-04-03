@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/rigid_body/FloatingBaseClasses.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

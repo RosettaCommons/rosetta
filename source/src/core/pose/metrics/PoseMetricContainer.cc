@@ -20,7 +20,6 @@
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -36,7 +35,6 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 namespace core {

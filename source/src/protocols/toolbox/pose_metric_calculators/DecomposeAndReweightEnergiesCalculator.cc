@@ -20,7 +20,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/methods/Methods.hh> //for long range energies
 #include <core/scoring/LREnergyContainer.hh> //long range energies
 #include <basic/MetricValue.hh>

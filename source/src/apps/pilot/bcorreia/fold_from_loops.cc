@@ -16,21 +16,15 @@
 #include <core/types.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragmentIO.hh>
 
-// AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/FoldConstraints.hh>
@@ -38,8 +32,6 @@
 
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/ShortLoopClosure.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopClosure.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Exceptions.hh>
@@ -47,14 +39,10 @@
 #include <protocols/jumping/util.hh>
 
 #include <protocols/Protocol.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 // Auto-header: duplicate removed #include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 //#include <core/scoring/ScoringManager.hh>
@@ -65,7 +53,6 @@
 
 //constraints
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/Func.hh>
 
@@ -78,17 +65,13 @@
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/PDBSilentStruct.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
@@ -118,7 +101,6 @@
 
 
 //Design headers
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -134,7 +116,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 using namespace core;
 using namespace protocols;
 using namespace kinematics;
@@ -142,7 +123,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer TR( "bcorreia_fold_from_loops" );
-
 
 
 //brief define_ut_point takes a loop file and a pose figures out how many and where the cutpoints should be based on secondary structure and the
@@ -199,8 +179,6 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 
 
 void copying_side_chains_swap_loop (core::pose::Pose & swap_loops, core::pose::Pose & fold_pose, protocols::loops::Loops & loops, core::kinematics::MoveMapOP & movemap);
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +260,6 @@ std::vector<Size> define_cut_points (
 }
 
 
-
 bool is_loop (
 		protocols::loops::Loops & loops,
 		Size & residue
@@ -319,7 +296,6 @@ bool is_loop_neighbor( protocols::loops::Loops & loops,
 
 	return loop_range;
 }
-
 
 
 void fold_tree_generator(
@@ -414,7 +390,6 @@ void define_movemap_extending_chain(
 }
 
 
-
 void get_fragments(
 		core::fragment::FragSetOP & fragset_large_,
 		core::fragment::FragSetOP & fragset_small_
@@ -471,8 +446,6 @@ void copying_side_chains(
 }
 
 
-
-
 void exclude_loop_residues( core::pose::Pose & pose,
 							utility::vector1< bool > & residues_to_mutate,
 							utility::vector1< bool > & allowed_aas ,
@@ -507,8 +480,6 @@ void refresh_cutpoints( core::pose::Pose & pose,
 
 
 }
-
-
 
 
 bool is_cut( std::vector<Size> & cut_points,
@@ -557,7 +528,6 @@ using namespace basic::options::OptionKeys;
 					else { seq_sep = pos_2 - pos; }
 
 
-
 					if ( seq_sep >=6  ){
 
 					if ( !res_is_loop && !res2_is_loop ) {
@@ -570,7 +540,6 @@ using namespace basic::options::OptionKeys;
 
 								Real const d( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
 								TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
-
 
 
 								cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new HarmonicFunc( d, sd ) ) );
@@ -603,7 +572,6 @@ using namespace basic::options::OptionKeys;
 	TR << "Constrains Standard Deviation - "<< sd <<std::endl;
 
 
-
 	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 				for (Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ){
 
@@ -623,7 +591,6 @@ using namespace basic::options::OptionKeys;
 					else { seq_sep = pos_2 - pos; }
 
 
-
 					if ( seq_sep >= 6  ){
 
 					if ( !res_is_loop && !res2_is_loop ) {
@@ -635,7 +602,6 @@ using namespace basic::options::OptionKeys;
 
 								Real const d( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
 								TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
-
 
 
 								cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new HarmonicFunc( d, sd ) ) );
@@ -667,7 +633,6 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 	std::string nat_seq = nat_prot.sequence();
 
 
-
 	centroid_target_loops = target_loops;
 
 	if (loops.size() == 1){
@@ -679,7 +644,6 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 		TR << "NSEGMENT "<< nsegment <<std::endl;
 		TR << "CSEGMENT "<< csegment <<std::endl;
 		TR << "NAT SEQ  " << nat_seq <<std::endl;
-
 
 
 		for (Size k=1; k <= nsegment ; ++k ) {
@@ -695,33 +659,22 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
-
 			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-
 
 
 			target_loops.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, 1, true);
 
 
-
-
-
 			target_loops.set_omega( 1, 180.0 );
 
 
-
-
-
-
 		}
-
 
 
 		for ( Size j = 0 ; j < csegment ; ++j  ){
 
 			const char aa = nat_seq[ loops[1].stop() + j  ];
 			Size residue = loops[1].stop() + j;
-
 
 
 			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
@@ -733,12 +686,7 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 			target_loops.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, residue , true );
 
 
-
-
 			target_loops.set_omega( residue , 180.0 );
-
-
-
 
 
 		}
@@ -771,7 +719,6 @@ void copying_side_chains_swap_loop (
 	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.total_residue());
 
 
-
 	movemap->set_chi(true);
 
 
@@ -802,8 +749,6 @@ void copying_side_chains_swap_loop (
 					//copy_residue_coordinates_and_rebuild_missing_atoms( swap_loops.residue( offsetres ), old_rsd , fold_pose.conformation() );
 
 
-
-
 					movemap->set_chi(pos, false);
 
 
@@ -832,7 +777,6 @@ main( int argc, char* argv [] )
 	using namespace constraints;
 
 
-
 	pose::Pose nat_pose;
 
 	pose::Pose extended_pose;
@@ -845,7 +789,6 @@ main( int argc, char* argv [] )
 	protocols::checkpoint::CheckPointer sliding_checkpoint("closing");
 
 
-
 	//Reading loops
 	protocols::loops::Loops lr_loops_in;
 	if ( option[ OptionKeys::loops::loop_file ].user() ){
@@ -854,11 +797,7 @@ main( int argc, char* argv [] )
 	}
 
 
-
-
 	ConstraintSetOP ca_cst ( new ConstraintSet() );
-
-
 
 
 	//Defining a fold tree
@@ -886,7 +825,6 @@ main( int argc, char* argv [] )
 	else{
 
 
-
 		TR<< "Only one loop defined no cutpoints necessary "<<std::endl;
 		f.add_edge( 1, extended_pose.total_residue(), Edge::PEPTIDE );
 		TR << "Pose fold tree " << f << std::endl;
@@ -901,15 +839,9 @@ main( int argc, char* argv [] )
 	}
 
 
-
-
-
-
 	extended_pose.fold_tree( f ); // apply the fold tree
 
 	core::util::switch_to_residue_type_set( extended_pose, core::chemical::CENTROID );
-
-
 
 
 	if ( option[out::pdb].user()){
@@ -930,16 +862,12 @@ main( int argc, char* argv [] )
 	std::string pdb_silent_file_des(option [ out::file::silent]()+"_des");
 
 
-
-
 	Real loop_tag=0;
 
 	if ( option[ out::file::silent ].user() ){
 
 
 		Real native_rmsd= core::scoring::rmsd_with_super(nat_pose, extended_pose, is_protein_CA); // calculating RMSD on CA
-
-
 
 
 		pose::setPoseExtraScore( extended_pose, "rms",  native_rmsd );
@@ -975,9 +903,6 @@ main( int argc, char* argv [] )
 		}
 
 
-
-
-
 	FragSetOP fragset_large_;
 	FragSetOP fragset_small_;
 
@@ -989,10 +914,7 @@ main( int argc, char* argv [] )
 	core::pose::Pose extended_target_loops;
 
 
-
-
 	if (option [OptionKeys::fold_from_loops::swap_loops ].user()){
-
 
 
 		std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
@@ -1003,8 +925,6 @@ main( int argc, char* argv [] )
 
 
 		new_pose_generator( target_loops, nat_pose , lr_loops_in ); //takes the target_loops an builds a pose with with the new loop and the correct lengths
-
-
 
 
 		extended_pose = target_loops;
@@ -1031,17 +951,14 @@ main( int argc, char* argv [] )
 	}
 
 
-
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std" ,"score4L" ); //setting up scoring function for loop closure
 
 	scorefxn->set_weight( scoring::linear_chainbreak, 1); //scoring function to close the loops has a chainbreak term ... makes sense
 
 
-
 	pose::Pose fold_pose; //defining a pose o be folded
 
 	pose::Pose fold_pose_relax;
-
 
 
 	Size nstruct = option[ out::nstruct ];
@@ -1050,8 +967,6 @@ main( int argc, char* argv [] )
 
 
 	load_checkpoint( i );
-
-
 
 
 	for (; i < nstruct ; ++i  ){
@@ -1073,7 +988,6 @@ main( int argc, char* argv [] )
 		abinitio->apply( fold_pose );
 
 
-
 		TR << "Pose Secondary Structure After abinitio " << fold_pose.secstruct() << std::endl;
 
 
@@ -1092,7 +1006,6 @@ main( int argc, char* argv [] )
 		sfd_cent.add_structure(ss_cent);
 
 
-
 		if ( rmsd_to_native < 5.0) {
 
 
@@ -1104,8 +1017,6 @@ main( int argc, char* argv [] )
 
 
 				TR << "Chain Break -  " << chain_break_dist << std::endl;
-
-
 
 
 				protocols::loops::SlidingWindowLoopClosureOP closure_protocol = new protocols::loops::SlidingWindowLoopClosure( fragset_small_, scorefxn, movemap );
@@ -1128,8 +1039,6 @@ main( int argc, char* argv [] )
 			}
 
 
-
-
 		std::string outfilename = option[ out::prefix ]() + "_" + right_string_of(i,3,'0') + ".pdb.gz"; //building name
 
 
@@ -1141,14 +1050,11 @@ main( int argc, char* argv [] )
 		scorefxn_fa->set_weight(scoring::overlap_chainbreak, 1 );
 
 
-
 		if (lr_loops_in.size() > 1 ){
 
 				refresh_cutpoints(fold_pose, cut_points);
 
 		}
-
-
 
 
 		//Copying Side Chains from loops
@@ -1174,17 +1080,12 @@ main( int argc, char* argv [] )
 		(*scorefxn_fa)(fold_pose_relax);
 
 
-
 		relax::ClassicRelax relax_protocol( scorefxn_fa, movemap);
 
 		//Implementing relax cycles
 
 
-
-
 		relax_protocol.apply( fold_pose_relax );
-
-
 
 
 		std::string outfilename_rlx = outfile_extended + "_nat_rlx";
@@ -1194,9 +1095,6 @@ main( int argc, char* argv [] )
 		std::string outfilename_rlx_1 = outfile_extended +"_des_rlx_1";
 
 		std::string outfilename_rlx_2 = outfile_extended +"_des_rlx_2";
-
-
-
 
 
 		core::io::silent::BinarySilentStructOP ss_fa_nat_rlx ( new core::io::silent::BinarySilentStruct( fold_pose_relax, outfilename_rlx ));
@@ -1223,9 +1121,6 @@ main( int argc, char* argv [] )
 		}
 
 
-
-
-
 		//Design step
 
 
@@ -1238,13 +1133,11 @@ main( int argc, char* argv [] )
 			core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( fold_pose ));
 
 
-
 			exclude_loop_residues(fold_pose, residues_to_mutate, allowed_aas, task, lr_loops_in );
 
 			task->restrict_to_residues( residues_to_mutate );
 
 			task->initialize_extra_rotamer_flags_from_command_line();
-
 
 
 			pack::pack_rotamers( fold_pose, *scorefxn_fa , task );
@@ -1258,14 +1151,12 @@ main( int argc, char* argv [] )
 			sfd_des.add_structure( ss_fa_des );
 
 
-
 			relax_protocol.apply(fold_pose);
 
 
 			Real final_rmsd  = core::scoring::rmsd_with_super(nat_pose, fold_pose, is_protein_CA); // calculating RMSD on CA
 
 			pose::setPoseExtraScore( fold_pose, "rms",  final_rmsd );
-
 
 
 			(*scorefxn_fa)(fold_pose); // score of the fold_pose
@@ -1277,12 +1168,10 @@ main( int argc, char* argv [] )
 			sfd_fa.add_structure( ss_fa_rlx );
 
 
-
 			pack::pack_rotamers( fold_pose, *scorefxn_fa , task );
 
 
 			relax_protocol.apply( fold_pose );
-
 
 
 			Real final_rmsd_rlx  = core::scoring::rmsd_with_super(nat_pose, fold_pose, is_protein_CA); // calculating RMSD on CA
@@ -1302,10 +1191,6 @@ main( int argc, char* argv [] )
 
 		sfd_fa.clear();
 		sfd_des.clear();
-
-
-
-
 
 
 		if ( option[out::pdb].user()){

@@ -50,7 +50,6 @@ public:
   virtual void initialize( core::pose::Pose& ) {}
 
 
-
 }; // end MoveMapMover base class
 
 } // moves

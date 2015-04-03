@@ -21,9 +21,7 @@
 // Unit headers
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
-// AUTO-REMOVED #include <protocols/jd2/BatchJobInputter.hh> //for BOGUS_BATCH_ID
 // Package headers
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -36,20 +34,16 @@
 #include <basic/MemTracer.hh>
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/assert.hh>
 #include <basic/prof.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/archive.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
-// AUTO-REMOVED #include <ctime>
-// AUTO-REMOVED #include <math.h>
 #include <basic/prof.hh>
 //Auto Headers
 #include <utility/vector1.hh>
@@ -72,7 +66,7 @@ using namespace basic::options::OptionKeys;
 using namespace core;
 
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIArchiveJobDistributor::MPIArchiveJobDistributor() :
   MPIFileBufJobDistributor( in_master_rank_, in_file_buf_rank_, in_min_client_rank_, true /*start empty*/ ),
@@ -92,7 +86,7 @@ MPIArchiveJobDistributor::set_archive( ArchiveBaseOP archive ) {
 		theArchive_ = archive;
 	}
 }
-///@brief dummy for master/slave version -- start the appropriate process depending on rank()
+/// @brief dummy for master/slave version -- start the appropriate process depending on rank()
 void
 MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 {
@@ -134,7 +128,7 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 	}
 }
 
-///@detail receive a new batch from ArchiveManager -- interpret batch_nr == 0 as STOP
+/// @detail receive a new batch from ArchiveManager -- interpret batch_nr == 0 as STOP
 bool
 MPIArchiveJobDistributor::receive_batch( Size MPI_ONLY( source_rank ) ) {
 basic::prof_show();
@@ -167,7 +161,7 @@ basic::prof_show();
 	return true;
 }
 
-///@detail sync batches with worker nodes.. this is called if they get a job for a batch they don't know yet...
+/// @detail sync batches with worker nodes.. this is called if they get a job for a batch they don't know yet...
 /// this method will send ALL batches they don't have yet.
 void
 MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
@@ -221,7 +215,7 @@ MPIArchiveJobDistributor::sync_batches( Size MPI_ONLY( slave_rank ) ) {
 	PROF_STOP( basic::ARCHIVE_SYNC_BATCHES );
 }
 
-///@detail send message to ArchiveManager .. eg. QueueEmpty
+/// @detail send message to ArchiveManager .. eg. QueueEmpty
 /// always send current_batch_id with the message ... used to determine if QueueEmpty is outdated
 void
 MPIArchiveJobDistributor::master_to_archive( Size MPI_ONLY(tag) ) {
@@ -236,7 +230,7 @@ MPIArchiveJobDistributor::master_to_archive( Size MPI_ONLY(tag) ) {
 #endif
 }
 
-///@detail called if JD is at and of BatchQueue...
+/// @detail called if JD is at and of BatchQueue...
 /// for a worker node that might mean he needs to sync batches with Master
 /// for a master node it means he sends QUEUE-EMPTY to ArchiveManager
 void
@@ -259,7 +253,7 @@ MPIArchiveJobDistributor::batch_underflow() {
 	}
 }
 
-///@detail process messages... BATCH_SYNC, ADD_BATCH, or delegate to Parent class
+/// @detail process messages... BATCH_SYNC, ADD_BATCH, or delegate to Parent class
 /// also send pending CompletionMessages out...
 ////this is a good place to do it, since CompletionMessages are non-blocking and we are otherwise in blocking communication with WorkerNodes
 bool
@@ -307,7 +301,7 @@ MPIArchiveJobDistributor::process_message(
 	return true;
 }
 
-///@detail queue up a CompletionMessage
+/// @detail queue up a CompletionMessage
 void
 MPIArchiveJobDistributor::notify_archive( CompletionMessage const& msg ) {
 	//TODO: check if there are older messages regarding this batch... if so ... remove
@@ -371,7 +365,7 @@ void MPIArchiveJobDistributor::_notify_archive() {
 	PROF_STOP( basic::MPI_NOTIFY_ARCHIVE );
 }
 
-///@detail work out if CompletionMessage should be send... looks at completed/bad decoys
+/// @detail work out if CompletionMessage should be send... looks at completed/bad decoys
 /// send "final" message if all jobs done... sends "update" message if nr_new_completed_ > nr_notify
 void
 MPIArchiveJobDistributor::notify_archive( core::Size batch_id ) {
@@ -401,7 +395,7 @@ MPIArchiveJobDistributor::notify_archive( core::Size batch_id ) {
 	}
 }
 
-///@detail overloaded to update our job-statistics ( needed for CompletionMessages )
+/// @detail overloaded to update our job-statistics ( needed for CompletionMessages )
 void MPIArchiveJobDistributor::mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time ) {
 	tr.Trace << "mark_job_as_completed " << job_id << " batch: " << batch_id << " " << run_time << " seconds" << std::endl;
 	Parent::mark_job_as_completed( job_id, batch_id, run_time );
@@ -421,7 +415,7 @@ void MPIArchiveJobDistributor::mark_job_as_bad( core::Size job_id, core::Size ba
 	}
 }
 
-///@detail load new batch from BatchQueue .. overloaded to setup the statistics for CompletionMessages
+/// @detail load new batch from BatchQueue .. overloaded to setup the statistics for CompletionMessages
 void MPIArchiveJobDistributor::load_new_batch() {
 	//	if ( current_batch_id() )	notify_archive( current_batch_id() );
 	Parent::load_new_batch();
@@ -437,7 +431,6 @@ void MPIArchiveJobDistributor::load_new_batch() {
 		mem_tr << "MPIArchiveJobDistributor::load_new_batch()'ed" << std::endl;
 	}
 }
-
 
 
 }//archive

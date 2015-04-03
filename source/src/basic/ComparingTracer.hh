@@ -11,7 +11,7 @@
 /// @brief  version of Tracer calss for to tracking down the source of an instability by compare
 ///         output with file.
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_basic_ComparingTracer_hh
 #define INCLUDED_basic_ComparingTracer_hh
@@ -34,7 +34,6 @@
 #include <ostream>
 #include <sstream>
 #include <basic/Tracer.fwd.hh>
-
 
 
 namespace basic {
@@ -61,7 +60,6 @@ private:
 	///                    if difference encountered.
 	bool dry_run_;
 };
-
 
 
 } // namespace basic

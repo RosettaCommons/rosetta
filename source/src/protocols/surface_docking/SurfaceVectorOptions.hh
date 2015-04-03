@@ -51,5 +51,4 @@ public:
 } // namespace protocols
 
 
-
 #endif //INCLUDED_protocols_surface_docking_SurfaceVectorOptions_hh

@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_ProteinAssemblyGraph_FWD_HH
 #define INCLUDED_ProteinAssemblyGraph_FWD_HH
 

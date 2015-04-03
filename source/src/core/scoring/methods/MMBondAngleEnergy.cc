@@ -97,7 +97,7 @@ MMBondAngleEnergy::clone() const
 	return EnergyMethodOP( new MMBondAngleEnergy( *this ) );
 }
 
-///
+
 void
 MMBondAngleEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -108,7 +108,7 @@ MMBondAngleEnergy::setup_for_packing(
 	pose.update_actcoords();
 }
 
-///
+
 void
 MMBondAngleEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -123,7 +123,7 @@ MMBondAngleEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )
 	}
 }
 
-///
+
 void
 MMBondAngleEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -131,7 +131,7 @@ MMBondAngleEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 	pose.update_actcoords();
 }
 
-///
+
 bool
 MMBondAngleEnergy::defines_intrares_energy( EnergyMap const & ) const
 {

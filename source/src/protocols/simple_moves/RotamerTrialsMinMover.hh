@@ -21,13 +21,11 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -53,21 +51,21 @@ public:
 	// default constructor
 	RotamerTrialsMinMover();
 
-	///@brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
+	/// @brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
 	/// WARNING TO ANY DESIGNER WHO PASSES IN A TASK: YOUR DESIGN STEPS WILL BE UNDONE
 	/// AS THIS TASK CONCEIVES OF THE INPUT SEQUENCE THAT CORRESPONDS TO THE ORIGINAL SEQUENCE
 	///
-	///@param scorefxn_in The score function used for packing and minimization (which may be modified externally)
-	///@param task_in The task that will pass to the rotamers packer
+	/// @param scorefxn_in The score function used for packing and minimization (which may be modified externally)
+	/// @param task_in The task that will pass to the rotamers packer
 	RotamerTrialsMinMover(
 		ScoreFunctionCOP scorefxn_in,
 		PackerTask & task_in
 	);
 
-	///@brief constructor with TaskFactory for producing the packer task
+	/// @brief constructor with TaskFactory for producing the packer task
 	///
-	///@param scorefxn_in The score function used for packing and minimization (which may be modified externally)
-	///@param factory_in The task that will pass to the rotamers packer
+	/// @param scorefxn_in The score function used for packing and minimization (which may be modified externally)
+	/// @param factory_in The task that will pass to the rotamers packer
 	RotamerTrialsMinMover(
 		ScoreFunctionCOP scorefxn_in,
 		TaskFactoryCOP factory_in
@@ -78,7 +76,7 @@ public:
 
 	virtual ~RotamerTrialsMinMover();
 
-	///@brief Apply Rotamer-Trials with minimization to pose, using the score function
+	/// @brief Apply Rotamer-Trials with minimization to pose, using the score function
 	///       and tasks provided by the constructor
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -92,7 +90,7 @@ public:
 
 	void task_factory( core::pack::task::TaskFactoryCOP tf );
 
-	///@brief Parse XML for RosettaScripts
+	/// @brief Parse XML for RosettaScripts
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -100,9 +98,9 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief Return a new mover instance (for RosettaScripts)
+	/// @brief Return a new mover instance (for RosettaScripts)
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	///@brief Return a copy of this mover instance (for RosettaScripts)
+	/// @brief Return a copy of this mover instance (for RosettaScripts)
 	virtual protocols::moves::MoverOP clone() const;
 
 protected:
@@ -128,7 +126,7 @@ private:
 	///If a factory is present it overwrites this task with each call to apply()
 	PackerTaskOP task_;
 
-	///@brief TaskFactory allows for nonconstant sequences to be used with RotamerTrialsMover
+	/// @brief TaskFactory allows for nonconstant sequences to be used with RotamerTrialsMover
 	///CAUTION: the factory is externally modifiable.
 	TaskFactoryCOP factory_;
 	bool nonideal_;

@@ -9,7 +9,7 @@
 
 /// @file ss_predictorFromSilents.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author TJ Brunette
 

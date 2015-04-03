@@ -8,14 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 //////////////////////////////////////////////////////////////////////
-/// @begin MathTensor
 ///
 /// @brief
 /// construction/destructor of 3-D Matrix's with some functions
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// *****NOTE**** The MathTensor class is indexed at 0!!!!
 ///
@@ -23,13 +21,11 @@
 /// Nils Woetzl
 /// Jens Meiler
 ///
-/// @authors Steven Combs, Nils Woetzl, Jens Meiler
-/// @authors ported to Rosetta by Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @authors generalized to N dimensions by Andrew Watkins
+/// @author Steven Combs, Nils Woetzl, Jens Meiler
+/// @author ported to Rosetta by Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author generalized to N dimensions by Andrew Watkins
 ///
-/// @last_modified December 2014
 /////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef INCLUDED_numeric_MathNTensor_hh
@@ -144,7 +140,7 @@ public:
 		return n_xs_;
 	}
     
-	///@brief copies elements of argument matrix into this object at position ( layer )
+	/// @brief copies elements of argument matrix into this object at position ( layer )
 	void
 	replace_layer( Size layer, MathNTensor< T > const & matrix) {
         
@@ -249,10 +245,7 @@ private:
 };
 
 
-
-
 }//end namespace numeric
-
 
 
 #endif

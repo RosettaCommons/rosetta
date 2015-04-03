@@ -73,7 +73,6 @@ using utility::sql_database::sessionOP;
 using cppdb::result;
 
 
-
 DatabaseJobInputter::DatabaseJobInputter() :
 	scfxn_(core::scoring::ScoreFunctionOP( new ScoreFunction() )),
 	protein_silent_report_(protocols::features::ProteinSilentReportOP( new ProteinSilentReport() ))

@@ -21,7 +21,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
@@ -32,7 +31,6 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
 #include <platform/types.hh>

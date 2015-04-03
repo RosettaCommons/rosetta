@@ -109,7 +109,6 @@ private:
 };
 
 
-
 void
 gnl_R_qfht(
 	ObjexxFCL::FArray3D< float > & fourier,

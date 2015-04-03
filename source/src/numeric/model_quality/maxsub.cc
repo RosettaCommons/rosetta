@@ -9,7 +9,7 @@
 
 /// @file numeric/model_quality/maxsub.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed Routines for calculating maxsub-based structural quality scores. Based on code originally
+/// @details Routines for calculating maxsub-based structural quality scores. Based on code originally
 /// written by Charlie Strauss for rosetta++, ported over by James Thompson.
 ///
 /// @author James Thompson
@@ -33,11 +33,10 @@ namespace numeric {
 namespace model_quality {
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin maxsub_native
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 /// cems 2001.
 /// this is the main rosetta entry point for this function.
 /// it is a wrapper for max sub, converting the input arrays to
@@ -61,9 +60,8 @@ namespace model_quality {
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 // void
 // maxsub_native(
@@ -105,7 +103,6 @@ namespace model_quality {
 // }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin maxsub
 ///
 /// @brief identify the largest subset of CA atoms of a model that superimposes
 /// "well" (under certain rms cutoff) over the experimental structure
@@ -155,9 +152,8 @@ namespace model_quality {
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified chu
 /////////////////////////////////////////////////////////////////////////////////
 void
 maxsub(
@@ -437,11 +433,10 @@ maxsub(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin erfcc
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  x - [in/out]? -
 ///
@@ -456,9 +451,8 @@ maxsub(
 /// @references
 ///  (C) Copr. 1986-92 Numerical Recipes Software
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 double
 erfcc( double x )
@@ -475,12 +469,11 @@ erfcc( double x )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin COMAS
 ///
 /// @brief
 //    Calculate the center of geometry for the selected atoms ---
 ///
-/// @detailed
+/// @details
 ///
 /// @param  C - [in/out]? -
 /// @param  WT - [in/out]? -
@@ -497,9 +490,8 @@ erfcc( double x )
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 COMAS(
@@ -541,7 +533,7 @@ COMAS(
 
 	ZC = SUMZ*SUM;
 
-//
+
 	i3 = 0;
 
 	for ( int i = 1; i <= NAT; ++i ) {

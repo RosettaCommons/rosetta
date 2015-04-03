@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/ligand_docking/WriteLigandMolFileCreator.hh
-///@brief This class will create instances of Mover WriteLigandMolFile for the MoverFactory
-///@author Sam DeLuca
+/// @file protocols/ligand_docking/WriteLigandMolFileCreator.hh
+/// @brief This class will create instances of Mover WriteLigandMolFile for the MoverFactory
+/// @author Sam DeLuca
 
 #ifndef INCLUDED_protocols_ligand_docking_WriteLigandMolFileCreator_hh
 #define INCLUDED_protocols_ligand_docking_WriteLigandMolFileCreator_hh

@@ -21,18 +21,12 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
@@ -189,7 +183,6 @@ namespace simple_moves {
 	AddCavitiesMover::get_name() const {
 		return "AddCavitiesMover";
 	}
-
 
 
 } // end namespace simple_moves

@@ -17,7 +17,6 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <numeric/numeric.functions.hh>

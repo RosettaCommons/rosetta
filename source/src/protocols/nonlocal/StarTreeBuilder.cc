@@ -18,8 +18,6 @@
 #include <utility>
 
 // External headers
-// AUTO-REMOVED #include <boost/format.hpp>
-// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Utility headers

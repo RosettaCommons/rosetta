@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/MSDMover.cc
-///@brief Multistate design mover used for restrained multistate design
-///@brief Takes in multiple poses from MSDJobDistributor, applies residue linking constraints based on
-///@brief sequence of all input poses and runs a design submover that has been specified in the tag
-///@author Alex Sevy (alex.sevy@gmail.com)
+/// @file protocols/simple_moves/MSDMover.cc
+/// @brief Multistate design mover used for restrained multistate design
+/// @brief Takes in multiple poses from MSDJobDistributor, applies residue linking constraints based on
+/// @brief sequence of all input poses and runs a design submover that has been specified in the tag
+/// @author Alex Sevy (alex.sevy@gmail.com)
 
 // unit headers
 #include <protocols/simple_moves/MSDMover.hh>
@@ -150,7 +150,6 @@ MSDMover::setup_mover ( core::pose::Pose & pose ) {
 	parse_resfiles();
 
 }
-
 
 
 void MSDMover::parse_my_tag(

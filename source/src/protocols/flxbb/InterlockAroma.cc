@@ -17,7 +17,6 @@
 
 #include <protocols/fldsgn/filters/InterlockingAromaFilter.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -41,7 +40,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 #include <utility/vector0.hh>
 

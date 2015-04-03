@@ -9,7 +9,7 @@
 
 /// @file SequenceProfile.cc
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Simply based on comparing single characters from two protein
+/// @details Simply based on comparing single characters from two protein
 /// sequences, along with affine gap penalties of the form penalty = A + Bk, where
 /// A represents the penalty for starting a gap, and B represents the penalty for
 /// extending a previously opened gap by k characters.
@@ -28,7 +28,6 @@
 
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <iostream>
 #include <string>
 
@@ -333,7 +332,6 @@ void SequenceProfile::read_from_file(
 	id( std::string(fn) );
 	//tr<<" the size of profile_ is: "<<profile_.size()<<" and the size of occurrence_data_ is: "<<occurrence_data_.size()<<std::endl;
 } // read_from_file
-
 
 
 void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string matrix ) {

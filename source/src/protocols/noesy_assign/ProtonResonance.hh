@@ -65,7 +65,7 @@ public:
     return ResonanceOP( new ProtonResonance( *this ) );
   }
 
-  ///@brief match the proton and corresponding label atom at same time
+  /// @brief match the proton and corresponding label atom at same time
   virtual bool match2D(
     core::Real proton_freq,
     core::Real proton_error,

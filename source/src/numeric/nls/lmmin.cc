@@ -7,9 +7,8 @@
 // Author:   Joachim Wuttke <j.wuttke@fz-juelich.de>
 //
 // Homepage: www.messen-und-deuten.de/lmfit
-//
 
-//
+
 // lmfit is released under the LMFIT-BEER-WARE licence:
 //
 // In writing this software, I borrowed heavily from the public domain,

@@ -22,11 +22,9 @@
 
 /// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// C++ headers
 #include <sstream>
-// AUTO-REMOVED #include <string>
 #include <list>
 #include <map>
 
@@ -57,7 +55,7 @@ token_type_name( TokenType );
 class Token : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Token();
 	virtual
 	TokenType
@@ -160,7 +158,7 @@ private:
 class TokenSet : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~TokenSet();
 	TokenSet();
 
@@ -190,7 +188,7 @@ private:
 class ArithmeticScanner : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ArithmeticScanner();
 	/// @brief Constructor which adds the "standard" set of min, max and sqrt functions.
 	ArithmeticScanner();
@@ -234,7 +232,7 @@ public:
 class ArithmeticASTNode : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ArithmeticASTNode();
 	virtual
 	void
@@ -419,7 +417,7 @@ private:
 class ASTVisitor : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ASTVisitor();
 
 	virtual
@@ -641,7 +639,7 @@ public:
 class Expression : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Expression();
 
 	virtual

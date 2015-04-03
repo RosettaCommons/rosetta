@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/id/AtomID.hh>
@@ -75,7 +74,7 @@ SymmetricLigandEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 SymmetricLigandEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -113,7 +112,6 @@ SymmetricLigandEnergy::residue_energy(
 
 
 }
-
 
 
 void
@@ -161,7 +159,6 @@ SymmetricLigandEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } // methods

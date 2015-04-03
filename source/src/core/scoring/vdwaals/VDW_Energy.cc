@@ -103,7 +103,7 @@ VDW_Energy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 VDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -111,7 +111,6 @@ VDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 }
 
 
-///
 void
 VDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -128,7 +127,7 @@ VDW_Energy::prepare_rotamers_for_packing(
 	set.store_trie( methods::vdw_method, trie );
 }
 
-///
+
 void
 VDW_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -291,7 +290,6 @@ VDW_Energy::eval_atom_derivative(
 	} // loop over nbrs of rsd1
 
 }
-
 
 
 /// @brief VDW_Energy distance cutoff

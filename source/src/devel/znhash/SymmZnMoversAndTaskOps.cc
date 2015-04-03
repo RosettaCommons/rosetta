@@ -1115,7 +1115,6 @@ void ZnCoordNumHbondCalculator::notify_energy_change() {
 }
 
 
-
 void ZnCoordNumHbondCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const
 {
    if ( key == "all_Hbonds" ) {
@@ -1221,7 +1220,7 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_hbond_calc", core::pose::metrics::PoseMetricCalculatorOP( new ZnCoordNumHbondCalculator ) );
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
@@ -1229,8 +1228,6 @@ void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {}
-
-
 
 
 }

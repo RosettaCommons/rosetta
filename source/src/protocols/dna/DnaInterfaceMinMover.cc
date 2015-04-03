@@ -162,7 +162,7 @@ DnaInterfaceMinMover::get_name() const {
 	return DnaInterfaceMinMoverCreator::mover_name();
 }
 
-///@brief parse XML (in the context of the parser/scripting scheme)
+/// @brief parse XML (in the context of the parser/scripting scheme)
 void
 DnaInterfaceMinMover::parse_my_tag(
 	TagCOP const tag,
@@ -197,14 +197,14 @@ DnaInterfaceMinMover::parse_my_tag(
 	}
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 MoverOP
 DnaInterfaceMinMover::fresh_instance() const
 {
 	return MoverOP( new DnaInterfaceMinMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 MoverOP
 DnaInterfaceMinMover::clone() const
 {

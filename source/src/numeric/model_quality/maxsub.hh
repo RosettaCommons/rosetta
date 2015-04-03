@@ -9,7 +9,7 @@
 
 /// @file numeric/model_quality/maxsub.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed Routines for calculating maxsub-based structural quality scores. Based on code originally
+/// @details Routines for calculating maxsub-based structural quality scores. Based on code originally
 /// written by Charlie Strauss for rosetta++, ported over by James Thompson.
 ///
 /// @author James Thompson
@@ -75,12 +75,11 @@ erfcc( double x );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin COMAS
 ///
 /// @brief
 //    Calculate the center of geometry for the selected atoms ---
 ///
-/// @detailed
+/// @details
 ///
 /// @param  C - [in/out]? -
 /// @param  WT - [in/out]? -
@@ -97,9 +96,8 @@ erfcc( double x );
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 
 void

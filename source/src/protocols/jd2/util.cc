@@ -41,17 +41,13 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/parser.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 #include <utility/mpi_util.hh>
 #include <utility/assert.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/import_pose/import_pose.hh>
@@ -226,7 +222,7 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
 
 
 #ifdef USEMPI
-///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
+/// @brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
 MPI_Comm const& current_mpi_comm() {
 	JobDistributor* jd
 		= JobDistributor::get_instance();

@@ -949,7 +949,6 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 }
 
 
-
 }
 }
 }

@@ -332,7 +332,7 @@ namespace silent {
 
 	protected:
 
-		///@ brief helper to detect fullatom input
+		/// @ brief helper to detect fullatom input
 		// performs logical operation on fullatom and not_defined:
 		// if residue is patched we cannot tell -- no change to fullatom and not_defined
 		// if residue is not patched and is protein we do the following:

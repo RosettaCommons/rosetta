@@ -11,18 +11,15 @@
 /// @brief  a collection classes of the FragData and SingleResidueFragData class hirachy
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/FrameList.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 // ObjexxFCL Headers
 

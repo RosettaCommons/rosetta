@@ -20,12 +20,9 @@
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/MinimizationData.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/database/open.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -129,7 +126,6 @@ FullatomCustomPairDistanceEnergy::clone() const
 }
 
 
-///
 void
 FullatomCustomPairDistanceEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,

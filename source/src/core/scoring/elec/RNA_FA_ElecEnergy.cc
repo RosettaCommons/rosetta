@@ -22,7 +22,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
@@ -33,7 +32,6 @@
 #include <core/pose/Pose.hh>
 
 #include <core/conformation/RotamerSetBase.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
@@ -42,16 +40,13 @@
 // ObjexxFCL headers
 
 
-
 // C++
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///
 /// Hacky (hence the name) implementation of 10r dielectric model, cutoff at 5.5A
 ///
-///
 
-//
 //     alternatives: WARSHEL (from ligand.cc)
 //     E = 322.0637*q1*q2/r/e(r)
 //     if ( r < 3 ) e(r) = 16.55
@@ -116,7 +111,7 @@ RNA_FA_ElecEnergy::clone() const
 	return methods::EnergyMethodOP( new RNA_FA_ElecEnergy( *this ) );
 }
 
-///
+
 void
 RNA_FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &) const
 {
@@ -124,7 +119,7 @@ RNA_FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
   
 }
 
-///
+
 void
 RNA_FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -533,7 +528,6 @@ RNA_FA_ElecEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 }

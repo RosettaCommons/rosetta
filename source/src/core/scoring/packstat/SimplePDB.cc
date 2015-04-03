@@ -116,7 +116,6 @@ SimplePDB::get_res_centers() const
 }
 
 
-
 core::Size SimplePDB::num_water() const {
 	core::Size count = 0;
 	for( core::Size i = 1; i <= atoms_.size(); ++i ) {
@@ -126,7 +125,6 @@ core::Size SimplePDB::num_water() const {
 	}
 	return count;
 }
-
 
 
 void SimplePDB::remove_surface_waters() {
@@ -157,20 +155,6 @@ void SimplePDB::remove_surface_waters() {
 		atoms_ = newatoms;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 } // namespace packstat

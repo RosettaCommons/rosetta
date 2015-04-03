@@ -19,11 +19,9 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/features/DatabaseJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-// AUTO-REMOVED #include <protocols/features/ProteinSilentReport.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/features/ProteinSilentReport.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
@@ -41,7 +39,7 @@
 namespace protocols {
 namespace features {
 
-///@details This is the simplest implementation of JobInputter, which
+/// @details This is the simplest implementation of JobInputter, which
 ///reads from -s/-l and Database files.
 class DatabaseJobInputter : public protocols::jd2::JobInputter
 {

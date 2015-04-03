@@ -14,35 +14,30 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/util.hh>
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//
+
 #include <protocols/frags/RMSVallData.hh>
 
 // C++ Headers
 #include <map>
 
 // Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
-//
+
 #include <string>
 
 #include <core/conformation/Residue.hh>
@@ -72,9 +67,8 @@ FragInsertAndAlignMover::FragInsertAndAlignMover(
 }
 
 
-///
-///@brief Initialize fragment library
-///@brief     Loads RMS vall data, sets up frame set
+/// @brief Initialize fragment library
+/// @brief     Loads RMS vall data, sets up frame set
 void FragInsertAndAlignMover::initialize_rb_fragments(
              utility::vector1< RBSegment > const &rbsegs,
              core::pose::Pose const &ref_pose,

@@ -22,7 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 
-
 namespace protocols {
 namespace metal_interface {
 

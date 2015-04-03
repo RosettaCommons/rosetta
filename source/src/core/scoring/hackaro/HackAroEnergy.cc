@@ -24,9 +24,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh>
 #include <numeric/xyzMatrix.hh>
 
 #include <core/id/AtomID.hh>
@@ -88,14 +86,13 @@ HackAroEnergy::clone() const
 }
 
 
-///
 void
 HackAroEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 HackAroEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -107,7 +104,7 @@ HackAroEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 HackAroEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -386,7 +383,6 @@ HackAroEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 }

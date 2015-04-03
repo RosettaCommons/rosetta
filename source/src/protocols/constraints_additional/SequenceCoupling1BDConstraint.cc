@@ -23,9 +23,7 @@
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
@@ -75,7 +73,7 @@ SequenceCoupling1BDConstraint::clone() const {
 	return ConstraintOP( new SequenceCoupling1BDConstraint( *this ) );
 }
 
-///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
+/// @details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
 SequenceCoupling1BDConstraint::read_def(
 	std::istream & is,

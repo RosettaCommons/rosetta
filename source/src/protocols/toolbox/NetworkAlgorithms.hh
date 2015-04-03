@@ -9,7 +9,7 @@
 
 /// @file src/protocols/toolbox/NetworkAlgorithms.hh
 /// @brief Computes network properties of a pose
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 

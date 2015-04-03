@@ -31,7 +31,7 @@ typedef std::string String;
 class RemarkInfo
 {
 public:
-///@brief default constructor to initialize all values
+/// @brief default constructor to initialize all values
 RemarkInfo() : num( 0 ), value() {}
 
 /// For now, all member names have the same names as fields in PDB standard.

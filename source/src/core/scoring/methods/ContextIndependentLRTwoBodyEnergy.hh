@@ -37,7 +37,7 @@ public:
 
 	virtual ~ContextIndependentLRTwoBodyEnergy();
 
-	///
+
 	EnergyMethodType
 	method_type() const;
 

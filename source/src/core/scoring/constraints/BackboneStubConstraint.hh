@@ -20,8 +20,6 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.fwd.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -34,7 +32,7 @@ namespace scoring {
 namespace constraints {
 
 
-///@brief This constraint favors the backbone landing on a "stub" backbone, which puts the sidechain in a pre-determined desirable location
+/// @brief This constraint favors the backbone landing on a "stub" backbone, which puts the sidechain in a pre-determined desirable location
 ///
 class BackboneStubConstraint : public Constraint
 {

@@ -118,8 +118,6 @@ SymFoldandDockSlideTrialMover::parse_my_tag(
 	}
 }
 
-///
-///
 
 std::string
 SymFoldandDockSlideTrialMoverCreator::keyname() const {

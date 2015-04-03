@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/ResidueContactScreener.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

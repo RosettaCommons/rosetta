@@ -9,7 +9,7 @@
 
 /// @file IterativeAbrelax
 /// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 // Unit Headers

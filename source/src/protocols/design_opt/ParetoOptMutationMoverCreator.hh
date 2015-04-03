@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/design_opt/ParetoOptMutationMoverCreator.hh
-///@brief This class will create instances of Mover ParetoOptMutationMover for the MoverFactory
-///@author Chris King (chrisk1@uw.edu)
+/// @file protocols/design_opt/ParetoOptMutationMoverCreator.hh
+/// @brief This class will create instances of Mover ParetoOptMutationMover for the MoverFactory
+/// @author Chris King (chrisk1@uw.edu)
 
 #ifndef INCLUDED_protocols_design_opt_ParetoOptMutationMoverCreator_hh
 #define INCLUDED_protocols_design_opt_ParetoOptMutationMoverCreator_hh

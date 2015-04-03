@@ -38,13 +38,13 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class SuckerEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	SuckerEnergy();
 	~SuckerEnergy();
 

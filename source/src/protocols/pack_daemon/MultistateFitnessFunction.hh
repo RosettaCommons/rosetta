@@ -20,7 +20,6 @@
 #include <protocols/pack_daemon/MultistateAggregateFunction.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/pack_daemon/EntityCorrespondence.fwd.hh>
 #include <protocols/pack_daemon/PackDaemon.fwd.hh>
 
 // Project headers
@@ -28,7 +27,6 @@
 #include <protocols/genetic_algorithm/FitnessFunction.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/heap.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
@@ -74,7 +72,7 @@ public:
 	core::Size
 	index_of_entity( Entity const & ent ) const;
 
-	/// @breif remove the worst entity from the set and return it
+	/// @brief remove the worst entity from the set and return it
 	EntityAndScore pop();
 
 private:

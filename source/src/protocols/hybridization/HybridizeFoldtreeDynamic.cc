@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief A mover to dynamically manipulate fold tree during the template hybridization sampling
-/// @detailed based on Chris Miles's start tree builder
+/// @details based on Chris Miles's start tree builder
 /// @file protocols/hybridization/HybridizeFoldtreeDynamic.cc
 /// @author Yifan Song, David Kim
 
@@ -347,7 +347,6 @@ void HybridizeFoldtreeDynamic::get_core_chunk_index_from_position( core::Size co
 }
 
 
-
 void HybridizeFoldtreeDynamic::reset( core::pose::Pose & pose ) {
 	if (pose.total_residue() > saved_n_residue_) {
 		pose.conformation().delete_residue_range_slow(saved_n_residue_+1, pose.total_residue());
@@ -574,7 +573,6 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	} // strand pairings
 
 
-
 	// Remember to include the original cutpoint at the end of the chain
 	// (before the virtual residue)
 	// TR << "Adding the last cut: " << num_nonvirt_residues_ << std::endl;
@@ -600,7 +598,6 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 												ft_jumps,	   // jump_point
 												ft_cuts,		// cuts
 												num_nonvirt_residues_+1);  // root
-
 
 
 	// strand pairings

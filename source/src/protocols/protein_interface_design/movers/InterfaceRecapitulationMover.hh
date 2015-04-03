@@ -30,7 +30,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
 // Unit headers
 
 namespace protocols {

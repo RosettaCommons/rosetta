@@ -30,5 +30,4 @@ public:
 } //protocols
 
 
-
 #endif /* SCREENINGJOBINPUTTERCREATOR_HH_ */

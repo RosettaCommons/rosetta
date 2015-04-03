@@ -28,12 +28,8 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/DOF_Node.hh>
@@ -185,7 +181,6 @@ private:
 	Size dof_start_for_focused_residue_;
 	Size ndofs_added_for_focused_residue_;
 };
-
 
 
 } // namespace scmin

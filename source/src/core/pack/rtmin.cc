@@ -32,50 +32,31 @@
 #include <core/types.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMultifunc.hh>
-// AUTO-REMOVED #include <core/optimization/SingleResidueMultifunc.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/vector1.functions.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 // STL headers
-// AUTO-REMOVED #include <ctime>
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>

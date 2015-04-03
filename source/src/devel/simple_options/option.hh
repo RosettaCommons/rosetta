@@ -10,12 +10,8 @@
 #define option_H
 
 #include <map>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <list>
 #include <iostream>
-// AUTO-REMOVED #include <vector>
 #include <cstdlib> //required by GCC 4.3.2
-// AUTO-REMOVED
 #include <cstdio>
 
 #define CONTINUE    '\\'
@@ -221,8 +217,6 @@ public:
 };
 
 
-
-
 class OptionBackend : public   utility::pointer::ReferenceCount {
 public:
 	virtual void get_options(OptionModule& module) = 0;
@@ -426,9 +420,6 @@ private:
 		};								\
 		static _the_registrator_ _register_;			\
 	}
-
-
-
 
 
 #endif

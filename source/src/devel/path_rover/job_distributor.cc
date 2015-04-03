@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author sheffler
+/// @author sheffler
 
 // MPI
 // jk Note: if MPI is used, it must be included BEFORE some other std libraries
@@ -183,11 +183,10 @@ main_job_distributor::jd->loop_over_function( eval, &f, 5 );
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::type
 ///
 /// @brief:  Return the job_distributor type
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -197,9 +196,8 @@ main_job_distributor::jd->loop_over_function( eval, &f, 5 );
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 std::string job_distributor::type() {
 
@@ -209,11 +207,10 @@ std::string job_distributor::type() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::initialize
 ///
 /// @brief: setup the job distributor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -223,9 +220,8 @@ std::string job_distributor::type() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::initialize() {
 	using namespace param;
@@ -257,11 +253,10 @@ void job_distributor::initialize() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::initialize_rosetta
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 /// atom_vdw_set files_paths.h
@@ -274,9 +269,8 @@ void job_distributor::initialize() {
 ///
 /// @references
 ///
-/// @authors car 8/18/2003
+/// @author car 8/18/2003
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::initialize_rosetta() {
 
@@ -312,11 +306,10 @@ void job_distributor::initialize_rosetta() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::check_pose1
 ///
 /// @brief: used when mode == pose1
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -326,9 +319,8 @@ void job_distributor::initialize_rosetta() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool job_distributor::check_pose1() {
 
@@ -339,11 +331,10 @@ bool job_distributor::check_pose1() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::run_main_pose1
 ///
 /// @brief: used when mode == pose1
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -353,9 +344,8 @@ bool job_distributor::check_pose1() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::run_main_pose1() {
 
@@ -367,11 +357,10 @@ void job_distributor::run_main_pose1() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::check_csa
 ///
 /// @brief: used for csa mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -381,9 +370,8 @@ void job_distributor::run_main_pose1() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool job_distributor::check_csa() {
 
@@ -393,13 +381,11 @@ bool job_distributor::check_csa() {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::run_csa
 ///
 /// @brief: used for csa mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -409,9 +395,8 @@ bool job_distributor::check_csa() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::run_csa() {
 
@@ -425,11 +410,10 @@ void job_distributor::run_csa() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::skip_starting_pdb
 ///
 /// @brief: called when starting coors cannot be obtained
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -439,9 +423,8 @@ void job_distributor::run_csa() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::skip_starting_pdb() {
 
@@ -454,12 +437,11 @@ void job_distributor::skip_starting_pdb() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_next_job_num
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -469,9 +451,8 @@ void job_distributor::skip_starting_pdb() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool job_distributor::get_next_job_num() {
 
@@ -488,12 +469,11 @@ bool job_distributor::get_next_job_num() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::prepare_for_next_startnum
 ///
 /// @brief: set the start_inx and output_inx such that
 ///      next time we'll move on to a new start_num
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -503,9 +483,8 @@ bool job_distributor::get_next_job_num() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::prepare_for_next_startnum() {
 
@@ -515,11 +494,10 @@ void job_distributor::prepare_for_next_startnum() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::made_output_decoy
 ///
 /// @brief: called when an output decoy has been made
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -529,9 +507,8 @@ void job_distributor::prepare_for_next_startnum() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::made_output_decoy() {
 
@@ -542,12 +519,11 @@ void job_distributor::made_output_decoy() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::done_attempt
 ///
 /// @brief: called when an attempt at an output decoy has been completed,
 ///           but the output decoy filters have not yet been applied
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -557,9 +533,8 @@ void job_distributor::made_output_decoy() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::done_attempt() {
 
@@ -570,11 +545,10 @@ void job_distributor::done_attempt() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::call_abrelax
 ///
 /// @brief: essentially a stub, required due to a derived class
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -584,9 +558,8 @@ void job_distributor::done_attempt() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::call_abrelax() {
 
@@ -597,11 +570,10 @@ void job_distributor::call_abrelax() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::setup_job
 ///
 /// @brief: setup for the next job. Return true if a job has been set up
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -611,9 +583,8 @@ void job_distributor::call_abrelax() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool job_distributor::setup_job() {
 
@@ -664,11 +635,10 @@ bool job_distributor::setup_job() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::run_job
 ///
 /// @brief: call the appropriate function to run this job, given the mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -678,9 +648,8 @@ bool job_distributor::setup_job() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::run_job() {
 
@@ -792,11 +761,10 @@ void job_distributor::report_progress()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::finish
 ///
 /// @brief: end Rosetta (cleanly)
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -806,9 +774,8 @@ void job_distributor::report_progress()
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::finish() {
 
@@ -830,11 +797,10 @@ void job_distributor::finish() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::finish_writing_files
 ///
 /// @brief: write the last set of files
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -844,9 +810,8 @@ void job_distributor::finish() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::finish_writing_files() {
 
@@ -882,11 +847,10 @@ void job_distributor::finish_writing_files() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::finish_summary
 ///
 /// @brief: write the final summary to stdout
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -896,9 +860,8 @@ void job_distributor::finish_writing_files() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::finish_summary( std::ostream & iunit ) {
 
@@ -919,11 +882,10 @@ void job_distributor::finish_summary( std::ostream & iunit ) {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::dump_status
 ///
 /// @brief: dump contents of member data, eg. for debugging
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -933,9 +895,8 @@ void job_distributor::finish_summary( std::ostream & iunit ) {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::dump_status( std::ostream & iunit ) {
 
@@ -958,12 +919,11 @@ void job_distributor::dump_status( std::ostream & iunit ) {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::loop_over_function
 ///
 /// @brief:  Loop over a function (passed in as first argument),
 ///          passing to it a ptr to a data class, then three loop counters
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -973,9 +933,8 @@ void job_distributor::dump_status( std::ostream & iunit ) {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 void job_distributor::loop_over_function(
 	void(*function)(const void * data_class, int const i, int const j, int const k),
@@ -998,12 +957,11 @@ void job_distributor::loop_over_function(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_curr_outnum
 ///
 /// @brief
 /// read access to private data
 ///
-/// @detailed
+/// @details
 /// For MPI jobs, output PDBs must be named by either their
 /// processor of origin, or which of the nstruct simulations they represent;
 /// naming is handled automatically by the job_distributor if the default
@@ -1021,148 +979,131 @@ void job_distributor::loop_over_function(
 ///
 /// @references
 ///
-/// @authors: apl
+/// @author: apl
 ///
-/// @last_modified: 01/09/07
 /////////////////////////////////////////////////////////////////////////////////
 int job_distributor::get_curr_outnum() const {return curr_outnum;}
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_mc_checkpoint_last_count
 ///
 /// @brief
 /// read access to private data
 ///
-/// @detailed
+/// @details
 /// The last pose Monte_carlo checkpoint step for the current nstruct has to be
 /// saved and persist outside of the Monte_carlo object. This returns the last
 /// Monte_carlo step that was checkpointed.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 int job_distributor::get_mc_checkpoint_last_count(){
 	return mc_checkpoint_last_count;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::set_mc_checkpoint_last_count
 ///
 /// @brief
 /// write access to private data
 ///
-/// @detailed
+/// @details
 /// Sets the last Pose Monte_carlo checkpoint step.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 void job_distributor::set_mc_checkpoint_last_count(int last_cnt){
 	mc_checkpoint_last_count = last_cnt;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_mc_checkpoint_current_count
 ///
 /// @brief
 /// read access to private data
 ///
-/// @detailed
+/// @details
 /// Gets the current Pose Monte_carlo checkpoint step.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 int job_distributor::get_mc_checkpoint_current_count(){
 	return mc_checkpoint_current_count;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::iterate_mc_checkpoint_current_count
 ///
 /// @brief
 /// iterate private data
 ///
-/// @detailed
+/// @details
 /// Iterates the current Pose Monte_carlo checkpoint step.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 void job_distributor::iterate_mc_checkpoint_current_count(){
 	mc_checkpoint_current_count++;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_mc_checkpoint_time
 ///
 /// @brief
 /// read access to private data
 ///
-/// @detailed
+/// @details
 /// Gets the time of the last Pose Monte_carlo checkpoint. This is used to
 /// determine when to checkpoint given a time interval. The interval can be
 /// set in seconds using the -checkpointing_interval argument.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 time_t job_distributor::get_mc_checkpoint_time() const {
 	return mc_checkpoint_time;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::update_mc_checkpoint_time
 ///
 /// @brief
 /// update checkpoint time private data
 ///
-/// @detailed
+/// @details
 /// Updates the time of the last Pose Monte_carlo checkpoint.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 void job_distributor::update_mc_checkpoint_time() {
 	time(&mc_checkpoint_time);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::get_mc_checkpoint_file
 ///
 /// @brief
 /// read access to private data
 ///
-/// @detailed
+/// @details
 /// Provides the checkpoint filename to the pose Monte_carlo object.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 std::string job_distributor::get_mc_checkpoint_file() const {
 	return mc_checkpoint_file;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::reset_mc_checkpoint
 ///
 /// @brief
 /// clear checkpoint information
 ///
-/// @detailed
+/// @details
 /// Clears the pose Monte_carlo checkpoint information. This should be called
 /// after each nstruct if checkpointing is used.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 void job_distributor::reset_mc_checkpoint() {
 
@@ -1191,17 +1132,15 @@ void job_distributor::reset_mc_checkpoint() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin job_distributor::skip_to_mc_checkpoint
 ///
 /// @brief
 /// skip checkpoint step
 ///
-/// @detailed
+/// @details
 /// Determine whether to skip to get to the last step that was checkpointed.
 ///
-/// @authors: dekim
+/// @author: dekim
 ///
-/// @last_modified: 04/11/07
 //////////////////////////////////////////////////////////////////////////////
 bool job_distributor::skip_to_mc_checkpoint() {
 	return ( mc_checkpoint_current_count < mc_checkpoint_last_count );
@@ -1215,11 +1154,10 @@ bool job_distributor::skip_to_mc_checkpoint() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::type
 ///
 /// @brief:  Return the job_distributor type
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1229,9 +1167,8 @@ bool job_distributor::skip_to_mc_checkpoint() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 std::string BOINC_job_distributor::type() {
 
@@ -1240,11 +1177,10 @@ std::string BOINC_job_distributor::type() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::initialize
 ///
 /// @brief: setup the BOINC job distributor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1254,9 +1190,8 @@ std::string BOINC_job_distributor::type() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::initialize()
 {
@@ -1321,11 +1256,10 @@ void BOINC_job_distributor::initialize()
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::checkNoProgressInitCount
 ///
 /// @brief: setup the BOINC job distributor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1335,9 +1269,8 @@ void BOINC_job_distributor::initialize()
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool BOINC_job_distributor::checkNoProgressInitCount( int& attempts, int& farlxstage )
 {
@@ -1391,11 +1324,10 @@ bool BOINC_job_distributor::checkNoProgressInitCount( int& attempts, int& farlxs
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::call_abrelax
 ///
 /// @brief: essentially a stub, required due to a derived class
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1405,9 +1337,8 @@ bool BOINC_job_distributor::checkNoProgressInitCount( int& attempts, int& farlxs
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::call_abrelax() {
 
@@ -1418,11 +1349,10 @@ void BOINC_job_distributor::call_abrelax() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::run_main_pose1
 ///
 /// @brief: setup when mode == pose1
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1432,9 +1362,8 @@ void BOINC_job_distributor::call_abrelax() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::run_main_pose1() {
 
@@ -1453,11 +1382,10 @@ void BOINC_job_distributor::run_main_pose1() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::set_BOINC_defaults
 ///
 /// @brief: reset namespace vars as appropriate for BOINC
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1467,9 +1395,8 @@ void BOINC_job_distributor::run_main_pose1() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::set_BOINC_defaults() {
 
@@ -1481,11 +1408,10 @@ void BOINC_job_distributor::set_BOINC_defaults() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::read_BOINC_params
 ///
 /// @brief: read BOINC params from stdout.txt
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1495,9 +1421,8 @@ void BOINC_job_distributor::set_BOINC_defaults() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::read_BOINC_params() {
 
@@ -1516,11 +1441,10 @@ void BOINC_job_distributor::read_BOINC_params() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::made_output_decoy
 ///
 /// @brief: called when an output decoy has been made
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1530,9 +1454,8 @@ void BOINC_job_distributor::read_BOINC_params() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::made_output_decoy() {
 
@@ -1556,11 +1479,10 @@ void BOINC_job_distributor::made_output_decoy() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::report_progress
 ///
 /// @brief: report how far we've come
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1570,9 +1492,8 @@ void BOINC_job_distributor::made_output_decoy() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::report_progress() {
 
@@ -1587,11 +1508,10 @@ void BOINC_job_distributor::report_progress() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::finish
 ///
 /// @brief: end Rosetta (cleanly)
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1601,9 +1521,8 @@ void BOINC_job_distributor::report_progress() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::finish() {
 
@@ -1645,11 +1564,10 @@ void BOINC_job_distributor::finish() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::finish_summary
 ///
 /// @brief: write the final summary to stdout
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1659,9 +1577,8 @@ void BOINC_job_distributor::finish() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void BOINC_job_distributor::finish_summary( std::ostream & iunit ) {
 
@@ -1684,12 +1601,11 @@ void BOINC_job_distributor::finish_summary( std::ostream & iunit ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin BOINC_job_distributor::get_next_job_num
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1700,9 +1616,8 @@ void BOINC_job_distributor::finish_summary( std::ostream & iunit ) {
 ///
 /// @references
 ///
-/// @authors: chu
+/// @author: chu
 ///
-/// @last_modified: 10/05/06
 /////////////////////////////////////////////////////////////////////////////////
 bool BOINC_job_distributor::get_next_job_num() {
 
@@ -1720,10 +1635,6 @@ bool BOINC_job_distributor::get_next_job_num() {
 #endif // BOINC
 
 
-
-
-
-
 #ifdef USEMPI
 
 ////////////////////////////////
@@ -1732,11 +1643,10 @@ bool BOINC_job_distributor::get_next_job_num() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::type
 ///
 /// @brief:  Return the job_distributor type
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1746,9 +1656,8 @@ bool BOINC_job_distributor::get_next_job_num() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 std::string MPI_generic_job_distributor::type() {
 
@@ -1757,11 +1666,10 @@ std::string MPI_generic_job_distributor::type() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::initialize
 ///
 /// @brief: setup the job distributor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1771,9 +1679,8 @@ std::string MPI_generic_job_distributor::type() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::initialize() {
 
@@ -1813,11 +1720,10 @@ void MPI_generic_job_distributor::initialize() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::sync_random_seed
 ///
 /// @brief: reset the random seed on all cpus to match
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1827,9 +1733,8 @@ void MPI_generic_job_distributor::initialize() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::sync_random_seeds() {
 
@@ -1843,13 +1748,11 @@ void MPI_generic_job_distributor::sync_random_seeds() {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::get_server_seed
 ///
 /// @brief: use a requested seed or get the random seed from the clock time
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1859,9 +1762,8 @@ void MPI_generic_job_distributor::sync_random_seeds() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 int MPI_generic_job_distributor::get_server_seed() {
 
@@ -1885,11 +1787,10 @@ int MPI_generic_job_distributor::get_server_seed() {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::set_MPI_defaults
 ///
 /// @brief: reset namespace vars as appropriate for MPI
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1899,9 +1800,8 @@ int MPI_generic_job_distributor::get_server_seed() {
 ///
 /// @references
 ///
-/// @authors jk Aug. 11/06
+/// @author jk Aug. 11/06
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::set_MPI_defaults() {
 
@@ -1915,11 +1815,10 @@ void MPI_generic_job_distributor::set_MPI_defaults() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::run_server
 ///
 /// @brief: run a server to distribute jobs
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1929,9 +1828,8 @@ void MPI_generic_job_distributor::set_MPI_defaults() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::run_server() {
 
@@ -1983,12 +1881,11 @@ void MPI_generic_job_distributor::run_server() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::get_next_job_num
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -1998,9 +1895,8 @@ void MPI_generic_job_distributor::run_server() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool MPI_generic_job_distributor::get_next_job_num() {
 
@@ -2011,12 +1907,11 @@ bool MPI_generic_job_distributor::get_next_job_num() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::get_next_task
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2026,9 +1921,8 @@ bool MPI_generic_job_distributor::get_next_job_num() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool MPI_generic_job_distributor::get_next_task() {
 
@@ -2078,11 +1972,10 @@ bool MPI_generic_job_distributor::get_next_task() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::finish
 ///
 /// @brief: end Rosetta (cleanly)
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2092,9 +1985,8 @@ bool MPI_generic_job_distributor::get_next_task() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::finish() {
 
@@ -2108,12 +2000,11 @@ void MPI_generic_job_distributor::finish() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_generic_job_distributor::loop_over_function
 ///
 /// @brief:  Use MPI to loop over a function (passed in as first argument),
 ///          passing to it a ptr to a data class, then three loop counters
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2123,9 +2014,8 @@ void MPI_generic_job_distributor::finish() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_generic_job_distributor::loop_over_function(
 	void(*function)(const void * data_class, int const i, int const j, int const k),
@@ -2160,18 +2050,16 @@ void MPI_generic_job_distributor::loop_over_function(
 }
 
 
-
 ////////////////////////////////
 ///  MPI_full_job_distributor classes
 ////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::type
 ///
 /// @brief:  Return the job_distributor type
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2181,9 +2069,8 @@ void MPI_generic_job_distributor::loop_over_function(
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 std::string MPI_full_job_distributor::type() {
 
@@ -2193,11 +2080,10 @@ std::string MPI_full_job_distributor::type() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::initialize
 ///
 /// @brief: setup the job distributor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2207,9 +2093,8 @@ std::string MPI_full_job_distributor::type() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_full_job_distributor::initialize() {
 
@@ -2235,14 +2120,13 @@ void MPI_full_job_distributor::initialize() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::prepare_for_next_startnum
 ///
 /// @brief: in the base class, sets the start_inx and output_inx
 ///      such that next time we'll move on to a new start_num. When
 ///      using MPI, however, we can't really do this (because more jobs
 ///      may have been started. Instead, just do nothing.
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2252,9 +2136,8 @@ void MPI_full_job_distributor::initialize() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_full_job_distributor::prepare_for_next_startnum() {
 
@@ -2264,12 +2147,11 @@ void MPI_full_job_distributor::prepare_for_next_startnum() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::get_next_task
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2279,9 +2161,8 @@ void MPI_full_job_distributor::prepare_for_next_startnum() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool MPI_full_job_distributor::get_next_task() {
 
@@ -2303,12 +2184,11 @@ bool MPI_full_job_distributor::get_next_task() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::get_next_job_num
 ///
 /// @brief: set the start_inx and output_inx for next job. Returns true if
 ///          more jobs remain, returns false if we've already done the last job
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2318,9 +2198,8 @@ bool MPI_full_job_distributor::get_next_task() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 06/24/06
 /////////////////////////////////////////////////////////////////////////////////
 bool MPI_full_job_distributor::get_next_job_num() {
 
@@ -2339,12 +2218,11 @@ bool MPI_full_job_distributor::get_next_job_num() {
 
 
 //////////////////////////////////////////////////////////////////////////////
-/// @begin MPI_full_job_distributor::loop_over_function
 ///
 /// @brief:  Loop over a function (passed in as first argument),
 ///          passing to it a ptr to a data class, then three loop counters
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -2354,9 +2232,8 @@ bool MPI_full_job_distributor::get_next_job_num() {
 ///
 /// @references
 ///
-/// @authors: jk
+/// @author: jk
 ///
-/// @last_modified: 11/12/06
 /////////////////////////////////////////////////////////////////////////////////
 void MPI_full_job_distributor::loop_over_function(
 	void(*function)(const void * data_class, int const i, int const j, int const k),

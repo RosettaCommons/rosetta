@@ -58,7 +58,6 @@
 	#include <numeric/NumericTraits.hh>
 
 
-
 	// #include <devel/init.hh>
 
 	// #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -1430,7 +1429,6 @@ int main (int argc, char *argv[]) {
 							if(lg12C9.distance_squared(khit.stub.local2global(lgC9)) > 4.0) continue;
 
 
-
 							#ifdef USE_OPENMP
 							#pragma omp critical
 							#endif
@@ -1501,9 +1499,6 @@ int main (int argc, char *argv[]) {
 							Real kd2 = tmp2.xyz(AtomID(tmp2.residue(7).nheavyatoms()-1,7)).distance(tmp2.xyz(AtomID(iO1,5)));
 							Real ka1 = numeric::angle_degrees(tmp2.xyz(AtomID(tmp2.residue(7).nheavyatoms()-2,7)),tmp2.xyz(AtomID(tmp2.residue(7).nheavyatoms()-1,7)), tmp2.xyz(AtomID(iO1,5)));
 							Real ka2 = numeric::angle_degrees(tmp2.xyz(AtomID(tmp2.residue(7).nheavyatoms()-1,7)),tmp2.xyz(AtomID(iO1,5)), tmp2.xyz(AtomID(iC5,5)));
-
-
-
 
 
 							// minimal pose:

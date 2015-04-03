@@ -33,8 +33,8 @@ void store_DC_in_pose(DipolarCouplingOP, core::pose::Pose&);
 DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose&);
 DipolarCouplingCOP retrieve_DC_from_pose(core::pose::Pose const&);
 
-///@brief DipolarCouplings are mainly handled by this class
-///@detail related classed: DC --- a single line in an DC file - representing a single dc coupling
+/// @brief DipolarCouplings are mainly handled by this class
+/// @detail related classed: DC --- a single line in an DC file - representing a single dc coupling
 ///                         DipolarCouplingEnergy -- an energy method which triggers computations handled by this class.
 ///
 class DipolarCoupling: public basic::datacache::CacheableData {
@@ -69,18 +69,18 @@ public:
 		return basic::datacache::CacheableDataOP( new DipolarCoupling(*this) );
 	}
 
-	///@brief compute dc score for given pose (non-constant due to membrane)
+	/// @brief compute dc score for given pose (non-constant due to membrane)
 	core::Real compute_dcscore(core::pose::Pose & pose);
 
 	void show(std::ostream&) const;
 
-  ///@brief get the raw DC data
+  /// @brief get the raw DC data
   inline DC_lines const& get_DC_data() const {
     return All_DC_lines_;
   }
 
 private:
-	///@brief read DC data from file
+	/// @brief read DC data from file
 	void read_DC_file( std::string const& filename );
 	void read_DC_file( );
 

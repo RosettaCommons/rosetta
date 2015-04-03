@@ -9,7 +9,7 @@
 
 /// @file NoesyModule.cc
 /// @brief main hook-up for the automatic NOESY assignment module
-/// @detailed
+/// @details
 ///	  handling of input-output options
 ///   class NoesyModule:
 ///       read input files
@@ -260,7 +260,7 @@ void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 #endif
 }
 
-///@brief write peak assignments into peak-file (sparky, cyana)
+/// @brief write peak assignments into peak-file (sparky, cyana)
 void NoesyModule::write_assignments( std::string file_name ) {
 	using namespace basic::options;
 
@@ -286,7 +286,7 @@ void NoesyModule::write_assignments( std::string file_name ) {
 	}
 }
 
-///@brief assign peaks ( no explicit decoys - wrapper )
+/// @brief assign peaks ( no explicit decoys - wrapper )
 void NoesyModule::assign() {
   using namespace basic::options;
   using namespace OptionKeys;
@@ -315,7 +315,7 @@ void NoesyModule::assign() {
   assign( sfd.begin(), sfd.end() );
 }
 
-///@brief generate constraint files from assignments
+/// @brief generate constraint files from assignments
 void NoesyModule::generate_constraint_files(
 	 core::pose::Pose const& pose,
 	 std::string const& cst_fa_file,

@@ -24,8 +24,6 @@
 #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/OrderedTuple.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

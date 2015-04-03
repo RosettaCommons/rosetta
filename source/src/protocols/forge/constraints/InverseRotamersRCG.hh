@@ -13,8 +13,6 @@
 /// @author Florian Richter, floric@u.washington.edu, april 2010
 
 
-
-
 #ifndef INCLUDED_protocols_forge_constraints_InverseRotamersRCG_hh
 #define INCLUDED_protocols_forge_constraints_InverseRotamersRCG_hh
 
@@ -41,7 +39,6 @@
 namespace protocols{
 namespace forge{
 namespace constraints{
-
 
 
 /// @brief a RemodelConstraintGenerator that creates AmbiguousConstraints for all positions
@@ -123,8 +120,6 @@ private:
 } //namespace remodel
 } //namespace forge
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_forge_remodel_InverseRotamersRCG_HH

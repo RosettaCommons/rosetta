@@ -16,10 +16,8 @@
 
 #include <protocols/simple_moves/ShakeStructureMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <cstdlib>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>

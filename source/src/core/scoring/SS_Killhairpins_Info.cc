@@ -16,13 +16,10 @@
 #include <core/scoring/SS_Killhairpins_Info.hh>
 
 /// Package headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <ObjexxFCL/format.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -95,7 +92,6 @@ operator<< ( std::ostream & out, Hairpin const & s )
 			<< I(5,s.s2_start()) << "-" << I(5,s.s2_end()) << "\n";
 	return out;
 }
-
 
 
 /// @brief default constructor

@@ -24,14 +24,10 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/assert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <algorithm>
-// AUTO-REMOVED #include <cmath>
 
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -44,16 +40,16 @@ namespace unfolded_state_energy_calculator {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///@brief ctor
+/// @brief ctor
 UnfoldedStateEnergyCalculatorJobDistributor::UnfoldedStateEnergyCalculatorJobDistributor() :
   FileSystemJobDistributor()
 {}
 
-///@brief dtor (don't put anything in here)
+/// @brief dtor (don't put anything in here)
 UnfoldedStateEnergyCalculatorJobDistributor::~UnfoldedStateEnergyCalculatorJobDistributor()
 {}
 
-///@brief
+/// @brief
 void
 UnfoldedStateEnergyCalculatorJobDistributor::go( protocols::moves::MoverOP mover )
 {
@@ -77,7 +73,7 @@ UnfoldedStateEnergyCalculatorJobDistributor::add_unfolded_energy_data( std::stri
 	unweighted_energies_map_[tlc].push_back( scores );
 }
 
-///@details Set the the internal EMapVector that contains the terms in the energy function used to score the
+/// @details Set the the internal EMapVector that contains the terms in the energy function used to score the
 /// fragments. Also if a term has a non-zero weight, set the weight to 1. This allows us to use the EMapVector
 /// output weighted functions.
 void

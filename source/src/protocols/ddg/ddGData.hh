@@ -60,8 +60,6 @@ private:
 };//class ddGData
 
 
-
-
 }//namespace ddG
 } //namespace protocols
 

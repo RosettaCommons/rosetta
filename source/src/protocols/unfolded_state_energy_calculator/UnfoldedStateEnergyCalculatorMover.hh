@@ -47,7 +47,7 @@ class UnfoldedStateEnergyCalculatorMover : public protocols::moves::Mover {
 // ctors, dtors, and cctors
 public:
 
-	///@brief ctor
+	/// @brief ctor
 	UnfoldedStateEnergyCalculatorMover(
 #ifdef USEMPI
 		UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor & job_dist,
@@ -65,28 +65,28 @@ public:
 		bool seq_match_frags
 	);
 
-  ///@brief dtor
+  /// @brief dtor
   virtual ~UnfoldedStateEnergyCalculatorMover();
 
-  ///@brief cctor
+  /// @brief cctor
   UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm );
 
 
 // mover and job distributor interface functions
 public:
 
-	///@brief
+	/// @brief
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief
+	/// @brief
 	virtual void apply( Pose & pose );
 
 	virtual std::string get_name() const;
 
-	///@brief
+	/// @brief
 	virtual	bool reinitialize_for_each_job() const;
 
-	///@brief
+	/// @brief
 	virtual	bool reinitialize_for_new_input() const;
 
 // class specific functions
@@ -126,13 +126,13 @@ private:
 	// will the central residue be mutated before being scored
 	bool native_sequence_;
 
-	//
+
 	std::string sequence_match_sequence_;
 
-	//
+
 	Size sequence_match_position_;
 
-	//
+
 	bool sequence_matched_fragments_;
 
 };

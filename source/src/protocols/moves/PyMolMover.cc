@@ -242,7 +242,7 @@ PyMolMover::PyMolMover() :
 	pymol_name_()
 {}
 
-/// @breif cctor
+/// @brief cctor
 PyMolMover::PyMolMover( PyMolMover const & other ) :
 	protocols::moves::Mover( other ),
 	link_( other.link_ ),
@@ -564,7 +564,6 @@ operator<<(std::ostream & output, PyMolMover const & mover)
 }
 
 
-
 void PyMolObserver::attach(core::pose::Pose &p)
 {
 		p.attach_general_obs(&PyMolObserver::generalEvent, this);
@@ -631,14 +630,14 @@ PyMolMover::parse_my_tag(
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PyMolMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new PyMolMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PyMolMover::clone() const
 {

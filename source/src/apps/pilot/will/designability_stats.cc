@@ -282,7 +282,6 @@ void register_options() {
 // };
 
 
-
 void
 collect_stats(
 	core::pose::Pose & pose,

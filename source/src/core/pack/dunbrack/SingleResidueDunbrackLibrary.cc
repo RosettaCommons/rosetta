@@ -12,9 +12,6 @@
 
 // Package headers
 ///#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.tmpl.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/ChiSet.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/CoarseRotamer.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/CoarseSingleResidueLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -26,9 +23,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-// AUTO-REMOVED #include <core/coarse/Translator.hh>
 #include <core/graph/Graph.hh>
 
 #include <basic/options/option.hh>
@@ -41,11 +36,9 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/interpolate.hh>
 #include <basic/Tracer.hh>
 
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 
 // Utility headers
 #include <utility/exit.hh>

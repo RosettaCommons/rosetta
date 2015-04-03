@@ -95,7 +95,7 @@ using namespace basic::options;
 
 static thread_local basic::Tracer TR( "cycgly_superimpose" );
 
-//
+
 // OPT_1GRP_KEY(Real,probabilities,localbb)
 // OPT_1GRP_KEY(Real, probabilities,sc)
 // OPT_1GRP_KEY(Real, probabilities, sc_prob_uniform)
@@ -447,25 +447,5 @@ int main( int argc, char * argv [] ) {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

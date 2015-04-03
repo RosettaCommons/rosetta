@@ -39,7 +39,6 @@
 static thread_local basic::Tracer TR( "apps.pilot.nmarze.packing_angle" );
 
 
-
 class PackingAngle : public protocols::moves::Mover {
 public:
 	// default constructor

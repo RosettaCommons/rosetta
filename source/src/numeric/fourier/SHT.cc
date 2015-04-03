@@ -162,7 +162,6 @@ SO3coeffs::coefLoc( int m1, int m2 ) {
 }
 
 
-
 //    Given orders m1, m2, and a bandwidth bw,
 //      generate all Wigner little d functions
 void
@@ -705,7 +704,6 @@ void SHT::idx_to_euler(int maxloc , numeric::xyzVector< double > & eulerAngles) 
 }
 
 
-
 //   so3CombineCoef: combine the S^2 spherical coefficients
 //     of two signals such that inverse SO(3) transform will
 //     result in the correlation of the two
@@ -772,7 +770,6 @@ SHT::so3CombineCoef(
 		}
 	}
 }
-
 
 
 // inverse SO3 transform
@@ -1049,7 +1046,7 @@ SHT::setup_Pmls( ) {
 		}
 	}
 
-	//
+
 	// transpose
 	for (int m=0; m<bw; m++) {
 		precompute_pml_trans_[m].resize( precompute_pml_[m].size() );

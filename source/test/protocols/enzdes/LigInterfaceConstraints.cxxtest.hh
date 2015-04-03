@@ -21,7 +21,6 @@
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/options/option.hh> //needed to set option
@@ -40,7 +39,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
-// AUTO-REMOVED #include <protocols/enzdes/AddorRemoveCsts.hh> //for parser testing
 #include <protocols/moves/MoverFactory.hh> //for parser testing
 
 #include <basic/datacache/DataMap.hh> //for parser test
@@ -51,7 +49,6 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <math.h>  //need for sqrt taking
 
 #include <basic/Tracer.hh>
 
@@ -71,7 +68,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 using basic::T;
@@ -160,7 +156,6 @@ public:
 	  TR << "angle Constraint Energy should be 1.67883, and is: " << test_pose.energies().total_energies()[ scoring::angle_constraint ] << std::endl;
 
 	  TR << "dihedral Constraint Energy should be 18.963, and is: " << test_pose.energies().total_energies()[ scoring::dihedral_constraint ] << std::endl;
-
 
 
 	  TS_ASSERT_DELTA(59.3895, test_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 1e-4 );
@@ -296,7 +291,6 @@ public:
 
 	  TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::angle_constraint ] , test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-5 );
 	  TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::dihedral_constraint ], test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-5 );
-
 
 
   }

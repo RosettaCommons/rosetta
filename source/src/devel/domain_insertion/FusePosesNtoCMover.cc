@@ -52,7 +52,6 @@
 #include <set>
 
 
-
 namespace devel {
 namespace domain_insertion {
 
@@ -715,7 +714,6 @@ FusePosesNtoCMover::setup_chain_mappings(
 	//we sort the mappings in ascending order of pose chains
 	std::sort( chain_mappings_.begin(), chain_mappings_.end(), custom_pair_compare );
 }
-
 
 
 /// @details

@@ -65,10 +65,10 @@ public:
 	LoopMover( protocols::loops::LoopsFileData const & loops_from_file );
 	LoopMover( protocols::loops::GuardedLoopsFromFileOP guarded_loops );
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	LoopMover( LoopMover const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	LoopMover & operator=( LoopMover const & rhs );
 
 	//destructor

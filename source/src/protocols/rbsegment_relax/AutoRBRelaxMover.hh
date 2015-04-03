@@ -12,14 +12,12 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/rbsegment_relax.hh>
 
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
 #include <utility/vector1.hh>

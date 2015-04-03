@@ -8,11 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 /// @file TracerToFile.hh
 /// @brief Class for a tracer that writes all output to a file.
 /// @author Matt O'Meara (mattjomeara@gmail.com)
-
 
 
 #include <basic/TracerToFile.hh>
@@ -34,7 +32,6 @@
 #include <basic/Tracer.fwd.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-
 
 
 namespace basic {

@@ -80,7 +80,7 @@ private:
 
 class SimpleDerivCheckResult : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~SimpleDerivCheckResult();
 	SimpleDerivCheckResult( Size const nangles, Size const nsteps ) :
 		step_data_( nangles ),

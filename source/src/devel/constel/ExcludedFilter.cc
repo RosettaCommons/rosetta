@@ -20,7 +20,6 @@ namespace constel {
 ResidueMaskOP ExcludedFilter::excluded;
 
 
-///
 /// @brief: reads from file the mask of excluded residues
 ///
 /// @param[in] ps pose for whose residues the mask is built
@@ -32,7 +31,6 @@ void ExcludedFilter::init(Pose& ps, std::string const& ex_fname) {
 }
 
 
-///
 /// @brief: given a constellation, returns true if it doesn't contain any
 /// 	residue to be excluded from any constellation; returns false otherwise.
 ///

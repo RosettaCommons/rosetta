@@ -44,7 +44,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace flexpack {
 namespace rotamer_set {

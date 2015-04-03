@@ -11,7 +11,7 @@
 /// @brief  a few vector<Real> helpers for use in true_false.cc
 /// @author Will Sheffler (willsheffler@gmail.com)
 /// @date   Thu Aug  9 19:49:23 2007
-///
+
 
 #ifndef demo_value_utility_Vec_HH
 #define demo_value_utility_Vec_HH

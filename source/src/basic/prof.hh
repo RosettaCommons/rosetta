@@ -423,7 +423,6 @@ enum ProfTag {
 };
 
 
-
 extern utility::vector1< std::string > tag2string;
 extern utility::vector1< clock_t > start_clock;
 extern utility::vector1< double > total_clock;
@@ -448,7 +447,7 @@ prof_start_function_body( ProfTag const tag )
 	++calls[ tag ];
 }
 
-///
+
 inline
 void
 prof_stop_function_body( ProfTag const tag )
@@ -496,7 +495,7 @@ private:
 	std::string tag_;
 };
 
-///@brief print "TIME_STAMP: Www Mmm dd hh:mm:ss yyyy msg" on tr.Error and on std::cerr (if boolean is true)
+/// @brief print "TIME_STAMP: Www Mmm dd hh:mm:ss yyyy msg" on tr.Error and on std::cerr (if boolean is true)
 extern bool show_time_on_cerr;
 void show_time( basic::Tracer& tr, std::string const& msg );
 

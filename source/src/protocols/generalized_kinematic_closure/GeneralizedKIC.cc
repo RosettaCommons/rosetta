@@ -72,7 +72,7 @@ GeneralizedKICCreator::mover_name()
 	return "GeneralizedKIC";
 }
 
-///@brief Constructor for GeneralizedKIC mover.
+/// @brief Constructor for GeneralizedKIC mover.
 ///
 GeneralizedKIC::GeneralizedKIC():
 		Mover("GeneralizedKIC"),
@@ -102,7 +102,7 @@ GeneralizedKIC::GeneralizedKIC():
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
-///@brief Copy constructor for GeneralizedKIC mover.
+/// @brief Copy constructor for GeneralizedKIC mover.
 ///
 GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 		Mover("GeneralizedKIC"),
@@ -146,18 +146,18 @@ GeneralizedKIC::GeneralizedKIC( GeneralizedKIC const &src ):
 	return;
 }
 
-///@brief Destructor for GeneralizedKIC mover.
+/// @brief Destructor for GeneralizedKIC mover.
 ///
 GeneralizedKIC::~GeneralizedKIC() {}
 
-///@brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
+/// @brief Clone operator to create a pointer to a fresh GeneralizedKIC object that copies this one.
 ///
 protocols::moves::MoverOP GeneralizedKIC::clone() const {
 	return protocols::moves::MoverOP( new GeneralizedKIC( *this ) );
 }
 
 
-///@brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
+/// @brief Fresh_instance operator to create a pointer to a fresh GeneralizedKIC object that does NOT copy this one.
 ///
 protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
 	return protocols::moves::MoverOP( new GeneralizedKIC );
@@ -167,7 +167,7 @@ protocols::moves::MoverOP GeneralizedKIC::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 void GeneralizedKIC::apply (core::pose::Pose & pose)
 {
@@ -223,8 +223,8 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("GeneralizedKIC").
+
+/// @brief Returns the name of this mover ("GeneralizedKIC").
 std::string GeneralizedKIC::get_name() const{
 	return "GeneralizedKIC";
 }
@@ -232,7 +232,7 @@ std::string GeneralizedKIC::get_name() const{
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 void
 GeneralizedKIC::parse_my_tag(
@@ -463,7 +463,7 @@ GeneralizedKIC::parse_my_tag(
 	return;
 }
 
-///
+
 /// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.
 void GeneralizedKIC::add_loop_residue( core::Size const residue_index )
 {
@@ -547,7 +547,7 @@ void GeneralizedKIC::check_tail_residues_sensible( core::pose::Pose const &pose 
 	return;
 }*/
 
-///
+
 /// @brief Function to set the pivot atoms for kinematic closure:
 void GeneralizedKIC::set_pivot_atoms(
 	core::Size const rsd1,
@@ -572,7 +572,7 @@ void GeneralizedKIC::set_pivot_atoms(
 /// actually just adds appropriate set_dihedral, set_bondangle, and set_bondlength perturbers to the perturber
 /// list.  Note that subsequent perturbers OR the closure itself can overwrite the bond length, bond angle, or
 /// torsion angles set here.
-/// @detailed
+/// @details
 /// @param[in] rsd1 -- The index of the first atom's residue (indexed based on residue indices in the original pose).
 /// @param[in] at1 -- The name of the first atom defining the bond to be closed.
 /// @param[in] rsd2 -- The index of the second atom's residue (indexed based on residue indices in the original pose).
@@ -664,7 +664,7 @@ void GeneralizedKIC::set_selector_kbt ( core::Real const &kbt ) {
 	return;
 }
 
-///
+
 /// @brief Add a new perturber to the list of perturbers.
 void GeneralizedKIC::add_perturber () {
 	perturber::GeneralizedKICperturberOP newperturber( new perturber::GeneralizedKICperturber );
@@ -672,7 +672,7 @@ void GeneralizedKIC::add_perturber () {
 	return;
 }
 
-///
+
 /// @brief Add a new perturber to the list of perturbers, setting the effect.
 void GeneralizedKIC::add_perturber ( perturber::perturber_effect const &effect ) {
 	add_perturber();
@@ -680,7 +680,7 @@ void GeneralizedKIC::add_perturber ( perturber::perturber_effect const &effect )
 	return;
 }
 
-///
+
 /// @brief Add a new perturber to the list of perturbers, setting the effect by effect name string.
 void GeneralizedKIC::add_perturber ( std::string const &effectname ) {
 	add_perturber();
@@ -689,7 +689,7 @@ void GeneralizedKIC::add_perturber ( std::string const &effectname ) {
 }
 
 /// @brief Set a perturber's effect.
-/// @detailed
+/// @details
 ///
 /// @param[in] perturber_index -- The index in the list of perturbers already added.
 /// @param[in] effect -- The perturber effect type, based on the perturber::perturber_effect enum (e.g. set_dihedral, randomize_backbone, etc.).
@@ -773,7 +773,7 @@ void GeneralizedKIC::set_perturber_bin( std::string const &bin )
 	return;
 } //set_perturber_bin
 
-///
+
 /// @brief Add a value to the list of values that a perturber takes.
 void GeneralizedKIC::add_value_to_perturber_value_list ( core::Size const perturber_index, core::Real const &val )
 {
@@ -782,7 +782,7 @@ void GeneralizedKIC::add_value_to_perturber_value_list ( core::Size const pertur
 	return;
 }
 
-///
+
 /// @brief Add a value to the list of values that a perturber takes.  This operates on the last perturber in the perturber list.
 void GeneralizedKIC::add_value_to_perturber_value_list ( core::Real const &val )
 {
@@ -809,7 +809,7 @@ void GeneralizedKIC::add_residue_to_perturber_residue_list ( core::Size const re
 	return;
 }
 
-///
+
 /// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.
 void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( core::Size const perturber_index, utility::vector1 < core::id::NamedAtomID > const &atomset )
 {
@@ -818,7 +818,7 @@ void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( core::Size const pe
 	return;
 }
 
-///
+
 /// @brief Add a set of AtomIDs to the list of sets of AtomIDs that a perturber takes.  This operates on the last perturber in the perturber list.
 void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( utility::vector1 < core::id::NamedAtomID > const &atomset ) {
 	runtime_assert_string_msg(perturberlist_.size()>0, "No perturbers specified.  Aborting from GeneralizedKIC::add_atomset_to_perturber_atomset_list().");
@@ -826,7 +826,7 @@ void GeneralizedKIC::add_atomset_to_perturber_atomset_list ( utility::vector1 < 
 	return;
 }
 
-///
+
 /// @brief Add a new filter to the list of filters.
 void GeneralizedKIC::add_filter () {
 	filter::GeneralizedKICfilterOP newfilter( new filter::GeneralizedKICfilter );
@@ -834,7 +834,7 @@ void GeneralizedKIC::add_filter () {
 	return;
 }
 
-///
+
 /// @brief Add a new filter to the list of filters, setting the filter type.
 void GeneralizedKIC::add_filter ( filter::filter_type const &filtertype ) {
 	add_filter();
@@ -842,7 +842,7 @@ void GeneralizedKIC::add_filter ( filter::filter_type const &filtertype ) {
 	return;
 }
 
-///
+
 /// @brief Add a new filter to the list of filters, setting the filter type by name.
 /// @details See src/protocols/generalized_kinematic_closure/filter/GeneralizedKICfilter.cc for
 /// the list of filter type names.
@@ -852,7 +852,7 @@ void GeneralizedKIC::add_filter ( std::string const &filtertypename ) {
 	return;
 }
 
-///
+
 /// @brief Add a real-valued parameter to a filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Real const &value)
 {
@@ -860,7 +860,7 @@ void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::s
 	return;
 }
 
-///
+
 /// @brief Add an integer-valued parameter to a filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, core::Size const value)
 {
@@ -868,7 +868,7 @@ void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::s
 	return;
 }
 
-///
+
 /// @brief Add a Boolean-valued parameter to a filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, bool const value)
 {
@@ -876,7 +876,7 @@ void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::s
 	return;
 }
 
-///
+
 /// @brief Add a string-valued parameter to a filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::string const &param_name, std::string const &value)
 {
@@ -884,7 +884,7 @@ void GeneralizedKIC::add_filter_parameter (core::Size const filter_index, std::s
 	return;
 }
 
-///
+
 /// @brief Add a real-valued parameter to the last filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::Real const &value)
 {
@@ -892,7 +892,7 @@ void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::
 	return;
 }
 
-///
+
 /// @brief Add an integer-valued parameter to the last filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::Size const value)
 {
@@ -900,7 +900,7 @@ void GeneralizedKIC::add_filter_parameter (std::string const &param_name, core::
 	return;
 }
 
-///
+
 /// @brief Add a Boolean-valued parameter to the last filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (std::string const &param_name, bool const value)
 {
@@ -908,7 +908,7 @@ void GeneralizedKIC::add_filter_parameter (std::string const &param_name, bool c
 	return;
 }
 
-///
+
 /// @brief Add a string-valued parameter to the last filter's parameter list.
 void GeneralizedKIC::add_filter_parameter (std::string const &param_name, std::string const &value)
 {
@@ -1002,7 +1002,6 @@ void GeneralizedKIC::set_ntries_before_giving_up ( core::Size const ntries ) {
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/// @begin get_path
 /// @brief Gets a path through atoms in the residue from one connection atom to another within a residue.
 /// @details  This is not necessarily the shortest path, geometrically, but hopefully it will do for our purposes.  (I
 /// didn't want to reimplement Dijkstra's algorithm, since that would tax my programming abilities and would result in
@@ -1087,7 +1086,7 @@ void GeneralizedKIC::get_path (
 	return;
 }
 
-///
+
 /// @brief Function to get the FIRST connection in res_with_connection that connects it to other_res:
 core::Size GeneralizedKIC::get_connection(
 	core::Size const res_with_connection,
@@ -1183,7 +1182,7 @@ void GeneralizedKIC::addloweranchor(
 	return;
 }
 
-///
+
 /// @brief Add the loop geometry from the starting pose to the temporary pose used for kinematic closure.  This will build ideal geometry if build_ideal==true (NOT YET TESTED).
 void GeneralizedKIC::addloopgeometry(
 	core::pose::Pose &perturbedloop_pose,
@@ -1323,7 +1322,7 @@ void GeneralizedKIC::addtailgeometry(
 	return;
 }
 
-///
+
 /// @brief Find the residue that is the anchor of the upper end of the loop that we're about to close and add it to the loop pose by a bond.
 void GeneralizedKIC::addupperanchor(
 	core::pose::Pose &perturbedloop_pose,
@@ -1432,7 +1431,7 @@ bool GeneralizedKIC::doKIC(
 	return (total_solution_count>0 && selector_success);
 }
 
-///
+
 /// @brief Generate the list of atomIDs for the chain that will be closed by kinematic closure.
 void GeneralizedKIC::generate_atomlist(
 	core::pose::Pose const &pose,
@@ -1506,7 +1505,7 @@ void GeneralizedKIC::generate_atomlist(
 	return;
 }
 
-///
+
 /// @brief Generate the numeric::kinematic_closure::bridgeObjects data from the atomlist_ object.
 void GeneralizedKIC::generate_bridgeobjects_data_from_atomlist(
 	utility::vector1< utility::vector1< core::Real > > &atoms, //atom xyz
@@ -1554,7 +1553,7 @@ core::Size GeneralizedKIC::get_perturbedloop_rsd ( core::Size const original_pos
 	return 0;
 }
 
-///
+
 ///	@brief Pick the pivots for kinematic closure.
 void GeneralizedKIC::pick_pivots(
 	core::pose::Pose const &original_pose,
@@ -1608,7 +1607,7 @@ void GeneralizedKIC::pick_pivots(
 /// @brief Apply the list of perturbers (everything in perturberlist_) to alter the desired torsion, desired angle, and
 ///        desired bond length lists prior to calling bridgeObjects.  Note that later perturbers might overwrite earlier
 ///        perturbers' effects.
-/// @detailed
+/// @details
 ///
 /// @param[in] loop_pose -- A pose consisting of just the loop to be closed.
 /// @param[in] original_pose -- A pose consisting of the full, original structure.

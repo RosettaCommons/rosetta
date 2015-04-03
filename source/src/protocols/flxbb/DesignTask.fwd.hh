@@ -10,13 +10,12 @@
 /// @file protocols/flxbb/DesignTask.fwd.hh
 /// @brief
 /// @author Nobuyasu Koga (nobuyasu@uw.edu)
-///
+
 
 #ifndef INCLUDED_protocols_flxbb_DesignTask_fwd_hh
 #define INCLUDED_protocols_flxbb_DesignTask_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

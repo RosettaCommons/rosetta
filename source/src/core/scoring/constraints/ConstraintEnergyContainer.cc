@@ -334,7 +334,6 @@ CstEnergyContainer::CstEnergyContainer( pose::Pose const & pose )
 }
 
 
-
 CstEnergyContainer::~CstEnergyContainer()
 {}
 

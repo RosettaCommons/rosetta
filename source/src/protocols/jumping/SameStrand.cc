@@ -13,7 +13,7 @@
 ///      - fragments
 ///      - psipred files ? other stuff
 ///
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -30,20 +30,15 @@
 // Project Headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragID_Iterator.hh>
-// AUTO-REMOVED #include <core/fragment/Frame.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/StaticIndexRange.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -55,7 +50,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 //// C++ headers
@@ -174,7 +168,7 @@ SameStrand::do_strand_sum( core::fragment::SecondaryStructure const& ss ) const 
 }
 
 #if 0
-///@detail read from file
+/// @detail read from file
 void
 SameStrand::read_from_file( std::string fn ) {
 
@@ -219,7 +213,7 @@ SameStrand::read_from_file( std::string fn ) {
 
 }
  #endif
-///@detail write to stream ( opposite from read_from_file )
+/// @detail write to stream ( opposite from read_from_file )
 void SameStrand::show( std::ostream& out ) const {
 	using namespace format;
 	for ( Size i = 1; i<=total_residue_; i++ ) {

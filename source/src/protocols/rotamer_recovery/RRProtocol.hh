@@ -34,7 +34,7 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-///@brief The protocol to run to compute the rotamer recovery the rotamer recovery test
+/// @brief The protocol to run to compute the rotamer recovery the rotamer recovery test
 ///
 /// Besides implementing the interface given in the base class
 /// RRProtocol each RRProtocol should have an entry in the convenience
@@ -42,7 +42,7 @@ namespace rotamer_recovery {
 class RRProtocol : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RRProtocol();
 
 //	RRProtocol();

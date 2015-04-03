@@ -105,7 +105,6 @@ public:
 };
 
 
-
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.
 class RRComparerCreator : public utility::pointer::ReferenceCount {
@@ -190,7 +189,6 @@ public:
 	RRReporterOP create_reporter() const;
 	std::string type_name() const;
 };
-
 
 
 } //namespace

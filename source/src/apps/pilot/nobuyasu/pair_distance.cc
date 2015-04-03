@@ -152,7 +152,6 @@ public: // constructor/deconstructor
 	} // calc_residue_sasa
 
 
-
 public: // apply
 
 
@@ -215,7 +214,7 @@ public: // apply
 			}
 		}
 
-		//
+
 		Size h( 0 );
 		Size total( 0 );
 		Size totale( 0 );

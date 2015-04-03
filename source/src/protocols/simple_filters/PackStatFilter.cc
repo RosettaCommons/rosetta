@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/PackStatFilter.cc
 /// @brief filter structures by packstat score
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -18,7 +18,6 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>

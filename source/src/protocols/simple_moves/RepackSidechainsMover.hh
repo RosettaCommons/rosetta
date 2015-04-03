@@ -28,8 +28,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace protocols {
 namespace simple_moves {
 
@@ -40,7 +38,7 @@ public:
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 
 public:
-	///@brief default constructor
+	/// @brief default constructor
 	RepackSidechainsMover();
 
 	/// @brief constructor with typename
@@ -62,7 +60,7 @@ public:
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -70,7 +68,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -78,10 +76,10 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP clone() const;
 
 	void set_scorefxn( ScoreFunctionCOP sf );

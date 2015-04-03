@@ -10,7 +10,7 @@
 /// @file StepWiseProteinBackboneSampler
 /// @brief Makes a list of (phi, psi, omega) at moving_residues that
 ///              could be useful for full-atom packing
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -415,7 +415,6 @@ namespace protein {
 			}
 		}
 	}
-
 
 
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -948,8 +947,6 @@ namespace protein {
 		 centroid_scores_.push_back( centroid_score );
 
  }
-
-
 
 
 } //protein

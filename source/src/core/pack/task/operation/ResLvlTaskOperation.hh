@@ -19,7 +19,6 @@
 
 // Unit Headers
 #include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilter.hh>
 
 // Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -32,7 +31,6 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

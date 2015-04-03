@@ -19,20 +19,12 @@
 #include <protocols/simple_moves/WobbleMover.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/util.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
 
 
 #include <core/pose/Pose.hh>

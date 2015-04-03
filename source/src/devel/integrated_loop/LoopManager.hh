@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -26,10 +26,8 @@
 #include <core/pose/Pose.hh>
 
 // protocols header
-// AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
 
 //C++ headers
-// AUTO-REMOVED #include <cstdlib>
 
 //Auto Headers
 #include <protocols/loops/Loops.hh>
@@ -39,7 +37,7 @@ namespace protocols {
 namespace moves {
 
 //////////////////////////////////////////////////////////
-///@brief manages loop business
+/// @brief manages loop business
 ///
 /////////////////////////////////////////////////////////
 

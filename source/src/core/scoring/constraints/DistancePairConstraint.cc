@@ -104,9 +104,8 @@ DistancePairConstraint::atom( Size const n ) const {
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details one line definition "DistancePair atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
+/// @details one line definition "DistancePair atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
 void
 DistancePairConstraint::read_def(
 	std::istream & in,
@@ -148,7 +147,6 @@ DistancePairConstraint::read_def(
 	atomA2_ = id::AtomID( core::pose::named_atom_id_to_atom_id( id::NamedAtomID( name2, res2 ), pose ) );
 	atomB1_ = id::AtomID( core::pose::named_atom_id_to_atom_id( id::NamedAtomID( name3, res3 ), pose ) );
 	atomB2_ = id::AtomID( core::pose::named_atom_id_to_atom_id( id::NamedAtomID( name4, res4 ), pose ) );
-
 
 
 	if (    atomA1_.atomno() == 0 || atomA2_.atomno() == 0

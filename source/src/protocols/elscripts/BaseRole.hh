@@ -35,7 +35,6 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 
-
 namespace protocols {
 namespace elscripts {
 

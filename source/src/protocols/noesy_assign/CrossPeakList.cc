@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -51,7 +51,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
@@ -236,7 +235,6 @@ void CrossPeakList::update_upperdistance_score() {
 	}
 #endif
 }
-
 
 
 void CrossPeakList::set_trivial_decoy_compatibility_score() {

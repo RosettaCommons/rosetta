@@ -311,10 +311,6 @@
   //  }
 
 
-
-
-
-
 // if(hits.size()){
 //  Hit & h(*hits[hits.size()]);
 //   ozstream out("test.pdb");

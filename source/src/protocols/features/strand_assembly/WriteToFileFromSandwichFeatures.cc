@@ -1144,7 +1144,6 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 }	// write_number_of_electrostatic_interactions_of_residues_to_files
 
 
-
 // write_p_aa_pp_of_AAs_to_a_file
 //	(Probability of amino acid at phipsi)
 // (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
@@ -1171,7 +1170,6 @@ write_p_aa_pp_of_AAs_to_a_file(
 	p_aa_pp_file.close();
 	return 0;
 }	//write_p_aa_pp_of_AAs_to_a_file
-
 
 
 //write_rama_of_AAs_to_a_file

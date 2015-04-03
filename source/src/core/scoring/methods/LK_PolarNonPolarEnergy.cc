@@ -1131,4 +1131,3 @@ LK_PolarNonPolarEnergy::version() const
 }
 
 
-

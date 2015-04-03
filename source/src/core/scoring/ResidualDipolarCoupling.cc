@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
@@ -44,19 +43,16 @@
 #include <string>
 
 
-
 /// Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 #include <numeric/nls/lmmin.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
@@ -212,7 +208,6 @@ void ResidualDipolarCoupling::read_RDC_file() {
 		std::string filename( option[ OptionKeys::in::file::rdc ]()[expid] );
 		read_RDC_file( expid, filename);
 	}
-
 
 
 	//extra weight file?
@@ -578,7 +573,6 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		//		std::cout << 'AL.TENSOR elements : ' << S_[ex][0][0]) << ' ' <<  S_[ex][0][1]  << ' ' << 	S_[ex][0][2] << ' '
 		//				<< S_[ex][1][1] << ' ' << S_[ex][1][2] << std::endl;
-
 
 
 	} // for ( ex = 0 .. nex )

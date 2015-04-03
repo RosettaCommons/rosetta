@@ -47,13 +47,13 @@ public:
 	DockDesignFilterFactory();
 	virtual ~DockDesignFilterFactory();
 
-	///@brief add a Filter prototype, using its default type name as the map key
+	/// @brief add a Filter prototype, using its default type name as the map key
 	void add_type( protocols::filters::FilterOP );
-	///@brief add a Filter prototype, using an arbitrary type name as the map key
+	/// @brief add a Filter prototype, using an arbitrary type name as the map key
 	void add_type( std::string const &, protocols::filters::FilterOP );
-	///@brief return new Filter by key lookup in dock_design_filter_map_
+	/// @brief return new Filter by key lookup in dock_design_filter_map_
 	protocols::filters::FilterOP newFilter( std::string const & );
-	///@brief return new Filter by Tag parsing
+	/// @brief return new Filter by Tag parsing
 	protocols::filters::FilterOP newFilter(
 		TagCOP,
 		basic::datacache::DataMap &,

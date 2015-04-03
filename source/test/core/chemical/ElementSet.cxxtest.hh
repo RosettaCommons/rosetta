@@ -67,7 +67,6 @@ class ElementSetTests : public CxxTest::TestSuite {
 	}
 
 
-
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)

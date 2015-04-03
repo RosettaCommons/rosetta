@@ -50,7 +50,7 @@ namespace protocols {
 				return TopologyClaimerOP( new MembraneTopologyClaimer( *this ) );
 			}
 
-			///@brief type() is specifying the output name of the TopologyClaimer
+			/// @brief type() is specifying the output name of the TopologyClaimer
 			virtual std::string type() const {
 				return _static_type_name();
 			}
@@ -87,7 +87,7 @@ namespace protocols {
 
 		private:
 
-			///@brief starting pose
+			/// @brief starting pose
 			core::pose::Pose input_pose_;
 
 		};

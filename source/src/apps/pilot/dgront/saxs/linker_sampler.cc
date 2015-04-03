@@ -109,7 +109,6 @@ public:
 	core::util::switch_to_residue_type_set(cen_pose_, core::chemical::CENTROID);
 
 
-
 //------------- set up sampling  -----------------
 	movemap_ = new core::kinematics::MoveMap();
 	movemap_->set_bb(false);
@@ -213,8 +212,6 @@ private:
     core::pose::Pose native_pose_;
     bool has_native_;
 };
-
-
 
 
 ////////////////////////////////////////////////////////

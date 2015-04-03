@@ -97,7 +97,7 @@ IAMover::IAMover() {
 //assign the correct constructor for the mover
 void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP & moverOP, core::pose::Pose & pose){
 
-  //
+
   if(pose.conformation().num_chains() <= 2){
     moverOP = new  devel::anchored_design::InterfaceAnalyzerMover(
 								 basic::options::option[ jumpnum ].value(),
@@ -291,7 +291,6 @@ void IAMover::apply( core::pose::Pose & pose ) {
 	return;
 
 }//end apply
-
 
 
 int

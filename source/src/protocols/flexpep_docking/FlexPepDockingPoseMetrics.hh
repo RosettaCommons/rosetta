@@ -48,11 +48,10 @@ public:
 		core::Real threashold ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
-	/// @begin calculate fractions of atoms that are at the same location as native
 	///
 	/// @brief calculate fractions of atoms that are at the same location as native
 	///
-	//  @detailed
+	//  @details
 	//  Calculate fraction of atoms that are less than k Angstroms between native and
 	//  final pose, using only residues marked in res_subset, and only atoms qualifying to
 	//  predicate function (see core/scoring/rms_utils.hh for definitions of predicates)
@@ -85,9 +84,8 @@ public:
 	) const;
 
 	/////////////////////////////////////////////////////////////////////////////
-	/// @begin calculate phi/psi torsion-RMSD over peptide
 	///
-	//  @detailed
+	//  @details
 	//  Calculate the RMSD in phi.psi angle over peptide between pose1 and pose2
 	//
 	//  @param
@@ -122,7 +120,6 @@ public:
 	void set_flags(FlexPepDockingFlagsCOP flags){
 		flags_ = flags;
 	}
-
 
 
 private:

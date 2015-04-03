@@ -9,7 +9,7 @@
 
 /// @file RNA_AnalyticLoopCloser
 /// @brief protocols that are specific to RNA_AnalyticLoopCloser
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 // Unit headers

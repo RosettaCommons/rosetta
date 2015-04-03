@@ -76,7 +76,6 @@ class ParseIterations (argparse.Action):
         return int(digits) * int(multiplier)
 
 
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--name', '-n', default=default_name)

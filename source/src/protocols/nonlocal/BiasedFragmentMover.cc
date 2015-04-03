@@ -23,7 +23,6 @@
 
 // Utility headers
 #include <numeric/prob_util.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 

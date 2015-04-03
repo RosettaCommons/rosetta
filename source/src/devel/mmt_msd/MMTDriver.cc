@@ -453,7 +453,6 @@ MMTDriver::optimize_generation()
 #endif
 
 
-
 	this_gen_work_ = OneGenerationJobInfoOP( new OneGenerationJobInfo( *ga_, *daf_ ) );
 	this_gen_results_.clear();
 	this_gen_results_.resize( this_gen_work_->n_new_sequences() );
@@ -695,7 +694,6 @@ MMTDriver::retrieve_pdb_from_node(
 
 	return utility::receive_string_from_node( node );
 }
-
 
 
 }

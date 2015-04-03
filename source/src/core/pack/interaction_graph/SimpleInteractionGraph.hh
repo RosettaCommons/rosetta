@@ -249,7 +249,6 @@ private:
 }; //SimpleEdge
 
 
-
 /// @brief A simple graph class for calculating pairwise decomposable
 /// energies as sidechains are moving on a fixed backbone.  This class
 /// is responsible for calculating energy changes, but is passive about

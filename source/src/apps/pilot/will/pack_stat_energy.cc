@@ -17,7 +17,6 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -30,10 +29,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-
-
-
-
 
 
 void test( std::string fname )
@@ -60,7 +55,6 @@ main (int argc, char *argv[])
 {
 
 	try {
-
 
 
 	devel::init( argc, argv );
@@ -90,7 +84,6 @@ main (int argc, char *argv[])
   	}
 	}
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -29,5 +29,4 @@ typedef utility::pointer::shared_ptr< ResourceOptionsCreator const > ResourceOpt
 } // namespace basic
 
 
-
 #endif //INCLUDED_basic_resource_managerResourceOptionsCreator_hh

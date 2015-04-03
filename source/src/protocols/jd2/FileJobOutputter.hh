@@ -35,7 +35,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details this is a middle-layer implementation of JobOutputter for file-based output.  It handles scorefile output, as scorefiles are common to file-outputting methods.
+/// @details this is a middle-layer implementation of JobOutputter for file-based output.  It handles scorefile output, as scorefiles are common to file-outputting methods.
 class FileJobOutputter : public protocols::jd2::JobOutputter
 {
 public:
@@ -49,25 +49,25 @@ public:
 	void set_defaults();
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
-	///@brief this function takes a string and writes it to disk (separately from Tracer output).
+	/// @brief this function takes a string and writes it to disk (separately from Tracer output).
 	virtual
 	void file( JobCOP job, std::string const & data );
 
-	///@brief this function outputs the final result of a job.
+	/// @brief this function outputs the final result of a job.
 	virtual
 	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag ) = 0;
 
-	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
+	/// @brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
 	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 
-	///@brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.  The base implementation looks for a pdb with the job's name already in existence.
+	/// @brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.  The base implementation looks for a pdb with the job's name already in existence.
 	virtual
 	bool job_has_completed( JobCOP job ) = 0;
 
-	///@brief this is the master function for determining the unique output identifier for a job
+	/// @brief this is the master function for determining the unique output identifier for a job
 	virtual
 	std::string output_name( JobCOP job ) = 0;
 
@@ -81,11 +81,11 @@ public:
 
 	//////////////////////////////////////scorefile functions/////////////////////////////////////
 protected:
-	///@brief this function will handle the scorefile.  If you need to make it virtual do so.  Latter two arguments are for redirecting the output to a different scorefile for "other_pose"s.  Also adds StringReal job info to the score file.
+	/// @brief this function will handle the scorefile.  If you need to make it virtual do so.  Latter two arguments are for redirecting the output to a different scorefile for "other_pose"s.  Also adds StringReal job info to the score file.
 	virtual
 	void scorefile( JobCOP job, core::pose::Pose const & pose, std::string prefix_tag = "", std::string suffix_tag = "", std::string scorefile = "" );
 
-	///@brief this function will handle the scorefile for arbitrary poses.
+	/// @brief this function will handle the scorefile for arbitrary poses.
 	//void other_scorefile( std::string const & tag, core::pose::Pose const & pose, std::string const & o_scorefile );
 
 private:

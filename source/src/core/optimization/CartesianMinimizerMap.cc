@@ -21,7 +21,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -34,7 +33,6 @@
 
 namespace core {
 namespace optimization {
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -129,7 +127,6 @@ CartesianMinimizerMap::zero_stored_derivs()
 		}
 	}
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

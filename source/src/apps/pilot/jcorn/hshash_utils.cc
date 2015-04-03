@@ -20,10 +20,8 @@
 ///			-s hotspot.stubs -target target.pdb --> hotspot density list
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/conformation/Interface.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/scoring/hbonds/HBondOptions.hh>

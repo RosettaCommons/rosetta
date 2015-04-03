@@ -68,7 +68,7 @@ TaskOperationOP RestrictNonSurfaceToRepackingOperation::clone() const {
 	return TaskOperationOP( new RestrictNonSurfaceToRepackingOperation( *this ) );
 }
 
-//
+
 // setter for nb_count cutoff. this allows users to vary how surface exposed a residue must be for it to be designed.
 // more specifically, if this value is very low (e.g. 10, or 5), only the most surface-exposed residues will be designed.
 // very few residues will have 5 or fewer neighbors and remain designable.  the rest will be set to repack only.
@@ -80,7 +80,6 @@ void RestrictNonSurfaceToRepackingOperation::surface_exposed_nb_cutoff( core::Si
 }
 
 
-//
 // apply method
 // Because there's no guarantee that the pose object has been scored at this point, we have to construct a "neighbor
 // graph" ourselves. I'm going to use the implementation written by Steven L and John K in the PoseMetricCalculators

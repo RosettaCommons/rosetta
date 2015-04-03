@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/modeler/rna/sugar/VirtualSugarSamplerFromStringList.hh>

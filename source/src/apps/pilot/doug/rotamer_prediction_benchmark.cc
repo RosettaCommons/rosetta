@@ -18,7 +18,6 @@
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -32,7 +31,6 @@
 // utility headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // c++ headers
 #include <iostream>

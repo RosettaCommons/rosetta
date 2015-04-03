@@ -37,14 +37,13 @@ namespace antibody{
 namespace design{
 
 
-///@brief Use insert_pose_into_pose to replace the cdr_piece with the current antibody's CDR.  No modeling or superposition.  For that, use protocols/grafting
+/// @brief Use insert_pose_into_pose to replace the cdr_piece with the current antibody's CDR.  No modeling or superposition.  For that, use protocols/grafting
 void
 insert_cdr_into_antibody(AntibodyInfoCOP ab_info, CDRNameEnum const cdr, core::pose::Pose & pose, core::pose::Pose & cdr_piece, core::Size overhang=3);
 
 
-
-///@brief Gets all possible graft permutations.
-///@details all_permutations is a list of vectors corresponding to cdrs_to_design vector.  Essentially, each inner index describes a position in the cdr_set.
+/// @brief Gets all possible graft permutations.
+/// @details all_permutations is a list of vectors corresponding to cdrs_to_design vector.  Essentially, each inner index describes a position in the cdr_set.
 /// Indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 /// Example: <1, 0, 1, 1, 1, 1>.  This is a possible combination to try graft, the second CDR, H2 is not part of the combination.
 void
@@ -59,13 +58,13 @@ design_type_from_string(std::string const design_type);
 
 // Undefined, commenting out to fix PyRosetta build  std::string design_type_from_enum(DesignTypeEnum const design_type);
 
-///@brief Convert an ab_dock_chain (L_H/ LH_A, etc. to the full dock chain string)
+/// @brief Convert an ab_dock_chain (L_H/ LH_A, etc. to the full dock chain string)
 std::string
 get_dock_chains_from_ab_dock_chains(AntibodyInfoCOP ab_info, std::string ab_dock_chains);
 
 
 /// Move this somewhere in pose or pose_selection.  PDBInfo's ResidueKey should be public and passed around in the first place.
-///@brief Super-basic numbering struct.
+/// @brief Super-basic numbering struct.
 struct PDBNumbering {
 	core::Size resnum;
 	char chain;
@@ -86,39 +85,39 @@ check_cb(core::pose::Pose const & pose, utility::vector1<bool> const & residues)
 std::pair<bool, core::Size>
 check_cb(core::pose::Pose const & pose, protocols::loops::Loops const & loops);
 
-///@brief Disable design of any particular region of the antibody complex.
+/// @brief Disable design of any particular region of the antibody complex.
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_region(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose,
 	AntibodyRegionEnum region);
 
-///@brief Disable design of the antigen residues
+/// @brief Disable design of the antigen residues
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_antigen(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose);
 
-///@brief Disable design of the framework residues
+/// @brief Disable design of the framework residues
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_framework(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose);
 
-///@brief Get a Restrict operation to turn OFF design for all CDRs.
+/// @brief Get a Restrict operation to turn OFF design for all CDRs.
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_cdrs(
 	AntibodyInfoCOP ab_info,
 	const core::pose::Pose & pose);
 
-///@brief Get a Restrict operation to turn OFF design for particular CDRs.
+/// @brief Get a Restrict operation to turn OFF design for particular CDRs.
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_design_cdr(
 	AntibodyInfoCOP ab_info,
 	CDRNameEnum cdr,
 	const core::pose::Pose & pose);
 
-///@brief Disable design for conserved framework positions.
+/// @brief Disable design for conserved framework positions.
 /// TODO: Needs to be expanded to read positions from database.
 core::pack::task::operation::RestrictResidueToRepackingOP
 disable_conserved_framework_positions(
@@ -127,18 +126,17 @@ disable_conserved_framework_positions(
 
 /// Application Options - Should be moved as part of parsers? 
 
-///@brief Get options set from default instructions file and any user overrides
+/// @brief Get options set from default instructions file and any user overrides
 AntibodyCDRSetOptions
 get_cdr_set_options();
 
-///@brief Get options set from default instructions file and any user overrides
+/// @brief Get options set from default instructions file and any user overrides
 AntibodyCDRGraftDesignOptions
 get_graft_design_options();
 
-///@brief Get options set from default instructions file and any user overrides
+/// @brief Get options set from default instructions file and any user overrides
 AntibodyCDRSeqDesignOptions
 get_seq_design_options();
-
 
 
 } //design

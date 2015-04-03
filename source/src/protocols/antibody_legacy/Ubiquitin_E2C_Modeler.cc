@@ -10,21 +10,12 @@
 /// @author Aroop Sircar ( aroopsircar@yahoo.com )
 
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/options/keys/antibody.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -39,14 +30,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
@@ -60,9 +47,7 @@ using namespace ObjexxFCL::format;
 
 #include <protocols/antibody_legacy/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/rigid/RB_geometry.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -79,7 +64,6 @@ using namespace ObjexxFCL::format;
 #include <protocols/jd2/ScoreMap.hh>
 
 //#include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <protocols/scoring/InterfaceInfo.hh>
 #include <utility/vector0.hh>

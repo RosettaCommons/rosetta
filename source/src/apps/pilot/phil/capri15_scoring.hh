@@ -184,8 +184,6 @@ enum CapriScoreType {
 };
 
 
-
-
 class CapriData : public basic::datacache::CacheableData {
 
 public:
@@ -206,7 +204,7 @@ public:
 
 typedef utility::pointer::owning_ptr< CapriData > CapriDataOP;
 
-///
+
 inline
 CapriData const &
 retrieve_capri_data_from_pose( pose::Pose const & pose )
@@ -249,8 +247,7 @@ retrieve_capri_data_from_pose( pose::Pose const & pose )
 	 distance between SAM CE and rGU N1
 
 **/
-///
-///
+
 
 class CapriTwoBodyEnergy : public scoring::methods::ContextIndependentTwoBodyEnergy {
 public:
@@ -403,7 +400,7 @@ CapriTwoBodyEnergy::residue_pair_energy(
 			if ( dis2_c > min_backbone_dis2 && dis2_c < backbone_dis2_threshold ) backbone_score += backbone_N_bonus;
 		}
 
-		//
+
 		if ( false ) { // true ) {//verbose ) {
 			using namespace std; Size const pos1( protein_rsd.seqpos() ); Size const pos2( rna_rsd.seqpos() );
 			if (     centroid_score != Real(0.0) ) cout << "cen: "  << pos1 << ' ' << pos2 << ' ' << centroid_score << endl;
@@ -420,7 +417,6 @@ CapriTwoBodyEnergy::residue_pair_energy(
 
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -447,8 +443,7 @@ CapriTwoBodyEnergy::residue_pair_energy(
 	 Red == no protein in atomic contact.
 
 **/
-///
-///
+
 
 class CapriTotalEnergy : public scoring::methods::WholeStructureEnergy {
 public:
@@ -524,7 +519,7 @@ private:
 
 };
 
-///
+
 void
 CapriTotalEnergy::read_datafile()
 {
@@ -555,7 +550,7 @@ CapriTotalEnergy::read_datafile()
 	data.close();
 }
 
-///
+
 void
 CapriTotalEnergy::setup_rna_atoms_for_pose(
 																					 pose::Pose const & pose,
@@ -651,7 +646,6 @@ CapriTotalEnergy::finalize_total_energy(
 	emap[ capri_dist ] = dist_score;
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -765,7 +759,6 @@ setup_capri_data( pose::Pose & pose, std::string const & pssm_file, id::Sequence
 {
 
 	CapriDataOP capri_data( new CapriData() );
-
 
 
 	// now fill in the conservation data, read a PSI-blast pssm file

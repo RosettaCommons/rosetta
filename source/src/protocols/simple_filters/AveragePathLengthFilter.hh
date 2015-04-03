@@ -98,8 +98,6 @@ public:
 	);
 
 
-
-
 private:
 	core::Real path_tightness_;
 	core::Real max_path_length_;

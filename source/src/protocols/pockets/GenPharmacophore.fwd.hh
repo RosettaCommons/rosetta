@@ -27,7 +27,6 @@ namespace pockets {
 class PharmacophopreBase;
 
 
-
 } // namespace pockets
 } // namespace protocols
 

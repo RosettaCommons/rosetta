@@ -61,8 +61,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;

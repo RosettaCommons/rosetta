@@ -23,20 +23,14 @@
 // Unit header
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
-// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
 
 // project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 
 // #include <core/scoring/Ramachandran.hh>
 // #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -94,7 +88,6 @@ public:
 	void setUp() {}
 
 	void tearDown() {}
-
 
 
 	// ------------- Helper Functions ------------- //

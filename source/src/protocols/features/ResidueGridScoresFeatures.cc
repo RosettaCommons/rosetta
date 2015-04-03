@@ -141,7 +141,6 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_manager->update_grids(pose,center);
 
 
-
 	InsertGenerator grid_insert("residue_grid_scores");
 	grid_insert.add_column("struct_id");
 	grid_insert.add_column("grid_name");

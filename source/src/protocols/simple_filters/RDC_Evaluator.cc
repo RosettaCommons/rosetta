@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -28,17 +27,13 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 // ObjexxFCL Headers
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/evaluation/util.hh>
 #include <utility/vector1.hh>
@@ -61,12 +56,12 @@ RDC_Evaluator::RDC_Evaluator( std::string tag ) :
 //}
 
 static core::scoring::methods::ResidualDipolarCouplingEnergy energy_evaluator;
- ///@brief evaluate pose
+ /// @brief evaluate pose
 core::Real
 RDC_Evaluator::apply( core::pose::Pose& pose ) const {
 	return energy_evaluator.eval_dipolar( pose, rdc_data_ ); //const
 }
-  ///@brief evaluate pose
+  /// @brief evaluate pose
 SelectRDC_Evaluator::SelectRDC_Evaluator( std::list< Size > const& selection, std::string tag, std::string file )
   : evaluation::SingleValuePoseEvaluator< Real >( "rdc"+tag ),
 		selection_( selection ),

@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -66,7 +66,7 @@ static thread_local basic::Tracer TR( "devel.IntegratedLoop.LoopModeler" );
 ////////////////////////////LoopMover/////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopModeler set_default
+/// @brief LoopModeler set_default
 //////////////////////////////////////////////////////////////////////////
 void LoopMover::set_default()
 {
@@ -78,7 +78,7 @@ void LoopMover::set_default()
 
 }
 //////////////////////////////////////////////////////////////////////////
-///@brief set_default_mc
+/// @brief set_default_mc
 //////////////////////////////////////////////////////////////////////////
 void LoopMover::set_default_mc( core::pose::Pose & pose )
 {
@@ -87,7 +87,7 @@ void LoopMover::set_default_mc( core::pose::Pose & pose )
 
 }
 //////////////////////////////////////////////////////////////////////////
-///@brief get_mc for viewer
+/// @brief get_mc for viewer
 //////////////////////////////////////////////////////////////////////////
 protocols::moves::MonteCarloOP LoopMover::get_mc( core::pose::Pose & pose )
 {
@@ -97,7 +97,7 @@ protocols::moves::MonteCarloOP LoopMover::get_mc( core::pose::Pose & pose )
 
 }
 //////////////////////////////////////////////////////////////////////////
-///@brief set movemap
+/// @brief set movemap
 //////////////////////////////////////////////////////////////////////////
 void LoopMover::set_movemap(
 	Loops const & LoopsToPerturb,
@@ -123,7 +123,7 @@ void LoopMover::set_movemap(
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief set movemap overloaded
+/// @brief set movemap overloaded
 //////////////////////////////////////////////////////////////////////////
 void LoopMover::set_movemap(
 	protocols::Loop const & ThisLoop,
@@ -175,7 +175,7 @@ void LoopMover::set_one_loop_fold_tree(
 
 }
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopModeler apply
+/// @brief LoopModeler apply
 //////////////////////////////////////////////////////////////////////////
 void LoopMover::set_loops_fold_tree(
 	core::pose::Pose & pose,
@@ -237,7 +237,7 @@ void LoopMover::set_loops_fold_tree(
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopModeler apply
+/// @brief LoopModeler apply
 //////////////////////////////////////////////////////////////////////////
 void LoopModeler::apply( core::pose::Pose & pose )
 {
@@ -248,7 +248,7 @@ void LoopModeler::apply( core::pose::Pose & pose )
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopModeler apply
+/// @brief LoopModeler apply
 //////////////////////////////////////////////////////////////////////////
 void LoopModeler::apply_mod( core::pose::Pose & pose )
 {
@@ -258,12 +258,11 @@ void LoopModeler::apply_mod( core::pose::Pose & pose )
 }
 
 
-
 ////////////////////////////LoopRefiner//////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopRefiner apply ( DONT USE THIS )
+/// @brief LoopRefiner apply ( DONT USE THIS )
 //////////////////////////////////////////////////////////////////////////
 void LoopRefiner::apply_mod( core::pose::Pose & pose )
 {
@@ -321,7 +320,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopRefiner apply
+/// @brief LoopRefiner apply
 //////////////////////////////////////////////////////////////////////////
 void LoopRefiner::apply( core::pose::Pose & pose )
 {
@@ -394,7 +393,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 
 }
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopRefiner small_move_perturbation
+/// @brief LoopRefiner small_move_perturbation
 //////////////////////////////////////////////////////////////////////////
 protocols::moves::SequenceMoverOP LoopRefiner::small_move_rot_trial_mover(
 	core::kinematics::MoveMapOP movemap_one_loop
@@ -416,7 +415,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::small_move_rot_trial_mover(
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopRefiner shear_move_perturbation
+/// @brief LoopRefiner shear_move_perturbation
 //////////////////////////////////////////////////////////////////////////
 protocols::moves::SequenceMoverOP LoopRefiner::shear_move_rot_trial_mover(
 	core::kinematics::MoveMapOP movemap_one_loop
@@ -438,7 +437,7 @@ protocols::moves::SequenceMoverOP LoopRefiner::shear_move_rot_trial_mover(
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief LoopRefiner Rotamer_trials
+/// @brief LoopRefiner Rotamer_trials
 //////////////////////////////////////////////////////////////////////////
 protocols::simple_moves::RotamerTrialsMoverOP LoopRefiner::rotamer_trial_mover(
 	core::pose::Pose & pose
@@ -453,7 +452,6 @@ protocols::simple_moves::RotamerTrialsMoverOP LoopRefiner::rotamer_trial_mover(
 	return RotTrial;
 
 }
-
 
 
 }//moves

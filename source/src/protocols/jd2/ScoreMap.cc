@@ -19,7 +19,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL headers
 
@@ -54,7 +53,7 @@ ScoreMap::nonzero_energies(
 	score_map_from_scored_pose(score_map, pose);
 }
 
-///@details creates score map from scored pdb; const so it can be used in job distributor
+/// @details creates score map from scored pdb; const so it can be used in job distributor
 void
 ScoreMap::score_map_from_scored_pose(
 	std::map < std::string, core::Real > & score_map,
@@ -88,7 +87,7 @@ std::map< std::string, core::Real > ScoreMap::score_map_from_scored_pose( core::
 }
 
 
-///@brief print out the contents of the ScoreMap
+/// @brief print out the contents of the ScoreMap
 void
 ScoreMap::print(
 	std::map < std::string, core::Real > & score_map,

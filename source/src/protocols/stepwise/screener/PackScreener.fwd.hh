@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/PackScreener.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

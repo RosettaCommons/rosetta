@@ -19,12 +19,9 @@
 
 // Unit headers
 #include <core/scoring/ProQPotential.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
 //#include <core/scoring/EnvPairPotential.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 //#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
@@ -33,7 +30,6 @@
 //#include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -87,7 +83,6 @@ private: // data
 
 
 };
-
 
 
 } // ns scoring

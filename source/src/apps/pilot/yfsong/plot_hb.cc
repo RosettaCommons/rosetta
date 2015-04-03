@@ -14,14 +14,12 @@
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/excn/Exceptions.hh>
 

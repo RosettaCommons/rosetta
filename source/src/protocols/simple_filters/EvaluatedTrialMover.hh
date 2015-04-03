@@ -9,13 +9,12 @@
 
 /// @file relax_initialization_protocols
 /// @brief
-/// @detailed
+/// @details
 ///	  For diagnosis. Run with this TrialMover and get a log-file containing output from the provided PoseEvalutor
 ///    and if it was accepted or not.
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_EvaluatedTrialMover_hh
@@ -26,8 +25,6 @@
 
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
@@ -39,7 +36,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <list>

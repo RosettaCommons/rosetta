@@ -9,7 +9,7 @@
 
 /// @file MiniRelax.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author James Thompson
 
 #include <protocols/relax/MiniRelax.hh>
@@ -17,14 +17,11 @@
 #include <protocols/relax/cst_util.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.hh>

@@ -59,7 +59,7 @@ JobOutputter::~JobOutputter() {}
 ///base implementation does nothing
 void JobOutputter::flush() {}
 
-///@details this is copied from protocols/jobdist/Jobs.cc, r24761
+/// @details this is copied from protocols/jobdist/Jobs.cc, r24761
 /// Checks the current JobInputter input source from the singleton instance of
 /// JobDistributor.  If a PDB_FILE, it will deliberately discard any path
 /// information in the input tag as well as any file name extension (since
@@ -121,7 +121,7 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	return oss.str();
 }
 
-///@details run the PoseEvaluators on the pose
+/// @details run the PoseEvaluators on the pose
 /// evaluation creates string value pairs which end up in the SilentStruct energy object
 /// instead of filling things into a SilentStruct we could provide a different interface...
 ///  wait until Steven has finished his string/value pair output
@@ -135,15 +135,15 @@ void JobOutputter::evaluate(
   }
 }
 
-///@brief optionally pass a starting (reference) pose to a JobOutputter for comparison purposes and/or as interface for initializing evaluators. (Currently does nothing in this base class.)
+/// @brief optionally pass a starting (reference) pose to a JobOutputter for comparison purposes and/or as interface for initializing evaluators. (Currently does nothing in this base class.)
 void JobOutputter::starting_pose( core::pose::Pose const & ){}
 
-///@details add another PoseEvaluator to the list of evaluations
+/// @details add another PoseEvaluator to the list of evaluations
 void JobOutputter::add_evaluation( evaluation::PoseEvaluatorOP ev_in ) {
   evaluators_->add_evaluation( ev_in );
 }
 
-///@details set a list of Evaluations
+/// @details set a list of Evaluations
 /// ( the list will be copied, the evaluations are OPs )
 ///
 void JobOutputter::set_evaluators( evaluation::PoseEvaluators const& ev_in ) {

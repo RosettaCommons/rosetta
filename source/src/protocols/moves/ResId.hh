@@ -17,7 +17,6 @@
 #define INCLUDED_protocols_moves_ResId_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/moves/ResId.fwd.hh>
 
 #include <utility/pointer/ReferenceCount.fwd.hh>

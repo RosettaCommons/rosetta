@@ -112,7 +112,7 @@ public:
 		utility::vector1< bool > & /*context_graphs_required*/
 	) const {}
 
-    ///@brief function to get membrane protein TMH centers of mass
+    /// @brief function to get membrane protein TMH centers of mass
     // Undefined, commenting out to fix PyRosetta build  utility::vector1<core::Size> get_tmh_CoMs(pose::Pose const& pose) const;
 
 private:

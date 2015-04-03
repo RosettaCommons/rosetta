@@ -84,7 +84,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-
 AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 		AntibodyNumberingSchemeEnum const & numbering_scheme,
 		CDRDefinitionEnum const cdr_definition,
@@ -526,7 +525,7 @@ AntibodyInfo::get_H3_kink_type_name() const {
 void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
 	//JAB using landmarks to refactor.  Still don't quite know exactly why these residues.
-	//
+
 
 	FrameWork frmwk;
 	vector1<FrameWork> Lfr, Hfr;
@@ -891,7 +890,6 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 
 	/// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
 	///
-	/// @last_modified 10/24/2013 (JAB)
 	///
 	/// @reference Kuroda et al. Proteins. 2008 Nov 15;73(3):608-20.
 	///			   Koliansnikov et al. J Bioinform Comput Biol. 2006 Apr;4(2):415-24.
@@ -1208,7 +1206,6 @@ AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
 }
 
 
-
 void
 AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose) {
 
@@ -1353,14 +1350,12 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & p
 } // all_cdr_fold_tree()
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin all_cdr_VL_VH_fold_tree
 ///
 /// @brief change to all CDR and VL-VH dock fold tree
 ///
 /// @author Aroop 07/13/2010
 /// @author Brian D. Weitzner
 ///
-/// @last_modified 06/25/2013
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTreeCOP
 AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
@@ -1433,16 +1428,14 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin LH_A_foldtree
 ///
 /// @brief	Fold tree for snugdock, docks LH with the antigen chains. The function
 ///			assumes that the coordinates for antigen chains in the input PDB file
 ///			are right after the antibody heavy chain (which must be named H).The
 ///			expected order of chains is thus L, H followed by the antigen chains.
 ///
-/// @authors Krishna Praneeth Kilambi 08/14/2012
+/// @author Krishna Praneeth Kilambi 08/14/2012
 ///
-/// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTree
 AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
@@ -1511,7 +1504,6 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin L_HA_foldtree
 ///
 /// @brief	Fold tree for LH refinement in snugdock, docks L with H + antigen
 ///			chains. The function assumes that the coordinates for antigen chains
@@ -1519,9 +1511,8 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 ///			(which must be named H).The expected order of chains is thus
 ///			L, H followed by the antigen chains.
 ///
-/// @authors Krishna Praneeth Kilambi 08/14/2012
+/// @author Krishna Praneeth Kilambi 08/14/2012
 ///
-/// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTree
 AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
@@ -1581,7 +1572,6 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin LA_H_foldtree
 ///
 /// @brief	Fold tree for LH refinement in snugdock, docks L + antigen chains
 ///			with H. The function assumes that the coordinates for antigen chains
@@ -1589,9 +1579,8 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 ///			(which must be named H).The expected order of chains is thus
 ///			L, H followed by the antigen chains.
 ///
-/// @authors Krishna Praneeth Kilambi 08/14/2012
+/// @author Krishna Praneeth Kilambi 08/14/2012
 ///
-/// @last_modified 08/14/2012
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTree
 AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
@@ -1759,8 +1748,6 @@ AntibodyInfo::get_MoveMap_for_LoopsandDock(pose::Pose const & pose,
 }
 
 
-
-
 //JQX: doesn't matter only antibody or antibody-antigen complex, just include CDRs and their neighbors
 pack::task::TaskFactoryOP
 AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
@@ -1781,7 +1768,6 @@ AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 	tf= setup_packer_task(pose);
 	//	tf->push_back( new RestrictToInterface(loop_residues) ); //JQX: not sure why we use loop_residues, in stead of sc_is_packable
 	tf->push_back( TaskOperationCOP( new RestrictToInterface(sc_is_packable) ) );
-
 
 
 	//pack::task::PackerTaskOP my_task2(tf->create_task_and_apply_taskoperations(pose));
@@ -1815,7 +1801,6 @@ AntibodyInfo::get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const cdr_na
 /// @brief: Identify 3 CDRs from a sequence. Automatically judge heavy or light chains (I hope!).
 ///         The input can be either a light chain, a heavy chain or another sequence.
 ///
-/// @last_modified 08/28/2012 by DK
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
@@ -2116,8 +2101,6 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 
 	// return 0;
 }
-
-
 
 
 std::string

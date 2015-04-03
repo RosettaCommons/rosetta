@@ -20,7 +20,6 @@
 #include <protocols/jobdist/Jobs.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <core/types.hh>
 
@@ -34,7 +33,6 @@
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 using basic::T;

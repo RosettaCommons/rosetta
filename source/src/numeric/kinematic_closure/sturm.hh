@@ -20,18 +20,13 @@
 
 // C++ headers
 #include <cmath>
-// AUTO-REMOVED #include <iostream>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1_bool.hh>
-
-
 
 
 // Constants

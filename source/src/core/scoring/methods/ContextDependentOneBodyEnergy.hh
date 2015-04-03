@@ -31,12 +31,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class ContextDependentOneBodyEnergy : public OneBodyEnergy {
 public:
 	typedef OneBodyEnergy parent;
@@ -52,7 +51,7 @@ public:
 	EnergyMethodType
 	method_type() const;
 
-	///
+
 	virtual
 	void
 	residue_energy(

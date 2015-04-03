@@ -34,14 +34,14 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details this class wraps MinMover, but ensures that its MoveMap always contains up-to-date information about sidechain mobility.  It takes its base movemap, allows sidechain freedom at any position mobile in a Factory-generated PackerTask, and passes the new movemap to MinMover.  The MinMover's MoveMap does not accumulate state over many calls to apply().
+/// @details this class wraps MinMover, but ensures that its MoveMap always contains up-to-date information about sidechain mobility.  It takes its base movemap, allows sidechain freedom at any position mobile in a Factory-generated PackerTask, and passes the new movemap to MinMover.  The MinMover's MoveMap does not accumulate state over many calls to apply().
 class TaskAwareMinMover : public protocols::moves::Mover {
 
 public:
 
 	TaskAwareMinMover();
 
-	///@brief constructor with TaskFactory
+	/// @brief constructor with TaskFactory
 	TaskAwareMinMover(
 		protocols::simple_moves::MinMoverOP minmover_in,
 		core::pack::task::TaskFactoryCOP factory_in
@@ -55,7 +55,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -68,7 +68,7 @@ public:
 		utility::lua::LuaObject const & tasks,
 		protocols::moves::MoverCacheSP cache );
 
-	///@brief parse "task_operations" XML option
+	/// @brief parse "task_operations" XML option
 	virtual void parse_task_operations(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -84,9 +84,9 @@ public:
 	bool jump() const{ return jump_;}
 
 private:
-	///@brief OP for MinMover
+	/// @brief OP for MinMover
 	protocols::simple_moves::MinMoverOP minmover_;
-	///@brief OP for constant task factory for nonconstant tasks, if present
+	/// @brief OP for constant task factory for nonconstant tasks, if present
 	core::pack::task::TaskFactoryCOP factory_;
 	bool chi_, bb_, jump_;
 

@@ -48,7 +48,6 @@ public:
 	~OrbitalXYZCoords() {}
 
 
-
 	Vector const &
 	xyz() const
 	{
@@ -80,18 +79,12 @@ private:
 	ShortSize type_;
 
 
-
-
 };
 
 
-
-
 }
 }
 }
-
-
 
 
 #endif /* ORBITALXYZCOORDS_HH_ */

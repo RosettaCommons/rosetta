@@ -78,27 +78,27 @@ public:
 	virtual void set_checkpoint_gzip( bool b ) { checkpoint_gzip_ = b; }
 	virtual void set_checkpoint_rename( bool b ) { checkpoint_rename_ = b; }
 
-	///@brief non-const to permit sort
+	/// @brief non-const to permit sort
 	virtual EntityCAPs best_entities( core::Size num );
 	virtual Entity const & tournament_select( utility::vector1< EntityCOP > const & pvec ) const;
 	virtual TraitEntityHashMap & entity_cache();
 	virtual TraitEntityHashMap const & entity_cache() const;
 	virtual utility::vector1<utility::vector1< EntityOP > > const & generations() const;
-	///@brief true const (read-only) access to entity population: new vector of const pointers
+	/// @brief true const (read-only) access to entity population: new vector of const pointers
 	virtual EntityCOPs population( core::Size gen_num ) const;
 	virtual void print_generation_statistics( std::ostream & os, core::Size gen_num ) const;
 	virtual void print_population( std::ostream & ) const;
 	virtual void print_cache( std::ostream & ) const;
 	virtual std::string entities_checkpoint_filename(std::string suffix = "") const;
-	///@brief for checkpointing fitness cache
+	/// @brief for checkpointing fitness cache
 	virtual bool read_entities_checkpoint( bool overwrite = false );
-	///@brief for checkpointing fitness cache
+	/// @brief for checkpointing fitness cache
 	virtual bool write_entities_checkpoint() const;
 	virtual std::string generations_checkpoint_filename(std::string suffix = "") const;
 	virtual bool write_generations_checkpoint() const;
 	virtual bool read_generations_checkpoint();
 	virtual bool read_checkpoint();
-	///@brief allows the prevention of accidental reuse of checkpoint files
+	/// @brief allows the prevention of accidental reuse of checkpoint files
 	virtual void rename_checkpoint_files() const;
 	virtual EntityCOP entity_template() const;
 	virtual void set_entity_template(EntityCOP entity);

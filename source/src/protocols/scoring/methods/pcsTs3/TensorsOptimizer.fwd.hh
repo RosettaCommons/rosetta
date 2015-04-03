@@ -10,9 +10,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/TensorsOptimizer.hh
  ///
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  ///
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 
@@ -23,7 +22,6 @@ namespace protocols{
 namespace scoring{
 namespace methods{
 namespace pcsTs3{
-
 
 
 }//namespace pcsTs3

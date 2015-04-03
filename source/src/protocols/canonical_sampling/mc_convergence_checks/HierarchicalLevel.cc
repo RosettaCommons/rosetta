@@ -12,12 +12,10 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
@@ -27,7 +25,6 @@
 #include <utility/file/PathName.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <basic/prof.hh>
 
 #include <set>
@@ -35,16 +32,9 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-// AUTO-REMOVED #include <sys/stat.h>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <errno.h>
-// AUTO-REMOVED #include <math.h>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
@@ -1050,7 +1040,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     }
   }
 
-  //
+
   PoolData
   HierarchicalLevel::load_pool( utility::vector1< core::Size > & address ) {
     PROF_START( basic::LOAD_HIERARCHY );

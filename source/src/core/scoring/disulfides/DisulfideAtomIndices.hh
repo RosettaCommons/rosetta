@@ -22,7 +22,6 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -48,7 +47,7 @@ public:
 
 	Size c_alpha_index() const { return c_alpha_index_; }
 	Size c_beta_index()  const { return c_beta_index_;  }
-    ///@brief The atom which participates in the disulfide bond
+    /// @brief The atom which participates in the disulfide bond
     /// SG for fullatom or CEN for centroid
 	Size disulf_atom_index() const { return disulf_atom_index_; }
 

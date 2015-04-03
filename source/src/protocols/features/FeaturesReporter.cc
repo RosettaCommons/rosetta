@@ -93,7 +93,7 @@ FeaturesReporter::write_schema_to_db(
 	}
 }
 
-///@details Extract all features from the pose to the database.  The
+/// @details Extract all features from the pose to the database.  The
 ///input parent_id can be used to connect the features with the rest
 ///of the database.  Usually the parent_id will be struct_id which
 ///uniquely identifies each structure in the database.  The feature
@@ -108,7 +108,7 @@ FeaturesReporter::report_features(
 	return report_features(pose, relevant_residues, parent_id, db_session);
 }
 
-///@details Extract all features from the pose to the database.  The
+/// @details Extract all features from the pose to the database.  The
 ///input parent_id can be used to connect the features with the rest
 ///of the database.  Usually the parent_id will be struct_id which
 ///uniquely identifies each structure in the database.  The feature

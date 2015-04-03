@@ -70,7 +70,7 @@ DNAChiEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 DNAChiEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -90,7 +90,6 @@ DNAChiEnergy::residue_energy(
 }
 
 
-///
 Real
 DNAChiEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,

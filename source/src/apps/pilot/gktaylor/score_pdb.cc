@@ -62,7 +62,6 @@
 #include <basic/Tracer.hh>
 
 
-
 #include <utility/file/FileName.hh>
 
 
@@ -84,7 +83,6 @@ using basic::Error;
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 using namespace std;

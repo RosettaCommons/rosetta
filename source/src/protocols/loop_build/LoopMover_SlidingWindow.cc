@@ -62,7 +62,6 @@ static thread_local basic::Tracer TR( "protocols.loop_build.LoopMover_SlidingWin
 using namespace core;
 
 
-
 LoopMover_SlidingWindow::LoopMover_SlidingWindow() :
 	IndependentLoopMover()
 {
@@ -84,7 +83,6 @@ LoopMover_SlidingWindow::LoopMover_SlidingWindow(
 	protocols::moves::Mover::type("LoopMover_SlidingWindow");
 	set_default_settings();
 }
-
 
 
 LoopMover_SlidingWindow::LoopMover_SlidingWindow(

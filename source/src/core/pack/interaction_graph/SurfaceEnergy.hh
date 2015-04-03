@@ -43,8 +43,6 @@ namespace interaction_graph {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin SurfaceEnergy
-///
 /// @brief
 /// Defines a (pseudo) context-dependent one-body surface energy.  Really, this class
 /// is only being used as a hack for the optE protocol so that the non-PD surface

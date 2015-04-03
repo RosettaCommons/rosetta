@@ -74,8 +74,6 @@ using namespace core;
 static thread_local basic::Tracer TR( "protocols.loops.loop_mover.perturb.LoopMover_Perturb_QuickCCD_Moves" );
 
 
-
-
 LoopMover_Perturb_QuickCCD_Moves::LoopMover_Perturb_QuickCCD_Moves() :
 	LoopMover_Perturb_QuickCCD( )
 {}
@@ -153,7 +151,6 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	core::pose::Pose start_pose = pose;
 
 
-
 	// either extend or at least idealize the loop (just in case).
 	if( loop.is_extended() ) set_extended_torsions( pose, loop );
 	else                     idealize_loop(  pose, loop );
@@ -197,7 +194,6 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	}
 
 
-
 	// Set up MonteCarlo Object
 	core::Real const init_temp = 2.0;
 	core::Real temperature = init_temp;
@@ -214,7 +210,6 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 		final_chain_break_weight = 5.0*symm_info->subunits();
 	}
-
 
 
 	float const delta_weight( final_chain_break_weight/cycles2 );

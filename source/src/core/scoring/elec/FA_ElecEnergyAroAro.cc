@@ -48,9 +48,7 @@
 ///
 /// Hacky (hence the name) implementation of 10r dielectric model, cutoff at 5.5A
 ///
-///
 
-//
 //     alternatives: WARSHEL (from ligand.cc)
 //     E = 322.0637*q1*q2/r/e(r)
 //     if ( r < 3 ) e(r) = 16.55
@@ -110,14 +108,14 @@ FA_ElecEnergyAroAro::clone() const
 	return methods::EnergyMethodOP( new FA_ElecEnergyAroAro( *this ) );
 }
 
-///
+
 void
 FA_ElecEnergyAroAro::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 FA_ElecEnergyAroAro::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -165,7 +163,7 @@ FA_ElecEnergyAroAro::update_residue_for_packing(
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 FA_ElecEnergyAroAro::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -408,7 +406,6 @@ FA_ElecEnergyAroAro::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 }

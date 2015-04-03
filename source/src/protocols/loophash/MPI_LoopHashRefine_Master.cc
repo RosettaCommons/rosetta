@@ -23,25 +23,18 @@
 #include <protocols/loophash/WorkUnit_LoopHash.hh>
 #include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
@@ -52,8 +45,6 @@
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <unistd.h>
-// AUTO-REMOVED #include <cctype>
 #endif
 
 #include <fstream>
@@ -112,7 +103,6 @@ MPI_LoopHashRefine_Master::init(){
 }
 
 
-
 void
 MPI_LoopHashRefine_Master::go()
 {
@@ -138,7 +128,6 @@ MPI_LoopHashRefine_Master::go()
 		print_stats_auto();
 	}
 }
-
 
 
 /// @brief figure out what to do with incoming WUs.
@@ -230,7 +219,6 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 
 	print_stats();
 }
-
 
 
 void
@@ -532,10 +520,6 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 				sample_weight_str_ = t;
 		}
 }
-
-
-
-
 
 
 } // namespace loophash

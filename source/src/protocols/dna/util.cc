@@ -19,7 +19,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
@@ -86,9 +85,8 @@ static thread_local basic::Tracer TR( "protocols.dna.util", basic::t_info );
 
 typedef utility::vector1< std::string > Strings;
 
-/// @begin close_to_dna
 /// @details checks c-beta (except glycine) to base atom-atom distances, not including ribose or phosphate backbone.
-/// @authors ashworth
+/// @author ashworth
 bool
 close_to_dna(
 	Residue const & pres,
@@ -106,9 +104,8 @@ close_to_dna(
 	return false;
 }
 
-/// @begin argrot_dna_dis2
 /// @details arginine rotamer sweep at a protein residue to see if it should be considered a (potentially) 'dna-contacting' residue
-/// @authors ashworth
+/// @author ashworth
 Real
 argrot_dna_dis2(
 	pose::Pose const & pose,
@@ -178,9 +175,8 @@ argrot_dna_dis2(
 	return shortest_dis2;
 }
 
-/// @begin contact_distance2
 /// @details distance check for contact between two sets of atoms
-/// @authors ashworth
+/// @author ashworth
 Real
 contact_distance2(
 	Atoms::const_iterator a_begin,
@@ -203,9 +199,8 @@ contact_distance2(
 	return shortest_dis2;
 }
 
-/// @begin z_axis_dist
 /// @details A sanity check for the arginine rotamer screen. Can prevent the design of positions that are best left alone because they are too far away along the helical axis ('laterally').
-/// @authors ashworth
+/// @author ashworth
 Real z_axis_dist(
 	Residue const & pres,
 	Residue const & dres
@@ -223,9 +218,8 @@ Real z_axis_dist(
 	return std::abs( dot(vec,Z) );
 }
 
-/// @begin dna_comp_name_str
 /// @brief also consider using the dna_base_partner function below
-/// @authors ashworth
+/// @author ashworth
 std::string dna_comp_name_str( std::string const & dna ) {
 	if ( dna == "ADE" ) return "THY";
 	if ( dna == "CYT" ) return "GUA";
@@ -239,7 +233,6 @@ std::string dna_comp_name_str( std::string const & dna ) {
 	return "NONE";
 }
 
-/// @begin dna_full_name3
 /// @brief intended to convert any DNA "threeletter code" into the full three-letter code. Note that this does not (necessarily) return the same thing as residue_type::name3 (which returns "  N" format as of Dec 2008)
 std::string dna_full_name3( std::string const & name3 )
 {
@@ -276,9 +269,8 @@ dna_base_partner( chemical::AA const & na )
 	return aa_unk;
 }
 
-/// @begin find_basepairs
 /// @details DnaChains version, adapted from pbradley's code.  More paranoid geometry checks, in order to allow highly distorted basepairs without making mistakes
-/// @authors ashworth
+/// @author ashworth
 void
 find_basepairs(
 	pose::Pose const & pose,
@@ -412,9 +404,8 @@ find_basepairs(
 	dna_chains.print( pose, TR );
 }
 
-/// @begin make_sequence_combinations
 /// @details populates a set of all possible sequence combinations over a given range of positions. recursive.
-/// @authors ashworth
+/// @author ashworth
 void
 make_sequence_combinations(
 	utility::vector1< Size >::const_iterator seqset_iter,
@@ -440,9 +431,8 @@ make_sequence_combinations(
 	}
 }
 
-/// @begin make_single_mutants
 /// @brief make a list of all single mutants from a base sequence
-/// @authors ashworth
+/// @author ashworth
 void
 make_single_mutants(
 	ResTypeSequence const & sequence,
@@ -555,9 +545,8 @@ void print_sequences_pdb_nums(
 	}
 }
 
-/// @begin restrict_dna_rotamers
 /// @details for packing a single DNA sequence out of a multi-DNA-sequence RotamerSet
-/// @authors ashworth
+/// @author ashworth
 void
 restrict_dna_rotamers(
 	RotamerSetsCOP rotamer_sets,
@@ -586,9 +575,8 @@ restrict_dna_rotamers(
 						<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
 
-/// @begin restrict_to_single_sequence
 /// @details for packing a single sequence out of a RotamerSets that (potentially) represents sequence variability
-/// @authors ashworth
+/// @author ashworth
 void
 restrict_to_single_sequence(
 	rotamer_set::RotamerSetsCOP rotamer_sets,
@@ -614,9 +602,8 @@ restrict_to_single_sequence(
 						<< " out of " << nrot << " rotamers disabled." << std::endl;
 }
 
-/// @begin substitute_residue
 /// @details
-/// @authors ashworth
+/// @author ashworth
 void
 substitute_residue(
 	pose::Pose & pose,
@@ -630,7 +617,6 @@ substitute_residue(
 	pose.replace_residue( index, *new_res, false );
 }
 
-// @begin write_checkpoint
 // @brief
 // @author ashworth
 void
@@ -666,7 +652,6 @@ write_checkpoint( pose::Pose & pose, Size iter )
 	TR << "wrote " << pdbname << ", " << checkpointname << std::endl;
 }
 
-// @begin load_checkpoint
 // @brief
 // @author ashworth
 void
@@ -701,7 +686,6 @@ load_checkpoint( pose::Pose & pose, Size & iter )
 	TR << "loaded " << pdbfile << " for iteration " << iter << std::endl;
 }
 
-// @begin checkpoint_cleanup
 // @brief make sure that old checkpoint files will not be accidentally reused
 // @author ashworth
 void
@@ -723,7 +707,6 @@ checkpoint_cleanup()
 	}
 }
 
-/// @begin load_dna_design_defs
 /// @brief loads command-line dna design definitions (shorthand alternative to using resfile)
 /// option value is string vector
 ///   i.e. -dna_defs C.-6 C.-5
@@ -1158,7 +1141,6 @@ set_base_segment_chainbreak_constraints(
 	}
 
 }
-
 
 
 } // namespace dna

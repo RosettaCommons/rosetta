@@ -39,7 +39,7 @@ pdb-profile match: This file should be formatted as pdb, profile_name:
 Each splice_segment is additionally associated with the sequence profiles mentioned in the pdb-profile match file. These should be
 formatted as Rosetta-readable PSSM files*/
 
-///@brief utility class and functions for dealing with sequence profiles for varying segments in Splice
+/// @brief utility class and functions for dealing with sequence profiles for varying segments in Splice
 class SpliceSegment : public utility::pointer::ReferenceCount
 {
 	public:

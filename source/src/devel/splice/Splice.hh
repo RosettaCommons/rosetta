@@ -58,7 +58,7 @@ class BBDofs : public utility::pointer::ReferenceCount
 		std::string resn_;
 };
 
-///@brief container for BBDofs, providing a convenient operator [], size, other methods and iterators that allow splice to treat
+/// @brief container for BBDofs, providing a convenient operator [], size, other methods and iterators that allow splice to treat
 /// ResidueBBDofs as a simple vector (even though it contains other elements as well)
 class ResidueBBDofs : public utility::pointer::ReferenceCount
 {

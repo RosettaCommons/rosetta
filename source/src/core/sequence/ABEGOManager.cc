@@ -34,7 +34,7 @@ ABEGO::add_line( Real const slope, Real const intercept, bool const region )
 	lines_.push_back( Line( slope, intercept, region ) );
 }
 
-/// @breif 	check input torsion angles is compatible with defined abego
+/// @brief 	check input torsion angles is compatible with defined abego
 bool
 ABEGO::check_rama2( Real const & phi, Real const & psi )
 {

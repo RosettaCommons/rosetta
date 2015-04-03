@@ -138,7 +138,6 @@ BB_Pos::update_indices( pose::Pose const & pose )
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// @brief default constructor
@@ -170,7 +169,7 @@ Strands::Strands(
 Strands::~Strands()
 {}
 
-///
+
 void
 Strands::resize( Size const nres )
 {
@@ -236,7 +235,7 @@ Helices::Helices(
 	resize( total_residue );
 }
 
-///
+
 void
 Helices::resize( int const nres )
 {
@@ -276,7 +275,6 @@ operator<< ( std::ostream & out, Helices const & s )
 	}
 	return out;
 }
-
 
 
 } // ns scoring

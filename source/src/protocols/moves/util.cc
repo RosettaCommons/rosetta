@@ -15,7 +15,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 // Project headers
 #include <protocols/filters/Filter.hh>

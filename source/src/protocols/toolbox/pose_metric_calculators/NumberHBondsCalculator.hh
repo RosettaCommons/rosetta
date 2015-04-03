@@ -25,7 +25,6 @@
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // utility headers
 #include <utility/vector1.hh>

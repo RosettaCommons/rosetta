@@ -19,7 +19,6 @@
 #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 
 #include <utility/vector1.hh>
 
@@ -73,7 +72,7 @@ public:
 	void show_definition( std::ostream & out ) const;
 
 	/// @brief Initializes this SOGFunc_Impl from the given istream.
-	/// @detailed The parameters are:
+	/// @details The parameters are:
 	/*!
 	 * Initializes this SOGFunc_Impl from the given istream. An example
 	 * of the type of string from which the istream should be constructed is:

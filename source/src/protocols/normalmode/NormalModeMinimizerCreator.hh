@@ -26,7 +26,6 @@ public:
 };
 
 
-
 } //namespace pockets
 } //namespace protocols
 

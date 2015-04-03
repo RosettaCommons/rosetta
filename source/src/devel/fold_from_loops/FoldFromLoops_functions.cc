@@ -178,8 +178,6 @@ std::vector<Size> define_cut_points (
 	}
 
 
-
-
 void fold_tree_cutpoints_generator(
 		protocols::loops::Loops & loops ,
 		std::vector<Size> & cutpoints,
@@ -266,8 +264,6 @@ using namespace basic::options::OptionKeys;
 		}
 
 
-
-
 	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 				for (Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ){
 
@@ -288,7 +284,6 @@ using namespace basic::options::OptionKeys;
 					}
 
 
-
 					if (!cut_points.empty()) {
 
 						cut_point_pos = is_cut(cut_points, pos );
@@ -298,15 +293,12 @@ using namespace basic::options::OptionKeys;
 					}
 
 
-
-
 					Size seq_sep = 0;
 
 					if (pos > pos_2){
 						seq_sep = pos - pos_2;
 						}
 					else { seq_sep = 0; } // This is here to avoid repetition of the csts
-
 
 
 					if ( seq_sep >=6  ){
@@ -321,7 +313,6 @@ using namespace basic::options::OptionKeys;
 
 										Real const d( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
 										TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
-
 
 
 										cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( d, sd ) ) ) ) ) );
@@ -365,8 +356,6 @@ using namespace basic::options::OptionKeys;
 	}
 
 
-
-
 	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 				for (Size pos_2 = 1; pos_2 <=pose.total_residue(); ++pos_2   ){
 
@@ -392,7 +381,6 @@ using namespace basic::options::OptionKeys;
 							res_cst_free = true;
 						}
 					}
-
 
 
 					Size seq_sep = 0;
@@ -421,7 +409,6 @@ using namespace basic::options::OptionKeys;
 											TR <<pos_2 <<" "<< pos << " "<<d <<std::endl;
 
 
-
 											cst->add_constraint( ConstraintCOP( ConstraintOP( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), core::scoring::func::FuncOP( new core::scoring::func::HarmonicFunc( d, sd ) ) ) ) ) );
 
 										}
@@ -432,10 +419,7 @@ using namespace basic::options::OptionKeys;
 	}
 
 
-
-
 }
-
 
 
 bool is_loop_neighbor( protocols::loops::Loops & loops,
@@ -456,9 +440,6 @@ bool is_loop_neighbor( protocols::loops::Loops & loops,
 
 	return loop_range;
 }
-
-
-
 
 
 void define_movemap_extending_chain(
@@ -540,7 +521,6 @@ void define_movemap(
 	movemap->set_bb(false);
 
 
-
 	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 
 
@@ -596,9 +576,6 @@ void define_movemap(
 }
 
 
-
-
-
 void extending_chain(
 		core::kinematics::MoveMapOP & movemap,
 		core::pose::Pose & pose
@@ -614,7 +591,6 @@ void extending_chain(
 
 		}
 }
-
 
 
 void get_fragments(
@@ -639,8 +615,6 @@ void get_fragments(
 }
 
 
-
-
 void new_pose_generator(
 		core::pose::Pose & target_loops,
 		core::pose::Pose & nat_prot,
@@ -660,7 +634,6 @@ void new_pose_generator(
 	std::string nat_seq = nat_prot.sequence();
 
 
-
 	centroid_target_loops = target_loops;
 
 	if (loops.size() == 1){
@@ -677,8 +650,6 @@ void new_pose_generator(
 		//set up a jump between the two loops
 
 
-
-
 		for (Size k=1; k <= nsegment ; ++k ) {
 
 
@@ -692,33 +663,22 @@ void new_pose_generator(
 			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
-
 			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-
 
 
 			target_loops.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, 1, true);
 
 
-
-
-
 			target_loops.set_omega( 1, 180.0 );
 
 
-
-
-
-
 		}
-
 
 
 		for ( Size j = 0 ; j < csegment ; ++j  ){
 
 			const char aa = nat_seq[ loops[1].stop() + j  ];
 			Size residue = loops[1].stop() + j;
-
 
 
 			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
@@ -730,12 +690,7 @@ void new_pose_generator(
 			target_loops.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, residue , true );
 
 
-
-
 			target_loops.set_omega( residue , 180.0 );
-
-
-
 
 
 		}
@@ -760,15 +715,12 @@ void new_pose_generator(
 		target_loops.fold_tree( loop_f );
 
 
-
-
 		Size n1segment = loops[1].start()-1;
 		Size c1segment = cut_points[0]-loops[1].stop();
 
 
 		Size n2segment = loops[2].start()-cut_points[0];
 		Size c2segment = nat_prot.total_residue() - loops[2].stop();
-
 
 
 		TR << "NSEGMENT1 "<< n1segment <<std::endl;
@@ -795,16 +747,13 @@ void new_pose_generator(
 					core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
-
 					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-
 
 
 					target_loops.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, 1, true);
 
 
 					target_loops.set_omega( 1, 180.0 );
-
 
 
 				}
@@ -828,17 +777,10 @@ void new_pose_generator(
 					target_loops.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, residue , true );
 
 
-
-
 					target_loops.set_omega( residue , 180.0 );
 
 
-
 				}
-
-
-
-
 
 
 				Size current_tot_res = target_loops.total_residue();
@@ -851,8 +793,6 @@ void new_pose_generator(
 
 				const char aa = nat_seq[ loops[2].start() - l - 1  ];// need to check this one
 				Size residue =   current_tot_res - (loops[2].stop()-loops[2].start()) ; // we need to check which one we start
-
-
 
 
 				TR << "RES AA N2  " << residue << aa <<std::endl;
@@ -869,9 +809,7 @@ void new_pose_generator(
 				target_loops.set_omega( residue , 180.0 );
 
 
-
 		}
-
 
 
 		for ( Size m = 0; m < c2segment ; ++m  ){
@@ -898,7 +836,6 @@ void new_pose_generator(
 
 
 	}
-
 
 
 	if (loops.size() == 3){
@@ -965,9 +902,7 @@ void new_pose_generator(
 				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
-
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-
 
 
 				target_loops.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, 1, true);
@@ -999,7 +934,6 @@ void new_pose_generator(
 				target_loops.set_omega( residue , 180.0 );
 
 
-
 			}
 
 			//target_loops.dump_pdb("c1.pdb");
@@ -1016,8 +950,6 @@ void new_pose_generator(
 				Size residue =   current_tot_res - (loops[2].size()+loops[3].size()-1) ; // we need to check which one we start
 
 
-
-
 				TR << "RES AA N2  " << residue << aa <<std::endl;
 
 				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
@@ -1030,7 +962,6 @@ void new_pose_generator(
 
 
 				target_loops.set_omega( residue , 180.0 );
-
 
 
 				}
@@ -1072,8 +1003,6 @@ void new_pose_generator(
 				Size residue =   current_tot_res - (loops[3].stop()-loops[3].start()) ; // we need to check which one we start
 
 
-
-
 				TR << "RES AA N3  " << residue << aa <<std::endl;
 
 				core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
@@ -1086,7 +1015,6 @@ void new_pose_generator(
 
 
 				target_loops.set_omega( residue , 180.0 );
-
 
 
 			}
@@ -1120,20 +1048,12 @@ void new_pose_generator(
 		}
 
 
-
-
-
-
-
-
-
 	TR << "Last Residue    " << target_loops.total_residue() <<std::endl;
 
 	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::LOWER_TERMINUS_VARIANT, 1 );
 	core::pose::add_variant_type_to_pose_residue(target_loops, chemical::UPPER_TERMINUS_VARIANT, target_loops.total_residue());
 
 }
-
 
 
 void refresh_cutpoints( core::pose::Pose & pose,
@@ -1148,8 +1068,6 @@ void refresh_cutpoints( core::pose::Pose & pose,
 		core::pose::add_variant_type_to_pose_residue(pose, chemical::CUTPOINT_UPPER, residue + 1);
 
 	}
-
-
 
 
 }
@@ -1169,7 +1087,6 @@ void copying_side_chains_swap_loop (
 	// Cleaning up the pose - > this step has to be performed before
 	core::pose::remove_lower_terminus_type_from_pose_residue(swap_loops, 1 );
 	core::pose::remove_upper_terminus_type_from_pose_residue(swap_loops, swap_loops.total_residue());
-
 
 
 	movemap->set_chi(true);
@@ -1196,7 +1113,6 @@ void copying_side_chains_swap_loop (
 }
 
 
-
 void exclude_loop_residues( core::pose::Pose & pose,
 							utility::vector1< bool > & residues_to_mutate,
 							utility::vector1< bool > & allowed_aas ,
@@ -1213,7 +1129,6 @@ void exclude_loop_residues( core::pose::Pose & pose,
 	}
 
 }
-
 
 
 void design_excluding_swap_loops (
@@ -1265,7 +1180,6 @@ void design_excluding_swap_loops (
 			}
 
 
-
 			task->restrict_to_residues( residues_to_mutate );
 
 		}
@@ -1297,8 +1211,6 @@ void copying_side_chains(
 		}
 
 }
-
-
 
 
 }

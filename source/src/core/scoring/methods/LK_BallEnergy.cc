@@ -96,7 +96,6 @@ LK_BallEnergyCreator::score_types_for_method() const {
 }
 
 
-
 static thread_local basic::Tracer TR("core.scoring.methods.LK_BallEnergy");
 
 Real const LK_BallEnergy::ramp_width_A2_( 5.0 );
@@ -127,7 +126,6 @@ retrieve_nonconst_lkb_residue_info( pose::Pose & pose, Size const seqpos ) {
 	return ( static_cast< LKB_PoseInfo & >
 					 ( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) )[ seqpos ] );
 }
-
 
 
 class LKB_ResPairMinData : public basic::datacache::CacheableData
@@ -178,10 +176,6 @@ LKB_ResPairMinData::initialize(
 	res1_data_ = res1_data;
 	res2_data_ = res2_data;
 }
-
-
-
-
 
 
 /////////////////////////////////////// mindata retrieval functions
@@ -249,9 +243,6 @@ retrieve_lkb_resdata_ptr(
 	debug_assert( utility::pointer::dynamic_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data )));
 	return ( utility::pointer::static_pointer_cast< LKB_ResidueInfo const > ( resdata.get_data( lkb_res_data ) ) );
 }
-
-
-
 
 
 /// HACKING //////////////////////////
@@ -358,7 +349,6 @@ LK_BallEnergy::LK_BallEnergy( LK_BallEnergy const & src ):
 }
 
 
-///
 void
 compute_and_store_pose_waters(
 															pose::Pose & pose
@@ -386,7 +376,6 @@ LK_BallEnergy::minimize_in_whole_structure_context( pose::Pose const & ) const
 {
 	return false;
 }
-
 
 
 void
@@ -464,7 +453,6 @@ LK_BallEnergy::setup_for_derivatives_for_residue(
 }
 
 
-///
 void
 LK_BallEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
@@ -493,7 +481,7 @@ LK_BallEnergy::update_residue_for_packing(
 	info.build_waters( rsd );
 }
 
-///
+
 void
 LK_BallEnergy::setup_for_scoring(
 																 pose::Pose & pose,
@@ -671,7 +659,6 @@ LK_BallEnergy::get_lk_fractional_contribution(
 }
 
 
-
 /// This guy is used during scoring if we are not minimizing
 void
 LK_BallEnergy::residue_pair_energy(
@@ -847,7 +834,6 @@ LK_BallEnergy::calculate_lk_ball_atom_energies(
 }
 
 
-
 void
 LK_BallEnergy::calculate_lk_ball_atom_energies_cp(
 																									Size const atom1,
@@ -907,7 +893,6 @@ LK_BallEnergy::calculate_lk_ball_atom_energies_cp(
 	lk_ball_desolvation_of_atom1_by_atom2 = lk_desolvation_of_atom1_by_atom2 *
 		get_lk_fractional_contribution( atom2_xyz, atom2_type_index, atom1_waters, dummy_size, dummy_real );
 }
-
 
 
 Real
@@ -1049,7 +1034,6 @@ LK_BallEnergy::accumulate_single_atom_contributions(
 }
 
 
-
 void
 LK_BallEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -1167,9 +1151,6 @@ LK_BallEnergy::residue_pair_energy(
 ///I AM HAVING A SLEEPOVER
 
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 // derivatives
 /////////////////////////////////////////////////////////////////////////////
@@ -1248,8 +1229,6 @@ LK_BallEnergy::eval_lk_ball_fraction_deriv(
 }
 
 
-
-
 /// @note  atom2 is desolvating atom1. atom1_waters is non-empty
 /// @note  Pretend that atom1 is the atom whose derivs are being calculated. weight_factor may include -1 term
 /// to switch the order...
@@ -1322,7 +1301,6 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair_one_way(
 	Real closest_water_d2_delta( 100.0);
 	Real const lk_fraction( get_lk_fractional_contribution( atom2_xyz, rsd2.atom( atom2 ).type(), atom1_waters,
 																													closest_water, closest_water_d2_delta ) );
-
 
 
 	if ( atom1_is_hydrogen ) { // all we want to include here is the derivative involving the lk-fraction term
@@ -1483,12 +1461,10 @@ LK_BallEnergy::sum_deriv_contributions_for_atom_pair(
 // }
 
 
-
 void
 LK_BallEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /* context_graphs_required */ ) const
 {}
-
 
 
 void
@@ -1656,12 +1632,6 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 }
 
 
-
-
-
-
-
-
 core::Size
 LK_BallEnergy::version() const
 {
@@ -1687,7 +1657,6 @@ LK_BallEnergy::version() const
 // 					}
 
 
-
 // 					if ( verbose ) { // HACKING
 // 						Real closest_water_dis2(0.0);
 // 						Size closest_water(0);
@@ -1701,8 +1670,6 @@ LK_BallEnergy::version() const
 // 							" desolvating_atom: " << rsd1.name() << ' ' << rsd1.seqpos() << ' ' << rsd1.atom_name( atom1 ) <<
 // 							std::endl;
 // 					}
-
-
 
 
 // 				if ( (  atom1_is_polar && lk_desolvation_of_atom1_by_atom2 < -1e-3 ) || // debugging

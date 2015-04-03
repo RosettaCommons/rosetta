@@ -376,8 +376,8 @@ BondedAtom::setup_min_map(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@li axis is the unit vector along the rotation axis for that DOF(Eab).
-///@li end_pos is the ending point of this unit vector(Vb).
+/// @li axis is the unit vector along the rotation axis for that DOF(Eab).
+/// @li end_pos is the ending point of this unit vector(Vb).
 ///
 /// @details consider simple case like, A->B->C->D and we want to know the change of D position
 /// with respect to the rotation along B->C bond( dr/dphi). In this case, Eab is
@@ -516,7 +516,6 @@ BondedAtom::raw_stub_atom3() const
 }
 
 
-///
 Jump BOGUS_JUMP;
 
 } // tree

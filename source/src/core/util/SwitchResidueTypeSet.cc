@@ -59,7 +59,7 @@ namespace util {
 static thread_local basic::Tracer TR( "core.util.switchresiduetypeset" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details the function allows a pose to use a different residue_type_set to represent all its residues,
+/// @details the function allows a pose to use a different residue_type_set to represent all its residues,
 ///such as from fullatom residues to centroid residues, or vice versa. During the switch, corresponding atoms
 ///will be copied. Redundant atoms will be removed (in case from fullatom to centroid) and missing atoms will be
 ///built by ideal geometry (in the case from centroid to fullatom).

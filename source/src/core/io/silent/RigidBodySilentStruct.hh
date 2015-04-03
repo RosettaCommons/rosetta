@@ -20,7 +20,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -37,7 +36,6 @@
 namespace core {
 namespace io {
 namespace silent {
-
 
 
 class RigidBodySilentStruct : public SilentStruct {

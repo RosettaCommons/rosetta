@@ -37,7 +37,6 @@ class ElementsTests : public CxxTest::TestSuite {
 	}
 
 
-
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)
@@ -77,9 +76,6 @@ class ElementsTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( core::chemical::element::H, core::chemical::element::elements_from_name(H) );
 
 	}
-
-
-
 
 
 };

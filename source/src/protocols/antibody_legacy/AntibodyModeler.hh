@@ -9,7 +9,7 @@
 
 /// @file AntibodyModeler
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Aroop Sircar

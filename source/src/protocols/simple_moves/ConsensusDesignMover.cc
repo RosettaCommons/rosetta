@@ -45,7 +45,6 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 static thread_local basic::Tracer TR( "protocols.simple_moves.ConsensusDesignMover" );

@@ -20,7 +20,6 @@
 // Project headers
 #include <core/types.hh>
 #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -341,7 +340,6 @@ private:// data
 
 	// @brief
 	StrandPairingOP empty_;
-
 
 
 }; // StrandPairingSet

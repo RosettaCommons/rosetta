@@ -98,7 +98,7 @@ void Tumble::apply( core::pose::Pose & pose ) {
     pose.batch_set_xyz(ids, coords);
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Tumble::parse_my_tag(
     TagCOP const tag,

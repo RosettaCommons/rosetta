@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/AllowInsert.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 // Unit Headers
@@ -646,6 +646,5 @@ namespace toolbox{
 
 }
 }
-
 
 

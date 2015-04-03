@@ -38,12 +38,12 @@ enum Chirality {
 
 core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality );
 
-///@details
+/// @details
 class ChiralMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	ChiralMover( core::Size chiral_seq_position );
 	ChiralMover( core::Size chiral_seq_position, Chirality chirality );
 	ChiralMover( core::Size chiral_seq_position, bool orient_functional_group );

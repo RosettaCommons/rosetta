@@ -69,5 +69,4 @@ private: //data
 }//protocols
 
 
-
 #endif //INCLUDED_protocols_enzdes_EnzdesJobOutputter_FWD_HH

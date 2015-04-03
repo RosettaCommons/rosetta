@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_Relaxer
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -62,7 +62,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 using namespace core;

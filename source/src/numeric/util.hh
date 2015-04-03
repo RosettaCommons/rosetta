@@ -98,7 +98,6 @@ namespace numeric {
 	}
 
 
-
 	/// @brief Calculates the acceptance probability of a given score-change at
 	/// the given temperature, generally used in simulated annealing algorithms.
 	/// Returns a value in the range (0-1).

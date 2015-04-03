@@ -19,11 +19,7 @@
 #include <core/pose/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet_.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>

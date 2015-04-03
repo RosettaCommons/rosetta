@@ -48,14 +48,13 @@ namespace moves {
 /// @brief A TrialMover applies a Mover and then accepts or rejects the move
 /// according to a MonteCarlo object.
 ///
-/// @detailed:
+/// @details:
 /// Each derived class should define its own apply() statement
 /// the apply (mc) which requires a monte carlo object and only keeps
 /// the move if the monte carlo test allows it
 ///
-/// @authors Monica Berrondo
+/// @author Monica Berrondo
 ///
-/// @last_modified August 16 2007
 ///////////////////////////////////////////////////////////////////////////////
 
 // silly little enum to keep track of how we want to

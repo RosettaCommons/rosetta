@@ -188,7 +188,6 @@ cal_perrsd_score(
 }
 
 
-//
 void
 FragmentBiasAssigner::
 cal_zscore(
@@ -297,7 +296,6 @@ assign_fragprobs(
 		fragbias_tr << "rsn: " << r << " fragProb: " << fragmentProbs_[r] << " score: " << perrsd_score[r] << std::endl;
 	}
 }
-
 
 
 void
@@ -611,7 +609,6 @@ rama(
 	assign_fragprobs( perrsd_rama_,
 										threshold );
 }
-
 
 
 void

@@ -327,7 +327,7 @@ bool CentroidDisulfidePotential::is_disulfide(
 		cacbcb_angle_2 >= 60. ;
 }
 
-///@brief the Cysteines with cb dist scores less than this threshold are
+/// @brief the Cysteines with cb dist scores less than this threshold are
 /// very likely (99%) to be disulfide bonded.
 const Real CentroidDisulfidePotential::disulfide_cb_dist_cutoff(4.392);
 
@@ -413,7 +413,6 @@ Real NCaCaC_Dihedral_Func::dfunc( Real const ) const {
 	return 0.0;
 }
 HistogramCOP<core::Real,core::Real>::Type NCaCaC_Dihedral_Func::backbone_dihedral_scores_ = 0;
-
 
 
 //CaCbCbCa_Dihedral_Func

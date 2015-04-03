@@ -26,12 +26,10 @@
 #include <numeric/MathVector_operations.hh>
 
 
-
 // --------------- Test Class --------------- //
 
 
 class TricubicSplineTests : public CxxTest::TestSuite {
-
 
 
 public:

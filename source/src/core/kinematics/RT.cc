@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace kinematics {
 
@@ -68,7 +67,6 @@ debug_assert( Size(rb.size()) == 6 );
 	Vector rb_trans( rb[1], rb[2], rb[3] ); // load the first 3
 	translation = new_center + Rzyx * ( translation - new_center ) + rb_trans;
 } // fold_in_rb_deltas
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

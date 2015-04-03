@@ -17,8 +17,6 @@
 
 // Unit Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/fragment/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -31,7 +29,6 @@
 
 // C/C++
 #include <iostream>
-// AUTO-REMOVED #include <utility>
 #include <vector>
 
 //Auto Headers

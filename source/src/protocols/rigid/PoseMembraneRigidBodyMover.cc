@@ -16,8 +16,6 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/types.hh>
 
@@ -30,17 +28,14 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>

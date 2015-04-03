@@ -104,7 +104,6 @@
 #include <basic/Tracer.fwd.hh>
 
 
-
 static basic::Tracer TR("protocols.rotamer_recovery.RRReporter.cxxtest");
 
 class RRReporterTests : public CxxTest::TestSuite {

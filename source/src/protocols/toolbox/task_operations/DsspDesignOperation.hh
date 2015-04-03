@@ -86,7 +86,6 @@ public:
     void set_restrictions_exclude( std::string const & sse, std::string const & aas );
 
 
-
 private:
 
 	/// @brief map sets of allowed residues to secondary structure elements

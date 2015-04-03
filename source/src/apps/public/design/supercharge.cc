@@ -49,8 +49,6 @@
 //5. Output pdb
 
 
-
-
 #include <devel/init.hh>
 
 #include <core/conformation/Residue.hh>
@@ -143,7 +141,7 @@ basic::options::BooleanOptionKey const compare_residue_energies_mut("compare_res
 }//local
 
 
-///@brief Adds charged residues to a protein surface
+/// @brief Adds charged residues to a protein surface
 class supercharge : public protocols::moves::Mover {
 public:
   supercharge(){}
@@ -164,7 +162,6 @@ public:
 				pose.pdb_info()->chain(i, 'A');
 			}
 		}
-
 
 
 		//If the target net charge is -10, current net charge is -4, need to perform positive-supercharging
@@ -396,8 +393,6 @@ public:
 			Size number_to_mutate = residues_to_mutate.size();
 			largest_mutated_AvNAPSA_ = (Size) pair_residue_avnapsa[number_to_mutate].second; //for naming output PDBs
 		}
-
-
 
 
 		////////// if no target net charge //////////////
@@ -654,7 +649,6 @@ public:
 		} //else
 
 
-
 		return;
 	}
 
@@ -832,7 +826,6 @@ public:
 		//native_ = pre_design;
 
 
-
 		//if a target net charge is given as an option, iterate between packrot and incrementing refweights until target charge is acheived
 		if( option[local::target_net_charge_active] ) {
 
@@ -907,8 +900,6 @@ public:
 			}
 
 		}
-
-
 
 
 		/////////////// rename pdb for output ////////////////////////////////////////
@@ -1351,8 +1342,6 @@ public:
 
 		return;
   }
-
-
 
 
 	virtual

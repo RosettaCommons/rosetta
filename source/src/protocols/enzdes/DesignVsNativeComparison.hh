@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_enzdes_DesignVsNativeComparison_hh
 
 
-
 // Unit headers
 
 // Package headers
@@ -40,13 +39,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace enzdes {
 
 class DesignVsNativeComparison;
 typedef utility::pointer::shared_ptr< DesignVsNativeComparison > DesignVsNativeComparisonOP;
-
 
 
 /// @brief class that holds a bunch of native poses and compares them

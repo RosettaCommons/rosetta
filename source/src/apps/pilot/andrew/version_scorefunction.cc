@@ -15,10 +15,8 @@
 /// @author Brian Weitzner
 
 
-
 /// Core headers
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -35,7 +33,6 @@
 /// basic headers
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/sort_predicates.hh>
@@ -49,7 +46,6 @@
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
-
 
 
 OPT_1GRP_KEY( String, sfxnfprnt, output_fingerprint_file )

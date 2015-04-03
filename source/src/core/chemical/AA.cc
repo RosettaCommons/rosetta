@@ -13,11 +13,9 @@
 
 // Rosetta headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
@@ -25,7 +23,6 @@
 
 #include <utility/vector1_bool.hh>
 #include <sstream>
-
 
 
 namespace core {

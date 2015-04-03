@@ -38,7 +38,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/OrderedTuple.hh>
 
 // C++ headers
 #include <list>

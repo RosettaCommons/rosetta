@@ -19,13 +19,10 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 

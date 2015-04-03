@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file devel/enzdes/MotifLoopBuildCreator.hh
-///@brief creates instances MotifLoopBuild opbject for the MoverFactory
-///@author Josh Friedman, jfried23@uw.edu
+/// @file devel/enzdes/MotifLoopBuildCreator.hh
+/// @brief creates instances MotifLoopBuild opbject for the MoverFactory
+/// @author Josh Friedman, jfried23@uw.edu
 
 #ifndef INCLUDED_devel_enzdes_MotifLoopBuildCreator_hh
 #define INCLUDED_devel_enzdes_MotifLoopBuildCreator_hh

@@ -59,11 +59,11 @@ public:
 
 private:
 	
-	///@brief compute the RDF between pairs of protein and ligand atoms
+	/// @brief compute the RDF between pairs of protein and ligand atoms
 	std::map<std::string, utility::vector1<core::Real> > ligand_protein_rdf(core::pose::Pose & pose);
-	///@brief compute the RDF between pairs of protein protein atoms
+	/// @brief compute the RDF between pairs of protein protein atoms
 	std::map<std::string, utility::vector1<core::Real> > protein_protein_rdf(core::pose::Pose & pose);
-	///@brief compute the RDF given a set of atom-atom pairs.  does most of the work.
+	/// @brief compute the RDF given a set of atom-atom pairs.  does most of the work.
 	std::map<std::string, utility::vector1<core::Real> >  compute_rdf(
 		core::pose::Pose & pose,
 		utility::vector1<std::pair<core::id::AtomID, core::id::AtomID> > const & atom_pairs );

@@ -15,21 +15,17 @@
 #include <cmath>
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/pHEnergy.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 

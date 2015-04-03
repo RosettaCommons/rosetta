@@ -9,7 +9,7 @@
 
 /// @file src/core/scoring/methods/ContactOrderEnergy.cc
 /// @brief calculates the contact order of a given conformation average sequence.
-/// @detailed contact order is defined as the average sequence separation of
+/// @details contact order is defined as the average sequence separation of
 /// residues that are in contact.
 ///
 /// @author James Thompson

@@ -16,8 +16,6 @@
 #include <numeric/roc_curve.hh>
 
 
-
-
 int main(int argc, char* argv[])
 {
     try {

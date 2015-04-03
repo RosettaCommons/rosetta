@@ -66,7 +66,6 @@
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 
 
-
 static thread_local basic::Tracer TR( "coiled_coil" );
 
 using core::Size;
@@ -130,7 +129,6 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec const & cen ) {
 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 }
-
 
 
 core::pose::Pose make_helix(std::string seq) {

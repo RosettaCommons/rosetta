@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/IteratedConvergenceMoverCreator.hh
-///@brief This class will create instances of Mover IteratedConvergenceMover for the MoverFactory
-///@author Rocco Moretti (rmoretti@u.washington.edu)
+/// @file protocols/moves/IteratedConvergenceMoverCreator.hh
+/// @brief This class will create instances of Mover IteratedConvergenceMover for the MoverFactory
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_moves_IteratedConvergenceMoverCreator_hh
 #define INCLUDED_protocols_moves_IteratedConvergenceMoverCreator_hh

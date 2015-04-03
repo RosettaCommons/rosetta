@@ -6,12 +6,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Polycubic_spline
 ///
 /// @brief
 /// Polycubic spline for smoothly interpolating a function in n dimensions
 ///
-/// @detailed
+/// @details
 ///
 ///
 /// @references
@@ -19,11 +18,10 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 /// ported to Rosetta by Andrew Leaver-Fay
 /// generalized to n dimensions by Andrew Watkins
 ///
-/// @last_modified Nov 2014
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_numeric_interpolation_spline_PolycubicSpline_hh
@@ -143,8 +141,6 @@ private:
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric
-
-
 
 
 #endif /* POLYCUBIC_SPLINE_HH_ */

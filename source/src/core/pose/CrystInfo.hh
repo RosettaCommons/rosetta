@@ -26,7 +26,7 @@ namespace pose {
 class CrystInfo
 {
 public:
-	///@brief default constructor to initialize all values
+	/// @brief default constructor to initialize all values
 	CrystInfo() {
 		A_ = B_ = C_ = 0.0;
 		alpha_ = beta_ = gamma_ = 90.0;

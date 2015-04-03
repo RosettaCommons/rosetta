@@ -27,7 +27,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <basic/Tracer.hh>
 
@@ -141,7 +140,7 @@ choose_random_base_step_jump( pose::Pose const & pose )
 /// Assumes no intra-dna jumps/cuts to begin with, and NO UNPAIRED BASES
 /// (should relax these assumptions).
 /// just sets the foldtree's connections, does not fiddle with jump atoms, does not change the pose itself
-///
+
 
 void
 add_dna_base_jumps_to_fold_tree(
@@ -384,8 +383,6 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 	setup_dna_only_fold_tree( jump_pose );
 
 }
-
-
 
 
 /// @details  Delete unpaired DNA bases from the input pose

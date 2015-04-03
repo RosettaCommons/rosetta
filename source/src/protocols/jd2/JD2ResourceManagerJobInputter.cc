@@ -81,7 +81,6 @@ using std::stringstream;
 static thread_local basic::Tracer tr( "protocols.jd2.JD2ResourceManagerJobInputter" );
 
 
-
 //CREATOR SECTION
 std::string
 JD2ResourceManagerJobInputterCreator::keyname() const
@@ -874,7 +873,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 
 }
 
-///@details Read the <Data/> subtag of the <Job/>
+/// @details Read the <Data/> subtag of the <Job/>
 ///
 ///   Form 1: <Data desc="resource_description" resource="resource_tag"/>
 ///      Precondition requirements:

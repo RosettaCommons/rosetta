@@ -88,14 +88,14 @@ std::string MultipleOutputWrapper::get_name() const
 	return MultipleOutputWrapperCreator::mover_name();
 }
 
-///@brief Process all input poses (provided pose and from previous mover)
+/// @brief Process all input poses (provided pose and from previous mover)
 void MultipleOutputWrapper::apply(core::pose::Pose& pose)
 {
 	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
 	generate_pose(pose);
 }
 
-///@brief Hook for multiple pose putput to JD2 or another mover
+/// @brief Hook for multiple pose putput to JD2 or another mover
 core::pose::PoseOP MultipleOutputWrapper::get_additional_output()
 {
 	if(!reference_pose_) {

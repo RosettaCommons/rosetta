@@ -24,7 +24,6 @@
 // project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/features/ProteinSilentReport.hh>
 
 // utility Headers
 #include <utility/file/FileName.hh>
@@ -39,7 +38,7 @@
 namespace protocols {
 namespace features {
 
-///@details this is a implementation of JobOutputter for database-based output.
+/// @details this is a implementation of JobOutputter for database-based output.
 class DatabaseJobOutputter : public protocols::jd2::FileJobOutputter
 {
 public:
@@ -73,10 +72,10 @@ public:
 	get_database_pq_schema() const;
 
 
-	///@brief see parent class for explanation
+	/// @brief see parent class for explanation
 	virtual void flush();
 
-	///@brief this function outputs the final result of a job.
+	/// @brief this function outputs the final result of a job.
 	virtual
 	void final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose, std::string const & tag );
 

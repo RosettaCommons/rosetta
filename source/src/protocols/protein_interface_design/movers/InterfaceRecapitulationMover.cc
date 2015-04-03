@@ -51,7 +51,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
 using namespace core;
 
 // option key includes

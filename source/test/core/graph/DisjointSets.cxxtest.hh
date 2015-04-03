@@ -64,7 +64,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	/// @detailed
+	/// @details
 	/// A trivial example that shows how to use various functions in the DisjointSets class
 	///
 	void test_disjoint_sets_example1() {

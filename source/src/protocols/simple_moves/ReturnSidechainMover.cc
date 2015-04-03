@@ -50,7 +50,7 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.ReturnSidechainMov
 namespace protocols {
 namespace simple_moves {
 
-///@details this code was copied from protocols/loops/loops_main.cc:187-204, revision 21282
+/// @details this code was copied from protocols/loops/loops_main.cc:187-204, revision 21282
 void
 ReturnSidechainMover::apply( core::pose::Pose & pose )
 {

@@ -16,25 +16,16 @@
 
 // Project headers
 #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/conformation/PointGraph.hh>
-// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/util.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

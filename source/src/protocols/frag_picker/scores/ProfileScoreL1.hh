@@ -23,7 +23,6 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/fragment_scoring_utilities.hh>
 
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 
 #include <utility/vector1.hh>
 

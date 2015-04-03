@@ -22,7 +22,6 @@
 
 // boost headers
 #include <boost/tuple/tuple.hpp>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 

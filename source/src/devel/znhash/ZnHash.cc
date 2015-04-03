@@ -411,7 +411,7 @@ void ZnCoordinationScorer::add_match_from_file(
 		utility_exit_with_message( "Bad input to ZnCoordinateConstraint add_match_from_file()" );
 	}
 
-	//
+
 	Size nhistadines( 0 );
 	for ( Size ii = 1; ii <= 2; ++ii ) {
 		if ( match_pose.residue(ii).aa() == core::chemical::aa_his ) ++nhistadines;
@@ -968,7 +968,6 @@ ZnCoordinationScorer::insert_match_onto_pose(
 	}
 
 }
-
 
 
 // @brief Compute the homogeneous transform that will take Zn coordinates from the reference frame,

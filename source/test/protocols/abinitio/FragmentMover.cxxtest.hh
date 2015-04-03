@@ -19,8 +19,6 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -30,9 +28,6 @@
 #include <core/fragment/FrameIteratorWorker_.hh>
 
 #include <core/fragment/util.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
 
 
 #include <core/pose/Pose.hh>
@@ -287,7 +282,6 @@ void FragmentMoverTest::test_proposed_ss() {
   using namespace protocols;
   using namespace simple_moves;
   using namespace scoring;
-
 
 
   std::string proposed_ss;

@@ -1003,6 +1003,5 @@ MatchOutputTracker::match_has_been_output( match_lite const & m ) const
 }
 
 
-
 }
 }

@@ -23,14 +23,12 @@
 #include <iostream>
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/FastMultiRelax.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -41,7 +39,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 class DisulfEpos : public utility::pointer::ReferenceCount {

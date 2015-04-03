@@ -23,14 +23,12 @@
 #include <core/conformation/signals/LengthEvent.hh>
 //#include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // utility headers
 #include <utility/signals/Link.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
-
 
 
 namespace core {

@@ -9,7 +9,7 @@
 
 /// @file Svm_rosetta.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author TJ Brunette
 

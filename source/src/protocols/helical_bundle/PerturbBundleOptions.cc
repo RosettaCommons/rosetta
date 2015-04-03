@@ -74,7 +74,7 @@ namespace protocols {
 		PerturbBundleOptions::~PerturbBundleOptions() {}
 
 
-		///@brief make a copy of this PerturbBundleOptions object (allocate actual memory for it)
+		/// @brief make a copy of this PerturbBundleOptions object (allocate actual memory for it)
 		///
 		PerturbBundleOptionsOP
 		PerturbBundleOptions::clone() const

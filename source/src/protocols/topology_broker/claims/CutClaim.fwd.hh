@@ -19,7 +19,6 @@
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

@@ -56,12 +56,10 @@
 
 // C++ headers
 #include <string>
-// AUTO-REMOVED #include <ctime>
 #include <sstream>
 #include <iterator>
 
 //Debug headers
-// AUTO-REMOVED #include <protocols/abinitio/AbrelaxMover.hh>
 #include <fstream> //testing
 #include <utility/io/izstream.hh>
 
@@ -112,8 +110,6 @@ namespace archive {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
-
-
 
 
 std::string
@@ -276,7 +272,7 @@ void BaseArchiveManager::set_archive( AbstractArchiveBaseOP anArchive ) {
 	theArchive_->initialize();
 }
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 ArchiveManager::ArchiveManager( core::Size archive_rank, core::Size jd_master_rank, core::Size file_buf_rank ) :
   archive_rank_( archive_rank ),

@@ -9,16 +9,14 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_closure/ccd/CCDLoopClosureMover.hh>
 #include <protocols/loops/loop_closure/ccd/LoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
@@ -28,24 +26,19 @@
 #include <protocols/evaluation/util.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragCache.hh> // for FragStore
 
-// AUTO-REMOVED
 
 #include <basic/options/option.hh> // for quick-test from run:dry_run
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/out.OptionKeys.gen.hh> //for frag_file ... temporary!
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/fast_loops.OptionKeys.gen.hh>

@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to relax
-/// @detailed
+/// @details
 /// @author Mike Tyka, Monica Berrondo
 
 //#include <protocols/jobdist/Jobs.hh>
@@ -94,7 +94,6 @@ using io::pdb::dump_pdb;
 
 namespace protocols {
 namespace relax {
-
 
 
 RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) :

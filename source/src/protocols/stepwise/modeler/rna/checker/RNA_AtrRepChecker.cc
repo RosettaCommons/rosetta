@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/checker/RNA_AtrRepChecker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

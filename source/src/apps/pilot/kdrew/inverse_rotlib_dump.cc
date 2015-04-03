@@ -80,7 +80,7 @@
 using namespace basic::options;
 using namespace protocols;
 
-//
+
 // tracer - used to replace cout
 static thread_local basic::Tracer TR( "Inverse Rotamer Library Dumper" );
 
@@ -133,7 +133,6 @@ main( int argc, char* argv[] )
     return 0;
 
 }//main
-
 
 
 void

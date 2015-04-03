@@ -179,11 +179,10 @@ setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin CDR_H3_filter
 ///
 /// @brief tests if a loop has H3 like base charachteristics
 ///
-/// @detailed Uses the Shirai rules to find out if the dihedral angle
+/// @details Uses the Shirai rules to find out if the dihedral angle
 ///           formed by CA atoms of residues n-2,n-1,n and n+1 conform to a
 ///           kinked/extended structure in accordance with the sequence. If
 ///           there is a match, a true value is returned
@@ -201,9 +200,8 @@ setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
 ///             Hiroki Shirai, Akinori Kidera, Haruki Nakamura
 ///             FEBS Letters 399 (1996) 1-8
 ///
-/// @authors Aroop 02/04/2010
+/// @author Aroop 02/04/2010
 ///
-/// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
 
 //TODO:
@@ -265,7 +263,6 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 
 
 	TR << "Base Dihedral: " << base_dihedral << std::endl;
-
 
 
 	// JQX: the code in the below if statement was in Rosetta 2, but Aroop did not port it into R3

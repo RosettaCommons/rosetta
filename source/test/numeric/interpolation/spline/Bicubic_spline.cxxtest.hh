@@ -14,7 +14,6 @@
 /// the e_periodic steps.
 
 
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 
@@ -25,12 +24,10 @@
 #include <numeric/MathVector_operations.hh>
 
 
-
 // --------------- Test Class --------------- //
 
 
 class Bicubic_spline_tests : public CxxTest::TestSuite {
-
 
 
 public:
@@ -78,7 +75,6 @@ public:
 		const std::pair<numeric::Real, numeric::Real> first_be[2] = {std::pair<numeric::Real, numeric::Real>(10,10), std::pair<numeric::Real, numeric::Real>(10,10) };
 
 
-
 		numeric::interpolation::spline::BicubicSpline naturalspline;
 
 		//numeric::interpolation::spline::BicubicSpline *testspline;
@@ -86,8 +82,6 @@ public:
 		//testspline->train(behavior, start, delta, input_values, lin_cont, first_be);
 
 		naturalspline.train(behavior, start, delta, input_values, lin_cont, first_be);
-
-
 
 
 		TS_ASSERT_EQUALS(36, naturalspline.get_dsecox().get_number_cols());
@@ -98,7 +92,6 @@ public:
 		TS_ASSERT_EQUALS(33.5, naturalspline.F(numeric::MakeVector(3.0, 0.0)));
 		TS_ASSERT_EQUALS(-0.5, naturalspline.dFdx(numeric::MakeVector(3.0, 0.0)));
 		TS_ASSERT_LESS_THAN(-0.391435, naturalspline.dFdy(numeric::MakeVector(3.0, 0.0)));
-
 
 
 	}

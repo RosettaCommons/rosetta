@@ -13,7 +13,6 @@
 #include <numeric/xyzVector.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.fwd.hh>
@@ -34,7 +33,6 @@ namespace orbitals{
 
 class AssignOrbitals {
 public:
-
 
 
 	AssignOrbitals(core::chemical::ResidueTypeOP const restype);
@@ -120,7 +118,6 @@ private:
 }
 }
 }
-
 
 
 #endif /* INCLUDED_core_chemical_orbitals_AssignOrbitals_hh */

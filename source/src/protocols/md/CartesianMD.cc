@@ -9,7 +9,7 @@
 
 /// @file    protocols/md/MDBase.hh
 /// @brief   initialization for MD
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 #include <protocols/md/CartesianMDCreator.hh>

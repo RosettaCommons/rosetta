@@ -16,9 +16,7 @@
 #include <protocols/abinitio/TemplateJumpSetup.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/abinitio/Templates.hh>
 #include <protocols/jumping/JumpSetup.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -70,7 +68,7 @@ public:
 
 	//'	jumping::JumpSample
 	//	create_jump_sample( std::string ModelID ) const;
-  ///@brief returns an ordered FragSet that is compatible with the JumpSample
+  /// @brief returns an ordered FragSet that is compatible with the JumpSample
   /// default: generate jumps from ss-library according to JumpSample
   virtual
 	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const;

@@ -85,7 +85,7 @@ namespace scores {
 FragmentScoreManager::~FragmentScoreManager() {}
 
 /// @brief creates an empty score map
-/// @detailed this is the recommended way to create FragmentScoreMap objects since FragmentScoreManager knows exactly
+/// @details this is the recommended way to create FragmentScoreMap objects since FragmentScoreManager knows exactly
 /// what is the correct size of the map i.e. how many scoring terms have been registered.
 FragmentScoreMapOP FragmentScoreManager::create_empty_map() {
 

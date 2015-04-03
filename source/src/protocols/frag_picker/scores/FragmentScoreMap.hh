@@ -16,7 +16,6 @@
 
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -31,14 +30,14 @@ namespace scores {
 using namespace core;
 
 /// @brief holds all small scores (score components) for a given fragment
-/// @detailed each scoring method puts its own result into the map. The total score
+/// @details each scoring method puts its own result into the map. The total score
 /// is a dot product of the vector from this map and a vector of weights
 class FragmentScoreMap: public utility::pointer::ReferenceCount {
 
 public:
 
 	/// @brief creates a new map for a given number of components
-	/// @detailed usually the new map should be created by FragmentScoreManager::create_empty_map()
+	/// @details usually the new map should be created by FragmentScoreManager::create_empty_map()
 	inline FragmentScoreMap(Size n_componens) {
 		small_scores_.resize(n_componens);
 		was_modified_ = false;
@@ -73,7 +72,7 @@ public:
 	}
 
 	/// @brief returns the total score that has been evaluated recently
-	/// @detailed the method does not compute anything. You must check if the map has been
+	/// @details the method does not compute anything. You must check if the map has been
 	/// modified after the last total score calculation. If so, you must recompute the total again
 	inline Real get_most_recent_total_score() {
 		return recent_total_;

@@ -20,14 +20,9 @@
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/string_util.hh>
 
@@ -118,7 +113,7 @@ Mover::Mover( Mover const & other ) :
 {}
 
 
-///@brief assignment operator
+/// @brief assignment operator
 Mover& Mover::operator=( Mover const & rhs ) {
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -174,7 +169,7 @@ void Mover::save_state( SerializableState & /*state*/ ) {
 }
 
 // end mpr support
-///@details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
+/// @details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
 void Mover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
@@ -199,29 +194,29 @@ Mover::get_current_job() const {
 }
 
 
-///@details Mechanism by which a mover may return multiple output poses from a single input pose.  After apply is called, calling this function will return subsequent output poses.  NULL is returned if the mover has no more output poses remaining.  The base class implementation returns NULL always; multi-output movers must override this.  RosettaScripts uses this interface to produce a 'branched' protocol.
+/// @details Mechanism by which a mover may return multiple output poses from a single input pose.  After apply is called, calling this function will return subsequent output poses.  NULL is returned if the mover has no more output poses remaining.  The base class implementation returns NULL always; multi-output movers must override this.  RosettaScripts uses this interface to produce a 'branched' protocol.
 core::pose::PoseOP
 Mover::get_additional_output() {
 	return NULL;
 }
 
 //////////////////////////start Job Distributor interface//////////////////////////////////
-///@details used by job distributor to get status
+/// @details used by job distributor to get status
 MoverStatus Mover::get_last_move_status() const { return last_status_; }
 
-///@details The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
+/// @details The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
 void Mover::reset_status() { last_status_ = MS_SUCCESS; }
 
-///@details use this function for implementing filtering in your protocol - failed jobs should set the status to something other than "SUCCESS".
+/// @details use this function for implementing filtering in your protocol - failed jobs should set the status to something other than "SUCCESS".
 void Mover::set_last_move_status( MoverStatus status ) { last_status_ = status; }
 
-///@details Movers default to not regenerating
+/// @details Movers default to not regenerating
 bool Mover::reinitialize_for_each_job() const { return false; }
 
-///@details Movers default to not regenerating
+/// @details Movers default to not regenerating
 bool Mover::reinitialize_for_new_input() const { return false; }
 
-///@details fresh_instance is meant to return a new object of this class, created with the default constructor.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.  This is used by the August 08 job distributor.
+/// @details fresh_instance is meant to return a new object of this class, created with the default constructor.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.  This is used by the August 08 job distributor.
 MoverOP Mover::fresh_instance() const
 {
 	utility_exit_with_message("fresh_instance has been called on a Mover which has not overridden the base class implementation.  Probably you tried to pass a Mover to the job distributor which does not have fresh_instance implemented.  Implement the function and try again.\n");
@@ -229,14 +224,14 @@ MoverOP Mover::fresh_instance() const
 	//return MoverOP( new Mover ); //this is what your Mover should return - it's illegal here because Mover does not define the pure virtual function apply().
 }
 
-///@details clone is meant to return an OP'ed deep copy of this object.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.
+/// @details clone is meant to return an OP'ed deep copy of this object.  This really should be a pure virtual in the base class, but adding pure virtuals to Mover would massively disrupt the code.  This default implementation crashes at runtime instead of compiletime if you try to call it.  If this code is causing you problems, your Mover needs to override this function.
 MoverOP Mover::clone() const {
 	utility_exit_with_message( "clone has been called on a Mover which has not overridden the base class implementation.  Probably you tried to pass a Mover to the job distributor or parser which does not have clone implemented.  Implement the function and try again.\n");
 	return MoverOP(NULL);
 }
 
 // Outputs details about the Mover, including current settings.
-///@details Ideally, a child Mover should call Mover.show() and add additional information particular to that Mover.
+/// @details Ideally, a child Mover should call Mover.show() and add additional information particular to that Mover.
 void
 Mover::show(std::ostream & output) const
 {

@@ -16,14 +16,11 @@
 
 ///Project headers
 
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobInputter.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 ///Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 ///C++ headers
 #include <string>
@@ -65,7 +62,7 @@ core::pose::PoseCOP InnerJob::get_pose() const { return pose_; }
 
 void InnerJob::set_pose( core::pose::PoseCOP pose ) { pose_ = pose; }
 
-///@details Only compare the pointer value of the pose the inner
+/// @details Only compare the pointer value of the pose the inner
 ///job is referencing.
 bool
 operator==(

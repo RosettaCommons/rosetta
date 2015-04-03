@@ -24,7 +24,6 @@ namespace protocols {
 namespace sic_dock {
 
 
-
 Vec3
 get_leap_upper_stub(
 	core::pose::Pose const & pose,

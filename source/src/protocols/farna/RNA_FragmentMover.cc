@@ -226,7 +226,6 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!"<< std::endl;
 
 
-
 	insert_map_frag_size_ = frag_size_; //up to date!
 
 }

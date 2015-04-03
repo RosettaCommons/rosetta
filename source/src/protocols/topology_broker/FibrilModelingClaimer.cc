@@ -17,7 +17,6 @@
 #include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.hh>
@@ -40,8 +39,6 @@
 #include <protocols/loops/LoopsFileIO.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>

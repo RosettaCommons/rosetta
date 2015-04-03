@@ -90,5 +90,4 @@ class Bond;
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_Bond_FWD_HH

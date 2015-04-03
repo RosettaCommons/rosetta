@@ -42,7 +42,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 //#include <core/scoring/func/Func.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -76,8 +75,6 @@
 //Auto Headers
 #include <core/kinematics/tree/Atom.hh>
 #include <core/scoring/EnergyGraph.hh>
-
-
 
 
 namespace protocols {
@@ -955,9 +952,7 @@ LigandBaseProtocol::reorder_foldtree_around_mobile_regions(
 	if( lig_id != 0 ) runtime_assert( lig_id == get_ligand_id(pose, jump_id) ); // runtime_assert ligand ID hasn't changed
 
 
-
 } // reorder_foldtree_around_mobile_regions
-
 
 
 void
@@ -1041,7 +1036,6 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 
 } //get_non_bb_clashing_rotamers
-
 
 
 } // namespace ligand_docking

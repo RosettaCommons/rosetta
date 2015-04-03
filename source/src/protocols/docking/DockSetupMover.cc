@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 //Unit Headers
@@ -64,18 +64,18 @@ DockSetupMover::DockSetupMover() {
 	set_defaults();
 }
 
-///@brief clone operator, calls the copy constructor
+/// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 DockSetupMover::clone() const {
 	return protocols::moves::MoverOP( new DockSetupMover(*this) );
 }
 
-///@brief copy ctor
+/// @brief copy ctor
 DockSetupMover::DockSetupMover( DockSetupMover const & rhs ) : Mover(rhs) {
 	copy(*this, rhs);
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 DockSetupMover & DockSetupMover::operator=( DockSetupMover const & rhs ) {
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -115,7 +115,6 @@ DockSetupMover::apply( pose::Pose & pose ) {
 }
 
 //// --------------------------------- Setters -------------------------------------------------
-
 
 
 /// ----------------------------------------- Getters ------------------------------------------

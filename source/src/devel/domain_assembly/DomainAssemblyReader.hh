@@ -15,9 +15,7 @@
 #define INCLUDED_devel_domain_assembly_DomainAssemblyReader_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <devel/domain_assembly/domain_assembly_setup.hh>
-// AUTO-REMOVED #include <devel/domain_assembly/domain_assembly.hh>
 
 // Package Headers
 
@@ -25,7 +23,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // STL Headers
@@ -48,7 +45,7 @@ typedef utility::pointer::shared_ptr< DomainAssemblyCommand const > DomainAssemb
 class DomainAssemblyCommand : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~DomainAssemblyCommand();
 	//@brief domain_action is the activity code for the option
 	virtual
@@ -145,7 +142,7 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 
 ///////////utility functions for domain_assembly reader//////////
 //add comment_line to resfile reader.hh
-///@brief utility for domain_assembly reader, commands MUST be entered into this hard-coded map
+/// @brief utility for domain_assembly reader, commands MUST be entered into this hard-coded map
 std::map< std::string, DomainAssemblyCommandOP >
 create_command_map();
 

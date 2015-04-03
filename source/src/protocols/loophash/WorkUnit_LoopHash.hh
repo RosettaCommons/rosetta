@@ -57,9 +57,6 @@ class WorkUnit_LoopHash: public protocols::wum::WorkUnit_SilentStructStore {
 };
 
 
-
-
-
 }
 }
 

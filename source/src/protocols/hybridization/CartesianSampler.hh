@@ -106,13 +106,13 @@ protected:
 	// apply a sequence fragment
 	bool apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 
-	//
+
 	void compute_fragment_bias( core::pose::Pose & pose );
 
-	//
+
 	void update_fragment_library_pointers( );
 
-	//
+
 	void apply_constraints( core::pose::Pose & pose );
 
 	// get frag->pose transform, return RMS

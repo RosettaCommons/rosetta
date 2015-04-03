@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/InterlockingAromaFilter.cc
 /// @brief filter structures by packstat score
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers

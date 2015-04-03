@@ -26,12 +26,12 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
-///@details
+/// @details
 class OopMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	OopMover( core::Size oop_seq_position );
 	OopMover( core::Size oop_seq_position, core::Real phi_angle, core::Real psi_angle );
 

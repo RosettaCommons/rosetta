@@ -34,12 +34,10 @@
 // C++ Headers
 #include <cstdlib>
 #include <iostream>
-// AUTO-REMOVED #include <utility>
 
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "core.io.constraints" );
@@ -143,7 +141,7 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	}
 }
 
-///
+
 Real
 CoordinateConstraint::non_virtual_score(
 	Vector const & xyz
@@ -152,7 +150,7 @@ CoordinateConstraint::non_virtual_score(
 	return func( xyz.distance( xyz_target_ ) );
 }
 
-///
+
 void
 CoordinateConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
@@ -186,15 +184,13 @@ CoordinateConstraint::fill_f1_f2(
 }
 
 
-
-///
 Size
 CoordinateConstraint::natoms() const
 {
 	return 2;
 }
 
-///
+
 core::id::AtomID const &
 CoordinateConstraint::atom( Size const n ) const
 {
@@ -237,7 +233,7 @@ CoordinateConstraint::steal_def( pose::Pose const& pose ) {
   xyz_target_ = conformation.xyz( atom_ );
 }
 
-///@details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
+/// @details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
 void
 CoordinateConstraint::read_def(
 	std::istream& data,

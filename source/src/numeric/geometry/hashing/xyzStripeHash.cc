@@ -495,7 +495,6 @@ std::string xyzStripeHash::debug_pdb(Xform const & x) const {
 }
 
 
-
  } // namespace hashing
  } // namespace geometry
  } // namespace numeric

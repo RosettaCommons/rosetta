@@ -16,10 +16,7 @@
 #define DEVEL_INVKINLIGLOOPDESIGN_RESID_HH
 
 #include <iostream>
-// AUTO-REMOVED #include <vector>
 #include <map>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -55,8 +52,6 @@ namespace devel {
 
     istream& operator>>(istream& in, ResID& res_id );
     ostream& operator<<(ostream& out, ResID const& res_id );
-
-
 
 
   }

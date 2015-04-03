@@ -15,11 +15,9 @@
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 
 // project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <iostream>
@@ -99,13 +97,13 @@ SheetFoldTypeManager::setup_foldtype_names()
 	name2foldtype_[ "Rsmn3x3" ] = Rsmn3x3;
 	name2foldtype_[ "Ploop3x3" ] = Ploop3x3;
 
-	///
+
 	name2foldtype_[ "UNFOLD" ] = UNFOLD;
 
-	///
+
 	name2foldtype_[ "NO_STRANDS" ] = NO_STRANDS;
 
-	///
+
 	name2foldtype_[ "UNKNOWN" ] = UNKNOWN;
 
 	assert( name2foldtype_.size() == n_fold_types );
@@ -197,13 +195,13 @@ SheetFoldTypeManager::setup_foldtype_strand_pairings()
 	spairs2foldtype_[ "1-2.P;1-4.P;2-3.P;4-5.P;5-6.P" ] = Rsmn3x3;
 	spairs2foldtype_[ "1-4.P;1-5.P;2-3.P;2-4.P;5-6.P" ] = Ploop3x3;
 
-	///
+
 	spairs2foldtype_[ "UNFOLD" ] = UNFOLD;
 
-	///
+
 	spairs2foldtype_[ "" ] = NO_STRANDS;
 
-	///
+
 	spairs2foldtype_[ "UNKNOWN" ] = UNKNOWN;
 
 	assert( spairs2foldtype_.size() == n_fold_types );

@@ -142,14 +142,14 @@ public:
 	void
 	set_preserve_detailed_balance( bool setting );
 
-	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	bool change_chi_without_replacing_residue() const;
 
-	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	void
 	set_change_chi_without_replacing_residue(	bool setting );
 
-	///@brief return true if your last move has mutated residue --- make sure the residue is replaced entirely
+	/// @brief return true if your last move has mutated residue --- make sure the residue is replaced entirely
 	virtual bool have_mutated_residue() const { return false; }
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges

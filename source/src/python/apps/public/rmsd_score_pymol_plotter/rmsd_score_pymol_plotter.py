@@ -9,8 +9,6 @@ import Tkinter, tkFileDialog, tkSimpleDialog
 from pymol import cmd
 
 
-
-
 def __init__( self ):
     self.menuBar.addmenuitem( 'Plugin', 'command', "RMSD_score_plotter",
                               label='RMSD Score Plotter',
@@ -29,7 +27,6 @@ class RMSD_score_plotter:
 
 
         self.parent = app.root
-
 
 
         self.main = Tkinter.Toplevel( self.parent )
@@ -57,8 +54,6 @@ class RMSD_score_plotter:
 
         print "single click point to get name of structure"
         print "double click point to open structure in pymol"
-
-
 
 
     def import_data( self ):
@@ -101,7 +96,6 @@ class RMSD_score_plotter:
         self.canvas.create_text( x - 3, y + 3,   text=text, fill=self.mark_color, anchor="ne" )
 
 
-
     def draw_axes( self ):
 
         ul_corner = self.pad, self.pad
@@ -120,10 +114,6 @@ class RMSD_score_plotter:
         self.draw_major_y_mark( ll_corner, str( round( self.y_min, 1 ) ) )
         self.draw_major_y_mark( midl,      str( round( float( self.y_min + self.y_max ) / 2, 1 ) ) )
         self.draw_major_y_mark( ul_corner, str( round( self.y_max, 1 ) ) )
-
-
-
-
 
 
     def display_data( self ):
@@ -162,7 +152,6 @@ class RMSD_score_plotter:
         for i in range( len( self.score ) ):
 
 
-
             x = self.rmsd[ i ]
             y = self.score[  i ]
 
@@ -180,7 +169,6 @@ class RMSD_score_plotter:
             y1 = y + point_size/2.
 
             self.canvas.create_oval(x0, y0, x1, y1, fill=point_color, tag=str( i ) )
-
 
 
     def event_double_click( self, event ):
@@ -223,7 +211,6 @@ class RMSD_score_plotter:
             self.loaded_structures.append(structure_filename)
 
         print "opening structure file", structure_filename
-
 
 
         structure_file = open( structure_filename )

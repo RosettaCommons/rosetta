@@ -137,7 +137,7 @@ RotamerTrialsMinMover::task( core::pose::Pose const & pose ) const
 	return task_->clone();
 }
 
-///@brief Parse XML for RosettaScripts
+/// @brief Parse XML for RosettaScripts
 void
 RotamerTrialsMinMover::parse_my_tag(
 	TagCOP const tag,
@@ -171,14 +171,14 @@ RotamerTrialsMinMover::parse_my_tag(
 	}
 }
 
-///@brief Return a new mover instance (for RosettaScripts)
+/// @brief Return a new mover instance (for RosettaScripts)
 protocols::moves::MoverOP
 RotamerTrialsMinMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new RotamerTrialsMinMover );
 }
 
-///@brief Return a copy of this mover instance (for RosettaScripts)
+/// @brief Return a copy of this mover instance (for RosettaScripts)
 protocols::moves::MoverOP
 RotamerTrialsMinMover::clone() const
 {

@@ -95,12 +95,10 @@
 #include <core/sequence/Sequence.hh>
 
 
-
 // C++ headers
 #include <fstream>
 #include <iostream>
 #include <string>
-
 
 
 #include <basic/Tracer.hh>
@@ -113,11 +111,9 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
 
 
 using namespace core;
@@ -189,7 +185,6 @@ main( int argc, char * argv [] )
 	}
 
 
-
 //		it->id()
 /*
 		vector1< core::Real > scores;
@@ -226,9 +221,6 @@ main( int argc, char * argv [] )
       					<< ((char((*it)[ir]) == '-') ? '0' : '1' )
 								<< std::endl;
 */
-
-
-
 
 
   core::pose::Pose newpose = structures[1];
@@ -319,7 +311,6 @@ main( int argc, char * argv [] )
 		}
 		model.push_back( bestpdb );
 	}
-
 
 
 	float curcost = cost( quality_vs_ir, model, slen );

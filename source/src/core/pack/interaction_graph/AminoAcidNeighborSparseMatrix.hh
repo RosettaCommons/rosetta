@@ -18,10 +18,8 @@
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.Project.hh>
 #include <ObjexxFCL/FArray1.hh>
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
@@ -485,9 +483,7 @@ public:
 	}
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin AminoAcidNeighborSparseMatrix::force_all_aa_neighbors
 ///
 /// @brief
 /// set this sparse-matrix to a completely-non-sparse state.  All entries
@@ -505,9 +501,8 @@ public:
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 	inline
 	void force_all_aa_neighbors()

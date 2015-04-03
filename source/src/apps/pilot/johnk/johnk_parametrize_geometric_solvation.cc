@@ -58,8 +58,6 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-
-
 using namespace core;
 using namespace core::scoring;
 using namespace core::scoring::hbonds;
@@ -157,9 +155,6 @@ void dump_water_grid_file( std::string const & fname, GridInfo const & grid_info
 	outstream.clear();
 
 }
-
-
-
 
 
 /// General testing code

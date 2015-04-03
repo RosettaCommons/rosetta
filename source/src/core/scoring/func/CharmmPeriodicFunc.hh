@@ -56,7 +56,6 @@ private:
 }; //charmm periodic func
 
 
-
 } // constraints
 } // scoring
 } // core

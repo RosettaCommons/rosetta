@@ -20,12 +20,9 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/min_pack.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers

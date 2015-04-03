@@ -9,17 +9,7 @@
 #define FOLDFROMLOOPS_FUNCTIONS_HH_
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 
-
-// AUTO-REMOVED #include <vector>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <string>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -32,11 +22,8 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace devel {
 namespace fold_from_loops{
-
 
 
 bool is_loop (
@@ -70,7 +57,6 @@ void CA_cst_generator(core::pose::Pose & pose,
 					core::scoring::constraints::ConstraintSetOP & cst,
 					protocols::loops::Loops & loops
 );
-
 
 
 bool is_loop_neighbor( protocols::loops::Loops & loops,

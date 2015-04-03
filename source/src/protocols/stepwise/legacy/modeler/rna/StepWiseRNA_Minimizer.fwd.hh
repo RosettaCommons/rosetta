@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/modeler/rna/StepWiseRNA_Minimizer.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

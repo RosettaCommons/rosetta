@@ -61,7 +61,7 @@ public:
 	HBondOptions const &
 	operator=( HBondOptions const & src );
 
-	///@brief set hbond options from key value options in a Tag
+	/// @brief set hbond options from key value options in a Tag
 	///structure, e.g. from a block in the SCOREFXNS section of a
 	///RosettaScripts file.
 	void
@@ -75,91 +75,91 @@ public:
 	bool
 	exclude_self_hbonds() const;
 
-	///
+
 	void
 	exclude_self_hbonds( bool const setting );
 
-	///
+
 	bool
 	exclude_DNA_DNA() const;
 
-	///
+
 	void
 	exclude_DNA_DNA( bool const setting );
 
-	///
+
 	bool
 	put_intra_into_total() const;
 
-	///
+
 	void
 	put_intra_into_total( bool const setting );
 
-	///
+
 	bool
 	exclude_intra_res_protein() const;
 
-	///
+
 	void
 	exclude_intra_res_protein( bool const setting );
 
-	///
+
 	bool
 	exclude_intra_res_RNA() const;
 
-	///
+
 	void
 	exclude_intra_res_RNA( bool const setting );
 
-	///
+
 	bool
 	use_hb_env_dep_DNA() const;
 
-	///
+
 	void
 	use_hb_env_dep_DNA( bool const setting );
 
-	///
+
 	bool
 	use_hb_env_dep() const;
 
-	///
+
 	void
 	use_hb_env_dep( bool const setting );
 
-	///
+
 	bool
 	smooth_hb_env_dep() const;
 
-	///
+
 	void
 	smooth_hb_env_dep( bool const setting );
 
-	///
+
 	bool
 	bb_donor_acceptor_check() const;
 
-	///
+
 	void
 	bb_donor_acceptor_check( bool const setting );
 
-	///
+
 	bool
 	decompose_bb_hb_into_pair_energies() const;
 
-	///
+
 	void
 	decompose_bb_hb_into_pair_energies( bool const setting );
 
-	///
+
 	//std::string const &
 	//HBEval_fname() const;
 
-	///
+
 	void
 	params_database_tag( std::string const & setting );
 
-	///
+
 	std::string const &
 	params_database_tag() const;
 
@@ -235,7 +235,7 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const HBondOptions & options );
 
-	///
+
 	void
 	show( std::ostream & out ) const;
 

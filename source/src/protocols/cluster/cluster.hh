@@ -93,7 +93,6 @@ private:
 };
 
 
-
 // Main base class for making constraints out of groups of structures
 
 class EnsembleConstraints;
@@ -109,7 +108,6 @@ public:
 	virtual void createConstraints( std::ostream &out ) = 0;
 	virtual std::string get_name() const;
 };
-
 
 
 // A super simple implementation of the above - jsut create bounds for close CA atoms.
@@ -131,8 +129,6 @@ public:
 protected:
 	core::Real minimum_width_;
 };
-
-
 
 
 class ClusterBase;

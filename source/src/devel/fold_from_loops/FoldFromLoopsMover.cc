@@ -9,7 +9,6 @@
 // author bcorreia
 
 
-
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -22,8 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
 
-
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 
 //scoring
 
@@ -46,7 +43,6 @@
 #include <protocols/jumping/util.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/loops/Exceptions.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -54,16 +50,9 @@
 
 
 //constraints
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/Func.hh>
 
 //design headers
-
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 
 
 //options
@@ -71,19 +60,15 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
 
 
 #include <utility/string_util.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <ctime>
 
 #include <basic/Tracer.hh>
 
@@ -143,20 +128,16 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	fold_tree_cutpoints_generator(loops_, cut_points, input_pose , f);
 
 
-
 	define_movemap( movemap, input_pose , loops_);
 
 
     core::pose::Pose loops_pdb = loops_pdb_;
 
 
-
 	new_pose_generator( loops_pdb  , input_pose , loops_, cut_points );
 
 
-
 	input_pose = loops_pdb; //update the input pose to the newly generated pose
-
 
 
 	input_pose.fold_tree( f );
@@ -165,19 +146,13 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	refresh_cutpoints(input_pose, cut_points);
 
 
-
-
-
 	if (option[ OptionKeys::in::file::psipred_ss2 ].user() ) {
 
 
 			protocols::loops::set_secstruct_from_psipred_ss2( input_pose ); //needs to be done inside the mover
 
 
-
 	}
-
-
 
 
 	protocols::abinitio::ClassicAbinitioOP abinitio( new protocols::abinitio::ClassicAbinitio( frag_small_, frag_large_ ,movemap ) );
@@ -197,8 +172,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 	abinitio->apply( input_pose);
 
 
-
-
 	TR << "Pose Secondary Structure After abinitio " << input_pose.secstruct() << std::endl;
 
 
@@ -211,9 +184,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 	pose::setPoseExtraScore( input_pose, "rms",   rmsd_to_native );
 	(*scorefxn_centr)(input_pose);
-
-
-
 
 
 		if ( rmsd_to_native < option[ OptionKeys::fold_from_loops::ca_rmsd_cutoff] )
@@ -229,8 +199,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 
 
 					TR << "Chain Break -  " << chain_break_dist << std::endl;
-
-
 
 
 					protocols::loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol( new protocols::loops::loop_closure::ccd::SlidingWindowLoopClosure( frag_small_, scorefxn_centr, movemap ) );
@@ -255,7 +223,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 		    }
 
 
-
 			if ( get_last_move_status() == MS_SUCCESS && option [OptionKeys::fold_from_loops::output_centroid].user() ){
 
 				(*scorefxn_centr)(input_pose);
@@ -275,8 +242,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			scorefxn_fa->set_weight(scoring::overlap_chainbreak, 1 );
 
 
-
-
 			//if (loops_.size() > 1 ){
 
 				//refresh_cutpoints(input_pose, cut_points);
@@ -287,20 +252,16 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			copying_side_chains_swap_loop( loops_pdb_ , input_pose, loops_, movemap );
 
 
-
 			(*scorefxn_fa)(input_pose);
 
 
 			design_excluding_swap_loops (  input_pose, loops_, scorefxn_fa );
 
 
-
 			protocols::relax::ClassicRelax relax_protocol( scorefxn_fa, movemap);
 
 
-
 			relax_protocol.apply( input_pose );
-
 
 
 			std::string decoy_name = option [OptionKeys::out::prefix] + "dr_init";
@@ -309,9 +270,7 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 			protocols::jd2::JobDistributor::get_instance()->current_job()->set_status_prefix( decoy_name ); // setting up struct name
 
 
-
 			protocols::jd2::output_intermediate_pose( input_pose, std::string() ); //output it to the same file name
-
 
 
 			if ( option [OptionKeys::fold_from_loops::add_relax_cycles ].user() ){
@@ -349,7 +308,6 @@ void FoldFromLoopsMover::apply (core::pose::Pose & input_pose )
 		} // RMSD cutoff for the relax cycles
 
 
-
 		else {
 
 			set_last_move_status( FAIL_RETRY );
@@ -363,7 +321,6 @@ std::string
 FoldFromLoopsMover::get_name() const {
 	return "FoldFromLoopsMover";
 }
-
 
 
 }

@@ -18,23 +18,16 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 
 #include <protocols/loops/Loops.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh> //so that the job distributor call can increase the OP count
 
 //for debugging
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 // Utility Headers
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 #include <utility/exit.hh>
 
 // Project headers
@@ -53,8 +46,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -62,7 +53,7 @@ using basic::Warning;
 //replaces cout
 static thread_local basic::Tracer tr( "apps.pilot.dan.LoopExtend" );
 
-///@brief main method for loop extension.
+/// @brief main method for loop extension.
 int
 main( int argc, char* argv[] )
 {

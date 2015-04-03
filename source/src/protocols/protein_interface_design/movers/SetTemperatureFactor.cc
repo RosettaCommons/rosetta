@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>

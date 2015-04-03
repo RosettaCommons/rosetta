@@ -19,7 +19,6 @@
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
 

@@ -391,7 +391,6 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		}
 
 
-
 	}
 
 	void test_proclose_start_score_start_func_match_w_total_flexibility()
@@ -421,7 +420,6 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		adv.simple_deriv_check( false, 1e-6 );
 
 	}
-
 
 
 };

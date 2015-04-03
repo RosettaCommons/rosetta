@@ -13,7 +13,6 @@
 /// @author Sam DeLuca
 
 
-
 #ifndef INCLUDED_basic_message_listening_DbMoverMessageListener_FWD_HH
 #define INCLUDED_basic_message_listening_DbMoverMessageListener_FWD_HH
 

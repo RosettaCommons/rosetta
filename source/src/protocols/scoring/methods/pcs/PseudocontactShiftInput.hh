@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/PseudocontactShiftInput.hh
  ///
  /// @brief Read input .npc input file
  ///
- /// @detailed The following classes are responsable to read / parse the PCS input file (.npc format)
+ /// @details The following classes are responsable to read / parse the PCS input file (.npc format)
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
@@ -188,8 +186,6 @@ public:
 	PCS_data_input
 	get_input_data(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & vec_weight);
 };
-
-
 
 
 }//namespace pcs

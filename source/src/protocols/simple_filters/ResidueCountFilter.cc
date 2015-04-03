@@ -312,11 +312,11 @@ ResidueCountFilter::packable( bool const pack )
 }
 
 
-///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
-///@detail given user specified residue type string, look for residue type name and add it to the list of types to count if it is present in the specified ResidueTypeSet.
-///@input res_type_set, the residue type set of the input structure
-///@input res_type_input, the user specified residue type name
-///@return false if res_type_input doesn't match any residue type names, true otherwise
+/// @brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
+/// @detail given user specified residue type string, look for residue type name and add it to the list of types to count if it is present in the specified ResidueTypeSet.
+/// @input res_type_set, the residue type set of the input structure
+/// @input res_type_input, the user specified residue type name
+/// @return false if res_type_input doesn't match any residue type names, true otherwise
 bool
 ResidueCountFilter::add_residue_type_by_name(
   core::chemical::ResidueTypeSet const & res_type_set,

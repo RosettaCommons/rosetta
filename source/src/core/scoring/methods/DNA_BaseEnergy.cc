@@ -87,7 +87,7 @@ DNA_BaseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 DNA_BaseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -132,7 +132,6 @@ debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose
 }
 
 
-///
 void
 DNA_BaseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -173,7 +172,6 @@ DNA_BaseEnergy::residue_pair_energy(
 	emap[ dna_bp ] += bp_score;
 	//std::cout << "DNA_BaseEnergy " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << bs_score << " " << bp_score << std::endl;
 }
-
 
 
 void
@@ -232,7 +230,6 @@ DNA_BaseEnergy::eval_atom_derivative(
 }
 
 
-
 /// @brief DNA_BaseEnergy distance cutoff
 Distance
 DNA_BaseEnergy::atomic_interaction_cutoff() const
@@ -250,7 +247,6 @@ DNA_BaseEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } // methods

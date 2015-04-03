@@ -25,22 +25,17 @@
 
 
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <basic/database/open.hh>
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-
 
 
 // --------------- Test Class --------------- //

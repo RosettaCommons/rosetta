@@ -16,28 +16,19 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/import_pose/PDBSilentStruct.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 static basic::Tracer TR("test.core.io.silent.PDBSilentStruct");

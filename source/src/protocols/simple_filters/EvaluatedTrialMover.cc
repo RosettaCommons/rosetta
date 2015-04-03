@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -33,8 +32,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <basic/prof.hh>
@@ -145,7 +142,6 @@ EvaluatedTrialMover::dump_file( std::string file ) {
     }
   }
 }
-
 
 
 }

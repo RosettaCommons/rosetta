@@ -167,10 +167,6 @@ void RemodelDesignMover::set_state( std::string state_tag ){
 	working_model_.task = archived_starting_task_;
 }
 
-
-
-///
-/// @begin RemodelDesignMover::apply
 ///
 /// @brief
 /// Apply method for Mover.
@@ -777,7 +773,6 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 							}
 
 
-
 							if (use_match_rt == true) {
 								disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
 								TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
@@ -994,7 +989,6 @@ void RemodelDesignMover::mode6_packertask(Pose & pose){ // manual with auto repa
 		}
 	}
 }
-
 
 
 } // remodel

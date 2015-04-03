@@ -77,9 +77,7 @@ namespace find_position_matches_using_inverse_rotamers {
 
 std::string usage_string;
 
-///
-/// @begin init_usage_prompt
-///
+
 /// @brief
 /// the usage prompt that gets printed when the user doesn't enter all the required command line arguments
 ///
@@ -112,9 +110,6 @@ void init_usage_prompt( std::string exe ) {
 }
 
 
-///
-/// @begin build_bb_independent_rotamers
-///
 /// @brief
 /// function which returns a set of backbone-independent rotamers for the given ResidueType.
 /// basically a copy of the function in core::pack::rotamer_set::bb_independent_rotamers.hh, but it samples more chi angles
@@ -233,9 +228,6 @@ void parse_position( std::string position, char & chain, core::Size & pdb_resnum
 }
 
 
-///
-/// @begin dump_rotamerset_pdb
-///
 /// @brief
 /// function which writes out a PDB file of the rotamers in the passed in vector
 /// this should really be a function of the RotamerSet class, but it's not. there is a similar function in the class RotamerSets,
@@ -409,7 +401,7 @@ main( int argc, char * argv [] ) {
 	// save it to a variable to keep from having to check the option over and over
 	Size number_glycan_clashes_allowed = option[ find_position_matches_using_inverse_rotamers::number_glycan_clashes_allowed ];
 
-	//
+
 	// concatenate -s and -l flags together to get total list of PDB files
 	// The called function will die with a useful error message if neither -s or -l is specified.
 	// Check to make sure all of the files exist here, too.

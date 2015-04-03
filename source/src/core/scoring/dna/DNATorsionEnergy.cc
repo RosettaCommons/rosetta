@@ -230,7 +230,6 @@ DNATorsionEnergy::eval_dof_derivative(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 DNATorsionEnergy::finalize_after_derivatives(

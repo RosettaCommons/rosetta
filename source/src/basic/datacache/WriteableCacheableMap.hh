@@ -45,7 +45,7 @@ namespace basic {
 namespace datacache {
 
 
-///@brief Wrapper for a map< string, string >.
+/// @brief Wrapper for a map< string, string >.
 class WriteableCacheableMap : public CacheableData
 {
   typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;

@@ -15,25 +15,19 @@
 #include <core/scoring/WaterAdductHBondPotential.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/types.hh>
 
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
 // // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/graph/Graph.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoreType.hh>
@@ -46,7 +40,6 @@
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -344,7 +337,6 @@ debug_assert( h2o_rsd.seqpos() != other_rsd.seqpos() ); // otherwise include in 
 		}
 	}
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

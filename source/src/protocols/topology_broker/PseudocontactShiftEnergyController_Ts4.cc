@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PseudocontactShiftEnergyController.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz //kalabharath & Oliver Lange
+ /// @authorv Christophe Schmitz //kalabharath & Oliver Lange
  ///
- /// @last_modified Aug 2011
  ////////////////////////////////////////////////
 
 // Unit Headers
@@ -43,13 +41,11 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 
 static thread_local basic::Tracer tr_control( "protocols.topology_broker.PseudocontactShiftEnergyController_Ts4" );
@@ -280,14 +276,6 @@ bool PseudocontactShiftEnergyController_Ts4::read_tag( std::string tag, std::ist
 		}
 		return true;
 	}
-
-
-
-
-
-
-
-
 
 
 	/*

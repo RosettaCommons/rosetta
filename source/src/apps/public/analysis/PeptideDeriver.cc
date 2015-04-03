@@ -44,7 +44,7 @@ using namespace basic::options::OptionKeys;
 
 static thread_local basic::Tracer TR("PeptideDeriver");
 
-//
+
 // PeptideDeriver app
 //
 int

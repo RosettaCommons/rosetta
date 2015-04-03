@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Domain Assembly
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #include <protocols/hybridization/DomainAssembly.hh>

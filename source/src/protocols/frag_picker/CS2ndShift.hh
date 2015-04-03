@@ -16,11 +16,8 @@
 
 // utility headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <protocols/frag_picker/CSTalosIO.hh>
-
 
 
 #include <string>
@@ -41,7 +38,6 @@ public:
 
 	CS2ndShift( CSTalosIO & input_data, bool use_sslimit );
 
-	//
 
 	inline utility::vector1< utility::vector1< std::pair< core::Size, core::Real > > > shifts() {
 		return secondary_shifts_;

@@ -21,8 +21,6 @@
 #include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
 
 #include <map>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <string>
 #include <utility/vector1.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
@@ -148,7 +146,6 @@ private: // helper functions
 
 	utility::vector1< Real > const
 	calc_sc_neighbors( Pose const & pose ) const;
-
 
 
 protected:

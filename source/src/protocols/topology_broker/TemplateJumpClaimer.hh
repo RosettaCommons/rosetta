@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -58,7 +58,7 @@
 namespace protocols {
 namespace topology_broker {
 
-///@brief hacky wrapper to keep the old Template code alive a bit longer
+/// @brief hacky wrapper to keep the old Template code alive a bit longer
 /// this claimer deals with the Jumpy part of the Templates.
 class TemplateJumpClaimer : public FragmentJumpClaimer {
 public:
@@ -72,7 +72,7 @@ public:
 	void read_config_file( std::string const& file );
 	void read_topol_file( std::string const& file );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

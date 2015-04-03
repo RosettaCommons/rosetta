@@ -216,18 +216,16 @@ public:
 #endif
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
-  /// @begin MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id = 0)
   /// @brief Generate molecular surfaces for the given pose.
-  ///// @detailed
+  ///// @details
 	// This function initializes the calculator, adds all residues in the given pose, and generates molecular surfaces.
 	//
 	// The pose is partitioned into separate molecules across the given jump. If the given jump is 0, the entire pose is
 	// loaded as molecule 1.
 	virtual int Calc(core::pose::Pose const & pose, core::Size jump_id = 0);
 
-  /// @begin MolecularSurfaceCalculator::Calc()
   /// @brief Generate molecular surfaces for loaded atoms.
-  ///// @detailed
+  ///// @details
 	// This function generates molecular surfaces for atoms added via AddAtom and AddResidue.
 	//
 	// Init() must be called before this function.
@@ -238,9 +236,8 @@ public:
 	RESULTS const & GetResults() { return run_.results; }
 
 protected:
-  /// @begin MolecularSurfaceCalculator::ComputeMolecularSurfaces
   /// @brief Generate untrimmed surfaces for the defined molecules.
-  ///// @detailed
+  ///// @details
   /// This function should be called within a try/catch block for ShapeComplementarityCalculatorException.
   /// Raises exception on error.
   void GenerateMolecularSurfaces();

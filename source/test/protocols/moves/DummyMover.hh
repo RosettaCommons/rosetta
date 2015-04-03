@@ -21,7 +21,7 @@
 
 #include <vector>
 
-///
+
 /// @details This is special mover class for testing other movers.
 ///  contain information regardin number of call/sequence of call's etc.
 ///

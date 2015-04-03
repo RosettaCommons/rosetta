@@ -21,7 +21,6 @@
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh> //needed to set option
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>

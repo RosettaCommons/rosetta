@@ -129,7 +129,7 @@ TorsionSamplingKinematicPerturber::TorsionSamplingKinematicPerturber( KinematicM
 
 TorsionSamplingKinematicPerturber::~TorsionSamplingKinematicPerturber(){}
 
-///@details Helper function for TorsionSamplingKinematicPerturber::perturb_beta_residue.  This initializes the list of minima in the Ramachandran cube for beta-3-amino acids.
+/// @details Helper function for TorsionSamplingKinematicPerturber::perturb_beta_residue.  This initializes the list of minima in the Ramachandran cube for beta-3-amino acids.
 void TorsionSamplingKinematicPerturber::initialize_betaresidue_minima (
 	utility::vector1 < core::Real > &philist, //outputs -- will be cleared by this function
 	utility::vector1 < core::Real > &thetalist, //outputs -- will be cleared by this function
@@ -169,7 +169,7 @@ void TorsionSamplingKinematicPerturber::initialize_betaresidue_minima (
 	return;
 }
 
-///@details This randomly picks a minimum from the enumerated minimia of the beta-amino acid Ramachandran cube, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.  The behaviour depends on beta_residue_type (0=pick everything randomly, 1=pick using beta-3-alanine Ramachandran cube).
+/// @details This randomly picks a minimum from the enumerated minimia of the beta-amino acid Ramachandran cube, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.  The behaviour depends on beta_residue_type (0=pick everything randomly, 1=pick using beta-3-alanine Ramachandran cube).
 void TorsionSamplingKinematicPerturber::perturb_beta_residue (
 	core::Real &phi, //output value
 	core::Real &theta, //output value
@@ -205,7 +205,7 @@ void TorsionSamplingKinematicPerturber::perturb_beta_residue (
 	return;
 }
 
-///@details randomly varies the torsions (and possibly the bond angles) for the loop.  Respects a MoveMap, if present, for torsions.  Does NOT respect the movemap for angles; does NOT cause any sort of interactions between the MoveMap and the KinematicMover's pivot residues.
+/// @details randomly varies the torsions (and possibly the bond angles) for the loop.  Respects a MoveMap, if present, for torsions.  Does NOT respect the movemap for angles; does NOT cause any sort of interactions between the MoveMap and the KinematicMover's pivot residues.
 void
 TorsionSamplingKinematicPerturber::perturb_chain(
 	core::pose::Pose const & pose,
@@ -445,7 +445,7 @@ sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKe
 
 VicinitySamplingKinematicPerturber::~VicinitySamplingKinematicPerturber(){}
 
-///@details small variation around the starting phi/psi angles -- order of magnitude is determined by degree_vicinity_
+/// @details small variation around the starting phi/psi angles -- order of magnitude is determined by degree_vicinity_
 void
 VicinitySamplingKinematicPerturber::perturb_chain(
 												  core::pose::Pose const & pose,
@@ -469,7 +469,6 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 			bond_ang[ i ] = bangle_min + numeric::random::rg().uniform() * bangle_sd;
 		}
 	}
-
 
 
 	core::Size tor_end = torsions.size() - 3;
@@ -528,7 +527,6 @@ VicinitySamplingKinematicPerturber::set_pose_after_closure(
 			if (pose.has_dof(dof_of_interest))
 				pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 		}
-
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
@@ -671,7 +669,7 @@ NeighborDependentTorsionSamplingKinematicPerturber::NeighborDependentTorsionSamp
 
 NeighborDependentTorsionSamplingKinematicPerturber::~NeighborDependentTorsionSamplingKinematicPerturber(){}
 
-///@details randomly varies the torsions (and possibly the bond angles) for the loop, using phi/psi combinations based on rama2b
+/// @details randomly varies the torsions (and possibly the bond angles) for the loop, using phi/psi combinations based on rama2b
 void
 NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 																  core::pose::Pose const & pose,
@@ -695,7 +693,6 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
 	}
-
 
 
 	core::Size tor_end = torsions.size() - 3;
@@ -749,7 +746,6 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 } //perturb_chain
 
 
-
 void
 NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 																		   core::pose::Pose & pose,
@@ -778,7 +774,6 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 			if (pose.has_dof(dof_of_interest))
 				pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 		}
-
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
@@ -840,10 +835,6 @@ NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 } //NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
 
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////TorsionRestrictedKinematicPerturber////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -867,7 +858,7 @@ TorsionRestrictedKinematicPerturber::TorsionRestrictedKinematicPerturber(
 
 TorsionRestrictedKinematicPerturber::~TorsionRestrictedKinematicPerturber(){}
 
-///@details randomly varies the torsions within the given torsion bin
+/// @details randomly varies the torsions within the given torsion bin
 void
 TorsionRestrictedKinematicPerturber::perturb_chain(
 	core::pose::Pose const & pose,
@@ -891,7 +882,6 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 			//TR << "replacing CA bond angle at " << (kinmover()->start_res()+int((i-4)/3)) << std::endl;
 		}
 	}
-
 
 
 	core::Size tor_end = torsions.size() - 3;
@@ -953,7 +943,6 @@ TorsionRestrictedKinematicPerturber::perturb_chain(
 } //perturb_chain
 
 
-
 void
 TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 	core::pose::Pose & pose,
@@ -982,7 +971,6 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 			if (pose.has_dof(dof_of_interest))
 				pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 		}
-
 
 
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
@@ -1042,8 +1030,6 @@ TorsionRestrictedKinematicPerturber::set_pose_after_closure(
 	}
 
 } //TorsionRestrictedKinematicPerturber::set_pose_after_closure(
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -1216,7 +1202,6 @@ BaseTabooPerturber::perturb_chain(
 	}
 
 
-
 	core::Size tor_end = torsions.size() - 3;
 
 	// function to provide the torsion string to be sampled -- to be written
@@ -1333,7 +1318,6 @@ BaseTabooPerturber::set_pose_after_closure(
 		}
 
 
-
 		// N-CA-C -- these are all within the same residue, so jumps are not an issue
 		for (Size res=kinmover_op->start_res(), atom=5; res<= kinmover_op->end_res(); res++, atom+=3) {
 			const core::id::AtomID atomid_N (1, res);
@@ -1391,7 +1375,6 @@ BaseTabooPerturber::set_pose_after_closure(
 	}
 
 } //TabooSamplingKinematicPerturber::set_pose_after_closure(
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////

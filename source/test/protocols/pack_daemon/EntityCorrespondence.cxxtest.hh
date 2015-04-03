@@ -20,7 +20,6 @@
 #include <test/util/pose_funcs.hh>
 
 // Core headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>

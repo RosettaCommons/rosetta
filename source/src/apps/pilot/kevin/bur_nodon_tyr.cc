@@ -61,7 +61,6 @@
 #include <utility/vector0.hh>
 
 
-
 static thread_local basic::Tracer TR( "bur_nodon_tyr" );
 
 using namespace core;
@@ -80,7 +79,7 @@ namespace bur_nodon_tyr {
 }
 
 
-///@brief load custom TaskOperations according to an xml-like utility::tag file
+/// @brief load custom TaskOperations according to an xml-like utility::tag file
 core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 
 	using namespace core::pack::task::operation;
@@ -99,7 +98,7 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 	return task_factory_;
 }
 
-///@brief return the set of residues that are designable based given pose
+/// @brief return the set of residues that are designable based given pose
 std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactoryOP & tf ) {
 
 	//we need to score the pose for many of the task operations passed from cmd line
@@ -125,7 +124,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 }
 
 
-///@brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
+/// @brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
 void measure_sequence_recovery( core::pose::Pose & pose ) {
 	
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

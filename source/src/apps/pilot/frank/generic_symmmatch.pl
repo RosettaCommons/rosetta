@@ -1302,7 +1302,6 @@ sub mmult {
 }
 
 
-
 # matrix inversion
 sub minv {
 	my $M = shift;
@@ -1688,7 +1687,6 @@ sub R2quat {
 }
 
 
-
 # my ($R,$rmsd, $Ycom, $Ycom_to_Xcom) = rms_align( $x,$y );
 sub rms_align {
 	my ($X,$Y) = @_;
@@ -1920,7 +1918,6 @@ sub jacobi3 {
 	print STDERR "WARNING: Too many iterations in jacobi3!  You're bad and you should feel bad.\n";
 	exit 1;
 }
-
 
 
 # ($eigen_vec, $eigenval) = diagonalize_symmetric( $matrix )

@@ -197,7 +197,6 @@ class FullControlWindow():
 	self.listbox_energy_terms = Listbox(self.main)
 
 
-
 	#### GRID ####
 	self.entry_Res.grid(row=r+5, column=c+0); self.entry_Cha.grid(row=r+5, column=c+1); self.entry_Nam.grid(row=r+5, column=c+2)
 	self.label_residue.grid(row=r+6, column=c+0); self.label_chain.grid(row=r+6, column=c+1); self.label_restype.grid(row=r+6,column=c+2)

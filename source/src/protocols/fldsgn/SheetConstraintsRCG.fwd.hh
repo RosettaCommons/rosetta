@@ -28,6 +28,4 @@ typedef utility::pointer::shared_ptr< SheetConstraintsRCG > SheetConstraintsRCGO
 } //namespace protocols
 
 
-
-
 #endif // INCLUDED_protocols_forge_remodel_SheetConstraintsRCG_HH

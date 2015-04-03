@@ -581,14 +581,14 @@ debug_assert(has_name(rsd->name()));
 
 }
 
-///@brief beginning of aas_defined_ list
+/// @brief beginning of aas_defined_ list
 std::list< AA >::const_iterator
 ResidueTypeSet::aas_defined_begin() const
 {
 	return aas_defined_.begin();
 }
 
-///@brief end of aas_defined_ list
+/// @brief end of aas_defined_ list
 std::list< AA >::const_iterator
 ResidueTypeSet::aas_defined_end() const
 {

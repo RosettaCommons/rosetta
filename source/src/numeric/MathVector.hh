@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin MathVector
 ///
 /// @brief
 /// Vector0's that can perform mathmatical functions
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// The MathVector is constructed just like utility::vector0, however this class does not
 /// inherit from utility::vector0. It is implemented this way to avoid confusion. Most functions
@@ -28,11 +27,9 @@
 /// Nils Woetzl
 /// Jens Meiler
 ///
-/// @authors Steven Combs, Nils Woetzl, Jens Meiler
+/// @author Steven Combs, Nils Woetzl, Jens Meiler
 ///
-/// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef INCLUDED_numeric_MathVector_hh
@@ -123,7 +120,6 @@ public:
 	/////////////////
 
 
-
 	/// @brief size of vector
 	/// @return size of Vector
 	Size size() const
@@ -192,8 +188,6 @@ return size_;
 	}
 
 
-
-
 	////////////////
 	// operations //
 	////////////////
@@ -227,8 +221,6 @@ return size_;
 	///////////////
 	// operators //
 	///////////////
-
-
 
 
 	/// return reference to changeable element ( POS)
@@ -284,9 +276,6 @@ return size_;
 		// return reference to this Vector
 		return *this;
 	}
-
-
-
 
 
 	/// operator += VALUE
@@ -400,14 +389,10 @@ private:
 	T *data_;
 
 
-
 };
 
 
-
 }
-
-
 
 
 #endif /* MATHVECTOR_HH_ */

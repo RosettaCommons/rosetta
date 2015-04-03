@@ -66,8 +66,8 @@ MakeBundleHelixCreator::mover_name()
 	return "MakeBundleHelix";
 }
 
-///
-///@brief Constructor for MakeBundleHelix mover.
+
+/// @brief Constructor for MakeBundleHelix mover.
 MakeBundleHelix::MakeBundleHelix():
 		Mover("MakeBundleHelix"),
 		reset_pose_(true),
@@ -80,8 +80,8 @@ MakeBundleHelix::MakeBundleHelix():
 	set_minor_helix_params_from_file("alpha_helix"); //By default, set the minor helix parameters to those of an alpha helix (read in from the database).
 }
 
-///
-///@brief Copy constructor for MakeBundleHelix mover.
+
+/// @brief Copy constructor for MakeBundleHelix mover.
 MakeBundleHelix::MakeBundleHelix( MakeBundleHelix const &src ):
 		protocols::moves::Mover( src ),
 		reset_pose_(src.reset_pose_),
@@ -93,12 +93,12 @@ MakeBundleHelix::MakeBundleHelix( MakeBundleHelix const &src ):
 {
 }
 
-///
-///@brief Destructor for MakeBundleHelix mover.
+
+/// @brief Destructor for MakeBundleHelix mover.
 MakeBundleHelix::~MakeBundleHelix() {}
 
-///
-///@brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
+
+/// @brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
 protocols::moves::MoverOP MakeBundleHelix::clone() const {
 	return protocols::moves::MoverOP( new MakeBundleHelix ( *this ) );
 	/*MakeBundleHelixOP newmover(new MakeBundleHelix( *this ));
@@ -106,8 +106,8 @@ protocols::moves::MoverOP MakeBundleHelix::clone() const {
 	return utility::pointer::dynamic_pointer_cast<protocols::moves::Mover>( newmover );*/
 }
 
-///
-///@brief Fresh_instance operator to create a pointer to a fresh MakeBundleHelix object that does NOT copy this one.
+
+/// @brief Fresh_instance operator to create a pointer to a fresh MakeBundleHelix object that does NOT copy this one.
 protocols::moves::MoverOP MakeBundleHelix::fresh_instance() const {
 	return protocols::moves::MoverOP( new MakeBundleHelix );
 }
@@ -116,7 +116,7 @@ protocols::moves::MoverOP MakeBundleHelix::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 void MakeBundleHelix::apply (core::pose::Pose & pose)
 {
@@ -213,8 +213,8 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("MakeBundleHelix").
+
+/// @brief Returns the name of this mover ("MakeBundleHelix").
 std::string MakeBundleHelix::get_name() const{
 	return "MakeBundleHelix";
 }
@@ -222,7 +222,7 @@ std::string MakeBundleHelix::get_name() const{
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 /*void
 MakeBundleHelix::parse_my_tag(

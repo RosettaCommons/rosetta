@@ -9,7 +9,7 @@
 
 /// @file    protocols/md/CartesianMD.hh
 /// @brief   Cartesian MD
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 #ifndef INCLUDED_protocols_md_CartesianMD_hh
 #define INCLUDED_protocols_md_CartesianMD_hh

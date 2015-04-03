@@ -240,7 +240,6 @@ class PythonPyExitCallback(rosetta.utility.py.PyExitCallback):
         raise PyRosettaException()
 
 
-
 ###############################################################################
 #
 def rosetta_database_from_env():
@@ -386,7 +385,6 @@ def MPIJobDistributor(njobs, fun):
 
     for j in myjobs:
         if j is not None: fun(j)
-
 
 
 def version():

@@ -11,7 +11,6 @@
 
 #include <protocols/farna/RNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
-// AUTO-REMOVED #include <protocols/farna/RNA_MatchType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>

@@ -57,7 +57,7 @@ typedef utility::vector1< CentroidRotNumVec > CentroidRotNumVecVec;
 
 enum MakeRotLibPolymerType { PEPTIDE, PEPTOID };
 
-///@details Stores all options contained in a MakeRotLib option file
+/// @details Stores all options contained in a MakeRotLib option file
 class MakeRotLibOptionsData : public utility::pointer::ReferenceCount
 {
 public:
@@ -65,7 +65,7 @@ public:
 	/// @brief ctor
   MakeRotLibOptionsData( std::string filename );
 
-	/// @breif dtor
+	/// @brief dtor
 	~MakeRotLibOptionsData() {}
 
 	/// @brief acessors

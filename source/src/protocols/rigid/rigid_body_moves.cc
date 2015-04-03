@@ -38,8 +38,6 @@ namespace rigid {
 using namespace core;
 
 
-
-
 int
 gaussian_jump_move(
 	pose::Pose & pose,
@@ -83,7 +81,6 @@ gaussian_jump_move(
 	jump.gaussian_move( dir, translation_magnitude, rotation_magnitude );
 	pose.set_jump( jump_number, jump );
 }
-
 
 
 } // namespace rigid

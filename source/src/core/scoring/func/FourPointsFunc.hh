@@ -21,13 +21,10 @@
 #include <core/scoring/func/XYZ_Func.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <utility/vector1_bool.hh>
-
 
 
 namespace core {
@@ -65,7 +62,6 @@ public:
 private:
 	utility::vector1< Vector > points_;
 };
-
 
 
 } // constraints

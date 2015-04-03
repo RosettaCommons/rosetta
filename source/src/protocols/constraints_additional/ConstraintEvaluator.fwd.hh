@@ -9,11 +9,11 @@
 
 /// @file ConstraintEvaluator.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_protocols_constraints_additional_ConstraintEvaluator_fwd_hh
 #define INCLUDED_protocols_constraints_additional_ConstraintEvaluator_fwd_hh

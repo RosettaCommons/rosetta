@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin PiPiCalculator
 ///
 /// @brief
 /// How many pi-pi interactiosn are there? pi-stacking considered are T-stacking and offset.
 ///
-/// @detailed
+/// @details
 /// Not much detailed here. Iterate through the carbons of aromatic rings and compare that to
 /// the distance of the aromatic hydrogens. Default distance is 3.2A.
 /// Wait, you want to know how to use this? Well, within your protocol, you need to do the following:
@@ -30,12 +29,10 @@
 /// @author
 /// Steven Combs
 ///
-/// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_PiPiCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_PiPiCalculator_hh
-
 
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
@@ -44,7 +41,6 @@
 #include <basic/MetricValue.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols{
@@ -74,14 +70,9 @@ protected:
 };
 
 
-
-
 }
 }
 }
-
-
-
 
 
 #endif

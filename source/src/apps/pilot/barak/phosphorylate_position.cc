@@ -50,10 +50,7 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-
 static thread_local basic::Tracer TR( "pilot_app.phoshporylate_position" );
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -34,7 +33,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/evaluation/util.hh>
 #include <utility/exit.hh>
@@ -45,8 +43,6 @@ static thread_local basic::Tracer tr( "protocols.evalution.RMSD" );
 namespace protocols {
 namespace simple_filters {
 using namespace core;
-
-
 
 
 RmsdEvaluator::RmsdEvaluator( core::pose::PoseCOP pose, Size start, Size end, std::string tag, bool bGDT /*default true*/ )
@@ -267,7 +263,6 @@ SelectMaxsubEvaluator::SelectMaxsubEvaluator( core::pose::Pose const& pose, std:
 {
 	evaluation::find_existing_residues( rmsd_pose_, tag, selection_ );
 }
-
 
 
 Real

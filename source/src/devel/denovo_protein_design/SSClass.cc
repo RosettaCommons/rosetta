@@ -13,13 +13,11 @@
 // Unit Headers
 #include <devel/denovo_protein_design/SSClass.hh>
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 // C++ Headers
 #include <string>
 #include <iostream>
 #include <sstream>
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
 #include <numeric/random/random.fwd.hh>
@@ -33,7 +31,6 @@ namespace denovo_protein_design{
 using namespace core;
 
 static thread_local basic::Tracer tr( "SS" );
-
 
 
 std::ostream & operator<< ( std::ostream & os, const SSs & sss_ ) {
@@ -76,7 +73,6 @@ SSs::add_ss( SS ss_ ) {
 	 ss_.sstype();
 	sss_.push_back( ss_ );
 }
-
 
 
 //////////////////////////////////////////////////////////////////////

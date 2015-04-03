@@ -13,7 +13,6 @@
 /// @author TJ brunette
 
 
-
 #ifndef INCLUDED_protocols_simple_moves_VallLookbackFragMover_HH
 #define INCLUDED_protocols_simple_moves_VallLookbackFragMover_HH
 

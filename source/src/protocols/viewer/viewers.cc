@@ -39,7 +39,6 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/triangleIterator.hh>
@@ -263,7 +262,6 @@ void processMouseActiveMotion(int x, int y) {
 }
 
 
-
 void processKeyPress(unsigned char key, int /* x */, int /* y */) {
 	using namespace graphics;
 	using namespace protocols::viewer;
@@ -337,10 +335,9 @@ idle_func( void )
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////
 // GRAPHICS THREAD
-//
+
 
 int
 conformation_viewer_window_init( GraphicsState& gs, std::string const & window_name, int length, int width )
@@ -505,7 +502,6 @@ add_monte_carlo_viewer(
 }
 
 
-///
 void
 silly_window_display()
 {
@@ -616,7 +612,6 @@ glColor3fxyz( Vector const & coord )
 	glColor3f((float)coord.x(), (float)coord.y(), (float)coord.z() );
 }
 
-///
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector
@@ -960,7 +955,6 @@ display_residues_wireframe(
 		} // i
 	} // nres
 } // void display_residues_wireframe
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1388,7 +1382,6 @@ bool check_chainbreak(const int & i, utility::vector1< core::conformation::Resid
 }
 
 
-
 void draw_secstruct(
 					GraphicsState & gs,
 					utility::vector1< core::conformation::ResidueCOP > const & residues,
@@ -1424,7 +1417,6 @@ void draw_secstruct(
 	//if (check_occupancy(end, pose))
 	draw_segment( start_segment, protein_end, prev_secstruct, gs, residues );
 }
-
 
 
 void draw_Calpha_trace(
@@ -1502,7 +1494,6 @@ void draw_Calpha_trace(
 	}
 
 }
-
 
 
 void

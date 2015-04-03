@@ -29,10 +29,7 @@
 #include <basic/options/option.hh>
 #include <fstream>
 #include <sys/stat.h>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 #include <utility/vector1.hh>
 
@@ -184,7 +181,6 @@ RemodelAccumulator::get_name() const {
 }
 
 
-
 void RemodelAccumulator::keep_top_pose( core::Size num_to_keep)
 {
  // TR << "sorted size " << pose_store_.size() << std::endl;
@@ -227,9 +223,6 @@ void RemodelAccumulator::write_checkpoint(core::Size progress_point){
 			filecount++;
   	}
 }
-
-
-
 
 
 core::Size RemodelAccumulator::recover_checkpoint()
@@ -320,10 +313,6 @@ core::Size RemodelAccumulator::recover_checkpoint()
 }
 
 
-
-
-
-
 void RemodelAccumulator::cluster_pose(){
 	runtime_assert(cluster_switch_);
 	cluster_ = ClusterPhilStyleOP( new protocols::cluster::ClusterPhilStyle() );
@@ -375,8 +364,6 @@ std::vector<core::pose::PoseOP>  RemodelAccumulator::clustered_best_poses(){
 	runtime_assert(cluster_switch_);
 	return cluster_->return_lowest_poses_in_clusters();
 }
-
-
 
 
 } // remodel

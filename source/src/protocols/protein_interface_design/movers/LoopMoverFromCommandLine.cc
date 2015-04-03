@@ -19,11 +19,8 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
@@ -35,15 +32,12 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 
 
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -58,26 +52,15 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 //create option keys for loop movers
 
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
 
-// AUTO-REMOVED #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/picking_old/vall/util.hh>
-// AUTO-REMOVED #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -86,7 +69,6 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {
@@ -159,7 +141,6 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops( *loops ) );
 		design(false);
 }
-
 
 
 //apply to pose

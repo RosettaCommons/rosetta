@@ -38,7 +38,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -280,7 +279,6 @@ ConstraintsEnergy::eval_residue_pair_derivatives(
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 // methods for ContextIndependentTwoBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
@@ -500,7 +498,7 @@ ConstraintsEnergy::setup_for_packing(
 	prepare_constraints_energy_container( pose );
 }
 
-///@brief Setup constraint-set specific derivatives
+/// @brief Setup constraint-set specific derivatives
 void
 ConstraintsEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
 {
@@ -585,9 +583,6 @@ ConstraintsEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
-
-
 
 
 } // constraints

@@ -9,7 +9,7 @@
 
 /// @file src/protocols/jumping/PairingTemplate
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -35,7 +35,6 @@
 #include <ObjexxFCL/FArray1A.fwd.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib> //required by GCC 4.3.2
 #include <string>
 
 //#include <vector>
@@ -89,16 +88,15 @@ public:
 	//	};
 };
 
-///@brief list of pairings
+/// @brief list of pairings
 //typedef utility::vector1<DisulfPairing> DisulfDisulfPairingsList;
 
 extern std::ostream& operator<< ( std::ostream& out, DisulfPairing const& );
 extern std::ostream& operator<< ( std::ostream& out, DisulfPairingsList const& p);
 
-///@brief add pairings in pairing_file to list "pairings"
+/// @brief add pairings in pairing_file to list "pairings"
 //extern void read_disulf_pairing_list( std::string disulf_pairing_file, DisulfPairingsList& disulf_pairings);
 extern void read_disulf_pairing_list( std::istream &is, DisulfPairingsList& disulf_pairings);
-
 
 
 } //protocols

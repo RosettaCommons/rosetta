@@ -156,7 +156,7 @@ make_base_pair_move(
 		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bps[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
-		//
+
 		dme = point_graph_dme( *pg, pose );
 		rmsd = scoring::nbr_atom_rmsd( pose, start_pose );
 		frag_dev = frag_devs[ nn ].first;
@@ -276,7 +276,7 @@ make_base_step_move(
 		Size const nn( static_cast< int >( top_nn * numeric::random::rg().uniform() ) + 1 );
 		bss[ frag_devs[ nn ].second ].insert( pose.conformation(), offsets );
 
-		//
+
 		dme = point_graph_dme( *pg, pose );
 		rmsd = scoring::nbr_atom_rmsd( pose, start_pose );
 		frag_dev = frag_devs[ nn ].first;

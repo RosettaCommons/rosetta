@@ -26,8 +26,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -79,11 +77,11 @@ public:
 	~GeneralizedKICselector();
 	GeneralizedKICselectorOP clone() const;
 
-	///
+
 	/// @brief Returns the name of this class.
 	std::string get_name() const;
 
-	///
+
 	/// @brief Given a selector type, return its name.  Returns "unknown_selector" if not recognized.
 	std::string get_selector_type_name( core::Size const selector_type ) const;
 	
@@ -91,27 +89,27 @@ public:
 	/// @brief Given the name of a selector type, return the selector type enum.  Returns unknown_selector if not recognized.
 	selector_type get_selector_type_by_name( std::string const &selectorname ) const;
 
-	///
+
 	/// @brief Sets the selector type for this selector.
 	void set_selector_type( selector_type const &stype);
 
-	///
+
 	/// @brief Sets the selector type for this selector by name.
 	void set_selector_type( std::string const &stypename);
 
-	///
+
 	/// @brief Returns the selector type for this selector.
 	selector_type get_selector_type () const { return selectortype_; }
 
-	///
+
 	/// @brief Set the scorefunction used by this selector.
 	void set_scorefunction( core::scoring::ScoreFunctionOP sfxn ) { selector_sfxn_=sfxn; return; }
 
-	///
+
 	/// @brief Set the Boltzmann temperature used by this selector.
 	void set_boltzmann_temp( core::Real const &temp) { boltzmann_kbt_=temp; return; }
 
-	///
+
 	/// @brief Returns the Boltzmann temperature used by this selector.
 	core::Real get_boltzmann_temp() const { return boltzmann_kbt_; }
 
@@ -151,16 +149,16 @@ private:
 //          PRIVATE VARIABLES                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	/// @brief The selector type for this selector (see the selector_type enum for all types).
 	selector_type selectortype_;
 
-	///
+
 	/// @brief An owning pointer to a scoring function that a selector can use.
 	/// @details This must be set explicitly; otherwise, it's set to NULL by default.
 	core::scoring::ScoreFunctionOP selector_sfxn_;
 
-	///
+
 	/// @brief A Boltzmann temperature (kbt, in Rosetta energy units) that some selectors can use.
 	core::Real boltzmann_kbt_;
 

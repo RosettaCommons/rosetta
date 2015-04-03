@@ -88,8 +88,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 using namespace std;
 using namespace utility;
 using namespace numeric;
@@ -337,14 +335,13 @@ test_suck_res( std::string fname ) {
 // 	std::cerr << "done... " << (*sf)(pose) << " " << (*sfnoc)(pose) << std::endl;
 //
 // }
-//
+
 
 int
 main (int argc, char *argv[])
 {
 
 	try {
-
 
 
 	devel::init( argc, argv );
@@ -375,7 +372,6 @@ main (int argc, char *argv[])
   	}
 	}
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

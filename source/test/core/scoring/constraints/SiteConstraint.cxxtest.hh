@@ -18,7 +18,6 @@
 #include <test/util/pose_funcs.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>

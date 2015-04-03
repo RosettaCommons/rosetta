@@ -17,7 +17,6 @@
 #define INCLUDED_core_scoring_packstat_CavityBall_fwd_hh
 
 
-
 namespace core {
 namespace scoring {
 namespace packstat {

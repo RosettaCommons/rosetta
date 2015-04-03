@@ -9,7 +9,7 @@
 
 /// @file AbrelaxApplication
 /// @brief Application-level code for Abrelax, fold_cst and JumpingFoldCst protocols
-/// @detailed
+/// @details
 ///	   use -help to see options
 ///    usage of class:
 ///    call AbrelaxApplication::register_options() before core::init::init
@@ -37,14 +37,11 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 //#include <core/scoring/constraints/ConstraintForest.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PCA.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/MembraneAbinitio.fwd.hh>
 #include <protocols/abinitio/Protocol.fwd.hh>
 #include <protocols/abinitio/Templates.fwd.hh>
 
@@ -64,7 +61,6 @@
 // #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
 

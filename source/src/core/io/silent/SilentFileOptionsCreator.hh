@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 /// @file   core/io/silent/SilentFileOptionsCreator.fwd.hh
 /// @brief  Creator for options for constructing a pose from a silent file
 /// @author Matthew O'Meara (mattjomeara@gmail.com)

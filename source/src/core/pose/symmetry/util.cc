@@ -332,8 +332,6 @@ void extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose &
 }
 
 
-
-
 // @details make a asymmetric pose copying residues of original pose
 core::pose::Pose
 get_asymmetric_pose_copy_from_symmetric_pose(
@@ -634,7 +632,6 @@ make_symmetric_movemap(
 			}
 		}
 	}
-
 
 
 	// First set all jump to false

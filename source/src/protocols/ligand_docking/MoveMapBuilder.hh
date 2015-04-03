@@ -16,18 +16,15 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 
 // Package Headers
 #include <core/kinematics/MoveMap.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -42,7 +39,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 class MoveMapBuilder: public utility::pointer::ReferenceCount
 {
 public:

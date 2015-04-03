@@ -26,10 +26,8 @@
 // Utility header
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #include <utility/vector1_bool.hh>

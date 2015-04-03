@@ -24,7 +24,6 @@
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 
 // Utility headers
@@ -46,11 +45,10 @@ namespace archive {
 //class ArchiveManager;
 
 
-
-///@brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
+/// @brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
 ///flagging as job as being a bad input
 
-///@details This job distributor is meant for running jobs where the machine you are using has a large number of
+/// @details This job distributor is meant for running jobs where the machine you are using has a large number of
 ///processors, the number of jobs is much greater than the number of processors, or the runtimes of the individual jobs
 ///could vary greatly. It dedicates the head node (whichever processor gets processor rank #0) to handling job requests
 ///from the slave nodes (all nonzero ranks). Unlike the MPIWorkPartitionJobDistributor, this JD will not work at all
@@ -59,53 +57,53 @@ namespace archive {
 ///on processor rank.
 class AbstractArchiveBase : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~AbstractArchiveBase();
 	AbstractArchiveBase( BaseArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
 	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
 
-	///@brief is archive converged ?
+	/// @brief is archive converged ?
 	virtual bool finished() const = 0;
 
 	//this is probably obsoleted
 	//	virtual bool ready_for_batch() const = 0;
 	virtual void initialize() = 0;
 
-	///@brief old-batches might be outdated and should not be computed anymore
+	/// @brief old-batches might be outdated and should not be computed anymore
 	/// return true for this query if this is the case for old_batch
  	virtual bool still_interested( jd2::archive::Batch const& /*old_batch*/ ) const { return true; };
 
-	///@brief create a new batch with manager().start_new_batch() and manager().finalize_batch();
+	/// @brief create a new batch with manager().start_new_batch() and manager().finalize_batch();
 	virtual void generate_batch() = 0;
 
-	///@brief create a batch for the current stage, return ct != 0 if more batches should be created at
+	/// @brief create a batch for the current stage, return ct != 0 if more batches should be created at
 	///current stage. (e.g., harvest_batches)
 	virtual core::Size generate_batch( jd2::archive::Batch&, core::Size /*repeat_id*/ ) { return 0; };
-	///@brief do some computations on archive that can be done while we are waiting
+	/// @brief do some computations on archive that can be done while we are waiting
 	virtual void idle() = 0;
 
 
-	///@brief read 'returned_decoys' from 'batch' into archive.
+	/// @brief read 'returned_decoys' from 'batch' into archive.
 	virtual void read_structures(
      core::io::silent::SilentFileData& returned_decoys,
 		 core::io::silent::SilentFileData& alternative_decoys,
 		 Batch const& batch
 	) = 0;
 
-	///@brief save archive to file .. you can put 'suffix' at end of dirname to save other snapshots than the 'current'
+	/// @brief save archive to file .. you can put 'suffix' at end of dirname to save other snapshots than the 'current'
 	virtual void save_to_file( std::string suffix = "" ) = 0;
 	virtual void save_status( std::ostream& ) const = 0;
 
-	///@brief restore archive
+	/// @brief restore archive
 	virtual bool restore_from_file() = 0;
 
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
 
-	///@brief set name of archive ( used also for save_to_file and restore_from_file )
+	/// @brief set name of archive ( used also for save_to_file and restore_from_file )
 	void set_name( std::string const& set )  { name_ = set; };
 	std::string const& name() const { return name_; };
 
-	///@brief access to the ArchiveManager (control of batches)
+	/// @brief access to the ArchiveManager (control of batches)
 	BaseArchiveManager& manager() {
 		runtime_assert( manager_ );
 		return *manager_;
@@ -149,23 +147,23 @@ public:
 
 	virtual void generate_batch() = 0;
 
-	///@brief add structure to Archive.. return false if structure is rejected.
+	/// @brief add structure to Archive.. return false if structure is rejected.
 	virtual bool add_structure (
 		core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
 	);
 
-	///@brief how many structures should be in archive .. varies from decoys().size() in startup phase.
+	/// @brief how many structures should be in archive .. varies from decoys().size() in startup phase.
 	core::Size nstruct() const { return nstruct_; };
 
-	///@brief set target size of pool
+	/// @brief set target size of pool
 	void set_nstruct( core::Size set ) { nstruct_ = set; };
 
-	///@brief save and restore archive to file-system
+	/// @brief save and restore archive to file-system
 	virtual void save_to_file( std::string suffix = "" );
 
-	///@brief helper routine to save decoys properly
+	/// @brief helper routine to save decoys properly
 	void save_decoys(
 			std::string const& dirname,
 			std::string const& name,
@@ -179,24 +177,24 @@ public:
 
 	virtual bool restore_from_file();
 
-	///@brief save and restore status of archive to file-system
+	/// @brief save and restore status of archive to file-system
 	virtual void save_status( std::ostream& ) const;
 	virtual void restore_status( std::istream& );
 
-	///@brief called when nothing is happening
+	/// @brief called when nothing is happening
 	virtual void idle() {};
 
-	///@brief read externally provided structures from decoy_file into archive
+	/// @brief read externally provided structures from decoy_file into archive
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
 
-	///@brief SilentFileData contains the new structures belonging to this batch.
+	/// @brief SilentFileData contains the new structures belonging to this batch.
 	virtual void read_structures(
     core::io::silent::SilentFileData&,
 		core::io::silent::SilentFileData& alternative_decoys,
 		Batch const& batch
 	);
 
-	///
+
 	///---- methods to keep statistics of acceptance
 	///
 	core::Size& accepts_since_last_batch() { return accepts_since_last_batch_; };
@@ -235,7 +233,7 @@ protected:
 		return max_nstruct_;
 	}
 
-	///@brief call to insert structure at position given by iterator
+	/// @brief call to insert structure at position given by iterator
 	virtual void add_structure_at_position (
     SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,

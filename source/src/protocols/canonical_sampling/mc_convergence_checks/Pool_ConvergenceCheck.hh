@@ -67,7 +67,7 @@ public:
 
 	virtual ~Pool_RMSD();
 
-	///@brief return position in pool for the best_decoy
+	/// @brief return position in pool for the best_decoy
 	core::Size evaluate( core::pose::Pose const&, std::string& best_decoy, core::Real& best_rmsd ) const;
 
 	core::Size evaluate( core::io::silent::SilentStruct const&, std::string& best_decoy, core::Real& best_rmsd ) const;
@@ -137,7 +137,7 @@ public:
 	Pool_Evaluator( Pool_RMSD_OP rmsd_pool_in ) : rmsd_pool_( rmsd_pool_in ) {};
 	/// from PoseEvaluator interface:
 
-	///@brief evaluate pose and store values in Silent_Struct
+	/// @brief evaluate pose and store values in Silent_Struct
 	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 	virtual void apply( core::io::silent::SilentStruct &pss) const;
 

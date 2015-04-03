@@ -260,6 +260,5 @@ get_resnum_list_ordered(
 }
 
 
-
 } //pose
 } //core

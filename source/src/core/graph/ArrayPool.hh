@@ -31,7 +31,7 @@
 namespace core {
 namespace graph {
 
-///@brief Class Array0 is a c-style array wrapper that does bounds checking in debug mode.
+/// @brief Class Array0 is a c-style array wrapper that does bounds checking in debug mode.
 /// It indexes from 0 just like regular c-arrays.  Class Array0 does not manage it's own
 /// memory.  It does not allocate memory if you want to make it larger, nor does it
 /// deallocate memory when you destroy it.  Bounds checking only ensures that the user

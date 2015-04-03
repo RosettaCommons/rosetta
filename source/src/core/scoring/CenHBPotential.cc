@@ -14,22 +14,12 @@
 
 #include <core/scoring/CenHBPotential.hh>
 
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
 #include <boost/bind.hpp>
-
 
 
 namespace core {
@@ -126,7 +116,6 @@ CenHBPotential::CenHBPotential() {
 		if ( l.fail() ) utility_exit_with_message("bad format for cen_smooth_params.txt");
 	}
 }
-
 
 
 }

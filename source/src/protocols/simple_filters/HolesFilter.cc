@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/HolesFilter.cc
 /// @brief filter structures by will's hole value
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -17,7 +17,6 @@
 #include <protocols/simple_filters/HolesFilterCreator.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/packing/compute_holes_score.hh>

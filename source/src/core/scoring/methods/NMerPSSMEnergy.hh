@@ -46,13 +46,13 @@ public:
 
 public:
 
-	///
+
 	NMerPSSMEnergy();
 
-	///
+
 	NMerPSSMEnergy( utility::vector1< std::map< core::chemical::AA, utility::vector1< core::Real > > > const & all_nmer_pssms_in );
 
-	///
+
 	virtual ~NMerPSSMEnergy();
 
 	virtual
@@ -63,7 +63,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -75,7 +75,7 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
-	///
+
 	virtual
 	Real
 	eval_dof_derivative(

@@ -754,7 +754,7 @@ identify_intra_res_hbonds(
 
 			// now we have identified a hbond -> put it into the hbond_set//////
 			hbond_set.append_hbond( hatm, rsd, aatm, rsd, hbe_type, unweighted_energy, environmental_weight, derivs );
-			///
+
 
 		} // loop over donors
 	} // loop over acceptors
@@ -1012,7 +1012,6 @@ identify_hbonds_1way_membrane(
 		} // loop over acceptors
 	} // loop over donors
 }
-
 
 
 //mjo this should be the only way to assign hbond energies.  If you

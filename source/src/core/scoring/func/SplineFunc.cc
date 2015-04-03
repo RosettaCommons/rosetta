@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/func/SplineFunc.cc
 /// @brief  Constraint function for looking up data in a histogram over which a spline is created
-/// @detailed The HistogramFunc constraints function allows one to input a histogram (in most cases, a knowledge-based potential).
+/// @details The HistogramFunc constraints function allows one to input a histogram (in most cases, a knowledge-based potential).
 /// This class loads a lookup table (your histogram), provides an interface for accessing it, creates a spline, and returns a value based on the spline generated from the knowledge-based potential.
 /// @author Stephanie Hirst (stephanie.j.hirst@vanderbilt.edu)
 

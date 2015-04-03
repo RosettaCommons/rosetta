@@ -14,7 +14,7 @@
 		"readPDB.cc -in::file::s <pdb file> -in::path::database <DB root dir>"
 */
 
-///
+
 /// @file   apps/pilot/lemmon/randomMove.cc
 ///
 /// @brief This is to illustrate packing residues in a PDB
@@ -42,7 +42,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 //////////////////////////////////////////////////////////////////////////////

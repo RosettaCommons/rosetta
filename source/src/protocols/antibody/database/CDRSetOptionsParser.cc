@@ -178,7 +178,6 @@ void
 CDRSetOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
 
 
-
 	if (mode == "CDR_SET" || mode == "CDRS" || mode == "GRAFT_SET" || mode == "CDRSET"){
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
@@ -362,15 +361,5 @@ CDRSetOptionsParser::clear_cdr_set_exclude_options(const std::string type) {
 
 }
 }
-
-
-
-
-
-
-
-
-
-
 
 

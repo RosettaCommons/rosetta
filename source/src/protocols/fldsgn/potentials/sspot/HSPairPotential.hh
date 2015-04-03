@@ -22,11 +22,8 @@
 #include <core/scoring/EnergyGraph.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/fldsgn/topology/BB_Pos.fwd.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers

@@ -235,7 +235,6 @@ debug_assert( nres == positions.size() );
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // A bit like create_subpose() but does not require fold tree, and
 // a little optimized to handle some weird terminal variants and RNA jumps.
@@ -1332,7 +1331,7 @@ atom_id_to_named_atom_id(
 	return core::id::NamedAtomID( rsd.atom_name( atom_id.atomno() ), atom_id.rsd() );
 }
 
-///@details returns an AtomID corresponding to your NamedAtomID
+/// @details returns an AtomID corresponding to your NamedAtomID
 /// check for a valid AtomID after this.
 /// following conditions return invalid ID :
 /// rsd > total_residue
@@ -1665,7 +1664,7 @@ remove_upper_terminus_type_from_pose_residue(
 	core::pose::remove_variant_type_from_pose_residue( pose, chemical::UPPER_TERMINUS_VARIANT, seqpos );
 }
 
-///@brief returns a Distance
+/// @brief returns a Distance
 core::Real
 pose_max_nbr_radius( Pose const & pose )
 {
@@ -2289,16 +2288,14 @@ Size nres_protein( pose::Pose const & pose ) {
 }// nres_protein
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin center_of_mass
 ///
 /// @brief calculates the center of mass of a pose
-/// @detailed
+/// @details
 ///				the start and stop positions (or residues) within the pose are used to
 ///				find the starting and finishing locations
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified Javier Castellanos June 4 2012
 /////////////////////////////////////////////////////////////////////////////////
 numeric::xyzVector< core::Real>
 center_of_mass(
@@ -2323,16 +2320,14 @@ center_of_mass(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin residue_center_of_mass
 ///
 /// @brief calculates the center of mass of a pose
-/// @detailed
+/// @details
 ///				the start and stop positions (or residues) within the pose are used to
 ///				find the starting and finishing locations
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified Javier Castellanos June 4 2012
 /////////////////////////////////////////////////////////////////////////////////
 int
 residue_center_of_mass(
@@ -2346,17 +2341,15 @@ residue_center_of_mass(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin core::pose::return_nearest_residue
 ///
 /// @brief finds the residue nearest some position passed in (normally a
 ///		center of mass)
-/// @detailed
+/// @details
 ///				the start and stop positions (or residues) within the pose are used to
 ///				find the starting and finishing locations
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified June 29 2007
 /////////////////////////////////////////////////////////////////////////////////
 int
 return_nearest_residue(

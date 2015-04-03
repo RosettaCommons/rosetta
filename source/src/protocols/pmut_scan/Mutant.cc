@@ -15,20 +15,14 @@
 // Project Headers
 #include <protocols/pmut_scan/Mutant.hh>
 
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Utility headers
 
 // ObjexxFCL header
 
 // C++
-// AUTO-REMOVED #include <string>
 #include <iostream>
 
 #include <utility/vector1.hh>
@@ -38,9 +32,6 @@
 namespace protocols {
 namespace pmut_scan {
 
-
-///
-/// @begin MutationData::MutationData
 ///
 /// @brief
 /// Constructor for MutationData objects. A mutation holds the wt and mutant amino acid type, pdb resnum, pose resnum, chain and icode.
@@ -54,18 +45,12 @@ MutationData::MutationData( char wt_residue, char mut_residue, core::Size pose_r
 	chain_( chain )
 {}
 
-
-///
-/// @begin MutationData::~MutationData
 ///
 /// @brief
 /// Destructor for MutationData objects. No dynamically allocated memory held in MutationData objects so nothing to do here.
 ///
 MutationData::~MutationData() {}
 
-
-///
-/// @begin MutationData::mutation_string
 ///
 /// @brief
 /// Returns a string representation of this mutation.
@@ -76,8 +61,6 @@ std::string MutationData::mutation_string() const {
 	return out.str();
 }
 
-///
-/// @begin MutationData::mutation_string_PDB_numbering
 ///
 /// @brief
 /// Returns a string representation of this mutation using PDB not pose numbering.
@@ -93,8 +76,6 @@ std::string MutationData::mutation_string_PDB_numbering() const {
 }
 
 ///
-/// @begin MutationData::mut_residue
-///
 /// @brief
 /// Accessor for the mut_residue member variable.  Needed by the function make_mutant_structure() in the PointMutScanDriver class.
 ///
@@ -102,8 +83,6 @@ char MutationData::mut_residue() const {
 	return mut_residue_;
 }
 
-///
-/// @begin MutationData::pose_resnum
 ///
 /// @brief
 /// Accessor for the pose_resnum member variable.  Needed by the function make_mutant_structure() in the PointMutScanDriver class.
@@ -113,8 +92,6 @@ core::Size MutationData::pose_resnum() const {
 }
 
 ///
-/// @begin MutationData::print_mutation_data
-///
 /// @brief
 /// print function for MutationData class; only used by unit tests
 ///
@@ -122,8 +99,6 @@ void MutationData::print_mutation_data( MutationData & md ) {
 	std::cout << md.wt_residue_ << md.pose_resnum_ << md.mut_residue_ << " (pdb chain/res: " << md.chain_ << "/" << md.pdb_resnum_ << ", icode: '" << md.icode_ << "')";
 }
 
-///
-/// @begin MutationData::mutation_data_equals
 ///
 /// @brief
 /// function which tests two MutationData objects for equality; only used by unit tests
@@ -146,9 +121,6 @@ Mutant::Mutant() {}
 /// Mutant class destructor
 Mutant::~Mutant() {}
 
-
-///
-/// @begin Mutant::n_mutations
 ///
 /// @brief
 /// Returns the number of mutations in this mutant.
@@ -158,8 +130,6 @@ core::Size Mutant::n_mutations() const {
 }
 
 ///
-/// @begin Mutant::add_mutation
-///
 /// @brief
 /// Adds the passed in mutation to the class member list.
 ///
@@ -167,8 +137,6 @@ void Mutant::add_mutation( MutationData md ) {
 	mutations_.push_back( md );
 }
 
-///
-/// @begin Mutant::mutations_begin
 ///
 /// @brief
 /// Returns a const iterator to beginning of the mutations vector
@@ -178,8 +146,6 @@ utility::vector1< MutationData >::const_iterator Mutant::mutations_begin() const
 }
 
 ///
-/// @begin Mutant::mutations_end
-///
 /// @brief
 /// Returns a const iterator to end of the mutations vector
 ///
@@ -187,8 +153,6 @@ utility::vector1< MutationData >::const_iterator Mutant::mutations_end() const {
 	return mutations_.end();
 }
 
-///
-/// @begin Mutant::operator==
 ///
 /// @brief
 /// Function which tests two Mutant objects for equality; only used by unit tests
@@ -208,9 +172,6 @@ bool Mutant::operator==( const Mutant & m_other ) const {
 	return true;
 }
 
-
-///
-/// @begin Mutant::pop_mutation
 ///
 /// @brief
 /// Sets the passed in reference to the first element of the mutations_ vector, and removes that element from the vector.

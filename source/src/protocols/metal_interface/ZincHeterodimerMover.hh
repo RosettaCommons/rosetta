@@ -29,7 +29,7 @@
 namespace protocols {
 namespace metal_interface {
 
-///@details ZincHeterodimerMover is a mover for the ZincHeterodimerDesign protocol
+/// @details ZincHeterodimerMover is a mover for the ZincHeterodimerDesign protocol
 class ZincHeterodimerMover : public protocols::moves::Mover {
 
 public:
@@ -55,7 +55,7 @@ private:
 	void generate_scorefunctions();
 	/// @brief constructor helper function - generates TaskFactory
 	void generate_factory();
-	///@brief apply helper function (ugly complex interface, I know)
+	/// @brief apply helper function (ugly complex interface, I know)
 	void copy_to_centroid(core::pose::Pose const & pose,
 												core::pose::Pose & centroid,
 												core::kinematics::FoldTree const & centroid_tree,

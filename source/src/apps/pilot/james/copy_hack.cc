@@ -14,14 +14,12 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
 

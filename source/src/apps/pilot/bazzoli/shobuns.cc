@@ -10,7 +10,7 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-///
+
 /// @brief computes, using the SHO solvation model, the buried unsatisfied atoms
 /// 	among a target set of polar atoms
 ///
@@ -39,7 +39,7 @@
 /// NOTE: flags that activate SHO within a scoring function, like
 ///       '-score:patch occ_Hbond_sol_exact_talaris', are irrelevant to
 ///       determining whether a polar atom is buried unsatisfied or not.
-///
+
 
 #include <protocols/toolbox/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.fwd.hh>
 #include <protocols/toolbox/pose_metric_calculators/SHOBuriedUnsatisfiedPolarsCalculator.hh>

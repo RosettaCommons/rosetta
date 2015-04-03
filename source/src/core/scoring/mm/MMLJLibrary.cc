@@ -27,7 +27,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <string>

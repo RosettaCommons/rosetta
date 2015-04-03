@@ -174,7 +174,7 @@ public:
 		return ( element_ != "H" );
 	}
 
-	///@brief is atom type virtual?
+	/// @brief is atom type virtual?
 	bool is_virtual() const {
 	debug_assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
 		return atom_is_virtual_;
@@ -230,13 +230,13 @@ public:
 		return hybridization_;
 	}
 
-	///@brief set all standard properties to false, set hybridization to
+	/// @brief set all standard properties to false, set hybridization to
 	///UNKNOWN_HYBRID, and clear extra properties
 	///
 	void
 	clear_properties();
 
-	///@brief set standard property to true, or set the specified hybridization
+	/// @brief set standard property to true, or set the specified hybridization
 	void
 	add_property(std::string const & property);
 

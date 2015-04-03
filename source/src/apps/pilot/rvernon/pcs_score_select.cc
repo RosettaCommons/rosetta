@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -24,13 +23,7 @@
 
 #include <core/kinematics/RT.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> //reading remarks
 
-// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh> // ?
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
 
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
@@ -44,7 +37,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -54,13 +46,10 @@
 
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <numeric/xyzMatrix.io.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/ScoringManager.hh>
@@ -72,10 +61,8 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
 // Unit headers
@@ -114,7 +101,6 @@ using ObjexxFCL::format::I;
 using ObjexxFCL::string_of;
 using ObjexxFCL::FArray2A_float;
 using ObjexxFCL::FArray2D_float;
-
 
 
 using namespace core;

@@ -30,7 +30,6 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -42,8 +41,6 @@
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
-
-
 
 
 // C++ headers
@@ -81,7 +78,7 @@ FragmentMover::FragmentMover(
 	protocols::moves::Mover::type( type );
 }
 
-///@brief constructor
+/// @brief constructor
 FragmentMover::FragmentMover(
 	core::fragment::FragSetCOP fragset,
 	core::kinematics::MoveMapCOP movemap,
@@ -119,12 +116,12 @@ Size FragmentMover::apply_at_all_positions( core::pose::Pose& pose ) const {
 	return ct;
 }
 
-///@brief accessor to the fragment set
+/// @brief accessor to the fragment set
 core::fragment::FragSetCOP FragmentMover::fragments() const {
 	return fragset_;
 }
 
-///@brief setter for the fragment set
+/// @brief setter for the fragment set
 void
 FragmentMover::set_fragments( core::fragment::FragSetCOP new_frags_ ) {
 	fragset_ = new_frags_;
@@ -133,7 +130,7 @@ FragmentMover::set_fragments( core::fragment::FragSetCOP new_frags_ ) {
 	on_new_fragments();
 }
 
-///@brief setter for the movemap
+/// @brief setter for the movemap
 void
 FragmentMover::set_movemap( core::kinematics::MoveMapCOP movemap ) {
 	movemap_ = movemap;

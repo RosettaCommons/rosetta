@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_methods_SmoothEnvEnergy_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <core/scoring/methods/EnvPairEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
@@ -36,13 +35,13 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class SmoothEnvEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
 public:
 
-	///
+
 	SmoothEnvEnergy();
 
 

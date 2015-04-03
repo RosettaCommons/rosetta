@@ -130,7 +130,7 @@ depth_first_search_sort(const VertexListGraph& g, DFSVisitor vis, ColorMap color
 	depth_first_search_sort(g, vis, color, *verts.first, func);
 }
 
-///@brief Named Parameter Variant
+/// @brief Named Parameter Variant
 template <class VertexListGraph, class SortFunc, class P, class T, class R>
 void
 depth_first_search_sort(const VertexListGraph& g, SortFunc const & func,
@@ -172,7 +172,6 @@ void depth_first_visit
   vis.start_vertex(u, g);
   depth_first_visit_sort_impl(g, u, vis, color, func);
 }
-
 
 
 } // namespace graph

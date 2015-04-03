@@ -62,8 +62,8 @@ FitSimpleHelixCreator::mover_name()
 	return "FitSimpleHelix";
 }
 
-///
-///@brief Creator for FitSimpleHelix mover.
+
+/// @brief Creator for FitSimpleHelix mover.
 FitSimpleHelix::FitSimpleHelix():
 		//utility::pointer::ReferenceCount(),
 		Mover("FitSimpleHelix"),
@@ -82,18 +82,18 @@ FitSimpleHelix::FitSimpleHelix():
 		delta_z1_vals_output_()
 {}
 
-///
-///@brief Destructor for FitSimpleHelix mover.
+
+/// @brief Destructor for FitSimpleHelix mover.
 FitSimpleHelix::~FitSimpleHelix() {}
 
-///
-///@brief Clone operator to create a pointer to a fresh FitSimpleHelix object that copies this one.
+
+/// @brief Clone operator to create a pointer to a fresh FitSimpleHelix object that copies this one.
 protocols::moves::MoverOP FitSimpleHelix::clone() const {
 	return protocols::moves::MoverOP( new FitSimpleHelix( *this ) );
 }
 
-///
-///@brief Fresh_instance operator to create a pointer to a fresh FitSimpleHelix object that does NOT copy this one.
+
+/// @brief Fresh_instance operator to create a pointer to a fresh FitSimpleHelix object that does NOT copy this one.
 protocols::moves::MoverOP FitSimpleHelix::fresh_instance() const {
 	return protocols::moves::MoverOP( new FitSimpleHelix );
 }
@@ -102,7 +102,7 @@ protocols::moves::MoverOP FitSimpleHelix::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 /// @details At the end of this function, two things will have happened:
 /// --The pose will be realigned to the ideal helix.
@@ -223,8 +223,8 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("FitSimpleHelix").
+
+/// @brief Returns the name of this mover ("FitSimpleHelix").
 std::string FitSimpleHelix::get_name() const{
 	return "FitSimpleHelix";
 }
@@ -250,7 +250,7 @@ void FitSimpleHelix::get_crick_parameters (
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 /*void
 FitSimpleHelix::parse_my_tag(
@@ -264,7 +264,6 @@ FitSimpleHelix::parse_my_tag(
 
 	return;
 }*/
-
 
 
 ////////////////////////////////////////////////////////////////////////////////

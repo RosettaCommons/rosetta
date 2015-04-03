@@ -27,7 +27,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // C++ headers
@@ -269,7 +268,6 @@ apply_transformation(
            std::list <core::Size> const & residue_list,
            numeric::xyzMatrix< core::Real > const & R, numeric::xyzVector< core::Real > const & preT, numeric::xyzVector< core::Real > const & postT
            );
-
 
 
 void

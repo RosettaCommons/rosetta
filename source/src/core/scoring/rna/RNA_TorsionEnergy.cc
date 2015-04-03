@@ -99,7 +99,6 @@ RNA_TorsionEnergy::eval_intrares_energy(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_TorsionEnergy::eval_atom_derivative(
@@ -132,7 +131,6 @@ RNA_TorsionEnergy::version() const
 {
 	return 2; // A new torsion potential (integration from Das lab branch -- Aug 2011)
 }
-
 
 
 } //rna

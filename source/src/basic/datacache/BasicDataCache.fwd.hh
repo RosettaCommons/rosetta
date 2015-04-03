@@ -27,7 +27,6 @@
 #include <iosfwd>
 
 
-
 namespace basic {
 namespace datacache {
 

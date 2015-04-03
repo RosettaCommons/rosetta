@@ -21,7 +21,6 @@
 #include <protocols/ligand_docking/RandomConformersCreator.hh>
 
 #include <protocols/ligand_docking/RandomConformerMover.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 
 #include <core/pose/util.hh>
 
@@ -44,7 +43,7 @@ namespace protocols {
 namespace ligand_docking {
 
 ///////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 
 static thread_local basic::Tracer random_conformer_tracer( "protocols.ligand_docking.ligand_options.RandomConformers", basic::t_debug );
 
@@ -95,7 +94,7 @@ std::string RandomConformers::get_name() const{
 //	chain_ = chain;
 //}
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 RandomConformers::parse_my_tag(
 		utility::tag::TagCOP tag,

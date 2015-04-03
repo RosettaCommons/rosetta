@@ -18,7 +18,6 @@
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/forge/methods/util.hh>
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // project headers
 
@@ -27,7 +26,6 @@
 #include <core/conformation/util.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -53,12 +51,9 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-
 namespace protocols {
 namespace forge {
 namespace build {
-
-
 
 
 /// @brief default constructor
@@ -845,7 +840,6 @@ pose.dump_pdb("test_idl.pdb");
 	}
 
 
-
 	// recover psi @ left-1 and phi @ right+1 to ensure they are set correctly
 	// and not junked due to residue deletion, values set to 999.0 if not applicable
 	if ( pre_psi <= 360.0 ) {
@@ -891,7 +885,6 @@ pose.dump_pdb("test_idl.pdb");
   if ( pose.pdb_info().get() ) {
 	    pose.pdb_info()->obsolete( true );
 			  }
-
 
 
 }

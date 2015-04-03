@@ -19,10 +19,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -31,14 +28,12 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -68,7 +63,7 @@ using namespace chemical;
 using utility::vector1;
 using std::pair;
 
-///@brief default ctor
+/// @brief default ctor
 ParetoOptMutationMover::ParetoOptMutationMover() :
 	Mover( ParetoOptMutationMoverCreator::mover_name() ),
 	task_factory_( /* NULL */ ),

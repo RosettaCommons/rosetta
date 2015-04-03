@@ -9,7 +9,7 @@
 
 /// @file core/scoring/loop_graph/LoopScoreInfo.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

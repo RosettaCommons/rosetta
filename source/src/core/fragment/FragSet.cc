@@ -13,13 +13,12 @@
 /// @author James Thompson (tex@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
 /// @author Roland A. Pache, PhD
-///
+
 
 // Unit Headers
 #include <core/fragment/FragSet.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.hh>
@@ -28,7 +27,6 @@
 
 // Project Headers
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 
@@ -37,13 +35,11 @@
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <basic/Tracer.hh>
 
 #include <ostream>
-// AUTO-REMOVED #include <set>
 
 #include <core/fragment/FragID.hh>
 #include <core/fragment/FrameIterator.hh>
@@ -57,7 +53,7 @@ using namespace kinematics;
 
 static thread_local basic::Tracer tr( "core.fragment" );
 
-///@brief return a list of frames that all sample the specified region, assume all motions are allowed
+/// @brief return a list of frames that all sample the specified region, assume all motions are allowed
 Size
 FragSet::region_all(
 	core::Size start,
@@ -73,7 +69,7 @@ FragSet::region_all(
 	return region( move_map, start, end, min_overlap, min_length, frames );
 }
 
-///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+/// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
 ///(also allows those frames that start before the region and reach into it)
 Size FragSet::overlapping_with_region(
     kinematics::MoveMap const& mm,
@@ -220,7 +216,6 @@ FragSet::add( FrameCOP aFrame ) {
 	if ( max_pos() < end ) {
 		set_max_pos( end );
 	};
-
 
 
 	//	tr.Trace << "frag length " << length << " ( " << max_frag_length() <<  " ) " << std::endl;

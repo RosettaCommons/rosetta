@@ -11,7 +11,7 @@
 /// @brief  yields a simple implementation of a fragset
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_ConstantLengthFragSetIterator__HH
 #define INCLUDED_core_fragment_ConstantLengthFragSetIterator__HH
@@ -22,9 +22,6 @@
 // Package Headers
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIterator.fwd.hh>
-
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 
 
 // Project Headers
@@ -35,7 +32,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/Frame.hh>
 #include <utility/vector1.hh>

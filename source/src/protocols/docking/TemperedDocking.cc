@@ -9,7 +9,7 @@
 
 /// @file TemperedDocking
 /// @brief low resolution docking using parallel or simulated tempering
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 //Unit Headers
@@ -123,20 +123,20 @@ void TemperedDocking::init(
 	setup_objects();
 }
 
-///@brief clone operator, calls the copy constructor
+/// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 TemperedDocking::clone() const {
 	return protocols::moves::MoverOP( new TemperedDocking(*this) );
 }
 
-///@brief copy ctor
+/// @brief copy ctor
 TemperedDocking::TemperedDocking( TemperedDocking const & rhs ) :
 	Mover(rhs)
 {
 	copy(*this, rhs);
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 TemperedDocking & TemperedDocking::operator=( TemperedDocking const & rhs ){
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -169,7 +169,7 @@ void TemperedDocking::copy(TemperedDocking & lhs, TemperedDocking const & rhs){
 
 //// ----------------------------------- END CONSTRUCTORS --------------------------------------------------
 
-///@brief setup steps when new pose comes in (this is not repeated for every reply, ... only when new sequence.. )
+/// @brief setup steps when new pose comes in (this is not repeated for every reply, ... only when new sequence.. )
 void
 TemperedDocking::finalize_setup( pose::Pose & pose ) //setup objects requiring pose during apply
 {
@@ -189,11 +189,10 @@ TemperedDocking::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin Docking apply
 ///
 /// @brief main docking protocol
 ///
-/// @detailed
+/// @details
 ///
 void
 TemperedDocking::apply( pose::Pose & pose )
@@ -275,7 +274,6 @@ void TemperedDocking::set_use_constraints( bool setting )
 protocols::moves::MoverCOP TemperedDocking::to_centroid() const {
 	return to_centroid_;
 }
-
 
 
 /// ---------------------------- diagnostic output ------------------------------------------

@@ -22,17 +22,13 @@
 
 #include <core/conformation/Residue.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -42,7 +38,6 @@
 //Objexx headers
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <utility/io/ozstream.hh> //for dump_weights
 
@@ -81,7 +76,6 @@ ResidualDipolarCouplingEnergyCreator::score_types_for_method() const {
 	sts.push_back( rdc );
 	return sts;
 }
-
 
 
 //////////////////////////////////////////////////////
@@ -144,7 +138,6 @@ void ResidualDipolarCouplingEnergy::setup_for_minimizing(
 		atom2rdc_map_.set( atom2, atm2_map );
 	}
 }
-
 
 
 //////////////////////////////////////////////////////

@@ -91,7 +91,6 @@ void FixedBBInteractionGraph::force_aa_neighbors_for_edge
 }
 
 
-
 /// @param node1 - [in] - the index of the smaller-indexed node
 /// @param node2 - [in] - the index of the larger-indexed node
 /// @param aa_node1 - [in] - the amino acid type for the node with the smaller index

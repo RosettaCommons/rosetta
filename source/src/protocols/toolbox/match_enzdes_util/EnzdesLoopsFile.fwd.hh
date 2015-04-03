@@ -13,13 +13,9 @@
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 
 
-
-
 #ifndef INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesLoopsFile_fwd_hh
 #define INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesLoopsFile_fwd_hh
 
-
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 

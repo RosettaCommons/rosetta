@@ -56,7 +56,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/abrelax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>

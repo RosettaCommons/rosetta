@@ -67,7 +67,7 @@ MinimizerOptions::MinimizerOptions(
 	}
 }
 
-///
+
 MinimizerOptionsOP
 MinimizerOptions::clone() const
 {
@@ -114,14 +114,14 @@ MinimizerOptions::deriv_check_to_stdout( bool setting )
 	deriv_check_to_stdout_ = setting;
 }
 
-//
+
 bool
 MinimizerOptions::deriv_check() const
 {
 	return deriv_check_;
 }
 
-//
+
 bool
 MinimizerOptions::deriv_check_verbose() const
 {

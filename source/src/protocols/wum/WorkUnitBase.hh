@@ -17,7 +17,6 @@
 #include <protocols/wum/WorkUnitBase.fwd.hh>
 
 //#include <protocols/wum/WorkUnitList.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 //#include <protocols/loops/BackboneDB.hh>
@@ -27,7 +26,6 @@
 
 #include <string>
 #include <vector>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 
@@ -142,7 +140,6 @@ private: // functions for serialization and sending of data
 		void raw_data_load( const unsigned char * raw_data_ptr, unsigned int size );
 
 
-
 public:
 
     /// @brief Return the memory usage of this WorkUnit
@@ -194,8 +191,6 @@ private: // data
 };
 
 
-
-
 class WorkUnit_Wait: public WorkUnitBase {
   public:
      WorkUnit_Wait( long wait_time = 2  ):
@@ -214,9 +209,6 @@ class WorkUnit_Wait: public WorkUnitBase {
     virtual void run();
 	private:
 };
-
-
-
 
 
 /// @brief This WorkUnit type has structures in it. Most Workunits should derive from this one rather
@@ -256,9 +248,6 @@ class WorkUnit_SilentStructStore : public WorkUnitBase {
 };
 
 
-
-
-
 /// @brief This WorkUnit type can encapsulate any MoverOP. When registering this WOrkunit
 /// provide it with a MoverOP and then, when executed on the slaves, this workunit will run the mover
 /// On every single input structure and return the results.
@@ -281,11 +270,6 @@ class WorkUnit_MoverWrapper : public WorkUnit_SilentStructStore {
 	private:
 		protocols::moves::MoverOP the_mover_;
 };
-
-
-
-
-
 
 
 }

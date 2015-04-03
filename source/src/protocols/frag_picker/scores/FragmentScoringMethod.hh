@@ -57,31 +57,31 @@ public:
 	}
 
 	/// @brief Sets a new integer index for this scoring method.
-	/// @detailed the method should be called only by a scoring manager
+	/// @details the method should be called only by a scoring manager
 	inline void set_id(Size id) {
 		id_ = id;
 	}
 
 	/// @brief Returns a priority of this scoring method.
-	/// @detailed The higher the priority, the earlier a given scoring method is evaluated
+	/// @details The higher the priority, the earlier a given scoring method is evaluated
 	inline Size get_priority() {
 		return priority_;
 	}
 
 	/// @brief Returns the lowest acceptable score value for this scoring method.
-	/// @detailed Fragments that are below the threshold will be discarded
+	/// @details Fragments that are below the threshold will be discarded
 	inline Real get_min_allowed_score() {
 		return lowest_acceptable_value_;
 	}
 
 	/// @brief Returns the boolean choice on using the above lowest acceptable score value.
-	/// @detailed False means there is no lowest acceptable score
+	/// @details False means there is no lowest acceptable score
 	inline bool get_use_lowest() {
 		return use_lowest_;
 	}
 
 	/// @brief Sets a new value of the lowest acceptable score
-	/// @detailed Fragments that are below the threshold will be discarded
+	/// @details Fragments that are below the threshold will be discarded
 	inline void set_min_allowed_score(Real lowest_acceptable_value) {
 		lowest_acceptable_value_ = lowest_acceptable_value;
 	}

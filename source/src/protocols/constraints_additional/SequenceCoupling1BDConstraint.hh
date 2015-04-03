@@ -18,10 +18,6 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceCoupling.hh>
-
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/sequence/SequenceCoupling.fwd.hh>
 #include <utility/vector1.hh>
@@ -30,7 +26,7 @@
 namespace protocols {
 namespace constraints_additional {
 
-///@brief
+/// @brief
 class SequenceCoupling1BDConstraint : public core::scoring::constraints::SequenceProfileConstraint {
 public:
 	typedef core::sequence::SequenceCoupling SequenceCoupling;
@@ -64,7 +60,7 @@ public:
 
 	virtual std::string type() const { return "SequenceCoupling1BD"; }
 
-	///@brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
+	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
 	virtual void
 	read_def(
 		std::istream &,

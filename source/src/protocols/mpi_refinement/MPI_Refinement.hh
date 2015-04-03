@@ -23,11 +23,9 @@
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <string>
 #include <vector>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
 
 namespace protocols {
@@ -181,11 +179,8 @@ private:
 };
 
 
-
-
 } // namespace loops
 } // namespace protocols
-
 
 
 #endif

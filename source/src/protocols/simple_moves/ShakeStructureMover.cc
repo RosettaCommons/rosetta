@@ -15,17 +15,10 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -34,23 +27,14 @@
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <ios>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -61,51 +45,31 @@
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/constraints/Constraints.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 
 //protocols
 #include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <time.h>
 using basic::T;
 using basic::Warning;
 using basic::Error;
@@ -113,7 +77,6 @@ using basic::Error;
 // C++ headers
 
 #include <utility/vector0.hh>
-
 
 
 namespace protocols {
@@ -501,7 +464,6 @@ ShakeStructureMover::setup_movers(
 	gshear->angle_max( 'E', shear_E_angle_max); //def 2.0
 	gshear->angle_max( 'L', shear_L_angle_max); //def 3.0
 }
-
 
 
 void

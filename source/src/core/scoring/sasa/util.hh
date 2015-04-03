@@ -33,9 +33,8 @@ namespace sasa {
 ///  Convenience Functions
 ///	
 ///
-///
 
-///@brief Calculate the sidechain and backbone sasa from atom sasa
+/// @brief Calculate the sidechain and backbone sasa from atom sasa
 std::pair<Real, Real>
 get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa);
 
@@ -52,26 +51,22 @@ get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & ato
 	
 
 	
-///@brief Gets sasa enum from string passed by options system.
+/// @brief Gets sasa enum from string passed by options system.
 SasaMethodEnum
 get_sasa_method_from_string(std::string method);
 
-///@brief Get string name of SASA radii used to obtain extra parameter index from atom_type_set
+/// @brief Get string name of SASA radii used to obtain extra parameter index from atom_type_set
 std::string
 get_sasa_radii_parameter_name(SasaRadii radii_set);
 
-///@brief Gets sasa radii enum from string passed by options system.
+/// @brief Gets sasa radii enum from string passed by options system.
 SasaRadii
 get_sasa_radii_set_from_string(std::string radii_set);
 
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////
-///@brief Return total SASA for side chains.
-///@Note: Uses Naccess radii by default for all atom.
+/// @brief Return total SASA for side chains.
+/// @Note: Uses Naccess radii by default for all atom.
 ///  Not for general use.  Values returned used to generate SVM for ProQ/ProQ2
 ///
 //Real
@@ -103,7 +98,6 @@ get_legrand_sasa_angles();
 ///
 ObjexxFCL::FArray2D_ubyte const & 
 get_legrand_sasa_masks();
-
 
 
 /// @brief
@@ -138,7 +132,7 @@ get_legrand_atomic_overlap( Real const radius_a, Real const radius_b, Real const
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// This function is used to get two indexes (phi and theta) which are used to get the index of a dot on the
 /// surface of the 'a' sphere. When calculating how much surface area sphere b covers on a, we can get the degree
 /// of overlap from the function above, but it's not necessarily the case that the vector that connects the center
@@ -180,7 +174,7 @@ get_legrand_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_i
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// This function is the same as the function above but get the orientation of a to b simultaneously with the
 /// orientation of b to a.  The same result could be achieved by making two separate get_2way_orientation() calls
 /// but this method does it more efficiently by avoiding an atan2 and acos call.  Instead, once you compute the

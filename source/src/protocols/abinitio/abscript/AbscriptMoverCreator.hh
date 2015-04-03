@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/abinitio/abscript/AbscriptMoverCreator.hh
-///@brief This class will create instances of Mover AbscriptMover for the MoverFactory
-///@author Justin Porter
+/// @file protocols/abinitio/abscript/AbscriptMoverCreator.hh
+/// @brief This class will create instances of Mover AbscriptMover for the MoverFactory
+/// @author Justin Porter
 
 #ifndef INCLUDED_protocols_abinitio_abscript_AbscriptMoverCreator_hh
 #define INCLUDED_protocols_abinitio_abscript_AbscriptMoverCreator_hh

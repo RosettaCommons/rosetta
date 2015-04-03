@@ -13,7 +13,7 @@
 
 // Example command line:
 //  fragment_extract.macosgccrelease  -database ~/minirosetta_database -in:file:silent  region_10_18_sample.cluster.out  region_11_19_sample.cluster.out -frag_res 10 11 -o test.frags
-//
+
 
 // libRosetta headers
 #include <core/scoring/Energies.hh>

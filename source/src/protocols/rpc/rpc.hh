@@ -33,7 +33,6 @@ namespace protocols {
 namespace rpc {
 
 
-
 void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit::Object &json_energies );
 
 // this is a virtual functor which is going to act basically as a callback or function pointer but cleaner.

@@ -195,7 +195,6 @@ void design(Pose & pose, ScoreFunctionOP sf, vector1<Size> iface_res ) {
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )
@@ -260,28 +259,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

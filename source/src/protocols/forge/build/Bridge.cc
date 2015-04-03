@@ -23,7 +23,6 @@
 
 // project headers
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -31,7 +30,6 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

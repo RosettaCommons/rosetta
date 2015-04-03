@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/setup/StepWiseMonteCarloJobDistributor.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

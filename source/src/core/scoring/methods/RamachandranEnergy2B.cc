@@ -37,8 +37,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 // C++
 
 
@@ -149,7 +147,7 @@ RamachandranEnergy2B::eval_intrares_energy(
 	}
 }
 
-///
+
 Real
 RamachandranEnergy2B::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,

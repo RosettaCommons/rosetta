@@ -73,7 +73,7 @@ void rebuild_loops_until_closed(
 
 /// @brief Function for stealing ligands from a given Pose
 /// and adding them to source_pose.
-/// @detailed: The parameters are: @arg dest_pose Pose to which
+/// @details: The parameters are: @arg dest_pose Pose to which
 /// ligands are added.
 /// @arg source_pose_in Pose from which ligands and orientations
 /// are taken.

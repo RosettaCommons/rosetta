@@ -23,7 +23,6 @@ namespace protocols {
 namespace relax {
 
 
-
 class WorkUnit_BatchRelax;
 typedef utility::pointer::shared_ptr< WorkUnit_BatchRelax > WorkUnit_BatchRelaxOP;
 typedef utility::pointer::shared_ptr< WorkUnit_BatchRelax const > WorkUnit_BatchRelaxCOP;
@@ -82,8 +81,6 @@ public:
 	core::Real trim_proportion_;
 	core::pose::Pose ref_pose_ ;
 };
-
-
 
 
 }

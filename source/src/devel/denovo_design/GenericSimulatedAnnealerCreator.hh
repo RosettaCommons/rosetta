@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/GenericSimulatedAnnealerCreator.hh
-///@brief This class will create instances of Mover GenericSimulatedAnnealer for the MoverFactory
-///@author Tom Linsky (tlinsky@gmail.com)
+/// @file protocols/simple_moves/GenericSimulatedAnnealerCreator.hh
+/// @brief This class will create instances of Mover GenericSimulatedAnnealer for the MoverFactory
+/// @author Tom Linsky (tlinsky@gmail.com)
 
 #ifndef INCLUDED_devel_denovo_design_GenericSimulatedAnnealerCreator_hh
 #define INCLUDED_devel_denovo_design_GenericSimulatedAnnealerCreator_hh

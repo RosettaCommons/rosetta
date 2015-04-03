@@ -508,5 +508,3 @@ GrowPeptides::parse_my_tag(
 } //end protocols
 
 
-
-

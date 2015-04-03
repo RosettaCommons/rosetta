@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/setup/FullModelInfoSetupFromCommandLine.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -133,7 +133,6 @@ namespace setup {
 		}
 		if ( native_pose == 0 && align_pose != 0 ) native_pose = align_pose;
 	}
-
 
 
 	///////////////////////////////////////////////////////////////////////////////////////

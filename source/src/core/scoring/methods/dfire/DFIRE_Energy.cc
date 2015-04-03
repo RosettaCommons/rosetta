@@ -19,18 +19,14 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/dfire/DFIRE_Potential.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/Methods.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -117,7 +113,7 @@ DFIRE_Energy::clone() const
 // methods
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 DFIRE_Energy::residue_energy(
 	conformation::Residue const &,

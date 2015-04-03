@@ -19,10 +19,8 @@
 
 // project headers
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
 #include <core/fragment/FrameIterator.fwd.hh>
-
 
 
 namespace protocols {

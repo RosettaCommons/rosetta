@@ -139,7 +139,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 
-//
 // convergence checker from ClassicAbinitio
 
 /// @brief (helper) functor class which keeps track of old pose for the
@@ -513,7 +512,6 @@ utility::vector1< core::Size > FoldTreeHybridize::get_jump_anchors() {
 }
 
 
-
 void FoldTreeHybridize::get_residue_weights(
 			core::pose::Pose & pose,
 			utility::vector1< core::Real > &wt1,
@@ -655,7 +653,6 @@ FoldTreeHybridize::setup_scorefunctions(
 
 	score3 = scorefxn_->clone();
 }
-
 
 
 // start strand pairings methods

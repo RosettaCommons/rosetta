@@ -17,7 +17,6 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -30,9 +29,7 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -75,11 +72,9 @@
 
 // Utility Headers
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -115,7 +110,7 @@ basic::options::BooleanOptionKey const publication("publication");
 basic::options::BooleanOptionKey const C_root("C_root");
 }}}//basic::options::OptionKeys
 
-///@details This function is specific to the original system for which this code was written - if you are not trying to duplicate the initial results you should remove it!
+/// @details This function is specific to the original system for which this code was written - if you are not trying to duplicate the initial results you should remove it!
 void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP score_fxn ){
 
 	//score main pose
@@ -160,7 +155,7 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
 	return;
 }
 
-///@brief FloppyTail mover
+/// @brief FloppyTail mover
 class FloppyTailMover : public protocols::moves::Mover {
 public:
 	FloppyTailMover() : start_(0), stop_(0), init_for_input_yet_(false), centroid_scorefunction_(NULL),
@@ -198,7 +193,7 @@ public:
 
 	}
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 	virtual
 	void
 	init_on_new_input(core::pose::Pose const & pose) {
@@ -702,7 +697,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_lesstail_;
-	///@brief stored so that it can be generated in the init_on_new_input function
+	/// @brief stored so that it can be generated in the init_on_new_input function
 	core::kinematics::FoldTreeOP foldtree_;
 	core::fragment::ConstantLengthFragSetOP fragset3mer_;
 

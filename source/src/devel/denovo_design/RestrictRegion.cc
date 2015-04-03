@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/RestrictRegion.cc
 /// @brief Tom's Denovo design protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 // Unit headers

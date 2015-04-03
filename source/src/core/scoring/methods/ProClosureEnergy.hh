@@ -28,12 +28,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class ProClosureEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;

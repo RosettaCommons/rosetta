@@ -10,7 +10,6 @@
 /// @file   src/numeric/interpolation/spline/CompoundInterpolator.cc
 /// @brief  Interpolation with cubic splines
 /// @author Will Sheffler
-///
 
 
 #include <numeric/interpolation/spline/CompoundInterpolator.hh>

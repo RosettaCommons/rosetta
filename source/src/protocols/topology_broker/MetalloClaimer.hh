@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -31,13 +31,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/FragSet.hh>
-//
+
 
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 //#include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
@@ -48,7 +46,6 @@
 
 //// C++ headers
 //#include <fstream>
-// AUTO-REMOVED #include <istream>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -81,7 +78,7 @@ public:
 
 	virtual void generate_claims( protocols::topology_broker::claims::DofClaims& dc);
 
-	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
+	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
  	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init ) {
@@ -92,7 +89,7 @@ public:
 
 	//	virtual bool accept_declined_claim( DofClaim const& was_declined );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

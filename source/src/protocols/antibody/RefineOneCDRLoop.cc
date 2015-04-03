@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/RefineOneCDRLoop.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #include <protocols/antibody/RefineOneCDRLoop.hh>
@@ -94,13 +93,9 @@ RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
 }
 
 
-
 void RefineOneCDRLoop::init( ) {
 	set_default();
 }
-
-
-
 
 
 void RefineOneCDRLoop::set_default() {
@@ -121,7 +116,6 @@ void RefineOneCDRLoop::set_default() {
 }
 
 
-
 // default destructor
 RefineOneCDRLoop::~RefineOneCDRLoop() {}
 
@@ -129,7 +123,6 @@ RefineOneCDRLoop::~RefineOneCDRLoop() {}
 protocols::moves::MoverOP RefineOneCDRLoop::clone() const {
 	return( protocols::moves::MoverOP( new RefineOneCDRLoop() ) );
 }
-
 
 
 std::string RefineOneCDRLoop::get_name() const {
@@ -144,9 +137,6 @@ void RefineOneCDRLoop::set_score_function(core::scoring::ScoreFunctionCOP scoref
 void RefineOneCDRLoop::pass_start_pose(core::pose::Pose & start_pose) {
 	start_pose_ = start_pose;
 }
-
-
-
 
 
 void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
@@ -285,11 +275,6 @@ void RefineOneCDRLoop::apply(core::pose::Pose &pose) {
 
 
 }//apply
-
-
-
-
-
 
 
 } // namespace antibody

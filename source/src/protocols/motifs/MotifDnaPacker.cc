@@ -17,16 +17,13 @@
 #include <protocols/dna/util.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/dna/DnaChains.hh>
-// AUTO-REMOVED #include <protocols/dna/RotamerDNAHBondFilter.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
-// AUTO-REMOVED #include <protocols/dna/SeparateDnaFromNonDna.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplings.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifSearch.hh>
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
 #include <protocols/motifs/Motif.hh> // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <protocols/motifs/BuildPosition.hh> // REQUIRED FOR WINDOWS
 
 //#include <devel/blab/opte/sidechain_relax.hh>
 //#include <devel/blab/motif/MotifData.hh>
@@ -36,7 +33,6 @@
 //#include <devel/blab/motif/loop_rebuild_movers.hh>
 //#include <devel/blab/loops/util.hh>
 //#include <devel/dna/util.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
@@ -44,32 +40,22 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 //#include <core/pack/task/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/dna/BasePartner.hh>
-// AUTO-REMOVED #include <core/scoring/dna/setup.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //#include <basic/tracer.hh>
 #include <basic/Tracer.hh>
@@ -77,10 +63,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/tools/make_vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
@@ -140,7 +122,7 @@ MotifDnaPackerCreator::mover_name()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief lightweight default constructor
+/// @brief lightweight default constructor
 MotifDnaPacker::MotifDnaPacker()
 	: protocols::moves::Mover("MotifDnaPacker"),
 		dna_packer_(/* 0 */),
@@ -160,7 +142,7 @@ MotifDnaPacker::MotifDnaPacker()
 	init_options();
 }
 
-///@brief functional constructor
+/// @brief functional constructor
 MotifDnaPacker::MotifDnaPacker(
 	ScoreFunctionOP scorefxn_in,
 	bool minimize,
@@ -184,17 +166,17 @@ MotifDnaPacker::MotifDnaPacker(
 	pdboutput_ = protocols::dna::PDBOutputOP( new PDBOutput );
 }
 
-///@brief destructor
+/// @brief destructor
 MotifDnaPacker::~MotifDnaPacker(){}
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MotifDnaPacker::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new MotifDnaPacker );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MotifDnaPacker::clone() const
 {
@@ -207,7 +189,6 @@ MotifDnaPacker::get_name() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin MotifDnaPacker::apply
 /// @brief
 /// @author sthyme
 void

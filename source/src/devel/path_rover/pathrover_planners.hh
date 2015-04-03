@@ -65,7 +65,6 @@ namespace pathways {
     };
 
 
-
   // *********** Linear_planner_iterator class: **********
 
   // an iterator between "from" and "to" vectors of DOFs, according to specified step parameters
@@ -163,7 +162,6 @@ namespace pathways {
     std::vector<double> _v_cur;
 
   };
-
 
 
 } // namespace pathways

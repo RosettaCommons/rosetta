@@ -197,7 +197,6 @@ bool MSDJobDistributor::apply_parsed_protocol( utility::vector1< core::pose::Pos
 			}
 
 
-
 			TR << "=================end mover " << "======================" << std::endl;
 			TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
 

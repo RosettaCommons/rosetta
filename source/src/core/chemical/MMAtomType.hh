@@ -83,5 +83,4 @@ private:
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_MMAtomType_HH

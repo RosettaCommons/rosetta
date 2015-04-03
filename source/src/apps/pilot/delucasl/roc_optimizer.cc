@@ -445,7 +445,6 @@ int main(int argc, char* argv[])
 #endif
 
 
-
 		if(mpi_rank == 0)
 		{
 			roc_tracer << "starting roc optimization for cycle " << cycle << std::endl;

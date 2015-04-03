@@ -24,7 +24,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.simple_moves.SwitchChainOrderMover" );
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>

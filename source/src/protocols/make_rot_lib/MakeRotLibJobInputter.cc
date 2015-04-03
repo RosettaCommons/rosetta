@@ -62,7 +62,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 
 protocols::make_rot_lib::MakeRotLibJobInputter::~MakeRotLibJobInputter(){}
 
-///@details This function will first see if the pose already exists in the Job.	If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.	The Job object (within its InnerJob) contains a PoseCOP.	This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
+/// @details This function will first see if the pose already exists in the Job.	If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.	The Job object (within its InnerJob) contains a PoseCOP.	This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
 void
 protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose & pose, jd2::JobOP job)
 {
@@ -107,7 +107,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose 
 
 }
 
-///@details this function determines what jobs exist from the make rot lib options data. Each job calculates the rotamers for one omg, phi, psi, eps bin.
+/// @details this function determines what jobs exist from the make rot lib options data. Each job calculates the rotamers for one omg, phi, psi, eps bin.
 void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::Jobs & jobs )
 {
 	TR << "MakeRotLibJobInputter::fill_jobs" << std::endl;

@@ -9,7 +9,7 @@
 
 /// @file _Exception
 /// @brief  base class for Exception system
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 

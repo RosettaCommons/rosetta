@@ -17,9 +17,6 @@
 
 // Unit Headers
 #include <protocols/fldsgn/potentials/sspot/NatbiasSecondaryStructureEnergy.fwd.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.hh>
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>

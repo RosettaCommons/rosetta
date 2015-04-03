@@ -199,7 +199,6 @@ namespace farna {
 	};
 
 
-
 } //farna
 } //protocols
 

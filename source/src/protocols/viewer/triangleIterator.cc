@@ -15,11 +15,8 @@
 #include <protocols/viewer/marchingCubes.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <utility/exit.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 

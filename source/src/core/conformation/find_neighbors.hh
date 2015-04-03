@@ -26,7 +26,6 @@
 #include <core/graph/UpperEdgeGraph.hh>
 
 
-
 // Numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzTriple.hh>
@@ -77,7 +76,6 @@ struct DefaultCubeHash : std::unary_function< CubeKey, std::size_t > {
                return seed;
        }
 };
-
 
 
 // Find neighbors and place them in a graph

@@ -9,11 +9,10 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 /// @author Zhe Zhang
-
 
 
 // Unit Headers
@@ -35,7 +34,6 @@
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

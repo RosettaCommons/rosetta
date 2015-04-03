@@ -18,7 +18,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <boost/dynamic_bitset.hpp>
 #include <algorithm>
 
 #include <utility/vector1.hh>

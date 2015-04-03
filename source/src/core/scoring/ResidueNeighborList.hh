@@ -19,12 +19,10 @@
 #include <core/scoring/ResidueNeighborList.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 

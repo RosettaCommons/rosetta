@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/NetworkAlgorithms.cc
 /// @brief calculate various network properties from poses
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Unit Headers
@@ -194,7 +194,7 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 	return false;
 }
 
-///@brief empties edges
+/// @brief empties edges
 void
 ResidueNetwork::clear_edges()
 {

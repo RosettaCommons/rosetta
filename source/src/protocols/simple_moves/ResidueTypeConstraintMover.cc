@@ -72,7 +72,6 @@ ResidueTypeConstraintMover::ResidueTypeConstraintMover( std::string const & type
 ResidueTypeConstraintMover::~ResidueTypeConstraintMover(){}
 
 
-
 void
 ResidueTypeConstraintMover::apply( Pose & pose )
 {

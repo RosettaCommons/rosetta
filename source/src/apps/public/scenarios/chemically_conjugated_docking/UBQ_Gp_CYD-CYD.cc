@@ -38,7 +38,6 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -73,12 +72,10 @@
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -137,7 +134,7 @@ public:
 		IAM_->set_use_centroid_dG(false);
 	}
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 	virtual
 	void
 	init_on_new_input() {
@@ -714,7 +711,7 @@ private:
 
 	protocols::loops::Loop loop_;
 
-	///@brief vector contains atomIDs for disulfide bond and atoms before/after bond to determine various torsions
+	/// @brief vector contains atomIDs for disulfide bond and atoms before/after bond to determine various torsions
 	utility::vector1< core::id::AtomID > atomIDs;
 
 	core::pose::Pose starting_pose_; //maintained from run to run
@@ -725,7 +722,7 @@ private:
 
 	core::Size GTPase_cyd_; //converted to member data for sharing between setup and apply
 
-	///@brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
+	/// @brief used to track which chains are "extra" nonmoving bodies in extra bodies mode
 	utility::vector1< core::Size > extra_bodies_chains_;
 };
 

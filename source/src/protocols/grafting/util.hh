@@ -26,15 +26,15 @@ namespace protocols {
 namespace grafting {
 
 
-///@brief Deletes a region of the pose. Starting from and including 'start' and 'end' residue.
+/// @brief Deletes a region of the pose. Starting from and including 'start' and 'end' residue.
 void 
 delete_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
         
-///@brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
+/// @brief Returns a region of the pose including start and end as a new pose. Has a simple foldtree.
 core::pose::Pose 
 return_region(core::pose::Pose & pose, core::Size const start, core::Size const end);
     
-///@brief replaces residues from from_pose to to_pose into pose where insertion region is defined. Returns product as a new value.
+/// @brief replaces residues from from_pose to to_pose into pose where insertion region is defined. Returns product as a new value.
 core::pose::Pose
 replace_region(
 	core::pose::Pose const & from_pose,
@@ -44,10 +44,10 @@ replace_region(
 	core::Size const insertion_length,
 	bool copy_pdbinfo = false);
 
-///@author Steven Lewis smlewi@gmail.com, Jared Adolf-Bryfogle
-///@brief inserts one pose into another pose, returning the product as a new value. 
-///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
-///@details Begins insertion AFTER insert point.
+/// @author Steven Lewis smlewi@gmail.com, Jared Adolf-Bryfogle
+/// @brief inserts one pose into another pose, returning the product as a new value. 
+/// @details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
+/// @details Begins insertion AFTER insert point.
 core::pose::Pose
 insert_pose_into_pose(
 	core::pose::Pose const & scaffold_pose,
@@ -56,9 +56,9 @@ insert_pose_into_pose(
 	core::Size const insert_point_end,
 	bool copy_pdbinfo = false);
 
-///@brief inserts one pose into another pose, returning the product as a new value. 
-///@details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
-///@details Begins insertion AFTER insert point. insert_point_end is assumed to be insert_point+1.
+/// @brief inserts one pose into another pose, returning the product as a new value. 
+/// @details Nter->Cter. Coordinates and dihedrals of insert are unchanged.
+/// @details Begins insertion AFTER insert point. insert_point_end is assumed to be insert_point+1.
 core::pose::Pose
 insert_pose_into_pose(
 	core::pose::Pose const & scaffold_pose,
@@ -70,8 +70,8 @@ insert_pose_into_pose(
 ////////////////////////////////
 
 
-///@brief convenience function for AFTER apply method.
-///@details flexible Nter and Cter residues plus the first and last residue of the insert.
+/// @brief convenience function for AFTER apply method.
+/// @details flexible Nter and Cter residues plus the first and last residue of the insert.
 void
 repack_connection_and_residues_in_movemap(
 	core::pose::Pose & pose,
@@ -80,8 +80,8 @@ repack_connection_and_residues_in_movemap(
 	core::Size const end,
 	core::kinematics::MoveMapCOP movemap);
 
-///@brief convenience function for AFTER apply method.
-///@details flexible Nter and Cter residues plus the entire insert.
+/// @brief convenience function for AFTER apply method.
+/// @details flexible Nter and Cter residues plus the entire insert.
 void
 repack_connection_and_residues_in_movemap_and_piece(
 	core::pose::Pose & pose,
@@ -90,8 +90,8 @@ repack_connection_and_residues_in_movemap_and_piece(
 	core::Size const end,
 	core::kinematics::MoveMapCOP movemap);
 
-///@brief convenience function for AFTER apply method.
-///@details flexible Nter and Cter residues plus the entire insert and neighbors.
+/// @brief convenience function for AFTER apply method.
+/// @details flexible Nter and Cter residues plus the entire insert and neighbors.
 void
 repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	core::pose::Pose & pose,
@@ -101,8 +101,8 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	core::kinematics::MoveMapCOP movemap,
 	core::Real neighbor_dis = 4.0);
 
-///@brief uses rms_util to superimpose overhang residues of piece onto pose.
-///@details Start + End denote residue number before and after the insert will be.  
+/// @brief uses rms_util to superimpose overhang residues of piece onto pose.
+/// @details Start + End denote residue number before and after the insert will be.  
 /// For example, start = 10, end = 11 for a scaffold where the previous residues are already deleted
 /// or a scaffold where you are superposimposing a linker between two domains - 
 /// one that ends at start and the other that begins at end
@@ -125,11 +125,8 @@ delete_overhang_residues(
 	core::Size Cter_overhang_length_len);
 
 
-
-
-
-///@brief combines the two main movemaps to use after the insertion.
-///@details Start + End denote residue number before and after the insert. 
+/// @brief combines the two main movemaps to use after the insertion.
+/// @details Start + End denote residue number before and after the insert. 
 /// original_end denotes the end residue number before insertion occurred
 core::kinematics::MoveMapOP 
 combine_movemaps_post_insertion(
@@ -145,7 +142,7 @@ combine_movemaps_post_insertion(
 core::Real 
 perturb_backbone_for_test(core::pose::Pose & pose, core::kinematics::MoveMapOP mm);
 
-///@brief Idealize loop residues and residues in movemap.
+/// @brief Idealize loop residues and residues in movemap.
 // Optionally idealize insert residues as well.
 void
 idealize_combined_pose(
@@ -158,19 +155,19 @@ idealize_combined_pose(
 	core::Size Cter_loop_end,
 	bool idealize_insert = false);
 
-///@brief Adds cutpoint varients above and below cutpoint
+/// @brief Adds cutpoint varients above and below cutpoint
 void
 add_cutpoint_variants_for_ccd(
 	core::pose::Pose & pose,
 	protocols::loops::Loops const & loops);
 
-///@brief Removes cutpoint variants above and below cutpoint
+/// @brief Removes cutpoint variants above and below cutpoint
 void
 remove_cutpoint_variants_for_ccd(
 	core::pose::Pose & pose,
 	protocols::loops::Loops const & loops);
 
-///@brief Uses has_severe_peptide_bond_issues with stringent geometry values to 
+/// @brief Uses has_severe_peptide_bond_issues with stringent geometry values to 
 /// determine graft closure at cutpoint.
 bool
 graft_closed(
@@ -178,14 +175,11 @@ graft_closed(
 	protocols::loops::Loops & loops);
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Useful FoldTrees
 //
 //
-//
-
 
 /////////////////////////////////////////////////////////////////
 /// @brief ****Nter_loop_start---->Piece----> | Cter_loop_end****
@@ -210,7 +204,6 @@ setup_single_loop_double_arm_remodeling_foldtree(
 	core::Size const Nter_loop_start,
 	core::Size const Cter_loop_end,
 	core::Size end, bool loop_modeling=false);
-
 
 
 }//namespace grafting

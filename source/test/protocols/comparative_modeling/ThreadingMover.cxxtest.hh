@@ -18,8 +18,6 @@
 #include <test/core/init_util.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>

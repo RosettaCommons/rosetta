@@ -54,7 +54,6 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -187,7 +186,6 @@ HBondDatabase::get_database( string const & tag ){
 	}
 	return param_db->second;
 }
-
 
 
 HBondDatabase::~HBondDatabase(){}
@@ -386,7 +384,7 @@ HBondDatabase::initialize_HBPoly1D()
 	}
 }
 
-	///@details read one dimensional polynomial definition file
+	/// @details read one dimensional polynomial definition file
 	// File Format:
 	//    -fields are space delimited
 	//    -Columns are: HBDonChemType, HBAccChemType, HBSeqSep, AHdist_short_fade_name, AHdist_long_fade_name, cosBAH_fade_name, cosAHD_fade_name, AHDist_poly_name, cosBAH_poly_name, cosAHD_poly_name,
@@ -740,8 +738,7 @@ HBondDatabase::HBFadeInterval_from_name(
 }
 
 
-
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 FadeIntervalCOP
 HBondDatabase::AHdist_short_fade_lookup(
@@ -765,7 +762,7 @@ HBondDatabase::AHdist_short_fade_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 FadeIntervalCOP
 HBondDatabase::AHdist_long_fade_lookup(
@@ -788,7 +785,7 @@ HBondDatabase::AHdist_long_fade_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 FadeIntervalCOP
 HBondDatabase::cosBAH_fade_lookup(
@@ -811,7 +808,7 @@ HBondDatabase::cosBAH_fade_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 FadeIntervalCOP
 HBondDatabase::cosAHD_fade_lookup(
@@ -849,7 +846,7 @@ HBondDatabase::HBPoly1D_from_name(
 	}
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::AHdist_poly_lookup(
@@ -872,7 +869,7 @@ HBondDatabase::AHdist_poly_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::cosBAH_short_poly_lookup(
@@ -896,7 +893,7 @@ HBondDatabase::cosBAH_short_poly_lookup(
 
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::cosBAH_long_poly_lookup(
@@ -919,7 +916,7 @@ HBondDatabase::cosBAH_long_poly_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::cosAHD_short_poly_lookup(
@@ -942,7 +939,7 @@ HBondDatabase::cosAHD_short_poly_lookup(
 	return p;
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::cosAHD_long_poly_lookup(
@@ -964,7 +961,7 @@ HBondDatabase::cosAHD_long_poly_lookup(
 	}
 	return p;
 }
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 Polynomial_1dCOP
 HBondDatabase::chi_poly_lookup(
@@ -1006,7 +1003,7 @@ debug_assert(acc_chem_type >= 1 && acc_chem_type <= hbacc_MAX );
 	return acc_strength_lookup_[acc_chem_type];
 }
 
-///@details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
+/// @details use get_hbond_evaluation_type(...) or HBEval_lookup(...)
 ///determine hb_eval_type.
 HBondWeightType
 HBondDatabase::weight_type_lookup(

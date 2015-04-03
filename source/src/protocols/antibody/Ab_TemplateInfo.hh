@@ -9,7 +9,7 @@
 
 /// @file protocls/antibody/Ab_TemplateInfo.cc
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
@@ -55,7 +55,6 @@ public:
 	friend std::ostream & operator<<(std::ostream& out, const Ab_TemplateInfo & ab_t_info );
 
 
-
 private:
 	bool load_L1_, load_L2_, load_L3_,
 	     load_H1_, load_H2_, load_H3_;
@@ -77,26 +76,13 @@ private:
 	bool camelid_;
 
 
-
-
-
 };
-
-
-
-
-
-
 
 
 } //namespace antibody
 } //namespace protocols
 
 
-
-
-
 #endif
-
 
 

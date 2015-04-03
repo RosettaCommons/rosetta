@@ -23,17 +23,14 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-// AUTO-REMOVED #include <core/id/types.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-
 
 
 namespace protocols {
@@ -42,7 +39,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.BindingStrainFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 BindingStrainFilter::BindingStrainFilter() :
 	parent( "BindingStrain" ),
 	task_factory_( /* NULL */ ),

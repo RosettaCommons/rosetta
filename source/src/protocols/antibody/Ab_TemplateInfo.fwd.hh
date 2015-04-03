@@ -9,7 +9,7 @@
 
 /// @file protocls/antibody/Ab_TemplateInfo.fwd.hh
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
@@ -32,7 +32,5 @@ typedef utility::pointer::shared_ptr< Ab_TemplateInfo const > Ab_TemplateInfoCOP
 } // protocols
 
 #endif
-
-
 
 

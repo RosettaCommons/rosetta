@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -26,9 +26,7 @@
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <protocols/jumping/ResiduePairJumpSetup.hh>
 #include <protocols/jumping/ResiduePairJump.hh>
@@ -37,7 +35,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
 
 //#include <utility/io/izstream.hh>
@@ -48,7 +45,6 @@
 //#include <basic/options/option.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -246,7 +242,6 @@ void MetalloClaimer::init_after_reading() {
 	jump_setup_->add_residue_pair_jump( residue_pair_jump_ );
 	set_jump_def( jump_setup_ ); //tell the underlying FragmentJumpClaimer
 }
-
 
 
 } //topology_broker

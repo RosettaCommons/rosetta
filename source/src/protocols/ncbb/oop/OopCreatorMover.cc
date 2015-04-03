@@ -64,7 +64,6 @@
 #include <basic/resource_manager/ResourceManager.hh>
 
 
-
 // Filter headers
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>

@@ -17,17 +17,10 @@
 // Unit headers
 #include <core/scoring/sasa.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
  // for core::pose::make_pose_from_sequence
 
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
@@ -36,7 +29,6 @@
 //Auto Headers
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
-
 
 
 // --------------- Test Class --------------- //

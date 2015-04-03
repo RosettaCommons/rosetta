@@ -376,7 +376,6 @@ get_rna_base_centroid( conformation::Residue const & rsd, bool verbose ){
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Unify the version in StepWiseRNA_Utill.cc and RNA_CentroidInfo.cc on June 25, 2011
 numeric::xyzMatrix< core::Real >

@@ -20,12 +20,10 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // Package headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.hh>

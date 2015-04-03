@@ -11,7 +11,7 @@
 /// @brief  a collection classes of the FragData and SingleResidueFragData class hirachy
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/FragData.hh>
@@ -31,7 +31,6 @@
 #include <utility/vector1.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

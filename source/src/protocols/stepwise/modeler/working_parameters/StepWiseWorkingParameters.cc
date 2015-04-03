@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -176,7 +176,6 @@ namespace working_parameters {
 		}
 		return is_pre_proline;
 	}
-
 
 
 } //working_parameters

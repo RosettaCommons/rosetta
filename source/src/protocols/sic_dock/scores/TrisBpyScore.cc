@@ -51,7 +51,6 @@ using core::Size;
 	typedef numeric::Xforms Xforms;
 
 
-
 	// byp tilt 32.5
 
 static thread_local basic::Tracer TR( "protocols.sic_dock.scores.TrisBpyScore" );
@@ -243,7 +242,6 @@ void TrisBpyScore::dump_trisbpy( Xforms const & x1s, Xforms const & x2s, std::st
 	printbpy(out,xbpy);
 	out.close();
 }
-
 
 
 } // namespace scores

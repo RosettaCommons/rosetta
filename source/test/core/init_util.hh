@@ -148,8 +148,6 @@ initialize_from_commandline_w_db( std::string const & commandline )
 }
 
 
-
-//
 // @brief Analog of Core::init() for unit test suite.
 //
 inline void core_init()

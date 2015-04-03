@@ -23,7 +23,7 @@ using core::Size;
 namespace devel {
 namespace constel {
 
-///
+
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
 ///		by compounds containing indole and a carboxylic group.
 ///
@@ -34,7 +34,6 @@ class FilterByIndoleCOO {
 };
 
 
-///
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
 /// 	by tryptamine.
 ///
@@ -45,7 +44,6 @@ class FilterByTryptamine {
 };
 
 
-///
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
 /// 	by amphetamine.
 ///
@@ -56,7 +54,6 @@ class FilterByAmphetamine {
 };
 
 
-///
 /// @brief Class to filter out constellations that cannot (putatively) be rescued
 /// 	by histamine.
 ///

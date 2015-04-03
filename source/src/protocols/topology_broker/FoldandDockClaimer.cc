@@ -17,7 +17,6 @@
 #include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.hh>
@@ -27,7 +26,6 @@
 
 // Utility header
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <numeric/random/random.hh>
 
@@ -69,7 +67,7 @@ FoldandDockClaimer::clone() const {
 	return TopologyClaimerOP( new FoldandDockClaimer( *this ) );
 }
 
-///@brief type() is specifying the output name of the TopologyClaimer
+/// @brief type() is specifying the output name of the TopologyClaimer
 std::string
 FoldandDockClaimer::type() const {
 	return _static_type_name();
@@ -154,7 +152,6 @@ void FoldandDockClaimer::generate_claims( claims::DofClaims& new_claims ) {
 																								claims::DofClaim::INIT /* for now... eventually CAN_INIT ? */ ) ) );
 	}
 }
-
 
 
 } //topology_broker

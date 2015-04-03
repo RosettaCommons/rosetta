@@ -19,9 +19,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <sstream>
 

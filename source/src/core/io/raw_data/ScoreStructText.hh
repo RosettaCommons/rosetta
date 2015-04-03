@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 
-
 // C++ Headers
 
 namespace core {

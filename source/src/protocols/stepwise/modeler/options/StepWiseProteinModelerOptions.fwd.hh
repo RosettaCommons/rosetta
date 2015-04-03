@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/options/StepWiseProteinModelerOptions.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -12,14 +12,10 @@
 
 // libRosetta headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 
 //#include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 //#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -28,7 +24,6 @@
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>

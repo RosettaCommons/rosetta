@@ -37,13 +37,11 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/comparative_modeling/util.hh>

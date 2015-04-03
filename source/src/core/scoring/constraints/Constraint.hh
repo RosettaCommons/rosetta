@@ -16,15 +16,12 @@
 // Unit header
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/FuncFactory.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/conformation/Conformation.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/random.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -37,7 +34,6 @@
 #include <utility/exit.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 
 #include <core/id/AtomID.fwd.hh>
 // #include <core/id/SequenceMapping.fwd.hh> Commented by Brian Weitzner to fix compilation

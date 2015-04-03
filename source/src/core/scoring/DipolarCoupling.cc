@@ -20,7 +20,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
@@ -43,7 +42,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>

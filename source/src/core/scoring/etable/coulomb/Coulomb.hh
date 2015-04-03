@@ -69,7 +69,7 @@ public:
 	) const;
 
 
-	///@brief Get the key numeric value for derivative calculations
+	/// @brief Get the key numeric value for derivative calculations
 	/// i.e. the derivative of energy with respect to distance divided by the distance
 	inline
 	Real
@@ -130,7 +130,7 @@ private:
 	bool sigmoidal_die_;
 	Real sigmoidal_D_, sigmoidal_D0_, sigmoidal_S_;
 
-  ///@brief Precomputed constants
+  /// @brief Precomputed constants
 	Real C0_;
 	Real C1_;
 	Real C2_;

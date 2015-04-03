@@ -155,7 +155,6 @@ IdealBondLengthSet::read_file( std::string const & filename )
 }
 
 
-
 /// @details This function iterates over each bond_type pair in the bond_length_ map and
 /// prints both keys. It is only used for debugging.
 void

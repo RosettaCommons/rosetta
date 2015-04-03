@@ -17,7 +17,6 @@
 #include <core/fragment/FragSet.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.fwd.hh>
 
 #include <string>

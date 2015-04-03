@@ -20,14 +20,12 @@
 #include <core/pose/Pose.hh>
 
 #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -74,7 +72,7 @@ MutateResidueCreator::mover_name()
 	return "MutateResidue";
 }
 
-///@brief default ctor
+/// @brief default ctor
 MutateResidue::MutateResidue() :
 	parent(),
 	target_(0),
@@ -82,7 +80,7 @@ MutateResidue::MutateResidue() :
 	preserve_atom_coords_(false)
 {}
 
-///@brief copy ctor
+/// @brief copy ctor
 MutateResidue::MutateResidue(MutateResidue const& dm) :
 	//utility::pointer::ReferenceCount(),
 	parent( dm ),
@@ -91,9 +89,9 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 	preserve_atom_coords_(dm.preserve_atom_coords_)
 {}
 
-///@brief Mutate a single residue to a new amino acid
-///@param target The residue index to mutate
-///@param new_res The name of the replacement residue
+/// @brief Mutate a single residue to a new amino acid
+/// @param target The residue index to mutate
+/// @param new_res The name of the replacement residue
 MutateResidue::MutateResidue( Size const target, string const new_res ) :
 	parent(),
 	target_(target),

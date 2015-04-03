@@ -35,17 +35,17 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class SecondaryStructureEnergy : public WholeStructureEnergy  {
 public:
 	typedef WholeStructureEnergy  parent;
 
 public:
 
-	///
+
 	SecondaryStructureEnergy();
 
-	///
+
 	SecondaryStructureEnergy( SecondaryStructureEnergy const & src );
 
 

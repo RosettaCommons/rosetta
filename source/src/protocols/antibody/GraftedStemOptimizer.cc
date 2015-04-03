@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftedStemOptimizer.cc
 /// @brief Optimize the CDR Grafted stem
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #include <protocols/antibody/GraftedStemOptimizer.hh>
@@ -35,13 +35,11 @@
 #include <protocols/moves/PyMolMover.hh>
 
 
-
 static thread_local basic::Tracer TRG( "protocols.antibody.GraftedStemOptimizer" );
 
 namespace protocols {
 namespace antibody {
 using namespace core;
-
 
 
 GraftedStemOptimizer::GraftedStemOptimizer( CDRNameEnum const & cdr_name,
@@ -183,8 +181,6 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	TRG<<"Score After Idealization, but Before Stem Optimization: "<<(*scorefxn_)(pose)<<std::endl;
 
 
-
-
 	Size inner_cycles( stem_size_ * 3 );
 	Size outer_cycles( 5 );
 	if(benchmark_) {
@@ -223,10 +219,6 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 }
 
 
-
-
-
-///
 /// 	      ####LLLLLLLLLLLLLLLLLLL####              L1-3.pdb, H1-3.pdb
 /// ..ffffffff@@@@                   @@@@ffffffffff..  framework.pdb
 ///                       ||
@@ -239,7 +231,6 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 ///          |     |                 |     |
 ///          |  |  |                 |  |  |
 ///   ffffffff@@|##LLLLLLLLLLLLLLLLLLL##|@@ffffffffff
-///
 ///
 
 void
@@ -328,8 +319,6 @@ GraftedStemOptimizer::get_Cstem_foldtree( pose::Pose const & pose ) const  {
 }
 
 
-
-
 kinematics::MoveMapOP
 GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string const & type, bool const & include_nb_sc ) const  {
 	using namespace core::kinematics;
@@ -378,7 +367,6 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 }
 
 
-
 pack::task::TaskFactoryOP
 GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const & type, bool const & include_nb_sc ) const  {
 	pack::task::TaskFactoryOP tf( new pack::task::TaskFactory() );
@@ -415,7 +403,6 @@ GraftedStemOptimizer::get_stem_taskfactory( pose::Pose & pose, std::string const
 }
 
 
-
 std::string
 GraftedStemOptimizer::get_name() const {
 	return "GraftedStemOptimizer";
@@ -427,7 +414,7 @@ GraftedStemOptimizer::GraftedStemOptimizer( GraftedStemOptimizer const & rhs ) :
 }
 
 
-///@brief assignment operator
+/// @brief assignment operator
 GraftedStemOptimizer & GraftedStemOptimizer::operator=( GraftedStemOptimizer const & rhs ) {
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -445,9 +432,6 @@ GraftedStemOptimizer::initForEqualOperatorAndCopyConstructor(GraftedStemOptimize
 	lhs.cdr_loop_     =  rhs.cdr_loop_;
 	lhs.scorefxn_     =  rhs.scorefxn_;
 }
-
-
-
 
 
 }  // namespace antibody

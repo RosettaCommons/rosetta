@@ -13,7 +13,7 @@
 /// @author James Thompson
 /// @author Ian Davis
 /// @date   Wed Aug 22 12:10:37 2007
-///
+
 
 // Unit headers
 #include <core/scoring/rms_util.hh>

@@ -28,7 +28,6 @@ if (length(args)!=2){
 	print("Output Directory Required")}
 
 
-
 drv <- dbDriver("SQLite")
 
 con <- dbConnect(drv, dbname = toString(args[1]))
@@ -80,7 +79,5 @@ for (r in regions$region){
 warnings()
 #sink()
 #close(con)
-
-
 
 

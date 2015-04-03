@@ -34,7 +34,6 @@
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -45,7 +44,6 @@
 #include <utility/assert.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -258,7 +256,6 @@ P_AA::read_P_AA_pp()
 //#endif
 
 
-
 	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
 
 		// Now prepare the bicubic spline
@@ -419,9 +416,9 @@ P_AA::get_Paa_pp_deriv(
 }
 
 
-///@brief Probability energies for P(aa)
+/// @brief Probability energies for P(aa)
 ///
-///@remarks No derivative function since there are no degrees of freedom to vary for a P_AA energy like for P_AA_pp.
+/// @remarks No derivative function since there are no degrees of freedom to vary for a P_AA energy like for P_AA_pp.
 Energy
 P_AA::P_AA_energy( conformation::Residue const & res ) const {
 

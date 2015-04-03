@@ -22,13 +22,11 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID_Map.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //Objexx headers

@@ -14,7 +14,6 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/MembraneCbetaEnergy.hh>
 #include <core/scoring/methods/MembraneCbetaEnergyCreator.hh>
 
@@ -22,12 +21,10 @@
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
@@ -82,7 +79,6 @@ MembraneCbetaEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 MembraneCbetaEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

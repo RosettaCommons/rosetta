@@ -21,7 +21,6 @@
 // Unit header
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/id/AtomID.hh>
@@ -56,7 +55,7 @@ public:
 // 	void
 // 	init_cst_score_types();
 
-	///
+
 	virtual
 	ConstraintOP clone() const {
 		if ( size() > 0 ) {
@@ -66,7 +65,7 @@ public:
 		}
 	}
 
-	///
+
 	virtual
 	ConstraintOP clone( func::FuncOP func ) const {
 		if ( size() > 0 ) {
@@ -100,7 +99,7 @@ public:
 	core::Real
 	dist( func::XYZ_Func const & xyz ) const;
 
-	///@brief add individual constraint into AmbiguousNMRConstraint
+	/// @brief add individual constraint into AmbiguousNMRConstraint
 	virtual
 	void
 	add_individual_constraint( ConstraintCOP cst_in );
@@ -137,7 +136,7 @@ public:
 // 	void show( std::ostream& out ) const;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
+/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
 	virtual void
 	read_def(
 		std::istream& data,

@@ -18,15 +18,12 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <protocols/pockets/PocketConstraint.fwd.hh>
-// AUTO-REMOVED #include <protocols/pockets/PocketGrid.hh>
 
-// AUTO-REMOVED #include <math.h>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <list>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
@@ -35,7 +32,7 @@
 namespace protocols {
 namespace pockets {
 
-///@brief This constraint favors creating a pocket suitable for a small-molecule
+/// @brief This constraint favors creating a pocket suitable for a small-molecule
 ///
 class PocketConstraint : public core::scoring::constraints::Constraint
 {

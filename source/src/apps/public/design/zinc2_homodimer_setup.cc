@@ -61,7 +61,6 @@
 #include <utility/vector0.hh>
 
 
-
 typedef core::pose::Pose Pose;
 typedef numeric::xyzVector<core::Real> point;
 typedef point axis;
@@ -79,7 +78,7 @@ basic::options::RealOptionKey const zn_zn_distance_cutoff( "zn_zn_distance_cutof
 basic::options::RealOptionKey const tetrahedral_angle_sumsq_cutoff( "tetrahedral_angle_sumsq_cutoff" ); // how strict you want to be when evaluated metal site geometry.  1800 is for a std dev. of 15 degrees (15 x 15 x 4 angles x 2 zinc sites).  Only 4 angles are considered despite there being 6 tetrahedral angles, because the tetrahedral angle within each match remains fixed
 
 
-///@brief
+/// @brief
 class zinc2_homodimer_setup : public protocols::moves::Mover {
 public:
 
@@ -118,7 +117,6 @@ public:
   }
 
   virtual ~zinc2_homodimer_setup(){};
-
 
 
   virtual void
@@ -230,7 +228,6 @@ public:
   }
 
 
-
   //setup
   virtual void
   setup_metalsites( Pose & homodimer ) {
@@ -263,20 +260,14 @@ public:
   }
 
 
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////// End of Setup  ////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////////////////// Protocol  ////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
   //protocol

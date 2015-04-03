@@ -25,7 +25,6 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Project headers
 #include <core/id/NamedAtomID.hh>

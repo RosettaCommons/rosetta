@@ -18,7 +18,6 @@
 
 // Unit headers
 #include <core/scoring/methods/WaterAdductHBondEnergy.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -38,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class WaterAdductHBondEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;

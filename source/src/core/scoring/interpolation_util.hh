@@ -10,7 +10,7 @@
 /// @file   core/interpolation/interpolation_util.hh
 /// @brief  Useful function for interpolation...
 /// @author Rhiju Das
-///
+
 
 #ifndef INCLUDED_core_scoring_interpolation_util_hh
 #define INCLUDED_core_scoring_interpolation_util_hh

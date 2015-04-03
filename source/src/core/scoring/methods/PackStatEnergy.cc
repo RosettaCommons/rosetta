@@ -17,7 +17,6 @@
 #include <core/scoring/methods/PackStatEnergyCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
@@ -26,7 +25,6 @@
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

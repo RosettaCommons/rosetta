@@ -22,8 +22,8 @@ namespace protocols {
 namespace grafting {
 namespace simple_movers {
 
-///@brief Insert a whole pose into another.  Loops, linkers, whaterver. No modeling here.  Wrapper to utility function insert_pose_into_pose.
-///@details Residues between start + end should be deleted before using this mover if needed.
+/// @brief Insert a whole pose into another.  Loops, linkers, whaterver. No modeling here.  Wrapper to utility function insert_pose_into_pose.
+/// @details Residues between start + end should be deleted before using this mover if needed.
 ///
 class InsertPoseIntoPoseMover : public  protocols::moves::Mover {
 	

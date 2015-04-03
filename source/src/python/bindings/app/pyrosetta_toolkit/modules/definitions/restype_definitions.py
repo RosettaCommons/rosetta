@@ -14,9 +14,6 @@
 #This object holds data used to define certain things.  CDR's, SASA, Residue types and names, etc.  Hopefully, this will streamline working within python.
 
 
-
-
-
 #This seems like an ok way to do this.  Keep.
 #All the dictionaries for residue Types in design
 

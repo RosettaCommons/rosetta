@@ -77,7 +77,6 @@ private:
 };
 
 
-
 // singleton class
 class WaterWeightGridSet : public utility::SingletonBase< WaterWeightGridSet >
 {

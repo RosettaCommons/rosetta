@@ -24,7 +24,7 @@ namespace core {
 namespace scoring {
 namespace sasa {
 
-///@brief Main interface to sasa calculations outside of pose metrics.
+/// @brief Main interface to sasa calculations outside of pose metrics.
 class SasaCalc : public utility::pointer::ReferenceCount {
 
 public:
@@ -36,7 +36,7 @@ public:
 
 	virtual ~SasaCalc();
 
-	///@brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
+	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
 	Real
 	calculate(const pose::Pose & pose);
 
@@ -67,7 +67,7 @@ public:
 		return atom_sasa_;
 	};
 
-	///@brief Convenience function to fill most commonly used data.
+	/// @brief Convenience function to fill most commonly used data.
 	void
 	fill_data(
 		Real & total_hsasa,
@@ -151,8 +151,6 @@ public:
 	}
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 /// Options
 ///
@@ -167,15 +165,15 @@ public:
 	void
 	set_calculation_method(SasaMethodEnum method);
 
-	///@brief Include hydrogens explicitly
+	/// @brief Include hydrogens explicitly
 	void
 	set_include_hydrogens_explicitly(bool include_hydrogens);
 
-	///@brief Probe radius of 1.4 (water) is typically used
+	/// @brief Probe radius of 1.4 (water) is typically used
 	void
 	set_probe_radius(Real probe_radius);
 
-	///@brief This is typically done.  Disabling it is more akin to obtaining the Surface Area than the SASA
+	/// @brief This is typically done.  Disabling it is more akin to obtaining the Surface Area than the SASA
 	void
 	set_include_probe_radius_in_atom_radii(bool include_probe_radius);
 
@@ -183,12 +181,11 @@ public:
 	/////////// Hydrophobic Calculation ///////////
 
 
-
-	///@brief Typically, only carbon or sulfers are included in the calculation.  If you are using ligands - this may not be good enough.
+	/// @brief Typically, only carbon or sulfers are included in the calculation.  If you are using ligands - this may not be good enough.
 	void
 	set_include_carbon_sulfer_only_in_hydrophobic_calc(bool include_c_s_only);
 
-	///@brief Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.
+	/// @brief Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.
 	/// .4 is a relative number.  This makes sure that carbonyl and carboxyl carbons are marked as polar, while others (protein-based) are non-polar
 	void
 	set_exclude_polar_atoms_by_charge(bool exclude_polar_all);
@@ -200,15 +197,14 @@ public:
 
 	/////////// Radii Sets ///////////
 
-	///@brief Radii set to use when not including hydrogens (naccess/chothia, legacy)
+	/// @brief Radii set to use when not including hydrogens (naccess/chothia, legacy)
 	/// Do not use legacy unless you know what you are doing and why.
 	void
 	set_implicit_hydrogen_included_radii_set(SasaRadii radii_set);
 
-	///@brief Radii set to use when including hydrogens (LJ/reduce)
+	/// @brief Radii set to use when including hydrogens (LJ/reduce)
 	void
 	set_explicit_hydrogen_included_radii_set(SasaRadii radii_set);
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +216,7 @@ public:
 
 	//set_expand_polar_radii(bool expand_polars, core::Size expansion_radius = 1.0); (Not used anywhere)
 
-	///@brief Not for general use.  Used to calculate unsatisfied buried polars with legacy radii (which implicitly had included hydrogens.)
+	/// @brief Not for general use.  Used to calculate unsatisfied buried polars with legacy radii (which implicitly had included hydrogens.)
 	void
 	set_use_big_polar_hydrogen(bool big_polar_h);
 
@@ -230,14 +226,13 @@ private:
 	void
 	init(const pose::Pose & pose);
 
-	///@brief Creates and sets up the sasa method before calculate is called on the instance.
+	/// @brief Creates and sets up the sasa method before calculate is called on the instance.
 	void
 	setup_sasa_method(SasaRadii radii_set);
 
 
 	void
 	calc_per_res_sasas(const pose::Pose & pose);
-
 
 
 private:
@@ -282,7 +277,6 @@ private:
 	Real total_rel_hsasa_;
 
 };
-
 
 
 } //sasa

@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_multistate_design_util_hh
 #define INCLUDED_protocols_multistate_design_util_hh
 
-// AUTO-REMOVED #include <protocols/genetic_algorithm/Entity.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <core/types.hh>
@@ -31,7 +30,7 @@ list_amino_acid_options(
 	core::pack::task::ResidueLevelTask const & rtask
 );
 
-/// @breif Creates a set of PosType entity-elements from a string of 1-letter AA codes
+/// @brief Creates a set of PosType entity-elements from a string of 1-letter AA codes
 protocols::genetic_algorithm::EntityElements
 entity_elements_from_1letterstring(
 	std::string const & input

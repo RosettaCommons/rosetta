@@ -38,7 +38,6 @@
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <unistd.h>
 
 #include <utility/vector1.hh>
 

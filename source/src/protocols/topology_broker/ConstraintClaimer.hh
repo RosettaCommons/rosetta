@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -66,7 +66,7 @@ public:
 
 	virtual void generate_claims( claims::DofClaims& );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -106,30 +106,30 @@ private:
 	mutable core::pose::Pose constraint_ref_pose_;
 	mutable std::string sequence_;
 	mutable utility::vector1< bool > combine_exclude_res_;
-	///@brief true if constraints are active in centroid mode
+	/// @brief true if constraints are active in centroid mode
 	bool bCentroid_;
 
-	///@brief true if constraints are active in full-atom mode
+	/// @brief true if constraints are active in full-atom mode
 	/// if true use fa_constraints if available... normal constraints otherwise
 	bool bFullatom_;
 
-	///@brief use constraints defined via command line
+	/// @brief use constraints defined via command line
 	bool bCmdFlag_;
 
 
-	///@brief combine constraints randomly into Ambiguous Constraints
+	/// @brief combine constraints randomly into Ambiguous Constraints
 	core::Size combine_ratio_;  //default 1: no constraint combination
 
-	///@brief drop restraints with this rate randomly -- default 0 -- no dropping
+	/// @brief drop restraints with this rate randomly -- default 0 -- no dropping
 	core::Real drop_random_rate_;
 
-	///@brief at most one constraint per residue pair ( does not look at bounds... )
+	/// @brief at most one constraint per residue pair ( does not look at bounds... )
 	bool skip_redundant_;
 
-	///@brief how many residues left and right do we exclude other "redundant" constraints...
+	/// @brief how many residues left and right do we exclude other "redundant" constraints...
 	core::Size skip_redundant_width_;
 
-	///@brief which weight should this constraint set have when used as a filter
+	/// @brief which weight should this constraint set have when used as a filter
 	core::Real filter_weight_;
 	std::string filter_name_;
 }; //class ConstraintClaimer

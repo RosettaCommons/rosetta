@@ -31,7 +31,6 @@
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -118,8 +117,6 @@ enum HBDonChemType {
 	hbdon_GENERIC_SC,
 	hbdon_MAX = hbdon_GENERIC_SC
 };
-
-
 
 
 enum HBEvalType{
@@ -393,17 +390,14 @@ extern ObjexxFCL::FArray3D<HBEvalType> const HBEval_lookup;
 //used in questional circumstances they are depricated and will be
 //removed in subsiquent versions of the hbond-potential.
 //
-//
 
 bool hbe_is_BB_type( HBEvalType hbe );
 
 bool hbe_is_SC_type( HBEvalType hbe );
 
 
-
 HBondWeightType
 get_hbond_weight_type( HBEvalType const & hbe_type );
-
 
 
 chemical::Hybridization
@@ -493,7 +487,6 @@ hb_eval_type(
 	HBAccChemType acc_chem_type,
 	HBSeqSep seq_sep_type
 );
-
 
 
 } // namespace hbonds

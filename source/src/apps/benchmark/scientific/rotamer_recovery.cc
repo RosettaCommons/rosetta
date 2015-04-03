@@ -12,7 +12,6 @@
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 
-
 // Unit Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryMover.hh>

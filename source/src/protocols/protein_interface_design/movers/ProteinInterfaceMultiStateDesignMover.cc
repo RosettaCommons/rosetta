@@ -16,19 +16,15 @@
 #include <protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMoverCreator.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <basic/datacache/DataMap.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -39,17 +35,14 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -588,14 +581,14 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	runtime_assert( at_least_one_negative_state );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::fresh_instance() const
 {
 	return moves::MoverOP( new ProteinInterfaceMultiStateDesignMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 ProteinInterfaceMultiStateDesignMover::clone() const
 {
@@ -668,7 +661,6 @@ ProteinInterfaceMultiStateDesignMover::add_states(
 		multistate_packer_->add_state( state );
 	}
 }
-
 
 
 } // namespace movers

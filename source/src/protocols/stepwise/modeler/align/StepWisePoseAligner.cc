@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/align/StepWisePoseAligner.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -58,7 +58,6 @@ using namespace core::pose::full_model_info;
 // -- rhiju, 2014
 //
 ///////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 namespace protocols {

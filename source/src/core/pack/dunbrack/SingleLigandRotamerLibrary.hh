@@ -31,8 +31,8 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-///@brief A fixed library of conformations for some residue type (doesn't have to be a ligand).
-///@details Reads residue conformations in PDB format separated by mandatory TER records.
+/// @brief A fixed library of conformations for some residue type (doesn't have to be a ligand).
+/// @details Reads residue conformations in PDB format separated by mandatory TER records.
 /// "Included" from a residue .params file with the PDB_ROTAMERS keyword.
 class SingleLigandRotamerLibrary : public SingleResidueRotamerLibrary
 {
@@ -141,7 +141,6 @@ public:
 	get_rotamers() const {
 		return rotamers_;
 	}
-
 
 
 private:

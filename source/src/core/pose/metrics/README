@@ -60,6 +60,3 @@ the base class. Any values returned by "lookup" (and "print") should be stored a
 3) Make sure to include assert statements with function calls to "check_cast" for each lookup metric.
 
 
-
-
-

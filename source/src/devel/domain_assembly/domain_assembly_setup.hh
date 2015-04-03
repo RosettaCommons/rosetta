@@ -62,18 +62,18 @@ public:
   void set_domain_end ( core::Size & i ) { domain_end_ = i; }
   core::Size get_domain_end () const { return domain_end_; }
 
-  ///@brief truncates and adds linker to a domain
+  /// @brief truncates and adds linker to a domain
   ///  fills processed_pose
   void process_domain( );
 };
 
-///@brief builds a full length pose from a set of input pdbs
+/// @brief builds a full length pose from a set of input pdbs
 void assemble_domains_setup();
 
-///@brief calls process domain to add linkers/truncate domains
+/// @brief calls process domain to add linkers/truncate domains
 void process_domains( utility::vector1< DomainInfo > & domains );
 
-///@brief connect the domains
+/// @brief connect the domains
 ///If using with pdbs files that contain RNA.  The RNA must either be at the beginning of the first pdb input
 ///or at the end of the last pdb input, otherwise the connect domains function will fail and crash
 void connect_domains( utility::vector1< DomainInfo > domains, core::pose::Pose & full_pose );

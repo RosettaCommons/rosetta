@@ -63,7 +63,7 @@ nearest_neighbor(
 // use because they're a little awkward.
 
 /// @brief returns the nearest neighbor to the given point.
-/// @detailed Parameters are (in order):
+/// @details Parameters are (in order):
 /// - current: the base of the tree
 /// - pt: the point that is being searched against the tree
 /// - bounds: hyper-rectangle in k-space that bounds all points in the tree

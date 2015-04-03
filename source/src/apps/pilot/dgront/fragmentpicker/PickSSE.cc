@@ -132,7 +132,6 @@ void register_options() {
 }
 
 
-
 int main(int argc, char * argv[]) {
     try {
 	register_options();

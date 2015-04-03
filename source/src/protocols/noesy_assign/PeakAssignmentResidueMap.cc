@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -28,9 +28,7 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -104,7 +102,7 @@ void PeakAssignmentResidueMap::add_all_atoms( ResonanceList const& rslist ) {
 		atoms_[ res1 ].insert( it->second->atom() );
 	}
 }
-///@brief remove assignment...
+/// @brief remove assignment...
 void PeakAssignmentResidueMap::remove( PeakAssignment const& assignment ) {
   Size const res1( assignment.resid( 1 ) );
   Size const res2( assignment.resid( 2 ) );

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief Application level code for relax-type protocols
-/// @detailed
+/// @details
 ///
 /// use AbrelaxApplication in the following way:
 ///
@@ -96,7 +96,6 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/SS_Killhairpins_Info.hh>
-// AUTO-REMOVED #include <core/scoring/SS_Killhairpins_Info.fwd.hh>
 #include <core/scoring/methods/ContactOrderEnergy.hh>
 
 // Project Headers
@@ -109,7 +108,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -134,7 +132,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
@@ -152,7 +149,6 @@
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/evaluation/util.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/loop_closure/ccd/FASelectSlidingWindowLoopClosure.hh>
@@ -179,7 +175,6 @@
 
 // C++ headers
 #include <cstdlib>
-// AUTO-REMOVED #include <iterator>
 #include <string>
 #include <utility>
 #include <vector>
@@ -207,7 +202,7 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 static thread_local basic::Tracer tr( "protocols.abinitio.AbrelaxApplication" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details registering of options that are relevant for AbrelaxApplication
+/// @details registering of options that are relevant for AbrelaxApplication
 void protocols::abinitio::AbrelaxApplication::register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -393,7 +388,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail c'stor - nothing special
+/// @detail c'stor - nothing special
 AbrelaxApplication::AbrelaxApplication() :
 	silent_score_file_( /* NULL */ ),
 	native_pose_( /* NULL */ ),
@@ -434,12 +429,12 @@ AbrelaxApplication::AbrelaxApplication( AbrelaxApplication const & src ) :
 {}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail add a PoseEvaluator derived instance for decoy-processing
+/// @detail add a PoseEvaluator derived instance for decoy-processing
 void AbrelaxApplication::add_evaluation( evaluation::PoseEvaluatorOP eval ) {
 	evaluator_->add_evaluation( eval );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details setup of Application data that is used for both, fold() and run()
+/// @details setup of Application data that is used for both, fold() and run()
 /// this is mainly stuff for scoring and evaluation ( process_decoys(), evaluator_ )
 void AbrelaxApplication::setup() {
 	using namespace basic::options::OptionKeys;
@@ -596,7 +591,7 @@ bool AbrelaxApplication::close_loops( pose::Pose &pose, core::scoring::ScoreFunc
 	return success;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail run all evaluations on the decoy from this function
+/// @detail run all evaluations on the decoy from this function
 /// if you want these evaluations also available during internal stages of the protocols -->
 ///     put them into a PoseEvaluator and use add_evaluation in setup()
 /// otherwise you can also use "manual" code right here in process_decoy --> this will only appear in final
@@ -643,7 +638,7 @@ void AbrelaxApplication::initialize_constraint_forest( pose::Pose & /*pose*/ ) {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail  read constraints file (once) and constraints_set to the pose (each call)
+/// @detail  read constraints file (once) and constraints_set to the pose (each call)
 void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	using namespace basic::options::OptionKeys;
@@ -769,7 +764,7 @@ void AbrelaxApplication::insert_template_frags( core::pose::Pose &pose, kinemati
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail loop over structures in silent-input file
+/// @detail loop over structures in silent-input file
 /// small trick is used to also have native structure in the set of analysis:
 /// it is added to the collection of silent_file-structures manually
 /// TODO we need to do something about difference between fullatom and centroid input!
@@ -878,7 +873,7 @@ void AbrelaxApplication::do_rerun() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail loop over structures in silent-input file
+/// @detail loop over structures in silent-input file
 /// small trick is used to also have native structure in the set of analysis:
 /// it is added to the collection of silent_file-structures manually
 /// TODO we need to do something about difference between fullatom and centroid input!
@@ -1064,7 +1059,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold() if option[ start_native ] is active
+/// @detail called by setup_fold() if option[ start_native ] is active
 /// the routine defines a fragment of the length of the structure
 /// steals the fragment from the native and applies it to the decoy
 /// native needs to be idealized!
@@ -1101,7 +1096,7 @@ void AbrelaxApplication::copy_structure( core::pose::Pose & extended_pose, core:
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(): setup the decoy pose with correct target sequence and extended structure
+/// @detail called by setup_fold(): setup the decoy pose with correct target sequence and extended structure
 ///
 void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose, std::string const& sequence ) const {
 	core::pose::make_pose_from_sequence(
@@ -1133,7 +1128,7 @@ void AbrelaxApplication::generate_extended_pose( core::pose::Pose &extended_pose
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(): read fragment libraries, I strongly suggest to use different options than A and B
+/// @detail called by setup_fold(): read fragment libraries, I strongly suggest to use different options than A and B
 /// if option[ steal ] fragments from the native structure are added to the set.
 /// native structure needs to be idealized for this!
 void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& fragsetB ) const {
@@ -1250,7 +1245,7 @@ void AbrelaxApplication::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& f
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(). Read template definitions
+/// @detail called by setup_fold(). Read template definitions
 void AbrelaxApplication::setup_templates() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -1274,7 +1269,7 @@ void AbrelaxApplication::setup_templates() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
+/// @detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
 /// if jump_def_ points to an object we will use JumpFoldConstraint-protocol in fold()
 	void AbrelaxApplication::setup_jumps(	pose::Pose const& extended_pose ) {
 	using namespace basic::options;
@@ -1391,7 +1386,7 @@ void AbrelaxApplication::setup_membrane_topology(	pose::Pose & pose, std::string
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail setup_fold() all initialization that is necessary to run abinitio production loop in fold()
+/// @detail setup_fold() all initialization that is necessary to run abinitio production loop in fold()
 /// read fragments, make pose from sequence, get constraints, set jumps, movemap .etc
 /// the two parameters are OUTPUT:
 ///    extended_pose to run A) with ( might actually contain native starting structure (option!) )
@@ -1729,7 +1724,7 @@ core::scoring::ScoreFunctionOP AbrelaxApplication::generate_scorefxn( bool fulla
 	return scorefxn;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail everything happens in fold()!
+/// @detail everything happens in fold()!
 /// setup of stuff that is not needed for rerun()
 ///    read fragments
 ///    [ optional ] steal fragments ( take fragments from native pose )
@@ -2059,7 +2054,7 @@ bool sort_PoseWithScore( const PoseWithScore& left, const PoseWithScore& right )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail do fast relax on multiple structures that have been visited during abinitio-protocol.
+/// @detail do fast relax on multiple structures that have been visited during abinitio-protocol.
 /// MIKE: please give more documentation to this
 bool AbrelaxApplication::multi_fast_relax(
 	Protocol& ,
@@ -2074,7 +2069,7 @@ bool AbrelaxApplication::multi_fast_relax(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail full-atom relax of decoys
+/// @detail full-atom relax of decoys
 /// uses either ClassicRelax or FastRelax protocols.
 void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {
 	using namespace basic::options::OptionKeys;
@@ -2128,7 +2123,7 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 } // AbrelaxApplication::relax
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail after setup() run either fold() or rerun()
+/// @detail after setup() run either fold() or rerun()
 void AbrelaxApplication::run() {
 	using namespace basic::options::OptionKeys;
 	if ( !basic::options::option[ basic::options::OptionKeys::in::path::database ].user() ) {
@@ -2163,7 +2158,7 @@ void AbrelaxApplication::run() {
 
 //============= Implementation of PoseEvaluators ======================================
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail
+/// @detail
 void ShowViolation::apply( pose::Pose &pose, std::string, io::silent::SilentStruct& ) const {
 	using namespace basic::options::OptionKeys;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
@@ -2173,7 +2168,7 @@ void ShowViolation::apply( pose::Pose &pose, std::string, io::silent::SilentStru
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail
+/// @detail
 void ComputeTotalDistCst::apply( pose::Pose &pose, std::string, io::silent::SilentStruct &pss ) const {
 	using namespace basic::options::OptionKeys;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {

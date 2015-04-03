@@ -18,25 +18,15 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh> // RM: Needed for compilation on my platform.
 #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
 
@@ -386,7 +376,6 @@ public:
 	}
 
 
-
 	///////////////////////////////////////////////////////////////////////////////
 	// ------------------------------------------ //
 	/// @brief simple test minimization
@@ -575,7 +564,6 @@ public:
 		return;
 
 		/// EVERYTHING BELOW IS UNREACHABLE
-
 
 
 		Pose pose;

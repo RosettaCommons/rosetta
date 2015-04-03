@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace simple_moves {
 
@@ -49,10 +48,10 @@ public:
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 
 public:
-	///@brief default constructor
+	/// @brief default constructor
 	MinPackMover();
 
-	///@brief constructor with typename
+	/// @brief constructor with typename
 	MinPackMover( std::string const & );
 
 	MinPackMover(
@@ -77,7 +76,7 @@ public:
 	virtual std::string get_name() const;
 	bool task_is_valid( Pose const & pose ) const; // should this be virtual?
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -85,7 +84,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -93,7 +92,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -101,10 +100,10 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP clone() const;
 
 	// setters

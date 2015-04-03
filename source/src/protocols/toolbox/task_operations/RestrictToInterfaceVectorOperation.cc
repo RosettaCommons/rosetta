@@ -25,7 +25,6 @@
 #include <core/pack/task/PackerTask.hh>
 //#include <protocols/toolbox/pose_metric_calculators/InterfaceVectorDefinitionCalculator.hh>
 //#include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -37,7 +36,6 @@
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector0.hh>
 
@@ -50,7 +48,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details, empty contructor for parser
+/// @details, empty contructor for parser
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 	parent(), //inits a jump number 1
 	jump_active_(true),
@@ -60,12 +58,12 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
 	vector_dist_cutoff_( 9.0 )
 { }
 
-// ///@details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
+// /// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
 // RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( std::string const & calculator )
 // 	: parent(), calculator_name_(calculator)
 // {}
 
-///@brief this ctor will generate the calculator for you (may use defaults)
+/// @brief this ctor will generate the calculator for you (may use defaults)
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain_id, core::Size const upper_chain_id ):
 	parent(),
@@ -100,7 +98,7 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 	upper_chain(upper_chain_id);
 }
 
-///@brief this ctor will generate the calculator for you (may use defaults)
+/// @brief this ctor will generate the calculator for you (may use defaults)
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ):
 	parent(),
@@ -128,7 +126,6 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation(
 {	set_movable_jumps( movable_jumps );}
 
 
-
 //class member functions
 RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() {}
 
@@ -138,14 +135,14 @@ RestrictToInterfaceVectorOperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation );
 }
 
-///@details be warned if you use clone that you'll not get a new interface calculator
+/// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation::clone() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceVectorOperation( *this ) );
 }
 
 
-///@details apply function, uses inherited functionality
+/// @details apply function, uses inherited functionality
 void
 RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
@@ -220,7 +217,7 @@ RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::
 
 }
 
-///@details setters: only exist to pass info from the parser
+/// @details setters: only exist to pass info from the parser
 void
 RestrictToInterfaceVectorOperation::upper_chain( core::Size upper_chain){
 	upper_chains_.clear();
@@ -283,7 +280,7 @@ RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pos
 }
 */
 
-///@details parse_tag function for the parser, sets reasonable values for all options
+/// @details parse_tag function for the parser, sets reasonable values for all options
 void
 RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 {

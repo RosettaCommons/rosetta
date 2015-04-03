@@ -147,7 +147,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -248,9 +247,6 @@ filebase( std::string const & file )
 }
 
 
-
-
-
 /**
 
 	 centroid score for docking / loop building:
@@ -274,20 +270,12 @@ filebase( std::string const & file )
 **/
 
 
-
-
-
 /// @details  Sets up a trimmed t033 protein using the 1p91 structure with 1qao SAM in place and rna added
 /// @note -- minimally trimmed... can be further trimmed stochastically as needed
 
 
-
 /// @details  Given a pose with protein + SAM + rna, does random re-orientation and slide into contact to get
 ///  distribution of docked conformations
-
-
-
-
 
 
 /// @details  Trims back a full-length t033 protein+sam pose to include only aligned residues
@@ -308,7 +296,6 @@ trim_back_t033_pose( pose::Pose & pose )
 	std::string source_seq, t033_seq;
 	read_alignment_file( "input/alignment_for_trimming.txt", source_seq, t033_seq, mapping );
 	assert( t033_seq == pose.sequence().substr(0,t033_seq.size() ) );
-
 
 
 	// this is stochastic
@@ -349,7 +336,6 @@ trim_back_t033_pose( pose::Pose & pose )
 }
 
 
-
 void
 setup_bonded_protein_rna_pose(
 															pose::Pose & pose,
@@ -369,7 +355,7 @@ setup_bonded_protein_rna_pose(
 	///
 	assert( pose.residue( sam_pos ).name3() == "SAM" );
 
-	///
+
 	core::pose::add_variant_type_to_pose_residue( pose, "SAM_CE_CONNECT", sam_pos );
 
 
@@ -519,7 +505,6 @@ public:
 private:
 	Real scale_;
 };
-
 
 
 ScoreFunctionOP
@@ -821,8 +806,6 @@ sample_rna_dofs_new(
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Loops over starting structures, homology models for t033 including sam
 void
@@ -1050,7 +1033,6 @@ pose_pos_from_pdb_pos( int const pdb_pos, char const pdb_chain, pose::Pose const
 }
 
 
-///
 void
 setup_sam_constraints(
 											pose::Pose & pose,
@@ -1182,7 +1164,6 @@ juke_sam_pos(
 }
 
 
-///
 ScoreFunctionOP
 get_relax_scorefxn()
 {
@@ -1436,7 +1417,7 @@ capri15_relax(
 
 }
 
-///
+
 /**
 
 	 read in a full-length model from recent simulations
@@ -1588,7 +1569,6 @@ centroid_rescore_test()
 		setup_capri_data( pose, option[ OK::dna::specificity::tf ], identity_mapping );
 
 
-
 		Real score( scorefxn( pose ) );
 
 		// count protein-RNA nbrs:
@@ -1625,7 +1605,6 @@ centroid_rescore_test()
 }
 
 
-
 /// @details  Diversify the conformation of the loop that passes beneath the SAM
 ///  protocol:
 /// ** read 1P91A /w 1qao SAM
@@ -1639,8 +1618,6 @@ centroid_rescore_test()
 /// ** SAM-juke using Jim's constraints
 ///
 /// ** full protein repack
-///
-
 
 
 void
@@ -1756,8 +1733,6 @@ diversify_sam_loop_test()
 }
 
 
-
-
 void
 capri_t033_trim_dock_test()
 {
@@ -1832,7 +1807,6 @@ capri_t033_trim_dock_test()
 		cst_set->add_constraint( new APC( pid( "CB", pos158, pose ), pid( "C5'", sam_pos, pose ), new HF( 4.5, 0.50 ))); // "
 
 
-
 		pose.constraint_set( cst_set );
 
 		/// soft rep packer wts plus constraints
@@ -1903,7 +1877,7 @@ capri_t033_trim_dock_test()
 	///
 	assert( pose.residue( sam_pos ).name3() == "SAM" );
 
-	///
+
 	core::pose::add_variant_type_to_pose_residue( pose, "SAM_CE_CONNECT", sam_pos );
 
 
@@ -2013,7 +1987,6 @@ capri_t033_loop_test()
 
 	Size const nstruct( option[ OK::out::nstruct ] );
 	std::string const output_tag( option[ OK::out::output_tag ] );
-
 
 
 	for ( Size n=1; n<= nstruct; ++n ) {
@@ -2144,14 +2117,13 @@ map_secstruct( std::string const & ss )
 
 
 /// @details   Returns a map from type to ss, indexed by: "1p91A", "psipred", "sam_stride", "sam_dssp"
-///
+
 
 SS_Map
 get_t033_ss()
 {
 
 
-	//
 	std::string t033_psipred    = map_secstruct( "CCCCCHHHHHHCCHHHCCCCCCCCHHEECCCEEECCCCCCCCCCCCCEEECCCCCCCCCCCCHHHHHHHHHHHHCCCCHHHHHHHHHHHHHCCCCCEEEEECCCCCHHHHHHHHHCCCCEEEEEECCHHHHHHHHHHCCCCCCEEEEECHHHCCCCCCCEEEEEECCCHHHHHHHHHHCCCCEEEEEEECCCHHHHHHHHHHHCCCCCCCCCHHHHHHHHHCCCCEEEEEEEEEEEECCHHHHHHHHHCCHHHCCCCHHHHHHCCCCCEEEEEEEEEEEEECC" );
 
 	std::string t033_sam_dssp   = map_secstruct( "CCCCCCCHCHHHHHHHHHCTTTHHHHEHETTEEEECTTCEEEHHHHCCEECCCCCCCCTTCHHHHHHHHHHHHHHTCCHHHHHHHHHHHHTCCTTCEEEEECCCHHHHHHHHHHHCTTCEEEEEECCHHHHHHHHHHHTTTCCEEEEECCTGSCCCTSCCEEEEECSCCCCHHHHHHTCCTTEEEEEEECCTTCHHHHHHHHHHHHHCCCCCCHHHHHHHHHHHHHHHEEEEEEEEECCHHHHHHHHHHCHHHHTCCHHHHHHHHHTTCCEEEEEEEEEEEEC" );

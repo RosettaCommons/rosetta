@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/LHSnugFitLegacy.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -63,13 +63,8 @@ using namespace ObjexxFCL::format;
 #include <protocols/antibody/util.hh>
 
 
-
-
-
-
 #include <core/chemical/VariantType.hh>
 //JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
 
 
 using basic::T;
@@ -79,17 +74,9 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.antibody.LHSnugFitLegacy" );
 
 
-
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
-
-
-
-
 
 
 // default constructor
@@ -124,9 +111,6 @@ protocols::moves::MoverOP LHSnugFitLegacy::clone() const {
 }
 
 
-
-
-
 void LHSnugFitLegacy::init(loops::LoopsOP loops_in, bool camelid ) {
 	is_camelid_ = camelid;
 	all_loops_ = loops_in;
@@ -144,14 +128,6 @@ void LHSnugFitLegacy::set_default() {
 std::string LHSnugFitLegacy::get_name() const {
 	return "LHSnugFitLegacy";
 }
-
-
-
-
-
-
-
-
 
 
 void LHSnugFitLegacy::apply( pose::Pose & pose ) {
@@ -217,7 +193,6 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
-
 	simple_moves::RotamerTrialsMoverOP pack_rottrial( new simple_moves::RotamerTrialsMover( pack_scorefxn, tf_ ) );
 
 	simple_moves::PackRotamersMoverOP pack_interface_repack( new simple_moves::PackRotamersMover( pack_scorefxn ) );
@@ -276,21 +251,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 } // namespace antibody
 } // namespace protocols
-
-
-
 
 

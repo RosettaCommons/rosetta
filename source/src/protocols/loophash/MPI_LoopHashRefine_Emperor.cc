@@ -20,28 +20,13 @@
 
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Emperor.hh>
-// AUTO-REMOVED #include <protocols/loophash/WorkUnit_LoopHash.hh>
 #include <protocols/wum/WorkUnitBase.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <ObjexxFCL/format.hh>
@@ -51,7 +36,6 @@
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <unistd.h>
 
 #include <utility/vector1.hh>
 
@@ -66,7 +50,6 @@ namespace loophash {
 using namespace protocols::wum;
 
 static thread_local basic::Tracer TR( "MPI.LHR.Emperor" );
-
 
 
 void
@@ -166,7 +149,6 @@ MPI_LoopHashRefine_Emperor::process_inbound_wus(){
 	save_state_auto();
 	print_stats();
 }
-
 
 
 void

@@ -52,7 +52,6 @@ core::kinematics::Stub getxform(core::conformation::Residue const & move_resi, c
 }
 
 
-
 void pose2frags(core::pose::Pose const & pose, Size minlen, Size maxlen, std::string tag) {
 	for(Size i = 1; i <= pose.n_residue()-minlen; ++i) {
 		for(Size l = minlen; l <= maxlen; ++l) {
@@ -85,7 +84,6 @@ main (int argc, char *argv[])
 
 
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

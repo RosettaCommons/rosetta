@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/bulge/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

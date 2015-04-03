@@ -74,7 +74,6 @@ public:
 		TS_ASSERT(rcf.apply(pose));
 
 
-
 		// min
 		rcf.enable_min_residue_count(true);
 		rcf.min_residue_count(3);

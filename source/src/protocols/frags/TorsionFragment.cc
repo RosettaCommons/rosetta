@@ -41,7 +41,6 @@
 #include <ObjexxFCL/format.hh>
 
 
-
 // C++ Headers
 // #include <cmath>
 // #include <cstdlib>
@@ -62,7 +61,6 @@ static thread_local basic::Tracer TR( "protocols.frags.TorsionFragment" );
 typedef utility::vector1< core::Size > Sizes;
 
 
-
 /// these will go into a helper file soon
 template < class T >
 bool
@@ -77,7 +75,6 @@ has_element( T const & t, utility::vector1< T > const & v )
 {
 	return ( std::find( v.begin(), v.end(), t ) != v.end() );
 }
-
 
 
 TorsionFragment::~TorsionFragment() {}
@@ -274,8 +271,6 @@ TorsionFragmentLibrary::copy_fragments( TorsionFragmentLibrary const & src )
 		fragments_[i]->copy_fragments( src[i] );
 	}
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -477,7 +472,6 @@ TorsionFragmentMover::pose_passes_ss_length_check( pose::Pose const & pose ) con
 {
 	return ss_length_check( min_len_helix_, min_len_strand_, pose );
 }
-
 
 
 void
@@ -796,7 +790,6 @@ fill_in_gaps(
 }
 
 
-
 /// @details  Show size info about library
 void
 TorsionFragmentLibrary::print( std::ostream & os ) const
@@ -1078,8 +1071,6 @@ insert_random_fragments_in_flexible_protein_regions(
 		}
 	}
 }
-
-
 
 
 } // ns frags

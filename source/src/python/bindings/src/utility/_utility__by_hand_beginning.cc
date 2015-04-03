@@ -29,7 +29,6 @@
 #include <map>
 
 
-
 // Includes for dummy bindings to simplify import orders
 #include <utility/inline_file_provider.hh>
 
@@ -589,11 +588,9 @@ struct python_istream_wrapper
 };
 
 
-
 }} // boost_adaptbx::python
 
 #endif // GUARD
-
 
 
 // template< class T >
@@ -604,7 +601,7 @@ struct python_istream_wrapper
 // }
 
 // std::pair ---------------------------------------------------------------------------------------------------
-//
+
 
 //vector1 wrapper requires ostream '<<' operator
 
@@ -931,9 +928,6 @@ void expose_basic_type(std::string name)
   wrap_vector1< utility::vector1<T>, CP_REF, CP_REF >("vec1_vec1_" + name);
   wrap_std_set< T, CP_CNCR, CP_CCR >("set_" + name);
 }
-
-
-
 
 
 void pyexit_callback(void)

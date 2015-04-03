@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/setup/StepWiseCSA_JobDistributor.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

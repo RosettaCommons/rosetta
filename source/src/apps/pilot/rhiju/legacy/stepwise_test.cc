@@ -358,7 +358,6 @@ sample_rama_test()
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 minimizer_test()
@@ -708,7 +707,6 @@ sample_trp_tyr_test()
 	copy_dofs_match_atom_names( pose_null, pose_input, res_map );
 
 
-
 	ScoreFunctionOP scorefxn = get_score_function();
 
 	PoseOP start_pose_op;
@@ -1004,7 +1002,6 @@ rebuild_test(){
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 // Don't really need this one anymore.
@@ -1087,7 +1084,6 @@ cluster_outfile_test_OLD(){
 		silent_file_data.write_silent_struct( *s, silent_file, false /*write score only*/ );
 
 	}
-
 
 
 }
@@ -1426,7 +1422,6 @@ score12_plot_test()
 	// and sample through chi's.
 
 }
-
 
 
 ////////////////////////////////////////////////////////

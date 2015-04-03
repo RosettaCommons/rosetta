@@ -260,7 +260,6 @@ core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Re
 }
 
 
-
 	CCluster::CCluster(core::Size x, core::Size y, core::Size z, std::string atype, core::Real step_, core::Real absX, core::Real absY, core::Real absZ){
 		Cxyz point;
 		point.x=x;
@@ -413,9 +412,6 @@ core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Re
 
 		return 0;
 	}
-
-
-
 
 
 void PocketGrid::clear(){
@@ -2102,8 +2098,6 @@ void PocketGrid::clusterPockets(){
 	}
 
 
-
-
 void PocketGrid::markPocketDepth(core::Real const & surf_d, core::Real const & bur_d){
   core::Size x,y,z;
   for (x=0;x<(xdim_); x++){
@@ -2835,9 +2829,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 				}
 
 
-
-
-
 			}
 		}
 
@@ -3061,13 +3052,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 					}
 
 
-
-
-
-
-
-
-
 					for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
 						if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 						if (!cit->isTarget(numTargets_)) continue;
@@ -3084,7 +3068,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		clusterCPockets();
 
 	}
-
 
 
     core::Real PocketGrid::largestTargetPocketVolume() {
@@ -3716,7 +3699,6 @@ void PocketGrid::write_pocketGrid_to_pdb( std::string const & output_filename ) 
     }
 
 
-
 	bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::func::XYZ_Func const & xyz_func, Size const total_residues, bool center_target, core::Real x, core::Real y, core::Real z ) {
 		core::pose::Pose tmp_pose;
 		int term=1;
@@ -3992,7 +3974,6 @@ void PocketGrid::move_pose_to_standard_orie( core::Size const & central_seqpos, 
 
 	return;
 }
-
 
 
 core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, std::string const & comparison_pdbname ) const {

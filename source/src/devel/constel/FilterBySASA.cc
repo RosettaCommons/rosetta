@@ -36,7 +36,6 @@ core::id::AtomID_Map<Real> FilterBySASA::atom_sasa;
 double FilterBySASA::MAX_ATOM_SASA;
 
 
-///
 /// @brief Initializes the data structures needed to filter out constellations
 /// 	based on SASA.
 ///
@@ -79,7 +78,6 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 }
 
 
-///
 /// @brief Tells whether a constellation has a sufficiently low per-atom SASA.
 ///
 /// @param[in] ps pose to which all residues in the constellation belong.

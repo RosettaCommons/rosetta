@@ -18,8 +18,6 @@
 
 // Utility headers
 //#include <utility/pointer/access_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 
@@ -30,7 +28,7 @@ namespace dssp {
 
 // Forward
 //class BaseJumpSetup;
-///@brief list of pairings
+/// @brief list of pairings
 class Pairing;
 typedef utility::vector1<Pairing> PairingsList;
 
@@ -42,7 +40,6 @@ typedef utility::vector1<Pairing> PairingList;
 // NO PairingsList is not a Ref-Counted class
 //typedef  utility::pointer::owning_ptr< PairingsList >  PairingsListOP;
 //typedef  utility::pointer::owning_ptr< PairingsList const >  PairingsListCOP;
-
 
 
 } //dssp

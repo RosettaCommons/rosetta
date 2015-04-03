@@ -51,9 +51,9 @@ public:
 	typedef core::pack::task::TaskFactoryCOP TaskFactoryCOP;
 
 public:
-	///@brief default constructor
+	/// @brief default constructor
 	RotamerizeMover();
-	///@brief constructor with typename
+	/// @brief constructor with typename
 	RotamerizeMover( std::string const & );
 
 	RotamerizeMover(
@@ -81,7 +81,7 @@ public:
 	RotamerSetsCOP rotamer_sets() const;
 
 protected:
-	///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
+	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
 
 private:

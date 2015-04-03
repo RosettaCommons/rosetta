@@ -87,7 +87,6 @@ public:
 };
 
 
-
 class DummyResourceLoader : public ResourceLoader {
 public:
 	DummyResourceLoader() {}
@@ -235,7 +234,6 @@ public:
 	virtual FallbackConfigurationOP create_fallback_configuration() const { return FallbackConfigurationOP( new DummyResourceFallbackConfiguration2 ); }
 	virtual std::string resource_description() const { return "DummyResource2"; }
 };
-
 
 
 class JD2ResourceManagerTests : public CxxTest::TestSuite {

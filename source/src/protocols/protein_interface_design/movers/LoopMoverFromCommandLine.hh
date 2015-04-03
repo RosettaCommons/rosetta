@@ -19,9 +19,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/protein_interface_design/movers/LoopMoverFromCommandLine.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>

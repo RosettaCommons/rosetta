@@ -47,10 +47,10 @@ public:
 
 public:
 
-	///
+
 	XtalMLEnergy();
 
-	///
+
 	XtalMLEnergy( XtalMLEnergy const & src ) :
 		parent(src) {
 		ml = src.ml;

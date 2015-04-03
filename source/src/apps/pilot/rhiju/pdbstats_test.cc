@@ -175,7 +175,7 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 
 					if ( ( don_h_atm_xyz - acc_atm_xyz ).length_squared() > DIST_CUTOFF2 ) continue;
 
-					//
+
 					// Save following information --
 					// which pdb,
 					//   residue number, atom number, residue type, and atom type of acceptor.
@@ -189,7 +189,7 @@ ch_o_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size co
 					// dihedral D--H--A--ABASE
 					//
 					// Pretty similar to Kortemme et al.
-					//
+
 
 					//This could be a matrix, I guess.
 					Vector const don_h_atm_xyz_rel = don_h_atm_xyz - acc_atm_xyz;
@@ -309,7 +309,7 @@ fa_cenpack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, S
 			//   distance[ action-atom/centroid ]
 			//   distance[ action-atom/action-atom ]
 			//  pretty straightforward
-			//
+
 
 			Distance cendist = (centroid_i - centroid_j).length();
 
@@ -427,7 +427,6 @@ aro_pack_output(utility::io::ozstream & out, Size const & count,
 	}
 
 
-
 	for ( Size n = 1; n <= output_atoms.size(); n++ ) {
 		Vector const local_xyz = stub1.global2local( rsd2.xyz( output_atoms[ n ] ) );
 		out << F( 8,3,local_xyz(1) ) << " "
@@ -535,7 +534,6 @@ proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose,
 	total_residues += res_count;
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -662,7 +660,6 @@ get_ring_centroids_and_stubs( core::conformation::Residue const & rsd,
 
 		ring_stubs.push_back( overall_stub ); // could also define a more 'local' coordinate system, but this is sort of arbitrary.
 	}
-
 
 
 }

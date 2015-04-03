@@ -9,7 +9,7 @@
 
 /// @file protocols/hotspot_hashing/movers/PlaceSurfaceProbe.cc
 /// @author Alex Ford fordas@uw.edu
-//
+
 
 #include <basic/Tracer.hh>
 

@@ -110,7 +110,6 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 }
 
 
-
 /// @brief Clone Energy Method
 EnergyMethodOP
 FaMPSolvEnergy::clone() const {

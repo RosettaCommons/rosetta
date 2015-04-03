@@ -22,13 +22,10 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 
@@ -40,10 +37,8 @@
 #include <core/fragment/FragID_Iterator.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 
 #include <core/fragment/SecondaryStructure.hh>
@@ -57,7 +52,6 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
@@ -72,12 +66,10 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 static thread_local basic::Tracer tr( "protocols.abinitio.Templates" );
 using namespace core;
 using namespace basic;
 using namespace basic::options;
-
 
 
 void protocols::abinitio::Templates::register_options() {
@@ -285,7 +277,6 @@ Templates::scored_fragpick_list( TemplateList& frag_list ) const {
 }
 
 
-
 void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol, Real wExtern) const {
 
 	Real sum_extern = 0;
@@ -461,7 +452,6 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
 	return TemplateJumpSetupOP( new TemplateJumpSetup( get_self_ptr(), ss_def, strand_stats_, helix_pairings ) );
 }
-
 
 
 void

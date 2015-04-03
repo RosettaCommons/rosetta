@@ -127,9 +127,8 @@ DihedralPairConstraint::atom( Size const n ) const {
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details one line definition "Dihedral atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
+/// @details one line definition "Dihedral atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
 void
 DihedralPairConstraint::read_def(
 	std::istream & in,

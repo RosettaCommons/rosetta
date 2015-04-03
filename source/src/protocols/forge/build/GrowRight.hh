@@ -21,7 +21,6 @@
 #include <protocols/forge/build/BuildInstruction.hh>
 
 // project headers
-// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -29,7 +28,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

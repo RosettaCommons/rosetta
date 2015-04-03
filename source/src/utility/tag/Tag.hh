@@ -40,7 +40,7 @@ namespace tag {
 class Tag : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< Tag >
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Tag();
 
 	typedef std::map<std::string, std::string > options_t;

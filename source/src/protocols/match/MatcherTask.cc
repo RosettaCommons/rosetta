@@ -25,12 +25,10 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -543,7 +541,7 @@ MatcherTask::output_file_name( std::string const & setting )
 	output_file_name_ = setting;
 }
 
-///@details Sets the output score filename and turns on score output boolean
+/// @details Sets the output score filename and turns on score output boolean
 void
 MatcherTask::score_output_file_name( std::string const & setting )
 {

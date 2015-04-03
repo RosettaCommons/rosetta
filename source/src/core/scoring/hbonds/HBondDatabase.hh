@@ -19,7 +19,6 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/polynomial.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
 
@@ -59,13 +58,13 @@ private:
 
 public:
 
-	///@brief only public way to create an HBondDatabase
+	/// @brief only public way to create an HBondDatabase
 	static
 	HBondDatabaseCOP
 	get_database();
 
 
-	///@brief only public way to create an HBondDatabase
+	/// @brief only public way to create an HBondDatabase
 	static
 	HBondDatabaseCOP
 	get_database( std::string const & );
@@ -98,67 +97,67 @@ public:
 	void
 	initialize_HBFadeInterval();
 
-	///@brief find polynomial function given name
+	/// @brief find polynomial function given name
 	FadeIntervalCOP
 	HBFadeInterval_from_name( std::string const name ) const;
 
-	///@brief find fading function for hbgd_AHdist sort
+	/// @brief find fading function for hbgd_AHdist sort
 	FadeIntervalCOP
 	AHdist_short_fade_lookup( Size const hb_eval_type ) const;
 
-	///@brief find fading function for hbgd_AHdist long
+	/// @brief find fading function for hbgd_AHdist long
 	FadeIntervalCOP
 	AHdist_long_fade_lookup( Size const hb_eval_type ) const;
 
-	///@brief find fading function for hbgd_cosBAH
+	/// @brief find fading function for hbgd_cosBAH
 	FadeIntervalCOP
 	cosBAH_fade_lookup( Size const hb_eval_type ) const;
 
-	///@brief find fading function for hbgd_cosAHD
+	/// @brief find fading function for hbgd_cosAHD
 	FadeIntervalCOP
 	cosAHD_fade_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial function given name
+	/// @brief find polynomial function given name
 	Polynomial_1dCOP
 	HBPoly1D_from_name( std::string const name ) const;
 
-	///@brief find polynomial to hbgd_AHdist dimension
+	/// @brief find polynomial to hbgd_AHdist dimension
 	Polynomial_1dCOP
 	AHdist_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial to hbgd_cosBAH dimension when hbgd_AHdist is short
+	/// @brief find polynomial to hbgd_cosBAH dimension when hbgd_AHdist is short
 	Polynomial_1dCOP
 	cosBAH_short_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial to hbgd_cosBAH dimension when hbgd_AHdist is long
+	/// @brief find polynomial to hbgd_cosBAH dimension when hbgd_AHdist is long
 	Polynomial_1dCOP
 	cosBAH_long_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is short
+	/// @brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is short
 	Polynomial_1dCOP
 	cosAHD_short_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is long
+	/// @brief find polynomial to hbgd_cosAHD dimension when hbgd_AHdist is long
 	Polynomial_1dCOP
 	cosAHD_long_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief find polynomial to hbgd_chi dimension
+	/// @brief find polynomial to hbgd_chi dimension
 	Polynomial_1dCOP
 	chi_poly_lookup( Size const hb_eval_type ) const;
 
-	///@brief get the bonding strength of a donor group
+	/// @brief get the bonding strength of a donor group
 	Real
 	don_strength( HBDonChemType const don_chem_type ) const;
 
-	///@brief get the bonding strength of an acceptor group
+	/// @brief get the bonding strength of an acceptor group
 	Real
 	acc_strength( HBAccChemType const ac_chem_type ) const;
 
-	///@brief find weight type for evaluation type
+	/// @brief find weight type for evaluation type
 	HBondWeightType
 	weight_type_lookup( Size const hb_eval_type ) const;
 
-	///@details Signal to use deprecated derivitive calculation in
+	/// @details Signal to use deprecated derivitive calculation in
 	///core::scoring::hbonds::hb_energy_deriv_u2(). Once old code has
 	///been modified to support the new behavior, remove this
 	///option. Since the options are not passe directly to to

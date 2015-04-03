@@ -8,8 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
-
 //#include <core/chemical/rna/util.hh>
 
 #include <utility/vector1.hh>
@@ -81,7 +79,6 @@ OrbitalsLookup::OrbitalsLookup(
 	}
 
 
-
 	//the spline will behave as a natural spline. This is controlled through an enum and put into an array. Using the natural spline
 	//allows for the border conditions to actuallay be met, unlike derivatives, where border conditions are never met
 	numeric::interpolation::spline::BorderFlag behavior[2] = {
@@ -143,9 +140,6 @@ OrbitalsLookup::OrbitalsLookup(
 */
 
 
-
-
-
 /*
 
 	for(core::Real i=0.00; i <= 30; i+=0.1){
@@ -164,7 +158,6 @@ OrbitalsLookup::OrbitalsLookup(
 */
 
 
-
 //std::cout << "###################################################################################\n#####################3" << std::endl;
 
 
@@ -174,8 +167,6 @@ OrbitalsLookup::OrbitalsLookup(
 	utility::vector1< utility::vector1< core::Real > > AOH_Hpol_bbOrbH_vector = parse_files(AOH_energies[2], AOH_bbOrbscH_map);
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOH_HARO_scOrbscH_map;
 	utility::vector1< utility::vector1< core::Real > > AOH_Haro_scOrbH_vector = parse_files(AOH_energies[3], AOH_HARO_scOrbscH_map);
-
-
 
 
 	//initial construction of a vector of MathMatrix. We will be pushing back matrixes into this
@@ -218,9 +209,6 @@ OrbitalsLookup::OrbitalsLookup(
 		AOH_Hpol_bbOrbH_splines_.push_back(AOH_Hpol_bbOrbH_vector_spline[count]);
 		AOH_Haro_scOrbH_splines_.push_back(AOH_Haro_scOrbH_vector_spline[count]);
 	}
-
-
-
 
 
 	//std::cout << "###################################################################################\n#####################3" << std::endl;
@@ -285,8 +273,6 @@ OrbitalsLookup::OrbitalsLookup(
 */
 
 
-
-
 	std::map<core::Size, std::pair<core::Size, core::Size> > AOD_orb_orb_map;
 	utility::vector1< utility::vector1< core::Real > > AOD_orb_orb_vector = parse_files(AOD_orb_orb_energies[1], AOD_orb_orb_map);
 
@@ -349,8 +335,6 @@ OrbitalsLookup::OrbitalsLookup(
 */
 
 
-
-
 	std::map<core::Size, std::pair<core::Size, core::Size> > ACO_AOH_orb_Hpol_map;
 	utility::vector1< utility::vector1< core::Real > > ACO_AOH_orb_Hpol_vector = parse_files(ACO_AOH_orb_Hpol_energies[1], ACO_AOH_orb_Hpol_map);
 	utility::vector1< numeric::MathMatrix<core::Real> > ACO_AOH_orb_Hpol_vector_matrix;
@@ -363,7 +347,6 @@ OrbitalsLookup::OrbitalsLookup(
 	utility::vector1<numeric::interpolation::spline::BicubicSpline> ACO_AOH_orb_Hpol_vector_spline;
 
 
-
 		bicubic_spline.train(behavior, start, delta, ACO_AOH_orb_Hpol_vector_matrix[1], linear_cont, first_deriv);
 		ACO_AOH_orb_Hpol_vector_spline.push_back( bicubic_spline );
 
@@ -373,9 +356,7 @@ OrbitalsLookup::OrbitalsLookup(
 		ACO_AOH_orb_Hpol_splines_.push_back(ACO_AOH_orb_Hpol_vector_spline[1]);
 
 
-
 }//end orbitalsLookup
-
 
 
 utility::vector1< utility::vector1< core::Real > > OrbitalsLookup::parse_files(
@@ -690,8 +671,6 @@ void OrbitalsLookup::OrbOrbDist_cosDOA_energy(
 		}
 	}
 }
-
-
 
 
 }//namespace orbitals

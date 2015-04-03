@@ -18,10 +18,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <protocols/loophash/FastGapMover.hh>
 
@@ -30,14 +26,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/excn/Exceptions.hh>
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/util/SwitchResidueTypeSet.hh>
 
 
 // C++ headers

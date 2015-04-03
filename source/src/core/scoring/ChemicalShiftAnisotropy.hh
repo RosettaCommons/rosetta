@@ -33,8 +33,8 @@ void store_CSA_in_pose(ChemicalShiftAnisotropyOP, core::pose::Pose&);
 ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose&);
 ChemicalShiftAnisotropyCOP retrieve_CSA_from_pose(core::pose::Pose const&);
 
-///@brief ChemicalShiftAnisotropys are mainly handled by this class
-///@detail related classed: CSA --- a single line in an CSA file - representing a single csa coupling
+/// @brief ChemicalShiftAnisotropys are mainly handled by this class
+/// @detail related classed: CSA --- a single line in an CSA file - representing a single csa coupling
 ///                         ChemicalShiftAnisotropyEnergy -- an energy method which triggers computations handled by this class.
 ///
 class ChemicalShiftAnisotropy: public basic::datacache::CacheableData {
@@ -69,18 +69,18 @@ public:
 		return basic::datacache::CacheableDataOP( new ChemicalShiftAnisotropy(*this) );
 	}
 
-	///@brief compute csa score for given pose (non-constant due to membrane)
+	/// @brief compute csa score for given pose (non-constant due to membrane)
 	core::Real compute_csascore(core::pose::Pose & pose);
 
 	void show(std::ostream&) const;
 
-  ///@brief get the raw CSA data
+  /// @brief get the raw CSA data
   inline CSA_lines const& get_CSA_data() const {
     return All_CSA_lines_;
   }
 
 private:
-	///@brief read CSA data from file
+	/// @brief read CSA data from file
 	void read_CSA_file( std::string const& filename );
 	void read_CSA_file( );
 

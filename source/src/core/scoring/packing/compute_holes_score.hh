@@ -16,24 +16,16 @@
 #define INCLUDED_core_scoring_packing_compute_holes_score_hh
 
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // you cannot #include yourself #include <core/scoring/packing/compute_holes_score.hh>
-// AUTO-REMOVED #include <core/scoring/packing/HolesEnergy.hh>
 #include <core/scoring/packing/HolesParams.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <iomanip>
 #include <iostream>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
@@ -46,7 +38,7 @@ namespace packing {
 	/// the result class holding the three scores and the per-atom scores
 	class HolesResult : public utility::pointer::ReferenceCount {
 	public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~HolesResult();
 		HolesResult() : score(0.0),decoy_score(0.0),resl_score(0.0),dec15_score(0.0) {}
 		core::Real score, decoy_score, resl_score, dec15_score, natom;

@@ -29,9 +29,9 @@ namespace protocols {
 namespace ligand_docking {
 
 
-///@brief An optimized mover for Monte Carlo trial of rigid body perturbations.
+/// @brief An optimized mover for Monte Carlo trial of rigid body perturbations.
 ///
-///@details
+/// @details
 ///
 class RigidSearchMover : public protocols::moves::Mover
 {

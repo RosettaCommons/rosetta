@@ -35,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
 class PreventResiduesFromRepackingOperation : public RestrictOperationsBase
 {
 public:

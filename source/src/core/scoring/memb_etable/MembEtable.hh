@@ -146,21 +146,21 @@ public:
 		return hydrogen_interaction_cutoff2_;
 	}
 
-	///
+
 	Real
 	nblist_dis2_cutoff_XX() const
 	{
 		return nblist_dis2_cutoff_XX_;
 	}
 
-	///
+
 	Real
 	nblist_dis2_cutoff_XH() const
 	{
 		return nblist_dis2_cutoff_XH_;
 	}
 
-	///
+
 	Real
 	nblist_dis2_cutoff_HH() const
 	{
@@ -185,21 +185,21 @@ public:
 		return lj_radius_[i];
 	}
 
-	///
+
 	Real
 	lk_dgfree( int const i ) const
 	{
 		return lk_dgfree_[i];
 	}
 
-	///
+
 	Real
 	lk_volume( int const i ) const
 	{
 		return lk_volume_[i];
 	}
 
-	///
+
 	Real
 	lk_lambda( int const i ) const
 	{

@@ -23,7 +23,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

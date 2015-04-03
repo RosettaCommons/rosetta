@@ -39,7 +39,6 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 
 namespace core {
@@ -363,7 +362,6 @@ debug_assert( built_stub.is_orthogonal( 0.001 ) );
 
 	return built_stub.spherical( phi_, theta_, d_ );
 }
-
 
 
 typedef basic::datacache::DataMapObj< std::set< std::string > > AtomMemo;

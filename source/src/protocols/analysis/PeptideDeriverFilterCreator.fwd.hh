@@ -12,9 +12,9 @@
 /// @author Yuval Sedan (yuval.sedan@mail.huji.ac.il)
 /// @date   Sep. 21, 2014
 
-//
+
 // PeptideDeriverFilterCreator
-//
+
 
 #ifndef INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh
 #define INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh

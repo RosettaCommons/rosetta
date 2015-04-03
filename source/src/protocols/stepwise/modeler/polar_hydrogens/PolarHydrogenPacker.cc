@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/polar_hydrogens/PolarHydrogenPacker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/modeler/polar_hydrogens/PolarHydrogenPacker.hh>

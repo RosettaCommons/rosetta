@@ -28,7 +28,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/moves/MoverStatus.hh>
 
 // Project headers
@@ -129,8 +128,8 @@ public:
 
 	virtual core::Real last_proposal_density_ratio() {return 1;} //ek added 2/25/10
 
-	///@brief Overload this static method if you access options within the mover.
-	///@details These options will end up in -help of your application if users of this mover call register_options.
+	/// @brief Overload this static method if you access options within the mover.
+	/// @details These options will end up in -help of your application if users of this mover call register_options.
 	/// Do this recursively!
 	/// If you use movers within your mover, call their register_options in your register_options() method.
 	static void register_options() {}
@@ -153,16 +152,16 @@ public:
 
 	void set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
 
-	///@brief setter for poses contained for rms
+	/// @brief setter for poses contained for rms
 	virtual void set_input_pose( PoseCOP pose );
 
-	///@brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+	/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
 	virtual void set_native_pose( PoseCOP pose );
 
 	PoseCOP get_input_pose() const;
 	PoseCOP get_native_pose() const; // ---- we should get rid of this method? it is widely used, but a bit unsafe
 
-	///@brief: Unit test support function.  Apply one move to a given pose.
+	/// @brief: Unit test support function.  Apply one move to a given pose.
 	///  			 Allows extra test specific functions to be called before applying
 	virtual void test_move( Pose & pose ) {
 		apply( pose );
@@ -195,37 +194,37 @@ public:
 	///end parser interface, start Job Distributor interface/////////////
 	//void output_intermediate_pose( Pose const & pose, std::string const & stage_tag );
 
-	///@brief returns status after an apply().  The job distributor (august 08 vintage) will check this function to see if your protocol wants to filter its results - if your protocol wants to say "that run was no good, skip it" then use the protected last_move_status(MoverStatus) to change the value that this function will return.
+	/// @brief returns status after an apply().  The job distributor (august 08 vintage) will check this function to see if your protocol wants to filter its results - if your protocol wants to say "that run was no good, skip it" then use the protected last_move_status(MoverStatus) to change the value that this function will return.
 	MoverStatus get_last_move_status() const;
 
-	///@brief resets status to SUCCESS, meant to be used before an apply().  The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
+	/// @brief resets status to SUCCESS, meant to be used before an apply().  The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
 	void reset_status();
 
 	///fpd
-	///@brief Mechanism by which a mover may return multiple output poses from a single input pose.
+	/// @brief Mechanism by which a mover may return multiple output poses from a single input pose.
 	virtual
 	core::pose::PoseOP get_additional_output();
 
-	///@brief Strings container can be used to return miscellaneous info (as std::string) from a mover, such as notes about the results of apply(). The job distributor (Apr 09 vintage) will check this function to see if your protocol wants to add string info to the Job that ran this mover. One way this can be useful is that later, a JobOutputter may include/append this info to an output file.
-	///@brief clear_info is called by jd2 before calling apply
+	/// @brief Strings container can be used to return miscellaneous info (as std::string) from a mover, such as notes about the results of apply(). The job distributor (Apr 09 vintage) will check this function to see if your protocol wants to add string info to the Job that ran this mover. One way this can be useful is that later, a JobOutputter may include/append this info to an output file.
+	/// @brief clear_info is called by jd2 before calling apply
 	virtual void clear_info() { info_.clear(); }
 
-	///@brief non-const accessor
+	/// @brief non-const accessor
 	virtual Strings & info() { return info_; }
 
-	///@brief const accessor
+	/// @brief const accessor
 	virtual Strings const & info() const { return info_; }
 
-	///@brief Inform the Job Distributor (August '08 vintage) whether this object needs to be freshly regenerated on
+	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be freshly regenerated on
 	/// each use.
 	virtual bool reinitialize_for_each_job() const;
 
-	///@brief Inform the Job Distributor (August '08 vintage) whether this object needs to be regenerated when the input
+	/// @brief Inform the Job Distributor (August '08 vintage) whether this object needs to be regenerated when the input
 	/// pose is about to change, (for example, if the Mover has special code on the first apply() that is only valid for
 	/// that one input pose).
 	virtual bool reinitialize_for_new_input() const;
 
-	///@brief Generates a new Mover object freshly created with the default ctor.
+	/// @brief Generates a new Mover object freshly created with the default ctor.
 	virtual MoverOP	fresh_instance() const /*= 0*/;
 
 	///////////////////////////////end Job Distributor interface////////////////////////////////////////
@@ -234,11 +233,11 @@ public:
 
 	jobdist::BasicJobCOP get_current_job() const;
 
-	///@brief Outputs details about the Mover, including current settings.
+	/// @brief Outputs details about the Mover, including current settings.
 	virtual void show(std::ostream & output=std::cout) const;
 
 protected:
-	///@brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.
+	/// @brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.
 	void set_last_move_status( MoverStatus status );
 
 private:
@@ -249,19 +248,19 @@ private:
 	PoseCOP input_pose_;
 	PoseCOP native_pose_;
 
-	///@brief used to track if movers fail their filters - jobdist::BasicJob Distributor queries for this value
+	/// @brief used to track if movers fail their filters - jobdist::BasicJob Distributor queries for this value
 	MoverStatus last_status_;
-	///@brief miscellaneous info: optional notes about mover results. Fed to Job by JobDistributor (jd2), allowing JobOutputters to optionally report this information in some way.
+	/// @brief miscellaneous info: optional notes about mover results. Fed to Job by JobDistributor (jd2), allowing JobOutputters to optionally report this information in some way.
 	Strings info_;
 
-	///@brief this field can be NULL or it refers to the current JOB this mover is working on.
+	/// @brief this field can be NULL or it refers to the current JOB this mover is working on.
 	jobdist::BasicJobCOP current_job_;
 
 }; // end Mover base class
 
 } // moves
 
-///@brief Insertion operator (overloaded so that the Mover can be "printed").
+/// @brief Insertion operator (overloaded so that the Mover can be "printed").
 //std::ostream & operator<<(std::ostream & output, moves::Mover const & mover);
 
 } // protocols

@@ -14,8 +14,6 @@
 #define MINIMAL_CST_RELAX_UTIL
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 #include <set>
 #include <map>
 
@@ -40,7 +38,7 @@ numeric::xyzVector< core::Real > get_centerOfMass(const core::pose::Pose& pose )
 /// CA that are being constrained.
 core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordCsts(std::set< core::Size > caAtomsToConstrain,const core::pose::Pose& pose);
 
-///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
+/// @brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
 std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose);
 
 /// @brief Generates a list of core residues to constrain. The residues chosen are the number of residues to constrain closest to the center of mass
@@ -71,10 +69,10 @@ void output_fastaWVirtual(const std::string fastaFileName, std::ostream & out);
 /// pdbid
 std::map< std::string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid);
 
-///@brief inputs the sequence alignments and keeps them ordered the way they
+/// @brief inputs the sequence alignments and keeps them ordered the way they
 /// were in the alingment.filt file.
 utility::vector1<SequenceAlignment> input_alignments();
-///@brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the target or template.
+/// @brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the target or template.
 void get_terminal_aln_res(const SequenceAlignment aln, const Size alnIdx, Size & firstRes, Size & lastRes);
 } //namespace cstEnergyBalance
 }//namespace devel

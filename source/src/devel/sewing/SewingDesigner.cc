@@ -295,7 +295,7 @@ SewingDesigner::apply( pose::Pose & pose )
 	job_me->add_string_real_pair("native_loop_gly_percent", native_retention_map.find("native_loop_gly_percent")->second);
 }
 
-///@brief Keep track of the percentages of native residues that
+/// @brief Keep track of the percentages of native residues that
 ///were retained throughout the design process. Add these statistics
 ///to the job data.
 void
@@ -457,7 +457,7 @@ SewingDesigner::design(
 	design_neighborhood(pose, native_helix_residues, all_residues);
 }
 
-///@brief Setup the packer with the appropriate
+/// @brief Setup the packer with the appropriate
 ///constraints and design the residues contained
 ///within the neighbor_residues list
 void
@@ -538,7 +538,7 @@ SewingDesigner::design_neighborhood(
 	repack_mover_->apply(pose);
 }
 
-///@brief update the native rotamers map to reflect
+/// @brief update the native rotamers map to reflect
 ///the position changes after an insertion
 void
 SewingDesigner::update_native_helix_residues(
@@ -564,7 +564,7 @@ SewingDesigner::update_native_helix_residues(
 }
 
 
-///@brief update the loops to reflect
+/// @brief update the loops to reflect
 ///the position changes after an insertion
 void
 SewingDesigner::update_anchors(
@@ -589,7 +589,7 @@ struct protein_segment
 	}
 };
 
-///@brief rearrange the segments before and after the given
+/// @brief rearrange the segments before and after the given
 ///loops file in order to minimize the sum of all loop distances
 void
 SewingDesigner::rearrange_pose(

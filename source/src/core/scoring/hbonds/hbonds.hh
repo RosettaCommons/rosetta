@@ -88,7 +88,7 @@ get_ssdep_weight(
 	SSWeightParameters const & ssdep
 );
 
-///@breif Fill HBondSet using the distance between the acceptor and
+/// @brief Fill HBondSet using the distance between the acceptor and
 ///hydrogen atoms as the definitional cutoff. Do not exclude any
 ///contacts and do not evaluate derivatives.
 void

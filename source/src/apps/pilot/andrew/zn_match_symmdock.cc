@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 #include <devel/init.hh>
 #include <devel/znhash/ZnHash.hh>
 #include <devel/znhash/SymmZnMoversAndTaskOps.hh>
@@ -108,7 +107,6 @@ void initialize_initalizeZNcst(
 	}
 
 
-
 	if ( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::znreach].user() ) {
 		init_zn->set_zn_reach( basic::options::option[ basic::options::OptionKeys::zn_match_symmdock::znreach] );
 	}
@@ -172,7 +170,6 @@ int main( int argc, char * argv [] )
 	NEW_OPT( zn_match_symmdock::require_3H, "Strength of the clash weight in the constraint weight", false );
 	NEW_OPT( zn_match_symmdock::preserve_input_virtual_atoms, "Use the coordinates for zinc virtual atoms in the match PDB instead of idealizing those coordinates", false );
 	NEW_OPT( zn_match_symmdock::final_cstscore_limit, "Upper limit for the constraint score after the final refinemen stage, above which a trajectory is said to have failed", 25.0 );
-
 
 
 	devel::init( argc, argv );

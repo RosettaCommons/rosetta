@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/InterchainEnergy.cc
 /// @brief  Statistically derived rotamer pair potentials
-/// @detailed For docking (or between chains) only those residues at the interface
+/// @details For docking (or between chains) only those residues at the interface
 ///						and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
@@ -19,7 +19,6 @@
 #include <core/types.hh>
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/AtomVDW.fwd.hh>
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 // Package headers
@@ -29,8 +28,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1.hh>
 
@@ -44,7 +41,7 @@ namespace scoring {
 class InterfaceInfo : public basic::datacache::CacheableData {
 public:
 
-	///@brief Default constructor with rb jump = 1
+	/// @brief Default constructor with rb jump = 1
 	InterfaceInfo(): calculated_(false)
 	{
 		rb_jump_.push_back( 1 );
@@ -52,7 +49,7 @@ public:
 		initialize();
 	}
 
-	///@brief Constructor with arguments for non-default rb jump
+	/// @brief Constructor with arguments for non-default rb jump
 	InterfaceInfo( core::Size rb_jump_in ): calculated_(false), distance_ (6.0)
 	{
 		rb_jump_.push_back( rb_jump_in );
@@ -60,7 +57,7 @@ public:
 		initialize();
 	}
 
-	///@brief Constructor with arguments for multiple jumps
+	/// @brief Constructor with arguments for multiple jumps
 	InterfaceInfo( utility::vector1_size rb_jump_in ): calculated_(false)
 	{
 		rb_jump_ = rb_jump_in;
@@ -76,36 +73,36 @@ public:
 		return basic::datacache::CacheableDataOP( new InterfaceInfo( *this ) );
 	}
 
-	///@brief Removes all jumps from the interface calculation
+	/// @brief Removes all jumps from the interface calculation
 	void clear_jumps(){ rb_jump_.clear(); }
 
-	///@brief Adds another jump to the interface calculation, for example
+	/// @brief Adds another jump to the interface calculation, for example
 	///for multi-body docking
 	void add_jump( core::Size jump_in ){ rb_jump_.push_back( jump_in ); }
 
-	///@brief Sets the distance cutoff for interface calculations
+	/// @brief Sets the distance cutoff for interface calculations
 	void distance( core::Real distance_in ){ distance_ = distance_in; }
 
-	///@brief Returns if interface calculation is up to date
+	/// @brief Returns if interface calculation is up to date
 	bool calculated() const { return calculated_; }
 
-	///@brief Returns if interface calculation is up to date
+	/// @brief Returns if interface calculation is up to date
 	bool & calculated() { return calculated_; }
 
-	///@brief Returns the number of jumps that are being used
+	/// @brief Returns the number of jumps that are being used
 	/// in interface calculations
 	core::Size num_jump() const { return num_jump_; }
 
-	///@brief Sets up InterfaceInfo members such as interface_list_
+	/// @brief Sets up InterfaceInfo members such as interface_list_
 	///based on variables from construction
 	void
 	initialize();
 
-	///@brief Returns whether a residue is at any of the interfaces
+	/// @brief Returns whether a residue is at any of the interfaces
 	bool
 	is_interface( core::conformation::Residue rsd ) const ;
 
-	///@brief Returns whether the two residues are considered a
+	/// @brief Returns whether the two residues are considered a
 	///residue pair at any of the interfaces
 	bool
 	is_pair(
@@ -113,12 +110,12 @@ public:
 		core::conformation::Residue rsd2
 	) const;
 
-	///@brief Returns the number of resides at the interface defined
+	/// @brief Returns the number of resides at the interface defined
 	///by jump_num
 	core::Size
 	interface_nres( core::Size jump_num ) const;
 
-	///@brief Calculates the interface for all jumps specified in
+	/// @brief Calculates the interface for all jumps specified in
 	///rb_jump_
 	void
 	calculate( core::pose::Pose const & pose);

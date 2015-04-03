@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 
@@ -21,20 +20,13 @@
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/NWAligner.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // option key includes
 

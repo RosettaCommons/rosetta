@@ -17,8 +17,6 @@
 #include <core/pack/scmin/AtomTreeSCMinMinimizerMap.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Project Headers
@@ -438,7 +436,6 @@ void AtomTreeSCMinMinimizerMap::reset_dof_nodes()
 	}
 	n_active_dof_nodes_ = 0;
 }
-
 
 
 } // namespace scmin

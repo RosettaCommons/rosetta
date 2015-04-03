@@ -35,7 +35,7 @@
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Energies.hh>
 
-//
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 

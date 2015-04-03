@@ -75,7 +75,7 @@ class SSMotifFinder : public filters::Filter
 		void superimpose_pose_on_template( core::pose::Pose const &, core::pose::Pose &, core::Size const, core::Size const ) const;
 };
 
-///@brief compute the atomic distance between two atoms on two residues
+/// @brief compute the atomic distance between two atoms on two residues
 core::Real
 atom_distance( core::conformation::Residue const & r1, std::string const a1,
                core::conformation::Residue const & r2, std::string const a2 );

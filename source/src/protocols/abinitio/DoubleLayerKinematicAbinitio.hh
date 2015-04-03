@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed
+/// @details
 /// this class will have two LOOP definitions:
 /// loops ( defines which part has missing density and should start "extended"
 /// rigids ( defines which part should be kept as a rigid (minimal) core )
@@ -43,7 +43,6 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -51,7 +50,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -86,7 +84,7 @@ public:
 	//	virtual void init( core::pose::Pose const& pose );
 
 protected:
-	///@brief heuristic to select subset of loops from loops_
+	/// @brief heuristic to select subset of loops from loops_
 	virtual void select_core_loops( loops::Loops& loops_select ) const;
 
 	virtual bool inner_loop( core::pose::Pose& pose );

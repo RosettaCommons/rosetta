@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -34,7 +34,6 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/exit.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -99,7 +98,7 @@ CrossPeak::CrossPeak() :
 
 CrossPeak::~CrossPeak() {}
 
-///@detail use for reading of assignments from file
+/// @detail use for reading of assignments from file
 /// pass as spin1, spin2, label1, label2 (indices 1..4)
 void CrossPeak::add_full_assignment( Size res_ids[] ) {
 // 	std::cerr << "CrossPeak::add_full_assignment stubbed out " << res_ids[ 1 ] << std::endl;
@@ -120,7 +119,7 @@ bool CrossPeak::has_proton( core::Size select ) const {
 	return info( select ).proton_tolerance() < 99;
 }
 
-///@brief find all possible assignments based on chemical shifts and tolerances
+/// @brief find all possible assignments based on chemical shifts and tolerances
 void CrossPeak::find_assignments( ) {
 
 	if ( proton1_.n_assigned() && proton2_.n_assigned() ) return; //if assignments are already present do nothing
@@ -152,7 +151,7 @@ void CrossPeak::print_peak_info( std::ostream& os ) const {
 	}
 }
 
-///@brief assign protons based on chemical shifts and tolerances
+/// @brief assign protons based on chemical shifts and tolerances
 void CrossPeak::assign_spin( Size iproton ) {
   //base-class: disregard label
   Real const my_freq( proton( iproton ).freq() );
@@ -165,7 +164,7 @@ void CrossPeak::assign_spin( Size iproton ) {
   }
 }
 
-///@brief assign protons ass pre-determined
+/// @brief assign protons ass pre-determined
 core::Size CrossPeak::assign_spin( Size iproton, Size res_id[] ) {
 	Size ind = proton( iproton ).assignment_index( res_id[ iproton ] );
 	if ( ind ) return ind;
@@ -431,7 +430,7 @@ core::Real CrossPeak::max_volume_contribution() const {
 #endif
 }
 
-///@brief do we have a inter residue assignment with at least volume_threshold contribution ?
+/// @brief do we have a inter residue assignment with at least volume_threshold contribution ?
 Size CrossPeak::min_seq_separation_residue_assignment( Real volume_threshold ) const {
 #ifndef WIN32
 	Size min_seq( 99999 );
@@ -552,7 +551,7 @@ void CrossPeak::calibrate( PeakCalibrator const& calibrator, PeakCalibrator::Typ
 #endif
 }
 
-///@brief assign protons ass pre-determined
+/// @brief assign protons ass pre-determined
 Size CrossPeak3D::assign_spin( Size iproton, Size res_id[] ) {
 	Size ind = CrossPeak::assign_spin( iproton, res_id );
 	if ( iproton == 1  && ind > label( iproton ).n_assigned() ) label( iproton ).add_assignment( res_id[ iproton+2 ] );
@@ -748,7 +747,6 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 //     }
 //   }
 // }
-
 
 
 } //noesy_assign

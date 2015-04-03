@@ -126,7 +126,6 @@ exit(
 	throw EXCN_utility_exit( message, file, line );
 
 
-
 #ifdef USEMPI
 	MPI_Abort( MPI_COMM_WORLD, 911 );
 #endif
@@ -187,7 +186,6 @@ cond_exit(
 	exit( file, line, message, status );
 	return 0; // keep compiler happy.
 }
-
 
 
 } // namespace utility

@@ -21,7 +21,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace fragment {
 namespace picking_old {

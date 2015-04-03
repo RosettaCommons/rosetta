@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/monte_carlo/mover/StepWiseMove.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -151,7 +151,6 @@ namespace mover {
 			}
 		}
 	}
-
 
 
 	//Destructor

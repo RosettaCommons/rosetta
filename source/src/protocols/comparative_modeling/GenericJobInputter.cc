@@ -19,7 +19,6 @@
 #include <core/pose/symmetry/util.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
 #include <protocols/simple_moves/ExtendedPoseMover.hh>

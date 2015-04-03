@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief mdsmith, sthyme
-///
+
 
 #include <devel/init.hh>
 #include <core/types.hh>

@@ -30,10 +30,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
@@ -189,7 +186,7 @@ SymPackRotamersMover::make_symmetric_task(
 protocols::moves::MoverOP SymPackRotamersMover::clone() const { return protocols::moves::MoverOP( new  SymPackRotamersMover( *this ) ); }
 protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return protocols::moves::MoverOP( new  SymPackRotamersMover ); }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 SymPackRotamersMover::parse_my_tag(
 	TagCOP const tag,

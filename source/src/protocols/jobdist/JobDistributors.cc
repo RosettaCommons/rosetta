@@ -23,8 +23,6 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/io/silent/util.hh>
 #include <core/io/raw_data/DecoyFileData.hh>
@@ -123,7 +121,7 @@ BaseJobDistributor::~BaseJobDistributor()
 }
 
 
-///@details
+/// @details
 /// Deliberately not virtual:  should not be overriden.
 /// This is where to insert ifdefs and code for different cluster architectures!
 bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
@@ -175,7 +173,7 @@ bool BaseJobDistributor::next_job(BasicJobOP & job, int & struct_n)
 
 }
 
-///@details
+/// @details
 /// Deliberately not virtual:  should not be overriden.
 /// Iterate over the jobs that exist, check that nothing has been started
 /// for each, and point the private data current_nstruct_ and current_job_ at
@@ -229,7 +227,7 @@ bool BaseJobDistributor::find_available_job()
 	return false;
 }
 
-///@details
+/// @details
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::startup()
 {
@@ -253,7 +251,7 @@ void BaseJobDistributor::startup()
 	}
 }
 
-///@details
+/// @details
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::shutdown()
 {
@@ -284,7 +282,7 @@ void BaseJobDistributor::shutdown()
 }
 
 
-///@details
+/// @details
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::begin_critical_section()
 {
@@ -294,7 +292,7 @@ void BaseJobDistributor::begin_critical_section()
 }
 
 
-///@details
+/// @details
 /// If overriden by a subclass, it MUST call the superclass implementation.
 void BaseJobDistributor::end_critical_section()
 {
@@ -304,20 +302,20 @@ void BaseJobDistributor::end_critical_section()
 }
 
 
-///@details
+/// @details
 /// Needed to output .in_progress files for multiple processor jobs
 void BaseJobDistributor::temp_file( std::string const & )
 {
 }
 
-///@details
+/// @details
 /// Needed if a score_map is to be output by the derived class
 void BaseJobDistributor::dump_pose_and_map( std::string const &, core::pose::Pose & )
 {
 }
 
 
-///@details
+/// @details
 /// Needed if a score_map is to be output by the derived class
 void BaseJobDistributor::score_map( std::map < std::string, core::Real > & )
 {
@@ -346,7 +344,7 @@ void BaseJobDistributor::checkpoint_read()
 }
 
 
-///@details Calls to this function are only a suggestion.
+/// @details Calls to this function are only a suggestion.
 /// If checkpointing is expensive, this function must track time between calls
 /// to avoid excessive disk activity, etc.
 void BaseJobDistributor::checkpoint_write()
@@ -573,7 +571,7 @@ void AtomTreeDiffJobDistributor::dump_pose(
 	this->end_critical_section();
 }
 
-///@brief Sets number of digits used in writing atomtree diff.
+/// @brief Sets number of digits used in writing atomtree diff.
 void AtomTreeDiffJobDistributor::set_precision(
 	int bb_precision,
 	int sc_precision,
@@ -595,7 +593,6 @@ bool AtomTreeDiffJobDistributor::is_finished(BasicJobOP const & job, int struct_
 {
 	return ( used_tags_.find(job->output_tag(struct_n)) != used_tags_.end() );
 }
-
 
 
 PlainPdbJobDistributor::PlainPdbJobDistributor(JobVector jobs, std::string outfile_name):
@@ -628,7 +625,7 @@ PlainPdbJobDistributor::PlainPdbJobDistributor(JobVector jobs, std::string outfi
 PlainPdbJobDistributor::~PlainPdbJobDistributor() {}
 
 
-///@details
+/// @details
 /// Over riding baseclass to enable inprogress file.
 void PlainPdbJobDistributor::startup()
 {
@@ -1024,12 +1021,12 @@ void PlainSilentFileJobDistributor::dump_silent(
 	this->end_critical_section();
 }
 
-///@details override base class function to
+/// @details override base class function to
 std::string PlainSilentFileJobDistributor::get_current_output_tag( ){
 	return get_output_tag( parent::current_job(), parent::current_nstruct() );
 }
 
-///@details returns an output tag generated as follows
+/// @details returns an output tag generated as follows
 /// "S_" + the current jobs tag + "option[ user_tag ]" + nstruct
 std::string PlainSilentFileJobDistributor::get_output_tag( BasicJobOP const & job, int const & struct_n ) const
 {

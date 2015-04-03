@@ -18,9 +18,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -115,7 +112,7 @@ SymmMinimalistNode::count_dynamic_memory() const
 }
 
 
-///@brief puts the symminNode in the unassigned state
+/// @brief puts the symminNode in the unassigned state
 void
 SymmMinimalistNode::assign_zero_state()
 {
@@ -140,7 +137,7 @@ SymmMinimalistNode::assign_zero_state()
 }
 
 
-////@brief assigns a new state to the Node
+//// @brief assigns a new state to the Node
 void
 SymmMinimalistNode::assign_state(int new_state)
 {
@@ -495,7 +492,7 @@ SymmMinimalistNode::project_deltaE_for_substitution
 }
 
 
-///@brief commits the last substitution that was considered by this Node
+/// @brief commits the last substitution that was considered by this Node
 void
 SymmMinimalistNode::commit_considered_substitution()
 {
@@ -874,7 +871,7 @@ SymmMinimalistInteractionGraph::get_energy_current_state_assignment()
 	return total_energy_current_state_assignment_;
 }
 
-///@brief O(1) total energy report.  Protected read access for derived classes.
+/// @brief O(1) total energy report.  Protected read access for derived classes.
 core::PackerEnergy
 SymmMinimalistInteractionGraph::get_energy_PD_current_state_assignment()
 {

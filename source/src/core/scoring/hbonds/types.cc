@@ -739,7 +739,6 @@ get_hbe_acc_hybrid( HBEvalType const & hbe )
 }
 
 
-
 ///////////////////////////////////////////////////////////
 //:::DEPRICATION NOTICE::::
 //
@@ -758,7 +757,6 @@ get_hbe_acc_hybrid( HBEvalType const & hbe )
 //modified-proteins or non-proteins.  Since these functions are only
 //used in questional circumstances they are depricated and will be
 //removed in subsiquent versions of the hbond-potential.
-//
 //
 
 bool
@@ -1001,7 +999,6 @@ hbe_is_BB_type( HBEvalType hbe )
 	return false; // <- to assure gcc a bool will be returned
 }
 bool hbe_is_SC_type( HBEvalType hbe ){return !hbe_is_BB_type(hbe);}
-
 
 
 HBondWeightType

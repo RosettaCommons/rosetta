@@ -31,7 +31,6 @@
 #include <basic/database/schema_generator/Schema.hh>
 
 
-
 // External Headers
 #include <cppdb/frontend.h>
 

@@ -103,7 +103,6 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	non_prot_res_pkeys.push_back(seqpos);
 
 
-
 	utility::vector1<Column> fkey_cols;
 	fkey_cols.push_back(struct_id);
 	fkey_cols.push_back(seqpos);
@@ -271,7 +270,6 @@ ResidueConformationFeatures::report_features(
 
 		conformation_insert.add_row(
 			utility::tools::make_vector(struct_id_data,seqpos_data,phi_data,psi_data,omega_data));
-
 
 
 		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){

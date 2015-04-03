@@ -39,7 +39,6 @@
 #include <core/pose/symmetry/util.hh>
 
 
-
 // C++
 
 
@@ -304,7 +303,6 @@ RG_Energy_Fast::nonconst_mindata_from_pose( pose::Pose & pose) const {
 	pose.data().set( core::pose::datacache::CacheableDataType::RG_MINDATA, rgmindata );
 	return *rgmindata;
 }
-
 
 
 core::Size

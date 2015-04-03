@@ -28,7 +28,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class MembraneCbetaEnergy;
 
 }

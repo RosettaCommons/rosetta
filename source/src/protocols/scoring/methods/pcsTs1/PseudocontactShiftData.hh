@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PseudocontactShiftData.hh
  ///
  /// @brief  Hold the PCS data on which the SVD will be applyed
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -23,9 +22,8 @@
  ///
  /// @references C Schmitz et.al. J Mol Biol. Mar 9, 2012; 416(5): 668–677 ; Yagi H et.al Structure, 2013, 21(6):883-890
  ///
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  ///
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 
@@ -141,7 +139,6 @@ public:
 
 	//core::Real calculate_tensor_and_cost_with_svd_precalc(PCS_tensor_Ts1 &PCS_t);
 };
-
 
 
 class PCS_data_Ts1 : public basic::datacache::CacheableData {

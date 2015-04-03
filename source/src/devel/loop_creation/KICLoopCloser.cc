@@ -62,7 +62,7 @@ KICLoopCloserCreator::mover_name()
 }
 
 //****END CREATOR METHODS****//
-///@brief default constructor
+/// @brief default constructor
 KICLoopCloser::KICLoopCloser():
 //	max_closure_attempts_(10),
 //	max_KIC_moves_per_closure_attempt_(10000),
@@ -73,7 +73,7 @@ KICLoopCloser::KICLoopCloser():
 //	tolerance_( 0.01 )
 {}
 
-///@brief explicit constructor
+/// @brief explicit constructor
 //KICLoopCloser::KICLoopCloser(
 //	core::Size max_closure_attempts,
 //	bool prevent_nonloop_modifications,
@@ -162,7 +162,7 @@ KICLoopCloser::apply(
 	}
 }
 
-///@brief parse tag for use in RosettaScripts
+/// @brief parse tag for use in RosettaScripts
 void
 KICLoopCloser::parse_my_tag(
 	utility::tag::TagCOP tag,

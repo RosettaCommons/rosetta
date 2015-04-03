@@ -851,7 +851,6 @@ Bool3DGrid::reset_grid() {
 }
 
 
-
 unsigned char
 Bool3DGrid::mask_from_offsets( Size xmod2, Size ymod2, Size zmod2 ) const
 {
@@ -918,7 +917,6 @@ Bool3DGrid::byte_index_from_doublebin( Bin3D const & doublebin ) const {
 
 	return index;
 }
-
 
 
 /////////////////////// BUMP GRID ////////////////////////////////////

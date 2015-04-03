@@ -57,7 +57,7 @@ public:
 
 	void factory_register( JobInputterCreatorOP creator );
 
-	///@brief return JobInputter defined by input parameters (contained in option system and #defines for MPI, etc)
+	/// @brief return JobInputter defined by input parameters (contained in option system and #defines for MPI, etc)
 	JobInputterOP get_new_JobInputter();
 
 private:

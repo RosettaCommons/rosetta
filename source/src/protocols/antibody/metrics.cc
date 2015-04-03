@@ -12,7 +12,7 @@
 /// @author Jeffrey J. Gray
 /// @author Oana Lungu
 /// @author Nick Marze
-///@author Jared Adolf-Bryfogle
+/// @author Jared Adolf-Bryfogle
 
 // Project Headers
 #include <protocols/antibody/metrics.hh>
@@ -176,7 +176,6 @@ kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 }
 
 
-
 core::Real
 kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
@@ -215,7 +214,6 @@ kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibod
 
 	return WHBdist;
 }
-
 
 
 //////////////////// SASA /////////////////

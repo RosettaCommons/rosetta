@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsDataCenterManager.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,11 +23,9 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
-
 
 
 // Unit headers
@@ -40,7 +37,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
 

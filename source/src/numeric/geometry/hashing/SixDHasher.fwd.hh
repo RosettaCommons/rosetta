@@ -16,18 +16,15 @@
 #define INCLUDED_numeric_geometry_hashing_SixDHasher_fwd_hh
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <numeric/types.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
 
 // Boost headers
-// AUTO-REMOVED #include <boost/unordered/unordered_map_fwd.hpp>
 
 #include <utility/fixedsizearray1.fwd.hh>
 

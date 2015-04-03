@@ -109,7 +109,6 @@ cond_exit(
 );
 
 
-
 /// @brief Exit with file + line + optional status
 inline
 void

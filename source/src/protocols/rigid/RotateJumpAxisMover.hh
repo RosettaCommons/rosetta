@@ -30,18 +30,18 @@
 namespace protocols {
 namespace rigid {
 
-///@details This mover rotates a jump transform.  Its original use was to rotate a freely rotateable zinc-histidine bond as emulated by an atom-to-atom fixed-length jump.  It recalculates the Stubs for the jump and applies the new jump, resulting in an N degree rotation of one partner about the axis between the histidine nitrogen and the zinc.  It will work for any jump but is intended for atom-atom jumps (not residue-residue jumps).  It will choose an angle from the uniform random distribution bounded by inputs (defaults to (-180,180]); if you want a particular value then set the limits equal.
+/// @details This mover rotates a jump transform.  Its original use was to rotate a freely rotateable zinc-histidine bond as emulated by an atom-to-atom fixed-length jump.  It recalculates the Stubs for the jump and applies the new jump, resulting in an N degree rotation of one partner about the axis between the histidine nitrogen and the zinc.  It will work for any jump but is intended for atom-atom jumps (not residue-residue jumps).  It will choose an angle from the uniform random distribution bounded by inputs (defaults to (-180,180]); if you want a particular value then set the limits equal.
 class RotateJumpAxisMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief constructor for random distribution (just needs rb_jump_num)
+	/// @brief constructor for random distribution (just needs rb_jump_num)
 	RotateJumpAxisMover( core::Size const rb_jump_num );
 
-	///@brief constructor for range - these angles are in degrees, not radians!
+	/// @brief constructor for range - these angles are in degrees, not radians!
 	RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const upper, core::Angle const lower );
 
-	///@brief constructor for single value - these angles are in degrees, not radians!
+	/// @brief constructor for single value - these angles are in degrees, not radians!
 	RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const angle );
 
 	virtual ~RotateJumpAxisMover();

@@ -34,7 +34,6 @@ namespace scoring {
 namespace constraints {
 
 
-
 /// @brief This isn't quite a standard constraint since it acts on DOF's directly
 ///          rather than on XYZ coordinates.
 /// @details All DOF_Constraints are expected to be immutable once created,

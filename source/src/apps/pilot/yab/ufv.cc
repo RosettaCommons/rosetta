@@ -61,7 +61,6 @@
 #include <protocols/jumping/StrandPairing.hh>
 
 
-
 // using
 using utility::options::OptionKey;
 

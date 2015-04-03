@@ -12,7 +12,6 @@
 /// @author TJ Brunette (tjbrunette@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_hh
 #define INCLUDED_protocols_simple_filters_LeastNativeLike9merFilter_hh
 
@@ -98,7 +97,6 @@ public:// virtual main operation
     void report( std::ostream & out,const Pose & pose ) const;
     Real compute( const Pose & pose ) const;
     virtual bool apply(const Pose & pose ) const;
-
 
 
 public:// parser

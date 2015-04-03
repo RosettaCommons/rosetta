@@ -190,8 +190,6 @@ namespace database {
 static thread_local basic::Tracer TR( "basic.database.sql_utils" );
 
 
-
-
 sessionOP
 get_db_session() {
 	using namespace basic::options;
@@ -373,7 +371,7 @@ get_db_session(
 	return 0;
 }
 
-///@
+/// @
 platform::SSize db_partition_from_options( DatabaseMode::e db_mode )
 {
 	using namespace basic::options;
@@ -848,7 +846,7 @@ std::string make_compound_statement(
 	return "INSERT INTO "+table_definition+ " VALUES " + value_list +";";
 }
 
-///@detail build database connection from options in a tag, this is useful make sure the fields for
+/// @detail build database connection from options in a tag, this is useful make sure the fields for
 ///constructing a database connection are consistent across different tags.
 utility::sql_database::sessionOP
 parse_database_connection(

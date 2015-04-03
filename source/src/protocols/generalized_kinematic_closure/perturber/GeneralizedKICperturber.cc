@@ -59,7 +59,7 @@ namespace perturber {
 
 static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.perturber.GeneralizedKICperturber" );
 
-///@brief Creator for GeneralizedKICperturber.
+/// @brief Creator for GeneralizedKICperturber.
 GeneralizedKICperturber::GeneralizedKICperturber():
 		utility::pointer::ReferenceCount(),
 		bbgmover_(),
@@ -74,7 +74,7 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
-///@brief Copy constructor for GeneralizedKICperturber.
+/// @brief Copy constructor for GeneralizedKICperturber.
 ///
 GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const &src ):
 	utility::pointer::ReferenceCount(),
@@ -92,7 +92,7 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	if(src.bin_transition_calculator_) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
-///@brief Destructor for GeneralizedKICperturber mover.
+/// @brief Destructor for GeneralizedKICperturber mover.
 GeneralizedKICperturber::~GeneralizedKICperturber() {}
 
 /// @brief Clone function for GeneralizedKICperturber:
@@ -102,12 +102,12 @@ GeneralizedKICperturberOP GeneralizedKICperturber::clone() const
 	return GeneralizedKICperturberOP( new GeneralizedKICperturber(*this) );
 }
 
-///@brief Returns the name of this class ("GeneralizedKICperturber").
+/// @brief Returns the name of this class ("GeneralizedKICperturber").
 std::string GeneralizedKICperturber::get_name() const{
 	return "GeneralizedKICperturber";
 }
 
-///
+
 /// @brief Returns the enum type for the effect of a pertuber based on a perturber name.
 ///        Returns unknown_effect if can't find a match for the name.
 perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::string const &name ) const
@@ -118,7 +118,7 @@ perturber_effect GeneralizedKICperturber::get_perturber_effect_from_name( std::s
 	return unknown_effect;
 }
 
-///
+
 /// @brief Returns the name of a perturber given the enum type.
 ///        Returns "unknown_effect" if no such effect exists.
 std::string GeneralizedKICperturber::get_perturber_effect_name( core::Size &effect ) const
@@ -179,7 +179,7 @@ void GeneralizedKICperturber::set_perturber_effect( perturber_effect const &effe
 	return;
 }
 
-///
+
 /// @brief Sets the effect of this perturber using the perturber effect name.
 ///        Exits with an error message if the name is unknown.
 void GeneralizedKICperturber::set_perturber_effect( std::string const &effectname )
@@ -562,7 +562,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 
 /// @brief Applies a set_bondangle perturbation to a list of bond angles.
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in] bondanglelist - List of sets of atoms defining bond angles, indexed based on the loop_pose.
 /// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).
@@ -633,7 +633,7 @@ void GeneralizedKICperturber::apply_set_bondangle (
 
 /// @brief Applies a set_bondlength perturbation to a list of bond lengths.
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in] bondlengthlist - List of sets of atoms defining bond lengths, indexed based on the loop_pose.
 /// @param[in] atomlist - List of atoms (residue indices are based on the loop_pose).

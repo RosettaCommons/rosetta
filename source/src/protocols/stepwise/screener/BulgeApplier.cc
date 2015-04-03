@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/BulgeApplier.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -30,25 +30,25 @@ namespace jd2 {
 
 class ScoreMap : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ScoreMap();
-	///@brief full atom energies for output
+	/// @brief full atom energies for output
 	static void nonzero_energies(
 		std::map< std::string, core::Real> & score_map,
 		core::scoring::ScoreFunctionOP score_fxn,
 		core::pose::Pose & pose
 	);
 
-	///@brief generates a scoremap assuming the pose is already scored (note const w.r.t. pose)
+	/// @brief generates a scoremap assuming the pose is already scored (note const w.r.t. pose)
 	static void score_map_from_scored_pose(
 		std::map< std::string, core::Real> & score_map,
 		core::pose::Pose const & pose
 	);
 
-	///@brief return-by-value version of score_map_from_scored_pose
+	/// @brief return-by-value version of score_map_from_scored_pose
 	static std::map< std::string, core::Real> score_map_from_scored_pose( core::pose::Pose const & pose );
 
-	///@brief print out the values in the scoremap
+	/// @brief print out the values in the scoremap
 	static void print(
 		std::map < std::string, core::Real > & score_map,
 		std::ostream & out

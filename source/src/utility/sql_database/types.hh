@@ -55,7 +55,6 @@ name_from_database_mode(
   DatabaseMode::e database_mode);
 
 
-
 }
 }
 

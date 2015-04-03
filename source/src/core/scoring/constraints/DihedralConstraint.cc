@@ -161,7 +161,7 @@ DihedralConstraint::p2_cosine_deriv(
 	//                      n12 * n23
 	//
 	// where theta is our dihedral angle
-	//
+
 
 	{ // derivatives of the numerator
 		// v1 and v2 both depend on position of p2
@@ -371,9 +371,8 @@ DihedralConstraint::atom( Size const n ) const {
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details one line definition "Dihedral atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
+/// @details one line definition "Dihedral atom1 res1 atom2 res2 atom3 res3 atom4 res4 function_type function_definition"
 void
 DihedralConstraint::read_def(
 	std::istream & in,
@@ -435,7 +434,6 @@ DihedralConstraint::read_def(
 		std::cout << std::endl;
 	}
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

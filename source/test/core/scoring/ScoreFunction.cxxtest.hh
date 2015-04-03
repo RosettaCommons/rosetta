@@ -19,14 +19,11 @@
 
 // Unit headers
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 
 // Package headers
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 //Auto Headers
 
@@ -69,7 +66,6 @@ public:
 		TS_ASSERT_EQUALS( find_weights_file("score12",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
 		TS_ASSERT_EQUALS( find_weights_file("score12.wts_patch",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
 	}
-
 
 
 };
@@ -135,7 +131,7 @@ public:
 		TS_ASSERT_DELTA(sc_exc2, sc, .0000001);
 	}
 
-	///@detail the long range terms maintain their own neighbor maps, so
+	/// @detail the long range terms maintain their own neighbor maps, so
 	///require iterating over the energy methods then over the residue
 	///pairs rather then the other way around.
 	void test_get_sub_score_exclude_res_long_range_terms() {

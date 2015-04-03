@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 
 
-
 static thread_local basic::Tracer tr( "protocols.sparta" );
 
 namespace protocols {
@@ -126,7 +125,6 @@ void GDB::loadGDB(const string &fileName)
 }
 
 
-
 void GDB::saveGDB(const string &fileName)
 {
   ofstream out(fileName.c_str(), ios::trunc);
@@ -196,7 +194,6 @@ void GDB::showGDB( std::ostream & out ) {
 }
 
 
-
 GDB::GDB_Entry GDB::getEntry(int number)
 {
   return Entries[number];
@@ -240,19 +237,16 @@ GDB::GDB_Entry GDB::getEntry(const string &VName1, const string &VVal1, const st
 }
 
 
-
 string GDB::getResidName(int rNum)
 {
   return residList[rNum];
 }
 
 
-
 int GDB::getEntryCount() // return size of current entries
 {
   return Entries.size();
 }
-
 
 
 //set value to a variable of a given entry
@@ -276,12 +270,10 @@ void GDB::setEntry(
 }
 
 
-
 //add a new entry to the end of entries list
 void GDB::addEntry(const string &VarName, const string &VarVal) {
   setEntry( Entries.size()+1, VarName, VarVal);
 }
-
 
 
 //add one VAR with given FORMAT to the end of VARS list
@@ -334,18 +326,15 @@ void GDB::setVAR(int index, const string &VAR_Name, const string &FORMAT_Name) {
 }
 
 
-
 //add a new REMARK entry
 void GDB::addRemark(const string &str) {
   REMARKS.push_back(str);
 }
 
 
-
 void GDB::setData(const string &DataName, const string &DataVal) {
   DATA.push_back( DataName+" "+DataVal );
 }
-
 
 
 string GDB::getData(const string &DataName) {
@@ -359,12 +348,10 @@ string GDB::getData(const string &DataName) {
 }
 
 
-
 bool GDB::isVarFloat(int index) {
   if (contains(FORMAT[index],'f') == 1) return true;
   return false;
 }
-
 
 
 bool GDB::isVarFloat(const string &VarName) {
@@ -376,12 +363,10 @@ bool GDB::isVarFloat(const string &VarName) {
 }
 
 
-
 bool GDB::isVarInt(int index) {
   if (contains(FORMAT[index],'d') == 1) return true;
   return false;
 }
-
 
 
 bool GDB::isVarInt(const string &VarName) {
@@ -393,12 +378,10 @@ bool GDB::isVarInt(const string &VarName) {
 }
 
 
-
 bool GDB::isVarString(int index) {
   if (contains(FORMAT[index],'s') == 1) return true;
   return false;
 }
-
 
 
 bool GDB::isVarString(const string &VarName) {
@@ -411,7 +394,6 @@ bool GDB::isVarString(const string &VarName) {
 
   return false;
 }
-
 
 
 // check if f is a valid FORMAT
@@ -496,7 +478,6 @@ void GDB::set_plaintext()
 {
   plain_text = true;
 }
-
 
 
 }

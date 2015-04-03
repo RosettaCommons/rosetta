@@ -17,7 +17,6 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
-// AUTO-REMOVED #include <algorithm>
 #include <utility/exit.hh>
 
 #include <stdio.h>

@@ -383,8 +383,6 @@ stubcrev( struct VEC const cen, struct VEC const a, struct VEC const b, struct V
 // struct MAT rotation_matrixf(float const x, float const y, float const z, float const t) ;
 
 
-
-
 // struct VEC {
 //   float x,y,z;
 // #ifdef __cplusplus

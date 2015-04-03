@@ -66,7 +66,7 @@ private:
 };
 
 
-///@brief Given a set of cut1/cut2/cut3/cut4 distance specifications, alter a
+/// @brief Given a set of cut1/cut2/cut3/cut4 distance specifications, alter a
 ///packing task to set residues within alpha carbons within cut1 of a ligand
 ///(or within cut2 with beta carbons facing inwards) to redesign, and within cut3
 ///(or cut4 facing inwards) to repack, and all others to fixed. If a resfile is provided,
@@ -168,7 +168,7 @@ private:
 	std::string cstid_list_;
 };
 
-///@brief Class to alter a packer task to speficially upweight the protein-ligand interaction energies
+/// @brief Class to alter a packer task to speficially upweight the protein-ligand interaction energies
 class ProteinLigandInterfaceUpweighter: public core::pack::task::operation::TaskOperation
 {
 

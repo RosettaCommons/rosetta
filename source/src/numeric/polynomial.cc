@@ -150,11 +150,10 @@ Polynomial_1d::coefficients() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin operator()
 ///
 /// @brief evaluate the polynomial and its derivative.
 ///
-/// @detailed
+/// @details
 ///
 /// @param  variable - [in] - evaluate polynomial(value)
 /// @param  value - [out] - returned output
@@ -178,10 +177,9 @@ Polynomial_1d::coefficients() const
 ///
 /// @references
 ///
-/// @authors Jack Snoeyink
-/// @authors Matthew O'Meara
+/// @author Jack Snoeyink
+/// @author Matthew O'Meara
 ///
-/// @last_modified Matthew O'Meara
 /////////////////////////////////////////////////////////////////////////////////
 void
 Polynomial_1d::operator()(

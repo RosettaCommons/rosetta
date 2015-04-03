@@ -8,8 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 #define CPLUSPLUS
 #include <devel/simple_options/option.hh>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <stdlib.h>
 
 #ifndef WIN32
 	#include <pwd.h>
@@ -28,8 +26,6 @@
 #endif
 
 
-
-
 using namespace std;
 #ifdef USE_OLLI_HELP
 START_OPT(opt_help,"help","Options to manipulate splash screen behaviour")
@@ -40,8 +36,6 @@ END_OPT(opt_help)
 #endif
 namespace devel {
 namespace option {
-
-
 
 
 OptionFile::OptionFile(string _in_file,string _out_file) : in_file(_in_file),out_file(_out_file) {

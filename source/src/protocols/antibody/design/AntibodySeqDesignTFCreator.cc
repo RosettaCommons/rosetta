@@ -410,7 +410,6 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 	tf->push_back( TaskOperationCOP( new InitializeFromCommandline() ) );
 
 
-
 	//Limit packing and design to only CDRs we are minimizing.
 	RestrictToLoopsAndNeighborsOP restrict_to_min_cdrs = this->generate_task_op_cdr_design(pose, neighbor_cdr_min, true);
 	tf->push_back(restrict_to_min_cdrs);
@@ -474,13 +473,5 @@ AntibodySeqDesignTFCreator::generate_tf_seq_design_graft_design(
 }
 }
 }
-
-
-
-
-
-
-
-
 
 

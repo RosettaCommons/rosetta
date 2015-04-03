@@ -75,7 +75,6 @@ set_rna_secstruct(  core::pose::Pose & pose, std::string const rna_secstruct_str
 }
 
 
-
 } //farna
 } //protocols
 

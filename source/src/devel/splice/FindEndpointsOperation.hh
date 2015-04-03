@@ -30,7 +30,7 @@
 namespace devel {
 namespace splice {
 
-///@details Find the endpoints on a beta barrel
+/// @details Find the endpoints on a beta barrel
     class FindEndpointsOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
 {
 public:

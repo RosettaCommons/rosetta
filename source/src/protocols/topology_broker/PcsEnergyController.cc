@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/topology_broker/PcsEnergyController.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz & Oliver Lange
+ /// @authorv Christophe Schmitz & Oliver Lange
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 // Unit Headers
@@ -38,8 +36,6 @@
 #include <protocols/scoring/methods/pcs2/PcsGridSearchParameterManager.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -87,7 +83,6 @@ bool PcsEnergyController::read_tag( std::string tag, std::istream& is ) {
 	n_m_d = PcsGridSearchParameterManager::get_instance()->get_n_multi_data();
 
 	PcsGridSearchParameter & g = PcsGridSearchParameterManager::get_instance()->get_grid_search_parameters(n_m_d);
-
 
 
 	if ( tag == "PCS_WEIGHT" ) {

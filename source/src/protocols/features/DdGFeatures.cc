@@ -183,7 +183,7 @@ DdGFeatures::report_features(
 	return 0;
 }
 
-///@details
+/// @details
 void
 DdGFeatures::insert_ddG_rows(
 	Pose const & pose,

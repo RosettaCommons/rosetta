@@ -108,6 +108,5 @@ LuaObject LuaObject::operator[] ( int /*i*/ ) const {
 }
 
 
-
 } //lua
 } //utility

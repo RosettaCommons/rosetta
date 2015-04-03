@@ -12,7 +12,6 @@
 /// @brief  
 /// @author TJ Brunette
 /// @date   
-///
 
 
 #ifndef INCLUDED_protocols_simple_moves_VallLookbackFragMover_fwd_hh

@@ -36,8 +36,6 @@
 #include <numeric/xyzMatrix.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>

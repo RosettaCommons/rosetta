@@ -107,7 +107,7 @@ public:
 		atoms_.clear(); // don't deallocate space -- makes DOF_Nodes reusable.
 	}
 
-	///
+
 	inline
 	void
 	add_atom( AtomID const & atom )

@@ -41,7 +41,7 @@ class GunnCostScore: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to a given pose, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	GunnCostScore(Size, Real, bool, core::pose::PoseOP,utility::vector1<Size>,Size);
 
 	~GunnCostScore();

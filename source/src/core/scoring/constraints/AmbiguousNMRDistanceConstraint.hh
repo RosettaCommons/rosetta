@@ -17,10 +17,8 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
@@ -29,7 +27,6 @@
 #include <core/chemical/AA.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // C++ Headers
@@ -43,8 +40,6 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-
-///
 
 class AmbiguousNMRDistanceConstraint : public Constraint {
 public:
@@ -79,7 +74,7 @@ public:
 		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func_, score_type() ) );
 	}
 
-	///
+
 	virtual
 	ConstraintOP clone( func::FuncOP func ) const {
 		return ConstraintOP( new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() ) );
@@ -95,11 +90,11 @@ public:
 	///returns AtomPairConstraint or AmbigousNMRDistanceConstraint (e.g. for GLY HA1-HA2 ... )
 	ConstraintOP map_to_CEN( pose::Pose const& src, pose::Pose const& centroid, core::Size& nr_mapped, std::string const& map_atom ) const;
 
-	///
+
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
-	///
+
 	core::Real
 	inv_dist6( func::XYZ_Func const & xyz ) const;
 
@@ -118,14 +113,14 @@ public:
 		return "AmbiguousNMRDistance";
 	}
 
-	///
+
 	Size
 	natoms() const
 	{
 		return atoms1_.size() + atoms2_.size();
 	}
 
-	///
+
 	Size
 	natoms( core::Size i ) const
 	{
@@ -137,7 +132,7 @@ public:
 		return atoms1_.size()*atoms2_.size();
 	}
 
-	///@brief return residue number: i=1,2
+	/// @brief return residue number: i=1,2
 	Size
 	resid( core::Size i ) const {
 		return i == 1 ? atoms1_[ 1 ].rsd() : atoms2_[ 1 ].rsd();
@@ -147,7 +142,7 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const
 	{

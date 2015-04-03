@@ -19,16 +19,11 @@ namespace core {
 namespace graph {
 
 ///
-/// @begin DisjointSets::DisjointSets()
-///
 /// @brief
 /// default constructor, for when number of nodes is not known
 ///
 DisjointSets::DisjointSets() {}
 
-
-///
-/// @begin DisjointSets::DisjointSets()
 ///
 /// @brief
 /// constructor for when number of nodes is known up front. fastest.
@@ -43,8 +38,6 @@ DisjointSets::DisjointSets( platform::Size n_nodes ) :
 }
 
 ///
-/// @begin DisjointSets::n_nodes()
-///
 /// @brief
 /// returns the total number of nodes
 ///
@@ -52,9 +45,6 @@ platform::Size DisjointSets::n_nodes() const {
 	return nodes_.size();
 }
 
-
-///
-/// @begin DisjointSets::ds_make_set()
 ///
 /// @brief
 /// creates a new set
@@ -69,9 +59,6 @@ void DisjointSets::ds_make_set() {
 	nodes_[ n_nodes() ].rank = 0;
 }
 
-
-///
-/// @begin DisjointSets::ds_find()
 ///
 /// @brief
 /// given a node_id, return the representative for that node
@@ -85,9 +72,6 @@ DisjointSets::ds_find( platform::Size node_id ) const {
 	return nodes_[ node_id ].parent;
 }
 
-
-///
-/// @begin DisjointSets::ds_union()
 ///
 /// @brief
 /// combine two sets; make it so that two nodes end up in the same set
@@ -112,9 +96,6 @@ DisjointSets::ds_union( platform::Size node1, platform::Size node2 ) {
 	}
 }
 
-
-///
-/// @begin DisjointSets::n_disjoint_sets()
 ///
 /// @brief
 /// count the number of disjoint sets. O(N)
@@ -129,9 +110,6 @@ platform::Size DisjointSets::n_disjoint_sets() const {
 	return n_disjoint;
 }
 
-
-///
-/// @begin DisjointSets::disjoint_set_sizes()
 ///
 /// @brief
 /// returns a vector1 containing the size of each disjoint set. O(N)
@@ -154,9 +132,6 @@ DisjointSets::disjoint_set_sizes() const {
 	return ds_set_sizes;
 }
 
-
-///
-/// @begin DisjointSets::nodes_in_set()
 ///
 /// @brief
 /// returns a vector1 of the nodes in the set containing the specified node.
@@ -177,9 +152,6 @@ DisjointSets::nodes_in_set( platform::Size node_id ) const {
 	return nis;
 }
 
-
-///
-/// @begin DisjointSets::sets()
 ///
 /// @brief
 /// return a map from the representative node of each set to the list of nodes in their sets

@@ -53,7 +53,7 @@ private:
 	utility::vector1< core::Size > bb_ids_;
 	core::Real eps_;
 
-	/// @breif access to the options data info that are not unique to this job
+	/// @brief access to the options data info that are not unique to this job
 	MakeRotLibOptionsDataOP mrlod_;
 
 	bool semirotameric_;

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/comparative_modeling/LoopRelaxMoverCreator.hh
-///@brief
-///@author Sarel
+/// @file protocols/comparative_modeling/LoopRelaxMoverCreator.hh
+/// @brief
+/// @author Sarel
 
 #ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh
 #define INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh

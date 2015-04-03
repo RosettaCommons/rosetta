@@ -15,7 +15,6 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
 

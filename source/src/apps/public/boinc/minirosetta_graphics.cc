@@ -19,7 +19,6 @@
 #endif
 
 #if _MSC_VER >= 1400
-// AUTO-REMOVED #include "windows.h"
 #endif
 
 
@@ -980,7 +979,6 @@ void draw_rosetta_screensaver( int & width, int & height )
 	int dim_main = 2*small_box;
 
 
-
 	// generate box above text box (need this to prevent lines from
 	// disappearing in graph and plot boxes for some odd reason)
 	glViewport( 0, height-3*small_box, small_box*6, small_box*3 );
@@ -1071,10 +1069,8 @@ void draw_rosetta_screensaver( int & width, int & height )
   glEnd();
 
 
-
 	using namespace graphics;
 	using namespace protocols::viewer;
-
 
 
 	// change view_type randomly

@@ -30,5 +30,4 @@ typedef utility::pointer::shared_ptr< Patch > PatchOP;
 } // core
 
 
-
 #endif

@@ -42,7 +42,6 @@ namespace protocols {
 namespace abinitio {
 
 
-
 HedgeArchive::HedgeArchive( std::string name ) :
 		score_cut_per_batch_( 0.1 ),
 		add_fuzzy_( 0.1 ) //0 for strictly score based, 1 for totally random

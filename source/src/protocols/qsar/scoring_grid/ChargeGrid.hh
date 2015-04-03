@@ -96,5 +96,4 @@ private:
 }
 
 
-
 #endif /* CHARGEGRID_HH_ */

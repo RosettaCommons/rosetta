@@ -9,7 +9,7 @@
 
 /// @file   protocols/scoring/InterfaceInfo.cc
 /// @brief  Statistically derived rotamer pair potentials
-/// @detailed For docking (or between chains) only those residues at the interface
+/// @details For docking (or between chains) only those residues at the interface
 ///						and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 

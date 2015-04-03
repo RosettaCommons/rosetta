@@ -361,7 +361,7 @@ DnaInterfaceMultiStateDesign::get_name() const {
 	return DnaInterfaceMultiStateDesignCreator::mover_name();
 }
 
-///@brief parse "XML" Tag (specifically in the context of the parser/scripting scheme)
+/// @brief parse "XML" Tag (specifically in the context of the parser/scripting scheme)
 void DnaInterfaceMultiStateDesign::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
@@ -395,14 +395,14 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 	parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfaceMultiStateDesign::fresh_instance() const
 {
 	return moves::MoverOP( new DnaInterfaceMultiStateDesign );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfaceMultiStateDesign::clone() const
 {

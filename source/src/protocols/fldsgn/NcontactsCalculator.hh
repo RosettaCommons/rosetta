@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/NcontactsCalculator.hh
 /// @brief header file for NcontactsCalculator class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 
@@ -51,7 +51,6 @@ public:
 	//typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 
 
-
 public:// constructor/destructor
 
 
@@ -80,13 +79,13 @@ public:// mutator
 	/// @brief set contact distance
 	void contact_distance( Real const r ) { condist_ = r; }
 
-	/// @breif ignore loops for calculation
+	/// @brief ignore loops for calculation
 	void ignore_loops( bool const b ) { ignore_loops_ = b; };
 
-	/// @breif ignore residue pairs of which residue belong to same ss element
+	/// @brief ignore residue pairs of which residue belong to same ss element
 	void ignore_same_sselement( bool const b ) { ignore_same_sselement_ = b; }
 
-	/// @breif ignore residue pairs of which residue belong to same beta sheet ( default true )
+	/// @brief ignore residue pairs of which residue belong to same beta sheet ( default true )
 	void ignore_same_sheet( bool const b ) { ignore_same_sheet_ = b; }
 
 	/// @brief use only calpha for calculation
@@ -108,13 +107,13 @@ private:
 	/// @brief residue pairs of i < i+isep_residue_ are used for counting #countacts ( default 4 )
 	Size isep_residue_;
 
-	/// @breif ignore loops for calculation  ( default false )
+	/// @brief ignore loops for calculation  ( default false )
 	bool ignore_loops_;
 
-	/// @breif ignore residue pairs of which residue belong to same ss element ( default false )
+	/// @brief ignore residue pairs of which residue belong to same ss element ( default false )
 	bool ignore_same_sselement_;
 
-	/// @breif ignore residue pairs of which residue belong to same beta sheet ( default false )
+	/// @brief ignore residue pairs of which residue belong to same beta sheet ( default false )
 	bool ignore_same_sheet_;
 
 	/// @brief use only calpha atoms for calculation ( default false )

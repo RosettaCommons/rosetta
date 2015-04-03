@@ -20,7 +20,7 @@
 namespace core {
 namespace scoring {
 
-///
+
 class WaterAdductHBondPotential;
 
 typedef  utility::pointer::shared_ptr< WaterAdductHBondPotential > WaterAdductHBondPotentialOP;

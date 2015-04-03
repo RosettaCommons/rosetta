@@ -9,7 +9,7 @@
 
 /// @file DisulfJumpClaimer
 /// @brief  Claimer for disulfide jump sampling
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Robert Vernon
 
 // Unit Headers
@@ -102,8 +102,6 @@ void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 //       (*it)->toggle( *movemap, true );
 // 		}
 // 	}
-
-
 
 
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?

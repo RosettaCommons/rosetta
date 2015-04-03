@@ -20,12 +20,11 @@
 #include <core/pose/Pose.hh>
 
 
-
 namespace protocols {
 namespace grafting {
 namespace simple_movers {
 
-///@brief Delete a region of a pose. Mover Wrapper to grafting utility function.
+/// @brief Delete a region of a pose. Mover Wrapper to grafting utility function.
 class DeleteRegionMover : public  protocols::moves::Mover {
 	
 public:
@@ -43,21 +42,21 @@ public:
 	
 public:
 	
-	///@brief Set the region of the pose where deletion will occur
+	/// @brief Set the region of the pose where deletion will occur
 	void
 	region(core::Size res_start, core::Size res_end);
 	
 	std::pair<core::Size, core::Size>
 	region() const;
 	
-	///@brief Set the first residue that will be deleted.
+	/// @brief Set the first residue that will be deleted.
 	void
 	start(core::Size res_start);
 	
 	core::Size
 	start() const;
 	
-	///@brief Set the last residue that will be deleted.
+	/// @brief Set the last residue that will be deleted.
 	void
 	end(core::Size res_end);
 	

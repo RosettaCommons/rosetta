@@ -12,20 +12,16 @@
 
 //moved to top to circumvent compiler errors on some version of GCC - these need to be after core/init/init.hh if using namespace core is in scope.
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragSet.hh>
 #include <devel/init.hh>
@@ -36,28 +32,17 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/abinitio/FragmentMover.hh>
@@ -69,7 +54,6 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 
 //Auto Headers
@@ -551,7 +535,6 @@ void report( std::string tag, PoseWrap & pw, core::pose::Pose & cenpose, ScoreFu
        << F(8,3,surface     ) << " "
        << F(8,3,rholes      ) << " "
 	    << pose.sequence().substr(0,pw.nres) << std::endl;
-
 
 
 	if( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {

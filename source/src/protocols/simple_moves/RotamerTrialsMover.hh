@@ -23,7 +23,6 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -57,7 +56,7 @@ public:
 	// default constructor
 	RotamerTrialsMover();
 
-	///@brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
+	/// @brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
 	/// WARNING TO ANY DESIGNER WHO PASSES IN A TASK: YOUR DESIGN STEPS WILL BE UNDONE
 	/// AS THIS TASK CONCEIVES OF THE INPUT SEQUENCE THAT CORRESPONDS TO THE ORIGINAL SEQUENCE
 	RotamerTrialsMover(
@@ -65,7 +64,7 @@ public:
 		PackerTask & task_in
 	);
 
-	///@brief constructor with TaskFactory
+	/// @brief constructor with TaskFactory
 	RotamerTrialsMover(
 		ScoreFunctionCOP scorefxn_in,
 		TaskFactoryCOP factory_in
@@ -125,7 +124,7 @@ private:
 	///If a factory is present it overwrites this task with each call to apply()
 	PackerTaskOP task_;
 
-	///@brief TaskFactory allows for nonconstant sequences to be used with RotamerTrialsMover
+	/// @brief TaskFactory allows for nonconstant sequences to be used with RotamerTrialsMover
 	///CAUTION: the factory is externally modifiable.
 	TaskFactoryCOP factory_;
 

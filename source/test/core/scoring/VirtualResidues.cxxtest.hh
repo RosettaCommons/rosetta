@@ -19,14 +19,12 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -34,9 +32,7 @@
 #include <core/types.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers

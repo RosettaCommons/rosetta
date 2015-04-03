@@ -30,6 +30,4 @@ typedef utility::pointer::shared_ptr< NtoC_RCG > NtoC_RCGOP;
 } //namespace protocols
 
 
-
-
 #endif // INCLUDED_protocols_forge_constraints_NtoC_RCG_HH

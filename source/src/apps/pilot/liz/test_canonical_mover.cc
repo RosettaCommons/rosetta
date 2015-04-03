@@ -12,16 +12,11 @@
 /// @author
 /// @author
 
-//
 
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
-
-
-
-
 
 
 int

@@ -329,7 +329,6 @@ numeric::xyzMatrix<numeric::Real> Quaternion::rotation_matrix() const {
 }
 
 
-
 void Quaternion::PrintEuler(ostream& s) const {
     numeric::xyzVector<numeric::Real> e = euler();
      s << fixed << setprecision(9) << setw(12) << e.x() << " "

@@ -26,25 +26,14 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/NullMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ProlineFixMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -83,8 +72,6 @@
 #include <basic/options/option.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/StrandPairing.hh>
-
-
 
 
 using namespace core;

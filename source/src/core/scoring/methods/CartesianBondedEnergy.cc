@@ -138,7 +138,6 @@ bool operator==(atm_name_single const& a,atm_name_single const& b) {
 }
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -269,7 +268,6 @@ void ResidueCartBondedParameters::oprev_cprev_n_h_interres_torsion_params(
 {
 	oprev_cprev_n_h_interres_torsion_params_ = params;
 }
-
 
 
 void ResidueCartBondedParameters::ca_nnext_c_o_interres_torsion_params(
@@ -678,7 +676,6 @@ IdealParametersDatabase::read_bbdep_table(
 }
 
 
-
 void
 IdealParametersDatabase::lookup_bondangle_buildideal(
 	core::chemical::ResidueType const & restype,
@@ -780,7 +777,6 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 		Kd = d0 = 0.0;
 	}
 }
-
 
 
 //////////////////////
@@ -941,7 +937,6 @@ IdealParametersDatabase::lookup_length(
 
 	return bondlengths_indep_[ tuple ];
 }
-
 
 
 // old-style interface to database
@@ -1517,7 +1512,6 @@ IdealParametersDatabase::create_parameters_for_restype(
 }
 
 
-
 //////////////////////
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
@@ -1628,7 +1622,6 @@ CartesianBondedEnergy::defines_residue_pair_energy(
 	// is this fn. called?
 	return ( res1 == (res2+1) || res1 == (res2-1) );
 }
-
 
 
 void
@@ -2686,7 +2679,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 	}
 }
 
-///
+
 void
 CartesianBondedEnergy::eval_singleres_derivatives(
 	conformation::Residue const & rsd,
@@ -2921,7 +2914,6 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 		r_atom_derivs[ rt4 ].f2() += dE_dphi * f2;
 	}
 }
-
 
 
 void

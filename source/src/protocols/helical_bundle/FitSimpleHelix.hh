@@ -27,8 +27,6 @@
 #include <protocols/filters/ContingentFilter.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -53,7 +51,7 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///
+
 	/// @brief Actually apply the mover to the pose.
 	virtual void apply(core::pose::Pose & pose);
 
@@ -81,15 +79,15 @@ public:
 		return;
 	}
 
-	///@brief Set the minimization type (e.g. dfpmin, linmin, etc.)
-	///@details Defaults to dfpmin if not set.
+	/// @brief Set the minimization type (e.g. dfpmin, linmin, etc.)
+	/// @details Defaults to dfpmin if not set.
 	void set_min_type ( std::string const &min_type)
 	{
 		min_type_=min_type;
 		return;
 	}
 
-	///@brief Set the minimizer tolerance (defaults to 1E-7, the default for many other protocols).
+	/// @brief Set the minimizer tolerance (defaults to 1E-7, the default for many other protocols).
 	///
 	void set_min_tolerance (core::Real const &min_tol_in)
 	{

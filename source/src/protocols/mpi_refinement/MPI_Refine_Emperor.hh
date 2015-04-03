@@ -12,7 +12,6 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_mpi_refinement_MPI_Refine_Emperor_hh
 #define INCLUDED_protocols_mpi_refinement_MPI_Refine_Emperor_hh
 

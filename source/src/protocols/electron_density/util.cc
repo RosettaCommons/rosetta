@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 #include <protocols/electron_density/util.hh>
@@ -28,14 +28,12 @@
 // Symmetry
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -45,7 +43,7 @@
 // option key includes
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-//
+
 #include <basic/Tracer.hh>
 
 #include <protocols/loops/Loop.hh>
@@ -260,7 +258,6 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 }
 
 
-//
 // dock pose into a density map
 //    respect recentering flags
 //    should we ensure we are set up for density scoring?????
@@ -382,7 +379,6 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 }
 
 
-//
 // align pose CoM to density CoM
 core::Real fastTransAlignPose(core::pose::Pose & pose) {
 	// align CoM of map and fragment

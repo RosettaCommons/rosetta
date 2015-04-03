@@ -21,7 +21,6 @@
 #include <core/scoring/hbonds/types.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
 #include <core/types.hh>
 
 // STL Headers

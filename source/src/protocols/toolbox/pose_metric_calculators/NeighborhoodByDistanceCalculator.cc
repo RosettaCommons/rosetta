@@ -45,14 +45,14 @@ namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
 
-///@details
+/// @details
 NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > central_residues )
 	: parent(), central_residues_(central_residues), dist_cutoff_ ( basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff] ), num_neighbors_(0)
 {
 
 }
 
-///@details
+/// @details
 NeighborhoodByDistanceCalculator::NeighborhoodByDistanceCalculator( std::set< core::Size > central_residues, core::Real dist_cutoff )
 	: parent(), central_residues_(central_residues), dist_cutoff_(dist_cutoff), num_neighbors_(0)
 {

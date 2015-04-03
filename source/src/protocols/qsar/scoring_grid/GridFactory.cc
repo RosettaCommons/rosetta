@@ -61,7 +61,7 @@ GridFactory::~GridFactory()
 { }
 
 
-///@brief add a Grid prototype, using it's default type name as the map key
+/// @brief add a Grid prototype, using it's default type name as the map key
 void
 GridFactory::factory_register(GridCreatorOP creator)
 {

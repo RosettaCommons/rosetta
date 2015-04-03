@@ -9,7 +9,7 @@
 
 /// @file src/protocols/topology_broker/TMHTopologySamplerClaimer.hh
 /// @brief source file for TMHTopologySamplerClaimer protocol
-/// @detailed implementation of sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
+/// @details implementation of sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
 /// 	sampling of membrane protein topologies
 ///
 /// @author Stephanie H. DeLuca (stephanie.h.deluca@vanderbilt.edu)
@@ -113,7 +113,7 @@ TMHTopologySamplerClaimer::register_options()
 	option.add_relevant(basic::options::OptionKeys::broker::rb_mover_stage1_weight);
 }
 
-///@brief read tag from topology broker file (setup.tpb)
+/// @brief read tag from topology broker file (setup.tpb)
 bool
 TMHTopologySamplerClaimer::read_tag( std::string tag, std::istream& is)
 {
@@ -153,7 +153,7 @@ TMHTopologySamplerClaimer::get_pose_from_claimer()
 	return core::pose::PoseOP( new core::pose::Pose(current_pose_) );
 }
 
-///@brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
+/// @brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
 bool
 TMHTopologySamplerClaimer::claimer_builds_own_fold_tree()
 {
@@ -189,14 +189,14 @@ TMHTopologySamplerClaimer::set_defaults()
 	}
 }
 
-///@brief get the pose from the boker and set it as this object's pose
+/// @brief get the pose from the boker and set it as this object's pose
 void
 TMHTopologySamplerClaimer::set_pose_from_broker(core::pose::Pose& pose)
 {
 	current_pose_ = pose;
 }
 
-///@brief read in the pose's spans via the MembraneTopology stored in the pose, determine jumps, TMHs, loops, etc.
+/// @brief read in the pose's spans via the MembraneTopology stored in the pose, determine jumps, TMHs, loops, etc.
 void
 TMHTopologySamplerClaimer::pre_process(core::pose::Pose& pose)
 {
@@ -406,7 +406,7 @@ TMHTopologySamplerClaimer::get_fold_tree(core::pose::Pose& pose)
 	return core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) );
 }
 
-///@brief generate DoF Claims to be read in by broker
+/// @brief generate DoF Claims to be read in by broker
 void
 TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 {
@@ -432,7 +432,7 @@ TMHTopologySamplerClaimer::generate_claims(claims::DofClaims &dof_claims)
 	current_pose_ = broker().current_pose();
 }
 
-///@brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
+/// @brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
 void
 TMHTopologySamplerClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& /*failed_to_init */)
 {
@@ -605,7 +605,7 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 	return membrane_vector;
 }
 
-///@brief pre-compute grid points where you want to move the helices
+/// @brief pre-compute grid points where you want to move the helices
 utility::vector1<core::Vector>
 TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 {
@@ -684,7 +684,7 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 	return grid_points;
 }
 
-///@brief claimers can add movers to the RandomMover (Container).
+/// @brief claimers can add movers to the RandomMover (Container).
 /// add your moves, make it dependent on stage if you want to. So far this is called only by abinitio...
 /// if you don't want to do anything special --- don't overload this method!
 /// default: adds mover given by virtual call get_mover()  with stage-dependent weight given by abinitio_mover_weight_
@@ -727,7 +727,5 @@ TMHTopologySamplerClaimer::add_mover(
 
 } // topology_broker
 } // protocols
-
-
 
 

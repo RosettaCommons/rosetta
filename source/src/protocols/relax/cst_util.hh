@@ -16,10 +16,8 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <utility/vector1.hh>

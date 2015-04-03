@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Chu Wang
-///
 
 
 // Unit Headers
@@ -37,7 +36,6 @@
 #include <basic/Tracer.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.hh>

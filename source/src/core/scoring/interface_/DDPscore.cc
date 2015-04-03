@@ -7,27 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file core/scoring/Interface_/DDPscore.cc
-///@brief Implementation of distance dependent interface score
-///@detailed The distance dependent score is a knowledge based potential specialized for
+/// @file core/scoring/Interface_/DDPscore.cc
+/// @brief Implementation of distance dependent interface score
+/// @details The distance dependent score is a knowledge based potential specialized for
 /// protein interfaces. This class loads and accesses the lookup tables.
-///@author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
+/// @author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
 
 #include <utility/vector1.hh>
 #include <core/scoring/interface_/DDPscore.hh>
 #include <core/scoring/interface_/DDPscoreCreator.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/scoring/EnergyMap.hh>
 
 
@@ -36,8 +29,6 @@
 namespace core{
 namespace scoring{
 namespace interface_{
-
-
 
 
 methods::EnergyMethodOP
@@ -140,7 +131,6 @@ debug_assert (rsd1.seqpos() != rsd2.seqpos()); //only call for distinct residues
 	}
 
 }
-
 
 
 void DDPscore::indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/ ) const

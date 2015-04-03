@@ -19,7 +19,6 @@
 #include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -54,7 +53,6 @@ public:
   {
     return basic::datacache::CacheableDataOP( new ResidualDipolarCoupling_Rohl( *this ) );
   }
-
 
 
   void read_RDC_file();

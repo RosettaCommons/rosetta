@@ -19,7 +19,7 @@ namespace constel {
 /// @brief Array of filters applied to a constellation.
 utility::vector1<MasterFilter::FiltPtr> MasterFilter::filters;
 
-///
+
 /// @brief Adds a filter to the array of filters.
 ///
 /// @param[in] f pointer to the filter.
@@ -30,7 +30,6 @@ void MasterFilter::addfilt(FiltPtr f) {
 }
 
 
-///
 /// @brief Tells whether a constellation is valid.
 ///
 /// @param[in] ps pose to which all residues forming the constellation belong.

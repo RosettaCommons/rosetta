@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_Classes.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -110,9 +110,6 @@ public:
 		core::Size possible_working_res_1;
 		core::Size possible_working_res_2;
 };
-
-
-
 
 
 class StepWiseRNA_CountStruct{

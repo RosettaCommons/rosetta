@@ -25,7 +25,6 @@
 #include <utility/vector1.fwd.hh>
 
 // C/C++
-// AUTO-REMOVED #include <iostream>
 #include <map>
 
 //Auto Headers

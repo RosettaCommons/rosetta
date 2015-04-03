@@ -16,10 +16,8 @@
 #define INCLUDED_protocols_protein_interface_design_ReportPSSMDifference_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 
 #include <map>
 

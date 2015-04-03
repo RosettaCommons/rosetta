@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file PseudocontactShiftData.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftData_fwd_hh

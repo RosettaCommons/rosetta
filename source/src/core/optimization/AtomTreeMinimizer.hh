@@ -21,7 +21,6 @@
 // Package headers
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
-// AUTO-REMOVED #include <core/optimization/types.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -33,7 +32,6 @@
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

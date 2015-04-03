@@ -48,13 +48,13 @@ public:
 
 	void factory_register( SilentStructCreatorCOP creator );
 
-	///@brief test if the specified silent struct type name is
+	/// @brief test if the specified silent struct type name is
 	///associated with a registered silent struct type.
 	bool
 	has_silent_struct_type(
 		std::string const & type_name );
 
-	///@brief pretty print a list of the available silent struct types.
+	/// @brief pretty print a list of the available silent struct types.
 	void
 	show_available_silent_struct_types(
 		std::ostream & out);

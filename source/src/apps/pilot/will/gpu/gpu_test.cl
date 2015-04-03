@@ -512,7 +512,6 @@ void copy_torsions(uint N, __global float *a, __global float const *b) {
 }
 
 
-
 __kernel void abinitio(
                      __global       float *tors,
                      __global const uint  *nres,

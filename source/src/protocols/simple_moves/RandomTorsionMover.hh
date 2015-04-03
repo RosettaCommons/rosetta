@@ -28,7 +28,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details Simple class that randomly purturbs a random torsion selected from a movemap
+/// @details Simple class that randomly purturbs a random torsion selected from a movemap
 class RandomTorsionMover : public protocols::moves::Mover {
 public:
 

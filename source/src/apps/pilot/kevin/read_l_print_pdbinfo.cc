@@ -102,7 +102,7 @@ static void read_FileVector(const basic::options::FileVectorOptionKey& fv_key, s
 	list.close();
 }
 
-///@brief
+/// @brief
 class xtal_water_bunsat : public protocols::moves::Mover {
 
 private:
@@ -259,7 +259,6 @@ int main( int argc, char* argv[] )
 	//	std::string mol_file = basic::options::option[basic::options::OptionKeys::in::file::s]()[1];
 	//	file_list.push_back(mol_file);
 	//}
-
 
 
 	std::vector<std::string> nat_list;

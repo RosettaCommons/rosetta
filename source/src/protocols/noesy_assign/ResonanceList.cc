@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -309,7 +309,7 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 	update_bond_connections();
 }
 
-///@brief write ResonanceList to stream
+/// @brief write ResonanceList to stream
 void ResonanceList::write_to_stream( std::ostream& os   ) const {
   for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
     runtime_assert( it->first == it->second->label() );
@@ -324,7 +324,7 @@ void ResonanceList::write_to_stream( std::ostream& os   ) const {
   }
 }
 
-///@brief write ResonanceList in TALOS format
+/// @brief write ResonanceList in TALOS format
 void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) const {
 	if ( sequence_.size() == 0 ) {
 		utility_exit_with_message( "sequence information required to write TALOS format -- use -in:file:fasta" );

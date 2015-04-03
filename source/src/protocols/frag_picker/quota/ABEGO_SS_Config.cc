@@ -106,7 +106,6 @@ Size ABEGO_SS_Config::most_probable_bin(Size pos) {
 }
 
 
-
 } // quota
 } // frag_picker
 } // protocols

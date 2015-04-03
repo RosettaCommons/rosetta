@@ -21,7 +21,6 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <boost/algorithm/string/trim.hpp>
 

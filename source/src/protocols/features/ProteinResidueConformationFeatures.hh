@@ -22,9 +22,6 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
@@ -46,20 +43,20 @@ public:
 
 	virtual ~ProteinResidueConformationFeatures(){}
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,

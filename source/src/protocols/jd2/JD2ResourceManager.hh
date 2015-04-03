@@ -295,7 +295,6 @@ private:
 };
 
 
-
 } // namespace resource_manager
 } // namespace basic
 

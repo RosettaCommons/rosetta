@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -286,9 +286,6 @@ void DistanceScoreMover::finalize_scoring() const {
 // 	}
 // 	return percent_violated / active_peaks_ / count_decoys_;
 // }
-
-
-
 
 
 }

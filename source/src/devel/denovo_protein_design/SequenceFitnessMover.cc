@@ -22,10 +22,8 @@
 // Package Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 
 
@@ -34,23 +32,16 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-
-
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
-// AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
 
 #include <basic/options/option.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <core/scoring/rms_util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // option key includes
 
@@ -58,8 +49,6 @@
 
 #include <protocols/relax/FastRelax.hh>
 #include <utility/vector1.hh>
-
-
 
 
 // C++ Headers
@@ -73,7 +62,7 @@ static thread_local basic::Tracer TR( "devel.DenovoProteinDesign.SequenceFitness
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 	using namespace core::scoring::packstat;
 	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
@@ -120,7 +109,7 @@ SequenceFitnessMover::get_name() const {
 	return "SequenceFitnessMover";
 }
 
-///@brief
+/// @brief
 SequenceFitnessMover::SequenceFitnessMover(
 ) : Mover()
 {

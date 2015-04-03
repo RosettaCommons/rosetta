@@ -18,8 +18,6 @@
 #include <utility/exit.hh>
 
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
 // C++ headers
 #include <ostream>
 #include <string>
@@ -108,8 +106,6 @@ operator >>( std::istream & is, NamedStubID& s )
 	is >> s.center_ >> s.atom1 >> s.atom2 >> s.atom3;
 	return is;
 }
-
-
 
 
 } // namespace id

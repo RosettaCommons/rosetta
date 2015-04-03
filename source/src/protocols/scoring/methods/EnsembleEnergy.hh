@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -35,13 +34,13 @@ namespace protocols {
 namespace scoring {
 namespace methods {
 
-///
+
 class EnsembleEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
 	typedef core::scoring::methods::WholeStructureEnergy  parent;
 public:
 
-	///
+
 	EnsembleEnergy();
 
 

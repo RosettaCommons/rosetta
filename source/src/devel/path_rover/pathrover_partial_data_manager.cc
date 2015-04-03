@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 
-
 // Rosetta Headers
 #include "pack.h"
 #include "pathways.h"
@@ -306,8 +305,6 @@ bool svd3d(double a[3][3], double w[3], double v[3][3])
 }
 
 
-
-
 void build_correlation_matrix(std::vector<Vec3d>& points, double* mat) {
   double x_mean,y_mean,z_mean,var,var_x,var_y,var_z;
   var=x_mean=y_mean=z_mean=var_x=var_y=var_z=0.0;
@@ -390,8 +387,6 @@ void compute_eigen_vector(double *a, double* eigenvector) {
   eigenvector[1] = eigenVectorMatrix[1][maxEigenValueIndex];
   eigenvector[2] = eigenVectorMatrix[2][maxEigenValueIndex];
 }
-
-
 
 
 double Partial_Data::compute_match(pose_ns::Pose const& p)
@@ -550,9 +545,6 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
       std::cout << "Match Helix: " << alpha_score << " weight " << weight_alpha << std::endl;
 
 
-
-
-
 	/*
 		for(unsigned int i = 0; i < _alpha_indices.size(); i++){
            double tmp_measure_psi =0; // to ask Barak if in rosetta (0..360) -40 i.e. 320
@@ -705,7 +697,6 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
   }
 
 
-
   Partial_Data::Partial_Data(pathways::Pathways * owner) {
     _dist_line_flag = false; _angle_flag = false; _centroid_flag = false; _match = false; _beta_flag = false; _helix_flag = false; _match_rmsd = false;
     weight_match = 1; weight_angle = 0.1; weight_centroid = 1; weight_alpha = 1; weight_beta = 1,weight_dist_line = 1;
@@ -742,11 +733,6 @@ Vec3d Partial_Data::compute_center_mass(std::vector<Vec3d> const & points){
       return -1; // not found
     return find_iter->second;
   }
-
-
-
-
-
 
 
 // --------------------------------------------------------------------------------
@@ -1007,14 +993,10 @@ void Partial_Data::set_match_recs(std::vector<PD_match> match_recs){
 }
 
 
-
-
 void Partial_Data::set_partial_data(){
   pose_ns::Pose const& trg = _owner->get_trg_partial_data_pose();
   pdbres_to_poseres_pose(trg,_map_pdbres_to_pose_target);
 }
-
-
 
 
 void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_recs){
@@ -1059,9 +1041,6 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
    //trg.dump_pdb("./output/PARTIAL_TARGET.pdb");
 
 }
-
-
-
 
 
 // read teh residues from the file and add the corresponding indices to
@@ -1113,12 +1092,7 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
     */
 
 
-
   }
-
-
-
-
 
 
 // class Line
@@ -1272,11 +1246,6 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
   }
 
 
-
-
-
-
 } // namespace pathways
-
 
 

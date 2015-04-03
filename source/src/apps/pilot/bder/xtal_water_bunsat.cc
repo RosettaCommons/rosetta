@@ -52,14 +52,13 @@ using namespace core;
 basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist_sasa_calc" );
 
 
-///@brief
+/// @brief
 class xtal_water_bunsat : public protocols::moves::Mover {
 public:
 	xtal_water_bunsat()
 	{
 	}
 	virtual ~xtal_water_bunsat(){};
-
 
 
   	virtual
@@ -139,7 +138,6 @@ public:
 		
 
 
-
 		return;
 	}
 	
@@ -199,7 +197,6 @@ public:
 	virtual
 	std::string
 	get_name() const { return "xtal_water_bunsat"; }
-
 
 
 private:

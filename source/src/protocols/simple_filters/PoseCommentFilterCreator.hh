@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the PoseCommentFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_PoseCommentFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_PoseCommentFilterCreator_hh
 

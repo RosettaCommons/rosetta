@@ -52,7 +52,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-
 #include <map>
 
 
@@ -73,7 +72,6 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 using namespace ObjexxFCL::format;
-
 
 
 static thread_local basic::Tracer tr( "main" );

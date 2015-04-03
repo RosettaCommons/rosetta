@@ -9,7 +9,7 @@
 
 /// @file PDDFScoreFilter.cc
 /// @brief runs reject or accept filters on pose
-/// @detailed
+/// @details
 ///	  Contains currently: PDDFScoreFilter
 ///
 ///
@@ -19,7 +19,6 @@
 #include <protocols/simple_filters/PDDFScoreFilter.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 #include <basic/options/option.hh>
@@ -31,8 +30,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 //// C++ headers

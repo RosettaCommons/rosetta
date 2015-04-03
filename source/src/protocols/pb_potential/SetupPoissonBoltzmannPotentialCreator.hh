@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/SetupPoissonBoltzmannPotentialCreator.hh
-///@brief This class will create instances of protocols::moves::Mover SetupPoissonBoltzmannPotential for the protocols::moves::MoverFactory
-///@author Sachko Honda (honda@apl.washington.edu)
+/// @file protocols/moves/SetupPoissonBoltzmannPotentialCreator.hh
+/// @brief This class will create instances of protocols::moves::Mover SetupPoissonBoltzmannPotential for the protocols::moves::MoverFactory
+/// @author Sachko Honda (honda@apl.washington.edu)
 
 #ifndef INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotentialCreator_hh
 #define INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotentialCreator_hh

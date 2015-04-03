@@ -76,7 +76,6 @@ void ProteinBackboneBuildPoint::H_pos( Vector const & setting ) { H_pos_  = sett
 void ProteinBackboneBuildPoint::HA_pos( Vector const & setting ){ HA_pos_ = setting; }
 
 
-
 OriginalBackboneBuildPoint::OriginalBackboneBuildPoint( Size index ):
 	parent( index ),
 	original_resid_( 0 )
@@ -92,7 +91,6 @@ OriginalBackboneBuildPoint::OriginalBackboneBuildPoint(
 {
 	initialize_from_residue( res );
 }
-
 
 
 OriginalBackboneBuildPoint::OriginalBackboneBuildPoint(

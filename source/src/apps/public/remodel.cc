@@ -74,9 +74,7 @@ static thread_local basic::Tracer TR( "apps.public.remodel" );
 
 std::string usage_string;
 
-///
-/// @begin init_usage_prompt
-///
+
 /// @brief
 /// the usage prompt that gets printed when the user doesn't enter any arguments or uses the -h flag since the application
 /// specific help Rosetta bring up with the -help flag is, in fact, not helpful.

@@ -9,7 +9,7 @@
 
 /// @file SimpleScoringScheme.cc
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Scoring scheme based on comparing single characters from two sequences
+/// @details Scoring scheme based on comparing single characters from two sequences
 /// with three types of score:
 /// - score for a match (characters are equal)
 /// - score for a mismatch (characters are not equal)
@@ -23,7 +23,6 @@
 
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

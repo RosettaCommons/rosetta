@@ -16,15 +16,12 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <map>

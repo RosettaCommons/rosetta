@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/ReportEffectivePKACreator.hh
-///@brief This class will create instances of Mover ReportEffectivePKA for the MoverFactory
-///@author Yifan Song
+/// @file protocols/simple_moves/ReportEffectivePKACreator.hh
+/// @brief This class will create instances of Mover ReportEffectivePKA for the MoverFactory
+/// @author Yifan Song
 
 #ifndef INCLUDED_protocols_simple_moves_ReportEffectivePKACreator_hh
 #define INCLUDED_protocols_simple_moves_ReportEffectivePKACreator_hh

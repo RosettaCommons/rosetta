@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/screener/SimpleRMSD_Screener.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

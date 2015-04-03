@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/LHRepulsiveRamp.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #ifndef INCLUDED_protocols_antibody_LHRepulsiveRamp_hh
@@ -112,20 +111,9 @@ private:
 };
 
 
-
-
-
-
-
 } // namespace antibody
 } // namespace protocols
 
 #endif
-
-
-
-
-
-
 
 

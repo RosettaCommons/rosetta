@@ -9,31 +9,24 @@
 
 /// @file
 /// @brief
-///
+
 
 #ifndef INCLUDED_devel_dna_util_hh
 #define INCLUDED_devel_dna_util_hh
 
 #include <protocols/dna/typedefs.hh>
 
-// AUTO-REMOVED #include <protocols/dna/DnaChains.fwd.hh>
 
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh> // const_iterator definition
 
 #include <iosfwd>
 
 #include <utility/vector1.hh>
-
 
 
 namespace devel {

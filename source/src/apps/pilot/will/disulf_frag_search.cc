@@ -61,7 +61,6 @@ void get_hb_info(core::pose::Pose & pose, int start, int stop, int & exhb, int &
 }
 
 
-
 int main(int argc, char *argv[]) {
 
 	try {

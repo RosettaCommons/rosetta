@@ -27,13 +27,10 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // STL Headers
 #include <iosfwd>
-// AUTO-REMOVED #include <vector>
 #include <list>
-// AUTO-REMOVED #include <assert.h>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>

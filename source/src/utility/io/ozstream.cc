@@ -14,7 +14,6 @@
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
 
-
 // Unit header
 #include <utility/io/ozstream.hh>
 
@@ -32,7 +31,7 @@
 namespace utility {
 namespace io {
 
-///@detail special "atomic" method to open a stream and print a header if it is new. This is necessary to avoid process competition when
+/// @detail special "atomic" method to open a stream and print a header if it is new. This is necessary to avoid process competition when
 /// checking for existance to decided whether or not to write a header.
 void
 ozstream::open_append_if_existed( std::string const& filename_a, std::stringstream& preprinted_header ) {

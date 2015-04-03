@@ -29,7 +29,6 @@
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 
 //STL Headers
-// AUTO-REMOVED #include <vector>
 #include <list>
 
 //ObjexxFCL Headers

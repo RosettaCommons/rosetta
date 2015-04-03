@@ -155,7 +155,6 @@ his_bb2m(float const chi1, float const chi2, float const chi3, bool DorE){
   //  hmd.dump_pdb("test.pdb");
 
 
-
   core::kinematics::Stub s(hmd.xyz(AtomID(2,1)),hmd.xyz(AtomID(1,1)),hmd.xyz(AtomID(3,1)));
   // MY = VEC(s.global2local( MY.xyzVector()));
   // ML = VEC(s.global2local( ML.xyzVector()));
@@ -345,7 +344,6 @@ inline struct XFORM const glud_bb2m(float const chi1, float const chi2, float co
 inline struct XFORM const glue_bb2m(float const chi1, float const chi2, float const chi3, float const chi4){ return       glu_bb2m(chi1,chi2,chi3,chi4,false)  ; }
 inline struct XFORM const glud_m2bb(float const chi1, float const chi2, float const chi3, float const chi4){ return xrev( glu_bb2m(chi1,chi2,chi3,chi4,true ) ); }
 inline struct XFORM const glue_m2bb(float const chi1, float const chi2, float const chi3, float const chi4){ return xrev( glu_bb2m(chi1,chi2,chi3,chi4,false) ); }
-
 
 
 inline struct XFORM const

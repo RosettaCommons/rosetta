@@ -27,13 +27,11 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>

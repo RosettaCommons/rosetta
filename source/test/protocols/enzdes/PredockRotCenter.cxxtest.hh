@@ -17,7 +17,6 @@
 #include <test/core/init_util.hh>
 //#include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 //#include <core/kinematics/MoveMap.hh>
 
@@ -27,28 +26,18 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 #include <basic/options/option.hh> //needed to set option
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/enzdes/EnzdesMovers.hh> // for testing rot_center
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //minimization stuff
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <math.h>  //need for sqrt taking
 
 #include <basic/Tracer.hh>
 

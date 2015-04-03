@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file devel/splice/RBInMoverCreator.hh
-///@brief This class will create instances of protocols::moves::Mover RBInMover for the protocols::moves::MoverFactory
-///@author Christoffer Norn
+/// @file devel/splice/RBInMoverCreator.hh
+/// @brief This class will create instances of protocols::moves::Mover RBInMover for the protocols::moves::MoverFactory
+/// @author Christoffer Norn
 
 #ifndef INCLUDED_devel_splice_RBInMoverCreator_hh
 #define INCLUDED_devel_splice_RBInMoverCreator_hh

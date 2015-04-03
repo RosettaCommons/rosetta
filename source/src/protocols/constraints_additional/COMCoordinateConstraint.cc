@@ -171,7 +171,7 @@ COMCoordinateConstraint::type() const {
 	return "COMCoordinate";
 }
 
-///
+
 Size
 COMCoordinateConstraint::natoms() const
 {

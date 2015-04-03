@@ -110,7 +110,6 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
     }
 
 
-
 	utility::io::izstream data( filename.c_str() );
 	if ( !data.good() ) utility_exit_with_message( "Unable to open bond file: "+filename );
 
@@ -162,7 +161,6 @@ GasteigerAtomTypeSet::read_bond_file( std::string const & filename ){
 		}
 	}
 }
-
 
 
 /// @brief Check if there is an element_type associated with an element_symbol string

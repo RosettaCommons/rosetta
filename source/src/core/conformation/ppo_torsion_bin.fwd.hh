@@ -42,5 +42,4 @@ typedef utility::vector0< ppo_torsion_bin > torsion_bin_string;
 } // core
 
 
-
 #endif

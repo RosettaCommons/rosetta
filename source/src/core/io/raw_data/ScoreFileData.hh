@@ -22,7 +22,6 @@
 #include <core/io/raw_data/RawFileData.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #include <utility/vector1.hh>

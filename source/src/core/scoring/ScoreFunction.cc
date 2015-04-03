@@ -23,9 +23,7 @@
 #include <vector>
 
 // External headers
-// AUTO-REMOVED #include <boost/format.hpp>
 #include <boost/algorithm/string/join.hpp>
-// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
@@ -58,7 +56,6 @@
 #include <core/id/TorsionID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 
 /// Utility headers
@@ -151,7 +148,7 @@ ScoreFunction::reset()
 
 ///////////////////////////////////////////////////////////////////////////////
 /// read info from file
-///
+
 
 void
 ScoreFunction::initialize_from_file( std::string const & filename )
@@ -437,7 +434,6 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::set_energy_method_options(
@@ -494,7 +490,7 @@ ScoreFunction::set_etable(
 	score_function_info_current_ = false;
 }
 
-///
+
 void
 ScoreFunction::set_method_weights(
 	ScoreType const & t,
@@ -1174,7 +1170,6 @@ ScoreFunction::get_sub_score_exclude_res(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::get_sub_score_exclude_res(
@@ -1730,7 +1725,6 @@ ScoreFunction::eval_ci_2b_sc_sc(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 ScoreFunction::eval_cd_2b(
@@ -1792,7 +1786,6 @@ ScoreFunction::eval_cd_2b_sc_sc(
 	}
 
 }
-
 
 
 /// @brief score the sidechain from rsd1 against the entirety of rsd2
@@ -2247,7 +2240,7 @@ ScoreFunction::setup_for_packing(
 	}
 }
 
-///
+
 void
 ScoreFunction::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
@@ -2260,7 +2253,7 @@ ScoreFunction::prepare_rotamers_for_packing(
 	}
 }
 
-///
+
 void
 ScoreFunction::update_residue_for_packing(
 	pose::Pose & pose,
@@ -2778,7 +2771,6 @@ ScoreFunction::AllMethods const & ScoreFunction::all_methods() const {
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @details private -- handles setting the derived data
 
@@ -3030,7 +3022,7 @@ ScoreFunction::max_atomic_interaction_cutoff() const {
 	return max_cutoff;
 }
 
-///@brief scoring function fills in the context graphs that its energy methods require
+/// @brief scoring function fills in the context graphs that its energy methods require
 ///
 /// input vector should be false and have num_context_graph_types slots.  Each method
 /// ors its required context graphs

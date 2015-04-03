@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the ExpiryFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_ExpiryFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_ExpiryFilterCreator_hh
 

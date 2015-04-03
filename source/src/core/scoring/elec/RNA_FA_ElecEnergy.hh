@@ -47,10 +47,10 @@ public:
 
 public:
 
-	///
+
 	RNA_FA_ElecEnergy( methods::EnergyMethodOptions const & options );
 
-	///
+
 	RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src );
 
 
@@ -67,7 +67,7 @@ public:
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;

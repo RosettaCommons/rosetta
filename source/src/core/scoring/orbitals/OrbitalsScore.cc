@@ -171,8 +171,6 @@ bool OrbitalsScore::defines_intrares_energy(core::scoring::EnergyMap const &) co
 }
 
 
-
-
 void OrbitalsScore::eval_intrares_energy(
 		core::conformation::Residue const &,
 		core::pose::Pose const &,
@@ -209,8 +207,6 @@ OrbitalsScore::update_residue_for_packing(
 {
 	pose.update_orbital_coords( resid );
 }
-
-
 
 
 core::Size
@@ -336,7 +332,6 @@ core::Real OrbitalsScore::scfxn_rules_for_weight(
 }
 
 
-
 bool OrbitalsScore::orb_orb_rules(
 	const core::Size atype1,
 	const core::Size atype2
@@ -363,7 +358,6 @@ bool OrbitalsScore::orb_orb_rules(
 		}else {return false;}   }
 	return false;
 }
-
 
 
 void
@@ -873,8 +867,6 @@ OrbitalsScore::eval_residue_pair_derivatives(
 	assign_orb_orb_derivs(res2, res1, weights, r2_atom_derivs, r1_atom_derivs);
 
 }
-
-
 
 
 void OrbitalsScore::assign_haro_derivs_one_way(

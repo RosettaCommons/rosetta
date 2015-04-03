@@ -42,14 +42,14 @@ public:
 
 	~ScoreMover();
 
-	///@brief constructor
-	///@details creates the ScoreMover with the names passed in rather than
+	/// @brief constructor
+	/// @details creates the ScoreMover with the names passed in rather than
 	///		taken from the commandline
 	///		patch is not necessary
 	ScoreMover( std::string const &, std::string const & patch = "" );
 
-	///@brief constructor
-	///@details creates the ScoreMover with the scorefunction itself passed in
+	/// @brief constructor
+	/// @details creates the ScoreMover with the scorefunction itself passed in
 	ScoreMover( ScoreFunctionOP );
 
 	virtual moves::MoverOP clone() const;
@@ -69,7 +69,7 @@ public:
 
 	static void register_options();
 
-	///@brief add an rms to the score_map
+	/// @brief add an rms to the score_map
 	/// TODO possibly find a better way to do this?
 	/// for now, there are too many different rmsd calculation
 	/// functions to be able to do the actual calculation in the protocols::moves::Mover

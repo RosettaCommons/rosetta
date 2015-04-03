@@ -393,7 +393,6 @@ LoopHashLibrary::create_db()
 }
 
 
-
 void
 LoopHashLibrary::set_default_score_functions()
 {
@@ -415,8 +414,6 @@ LoopHashLibrary::set_default_score_functions()
 	scorefxn_cen_cst->set_weight( rsigma	 , 1.0);
 	scorefxn_cen_cst->set_weight( sheet		, 1.0);
 }
-
-
 
 
 void
@@ -455,9 +452,6 @@ LoopHashLibrary::graft_loop(
 
 	transfer_phi_psi( pose, tgt_pose );
 }
-
-
-
 
 
 void
@@ -708,7 +702,6 @@ LoopHashLibrary::get_all(
 	core::pose::Pose edit_pose = start_pose;
 
 
-
 	kinematics::MoveMap final_mm;
 	final_mm.set_bb(true);
 	// setup movemap & minimisation
@@ -752,7 +745,6 @@ LoopHashLibrary::get_all(
 			hashmap.lookup( t, leap_index_bucket );
 
 			TR.Info << "G: " << runcount << " " << ir << "	" << jr << " " << leap_index_bucket.size() << "	" << t[1] << "	" << t[2] << "	" << t[3] << "	" << t[4] << "	" << t[5] << "	" << t[6] << std::endl;
-
 
 
 			// Now for every hit, get the internal coordinates and make a short list of replacement loops
@@ -829,8 +821,6 @@ LoopHashLibrary::get_all(
 				//core::pose::PoseOP newpose2( new Pose( original_pose ) );
 				//new_bs.apply_to_pose( *newpose2, ir, true );
 				//newpose2->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".cut.pdb" );
-
-
 
 
 				//scorefxn_rama_cst->show( TR.Info, *newpose );
@@ -933,7 +923,6 @@ LoopHashLibrary::extract_data_from_pose( core::pose::Pose& pose, core::Size nres
 			pose_bs.read_from_pose( pose, ir, loop_size );
 		}
 	}
-
 
 
 	// reset the fold tree
@@ -1134,7 +1123,6 @@ void LoopHashLibrary::test_loop_sample( core::pose::Pose& pose, core::Size nres 
 		pose.fold_tree( f );
 
 }
-
 
 
 } // namespace loops

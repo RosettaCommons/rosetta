@@ -37,7 +37,7 @@ class IteratedConvergenceMover : public Mover {
 public:
 
 public:
-	///@brief default constructor
+	/// @brief default constructor
 	IteratedConvergenceMover();
 
 	IteratedConvergenceMover( MoverOP submover, filters::FilterCOP filter, core::Real delta=0.1, core::Size cycles=1, core::Size maxcycles=1000 );
@@ -52,7 +52,7 @@ public:
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -60,10 +60,10 @@ public:
 		Movers_map const &,
 		Pose const & );
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual MoverOP fresh_instance() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual MoverOP clone() const;
 
 	// setters

@@ -32,5 +32,4 @@ typedef utility::pointer::shared_ptr<RDFBase> RDFBaseOP;
 }
 
 
-
 #endif

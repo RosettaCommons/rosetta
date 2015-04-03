@@ -501,8 +501,6 @@ std::istream& operator >>(std::istream &is,PD_match &p){
 }
 
 
-
-
 // MATCH_rmsd target A 15 20  source A 20 30 id
 std::istream& operator >>(std::istream &is,PD_match_rmsd &p){
 	std::string s1,s2;

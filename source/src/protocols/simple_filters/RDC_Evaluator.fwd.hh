@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-///
 
 
 #ifndef INCLUDED_protocols_simple_filters_RDC_Evaluator_fwd_hh

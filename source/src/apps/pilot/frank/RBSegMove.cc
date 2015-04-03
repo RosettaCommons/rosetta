@@ -16,7 +16,6 @@
 #include <devel/init.hh>
 
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 // Auto-header: duplicate removed #include <devel/init.hh>
 #include <basic/options/option.hh>
 

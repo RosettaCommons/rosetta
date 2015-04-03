@@ -85,7 +85,7 @@ std::string AdditionalOutputWrapper::get_name() const
 	return AdditionalOutputWrapperCreator::mover_name();
 }
 
-///@brief Process all input poses (provided pose and from previous mover)
+/// @brief Process all input poses (provided pose and from previous mover)
 void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 {
 	reference_pose_ = core::pose::PoseOP( new core::pose::Pose(pose) );
@@ -93,7 +93,7 @@ void AdditionalOutputWrapper::apply(core::pose::Pose& pose)
 	++n_poses_;
 }
 
-///@brief Hook for multiple pose putput to JD2 or another mover
+/// @brief Hook for multiple pose putput to JD2 or another mover
 core::pose::PoseOP AdditionalOutputWrapper::get_additional_output()
 {
 	if(!reference_pose_) {

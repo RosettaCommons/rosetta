@@ -13,7 +13,6 @@
 /// @author Lei Shi (shilei@uw.edu)
 
 #include <core/scoring/constraints/SiteConstraintResidues.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

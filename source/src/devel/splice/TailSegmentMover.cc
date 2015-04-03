@@ -99,7 +99,7 @@ TailSegmentMover::TailSegmentMover(): protocols::moves::Mover("TailSegment"),
 
 TailSegmentMover::~TailSegmentMover(){}
 
-///@brief copy ctor
+/// @brief copy ctor
 TailSegmentMover::TailSegmentMover( TailSegmentMover const & rhs ) :
 	Mover(rhs)
 {

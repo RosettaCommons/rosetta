@@ -25,14 +25,10 @@
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformerBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 #include <core/pose/Pose.hh>
 
 // Project headers
@@ -50,7 +46,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

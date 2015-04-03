@@ -164,7 +164,6 @@ LoopCloseEnergy::version() const
 }
 
 
-
 } // loop_graph
 } // scoring
 } // core

@@ -29,13 +29,9 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <utility/excn/Exceptions.hh>
 
-// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/CompositeScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
@@ -56,8 +52,6 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 

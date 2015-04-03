@@ -12,7 +12,7 @@
 ///
 /// @brief 	Mover to create a ContactMap
 ///
-/// @detailed :
+/// @details :
 ///		This mover takes a pose and creates a matrix with true(1) or false(0) values for
 ///		atom pairs depending on whether both atoms are within a specified cutoff distance.
 ///		For protein residues (specified via region1/2 tag) CB or CA (Gly) atoms and for ligands
@@ -141,7 +141,6 @@ private:
 }; //class ContactMap
 
 
-
 /// @brief	Simple class that holds the information on an atom involved in a contact
 class ContactPartner{
 
@@ -165,7 +164,6 @@ private:
 	std::string resname_;
 	std::string atomname_;
 }; // class ContactPartner
-
 
 
 /// @brief	Simple class representing a contact between two atoms

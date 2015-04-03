@@ -23,7 +23,6 @@ score_analysis = ScoreAnalysis()
 score_analysis.read_scores(os.path.dirname(os.path.abspath(__file__))+"/data/gui/SCORED_PDBLIST.txt")
 
 
-
 print "Getting top score model:"
 top = score_analysis.get_top_scoring(False)
 print top

@@ -137,7 +137,7 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
-	///
+
 	void
 	add_residue_library(
 		AA const & aa,
@@ -379,7 +379,6 @@ private:
 
 	void
 	read_from_binary( utility::io::izstream & in );
-
 
 
 	RotamerLibrary();

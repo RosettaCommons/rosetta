@@ -9,7 +9,7 @@
 
 /// @file src/protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -25,7 +25,6 @@
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -42,7 +41,6 @@
 //#include <protocols/simple_moves/FragmentMover.hh>
 //#include <core/fragment/SecondaryStructure.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
 
 // ObjexxFCL Headers
 
@@ -50,7 +48,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -68,7 +65,7 @@ typedef utility::pointer::shared_ptr< FASelectSlidingWindowLoopClosure const > F
 class FASelectSlidingWindowLoopClosure : public WidthFirstSlidingWindowLoopClosure {
 	typedef  WidthFirstSlidingWindowLoopClosure Parent;
 public:
-   ///@brief constructor: supply fragsets for fragment moves
+   /// @brief constructor: supply fragsets for fragment moves
 	FASelectSlidingWindowLoopClosure(
 		core::fragment::FragSetCOP fragset,
 		core::scoring::ScoreFunctionOP scorefxn,

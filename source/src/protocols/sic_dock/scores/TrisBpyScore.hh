@@ -51,8 +51,6 @@ class TrisBpyScore : public RigidScore {
 };
 
 
-
-
 } // namespace scores
 } // namespace sic_dock
 } // namespace protocols

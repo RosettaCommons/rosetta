@@ -22,7 +22,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers

@@ -22,11 +22,9 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -48,7 +46,7 @@ public:
 
 	virtual ~WholeStructureEnergy() {}
 
-	///
+
 	EnergyMethodType
 	method_type() const;
 

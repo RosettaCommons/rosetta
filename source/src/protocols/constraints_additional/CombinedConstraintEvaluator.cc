@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -25,27 +24,16 @@
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/id/Exceptions.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSample.hh>
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <utility/vector1.hh>
 

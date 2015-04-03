@@ -20,11 +20,8 @@
 //Package headers
 
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -33,13 +30,11 @@
 
 #include <core/scoring/packing/compute_holes_score_res.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //utility headers
 #include <utility/vector1.hh>

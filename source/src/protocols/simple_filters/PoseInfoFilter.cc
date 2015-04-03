@@ -32,7 +32,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.PoseInfoFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 PoseInfoFilter::PoseInfoFilter() :
 	parent( "PoseInfo" )
 {}
@@ -103,7 +103,6 @@ PoseInfoFilterCreator::create_filter() const { return protocols::filters::Filter
 
 std::string
 PoseInfoFilterCreator::keyname() const { return "PoseInfo"; }
-
 
 
 } // filters

@@ -14,59 +14,32 @@
 
 // Package Headers
 #include <protocols/abinitio/PairingStatistics.hh>
-// AUTO-REMOVED #include <protocols/abinitio/Template.hh>
-// AUTO-REMOVED #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.hh>
 
 // Project Headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh> //to get secondary structure
-// AUTO-REMOVED #include <core/fragment/SecstructSRFD.hh> //to get secondary structure
-// AUTO-REMOVED #include <core/fragment/FragID_Iterator.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSample.hh>
 
 #ifdef WIN32
 #include <core/scoring/dssp/PairingsList.hh>
 #endif
 
 
-
 //numeric headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -75,7 +48,6 @@
 #include <vector>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.abinitio.StrandConstraints" );

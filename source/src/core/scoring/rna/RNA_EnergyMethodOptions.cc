@@ -9,7 +9,7 @@
 
 /// @file core/scoring/rna/RNA_EnergyMethodOptions.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -62,7 +62,6 @@ namespace rna {
 	}
 
 
-///
 void
 RNA_EnergyMethodOptions::show( std::ostream & out ) const
 {

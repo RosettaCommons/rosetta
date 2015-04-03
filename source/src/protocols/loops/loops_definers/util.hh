@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loops_definers/util.hh
 /// @brief Utility functions useful in LoopDefiner classes.
-/// @authors Matthew O'Meara (mattjomeara@gmail.com)
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_protocols_loops_loops_definers_util_HH
 #define INCLUDED_protocols_loops_loops_definers_util_HH

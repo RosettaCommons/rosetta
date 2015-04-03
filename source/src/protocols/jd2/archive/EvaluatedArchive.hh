@@ -20,14 +20,11 @@
 #include <protocols/jd2/archive/ArchiveBase.hh>
 #include <protocols/jd2/archive/VarianceStatisticsArchive.fwd.hh>
 //#include <protocols/jd2/archive/EvaluatedArchive.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Package headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Utility headers
 #include <core/types.hh>
@@ -50,11 +47,10 @@ namespace archive {
 //class ArchiveManager;
 
 
-
-///@brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
+/// @brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
 ///flagging as job as being a bad input
 
-///@details This job distributor is meant for running jobs where the machine you are using has a large number of
+/// @details This job distributor is meant for running jobs where the machine you are using has a large number of
 ///processors, the number of jobs is much greater than the number of processors, or the runtimes of the individual jobs
 ///could vary greatly. It dedicates the head node (whichever processor gets processor rank #0) to handling job requests
 ///from the slave nodes (all nonzero ranks). Unlike the MPIWorkPartitionJobDistributor, this JD will not work at all
@@ -66,16 +62,16 @@ class EvaluatedArchive : public ArchiveBase {
 	typedef ArchiveBase Parent;
 public:
 
-	///@brief Constructor  and Destructor
+	/// @brief Constructor  and Destructor
 	EvaluatedArchive( ArchiveManagerAP ptr );
 	EvaluatedArchive();
 	~EvaluatedArchive();
 
-	///@brief Archive specific options
+	/// @brief Archive specific options
 	static void register_options();
 
-	///@brief add decoy to Archive
-	///@detail evaluate decoy and call add_evaluated_structure
+	/// @brief add decoy to Archive
+	/// @detail evaluate decoy and call add_evaluated_structure
 	virtual bool add_structure(
 	  core::io::silent::SilentStructOP new_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
@@ -83,42 +79,42 @@ public:
 	);
 
 
-	///@brief  compute score according to select_weights --- this can contain any evaluator columns
+	/// @brief  compute score according to select_weights --- this can contain any evaluator columns
 	core::Real select_score( core::io::silent::SilentStructOP evaluated_decoy );
 
-	///@brief set common evaluators: eg. ConstraintEvaluator if -cst_file is present
+	/// @brief set common evaluators: eg. ConstraintEvaluator if -cst_file is present
 	void setup_default_evaluators();
 
-	///@brief overloaded that we can sort the pool after reading
+	/// @brief overloaded that we can sort the pool after reading
 	virtual bool restore_from_file();
 
-	///@brief only overloaded this to add some verbosity each time we read structures
+	/// @brief only overloaded this to add some verbosity each time we read structures
 	virtual void read_structures(
    core::io::silent::SilentFileData& sfd,
 	 core::io::silent::SilentFileData& alternative_decoys,
 	 Batch const& batch
 );
 
-	///@brief overloaded to make input decoys appear the same as decoys coming from batches
+	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
 
-	///@brief typedefs for Evaluators and Weights
+	/// @brief typedefs for Evaluators and Weights
 	typedef std::map< std::string, core::Real > WeightMap;
 	typedef std::map< std::string, evaluation::PoseEvaluatorCOP > EvaluatorMap;
 
 	void start_evaluation_timer() const;
-	///@brief yields an "evaluated" silent-struct which can be queried with select_score
-	///@detail will run scoring-process if evaluate_local() otherwise just returns the intpu-silent-struct
+	/// @brief yields an "evaluated" silent-struct which can be queried with select_score
+	/// @detail will run scoring-process if evaluate_local() otherwise just returns the intpu-silent-struct
 	core::io::silent::SilentStructOP evaluate_silent_struct( core::io::silent::SilentStructOP from_batch ) const;
 
-	///@brief add an evaluated decoy to Archive (i.e, evaluated_decoy = evaluate( some_decoy ) );
+	/// @brief add an evaluated decoy to Archive (i.e, evaluated_decoy = evaluate( some_decoy ) );
 	virtual bool add_evaluated_structure(
     core::io::silent::SilentStructOP evaluated_decoy,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
 	);
 
-	///@brief specify if decoys are evaluated on the master or (non-local i.e., on the individual slave nodes)
+	/// @brief specify if decoys are evaluated on the master or (non-local i.e., on the individual slave nodes)
 	bool evaluate_local() const {
 		return b_evaluate_incoming_decoys_;
 	}
@@ -127,25 +123,25 @@ public:
 		b_evaluate_incoming_decoys_ = setting;
 	}
 
-	///@brief recompute all score-values of all decoys and re-order the archive by (new) select_score
+	/// @brief recompute all score-values of all decoys and re-order the archive by (new) select_score
 	virtual void rescore();
 
-	///@brief add new PoseEvaluation to set of evaluators, specify weight for contribution to select_score()
+	/// @brief add new PoseEvaluation to set of evaluators, specify weight for contribution to select_score()
 	void add_evaluation( evaluation::PoseEvaluatorCOP, core::Real weight = 0.0 );
 
-	///@brief remove Evaluator
+	/// @brief remove Evaluator
 	void remove_evaluation( std::string const& column );
 
-	///@brief is a certain elvaluator present ?
+	/// @brief is a certain elvaluator present ?
 	bool has_evaluator( std::string const& column );
 
-	///@brief set weight of an evaluator or a column otherwise present in silent-structs
+	/// @brief set weight of an evaluator or a column otherwise present in silent-structs
 	/// (i.e, score, chainbreak, external evaluation like score_final )
 	void set_weight( std::string const& column, core::Real weight );
 
 	core::Real get_weight( std::string const& column ) const;
 
-	///@brief set scorefxn used for evaluation
+	/// @brief set scorefxn used for evaluation
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn_ );
 
 	core::scoring::ScoreFunction const & scorefxn() const;
@@ -171,39 +167,39 @@ public:
 protected:
 	core::scoring::ScoreFunctionOP scorefxn_non_const();
 
-	///@brief score a pose
+	/// @brief score a pose
 	virtual void score( core::pose::Pose& pose ) const;
 
 	virtual void invalidate_score_variations() {}
 
 private:
-	///@brief call score( pose ) and collect energies into result
+	/// @brief call score( pose ) and collect energies into result
 	/// this is low-level function: it expects that result already contains the coordinates of the pose
 	/// for convenience the pointer result is also return value
 	virtual core::io::silent::SilentStructOP evaluate_pose( core::io::silent::SilentStructOP result, core::pose::Pose& input_pose ) const;
 
-	///@brief re-sort decoys based on select_score
+	/// @brief re-sort decoys based on select_score
 	void sort();
 
-	///@brief scorefxn_ for evaluate( SilentStruct, Pose const& )
+	/// @brief scorefxn_ for evaluate( SilentStruct, Pose const& )
 	core::scoring::ScoreFunctionOP scorefxn_;
 
-	///@brief Evaluators and weights for select_score and evaluate
+	/// @brief Evaluators and weights for select_score and evaluate
 	WeightMap select_weights_;
 	EvaluatorMap evaluators_;
 
 	WeightMap dummy_score_variations_;
 
-	///@brief keep track wether cached scores in _archive_select_score_ are up-to-date
+	/// @brief keep track wether cached scores in _archive_select_score_ are up-to-date
 	mutable bool scores_are_clean_; //false after add_evaluation or change of scorefxn_
 
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// mutable bool score_variations_are_clean_;
 
-	///@brief local evaluation or is evaluation outsourced to slave nodes?
+	/// @brief local evaluation or is evaluation outsourced to slave nodes?
 	bool b_evaluate_incoming_decoys_;
 
-	///@brief keep track whether our options have been registered at start up
+	/// @brief keep track whether our options have been registered at start up
 	static bool options_registered_;
 
 	mutable time_t start_eval_time_;

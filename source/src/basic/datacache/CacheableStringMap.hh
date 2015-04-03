@@ -40,12 +40,11 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
-
 namespace basic {
 namespace datacache {
 
 
-///@brief Wrapper for a map< string, string >.
+/// @brief Wrapper for a map< string, string >.
 class CacheableStringMap : public CacheableData
 {
 public:

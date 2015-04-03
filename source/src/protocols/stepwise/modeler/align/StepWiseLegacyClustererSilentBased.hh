@@ -9,7 +9,7 @@
 
 /// @file StepWiseLegacyClustererSilentBased.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

@@ -219,7 +219,6 @@
 #include <boost/functional/hash.hpp>
 
 
-
 namespace core {
 namespace pose {
 
@@ -251,7 +250,7 @@ initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const
 	}
 }
 
-///@brief returns a Distance
+/// @brief returns a Distance
 core::Real
 pose_max_nbr_radius( pose::Pose const & pose );
 

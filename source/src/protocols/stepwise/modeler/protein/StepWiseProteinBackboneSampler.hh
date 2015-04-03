@@ -9,7 +9,7 @@
 
 /// @file SWA_Screener.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

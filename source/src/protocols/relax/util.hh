@@ -15,7 +15,6 @@
 
 #ifndef INCLUDED_protocols_relax_util_hh
 #define INCLUDED_protocols_relax_util_hh
-// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh> //pba
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -31,13 +30,13 @@
 namespace protocols {
 namespace relax {
 
-///@brief (pba)  read in membrane topology
+/// @brief (pba)  read in membrane topology
 void setup_membrane_topology( core::pose::Pose & pose, std::string spanfile );
 
-///@brief Make DNA Rigid in movemap if found in pose
+/// @brief Make DNA Rigid in movemap if found in pose
 void make_dna_rigid(core::pose::Pose & pose, core::kinematics::MoveMap & mm);
 
-///@brief Set energy method options for DNA-DNA.  Any other optimization for DNA relax should go here.
+/// @brief Set energy method options for DNA-DNA.  Any other optimization for DNA relax should go here.
 void setup_for_dna(core::scoring::ScoreFunction & scorefxn);
 
 void relax_pose( core::pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag );

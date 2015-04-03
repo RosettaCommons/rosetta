@@ -22,7 +22,6 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 
@@ -96,7 +95,6 @@ private:
 	Size total_residue_;
 
 };
-
 
 
 } // namespace kinematics

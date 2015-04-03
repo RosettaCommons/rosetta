@@ -145,7 +145,6 @@ save_contact_info( FArray2D< Real > & ds, pose::Pose & pose ){
 	}
 
 
-
 }
 
 

@@ -58,7 +58,6 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
@@ -102,7 +101,6 @@
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
@@ -111,7 +109,6 @@
 
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -531,7 +528,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	}
 
 
-
 	///////////////////////////////////////////////////////////////////////////////////////
 	////
 	//// 	Loop remodelling (centroid loop modelling)
@@ -854,7 +850,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		}
 
 
-
 		// Add coordinate constraints to non-loop regions if desired
 		core::Real constrain_rigid_segments_weight = option[ OptionKeys::loops::constrain_rigid_segments ]();
 		if( constrain_rigid_segments_weight > 0.0 ){
@@ -939,17 +934,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			}
 
 
-
 			fa_scorefxn_->set_weight( coordinate_constraint, constrain_rigid_segments_weight );
 		}
 
 
-
-
 		// ----------------------------------------------------------
-
-
-
 
 
 		// do the same (again) for fit-to-density

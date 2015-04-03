@@ -9,7 +9,7 @@
 
 /// @file moves/GraftMover.cc
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Aroop Sircar (aroopsircar@yahoo.com)
 
 // Unit headers
@@ -848,11 +848,10 @@ void LoopRlxMover::set_default() {
 
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin LoopRlxMover::apply
 ///
 /// @brief relaxes the region specified
 ///
-/// @detailed This is all done in high resolution.Hence there are no rigid
+/// @details This is all done in high resolution.Hence there are no rigid
 ///           body moves relative to the docking partners. Only small moves
 ///           are carried out here to see if there are better fits.
 ///           Repacking is carried out extensively after each move.
@@ -867,9 +866,8 @@ void LoopRlxMover::set_default() {
 ///
 /// @references
 ///
-/// @authors Aroop 05/12/2010
+/// @author Aroop 05/12/2010
 ///
-/// @last_modified 05/12/2010
 ///////////////////////////////////////////////////////////////////////////
 void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace protocols;
@@ -1089,7 +1087,6 @@ LoopRlxMover::setup_packer_task(
 	TR << "LoopRlxMover Done: Setting Up Packer Task" << std::endl;
 
 } // LoopRlxMover::setup_packer_task
-
 
 
 }  // namespace moves

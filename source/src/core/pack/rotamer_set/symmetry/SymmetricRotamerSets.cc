@@ -31,15 +31,11 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 
 // C++
-// AUTO-REMOVED #include <fstream>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>

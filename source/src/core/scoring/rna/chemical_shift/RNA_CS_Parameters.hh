@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #ifndef INCLUDED_core_scoring_rna_RNA_CS_Parameters_HH
 #define INCLUDED_core_scoring_rna_RNA_CS_Parameters_HH
 
@@ -29,7 +28,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +71,6 @@ enum atomitem{ oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, m
         //   if the csd due to the electrical field has to be calculated for
         //   this hydrogen atom
         // CHRG charge information for an atom
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,8 +163,6 @@ class RNA_CS_parameters : public utility::pointer::ReferenceCount {
 		RNA_CS_residue_parameters const CS_URA_params_; 
 
 }; 
-
-
 
 
 } //chemical_shift

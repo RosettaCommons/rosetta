@@ -13,7 +13,6 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <core/sequence/Aligner.hh>
 #include <core/sequence/MCAligner.hh>
@@ -28,9 +27,7 @@
 #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <iostream>
 #include <string>
 

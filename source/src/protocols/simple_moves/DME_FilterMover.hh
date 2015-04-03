@@ -33,7 +33,6 @@
 #include <string>
 
 // Utility Headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
 

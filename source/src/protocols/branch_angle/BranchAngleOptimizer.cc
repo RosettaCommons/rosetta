@@ -126,7 +126,7 @@ BranchAngleOptimizer::bond_angle_residue_type_param_set(
 	bond_angle_residue_type_param_set_ = core::scoring::mm::MMBondAngleResidueTypeParamSetOP( new core::scoring::mm::MMBondAngleResidueTypeParamSet( *param_set ) );
 }
 
-/// @detailed
+/// @details
 /// Add a branch point to the object, if optimization parameters were found, returns an index
 /// to them, otherwise returns 0. If other failure conditions are met, a warning is output
 /// and the function returns 0.
@@ -306,7 +306,7 @@ BranchAngleOptimizer::optimize_angles(
 	return coef_index;
 }
 
-/// @detailed
+/// @details
 /// if overall parameters are not available, single bond parameters will be returned
 core::Size
 BranchAngleOptimizer::overall_params(
@@ -413,7 +413,7 @@ BranchAngleOptimizer::overall_params(
 	return coef_index;
 }
 
-/// @detailed
+/// @details
 /// use the MMBondAngleLibrary referenced by this object
 BranchParam1
 BranchAngleOptimizer::param1(
@@ -459,7 +459,7 @@ BranchAngleOptimizer::param1(
 	return params;
 }
 
-/// @detailed
+/// @details
 /// use the MMBondAngleLibrary referenced by this object
 BranchParam2
 BranchAngleOptimizer::param2(
@@ -524,7 +524,7 @@ BranchAngleOptimizer::param2(
 	return params;
 }
 
-/// @detailed
+/// @details
 /// get number of single branching atom coefficients
 core::Size
 BranchAngleOptimizer::num_coef1() const
@@ -532,7 +532,7 @@ BranchAngleOptimizer::num_coef1() const
 	return coef1_.size();
 }
 
-/// @detailed
+/// @details
 /// get number of double branching atom coefficients
 core::Size
 BranchAngleOptimizer::num_coef2() const
@@ -540,7 +540,7 @@ BranchAngleOptimizer::num_coef2() const
 	return coef2_.size();
 }
 
-/// @detailed
+/// @details
 /// get number of undefined single branching atom coefficients
 core::Size
 BranchAngleOptimizer::num_undefined_coef1() const
@@ -548,7 +548,7 @@ BranchAngleOptimizer::num_undefined_coef1() const
 	return undefined_coef1_.size();
 }
 
-/// @detailed
+/// @details
 /// get number of undefined double branching atom coefficients
 core::Size
 BranchAngleOptimizer::num_undefined_coef2() const
@@ -556,7 +556,7 @@ BranchAngleOptimizer::num_undefined_coef2() const
 	return undefined_coef2_.size();
 }
 
-/// @detailed
+/// @details
 /// read known parameters from the database
 void
 BranchAngleOptimizer::read_database()
@@ -568,7 +568,7 @@ BranchAngleOptimizer::read_database()
 	initialized_ = true;
 }
 
-/// @detailed
+/// @details
 /// write undefined parameters to the database
 void
 BranchAngleOptimizer::write_database() const
@@ -583,7 +583,7 @@ BranchAngleOptimizer::write_database() const
 	}
 }
 
-/// @detailed
+/// @details
 /// reads records of the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -650,7 +650,7 @@ BranchAngleOptimizer::read_coef1(
 	}
 }
 
-/// @detailed
+/// @details
 /// read from an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::read_coef1(
@@ -668,7 +668,7 @@ BranchAngleOptimizer::read_coef1(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// read from sampling/branch_angle/branch_angle_1.txt
 void
 BranchAngleOptimizer::read_coef1_default()
@@ -679,7 +679,7 @@ BranchAngleOptimizer::read_coef1_default()
 	infile.close();
 }
 
-/// @detailed
+/// @details
 /// read from branch_angle/branch_angle_1_user.txt
 bool
 BranchAngleOptimizer::read_coef1_user()
@@ -687,7 +687,7 @@ BranchAngleOptimizer::read_coef1_user()
 	return read_coef1(basic::database::full_name("branch_angle/branch_angle_1_user.txt", false));
 }
 
-/// @detailed
+/// @details
 /// reads records of the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -784,7 +784,7 @@ BranchAngleOptimizer::read_coef2(
 	}
 }
 
-/// @detailed
+/// @details
 /// read from an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::read_coef2(
@@ -802,7 +802,7 @@ BranchAngleOptimizer::read_coef2(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// read from sampling/branch_angle/branch_angle_2.txt, fails hard
 void
 BranchAngleOptimizer::read_coef2_default()
@@ -813,7 +813,7 @@ BranchAngleOptimizer::read_coef2_default()
 	infile.close();
 }
 
-/// @detailed
+/// @details
 /// read from branch_angle/branch_angle_2_user.txt
 bool
 BranchAngleOptimizer::read_coef2_user()
@@ -821,7 +821,7 @@ BranchAngleOptimizer::read_coef2_user()
 	return read_coef2(basic::database::full_name("branch_angle/branch_angle_2_user.txt", false));
 }
 
-/// @detailed
+/// @details
 /// reads records of the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -856,7 +856,7 @@ BranchAngleOptimizer::read_undefined_coef1(
 	}
 }
 
-/// @detailed
+/// @details
 /// read from an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::read_undefined_coef1(
@@ -874,7 +874,7 @@ BranchAngleOptimizer::read_undefined_coef1(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// read from branch_angle/branch_angle_1_undefined.txt
 bool
 BranchAngleOptimizer::read_undefined_coef1()
@@ -882,7 +882,7 @@ BranchAngleOptimizer::read_undefined_coef1()
 	return read_undefined_coef1(basic::database::full_name("branch_angle/branch_angle_1_undefined.txt", false));
 }
 
-/// @detailed
+/// @details
 /// for every set of parameters, dump out three lines in the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -907,7 +907,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 	out << std::setprecision(oldprecision);
 }
 
-/// @detailed
+/// @details
 /// write to an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::write_undefined_coef1(
@@ -925,7 +925,7 @@ BranchAngleOptimizer::write_undefined_coef1(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// overwrite branch_angle/branch_angle_1_undefined.txt if undefined parameters exist
 bool
 BranchAngleOptimizer::write_undefined_coef1() const
@@ -937,7 +937,7 @@ BranchAngleOptimizer::write_undefined_coef1() const
 	return true;
 }
 
-/// @detailed
+/// @details
 /// reads records of the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -990,7 +990,7 @@ BranchAngleOptimizer::read_undefined_coef2(
 	}
 }
 
-/// @detailed
+/// @details
 /// read from an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::read_undefined_coef2(
@@ -1008,7 +1008,7 @@ BranchAngleOptimizer::read_undefined_coef2(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// read from branch_angle/branch_angle_2_undefined.txt
 bool
 BranchAngleOptimizer::read_undefined_coef2()
@@ -1016,7 +1016,7 @@ BranchAngleOptimizer::read_undefined_coef2()
 	return read_undefined_coef2(basic::database::full_name("branch_angle/branch_angle_2_undefined.txt", false));
 }
 
-/// @detailed
+/// @details
 /// for every set of parameters, dump out three lines in the format:
 ///
 /// m1_m2_Ktheta(kcal/radians^2) m1_m2_theta0(degrees)
@@ -1047,7 +1047,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 	out << std::setprecision(oldprecision);
 }
 
-/// @detailed
+/// @details
 /// write to an uncompressed or gzip-compressed file, returns false on failure
 bool
 BranchAngleOptimizer::write_undefined_coef2(
@@ -1065,7 +1065,7 @@ BranchAngleOptimizer::write_undefined_coef2(
 	return false;
 }
 
-/// @detailed
+/// @details
 /// overwrite branch_angle/branch_angle_2_undefined.txt if undefined parameters exist
 bool
 BranchAngleOptimizer::write_undefined_coef2() const
@@ -1077,7 +1077,7 @@ BranchAngleOptimizer::write_undefined_coef2() const
 	return true;
 }
 
-/// @detailed
+/// @details
 /// get ordered branching atom around an atom with 3 neighbors
 void
 branching_atomid1(
@@ -1109,7 +1109,7 @@ branching_atomid1(
 	runtime_assert(found_main_atomid1 && found_main_atomid2);
 }
 
-/// @detailed
+/// @details
 /// get ordered branching atoms such that the torsion offset from main_atomid2 to branch_atomid1
 /// is less than that to branch_atomid2, given that both are in the range [0, 2*pi). In other
 /// words the atoms will be returned clockwise from main_atomid2, when looking from main_atomid1
@@ -1166,7 +1166,7 @@ branching_atomids2(
 	}
 }
 
-/// @detailed
+/// @details
 /// get ordered branching atoms such that the torsion offset from main_atom2 to branch_atom1
 /// is less than that to branch_atom2, given that both are in the range [0, 2*pi). In other
 /// words the atoms will be returned clockwise from main_atom2, when looking from main_atom1

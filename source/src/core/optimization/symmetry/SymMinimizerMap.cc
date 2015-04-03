@@ -22,9 +22,7 @@
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/util.hh>
@@ -259,7 +257,6 @@ SymMinimizerMap::dof_node_from_id( DOF_ID const &id ) const
 }
 
 
-
 void SymMinimizerMap::zero_torsion_vectors()
 {
 	for ( const_iterator iter = dof_nodes_.begin(),
@@ -346,7 +343,6 @@ SymMinimizerMap::reset_jump_rb_deltas(
 		}
 	}
 }
-
 
 
 void

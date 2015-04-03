@@ -121,7 +121,6 @@ D2H_SA_Energy::D2H_SA_Energy() :
 				//group.push_back(g);
 
 
-
 			}
 			TR << line << std::endl ;
 		}

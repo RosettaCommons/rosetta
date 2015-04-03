@@ -133,12 +133,12 @@ main( int argc, char * argv [] )
 	using core::fragment::FrameIterator;
 	using core::scoring::CA_rmsd;
 
-	//
+
 	FragSetOP fragset;
 	FrameList frames;
 	fragset = FragmentIO().read_data( option[ f ]() );
 
-	//
+
 	core::pose::Pose test_pose( pose );
 	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 	core::util::switch_to_residue_type_set( test_pose, core::chemical::CENTROID );

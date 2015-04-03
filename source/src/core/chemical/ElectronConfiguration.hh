@@ -96,7 +96,6 @@ public:
 //#                AngularMomentumQuantumNumberEnum;
 
 
-
     public:
 
 //#      //! single instance of that class
@@ -226,7 +225,6 @@ public:
       //! @param INDENT number of indentations
       //! @return ostream which was written to
       std::ostream &write( std::ostream &OSTREAM ) const;
-
 
 
     private:

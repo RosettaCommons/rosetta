@@ -42,12 +42,11 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
-
 namespace basic {
 namespace datacache {
 
 
-///@brief Wrapper for std::map<string, Real>
+/// @brief Wrapper for std::map<string, Real>
 class DiagnosticData : public CacheableData
 {
 public:

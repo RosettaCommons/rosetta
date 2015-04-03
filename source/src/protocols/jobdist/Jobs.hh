@@ -30,9 +30,9 @@ namespace jobdist {
 
 static thread_local basic::Tracer jobs_tracer( "protocol.jobdist.jobs.hh" );
 
-///@brief Each Job object describes a particular input to Rosetta.
+/// @brief Each Job object describes a particular input to Rosetta.
 ///
-///@details
+/// @details
 /// Ordinarily, an input is just a single PDB file.
 /// In other cases, e.g. docking, input might be a pair of PDB files.
 /// In still other cases, input might be a list of tags to extract from a silent file.
@@ -71,7 +71,7 @@ class BasicJob : public utility::pointer::ReferenceCount
 {
 public:
 
-	///@brief You MUST ensure that input_tag is a UNIQUE identifier for this Job!
+	/// @brief You MUST ensure that input_tag is a UNIQUE identifier for this Job!
 	BasicJob(std::string input_tag, std::string native_tag, int nstruct=1):
 		input_id_(input_tag),
 		native_id_(native_tag),
@@ -81,32 +81,32 @@ public:
 
 	virtual ~BasicJob() {}
 
-	///@brief The number of times this job should be repeated.
+	/// @brief The number of times this job should be repeated.
 	virtual int nstruct() const
 	{ return nstruct_; }
 
-	///@brief The tag supplied at create time.
+	/// @brief The tag supplied at create time.
 	virtual std::string input_tag() const
 	{ return input_id_; }
 
-	///@brief The tag supplied at create time.
+	/// @brief The tag supplied at create time.
 	virtual std::string native_tag() const
 	{ return native_id_; }
 
-	///@brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
+	/// @brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
 	virtual std::string output_tag(int struct_n) const;
 
-	///@brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
+	/// @brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
 	virtual std::string output_file_name() const {
 		return output_file_name_;
 	};
 
-///@brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
+/// @brief The tag supplied at create time plus the nstruct number (from 1 to nstruct inclusive).
 	void set_output_file_name( std::string str ) {
 		output_file_name_ = str;
 	};
 
-	///@brief Extracts named value.  Works for anything that deserializes from string.  Returns false on error.
+	/// @brief Extracts named value.  Works for anything that deserializes from string.  Returns false on error.
 	template <typename T>
 	bool get(std::string const & key, T & value)
 	{
@@ -116,7 +116,7 @@ public:
 		return !is.fail();
 	}
 
-	///@brief Specialization for strings.
+	/// @brief Specialization for strings.
 	bool get(std::string const & key, std::string & value)
 	{
 		if( extra_data_.find(key) == extra_data_.end() ) return false;
@@ -124,7 +124,7 @@ public:
 		return true;
 	}
 
-	///@brief Set named value.  Works for anything that serializes to a string.
+	/// @brief Set named value.  Works for anything that serializes to a string.
 	template <typename T>
 	void set(std::string const & key, T const & value)
 	{
@@ -134,7 +134,7 @@ public:
 		extra_data_[key] = os.str();
 	}
 
-	///@brief Specialization for strings.
+	/// @brief Specialization for strings.
 	void set(std::string const & key, std::string const & value)
 	{ extra_data_[key] = value; }
 

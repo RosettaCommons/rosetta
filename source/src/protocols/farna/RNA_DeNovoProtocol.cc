@@ -9,7 +9,7 @@
 
 /// @file RNA de novo fragment assembly
 /// @brief protocols that are specific to RNA_DeNovoProtocol
-/// @detailed
+/// @details
 /// @author Rhiju Das, Parin Sripakdeevong, Fang-Chieh Chou
 
 
@@ -604,7 +604,6 @@ RNA_DeNovoProtocol::initialize_tag_is_done()
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::setup_rigid_body_mover( pose::Pose const & pose, Size const r ){
@@ -969,7 +968,6 @@ RNA_DeNovoProtocol::update_pose_constraints( Size const r, core::pose::Pose & po
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::update_frag_size( Size const r )
@@ -991,7 +989,7 @@ RNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 	//   and
 	// (2) "chunk insertions", which change out whole loops, motifs, or
 	//     junctions based on previous models stored in silent files
-	//
+
 
 	if  ( numeric::random::rg().uniform() < jump_change_frequency_ )  {
 		//Following returns early if there are no jumps.

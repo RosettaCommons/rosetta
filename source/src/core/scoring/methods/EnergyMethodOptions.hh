@@ -32,12 +32,10 @@
 #include <core/chemical/AA.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #include <utility/vector1.hh>
@@ -51,7 +49,6 @@ namespace methods {
 /// NOTE: If you add an option, make sure you also update the constructor,
 /// the assignment operator, the == comparison operator, and the show method in the .cc file!
 /// right now this class should be pretty light-weight since a copy is held inside ScoreFunctionInfo
-///
 
 
 class EnergyMethodOptions : public utility::pointer::ReferenceCount {
@@ -79,38 +76,38 @@ public:
 		return EnergyMethodOptionsOP( new EnergyMethodOptions( *this ) );
 	}
 
-	///
+
 	std::string const &
 	etable_type() const;
 
-	///
+
 	void
 	etable_type( std::string const & type );
 
 	bool analytic_etable_evaluation() const;
 	void analytic_etable_evaluation( bool setting );
 
-	///
+
 	std::string const &
 	unfolded_energies_type() const;
 
-	///
+
 	void
 	unfolded_energies_type( std::string const & type );
 
-	///
+
 	bool
 	exclude_protein_protein_fa_elec() const;
 
-	///
+
 	void
 	exclude_protein_protein_fa_elec( bool const setting );
 
-	///
+
 	bool
 	exclude_monomer_fa_elec() const;
 
-	///
+
 	void
 	exclude_monomer_fa_elec( bool const setting );
 
@@ -203,43 +200,43 @@ public:
 	void
 	grpelec_context_dependent( bool setting );
 
-	///
+
 	bool
 	exclude_DNA_DNA() const;
 
-	///
+
 	void
 	exclude_DNA_DNA( bool const setting );
 
-	///
+
 	bool
 	exclude_intra_res_protein() const;
 
-	///
+
 	void
 	exclude_intra_res_protein( bool const setting );
 
-	///
+
 	bool
 	put_intra_into_total() const;
 
-	///
+
 	void
 	put_intra_into_total( bool const setting );
 
-	///
+
 	core::Size
 	geom_sol_interres_path_distance_cutoff() const;
 
-	///
+
 	void
 	geom_sol_interres_path_distance_cutoff( core::Size const setting );
 
-	///
+
 	core::Size
 	geom_sol_intrares_path_distance_cutoff() const;
 
-	///
+
 	void
 	geom_sol_intrares_path_distance_cutoff( core::Size const setting );
 
@@ -319,15 +316,15 @@ public:
 	std::string const &
 	atom_vdw_atom_type_set_name() const;
 
-	///
+
 	void
 	atom_vdw_atom_type_set_name( std::string const & setting );
 
-	///
+
 	core::Size
 	cst_max_seq_sep() const;
 
-	///
+
 	void
 	cst_max_seq_sep( Size const setting );
 
@@ -354,29 +351,29 @@ public:
 		int ss_lowstrand,
 		int ss_cutoff);
 
-	///
+
 	SecondaryStructureWeights const &
 	secondary_structure_weights() const;
 
-	///
+
 	SecondaryStructureWeights &
 	secondary_structure_weights();
 
-	///
+
 	bool
 	has_method_weights( ScoreType const & type ) const;
 
-	///
+
 	utility::vector1< Real > const &
 	method_weights( ScoreType const & type ) const;
 
-	///
+
 	void
 	set_method_weights(
 		ScoreType const & type,
 		utility::vector1< Real > const & wts);
 
-	///@brief get the harmonic bond angle and bond-length spring constants
+	/// @brief get the harmonic bond angle and bond-length spring constants
 	void
 	get_cartesian_bonded_parameters( Real &len, Real &ang, Real &tors, Real &proton , Real &imp ) const {
 		len=cartbonded_len_;
@@ -386,7 +383,7 @@ public:
 		imp=cartbonded_improper_;
 	}
 
-	///@brief set the harmonic bond angle and bond-length spring constants
+	/// @brief set the harmonic bond angle and bond-length spring constants
 	void
 	set_cartesian_bonded_parameters( Real len, Real ang, Real tors, Real proton, Real imp ) {
 		cartbonded_len_=len;
@@ -396,12 +393,12 @@ public:
 		cartbonded_improper_=imp;
 	}
 
-	///@brief get the harmonic bond angle and bond-length spring constants
+	/// @brief get the harmonic bond angle and bond-length spring constants
 	bool get_cartesian_bonded_linear() const {
 		return cartbonded_linear_;
 	}
 
-	///@brief set the harmonic bond angle and bond-length spring constants
+	/// @brief set the harmonic bond angle and bond-length spring constants
 	void set_cartesian_bonded_linear( bool lin_in ) {
 		cartbonded_linear_ = lin_in;
 	}
@@ -416,7 +413,7 @@ public:
 	bool
 	operator!=( EnergyMethodOptions const & a, EnergyMethodOptions const & b );
 
-	///
+
 	void
 	show( std::ostream & out ) const;
 

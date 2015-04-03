@@ -86,7 +86,7 @@ std::string MultiplePoseMover::get_name() const
 	return MultiplePoseMoverCreator::mover_name();
 }
 
-///@brief Process input pose
+/// @brief Process input pose
 void MultiplePoseMover::apply(core::pose::Pose& pose)
 {
 	protocols::moves::Mover::set_last_move_status(protocols::moves::FAIL_RETRY);
@@ -120,7 +120,7 @@ void MultiplePoseMover::apply(core::pose::Pose& pose)
 	}
 }
 
-///@brief 
+/// @brief 
 core::pose::PoseOP MultiplePoseMover::get_additional_output()
 {
 	return generate_pose();
@@ -197,7 +197,7 @@ core::pose::PoseOP MultiplePoseMover::generate_pose()
 	return NULL;
 }
 
-///@brief Select poses from set using specified selectors
+/// @brief Select poses from set using specified selectors
 std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < core::pose::PoseOP > & poses)
 {	
 	// Process selection criteria
@@ -243,7 +243,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::select_poses( std::deque < 
 	return selected_poses_for_processing;
 }
 
-///@brief Rub sub-protocol on set of poses
+/// @brief Rub sub-protocol on set of poses
 std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque < core::pose::PoseOP > & poses )
 { 
 	if(!rosetta_scripts_tag_) {
@@ -273,7 +273,7 @@ std::deque < core::pose::PoseOP > MultiplePoseMover::process_poses( std::deque <
 	return selected_poses;
 }
 
-///@brief Process a single input pose by the RosettaScripts mover
+/// @brief Process a single input pose by the RosettaScripts mover
 bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 < core::pose::PoseOP > & additional_poses )
 {
 	if(!rosetta_scripts_tag_)
@@ -305,7 +305,7 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	return true;
 }
 
-///@brief Parse settings in tag
+/// @brief Parse settings in tag
 void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,

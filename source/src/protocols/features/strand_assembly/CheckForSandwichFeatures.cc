@@ -40,7 +40,6 @@ absolute_vec (numeric::xyzVector<Real> vector)
 }	//absolute_vec
 
 
-
 // calculate_dihedral_w_4_resnums
 Real
 calculate_dihedral_w_4_resnums(
@@ -101,8 +100,6 @@ calculate_dihedral_w_4_resnums(
 	}
 	return torsion_i_j;
 } // calculate_dihedral_w_4_resnums
-
-
 
 
 //	cal_dis_angle_to_find_sheet
@@ -257,8 +254,6 @@ cal_min_avg_dis_between_two_sheets_by_cen_res (
 } //	cal_min_avg_dis_between_two_sheets_by_cen_res
 
 
-
-
 //	cal_min_dis_between_sheets_by_all_res
 float
 cal_min_dis_between_sheets_by_all_res (
@@ -315,7 +310,6 @@ cal_min_dis_between_sheets_by_all_res (
 } //	cal_min_dis_between_sheets_by_all_res
 
 
-
 //	cal_min_dis_between_two_sheets_by_all_res
 float
 cal_min_dis_between_two_sheets_by_all_res (
@@ -350,9 +344,6 @@ cal_min_dis_between_two_sheets_by_all_res (
 
 	return min_dis_between_two_sheets_by_all_res;
 } //	cal_min_dis_between_two_sheets_by_all_res
-
-
-
 
 
 //	cal_num_of_sheets_that_surround_this_sheet
@@ -402,7 +393,6 @@ cal_num_of_sheets_that_surround_this_sheet (
 		// if (num_of_sheets_that_surround_sheet_id > 1) // this sheet is surrounded by more than 1 other sheets!
 		// if (num_of_sheets_that_surround_sheet_id == 1) // this sheet is NOT surrounded by more than 1 other sheets, so we can use these sheets to extract sandwich
 } //	cal_num_of_sheets_that_surround_this_sheet
-
 
 
 //	cal_shortest_dis_between_facing_aro_in_sw
@@ -790,8 +780,6 @@ check_canonicalness_of_parallel_EE(
 } //check_canonicalness_of_parallel_EE
 
 
-
-
 //check_heading_direction
 string
 check_heading_direction( // exclusively between preceding E and following E
@@ -869,7 +857,6 @@ check_heading_direction( // exclusively between preceding E and following E
 		return "except";
 	}
 } //check_heading_direction
-
 
 
 bool
@@ -1109,10 +1096,6 @@ check_sw_by_dis(
 } //check_sw_by_dis
 
 
-
-
-
-
 //check_whether_hairpin_connects_short_strand
 bool
 check_whether_hairpin_connects_short_strand(
@@ -1173,8 +1156,6 @@ check_whether_hairpin_connects_short_strand(
 
 	return false; // use this hairpin for LR/PA
 } //check_whether_hairpin_connects_short_strand
-
-
 
 
 //check_whether_same_direction_strands_connect_two_sheets_or_a_loop
@@ -1391,8 +1372,6 @@ check_whether_sheets_are_connected_with_near_bb_atoms(
 } //	check_whether_sheets_are_connected_with_near_bb_atoms
 
 
-
-
 // check_whether_sw_by_sh_id_still_alive
 bool
 check_whether_sw_by_sh_id_still_alive(
@@ -1541,7 +1520,6 @@ check_whether_strand_i_is_in_sheet(
 } //check_whether_strand_i_is_in_sheet
 
 
-
 //count_AA_w_direction
 vector<Size>
 count_AA_w_direction(
@@ -1681,9 +1659,6 @@ count_AA_w_direction(
 } //count_AA_w_direction
 
 
-
-
-
 //count_AA_wo_direction
 vector<Size>
 count_AA_wo_direction(
@@ -1773,8 +1748,6 @@ determine_core_heading_surface_heading_by_distance(
 	}
 	return heading;
 }	//determine_core_heading_surface_heading_by_distance
-
-
 
 
 //determine_heading_direction_by_vector
@@ -1942,7 +1915,6 @@ get_full_strands(
 }//get_full_strands
 
 
-
 //find_sheet (assign a new strand into a sheet)
 Size
 find_sheet(
@@ -2083,8 +2055,6 @@ find_sheet(
 } //find_sheet
 
 
-
-
 //get_all_residues_in_this_sheet
 vector<Size>
 get_all_residues_in_this_sheet(
@@ -2196,7 +2166,6 @@ get_all_strands_in_sheet_i(
 } //get_all_strands_in_sheet_i
 
 
-
 //get_aro_residues_in_this_sheet
 vector<Size>
 get_aro_residues_in_this_sheet(
@@ -2272,7 +2241,6 @@ get_aro_residues_in_this_sheet(
 } //get_aro_residues_in_this_sheet
 
 
-
 //get_avg_dis_CA_CA
 Real
 get_avg_dis_CA_CA(
@@ -2316,8 +2284,6 @@ get_avg_dis_CA_CA(
 } // get_avg_dis_CA_CA
 
 
-
-
 //get_avg_dis_strands
 // check whether these sheets are too close, the closeness is checked for every possible distances
 // <where to use	now?> get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
@@ -2349,7 +2315,6 @@ get_avg_dis_strands(
 	//	TR << "avg_dis_strands: " <<	sum_dis_CA_CA/(strand_i.get_size()*strand_j.get_size()) << endl;
 	return sum_dis_CA_CA/(strand_i.get_size()*strand_j.get_size());
 } // get_avg_dis_strands
-
 
 
 //get_central_residues_in_other_sheet
@@ -2531,8 +2496,6 @@ get_central_residues_in_this_sheet(
 } //get_central_residues_in_this_sheet
 
 
-
-
 //get_chain_B_resNum
 utility::vector1<Size>
 get_chain_B_resNum(
@@ -2605,8 +2568,6 @@ get_closest_distance_between_strands(
 	//	TR << "closest_dis_CA_CA: " <<	closest_dis_CA_CA << endl;
 	return closest_dis_CA_CA;
 } //get_closest_distance_between_strands
-
-
 
 
 //get_central_residues_in_each_of_two_edge_strands
@@ -2817,9 +2778,6 @@ get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 } // get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
 
 
-
-
-
 //get_distinct_sw_id_from_sandwich_table
 utility::vector1<Size>
 get_distinct_sw_id_from_sandwich_table(
@@ -2885,7 +2843,6 @@ get_full_strands_from_sheet(
 	}
 	return all_strands;
 }	//get_full_strands_from_sheet
-
 
 
 //get_next_starting_res_for_connecting_strands
@@ -2998,8 +2955,6 @@ get_num_of_sheets_that_surround_this_sheet(
 } //get_num_of_sheets_that_surround_this_sheet
 
 
-
-
 //	get_list_of_residues_in_sheet_i
 utility::vector1<Size>
 get_list_of_residues_in_sheet_i(
@@ -3107,8 +3062,6 @@ get_sheet_antiparallel_info(
 } //get_sheet_antiparallel_info
 
 
-
-
 //get_segment_id
 Size
 get_segment_id(
@@ -3185,7 +3138,6 @@ get_size_sandwich_PK_id(
 } //get_size_sandwich_PK_id
 
 
-
 // get_start_end_res_num_in_the_longest_strand which is used for judge_facing
 utility::vector1<SandwichFragment>
 get_start_end_res_num_in_the_longest_strand(
@@ -3215,7 +3167,6 @@ get_start_end_res_num_in_the_longest_strand(
 
 	return start_end_res_num_in_longest_strand;
 } //get_start_end_res_num_in_the_longest_strand
-
 
 
 //get_starting_res_for_connecting_strands
@@ -3349,7 +3300,6 @@ get_vec_AA_kind (
 
 	return vec_AA_kind;
 } // get_vec_AA_kind
-
 
 
 // get_vec_of_sw_can_by_sh_id
@@ -3524,7 +3474,6 @@ identify_sheet_id_by_residue_end(
 	}
 	return sheet_id;
 } //identify_sheet_id_by_residue_end
-
 
 
 // is_this_strand_at_edge
@@ -3712,7 +3661,6 @@ is_this_strand_at_edge_by_looking_db(
 } //is_this_strand_at_edge_by_looking_db
 
 
-
 //	judge_facing
 int
 judge_facing(
@@ -3817,7 +3765,6 @@ judge_facing(
 		}
 	}
 	// <end> measure inter-sheet angle to prevent non-facing sheets
-
 
 
 	if (angle_with_cen_res > max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_)
@@ -4003,7 +3950,6 @@ report_heading_directions_of_all_AA_in_a_strand	(
 } // report_heading_directions_of_all_AA_in_a_strand
 
 
-
 utility::vector1<int>
 retrieve_residue_num_of_rkde(
 	StructureID struct_id,
@@ -4093,7 +4039,6 @@ retrieve_residue_num_of_rkde(
 } //retrieve_residue_num_of_rkde
 
 
-
 // (07/19/14) but I(Doonam) confirms that 'round_to_Real' rounds as expected with 'float' argument
 // 'round_to_float' didn't round as expected with 'float' argument
 float
@@ -4168,7 +4113,6 @@ see_edge_or_core_or_loop_or_short_edge (
 	}
 	return edge_or_core;
 }	//	see_edge_or_core_or_loop_or_short_edge
-
 
 
 // see_whether_sheet_is_antiparallel

@@ -16,8 +16,6 @@
 
 //Package headers
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <basic/options/option.hh>
 
 #include <basic/prof.hh>
@@ -25,7 +23,6 @@
 //numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -52,14 +49,9 @@
 #include <core/scoring/packing/PoseBallsLite.hh>
 
 
-
-
-
-
 namespace core {
 namespace scoring {
 namespace packing {
-
 
 
 Real

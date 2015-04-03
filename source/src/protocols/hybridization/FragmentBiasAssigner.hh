@@ -105,7 +105,7 @@ public:
 	void fragbias_reporter( pose::Pose &pose );
  	void cumulate_probability(){ cumulative_=true; }
 
-	//
+
 	void set_wdw_to_freeze( int wdw=0 ){ wdw_to_freeze_=wdw; }
 
 private:

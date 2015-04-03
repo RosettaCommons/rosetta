@@ -278,7 +278,6 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 }
 
 
-
 }
 }
 }

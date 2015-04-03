@@ -15,7 +15,6 @@
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -26,7 +25,6 @@
 
 // Symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>

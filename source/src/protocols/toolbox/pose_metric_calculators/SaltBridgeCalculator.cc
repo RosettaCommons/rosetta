@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin SaltBridgeCalculator
 ///
 /// @brief
 /// How many salt bridge interactions are there?
 ///
-/// @detailed
+/// @details
 /// Not much detailed here. Iterate through the oxygens of acidic residues and compare that to
 /// the distance of the polar hydrogens in basic residues. Default distance is 3.2A.
 /// Wait, you want to know how to use this? Well, within your protocol, you need to do the following:
@@ -30,7 +29,6 @@
 /// @author
 /// Steven Combs
 ///
-/// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
 #include <protocols/toolbox/pose_metric_calculators/SaltBridgeCalculator.hh>
 #include <core/pose/Pose.hh>
@@ -53,7 +51,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 
-	///@brief default constructor sets distance_cutoff to 3.2. This is what is usually defined as a Hbond between heavy atom and Hydrogen
+	/// @brief default constructor sets distance_cutoff to 3.2. This is what is usually defined as a Hbond between heavy atom and Hydrogen
 	SaltBridgeCalculator::SaltBridgeCalculator() :
 		distance_cutoff_(3.2),
 		salt_bridge_total_(0)
@@ -62,16 +60,13 @@ namespace pose_metric_calculators {
 	}
 
 
-	///@brief constructur where you define what the distance cutoff is for the salt bridge
+	/// @brief constructur where you define what the distance cutoff is for the salt bridge
 	SaltBridgeCalculator::SaltBridgeCalculator(core::Real dist_cutoff) :
 		distance_cutoff_(dist_cutoff),
 		salt_bridge_total_(0)
 	{
 
 	}
-
-
-
 
 
 void SaltBridgeCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
@@ -97,8 +92,7 @@ std::string SaltBridgeCalculator::print( std::string const & key ) const{
 }
 
 
-
-///@brief not sure why they name this function recompute as you are actually computing the metric. Whateva
+/// @brief not sure why they name this function recompute as you are actually computing the metric. Whateva
 void SaltBridgeCalculator::recompute(core::pose::Pose const & pose){
 	salt_bridge_total_ = 0;
 	//start iterating through the residues

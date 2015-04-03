@@ -16,12 +16,8 @@
 #include <core/scoring/disulfides/DisulfideMatchingDatabase.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/conformation/Atom.hh>
 #include <core/kinematics/RT.hh>
 

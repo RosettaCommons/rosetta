@@ -19,12 +19,9 @@
 
 // Project Headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
-// AUTO-REMOVED #include <protocols/backrub/BackrubMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -40,15 +37,15 @@
 namespace protocols {
 namespace backrub {
 
-///@details
+/// @details
 class BackrubSidechainMover : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
 
-	///@brief
+	/// @brief
 	BackrubSidechainMover();
 
-	///@brief
+	/// @brief
 	BackrubSidechainMover(
 		BackrubSidechainMover const & mover
 	);

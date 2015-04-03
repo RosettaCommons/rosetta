@@ -197,7 +197,6 @@ AntibodyGraftDesignMover::set_epitope_residues(vector1<PDBNumbering> epitope_res
 }
 
 
-
 void
 AntibodyGraftDesignMover::setup_native_clusters(core::pose::Pose & pose){
 	ab_info_->setup_CDR_clusters(pose);
@@ -635,7 +634,7 @@ AntibodyGraftDesignMover::check_for_top_designs(pose::Pose & pose){
 	//mc_->eval_lowest_score_pose(pose, false, true);
 }
 
-///@brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
+/// @brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
 vector1< vector1 < Size > >
 AntibodyGraftDesignMover::get_cdr_set_index_list(){
 	vector1< vector1< Size > > index_list;

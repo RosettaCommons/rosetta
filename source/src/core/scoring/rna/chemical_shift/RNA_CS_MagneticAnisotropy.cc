@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #include <core/scoring/rna/chemical_shift/RNA_CS_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh>
 #include <ObjexxFCL/format.hh>
@@ -73,7 +72,7 @@ delta_magnetic_anisotropy(	numeric::xyzVector< core::Real > const & CS_data_atom
 	//xy component
 	Real const termxy = ( ( 3.0 * x_length * y_length )             ) * ( coeff_xy ); 
 
-	//
+
 	Real const termr = -1.0 / ( 3.0 * r_length5 );
 
 
@@ -115,7 +114,6 @@ get_delta_magnetic_anisotropy_deriv( numeric::xyzVector< core::Real > const & CS
 	Real const r_length5 = std::pow( r_length, 5 );
 
 
-
 	numeric::xyzVector< core::Real > const x_norm = base_coordinate_matrix.col_x();
 	numeric::xyzVector< core::Real > const y_norm = base_coordinate_matrix.col_y(); 
 	numeric::xyzVector< core::Real > const z_norm = base_coordinate_matrix.col_z();
@@ -152,7 +150,7 @@ get_delta_magnetic_anisotropy_deriv( numeric::xyzVector< core::Real > const & CS
 	//xy component
 	Real const termxy = ( ( 3.0 * x_length * y_length )             ) * ( coeff_xy ); 
 
-	//
+
 	Real const termr = -1.0 / ( 3.0 * r_length5 );
 
 	Real const dtermr_dr = ( -5.0 / r_length ) * ( termr ); 
@@ -351,7 +349,6 @@ magnetic_anisotropy_effect( numeric::xyzVector< core::Real > const & atom_xyz, c
 
 }
 ///////////////////////////////////////////////////////////////
-
 
 
 } //chemical_shift

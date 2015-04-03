@@ -19,7 +19,6 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -30,28 +29,14 @@
 #include <core/fragment/FragID_Iterator.hh>
 
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragCache.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/util.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-
-
-
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <numeric/numeric.functions.hh>
 
 //Auto Headers
@@ -86,7 +71,6 @@ using namespace ObjexxFCL;
 // 		fragset.add( frame );
 // 	};
 //  }
-
 
 
 class FragmentConstantLengthTest : public CxxTest::TestSuite

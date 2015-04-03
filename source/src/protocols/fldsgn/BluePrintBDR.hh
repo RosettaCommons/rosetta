@@ -31,7 +31,6 @@
 #include <protocols/forge/remodel/RemodelConstraintGenerator.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.fwd.hh>
-// AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -39,7 +38,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -316,7 +314,7 @@ private: // data
 	/// @brief Entire sequence except for rebuilding regions become poly Val
 	bool use_poly_val_;
 
-	///@brief if we a fold tree has already been set up prior
+	/// @brief if we a fold tree has already been set up prior
 	bool tell_vlb_to_not_touch_fold_tree_;
 
 	/// @brief in case we're folding up around a ligand

@@ -24,7 +24,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>

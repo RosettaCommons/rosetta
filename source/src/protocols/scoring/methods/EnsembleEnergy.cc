@@ -20,13 +20,10 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 
 // Utility headers

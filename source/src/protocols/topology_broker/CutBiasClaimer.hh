@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -66,10 +66,10 @@ public:
 
 	virtual void generate_claims( claims::DofClaims& ) {};
 
-	///@brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
+	/// @brief read definition of Claimer from setup file, i.e., a CLAIMER <type> ... END_CLAIMER block
 	virtual void read( std::istream & ) {};
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

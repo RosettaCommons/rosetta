@@ -16,12 +16,10 @@
 
 #include <core/scoring/dna/BasePartner.fwd.hh>
 
-// AUTO-REMOVED #include <core/types.hh>
 
 #include <basic/datacache/CacheableData.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 

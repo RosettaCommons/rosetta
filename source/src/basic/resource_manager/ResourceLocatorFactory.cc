@@ -52,10 +52,10 @@ ResourceLocatorFactory::create_singleton_instance()
 	return new ResourceLocatorFactory;
 }
 
-///@details Create a resource locator from a tags object
-///@input locator_type This is the type of the resource locator, e.g., DatabaseResourceLocator
-///@input locator_tag This is the name of the instance of the the resource locator, e.g., coming from the 'tag' field in the ResourceLocator tag 'stage_1_resfiles'.
-///@input tags this is the tag structure that is parsed by the ResourceLocator to initialize itself.
+/// @details Create a resource locator from a tags object
+/// @input locator_type This is the type of the resource locator, e.g., DatabaseResourceLocator
+/// @input locator_tag This is the name of the instance of the the resource locator, e.g., coming from the 'tag' field in the ResourceLocator tag 'stage_1_resfiles'.
+/// @input tags this is the tag structure that is parsed by the ResourceLocator to initialize itself.
 ResourceLocatorOP
 ResourceLocatorFactory::create_resource_locator(
 	std::string const & locator_type,

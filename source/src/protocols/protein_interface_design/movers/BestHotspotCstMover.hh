@@ -15,7 +15,6 @@
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>

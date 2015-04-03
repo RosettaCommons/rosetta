@@ -25,8 +25,6 @@
 
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 

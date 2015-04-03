@@ -474,7 +474,6 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 }
 
 
-
 ///////////////////////// EtableEnergy -- analytic evaluation //////////////////////////////////
 
 void
@@ -865,7 +864,6 @@ VDWTrieCountPair1B::resolve_trie_vs_path(
 {
 	utility_exit_with_message( "etable::etrie::VDWTrieCountPair1B::resolve_trie_vs_path reached with HBondEnergy" );
 }
-
 
 
 /// Hack Elec E
@@ -1958,7 +1956,6 @@ void VDWTrieCountPair1B::resolve_trie_vs_path(
 {
 	trie_vs_path( trie1, trie2, *this, sfxn, pair_energy_vector, temp_vector );
 }
-
 
 
 }

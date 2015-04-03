@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/TagDefinition.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

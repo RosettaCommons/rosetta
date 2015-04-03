@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #ifndef INCLUDED_core_scoring_rna_chemical_shift_RNA_CS_Util_HH
 #define INCLUDED_core_scoring_rna_chemical_shift_RNA_CS_Util_HH
 
@@ -53,13 +52,10 @@ numeric::xyzMatrix< core::Real > const
 get_rna_base_coordinate_system_from_CS_params( core::conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params );
 
 
-
-
 } //chemical_shift
 } //rna
 } //scoring
 } //core
-
 
 
 #endif

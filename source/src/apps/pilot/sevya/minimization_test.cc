@@ -197,7 +197,7 @@ update_constraints( utility::vector1< std::pair< core::pose::PoseOP, bool > > po
 	}
 	poses[ current_pose ].first->constraint_set( cst_set );
 
-	//
+
 	add_fnr_constraints( poses[ current_pose ].first, reference_poses[ current_pose ].first, res_links[ current_pose ], fnr_penalty, poses[ current_pose ].second );
 	apply_linked_constraints( poses, res_links, positive_linked_penalty, negative_linked_penalty, current_pose );
 
@@ -316,7 +316,6 @@ main( int argc, char * argv [] )
 		}
 
 
-
 		/* Set up task operations and assign to the right task factory */
 		core::pack::task::operation::InitializeFromCommandlineOP ifcl = new core::pack::task::operation::InitializeFromCommandline;
 		core::pack::task::operation::RestrictToRepackingOP rtr = new core::pack::task::operation::RestrictToRepacking;
@@ -402,7 +401,6 @@ main( int argc, char * argv [] )
 			pos_design->task_factory( design_task_factories[ i ] );
 			pos_design_vector.push_back( pos_design );
 		}
-
 
 
 		/* Create pack rotamer movers to use during minimization */

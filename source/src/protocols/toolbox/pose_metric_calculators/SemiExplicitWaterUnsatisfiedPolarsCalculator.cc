@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin SemiExplicitWaterUnsatisfiedPolarsCalculator
 ///
 /// @brief
 /// How many unsatisfied polars are there?
 ///
-/// @detailed
+/// @details
 /// Buried unsatisfied polar hbonds are destabilizing for proteins. It is good to have less.
 /// In a study of 2299 high resolution crystal structures of 1.5A or better, there was an average
 /// 71 unsatisfied buried polar hbonds. The normalized average (normalized against aa #) was 0.30 (unpublished).
@@ -31,7 +30,6 @@
 /// Chris King
 /// Steven Combs - comments
 ///
-/// @last_modified 9/2/2011
 /////////////////////////////////////////////////////////////////////////
 /// @file   core/pose/metrics/SemiExplicitWaterUnsatisfiedPolarsCalculator.cc
 /// @brief  number of hbonds calculator class
@@ -46,25 +44,19 @@
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 //protocol headers
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
 
 // Utility headers
@@ -80,7 +72,6 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <numeric/constants.hh>
-
 
 
 using namespace core;
@@ -193,7 +184,6 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::lookup(
 } //lookup
 
 
-
 std::string
 SemiExplicitWaterUnsatisfiedPolarsCalculator::print( std::string const & key ) const
 {
@@ -250,7 +240,6 @@ fast_clash_check(
   }
   return false;
 }
-
 
 
 Real

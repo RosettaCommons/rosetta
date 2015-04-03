@@ -11,7 +11,7 @@
 /// @brief  set of fragments for a certain alignment frame
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/JumpingFrame.hh>
@@ -19,7 +19,6 @@
 // Package Headers
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/id/SequenceMapping.hh>
 //#include <core/chemical/ChemicalManager.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
@@ -123,7 +122,7 @@ void NonContinuousFrame::shift_by( int offset ) {
 	}
 }
 
-//
+
 //  --- cloning with frags is taken care of correctly by base-class
 // it is enough that clone() itself is virtually overloaded
  /// @brief clone method, new frame with same alignment position, fragments are not copied!

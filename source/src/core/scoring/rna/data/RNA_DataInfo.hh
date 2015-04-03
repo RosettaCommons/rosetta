@@ -38,7 +38,7 @@
 // In the future, should probably be able to deprecate backbone_burial_, backbone_exposed_ (FArrays! Dang that's old)
 //  and perhaps RNA_Data, which requires user to dial in weight for exposing base edges -- those were
 //  totally experimental (but nicely generic).
-//
+
 
 namespace core {
 namespace scoring {

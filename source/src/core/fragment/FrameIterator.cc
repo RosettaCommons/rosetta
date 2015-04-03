@@ -17,7 +17,6 @@
 
 // Package Headers
 #include <core/fragment/FrameIteratorWorker_.hh>
-// AUTO-REMOVED #include <core/fragment/FragID_Iterator.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -25,7 +24,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -115,7 +113,6 @@ FrameOP FrameIterator::frame_ptr() {
 FrameCOP ConstFrameIterator::frame_ptr() const{
 	return it_->frame_ptr();
 }
-
 
 
 }

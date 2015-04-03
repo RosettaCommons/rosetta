@@ -15,10 +15,8 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationCreator.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilter.hh>
 #include <core/pack/task/operation/ResFilterCreator.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 
@@ -79,7 +77,7 @@ TaskOperationFactory::create_singleton_instance()
 
 TaskOperationFactory::~TaskOperationFactory(){}
 
-///@brief the default TaskOperations are now initialized in core/init/init.cc via the registrator/creator scheme
+/// @brief the default TaskOperations are now initialized in core/init/init.cc via the registrator/creator scheme
 TaskOperationFactory::TaskOperationFactory() {}
 
 void
@@ -91,7 +89,7 @@ TaskOperationFactory::factory_register( TaskOperationCreatorOP creator )
 	add_creator( creator );
 }
 
-///@brief add a TaskOperation prototype creator
+/// @brief add a TaskOperation prototype creator
 void
 TaskOperationFactory::add_creator( TaskOperationCreatorOP creator )
 {
@@ -104,21 +102,21 @@ bool TaskOperationFactory::has_type( std::string const & type ) const
 	return ( task_operation_creator_map_.find( type ) != task_operation_creator_map_.end() );
 }
 
-///@brief adds a ResLvlTaskOperation prototype creator to the child ResLvlTaskOperationFactory
+/// @brief adds a ResLvlTaskOperation prototype creator to the child ResLvlTaskOperationFactory
 void
 TaskOperationFactory::add_creator( ResLvlTaskOperationCreatorOP creator )
 {
 	ResLvlTaskOperationFactory::get_instance()->add_creator( creator );
 }
 
-///@brief adds a ResFilter prototype creator to the child ResFilterFactory
+/// @brief adds a ResFilter prototype creator to the child ResFilterFactory
 void
 TaskOperationFactory::add_creator( ResFilterCreatorOP creator )
 {
 	ResFilterFactory::get_instance()->add_creator( creator );
 }
 
-///@brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
+/// @brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
 /*!
 Example Tag syntax for parser as of Summer 2009
 
@@ -155,7 +153,7 @@ TaskOperationFactory::newTaskOperation(
 	}
 }
 
-///@brief recurse tag file to find TASKOPERATIONS definitions
+/// @brief recurse tag file to find TASKOPERATIONS definitions
 void
 TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacache::DataMap & datamap, TagCOP tag ) const
 {

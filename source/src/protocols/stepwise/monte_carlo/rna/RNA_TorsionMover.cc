@@ -9,7 +9,7 @@
 
 /// @file DeleteMover
 /// @brief Torsions an RNA residue from a chain terminus.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>

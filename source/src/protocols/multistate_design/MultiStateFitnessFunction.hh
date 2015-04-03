@@ -18,16 +18,13 @@
 #include <protocols/genetic_algorithm/FitnessFunction.hh>
 
 #include <protocols/multistate_design/SingleState.fwd.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/MultiStateEntity.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
-// AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/MetricValueGetter.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
@@ -65,7 +62,7 @@ public:
 	virtual void set_scorefxn( core::scoring::ScoreFunctionCOP sf );
 	virtual core::scoring::ScoreFunctionCOP scorefxn() const;
 
-	///@brief true const (read only) access to states
+	/// @brief true const (read only) access to states
 	virtual SingleStateCOPs const_states( bool positive_only = false ) const;
 	virtual SingleStateCOPs positive_states() const;
 

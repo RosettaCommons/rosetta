@@ -43,8 +43,8 @@ namespace loops {
 namespace loop_closure {
 namespace kinematic_closure {
 
-///@brief A mover class for performing kinematic loop closure on a peptide segment
-///@detail
+/// @brief A mover class for performing kinematic loop closure on a peptide segment
+/// @detail
 ///////////////////////////////////////////////////////////////////////////////
 class KinematicMover : public moves::Mover {
 public:

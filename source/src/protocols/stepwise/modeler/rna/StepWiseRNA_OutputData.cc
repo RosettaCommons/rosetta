@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_OutputData.cc (created on Sept 26, 2011)
 /// @brief Output silent_file_data functions for Stepwise Assembly RNA.
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong
 
 
@@ -189,7 +189,6 @@ namespace rna {
 		silent_file_data.write_silent_struct( s, silent_file, write_score_only );
 
 	}
-
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

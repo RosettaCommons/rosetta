@@ -21,20 +21,16 @@
 // Project headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 #include <map>
 
 #include <utility/vector1_bool.hh>
 
 #include <core/types.hh>
 #include <core/chemical/Element.fwd.hh>
-
-
 
 
 namespace core {

@@ -22,7 +22,6 @@
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 
 #include <utility/vector1.hh>
 

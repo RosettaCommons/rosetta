@@ -135,7 +135,6 @@ test_write_lock_prevents_reading_t2(
 }
 
 
-
 #endif
 #endif
 

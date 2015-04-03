@@ -30,9 +30,9 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief Manages harmonic restraints on torsions, so they can be turned off for packing.
+/// @brief Manages harmonic restraints on torsions, so they can be turned off for packing.
 ///
-///@details Restraints are created when object is created, so they start off enabled.
+/// @details Restraints are created when object is created, so they start off enabled.
 /// I had to change from a PoseOP in the constructor to Pose references in enable/disable
 /// because Movers only get Pose references, not PoseOPs.
 /// Do not try to use one of these with multiple different poses, or surely the C++ gods will smite thee.
@@ -41,7 +41,7 @@ class ResidueTorsionRestraints : public utility::pointer::ReferenceCount
 {
 public:
 
-	///@brief Establishes initial constraints set -- constraints start off enabled.
+	/// @brief Establishes initial constraints set -- constraints start off enabled.
 	ResidueTorsionRestraints(
 		core::pose::Pose & pose,
 		core::Size resid,
@@ -49,20 +49,20 @@ public:
 	);
 	virtual ~ResidueTorsionRestraints() {}
 
-	///@brief Constrain residue torsions for specified pose.
+	/// @brief Constrain residue torsions for specified pose.
 	virtual void enable( core::pose::Pose & pose );
 
-	///@brief Remove residue torsions constraints added by this object (if any).
+	/// @brief Remove residue torsions constraints added by this object (if any).
 	virtual void disable( core::pose::Pose & pose );
 
 	bool operator==(const ResidueTorsionRestraints &other);
 
 private:
 
-	///@brief Shared logic for creating torsional constraints
+	/// @brief Shared logic for creating torsional constraints
 	virtual void setup_constraints(core::pose::Pose & pose);
 
-	///@brief Shared logic; returns old_constraints without my_constraints_
+	/// @brief Shared logic; returns old_constraints without my_constraints_
 	virtual
 	core::scoring::constraints::ConstraintSetOP
 	without_my_constraints(

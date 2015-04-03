@@ -23,7 +23,6 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // utility headers
 #include <core/types.hh>
@@ -85,7 +84,7 @@ public:
 	void clear() { storage_->clear(); }
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	/// @detailed This is a very special case - collector will be used only for a given position.
+	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
 	Size count_candidates(Size) const { return current_size(); }
 
@@ -93,7 +92,7 @@ public:
 	Size count_candidates() const { return current_size(); }
 
 	/// @brief  Check the size of query sequence that this object knows.
-	/// @detailed This is a very special case - collector will be used only for a given position and it does NOT
+	/// @details This is a very special case - collector will be used only for a given position and it does NOT
 	/// know the tolal size. Thus it returns always 0
 	Size query_length() const { return 0; }
 

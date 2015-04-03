@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_moves/CopyDofMover.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -86,8 +86,6 @@ namespace simple_moves {
 
 		return ( copy_dofs_info_.find( pose_string_ ) != copy_dofs_info_.end() );
 	}
-
-
 
 
 } //simple_moves

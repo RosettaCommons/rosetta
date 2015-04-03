@@ -18,13 +18,11 @@
 // Package headers
 
 #include <protocols/symmetric_docking/SymDockingLowRes.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 
 #include <protocols/moves/MoverContainer.fwd.hh>

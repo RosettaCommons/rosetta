@@ -19,18 +19,14 @@
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/types.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <vector>
 
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>

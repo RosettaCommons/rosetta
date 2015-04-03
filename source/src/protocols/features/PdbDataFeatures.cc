@@ -449,7 +449,5 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 }
 
 
-
-
 }
 }

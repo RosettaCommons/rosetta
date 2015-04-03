@@ -66,7 +66,7 @@ core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() con
 	return core::pack::task::operation::TaskOperationOP( new FindEndpointsOperation( *this ) );
 }
 
-///@brief compute the number of residue neighbours target_res has within neighbours vector
+/// @brief compute the number of residue neighbours target_res has within neighbours vector
 core::Size
     neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp, core::Size const sequence_separation ){
 
@@ -90,7 +90,7 @@ core::Size
     return( neighbor_count );
 }
 
-///@brief restricts to repacking all residues outside of design_shell_ around each residue
+/// @brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {

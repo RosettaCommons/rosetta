@@ -30,7 +30,7 @@ namespace loops {
 void
 fix_with_coord_cst( loops::Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom, utility::vector1< core::Real >& );
 
-///@brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
+/// @brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
 extern void
 select_loop_frags(
 	Loops const& loops,
@@ -128,7 +128,7 @@ extract_continuous_chunks(core::pose::Pose const & pose,
 		core::Real const CA_CA_distance_cutoff = 4);
 
 
-///@brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residues if outside cutoff.
+/// @brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residues if outside cutoff.
 ///  Returns boolean and the position of found wonky peptide bond (0 if none found).
 ///  Does not use AtomTree to get angles/lengths, assumes resnum is connected to resnum +1
 /// @details Values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
@@ -149,7 +149,7 @@ has_severe_pep_bond_geom_issues(
 	core::Real allowed_ca_c_n_deviation = 25.0,
 	core::Real allowed_c_n_ca_deviation = 25.0);
 
-///@brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residue outside cutoff.
+/// @brief Measures C-N distance and N-Ca-C, C-N-CA bond angles to detect chainbreak/poory resolved loop residue outside cutoff.
 ///  Returns boolean and the position of found wonky peptide bond (0 if none found).
 ///  Does not use AtomTree to get angles/lengths, assumes resnum is connected to resnum +1
 /// @details Values are based on the CDL.  No peptide bond without severe chainbreaks or missing residues should have values
@@ -175,8 +175,5 @@ has_severe_pep_bond_geom_issues(
 } //protocols
 
 #endif
-
-
-
 
 

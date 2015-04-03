@@ -64,7 +64,6 @@ void protocols::canonical_sampling::SilentTrajectoryRecorder::register_options()
 }
 
 
-
 namespace protocols {
 namespace canonical_sampling {
 using namespace core;

@@ -23,7 +23,6 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/CArray.fwd.hh>
 #include <ObjexxFCL/CArrayP.fwd.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray.all.fwd.hh>
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>

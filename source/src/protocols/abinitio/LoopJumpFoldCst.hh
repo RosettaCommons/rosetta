@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -37,7 +37,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/loops/Loops.hh>
 #include <core/fragment/SecondaryStructure.hh>
@@ -47,7 +46,6 @@
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -55,7 +53,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -97,7 +94,7 @@ public:
 	virtual std::string get_name() const;
 
 protected:
-  ///@brief heuristic to select subset of loops from loops_
+  /// @brief heuristic to select subset of loops from loops_
   virtual void select_loops( loops::Loops& loops_select ) const;
 
   //@brief change fold-tree such that only loop regions move. keep jumps if they are not within the same rigid-region
@@ -108,7 +105,6 @@ protected:
   //	virtual bool apply( core::pose::Pose &pose );
 
 	virtual bool parse_jump_def( KinematicControlOP current_kinematics, core::kinematics::MoveMapOP );
-
 
 
 private:

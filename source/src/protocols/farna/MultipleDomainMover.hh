@@ -9,7 +9,7 @@
 
 /// @file loopRNA_minimizer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -117,7 +117,6 @@ private:
 	utility::vector1< protocols::rigid::RigidBodyPerturbMoverOP > rb_movers_;
 
 }; // class MultipleDomainMover
-
 
 
 } //farna

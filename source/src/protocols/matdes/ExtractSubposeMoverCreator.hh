@@ -9,7 +9,7 @@
 
 /// @file src/protocols/matdes/ExtractSubposeMover.cc
 /// @brief  Extract primary component associated with symdofs and all neighboring components.
-///@author Jacob Bale ( balej@uw.edu )
+/// @author Jacob Bale ( balej@uw.edu )
 
 #ifndef INCLUDED_protocols_matdes_ExtractSubposeMoverCreator_hh
 #define INCLUDED_protocols_matdes_ExtractSubposeMoverCreator_hh

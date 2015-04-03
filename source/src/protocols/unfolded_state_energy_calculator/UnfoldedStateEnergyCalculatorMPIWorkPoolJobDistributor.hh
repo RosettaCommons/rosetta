@@ -47,43 +47,43 @@ class UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor : public protocols:
 public:
 	typedef	std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
 
-  ///@brief ctor is protected; singleton pattern
+  /// @brief ctor is protected; singleton pattern
   UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
   virtual ~UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor();
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & scores );
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	set_energy_terms( core::scoring::EMapVector const & weights );
 
 protected:
 
-	///@brief
+	/// @brief
   virtual
   void
   master_go( protocols::moves::MoverOP mover );
 
 private:
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	master_add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & scores );
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	slave_add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & scores );
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	master_set_energy_terms( core::scoring::EMapVector const & weights );
 
-	///@brief dummy for master/slave version
+	/// @brief dummy for master/slave version
 	void
 	slave_set_energy_terms( core::scoring::EMapVector const & weights );
 

@@ -42,7 +42,6 @@ public:
 	typedef core::Real   Real;
 
 
-
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)

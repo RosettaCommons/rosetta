@@ -21,7 +21,6 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
@@ -36,12 +35,9 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -50,11 +46,7 @@
 #include <protocols/relax/MiniRelax.cc>
 
 #include <protocols/loophash/FastGapMover.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/StealSideChainsMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/RecoverSideChainsMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -64,7 +56,6 @@
 #include <string>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 

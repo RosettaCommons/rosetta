@@ -177,7 +177,7 @@ ResidueTotalScoresFeatures::report_features(
 	return 0;
 }
 
-///@details
+/// @details
 void
 ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	Pose const & pose,
@@ -214,7 +214,6 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 		safely_write_to_database(stmt);
 
 	} // End rsd for loop
-
 
 
 } // End function body

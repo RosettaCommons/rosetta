@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -59,7 +58,6 @@ SequenceDependentRefEnergyCreator::score_types_for_method() const {
 }
 
 
-
 SequenceDependentRefEnergy::SequenceDependentRefEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new SequenceDependentRefEnergyCreator ) )
 {
@@ -76,7 +74,6 @@ SequenceDependentRefEnergy::SequenceDependentRefEnergy( utility::vector1< utilit
 }
 
 SequenceDependentRefEnergy::~SequenceDependentRefEnergy() {}
-
 
 
 void SequenceDependentRefEnergy::read_energy_weight_table() {

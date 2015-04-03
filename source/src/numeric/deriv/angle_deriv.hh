@@ -440,7 +440,7 @@ angle_p1_p2_p3_deriv(
 	// so dtheta_dphi  = -dalpha_dphi - dbeta_dphi
 	//
 	// for these we can use the p1_theta_deriv formula
-	//
+
 
 	// alpha deriv for point 2
 	Vector v21 = -1 * v12;

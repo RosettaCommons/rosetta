@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Oliver Lange
 /// @author Christopher Miles (cmiles@uw.edu)

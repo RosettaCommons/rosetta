@@ -14,15 +14,11 @@
 // Unit Headers
 #include <core/pack/annealer/SimAnnealerBase.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 // NUmeric headers
 #include <numeric/random/random.hh>
@@ -36,8 +32,6 @@
 
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
-
-
 
 
 using namespace ObjexxFCL;
@@ -92,12 +86,11 @@ SimAnnealerBase::SimAnnealerBase
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin SimAnnealerBase::~SimAnnealerBase()
 ///
 /// @brief
 /// virtual destructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -107,19 +100,17 @@ SimAnnealerBase::SimAnnealerBase
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 SimAnnealerBase:: ~SimAnnealerBase() {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin SimAnnealerBase::get_outeriterations()
 ///
 /// @brief
 /// get the iterations number for simulation
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -129,9 +120,8 @@ SimAnnealerBase:: ~SimAnnealerBase() {}
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 int SimAnnealerBase::get_outeriterations() const
@@ -140,11 +130,10 @@ int SimAnnealerBase::get_outeriterations() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin SimAnnealerBase::get_inneriterations()
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -154,9 +143,8 @@ int SimAnnealerBase::get_outeriterations() const
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 int SimAnnealerBase::get_inneriterations() const
@@ -173,11 +161,10 @@ int SimAnnealerBase::get_inneriterations() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin SimAnnealerBase::setup_iterations(bool start_with_current)
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -187,9 +174,8 @@ int SimAnnealerBase::get_inneriterations() const
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void SimAnnealerBase::setup_iterations()
 {
@@ -305,13 +291,12 @@ void SimAnnealerBase::set_lowtemp( core::PackerEnergy low) { lowtemp_ = low; }
 void SimAnnealerBase::set_disallow_quench( bool const & setting ){ disallow_quench_ = setting; }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin SimAnnealerBase::pass_metropolis
 ///
 ///
 /// @brief
 /// accept or reject movement based on Metropolis criterion
 /// if this is the first movement, accept by default.
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -321,9 +306,8 @@ void SimAnnealerBase::set_disallow_quench( bool const & setting ){ disallow_quen
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 bool SimAnnealerBase::pass_metropolis( core::PackerEnergy delta_energy) const
 {

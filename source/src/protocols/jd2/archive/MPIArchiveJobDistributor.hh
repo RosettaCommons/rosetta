@@ -84,8 +84,8 @@ core::Size const MPI_ARCHIVE_TAG = 12310925; //keep unique TAG to communicate be
 ///Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
 ///flagging as job as being a bad input
 
-///@brief JobDistributor for the iterative ArchiveManager/Archive Framework
-///@details This job distributor is meant for running iterative jobs with the ArchiveManager/Archive Framework.
+/// @brief JobDistributor for the iterative ArchiveManager/Archive Framework
+/// @details This job distributor is meant for running iterative jobs with the ArchiveManager/Archive Framework.
 ///could vary greatly. In this configuration the three first nodes are dedicated processes (JobDistributor, FileBuffer, and ArchiveManger )
 ///and the remaining CPUs form slave or worker nodes. This JD will not work at all
 ///without MPI and the implementations of all but the interface functions have been put inside of ifdef directives.
@@ -96,7 +96,7 @@ class MPIArchiveJobDistributor : public MPIFileBufJobDistributor
 {
 public:
 
-	///@brief CompletionMessage(s) are send to the ArchiveManager whenever more than nr_notify decoys have been finished
+	/// @brief CompletionMessage(s) are send to the ArchiveManager whenever more than nr_notify decoys have been finished
 	//// or when the full batch is finished.
 	struct CompletionMessage {
 	public:
@@ -117,7 +117,7 @@ public:
 protected:
 	typedef MPIFileBufJobDistributor Parent;
 
-	///@brief ctor is protected; singleton pattern
+	/// @brief ctor is protected; singleton pattern
 	MPIArchiveJobDistributor();
 	friend class protocols::jd2::JobDistributorFactory; //ctor access
 
@@ -125,7 +125,7 @@ protected:
 
 public:
 
-	///@brief overloaded to also start the ArchiveManager process
+	/// @brief overloaded to also start the ArchiveManager process
 	virtual
 	void
 	go( protocols::moves::MoverOP mover );
@@ -138,10 +138,10 @@ public:
 	}
 
 protected:
-	///@brief triggered in slave if new batch_ID comes in.
+	/// @brief triggered in slave if new batch_ID comes in.
 	virtual void batch_underflow();
 
-	///@brief act on a message, return true if message was understood
+	/// @brief act on a message, return true if message was understood
 	virtual bool process_message(
     core::Size msg_tag,
 		core::Size slave_rank,
@@ -150,16 +150,16 @@ protected:
 		core::Real run_time
 	);
 
-	///@brief overloaded to allow statistics and sending of CompletionMessages
+	/// @brief overloaded to allow statistics and sending of CompletionMessages
 	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time );
 
-	///@brief overloaded to allow statistics and sending of CompletionMessages
+	/// @brief overloaded to allow statistics and sending of CompletionMessages
 	virtual void mark_job_as_bad( core::Size job_id, core::Size batch_id );
 
-	///@brief overloaded to start new entries in nr_new_completed_, nr_completed_, nstruct_ and nr_bad_ ...
+	/// @brief overloaded to start new entries in nr_new_completed_, nr_completed_, nstruct_ and nr_bad_ ...
 	virtual void load_new_batch();
 
-	///@brief rank of ArchiveManger process
+	/// @brief rank of ArchiveManger process
 	core::Size archive_rank() const {
 		return archive_rank_;
 	}
@@ -170,13 +170,13 @@ private:
 	//actually transmit a notify msg -- this should only be called out of the process_message method
 	void _notify_archive();
 
-	///@brief receive a new Batch from ArchiveManager
+	/// @brief receive a new Batch from ArchiveManager
 	bool receive_batch( core::Size source_rank );
 
-	///@brief sync batch queue with slave node
+	/// @brief sync batch queue with slave node
 	void sync_batches( core::Size slave_rank );
 
-	///@brief send message to ArchiveManager
+	/// @brief send message to ArchiveManager
 	void master_to_archive( core::Size tag );
 
 	//some statistics about completion for ArchiveManager to query
@@ -190,14 +190,14 @@ private:
 	core::Size nr_notify_;
 	core::Size archive_rank_;
 
-	///@brief add a notifcation (CompletionMessage) to the msg queue ...
+	/// @brief add a notifcation (CompletionMessage) to the msg queue ...
 	// these are send out by _notify_archive() at beginning of process_message()
 	void notify_archive( CompletionMessage const& );
 
-	///@brief work out if a notifcation should be send (using above method)
+	/// @brief work out if a notifcation should be send (using above method)
 	void notify_archive( core::Size batch_id );
 
-	///@brief unsent notifications
+	/// @brief unsent notifications
 	std::deque< CompletionMessage > pending_notifications_;
 
 

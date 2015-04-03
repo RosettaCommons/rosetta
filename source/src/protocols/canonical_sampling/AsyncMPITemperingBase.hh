@@ -39,7 +39,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @details
 class AsyncMPITemperingBase : public protocols::canonical_sampling::TemperingBase {
 	typedef TemperingBase Parent;
 	class ExchangeRequest {

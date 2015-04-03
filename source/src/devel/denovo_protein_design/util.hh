@@ -9,29 +9,22 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Grant Murphy
-///
+
 
 #ifndef INCLUDE_src_devel_denovo_protein_design_util_hh
 #define INCLUDE_src_devel_denovo_protein_design_util_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

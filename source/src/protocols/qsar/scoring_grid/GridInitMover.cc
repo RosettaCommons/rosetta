@@ -106,4 +106,3 @@ void GridInitMover::apply(core::pose::Pose & pose)
 }
 
 
-

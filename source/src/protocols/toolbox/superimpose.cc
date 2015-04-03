@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // ObjexxFCL Headers
@@ -30,12 +29,8 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <numeric/model_quality/maxsub.hh>
-// AUTO-REMOVED #include <numeric/gmx_functions.hh>
 #include <numeric/xyz.functions.hh>
 //// C++ headers
 #include <string>
@@ -468,7 +463,6 @@ void oprod(const rvec a,const rvec b,rvec c)
   c[YY]=a[ZZ]*b[XX]-a[XX]*b[ZZ];
   c[ZZ]=a[XX]*b[YY]-a[YY]*b[XX];
 }
-
 
 
 void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x, matrix R)

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief stupid test file for visual studio c++
-/// @detailed
+/// @details
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>

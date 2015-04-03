@@ -17,13 +17,11 @@
 // Package headers
 #include <protocols/genetic_algorithm/Entity.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh> // REQUIRED FOR WINDOWS
 
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS
 
 // C++ headers
 #include <set>

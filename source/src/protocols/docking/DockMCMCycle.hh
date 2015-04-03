@@ -9,7 +9,7 @@
 
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -22,7 +22,6 @@
 
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockMCMCycle.fwd.hh>
-// AUTO-REMOVED #include <protocols/docking/DockTaskFactory.hh>
 
 // Package headers
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -38,7 +37,6 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <utility/vector1.hh>
 #include <iostream>
-
 
 
 // option key includes
@@ -116,7 +114,6 @@ private:
 	// moves::TrialMoverOP dock_mcm_mover_;
 	moves::CycleMoverOP dock_mcm_cycle_; //JQX define it
 	moves::MonteCarloOP mc_;
-
 
 
 	// docking

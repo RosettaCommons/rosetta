@@ -12,7 +12,6 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
 #include <protocols/antibody/clusters/CDRClusterFeatures.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>

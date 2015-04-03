@@ -54,7 +54,7 @@ LoadUnboundRotMover::LoadUnboundRotMover()
 
 LoadUnboundRotMover::~LoadUnboundRotMover(){}
 
-///@details
+/// @details
 void LoadUnboundRotMover::apply( core::pose::Pose & pose ){
 	core::pack::dunbrack::load_unboundrot(pose);
 	return;
@@ -68,7 +68,7 @@ LoadUnboundRotMover::get_name() const {
 protocols::moves::MoverOP LoadUnboundRotMover::fresh_instance() const { return protocols::moves::MoverOP( new LoadUnboundRotMover ); }
 protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return protocols::moves::MoverOP( new LoadUnboundRotMover( *this ) ); }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
+/// @brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
 void
 LoadUnboundRotMover::parse_my_tag(
 		utility::tag::TagCOP const,

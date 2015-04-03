@@ -27,7 +27,6 @@ using core::Size;
 static thread_local basic::Tracer TR( "devel.constel.NeighTeller" );
 
 
-///
 /// @brief NeighTeller's constructor
 ///
 /// @param[out] ref_pose pose containing the residues whose neighbors	are to be
@@ -45,7 +44,6 @@ NeighTeller::NeighTeller(Pose& ref_pose) :
 }
 
 
-///
 /// @brief Tells whether a probe residue is a neighbor of a target residue.
 ///
 /// @param[in] tgt the target residue.
@@ -73,7 +71,6 @@ bool NeighTeller::isneigh(core::conformation::Residue const & tgt,
 }
 
 
-///
 /// @brief: tells whether a set of residues form a tree of neighbors.
 ///
 /// @param[in] pose indexes of the residues in the set
@@ -128,7 +125,6 @@ bool NeighTeller::is_neigh_tree(utility::vector1<core::Size> const& set, Pose co
 }
 
 
-///
 /// @brief Prints the neighboring table for a set of residues
 ///
 /// @param[in] nres number of residues in the set
@@ -146,7 +142,6 @@ void NeighTeller::print_nmap(Size const nres, std::ostream& os) const {
 }
 
 
-///
 /// @brief Creates the list of residues that are neighbors of a given target
 /// 	residue.
 ///

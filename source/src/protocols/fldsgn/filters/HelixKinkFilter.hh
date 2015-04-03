@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/HelixKinkFilter.hh
 /// @brief header file for HelixKinkFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

@@ -16,7 +16,6 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -40,7 +39,7 @@ namespace filters {
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableResiduesFilter" );
 static thread_local basic::Tracer TR_pymol( "protocols.protein_interface_design.filters.DesignableResiduesFilter_pymol" );
 
-///@brief default ctor
+/// @brief default ctor
 DesignableResiduesFilter::DesignableResiduesFilter() :
 	parent( "DesignableResidues" ),
 	task_factory_( /* NULL */ ),

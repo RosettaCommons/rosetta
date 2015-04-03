@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -19,7 +19,6 @@
 #include <protocols/noesy_assign/StructureIndependentPeakCalibrator.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 
 // Project Headers
 
@@ -27,7 +26,6 @@
 #include <basic/Tracer.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cmath>
 
 #include <utility/vector1.hh>
 

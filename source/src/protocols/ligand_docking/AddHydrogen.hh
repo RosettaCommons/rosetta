@@ -18,7 +18,6 @@
 
 #include <protocols/ligand_docking/AddHydrogen.fwd.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 //#include <core/conformation/Residue.hh>
 #include <protocols/moves/Mover.hh>
@@ -32,9 +31,9 @@ namespace ligand_docking {
 
 static thread_local basic::Tracer add_hydrogen_tracer( "protocols.ligand_docking.AddHydrogen", basic::t_debug );
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class AddHydrogen : public protocols::moves::Mover{
 

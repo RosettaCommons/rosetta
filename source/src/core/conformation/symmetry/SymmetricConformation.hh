@@ -108,7 +108,7 @@ public:
     Jump const & new_jump
   );
 
-	///
+
 	virtual
 	void
 	set_bond_angle(
@@ -118,7 +118,7 @@ public:
 		Real setting
 	);
 
-	///
+
 	virtual
 	void
 	set_bond_length(
@@ -127,7 +127,7 @@ public:
 		Real setting
 	);
 
-	///
+
 	virtual
 	void
 	set_torsion_angle(
@@ -199,7 +199,7 @@ public:
 		utility::vector1<PointPosition> const & positions
 	);
 
-	///
+
 	virtual
 	~SymmetricConformation();
 
@@ -273,7 +273,6 @@ private:
 } // symmetry
 } // conformation
 } // core
-
 
 
 #endif

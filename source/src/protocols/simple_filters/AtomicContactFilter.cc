@@ -23,7 +23,6 @@
 //parsing
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -38,13 +37,13 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.AtomicContactFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 AtomicContactFilter::AtomicContactFilter() :
 	parent( "AtomicContact" ),
 	protocols::moves::ResId( 0u )
 {}
 
-///@brief Constructor with a single target residue
+/// @brief Constructor with a single target residue
 AtomicContactFilter::AtomicContactFilter( core::Size const res1, core::Size const res2, core::Real const distance, bool const sidechain, bool const backbone, bool const protons ) :
 	parent( "AtomicContact" ),
 	protocols::moves::ResId( res2 ),
@@ -160,7 +159,6 @@ AtomicContactFilterCreator::create_filter() const { return filters::FilterOP( ne
 
 std::string
 AtomicContactFilterCreator::keyname() const { return "AtomicContact"; }
-
 
 
 } // filters

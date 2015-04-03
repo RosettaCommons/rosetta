@@ -63,7 +63,7 @@ public:
 		return "HelixBundleFeatures";
 	};
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual
 	void
 	write_schema_to_db(
@@ -80,7 +80,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
@@ -91,7 +91,7 @@ public:
 		HelicalFragmentOP const & fragment_2
 	);
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(
@@ -113,7 +113,7 @@ public:
 		HelicalFragmentOP fragment
 	);
 
-	///@brief create a bundle-pose from the combination of fragments
+	/// @brief create a bundle-pose from the combination of fragments
 	/// and record the "interface" SASA for each helix against the
 	/// rest of the bundle
 	void
@@ -128,7 +128,7 @@ public:
 		utility::vector1<HelicalFragmentOP> helix_fragments
 	);
 
-	///@brief calculate the shared fa_attr for each pair of helices
+	/// @brief calculate the shared fa_attr for each pair of helices
 	/// in the bundle
 	void
 	calc_fa_energy(
@@ -136,7 +136,7 @@ public:
 		FragmentPair & fragment_pair
 	);
 
-	///@brief calculate the crossing angles of the helix fragment in the bundle set
+	/// @brief calculate the crossing angles of the helix fragment in the bundle set
 	void
 	calc_crossing_angles(
 		core::pose::Pose const & pose,

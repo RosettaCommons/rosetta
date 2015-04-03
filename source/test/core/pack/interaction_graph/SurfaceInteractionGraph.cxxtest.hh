@@ -36,13 +36,11 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // Auto-header: duplicate removed #include <core/types.hh>
 
@@ -123,7 +121,6 @@
 #include <boost/pool/poolfwd.hpp>
 
 
-
 static basic::Tracer TR("test.core.pack.interactiongraph.sig");
 
 using namespace core;
@@ -182,11 +179,11 @@ public:
 		// a mute here because the interaction graphs generate tons of debugging output (in DEBUG mode anyway).
 		core_init_with_additional_options( "-no_optH -mute core.io core.init core.scoring core.mm -restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
 
-		//
+
 		// To create a Surface Interaction Graph object, we need to create a few other objects like a Pose, a ScoreFunction,
 		// a PackerTask and a RotamerSets object.  Create all of these objects here in the suite-level fixture since they'll
 		// get reused throughout the suite.
-		//
+
 
 		// --- Pose ---
 		// since this is a test suite, we don't want to read in PDB files from the command line.  just hardcode the tests to use
@@ -219,13 +216,13 @@ public:
 		rotsets->prepare_sets_for_packing( pose, *scorefxn );
 		//TR << "\tbuilt " << rotsets->nrotamers() << " rotamers at " << rotsets->nmoltenres() << " positions." << std::endl;
 
-		//
+
 		// Most of the tests in this suite need an interaction graph (more specifically, a Pairwise-decomposable IG).
 		// Create the PDIG in the suite-fixture and then for the test fixture, just call blanket_assign_state_0.
 		// That will "reset" the interaction graph to the clean state for each test. This saves alot of time because
 		// the expensive graph creation (including creating nodes and edges and subsequently dropping edges) only happens
 		// once.
-		//
+
 
 		// --- InteractionGraph ---
 		//TR << "Instantiating PDSurfaceInteractionGraph..." << std::endl;
@@ -237,12 +234,12 @@ public:
 		// compute_energies() does some initialization of the interaction graph and computes the energies
 		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(pdsig) );
 
-		//
+
 		// Now that we have an interaction graph, a pose, scorefunction, etc, we have everything we need to run the
 		// packer except for an annealer. Use just a plain FixbbAnnealer. Go ahead and create a FixbbSA here.  In the
 		// test case that uses linmem_ig we'll have to recreate the annealer but this state is common to the rest of
 		// the tests since they all use a standard PD IG.
-		//
+
 
 		// initialize some other variables that are used in the SimAnnealers constructor
 		bestrotamer_at_seqpos.dimension( pose.total_residue() );
@@ -285,7 +282,7 @@ public:
 	// --------------- Test Cases --------------- //
 
 
-	/// @detailed
+	/// @details
 	/// Tests to make sure when doing a design on only some residues that certain residues are indeed being treated and set
 	/// as background nodes. If this array returns the wrong indices, background nodes are not being set properly.
 	///
@@ -297,8 +294,8 @@ public:
 		TS_ASSERT( pdsig->bg_node_2_resid(7) == 13 );
 	}
 
-	///
-	/// @detailed
+
+	/// @details
 	/// Tests the function consider_substitution() (hereafter cs()).
 	/// cs() takes a position and a new state and tells all nb'ing nodes to update their hASA and return a (possibly
 	/// inaccurate) estimate of the change in energy.  The energy is incorrect if the IG decideds to procrastinate the
@@ -361,8 +358,8 @@ public:
 		}
 	}
 
-	///
-	/// @detailed
+
+	/// @details
 	/// The main things to test with commit sub() is that the total energy returned is correct and that the node counts (for
 	/// the changing node *and* all neighboring nodes) are updated.  It's possible that consider doesn't actually compute
 	/// the correct energy because of computation procrastination.  That would also mean the node counts would be inaccurate
@@ -433,7 +430,7 @@ public:
 
 	}
 
-	/// @detailed
+	/// @details
 	/// Make some random commits and make sure the total energy current state assignment method is returning the same
 	/// thing that was computed in commit_sub().
 	///
@@ -455,7 +452,7 @@ public:
 
 	}
 
-	/// @detailed
+	/// @details
 	/// Near the end of sims, lots of rotamers are tried (which change the alt state counts) but then aren't committed.
 	/// This test ensures that the graph is resetting state correctly in those cases.
 	///
@@ -489,7 +486,6 @@ public:
 		}
 
 	}
-
 
 
 	/// @brief

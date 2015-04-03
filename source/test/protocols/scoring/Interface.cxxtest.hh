@@ -18,9 +18,7 @@
 #include <test/protocols/init_util.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -30,9 +28,7 @@
 #include <protocols/scoring/Interface.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
@@ -52,7 +48,7 @@ using namespace protocols::scoring;
 
 /// @name InterfaceTest
 /// @brief: test the interface calculation between two proteins
-/// @detailed use the docking protein from demo/rosetta/docking
+/// @details use the docking protein from demo/rosetta/docking
 ///		Values for the interface have been checked against pymol
 
 class InterfaceTest : public CxxTest::TestSuite

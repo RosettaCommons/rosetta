@@ -10,7 +10,7 @@
 /// @file StepWiseProteinKIC_LoopBridger
 /// @brief Makes a list of (phi, psi, omega) at moving_residues that
 ///              could be useful for full-atom packing
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -70,7 +70,6 @@ namespace stepwise {
 namespace modeler {
 namespace protein {
 namespace loop_close {
-
 
 
   //////////////////////////////////////////////////////////////////////////
@@ -310,7 +309,6 @@ return "StepWiseProteinKIC_LoopBridger";
 	}
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseProteinKIC_LoopBridger::fill_chainTORS_info( pose::Pose const & pose,
@@ -489,7 +487,6 @@ return "StepWiseProteinKIC_LoopBridger";
 		}
 
 	}
-
 
 
 } //loop_close

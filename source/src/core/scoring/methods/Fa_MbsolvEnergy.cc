@@ -36,10 +36,7 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh> //pba
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.hh>
 
@@ -111,7 +108,7 @@ Fa_MbsolvEnergy::setup_for_scoring(
   potential_.compute_fa_projection( pose );
 }
 
-///
+
 void
 Fa_MbsolvEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -478,6 +475,5 @@ Fa_MbsolvEnergy::version() const
 }
 }
 }
-
 
 

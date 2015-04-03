@@ -63,7 +63,6 @@ SymFoldandDockMoveRbJumpMover::parse_my_tag(
 {
 }
 
-///
 
 std::string
 SymFoldandDockMoveRbJumpMoverCreator::keyname() const {

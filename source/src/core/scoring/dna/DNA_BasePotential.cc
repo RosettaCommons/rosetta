@@ -20,7 +20,6 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
 
 #include <utility/io/izstream.hh>
@@ -256,9 +255,6 @@ debug_assert( params.size() == 6 );
 
 	return score;
 }
-
-
-
 
 
 Real
@@ -569,7 +565,7 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 	//
 	// in addition we can assume that sin(gamma)/gamma is constant
 	// since gamma is small
-	//
+
 
 	{
 		Real const dE_droll( dE_dp(2) );
@@ -623,7 +619,6 @@ debug_assert( params[1] * dot( MBT.col_z(), cross( M2.col_y(), M1.col_y() ) ) > 
 	}
 
 } // eval_base_step_derivative ////////////////////////////////////////////////
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -851,7 +846,7 @@ debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 	//
 	// in addition we can assume that sin(gamma)/gamma is constant
 	// since gamma is small
-	//
+
 
 	{
 		Real const dE_dkappa( dE_dp(2) );
@@ -899,8 +894,6 @@ debug_assert( omega * dot( MBT.col_y(), cross( M2.col_x(), M1.col_x() ) ) > 0);
 	}
 
 } // eval_base_pair_derivative //////////////////////////
-
-
 
 
 } // namespace dna

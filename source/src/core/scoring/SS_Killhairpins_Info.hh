@@ -16,29 +16,20 @@
 #define INCLUDED_core_scoring_SS_Killhairpins_Info_hh
 
 /// Unit headers
-// AUTO-REMOVED #include <core/scoring/SS_Info.fwd.hh>
 
 /// Package headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 #include <iosfwd>
 
 #include <utility/vector1.hh>

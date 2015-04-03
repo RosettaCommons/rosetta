@@ -27,7 +27,7 @@ namespace sasa {
 	};
 	
 	
-///@brief Very (very) basic implementation until I understand the regular  implementation used by constraints/features/etc.
+/// @brief Very (very) basic implementation until I understand the regular  implementation used by constraints/features/etc.
 /// Also used for me to debug everything else before creating the real factory.
 SasaMethodOP
 create_sasa_method(SasaMethodEnum method, core::Real probe_radius, SasaRadii radii_set);

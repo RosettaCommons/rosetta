@@ -12,7 +12,6 @@
 /// @author Phil Bradley
 
 
-
 // Unit headers
 #include <core/scoring/methods/EnergyMethod.hh>
 

@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_moves/GenericMonteCarloMover.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
-/// @detailed The "score" evaluation of pose during MC after applying mover is done by
+/// @details The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
@@ -250,7 +250,7 @@ public:
 
 	/// @brief if boltz_rank=true, rank structures by the temperature-weighted
 	/// sum of scores, rather than a single filter
-	/// @detailed The score used here is the effective combined energy function
+	/// @details The score used here is the effective combined energy function
 	/// that the Monte Carlo sampler is sampling over.
 	void set_boltz_rank( bool const boltz_rank );
 
@@ -268,7 +268,7 @@ public:
 		Pose const &
 	);
 
-	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
 		TagCOP,
 		basic::datacache::DataMap const &,

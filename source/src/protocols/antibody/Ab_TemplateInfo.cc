@@ -9,9 +9,8 @@
 
 /// @file protocls/antibody/Ab_TemplateInfo.cc
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #include <protocols/antibody/Ab_TemplateInfo.hh>
@@ -29,7 +28,6 @@ static thread_local basic::Tracer TR( "antibody.Ab_TemplateInfo" );
 namespace protocols {
 namespace antibody {
 using namespace core;
-
 
 
 /// default constructor
@@ -52,12 +50,6 @@ Ab_TemplateInfo::Ab_TemplateInfo(bool load_L1, bool load_L2, bool load_L3,
 	load_templates_from_pdbs(load_L1, load_L2, load_L3,
 	                         load_H1, load_H2, load_H3, camelid );
 }
-
-
-
-
-
-
 
 
 void
@@ -111,7 +103,6 @@ Ab_TemplateInfo::load_templates_from_pdbs(bool load_L1, bool load_L2, bool load_
 }
 
 
-
 void
 Ab_TemplateInfo::set_default( bool camelid ) {
 	camelid_ = camelid;
@@ -126,8 +117,6 @@ Ab_TemplateInfo::set_default( bool camelid ) {
 }
 
 
-
-
 pose::Pose Ab_TemplateInfo::get_one_template_pose(std::string cdr_name) {
 
 	TemplatePoseMap::iterator iter = templates_poses_.begin();
@@ -137,7 +126,6 @@ pose::Pose Ab_TemplateInfo::get_one_template_pose(std::string cdr_name) {
 	}
 	return iter->second;
 }
-
 
 
 void Ab_TemplateInfo::obtain_templates_names() {
@@ -167,10 +155,6 @@ void Ab_TemplateInfo::obtain_templates_names() {
 	inf>>temp>>temp>>temp>>temp>>tttt>>temp>>temp;
 	H3_t_name_ = tttt;
 }
-
-
-
-
 
 
 /// @details  Show the complete setup of the Ab_TemplateInfo
@@ -230,10 +214,6 @@ std::ostream & operator<<(std::ostream& out, const Ab_TemplateInfo & ab_t_info )
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	return out;
 }
-
-
-
-
 
 
 } //namespace antibody

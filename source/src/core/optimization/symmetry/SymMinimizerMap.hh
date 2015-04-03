@@ -28,7 +28,6 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/DerivVectorPair.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -159,7 +158,7 @@ public:
 		return dependent_dof_nodes_.begin();
 	}
 
-	///
+
 	const_iterator
 	dependent_end() const
 	{
@@ -167,8 +166,6 @@ public:
 	}
 
 
-
-	///
 	DOF_Nodes const &
 	dof_nodes() const
 	{
@@ -221,7 +218,7 @@ private:
 	/// adding this guy so we can tell more accurately which dof's are dependent/independent
 	id::DOF_ID_Map< id::TorsionID > dof_id2torsion_id_;
 
-	///
+
 	bool new_sym_min_;
 
 };

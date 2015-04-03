@@ -86,7 +86,7 @@ map<string, Size> static_batch_id_map_;
 static Tracer TR("protocols.features.util");
 // End static data
 
-///@brief write the given protocol and batch ids to the database. The protocol and batches
+/// @brief write the given protocol and batch ids to the database. The protocol and batches
 ///features reporters will check for an existing entry with the same key, and write if one
 ///does not exist. Not recommended for parallel use as it is subject to race conditions (due
 ///to the nature of 'insert or ignore' type database writing)
@@ -113,7 +113,7 @@ set_protocol_and_batch_id(
 	write_batch_reports_table(features_reporters, batch_id, db_session);
 }
 
-///@brief Get the protocol and batch ids or create them if they don't
+/// @brief Get the protocol and batch ids or create them if they don't
 ///yet exist. For MPI protocols, only allow the head node to create
 ///protocol or batch ids and have the other nodes ask the head node
 ///for the info.
@@ -338,7 +338,7 @@ serialize_ids(
 		utility::to_string(batch_id);
 }
 
-///@detail look up the batch id given a struct id. Note this should
+/// @detail look up the batch id given a struct id. Note this should
 ///only be used once the structure's table has been created, eg in an
 ///average features reporter's report_features function.
 Size

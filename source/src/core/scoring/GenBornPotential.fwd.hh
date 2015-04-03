@@ -20,24 +20,23 @@
 namespace core {
 namespace scoring {
 
-///
+
 class GenBornResidueInfo;
 typedef utility::pointer::shared_ptr< GenBornResidueInfo > GenBornResidueInfoOP;
 
-///
+
 class GenBornPoseInfo;
 typedef utility::pointer::shared_ptr< GenBornPoseInfo > GenBornPoseInfoOP;
 
-///
+
 class GenBornRotamerSetInfo;
 typedef utility::pointer::shared_ptr< GenBornRotamerSetInfo > GenBornRotamerSetInfoOP;
 
-///
+
 class GenBornPotential;
 
 typedef  utility::pointer::shared_ptr< GenBornPotential > GenBornPotentialOP;
 typedef  utility::pointer::shared_ptr< GenBornPotential const > GenBornPotentialCOP;
-
 
 
 } // scoring

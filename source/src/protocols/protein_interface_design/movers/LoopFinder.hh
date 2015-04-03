@@ -18,9 +18,7 @@
 //#include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <protocols/loops/Loops.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // the following must be included because LoopFinder is derived from DRMover
 //#include <core/scoring/ScoreFunction.fwd.hh>

@@ -305,7 +305,7 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-	///@brief Evaluate the interaction between the backbone of rsd1 and the
+	/// @brief Evaluate the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulate the unweighted energies.  The sum
 	/// bb_bb(r1,r2) + bb_sc(r1,r2) + bb_sc(r2,r1) + sc_sc( r1,r2) must
 	/// equal the weighted result of a call to residue_pair_energy.
@@ -322,7 +322,7 @@ public:
 	) const;
 
 
-	///@brief Evaluate the interaction between the backbone of rsd1 and the
+	/// @brief Evaluate the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulate the unweighted energies.  The sum
 	/// bb_bb(r1,r2) + bb_sc(r1,r2) + bb_sc(r2,r1) + sc_sc( r1,r2) must
 	/// equal the unweighted result of a call to residue_pair_energy.
@@ -338,7 +338,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///@brief Evaluate the interaction between the sidechain of rsd1 and the
+	/// @brief Evaluate the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulate the unweighted energies.  The sum
 	/// bb_bb(r1,r2) + bb_sc(r1,r2) + bb_sc(r2,r1) + sc_sc( r1,r2) must
 	/// equal the unweighted result of a call to residue_pair_energy.

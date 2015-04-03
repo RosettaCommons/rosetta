@@ -17,7 +17,6 @@
 // Unit Headers
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
 #include <core/types.hh>
 
 // Package Headers
@@ -27,7 +26,6 @@
 // Project Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -40,8 +38,6 @@
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
 #include <list>
 #include <set>
 #include <map>
@@ -53,8 +49,7 @@ namespace protocols {
 namespace noesy_assign {
 
 
-
-///@brief fast access to assignments by residue number
+/// @brief fast access to assignments by residue number
 class PeakAssignmentResidueMap : public utility::pointer::ReferenceCount {
 public:
   typedef std::list< PeakAssignmentOP > PeakAssignments;
@@ -64,37 +59,37 @@ public:
   PeakAssignmentResidueMap();
 	virtual ~PeakAssignmentResidueMap();
 
-  ///@brief add all PeakAssignments in all Crosspeaks of list
+  /// @brief add all PeakAssignments in all Crosspeaks of list
   void add( CrossPeakList const& );
 
-  ///@brief add individual PeakAssignment
+  /// @brief add individual PeakAssignment
   void add( PeakAssignmentOP const& );
 
 
-	///@brief add all resonances for backward compatibility in covalent-part of network-analysis
+	/// @brief add all resonances for backward compatibility in covalent-part of network-analysis
 	void add_all_atoms( ResonanceList const& );
 
-  ///@brief remove individual PeakAssignment
+  /// @brief remove individual PeakAssignment
   void remove( PeakAssignment const& );
 
-  ///@brief invalidate non symmetric peaks
+  /// @brief invalidate non symmetric peaks
   void check_for_symmetric_peaks( CrossPeakList&, bool accumulate_symmetry );
 
-  ///@brief remove all ambiguous assignments to i,i+1 CrossPeaks.
+  /// @brief remove all ambiguous assignments to i,i+1 CrossPeaks.
 
 	//commented out 9/10/12 because the only relevant action within the subroutine is commented out already
   //void invalidate_competitors_to_sequential_NOE( CrossPeakList& );
 
 	void network_analysis( Size n_total_assignments );
 	void network_analysis2(); // ResonanceList const& resonances );
-  ///@brief get list of PeakAssignments for pair of residues --- throws Exception
+  /// @brief get list of PeakAssignments for pair of residues --- throws Exception
   PeakAssignments const& assignments( core::Size resi, core::Size resj ) const;
   PeakAssignments& assignments( core::Size resi, core::Size resj );
 
-	///@brief add assignments found between resi and resj to collector
+	/// @brief add assignments found between resi and resj to collector
 	void assignments( core::Size resi, core::Size resj, PeakAssignments& collector ) const;
 
-  ///@brief has some (valid or invalid) assignments between residue pair
+  /// @brief has some (valid or invalid) assignments between residue pair
   bool has( core::Size resi, core::Size resj );
 
   core::Size total_residue() const {
@@ -102,11 +97,11 @@ public:
   }
 
 private:
-  ///@brief same as "assignments()" but returns BOGUS_ASSIGNMENTS if not found
+  /// @brief same as "assignments()" but returns BOGUS_ASSIGNMENTS if not found
   PeakAssignments const& _assignments( core::Size resi, core::Size resj ) const;
   PeakAssignments& _assignments( core::Size resi, core::Size resj );
 
-	///@brief subroutine to compute Nk for alpha->gamma->beta path.
+	/// @brief subroutine to compute Nk for alpha->gamma->beta path.
 	core::Real compute_Nk(
 	   PeakAssignment const&	alpha_beta,
 		 core::id::NamedAtomID const& gamma_atom,
@@ -119,7 +114,7 @@ private:
 		 /*either the a-g or g-b peak_volume (corresponding to the "false" in one of the connect_in_i/j */
 	) const;
 
-	///@brief subroutine to collect putative gammas that need to be queried due to covalent structure
+	/// @brief subroutine to collect putative gammas that need to be queried due to covalent structure
 	void fill_covalent_gammas( Size, std::map< core::id::NamedAtomID, bool >& collector ) const;
 
 

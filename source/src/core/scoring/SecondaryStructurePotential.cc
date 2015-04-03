@@ -29,7 +29,6 @@
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -46,7 +45,6 @@
 #include <basic/prof.hh>
 // ObjexxFCL headers
 //#include <ObjexxFCL/ObjexxFCL.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -64,7 +62,6 @@
 #include <core/scoring/SS_Killhairpins_Info.hh>
 #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/format.hh>
-
 
 
 namespace core {
@@ -123,7 +120,6 @@ fill_bb_pos(
 }
 
 
-///
 void
 SecondaryStructurePotential::setup_for_scoring( pose::Pose & pose ) const
 {
@@ -146,8 +142,6 @@ SecondaryStructurePotential::setup_for_scoring( pose::Pose & pose ) const
 	//	std::cout << "identify_ss:\n" << ss_info.helices() << ss_info.strands();
 
 }
-
-
 
 
 /// @brief score secondary structure
@@ -307,49 +301,49 @@ public:
 		 valid_( true )
 	{}
 
-	///
+
 	int
 	dimer1() const
 	{
 		return dimer1_;
 	}
 
-	///
+
 	int
 	dimer2() const
 	{
 		return dimer2_;
 	}
 
-	///
+
 	int
 	sign1() const
 	{
 		return sign1_;
 	}
 
-	///
+
 	int
 	sign2() const
 	{
 		return sign2_;
 	}
 
-	///
+
 	Real
 	score() const
 	{
 		return score_;
 	}
 
-	///
+
 	bool
 	valid() const
 	{
 		return valid_;
 	}
 
-	///
+
 	void
 	valid( bool const setting )
 	{
@@ -393,7 +387,7 @@ SecondaryStructurePotential::sspair(
 	ss_score = 0.0;
 	rsigma_score = 0.0;
 
-	//
+
 	int const lowstrand( wts.get_ss_lowstrand() );
 	int const cutoff( wts.get_ss_cutoff() );
 
@@ -434,7 +428,6 @@ SecondaryStructurePotential::sspair(
 		strands.dimer_neighbor(1,ss1) = 0;
 		strands.dimer_neighbor(2,ss1) = 0;
 	}
-
 
 
 //car ss1 is the first dimer in the possible pair
@@ -856,7 +849,6 @@ SecondaryStructurePotential::sspair(
 //car    (note the penalties have already been added in)
 
 
-
 	std::sort( dimer_pairs.begin(), dimer_pairs.end(), dimer_pairing_pointer_sorter );
 
 	for ( DimerPairings::iterator it= dimer_pairs.begin(), ite= dimer_pairs.end(); it != ite; ++it ) {
@@ -1174,9 +1166,6 @@ SecondaryStructurePotential::sheets_from_dimers(
 	//std::cout << " SHEET-SCORE: " << sheet_score << std::endl;
 	return sheet_score * 2.019; // pre-weighting from r++::structure.cc:733
 }
-
-
-
 
 
 /// @details identifies secondary structure at the start of scoring and loads the Strands/Helices
@@ -1873,7 +1862,6 @@ SecondaryStructurePotential::ss_penalty_initializer(
 
 } // ns scoring
 } // ns core
-
 
 
 /// @brief This function takes a set of dimer neighbors, and determines how

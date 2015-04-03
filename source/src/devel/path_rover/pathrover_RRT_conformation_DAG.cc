@@ -25,7 +25,6 @@ RRT_node::~RRT_node()
 }
 
 
-  //
   void
   RRT_node::set_custom_info
   (Node_custom_info* ci)
@@ -36,7 +35,6 @@ RRT_node::~RRT_node()
   }
 
 
-  //
   double
   CA_RMSD_functor::operator ()(RRT_node const* node1, RRT_node const* node2)
   {
@@ -88,8 +86,6 @@ RRT_node::~RRT_node()
 }
 
 
-
-//
 // L2-norm between dofs vectro
 double Dofs_vector_L2_norm_functor::operator()(RRT_node const* node1, RRT_node const* node2)
 {

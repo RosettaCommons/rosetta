@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/methods/pcs2/GridSearchIterator.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 

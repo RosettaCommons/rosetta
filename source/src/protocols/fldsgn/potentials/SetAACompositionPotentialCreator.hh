@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/fldsgn/SetAACompositionPotentialCreator.hh
-///@brief This class will create instances of Mover SetAACompositionPotential for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @file protocols/fldsgn/SetAACompositionPotentialCreator.hh
+/// @brief This class will create instances of Mover SetAACompositionPotential for the MoverFactory
+/// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_fldsgn_potentials_SetAACompositionPotentialCreator_HH
 #define INCLUDED_protocols_fldsgn_potentials_SetAACompositionPotentialCreator_HH

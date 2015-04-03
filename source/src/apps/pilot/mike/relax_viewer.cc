@@ -18,57 +18,23 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
-
-// AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
-
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
 
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh> //option.hh>
 //#include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -78,25 +44,21 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/phil.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/relax/ClassicRelax.hh>
-
 
 
 using basic::T;
@@ -152,7 +114,6 @@ relax_test()
 	myrelax.apply(pose );
 	std::cerr << "DONE" << std::endl;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

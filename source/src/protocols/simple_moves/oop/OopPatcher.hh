@@ -27,12 +27,12 @@ namespace simple_moves {
 namespace oop {
 
 
-///@details
+/// @details
 class OopPatcher : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	OopPatcher( core::Size oop_seq_position );
 
 	virtual ~OopPatcher();
@@ -45,8 +45,6 @@ private:
 	core::Size const oop_pre_pos_;
 	core::Size const oop_post_pos_;
 };//end OopPatcher
-
-
 
 
 }//namespace oop

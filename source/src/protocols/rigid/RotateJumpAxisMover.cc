@@ -97,17 +97,17 @@ RotateJumpAxisMover::get_name() const {
 core::Angle RotateJumpAxisMover::calc_angle()
 {	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
-///@details random angle constructor.  rb_jump_num is the number of the jump.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
+/// @details random angle constructor.  rb_jump_num is the number of the jump.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num )
 	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(180.0), lower_angle_(-179.9999999999999999999999999999999999999999999999)
 {	Mover::type( "RotateJumpAxisMover" ); }
 
-///@details range of angles constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
+/// @details range of angles constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const upper, core::Angle const lower )
 	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(upper), lower_angle_(lower)
 {	Mover::type( "RotateJumpAxisMover" ); }
 
-///@details particular angle constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
+/// @details particular angle constructor - takes DEGREES not RADIANS.  rb_jump_num is the number of the jump.
 RotateJumpAxisMover::RotateJumpAxisMover( core::Size const rb_jump_num, core::Angle const angle )
 	: moves::Mover(), rb_jump_num_(rb_jump_num), upper_angle_(angle), lower_angle_(angle)
 {	moves::Mover::type( "RotateJumpAxisMover" ); }

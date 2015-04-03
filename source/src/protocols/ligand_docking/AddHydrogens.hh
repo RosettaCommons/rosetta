@@ -17,8 +17,6 @@
 #define INCLUDED_protocols_ligand_docking_AddHydrogens_hh
 
 #include <protocols/ligand_docking/AddHydrogens.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
@@ -33,9 +31,9 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class AddHydrogens : public protocols::moves::Mover{
 

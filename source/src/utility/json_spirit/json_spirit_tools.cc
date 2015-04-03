@@ -99,7 +99,6 @@ namespace json_spirit {
   }
 
 
-
 }
 }
 

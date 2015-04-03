@@ -73,7 +73,6 @@ TrialCounterObserver::clone() const {
 }
 
 
-
 void
 TrialCounterObserver::parse_my_tag(
        utility::tag::TagCOP tag,

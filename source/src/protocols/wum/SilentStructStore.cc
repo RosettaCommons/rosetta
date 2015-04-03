@@ -20,9 +20,6 @@
 //#include <protocols/frag_picker/VallChunk.hh>
 //#include <protocols/frag_picker/VallProvider.hh>
 
-// AUTO-REMOVED #include <boost/cstdint.hpp>
-// AUTO-REMOVED #include <boost/unordered_map.hpp>
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -32,18 +29,10 @@
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
 #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -51,16 +40,10 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -72,7 +55,6 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
@@ -92,14 +74,11 @@ using namespace conformation;
 using namespace protocols::moves;
 
 
-
-
 namespace protocols {
 namespace wum {
 
 /// @details Auto-generated virtual destructor
 SilentStructStore::~SilentStructStore() {}
-
 
 
 	class sort_SilentStructOPs
@@ -123,7 +102,6 @@ SilentStructStore::~SilentStructStore() {}
 		if ( check->get_energy(field_) == value_ ) return true;
 		return false;
 	}
-
 
 
 static thread_local basic::Tracer TR( "SilentStructStore" );
@@ -284,9 +262,6 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
   }
 
 
-
-
-
   void SilentStructStore::print( std::ostream & out ) const {
     SilentFileData sfd;
     core::Size count=0;
@@ -300,7 +275,6 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
     }
     out << "----------------------------------------------" << std::endl;
   }
-
 
 
 	core::Size
@@ -345,7 +319,6 @@ static thread_local basic::Tracer TR( "SilentStructStore" );
 	}
 
 
-
 // TOOLS
 
 
@@ -373,7 +346,6 @@ encode_alphanum(unsigned long number, int pad_width=0, char pad_char = '0')
 }
 
 
-
 // without locking this is not really threadsafe. But how to otherwise proved a *globally*
 // unique number ? A singleton wont help either, just code overhead.
 
@@ -390,8 +362,6 @@ generate_unique_structure_id(){
 	unique_count++;
 	return encode_alphanum( unique_count ) + encode_alphanum( mpi_rank, width, '0' );
 }
-
-
 
 
 }

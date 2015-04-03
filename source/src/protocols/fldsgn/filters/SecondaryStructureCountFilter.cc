@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/SecondaryStructureCountFilter.cc
 /// @brief filter structures by number of secondary structures
-/// @detailed
+/// @details
 /// @author Lei Shi ( shilei@uw.edu )
 
 // Unit Headers
@@ -21,7 +21,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Utility headers
 #include <basic/Tracer.hh>

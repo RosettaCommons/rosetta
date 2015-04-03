@@ -26,8 +26,6 @@
 // Unit Headers
 #include <boost/unordered_map.hpp>
 #include <protocols/sparta/SpartaUtil.hh>
-// AUTO-REMOVED #include <protocols/sparta/constants.hh>
-// AUTO-REMOVED #include <protocols/sparta/util.hh>
 
 #include <core/types.hh>
 
@@ -36,12 +34,9 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <cstdlib>
 #include <cstdio>
 #include <string>
-// AUTO-REMOVED #include <cmath>
 
-// AUTO-REMOVED #include <iostream>
 
 #ifdef WIN32
 #include <direct.h>
@@ -270,7 +265,6 @@ char * itoa( int n, char *buff, int /*base*/ )
 	sprintf(buff, "%d", n);
 	return buff;
 }
-
 
 
 char * ftoa( float n, char *buff, char f, int prec )

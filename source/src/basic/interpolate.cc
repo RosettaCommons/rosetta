@@ -64,11 +64,10 @@
 namespace basic {
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin interpolate_bilinear_by_value
 ///
 /// @brief get bilinear interpolate, given four points of a 2d periodic function
 ///
-/// @detailed
+/// @details
 ///
 ///     Value and derivatives of bilinear interpolation between four
 ///     specified input values, which are the function values
@@ -119,9 +118,8 @@ namespace basic {
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 interpolate_bilinear_by_value(

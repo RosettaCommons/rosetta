@@ -56,7 +56,6 @@
 #include <protocols/rotamer_recovery/RRComparer.hh>
 
 
-
 namespace protocols{
 namespace features{
 

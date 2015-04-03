@@ -12,12 +12,9 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh> // needed to pass NULL owning pointer
-// AUTO-REMOVED #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 

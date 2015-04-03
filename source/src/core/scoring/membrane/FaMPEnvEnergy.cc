@@ -177,7 +177,7 @@ FaMPEnvEnergy::eval_atom_derivative(
 	}
 }
 
-///@brief Fa_MbenvEnergy is context independent
+/// @brief Fa_MbenvEnergy is context independent
 void
 FaMPEnvEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const {}
 

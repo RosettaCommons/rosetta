@@ -68,7 +68,6 @@ using basic::Error;
 #include <core/import_pose/import_pose.hh>
 
 
-
 using namespace core;
 using namespace core::chemical;
 using utility::file::FileName;

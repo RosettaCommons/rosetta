@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin RotamerRecovery
 ///
 /// @brief
 /// Compare the rotamer recovery between a native protein and a list of other proteins
 ///
-/// @detailed
+/// @details
 /// This is an implementation taken from James Thompson. I am not even sure he knows I stole it
 /// from him. The main function that is called is the get_rotamer_recovery() function. You can
 /// pass this function a native pdb and a list of altered pdbs, or just 1 native and 1
@@ -31,30 +30,23 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// @author James Thompson (original author)
 /// @author Steven Combs (moved it to protocols for general use)
 ///
-/// @last_modified October 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 //#include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 
 // XRW-REMOVE #include <protocols/jumping/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -70,12 +62,9 @@
 // option key includes
 
 
-
-
 namespace protocols{
 namespace toolbox{
 namespace pose_metric_calculators{
-
 
 
 char RotamerRecovery::torsion2big_bin(
@@ -192,7 +181,6 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 	);
 
 
-
 	utility::vector1< utility::vector1< core::Size > > chis_correct(
 			native.total_residue(), utility::vector1< core::Size >( native.total_residue(), 0 )
 	);
@@ -294,10 +282,7 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 		}
 
 
-
 }
-
-
 
 
 /*
@@ -344,8 +329,6 @@ main( int argc, char* argv [] ) {
 	);
 
 
-
-
 	Size total(0);
 	while( input.has_another_pose() ) {
 		Pose pose;
@@ -370,7 +353,6 @@ main( int argc, char* argv [] ) {
 		}
 		++total;
 	}
-
 
 
 	//////
@@ -447,7 +429,6 @@ main( int argc, char* argv [] ) {
 	return 0;
 } // int main( int argc, char * argv [] )
 */
-
 
 
 }

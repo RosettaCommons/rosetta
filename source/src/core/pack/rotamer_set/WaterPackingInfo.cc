@@ -13,7 +13,6 @@
 
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>

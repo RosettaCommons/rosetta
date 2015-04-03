@@ -37,8 +37,6 @@ debug_assert( dynamic_cast< BasePartner const *>( &( pose.data().get( core::pose
 }
 
 
-
-
 } // namespace dna
 } // scoring
 } // core

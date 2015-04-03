@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace enzdes {
 
@@ -209,7 +208,6 @@ private:
 	Size max_trials_;
 
 };
-
 
 
 } // enzdes

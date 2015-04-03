@@ -347,7 +347,7 @@ HelixBundleFeatures::get_helix_pairs(
 	return pair_map;
 }
 
-///@brief calculate the shared fa_attr for each pair of helices
+/// @brief calculate the shared fa_attr for each pair of helices
 /// in the bundle
 void
 HelixBundleFeatures::calc_fa_energy(
@@ -397,7 +397,7 @@ HelixBundleFeatures::calc_fa_energy(
 }
 
 
-///@brief calculate the crossing angles of the helix fragment in the bundle set
+/// @brief calculate the crossing angles of the helix fragment in the bundle set
 void
 HelixBundleFeatures::calc_crossing_angles(
 	core::pose::Pose const & pose,
@@ -475,7 +475,7 @@ HelixBundleFeatures::calc_crossing_angles(
 }
 
 
-///@brief create a bundle-pose from the combination of fragments
+/// @brief create a bundle-pose from the combination of fragments
 /// and record the "interface" SASA for each helix against the
 /// rest of the bundle
 void

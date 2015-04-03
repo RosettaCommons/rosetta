@@ -20,7 +20,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Utility Headers
 #include <core/types.hh>

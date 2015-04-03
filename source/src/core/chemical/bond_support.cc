@@ -30,8 +30,8 @@ namespace chemical {
 
 static thread_local basic::Tracer TR( "core.chemical.bond_support" );
 
-//! @brief convert bond order or aromatic into the corresponding radius
-//! @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
+/// @brief convert bond order or aromatic into the corresponding radius
+/// @param BOND_ORDER_OR_AROMATIC bond type in notation: 1=single, 2=double, 3=triple, 4=aromatic
 gasteiger::GasteigerAtomTypeData::Properties bond_order_to_property( const core::Size &BOND_ORDER_OR_AROMATIC)
 {
   static gasteiger::GasteigerAtomTypeData::Properties properties[ 5] =

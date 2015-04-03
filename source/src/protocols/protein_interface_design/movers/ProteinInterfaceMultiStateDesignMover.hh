@@ -17,7 +17,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
-// AUTO-REMOVED #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -35,7 +34,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-///@brief wraps protein-interface specific considerations around the general multistate design / genetic algorithm framework
+/// @brief wraps protein-interface specific considerations around the general multistate design / genetic algorithm framework
 class ProteinInterfaceMultiStateDesignMover : public protocols::simple_moves::PackRotamersMover {
 public:
 	typedef multistate_design::PosType PosType;

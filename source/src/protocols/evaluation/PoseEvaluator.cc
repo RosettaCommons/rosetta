@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -28,8 +27,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -67,8 +64,6 @@ std::string MetaPoseEvaluator::name( core::Size ind ) const {
 	runtime_assert( it != evaluators_.end() );
 	return (*it)->name( ind - last_s );
 }
-
-
 
 
 } //evaluation

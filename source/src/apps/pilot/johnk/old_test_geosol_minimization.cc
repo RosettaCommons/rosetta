@@ -59,8 +59,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 using namespace core;
 using namespace core::scoring;
 using namespace core::scoring::hbonds;

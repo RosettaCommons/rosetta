@@ -51,7 +51,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -59,7 +58,6 @@
 
 #include <utility/vector1.hh>
 #include <sstream>
-
 
 
 using namespace ObjexxFCL;
@@ -567,7 +565,6 @@ Ramachandran::eval_rama_score_residue(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //void Ramachandran::eval_procheck_rama(
 //	Pose const & /*pose*/,
@@ -611,7 +608,6 @@ Real Ramachandran::minimum_sampling_probability() const {
 }
 
 
-
 utility::vector1< Real > const &
 Ramachandran::cdf_for_aa( core::chemical::AA aa ) const
 {
@@ -626,7 +622,6 @@ Ramachandran::cdf_for_aa_for_torsion_bin(
 {
 	return cdf_by_torsion_bin_( aa, torsion_bin );
 }
-
 
 
 void

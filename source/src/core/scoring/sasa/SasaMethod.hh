@@ -22,8 +22,8 @@ namespace core {
 namespace scoring {
 namespace sasa {
 
-	///@brief Type of Radii to use.
-	///@details
+	/// @brief Type of Radii to use.
+	/// @details
 	///       LJ:  Refers to Leonard Jones radii - Rosetta uses radii at the minimum of the potential (sigma2).
 	///       Legacy:  Refers to radii optimized for a no longer in use term, but some protocols have been optimized to use it.
 	///       naccess:  Refers to radii used in the program naccess.  Originally derived from Chothia.  Do not use for all-atom SASA as hydrogens are implicitly included.
@@ -41,7 +41,7 @@ namespace sasa {
 	};
 
 
-///@brief Abstract base class for SasaMethods.  Feel free to edit as needed.
+/// @brief Abstract base class for SasaMethods.  Feel free to edit as needed.
 class SasaMethod : public utility::pointer::ReferenceCount {
 
 
@@ -50,7 +50,7 @@ public:
 	SasaMethod(Real probe_radius, SasaRadii radii_set);
 	virtual ~SasaMethod();
 
-	///@brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
+	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa in AtomID_Map.  This is carried over for compatability purposes.
 	virtual Real
 	calculate(
 			const pose::Pose & pose,
@@ -64,18 +64,17 @@ public:
 
 public:
 
-	///@brief Include the probe radius in calc.  Typical for SASA.
+	/// @brief Include the probe radius in calc.  Typical for SASA.
 	void
 	set_include_probe_radius_in_calc(bool include_probe_radius);
 
-	///@brief Set the probe radius.  Typical value is that of water at 1.4 A
+	/// @brief Set the probe radius.  Typical value is that of water at 1.4 A
 	void
 	set_probe_radius(Real probe_radius);
 
-	///@brief Set the radii type.
+	/// @brief Set the radii type.
 	void
 	set_radii_set(SasaRadii radii_set);
-
 
 
 ///////////Legacy Options ///////////
@@ -83,7 +82,7 @@ public:
 	//void
 	//set_expand_polar_radii(bool expand_polars, core::Size expansion_radius = 1.0);
 
-	///@brief Legacy option to increase polar hydrogen radii to 1.08A.  Supported for now.
+	/// @brief Legacy option to increase polar hydrogen radii to 1.08A.  Supported for now.
 	void
 	set_use_big_polar_hydrogen(bool big_polar_h);
 
@@ -96,7 +95,6 @@ protected:
 	bool use_big_polar_H_;
 	//vector1<std::string> radii_names_;
 };
-
 
 
 }

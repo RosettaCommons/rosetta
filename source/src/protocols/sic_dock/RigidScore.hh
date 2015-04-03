@@ -123,7 +123,6 @@ private:
 };
 
 
-
 struct AtomIDHashFunction { std::size_t operator ()(core::id::AtomID const aid) const {
 	return aid.atomno()+65536*aid.rsd();
 } };
@@ -150,9 +149,6 @@ private:
 	core::scoring::constraints::ConstraintCOPs const csts_;
 	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> start_coords_;
 };
-
-
-
 
 
 class EdgeStandScore : public RigidScore {
@@ -216,10 +212,6 @@ private:
 // 	RigidScoreCOP score_;
 // 	// some kind of 6 dof hash
 // };
-
-
-
-
 
 
 } // namespace sic_dock

@@ -16,7 +16,6 @@
 #include <core/scoring/UnfoldedStatePotential.hh>
 
 // Project headers
-// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <core/conformation/Residue.hh>
 

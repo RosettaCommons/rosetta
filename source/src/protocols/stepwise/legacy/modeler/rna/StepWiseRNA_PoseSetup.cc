@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_PoseSetup
 /// @brief Sets up pose and job parameters for RNA stepwise building.
-/// @detailed
+/// @details
 /// @author Rhiju Das, Parin Sripakdeevong
 
 

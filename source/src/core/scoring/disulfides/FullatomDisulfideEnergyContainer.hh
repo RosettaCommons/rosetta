@@ -16,7 +16,6 @@
 
 // Unit headers
 #include <core/scoring/disulfides/FullatomDisulfideEnergyContainer.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
 
 // Package headers
 #include <core/scoring/LREnergyContainer.hh>
@@ -25,9 +24,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

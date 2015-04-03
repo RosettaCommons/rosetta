@@ -40,7 +40,7 @@ namespace loops {
 namespace loops_definers {
 
 
-///@ details given a database table with the following schema, defining a single loop per row
+/// @ details given a database table with the following schema, defining a single loop per row
 ///
 ///CREATE TABLE loops (
 ///	tag TEXT,

@@ -17,7 +17,6 @@
 // Package Headers
 
 #include <core/io/silent/SilentStruct.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/RigidBodySilentStruct.hh>

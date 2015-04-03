@@ -16,9 +16,7 @@
 #define INCLUDED_protocols_viewer_triangle_hh
 
 #include <numeric/xyzMatrix.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
-
 
 
 namespace protocols {

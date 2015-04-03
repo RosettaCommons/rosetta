@@ -1879,7 +1879,6 @@ CrystDock::apply( Pose & pose) {
 	}
 
 
-
 	// get SS
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );

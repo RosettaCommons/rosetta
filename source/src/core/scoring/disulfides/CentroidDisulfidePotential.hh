@@ -21,13 +21,10 @@
 
 //Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/func/Func.hh>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <numeric/interpolation/Histogram.fwd.hh>
 
@@ -124,7 +121,7 @@ private: //Scoring functions
 	static NCaCaC_Dihedral_FuncCOP ncacac_dihedral_func_;
 	static CaCbCbCa_Dihedral_FuncCOP cacbcbca_dihedral_func_;
 
-	///@brief the Cysteines with cb dist scores less than this threshold are
+	/// @brief the Cysteines with cb dist scores less than this threshold are
 	/// very likely (99%) to be disulfide bonded.
 	static const core::Real disulfide_cb_dist_cutoff;
 

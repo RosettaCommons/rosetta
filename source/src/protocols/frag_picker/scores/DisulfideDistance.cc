@@ -23,14 +23,11 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/io/raw_data/DisulfideFile.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
 
-// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
 #include <utility/vector1.hh>
 

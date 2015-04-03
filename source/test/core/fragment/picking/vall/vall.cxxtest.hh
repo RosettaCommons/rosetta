@@ -23,8 +23,6 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/picking_old/vall/vall_io.hh>
 #include <core/fragment/picking_old/vall/VallSection.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.hh>

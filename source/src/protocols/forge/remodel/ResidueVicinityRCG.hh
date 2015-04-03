@@ -17,7 +17,6 @@
 
 // protocol headers
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
-// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh>
 
 // project headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,7 +27,6 @@
 
 //utility headers
 #include <utility/vector1.hh>
-
 
 
 namespace protocols{
@@ -248,8 +246,6 @@ private:
 } //namespace remodel
 } //namespace forge
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_forge_remodel_ResidueVicinityRCG_HH

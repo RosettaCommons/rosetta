@@ -38,7 +38,7 @@
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-//
+
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 
 using namespace core;

@@ -49,14 +49,13 @@ using namespace core;
 
 //basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist_sasa_calc" );
 
-///@brief
+/// @brief
 class khSandbox2 : public protocols::moves::Mover {
 public:
 	khSandbox2()
 	{
 	}
 	virtual ~khSandbox2(){};
-
 
 
 	virtual

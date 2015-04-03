@@ -40,7 +40,6 @@
 #define MAX_STEPS_MOVING_AWAY_FROM_PARTIAL_DATA 2
 
 
-
 namespace pathways {
 
 class Pathways;
@@ -78,7 +77,6 @@ public:
  };
 
  typedef std::multimap< double, Node_pair > t_map_node_pairs_by_dist;
-
 
 
 class Single_tree_RRT
@@ -144,7 +142,6 @@ public:
         int fulfilled_stop_condition(int num_generated_nodes,int num_conseq_fails);
 
 
-
 	// generates a random conformation based on the dof set by the owner
 	// returns a dummy node for the random conformation
         RRT_node* generate_random_conformation();
@@ -190,10 +187,6 @@ protected:
 }; //end class single RRT
 
 
-
-
-
-
 class biRRT : Single_tree_RRT
 {
 protected:
@@ -228,7 +221,7 @@ public:
       ( std::vector<std::vector<RRT_node *> >& generated_nodes_from_all_trees,
 	std::vector< Node_pair >& output_pairs);
 
-    //
+
     void try_to_connect_trees
       ( std::vector<std::vector<RRT_node *> >& generated_nodes_from_all_trees,
 	std::vector<RRT_node*>& connecting_nodes,
@@ -267,15 +260,10 @@ public:
     std::vector<RRT_node *> find_nearest_nodes_by_DOFs_vector(RRT_node* n, double& dist );
 
 
-
     int  _max_steps_moving_away_from_partial_data;
 
 
-
 }; //end class Towards_partial_data_RRT
-
-
-
 
 
 }

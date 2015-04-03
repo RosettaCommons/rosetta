@@ -9,7 +9,7 @@
 
 /// @file util.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -37,7 +37,6 @@
 #include <map>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
-
 
 
 namespace protocols {

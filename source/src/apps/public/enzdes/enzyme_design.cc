@@ -16,12 +16,10 @@
 #include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
 //#include <devel/enzdes/EnzdesRemodelProtocol.hh>
 #include <protocols/enzdes/enzdes_util.hh>
-// AUTO-REMOVED #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/EnzFilters.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -34,10 +32,6 @@
 
 #include <utility/string_util.hh>
 
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>

@@ -20,10 +20,8 @@
 #include <core/id/AtomID_Mask.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 //Auto Headers
-
 
 
 #endif // INCLUDED_core_id_AtomID_Mask_HH

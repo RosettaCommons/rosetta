@@ -20,12 +20,9 @@
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/SimplePDB.fwd.hh>
 #include <core/scoring/packstat/SimplePDB_Atom.hh>
-// AUTO-REMOVED #include "core/scoring/packstat/AtomRadiusMap.hh"
 
-// AUTO-REMOVED #include <vector>
 
 #include <core/scoring/packstat/AtomRadiusMap.fwd.hh>
-
 
 
 namespace core {

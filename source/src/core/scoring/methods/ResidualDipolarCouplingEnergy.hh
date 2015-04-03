@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 //Objexx headers
 
 
@@ -41,7 +40,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class ResidualDipolarCouplingEnergy : public WholeStructureEnergy  {
 public:
 	typedef WholeStructureEnergy  parent;

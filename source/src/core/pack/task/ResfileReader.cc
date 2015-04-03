@@ -33,10 +33,8 @@
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 using basic::T;
 using basic::Error;
@@ -58,8 +56,6 @@ using basic::Warning;
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace core {
@@ -187,7 +183,7 @@ ResfileContents::parse_header_line(
 }
 
 
-///@ details Parse body line in resfile
+/// @ details Parse body line in resfile
 /// expected formats:
 ///  <residue identifier> <chain identifier> <commands*>
 ///  <residue identifier> - <residue identifier> <chain identifier> <commands*>
@@ -470,7 +466,6 @@ ResfileContents::locate_resid(
 }
 
 
-
 ResfileCommandOP
 ResfileContents::locate_command(
 	Size const which_token,
@@ -494,7 +489,7 @@ ResfileContents::locate_command(
 
 
 ///////////////////////////////////////////////////////////////////////
-///@brief NATRO disables packing and designing at a position, the residue
+/// @brief NATRO disables packing and designing at a position, the residue
 ///will be totally unchanged
 void
 NATRO::initialize_from_tokens(
@@ -517,7 +512,7 @@ NATRO::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief NATAA allows repacking but no sequence changes (all rotamers are of the original residue)
+/// @brief NATAA allows repacking but no sequence changes (all rotamers are of the original residue)
 void
 NATAA::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -539,7 +534,7 @@ NATAA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief ALLAA is deprecated; allows repacking and designing to any canonical residue (default state of PackerTask)
+/// @brief ALLAA is deprecated; allows repacking and designing to any canonical residue (default state of PackerTask)
 void
 ALLAA::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY( tokens ),
@@ -573,7 +568,7 @@ ALLAA::residue_action(
 
 
 ///////////////////////////////////////////////////////////////////////
-///@brief ALLAAxc allows repacking and designing to any canonical noncysteine residue
+/// @brief ALLAAxc allows repacking and designing to any canonical noncysteine residue
 void
 ALLAAxc::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -599,7 +594,7 @@ ALLAAxc::residue_action(
 
 
 ///////////////////////////////////////////////////////////////////////
-///@brief allows repacking and designing to any canonical residue (default state of PackerTask)
+/// @brief allows repacking and designing to any canonical residue (default state of PackerTask)
 void
 ALLAAwc::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -622,7 +617,7 @@ ALLAAwc::residue_action(
 
 
 ///////////////////////////////////////////////////////////////////////
-///@brief PIKAA allows residues specifed in a following string and packing
+/// @brief PIKAA allows residues specifed in a following string and packing
 ///the string should be formatted ALLCAPS with no spaces between residues
 ///using the standard single letter codes
 void
@@ -688,7 +683,7 @@ PIKAA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief PIKNA allows nucleic acid residues specifed in a following string
+/// @brief PIKNA allows nucleic acid residues specifed in a following string
 /// uses a string of single letter codes
 void
 PIKNA::initialize_from_tokens(
@@ -740,7 +735,7 @@ PIKNA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief PIKNA allows nucleic acid residues specifed in a following string
+/// @brief PIKNA allows nucleic acid residues specifed in a following string
 /// uses a string of single letter codes
 void
 PIKRNA::initialize_from_tokens(
@@ -793,7 +788,7 @@ PIKRNA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief NOTAA disallows residues specified in a following string, and allows packing
+/// @brief NOTAA disallows residues specified in a following string, and allows packing
 ///the string should be formatted ALLCAPS with no spaces between residues
 ///using the standard single letter codes
 void
@@ -837,7 +832,7 @@ NOTAA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief EMPTY disallows canonical residues but leaves packing and designing unchanged
+/// @brief EMPTY disallows canonical residues but leaves packing and designing unchanged
 ///this is intended for use with noncanonical residues
 ///it will act like NOTAA QWERTYIPASDFGHKLCVNM (all residues), which essentially prevents repacking; PIKAA with no argument raises error
 void
@@ -866,7 +861,7 @@ EMPTY::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief RESET disallows noncanonical residues and enables all of the canonical
+/// @brief RESET disallows noncanonical residues and enables all of the canonical
 ///this is intended for use when both NC and PIKAA actions are used to allow for noncanonical and canonical residue at the same position
 void
 RESET::initialize_from_tokens(
@@ -893,7 +888,7 @@ RESET::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief POLAR allows polar residues and packing
+/// @brief POLAR allows polar residues and packing
 ///polar-ness is ultimately determined in residue parameter file
 void
 POLAR::initialize_from_tokens(
@@ -936,7 +931,7 @@ POLAR::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief APOLAR allows nonpolar residues and packing
+/// @brief APOLAR allows nonpolar residues and packing
 ///apolarity is (ultimately) determined by the lack of a POLAR flag in the residue parameter file
 void
 APOLAR::initialize_from_tokens(
@@ -979,7 +974,7 @@ APOLAR::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief APOLA is deprecated, it calls APOLAR to allow nonpolar residues and packing
+/// @brief APOLA is deprecated, it calls APOLAR to allow nonpolar residues and packing
 void
 APOLA::initialize_from_tokens(
 #ifdef NDEBUG
@@ -1007,7 +1002,7 @@ APOLA::residue_action(
 }
 
 ///////////////////////////////////////////////////////////////////////
-///@brief EX handles extrachi options.  one EX command is necessary for each
+/// @brief EX handles extrachi options.  one EX command is necessary for each
 ///chi and sampling level you wish to turn on, so multiple EX commands may
 ///appear on a line.  EX must be followed by an integer (which chi)
 ///EX recognizes an optional subcommand LEVEL following the chi integer
@@ -1094,7 +1089,7 @@ EX::residue_action(
 }
 
 ////////////////////////////////////////////////////////////////////
-///@brief NC allows a noncanonical residue; use one NC command per noncanonical.
+/// @brief NC allows a noncanonical residue; use one NC command per noncanonical.
 /// The "nc_to_include_" string should match the interchangeability_group of
 /// your desired residue type, and the residue type(s) in that group with
 /// matching variants will be added to the PackerTask.
@@ -1128,7 +1123,7 @@ NC::residue_action(
 }//end NC
 
 /////////////////////////////////////////////////////////////////
-///@brief EX_CUTOFF allows setting of the extrachi_cutoff (for determining burial for extra rotamers)
+/// @brief EX_CUTOFF allows setting of the extrachi_cutoff (for determining burial for extra rotamers)
 void
 EX_CUTOFF::initialize_from_tokens(
 	utility::vector1< std::string > const & tokens,
@@ -1162,7 +1157,7 @@ EX_CUTOFF::residue_action(
 }//end EX_CUTOFF
 
 ///////////////////////////////////////////////////////////
-///@brief USE_INPUT_SC turns on inclusion of the current rotamer for the packer
+/// @brief USE_INPUT_SC turns on inclusion of the current rotamer for the packer
 void
 USE_INPUT_SC::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -1184,7 +1179,7 @@ USE_INPUT_SC::residue_action(
 }//end USE_INPUT_SC
 
 ///////////////////////////////////////////////////////////
-///@brief AUTO
+/// @brief AUTO
 void
 AUTO::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -1206,7 +1201,7 @@ AUTO::residue_action(
 }//end AUTO
 
 ///////////////////////////////////////////////////////////
-///@brief SCAN
+/// @brief SCAN
 void
 SCAN::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -1229,7 +1224,7 @@ SCAN::residue_action(
 //end SCAN
 
 ///////////////////////////////////////////////////////////
-///@brief TARGET
+/// @brief TARGET
 void
 TARGET::initialize_from_tokens(
 	utility::vector1< std::string > const & tokens,
@@ -1276,7 +1271,7 @@ TARGET::residue_action(
 //end TARGET
 
 ///////////////////////////////////////////////////////////
-///@brief NO_ADDUCTS
+/// @brief NO_ADDUCTS
 void
 NO_ADDUCTS::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -1299,7 +1294,7 @@ NO_ADDUCTS::residue_action(
 //end NO_ADDUCTS
 
 ///////////////////////////////////////////////////////////
-///@brief FIX_HIS_TAUTOMER
+/// @brief FIX_HIS_TAUTOMER
 void
 FIX_HIS_TAUTOMER::initialize_from_tokens(
 	utility::vector1< std::string > const & ASSERT_ONLY(tokens),
@@ -1321,7 +1316,7 @@ FIX_HIS_TAUTOMER::residue_action(
 }
 //end FIX_HIS_TAUTOMER
 
-///@details this creates a map linking the parsed strings from the resfile
+/// @details this creates a map linking the parsed strings from the resfile
 ///to the command objects.  NEW COMMANDS MUST BE ADDED HERE, HARD CODED
 ///note that it uses the command object name() method, not hard coded strings
 ///(of course, the name() method has hard coded strings...)
@@ -1357,14 +1352,14 @@ create_command_map()
 
 	return command_map;
 }
-///@brief utility function for resfile reader (checks for a leading # signaling a comment)
+/// @brief utility function for resfile reader (checks for a leading # signaling a comment)
 bool
 comment_begin( utility::vector1< std::string > const & tokens, Size which_token )
 {
 	return get_token( which_token, tokens )[ 0 ] == '#';
 }
 
-///@details resfile parser applies a resfile filename to a PackerTask
+/// @details resfile parser applies a resfile filename to a PackerTask
 ///each line of the resfile is broken into whitespace-delimited tokens
 ///whenever it reads a comment token, it ignores the rest of the line
 ///commands read before a "start" token are stored for application
@@ -1408,8 +1403,6 @@ parse_resfile(
 		}
 	}
 }
-
-
 
 
 	// question: if no chain is supplied should it be accepted?

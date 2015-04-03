@@ -35,7 +35,6 @@
 // utils
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>

@@ -174,6 +174,5 @@ void
 NetChargeFilter::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
 
 
-
 }
 }

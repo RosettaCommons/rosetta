@@ -25,7 +25,6 @@
 #include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
 #include <protocols/flexpep_docking/FlexPepDockingAbInitio.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +32,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 #include <string>
 #include <set>
 
@@ -132,7 +130,6 @@ public:
 	// @param pSer_positions - positions for pSer'ilation
 	/////////////////////////////////////////////////////////////////////////////
 	void restorePSER(core::pose::Pose& pose, std::set<int> const& pSer_positions);
-
 
 
 private:

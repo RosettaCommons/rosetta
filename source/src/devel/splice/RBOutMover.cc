@@ -23,7 +23,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #include <core/pose/Pose.hh>
@@ -43,7 +42,7 @@ static thread_local basic::Tracer TR( "protocols.simple_moves.RBOutMover" );
 namespace devel {
 namespace splice {
 
-//
+
 using namespace::protocols;
 
 std::string

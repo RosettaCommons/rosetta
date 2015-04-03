@@ -63,11 +63,11 @@ public:
 		return "HelixBundleFeatures";
 	}
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(

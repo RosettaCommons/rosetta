@@ -31,10 +31,10 @@
 #include <cstdlib>
 #include <iostream>
 
-//
+
 // A mod of IntegerVectorOption that, by default, returns list of integers but more generally stores and
 // returns chain information as well. Converts tags like A:1-4 B:1-3 into a pair of vectors,  [1 2 3 4 1 2 3], [A A A A B B B]
-//
+
 
 namespace utility {
 namespace options {
@@ -133,7 +133,6 @@ private:
 	utility::vector1< std::string > value_strings_;
 
 }; // ResidueChainVectorOption
-
 
 
 } // namespace options

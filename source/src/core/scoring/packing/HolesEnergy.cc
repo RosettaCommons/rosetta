@@ -21,20 +21,16 @@
 //Package headers
 
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/database/open.hh>
 #include <core/id/CacheableAtomID_MapVector.hh>
 #include <basic/options/option.hh>
 
 #include <core/scoring/packing/compute_holes_score.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
@@ -42,7 +38,6 @@
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -197,8 +192,6 @@ HolesEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
-
 
 
 } // packing

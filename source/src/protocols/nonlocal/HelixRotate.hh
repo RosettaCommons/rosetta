@@ -20,12 +20,10 @@
 #include <string>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>

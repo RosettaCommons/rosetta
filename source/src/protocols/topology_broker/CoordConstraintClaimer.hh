@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -68,7 +68,7 @@ public:
 
 	virtual void generate_claims( claims::DofClaims& );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -84,12 +84,12 @@ public:
 
 	virtual void new_decoy( core::pose::Pose const& );
 
-	///@brief superimpose xyz coords in constraints_ with pose
+	/// @brief superimpose xyz coords in constraints_ with pose
 	void superimpose( core::pose::Pose const& ) const;
 
 protected:
 
-	///@brief virtual functions for IO
+	/// @brief virtual functions for IO
 	virtual bool read_tag( std::string tag, std::istream & );
 	virtual void set_defaults();
 	virtual void init_after_reading();
@@ -112,22 +112,22 @@ private:
 	bool bUseXYZ_in_cstfile_;
 	core::pose::PoseOP cst_pose_;
 
-	///@brief true if constraints are active in centroid mode
+	/// @brief true if constraints are active in centroid mode
 	bool bCentroid_;
 
-	///@brief true if constraints are active in full-atom mode
+	/// @brief true if constraints are active in full-atom mode
 	bool bFullatom_;
 
-	///@brief tmp for backwards compatibility
+	/// @brief tmp for backwards compatibility
 	bool bLocal_;
 
-	///@brief add 0..perturb_ random number to xyz-coords.
+	/// @brief add 0..perturb_ random number to xyz-coords.
 	core::Real perturb_;
 
-	///@brief superimpose xyz coordinates with pose in add_constraints()
+	/// @brief superimpose xyz coordinates with pose in add_constraints()
 	bool bSuperimpose_;
 
-	///@brief superimpose on these residues
+	/// @brief superimpose on these residues
 	loops::Loops superimpose_regions_;
 
 }; //class CoordConstraintClaimer

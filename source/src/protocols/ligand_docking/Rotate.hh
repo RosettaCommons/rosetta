@@ -25,16 +25,13 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Scoring grid headers
-// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 
 //// Project Headers
 #include <core/kinematics/Jump.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/grid/CartGrid.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +95,7 @@ private:
 
 	void rotate_ligand(core::pose::Pose & pose);
 
-	///@brief  These should have repulsive and attractive scores under the threshold
+	/// @brief  These should have repulsive and attractive scores under the threshold
 	utility::vector1< Ligand_info> create_random_rotations(
 			utility::pointer::shared_ptr<core::grid::CartGrid<int> > const & grid,
 			protocols::rigid::RigidBodyMoverOP const mover,

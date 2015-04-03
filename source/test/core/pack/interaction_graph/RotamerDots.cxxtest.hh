@@ -21,9 +21,7 @@
 #include <core/scoring/sasa.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Utility Headers
@@ -31,7 +29,6 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Test headers
 #include <test/core/init_util.hh>
@@ -91,7 +88,6 @@ public:
 	}
 
 
-
 	// --------------- Test Fixture --------------- //
 
 	// Define a test fixture (some initial state that several tests share)
@@ -121,7 +117,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	/// @detailed
+	/// @details
 	/// Tests to make sure when doing a design on only some residues that certain residues are indeed being treated and set
 	/// as background nodes. If this array returns the wrong indices, background nodes are not being set properly.
 	///
@@ -135,7 +131,7 @@ public:
 		TS_ASSERT_EQUALS( ds.get_dot_covered( 162 ), 0 );
 	}
 
-	// @detailed
+	// @details
 	// tests to make sure the member function get_total_dots is correct
 	void test_dotsphere_get_total_dots() {
 		TR << "Running test_dotsphere_get_total_dots..." << std::endl;

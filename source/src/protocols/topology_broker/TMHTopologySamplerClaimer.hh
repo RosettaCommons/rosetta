@@ -9,7 +9,7 @@
 
 /// @file src/protocols/topology_broker/TMHTopologySamplerClaimer.hh
 /// @brief header file for TMHTopologySamplerClaimer, to be used by the TopologyBroker for de novo folding of TM proteins
-/// @detailed header for sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
+/// @details header for sampling protocol that treats transmembrane helices as rigid bodies and moves them around to improve
 /// 	sampling of membrane protein topologies
 ///
 /// @author Stephanie H. DeLuca (stephanie.h.deluca@vanderbilt.edu)
@@ -53,19 +53,19 @@ class TMHTopologySamplerClaimer : public TopologyClaimer{
 public:
 	TMHTopologySamplerClaimer();
 
-	///@brief constructor: supply mover classes for Fragment Moves
+	/// @brief constructor: supply mover classes for Fragment Moves
 	TMHTopologySamplerClaimer(topology_broker::TopologyBrokerOP broker);
 
-	///@brief destructor
+	/// @brief destructor
 	virtual
 	~TMHTopologySamplerClaimer();
 
-	///@brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance
+	/// @brief TMHTopologySamplerClaimer has virtual functions... use this to obtain a new instance
 	virtual TopologyClaimerOP clone() const {
 		return TopologyClaimerOP( new TMHTopologySamplerClaimer( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -74,17 +74,17 @@ public:
 		return "TMHTopologySamplerClaimer";
 	}
 
-	///@brief register cmd-line options in option system ( call before core::init )
+	/// @brief register cmd-line options in option system ( call before core::init )
 	static void
 	register_options();
 
-	///@brief get the pose from the boker and set it as this object's pose
+	/// @brief get the pose from the boker and set it as this object's pose
 	virtual void set_pose_from_broker(core::pose::Pose& pose);
 
-	///@brief read in the pose's spans via the MembraneTopology store din the pose, determine jumps, TMHs, loops, etc.
+	/// @brief read in the pose's spans via the MembraneTopology store din the pose, determine jumps, TMHs, loops, etc.
 	virtual void pre_process(core::pose::Pose& pose);
 
-	///@brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
+	/// @brief the broker checks if the claimer builds its own fold tree to figure out if needs to build one itself
 	virtual bool claimer_builds_own_fold_tree();
 
 	//getter function to retrieve this claimer's fold tree for the broker
@@ -93,13 +93,13 @@ public:
 	//getter function to retrieve this claimer's current_pose (to get after moving spans)
 	virtual core::pose::PoseOP get_pose_from_claimer();
 
-	///@brief generate DofClaims
+	/// @brief generate DofClaims
 	virtual void generate_claims( claims::DofClaims& dof_claims); //add to list ( never call clear() on list )
 
-	///@brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
+	/// @brief make move_map and add the DoF claims from generate_claims() to the movemap.  Now we can move certain parts with certain DOFs.
 	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_dofs, claims::DofClaims& failed_to_init);
 
-	///@brief claimers can add movers to the RandomMover (Container).
+	/// @brief claimers can add movers to the RandomMover (Container).
 	/// add your moves, make it dependent on stage if you want to. So far this is called only by abinitio...
 	/// if you don't want to do anything special --- don't overload this method!
 	/// default: adds mover given by virtual call get_mover()  with stage-dependent weight given by abinitio_mover_weight_
@@ -111,32 +111,32 @@ public:
 		core::Real /* progress */ /* progress within stage */
 	);
 
-	///@brief this claimer builds its own radial fold tree based on read-in spanfile
+	/// @brief this claimer builds its own radial fold tree based on read-in spanfile
 	virtual void build_fold_tree(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree);
 
-	///@brief read tag from topology broker file (setup.tpb)
+	/// @brief read tag from topology broker file (setup.tpb)
 	virtual bool read_tag( std::string tag, std::istream& is );
 
 protected:
-	///@brief called by constructor ---  calls all set_default_XXX methods
+	/// @brief called by constructor ---  calls all set_default_XXX methods
 	void set_defaults();
 
-	///@brief Make extended chain an idealized helix
+	/// @brief Make extended chain an idealized helix
 	void set_pose_torsions(core::pose::Pose& pose);
 
-	///@brief move helices closer together
+	/// @brief move helices closer together
 	void move_spans(core::pose::Pose& pose);
 
-	///@brief output membrane center and normal as virtual atoms
+	/// @brief output membrane center and normal as virtual atoms
 	core::Vector output_membrane_vector(core::pose::Pose& pose);
 
-	///@brief pre-compute grid points where you want to move the helices
+	/// @brief pre-compute grid points where you want to move the helices
 	utility::vector1<core::Vector> pre_compute_grid_points(core::pose::Pose& pose);
 
-	///@brief get membrane topology information
+	/// @brief get membrane topology information
 	core::scoring::MembraneTopologyOP get_membrane_topology(core::pose::Pose& pose);
 
-	///@brief get membrane embedding information
+	/// @brief get membrane embedding information
 	core::scoring::MembraneEmbed get_membrane_embed(core::pose::Pose& pose);
 
 private:

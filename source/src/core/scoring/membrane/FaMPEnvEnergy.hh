@@ -100,7 +100,7 @@ public:
 		Vector & F2
 		) const;
 	
-	///@brief Fa_MbenvEnergy is context independent
+	/// @brief Fa_MbenvEnergy is context independent
 	virtual
 	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const;

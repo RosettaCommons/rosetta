@@ -73,7 +73,6 @@ using basic::T;
 #include <core/import_pose/import_pose.hh>
 
 
-
 using basic::Error;
 using basic::Warning;
 
@@ -120,7 +119,7 @@ store_energies( ObjexxFCL::FArray2D< double > &two_d_e_arrays,
 			num_score_components++;
 		}
 	}
-	//
+
 
 	two_d_e_arrays.dimension(num_score_components,size_to_expect);
 
@@ -332,7 +331,6 @@ main( int argc, char * argv [] )
 			//store components of energy breakdown in 2D array for easy averaging later on
 			store_energies(wt_score_components, (*score_structure_scorefxn), temporary_pose,i,num_iterations);
 			//end store components
-
 
 
 			if(debug_output){

@@ -173,7 +173,6 @@ sub mmult {
 }
 
 
-
 # matrix inversion
 sub minv {
 	my $M = shift;

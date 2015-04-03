@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           maintains list of ToplogyClaimers
 ///           maintains DofClaims -- exclusive or non-exclusively markedup dofs like BackboneClaim, IntraResClaim, JumpClaim
 ///           generates FoldTree, MoveMap, and collects samplers provided by TopologyClaimers
@@ -592,7 +592,7 @@ void TopologyBroker::initialize_sequence( claims::DofClaims& claims, core::pose:
 	//REMEMBER: make cuts at end of each sequence?
 }
 
-///@brief get the sequence claim that is consistent with the label,
+/// @brief get the sequence claim that is consistent with the label,
 /// throws EXCN_Unknown_SequenceLabel if not found
 claims::SequenceClaim& TopologyBroker::resolve_sequence_label( std::string const& label ) const {
 	claims::SequenceClaimOP found(NULL);
@@ -985,7 +985,7 @@ bool TopologyBroker::check_chainbreak_variants(
 	return success;
 }
 
-///@brief if some claimer wants to influence the movemap for relax he can do it here:
+/// @brief if some claimer wants to influence the movemap for relax he can do it here:
 void TopologyBroker::adjust_relax_movemap( core::kinematics::MoveMap& mm) const {
 	for ( TopologyClaimers::const_iterator top = claimers_.begin();
 				top != claimers_.end(); ++top ) {

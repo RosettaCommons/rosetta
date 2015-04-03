@@ -21,7 +21,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
@@ -37,16 +36,12 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <core/kinematics/MoveMap.fwd.hh> // needed?
 
 #include <sstream>
@@ -59,7 +54,7 @@ namespace ligand_docking {
 
 using namespace ObjexxFCL;
 
-///@brief append interface_delta scores
+/// @brief append interface_delta scores
 void
 append_interface_deltas(
 		core::Size jump_id,
@@ -221,8 +216,8 @@ append_interface_deltas(
 	}
 }
 
-///@brief Another interesting metric -- how far does the ligand centroid move?
-///@brief Large values indicate we're outside of the intended binding site.
+/// @brief Another interesting metric -- how far does the ligand centroid move?
+/// @brief Large values indicate we're outside of the intended binding site.
 void
 append_ligand_travel(
 		core::Size jump_id,
@@ -342,8 +337,8 @@ void append_ligand_grid_scores(
 
 }
 
-///@brief Calculate radius of gyration for downstream non-H atoms
-///@brief Ligands tend to bind in outstretched conformations...
+/// @brief Calculate radius of gyration for downstream non-H atoms
+/// @brief Ligands tend to bind in outstretched conformations...
 void
 append_radius_of_gyration(
 		core::Size jump_id,

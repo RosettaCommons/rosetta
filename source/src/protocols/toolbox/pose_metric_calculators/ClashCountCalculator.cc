@@ -27,9 +27,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 
 #include <utility/assert.hh>
 
@@ -130,7 +128,6 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 		}// jpos
 	}//ipos
 }
-
 
 
 } // PoseMetricCalculators

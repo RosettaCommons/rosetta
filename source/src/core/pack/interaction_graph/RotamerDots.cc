@@ -179,13 +179,10 @@ void write_sphere_list_farray( std::ostream & ostr, std::string const & label, s
 }
 
 
-
 //----------------------------------------------------------------------------//
 //----------------------------- Dot Sphere Class -----------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin DotSphere::DotSphere
 ///
 /// @brief
 /// default constructor, initializes all dot counts to zero
@@ -198,20 +195,14 @@ DotSphere::DotSphere() :
 	zero();
 }
 
-
-///
-/// @begin DotSphere::~DotSphere
 ///
 DotSphere::~DotSphere() {}
 
-
-///
-/// @begin DotSphere::DotSphere
 ///
 /// @brief
 /// copy constructor
 ///
-/// @detailed
+/// @details
 /// memcpy is much faster than the FArray operator =
 ///
 DotSphere::DotSphere( DotSphere const & rhs ) {
@@ -220,9 +211,6 @@ DotSphere::DotSphere( DotSphere const & rhs ) {
 	memcpy( dots_coverage_count_, rhs.dots_coverage_count_, NUM_COUNTS_TO_ALLOCATE );
 }
 
-
-///
-/// @begin DotSphere::operator=
 ///
 /// @brie=
 /// assignment operator
@@ -234,9 +222,6 @@ DotSphere const & DotSphere::operator= ( DotSphere const & rhs ) {
 	return *this;
 }
 
-
-///
-/// @begin DotSphere::operator!=
 ///
 /// @brief
 /// Comparison operator. Using this in debugging. When alternate state rotamer dots is not equal to current state
@@ -261,9 +246,7 @@ bool DotSphere::operator!= ( DotSphere const & rhs ) {
 }
 
 ///
-/// @begin DotSphere::zero
-///
-/// @detailed
+/// @details
 /// sets the dot coverage counts to zero for all dots
 /// memset is fast -- a lot of time is spent in this function so I'm using c-style arrays instead of the FArrays
 ///
@@ -275,14 +258,11 @@ void DotSphere::zero() {
 	num_covered_current_ = true;
 }
 
-
-///
-/// @begin DotSphere::increment_count
 ///
 /// @brief
 /// increment the count for the dots using an input ubyte array.
 ///
-/// @detailed
+/// @details
 /// Each bit in this ubyte array corresponds to a single dot on the surface of this sphere. Dot coverage counts are
 /// incremented for dots whose corresponding bits in the ubyte array are '1'. dots_coverage_count_ is C-style array
 /// of unsigned chars. So, index 0 returns the first char (or one byte), index 20*8+7, or 167, is the last char/byte.
@@ -325,14 +305,11 @@ void DotSphere::increment_count( utility::vector1< ObjexxFCL::ubyte > const & ov
 	num_covered_current_ = false;
 }
 
-
-///
-/// @begin DotSphere::get_num_uncovered
 ///
 /// @brief
 /// returns the total number of dots on this atom whose coverage count is 0
 ///
-/// @detailed
+/// @details
 /// if the coverage count has not been modified since the last time the number of covered dots was counted, then the
 /// method uses the cached result.
 ///
@@ -343,14 +320,11 @@ Size DotSphere::get_num_uncovered() const {
 	return NUM_DOTS_TOTAL - num_covered_;
 }
 
-
-///
-/// @begin DotSphere::get_num_covered
 ///
 /// @brief
 /// returns the total number of dots on this atom with a non-zero coverage count
 ///
-/// @detailed
+/// @details
 /// if the coverage count has not been modified since the last time the number of covered dots was counted, then the
 /// method uses the cached result
 ///
@@ -360,14 +334,11 @@ Size DotSphere::get_num_covered() const {
 	return num_covered_;
 }
 
-
-///
-/// @begin DotSphere::count_num_covered
 ///
 /// @brief
 /// iterates across all dots and stores the number with a non-zero coverage count for later use
 ///
-/// @detailed
+/// @details
 /// both num_covered_ and num_covered_current_ are declared mutable so that they may be modified in this const method
 ///
 void DotSphere::count_num_covered() const {
@@ -385,9 +356,6 @@ void DotSphere::count_num_covered() const {
 	num_covered_current_ = true;
 }
 
-
-///
-/// @begin DotSphere::operator -=
 ///
 /// @brief
 /// decrements the coverage count for this sphere by the coverage count of the rhs sphere
@@ -400,9 +368,6 @@ DotSphere const & DotSphere::operator -= ( DotSphere const & rhs ) {
 	return *this;
 }
 
-
-///
-/// @begin DotSphere::operator +=
 ///
 /// @brief
 /// increments the coverage count for this sphere by the coverage count of the rhs sphere
@@ -415,9 +380,6 @@ DotSphere const & DotSphere::operator += ( DotSphere const & rhs ) {
 	return *this;
 }
 
-
-///
-/// @begin DotSphere::get_dot_covered
 ///
 /// @brief
 /// Returns a boolean indicating whether the given dot is covered. Note, this function takes in a 1-based dot-index
@@ -428,9 +390,6 @@ debug_assert( dot_index > 0 && dot_index <= NUM_DOTS_TOTAL );
 	return ( dots_coverage_count_[ dot_index - 1 ] != 0 );
 }
 
-
-///
-/// @begin DotSphere::write_to_compact_array
 ///
 /// @brief
 /// note, this method results in loss of information; counts > 1 are truncated to 1.
@@ -477,8 +436,6 @@ void DotSphere::invert_to_compact_array( utility::vector1< ObjexxFCL::ubyte > & 
 }
 
 ///
-/// @begin DotSphere::print
-///
 /// @brief
 /// Writes coverage counts to the output stream.  if a dot is covered by 10 or more residues, prints 9 to the output stream instead.
 /// Useful for debugging.
@@ -499,8 +456,6 @@ void DotSphere::print( std::ostream & os ) const {
 	return;
 }
 
-///
-/// @begin operator<< ( ostream, DotSphere)
 ///
 /// @brief
 /// invokes print on the input DotSphere object
@@ -524,9 +479,6 @@ utility::vector1< core::Vector > RotamerDots::dot_coords_( 0 );
 ObjexxFCL::FArray2D_int const *   RotamerDots::lg_angles_( 0 );
 ObjexxFCL::FArray2D_ubyte const * RotamerDots::lg_masks_( 0 );
 
-
-///
-/// @begin RotamerDots::RotamerDots
 ///
 RotamerDots::RotamerDots():
 	rotamer_(/* 0 */),
@@ -536,12 +488,10 @@ RotamerDots::RotamerDots():
 {}
 
 ///
-/// @begin RotamerDots::RotamerDots
-///
 /// @brief
 /// Custom constructor for a RotamerDots object
 ///
-/// @detailed
+/// @details
 /// One RotamerDots object get allocated for every state of a first class IG Node, for all first class IG Nodes of a
 /// protein being designed. That's potentially a very large number of states. This class should only hold the information
 /// it needs to hold to do its job.
@@ -580,15 +530,10 @@ RotamerDots::RotamerDots(
 }
 
 ///
-/// @begin RotamerDots::~RotamerDots
-///
 RotamerDots::~RotamerDots() {
 	//TR_RD << "called destructor" << std::endl;
 }
 
-
-///
-/// @begin RotamerDots::RotamerDots
 ///
 /// @brief
 /// copy constructor
@@ -605,9 +550,6 @@ RotamerDots::RotamerDots( RotamerDots const & rhs ) :
 	radii_( rhs.radii_ )
 {}
 
-
-///
-/// @begin RotamerDots::copy
 ///
 /// @brief
 /// Copy method for the RotamerDots class. Also used by the assignment operator.
@@ -624,15 +566,11 @@ void RotamerDots::copy( RotamerDots const & rhs ) {
 }
 
 ///
-/// @begin RotamerDots::operator=
-///
 RotamerDots const & RotamerDots::operator=( RotamerDots const & rhs ) {
 	copy( rhs );
 	return *this;
 }
 
-///
-/// @begin RotamerDots::operator!=
 ///
 /// @brief
 /// Used during debugging of the HPatchIG.  Some extra information is printed if current state dots is NOT EQUAL to
@@ -659,14 +597,11 @@ bool RotamerDots::operator!=( RotamerDots const & rhs ) {
 	return false;
 }
 
-
-///
-/// @begin RotamerDots::zero
 ///
 /// @brief
 /// Zeros out all of the contained data except the rotamer pointer and the radii array.
 ///
-/// @detailed
+/// @details
 /// So far, this function only gets called by the BGNode::prep_for_simA() call so that multiple runs through an
 /// interaction graph can be done. If the rotamer dots object on the BGNodes isn't "cleared" after a run, then the run
 /// immediately following will have the incorrect counts.
@@ -687,14 +622,11 @@ void RotamerDots::zero() {
 
 }
 
-
-///
-/// @begin RotamerDots::overlaps
 ///
 /// @brief
 /// Returns true if this RotamerDots object has any sphere overlap with the passed in RotamerDots object.
 ///
-/// @detailed
+/// @details
 /// This method only checks to see if two RotamerDots objects are within touching distance of each other. It is used
 /// to determine whether Edges or BGEdges should be created in the IG. Calculate this using the expanded polar atom
 /// radii. If we don't, there's a chance that a state substitution on a Node may cause SASA changes (when expanded polars
@@ -721,17 +653,12 @@ bool RotamerDots::overlaps( RotamerDots const & other ) const {
 	return false;
 }
 
-
-///
-/// @begin RotamerDots::rotamer
 ///
 core::conformation::ResidueCOP
 RotamerDots::rotamer() const {
 	return rotamer_;
 }
 
-///
-/// @begin RotamerDots::state_unassigned
 ///
 /// @brief
 /// Is the state of this RotamerDots object unassigned?
@@ -743,8 +670,6 @@ bool RotamerDots::state_unassigned() const {
 }
 
 ///
-/// @begin RotamerDots::get_num_atoms
-///
 /// @brief
 /// Returns the number of atoms this RotamerDots object is keeping SASA for.
 ///
@@ -752,8 +677,6 @@ Size RotamerDots::get_num_atoms() const {
 	return num_atoms_;
 }
 
-///
-/// @begin RotamerDots::get_atom_coords_xyz
 ///
 /// @brief
 /// Return the xyz coordinates of an atom in this RotamerDots instance.
@@ -765,14 +688,11 @@ numeric::xyzVector< Real > RotamerDots::get_atom_coords_xyz( Size atom_index ) c
 	return rotamer_->xyz( atom_index );
 }
 
-
-///
-/// @begin RotamerDots::get_atom_radius
 ///
 /// @brief
 /// Returns the SASA radius for the passed in atom type. The DB file should have been read in at construct time.
 ///
-/// @detailed
+/// @details
 /// Many of the functions in this class iterate over 1 .. num_atoms_.
 /// That's not the same thing as an atom type index which is what the radii vector is indexed with. So before we can return
 /// the radius, we have to convert the passed in atom_index into the right atom in the residue and then use that to get the
@@ -788,8 +708,6 @@ Real RotamerDots::get_atom_radius( Size atom_index ) const {
 }
 
 ///
-/// @begin RotamerDots::radius_for_attype
-///
 /// @brief
 /// Same as the above, but skips the conversion from atom index to atom type index.
 ///
@@ -798,9 +716,6 @@ RotamerDots::radius_for_attype( Size const attype_index ) {
 	return (*radii_)[ attype_index ];
 }
 
-
-///
-/// @begin RotamerDots::max_atom_radius
 ///
 /// @brief
 /// Returns the maximum atom radius. Used only by the SurfacePotential class.
@@ -810,9 +725,6 @@ RotamerDots::max_atom_radius() {
 	return utility::max( *radii_ );
 }
 
-
-///
-/// @begin RotamerDots::get_radii
 ///
 /// @brief
 /// Returns a pointer to the radii vector. Used only by the InvRotamerDots class.
@@ -822,8 +734,6 @@ RotamerDots::get_radii() const {
 	return radii_;
 }
 
-///
-/// @begin RotamerDots::invert_to_boolmasks
 ///
 /// @brief
 /// Inverts the current dot counts and saves them to the passed in vector.
@@ -855,14 +765,11 @@ RotamerDots::dot_coord( Size index ) {
 	return dot_coords_[ index ];
 }
 
-
-///
-/// @begin RotamerDots::initialize_sasa_arrays
 ///
 /// @brief
 /// Initializes the pointers to the angles and masks FArrays used by sasa.cc and inits the dot sphere coordinates.
 ///
-/// @detailed
+/// @details
 /// This call should only occur once (when the first RotamerDots object get constructed) and never again.
 ///
 void RotamerDots::initialize_sasa_arrays() {
@@ -878,14 +785,11 @@ void RotamerDots::initialize_sasa_arrays() {
 	return;
 }
 
-
-///
-/// @begin RotamerDots::increment_self_overlap
 ///
 /// @brief
 /// computes and stores self-induced dot coverage. uses a vector1 of vector1 of ubytes to store the calculated overlap information.
 ///
-/// @detailed
+/// @details
 /// uses get_atom_atom_coverage() which in turn uses get_overlap() and get_orientation() method calls in sasa.cc to get
 /// the right overlap "masks". when all atom pairs are complete, converts the masks into coverage "counts" which are stored
 /// in the DotSphere class (member variable atom_counts_).
@@ -927,14 +831,11 @@ void RotamerDots::increment_self_overlap() {
 	sasa_is_current_ = false;
 }
 
-
-///
-/// @begin RotamerDots::increment_this_and_cache
 ///
 /// @brief
 /// Add rotamer coverage counts for dots on this object only, leaving rhs unaltered.
 ///
-/// @detailed
+/// @details
 /// In the context of the HPatchIG, this method is called by all FCNodes to increment the overlap a BG residue has on
 /// the FCNode. It is called by all BG Edges, to make sure that all FCNodes that are connected to a BG residue get this
 /// method called by them. 'other' in this case is a BG residue, and 'this_overlap_on_other' is the overlap that is
@@ -973,9 +874,6 @@ void RotamerDots::increment_this_and_cache(
 
 }
 
-
-///
-/// @begin RotamerDots::get_overlap_cache
 ///
 /// @brief
 /// computes the overlap each rotamer (this & other) induce on each other and stores that information in the RotamerDotsCache objects
@@ -1035,9 +933,6 @@ void RotamerDots::get_overlap_cache(
 
 }
 
-
-///
-/// @begin RotamerDots::get_res_res_overlap()
 ///
 /// @brief
 /// Calls get_atom_atom_coverage for all atom pairs between res1 and res2. This method gets called by RotamerDots::get_overlap_cache().
@@ -1077,9 +972,6 @@ void RotamerDots::get_res_res_overlap(
 	}
 }
 
-
-///
-/// @begin RotamerDots::get_atom_atom_coverage()
 ///
 /// @brief
 /// returns false if the two spheres do not overlap at all. otherwise, saves the overlap masks to the input vectors.
@@ -1126,9 +1018,6 @@ bool RotamerDots::get_atom_atom_coverage( Vector const & at1_xyz, Real at1_base_
 	return true;
 }
 
-
-///
-/// @begin RotamerDots::increment_from_cached
 ///
 /// @brief
 /// Increments the dot coverage count for this rotamer from a coverage cache
@@ -1145,9 +1034,6 @@ debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	sasa_is_current_ = false;
 }
 
-
-///
-/// @begin RotamerDots::decrement_from_cached
 ///
 /// @brief
 /// decrements the dot coverage count for this by the coverage stored in the input RotamerDotsCache object
@@ -1162,14 +1048,11 @@ debug_assert( cache.atom_counts_.size() == atom_counts_.size() );
 	sasa_is_current_ = false;
 }
 
-
-///
-/// @begin RotamerDots::increment_both
 ///
 /// @brief
 /// Add rotamer coverage counts for dots on both this and other. sets sasa_is_current_ to false on both this and rhs
 ///
-/// @detailed
+/// @details
 /// One use case involves BGNodes initializing overlap with other BGNodes. This is a brute force all BGNode v all BGNode
 /// pairwise increment on the RotamerDots objects each Node holds. That's why we call increment *both*.
 /// We don't care about the cache values in this case, but to use increment_both_and_cache, we have to create Cache variables
@@ -1191,9 +1074,7 @@ void RotamerDots::increment_both( RotamerDots & other ) {
 }
 
 ///
-/// @begin RotamerDots::increment_both_and_cache
-///
-/// @detailed
+/// @details
 /// Add rotamer coverage counts for dots on both this and other. Cache's the overlap this and other have with each other for greater efficiency.
 /// The second parameter are the dots on the surface of other_rotamer that this overlaps. The third parameter are the dots on the surface of this
 /// that other_rotamer overlaps. The fourth parameter lives on the Edges of the IG and stores a boolean indicating whether two atoms have
@@ -1218,14 +1099,11 @@ void RotamerDots::increment_both_and_cache( RotamerDots & other_rotamer, Rotamer
 
 }
 
-
-///
-/// @begin RotamerDots::get_sasa
 ///
 /// @brief
 /// Given the current dot coverage counts, returns the total SASA of this residue.
 ///
-/// @detailed
+/// @details
 /// This method does not do any work figuring out who is overlapping with this rotamer. It assumes that work has been
 /// done. Instead, it returns the SASA of the dot counts currently held.  If the dot counts have not changed since the
 /// last time get_sasa() got called then sasa_is_current_ will be true.  In that case, the method will just return the
@@ -1263,9 +1141,6 @@ Real RotamerDots::get_sasa() const {
 	return sasa_;
 }
 
-
-///
-/// @begin RotamerDots::get_atom_sasa
 ///
 /// @brief
 /// Given the current dot coverage counts, returns the total SASA for a particular atom index.
@@ -1278,9 +1153,6 @@ Real RotamerDots::get_atom_sasa( Size atom_index ) const {
 	return atom_sasa_[ atom_index ];
 }
 
-
-///
-/// @begin RotamerDots::get_num_uncovered
 ///
 /// @brief
 /// Returns the number of uncovered dots on the given atom, when using standard SASA radii.
@@ -1290,9 +1162,6 @@ Size RotamerDots::get_num_uncovered( Size atom ) const {
 	return atom_counts_[ atom ].get_num_uncovered();
 }
 
-
-///
-/// @begin RotamerDots::get_num_covered
 ///
 /// @brief
 /// Note: no expanded polars version of this method.
@@ -1307,9 +1176,6 @@ Size RotamerDots::get_num_covered_total() const {
 	return total_num_covered;
 }
 
-
-///
-/// @begin RotamerDots::write_dot_kinemage
 ///
 /*void RotamerDots::write_dot_kinemage( std::ofstream & kinfile ) {
 
@@ -1346,16 +1212,11 @@ Size RotamerDots::get_num_covered_total() const {
 	}
 }
 
-
-///
-/// @begin RotamerDots::write_dotlist_header
 ///
 void RotamerDots::write_dotlist_header( std::ofstream & kinfile, std::string master_name, std::string color ) {
 	kinfile << "@dotlist master= {" << master_name << "} color= " << color << "\n";
 }
 
-///
-/// @begin RotamerDots::write_dot
 ///
 void RotamerDots::write_dot( std::ofstream & kinfile, Size atom, Size dot, Real radius ) {
 	static numeric::xyzVector< Real > coord;
@@ -1365,8 +1226,6 @@ void RotamerDots::write_dot( std::ofstream & kinfile, Size atom, Size dot, Real 
 	write_dot( kinfile, coord, "dot" );
 }
 
-///
-/// @begin RotamerDots::write_dot
 ///
 void RotamerDots::write_dot( std::ofstream & kinfile, numeric::xyzVector< Real > const & coord, std::string atname ) {
 	static std::string last_atname = "";
@@ -1378,9 +1237,6 @@ void RotamerDots::write_dot( std::ofstream & kinfile, numeric::xyzVector< Real >
 	}
 }
 
-
-///
-/// @begin RotamerDots::get_dot_coord
 ///
 numeric::xyzVector<Real> const & RotamerDots::get_dot_coord( Size dot_id ) {
 	if ( ! dot_sphere_coordinates_initialized_ ) {
@@ -1389,9 +1245,6 @@ numeric::xyzVector<Real> const & RotamerDots::get_dot_coord( Size dot_id ) {
 	return dot_sphere_coordinates_[ dot_id ];
 }
 
-
-///
-/// @begin RotamerDots::initialize_dot_sphere_coordinates_from_file
 ///
 void RotamerDots::initialize_dot_sphere_coordinates_from_file() {
 
@@ -1409,8 +1262,6 @@ void RotamerDots::initialize_dot_sphere_coordinates_from_file() {
 }
 */
 
-///
-/// @begin RotamerDots::print
 ///
 void RotamerDots::print( std::ostream & os ) const {
 
@@ -1433,8 +1284,6 @@ void RotamerDots::print( std::ostream & os ) const {
 std::string RotamerDots::name3() const { return rotamer_->name3(); } // for operator<<
 core::Size  RotamerDots::seqpos() const { return rotamer_->seqpos(); } // for operator<<
 
-///
-/// @begin operator<< ( ostream, RotamerDots )
 ///
 /// @brief
 /// invokes print on the input RotamerDots object
@@ -1716,22 +1565,14 @@ RotamerDotsRadiusData::get_NACCESS_SASA_radii_with_expanded_polars() const
 //------------------------- Rotamer Dots Cache Class -------------------------//
 //----------------------------------------------------------------------------//
 
-
-///
-/// @begin RotamerDotsCache::RotamerDotsCache
 ///
 RotamerDotsCache::RotamerDotsCache() {}
 
-///
-/// @begin RotamerDotsCache::RotamerDotsCache
 ///
 RotamerDotsCache::RotamerDotsCache( Size num_atoms ) {
 	atom_counts_.resize( num_atoms );
 }
 
-
-///
-/// @begin RotamerDotsCache::RotamerDotsCache
 ///
 /// @brief
 /// copy constructor
@@ -1740,15 +1581,9 @@ RotamerDotsCache::RotamerDotsCache( RotamerDotsCache const & rhs ) :
 	atom_counts_( rhs.atom_counts_ )
 {}
 
-
-///
-/// @begin RotamerDotsCache::~RotamerDotsCache
 ///
 RotamerDotsCache::~RotamerDotsCache() {}
 
-
-///
-/// @begin RotamerDotsCache::operator=
 ///
 /// @brief
 /// assignment operator
@@ -1758,9 +1593,6 @@ RotamerDotsCache const & RotamerDotsCache::operator=( RotamerDotsCache const & r
 	return *this;
 }
 
-
-///
-/// @begin RotamerDotsCache::resize
 ///
 void RotamerDotsCache::resize( Size num_atoms ) {
 	//TR_RDC << "resize() called with num_atoms: " << num_atoms << std::endl;
@@ -1768,14 +1600,11 @@ void RotamerDotsCache::resize( Size num_atoms ) {
 	atom_counts_.resize( num_atoms );
 }
 
-
-///
-/// @begin RotamerDotsCache::zero
 ///
 /// @brief
 /// sets the dot counts to zero for all atoms
 ///
-/// @detailed
+/// @details
 /// if the cache already knows the atom's counts are uniformly 0, it skips it
 ///
 void
@@ -1788,9 +1617,6 @@ RotamerDotsCache::zero() {
 	//atom_counts_.clear(); // leaving this in causes the vector to be sized down to 0, causing problems
 }
 
-
-///
-/// @begin RotamerDotsCache::increment_count
 ///
 /// @brief
 /// increments the dot coverage counts for all atoms in the cache
@@ -1811,11 +1637,8 @@ debug_assert( atom_counts_.size() <= covered.size() );
 
 }
 
-
 ///
-/// @begin RotamerDotsCache::write_to_compact_array
-///
-/// @detailed
+/// @details
 /// Called by BGEdges with a reference to a vector1 of vector1 of ubytes representing where to put the compact (count)
 /// based representation of all the atom overlap masks.
 ///
@@ -1829,9 +1652,6 @@ debug_assert( compact.size() != 0 );
 	}
 }
 
-
-///
-/// @begin RotamerDotsCache::print()
 ///
 void RotamerDotsCache::print_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) const {
 	for ( Size bb = 1; bb <= values.size(); ++bb ) {
@@ -1844,9 +1664,6 @@ void RotamerDotsCache::print_bit_string( utility::vector1< ObjexxFCL::ubyte > & 
 	std::cout << std::endl;
 }
 
-
-///
-/// @begin RotamerDotsCache::print()
 ///
 void RotamerDotsCache::print( std::ostream & os ) const {
 	for ( Size ii = 1; ii <= atom_counts_.size(); ++ii ) {
@@ -2160,8 +1977,6 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 	return at2_intersection_exposed;
 }
 
-///
-/// @begin InvRotamerDots::print_dot_bit_string
 ///
 /// @brief
 /// Helper method I am using to confirm that the dots are being overlapped and bits are being set correctly.

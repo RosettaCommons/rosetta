@@ -29,8 +29,6 @@ namespace conformation {
 namespace symmetry {
 
 
-
-
 basic::resource_manager::ResourceOP
 SymmDataLoader::create_resource(
 	basic::resource_manager::ResourceOptions const &,

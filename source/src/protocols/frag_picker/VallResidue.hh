@@ -26,11 +26,9 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 
 // C++ headers
 #include <iostream>

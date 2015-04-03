@@ -106,7 +106,6 @@
 //#include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 //#include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 //#include <basic/MetricValue.fwd.hh>
-//// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 //#include <basic/Tracer.fwd.hh>
 //#include <basic/datacache/BasicDataCache.fwd.hh>
 //#include <basic/datacache/BasicDataCache.hh>

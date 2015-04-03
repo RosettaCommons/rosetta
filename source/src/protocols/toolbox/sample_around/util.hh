@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/sample_around/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

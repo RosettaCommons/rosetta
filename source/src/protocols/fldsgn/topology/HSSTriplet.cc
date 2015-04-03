@@ -22,7 +22,6 @@
 #include <boost/lexical_cast.hpp>
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
 

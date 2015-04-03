@@ -9,7 +9,7 @@
 
 /// @file core/scoring/methods/OtherPoseEnergy.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -31,7 +31,7 @@ class OtherPoseEnergy : public WholeStructureEnergy {
 public:
 	typedef WholeStructureEnergy  parent;
 
-	///
+
 	OtherPoseEnergy();
 
 	/// clone

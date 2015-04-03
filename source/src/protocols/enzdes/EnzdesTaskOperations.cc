@@ -13,7 +13,6 @@
 
 #include <protocols/motifs/BuildPosition.hh>  // REQUIRED FOR WINDOWS
 #include <protocols/motifs/Motif.hh>  // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <protocols/motifs/MotifHit.hh>  // REQUIRED FOR WINDOWS
 
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/enzdes/DetectProteinLigandInterfaceOperationCreator.hh>
@@ -32,14 +31,12 @@
 #include <protocols/motifs/LigandMotifSearch.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -61,12 +58,8 @@
 // utility includes
 #include <utility/string_util.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/motifs.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <utility/vector0.hh>
@@ -388,7 +381,6 @@ PackerTask & task) const
 			}
 		}  // end pack/design assignment loop
 	} // detect design interface
-
 
 
 	//in case we are only interested in scoring

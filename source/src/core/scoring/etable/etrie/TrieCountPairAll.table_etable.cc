@@ -395,7 +395,6 @@ void TrieCountPairAll::resolve_trie_vs_path(
 }
 
 
-
 } // namespace etrie
 } // namespace etable
 } // namespace scoring

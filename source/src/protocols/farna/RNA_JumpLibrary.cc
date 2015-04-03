@@ -9,7 +9,7 @@
 
 /// @file Library of RNA base pair jumps
 /// @brief protocols that are specific to RNA_JumpLibrary
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -29,7 +29,6 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

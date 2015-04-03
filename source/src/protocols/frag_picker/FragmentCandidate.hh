@@ -44,7 +44,7 @@ utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
 		VallProviderOP, Size max_nfrags_per_pos = 900000000);
 
 /// @brief Vector candidate says which X-mer from vall fits to a query sequence
-/// @detailed Scores for a given fragment are stored separately in a FragmentScoreMap object
+/// @details Scores for a given fragment are stored separately in a FragmentScoreMap object
 /// Therefore fragment containers hold std::pair<FragmentCandidateOP,FragmentScoreMapOP>
 ///
 class FragmentCandidate: public utility::pointer::ReferenceCount {
@@ -70,7 +70,7 @@ public:
 	}
 
 	/// @brief returns a given residue from this fragment
-	/// @detailed the irgument is in the range [1,fragmentLength]
+	/// @details the irgument is in the range [1,fragmentLength]
 	inline VallResidueOP get_residue(Size whichOne) const {
 		runtime_assert( chunk_ != 0 );
 		runtime_assert( whichOne >= 1 && whichOne <= fragmentLength_ );

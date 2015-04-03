@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_match_downstream_DownstreamAlgorithm_fwd_hh
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/Hit.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

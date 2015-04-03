@@ -33,7 +33,6 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/assert.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -61,7 +60,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	JobDistributor(),
@@ -92,7 +91,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 #endif
 }
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	core::Size master_rank,
@@ -130,7 +129,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 #endif
 }
 
-///@brief dtor
+/// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 MPIFileBufJobDistributor::~MPIFileBufJobDistributor()
@@ -161,7 +160,7 @@ MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {
 }
 
 
-///@details This is the heart of the MPIFileBufJobDistributor. It consistits of two while loops: the job
+/// @details This is the heart of the MPIFileBufJobDistributor. It consistits of two while loops: the job
 ///distribution loop (JDL) and the node spin down loop (NSDL). The JDL has three functions. The first is to recieve and
 ///process messages from the slave nodes requesting new job ids. The second is to recieve and process messages from the
 ///slave nodes indicating a bad input. The third is to recive and process job_success messages from the slave nodes and
@@ -189,7 +188,7 @@ void MPIFileBufJobDistributor::send_job_to_slave( Size MPI_ONLY(slave_rank) ) {
 #endif
 }
 
-///@details messages are received constantly by Master JobDistributor and then the virtual process_message() method
+/// @details messages are received constantly by Master JobDistributor and then the virtual process_message() method
 /// is used to assign some action to each message ... this allows child-classes to answer to more messages or change behaviour of already known messages
 bool
 MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size slave_job_id, Size slave_batch_id, core::Real runtime ) {
@@ -225,7 +224,7 @@ MPIFileBufJobDistributor::process_message( Size msg_tag, Size slave_rank, Size s
 	return true;
 }
 
-///@brief mark job as completed
+/// @brief mark job as completed
 void MPIFileBufJobDistributor::mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real runtime ) {
 	if ( runtime > 0 ) {
 		cumulated_runtime_+=runtime;
@@ -236,7 +235,7 @@ void MPIFileBufJobDistributor::mark_job_as_completed( core::Size job_id, core::S
 	}
 }
 
-///@brief mark job as failed --- remove future versions of same input from list
+/// @brief mark job as failed --- remove future versions of same input from list
 void MPIFileBufJobDistributor::mark_job_as_bad( core::Size job_id, core::Size batch_id ) {
 	if ( batch_id == current_batch_id() ) {
 		bad_job_id_ = job_id;
@@ -244,7 +243,7 @@ void MPIFileBufJobDistributor::mark_job_as_bad( core::Size job_id, core::Size ba
 	}
 }
 
-///@brief receive message of certain type -- and ignore it ... sometimes needed in communication protocol
+/// @brief receive message of certain type -- and ignore it ... sometimes needed in communication protocol
 void
 MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) {
 #ifdef USEMPI
@@ -273,7 +272,7 @@ MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) 
 	//	runtime_assert( msg_tag == msg_tag_in );
 }
 
-///@brief the main message loop --- master cycles thru until all slave nodes have been spun down
+/// @brief the main message loop --- master cycles thru until all slave nodes have been spun down
 void
 MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 {
@@ -346,7 +345,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 #endif
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 core::Size
 MPIFileBufJobDistributor::get_new_job_id()
 {
@@ -359,7 +358,7 @@ MPIFileBufJobDistributor::get_new_job_id()
 }
 
 
-///@brief work out what next job is
+/// @brief work out what next job is
 core::Size
 MPIFileBufJobDistributor::master_get_new_job_id()
 {
@@ -425,7 +424,7 @@ MPIFileBufJobDistributor::slave_get_new_job_id()
 	return slave_current_job_id_;
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIFileBufJobDistributor::mark_current_job_id_for_repetition()
 {
@@ -453,7 +452,7 @@ MPIFileBufJobDistributor::slave_mark_current_job_id_for_repetition()
 	repeat_job_ = true;
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIFileBufJobDistributor::remove_bad_inputs_from_job_list()
 {
@@ -501,7 +500,7 @@ MPIFileBufJobDistributor::slave_remove_bad_inputs_from_job_list()
 	slave_to_master( BAD_INPUT );
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIFileBufJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real runtime, std::string const & tag)
 {

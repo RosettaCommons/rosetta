@@ -46,7 +46,7 @@
 namespace devel {
 namespace replica_docking {
 
-///@details
+/// @details
 class TempWeightedMetropolisHastingsMover : public protocols::canonical_sampling::MetropolisHastingsMover {
 	typedef utility::vector1< devel::replica_docking::TempInterpolatorBaseOP > Interpolators;
 	typedef utility::vector1< core::Real > Weights;

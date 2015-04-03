@@ -15,11 +15,9 @@
 #define INCLUDED_protocols_features_ProteinRMSDFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/ProteinRMSDFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

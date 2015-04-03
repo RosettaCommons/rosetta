@@ -79,7 +79,7 @@ public:
 	/// @brief Create a mover given its identifying string
 	MoverOP newMover( std::string const & );
 
-	///@brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
+	/// @brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
 	MoverOP
 	newMover(
 		TagCOP,

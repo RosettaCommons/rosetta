@@ -23,7 +23,7 @@
 namespace numeric {
 namespace interpolation {
 
-///@details read in a file, read out a spline.
+/// @details read in a file, read out a spline.
 ///The file should be tab separated, and have two lines
 ///The first field of one line should be "x_axis", the next fields should be the x values of the points for the spline
 ///The first field of the other line should be "y_axis", the next fields should be the y values for the points on the spline

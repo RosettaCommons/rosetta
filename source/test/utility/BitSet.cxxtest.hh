@@ -18,7 +18,6 @@
 #include <cxxtest/TestSuite.h>
 
 
-//
 // Place the following definitions inside a namespace and then "use" that namespace in each of the
 // individual test functions.  Without this namespace, the linker throws a multiple definition
 // error for the operator "|" because there's one definition here and one in BitVector.cxxtest.hh
@@ -72,8 +71,6 @@ public:
 
 } // namespace b
 } // namespace vector
-
-
 
 
 class BitSetTests : public CxxTest::TestSuite {

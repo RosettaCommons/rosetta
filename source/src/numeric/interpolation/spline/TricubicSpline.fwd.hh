@@ -17,11 +17,9 @@ namespace interpolation {
 namespace spline {
 
 
-
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric
-
 
 
 #endif /* INCLUDED_numeric_interpolation_spline_TricubicSpline_fwd_hh */

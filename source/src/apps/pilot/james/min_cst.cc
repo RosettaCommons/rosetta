@@ -101,7 +101,6 @@ using basic::Error;
 #include <utility/excn/Exceptions.hh>
 
 
-
 /// @brief super-simple attempt to mimick the Modeller algorithm. Similar to FoldConstraints, except
 /// moves are made based on minimization rather than based on fragment moves.
 

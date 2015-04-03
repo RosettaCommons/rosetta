@@ -30,5 +30,4 @@ public:
 }
 
 
-
 #endif /* ADDJOBSTRINGPAIR_HH_ */

@@ -245,7 +245,7 @@ private:
 class FindZnCoordinatingResidues : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FindZnCoordinatingResidues();
 	FindZnCoordinatingResidues();
 	void fail_on_absent_coordinators( bool setting );
@@ -278,7 +278,7 @@ public:
 	virtual std::string get_name() const;
 	virtual void apply( core::pose::Pose & p );
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,
@@ -336,7 +336,6 @@ private:
 };
 
 
-
 /// @brief Handles sphere-sphere overlap calculations
 class LoadZnCoordNumHbondCalculatorMover : public protocols::moves::Mover {
 
@@ -348,7 +347,7 @@ public:
 	virtual std::string get_name() const;
 	virtual void apply( core::pose::Pose & p );
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP const,
 		basic::datacache::DataMap &,

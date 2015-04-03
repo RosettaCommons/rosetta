@@ -117,9 +117,9 @@ private:
 std::ostream & operator << ( std::ostream & os, Particle const & p );
 
 
-///@brief Particle Swarm Optimization engine.
+/// @brief Particle Swarm Optimization engine.
 ///
-///@details Algorithm details based heavily on
+/// @details Algorithm details based heavily on
 ///
 ///     Chen, Liu, Huang, Hwang, Ho (2006).
 ///     "SODOCK:  Swarm Optimization for Highly Flexible Protein-Ligand Docking"

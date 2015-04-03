@@ -32,7 +32,6 @@
 #include <basic/datacache/DataMap.hh>
 
 
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
@@ -48,19 +47,19 @@ using utility::tag::TagCOP;
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors() : parent()
 {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 RestrictToLoopsAndNeighbors::RestrictToLoopsAndNeighbors( RestrictToLoopsAndNeighbors const & rhs ) : parent(rhs)
 {
 	init_for_copy( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 RestrictToLoopsAndNeighbors & RestrictToLoopsAndNeighbors::operator=( RestrictToLoopsAndNeighbors const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;

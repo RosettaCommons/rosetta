@@ -19,10 +19,8 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

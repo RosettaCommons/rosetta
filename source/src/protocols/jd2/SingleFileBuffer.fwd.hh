@@ -9,7 +9,6 @@
 
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_protocols_jd2_SingleFileBuffer_fwd_hh

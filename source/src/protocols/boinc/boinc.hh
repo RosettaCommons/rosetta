@@ -51,11 +51,8 @@
 #endif // BOINC_GRAPHICS
 #endif // BOINC
 
-// AUTO-REMOVED #include <protocols/boinc/watchdog.hh>
-
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 
 #define BOINC_MAX_NO_PROGRESS_INIT_CNT 25 // maximum allowed restarts w/ no progress
 #define BOINC_MAX_NSTRUCT 99  // maximum nstruct that the assimilator should have to handle. More than that is likely too much to sensibly upload anyway!
@@ -71,7 +68,6 @@
 
 namespace protocols {
 namespace boinc {
-
 
 
 class Boinc {
@@ -115,7 +111,7 @@ public:
 	/// preference and the total wu_cpu_run_time. Calls BOINC API
 	/// boinc_fraction_done().
 	static void update_pct_complete(void);
-	///@brief gets the current runtime for the boinc wu
+	/// @brief gets the current runtime for the boinc wu
 	static double get_boinc_wu_cpu_time();
 	/// @brief Is the task finished?
 	static bool worker_is_finished(const int & total_nstruct);

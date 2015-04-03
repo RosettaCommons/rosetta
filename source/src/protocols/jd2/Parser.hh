@@ -87,11 +87,11 @@ public:
 	/// @param [in/out] pose this is the "starting pose" for a series of jobs; the
 	///                 function is allowed to modify it by adding constraints if
 	///                 necessary
-	///@param [in/out]  mover this is a mover; the function can choose to overwrite
+	/// @param [in/out]  mover this is a mover; the function can choose to overwrite
 	///                 the input with a new mover
-	///@param [in]      bool new_input true if this is different input (a different
+	/// @param [in]      bool new_input true if this is different input (a different
 	///                 pose) from the last job distributor cycle
-	///@param [out]     bool the return value states whether or not the pose has
+	/// @param [out]     bool the return value states whether or not the pose has
 	///                 been changed - it will be repackaged into the InnerJob only
 	///                 as necessary
 	virtual

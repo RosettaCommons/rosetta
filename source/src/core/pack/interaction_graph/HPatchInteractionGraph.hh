@@ -19,13 +19,9 @@
 //Rosetta Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 #include <core/graph/DisjointSets.hh>
 
@@ -47,7 +43,6 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>  // needed to get arg_max - DO NOT AUTO-REMOVE!
 #include <utility/exit.hh>
@@ -103,8 +98,6 @@ template < typename V, typename E, typename G > class HPatchInteractionGraph;
 //---------------------------- HPatch Node Class -------------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchNode
 ///
 /// @brief
 /// Defines a FirstClass node which will keep track of changes in the SASA and hpatch score.
@@ -282,13 +275,10 @@ class HPatchNode : public FirstClassNode< V, E, G > {
 };
 
 
-
 //----------------------------------------------------------------------------//
 //------------------------- HPatch Background Node Class -----------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchBackgroundNode
 ///
 /// @brief
 /// Defines a Background Node which will contribute to changes in SASA/hpatchE due to state changes on neighboring nodes,
@@ -405,8 +395,6 @@ class HPatchBackgroundNode : public BackgroundNode< V, E, G > {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin HPatchEdge
-///
 /// @brief
 /// Defines a HPatch Edge which connects two first-class HPatch Nodes. Edges have to keep some state so that updates
 /// to SASA and the hpatch score can be done fast.
@@ -478,13 +466,10 @@ class  HPatchEdge : public FirstClassEdge< V, E, G > {
 };
 
 
-
 //----------------------------------------------------------------------------//
 //------------------- HPatch Background Edge Class -----------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchBackgroundEdge
 ///
 /// @brief
 /// Defines an edge between a FirstClass (HPatchNode) and a background node (HPatchBackgroundNode)
@@ -556,13 +541,10 @@ class HPatchBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 };
 
 
-
 //----------------------------------------------------------------------------//
 //--------------------- HPatch Interaction Graph -------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchInteractionGraph
 ///
 /// @brief
 /// Defines the interaction graph that will keep track of changes to the hpatch score.
@@ -793,13 +775,10 @@ class HPatchInteractionGraph : public AdditionalBackgroundNodesInteractionGraph<
 };
 
 
-
 //----------------------------------------------------------------------------//
 //-------------------------------- HPatch Node Class ---------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchNode< V, E, G >::HPatchNode
 ///
 /// @brief
 /// HPatchNode constructor
@@ -816,9 +795,6 @@ HPatchNode< V, E, G >::HPatchNode( G* owner, int node_index, int num_states ) :
 	self_and_bg_dots_for_states_.resize( parent::get_num_states() );
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::~HPatchNode
 ///
 /// @brief
 /// destructor -- no dynamically allocated data, does nothing
@@ -828,9 +804,6 @@ HPatchNode< V, E, G >::~HPatchNode() {
 	//TR_NODE << "called destructor" << std::endl;
 }
 
-
-///
-/// @begin HPatchNode::set_rotamers
 ///
 /// @details
 /// Need to save a reference to the rotamer_set so that we can determine what a particular state change will do to the score
@@ -897,8 +870,6 @@ void HPatchNode< V, E, G >::set_rotamers( rotamer_set::RotamerSetCOP rotamers ) 
 }
 
 ///
-/// @begin HPatchNode::get_rotamer
-///
 /// @brief
 /// Returns a constant OP to the rotamer/residue object for the given state.
 ///
@@ -911,14 +882,11 @@ HPatchNode< V, E, G >::get_rotamer( int state ) const {
 	return rotamers_vector_[ state ];
 }
 
-
-///
-/// @begin HPatchNode::set_rotamer_dots_for_state
 ///
 /// @brief
 /// stores the coordinates for a state.
 ///
-/// @detailed
+/// @details
 /// Currently RotamerCoords stores the atoms in the order they are created for the pose. In the future, this might be
 /// changes to store the atoms in special trie order to reduce the number of sphere calculations necessary.
 ///
@@ -932,14 +900,11 @@ debug_assert( state > 0 && state <= (Size)parent::get_num_states() );
 	self_and_bg_dots_for_states_[ state ] = rd;
 }
 
-
-///
-/// @begin HPatchNode::overlaps
 ///
 /// @brief
 /// returns true if any sphere for any atom of any state on this vertex overlaps with any atom on any sphere on a neighboring vertex.
 ///
-/// @detailed
+/// @details
 /// neighbor - [in] - the vertex that neighbors this vertex
 ///
 /// @remarks
@@ -974,9 +939,6 @@ bool HPatchNode< V, E, G >::overlaps( HPatchNode< V, E, G >* neighbor ) {
 	return found_overlap;
 }
 
-
-///
-/// @begin HPatchNode::detect_any_overlap_with_rotamer
 ///
 /// @brief
 /// determines if any atom for any rotamer of this vertex overlaps with any atom from some background residue.
@@ -997,9 +959,6 @@ bool HPatchNode< V, E, G >::detect_any_overlap_with_rotamer( RotamerDots const &
 	return false;
 }
 
-
-///
-/// @begin HPatchNode::prepare_for_simulated_annealing
 ///
 /// @brief
 /// invokes V's prep_for_simA method. Also computes the "self-overlap" that each of its rotamers has.
@@ -1036,9 +995,6 @@ HPatchNode< V, E, G >::prepare_for_simulated_annealing() {
 	initialize_atom_atom_overlap_cache();
 }
 
-
-///
-/// @begin HPatchNode::initialize_self_overlap
 ///
 /// @brief
 /// Initializes rotamer self overlap; called by HPatchInteractionGraph;:prepare_for_sim_annealing right before simulated
@@ -1054,14 +1010,11 @@ void HPatchNode< V, E, G >::initialize_self_overlap() {
 
 }
 
-
-///
-/// @begin HPatchNode::initialize_atom_atom_overlap_cache
 ///
 /// @brief
 /// Initializes the atom_atom_overlaps vector.
 ///
-/// @detailed
+/// @details
 /// The atom_atom_overlaps vector stores a boolean for the intra-residue atom-atom overlap for every state possible at
 /// this Node. During simulated annealing, the IG has to determine the connected components after every sub. To do this,
 /// it has to know which atoms are exposed as well as overlapping. Instead of recomputing atom-atom overlaps after every
@@ -1148,14 +1101,11 @@ void HPatchNode< V, E, G >::initialize_atom_atom_overlap_cache() {
 
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::initialize_overlap_with_background
 ///
 /// @brief
 /// This method computes and caches each set of overlaps this node's states have with a background residue.
 ///
-/// @detailed
+/// @details
 /// The node stores these overlaps in two places: 1) in the input vector from the HPatchBackgroundEdge object, and 2) in
 /// its own array of dot coverage counts for the self-and-background sphere overlaps.
 ///
@@ -1214,14 +1164,11 @@ void HPatchNode< V, E, G >::initialize_overlap_with_background(
 
 }
 
-
-///
-/// @begin HPatchNode::assign_zero_state
 ///
 /// @brief
 /// Assign the node to state 0 -- the "unassigned" state.
 ///
-/// @detailed
+/// @details
 /// A node in state 0 produces no hpatch score.  Its neighbors have to adjust their scores appropriately. This method
 /// iterates over all the edges emanating from this node and tells them to acknowledge that they've been zeroed out.
 ///
@@ -1263,9 +1210,6 @@ void HPatchNode< V, E, G >::assign_zero_state() {
 
 }
 
-
-///
-/// @begin HPatchNode::acknowledge_neighbors_substitution
 ///
 /// @brief
 /// bookkeeping to follow a neighbors state substitution.  this method gets called when a HPatchNode commits a sub
@@ -1294,14 +1238,11 @@ void HPatchNode< V, E, G >::acknowledge_neighbors_substitution() {
 	alt_state_dots_matches_current_state_dots_ = true;
 }
 
-
-///
-/// @begin HPatchNode::get_current_state_sasa()
 ///
 /// @brief
 /// returns the amount of sasa this node has in its current state assignment
 ///
-/// @detailed
+/// @details
 /// RotamerDots objects know when they are in the unassigned state, so nothing special needs to be done to handle
 /// the 0 state. But, we could also query parent using get_current_state() to check if it's nonzero as an alternative.
 ///
@@ -1310,9 +1251,6 @@ Real HPatchNode< V, E, G >::get_current_state_sasa() const {
 	return current_state_rotamer_dots_.get_sasa();
 }
 
-
-///
-/// @begin HPatchNode::get_current_state_sasa()
 ///
 /// @brief
 /// Returns the current state SASA for the passed in atom index.
@@ -1322,9 +1260,6 @@ Real HPatchNode< V, E, G >::get_current_state_sasa( Size atom_index ) const {
 	return current_state_rotamer_dots_.get_atom_sasa( atom_index );
 }
 
-
-///
-/// @begin HPatchNode::get_alternate_state_sasa()
 ///
 /// @brief
 /// Returns the alternate state SASA for the passed in atom index.
@@ -1334,9 +1269,6 @@ Real HPatchNode< V, E, G >::get_alternate_state_sasa( Size atom_index ) const {
 	return alt_state_rotamer_dots_.get_atom_sasa( atom_index );
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::get_atom_atom_self_overlaps_for_state
 ///
 /// @brief
 /// Returns a const reference to the atom-x-atom-pair vector-of-vectors of bools that specifies which atoms are overlapping, in the given state.
@@ -1347,14 +1279,11 @@ HPatchNode< V, E, G >::get_atom_atom_self_overlaps_for_state( Size state ) const
 	return self_atom_atom_overlaps_[ state ];
 }
 
-
-///
-/// @begin HPatchNode::calculate_PD_deltaE_for_substitution
 ///
 /// @brief
 /// Returns the change in energy induced by changing a node from its current state into some alternate state for the PD energy terms only.
 ///
-/// @detailed
+/// @details
 /// This function always gets called for every substitution. Only the consider_alt_state() call can get procrastinated.
 ///
 template < typename V, typename E, typename G >
@@ -1374,9 +1303,6 @@ debug_assert( alternate_state > 0  && alternate_state <= parent::get_num_states(
 
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::get_pd_energy_delta()
 ///
 /// @brief
 /// Returns the deltaE for just the PD terms. Separate method from the one above because this one can be called from within
@@ -1387,9 +1313,6 @@ core::PackerEnergy HPatchNode< V, E, G >::get_pd_energy_delta() {
 	return ( parent::get_alt_pd_energy_total() - parent::get_curr_pd_energy_total() );
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::consider_alternate_state()
 ///
 /// @brief
 /// Instructs the Node to update the alt state information held by it and its neighbors in response to switching from the
@@ -1447,9 +1370,6 @@ debug_assert( alt_state_dots_matches_current_state_dots_ );
 	return delta_sasa;
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::update_alt_state_exphphobes
 ///
 /// @brief
 /// Updates the vector alt_state_exp_hphobes_ by checking the sasa of every atom in the residue currently on this Node.
@@ -1466,15 +1386,12 @@ void HPatchNode< V, E, G >::update_alt_state_exphphobes() {
 	}
 }
 
-
-///
-/// @begin HPatchNode< V, E, G >::update_state_for_neighbors_substitution
 ///
 /// @brief
 /// returns the change in sasa for this node induced by a state substitution at a neighboring node.  The node
 /// increments the dot coverage count for the RotamerDots object representing the alternate state dots for that neighbor.
 ///
-/// @detailed
+/// @details
 /// The procedure is simple at heart -- the caching makes it complex.
 ///
 /// alt_state_rotamer_dots_ = current_state_rotamer_dots_;      //copy dot coverage counts
@@ -1590,15 +1507,12 @@ debug_assert( alt_state_dots_matches_current_state_dots_ );
 	return get_sasa_difference();
 }
 
-
-///
-/// @begin HPatchNode::get_sasa_difference
 ///
 /// @brief
 /// Returns alt_state_rotamer_dots_.get_sasa() - curr_state_dots.get_sasa() except when either the current state or the
 /// alternate state is the unassigned state; state 0.
 ///
-/// @detailed
+/// @details
 /// This method requires that the variables current_state_ and alternate_state_  correspond to the rotamers held in
 /// current_state_rotamer_dots_ and alt_state_rotamer_dots_.  Usually, alternate_state_ holds meaningful data only if a vertex is considering
 /// a state substitution.  This method will be invoked by a vertex as it considers a state substitition; it will also be
@@ -1619,9 +1533,6 @@ Real HPatchNode< V, E, G >::get_sasa_difference() const {
 	return alt_state_rotamer_dots_.get_sasa() - current_state_rotamer_dots_.get_sasa();
 }
 
-
-///
-/// @begin HPatchNode::reset_alt_state_dots
 ///
 /// @brief
 /// Sets the alt state rotamer dots to the current state rotamer dots.  See comments in SIG and commit_considered_substitution
@@ -1647,9 +1558,6 @@ void HPatchNode< V, E, G >::reset_alt_state_dots() {
 
 }
 
-
-///
-/// @begin HPatchNode::commit_considered_substitution
 ///
 /// @brief
 /// Sets the current state to the alternate state this node was asked to
@@ -1657,7 +1565,7 @@ void HPatchNode< V, E, G >::reset_alt_state_dots() {
 /// neighbors that it is going through with the state substitution it had been
 /// considering.
 ///
-/// @detailed
+/// @details
 /// There's a potential situation with considers() and commits() that needs to be checked for here. It's possible that
 /// a consider() call is made which causes a set of Nodes to update their alt states correspondingly.  Since the
 /// consider() only gets processed by (or actually the call only goes out to) Nodes which are neighbor graph neighbors,
@@ -1709,9 +1617,6 @@ debug_assert( parent::considering_alternate_state() );
 
 }
 
-
-///
-/// @begin HPatchNode::getMemoryUsageInBytes
 ///
 /// @brief
 /// Not implemented, but needs to be!
@@ -1722,8 +1627,6 @@ unsigned int HPatchNode< V, E, G >::getMemoryUsageInBytes() const {
 }
 
 ///
-/// @begin HPatchNode::count_static_memory
-///
 /// @brief
 /// Returns the amount of static memory used by this Node object
 ///
@@ -1732,8 +1635,6 @@ unsigned int HPatchNode< V, E, G >::count_static_memory() const {
 	return sizeof ( HPatchNode< V, E, G > );
 }
 
-///
-/// @begin HPatchNode::count_dynamic_memory
 ///
 /// @brief
 /// Returns the amount of dynamic memory used by this Node object
@@ -1748,9 +1649,6 @@ unsigned int HPatchNode< V, E, G >::count_dynamic_memory() const {
 	return total_memory;
 }
 
-
-///
-/// @begin HPatchNode::write_dot_kinemage
 ///
 /// @brief
 /// useful for debugging
@@ -1760,9 +1658,6 @@ unsigned int HPatchNode< V, E, G >::count_dynamic_memory() const {
 //	current_state_rotamer_dots_.write_dot_kinemage( output_kin );
 //}
 
-
-///
-/// @begin HPatchNode::print
 ///
 /// @brief
 /// useful for debugging - writes information about a node to the tracer
@@ -1781,8 +1676,6 @@ void HPatchNode< V, E, G >::print() const {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin HPatchBackgroundNode::HPatchBackgroundNode
-///
 /// @brief
 /// main constructor.  No default constructor, copy constructor or assignment operator
 ///
@@ -1795,18 +1688,12 @@ HPatchBackgroundNode< V, E, G >::HPatchBackgroundNode( AdditionalBackgroundNodes
 	alt_state_dots_matches_current_state_dots_( true )
 {}
 
-
-///
-/// @begin HPatchBackgroundNode::~HPatchBackgroundNode
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundNode< V, E, G >::~HPatchBackgroundNode() {
 	//TR_BGNODE << "called destructor" << std::endl;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::set_rotamer
 ///
 /// @brief
 /// inits the RotamerOP held by a background node. called in the HPatchIG::initialize method.
@@ -1836,9 +1723,6 @@ void HPatchBackgroundNode< V, E, G >::set_rotamer( conformation::ResidueOP const
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::get_rotamer
 ///
 /// @brief
 /// returns a const reference to the ResidueOP object held by this background Node. needed by the initialize_bg_bg_overlap
@@ -1849,9 +1733,6 @@ conformation::ResidueCOP HPatchBackgroundNode< V, E, G >::get_rotamer() const {
 	return rotamer_;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::set_rotamer_dots
 ///
 /// @brief
 /// inits the RotamerDots object held by a background node. called in the HPatchIG::initialize method.
@@ -1862,14 +1743,11 @@ void HPatchBackgroundNode< V, E, G >::set_rotamer_dots( RotamerDots const & bg_r
 	alt_state_dots_matches_current_state_dots_ = false;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::detect_overlap
 ///
 /// @brief
 /// returns true if this background residue overlaps with any atom on any rotamer of a HPatchNode.
 ///
-/// @detailed
+/// @details
 /// Uses the HPatchNode function detect_any_overlap_with_rotamer. It calls the function on the passed in HPatchNode with the
 /// RotamerDots object this BGNode keeps in current_state_rotamer_dots_.
 ///
@@ -1878,15 +1756,12 @@ bool HPatchBackgroundNode< V, E, G >::detect_overlap( HPatchNode< V, E, G >* nod
 	return node->detect_any_overlap_with_rotamer( current_state_rotamer_dots_ );
 }
 
-
-///
-/// @begin HPatchBackgroundNode::prepare_for_simulated_annealing
 ///
 /// @brief
 /// detects self overlap and asks its incident HPatchBackgroundEdges to compute and cache the overlaps of this residue
 /// with all states on the neighboring HPatchNode.
 ///
-/// @detailed
+/// @details
 /// if we've already gone through this method once, then don't update the parent classes edge vectors. but we do need to
 /// reinitialize the self overlap on the BGNode as well as the overlap caused by all other bg nodes.
 ///
@@ -1916,9 +1791,6 @@ void HPatchBackgroundNode< V, E, G >::prepare_for_simulated_annealing() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::initialize_self_overlap
 ///
 /// @brief
 /// initializes the self overlap for its RotamerDots object
@@ -1944,9 +1816,6 @@ void HPatchBackgroundNode< V, E, G >::initialize_self_overlap() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::initialize_atom_atom_overlaps
 ///
 /// @brief
 /// initializes the atom-atom overlap vector stored by this background node. called once during prep_for_simA.
@@ -2014,9 +1883,6 @@ void HPatchBackgroundNode< V, E, G >::initialize_atom_atom_overlaps() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::initialize_bg_bg_overlap
 ///
 /// @brief
 /// stores the sphere overlap for a pair of background nodes
@@ -2034,9 +1900,6 @@ void HPatchBackgroundNode< V, E, G >::initialize_bg_bg_overlap( HPatchBackground
 //#endif
 }
 
-
-///
-/// @begin HPatchBackgroundNode::update_state_for_substitution
 ///
 /// @brief
 /// returns the change in sasa induced by a HPatchNode undergoing a state substitution. The overlap between the HPatchNode
@@ -2094,9 +1957,6 @@ Real HPatchBackgroundNode< V, E, G >::update_state_for_substitution( HPatchNode<
 	return sasa_difference;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::reset_alt_state_dots
 ///
 /// @brief
 /// Sets the alt state dots to the current state dots.  See comments in HIG and commit_considered_substitution
@@ -2118,9 +1978,6 @@ void HPatchBackgroundNode< V, E, G >::reset_alt_state_dots() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::acknowledge_substitution
 ///
 /// @brief
 /// bookkeeping to reflect a HPatchNode's state substitution. uses the RotamerDots class method operator=.
@@ -2133,9 +1990,6 @@ void HPatchBackgroundNode< V, E, G >::acknowledge_substitution() {
 	alt_state_dots_matches_current_state_dots_ = true;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::update_alt_state_exphphobes
 ///
 /// @brief
 /// Updates the vector alt_state_exp_hphobes_ with the atom id (??) of the exposed hydrophobic atoms in this residue.
@@ -2151,9 +2005,6 @@ void HPatchBackgroundNode< V, E, G >::update_alt_state_exphphobes() {
 	}
 }
 
-
-///
-/// @begin HPatchBackgroundNode< V, E, G >::get_current_sasa
 ///
 /// @brief
 /// returns the total SASA under the current state assignment
@@ -2163,9 +2014,6 @@ Real HPatchBackgroundNode< V, E, G >::get_current_sasa() const {
 	return current_state_rotamer_dots_.get_sasa();
 }
 
-
-///
-/// @begin HPatchBackgroundNode< V, E, G >::get_current_sasa
 ///
 /// @brief
 /// Returns the current state SASA for the passed in atom index
@@ -2176,9 +2024,6 @@ HPatchBackgroundNode< V, E, G >::get_current_sasa( Size atom_index ) const {
 	return current_state_rotamer_dots_.get_atom_sasa( atom_index );
 }
 
-
-///
-/// @begin HPatchBackgroundNode< V, E, G >::get_alternate_sasa
 ///
 /// @brief
 /// returns the total SASA under the alternate state assignment
@@ -2189,9 +2034,6 @@ HPatchBackgroundNode< V, E, G >::get_alternate_sasa() const {
 	return alt_state_rotamer_dots_.get_sasa();
 }
 
-
-///
-/// @begin HPatchBackgroundNode< V, E, G >::get_alternate_sasa
 ///
 /// @brief
 /// Returns the alternate state SASA for the passed in atom index
@@ -2202,9 +2044,6 @@ HPatchBackgroundNode< V, E, G >::get_alternate_sasa( Size atom_index ) const {
 	return alt_state_rotamer_dots_.get_atom_sasa( atom_index );
 }
 
-
-///
-/// @begin HPatchBackgroundNode< V, E, G >::get_atom_atom_self_overlaps
 ///
 /// @brief
 /// Returns a const reference to the atom x atom pair vector of vectors of bools that specifies which atoms are overlapping.
@@ -2214,17 +2053,12 @@ utility::vector1< utility::vector1 < bool > > const & HPatchBackgroundNode< V, E
 	return self_atom_atom_overlaps_;
 }
 
-
-///
-/// @begin HPatchBackgroundNode::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchBackgroundNode< V, E, G >::count_static_memory() const {
 	return sizeof ( HPatchBackgroundNode< V, E, G > );
 }
 
-///
-/// @begin HPatchBackgroundNode::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchBackgroundNode< V, E, G >::count_dynamic_memory() const {
@@ -2234,8 +2068,6 @@ unsigned int HPatchBackgroundNode< V, E, G >::count_dynamic_memory() const {
 }
 
 ///
-/// @begin HPatchBackgroundNode::print
-///
 /// @brief
 /// used only for debugging
 //template < typename V, typename E, typename G >
@@ -2243,9 +2075,6 @@ unsigned int HPatchBackgroundNode< V, E, G >::count_dynamic_memory() const {
 //	current_state_rotamer_dots_.write_dot_kinemage( output_kin );
 //}
 
-
-///
-/// @begin HPatchBackgroundNode::print
 ///
 /// @brief
 /// used only for debugging
@@ -2261,9 +2090,6 @@ void HPatchBackgroundNode< V, E, G >::print() const {
 //------------------------------ HPatch Edge Class -----------------------------//
 //----------------------------------------------------------------------------//
 
-
-///
-/// @begin HPatchEdge::HPatchEdge
 ///
 /// @brief
 /// main constructor.  No default, or copy constructors, no assignment operator
@@ -2288,18 +2114,12 @@ HPatchEdge< V, E, G >::HPatchEdge( G* owner, int node1, int node2 ) :
 
 }
 
-
-///
-/// @begin HPatchEdge::~HPatchEdge
 ///
 template < typename V, typename E, typename G >
 HPatchEdge< V, E, G >::~HPatchEdge() {
 	//TR_EDGE << "called destructor" << std::endl;
 }
 
-
-///
-/// @begin HPatchEdge::prepare_for_simulated_annealing
 ///
 /// @brief
 /// drops zero submatrices of the AminoAcidNeighborSparseMatrix and if the two_body_energies_ member then holds nothing,
@@ -2325,14 +2145,11 @@ void HPatchEdge< V, E, G >::prepare_for_simulated_annealing() {
 	}
 }
 
-
-///
-/// @begin HPatchEdge::acknowledge_state_zeroed
 ///
 /// @brief
 /// respond to when one of its vertices enters the "unassigned" state.
 ///
-/// @detailed
+/// @details
 /// called during the HIG::blanket_assign_state_0 -> HPatchNode::assign_zero_state() cascade of calls.
 ///
 template < typename V, typename E, typename G >
@@ -2360,9 +2177,6 @@ void HPatchEdge< V, E, G >::acknowledge_state_zeroed( int node_that_changed ) {
 	inform_non_changing_node_of_neighbors_change();
 }
 
-
-///
-/// @begin HPatchEdge::inform_non_changing_node_of_neighbors_change
 ///
 /// @brief
 /// tells the node that isn't considering a substitution or changing state that its neighbor who is has changed.
@@ -2373,14 +2187,11 @@ void HPatchEdge< V, E, G >::inform_non_changing_node_of_neighbors_change() {
 	get_hpatch_node( node_not_changing_ )->acknowledge_neighbors_substitution();
 }
 
-
-///
-/// @begin HPatchEdge::update_state_at_neighbor
 ///
 /// @brief
 /// returns the change in sasa for the neighbor of a node that is produced by the state substitution it is considering.
 ///
-/// @detailed
+/// @details
 /// Very complicated.  See HPatchNode::project_deltaE_for_neighbors_state_sub
 /// This edge collects cached sphere overlaps and hands this cached data to
 /// the node that is not considering the state substitution.  That node
@@ -2475,9 +2286,6 @@ Real HPatchEdge< V, E, G >::update_state_at_neighbor( int node_considering_subst
 	return delta_sasa;
 }
 
-
-///
-/// @begin HPatchEdge::acknowledge_substitution
 ///
 /// @brief
 /// bookkeeping following the decision to substitute a nodes current state with the alternate it was asked to consider.
@@ -2542,9 +2350,6 @@ void HPatchEdge< V, E, G >::acknowledge_substitution() {
 	return;
 }
 
-
-///
-/// @begin HPatchEdge< V, E, G >::get_current_state_atom_atom_overlaps
 ///
 /// @brief
 /// Returns a const reference to the atom-x-atom-pair vector-of-vectors of bools that specifies which atoms are overlapping,
@@ -2556,9 +2361,6 @@ HPatchEdge< V, E, G >::get_current_state_atom_atom_overlaps() const {
 	return current_state_atom_atom_overlaps_;
 }
 
-
-///
-/// @begin HPatchEdge< V, E, G >::get_alt_state_atom_atom_overlaps
 ///
 /// @brief
 /// Returns a const reference to the atom-x-atom-pair vector-of-vectors of bools that specifies which atoms are overlapping,
@@ -2570,9 +2372,6 @@ HPatchEdge< V, E, G >::get_alt_state_atom_atom_overlaps() const {
 	return alt_state_atom_atom_overlaps_;
 }
 
-
-///
-/// @begin HPatchEdge::declare_energies_final
 ///
 /// @brief
 /// Reduces memory usage in the two body energy table after the energy
@@ -2592,9 +2391,6 @@ void HPatchEdge< V, E, G >::declare_energies_final() {
 	parent::declare_energies_final_no_deletion();
 }
 
-
-///
-/// @begin HPatchEdge::getMemoryUsageInBytes
 ///
 /// @remarks
 /// Not implemented.
@@ -2604,17 +2400,12 @@ unsigned int HPatchEdge< V, E, G >::getMemoryUsageInBytes() const {
 	return 0;
 }
 
-
-///
-/// @begin HPatchEdge::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchEdge< V, E, G >::count_static_memory() const {
 	return sizeof ( HPatchEdge< V, E, G > );
 }
 
-///
-/// @begin HPatchEdge::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
@@ -2635,13 +2426,10 @@ unsigned int HPatchEdge< V, E, G >::count_dynamic_memory() const {
 }
 
 
-
 //----------------------------------------------------------------------------//
 //----------------------- HPatchBackgroundEdge Class ---------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchBackgroundEdge< V, E, G >::HPatchBackgroundEdge
 ///
 /// @brief
 /// main constructor
@@ -2658,9 +2446,6 @@ HPatchBackgroundEdge< V, E, G >::HPatchBackgroundEdge( AdditionalBackgroundNodes
 	//alt_dots_cache_( 0 ) // default constructed
 {}
 
-
-///
-/// @begin HPatchBackgroundEdge::~HPatchBackgroundEdge
 ///
 template < typename V, typename E, typename G >
 HPatchBackgroundEdge< V, E, G >::~HPatchBackgroundEdge() {
@@ -2668,9 +2453,6 @@ HPatchBackgroundEdge< V, E, G >::~HPatchBackgroundEdge() {
 	// node_states_coverage_of_bg_res_ is a vector, so when it goes out of scope the memory will be freed
 }
 
-
-///
-/// @begin HPatchBackgroundEdge::prepare_for_simulated_annealing
 ///
 /// @brief
 /// Invoked by AdditionalBackgroundNodesInteractionGraph::prepare_for_simulated_annealing.
@@ -2683,9 +2465,6 @@ HPatchBackgroundEdge< V, E, G >::~HPatchBackgroundEdge() {
 template < typename V, typename E, typename G >
 void HPatchBackgroundEdge< V, E, G >::prepare_for_simulated_annealing() {}
 
-
-///
-/// @begin HPatchBackgroundEdge::initialize_overlap_cache
 ///
 /// @brief
 /// compute the sphere overlaps of the background node with every state on the first class node. The HPatchBackgroundEdge
@@ -2723,15 +2502,12 @@ void HPatchBackgroundEdge< V, E, G >::initialize_overlap_cache( RotamerDots cons
 
 }
 
-
-///
-/// @begin HPatchBackgroundEdge::acknowledge_state_change
 ///
 /// @brief
 /// bookkeeping in response to a HPatchNode switching states (without having gone through the usual
 /// consider-substitution/commit-substitution pattern).
 ///
-/// @detailed
+/// @details
 /// State "0" is handled by the HPatchBackgroundEdge just like any other state. The dot overlap cache is simply empty:
 /// the unassigned state induces no overlap on the background node.  The HPatchBackgroundEdge keeps a stl vector of
 /// RotamerDotCaches.  Position 0 in that vector holds a Cache object of nothing but 0's.
@@ -2747,9 +2523,6 @@ void HPatchBackgroundEdge< V, E, G >::acknowledge_state_change( int new_state ) 
 
 }
 
-
-///
-/// @begin HPatchBackgroundEdge::update_state_at_neighbor
 ///
 /// @brief
 /// returns the change in hpatch energy produced by a background node in response to a considered state substitution of
@@ -2783,9 +2556,6 @@ Real HPatchBackgroundEdge< V, E, G >::update_state_at_neighbor( int alt_state ) 
 	return delta_sasa;
 }
 
-
-///
-/// @begin HPatchBackgroundEdge::acknowledge_substitution
 ///
 /// @brief
 /// bookkeeping in response to the HPatchNode committing the considered substitution
@@ -2800,9 +2570,6 @@ void HPatchBackgroundEdge< V, E, G >::acknowledge_substitution() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundEdge< V, E, G >::get_atom_atom_self_overlaps_for_state
 ///
 /// @brief
 /// Returns a const reference to the atom-x-atom-pair vector-of-vectors of bools that specifies which atoms are overlapping,
@@ -2815,17 +2582,12 @@ debug_assert( state <= node_states_overlap_with_bg_res_.size() );
 	return node_states_overlap_with_bg_res_[ state ];
 }
 
-
-///
-/// @begin HPatchBackgroundEdge::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchBackgroundEdge< V, E, G >::count_static_memory() const {
 	return sizeof ( HPatchBackgroundEdge< V, E, G > );
 }
 
-///
-/// @begin HPatchBackgroundEdge::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchBackgroundEdge< V, E, G >::count_dynamic_memory() const {
@@ -2835,7 +2597,6 @@ unsigned int HPatchBackgroundEdge< V, E, G >::count_dynamic_memory() const {
 	total_memory += node_states_overlap_with_bg_res_.size() * sizeof( bool ); // underestimate; each element is a vector, too! (ronj)
 	return total_memory;
 }
-
 
 
 //----------------------------------------------------------------------------//
@@ -2864,9 +2625,7 @@ template < typename V, typename E, typename G >
 std::string HPatchInteractionGraph< V, E, G >::sulfur_atom = "S";
 
 ///
-/// @begin HPatchInteractionGraph::HPatchInteractionGraph
-///
-/// @detailed
+/// @details
 /// Main constructor. Initializes all member variables to 0 and false.
 ///
 template < typename V, typename E, typename G >
@@ -2900,20 +2659,14 @@ HPatchInteractionGraph< V, E, G >::HPatchInteractionGraph( int num_nodes ) :
 	for ( Size ii = 1; ii <= fc_nodes_near_rotsub_.size(); ++ii ) { fc_nodes_near_rotsub_[ ii ] = ii; }
 }
 
-
-///
-/// @begin HPatchInteractionGraph::~HPatchInteractionGraph
 ///
 template < typename V, typename E, typename G >
 HPatchInteractionGraph< V, E, G >::~HPatchInteractionGraph() {
 	//TR_HIG << "called destructor" << std::endl;
 }
 
-
 ///
-/// @begin HPatchInteractionGraph::set_pose
-///
-/// @detailed
+/// @details
 /// All throughout this class, I refer back to the original pose sequence. To be able to do that, I need to have a
 /// handle to the pose in this class.  That's what this method provides.  In IGFactory.cc, this method gets called with
 /// the pose object that's being packed/designed.
@@ -2934,9 +2687,6 @@ HPatchInteractionGraph<V, E, G>::set_pose( pose::Pose const & pose ) {
 	pose_ = pose::PoseOP( new pose::Pose( pose ) );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_packer_task
 ///
 /// @brief
 /// We need a copy of the packer task to figure out which residues are being packed and/or designed. We have to figure
@@ -2949,11 +2699,8 @@ HPatchInteractionGraph<V, E, G>::set_packer_task( task::PackerTask const & the_t
 	packer_task_ = the_task.clone();
 }
 
-
 ///
-/// @begin HPatchInteractionGraph::set_rotamer_sets
-///
-/// @detailed
+/// @details
 /// It's nice to be able to print out information about the possible rotamer during initialization of the IG.
 /// This method gets called in IGSupport.cc.
 ///
@@ -2963,11 +2710,8 @@ HPatchInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets cons
 	rotamer_sets_ = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets( rotsets ) );
 }
 
-
 ///
-/// @begin HPatchInteractionGraph::initialize()
-///
-/// @detailed
+/// @details
 /// This function is the 1st major entry point (well, after the constructor) into the HIG. It needs to set residues that
 /// are not changing as background residues
 ///
@@ -3104,9 +2848,6 @@ void HPatchInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBase
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::create_new_node
 ///
 /// @brief
 /// factory method pattern for instantiation of HPatchNode objects, used by InteractionGraphBase class.
@@ -3119,9 +2860,6 @@ NodeBase* HPatchInteractionGraph< V, E, G >::create_new_node( int node_index, in
 	return new HPatchNode< V, E, G >( this, node_index, num_states );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::create_new_edge
 ///
 /// @brief
 /// factory method pattern for instantiation of HPatchEdge objects, used by InteractionGraphBase class.
@@ -3134,9 +2872,6 @@ EdgeBase* HPatchInteractionGraph< V, E, G >::create_new_edge( int index1, int in
 	return new HPatchEdge< V, E, G >( this, index1, index2 );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::create_background_node
 ///
 /// @brief
 /// factory method pattern for instantiation of HPatchBackgroundNode objects, used by AdditionalBackgroundNodesInteractionGraph class.
@@ -3149,9 +2884,6 @@ BackgroundNode< V, E, G >* HPatchInteractionGraph< V, E, G >::create_background_
 	return new HPatchBackgroundNode< V, E, G >( this, node_index );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::create_background_edge
 ///
 /// @brief
 /// factory method pattern for instantiation of HPatchBackgroundEdge objects, used by AdditionalBackgroundNodesInteractionGraph class.
@@ -3164,14 +2896,11 @@ BackgroundToFirstClassEdge< V, E, G >* HPatchInteractionGraph< V, E, G >::create
 	return new HPatchBackgroundEdge< V, E, G >( this, fc_node_index, bg_node_index );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_num_residues_in_protein
 ///
 /// @brief
 /// tells the graph how many residues there are total in the protein
 ///
-/// @detailed
+/// @details
 /// The graph maintains its own enumeration for the background residues; but asks that anyone wanting to refer to them
 /// use their original resid. The graph has to switch back and forth between enumeration schemes and must know how many
 /// residues there are total to do that efficiently.
@@ -3188,15 +2917,12 @@ void HPatchInteractionGraph< V, E, G >::set_num_residues_in_protein( Size num_re
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_num_background_residues
 ///
 /// @brief
 /// tells the graph how many residues there are as part of the protein that are not part of the combinatorial
 /// optimization process -- they are part of the background
 ///
-/// @detailed
+/// @details
 /// The other half of switching between enumeration schemes for the background residues is knowing how many background residues there are.
 ///
 template < typename V, typename E, typename G >
@@ -3221,9 +2947,6 @@ void HPatchInteractionGraph< V, E, G >::set_num_background_residues( Size num_ba
 	}
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_residue_as_background_residue
 ///
 /// @brief
 /// informs the graph that a particular residue is part of the background
@@ -3248,9 +2971,6 @@ debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_background_residue_rotamer_dots
 ///
 /// @brief
 /// Creates and inits a RotamerDots object for a background residue.  the residue must first have been declared to be a background residue.
@@ -3271,9 +2991,6 @@ void HPatchInteractionGraph< V, E, G >::set_background_residue_rotamer_dots( Siz
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_rotamer_dots_for_node_state
 ///
 /// @brief
 /// store the coordinates for a particular rotamer
@@ -3292,14 +3009,11 @@ void HPatchInteractionGraph< V, E, G >::set_rotamer_dots_for_node_state( Size no
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::prepare_for_simulated_annealing
 ///
 /// @brief
 /// Prepares the graph to begin simulated annealing.
 ///
-/// @detailed
+/// @details
 /// Invokes both base-class prepare_for_simulated_annealing subroutines: InteractionGraphBase first, to prepare the
 /// HPatchNodes and HPatchEdges. Then the AdditionalBackgroundNodesInteractionGraph, to prepare the HPatchBackgroundNodes,
 /// the HPatchBackgroundEdges, and to do a little more preparing of the HPatchNodes.
@@ -3366,9 +3080,6 @@ void HPatchInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::detect_background_residue_and_first_class_residue_overlap
 ///
 /// @brief
 /// iterates across all pairs of first- and second-class nodes to determine which share sphere overlaps.
@@ -3405,9 +3116,6 @@ void HPatchInteractionGraph< V, E, G >::detect_background_residue_and_first_clas
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::initialize_bg_bg_overlaps
 ///
 /// @brief
 /// computes the background overlaps for all background node pairs
@@ -3424,9 +3132,6 @@ void HPatchInteractionGraph< V, E, G >::initialize_bg_bg_overlaps() {
 
 }
 
-
-///
-/// @begin HPatchBackgroundNode::get_bg_bg_atom_atom_overlaps
 ///
 //template < typename V, typename E, typename G >
 template < typename V, typename E, typename G >
@@ -3441,12 +3146,10 @@ debug_assert( node1_index < node2_index );
 }
 
 ///
-/// @begin HPatchBackgroundNode::initialize_bg_bg_atom_atom_overlaps
-///
 /// @brief
 /// initializes the atom-atom overlap vector stored by the IG for all the bg-bg node overlaps.
 ///
-/// @detailed
+/// @details
 /// During simulated annealing, the IG has to determine the connected components after every sub. To do this, it has to
 /// check a very large number of atom pairs for overlap.  These pairs include intra-Node atom-pairs, intra-BGNode atom-pairs,
 /// BGNode-BGNode atom-pairs, BGNode-FCNode atom-pairs, and FCNode-FCNode atom-pairs.  Now intra-Node/BGNode atom-pairs
@@ -3539,7 +3242,6 @@ void HPatchInteractionGraph< V, E, G >::initialize_bg_bg_atom_atom_overlaps() {
 	} // node_ii
 
 
-
 #ifdef FILE_DEBUG
 	/*for ( Size bgnode_ii = 1; bgnode_ii <= (Size)parent::get_num_background_nodes(); ++bgnode_ii ) {
 		TR_HIG << "background nodes overlapping with background node " << bgnode_ii << ": ";
@@ -3566,14 +3268,11 @@ void HPatchInteractionGraph< V, E, G >::initialize_bg_bg_atom_atom_overlaps() {
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::blanket_assign_state_0
 ///
 /// @brief
 /// assigns state 0 -- the unassigned state -- to all (first class) vertices in the graph
 ///
-/// @detailed
+/// @details
 /// This is the 3rd entry point into the HIG.  It is called by the Annealer just before simulated annealing and rotamer
 /// substitutions begin to init the graph to unassigned values everywhere.
 ///
@@ -3627,16 +3326,13 @@ void HPatchInteractionGraph< V, E, G >::blanket_assign_state_0() {
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::update_internal_energy_totals_hpatch
 ///
 /// @brief
 /// After every 2^10 commits, the graph traverses its nodes and edges and
 /// re-tallies the total energy of the current state assignment.  This update
 /// prevents the accumulation of numerical drift, increasing accuracy.
 ///
-/// @detailed
+/// @details
 /// this function becomes less necessary in this implementation since the graph itself calculates the score. no longer do we
 /// have the situation where the nodes/bgnodes keep the score and the IG just applies deltaE's every commit. now the IG calculates
 /// the score for every consider/commit. the only "drift" that may accumulate would result from not calculating de novo
@@ -3661,12 +3357,11 @@ void HPatchInteractionGraph< V, E, G >::update_internal_energy_totals_hpatch() {
 
 #ifdef DOUBLE_CHECK_COUNTS
 ///
-/// @begin HPatchInteractionGraph::verify_sasas_correct
 ///
 /// @brief
 /// Verifies that the SASAs held on the Nodes and BGNodes are correct. Only runs every 1000 commits and if DOUBLE_CHECK_COUNTS is defined.
 ///
-/// @detailed
+/// @details
 /// Constructs a new Pose object based on the current state of the IG and runs the calc_per_atom_sasa function in sasa.cc
 /// as an independent way of making sure that the Nodes and BGNodes are correctly keeping track of SASA. Very slow.
 /// Should only be used for testing.
@@ -3752,12 +3447,10 @@ void HPatchInteractionGraph< V, E, G >::verify_sasas_correct() {
 #endif
 
 ///
-/// @begin HPatchInteractionGraph::set_errorfull_deltaE_threshold
-///
 /// @brief
 /// Allows the sim-annealer to specify a deltaE threshold above which, it is no longer necessary to be very accurate.
 ///
-/// @detailed
+/// @details
 /// When the annealer asks the graph to consider a state substitution that produces a large collision, the graph may
 /// approximate the hpatch deltaE instead of performing expensive sphere overlap computations.  The deltaE returned by
 /// consider_substitution() will be inaccurate, but if the annealer is unlikely to accept the substitution, then time
@@ -3778,9 +3471,6 @@ void HPatchInteractionGraph< V, E, G >::set_errorfull_deltaE_threshold( core::Pa
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::print_hpatch_avoidance_stats
 ///
 /// @brief
 /// reports on the level of success for hpatch score calculation procrastination
@@ -3805,8 +3495,6 @@ void HPatchInteractionGraph< V, E, G >::print_hpatch_avoidance_stats() {
 }
 
 ///
-/// @begin HPatchInteractionGraph::reset_hpatch_avoidance_stats
-///
 /// @brief
 /// resets static member variables of HPatchIG that measure how worthwhile hpatch calculation procrastination is.
 ///
@@ -3817,14 +3505,11 @@ void HPatchInteractionGraph< V, E, G >::reset_hpatch_avoidance_stats() {
 	num_hpatch_comps_later_made_ = 0;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::consider_substitution
 ///
 /// @brief
 /// Returns the (possibly approximate) change in energy induced by switching a particular node from its currently assigned state to some alternate state.
 ///
-/// @detailed
+/// @details
 /// First, queries the HPatchNode for the pairwise-decomposable (PD) energy. If the PD difference
 /// implies a collision, then the HPatchIG pretends as if the state substitution causes the best
 /// improvement possible in hpatch score, and returns the PD difference + pretend hpatch difference.
@@ -3889,11 +3574,8 @@ void HPatchInteractionGraph< V, E, G >::consider_substitution( int node_ind, int
 
 }
 
-
 ///
-/// @begin HPatchInteractionGraph< V, E, G >::calculate_hpatch_deltaE()
-///
-/// @detailed
+/// @details
 /// Goes through the entire process of calculating the hpatch deltaE for a substitution.
 ///
 template < typename V, typename E, typename G >
@@ -3935,11 +3617,8 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::calculate_hpatch_deltaE() 
 	return hpatch_deltaE;
 }
 
-
 ///
-/// @begin HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0()
-///
-/// @detailed
+/// @details
 /// Initialized to true in the constructor, and also set to true after a call to blanket_assign_state0.  After all nodes
 /// get assigned a state, then this boolean is set to false.  It is used to reduce the number of operations that are performed
 /// when annealing is just beginning. Functionality added by Andrew - best commenting I can do. -RJ
@@ -3949,9 +3628,6 @@ void HPatchInteractionGraph< V, E, G >:: register_fc_node_in_state0() {
 	some_node_in_state_0_ = true;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::register_fc_node_affected_by_rotsub()
 ///
 /// @brief
 /// Called by HPatchNodes to specify which first-class Nodes are affected by a given rotamer substitution. If a given
@@ -3989,7 +3665,7 @@ void HPatchInteractionGraph< V, E, G >::register_fc_node_affected_by_rotsub( int
 	// occurs only once when the IG become fully assigned is better than having two extra if statements in this function and the one below (which get called millions
 	// of times).  the only real way to know would be to check runtimes of a couple design runs, but I don't feel like doing that. so I'm going with taking out the if
 	// statements and accepting the one-time cost that occurs once the IG is fully assigned. crossing my fingers. -ronj
-	//
+
 
 }
 
@@ -4005,9 +3681,6 @@ void HPatchInteractionGraph< V, E, G >::register_bg_node_affected_by_rotsub( int
 	//}
 }
 
-
-///
-/// @begin HPatchInteractionGraph::init_SASA_radii_from_database()
 ///
 /// @brief
 /// Puts the SASA radii values in the database into the passed in radii array. Temporary location. Should only be done once.
@@ -4026,9 +3699,6 @@ void HPatchInteractionGraph< V, E, G >::init_SASA_radii_from_database() {
 	initialized_SASA_radii = true;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::update_disjoint_sets_using_cache()
 ///
 /// @brief
 /// Helper function for calculating the hpatch score. This function is specific for intra-residue overlaps, the one
@@ -4081,9 +3751,6 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 	return;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::update_disjoint_sets_using_cache()
 ///
 /// @brief
 /// Helper function for calculating the hpatch score.
@@ -4154,9 +3821,6 @@ void HPatchInteractionGraph< V, E, G >::update_disjoint_sets_using_cache(
 	return;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::calculate_alt_state_hpatch_score()
 ///
 /// @brief
 /// Constructs an atom-level graph for the alternate state assignment on the IG and then runs the union-find algorithm on
@@ -4363,7 +4027,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 	TR_HIG.flush();
 #endif
 
-	//
+
 	// first-class edges
 	// now we have to iterate over every edge (and bg edge) in the IG and do pairwise-atom comparisons to see if two atoms should be
 	// assigned to the same connected component. some of these edges will be connected to the node considering a substitution. that
@@ -4372,7 +4036,7 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 	// for these edges.  for all other FC edges, the alt state could be anything. it could be the same as the current state, or
 	// it could be some alt_state that was considering a long time ago that wasn't commit'd(). so for these edges, we have to use
 	// the overlap values for the current state rotamers at both nodes.
-	//
+
 
 	for ( std::list<EdgeBase*>::iterator iter = parent::get_edge_list_begin(); iter != parent::get_edge_list_end(); ++iter ) {
 
@@ -4444,14 +4108,14 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 	TR_HIG.flush();
 #endif
 
-	//
+
 	// background edges
 	// now we have to iterate over every bgedge and do the same as for the FC edges. bgedges are susceptible to the same problem
 	// as described above for fc edges. it may be that the node of a bgedge is the node that is considering a sub for this
 	// consider() call. in that case, we have to use the overlap that the bgnode and the alt_state on the node have for this
 	// function.  alternatively, if the node isn't the one considering a sub, then we need to use the current state on the
 	// fc node and bgnode overlap.
-	//
+
 
 	typename std::list< core::pack::interaction_graph::BackgroundToFirstClassEdge< V, E, G >* >::const_iterator iter;
 	for ( iter = parent::get_bg_edge_list_begin(); iter != parent::get_bg_edge_list_end(); ++iter ) {
@@ -4496,7 +4160,6 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 	} // for loop over all bg edges
 
 
-	//
 	// finally, reprint the largest patch size atoms for easy access
 	//
 #ifdef FILE_DEBUG
@@ -4645,11 +4308,8 @@ Real HPatchInteractionGraph< V, E, G >::calculate_alt_state_hpatch_score() {
 
 }
 
-
 ///
-/// @begin HPatchInteractionGraph< V, E, G >::decide_procrastinate_hpatch_computations()
-///
-/// @detailed
+/// @details
 /// Makes the decision whether or not to procrastinate calculating the hpatch score. Basically, if the PD energy got better (dE < 0)
 /// then return false so we don't procrastinate the calculation (because the alternate state probably will be accepted?). If the best
 /// guess for the hpatch deltaE also comes back better (dE < 0), then return false.  Finally, if the difference between the deltaE
@@ -4682,15 +4342,12 @@ bool HPatchInteractionGraph< V, E, G >::decide_procrastinate_hpatch_computations
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::reset_from_previous_deltaHpatch_comp
 ///
 /// @brief
 /// Iterates through all FCNodes and BGNodes affected by the last deltaHpatch computation, and resets their
 /// state.
 ///
-/// @detailed
+/// @details
 /// the Node consider() function is the main entry point from the HIG when the annealer considers a sub. need to make sure that the
 /// node's alt_state is the same as the current state before we start incrementing/decrementing things or otherwise you wind
 /// up with total SASAs that are wrong. alt state will be the same as current state on the first time through because of
@@ -4754,9 +4411,6 @@ void HPatchInteractionGraph< V, E, G >::reset_from_previous_deltaHpatch_comp() {
 	}
 }
 
-
-///
-/// @begin HPatchInteractionGraph::commit_considered_substitution
 ///
 /// @brief
 /// Commits the substitution that the sim annealer had previously asked the graph to consider.  Returns the accurate total energy for the graph.
@@ -4799,9 +4453,6 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::commit_considered_substitu
 	return total_energy_current_state_assignment_;
 }
 
-
-///
-/// @begin HPatchInteractionGraph< V, E, G >::track_hpatch_E_min
 ///
 /// @brief
 /// Keeps track of the minimum hpatch score seen.  Every 100 substitutions, updates the variable hpatch_score_min_last_100.
@@ -4826,15 +4477,12 @@ void HPatchInteractionGraph< V, E, G >::track_hpatch_E_min() {
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_network_state
 ///
 /// @brief
 /// Switch the state assignment of every first class node in the graph.
 /// Useful, for instance, if you want to switch to the best network state that you've found so far.
 ///
-/// @detailed
+/// @details
 /// This function is the last major entry point from the Annealer into the HIG.
 ///
 template < typename V, typename E, typename G >
@@ -4858,9 +4506,6 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::set_network_state( ObjexxF
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::get_energy_current_state_assignment
 ///
 /// @brief
 /// returns the energy of the entire graph under the current network state assignment.  Also sends a bunch of information to standard error.
@@ -4871,10 +4516,6 @@ core::PackerEnergy HPatchInteractionGraph< V, E, G >::get_energy_current_state_a
 	return total_energy_current_state_assignment_;
 }
 
-
-
-///
-/// @begin HPatchInteractionGraph::print_current_state_assignment
 ///
 /// @brief
 /// Should write the state assigned to each first class vertex to the screen.
@@ -4916,9 +4557,6 @@ void HPatchInteractionGraph< V, E, G >::print_current_state_assignment() const {
 
 }*/
 
-
-///
-/// @begin HPatchInteractionGraph::get_edge_memory_usage
 ///
 /// @brief
 /// Should return a measurement of the memory used by the interaction graph
@@ -4929,18 +4567,12 @@ int HPatchInteractionGraph< V, E, G >::get_edge_memory_usage() const {
 	return 0;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchInteractionGraph< V, E, G >::count_static_memory() const {
 	return sizeof ( HPatchInteractionGraph< V, E, G > );
 }
 
-
-///
-/// @begin HPatchInteractionGraph::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int HPatchInteractionGraph< V, E, G >::count_dynamic_memory() const {
@@ -4952,9 +4584,6 @@ unsigned int HPatchInteractionGraph< V, E, G >::count_dynamic_memory() const {
 	return total_memory;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::get_energy_sum_for_vertex_group
 ///
 /// @brief
 /// returns the sum of the PD energy and the hpatch energy for all members first class members of a user-defined
@@ -4966,9 +4595,6 @@ Real HPatchInteractionGraph< V, E, G >::get_energy_sum_for_vertex_group( Size ) 
 	return 0;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::print_internal_energies_for_current_state_assignment
 ///
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::print_internal_energies_for_current_state_assignment() {
@@ -5005,9 +4631,6 @@ void HPatchInteractionGraph< V, E, G >::print_internal_energies_for_current_stat
 	}
 }
 
-
-///
-/// @begin HPatchInteractionGraph::write_dot_kinemage
 ///
 /*template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::write_dot_kinemage( std::ofstream & output_kin ) {
@@ -5026,9 +4649,6 @@ void HPatchInteractionGraph< V, E, G >::write_dot_kinemage( std::ofstream & outp
 
 }*/
 
-
-///
-/// @begin HPatchInteractionGraph::print
 ///
 /// @brief
 /// useful for debugging
@@ -5054,16 +4674,14 @@ HPatchInteractionGraph<V, E, G>::print() const {
 // tests using release mode, I can't #ifdef these functions (to leave them out of release mode builds) or the unit
 // tests don't compile. So just compile them regardless of build mode.
 
-/// @begin HPatchNode::get_current_state_rotamer_dots
-///
+
 /// @brief
 /// Returns current state. Only used by the unit tests.
 ///
 template< typename V, typename E, typename G >
 RotamerDots const & HPatchNode<V, E, G>::get_current_state_rotamer_dots() { return current_state_rotamer_dots_; }
 
-/// @begin HPatchNode::get_alt_state_rotamer_dots
-///
+
 /// @brief
 /// Returns current state. Only used by the unit tests.
 ///
@@ -5071,8 +4689,6 @@ template< typename V, typename E, typename G >
 RotamerDots const & HPatchNode<V, E, G>::get_alt_state_rotamer_dots() { return alt_state_rotamer_dots_; }
 
 
-/// @begin HPatchBackgroundNode::get_current_state_rotamer_dots
-///
 /// @brief
 /// Returns current state. Only used by the unit tests.
 ///
@@ -5080,17 +4696,12 @@ template< typename V, typename E, typename G >
 RotamerDots const & HPatchBackgroundNode<V, E, G>::get_current_state_rotamer_dots() { return current_state_rotamer_dots_; }
 
 
-/// @begin HPatchBackgroundNode::get_alt_state_rotamer_dots
-///
 /// @brief
 /// Returns current state. Only used by the unit tests.
 ///
 template< typename V, typename E, typename G >
 RotamerDots const & HPatchBackgroundNode<V, E, G>::get_alt_state_rotamer_dots() { return alt_state_rotamer_dots_; }
 
-
-///
-/// @begin HPatchInteractionGraph::get_network_state
 ///
 /// @brief
 /// Returns the state on each FCNode, but not necessarily in pose resid order. Only used by the unit tests.
@@ -5105,9 +4716,6 @@ std::vector< int > HPatchInteractionGraph<V, E, G>::get_network_state() const {
 	return networkstate;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::set_observed_sufficient_boolean_true
 ///
 /// @brief
 /// Sets the observed_sufficient_hpatch_E_to_predict_min_ to true. Only used by the unit tests.
@@ -5117,9 +4725,6 @@ void HPatchInteractionGraph<V, E, G>::set_observed_sufficient_boolean_true() {
 	observed_sufficient_hpatch_E_to_predict_min_ = true;
 }
 
-
-///
-/// @begin HPatchInteractionGraph< V, E, G >::get_all_sasas
 ///
 /// @brief
 /// Iterates over all nodes and bgnodes
@@ -5138,9 +4743,6 @@ void HPatchInteractionGraph< V, E, G >::get_all_sasas( utility::vector1< Real > 
 
 }
 
-
-///
-/// @begin HPatchInteractionGraph::bg_node_2_resid
 ///
 /// @brief
 /// Provides read access to the bg to resid array. Returns -1 if the index is not in bounds.
@@ -5156,7 +4758,6 @@ int HPatchInteractionGraph< V, E, G >::bg_node_2_resid( Size node_index ) {
 
 
 /*///
-/// @begin HPatchInteractionGraph::get_fc_nodes_near_rotsub
 ///
 /// @brief
 /// Read access to the vector fc_nodes_near_rotsub_.
@@ -5167,8 +4768,6 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes
 }
 
 ///
-/// @begin HPatchInteractionGraph::get_fc_nodes_near_rotsub_bool
-///
 /// @brief
 /// Read access to the vector fc_nodes_near_rotsub_bool_.
 ///
@@ -5177,8 +4776,6 @@ utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_fc_nodes
 	return fc_nodes_near_rotsub_bool_;
 }
 
-///
-/// @begin HPatchInteractionGraph::get_bg_nodes_near_rotsub
 ///
 /// @brief
 /// Read access to the vector bg_nodes_near_rotsub_.
@@ -5189,8 +4786,6 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes
 }
 
 ///
-/// @begin HPatchInteractionGraph::get_bg_nodes_near_rotsub_bool
-///
 /// @brief
 /// Read access to the vector bg_nodes_near_rotsub_bool_.
 ///
@@ -5199,9 +4794,6 @@ utility::vector1< bool > const & HPatchInteractionGraph< V, E, G >::get_bg_nodes
 	return bg_nodes_near_rotsub_bool_;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::get_fc_exp_hphobe_djs_offsets
 ///
 /// @brief
 /// Read access to the vector fc_exp_hphobe_djs_offsets_.
@@ -5211,9 +4803,6 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_exp_h
 	return fc_exp_hphobe_djs_offsets_;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::get_bg_exp_hphobe_djs_offsets
 ///
 /// @brief
 /// Read access to the vector bg_exp_hphobe_djs_offsets_.
@@ -5223,9 +4812,6 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_exp_h
 	return bg_exp_hphobe_djs_offsets_;
 }
 
-
-///
-/// @begin HPatchInteractionGraph::get_fc_n_exp_hphobes
 ///
 /// @brief
 /// Read access to the vector fc_n_exp_hphobes_.
@@ -5236,8 +4822,6 @@ utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_fc_n_exp
 }
 
 ///
-/// @begin HPatchInteractionGraph::get_bg_n_exp_hphobes
-///
 /// @brief
 /// Read access to the vector bg_n_exp_hphobes_.
 ///
@@ -5245,7 +4829,6 @@ template < typename V, typename E, typename G >
 utility::vector1< Size > const & HPatchInteractionGraph< V, E, G >::get_bg_n_exp_hphobes() {
 	return bg_n_exp_hphobes_;
 }*/
-
 
 
 } //end namespace

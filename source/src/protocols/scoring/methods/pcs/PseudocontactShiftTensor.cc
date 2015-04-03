@@ -8,11 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @brief Hold chi- tensor information for the Pseudocontact Shift calculation
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -22,9 +21,8 @@
  ///
  /// @references JBNMR 2008  41:179-189 schmitz et all will explains the tensor convention used
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 

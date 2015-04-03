@@ -63,7 +63,6 @@ MatchResiduesMover::MatchResiduesMover()
 {}
 
 
-
 // @brief destructor
 MatchResiduesMover::~MatchResiduesMover() {}
 
@@ -76,7 +75,6 @@ protocols::moves::MoverOP
 MatchResiduesMover::clone() const{
   return protocols::moves::MoverOP( new MatchResiduesMover( *this ) );
 }
-
 
 
 void

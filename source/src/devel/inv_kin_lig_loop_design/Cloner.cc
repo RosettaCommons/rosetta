@@ -31,13 +31,11 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 #define FORVC(Iter,Type,Vec)  for( utility::vector0<Type>::const_iterator Iter  = (Vec).begin(); Iter != (Vec).end(); ++Iter)
@@ -547,8 +545,6 @@ namespace devel {
       }
 
 
-
-
       for( k = 0, begin = 1; k < segments.size(); ++k, begin += size ) {
 				size = segments[k].size();
 
@@ -603,7 +599,6 @@ namespace devel {
 
 		//       return find_or_default( clones, find_or_throw( residss, res_id ), static_cast<Residue const*>(0) );
 		//     }
-
 
 
     core::pose::PoseOP Cloner::clone() {

@@ -9,7 +9,7 @@
 
 /// @file /protocols/relax/util.cc
 /// @brief initialization protocols for relax and utility functions
-/// @detailed
+/// @details
 /// @author Mike Tyka, Monica Berrondo
 /// @author Roland A. Pache
 

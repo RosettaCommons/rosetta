@@ -15,7 +15,6 @@
 //#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -25,60 +24,30 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/pack/packer_neighbors.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/optimizeH.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MultiConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -89,7 +58,6 @@
 #include <protocols/moves/MoverStatistics.hh>
 #include <apps/pilot/will/mynamespaces.ihh>
 #include <apps/pilot/will/will_util.ihh>
-
 
 
 using core::kinematics::Stub;
@@ -147,7 +115,6 @@ vector1<Size> read_res_list(string fn) {
 }
 
 
-
 struct Hit : public utility::pointer::ReferenceCount {
   Size ihis,jcys;
 		Real c11,c12,c21,c22;
@@ -156,7 +123,6 @@ struct Hit : public utility::pointer::ReferenceCount {
 		Hit(Size , Size , Real i11, Real i12, Real i21, Real i22, bool id) : c11(i11),c12(i12),c21(i21),c22(i22),idmr(id) {}
 };
 typedef utility::pointer::owning_ptr<Hit> HitOP;
-
 
 
 vector1<Reals> vecs2vv(Vecs const & v) {
@@ -185,7 +151,6 @@ core::kinematics::Stub res2stub(core::pose::Pose const & pose, Size rsd, core::k
   Vec const p3 = ref.local2global( pose.xyz(AtomID(3,rsd)) );
   return core::kinematics::Stub( p1, p2, p3 );
 }
-
 
 
 // {{{ void ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & ifc, vector1<HitOP> & hits) {
@@ -343,7 +308,6 @@ Real ik_his_clamp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & if
 // }}}
 
 
-
 void run(std::string fname) {
   using namespace std;
   using basic::options::option;
@@ -446,7 +410,6 @@ int main (int argc, char *argv[]) {
 	try {
 
 
-
   devel::init(argc,argv);
 
   using basic::options::option;
@@ -460,17 +423,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

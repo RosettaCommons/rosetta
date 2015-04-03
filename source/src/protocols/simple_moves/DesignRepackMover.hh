@@ -35,8 +35,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace protocols {
 namespace simple_moves {
 
@@ -79,7 +77,7 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn_minimize() const;
 	core::pack::task::PackerTaskCOP task() const;
 	core::pack::task::PackerTaskOP & task();
-///@brief after fiddling with a task from outside this mover, clear it, or else, on the next iteration through
+/// @brief after fiddling with a task from outside this mover, clear it, or else, on the next iteration through
 /// the mover the changes will be remembered
 	void clear_task();
 	void clear_task_factory();

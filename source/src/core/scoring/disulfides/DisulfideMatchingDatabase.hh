@@ -17,17 +17,11 @@
 
 //Unit headers
 //#include <core/scoring/disulfides/DisulfideMatchingDatabase.fwd.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 //Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>

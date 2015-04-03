@@ -10,7 +10,7 @@
 /// @file protocols/simple_filters/JScoreEvaluator.hh
 /// @brief
 /// @author James Thompson
-///
+
 
 #ifndef INCLUDED_protocols_simple_filters_JScoreEvaluator_hh
 #define INCLUDED_protocols_simple_filters_JScoreEvaluator_hh

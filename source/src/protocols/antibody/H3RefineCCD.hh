@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/H3RefineCCD.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #ifndef INCLUDED_protocols_antibody_H3RefineCCD_hh
@@ -155,11 +154,6 @@ private:
 	core::Size max_cycle_close_trial_;
 
 };
-
-
-
-
-
 
 
 } // namespace antibody

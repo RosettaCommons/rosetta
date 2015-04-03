@@ -35,7 +35,6 @@
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <iostream>
 
@@ -48,12 +47,11 @@ namespace annealer {
 static thread_local basic::Tracer TR( "core.pack.annealer.FixbbLinkingRotamerSimAnnealer", basic::t_info );
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin FixbbLinkingRotamerSimAnnealer::FixbbLinkingRotamerSimAnnealer()
 ///
 /// @brief
 /// constructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -63,9 +61,8 @@ static thread_local basic::Tracer TR( "core.pack.annealer.FixbbLinkingRotamerSim
 ///
 /// @references
 ///
-/// @authors
-///
-/// @last_modified
+/// @author
+
 
 ////////////////////////////////////////////////////////////////////////////////
 FixbbLinkingRotamerSimAnnealer::FixbbLinkingRotamerSimAnnealer(
@@ -516,8 +513,6 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 		debug_assert( !calc_rot_freq() );
 			continue; // skip the logic below for single-rotamer substitution ////////////////////////////////////
-
-
 
 
 			//std::cerr << "mres: " << moltenres_id << ", state: ";

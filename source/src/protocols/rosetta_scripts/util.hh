@@ -15,8 +15,6 @@
 ///         Eva-Maria Strauch (evas01@uw.edu)
 
 
-
-
 #ifndef INCLUDED_protocols_rosetta_scripts_util_hh
 #define INCLUDED_protocols_rosetta_scripts_util_hh
 
@@ -60,7 +58,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*con
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const task_list, basic::datacache::DataMap const & data );
 
-///@brief Look up the score function defined in the <SCOREFXNS/>
+/// @brief Look up the score function defined in the <SCOREFXNS/>
 ///through the given option. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
@@ -69,7 +67,7 @@ parse_score_function(
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key="talaris2013" );
 
-///@brief Look up the score function defined in the <SCOREFXNS/>
+/// @brief Look up the score function defined in the <SCOREFXNS/>
 ///through the option 'scorefxn='. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
@@ -77,7 +75,7 @@ parse_score_function(
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key="talaris2013" );
 
-///@brief Look up the name of assigned score function to the given
+/// @brief Look up the name of assigned score function to the given
 ///option. Use this to prevent hard coding default score functions into
 ///protocols.
 std::string
@@ -85,7 +83,7 @@ get_score_function_name(
 	utility::tag::TagCOP tag,
 	std::string const & option_name);
 
-///@brief Look up the name of assigned score function to the 'scorefxn='
+/// @brief Look up the name of assigned score function to the 'scorefxn='
 ///option. Use this to prevent hard coding default score functions into
 ///protocols.
 std::string
@@ -111,7 +109,7 @@ parse_movemap(
 	basic::datacache::DataMap &,
 	bool const reset_movemap = true /* should we turn everything to true at start?*/);
 
-///@details modifies an existing movemap according to tag
+/// @details modifies an existing movemap according to tag
 /// the movemap defaults to move all bb, chi, and jumps.
 /// Still resets movemap if MoveMap branch not found!
 void
@@ -121,7 +119,7 @@ parse_movemap(
 	core::kinematics::MoveMapOP mm,
 	bool const reset_movemap = true /* should we turn everything to true at start?*/);
 
-///@brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
+/// @brief Parses in_tag, adding any MoveMaps specified in branches with names to the datamap for use after.
 /// Skips any mm names that are already loaded.
 /// This should allow multiple MoveMaps to be specified and loaded in a mover.
 void
@@ -131,7 +129,7 @@ add_movemaps_to_datamap(
 	basic::datacache::DataMap & data,
 	bool initialize_mm_as_true = false);
 
-///@brief Does the tag have a branch of the given name
+/// @brief Does the tag have a branch of the given name
 bool
 has_branch(utility::tag::TagCOP in_tag, std::string const branch_name);
 
@@ -161,7 +159,7 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res);
 utility::vector1< core::Size >
 residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFactoryCOP tf, bool const designable, bool const packable/*but not designable*/ );
 
-///@brief Access res_num/pdb_num tag with prefix.
+/// @brief Access res_num/pdb_num tag with prefix.
 /// This is to allow parsing at apply time (pdb_num) instead of at parse_my_tag.
 /// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.
 /// This function is to prevent unused variable crash.

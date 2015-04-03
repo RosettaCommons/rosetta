@@ -103,7 +103,6 @@ public:
 };
 
 
-
 } // namespace sic_dock
 } // namespace protocols
 

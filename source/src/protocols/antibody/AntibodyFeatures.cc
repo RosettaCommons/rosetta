@@ -662,7 +662,6 @@ AntibodyFeatures::write_cdr_definitions_schema_to_db(utility::sql_database::sess
 */
 
 
-
 void
 AntibodyFeatures::parse_my_tag(
 		utility::tag::TagCOP tag, 

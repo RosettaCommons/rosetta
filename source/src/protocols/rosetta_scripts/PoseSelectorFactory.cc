@@ -58,7 +58,7 @@ PoseSelectorFactory::PoseSelectorFactory(){}
 
 PoseSelectorFactory::~PoseSelectorFactory(){}
 
-///@brief add a PoseSelector prototype, using its default type name as the map key
+/// @brief add a PoseSelector prototype, using its default type name as the map key
 void
 PoseSelectorFactory::factory_register( PoseSelectorCreatorOP creator )
 {
@@ -74,7 +74,7 @@ PoseSelectorFactory::factory_register( PoseSelectorCreatorOP creator )
 }
 
 
-///@brief return new PoseSelector by key lookup in poseselector_creator_map_ (new PoseSelector parses Tag if provided)
+/// @brief return new PoseSelector by key lookup in poseselector_creator_map_ (new PoseSelector parses Tag if provided)
 PoseSelectorOP
 PoseSelectorFactory::newPoseSelector(	std::string const & pose_selector_type )
 {
@@ -95,7 +95,7 @@ PoseSelectorFactory::newPoseSelector(	std::string const & pose_selector_type )
 	}
 }
 
-///@brief return new PoseSelector by Tag parsing
+/// @brief return new PoseSelector by Tag parsing
 PoseSelectorOP
 PoseSelectorFactory::newPoseSelector(
 	TagCOP const tag,

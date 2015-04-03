@@ -26,7 +26,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @details
 class WTEBiasEnergy : public BiasEnergy {
 	typedef BiasEnergy Parent;
 public:

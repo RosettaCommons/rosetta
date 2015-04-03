@@ -12,7 +12,6 @@
 #include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/pose/Pose.hh>
@@ -20,7 +19,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-
 
 
 #ifdef USEMPI
@@ -62,7 +60,6 @@ public:
 
 static core::Size master_node_;
 static core::Size pool_master_node_;
-
 
 
 MPIBPool_RMSD( std::string const& silent_file );
@@ -148,7 +145,6 @@ void slave_gather_new_coords();
 void slave_report_no_new_coords();
 
 
-
 private:
   core::Size workers_finished_;
   utility::vector1< bool > nodes_finished_;
@@ -169,7 +165,6 @@ private:
   TransferBuffer transfer_buf_;
 
 };
-
 
 
 } //mc_convergence_checks

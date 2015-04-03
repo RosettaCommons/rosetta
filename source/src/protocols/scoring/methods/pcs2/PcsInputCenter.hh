@@ -8,14 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsInputCenter.hh
  ///
  /// @brief This class hold the information for each paramagnetic center
  /// Multiple data set with different lanthanide can be measured for each paramagnetic center
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -25,9 +24,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputCenter_hh
@@ -48,7 +46,6 @@
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace protocols{

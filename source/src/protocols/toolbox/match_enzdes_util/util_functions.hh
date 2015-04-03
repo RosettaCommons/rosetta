@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_toolbox_match_enzdes_util_util_functions_hh
 
 
-
 #include <core/types.hh>
 
 #include <core/conformation/Residue.fwd.hh>

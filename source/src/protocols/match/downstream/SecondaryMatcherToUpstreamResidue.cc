@@ -22,13 +22,9 @@
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/Hit.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformerBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>

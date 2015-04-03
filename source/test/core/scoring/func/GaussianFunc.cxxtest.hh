@@ -16,27 +16,17 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/func/GaussianFunc.hh>
 #include <core/scoring/func/GaussianFunc.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
-
 
 
 using basic::T;

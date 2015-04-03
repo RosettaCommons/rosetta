@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Bicubic_spline
 ///
 /// @brief
 /// Tricubic spline for smoothly interpolating a function in 3 dimensions
 ///
-/// @detailed
+/// @details
 ///
 ///
 /// @references
@@ -22,10 +21,9 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 /// ported to Rosetta by Andrew Leaver-Fay
 ///
-/// @last_modified March 28 2012
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_numeric_interpolation_spline_TricubicSpline_hh
@@ -159,8 +157,6 @@ private:
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric
-
-
 
 
 #endif /* BICUBIC_SPLINE_HH_ */

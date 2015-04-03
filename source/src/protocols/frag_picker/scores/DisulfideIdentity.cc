@@ -54,7 +54,6 @@ bool DisulfideIdentity::score(FragmentCandidateOP f,
 		}
 
 
-
 		//if (query_[i + f->get_first_index_in_query() - 2] == 'c') {
 		//	if (r->aa() != 'c')
 		//		totalScore += 1;

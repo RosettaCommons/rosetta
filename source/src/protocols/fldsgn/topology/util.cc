@@ -29,14 +29,12 @@
 #include <core/scoring/sasa.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 // C++ headers
 #include <utility/assert.hh>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <boost/lexical_cast.hpp>
 #include <basic/Tracer.hh>
 #include <map>
 
@@ -132,7 +130,7 @@ calc_strand_pairing_set(
 			continue;
 		}
 
-		//
+
 		TR.Debug << "Defined strand pair : " << *((*it).second)
 						 << ", 1st_strand begin: " << (*it).second->begin1() << ", end: " <<  (*it).second->end1()
 						 << ", 2nd_strand begin: " << (*it).second->begin2() << ", end: " <<  (*it).second->end2() << std::endl;

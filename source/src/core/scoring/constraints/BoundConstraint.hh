@@ -34,7 +34,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-///
+
 class BoundFunc : public func::Func {
 public:
 	BoundFunc( Real const lb, Real const ub, Real sd, std::string type ): lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type ) {}
@@ -205,7 +205,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-///
+
 class BoundFunc : public func::Func {
 public:
  BoundFunc( Real const lb, Real const ub, Real sd, std::string type ): lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type ) {}

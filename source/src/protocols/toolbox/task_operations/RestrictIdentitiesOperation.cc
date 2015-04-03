@@ -16,9 +16,7 @@
 #include <protocols/toolbox/task_operations/RestrictIdentitiesOperationCreator.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
@@ -44,7 +42,6 @@
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <boost/functional/hash.hpp>
-
 
 
 using basic::Error;

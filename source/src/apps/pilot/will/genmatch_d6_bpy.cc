@@ -75,7 +75,6 @@ typedef numeric::xyzMatrix<Real> Mat;
 static thread_local basic::Tracer TR( "genmatch_d6_bpy" );
 
 
-
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
 	add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
@@ -83,7 +82,6 @@ void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	remove_lower_terminus_type_from_pose_residue(pose,1);
 	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
 }
-
 
 
 // find 2 HIS that can chelate a tetrahedral metal
@@ -729,8 +727,6 @@ void run() {
 																		opose.energies().clear_energies();
 																		sf->score(opose);
 																		TR << opose.chi(1,irsd) << " " << opose.chi(2,irsd) << " " << opose.residue(irsd).name() << " " << opose.energies().residue_total_energies(irsd)[core::scoring::fa_dun] << std::endl;
-
-
 
 
 																		opose.dump_pdb("test.pdb");

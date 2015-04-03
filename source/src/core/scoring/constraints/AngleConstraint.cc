@@ -28,7 +28,6 @@
 #include <core/id/NamedAtomID.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/angle_deriv.hh>
 
@@ -61,7 +60,7 @@ void AngleConstraint::show_def( std::ostream& out, pose::Pose const& pose ) cons
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@details one line definition "Angle atom1 res1 atom2 res2 atom3 res3 function_type function_definition"
+/// @details one line definition "Angle atom1 res1 atom2 res2 atom3 res3 function_type function_definition"
 ///SML: It appears to be reading the angle in radians, because score ultimately uses std:acos, which returns radians.
 void
 AngleConstraint::read_def(
@@ -386,7 +385,7 @@ debug_assert( std::abs( dot( f2, cross( v1,v2) ) ) < 1e-3 );
 	//Real const theta = arccos( dot( v1,v2 ) / v12 );
 	Real const dE_dtheta = dfunc( theta );
 
-	//
+
 	//std::cout << "dE_dtheta_p2_deriv: " << dE_dtheta << ' ' <<
 	//	f1(1) << ' ' << f1(2) << ' ' << f1(3) << std::endl;
 

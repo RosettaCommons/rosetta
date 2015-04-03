@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -22,7 +22,6 @@
 #include <protocols/noesy_assign/PeakCalibrator.hh>
 #include <protocols/noesy_assign/FoldResonance.hh>
 
-// AUTO-REMOVED #include <protocols/noesy_assign/Exceptions.hh>
 #include <core/id/NamedAtomID.hh>
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -43,12 +42,9 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <deque>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.resonances" );

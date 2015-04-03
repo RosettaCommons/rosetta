@@ -77,14 +77,14 @@ public:
 		pose::Pose const & pose
 	);
 
-	///@brief read one individual constraint defined.
+	/// @brief read one individual constraint defined.
 	static ConstraintOP read_individual_constraint_new(
 		std::istream & data,
 		core::pose::Pose const& pose,
 		func::FuncFactory const & func_factory
 	);
 
-	///@brief read one individual constraint defined.
+	/// @brief read one individual constraint defined.
 	static ConstraintOP read_individual_constraint_new(
 		std::istream & data,
 		core::pose::Pose const& pose,

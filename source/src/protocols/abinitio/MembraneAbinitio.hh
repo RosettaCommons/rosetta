@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/MembraneAbinitio.hh
 /// @brief header file for MembraneAbinitio protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -32,7 +32,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -119,7 +118,7 @@ public:
 		STAGE_3b,
 		STAGE_4
 	};
-	///@brief This constructor does not work -- Fix it before using it.
+	/// @brief This constructor does not work -- Fix it before using it.
 	// constructor: supply mover classes for Fragment Moves
 	MembraneAbinitio(
 		simple_moves::FragmentMoverOP brute_move_small,
@@ -129,7 +128,7 @@ public:
 		int  /*dummy otherwise the two constructors are ambiguous */
 	);
 
-	///@brief constructor: supply fragsets for large and small fragment moves
+	/// @brief constructor: supply fragsets for large and small fragment moves
 	MembraneAbinitio(
 					 core::fragment::FragSetCOP fragset_small,
 					 core::fragment::FragSetCOP fragset_small_top25,

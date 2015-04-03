@@ -22,7 +22,6 @@
 
 // C++ Headers
 
-// AUTO-REMOVED #include <ostream>
 
 #include <utility/vector1.hh>
 
@@ -68,7 +67,7 @@ public:
 
 
 	/// @brief Initializes this SOGFunc from the given istream.
-	/// @detailed The parameters are:
+	/// @details The parameters are:
 	/*!
 	 * Initializes this SOGFunc from the given istream. An example
 	 * of the type of string from which the istream should be constructed is:
@@ -88,7 +87,6 @@ private:
 
 	SOGFunc_Impl member_;
 };
-
 
 
 } // constraints

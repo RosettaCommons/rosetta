@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsDataCenter.hh
  ///
  /// @brief Hold the PCS data on which the SVD will be applyed
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -23,9 +22,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_hh
@@ -134,7 +132,6 @@ public:
 	update_matrix_A_all_for_cstyle(core::Real const X,
 																 core::Real const Y,
 																 core::Real const Z);
-
 
 
 	/// @brief Give me the vector PCS_data_per_lanthanides_all_

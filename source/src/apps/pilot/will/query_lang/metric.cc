@@ -11,7 +11,7 @@
 /// @brief  demo of True/False query class which handles basic boolean logic
 /// @author Will Sheffler (willsheffler@gmail.com)
 /// @date   Thu Oct 19 19:49:23 2007
-///
+
 
 #include <cstdlib>
 #include <iostream>
@@ -66,7 +66,6 @@ void test_real() {
 }
 
 
-
 // some dummy structure link something from a silent file
 struct SomeThing {
 	SomeThing() {
@@ -84,7 +83,6 @@ struct SomeThingGetter : public Converter1Param<SomeThing*,string,Real> {
 	Real convert(SomeThing * si, string s) { return si->get_score(s); }
 	string description() { return "silent info score"; }
 };
-
 
 
 void test_fake_silent() {
@@ -119,7 +117,6 @@ void test_fake_silent() {
 	}
 
 }
-
 
 
 int main (int argc, char * argv[])

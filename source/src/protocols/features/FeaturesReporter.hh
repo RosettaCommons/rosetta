@@ -42,8 +42,6 @@
 #endif
 
 
-
-
 namespace protocols {
 namespace features {
 
@@ -60,7 +58,7 @@ public:
 		relevant_residues_mode_(RelevantResiduesMode::Exclusive)
 	{}
 
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FeaturesReporter();
 
 	virtual
@@ -69,14 +67,14 @@ public:
 		return "Unknown_FeaturesReporter";
 	}
 
-	///@brief return sql statements that sets up the appropriate tables
+	/// @brief return sql statements that sets up the appropriate tables
 	///to contain the features. This should be removed once everything
 	///has been moved to the schema generator
 	virtual
 	std::string
 	schema() const { return "";}
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	virtual
 	utility::vector1<std::string>
@@ -86,7 +84,7 @@ public:
 	}
 
 
-	///@brief Define the schema and write it to the database. This is
+	/// @brief Define the schema and write it to the database. This is
 	///most easily achieved using the schema_generator. Once everything
 	///has converted to the schema generator this should be made a pure virtual
 	virtual void
@@ -94,7 +92,7 @@ public:
 		utility::sql_database::sessionOP db_session
 	) const = 0;
 
-	///@brief collect all the feature data for the pose.
+	/// @brief collect all the feature data for the pose.
 	core::Size
 	report_features(
 		core::pose::Pose const & /*pose*/,
@@ -102,7 +100,7 @@ public:
 		utility::sql_database::sessionOP /*db_session*/
 	);
 
-	///@brief collect all the feature data for the pose.
+	/// @brief collect all the feature data for the pose.
 	virtual
 	core::Size
 	report_features(
@@ -134,7 +132,7 @@ public:
 		StructureID,
 		utility::sql_database::sessionOP ) {}
 
-	//
+
 	// The idea here is when you specify a set of residues for which you want to extract features,
 	// and the feature type involves multiple residues
 	// --explicit mode means that all residues of the feature must be specified, and implicit mode mode means that at least one of the residues has to be specified.
@@ -181,7 +179,7 @@ protected:
 		core::pose::Pose const & pose
 	) const;
 
-	///@brief a helper function for deleting data associated with a given structure from  feature database
+	/// @brief a helper function for deleting data associated with a given structure from  feature database
 	///WARNING table_name must be sanitized!
 	void
 	delete_records_from_table(

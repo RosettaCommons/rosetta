@@ -59,7 +59,7 @@ main( int argc, char * argv [] ) {
 	option.add( protocols::pmut_scan::alter_spec_disruption_mode, "Use AlterSpecDisruption protocol instead.  Difference: assumes a two-chain system, and scans for mutations that weaken binding, as the first step of the alter_spec protocol.").def( false );
 	devel::init( argc, argv );
 
-	//
+
 	// concatenate -s and -l flags together to get total list of PDB files
 	// The called function will die with a useful error message if neither -s or -l is specified.
 	// Check to make sure all of the files exist here, too.

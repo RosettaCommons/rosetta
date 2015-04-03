@@ -21,7 +21,6 @@
 #include <protocols/match/OccupiedSpaceHash.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 
 // Project headers

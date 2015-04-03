@@ -19,11 +19,9 @@
 #include <protocols/viewer/SilentObserver.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/signals/DestructionEvent.fwd.hh>
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 
 // Project headers

@@ -196,7 +196,7 @@ update_constraints( utility::vector1< std::pair< core::pose::PoseOP, bool > > po
 	}
 	poses[ current_pose ].first->constraint_set( cst_set );
 
-	//
+
 	add_fnr_constraints( poses[ current_pose ].first, reference_poses[ current_pose ].first, res_links[ current_pose ], fnr_penalty, poses[ current_pose ].second );
 	apply_linked_constraints( poses, res_links, positive_linked_penalty, negative_linked_penalty, current_pose );
 
@@ -313,7 +313,6 @@ main( int argc, char * argv [] )
 		if ( ramp.size() != ( option[ msd::soft_design ] ? (core::Size) option[ msd::design_rounds ]+1 : (core::Size) option[ msd::design_rounds ] ) ) {
 			utility_exit_with_message( "There must be the same number of ramping weights as design rounds" );
 		}
-
 
 
 		/* Set up task operations and assign to the right task factory */

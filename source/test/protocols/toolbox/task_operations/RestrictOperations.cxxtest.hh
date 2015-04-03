@@ -28,7 +28,6 @@
 // project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
@@ -83,7 +82,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief
+	/// @brief
 	void test_RestrictToInterfaceOperation() {
 
 		/* if you are debugging this test, I suggest passing the flag -print_pymol_selection for ease of use.

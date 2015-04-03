@@ -37,7 +37,6 @@
 #include <basic/options/option_macros.hh>
 
 #include  <mpi.h>
-//
 
 
 namespace protocols {
@@ -46,7 +45,7 @@ namespace mc_convergence_checks {
 
 static thread_local basic::Tracer tr( "MPIBPool_ConvergenceCheck" );
 
-  //
+
   core::Size MPIBPool_RMSD::master_node_;
   core::Size MPIBPool_RMSD::pool_master_node_;
 
@@ -617,7 +616,7 @@ void MPIBPool_RMSD::finalize(){
   }
 }
 
-//
+
   void MPIBPool_RMSD::create_comm( int ranks_to_include[], int new_size ){
     int returnval;
     MPI_Group new_pool_group, old_pool_group;
@@ -659,7 +658,7 @@ void MPIBPool_RMSD::finalize(){
   }
 
 
-///@detail update the rank of the pool to the MPI_COMM_POOL relative rank
+/// @detail update the rank of the pool to the MPI_COMM_POOL relative rank
 void MPIBPool_RMSD::update_ranks( int const active_nodes[], int new_size ){
   //bool is_active = false;
 
@@ -922,7 +921,6 @@ void MPIBPool_RMSD::master_go(){
 
   return;
 }
-
 
 
 bool MPIBPool_RMSD::is_master_node(){

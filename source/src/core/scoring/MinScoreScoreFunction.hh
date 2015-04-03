@@ -21,7 +21,6 @@
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -56,11 +55,11 @@ public:
 
 	MinScoreScoreFunction( core::Real const );
 
-	///@brief INTERNAL USE ONLY
+	/// @brief INTERNAL USE ONLY
 	virtual void
 	assign( ScoreFunction const & src);
 
-	///@brief INTERNAL USE ONLY
+	/// @brief INTERNAL USE ONLY
 	virtual void
 	assign( MinScoreScoreFunction const & src);
 

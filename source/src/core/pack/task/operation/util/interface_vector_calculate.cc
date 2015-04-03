@@ -36,8 +36,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 //#include <utility/exit.hh>
 #include <utility/string_util.hh>
 //#include <basic/options/option.hh>
@@ -52,7 +50,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
@@ -72,7 +69,7 @@ typedef numeric::HomogeneousTransform< core::Real > HTReal;
 
 
 //forward declarations of funtions that do the work
-///@brief looks at the big set and figures out what is actually pointing towards the interface
+/// @brief looks at the big set and figures out what is actually pointing towards the interface
 void find_interface_pointing_residues_from_neighbs(
 	core::pose::Pose const & pose, InterfacePair const & interface_pair,
 	core::Real const nearby_atom_cutoff,
@@ -81,24 +78,24 @@ void find_interface_pointing_residues_from_neighbs(
 	utility::vector1_bool & interface_residues
 );
 
-///@brief find nearby atoms to other in interface
+/// @brief find nearby atoms to other in interface
 bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 														 core::conformation::Residue & res2,
 														 core::Real cutoff);
 
-///@brief neighbors to look for vectors within (big set here)
+/// @brief neighbors to look for vectors within (big set here)
 InterfacePair find_neighbors_within_CB_cutoff( core::pose::Pose const & pose, core::Real big_cutoff,
 																							 core::Size chain1, core::Size chain2 );
 
-///@brief find neighbors to look for vectors within using a big cutoff for CBs
+/// @brief find neighbors to look for vectors within using a big cutoff for CBs
 InterfacePair find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real big_cutoff,
 																									 int jump_num );
 
-///@brief the Cbeta vector(s) from on rsd to another
+/// @brief the Cbeta vector(s) from on rsd to another
 numeric::xyzVector<core::Real> cbeta_vector( core::conformation::Residue & res);
-///@brief the action coordinate for each residue
+/// @brief the action coordinate for each residue
 numeric::xyzVector<core::Real> select_coord_for_residue(core::conformation::Residue & res);
-///@brief out if res1 and res2 are pointing at eachother
+/// @brief out if res1 and res2 are pointing at eachother
 bool res1_pointed_at_res2( core::conformation::Residue & res1,
 													 core::conformation::Residue & res2,
 													 core::Real angle_cutoff /*degrees*/,
@@ -106,7 +103,7 @@ bool res1_pointed_at_res2( core::conformation::Residue & res1,
 void fill_in_chain_terminii( core::pose::Pose const & pose, core::Size chain1, core::Size chain2 );
 
 
-///@details minimal chain number definition
+/// @details minimal chain number definition
 utility::vector1_bool
 calc_interface_vector( core::pose::Pose const & pose, core::Size const chain1_number, core::Size const chain2_number ){
 	// set some logical defaults and run the full calc function
@@ -119,7 +116,7 @@ calc_interface_vector( core::pose::Pose const & pose, core::Size const chain1_nu
 																nearby_atom_cutoff,	vector_angle_cutoff, vector_dist_cutoff );
 }
 
-///@details full runner that takes all of the inputs for chains
+/// @details full runner that takes all of the inputs for chains
 utility::vector1_bool
 calc_interface_vector(
 	core::pose::Pose  const & pose,
@@ -143,7 +140,7 @@ calc_interface_vector(
 	return at_interface;
 }
 
-///@details full runner that takes the jump
+/// @details full runner that takes the jump
 utility::vector1_bool
 calc_interface_vector(
 	core::pose::Pose const & pose,
@@ -169,7 +166,7 @@ calc_interface_vector(
 	return at_interface;
 }
 
-///@details minimal jump runner
+/// @details minimal jump runner
 utility::vector1_bool
 calc_interface_vector( core::pose::Pose const & pose, int const interface_jump ){
 	// set some logical defaults and run the full calc function
@@ -181,7 +178,7 @@ calc_interface_vector( core::pose::Pose const & pose, int const interface_jump )
 																nearby_atom_cutoff,	vector_angle_cutoff, vector_dist_cutoff );
 }
 
-///@details calc_interacting_vector does the same thing except does not need interface separation
+/// @details calc_interacting_vector does the same thing except does not need interface separation
 /// I
 utility::vector1_bool calc_interacting_vector(
 	core::pose::Pose const & pose,
@@ -234,7 +231,7 @@ utility::vector1_bool calc_interacting_vector(
 
 }
 
-///@details does the real work, looks at the big set and figures out what is actually pointing towards the interface
+/// @details does the real work, looks at the big set and figures out what is actually pointing towards the interface
 ///sets a vector bool value to true if a residue is at the interface
 void find_interface_pointing_residues_from_neighbs(
 	core::pose::Pose const & pose,
@@ -305,7 +302,7 @@ void find_interface_pointing_residues_from_neighbs(
 }//end find_interface_pointing_residues_from_neighbs
 
 
-///@details looks are residue 1 and sees if any of the side chain atoms are within the cutoff distance to residue 2
+/// @details looks are residue 1 and sees if any of the side chain atoms are within the cutoff distance to residue 2
 bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 														 core::conformation::Residue & res2,
 														 core::Real cutoff){
@@ -343,7 +340,7 @@ bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 } //end any_atoms_within_cutoff
 
 
-///@details find based on chains neighbors to look for vectors within using a big cutoff for CBs
+/// @details find based on chains neighbors to look for vectors within using a big cutoff for CBs
 InterfacePair
 find_neighbors_within_CB_cutoff( core::pose::Pose const & pose,
 																 core::Real big_cutoff,
@@ -382,7 +379,7 @@ find_neighbors_within_CB_cutoff( core::pose::Pose const & pose,
 	return std::make_pair( side1_within_cutoff, side2_within_cutoff );
 } // end find_neighbors_within_CB_cutoff
 
-///@details find neighbors to look for vectors within using a big cutoff for CBs
+/// @details find neighbors to look for vectors within using a big cutoff for CBs
 InterfacePair
 find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real big_cutoff, int jump_num ){
 	std::set<core::Size> side1_within_cutoff, side2_within_cutoff;
@@ -426,7 +423,7 @@ find_jump_partners_within_CB_cutoff( core::pose::Pose const & pose, core::Real b
 	return std::make_pair( side1_within_cutoff, side2_within_cutoff );
 } // end find_jump_partners_within_CB_cutoff
 
-///@details find the Cbeta vector(s) from one residue to another, returns the normalized vector needed
+/// @details find the Cbeta vector(s) from one residue to another, returns the normalized vector needed
 numeric::xyzVector<core::Real>
 cbeta_vector( core::conformation::Residue & res){
 	//std::string const atom_to_use( "CA" );
@@ -440,7 +437,7 @@ cbeta_vector( core::conformation::Residue & res){
 	return cbvector.normalize();
 }
 
-///@details selects the action position for a given residue
+/// @details selects the action position for a given residue
 /// Generally CB for everything but gly, and an imaginary CB position for gly.
 numeric::xyzVector<core::Real>
 select_coord_for_residue(core::conformation::Residue & res){
@@ -487,8 +484,8 @@ select_coord_for_residue(core::conformation::Residue & res){
 
 } //end select_coord_for_residue
 
-///@details figures out if res1 and res2 are pointing at eachother
-///@details the angle is the max angle between the two residues, dist_cutoff is how far the coords are from eachother
+/// @details figures out if res1 and res2 are pointing at eachother
+/// @details the angle is the max angle between the two residues, dist_cutoff is how far the coords are from eachother
 bool res1_pointed_at_res2( core::conformation::Residue & res1,
 													 core::conformation::Residue & res2,
 													 core::Real angle_cutoff /*degrees*/,

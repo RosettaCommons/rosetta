@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_RmsdEvaluator_hh
@@ -25,7 +24,6 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
@@ -35,7 +33,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <list>
@@ -49,7 +46,6 @@ namespace protocols {
 namespace simple_filters {
 
 
-
 class RmsdEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	RmsdEvaluator( core::pose::PoseCOP, core::Size start, core::Size end, std::string tag = "", bool bGDT = true );
@@ -58,7 +54,7 @@ public:
 	virtual void
 	apply ( core::pose::Pose& pose, std::string tag, core::io::silent::SilentStruct &pss) const;
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 
 	void report_gdt_components( bool const setting ){ report_gdt_components_ = setting; }
@@ -83,7 +79,7 @@ public:
 	//work it out by yourself from missing density == whacky random coords
 	SelectRmsdEvaluator( core::pose::Pose const&, std::string tag = "", bool CAonly=true );
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:
@@ -104,7 +100,7 @@ public:
 	//work it out by yourself from missing density == whacky random coords
 	SelectGdtEvaluator( core::pose::Pose const&, std::string tag = "" );
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:
@@ -124,7 +120,7 @@ public:
 	//work it out by yourself from missing density == whacky random coords
 	SelectMaxsubEvaluator( core::pose::Pose const&, std::string tag = "", core::Real rmsd_threshold = 4.0 );
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:

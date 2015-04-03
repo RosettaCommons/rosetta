@@ -21,9 +21,6 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -302,7 +299,6 @@ EnzRepackMinimize::rb_min_jumps() const{ return rb_min_jumps_; }
 void
 EnzRepackMinimize::rb_min_jumps( utility::vector1< core::Size > const v ){
 	rb_min_jumps_ = v; }
-
 
 
 } //enzdes

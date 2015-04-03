@@ -12,7 +12,6 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <devel/dna/protocols.hh>
 #include <devel/dna/ProteinDNA_Relax.hh>
 #include <devel/dna/relax_util.hh>
 #include <devel/dna/base_movers.hh>
@@ -26,43 +25,27 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -75,15 +58,12 @@
 #include <core/io/pdb/pose_io.hh>
 
 
-
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 
 // // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 //silly using/typedef
 
@@ -123,7 +103,6 @@ static thread_local basic::Tracer ti( "demo.phil.zf_relax", basic::t_info );
 static thread_local basic::Tracer tw( "demo.phil.zf_relax", basic::t_warning );
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 namespace zf_relax_ns {
 
@@ -159,7 +138,6 @@ zf_chainbreak_distance( Size const finger, pose::Pose const & pose )
 
 ///////////////////////////////////////////////////////////////////////////////
 // returns true for success, false for failure
-//
 
 
 bool
@@ -277,8 +255,6 @@ private:
 }; // ZF_PatchupMover
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 setup_zf_pose(
@@ -368,7 +344,6 @@ setup_zf_pose(
 
 	 experiment with ccd closure ? to close the finger chainbreaks, or fragment-based closure? or
 	 torsion/angle minimization as above?
-
 
 
 **/

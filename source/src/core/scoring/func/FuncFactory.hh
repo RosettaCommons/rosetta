@@ -21,7 +21,6 @@
 #include <core/scoring/func/Func.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // C++ Headers
 #include <string>

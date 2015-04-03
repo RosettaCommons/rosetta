@@ -15,7 +15,6 @@
 
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -29,7 +28,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>

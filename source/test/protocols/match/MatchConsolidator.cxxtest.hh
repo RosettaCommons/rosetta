@@ -17,15 +17,12 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 #include <protocols/match/output/MatchConsolidator.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 #include <protocols/match/Hit.hh>

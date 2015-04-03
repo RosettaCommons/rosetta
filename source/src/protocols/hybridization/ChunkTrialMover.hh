@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Wrapper for InsertChunkMover. It can take a random template and steal coordinates of all chunks or a random one
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #ifndef INCLUDED_protocols_hybridization_ChunkTrialMover_hh

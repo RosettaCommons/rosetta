@@ -9,13 +9,12 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to relax
-/// @detailed
+/// @details
 /// @author Mike Tyka, Monica Berrondo
 
 
 #include <protocols/relax/ClassicRelax.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -23,7 +22,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
@@ -46,7 +44,6 @@
 
 // Symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -57,7 +54,6 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/jd2/ScoreMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
@@ -205,7 +201,7 @@ ClassicRelax::~ClassicRelax(){}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details registering of options that are relevant for AbrelaxApplication
+/// @details registering of options that are relevant for AbrelaxApplication
 void ClassicRelax::register_options(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -236,8 +232,6 @@ void ClassicRelax::set_default( core::scoring::ScoreFunctionOP scorefxn_in ) {
 	set_scorefxn( scorefxn_in );
 	set_default();
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,7 +311,7 @@ void ClassicRelax::set_default_minimizer() {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details At stage 1 we're only doing small and shear moves
+/// @details At stage 1 we're only doing small and shear moves
 void ClassicRelax::set_default_moveset_phase1()
 {
 	// setup the move objects
@@ -341,7 +335,7 @@ void ClassicRelax::set_default_moveset_phase1()
 	moveset_phase1_ = moveset_phase1_temp;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details At stage 2 we're doing small, shear, wobble and crank moves (the latter two are works in progress)
+/// @details At stage 2 we're doing small, shear, wobble and crank moves (the latter two are works in progress)
 void ClassicRelax::set_default_moveset_phase2()
 {
 	// setup the move objects
@@ -378,7 +372,7 @@ void ClassicRelax::set_default_moveset_phase2()
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details At stage 3 we're only doing small and shear moves
+/// @details At stage 3 we're only doing small and shear moves
 void ClassicRelax::set_default_moveset_phase3()
 {
 	// setup the move objects
@@ -413,7 +407,6 @@ moves::MonteCarloOP ClassicRelax::get_mc( core::pose::Pose &pose ) {
 	check_default_mc( pose );
 	return mc_;
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

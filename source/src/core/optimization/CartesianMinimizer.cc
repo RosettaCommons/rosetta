@@ -19,7 +19,6 @@
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
 #include <core/optimization/CartesianMultifunc.hh>
 
@@ -27,8 +26,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <basic/Tracer.hh>

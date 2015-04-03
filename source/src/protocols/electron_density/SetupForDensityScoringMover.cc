@@ -9,51 +9,37 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/util.hh>
 
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 
 // Symmetry
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/options/option.hh>
 
 // option key includes
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-//
+
 #include <basic/Tracer.hh>
 
 #include <protocols/loops/Loop.hh>
@@ -143,7 +129,6 @@ void set_pose_and_scorefxn_for_edens_scoring( core::pose::Pose & pose, core::sco
 	core::pose::addVirtualResAsRoot( pose );
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( scorefxn );
 }
-
 
 
 }

@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/PoseMetricCalculators/NcontactsCalculator.cc
 /// @brief calculate #atom contacts divided by pose.total_residue() in a given pose
-/// @detailed If two atom, each of which belongs to different residues, are within a
+/// @details If two atom, each of which belongs to different residues, are within a
 /// given distance, condist_( default 6.0A ), the two atoms are defined as contact pair.
 /// The residues the atoms belong to are close ( isep_residue_ = 4 ) with each other along sequence,
 /// the contact pair is ignored.

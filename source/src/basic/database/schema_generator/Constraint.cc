@@ -50,7 +50,6 @@ Constraint::Constraint(
 {}
 
 
-
 UniqueConstraint::UniqueConstraint(
 	Column column
 ) :

@@ -26,10 +26,8 @@
 #include <core/pack/interaction_graph/SurfaceInteractionGraph.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/packer_neighbors.hh>
 
@@ -50,7 +48,7 @@ using namespace core::pack;
 using namespace core::pack::interaction_graph;
 
 // --------------- Test Class --------------- //
-///@details This suite of tests covers the InteractionGraphFactory.  That class's job is to examine the option system/PackerTask and determine the appropriate flavor of InteractionGraph for the packing at hand.  This test creates environments, runs the factory, and uses dynamic_cast to ensure that the created IG is of the correct type.
+/// @details This suite of tests covers the InteractionGraphFactory.  That class's job is to examine the option system/PackerTask and determine the appropriate flavor of InteractionGraph for the packing at hand.  This test creates environments, runs the factory, and uses dynamic_cast to ensure that the created IG is of the correct type.
 class InteractionGraphFactoryTests : public CxxTest::TestSuite {
 
 public:
@@ -136,7 +134,7 @@ public:
 	//else (meaning, no linmem_ig, not designing, in centroid mode, or we have no rotamers)
 	//DensePDInteractionGraph
 
-	/// @detailed we should get a linmemIG if linmem_ig is set in the packer task and surface weight is 0 in the scorefunction
+	/// @details we should get a linmemIG if linmem_ig is set in the packer task and surface weight is 0 in the scorefunction
 	void test_LinearMemoryInteractionGraph() {
 		//surface weight 0
 		scorefxn->set_weight( core::scoring::surface, 0 );
@@ -157,7 +155,7 @@ public:
 		return;
 	}
 
-	///@brief we should get a linmemsurfaceIG if linmem_ig is set in the packer task and surface weight is not 0 in the scorefunction
+	/// @brief we should get a linmemsurfaceIG if linmem_ig is set in the packer task and surface weight is not 0 in the scorefunction
 	void test_LinearMemorySurfaceInteractionGraph() {
 		//surface weight 1
 		scorefxn->set_weight( core::scoring::surface, 1 );
@@ -178,7 +176,7 @@ public:
 		return;
 	}
 
-	///@brief we should get this if we are designing, have rotamers, aren't centroid, and surface is nonzero
+	/// @brief we should get this if we are designing, have rotamers, aren't centroid, and surface is nonzero
 	void test_PDSurfaceInteractionGraph() {
 		//surface weight 1
 		scorefxn->set_weight( core::scoring::surface, 1 );
@@ -198,7 +196,7 @@ public:
 		return;
 	}
 
-	///@brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero
+	/// @brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero
 	void test_PDInteractionGraph() {
 		//surface weight 0
 		scorefxn->set_weight( core::scoring::surface, 0 );
@@ -218,7 +216,7 @@ public:
 		return;
 	}
 
-	///@brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero, and lazy_ig is set in the packertask
+	/// @brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero, and lazy_ig is set in the packertask
 	void test_LazyInteractionGraph() {
 		//surface weight 0
 		scorefxn->set_weight( core::scoring::surface, 0 );
@@ -239,7 +237,7 @@ public:
 		return;
 	}
 
-	///@brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero, and double_lazy_ig is set in the packertask
+	/// @brief we should get this if we are designing, have rotamers, aren't centroid, and surface is zero, and double_lazy_ig is set in the packertask
 	void test_DoubleLazyInteractionGraph() {
 		//surface weight 0
 		scorefxn->set_weight( core::scoring::surface, 0 );
@@ -260,7 +258,7 @@ public:
 		return;
 	}
 
-	///@brief we should get this if we aren't designing or are centroid, and linmem_ig is not set in the packertask
+	/// @brief we should get this if we aren't designing or are centroid, and linmem_ig is not set in the packertask
 	void test_DensePDInteractionGraph() {
 		//TEST 1: not designing
 		//surface weight 0

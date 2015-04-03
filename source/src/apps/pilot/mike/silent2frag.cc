@@ -20,7 +20,6 @@
 #include <protocols/jd2/util.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -44,7 +43,6 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-
 
 
 using namespace core;
@@ -103,7 +101,6 @@ void FragCaptureMover::write( const std::string &filename )
 
 } // moves
 } // protocols
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

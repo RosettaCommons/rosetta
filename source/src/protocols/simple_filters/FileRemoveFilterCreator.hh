@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the FileRemoveFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_FileRemoveFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_FileRemoveFilterCreator_hh
 

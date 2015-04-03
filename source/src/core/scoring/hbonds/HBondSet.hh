@@ -28,14 +28,11 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <basic/datacache/CacheableData.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
 
 // Utility headers
 //#include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -50,7 +47,6 @@
 //#include <set>
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -58,7 +54,7 @@ namespace hbonds {
 class HBond : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< HBond >
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~HBond();
 	HBond(
 		Size const dhatm,
@@ -85,11 +81,11 @@ public:
 	//inline HBondCAP get_self_weak_ptr() const { return HBondCAP( shared_from_this() ); }
 	//inline HBondAP get_self_weak_ptr() { return HBondAP( shared_from_this() ); }
 
-	///
+
 	Size
 	don_res() const;
 
-	///
+
 	Size
 	don_hatm() const;
 
@@ -107,11 +103,11 @@ public:
 	bool
 	don_hatm_is_backbone() const;
 
-	///
+
 	Size
 	acc_res() const;
 
-	///
+
 	Size
 	acc_atm() const;
 
@@ -133,37 +129,37 @@ public:
 	Real
 	energy() const;
 
-	///
+
 	Real
 	weight() const;
 
-	///
+
 	HBondDerivs const &
 	derivs() const;
 
-	///@brief The HBEval type encodes the evaluation type as a single
+	/// @brief The HBEval type encodes the evaluation type as a single
 	///enum value
 	HBEvalType
 	eval_type() const;
 
-	///@brief The HBEvalTuple is a tuple of enums for each dimension of
+	/// @brief The HBEvalTuple is a tuple of enums for each dimension of
 	///the evaluation type
 	HBEvalTuple const &
 	eval_tuple() const;
 
-	///
+
 	bool
 	atom_is_donorH( id::AtomID const & atom ) const;
 
-	///
+
 	bool
 	atom_is_acceptor( id::AtomID const & atom ) const;
 
-	///@breif a bare bones description of the data contained in the hbond object
+	/// @brief a bare bones description of the data contained in the hbond object
 	void
 	show( std::ostream & out ) const;
 
-	///@brief a prettier, more interpretable description of an hbond,
+	/// @brief a prettier, more interpretable description of an hbond,
 	///including pdb identified residues and the geometric dimensions of
 	///the hydrogen bond.
 	void show(
@@ -177,7 +173,6 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////
 	// Geometry Info
-	//
 	//
 
 	Real
@@ -198,7 +193,7 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const HBond & hbond );
 
-	///
+
 	friend
 	bool
 	operator==(HBond const & a, HBond const & b);
@@ -239,9 +234,9 @@ private:
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief A class that holds Hbond objects and helps setup Hbonds for scoring
+/// @brief A class that holds Hbond objects and helps setup Hbonds for scoring
 ///
-///@details For general hydrogen bond information, either use the default or option constructor,
+/// @details For general hydrogen bond information, either use the default or option constructor,
 /// then use the fill methods in hbonds.hh OR use the convenience constructors to detect all Hbonds.
 /// Use the copy constructors to fill HBondSets with the Hydrogen bonds you are interested in.
 ///
@@ -262,24 +257,21 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	// Convenience Constructors - Use fill methods in hbond.hh for more options
 	//
-	//
 
-	///@brief convenience constructor: Find all the hbonds in the pose. BB only default.
+	/// @brief convenience constructor: Find all the hbonds in the pose. BB only default.
 	HBondSet(
 		pose::Pose & pose,
 		bool const bb_only = true);
 
-	///@brief convenience constructor: Find all the hbonds in the pose. BB only default.
+	/// @brief convenience constructor: Find all the hbonds in the pose. BB only default.
 	HBondSet(
 		HBondOptions const & options,
 		pose::Pose & pose,
 		bool const bb_only = true);
 
 
-
 	////////////////////////////////////////////////////////////////////////////
 	// Copy Constructors
-	//
 	//
 
 	HBondSet( HBondSet const & src );
@@ -289,7 +281,6 @@ public:
 	HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask );
 
 	HBondSet( HBondSet const & src, Size seqpos );
-
 
 
 public:
@@ -304,52 +295,51 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	// Accessors
 	//
-	//
 
-	///@brief  Access hbond
+	/// @brief  Access hbond
 	HBond const &
 	hbond( Size const number ) const;
 
-	///@brief  Access hbond
+	/// @brief  Access hbond
 	HBondCOP
 	hbond_cop( Size const number ) const;
 
-	///@brief  Get a vector of all the hbonds involving this atom
-	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
+	/// @brief  Get a vector of all the hbonds involving this atom
+	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	utility::vector1< HBondCOP > const
 	atom_hbonds( AtomID const & atom, bool include_only_allowed = true ) const;
 
-	///@brief Get a vector of all the hbonds involving this residue
-	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
+	/// @brief Get a vector of all the hbonds involving this residue
+	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	utility::vector1< HBondCOP > const
 	residue_hbonds(Size const seqpos, bool include_only_allowed = true) const;
 
 
-	///@brief  Number of hbonds
+	/// @brief  Number of hbonds
 	Size
 	nhbonds() const;
 
-	///@brief Number of hbonds involving this residue
-	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
+	/// @brief Number of hbonds involving this residue
+	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	Size
 	nhbonds(Size const seqpos, bool include_only_allowed = true) const;
 
-	///@brief Number of hbonds involving this atom
-	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
+	/// @brief Number of hbonds involving this atom
+	/// @details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	Size
 	nhbonds( AtomID const & atom, bool include_only_allowed = true) const;
 
-	///@brief general function for accessing the number of 10A neighbors of a given position set by setup_for_residue_pair_energies.
+	/// @brief general function for accessing the number of 10A neighbors of a given position set by setup_for_residue_pair_energies.
 	int
 	nbrs( Size const seqpos ) const;
 
-	///@brief Read access to the stored hbond options
+	/// @brief Read access to the stored hbond options
 	HBondOptions const &
 	hbond_options() const;
 
 
-	///@brief  Is this hbond allowed under the bb-bb exclusion scheme?
-	///@details bb-bb exclusion scheme means that if the query hbond is a sc making a sc-bb hbond with a backbone already involved in a bb-bb hbond, return false
+	/// @brief  Is this hbond allowed under the bb-bb exclusion scheme?
+	/// @details bb-bb exclusion scheme means that if the query hbond is a sc making a sc-bb hbond with a backbone already involved in a bb-bb hbond, return false
 	/// This has been included by default when assessing pose Hbond energies due to Rosetta designing too many ser/thr bifricated  hbonds in ss structures.
 	/// Part of the reason is that Rosetta currently does NOT treat bifricated hbonds differently - so both hbonds are counted toward the score.
 	/// Another reason is that the rotamer library itself favors local bb-sc hbonds.
@@ -362,11 +352,11 @@ public:
 	allow_hbond( HBond const & hbond ) const;
 
 
-	///@brief is the backbone bone acceptor group in a bb/bb hydrogen bond?
+	/// @brief is the backbone bone acceptor group in a bb/bb hydrogen bond?
 	bool
 	acc_bbg_in_bb_bb_hbond( Size const residue ) const;
 
-	///@brief is the backbone bone donor group in a bb/bb hydrogen bond?
+	/// @brief is the backbone bone donor group in a bb/bb hydrogen bond?
 	bool
 	don_bbg_in_bb_bb_hbond( Size const residue ) const;
 
@@ -374,9 +364,8 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	// Mutators
 	//
-	//
 
-	///@brief  Add a new hbond to the list
+	/// @brief  Add a new hbond to the list
 	/// updates the "hbchk" array as necessary
 	void
 	append_hbond(
@@ -397,32 +386,32 @@ public:
 	void
 	sort_by_weighted_energy();
 
-	///@brief  Delete all the data
+	/// @brief  Delete all the data
 	void
 	clear();
 
-	///@brief Manually set the state of backbone-backbone acceptor. Used for symmetry.
+	/// @brief Manually set the state of backbone-backbone acceptor. Used for symmetry.
 	void
 	set_backbone_backbone_acceptor( Size const residue, bool state )
 	{
 		backbone_backbone_acceptor_[ residue ] = state;
 	}
 
-	///@brief Manually set the state of backbone-backbone donor. Used for symmetry.
+	/// @brief Manually set the state of backbone-backbone donor. Used for symmetry.
 	void
 	set_backbone_backbone_donor( Size const residue, bool state )
 	{
 		backbone_backbone_donor_[ residue ] = state;
 	}
 
-	///@brief Resize bb info arrays
+	/// @brief Resize bb info arrays
 	void
 	resize_bb_donor_acceptor_arrays( Size const new_dimension );
 
 	void
 	copy_bb_donor_acceptor_arrays( HBondSet const & src );
 
-	///@brief Used by SymmetricScorFunction.  Not sure why. Not for general use.
+	/// @brief Used by SymmetricScorFunction.  Not sure why. Not for general use.
 	void
 	set_nbrs( Size const seqpos, Size value );
 
@@ -437,7 +426,7 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const HBondSet & hbond_set );
 
-	///@brief equality operator
+	/// @brief equality operator
 	friend
 	bool
 	operator==(HBondSet const & a, HBondSet const & b);
@@ -445,13 +434,11 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 
 
-
 	////////////////////////////////////////////////////////////////////////////
 	// Show Methods
 	//
-	//
 
-	///@brief Print just the information stored in each individual
+	/// @brief Print just the information stored in each individual
 	/// hbond.
 	void show(std::ostream & out) const;
 
@@ -459,7 +446,7 @@ public:
 	void show() const { show(std::cout); };
 
 
-	///@brief Print nicely formated summary of the hbonds and their geometry in the pose.
+	/// @brief Print nicely formated summary of the hbonds and their geometry in the pose.
 	void show(
 		pose::Pose const & pose,
 		bool const print_header,
@@ -471,7 +458,7 @@ public:
 		bool const print_header=true) const { show(pose, print_header, std::cout); }
 
 
-	///@brief Print nicely formated summary of all the hbonds to a
+	/// @brief Print nicely formated summary of all the hbonds to a
 	/// specific residue
 	void show(
 		pose::Pose const & pose,
@@ -489,7 +476,7 @@ public:
 private:
 	typedef std::map< AtomID, utility::vector1< HBondCOP > > HBondAtomMap;
 
-	///@brief  Setup the mapping from atoms to hbonds
+	/// @brief  Setup the mapping from atoms to hbonds
 	void
 	setup_atom_map() const;
 

@@ -35,12 +35,10 @@
 //#include <utility/io/all.fwd.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <vector>
 #include <list>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1A.hh>
-
 
 
 namespace core {

@@ -208,7 +208,7 @@ is_semi_rot( core::chemical::AA aa ) {
 	);
 }
 
-//
+
 void
 mutate_to_ala(core::pose::Pose &pose, int center) {
 	using namespace core;
@@ -232,7 +232,6 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 }
 
 
-//
 void
 dump_table( ObjexxFCL::FArray2D<core::Real> table, std::string filename, std::string tag ) {
 	std::ofstream outtable( filename.c_str(), std::ofstream::out | std::ofstream::app );
@@ -249,7 +248,6 @@ dump_table( ObjexxFCL::FArray2D<core::Real> table, std::string filename, std::st
 }
 
 
-//
 void
 correct_dunbrack() {
 	using namespace core::chemical;
@@ -747,7 +745,6 @@ correct_dunbrack() {
 }
 
 
-//
 void
 calc_scores() {
 	using namespace core::chemical;
@@ -891,7 +888,6 @@ calc_scores() {
 }
 
 
-//
 void
 make_fragments() {
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();

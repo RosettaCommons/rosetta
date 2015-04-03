@@ -9,7 +9,7 @@
 
 /// @file CompositeScoringScheme.hh
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Scoring scheme based on comparing sequence columns based on
+/// @details Scoring scheme based on comparing sequence columns based on
 /// the additive combination of several ScoringScheme objects.
 /// @author James Thompson
 

@@ -252,7 +252,6 @@ private:
 };
 
 
-
 } // task_operations
 } // denovo_design
 } // devel

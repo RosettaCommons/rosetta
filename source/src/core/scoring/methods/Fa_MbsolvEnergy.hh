@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class Fa_MbsolvEnergy : public ContextDependentTwoBodyEnergy {
 public:
   typedef ContextDependentTwoBodyEnergy  parent;

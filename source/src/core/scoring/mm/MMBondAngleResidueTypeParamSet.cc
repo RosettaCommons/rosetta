@@ -30,19 +30,16 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <string>
 #include <map>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
 #include <utility/assert.hh>
 
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -147,7 +144,6 @@ MMBondAngleResidueTypeParamSet::lookup(
 
 	lookup(conformation, atomid1, atomid2, atomid3, residue_type_param, Ktheta, theta0);
 }
-
 
 
 /// @brief lookup Ktheta and theta0 for any bond angle in a conformation

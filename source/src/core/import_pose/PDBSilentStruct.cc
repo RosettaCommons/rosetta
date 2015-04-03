@@ -42,7 +42,6 @@
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 

@@ -46,7 +46,6 @@
 #include <utility/io/ozstream.hh>
 
 
-
 static thread_local basic::Tracer TR( "gpu_score_test" );
 
 

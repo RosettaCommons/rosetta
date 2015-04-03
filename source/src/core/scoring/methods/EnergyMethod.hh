@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -31,13 +30,10 @@
 #include <core/kinematics/DomainMap.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.fwd.hh>
 
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.fwd.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -235,7 +231,7 @@ public:
 		utility::vector1< bool > & context_graphs_required
 	) const = 0;
 
-	///@brief Return the version of the energy method
+	/// @brief Return the version of the energy method
 	virtual
 	core::Size version() const = 0;
 

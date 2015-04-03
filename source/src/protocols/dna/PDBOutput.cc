@@ -88,7 +88,6 @@ PDBOutput::PDBOutput()
 PDBOutput::~PDBOutput(){}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin PDBOutput::final_pose
 /// @details pose is const here, so it must be scored already if score information is expected in output file
 /// @author ashworth
 void
@@ -108,7 +107,6 @@ PDBOutput::final_pose( JobOP job, Pose const & pose, std::string const & /*tag*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin PDBOutput () operator -- non-JobDistributor usage
 /// @details scores pdb
 /// @author ashworth
 void
@@ -130,7 +128,6 @@ PDBOutput::operator() (
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin PDBOutput::output_pdb
 /// @details
 /// @author ashworth
 void
@@ -235,7 +232,7 @@ PDBOutput::remove_info( std::string const & key )
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // private methods
 
-///@brief compares identity, then internal degrees of freedom for between residues
+/// @brief compares identity, then internal degrees of freedom for between residues
 bool
 PDBOutput::residues_are_different(
 	Residue const & res1,
@@ -301,7 +298,6 @@ string_join(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin output design tags
 /// @details outputs a set of tags describing how residues varied
 /// @author ashworth
 void
@@ -407,7 +403,6 @@ PDBOutput::output_score_info( ozstream & pdbout )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin output_hbond_info
 /// @brief Generates a table of hydrogen bond info and categorizes hbonds by type
 /// @author ashworth
 void
@@ -527,7 +522,6 @@ PDBOutput::output_hbond_info( ozstream & pdbout )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin output_buried_unsatisfied_hbonds
 /// @details
 /// @author ashworth
 void

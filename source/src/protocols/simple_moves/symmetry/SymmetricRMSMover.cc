@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -25,7 +24,6 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 // ObjexxFCL Headers

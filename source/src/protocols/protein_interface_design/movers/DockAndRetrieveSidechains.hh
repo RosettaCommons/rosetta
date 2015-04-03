@@ -19,8 +19,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockProtocol.hh>
 
 #include <protocols/docking/DockingProtocol.fwd.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.fwd.hh>

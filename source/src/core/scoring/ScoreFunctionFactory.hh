@@ -100,7 +100,6 @@ extern std::string const DOCK_PATCH;
 extern std::string const DOCK_LOW_PATCH;
 
 
-
 /// @brief A helper function which returns a scoring function owning pointer according to the
 /// user's command line parameters -score:weights and -score:patch
 /// By default it returns weights=standard and patch=score12 for fullatom,

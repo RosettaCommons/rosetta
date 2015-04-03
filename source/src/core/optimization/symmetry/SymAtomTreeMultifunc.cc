@@ -15,24 +15,17 @@
 #include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 
 /// Package headers
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
 #include <core/optimization/symmetry/sym_atom_tree_minimize.hh>
 
 /// Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -41,13 +34,11 @@
 #include <basic/prof.hh>
 
 /// Numeric headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <utility/string_util.hh>
-
 
 
 namespace core {

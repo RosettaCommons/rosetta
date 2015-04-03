@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace etable {
@@ -182,7 +181,6 @@ private:
 
 	Real hydrogen_interaction_cutoff2_;
 };
-
 
 
 class AnalyticEtableEvaluator : public EtableEvaluator
@@ -709,7 +707,6 @@ private:
 };
 
 
-///
 class TableLookupEtableEnergy : public BaseEtableEnergy< TableLookupEtableEnergy >  {
 public:
 	typedef BaseEtableEnergy< TableLookupEtableEnergy >  parent;
@@ -739,7 +736,6 @@ public:
 	setup_for_scoring_(pose::Pose const& pose, scoring::ScoreFunction const&) const;
 
 
-	//
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
@@ -816,7 +812,6 @@ public:
 	setup_for_scoring_(pose::Pose const& pose, scoring::ScoreFunction const&) const;
 
 
-	//
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentTwoBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
@@ -934,7 +929,6 @@ debug_assert( ljatr_.active() );
 	} //if within cutoff
 
 }
-
 
 
 inline

@@ -69,7 +69,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-
 // C++ headers
 //#include <cstdlib>
 #include <fstream>

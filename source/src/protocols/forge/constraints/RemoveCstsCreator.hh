@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/forge/constraints/RemoveCstsCreator.hh
-///@brief This class will create instances of the RemoveCsts mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/constraints/RemoveCstsCreator.hh
+/// @brief This class will create instances of the RemoveCsts mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_forge_constraints_RemoveCstsCreator_hh
 #define INCLUDED_protocols_forge_constraints_RemoveCstsCreator_hh

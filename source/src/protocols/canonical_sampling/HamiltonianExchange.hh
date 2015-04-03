@@ -32,7 +32,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @details
 class HamiltonianExchange : public protocols::canonical_sampling::AsyncMPITemperingBase {
 	typedef AsyncMPITemperingBase Parent;
 	//	typedef utility::vector1< core::Size > GridCoord; // moving to base class TemperatureController
@@ -143,7 +143,7 @@ protected:
 
 private:
 	void setup_exchange_schedule();
-	///@brief small helper function; compute unique key out of (z1, z2, ... , zN) excluding zD
+	/// @brief small helper function; compute unique key out of (z1, z2, ... , zN) excluding zD
 	core::Size coord2key(
     GridCoord const& coord,
 		GridCoord const& max_coord,

@@ -340,7 +340,7 @@ public:
 	void prob_to_accumulate_nonburied( Real );
 
 	///DOUG DOUG DOUG This can be removed but might need to be converted to strings. However it seems that in our case they could be member variables since we really are having SINGLE RESIDUE rot libs and these provide look up for each.
-	///@brief Hard coded specifics about the amino acids
+	/// @brief Hard coded specifics about the amino acids
 	static
 	void
 	n_rotamer_bins_for_aa(
@@ -395,7 +395,6 @@ private:
 	utility::vector1< utility::vector1< Size > > packed_rotno_2_rotwell_;
 
 };
-
 
 
 } // dunbrack

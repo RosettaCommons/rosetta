@@ -17,7 +17,6 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 // Project Headers

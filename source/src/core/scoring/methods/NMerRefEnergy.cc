@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>

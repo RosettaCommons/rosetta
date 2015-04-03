@@ -24,8 +24,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 
-
-
 #include <time.h>
 
 //Auto Headers
@@ -63,7 +61,6 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 // inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec const & cen ) {
 // 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 // }
-
 
 
 Real dot_sasa(Pose & pose, clock_t & t) {
@@ -116,7 +113,6 @@ int main (int argc, char *argv[])
 	basic::prof_show();
 
 
-
 	return 0;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
@@ -125,22 +121,5 @@ int main (int argc, char *argv[])
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

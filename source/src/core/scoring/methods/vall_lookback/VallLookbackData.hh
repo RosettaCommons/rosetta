@@ -21,7 +21,6 @@
 #include <core/types.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {

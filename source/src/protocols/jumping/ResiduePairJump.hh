@@ -9,14 +9,13 @@
 
 /// @file src/protocols/jumping/ResiduePairJump.hh
 /// @brief a class to create jump transform from a pair of residues
-/// @detailed
+/// @details
 ///  This class is to create possible jump transforms between a pair of residues
 ///  when their sidechains are locked in certain geometry constraints. It starts
 ///  from the predefined constraints and takes backbone-independent rotamer
 ///  conformation into account and reversely generate their backbone positions.
 ///  Then a jump transform is measured.
 /// @author Chu Wang
-
 
 
 #ifndef INCLUDED_protocols_jumping_ResiduePairJump_hh
@@ -30,7 +29,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
 #include <core/fragment/Frame.fwd.hh>
 #ifdef WIN32
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -43,14 +41,11 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <vector>
 
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <utility/vector1.hh>
@@ -59,74 +54,74 @@
 namespace protocols {
 namespace jumping {
 ///////////////////////////////////////////////////////////////////////////////////
-///@brief a single residue component of a ResiduePairJump class
+/// @brief a single residue component of a ResiduePairJump class
 ///
-///@details a residue type with information which atoms to be used to define a jump
+/// @details a residue type with information which atoms to be used to define a jump
 ///and cst.
 class ResiduePairJumpSingle : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief empty constructor
+	/// @brief empty constructor
 	ResiduePairJumpSingle();
 
 	virtual ~ResiduePairJumpSingle();
 
-	///@brief constructed by residue_type
+	/// @brief constructed by residue_type
 	ResiduePairJumpSingle(
 		core::chemical::ResidueType const & residue_type
 	);
 
-	///@brief have jumpAtoms been defined?
+	/// @brief have jumpAtoms been defined?
 	inline
 	bool jumpAtoms_defined() const { return jumpAtoms_.size() == 3; }
 
-	///@brief have cstAtoms been defined?
+	/// @brief have cstAtoms been defined?
 	inline
 	bool cstAtoms_defined() const { return cstAtoms_.size() == 3; }
 
-	///@brief whether this residue has internal flexibility
+	/// @brief whether this residue has internal flexibility
 	inline
 	bool fixResidue() const { return fixResidue_; }
 
-	///@brief access residue type
+	/// @brief access residue type
 	core::chemical::ResidueTypeOP residueType() const;
 
-	///@brief access all three jumpAtoms at once
+	/// @brief access all three jumpAtoms at once
 	inline
 	utility::vector1< std::string > const & jumpAtoms() const { return jumpAtoms_; }
 
-	///@brief access single jumpAtom one at a time
+	/// @brief access single jumpAtom one at a time
 	inline
 	std::string const jumpAtoms( core::Size i ) const { return jumpAtoms_[i]; }
 
-	///@brief access all three cstAtoms at once
+	/// @brief access all three cstAtoms at once
 	inline
 	utility::vector1< std::string > const & cstAtoms() const { return cstAtoms_; }
 
-	///@brief access single cstAtom one at a time
+	/// @brief access single cstAtom one at a time
 	inline
 	std::string const cstAtoms( core::Size i ) const { return cstAtoms_[i]; }
 
-	///@brief set all three jumpAtoms at once
+	/// @brief set all three jumpAtoms at once
 	void set_jumpAtoms( utility::vector1< std::string > const & jump_atoms );
 
-	///@brief set single jumpAtom one at a time
+	/// @brief set single jumpAtom one at a time
 	void set_jumpAtoms( core::Size i, std::string const atom_name );
 
-	///@brief set all three cstAtoms at once
+	/// @brief set all three cstAtoms at once
 	void set_cstAtoms( utility::vector1< std::string > const & cst_atoms );
 
-	///@brief set all single cstAtom one at a time
+	/// @brief set all single cstAtom one at a time
 	void set_cstAtoms( core::Size i, std::string const atom_name );
 
 private:
-	///@brief internal data -- residue type
+	/// @brief internal data -- residue type
 	core::chemical::ResidueTypeOP residueType_;
-	///@brief internal data -- atom names (3) for creating the jump
+	/// @brief internal data -- atom names (3) for creating the jump
 	utility::vector1< std::string >  jumpAtoms_;
-	///@brief internal data -- atom names (3) for defining cst
+	/// @brief internal data -- atom names (3) for defining cst
 	utility::vector1< std::string >  cstAtoms_;
-	///@brief internal data -- whether to consider internal flexibility within this residue
+	/// @brief internal data -- whether to consider internal flexibility within this residue
 	bool fixResidue_;
 };
 

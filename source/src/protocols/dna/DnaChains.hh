@@ -31,7 +31,7 @@ namespace protocols {
 namespace dna {
 
 class DnaPosition {
-///@brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<Size,Size> would, but is nicer to use
+/// @brief Stores residue index/indices for a DNA position, which could be a basepair or a single-stranded position.  Accomplishes what std::pair<Size,Size> would, but is nicer to use
 public: // constructors
 	// default empty constructor
 	DnaPosition() : top_(0), bottom_(0), paired_(false) {}

@@ -53,8 +53,6 @@ namespace protocols{
 namespace pathrover{
 
 
-
-
 //////////////////////////////////////////////////////////
 //
 // A global function for invoking the flexible peptide docking
@@ -87,12 +85,11 @@ void pathrover_generator_main(bool &failed)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin Pathways::Pathways()
 ///
 /// @brief ctr of protocol for generating pathways of conformations with RRT class algorithms,
 //         etc.
 ///
-/// @detailed
+/// @details
 /// ctr of // TODO: fill this up
 ///
 /// @global_read
@@ -106,9 +103,8 @@ void pathrover_generator_main(bool &failed)
 ///
 /// @references
 ///
-/// @authors Barak & Angela 29/Nov/2007
+/// @author Barak & Angela 29/Nov/2007
 ///
-/// @last_modified 29/Nov/2007
 /////////////////////////////////////////////////////////////////////////////////
 path_rover::PathRover()
 	: 	 _params_h("pathways.params"), // TODO: run-time definition of file name
@@ -489,7 +485,6 @@ std::cout << "CENTROID mode" << std::endl;
 }
 
 
-
 void
 path_rover::run(){
 	using namespace pose_ns;
@@ -701,8 +696,6 @@ path_rover::run(){
 		rrt.run();
 	}
 }
-
-
 
 
 } // namespace pathways

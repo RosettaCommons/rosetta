@@ -13,7 +13,6 @@
 
 #include <protocols/fldsgn/potentials/sspot/util.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 // numeric headers
 #include <numeric/conversions.hh>
@@ -26,7 +25,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 namespace protocols {

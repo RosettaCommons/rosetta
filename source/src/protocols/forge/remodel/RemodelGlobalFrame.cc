@@ -15,7 +15,6 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelGlobalFrame.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
 
@@ -315,7 +314,6 @@ TR.Debug << "align seg 1" << std::endl;
 		pose.constraint_set(pose_cst_set);
 		pose.pdb_info()->obsolete(true);
 	}
-
 
 
 	//Size numRes = pose.total_residue();  // unused ~Labonte
@@ -834,7 +832,6 @@ TR.Debug << "setup RGF cst 1" << std::endl;
 				Vector idealCM_4( COM_target(0,3), COM_target(1,3), COM_target(2,3));
 
 
-
 				Vector3f c_COMs(COMs.row(0).mean(), COMs.row(1).mean(), COMs.row(2).mean());
 				Vector3f c_COM_target(COM_target.row(0).mean(), COM_target.row(1).mean(), COM_target.row(2).mean());
 				xyzVector< Real >  preT (c_COMs(0), c_COMs(1), c_COMs(2));   // preT
@@ -1042,7 +1039,6 @@ double get_RMSD(MatrixXf &A,MatrixXf &B){
 //  cout<<"RGF rmsd:"<<rmsd<<endl;
   return rmsd;
 }
-
 
 
 } // remodel

@@ -13,7 +13,6 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
@@ -26,16 +25,12 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <fstream>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <sstream>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
@@ -210,7 +205,6 @@ main (int argc, char *argv[]){
   }
 
   return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -397,7 +397,6 @@ double TailsScoreMover::score_mode3(int& out_min_ltail_length, int& out_min_rtai
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin apply for ScoreMover
 ///
 /// @brief Simply score a pdb
 void

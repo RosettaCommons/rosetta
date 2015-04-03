@@ -10,7 +10,7 @@
 /// @file protocols/flxbb/DesignTask.cc
 /// @brief
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
-///
+
 
 // Unit Headers
 #include <protocols/flxbb/DesignTask.hh>
@@ -21,7 +21,6 @@
 #include <protocols/flxbb/FilterStructs.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>

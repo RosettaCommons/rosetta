@@ -66,7 +66,7 @@ public:
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(

@@ -15,7 +15,6 @@
 
 // Unit header or inline function header
 #include <core/scoring/packstat/PackingScore.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <cmath>
 #include <iostream>

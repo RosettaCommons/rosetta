@@ -104,7 +104,7 @@ public:
 };*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief different set of choices at each position in Entity's traits
+/// @brief different set of choices at each position in Entity's traits
 class Mutate1Randomizer : public protocols::genetic_algorithm::PositionSpecificRandomizer {
 public:
 	typedef protocols::genetic_algorithm::PositionSpecificRandomizer parent;

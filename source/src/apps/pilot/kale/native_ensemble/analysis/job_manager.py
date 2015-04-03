@@ -580,7 +580,6 @@ class MoveStatsWindow (gtk.Window):
                 model.set(row, 6, efficiency)
 
 
-
 class CommandManager (type):
     scripts = []
 
@@ -613,7 +612,6 @@ class CommandLauncher (object):
             commands.append(CommandRunner(self.title, command))
 
         return commands
-
 
 
 class DeleteJob (CommandLauncher):
@@ -716,7 +714,6 @@ class SaveMovie (CommandLauncher):
 
         hbox.pack_start(self.entry, expand=True, fill=True)
         hbox.pack_start(self.combo, expand=False)
-
 
 
 if __name__ == "__main__":

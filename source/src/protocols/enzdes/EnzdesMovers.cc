@@ -14,7 +14,6 @@
 #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 
-// AUTO-REMOVED #include <protocols/enzdes/EnzdesFixBBProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
@@ -25,15 +24,12 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -47,13 +43,11 @@
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <core/id/AtomID.hh>
 
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // option key includes

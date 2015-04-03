@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -29,9 +28,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
-
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 

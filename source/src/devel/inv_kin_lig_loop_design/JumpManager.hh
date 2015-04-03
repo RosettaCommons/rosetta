@@ -15,7 +15,6 @@
 #ifndef DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
 #define DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
 
-// AUTO-REMOVED #include <utility>
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/Jump.hh>

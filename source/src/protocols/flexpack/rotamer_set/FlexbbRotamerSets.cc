@@ -183,7 +183,6 @@ FlexbbRotamerSets::nbackbone_conformations() const
 }
 
 
-
 /// @brief function to figure out the flexpack neighbor graph, see core::pack::create_packer_graph for fixbb version
 /// @brief problem: Ca/Cb not fixed, so we need to add a certain distance to the interaction energies. this distance
 /// @brief will depend on the average deviation of the CBs in the flexible segments for each residue
@@ -235,7 +234,6 @@ FlexbbRotamerSets::determine_res_cb_deviation(
 } //determine_res_cb_deviation
 
 
-
 void
 FlexbbRotamerSets::build_rotamers(
 	core::pose::Pose const & pose,
@@ -278,8 +276,6 @@ FlexbbRotamerSets::build_rotamers(
 	}
 
 } //build_rotamers
-
-
 
 
 /// @brief function to dump all the rotamer sets out to pdb files, more or less only used for debugging
@@ -486,7 +482,6 @@ FlexbbRotamerSets::build_residue_vector_from_fragment(
 		fragment_res.push_back( core::conformation::ResidueOP( new core::conformation::Residue ( pose.residue( rescount ) ) ) );
 	}
 } //build residue vector from fragment
-
 
 
 core::Size

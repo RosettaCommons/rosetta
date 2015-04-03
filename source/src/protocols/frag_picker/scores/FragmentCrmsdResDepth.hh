@@ -21,7 +21,6 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 // mini
-// AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
 
 #include <core/types.hh>
 
@@ -47,11 +46,11 @@ class FragmentCrmsdResDepth: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to a given pose, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	FragmentCrmsdResDepth(Size, Real, bool, core::pose::PoseOP, utility::vector1<core::Real> & query_residue_depth);
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
 	FragmentCrmsdResDepth(Size, Real, bool, utility::vector1< utility::vector1<Real> >,  utility::vector1<core::Real> & query_residue_depth);
 
 	~FragmentCrmsdResDepth();

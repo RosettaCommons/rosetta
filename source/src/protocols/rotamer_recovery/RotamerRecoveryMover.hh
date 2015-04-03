@@ -34,10 +34,6 @@
 #include <string>
 
 
-
-
-
-
 namespace protocols {
 namespace rotamer_recovery {
 
@@ -87,7 +83,7 @@ public: // functional interface
 		moves::Movers_map const & movers,
 		Pose const &);
 
-	///@brief this function informs the job distributor (august 08
+	/// @brief this function informs the job distributor (august 08
 	///vintage) whether this object needs to be freshly regenerated on
 	///each use.
 	virtual
@@ -95,7 +91,7 @@ public: // functional interface
 	reinitialize_for_each_job() const;
 
 
-	///@brief this function informs the job distributor (august 08
+	/// @brief this function informs the job distributor (august 08
 	///vintage) whether this object needs to be regenerated when the
 	///input pose is about to change (for example, if the mover has
 	///special code on the first apply() that is only valid for that

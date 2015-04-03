@@ -144,7 +144,6 @@ pick_fragments(
 );
 
 
-
 } // vall
 } // picking_old
 } // fragment

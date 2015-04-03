@@ -17,38 +17,27 @@
 
 
 // Package Headers
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // core::pose::make_pose_from_sequence
 
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>// getting sequence from pose
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
 #include <protocols/abinitio/ClassicAbinitio.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
 #include <core/scoring/dssp/Dssp.hh>// dssp info
 
@@ -58,23 +47,17 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <devel/denovo_protein_design/util.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // C++ Headers
 #include <vector>
 #include <iostream>
 #include <iomanip>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
-// AUTO-REMOVED #include <ctime>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // option key includes
@@ -90,8 +73,6 @@
 #include <utility/vector0.hh>
 
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -101,7 +82,7 @@ using namespace core;
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 	std::string nucleated_sequence;
@@ -127,8 +108,6 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 	}
 
 	}
-
-
 
 
 	// set up for create from secondary structure
@@ -309,10 +288,9 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 	pose = nucleated_pose;
 
 
-
 }//apply
 
-///@brief
+/// @brief
 CreateStartingStructureMover::CreateStartingStructureMover(
 ) : Mover()
 {

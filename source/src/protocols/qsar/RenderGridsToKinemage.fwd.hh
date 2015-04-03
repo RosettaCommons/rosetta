@@ -24,5 +24,4 @@ class RenderGridsToKinemage;
 }
 
 
-
 #endif /* RENDERGRIDSTOKINEMAGE_FWD_HH_ */

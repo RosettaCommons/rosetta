@@ -153,7 +153,7 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
     }
 }
 
-///
+
 void
 RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
@@ -444,7 +444,7 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	//      dE/dx = dE/dr (x/r)   +   ( - x * z / r^3 ) ( dE/dcos(theta) )
 	//      dE/dy = dE/dr (y/r)   +   ( - y * z / r^3 ) ( dE/dcos(theta) )
 	//      dE/dz = dE/dr (z/r)   +   ( (r^2 - z^2) / r^3 ) ( dE/dcos(theta) )
-	//
+
 
   Vector const x_i = M_i.col_x();
   Vector const y_i = M_i.col_y();

@@ -13,45 +13,24 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/SWAligner.hh>
-// AUTO-REMOVED #include <core/sequence/L1ScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/MatrixScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/ScoringSchemeFactory.hh>
 
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
-
-// AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -81,7 +60,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -18,7 +18,6 @@
 #include <core/pack/interaction_graph/SymmOnTheFlyInteractionGraph.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 #include <core/pack/interaction_graph/SparseMatrixIndex.hh>
 #include <core/pack/interaction_graph/FixedBBInteractionGraph.hh>
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
@@ -40,7 +39,6 @@
 #include <numeric/xyzVector.hh>
 
 /// C++ headers
-// AUTO-REMOVED #include <utility> // std::pair
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>

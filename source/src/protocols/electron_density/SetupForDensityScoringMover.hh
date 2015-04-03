@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 
@@ -21,12 +21,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <protocols/loops/Loops.fwd.hh>

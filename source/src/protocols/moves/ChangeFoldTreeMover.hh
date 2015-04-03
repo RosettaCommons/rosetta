@@ -25,8 +25,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL Headers
@@ -38,7 +36,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

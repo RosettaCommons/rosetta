@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/SSPredictionFilter.cc
 /// @brief Filter to determine agreement with SSPrediction for secondary structure prediction
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // unit headers

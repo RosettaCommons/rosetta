@@ -151,11 +151,6 @@ void t_option_file::write_options() {
 };
 
 
-
-
-
-
-
 /* ################## block and line implementation ##################*/
 char *fgets2(char *line, int n, FILE *stream)
 /* This routine reads a string from stream of max length n

@@ -12,7 +12,7 @@
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
 /// @author Roland A. Pache, PhD
-///
+
 
 #ifndef INCLUDED_core_fragment_ConstantLengthFragSet_HH
 #define INCLUDED_core_fragment_ConstantLengthFragSet_HH
@@ -26,14 +26,12 @@
 #include <core/fragment/FrameList.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -108,7 +106,7 @@ public:
 	void read_fragment_stream( utility::io::izstream & data, Size top25 = 0, Size ncopies = 1, bool bAnnotation = false  );
 
 	// void print_fragments();
-	///@brief there is only one Frame per position, end / max_overlap are ignored
+	/// @brief there is only one Frame per position, end / max_overlap are ignored
 	Size region(
 		kinematics::MoveMap const& mm,
 		core::Size start,
@@ -118,7 +116,7 @@ public:
 		FrameList &frames
 	) const;
     
-    ///@brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
+    /// @brief returns the number and list of all fragment alignment frames that somehow overlap with the given region
     ///(also allows those frames that start before the region and reach into it)
     Size overlapping_with_region(
         kinematics::MoveMap const& mm,
@@ -137,7 +135,7 @@ public:
 // 		FrameList & frame
 // 	);
 
-	///@brief iterate over contents
+	/// @brief iterate over contents
 	ConstFrameIterator begin() const;
 	ConstFrameIterator end() const;
 

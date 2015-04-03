@@ -21,7 +21,6 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -55,13 +54,13 @@ public:
 	// default constructor
 	BoltzmannRotamerMover();
 
-	///@brief constructor with PackerTask
+	/// @brief constructor with PackerTask
 	BoltzmannRotamerMover(
 		ScoreFunctionCOP scorefxn_in,
 		PackerTaskOP & task_in
 	);
 
-	///@brief constructor with TaskFactory
+	/// @brief constructor with TaskFactory
 	BoltzmannRotamerMover(
 		ScoreFunctionCOP scorefxn_in,
 		TaskFactoryCOP factory_in

@@ -31,10 +31,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
@@ -43,7 +41,6 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
@@ -51,10 +48,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
 #include <core/pack/task/PackerTask.hh>
 
 // Scripter Headers
@@ -97,7 +92,7 @@ HighResDockerCreator::mover_name()
 	return "HighResDocker";
 }
 
-///@brief
+/// @brief
 HighResDocker::HighResDocker():
 		Mover("HighResDocker"),
 		num_cycles_(0),
@@ -147,7 +142,7 @@ std::string HighResDocker::get_name() const{
 	return "HighResDocker";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 HighResDocker::parse_my_tag(
 		utility::tag::TagCOP tag,

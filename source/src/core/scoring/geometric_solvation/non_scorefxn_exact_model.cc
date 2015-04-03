@@ -11,47 +11,30 @@
 /// @author jk
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/geometric_solvation/non_scorefxn_exact_model.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Atom.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableOptions.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
 
-// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 //#include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // C++ Headers
 #include <cmath>
@@ -63,8 +46,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <numeric/xyz.functions.hh>
-
-
 
 
 //Vector dummy_res_energy_vector_;

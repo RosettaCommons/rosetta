@@ -27,17 +27,13 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -71,7 +67,7 @@ namespace protocols {
 				return "PerturbByBins";
 			}
 
-			///@brief Default constructor
+			/// @brief Default constructor
 			///
 			PerturbByBins::PerturbByBins() : //TODO: initialize variables here!
 				protocols::moves::Mover("PerturbByBins"),

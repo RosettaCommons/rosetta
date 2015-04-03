@@ -15,9 +15,6 @@
 #define INCLUDED_core_scoring_methods_dfire_DFIRE_Potential_HH
 
 // core
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // Unit Headers
 #include <core/scoring/methods/dfire/DFIRE_Potential.fwd.hh>
@@ -25,9 +22,6 @@
 #include <boost/unordered_map.hpp>
 
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>

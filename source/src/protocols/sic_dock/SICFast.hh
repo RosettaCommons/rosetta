@@ -23,7 +23,6 @@
 #include <core/kinematics/Stub.fwd.hh>
 
 
-
 namespace protocols {
 namespace sic_dock {
 
@@ -84,7 +83,6 @@ private:
 
 	core::pose::xyzStripeHashPose *h1_,*h2_;
 };
-
 
 
 } // namespace sic_dock

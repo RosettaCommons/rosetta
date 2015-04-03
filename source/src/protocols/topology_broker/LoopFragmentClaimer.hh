@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -27,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/LoopFragSet.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 
@@ -61,7 +60,7 @@ public:
 	LoopFragmentClaimer( core::fragment::FragSetOP, std::string label );
 
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

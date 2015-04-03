@@ -53,7 +53,7 @@ namespace filter {
 
 static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter" );
 
-///@brief Constructor for GeneralizedKICfilter.
+/// @brief Constructor for GeneralizedKICfilter.
 ///
 GeneralizedKICfilter::GeneralizedKICfilter():
 		filtertype_(no_filter),
@@ -67,7 +67,7 @@ GeneralizedKICfilter::GeneralizedKICfilter():
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
-///@brief Copy constructor for GeneralizedKICfilter.
+/// @brief Copy constructor for GeneralizedKICfilter.
 ///
 GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 		utility::pointer::ReferenceCount(),
@@ -84,22 +84,22 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 	if(src.bin_transition_calculator_) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
-///@brief Destructor for GeneralizedKICfilter mover.
+/// @brief Destructor for GeneralizedKICfilter mover.
 ///
 GeneralizedKICfilter::~GeneralizedKICfilter() {}
 
-///@brief Clone operator to create a pointer to a fresh GeneralizedKICfilter object that copies this one.
+/// @brief Clone operator to create a pointer to a fresh GeneralizedKICfilter object that copies this one.
 ///
 GeneralizedKICfilterOP GeneralizedKICfilter::clone() const {
 	return GeneralizedKICfilterOP( new GeneralizedKICfilter( *this ) );
 }
 
-///@brief Returns the name of this class ("GeneralizedKICfilter").
+/// @brief Returns the name of this class ("GeneralizedKICfilter").
 std::string GeneralizedKICfilter::get_name() const{
 	return "GeneralizedKICfilter";
 }
 
-///
+
 /// @brief Given a filter type, return its name.  Returns "unknown_filter" if not recognized.
 std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_type ) const {
 	std::string returnstring = "";
@@ -123,7 +123,7 @@ std::string GeneralizedKICfilter::get_filter_type_name( core::Size const filter_
 	return returnstring;
 }
 
-///
+
 /// @brief Given the name of a filter type, return the filter type enum.  Returns unknown_filter if not recognized.
 filter_type GeneralizedKICfilter::get_filter_type_by_name( std::string const &filtername ) const {
 	for(core::Size i=1, imax=end_of_filter_list; i<imax; ++i) {
@@ -132,7 +132,7 @@ filter_type GeneralizedKICfilter::get_filter_type_by_name( std::string const &fi
 	return unknown_filter;
 }
 
-///
+
 /// @brief Sets the filter type for this filter.
 void GeneralizedKICfilter::set_filter_type( filter_type const &ftype) {
 	runtime_assert_string_msg(ftype > 0 && ftype < end_of_filter_list, "Filter type not recognized.  Error in GeneralizedKICfilter::set_filter_type().");
@@ -143,7 +143,7 @@ void GeneralizedKICfilter::set_filter_type( filter_type const &ftype) {
 	return;
 }
 
-///
+
 /// @brief Sets the filter type for this filter by name.
 void GeneralizedKICfilter::set_filter_type( std::string const &ftypename) {
 	filter_type ftype = get_filter_type_by_name(ftypename);
@@ -155,13 +155,13 @@ void GeneralizedKICfilter::set_filter_type( std::string const &ftypename) {
 	return;
 }
 
-///
+
 /// @brief Gets the filter type name for THIS filter.
 std::string GeneralizedKICfilter::get_this_filter_type_name () const {
 	return get_filter_type_name( filtertype_ );
 }
 
-///
+
 /// @brief Add a real-valued filter parameter.
 void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core::Real const &value )
 {
@@ -169,7 +169,7 @@ void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core
 	return;
 }
 
-///
+
 /// @brief Add a integer-valued filter parameter.
 void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core::Size const value )
 {
@@ -177,7 +177,7 @@ void GeneralizedKICfilter::add_filter_param( std::string const &param_name, core
 	return;
 }
 
-///
+
 /// @brief Add a Boolean-valued filter parameter.
 void GeneralizedKICfilter::add_filter_param( std::string const &param_name, bool const value )
 {
@@ -185,7 +185,7 @@ void GeneralizedKICfilter::add_filter_param( std::string const &param_name, bool
 	return;
 }
 
-///
+
 /// @brief Add a string-valued filter parameter.
 void GeneralizedKICfilter::add_filter_param( std::string const &param_name, std::string const &value )
 {

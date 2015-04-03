@@ -24,13 +24,11 @@
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

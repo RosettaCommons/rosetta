@@ -27,7 +27,6 @@ typedef utility::pointer::shared_ptr< SequenceAnnotation > SequenceAnnotationOP;
 typedef utility::pointer::shared_ptr< SequenceAnnotation const > SequenceAnnotationCOP;
 
 
-
 } // environment
 } // core
 

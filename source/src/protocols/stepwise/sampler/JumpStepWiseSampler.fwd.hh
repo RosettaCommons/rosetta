@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/JumpStepWiseSampler.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

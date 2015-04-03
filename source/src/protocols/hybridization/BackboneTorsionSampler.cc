@@ -328,7 +328,7 @@ void BackboneTorsionSampler::task_factory( core::pack::task::TaskFactoryCOP tf )
     task_factory_ = tf;
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 BackboneTorsionSampler::parse_my_tag(
     TagCOP tag,

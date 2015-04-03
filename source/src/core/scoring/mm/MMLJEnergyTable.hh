@@ -26,7 +26,6 @@
 
 // Utility header
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -41,7 +40,7 @@ class MMLJEnergyTable : public utility::pointer::ReferenceCount
 {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MMLJEnergyTable();
 
   /// @briefs typedefs

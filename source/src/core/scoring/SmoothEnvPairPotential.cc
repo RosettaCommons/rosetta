@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 
@@ -608,7 +607,6 @@ SmoothEnvPairPotential::nonconst_dcenlist_from_pose( pose::Pose & pose ) const {
 	pose.data().set( core::pose::datacache::CacheableDataType::SIGMOID_WEIGHTED_D_CEN_LIST, cenlist );
 	return *cenlist;
 }
-
 
 
 }

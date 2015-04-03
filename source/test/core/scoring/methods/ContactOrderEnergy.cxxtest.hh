@@ -25,8 +25,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 //Auto Headers

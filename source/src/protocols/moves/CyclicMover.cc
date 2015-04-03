@@ -18,7 +18,6 @@
 #include <vector>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>

@@ -16,9 +16,7 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/FinalMinimizer.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeBackbone.fwd.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 
 // Package Headers
 //// Project Headers
@@ -40,7 +38,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 class FinalMinimizer : public protocols::moves::Mover
 {
 public:

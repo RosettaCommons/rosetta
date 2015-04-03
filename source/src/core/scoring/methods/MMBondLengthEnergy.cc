@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
@@ -28,10 +27,8 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 
 // C++ headers
@@ -83,7 +80,7 @@ MMBondLengthEnergy::clone() const
 	return EnergyMethodOP( new MMBondLengthEnergy( *this ) );
 }
 
-///
+
 void
 MMBondLengthEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -94,7 +91,7 @@ MMBondLengthEnergy::setup_for_packing(
 	pose.update_actcoords();
 }
 
-///
+
 void
 MMBondLengthEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -102,7 +99,7 @@ MMBondLengthEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & 
 	pose.update_actcoords();
 }
 
-///
+
 void
 MMBondLengthEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -110,7 +107,7 @@ MMBondLengthEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction cons
 	pose.update_actcoords();
 }
 
-///
+
 bool
 MMBondLengthEnergy::defines_intrares_energy( EnergyMap const & ) const
 {

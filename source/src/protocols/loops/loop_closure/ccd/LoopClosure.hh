@@ -9,13 +9,12 @@
 
 /// @file src/protocols/abinitio/LoopClosure.hh
 /// @brief header file for LoopClosure protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
 /// @author Mike Tyka
-///
 
 
 #ifndef INCLUDED_protocols_loops_loop_closure_ccd_LoopClosure_hh
@@ -25,7 +24,6 @@
 #include <protocols/loops/loop_closure/ccd/LoopClosure.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -48,9 +46,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
@@ -63,7 +58,7 @@ namespace ccd {
 
 class LoopClosure : public utility::pointer::ReferenceCount {
 public:
-	///@brief constructor: supply fragsets for fragment moves
+	/// @brief constructor: supply fragsets for fragment moves
 	LoopClosure(
 		core::fragment::FragSetCOP fragset,
 		core::scoring::ScoreFunctionOP scorefxn,
@@ -137,7 +132,7 @@ protected:
   //@brief inner-loop of fragment and ccd-moves
   virtual void do_frag_cycles( core::pose::Pose &pose ) const;
 
-  ///@brief save the loop-fragment in closure_frames_
+  /// @brief save the loop-fragment in closure_frames_
   virtual void catch_fragment( core::pose::Pose const& pose );
 
 //   core::fragment::FrameOP&
@@ -145,7 +140,7 @@ protected:
 //     return closure_frame_;
 //   }
 
-  ///@brief replace scorefxn
+  /// @brief replace scorefxn
   void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 
   void set_loop( Loop const& loop_in ) {

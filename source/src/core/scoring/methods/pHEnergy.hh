@@ -27,8 +27,6 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 
@@ -39,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class pHEnergy : public ContextIndependentOneBodyEnergy {
 
 public:

@@ -34,7 +34,7 @@ namespace grafting {
 	
 	using protocols::simple_moves::SmallMoverOP;
 	
-///@brief General purpose Grafting class which:
+/// @brief General purpose Grafting class which:
 /// 1) superimposes the insert onto the scaffold using any overhang residues,
 /// 2) Inserts the pose piece into the scaffold pose, deleting any overhang residues or residues in the region the isertion will occur between.
 /// 3) Cycles of:
@@ -56,7 +56,7 @@ namespace grafting {
 ///
 /// see also: grafting/util.hh.
 ///
-///@details Uses two CCD arms on either side of the scaffold to close graft.
+/// @details Uses two CCD arms on either side of the scaffold to close graft.
 /// Insert is held fixed in cartesian space after superposition of any overhang residues by default.
 ///
 /// ****Nter_loop_start-----> | Piece | <----Nter_loop_end****
@@ -74,7 +74,7 @@ public:
     
 	CCDEndsGraftMover();
 	
-	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
+	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	CCDEndsGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
 
 	CCDEndsGraftMover(
@@ -92,8 +92,8 @@ public:
 public:
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///@brief Advanced way to set flexibility. 
-	///@details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
+	/// @brief Advanced way to set flexibility. 
+	/// @details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
 	/// One arm Will go from first flexible N terminal residue to after start_+any contiguous residues on in the movemap from there. Opposite for Cter side.
 	/// This way any loop regions within a chain on either side can be used as flexible residues to close full graft.
 	///

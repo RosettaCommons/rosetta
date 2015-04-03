@@ -19,7 +19,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 #include <iostream>

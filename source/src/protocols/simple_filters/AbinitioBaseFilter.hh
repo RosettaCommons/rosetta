@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_filters/AbinitioBaseFilter.hh
 /// @brief header file for AbinitioBaseFilter.cc
-/// @detailed
+/// @details
 ///
 ///
 ///

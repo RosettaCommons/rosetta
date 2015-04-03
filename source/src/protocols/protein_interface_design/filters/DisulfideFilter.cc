@@ -56,14 +56,14 @@ static thread_local basic::Tracer TR( "protocols.protein_interface_design.filter
 
 const core::scoring::disulfides::CentroidDisulfidePotential DisulfideFilter::potential_;
 
-///@brief default ctor
+/// @brief default ctor
 DisulfideFilter::DisulfideFilter() :
 	parent( "DisulfideFilter" ),
 	targets_(),
 	rb_jump_(1)
 {}
 
-///@brief copy ctor
+/// @brief copy ctor
 DisulfideFilter::DisulfideFilter(DisulfideFilter const& df) :
 	//utility::pointer::ReferenceCount(),
 	parent( "DisulfideFilter" ),
@@ -71,7 +71,7 @@ DisulfideFilter::DisulfideFilter(DisulfideFilter const& df) :
 	rb_jump_(df.rb_jump_)
 {}
 
-///@brief Constructor with a single target residue
+/// @brief Constructor with a single target residue
 DisulfideFilter::DisulfideFilter( core::Size targetResidue ) :
 	parent( "DisulfideFilter" ),
 	targets_(),
@@ -80,7 +80,7 @@ DisulfideFilter::DisulfideFilter( core::Size targetResidue ) :
 	targets_.push_back(targetResidue);
 }
 
-///@brief Constructor with multiple target residues
+/// @brief Constructor with multiple target residues
 DisulfideFilter::DisulfideFilter( utility::vector1<core::Size> const& targetResidues ) :
 	parent( "DisulfideFilter" ),
 	targets_(targetResidues),

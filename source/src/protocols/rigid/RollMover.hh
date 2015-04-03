@@ -17,12 +17,9 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -31,12 +28,12 @@
 namespace protocols {
 namespace rigid {
 
-///@details
+/// @details
 class RollMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	RollMover();
 
 	RollMover(
@@ -54,10 +51,10 @@ public:
 	void set_min_max_angles( core::Real min_angle, core::Real max_angle );
 	virtual std::string get_name() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP fresh_instance() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP clone() const;
 
 	virtual 
@@ -68,7 +65,6 @@ public:
 		Filters_map const & /*filters*/,
 		moves::Movers_map const & /*movers*/,
 		Pose const & /*pose*/);
-
 
 
 private:

@@ -56,7 +56,6 @@ print ( a2 - a1 ).cross_product( a3 - a1 ).dot( an )
 print ( b2 - b1 ).cross_product( b3 - b1 ).dot( bn )
 
 
-
 # T(x) = Rx + s   where:
 # R = U Q-1
 # s = - U Q-1 a1 + b1

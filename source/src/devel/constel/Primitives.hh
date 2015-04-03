@@ -33,7 +33,6 @@ namespace constel {
 core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps);
 
 
-///
 /// @brief A class to represent the mutation of a residue.
 ///
 struct ResMut {
@@ -63,7 +62,6 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 	ResMut const& mut3, int const cslnum, Pose& ps);
 
 
-///
 /// @brief A class to hold data structures and functions shared by filters that
 /// 	consider hydrogen bonding.
 ///
@@ -83,7 +81,6 @@ class HBondCommon {
 };
 
 
-///
 /// @brief A class to hold data structures and functions common to filters that
 /// 	consider how groups of atoms within a constellation are oriented.
 ///
@@ -98,7 +95,6 @@ public:
 };
 
 
-///
 /// @brief A class to hold data structures and functions shared by filters that
 /// 	check whether the amino acids and atoms they require in the constellation
 ///		are indeed present.

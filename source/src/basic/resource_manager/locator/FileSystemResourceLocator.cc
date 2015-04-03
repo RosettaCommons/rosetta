@@ -64,7 +64,7 @@ FileSystemResourceLocatorCreator::locator_type() const {
 
 ///// FileStream //////
 
-///@detail This is private. The FileStream shouldn't be copied
+/// @detail This is private. The FileStream shouldn't be copied
 FileStream::FileStream(
 	FileStream const & src
 ) :
@@ -72,7 +72,7 @@ FileStream::FileStream(
 	stream_()
 {}
 
-///@detail If you use this constructor be sure to use the open
+/// @detail If you use this constructor be sure to use the open
 ///function before accessing the stream
 FileStream::FileStream() :
 	ResourceStream(),

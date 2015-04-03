@@ -24,11 +24,9 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

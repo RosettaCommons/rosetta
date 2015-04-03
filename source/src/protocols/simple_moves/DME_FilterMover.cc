@@ -16,21 +16,18 @@
 // Rosetta Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
 // Random number generator
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 static thread_local basic::Tracer TR( "protocols.DME_FilterMover" );
 
-//
+
 #include <string>
 
 #include <core/conformation/PointGraphData.hh>

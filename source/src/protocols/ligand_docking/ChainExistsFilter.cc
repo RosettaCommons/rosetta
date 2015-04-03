@@ -24,7 +24,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -68,7 +67,6 @@ ChainExistsFilterCreator::create_filter() const { return protocols::filters::Fil
 
 std::string
 ChainExistsFilterCreator::keyname() const { return "ChainExists"; }
-
 
 
 } // ligand_docking

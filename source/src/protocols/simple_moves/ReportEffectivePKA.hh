@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file
-///@author Yifan Song
+/// @author Yifan Song
 
 #ifndef INCLUDED_protocols_simple_moves_ReportEffectivePKA_hh
 #define INCLUDED_protocols_simple_moves_ReportEffectivePKA_hh

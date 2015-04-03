@@ -43,7 +43,7 @@
 namespace core {
 namespace kinematics {
 
-///@brief A class specifying DOFs to be flexible or fixed
+/// @brief A class specifying DOFs to be flexible or fixed
 ///
 /// currently there are two groups of data, one is residue-based Torsion
 /// definition, such as BB, CHI, NU, and JUMP; the other is atom-based DOF
@@ -82,7 +82,7 @@ namespace kinematics {
 ///     SmallMover
 class MoveMap: public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MoveMap();
 	// ids
 	typedef id::AtomID AtomID;
@@ -118,7 +118,7 @@ public:
 	/// @brief flexible or fixed jumps (fold-tree independent definition via residue pairs )
 	typedef std::map< id::JumpID, bool > JumpID_Map;
 
-	///@brief default constructor
+	/// @brief default constructor
 	MoveMap(){}
 
 	MoveMapOP clone() const {
@@ -385,7 +385,7 @@ public:
 		set( MoveMapTorsionID( jump_number, id::JUMP ), setting );
 	}
 
-	///@brief set JUMP moveable or not for one specific residue pair
+	/// @brief set JUMP moveable or not for one specific residue pair
 	/// this mechanism  does not mix with the "jump_nr" mechanism...
 	/// i.e., if you set jump_nr 3 = movable ---> movemap does not know that this refers to say residue 23-89
 	// but it does mix with the global switch set_jump( true/false ).

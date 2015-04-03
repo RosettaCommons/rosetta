@@ -118,7 +118,7 @@ public:
 
 private: // methods
 
-	///
+
 	bool atoms_are_equiv( std::string const & a1, std::string const & a2 );
 
 	/// @brief add pair of equivalent atoms to atom_equiv_ table.

@@ -2525,7 +2525,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_files(
 	read_bbind_continuous_minimization_data( in_continmin_bbind );
 }
 
-/// @breif read-from-files that does not require the in_continmin_bbind file
+/// @brief read-from-files that does not require the in_continmin_bbind file
 template < Size T, Size N >
 void
 SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_files(
@@ -3112,7 +3112,6 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_bbdep_nrchi_sampl
 //{
 //	utility_exit();
 //}
-
 
 
 } // namespace dunbrack

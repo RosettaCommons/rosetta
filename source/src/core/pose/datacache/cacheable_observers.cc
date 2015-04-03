@@ -16,7 +16,6 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 
 // Package headers
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
@@ -277,7 +276,6 @@ SpecialSegmentsObserver::detach_impl(){
 	length_event_link_.invalidate();
 
 }
-
 
 
 } // namespace datacache

@@ -9,12 +9,10 @@
 
 /// @file protocols/antibody/H3CterInsert.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
-
-
 
 
 #ifndef INCLUDED_protocols_antibody_H3CterInsert_hh
@@ -28,13 +26,9 @@
 #include <protocols/moves/Mover.hh>
 
 
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,10 +80,6 @@ private:
 	std::string H3_ter_library_filename_;
 
 };
-
-
-
-
 
 
 }//antibody

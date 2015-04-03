@@ -23,7 +23,6 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
 // Utility headers
 #include <utility/exit.hh>
@@ -31,10 +30,7 @@
 #include <core/id/AtomID.fwd.hh>
 
 
-// Commented by inclean daemon #include <ObjexxFCL/string.functions.hh>
-
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 
 namespace core {
@@ -122,21 +118,21 @@ public:
 		return type_;
 	}
 
-	///
+
 	bool
 	is_internal() const
 	{
 		return ( type_ == INTERNAL );
 	}
 
-	///
+
 	bool
 	is_polymer_lower() const
 	{
 		return ( type_ == POLYMER_LOWER );
 	}
 
-	///
+
 	bool
 	is_polymer_upper() const
 	{
@@ -162,11 +158,11 @@ public:
 
 public:
 
-	///
+
 	Vector const &
 	xyz( Residue const & rsd, Conformation const & conformation ) const;
 
-	///
+
 	Vector // const &
 	xyz( ResidueType const & rsd_type ) const;
 
@@ -177,7 +173,7 @@ public:
 	Vector
 	xyz( conformation::Residue const & rsd ) const;
 
-	///
+
 	id::AtomID
 	atom_id( Size const seqpos, Conformation const & conformation ) const;
 
@@ -249,21 +245,21 @@ public:
 		return phi_;
 	}
 
-	///
+
 	Real
 	theta() const
 	{
 		return theta_;
 	}
 
-	///
+
 	Real
 	d() const
 	{
 		return d_;
 	}
 
-	///
+
 	ICoorAtomID const &
 	stub_atom1() const
 	{
@@ -284,21 +280,21 @@ public:
 		return stub_atom3_;
 	}
 
-	///
+
 	bool
 	is_internal() const
 	{
 		return ( stub_atom1_.is_internal() && stub_atom2_.is_internal() && stub_atom3_.is_internal() );
 	}
 
-	///
+
 	bool
 	depends_on_polymer_lower() const
 	{
 		return ( stub_atom1_.is_polymer_lower() || stub_atom2_.is_polymer_lower() || stub_atom3_.is_polymer_lower() );
 	}
 
-	///
+
 	bool
 	depends_on_polymer_upper() const
 	{
@@ -357,7 +353,7 @@ public:
 		built_vd_ = vd;
 	}
 
-	///@brief The vertex descriptor of the atom being built by this icoor
+	/// @brief The vertex descriptor of the atom being built by this icoor
 	/// Can be null_vertex if this AtomICoor doesn't build a physical atom.
 	/// (e.g. CONNECT, UPPER, LOWER)
 	core::chemical::VD built_atom_vertex() const
@@ -417,7 +413,6 @@ void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, Residue
 
 } // chemical
 } // core
-
 
 
 #endif

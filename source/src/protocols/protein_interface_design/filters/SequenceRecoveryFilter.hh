@@ -39,7 +39,7 @@ private:
 public:
 	/// @brief default ctor
 	SequenceRecoveryFilter();
-	///@brief Constructor with a single target residue
+	/// @brief Constructor with a single target residue
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void apply( core::io::serialization::PipeMap & pmap);
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;

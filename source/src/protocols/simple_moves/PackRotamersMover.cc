@@ -16,7 +16,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 
@@ -25,7 +24,6 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -37,7 +35,6 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -169,8 +166,8 @@ PackRotamersMover::show(std::ostream & output) const
 	else { output << "Score function: none" << std::endl; }
 }
 
-///@brief when the PackerTask was not generated locally, verify compatibility with pose
-///@details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
+/// @brief when the PackerTask was not generated locally, verify compatibility with pose
+/// @details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
 bool
 PackRotamersMover::task_is_valid( Pose const & pose ) const
 {
@@ -203,7 +200,7 @@ void PackRotamersMover::parse_def( utility::lua::LuaObject const & def,
 	}
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 PackRotamersMover::parse_my_tag(
 	TagCOP const tag,
@@ -227,7 +224,7 @@ PackRotamersMover::parse_my_tag(
 	parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
-///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 PackRotamersMover::parse_score_function(
 	TagCOP const tag,
@@ -242,7 +239,7 @@ PackRotamersMover::parse_score_function(
 	score_function( new_score_function );
 }
 
-///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 PackRotamersMover::parse_task_operations(
 	TagCOP const tag,
@@ -257,21 +254,21 @@ PackRotamersMover::parse_task_operations(
 	task_factory( new_task_factory );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PackRotamersMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new PackRotamersMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 PackRotamersMover::clone() const
 {
 	return protocols::moves::MoverOP( new protocols::simple_moves::PackRotamersMover( *this ) );
 }
 
-///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
+/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 void PackRotamersMover::setup( Pose & pose )
 {
 	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc
@@ -304,7 +301,7 @@ core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > 
 	return pack_rotamers_run( pose, task_, rotamer_sets_, ig_, rot_to_pack );
 }
 
-///@brief note PackerTask's packable and designable residues as string info
+/// @brief note PackerTask's packable and designable residues as string info
 void PackRotamersMover::note_packertask_settings( Pose const & pose )
 {
 	std::ostringstream packable, designable;

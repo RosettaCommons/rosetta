@@ -15,7 +15,6 @@
 #define INCLUDED_core_util_SwitchResidueTypeSet_hh
 
 // Unit headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>

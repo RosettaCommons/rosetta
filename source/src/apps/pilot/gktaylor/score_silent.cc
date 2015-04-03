@@ -62,7 +62,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 using basic::T;
 using basic::Warning;
 using basic::Error;
@@ -81,7 +80,6 @@ using basic::Error;
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 int

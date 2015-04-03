@@ -1550,7 +1550,6 @@ public:
 };
 
 
-
 } // namespace etrie
 } // namespace etable
 } // namespace scoring

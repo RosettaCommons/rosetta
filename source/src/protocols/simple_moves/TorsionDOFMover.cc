@@ -60,7 +60,7 @@ TorsionDOFMover::TorsionDOFMover() :
 	tries_(0)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
-///@details random angle constructor.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
+/// @details random angle constructor.  Magic numbers 180 and -179.9999999... maintain the uniform range.  I'm sure there's a better way to get [180, -180) but I can't figure out what it is.
 TorsionDOFMover::TorsionDOFMover(
 	core::id::AtomID const & atom1,
 	core::id::AtomID const & atom2,
@@ -80,7 +80,7 @@ TorsionDOFMover::TorsionDOFMover(
 	tries_(1)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
-///@details range of angles constructor - takes DEGREES not RADIANS.
+/// @details range of angles constructor - takes DEGREES not RADIANS.
 TorsionDOFMover::TorsionDOFMover(
 	core::id::AtomID const & atom1,
 	core::id::AtomID const & atom2,
@@ -102,7 +102,7 @@ TorsionDOFMover::TorsionDOFMover(
 	tries_(1)
 {	protocols::moves::Mover::type( "TorsionDOFMover" ); }
 
-///@details particular angle constructor - takes DEGREES not RADIANS.
+/// @details particular angle constructor - takes DEGREES not RADIANS.
 TorsionDOFMover::TorsionDOFMover( core::id::AtomID const & atom1, core::id::AtomID const & atom2, core::id::AtomID const & atom3, core::id::AtomID const & atom4, core::Angle const angle )
 : protocols::moves::Mover(),
 	atom1_(atom1),
@@ -176,15 +176,15 @@ TorsionDOFMover::get_name() const {
 	return "TorsionDOFMover";
 }
 
-///@brief calculate angle for perturbation - call to RNG
+/// @brief calculate angle for perturbation - call to RNG
 core::Angle TorsionDOFMover::calc_angle()
 {	return numeric::conversions::radians(lower_angle_ + ((upper_angle_ - lower_angle_) * numeric::random::rg().uniform())); }
 
-///@brief calculate mmt score for the moving bond
+/// @brief calculate mmt score for the moving bond
 ///This is the stupidest possible method - score the whole pose.  It would be much better if this could directly use MMTorsionEnergy to calculate about just the one bond in question, but I can't figure out how to reliably look up exactly the set of residues modified by this torsion (remember that changing this 4-body torsion affects other 4-bodies with a shared central bond).
 core::Energy TorsionDOFMover::score_torsion(core::pose::Pose & pose){ return ((*mmt_)(pose)); }
 
-///@brief boltzmann calculation - is the new score acceptable?
+/// @brief boltzmann calculation - is the new score acceptable?
 bool TorsionDOFMover::boltzmann( core::Energy const pre_score, core::Energy const post_score ){
 
 	//TR << pre_score << " " << post_score << std::endl;

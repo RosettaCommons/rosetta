@@ -20,19 +20,14 @@
 //#include <core/init/init.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -42,11 +37,9 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
@@ -58,7 +51,6 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <algorithm>
-// AUTO-REMOVED #include <ctime>
 #include <map>
 #include <string>
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -66,7 +58,6 @@
 #endif
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -154,7 +145,7 @@ utility::vector1< BasicJobOP > load_s_and_l()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Helper function to safely get current output tag that's cached in Pose.
+/// @brief Helper function to safely get current output tag that's cached in Pose.
 std::string get_output_tag(core::pose::Pose const & pose)
 {
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
@@ -166,7 +157,7 @@ std::string get_output_tag(core::pose::Pose const & pose)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Helper function to safely get score_map that's cached in Pose.
+/// @brief Helper function to safely get score_map that's cached in Pose.
 std::map < std::string, core::Real > get_score_map(core::pose::Pose const & pose)
 {
 	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
@@ -182,7 +173,7 @@ std::map < std::string, core::Real > get_score_map(core::pose::Pose const & pose
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Universal IO handler for score, relax and cluster (and hopefully more) executables
+/// @details Universal IO handler for score, relax and cluster (and hopefully more) executables
 ///         Handles reading/writing of Silent OR PDB files.
 void register_options_universal_main(){
 	using namespace basic::options;
@@ -369,7 +360,6 @@ int universal_main(
 			jobdist->disable_output();
 			jobdist->enable_ignorefinished();
 		}
-
 
 
 		evaluation::MetaPoseEvaluatorOP evaluator( new evaluation::MetaPoseEvaluator );
@@ -669,7 +659,7 @@ int universal_main(
 } // universal_main
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Example of how to use the job distributor that will write
+/// @details Example of how to use the job distributor that will write
 /// either a pdb or a raw_data (silent) file depending on an input flag
 /// Because PDBs are so big and inefficient, this function is NOT RECOMMENDED
 /// for use in production environements.
@@ -784,7 +774,7 @@ int main_plain_mover(
 	return 0;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Example of how to use the job distributor with plain old PDB files.
+/// @details Example of how to use the job distributor with plain old PDB files.
 /// Because PDBs are so big and inefficient, this function is NOT RECOMMENDED
 /// for use in production environements.
 /// If this function doesn't meet your needs as is, please COPY it into your own main method
@@ -900,7 +890,7 @@ int main_plain_pdb_mover(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-///@details Example of how to use the job distributor with silent files.
+/// @details Example of how to use the job distributor with silent files.
 /// If this function doesn't meet your needs as is, please COPY it into your own main method
 /// rather than modifying it in place!
 /// The goal is to keep this one as a simple-as-possible EXAMPLE for others,

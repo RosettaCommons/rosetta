@@ -40,16 +40,16 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-///
+
 class ContextDependentGeometricSolEnergy : public methods::ContextDependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextDependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & options );
 
-	///@brief copy c-tor
+	/// @brief copy c-tor
 	ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & src );
 
 	/// clone
@@ -65,7 +65,7 @@ public:
     utility::vector1< bool > const &,
     utility::vector1< bool > const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
@@ -211,7 +211,7 @@ public:
 	//Real
 	//hydrogen_interaction_cutoff2() const;
 
-	///@brief GeometricSolEnergy is context sensitive
+	/// @brief GeometricSolEnergy is context sensitive
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;

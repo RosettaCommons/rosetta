@@ -32,13 +32,11 @@
 // C++ Headers
 #include <cstdlib>
 #include <iostream>
-// AUTO-REMOVED #include <utility>
 
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
-
 
 
 static thread_local basic::Tracer tr( "core.LocalCoordinateConstraint" );
@@ -143,7 +141,7 @@ void LocalCoordinateConstraint::set_xyz_target( Vector const& xyz_in, core::pose
 	xyz_target_=my_stub.global2local( xyz_in );
 }
 
-///@details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
+/// @details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
 void
 LocalCoordinateConstraint::read_def(
 	std::istream& data,
@@ -216,7 +214,7 @@ LocalCoordinateConstraint::show_def(
 	func_->show_definition( out );
 }
 
-///
+
 Real
 LocalCoordinateConstraint::score(
 			Vector const & xyz, //target

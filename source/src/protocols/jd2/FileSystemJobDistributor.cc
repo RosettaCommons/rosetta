@@ -97,7 +97,6 @@ core::Size get_min_nstruct_index_checkpoint_file(){
 }
 
 
-
 core::Size
 FileSystemJobDistributor::get_new_job_id()
 {
@@ -167,7 +166,7 @@ FileSystemJobDistributor::mark_current_job_id_for_repetition()
 	}
 }
 
-///@details this function handles the FAIL_BAD_INPUT mover status by removing other jobs with the same input from consideration
+/// @details this function handles the FAIL_BAD_INPUT mover status by removing other jobs with the same input from consideration
 void
 FileSystemJobDistributor::remove_bad_inputs_from_job_list()
 {
@@ -230,7 +229,6 @@ std::string const
 FileSystemJobDistributor::temporary_file_name( JobCOP job ) const {
 	return path_ + job_outputter()->output_name( job ) + extension_;
 }
-
 
 
 void

@@ -11,26 +11,17 @@
 #include <protocols/simple_moves/BBConRotMover.hh>
 //core
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID_Range.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/Stub.hh>
 
 //util
@@ -44,7 +35,6 @@
 #include <numeric/internal/RowVectors.hh>
 
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <sstream>
 
 #include <utility/vector1.hh>

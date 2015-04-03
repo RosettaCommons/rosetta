@@ -20,31 +20,19 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>

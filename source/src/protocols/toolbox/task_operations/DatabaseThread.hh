@@ -28,7 +28,6 @@
 
 // C++ Headers
 #include <string>
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector1.hh>
 
@@ -37,7 +36,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to thread sequences from a database.
+/// @details this class is a TaskOperation to thread sequences from a database.
 class DatabaseThread : public RestrictOperationsBase
 {
 public:

@@ -65,7 +65,7 @@ public:
 	  std::cerr << "ERROR!!! unimplemented method in SpecificJumpSetup.cc " << std::endl;
 	}
 
-        ///@brief returns an ordered FragSet that is compatible with the JumpSample
+        /// @brief returns an ordered FragSet that is compatible with the JumpSample
         /// default: generate jumps from ss-library according to JumpSample
         // if the movemap allows sampling of the down-residue but not the up-residue:
         // include a jump with torsions only for the "down" residue

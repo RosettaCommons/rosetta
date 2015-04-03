@@ -24,12 +24,8 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

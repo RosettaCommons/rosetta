@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author
 
 

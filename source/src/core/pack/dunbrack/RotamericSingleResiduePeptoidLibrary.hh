@@ -223,7 +223,7 @@ protected:
 	virtual Size memory_usage_static() const;
 	virtual Size memory_usage_dynamic() const;
 
-	/// @breif  Evaluates the score and chi-deviation penalty for the rotameric
+	/// @brief  Evaluates the score and chi-deviation penalty for the rotameric
 	/// chi (in this class, that means all the chi) and stores the answers in
 	/// the scratch object.  If eval_deriv is true, then at the end of this
 	/// function, scratch contains up-to-date dchidevpen_dbb, dchidevpen_dchi,

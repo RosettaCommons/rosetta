@@ -13,14 +13,11 @@
 /// @author Florian Richter
 
 
-
-
 #ifndef INCLUDED_protocols_enzdes_EnzdesBaseProtocol_hh
 #define INCLUDED_protocols_enzdes_EnzdesBaseProtocol_hh
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.fwd.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -31,7 +28,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -224,8 +220,6 @@ private:
 
 } //namespace enzdes
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_enzdes_EnzdesBaseProtocol_HH

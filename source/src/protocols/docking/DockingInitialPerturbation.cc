@@ -9,7 +9,7 @@
 
 /// @file DockingInitialPerturbation.cc
 /// @brief initial position functions
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -39,14 +39,12 @@
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
@@ -105,7 +103,6 @@ DockingInitialPerturbationCreator::mover_name()
 //     the search; they are controlled through command-line flags
 //
 //     at the end, partners are slid into contact and scored
-//
 
 
 //constructors
@@ -230,11 +227,10 @@ DockingInitialPerturbation::register_options()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin initial_perturbation
 ///
 /// @brief   Make starting perturbations for rigid body moves
 ///
-/// @detailed    There are several ways to perturb the structure before beginning
+/// @details    There are several ways to perturb the structure before beginning
 ///     the search; they are controlled through command-line flags
 ///     At the end, partners are slid into contact and scored (including
 ///     mc_reset).
@@ -243,9 +239,8 @@ DockingInitialPerturbation::register_options()
 ///
 /// @references see dock_structure or pose_docking from rosetta++
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified October 17 2007
 /////////////////////////////////////////////////////////////////////////////////
 void DockingInitialPerturbation::apply( core::pose::Pose & pose )
 {

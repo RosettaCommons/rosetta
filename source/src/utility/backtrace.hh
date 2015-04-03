@@ -10,7 +10,6 @@
 /// @file   utility/backtrace.hh
 /// @brief  Programmatic backtrace whenever you want it.
 /// @author Rhiju Das
-///
 
 
 #ifndef INCLUDED_utility_backtrace_hh

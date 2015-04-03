@@ -53,7 +53,6 @@ ReferenceEnergyCreator::score_types_for_method() const {
 }
 
 
-
 ReferenceEnergy::ReferenceEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new ReferenceEnergyCreator ) )
 {}

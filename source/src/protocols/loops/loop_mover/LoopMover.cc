@@ -42,7 +42,6 @@
 
 
 /// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <iostream>
@@ -52,23 +51,17 @@
 	#include <ctime>
 #endif
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <numeric/random/random.hh>
 
 //Auto Headers
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Auto-header: duplicate removed #include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
-
-
 
 
 namespace protocols {
@@ -175,7 +168,6 @@ protocols::loops::LoopsOP LoopMover::loops()
 {
    return guarded_loops_->loops();
 }
-
 
 
 const utility::vector1< core::fragment::FragSetOP > & LoopMover::frag_libs() const
@@ -294,14 +286,14 @@ loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const
 	}
 }
 
-///@brief copy ctor
+/// @brief copy ctor
 LoopMover::LoopMover( LoopMover const & rhs ) :
 	Mover(rhs)
 {
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 LoopMover & LoopMover::operator=( LoopMover const & rhs ){
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -330,8 +322,8 @@ void LoopMover::resolve_loop_indices( core::pose::Pose const & p )
 /// @details generates a string with the torsion angle bins, using uppercase letters as in the
 /// publication above for omega ~ 180, and lowercase letters for omega ~ 0; to be used in
 /// loop sampling analysis
-///@author Amelie Stein
-///@date April 26, 2012
+/// @author Amelie Stein
+/// @date April 26, 2012
 core::conformation::torsion_bin_string
 LoopMover::torsion_features_string( core::pose::Pose const & pose ) const
 {

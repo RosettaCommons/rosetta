@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/protein/ProteinFragmentStepWiseSampler.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

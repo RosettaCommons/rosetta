@@ -844,7 +844,6 @@ TrieCountPairNone::resolve_trie_vs_path(
 }
 
 
-
 /// Hack Elec E
 void
 TrieCountPairNone::resolve_trie_vs_trie(

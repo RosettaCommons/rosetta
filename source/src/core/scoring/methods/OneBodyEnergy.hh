@@ -214,7 +214,6 @@ public:
 	) const;
 
 
-
 };
 
 } // methods

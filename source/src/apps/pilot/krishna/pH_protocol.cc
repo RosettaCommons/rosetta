@@ -15,13 +15,11 @@
 #include <core/scoring/methods/pHEnergy.hh>
 #include <core/scoring/Energies.hh>
 
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
 #include <devel/init.hh>
@@ -52,8 +50,6 @@
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 
 // option key includes

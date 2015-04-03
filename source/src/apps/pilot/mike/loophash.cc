@@ -20,7 +20,6 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 
-// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -82,7 +81,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
-
 
 
 static thread_local basic::Tracer TR( "main" );
@@ -276,7 +274,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		TR.Info << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 
-
     if((  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
        (  option[ OptionKeys::lh::centroid_only ]() )){
 
@@ -304,9 +301,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			TR.Info << "Centroid mode. Skipping relax" << std::endl;
 			continue;
 		}
-
-
-
 
 
 		/// For fullatom goodness, continue

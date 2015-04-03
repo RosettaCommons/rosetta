@@ -9,7 +9,7 @@
 
 /// @file src/protocols/relax/FastRelax.cc
 /// @brief The FastRelax Protocol
-/// @detailed
+/// @details
 /// @author Mike Tyka
 /// @author Roland A. Pache
 /// @author Jared Adolf-Bryfogle
@@ -122,8 +122,6 @@ exit
 will quit with immediate effect
 
 
-
-
 A typical FastRelax command_script is: (thi sin fact is the default command script)
 
 repeat 5
@@ -133,8 +131,6 @@ ramp_repack_min 0.550 0.01     0.0
 ramp_repack_min 1     0.00001  0.0
 accept_to_best
 endrepeat
-
-
 
 
 */
@@ -200,7 +196,6 @@ endrepeat
 #include <fstream>
 
 
-
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>
 #endif
@@ -229,10 +224,7 @@ namespace relax {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
 using namespace ObjexxFCL;
-
-
 
 
 std::string
@@ -273,7 +265,6 @@ FastRelax::FastRelax(
 }
 
 
-
 FastRelax::FastRelax(
 	core::scoring::ScoreFunctionOP scorefxn_in,
 	core::Size                     standard_repeats
@@ -290,7 +281,6 @@ FastRelax::FastRelax(
 		read_script_file( "", standard_repeats );
 	}
 }
-
 
 
 FastRelax::FastRelax(
@@ -652,7 +642,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	else{
 		make_dna_rigid( pose, *local_movemap );
 	}
-
 
 
 	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
@@ -1219,11 +1208,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 }
 
 
-
-
 // Batch Relax stuff
-
-
 
 
 struct SRelaxPose {
@@ -1268,7 +1253,6 @@ void FastRelax::batch_apply(
 	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	core::pose::Pose pose;
-
 
 
 	TR.Debug  << "================== RelaxScriptBatchRelax: " << script_.size() << " ===============================" << std::endl;
@@ -1642,7 +1626,6 @@ void FastRelax::batch_apply(
 			<< local_scorefxn->get_weight( scoring::fa_rep	)
 			<< std::endl;
 	}
-
 
 
 	input_structs.clear();

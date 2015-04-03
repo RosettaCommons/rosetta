@@ -90,8 +90,6 @@
 #define CONTACT_TH2 15
 
 
-
-
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
 using core::pose::Pose;
@@ -188,8 +186,6 @@ private:
 
 
 //////////////////////////////////////////////////////////
-
-
 
 
 inline Real const sqr(Real const r) { return r*r; }
@@ -323,7 +319,6 @@ void dumpsym(Pose const & pose, Mat R2, Mat R3a, Mat R3b, Vec cen2, string fname
   }
   out.close();
 }
-
 
 
 int pose_cbcount(Pose const & a, Pose const & b) {
@@ -1494,8 +1489,6 @@ vector1<Hit> dock(Pose & init, string fname) {
 
   return hits;
 }
-
-
 
 
 int main (int argc, char *argv[]) {

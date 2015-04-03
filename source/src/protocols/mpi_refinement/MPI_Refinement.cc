@@ -26,7 +26,6 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -47,8 +46,6 @@
 #include <core/scoring/rms_util.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -66,7 +63,6 @@
 
 // C/C++ headers
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <unistd.h>
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -585,7 +581,7 @@ MPI_Refinement::limit_library()
     TR << "Limit library: " << npop << " structures removed from library" << std::endl;
 }
 
-//
+
 void
 MPI_Refinement::shave_library( SilentStructStore &new_structs,
 															 std::string const scorename,

@@ -15,13 +15,11 @@
 // Unit headers
 #include <protocols/simple_moves/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/RepackSidechainsMoverCreator.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/pack_missing_sidechains.hh>
 
 #include <core/id/AtomID_Mask.fwd.hh>
@@ -33,10 +31,8 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -125,7 +121,7 @@ RepackSidechainsMover::get_name() const {
 }
 
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 RepackSidechainsMover::parse_my_tag(
 	TagCOP const tag,
@@ -139,7 +135,7 @@ RepackSidechainsMover::parse_my_tag(
 	//	parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
-///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 RepackSidechainsMover::parse_score_function(
 	TagCOP const tag,
@@ -154,14 +150,14 @@ RepackSidechainsMover::parse_score_function(
 	set_scorefxn( new_score_function );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 RepackSidechainsMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new RepackSidechainsMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 RepackSidechainsMover::clone() const
 {

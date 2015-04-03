@@ -782,7 +782,6 @@ public:
 	}
 
 
-
 	// 	// old stuff -- still used? yeah abinitio mode- endbias check
 	//inline ObjexxFCL::FArray1D_int const & get_jump_edge_count() const;
 	Size count_fixed_residues(
@@ -1046,7 +1045,7 @@ FoldTree::check_order() const
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///@brief  routines for retrieving the derived data
+/// @brief  routines for retrieving the derived data
 /// will call check_topology and/or check_order first
  inline
 Size

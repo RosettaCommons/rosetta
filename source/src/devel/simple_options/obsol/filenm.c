@@ -9,7 +9,7 @@
 
 /// @file FoldConstraints.hh
 /// @brief Abinitio-Folding under (distance-)constraints
-/// @detailed
+/// @details
 ///	similar to classic Foldconstraints Protocol
 ///
 ///

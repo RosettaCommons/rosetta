@@ -790,7 +790,7 @@ void get_tenA_neighbor_residues(
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-///@details use 10A CB distance cutoff as neighboring residue defintion. The function
+/// @details use 10A CB distance cutoff as neighboring residue defintion. The function
 ///is used for conveniently setting up sidechain movable residues in loop modeling.
 ///The 10A residue set is further reduced if neighbor_dist < 10.0
 /////////////////////////////////////////////////////////////////////////////////
@@ -823,7 +823,7 @@ void select_loop_residues(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@details use 10A CB distance cutoff as neighboring residue defintion. The function
+/// @details use 10A CB distance cutoff as neighboring residue defintion. The function
 ///is used for conveniently setting up sidechain movable residues in loop modeling.
 ///The 10A residue set is further reduced if neighbor_dist < 10.0
 utility::vector1<bool> select_loop_residues(
@@ -839,7 +839,7 @@ utility::vector1<bool> select_loop_residues(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@details for one loop only
+/// @details for one loop only
 void select_loop_residues(
 	pose::Pose const & pose,
 	Loop const & loop,
@@ -855,7 +855,7 @@ void select_loop_residues(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@details for one loop only
+/// @details for one loop only
 utility::vector1<bool> select_loop_residues(
 	pose::Pose const & pose,
 	Loop const & loop,
@@ -869,7 +869,7 @@ utility::vector1<bool> select_loop_residues(
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-///@details neighbors contains the set of potential neighbors to the loop residues
+/// @details neighbors contains the set of potential neighbors to the loop residues
 ///given in loops. This set is reduced to only contain neighbors within dist_cutoff
 ///of any residue in loops.
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1038,7 +1038,6 @@ apply_sequence_mapping(
 
 		pose.fold_tree( f );
 	}
-
 
 
 	tt << "start mapping: " << std::endl;
@@ -1459,7 +1458,7 @@ core::Real native_loop_core_CA_rmsd(
 
 
 /////////////////////////////////////////////////////////////////////////////////////
-///@details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
+/// @details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
 ///The rmsd is calculated over four backbone atoms of all loop residues, assuming template
 ///regions in pose1 and pose2 are already aligned.
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1478,7 +1477,7 @@ loop_rmsd_with_superimpose(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-///@details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
+/// @details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
 ///The rmsd is calculated over four backbone atoms of all loop residues, assuming template
 ///regions in pose1 and pose2 are already aligned.
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1512,7 +1511,7 @@ loop_rmsd_with_superimpose_core(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-///@details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
+/// @details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
 ///The rmsd is calculated over four backbone atoms of all loop residues, assuming template
 ///regions in pose1 and pose2 are already aligned.
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1576,7 +1575,7 @@ loop_rmsd(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-///@details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
+/// @details pose1 is the reference and pose2 is the structure for which rmsd is calculated.
 ///The rmsd is calculated over four backbone atoms of each loop after fitting it onto the reference
 ///loop and when there are multiple loops, return the mean value.
 //////////////////////////////////////////////////////////////////////////////////////

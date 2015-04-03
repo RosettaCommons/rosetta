@@ -396,7 +396,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	moves::Mover::type( "RigidBodyPerturbNoCenter" );
 }
 
-///@details constructor for the rbm that doesn't set a center
+/// @details constructor for the rbm that doesn't set a center
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	core::pose::Pose const & pose_in,
 	kinematics::MoveMap const & mm,
@@ -582,7 +582,7 @@ RigidBodySpinMover::RigidBodySpinMover() : parent(), spin_axis_( 0.0 )
 	moves::Mover::type( "RigidBodySpin" );
 }
 
-///@brief constructor with arguments
+/// @brief constructor with arguments
 ///       spin axis is initialized to 0 and then calculated during apply()
 RigidBodySpinMover::RigidBodySpinMover(
 	int const rb_jump_in
@@ -661,7 +661,7 @@ RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
 
 }
 
-///@brief constructor with arguments
+/// @brief constructor with arguments
 ///       takes a complete set of arguments needed for apply
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rot_center, float angle_magnitude ):
 parent( rb_jump_in )

@@ -80,10 +80,8 @@ private:
 };
 
 
-
 } // chemical
 } // core
-
 
 
 #endif

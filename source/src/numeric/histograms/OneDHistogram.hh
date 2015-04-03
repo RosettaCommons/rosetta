@@ -7,20 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin OneDHistogram
 ///
 /// @brief
 /// A 1D histogram based upon a map structure
 ///
-/// @detailed
+/// @details
 /// Very simple class for histograms based upon maps. You provide the key, which is templated,
 /// meaning that the key can be a string, real, size, enum. It will return a count, if you want it
 ///
 ///
 ///
-/// @authors Steven Combs
+/// @author Steven Combs
 ///
-/// @last_modified November 18 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -33,7 +31,6 @@
 
 namespace numeric{
 namespace histograms{
-
 
 
 template<typename key1>
@@ -56,16 +53,11 @@ public:
 	}
 
 
-
-
-
 private:
 std::map< key1, platform::Size > histogram_;
 
 
-
 };
-
 
 
 }

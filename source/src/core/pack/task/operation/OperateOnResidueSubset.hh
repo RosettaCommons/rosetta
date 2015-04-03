@@ -29,12 +29,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <map>
 
 #include <utility/vector1.hh>
 
@@ -61,9 +58,9 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const &, PackerTask & ) const;
 
-	///@brief sets the ResLvlTaskOperation that will be applied to residues
+	/// @brief sets the ResLvlTaskOperation that will be applied to residues
 	void op( ResLvlTaskOperationCOP );
-	///@brief sets the ResidueSelector that will be used to determine which residues to apply the RLTOP to
+	/// @brief sets the ResidueSelector that will be used to determine which residues to apply the RLTOP to
 	void selector( residue_selector::ResidueSelectorCOP );
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter

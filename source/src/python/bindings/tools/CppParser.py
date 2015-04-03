@@ -29,7 +29,6 @@ class CD:
         return r[:-2]+'|'
 
 
-
 class ReferenceSection:
     def __init__(self, ReferenceSection):
         # do we even need this??? self.ReferenceSection = ReferenceSection
@@ -76,7 +75,6 @@ class ReferenceSection:
         pass
 
 
-
 def normalize_context(context):  # making sure that context have form ::namespace(s)::
     if not context.startswith('::'): context = '::'+ context
     if not context.endswith('::'): context = context+'::'
@@ -112,8 +110,6 @@ class CppType_Composite(CppType):  #, 'FunctionType', 'ArrayType' - have some ad
     def getContext(self): return ''
     def getKind(self): return 'Composite'
     def T(self, simplify=False): return '___XQWERTY___' + self.type_
-
-
 
 
 def resolve_context_and_name(context, name):  # see if we can map self.context and self.name to more general type
@@ -232,7 +228,6 @@ class CppType_Typedef(CppType_Complex):
         else: return CppType_Complex.T(self)
 
 
-
 class CppNamespace:
     ''' data holder for C++ namespace. name represent namespace name and context is full context in which it recides
     '''
@@ -279,7 +274,6 @@ class CppEnum:
         return [self.file_]
 
 
-
 class CppVariable:
     def __init__(self, node, context, refSection):
         self.name = node.getAttribute('name')
@@ -300,7 +294,6 @@ class CppVariable:
 
         r = '  %sdef_%s("%s", &%s%s);\n' % (wrappingScope, readwrite, self.name, self.context, self.name)
         return  ('\n' + indent).join( r.split('\n') ) + '\n'
-
 
 
 class CppFunction:
@@ -498,7 +491,6 @@ class CppFunction:
             return '    , boost::python::return_value_policy< boost::python::reference_existing_object >()\n'
 
 
-
         return ''
 
 
@@ -635,7 +627,6 @@ class CppFunction:
         return 'CppFunction: %s Context=%s isWrapable=%s, %s %s' % (self.name, self.context, self.isWrapable(), self.returnType, self.argsTypes)
 
 
-
 class CppClass:
     def __init__(self, node, context, refSection):
         self.reference = refSection
@@ -749,7 +740,6 @@ class CppClass:
         return D
 
 
-
     def isCreatable(self, asBase=False, with_callback_struct=False):
         if with_callback_struct:
             return self.getAllVirtualFunctions({})
@@ -802,8 +792,6 @@ class CppClass:
         return True
 
 
-
-
     def isCallbackStructNeeded(self):
         ''' Return True if class have public virtual functions, so it make sense to allow callback from Python...
         '''
@@ -830,8 +818,6 @@ class CppClass:
             if f.isCallbackStructNeeded() and f.isWrapable(): return True  # and (not f.const)
 
         return False
-
-
 
 
     def isWrapable(self):
@@ -1068,7 +1054,6 @@ class CppClass:
                         r += '  %(exposer)s.def( boost::python::init< %(args)s > () );\n' % dict(D.items(), args=c.getSimpleArgsType() )
 
 
-
         if self.enums:
             r+= '    boost::python::scope %(name)s_scope( %(exposer)s );\n' % D
             for e in self.enums:
@@ -1303,8 +1288,6 @@ class GccXML:
                         object_.dataMembers.append( CppVariable(m, ch_context, self) )
 
 
-
-
             if object_:
                 if not self.Contexts.get(context): self.Contexts[context] = [ object_ ]
                 else: self.Contexts[ context ].append( object_ )
@@ -1370,7 +1353,6 @@ def sortObjects(l):
                     #if 'utility::SingletonBase' in l[i].context+l[i].name  and  'utility::SingletonBase' not in l[j].context+l[j].name: swap(i, j); f = True; break
                     #if 'utility::SingletonBase' in l[i].context+l[i].name  and  'utility::SingletonBase' in l[j].context+l[j].name:
                     #   if l[i].context+l[i].name > l[j].context+l[j].name: swap(i, j); f = True; break
-
 
 
 def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending='', monolith=False):
@@ -1684,7 +1666,6 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
         # # r += '  main_namespace["__import__"] = __import__;\n'
 
 
-
         # r += '  std::string submodule_name( boost::python::extract<const char*>(current.attr("__name__")));\n'
         # r += '  submodule_name.append(".pyrosetta");\n'
 
@@ -1697,7 +1678,6 @@ def generate_monolith_main(root_module, modules, rosetta_library_name, embed_pyt
         #r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format("aaa = 'ABC'\\nprint aaa\\n", init_file)
 
         # r += '  boost::python::exec("{}", main_namespace, main_namespace);\n'.format(init_file)
-
 
 
         r += '  boost::python::object main = boost::python::import("__main__");\n'
@@ -1780,9 +1760,6 @@ def GCC_XML_main(args):
     print wrapModule('test', '::NM::', gxml.Contexts)
 
 
-
-
-
 class ClangXML:
     def __init__(self, dom):
         self.dom = dom  # Do we even need this???
@@ -1792,7 +1769,6 @@ class ClangXML:
         for i in dom.documentElement.childNodes:  # dom.documentElement suppose to be dom.getElementsByTagName('CLANG_XML')
             if i.nodeName == 'TranslationUnit':  self.TranslationUnit = i
             if i.nodeName == 'ReferenceSection':  self.ReferenceSection = ReferenceSection(i)
-
 
 
     def parse(self, node=None, relevantFilesList=None):

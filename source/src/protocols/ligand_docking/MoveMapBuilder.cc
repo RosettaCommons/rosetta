@@ -29,7 +29,6 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.hh>
@@ -182,7 +181,7 @@ MoveMapBuilder::set_all_chi(
 	}
 }
 
-///@details You MUST call set_all_chi first
+/// @details You MUST call set_all_chi first
 void
 MoveMapBuilder::set_all_bb(
 		core::pose::Pose const & pose,

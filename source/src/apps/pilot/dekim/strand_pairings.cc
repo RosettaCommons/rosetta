@@ -55,7 +55,6 @@
 #include <fstream>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;

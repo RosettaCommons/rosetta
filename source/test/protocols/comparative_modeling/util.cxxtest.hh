@@ -18,12 +18,9 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 
 #include <protocols/loops/Loop.hh>
@@ -31,7 +28,6 @@
 #include <protocols/comparative_modeling/util.hh>
 
 //Auto Headers
-
 
 
 static basic::Tracer TR("test.protocols.comparative_modeling.util");

@@ -168,6 +168,5 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 }
 
 
-
 } // chemical
 } // core

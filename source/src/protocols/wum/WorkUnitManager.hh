@@ -19,18 +19,15 @@
 #include <protocols/wum/WorkUnitList.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/wum/MoverList.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
 #include <string>
 #include <vector>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -145,8 +142,6 @@ class WorkUnitQueue_Swapped: public WorkUnitQueue {
 };
 
 
-
-
 class WorkUnitManager: public utility::pointer::ReferenceCount {
   public:
     friend class WorkUnitQueue_Swapped;
@@ -196,9 +191,6 @@ class WorkUnitManager: public utility::pointer::ReferenceCount {
 
 
 };
-
-
-
 
 
 }

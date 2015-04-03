@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 
@@ -26,13 +25,10 @@
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // option key includes
 

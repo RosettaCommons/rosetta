@@ -16,7 +16,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <protocols/comparative_modeling/features/ResidueFeature.hh>
 #include <protocols/comparative_modeling/features/ResidueFeature.fwd.hh>

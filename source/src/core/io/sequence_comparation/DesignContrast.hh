@@ -26,14 +26,10 @@
 
 // mini headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -75,7 +71,7 @@ using utility::vector1;
 		/// @brief Get pdb file names from the pdb list files.
 		void setNames (); // vector1<std::string> & pdb_file_names ); the pdb_file_names is a private member
 
-		///
+
 		vector1<FileName> & getPdbNames();
 		vector1<FileName> const & getPdbNames() const;
 

@@ -11,7 +11,6 @@
 /// @brief  set of fragments for a certain alignment frame
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_protocols_simple_moves_WobbleMover_HH
@@ -44,8 +43,8 @@ typedef utility::pointer::shared_ptr< WobbleMover > WobbleMoverOP;
 typedef utility::pointer::shared_ptr< const WobbleMover > WobbleMoverCOP;
 
 
-///@brief A protocols::moves::Mover class for a classic-wobble analog: a smooth move followed by ccd closure
-///@detail a smooth fragment is chosen according to the FragmentCost Functor;
+/// @brief A protocols::moves::Mover class for a classic-wobble analog: a smooth move followed by ccd closure
+/// @detail a smooth fragment is chosen according to the FragmentCost Functor;
 ///   a cutpoint is inserted just in front of or just after the fragment
 ///   a loop is defined around the fragment and cutpoint to be closed with ccd:
 ///   a cut_Cterm insertion: ----lfff bbb----   f: fragment_res b: buffer_res -: immovable residues
@@ -90,7 +89,7 @@ protected:
 		core::pose::Pose &pose
 	) const;
 
-	///@brief close loop and return if successful ( deviations smaller than thresholds )
+	/// @brief close loop and return if successful ( deviations smaller than thresholds )
 	bool ccd_closure(
 		core::pose::Pose & pose,
 		protocols::loops::Loops const & loops,
@@ -99,10 +98,10 @@ protected:
 
 
 private:
-	///@brief how many variable residues on opposite side of fragment
+	/// @brief how many variable residues on opposite side of fragment
 	core::Size buffer_length_;
 
-	///@brief cutoffs that ccd has to undercut to be accepted
+	/// @brief cutoffs that ccd has to undercut to be accepted
 	core::Real forward_threshold_;
 	core::Real backward_threshold_;
 };

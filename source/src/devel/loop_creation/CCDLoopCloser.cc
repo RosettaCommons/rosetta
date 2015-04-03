@@ -67,7 +67,7 @@ CCDLoopCloserCreator::mover_name()
 //****END CREATOR METHODS****//
 
 	
-///@brief default constructor
+/// @brief default constructor
 CCDLoopCloser::CCDLoopCloser():
 	max_closure_attempts_(10),
 	max_ccd_moves_per_closure_attempt_(10000),
@@ -81,7 +81,7 @@ CCDLoopCloser::CCDLoopCloser():
 	init();
 }
 
-///@brief explicit constructor
+/// @brief explicit constructor
 CCDLoopCloser::CCDLoopCloser(
 	core::Size max_closure_attempts,
 	bool prevent_nonloop_modifications,
@@ -215,7 +215,7 @@ CCDLoopCloser::apply(
 	pose.fold_tree(saved_ft);
 }
 
-///@brief Create a fold tree that prevents downstream propogation
+/// @brief Create a fold tree that prevents downstream propogation
 /// of loop insertions
 void
 CCDLoopCloser::prepare_fold_tree(
@@ -234,7 +234,7 @@ CCDLoopCloser::prepare_fold_tree(
 	pose.fold_tree(new_ft);
 }
 	
-///@brief parse tag for use in RosettaScripts
+/// @brief parse tag for use in RosettaScripts
 void
 CCDLoopCloser::parse_my_tag(
 	utility::tag::TagCOP tag,

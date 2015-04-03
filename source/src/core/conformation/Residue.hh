@@ -63,7 +63,7 @@ namespace conformation {
 void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, core::chemical::ResidueType const & base_res );
 #endif
 
-///@brief  Instance Residue class, used for placed residues and rotamers
+/// @brief  Instance Residue class, used for placed residues and rotamers
 /**
 	@details This class is designed to be lightweight.  It holds a const-reference ("rsd_type_")
 	to a ResidueType object for access to information common to all instances
@@ -426,7 +426,7 @@ public:
 	}
 
 
-	///@brief Returns this residue's Atoms (const), a vector1 of Atom objects
+	/// @brief Returns this residue's Atoms (const), a vector1 of Atom objects
 	///
 	/// example(s):
 	///     residue.atoms()
@@ -439,7 +439,7 @@ public:
 		return atoms_;
 	}
 
-	///@brief Returns this residue's Atoms (non-const), a vector1 of Atom objects
+	/// @brief Returns this residue's Atoms (non-const), a vector1 of Atom objects
 	///
 	/// example(s):
 	///     residue.atoms()
@@ -938,7 +938,7 @@ public:
 		return rsd_type_.nbr_radius();
 	}
 
-	///
+
 	Vector const &
 	nbr_atom_xyz() const
 	{
@@ -1099,7 +1099,7 @@ public:
 	}
 
 
-	///@brief Returns this residue's upper_connection
+	/// @brief Returns this residue's upper_connection
 	/// a ResidueConnection has internal coords info
 	/// on how to build the atom in the next residue which
 	/// connects to this residue
@@ -1651,7 +1651,7 @@ public:
 		return rsd_type_.is_protein();
 	}
 
-	/// @breif Returns if this residue is a peptoid
+	/// @brief Returns if this residue is a peptoid
 	bool
 	is_peptoid() const
 	{
@@ -1717,7 +1717,6 @@ public:
 	}
 
 
-
 	/// @brief Returns true if the residue has side chain orbitals
 	bool
 	has_sc_orbitals() const
@@ -1760,7 +1759,7 @@ public:
 		return rsd_type_.is_aromatic();
 	}
 
-	///@brief residue is coarse (used for RNA right now)
+	/// @brief residue is coarse (used for RNA right now)
 	bool
 	is_coarse() const
 	{
@@ -2016,7 +2015,6 @@ public:
 		}
 	}
 #endif
-
 
 
 	/// @brief BasicDataCache indexed by enum in residue_datacache.hh

@@ -18,7 +18,6 @@
 
 #include <core/types.hh>
 #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <basic/MetricValueIO.hh>
 
 #include <string>
 #include <map>

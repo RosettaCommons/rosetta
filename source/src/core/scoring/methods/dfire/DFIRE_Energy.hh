@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -41,7 +40,7 @@ public:
 
 public:
 
-	///
+
 	DFIRE_Energy();
 
 	/// clone
@@ -75,7 +74,7 @@ public:
 		EnergyMap & emap
 	) const ;
 
-	///
+
 	virtual void residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,

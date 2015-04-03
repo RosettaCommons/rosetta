@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_filters/ConstraintScoreCutoffFilter.hh
 /// @brief header file for ConstraintScoreCutoffFitler class.
-/// @detailed
+/// @details
 /// @author Florian Richter floric@u.washington.edu
 
 
@@ -23,8 +23,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 #include <core/scoring/ScoreType.hh>
 
 

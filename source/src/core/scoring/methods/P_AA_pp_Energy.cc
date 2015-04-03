@@ -26,7 +26,6 @@
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 // Numeric headers
@@ -58,7 +57,6 @@ P_AA_pp_EnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// ctor
 P_AA_pp_Energy::P_AA_pp_Energy() :
 	parent( methods::EnergyMethodCreatorOP( new P_AA_pp_EnergyCreator ) ),
@@ -76,7 +74,7 @@ P_AA_pp_Energy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 P_AA_pp_Energy::residue_energy(
 	conformation::Residue const & rsd,
@@ -120,7 +118,7 @@ P_AA_pp_Energy::eval_residue_dof_derivative(
 	return numeric::conversions::degrees( weights[ p_aa_pp ] * p_aa_.get_Paa_pp_deriv( rsd, tor_id ));
 }
 
-///
+
 Real
 P_AA_pp_Energy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,

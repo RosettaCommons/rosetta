@@ -20,11 +20,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <sstream>
 #include <iostream>
@@ -42,7 +39,6 @@ namespace func {
 	{
 		return func_to_weight_->func( x ) * weight_;
 	}
-
 
 
 	Real

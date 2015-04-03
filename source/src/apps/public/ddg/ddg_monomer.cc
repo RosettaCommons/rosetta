@@ -16,22 +16,14 @@
 #include <core/chemical/AA.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -47,17 +39,13 @@
 #include <basic/database/open.hh>
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <ios>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -77,7 +65,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 static thread_local basic::Tracer TR( "apps.public.ddg.ddg_monomer" );
-
 
 
 using namespace core;

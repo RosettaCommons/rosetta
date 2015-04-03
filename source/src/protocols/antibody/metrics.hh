@@ -58,7 +58,7 @@ kink_dihedral( const core::pose::Pose & pose, const AntibodyInfo & abinfo, bool 
 
 ///// paratope and pose measures /////
 
-///@brief Convenience struct for passing around paratope data, including individual data for cdrs.
+/// @brief Convenience struct for passing around paratope data, including individual data for cdrs.
 /// CDRs not present default to 0.  Templates are used mainly to have Size/ Real or string values. 
 template <typename T>
 struct ParatopeMetric {
@@ -83,31 +83,31 @@ paratope_sasa( const core::pose::Pose & pose, const AntibodyInfo & ab_info);
 ParatopeMetric<core::SSize>
 paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & abinfo );
 
- ///@brief calculate the net charge of the antibody
+ /// @brief calculate the net charge of the antibody
 core::SSize
 pose_charge( core::pose::Pose const & pose );
 
-///@brief calculate dSASA of the paratope and antigen using result of InterfaceAnalyzerMover
+/// @brief calculate dSASA of the paratope and antigen using result of InterfaceAnalyzerMover
 //std::pair<core::Real,core::Real>
 //paratope_dSASA( 
 //	const core::pose::Pose & pose,
 //	const AntibodyInfo & ab_info);
 
-///@brief calculate dSASA of the paratope using data held in PerResidueInterfaceData returned from InterfaceAnalyzerMover
+/// @brief calculate dSASA of the paratope using data held in PerResidueInterfaceData returned from InterfaceAnalyzerMover
 //std::pair<core::Real,core::Real>
 //paratope_dSASA( 
 //	const core::pose::Pose & pose,
 //	const AntibodyInfo & ab_info
 //	const protocols::analysis::PerResidueInterfaceData & interface_data);
 
-///@brief calculate dSASA of a cdr and antigen using InterfaceAnalyzerMover. Returns all and hydrophobic components.
+/// @brief calculate dSASA of a cdr and antigen using InterfaceAnalyzerMover. Returns all and hydrophobic components.
 //std::pair<core::Real, core::Real>
 //cdr_dSASA(
 //	const core::pose::Pose & pose,
 //	const AntibodyInfo & ab_info,
 //	const CDRNameEnum & cdr);
 
-///@brief calculate dSASA of a cdr using data held in PerResidueInterfaceData returned from InterfaceAnalyzerMover.
+/// @brief calculate dSASA of a cdr using data held in PerResidueInterfaceData returned from InterfaceAnalyzerMover.
 //std::pair<core::Real, core::Real>
 //cdr_dSASA(
 //	const core::pose::Pose & pose,
@@ -117,11 +117,11 @@ pose_charge( core::pose::Pose const & pose );
 
 ///// CDR measures /////
 
-///@brief Calculates energy of cdr by decomposing scorefxn into pair and then summing.  This means it includes hbonding components, etc.
+/// @brief Calculates energy of cdr by decomposing scorefxn into pair and then summing.  This means it includes hbonding components, etc.
 core::Real
 cdr_energy(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, core::scoring::ScoreFunctionCOP scorefxn, CDRNameEnum const & cdr);
 
-///@brief Calculate the distance between the carbon and nitrogen of each residue before and after the CDR respectively
+/// @brief Calculate the distance between the carbon and nitrogen of each residue before and after the CDR respectively
 core::Real
 cdr_CN_anchor_distance(core::pose::Pose const & pose, AntibodyInfoCOP ab_info, CDRNameEnum const & cdr);
 

@@ -9,7 +9,7 @@
 
 /// @file RGFilter.cc
 /// @brief runs reject or accept filters on pose
-/// @detailed
+/// @details
 ///	  Contains currently: RGFilter
 ///
 ///
@@ -23,7 +23,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 
@@ -33,7 +32,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

@@ -62,7 +62,7 @@ JobInputterFactory::JobInputterFactory()
 
 JobInputterFactory::~JobInputterFactory(){}
 
-///@brief add a JobInputter prototype, using its default type name as the map key
+/// @brief add a JobInputter prototype, using its default type name as the map key
 void
 JobInputterFactory::factory_register( JobInputterCreatorOP creator )
 {
@@ -74,7 +74,7 @@ JobInputterFactory::factory_register( JobInputterCreatorOP creator )
 	job_inputter_creator_map_[ job_inputter_type ] = creator;
 }
 
-///@details return new JobInputter by key lookup in map
+/// @details return new JobInputter by key lookup in map
 JobInputterOP
 JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputter_type )
 {
@@ -99,7 +99,7 @@ JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputte
 	}
 }
 
-///@brief return new JobInputter from logic of option system plus compilation options.  All the logic for determining job input type lives here.
+/// @brief return new JobInputter from logic of option system plus compilation options.  All the logic for determining job input type lives here.
 JobInputterOP
 JobInputterFactory::get_new_JobInputter()
 {

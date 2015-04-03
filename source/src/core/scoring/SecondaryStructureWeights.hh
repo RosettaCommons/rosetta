@@ -17,9 +17,7 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 
@@ -120,7 +118,6 @@ public: // construct/destruct
 	}
 
 
-
 		/// @brief parallel strand weight
 		inline
 		Real const &
@@ -137,7 +134,7 @@ public: // construct/destruct
 			return antiparallel_weight_;
 		}
 
-		///
+
 		inline
 		int
 		get_ss_lowstrand() const
@@ -145,7 +142,7 @@ public: // construct/destruct
 			return ss_lowstrand_;
 		}
 
-		///
+
 		inline
 		int
 		get_ss_cutoff() const
@@ -224,14 +221,14 @@ public: // construct/destruct
 			antiparallel_weight_ = weight;
 		}
 
-		///
+
 		void
 		set_ss_lowstrand( int const setting )
 		{
 			ss_lowstrand_ = setting;
 		}
 
-		///
+
 		void
 		set_ss_cutoff( int const setting )
 		{
@@ -326,7 +323,6 @@ public: // construct/destruct
 
 
 };
-
 
 
 } // ns scoring

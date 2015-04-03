@@ -34,7 +34,6 @@
 
 // project headers
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -55,7 +54,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

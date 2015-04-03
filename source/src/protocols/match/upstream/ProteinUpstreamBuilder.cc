@@ -18,7 +18,6 @@
 // Package headers
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/match/upstream/ProteinSCSampler.hh>
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamResTypeGeometry.hh>
@@ -26,7 +25,6 @@
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
@@ -1006,7 +1004,6 @@ ProteinUpstreamBuilder::build(
 }
 
 
-
 /// @brief Replace residue for the amino acid corresponding to the rotamer indicated in the
 /// hit at the Pose position seqpos_to_insert_at.
 /// @details It is crucial here that the rotamers are counted in the same way they were
@@ -1248,7 +1245,6 @@ void ProteinUpstreamBuilder::set_use_input_sidechain( bool setting )
 	//std::cout << "Setting use_input_sidechain" << setting << std::endl;
 	use_input_sc_ = setting;
 }
-
 
 
 /// @brief Copy the coordinates from the build_point object into the the rescoords

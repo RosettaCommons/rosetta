@@ -11,7 +11,7 @@
 /// @brief  Small object to represent rms data.
 /// @author James Thompson
 /// @date   Thu Jan 10 06:55:37 2008
-///
+
 
 #include <numeric/types.hh>
 #include <numeric/xyzVector.hh>

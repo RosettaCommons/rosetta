@@ -31,7 +31,6 @@
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector0.hh>
 
@@ -99,13 +98,13 @@ RestrictInterGroupVectorOperationCreator::create_task_operation() const
   return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation );
 }
 
-///@details be warned if you use clone that you'll not get a new interface calculator
+/// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictInterGroupVectorOperation::clone() const
 {
   return core::pack::task::operation::TaskOperationOP( new RestrictInterGroupVectorOperation( *this ) );
 }
 
-///@details setters
+/// @details setters
 void RestrictInterGroupVectorOperation::insert_pair( group_pair pair){
   pair_vector_.push_back(pair);
 }
@@ -122,7 +121,7 @@ void RestrictInterGroupVectorOperation::vector_dist_cutoff(core::Real vector_dis
   vector_dist_cutoff_ = vector_dist_cutoff;
 }
 
-///@details apply function, uses inherited functionality
+/// @details apply function, uses inherited functionality
 void
 RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
@@ -154,7 +153,7 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 
 }//apply
 
-// ///@details parse_tag
+// /// @details parse_tag
 // void
 // RestrictInterGroupVectorOperation::parse_tag(utility::tag::TagCOP tag)
 // {

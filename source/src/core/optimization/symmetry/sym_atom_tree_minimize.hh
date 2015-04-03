@@ -18,25 +18,18 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.fwd.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
-// AUTO-REMOVED #include <core/optimization/DOF_Node.hh>
 
 // Symmetry
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/optimization/Multifunc.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

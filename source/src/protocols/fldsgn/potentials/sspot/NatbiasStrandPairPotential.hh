@@ -19,7 +19,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/fldsgn/topology/BB_Pos.fwd.hh>
 #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
@@ -27,7 +26,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers
@@ -132,7 +130,6 @@ private: // initialization
 
 	/// @brief
 	void load_dotscore_bins();
-
 
 
 private: // secondary structure data

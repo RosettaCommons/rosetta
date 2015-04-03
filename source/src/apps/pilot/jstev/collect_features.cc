@@ -404,8 +404,6 @@ training (can use more data for training)
 3) if passes 1 and 2, test for rescue
 
 
-
-
 NOTES:
 
 make a program to chop up the pdb files into atom and site files

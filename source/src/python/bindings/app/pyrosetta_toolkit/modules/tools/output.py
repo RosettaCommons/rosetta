@@ -258,7 +258,6 @@ def saveSeqFile(p, fileout=None, loops_as_strings=None):
     return
 
 
-
 def save_basic_blueprint(p, output=True, outfilename=None):
     """
     Saves a basic blueprint file to be manually edited.

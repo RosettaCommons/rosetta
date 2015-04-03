@@ -538,7 +538,6 @@ namespace farna {
 	}
 
 
-
 	////////////////////////////////////////////////////////////////
 	void
 	RNA_ChunkLibrary::set_allow_insert(toolbox::AllowInsertOP allow_insert ){

@@ -87,8 +87,6 @@ using core::scoring::ScoreFunctionOP;
 using numeric::random::uniform;
 
 
-
-
 class DuboisChiMover : public protocols::moves::Mover {
 	Real mag12_, mag3_, mag4_;
 public:

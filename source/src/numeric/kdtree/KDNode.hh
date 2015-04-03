@@ -105,7 +105,6 @@ private:
 }; // class KDNode
 
 
-
 } // kdtree
 } // numeric
 

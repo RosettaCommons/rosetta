@@ -25,7 +25,7 @@
 namespace devel {
 namespace splice {
 
-///@brief an object to manage the torsion/sequence data and to perform individual moves, such as introducing a new fragment
+/// @brief an object to manage the torsion/sequence data and to perform individual moves, such as introducing a new fragment
 // The main method is pose_from_fragment_info which creates a pose directly from the PoseFragmentInfo
 class FoldUnitUtils : public utility::pointer::ReferenceCount {
 	public:
@@ -82,7 +82,7 @@ class FoldUnitUtils : public utility::pointer::ReferenceCount {
 
 };
 
-///@brief manage pose-fragmnet information.
+/// @brief manage pose-fragmnet information.
 class PoseFragmentInfo : public utility::pointer::ReferenceCount{
 	public:
 		PoseFragmentInfo(){ fragment_map_.clear(); };

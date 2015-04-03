@@ -38,7 +38,6 @@ namespace core {
 namespace scoring {
 
 
-
 class MembraneTopology : public basic::datacache::CacheableData {
 
 public:
@@ -106,7 +105,7 @@ public:
 
 	//void
 	//initialize(pose::Pose & pose, std::string const & spanfile);
-	///
+
 
 	void
 	print() const;
@@ -223,7 +222,6 @@ public:
 	 */
 
  protected:
-
 
 
 /*	Real const cen_dist_cutoff2;

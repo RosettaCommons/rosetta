@@ -18,7 +18,6 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #ifdef WIN32
 // required for VS2005 build
@@ -50,7 +49,7 @@ ParserJobInputter::ParserJobInputter(){
 ParserJobInputter::~ParserJobInputter(){
 }
 
-///@details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
+/// @details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void
 ParserJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 	static protocols::protein_interface_design::PatchdockReader pd_reader;

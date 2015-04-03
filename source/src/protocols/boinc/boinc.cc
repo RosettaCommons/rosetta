@@ -51,14 +51,12 @@
 #endif
 
 
-
 // C++ headers
 #include <iostream>
 
 // option key includes
 
 #include <basic/options/keys/boinc.OptionKeys.gen.hh>
-
 
 
 namespace protocols {
@@ -684,7 +682,7 @@ int Boinc::create_semaphore() {
 	// Win9X doesn't like any reference to a security descriptor.
 	// So if we detect that we are running on the Win9X platform pass
 	// a NULL value for it.
-	//
+
 
 	DWORD dwError = 0;
 	DWORD dwRes = 0;

@@ -170,8 +170,6 @@ void read_occupancy_data( SetOfClusters & set, std::string & occupancy_data, std
 }
 
 
-
-
 int main( int argc, char *argv[] ) {
     try {
 
@@ -216,7 +214,6 @@ int main( int argc, char *argv[] ) {
   for( int jj = 1; jj <= min_occupancy.size(); jj++ ) {
     below_min_occupancy.clear();
     above_min_occupancy.clear();
-
 
 
     for( int ii = 1; ii <= dataset.size(); ii++ ) {

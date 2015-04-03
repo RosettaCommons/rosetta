@@ -9,53 +9,40 @@
 
 /// @file KinematicControl.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
 #include <protocols/abinitio/KinematicControl.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 
 // Project Headers
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/fragment/OrderedFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragSetCollection.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-
 
 
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/jumping/util.hh>
-// AUTO-REMOVED #include <protocols/jumping/PairingLibrary.hh>
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>

@@ -1234,7 +1234,5 @@ HBondFeatures::insert_hbond_dehydron_row(
 }
 
 
-
-
 } // namesapce
 } // namespace

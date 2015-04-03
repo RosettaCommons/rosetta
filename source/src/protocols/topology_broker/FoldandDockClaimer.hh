@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 
-
 // option key includes
 
 
@@ -52,7 +51,7 @@ public:
 	//clone
 	virtual TopologyClaimerOP clone() const;
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const;
 
 	static std::string _static_type_name();
@@ -73,7 +72,7 @@ public:
 
 private:
 
-	///@brief starting pose
+	/// @brief starting pose
   core::pose::Pose input_pose_;
 
 };

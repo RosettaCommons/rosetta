@@ -16,14 +16,7 @@
 #define INCLUDED_protocols_viewer_triangleIterator_hh
 
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray3A.hh>
-// AUTO-REMOVED #include <numeric/all.fwd.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3P.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <vector>
 

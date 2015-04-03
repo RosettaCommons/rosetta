@@ -16,9 +16,7 @@
 /// @code design_disulfide -s input.pdb -o output.pdb -database db -detect_disulf
 
 
-
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 //Utility
 #include <devel/init.hh>

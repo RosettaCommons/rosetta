@@ -41,7 +41,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -245,70 +244,70 @@ HBondOptions::parse_my_tag(
 
 }
 
-///
+
 bool
 HBondOptions::exclude_DNA_DNA() const
 {
 	return exclude_DNA_DNA_;
 }
 
-///
+
 void
 HBondOptions::exclude_DNA_DNA( bool const setting )
 {
 	exclude_DNA_DNA_ = setting;
 }
 
-///
+
 bool
 HBondOptions::exclude_intra_res_protein() const
 {
 	return exclude_intra_res_protein_;
 }
 
-///
+
 void
 HBondOptions::exclude_intra_res_protein( bool const setting )
 {
 	exclude_intra_res_protein_ = setting;
 }
 
-///
+
 bool
 HBondOptions::exclude_intra_res_RNA() const
 {
 	return exclude_intra_res_RNA_;
 }
 
-///
+
 void
 HBondOptions::exclude_intra_res_RNA( bool const setting )
 {
 	exclude_intra_res_RNA_ = setting;
 }
 
-///
+
 bool
 HBondOptions::put_intra_into_total() const
 {
 	return put_intra_into_total_;
 }
 
-///
+
 void
 HBondOptions::put_intra_into_total( bool const setting )
 {
 	put_intra_into_total_ = setting;
 }
 
-///
+
 bool
 HBondOptions::exclude_self_hbonds() const
 {
 	return exclude_self_hbonds_;
 }
 
-///
+
 void
 HBondOptions::exclude_self_hbonds( bool const setting )
 {
@@ -316,86 +315,83 @@ HBondOptions::exclude_self_hbonds( bool const setting )
 }
 
 
-
-
-///
 bool
 HBondOptions::use_hb_env_dep_DNA() const
 {
 	return use_hb_env_dep_DNA_;
 }
 
-///
+
 void
 HBondOptions::use_hb_env_dep_DNA( bool const setting )
 {
 	use_hb_env_dep_DNA_ = setting;
 }
 
-///
+
 bool
 HBondOptions::use_hb_env_dep() const
 {
 	return use_hb_env_dep_;
 }
 
-///
+
 void
 HBondOptions::use_hb_env_dep( bool const setting )
 {
 	use_hb_env_dep_ = setting;
 }
 
-///
+
 bool
 HBondOptions::smooth_hb_env_dep() const
 {
 	return smooth_hb_env_dep_;
 }
 
-///
+
 void
 HBondOptions::smooth_hb_env_dep( bool const setting )
 {
 	smooth_hb_env_dep_ = setting;
 }
 
-///
+
 bool
 HBondOptions::decompose_bb_hb_into_pair_energies() const
 {
 	return decompose_bb_hb_into_pair_energies_;
 }
 
-///
+
 void
 HBondOptions::decompose_bb_hb_into_pair_energies( bool const setting )
 {
 	decompose_bb_hb_into_pair_energies_ = setting;
 }
 
-///
+
 bool
 HBondOptions::bb_donor_acceptor_check() const
 {
 	return bb_donor_acceptor_check_;
 }
 
-///
+
 void
 HBondOptions::bb_donor_acceptor_check( bool const setting )
 {
 	bb_donor_acceptor_check_ = setting;
 }
 
-///
+
 std::string const &
 HBondOptions::params_database_tag() const
 {
 	return params_database_tag_;
 }
 
-///
+
 void
 HBondOptions::params_database_tag( std::string const & setting )
 {
@@ -409,21 +405,21 @@ HBondOptions::Mbhbond() const
 	return Mbhbond_;
 }
 
-///
+
 void
 HBondOptions::Mbhbond( bool const setting )
 {
 	Mbhbond_ = setting;
 }
 
-///
+
 bool
 HBondOptions::mphbond() const
 {
 	return mphbond_;
 }
 
-///
+
 void
 HBondOptions::mphbond( bool const setting )
 {
@@ -506,7 +502,7 @@ operator<< ( std::ostream & out, const HBondOptions & options ){
 	return out;
 }
 
-///
+
 void
 HBondOptions::show( std::ostream & out ) const
 {

@@ -140,7 +140,6 @@ using utility::vector1;
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 #include <utility/stream_util.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>

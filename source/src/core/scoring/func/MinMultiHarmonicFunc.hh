@@ -17,7 +17,6 @@
 #include <core/scoring/func/MinMultiHarmonicFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 

@@ -18,25 +18,20 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/pack/rtmin.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -46,7 +41,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 //////////////////////////////////////////////////////////////////////////////

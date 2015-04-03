@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/RotamerTrialsMinMoverCreator.hh
-///@brief This class will create instances of RotamerTrialsMinMover for the protocols::moves::MoverFactory
-///@author Rocco Moretti (rmoretti@u.washington.edu)
+/// @file protocols/simple_moves/RotamerTrialsMinMoverCreator.hh
+/// @brief This class will create instances of RotamerTrialsMinMover for the protocols::moves::MoverFactory
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_simple_moves_RotamerTrialsMinMoverCreator_hh
 #define INCLUDED_protocols_simple_moves_RotamerTrialsMinMoverCreator_hh

@@ -24,7 +24,6 @@ typedef utility::pointer::shared_ptr<GridManager> GridManagerOP;
 typedef utility::pointer::shared_ptr<GridManager const> GridManagerCOP;
 
 
-
 }
 }
 }

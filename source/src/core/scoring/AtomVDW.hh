@@ -43,14 +43,13 @@ public:
 	AtomVDW( std::string const & atom_type_set_name );
 
 
-	///
 	utility::vector1< Real > const &
 	operator()( Size const atom_type_index ) const
 	{
 		return atom_vdw_[ atom_type_index ];
 	}
 
-	///
+
 	Real
 	approximate_vdw_radius( Size const atom_type_index ) const
 	{

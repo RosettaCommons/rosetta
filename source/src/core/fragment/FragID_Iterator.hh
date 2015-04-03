@@ -11,13 +11,12 @@
 /// @brief  set of fragments
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_FragID_Iterator_HH
 #define INCLUDED_core_fragment_FragID_Iterator_HH
 
 // Unit Headers
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 
 // Package Headers
 #include <core/fragment/FragID.fwd.hh>
@@ -29,11 +28,8 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/FragID.hh>
 #include <utility/vector1.hh>

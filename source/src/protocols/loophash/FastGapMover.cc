@@ -16,14 +16,9 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
@@ -31,19 +26,11 @@
 
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // C++ headems
-// AUTO-REMOVED #include <ctime>
 #include <algorithm>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -53,7 +40,6 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 namespace protocols {

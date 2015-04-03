@@ -21,7 +21,6 @@
 #include <protocols/checkpoint/Checkpoint.hh>
 
 
-
 namespace protocols {
 namespace checkpoint {
 

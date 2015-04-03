@@ -37,7 +37,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -48,7 +47,6 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 // C++ headers
 #include <utility>

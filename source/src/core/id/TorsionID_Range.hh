@@ -30,7 +30,6 @@
 //#include <utility/exit.hh>
 
 // C++ header
-// AUTO-REMOVED #include <utility/assert.hh>
 #include <iostream>
 
 

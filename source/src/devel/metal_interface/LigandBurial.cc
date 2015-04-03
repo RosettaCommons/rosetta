@@ -31,8 +31,6 @@
 #include <sstream>
 
 
-
-
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -49,7 +47,7 @@ using namespace core;
 namespace devel {
 namespace metal_interface {
 
-///@brief
+/// @brief
 
 
 LigandBurial::LigandBurial( core::pose::Pose const & pose, std::string ligand_3_letter_code )
@@ -176,8 +174,6 @@ LigandBurial::calculate_ligand_sasa() {
 	// chain_ligand_only.dump_pdb("ligand_only.pdb");
 
 }
-
-
 
 
 } //metal_interface

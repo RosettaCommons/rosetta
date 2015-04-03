@@ -23,19 +23,14 @@
 #include <basic/options/option.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/assert.hh>
 
 // option key includes
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/tag/Tag.hh>
@@ -114,7 +109,7 @@ std::string LigandDesign::get_name() const{
 	return "LigandDesign";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 LigandDesign::parse_my_tag(
 		utility::tag::TagCOP tag,

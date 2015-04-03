@@ -18,7 +18,6 @@
 #include <devel/init.hh>
 
 //core headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -30,19 +29,15 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -52,13 +47,9 @@
 #include <basic/Tracer.hh>
 
 //protocols
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/simple_moves/ddG.hh>
@@ -66,29 +57,22 @@
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymmetricRMSMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //JD2
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -97,7 +81,6 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <stdlib.h>
 
 //Auto Headers
 #include <utility/vector0.hh>
@@ -186,7 +169,7 @@ private:
 	protocols::protein_interface_design::movers::BuildAlaPoseOP build_ala_mover_;
 	protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP get_sidechains_mover_;
 	//calculators
-	///@brief InterfaceNeighborDefinition calculator name string
+	/// @brief InterfaceNeighborDefinition calculator name string
 	std::string InterfaceNeighborDefinition_;
 	//other movers
 	//devel::anchored_design::InterfaceAnalyzerMoverOP interface_mover_;
@@ -212,7 +195,6 @@ HDdesignMover::HDdesignMover() {
  	//scorefxn_->set_energy_method_options( energymethodoptions );
 
 }
-
 
 
 void HDdesignMover::cloak_and_setup( pose::Pose & pose ){
@@ -556,8 +538,6 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		set_last_move_status(protocols::moves::FAIL_RETRY);
 	else
 		job_me->add_string_real_pair("dGbind", ddgvalue);
-
-
 
 
 	//find bb-bb hbond E

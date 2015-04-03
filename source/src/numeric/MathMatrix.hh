@@ -8,14 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 //////////////////////////////////////////////////////////////////////
-/// @begin MathMatrix
 ///
 /// @brief
 /// construction/destructor of Matrix's with some functions
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// The Matrix is constructed out of arrays and places values into rows/columns based on
 /// however many columns/rows you specify. Actual operations of the MathMatrix are implemented
@@ -27,11 +25,9 @@
 /// Nils Woetzl
 /// Jens Meiler
 ///
-/// @authors Steven Combs, Nils Woetzl, Jens Meiler
+/// @author Steven Combs, Nils Woetzl, Jens Meiler
 ///
-/// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef INCLUDED_numeric_MathMatrix_hh
@@ -123,7 +119,6 @@ public:
 	{
 		std::copy( MATRIX.data_, MATRIX.data_ + size_, data_);
 	}
-
 
 
 	/// @brief Clone function
@@ -290,9 +285,6 @@ public:
 	}
 
 
-
-
-
 	//////////////////////
 	// Matrix functions //
 	//////////////////////
@@ -343,8 +335,6 @@ public:
 	{
 		return MATRIX_LHS.get_number_cols() == MATRIX_RHS.get_number_rows();
 	}
-
-
 
 
 	MathMatrix< T> & set_zero()
@@ -418,8 +408,6 @@ public:
 	}
 
 
-
-
 	/// invert small square matrices exactly
 	inline MathMatrix< T> inverse_square_matrix(){
 		// do quick inverse if diagonal
@@ -472,7 +460,6 @@ public:
 	}
 
 
-
 	inline MathMatrix< T> & inverse_diagonal_matrix()
 	{
 		for( Size i( 0); i < NumberRows_; ++i)
@@ -485,8 +472,6 @@ public:
 
 		return *this;
 	}
-
-
 
 
 	/// @return this algorithm was found on this page: http://www.csit.fsu.edu/~burkardt/math2071/math2071.html
@@ -525,11 +510,6 @@ public:
 
 		return( operator =( newmatrix));
 		}
-
-
-
-
-
 
 
 	/// @return set all elements in matrix to T( 0) but diagonal elements to T( 1)
@@ -640,7 +620,6 @@ public:
 		}
 
 
-
 	//////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
@@ -660,7 +639,6 @@ public:
 		else return true;
 
 	}
-
 
 
 	///////////////
@@ -719,7 +697,6 @@ public:
 
 
 	}
-
 
 
 	/// @brief assignment from value
@@ -792,11 +769,6 @@ public:
 		}
 
 
-
-
-
-
-
 private:
 	Size NumberRows_; //number of rows
 	Size NumberCols_; //number columns
@@ -806,10 +778,7 @@ private:
 };
 
 
-
-
 }//end namespace numeric
-
 
 
 #endif

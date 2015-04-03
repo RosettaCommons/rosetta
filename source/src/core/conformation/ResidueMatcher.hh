@@ -19,7 +19,6 @@
 #include <core/conformation/ResidueMatcher.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 // Utility headers
 //#include <utility/vector1.fwd.hh>
@@ -34,7 +33,7 @@ namespace conformation {
 
 class ResidueMatcher : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ResidueMatcher();
 	virtual
 	bool

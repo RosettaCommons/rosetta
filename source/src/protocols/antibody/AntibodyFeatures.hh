@@ -25,8 +25,8 @@ namespace antibody {
 	using namespace protocols::features;
 	using namespace core::scoring;
 	
-///@brief Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, and LH_A (this can be set), and other metrics.
-///@details Adds .... tables to the database.  See also protocols/antibody/clusters/CDRClusterFeatures
+/// @brief Collects data on an antibody including CDRs, interfaces of L_H, L_A, H_A, and LH_A (this can be set), and other metrics.
+/// @details Adds .... tables to the database.  See also protocols/antibody/clusters/CDRClusterFeatures
 class AntibodyFeatures : public InterfaceFeatures {
 	
 public:
@@ -38,7 +38,7 @@ public:
 	AntibodyFeatures(AntibodyInfoOP ab_info, ScoreFunctionCOP scorefxn);
 
 	
-	///@breif return string with class name
+	/// @brief return string with class name
 	virtual std::string
 	type_name() const;
 	
@@ -49,7 +49,7 @@ public:
 	write_ab_metrics_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
 	
-	///@brief Write kink metrics schema.  Please add or modify as needed.
+	/// @brief Write kink metrics schema.  Please add or modify as needed.
 	void
 	write_ab_H3_kink_metrics_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -67,7 +67,7 @@ public:
 		utility::sql_database::sessionOP db_session) const;
 	
 	
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	//virtual utility::vector1<std::string>
 	//features_reporter_dependencies() const;
@@ -80,7 +80,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose);
 	
-	///@breif collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -134,8 +134,8 @@ public:
 	void
 	set_ab_info(AntibodyInfoOP ab_info);
 	
-	///@brief Set intermediate interface chains: Example: L_A, H_A, L_H, LH_A (A stands for antigen)
-	///@brief Any other chains, use InterfaceFeatures.
+	/// @brief Set intermediate interface chains: Example: L_A, H_A, L_H, LH_A (A stands for antigen)
+	/// @brief Any other chains, use InterfaceFeatures.
 	void
 	set_interface_chains(utility::vector1< std::string > intermediate_interfaces);
 	
@@ -147,7 +147,7 @@ private:
 	calculate_cdr_totals(CDRNameEnum const cdr, const utility::vector1<Real> & data) const ;
 
 	
-	///@brief Calculate polar dSASA using IAM results.
+	/// @brief Calculate polar dSASA using IAM results.
 	core::Real
 	calculate_cdr_dpSASA(CDRNameEnum const cdr);
 	
@@ -156,17 +156,17 @@ private:
 	core::Size
 	calculate_cdr_aromatic_nres(const core::pose::Pose & pose, CDRNameEnum const cdr);
 	
-	///@brief Calculate residue atomic contacts to antigen according to this metric:
-	///@details An atomic contact is defined as at least 5 atoms of the antigen that are within 5 angstroms of an atom
+	/// @brief Calculate residue atomic contacts to antigen according to this metric:
+	/// @details An atomic contact is defined as at least 5 atoms of the antigen that are within 5 angstroms of an atom
 	void
 	calculate_residue_atomic_contacts(const core::pose::Pose & pose, const utility::vector1<bool> & residues_to_match, const utility::vector1<bool> & antigen_residues);
 	
-	///@brief Total number of cdr atomic contacts as defined above.
+	/// @brief Total number of cdr atomic contacts as defined above.
 	core::Size
 	calculate_cdr_contacts_total(const core::pose::Pose & pose, CDRNameEnum const cdr);
 	
-	///@brief Total number of residues making at least one atomic contact with antigen.
-	///@details
+	/// @brief Total number of residues making at least one atomic contact with antigen.
+	/// @details
 	core::Size
 	calculate_cdr_contacts_nres(const core::pose::Pose & pose, CDRNameEnum const cdr);
 	
@@ -189,8 +189,6 @@ private:
 
 } //antibody
 } //protocols
-
-
 
 
 #endif	//INCLUDED_protocols_antibody_AntibodyFeatures.hh

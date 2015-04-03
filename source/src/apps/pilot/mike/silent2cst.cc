@@ -98,8 +98,6 @@ typedef utility::pointer::owning_ptr< SimpleCstMover > SimpleCstMoverOP;
 typedef utility::pointer::owning_ptr< SimpleCstMover const > SimpleCstMoverCOP;
 
 
-
-
 void SimpleCstMover::apply( pose::Pose & pose )
 {
 	std::cout << "Stealing .. " << std::endl;
@@ -141,7 +139,6 @@ void SimpleCstMover::write( const std::string &filename )
 
 } // moves
 } // protocols
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

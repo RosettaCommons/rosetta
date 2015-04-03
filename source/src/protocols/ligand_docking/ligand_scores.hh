@@ -16,11 +16,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_ligand_scores_hh
 #define INCLUDED_protocols_ligand_docking_ligand_scores_hh
 
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
@@ -34,7 +31,7 @@ namespace ligand_docking {
 
 static thread_local basic::Tracer ligand_scores_tracer( "protocols.ligand_docking.ligand_scores", basic::t_debug );
 
-///@brief append interface_delta scores
+/// @brief append interface_delta scores
 void
 append_interface_deltas(
 		core::Size jump_id,

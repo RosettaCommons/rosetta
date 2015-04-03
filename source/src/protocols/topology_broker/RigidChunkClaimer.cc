@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -29,14 +29,12 @@
 #include <core/id/DOF_ID.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/comparative_modeling/util.hh>
-// AUTO-REMOVED #include <core/kinematics/Exceptions.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.tmpl.hh>
 #include <protocols/loops/LoopsFileIO.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
@@ -51,7 +49,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <vector>
-// AUTO-REMOVED #include <iterator>
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
@@ -60,7 +57,6 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );
@@ -215,7 +211,7 @@ void RigidChunkClaimer::select_parts() {
 	}
 }
 
-///@detail generate exclusive backbone claims for each residue of the rigid-chunk
+/// @detail generate exclusive backbone claims for each residue of the rigid-chunk
 /// jumps are not exclusive and are added later in final_claims --- want to reuse other jumps if possible
 void RigidChunkClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	using namespace loops;
@@ -528,7 +524,7 @@ void RigidChunkClaimer::initialize_dofs( core::pose::Pose& pose, claims::DofClai
 	copy_internal_coords( pose, centroid_input_pose_, current_rigid_core_ );
 }
 
-///@brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
+/// @brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
 void RigidChunkClaimer::manipulate_cut_bias( utility::vector1< core::Real >& cut_bias ) {
 	current_rigid_core_.transfer_to_residue_vector( cut_bias, 0.0 );
 }
@@ -612,7 +608,7 @@ bool RigidChunkClaimer::JumpCalculator::irrelevant_jump( Size global_start, Size
 	return false; //either connects rigid regions or is neighbor to rigid region
 }
 
-///@brief check if this (relevant) jump is compatible with our rigid-structure
+/// @brief check if this (relevant) jump is compatible with our rigid-structure
 ///   not on the same continuous stretch of rigid residues  ( we don't allow cuts within rigid stretches )
 ///   not connecting already conntected rigid stretches
 /// if it connects two unconnected rigid stretches ---> its a good jump we'll keep it,
@@ -660,7 +656,7 @@ bool RigidChunkClaimer::JumpCalculator::good_jump( core::Size global_start, core
 	return false;
 }
 
-///@detail generate a list of Jumps (Size tupels) that fix the remaining part of the chunk
+/// @detail generate a list of Jumps (Size tupels) that fix the remaining part of the chunk
 void
 RigidChunkClaimer::JumpCalculator::generate_rigidity_jumps( RigidChunkClaimer* parent_claimer, claims::DofClaims& extra_jumps, std::string label ) {
 	if( visited_.size() == 0 ){ // No rigid chunks ??

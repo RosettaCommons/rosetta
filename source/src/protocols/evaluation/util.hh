@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_evaluation_util_hh
@@ -25,7 +24,6 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -42,7 +40,7 @@
 namespace protocols {
 namespace evaluation {
 
-///@brief register cmd-line options relevant for evaluators...
+/// @brief register cmd-line options relevant for evaluators...
 void register_options();
 
 //@detail find residues that don't have missing density

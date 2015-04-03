@@ -34,7 +34,6 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -48,7 +47,7 @@ namespace constraints {
 
 class Constraints : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Constraints();
 	typedef id::AtomID AtomID;
 	typedef conformation::Residue Residue;
@@ -132,7 +131,7 @@ public:
  		Vector & F2
  	) const;
 
-	///
+
 	void
 	add_constraint( ConstraintCOP cst );
 

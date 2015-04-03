@@ -25,7 +25,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -49,7 +48,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.RelativePoseFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 RelativePoseFilter::RelativePoseFilter() :
 	parent( "RelativePose" ),
 	filter_( /* NULL */ ),

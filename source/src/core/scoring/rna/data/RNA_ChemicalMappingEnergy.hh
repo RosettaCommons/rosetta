@@ -39,7 +39,7 @@ public:
 
 	typedef methods::WholeStructureEnergy parent;
 
-	///
+
 	RNA_ChemicalMappingEnergy();
 
 	~RNA_ChemicalMappingEnergy();

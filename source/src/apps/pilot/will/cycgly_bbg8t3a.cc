@@ -111,7 +111,6 @@ OPT_1GRP_KEY(Boolean,probabilities,use_hierarchical_clustering)
 OPT_1GRP_KEY(Integer, probabilities, hierarchical_max_cache_size)
 
 
-
 struct AbsFunc : public core::scoring::constraints::Func {
 	AbsFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
 	core::scoring::constraints::FuncOP
@@ -428,7 +427,6 @@ public:
 };
 
 
-
 int main( int argc, char * argv [] ) {
 
 	try {
@@ -743,25 +741,5 @@ int main( int argc, char * argv [] ) {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

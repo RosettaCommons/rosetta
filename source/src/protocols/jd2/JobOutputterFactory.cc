@@ -62,7 +62,7 @@ JobOutputterFactory::JobOutputterFactory()
 
 JobOutputterFactory::~JobOutputterFactory(){}
 
-///@brief add a JobOutputter prototype, using its default type name as the map key
+/// @brief add a JobOutputter prototype, using its default type name as the map key
 void
 JobOutputterFactory::factory_register( JobOutputterCreatorOP creator )
 {
@@ -74,7 +74,7 @@ JobOutputterFactory::factory_register( JobOutputterCreatorOP creator )
 	job_outputter_creator_map_[ job_outputter_type ] = creator;
 }
 
-///@details return get_JobOutputter_from_string( "JobOutputter by key lookup in map
+/// @details return get_JobOutputter_from_string( "JobOutputter by key lookup in map
 JobOutputterOP
 JobOutputterFactory::get_JobOutputter_from_string( std::string const & job_outputter_type )
 {
@@ -99,7 +99,7 @@ JobOutputterFactory::get_JobOutputter_from_string( std::string const & job_outpu
 	}
 }
 
-///@brief return new JobOutputter from logic of option system plus compilation options.  All the logic for determining job output type lives here.
+/// @brief return new JobOutputter from logic of option system plus compilation options.  All the logic for determining job output type lives here.
 JobOutputterOP
 JobOutputterFactory::get_new_JobOutputter()
 {
@@ -123,7 +123,7 @@ JobOutputterFactory::get_new_JobOutputter()
 
 }
 
-	///@brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
+	/// @brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
 JobOutputterOP
 JobOutputterFactory::get_new_JobOutputter( JobOutputterOP default_jobout ) {
 

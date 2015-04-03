@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -34,7 +34,6 @@
 //// C++ headers
 #include <string>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.resonances" );
@@ -94,7 +93,7 @@ void FloatingResonance::write_to_stream( std::ostream& os, core::chemical::AA aa
 	_write_partner_ids( os );
 }
 
-///@brief match the proton and corresponding label atom at same time
+/// @brief match the proton and corresponding label atom at same time
 bool FloatingResonance::match2D(
 		core::Real proton_freq,
 		core::Real proton_error,

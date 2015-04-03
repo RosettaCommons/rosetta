@@ -18,7 +18,6 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 // Project headers

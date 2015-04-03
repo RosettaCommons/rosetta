@@ -9,14 +9,12 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
 /// @author Mike Tyka
-///
 
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // Package Headers
 #include <protocols/loops/Loops.hh>

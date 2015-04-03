@@ -16,7 +16,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
@@ -47,7 +46,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/SecondaryStructurePotential.hh>
-
 
 
 static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.sspot.SSPairPotential", basic::t_info );
@@ -177,7 +175,7 @@ SSPairPotential::pair_dp(
 	// unit vector of mid_vector
 	Vector const u_midvec( mid_vector.normalized_or_zero() );
 
-	//
+
 	Real dp1( 0.0 );
 	Real sdp1( 0.0 );
 	for ( Size i=ss1; i<=ss1+1; ++i ) {
@@ -193,7 +191,7 @@ SSPairPotential::pair_dp(
 	}
 	dp1 *= 0.5;
 
-	//
+
 	Real dp2( 0.0 );
 	Real sdp2( 0.0 );
 	for ( Size i=ss2; i<=ss2+1; ++i ) {
@@ -218,7 +216,6 @@ SSPairPotential::pair_dp(
 	sign1 = ( sdp1 > 0.0 ? 2 : 1 );
 	sign2 = ( sdp2 < 0.0 ? 2 : 1 );
 }
-
 
 
 /// @brief
@@ -313,7 +310,7 @@ SSPairPotential::score(
 							if ( dotscore < 0.0 ) rsigma_score += tempscore_rsigma;
 						}
 
-						//
+
 						if ( dimer_seqsep >= dimer_seqsep_cutoff_ ) {
 							// dist score
 							if ( lowstrand_ > 0.5 ) {  // what is lowstrand ??????

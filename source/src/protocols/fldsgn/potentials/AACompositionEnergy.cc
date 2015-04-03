@@ -23,10 +23,8 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -115,7 +113,7 @@ AACompositionEnergy::residue_energy(
 		hist[ pose.aa( i ) ] ++;
 	}
 
-	//
+
 	std::map< AA, std::pair< Real, Real > >::const_iterator itr( comp_constraint_aas_.find( rsd.aa() ) );
 	if( itr != comp_constraint_aas_.end() ) {
 		// histgoram if the residue at rsd.seqpos() is mutated to rsd.aa()

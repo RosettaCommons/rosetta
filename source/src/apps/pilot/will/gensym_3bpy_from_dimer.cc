@@ -643,7 +643,6 @@ int neighbor_count(Pose const &pose, int ires, double distance_threshold=10.0) {
 }
 
 
-
 #define ATET 54.735610317245360079 // asin(sr2/sr3)
 #define AOCT 35.264389682754668343 // asin(sr1/sr3)
 #define AICS 20.89774264557		     // asin(G/2/sr3)
@@ -983,8 +982,6 @@ void run() {
 					// continue;
 
 
-
-
 					// repack(psym,ibpy,dimersub);
 					// //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+outfname+"_RPK.pdb");
 					// Real s0 = sfsym->score(psym);
@@ -1064,7 +1061,6 @@ void run() {
 		}
 
 
-
 		}
 		// utility_exit_with_message("debug SG");
 		} else {
@@ -1087,21 +1083,5 @@ int main(int argc, char **argv){
 		return -1;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

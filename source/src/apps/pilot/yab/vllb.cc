@@ -47,7 +47,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 static thread_local basic::Tracer TR( "apps.pilot.yab.vllb" );
 
 

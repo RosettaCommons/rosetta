@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/LHRepulsiveRamp.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #include <protocols/antibody/LHRepulsiveRamp.hh>
@@ -42,7 +41,6 @@ namespace protocols {
 namespace antibody {
 
 
-
 // default constructor
 LHRepulsiveRamp::LHRepulsiveRamp() : Mover() {}
 
@@ -68,10 +66,8 @@ protocols::moves::MoverOP LHRepulsiveRamp::clone() const {
 }
 
 
-
 void LHRepulsiveRamp::init( ) {
 	set_default();
-
 
 
 	//JQX: Jeff wants this repulsive ramping mover to be more general, therefore, no default
@@ -97,15 +93,12 @@ void LHRepulsiveRamp::set_default() {
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////
-/// @begin repulsive_ramp
 ///
 /// @brief ramping up the fullatom repulsive weight slowly to allow the
 ///        partners to relieve clashes and make way for each other
 ///
-/// @detailed This routine is specially targetted to the coupled
+/// @details This routine is specially targetted to the coupled
 ///           optimization of docking partners and the loop region.  The
 ///           loop modelling & all previous  steps  involve mainly
 ///           centroid  mode .On switching  on fullatom mode, one is bound
@@ -140,7 +133,6 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 		rep_ramp_cycles_ = 1;
 		num_repeats_ = 1;
 	}
-
 
 
 	core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
@@ -178,7 +170,6 @@ void LHRepulsiveRamp::apply( pose::Pose & pose ) {
 }
 
 
-
 std::string LHRepulsiveRamp::get_name() const {
 	return "LHRepulsiveRamp";
 }
@@ -195,7 +186,6 @@ void LHRepulsiveRamp::set_move_map(kinematics::MoveMapCOP movemap) {
 void LHRepulsiveRamp::set_dock_jump(docking::DockJumps jump) {
 	jump_ = jump;
 }
-
 
 
 } // namespace antibody

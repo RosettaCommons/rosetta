@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/H3RefineCCD.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -128,9 +128,6 @@ void H3RefineCCD::init( ) {
 }
 
 
-
-
-
 void H3RefineCCD::set_default() {
 	include_neighbors_ = true;
 	H3_filter_         = true;
@@ -163,7 +160,6 @@ void H3RefineCCD::set_default() {
 }
 
 
-
 // default destructor
 H3RefineCCD::~H3RefineCCD() {}
 
@@ -173,29 +169,14 @@ protocols::moves::MoverOP H3RefineCCD::clone() const {
 }
 
 
-
-
-
-
-
-
-
 std::string H3RefineCCD::get_name() const {
 	return "H3RefineCCD";
 }
 
 
-
 void H3RefineCCD::pass_start_pose(core::pose::Pose & start_pose) {
 	start_pose_ = start_pose;
 }
-
-
-
-
-
-
-
 
 
 void H3RefineCCD::finalize_setup( core::pose::Pose & pose ) {
@@ -352,8 +333,6 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 		pack_rottrial->apply( pose );
 
 
-
-
 		Real temperature = init_temp_;
 		mc_->reset( pose ); // monte carlo reset
 
@@ -436,8 +415,6 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 		// minimize
 		change_FT_to_flankloop_->apply( pose );
 		loop_min_mover_->apply( pose );
-
-
 
 
 		closed_cutpoints = cutpoints_separation( pose, ab_info_ );

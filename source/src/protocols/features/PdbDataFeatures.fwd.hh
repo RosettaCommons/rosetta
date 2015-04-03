@@ -26,5 +26,4 @@ typedef utility::pointer::shared_ptr< PdbDataFeatures > PdbDataFeaturesOP;
 }
 
 
-
 #endif /* PDBDATAFEATURES_FWD_HH_ */

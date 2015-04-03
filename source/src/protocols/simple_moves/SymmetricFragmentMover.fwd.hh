@@ -11,7 +11,6 @@
 /// @brief  set of fragments for a certain alignment frame
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_protocols_simple_moves_SymmetricFragmentMover_fwd_hh

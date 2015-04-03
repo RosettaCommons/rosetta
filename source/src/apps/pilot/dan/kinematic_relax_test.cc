@@ -40,8 +40,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 static thread_local basic::Tracer TR( "apps.pilot.kinematic_relax_test.main" );
 
 void*

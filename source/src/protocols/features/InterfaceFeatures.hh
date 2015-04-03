@@ -26,16 +26,15 @@ namespace features {
 	using utility::vector1;
 
 
-///@brief Analyzes interfaces and interface residues of a pose mainly using InterfaceAnalayzerMover.
+/// @brief Analyzes interfaces and interface residues of a pose mainly using InterfaceAnalayzerMover.
 /// By default, will analyze every interface with and report any that have dSASA > cutoff.  Interfaces to report can be set via code or RS.
 ///
-///@details  Should work (but untested) with most ligands if loaded, rna chains, and dna chains.
+/// @details  Should work (but untested) with most ligands if loaded, rna chains, and dna chains.
 /// Note that interfacial waters and ions are currently ignored, but separate features reporters may soon be in the works to accomplish this.
 ///
 /// Most main functions are virtual so you can derive from this and have more-specific interface analysis, such as an AntibodyInterfaceFeature class.
 ///
 class InterfaceFeatures : public FeaturesReporter {
-
 
 
 public:
@@ -48,16 +47,16 @@ public:
 
 	virtual ~InterfaceFeatures();
 
-	///@breif return string with class name
+	/// @brief return string with class name
 	virtual std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	virtual utility::vector1<std::string>
 	features_reporter_dependencies() const;
@@ -70,7 +69,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
-	///@breif collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual core::Size
 	report_features(
 		core::pose::Pose const & pose,
@@ -81,31 +80,31 @@ public:
 
 	////////////////////////////////////////////////////////////////////////////
 	//Options
-	//
 
-	///@brief Set the fixed chain combinations that will be analyzed.  Default is all of them.
-	///@details Example:  AB_C would analyze the interface between AB and C, keeping AB fixed while separating C.
+
+	/// @brief Set the fixed chain combinations that will be analyzed.  Default is all of them.
+	/// @details Example:  AB_C would analyze the interface between AB and C, keeping AB fixed while separating C.
 	/// Note that here, you can also give A_C   and a new pose would be created with only A and C so that this interface can be tested.
 	/// Note also that multiple pose interfaces can be set.
 	virtual void
 	set_interface_chains(vector1< std::string > interfaces);
 
-	///@brief Pack the interface before separation? Default is false.
+	/// @brief Pack the interface before separation? Default is false.
 	void
 	set_pack_separated(bool const pack_separated );
 
-	///@brief Pack the interface after separation?  Default is true.
+	/// @brief Pack the interface after separation?  Default is true.
 	void
 	set_pack_together(bool const pack_together );
 
-	///@brief Compute the packstat score?  Default true
+	/// @brief Compute the packstat score?  Default true
 	void
 	set_compute_packstat(bool const compute_packstat);
 
 	void
 	set_defaults();
 
-	///@brief Set the reporter to only include interfaces >dSASA_cutoff.
+	/// @brief Set the reporter to only include interfaces >dSASA_cutoff.
 	void
 	set_dSASA_cutoff(core::Real dSASA_cutoff);
 	
@@ -123,8 +122,8 @@ public:
 	write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const;
 	
 	
-	///@brief Report all features.  Called by report_features.  Easy interface for subclassing specific interfaces.
-	///@details interface is the interface analyzed, db_interface is the name that is actually inserted into the database
+	/// @brief Report all features.  Called by report_features.  Easy interface for subclassing specific interfaces.
+	/// @details interface is the interface analyzed, db_interface is the name that is actually inserted into the database
 	/// Usually this is the same, but useful when dealing with different chain ids but same interface type. db_interface should have sides as well (L_H))
 	virtual void
 	report_all_interface_features(
@@ -135,7 +134,7 @@ public:
 		std::string const interface,
 		std::string const db_interface);
 	
-	///@brief Add interfaces table data to table
+	/// @brief Add interfaces table data to table
 	virtual void
 	report_interface_features(
 		core::pose::Pose const & pose,
@@ -144,7 +143,7 @@ public:
 		std::string const chains_side1,
 		std::string const chains_side2) const;
 	
-	///@brief Add interface_sides table data to table
+	/// @brief Add interface_sides table data to table
 	virtual void
 	report_interface_side_features(
 		core::pose::Pose const & pose,
@@ -155,7 +154,7 @@ public:
 		protocols::analysis::InterfaceRegion const region,
 		std::string const region_string) const;
 	
-	///@brief Add interface_residues data to table
+	/// @brief Add interface_residues data to table
 	virtual void
 	report_interface_residue_features(
 		core::pose::Pose const & pose,
@@ -165,7 +164,7 @@ public:
 		std::string const chains_side1,
 		std::string const chains_side2) const;
 
-	///@brief Gets all possible interface combinations of a given pose.
+	/// @brief Gets all possible interface combinations of a given pose.
 	void
 	make_interface_combos(core::pose::Pose const & pose, vector1<std::string> & interfaces);
 
@@ -185,7 +184,7 @@ private:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	///@brief Recursive function. Get all orders of ex ABCD.
+	/// @brief Recursive function. Get all orders of ex ABCD.
 	void
 	get_all_string_combos(std::string & interface, std::string current, vector1<std::string> & chains) const;
 

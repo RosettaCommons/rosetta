@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @authors Rhiju Das
+/// @author Rhiju Das
 
 // libRosetta headers
 #include <core/types.hh>

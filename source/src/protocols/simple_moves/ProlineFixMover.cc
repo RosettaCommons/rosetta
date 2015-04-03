@@ -18,7 +18,6 @@
 #include <protocols/simple_moves/ProlineFixMover.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

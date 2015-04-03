@@ -197,7 +197,6 @@ main( int argc, char * argv [] )
 	pose.dump_scored_pdb( after_pack_filename, *score_fxn );
 
 
-
 	std::cout << "DONE" << std::endl;
 
 	return 0;

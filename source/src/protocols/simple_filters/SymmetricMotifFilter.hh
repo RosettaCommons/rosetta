@@ -39,7 +39,7 @@ core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chai
                        numeric::xyzMatrix< core::Real > &R,
                       numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT);
 
-//
+
 class SymmetricMotifFilter : public protocols::filters::Filter
 {
 public:

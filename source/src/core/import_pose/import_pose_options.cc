@@ -49,7 +49,7 @@ ImportPoseOptionsCreator::create_options() const {
 	return basic::resource_manager::ResourceOptionsOP( new ImportPoseOptions );
 }
 
-///@detail NOTE: This creator creates an options type called
+/// @detail NOTE: This creator creates an options type called
 ///'PoseFromPDBOptions' to make it consistent with
 ///'PoseFromPDBLoader'.
 std::string

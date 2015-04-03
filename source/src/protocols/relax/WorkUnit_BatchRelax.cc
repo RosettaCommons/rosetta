@@ -15,34 +15,22 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/relax/FastRelax.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueType.hh>
@@ -139,9 +127,6 @@ WorkUnit_BatchRelax::post_process(){
 // -----------------------------------------------------------------------
 //
 //	WorkUnit_BatchRelax_and_PostRescore
-//
-
-
 
 
 WorkUnit_BatchRelax_and_PostRescore::WorkUnit_BatchRelax_and_PostRescore():
@@ -248,7 +233,6 @@ WorkUnit_BatchRelax_and_PostRescore::rescore_all_decoys(){
 			// combine the score functions into one
 
 
-			//
 			core::Size pre_relax_time = time(NULL);
 			relax::FastRelax final_relax( combined_scorefxn, option[ OptionKeys::wum::extra_scorefxn_relax]() );
 			final_relax.apply( pose );

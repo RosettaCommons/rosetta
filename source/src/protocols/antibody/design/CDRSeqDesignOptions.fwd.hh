@@ -43,6 +43,3 @@ typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser const > CDRSeqDe
 #endif	//INCLUDED_ TestClass2.fwd.hh
 
 
-
-
-

@@ -11,7 +11,6 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-// AUTO-REMOVED #include <numeric/util.hh>
 
 #include <core/scoring/func/SoedingFunc.hh>
 #include <core/scoring/constraints/util.hh>

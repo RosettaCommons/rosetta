@@ -62,9 +62,6 @@
 #include <utility/vector1.hh>
 
 
-
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -202,7 +199,6 @@ public:
 
 	  //TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::angle_constraint ] , test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-5 );
 	  //TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::dihedral_constraint ], test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-5 );
-
 
 
   }

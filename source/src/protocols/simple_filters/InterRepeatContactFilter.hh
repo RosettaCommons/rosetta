@@ -9,7 +9,7 @@
 // 
 /// @file protocols/simple_filters/InterRepeatContactFilter
 /// @brief filter structures by InterRepeatContacts
-/// @detailed
+/// @details
 /// @author TJ Brunette
 
 #ifndef INCLUDED_protocols_simple_filters_InterRepeatContactFilter_hh
@@ -92,7 +92,6 @@ public:// accessor
 
     // @brief get name of this filter
     virtual std::string name() const { return "InterRepeatContactFilter"; }
-
 
 
 public:// parser

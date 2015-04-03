@@ -12,24 +12,18 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_loophash_MPI_LoopHashRefine_hh
 #define INCLUDED_protocols_loophash_MPI_LoopHashRefine_hh
 
 #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/wum/MPI_WorkUnitManager.hh>
-// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.fwd.hh>
-// AUTO-REMOVED #include <protocols/loophash/LocalInserter.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <string>
 #include <vector>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
 
 
@@ -145,15 +139,10 @@ private:
 };
 
 
-
-
 } // namespace loops
 } // namespace protocols
 
 
-
 #endif
-
-
 
 

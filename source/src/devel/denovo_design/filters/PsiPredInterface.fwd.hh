@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/PsiPredInterface.fwd.hh
 /// @brief header file for class which interfaces with psipred
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_devel_denovo_design_filters_psipredinterface_fwd_hh

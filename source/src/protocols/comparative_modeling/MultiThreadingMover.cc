@@ -22,9 +22,7 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
@@ -34,29 +32,19 @@
 #include <core/id/AtomID_Mask.fwd.hh>
 
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
-// AUTO-REMOVED #include <core/pack/optimizeH.hh>
-// AUTO-REMOVED #include <core/pack/pack_missing_sidechains.hh>
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // C++ headers
 #include <string>
@@ -64,7 +52,6 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 // option key includes
-
 
 
 namespace protocols {

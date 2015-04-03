@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/HelixKinkFilter.cc
 /// @brief
-/// @detailed filter structures out, which have kink helices
+/// @details filter structures out, which have kink helices
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -34,7 +34,6 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

@@ -347,8 +347,6 @@ int main (int argc, char *argv[]) {
   // }
 
 
-
-
 }
 
 // point in POI octree x,y,z 8/8/5/11

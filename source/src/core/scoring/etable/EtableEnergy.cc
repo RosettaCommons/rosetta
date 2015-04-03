@@ -477,7 +477,6 @@ TableLookupEvaluator::trie_vs_path(
 }
 
 
-
 AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 	EtableEvaluator( etable ),
 	etable_( etable ),
@@ -547,7 +546,6 @@ AnalyticEtableEvaluator::residue_atom_pair_energy_sidechain_sidechain(
 {
 	cp.residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, *this, emap );
 }
-
 
 
 /// @details first level polymorphic type resolution function

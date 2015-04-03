@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/ParallelBetaPairingPreferenceFilter.cc
 /// @brief filter structures by parallel beta pairing preference
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers

@@ -9,7 +9,7 @@
 
 /// @file loopRNA_minimizer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -205,7 +205,6 @@ private:
 	std::map< core::Size, std::string > non_standard_residues_;
 
 }; // class RNA_HelixAssembler
-
 
 
 } //helix

@@ -9,7 +9,7 @@
 
 /// @file SWA_LoopBridger.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

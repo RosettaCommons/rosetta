@@ -18,8 +18,6 @@
 #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <boost/functional/hash.hpp> // hash_range
 

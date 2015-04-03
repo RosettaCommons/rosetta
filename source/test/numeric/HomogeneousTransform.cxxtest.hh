@@ -436,7 +436,6 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 	}
 
 
-
 	void test_ht_inverse() {
 		HTD ht1, ht2, ht3;
 		ht1.set_zaxis_rotation_deg( 33 );

@@ -26,8 +26,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -43,16 +41,16 @@
 namespace protocols {
 namespace generalized_kinematic_closure {
 
-	///
+
 	/// @brief Function to determine whether a value is in a list.
 	bool is_in_list (core::Size const val, utility::vector1 < core::Size > const &list);
 
-	///
+
 	/// @brief function to determine whether a residue index from the original pose is in the residue_map list.
 	bool original_pose_residue_is_in_residue_map (core::Size const residue_index, utility::vector1 < std::pair<core::Size, core::Size> > const &residue_map);
 
 	/// @brief Set the loop pose conformation based on a set of results from kinematic closure.
-	/// @detailed
+	/// @details
 	/// @param[in,out] pose -- A pose consisting of the loop to be closed only.
 	/// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
 	/// @param[in] torsions -- The torsion angles values to set.
@@ -67,7 +65,7 @@ namespace generalized_kinematic_closure {
 	);
 	
 	/// @brief Set the loop pose conformation based on a set of results from kinematic closure.
-	/// @detailed  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
+	/// @details  This version ONLY sets mainchain torsions, and does no rebuilding of mainchain O or H atoms.
 	/// @param[in,out] pose -- A pose consisting of the loop to be closed only.
 	/// @param[in] atomlist -- A list of AtomIDs and corresponding xyz coordinates (though we don't use the latter) of the chain of atoms closed by KIC.  Note that the residue indices refer to the loop pose, not the original pose.
 	/// @param[in] torsions -- The torsion angles values to set.

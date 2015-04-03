@@ -41,7 +41,6 @@ using core::scoring::geometric_solvation::create_ExactSHOEnergy_from_cmdline;
 static thread_local basic::Tracer TR("protocols.toolbox.pose_metric_calculators.SHOBuriedUnsatisfiedPolarsCalculator");
 
 
-///
 /// @brief constructs the calculator for a target atom in residues of a target
 /// 	amino acid type.
 ///
@@ -68,7 +67,6 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 }
 
 
-///
 /// @brief constructs the calculator for a target residue set.
 ///
 /// @params[in] sho_cutoff maximum SHO energy value for a polar group to be
@@ -95,7 +93,6 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 }
 
 
-///
 /// @brief clones this calculator
 ///
 /// @details members sho_meth_ and sfxn_ of the clone will point, respectively,
@@ -109,7 +106,6 @@ core::pose::metrics::PoseMetricCalculatorOP
 }
 
 
-///
 /// @brief outputs a quantity's value that is cached in the calculator
 ///
 /// @param[in] key identifier of the quantity
@@ -133,7 +129,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::lookup(std::string const &key,
 }
 
 
-///
 /// @brief returns the string representation of a quantity's value that is
 /// 	cached in the calculator
 ///
@@ -152,7 +147,6 @@ std::string SHOBuriedUnsatisfiedPolarsCalculator::print(std::string const& key) 
 }
 
 
-///
 /// @brief finds buried unsatisfied atoms by building all needed data structures
 /// 	from scratch.
 ///
@@ -198,7 +192,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute(
 }
 
 
-///
 /// @brief prints on screen the SHO energies of all atoms in a pose
 ///
 /// @param[in]: ps the pose
@@ -225,7 +218,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_sho_energies(
 }
 
 
-///
 /// @brief partitions a target residue's polar atoms into "buried	unsatisfied"
 /// 	and "other"
 ///
@@ -271,7 +263,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::residue_partition(
 }
 
 
-///
 /// @brief partitions target atoms into "buried unsatisfied" and "other".
 ///
 /// @params[in] ps the pose at issue
@@ -340,7 +331,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::partition(
 }
 
 
-///
 /// @brief assigns an atom to either the "buried unsatisfied" class or the
 /// 	"other" class
 ///
@@ -356,7 +346,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::assign_atom(
 }
 
 
-///
 /// @brief is atom aid buried?
 ///
 /// @param[in] aid
@@ -367,7 +356,6 @@ bool SHOBuriedUnsatisfiedPolarsCalculator::is_buried(AtomID aid) {
 }
 
 
-///
 /// @brief is atom aid unsatisfied?
 ///
 /// @param[in] aid
@@ -378,7 +366,6 @@ bool SHOBuriedUnsatisfiedPolarsCalculator::is_unsat(AtomID aid) const {
 }
 
 
-///
 /// @brief prints on screen info about the SHO energy and the hydrogen bonds of
 /// 	each atom in a subset (i.e., either the "buried unsatisfied" atoms or the
 /// 	"other" atoms).
@@ -421,7 +408,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_subset(
 }
 
 
-///
 /// @brief returns the total H-bond energy of an atom.
 ///
 /// @param[in] aid AtomID of the atom
@@ -489,7 +475,6 @@ Real SHOBuriedUnsatisfiedPolarsCalculator::hbond_energy(AtomID aid,
 }
 
 
-///
 /// @brief prints an atom's identifier on screen
 ///
 /// @param[in] aid AtomID of the atom
@@ -506,7 +491,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_atom_info(
 }
 
 
-///
 /// @brief prints all information in this calculator
 ///
 /// @prams[in] ps the pose at issue
@@ -552,7 +536,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::print_all_info(
 }
 
 
-///
 /// @brief recomputes all data from scratch and prints it to screen
 ///
 /// @param[in] ps pose for which the data are to be computed
@@ -566,7 +549,6 @@ void SHOBuriedUnsatisfiedPolarsCalculator::recompute_and_print(
 }
 
 
-///
 /// @brief extracts the pose indexes of a selected subset of residues
 ///
 /// @param[in] setf path to a file specifying the residue subset according

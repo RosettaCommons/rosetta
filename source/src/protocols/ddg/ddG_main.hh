@@ -10,8 +10,6 @@
 #ifndef INCLUDED_protocols_ddg_ddG_main_hh
 #define INCLUDED_protocols_ddg_ddG_main_hh
 
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 namespace protocols {
 	int ddG_main();

@@ -39,10 +39,6 @@
 #endif
 
 
-
-
-
-
 namespace protocols {
 namespace loophash {
 
@@ -457,7 +453,6 @@ struct FilterBucket {
 	}
 
 
-
 }
 
 // closes gaps.  focuses on decreasing variability, not for use with loophash mpi
@@ -474,7 +469,5 @@ struct FilterBucket {
 
 } // namespace loops
 } // namespace protocols
-
-
 
 

@@ -11,7 +11,7 @@
 /// @brief  version of Tracer calss for to tracking down the source of an instability by compare
 ///         output with file.
 /// @author Sergey Lyskov
-///
+
 
 #include <basic/ComparingTracer.hh>
 
@@ -161,8 +161,6 @@
 #include <basic/Tracer.fwd.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/keys/OptionKeys.hh>
-
-
 
 
 namespace basic {

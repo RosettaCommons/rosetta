@@ -33,7 +33,6 @@ typedef  utility::pointer::weak_ptr< AntibodyInfo >  AntibodyInfoAP;
 typedef  utility::pointer::weak_ptr< AntibodyInfo const >  AntibodyInfoCAP;
 
 
-
 } //namespace antibody
 } //namespace protocols
 

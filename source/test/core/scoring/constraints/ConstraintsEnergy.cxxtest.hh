@@ -18,28 +18,18 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 // Project headers
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 
 //Auto Headers

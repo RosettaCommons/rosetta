@@ -35,13 +35,13 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class CenRotEnvEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
 public:
 
-	///
+
 	CenRotEnvEnergy();
 
 

@@ -24,11 +24,9 @@
 #include <core/pose/PDBInfo.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers

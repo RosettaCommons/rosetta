@@ -29,12 +29,12 @@
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 class CreateStartingStructureMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	CreateStartingStructureMover();
 
 	virtual ~CreateStartingStructureMover();

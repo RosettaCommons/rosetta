@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsDataCenter.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -172,7 +170,6 @@ fill_A_line_slow(utility::vector1<core::Real> & A_line,
 }
 
 
-
 utility::vector1<PcsDataLanthanide> &
 PcsDataCenter::get_pcs_data_per_lanthanides_all() {
 	return (PCS_data_per_lanthanides_all_);
@@ -247,11 +244,6 @@ PcsDataCenter::update_matrix_A_all_for_cstyle(core::Real const X,
 	}
 	update_matrix_A_cstyle();
 }
-
-
-
-
-
 
 
 //To be called each time the pose is changed

@@ -22,10 +22,8 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -39,7 +37,6 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // temp
 
 // C++ Headers
 #include <cmath>
@@ -616,8 +613,6 @@ LeGrandSasa::calc_atom_masks(
 }
 
 
-
-
 ObjexxFCL::FArray2D_int const &
 LeGrandSasa::get_angles() const {
 	return angles_;
@@ -628,7 +623,6 @@ ObjexxFCL::FArray2D_ubyte const &
 LeGrandSasa::get_masks() const {
 	return masks_;
 }
-
 
 
 /// @brief

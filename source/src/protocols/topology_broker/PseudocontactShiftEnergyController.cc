@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PseudocontactShiftEnergyController.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz & Oliver Lange
+ /// @authorv Christophe Schmitz & Oliver Lange
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 // Unit Headers
@@ -39,11 +37,8 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 
 //TEMP
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -280,14 +275,6 @@ bool PseudocontactShiftEnergyController::read_tag( std::string tag, std::istream
 		}
 		return true;
 	}
-
-
-
-
-
-
-
-
 
 
 	/*

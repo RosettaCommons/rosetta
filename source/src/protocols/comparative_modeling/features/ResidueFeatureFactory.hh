@@ -15,14 +15,11 @@
 #define INCLUDED_protocols_comparative_modeling_features_ResidueFeatureFactory_hh
 
 // Package headers
-// AUTO-REMOVED #include <protocols/comparative_modeling/features/ResidueFeature.hh>
 #include <protocols/comparative_modeling/features/ResidueFeature.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace protocols {

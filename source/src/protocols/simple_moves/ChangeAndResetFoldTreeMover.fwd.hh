@@ -35,6 +35,3 @@ typedef utility::pointer::shared_ptr< ChangeAndResetFoldTreeMover const > Change
 #endif	//INCLUDED_ TestClass2.fwd.hh
 
 
-
-
-

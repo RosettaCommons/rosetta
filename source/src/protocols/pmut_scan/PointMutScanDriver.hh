@@ -55,13 +55,13 @@ public:
 
 	void make_specific_mutant( utility::vector1< core::pose::Pose > & mutant_poses, utility::vector1< core::pose::Pose > & native_poses, protocols::pmut_scan::Mutant & m, std::string mutation_string = "", std::string mutation_string_PDB_numbering = "" );
 
-	///@brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
+	/// @brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
 	virtual core::Energy score(core::pose::Pose & pose);
 
-	///@brief accessor for scorefxn_ now that it is private member data
+	/// @brief accessor for scorefxn_ now that it is private member data
 	core::scoring::ScoreFunctionCOP get_scorefxn() const;// { return scorefxn_; }
 
-	///@brief offers a chance for child classes to inject mutant selection logic
+	/// @brief offers a chance for child classes to inject mutant selection logic
 	virtual bool reject_mutant( Mutant const & /*m*/, core::pose::Pose const & /*pose*/ ) { return false; }
 
 	//unit test utilities

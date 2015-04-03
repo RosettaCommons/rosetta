@@ -497,8 +497,6 @@ FastDensEnergy::eval_residue_pair_derivatives(
 }
 
 
-
-
 core::Size
 FastDensEnergy::version() const
 {

@@ -28,7 +28,7 @@
 namespace protocols{
 namespace features{
 
-///@brief write the given protocol and batch ids to the database. The protocol and batches
+/// @brief write the given protocol and batch ids to the database. The protocol and batches
 ///features reporters will check for an existing entry with the same key, and write if one
 ///does not exist. Not recommended for parallel use as it is subject to race conditions (due
 ///to the nature of 'insert or ignore' type database writing)
@@ -42,7 +42,7 @@ set_protocol_and_batch_id(
 	utility::sql_database::sessionOP db_session
 );
 
-///@brief Get the protocol and batch ids or create them if they don't
+/// @brief Get the protocol and batch ids or create them if they don't
 ///yet exist. For MPI protocols, only allow the head node to create
 ///protocol or batch ids and have the other nodes ask the head node
 ///for the info.
@@ -59,7 +59,7 @@ write_features_reporters_table(
 	utility::sql_database::sessionOP db_session
 );
 
-///@brief write the linking table between features reporters
+/// @brief write the linking table between features reporters
 ///and batches. This happens here so that the protocol/batch
 ///id framework can be used to prevent duplicate key entries.
 ///This function gets called when the batch id is written.
@@ -89,7 +89,7 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 
 utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms);
 
-///@brief Returns (?,?,?) With question marks of length n to help create database query.
+/// @brief Returns (?,?,?) With question marks of length n to help create database query.
 std::string
 get_question_mark_string(core::Size const n);
 

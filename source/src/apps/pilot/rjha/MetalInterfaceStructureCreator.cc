@@ -29,9 +29,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethod.hh>
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -41,7 +38,6 @@
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
@@ -54,7 +50,6 @@
 
 // Utility Headers
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
@@ -65,14 +60,11 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-
-
 
 
 //tracers

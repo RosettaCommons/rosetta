@@ -17,10 +17,7 @@
 
 #include <core/conformation/Residue.hh>
 //#include <core/io/pdb/pose_io.hh> -- REALLY?
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
 #include <core/id/SequenceMapping.hh>

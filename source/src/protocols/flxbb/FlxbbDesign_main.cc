@@ -23,11 +23,8 @@
 
 #include <core/scoring/constraints/util.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/flxbb/DesignTask.hh>
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>

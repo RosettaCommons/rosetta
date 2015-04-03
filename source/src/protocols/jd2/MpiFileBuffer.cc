@@ -265,7 +265,6 @@ bool MpiFileBuffer::remote_close_file( std::string const& filename ) {
 }
 
 
-
 void MpiFileBuffer::release_file( std::string filename ) {
 	//if this is a reference I get seqfault, since it might point into list where I erase from...
 	std::list< std::string >::iterator iter = find( blocked_files_.begin(), blocked_files_.end(), filename );

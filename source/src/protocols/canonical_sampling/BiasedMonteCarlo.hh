@@ -27,7 +27,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @details
 class BiasedMonteCarlo : public protocols::moves::MonteCarlo {
 	typedef protocols::moves::MonteCarlo Parent;
 public:

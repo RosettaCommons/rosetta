@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_filters/PDDFScoreFilters.hh
 /// @brief header file for PDDFScoreFilter class.
-/// @detailed Filters poses based on their fit to the experimental (or fake) P(r) data
+/// @details Filters poses based on their fit to the experimental (or fake) P(r) data
 /// @author Dominik Gront
 
 #ifndef INCLUDED_protocols_simple_filters_PDDFScoreFilter_hh
@@ -19,7 +19,6 @@
 #include <protocols/simple_filters/PDDFScoreFilter.fwd.hh>
 #include <protocols/scoring/methods/saxs/PDDFEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>
 

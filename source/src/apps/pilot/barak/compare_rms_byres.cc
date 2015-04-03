@@ -52,7 +52,6 @@ using basic::Error;
 using basic::Warning;
 
 
-
 class RMSByResStatistics : public protocols::moves::Mover
 {
 public:
@@ -63,7 +62,6 @@ public:
 	virtual std::string get_name() const
 	{ return std::string("RMSByResStatistics"); }
 };
-
 
 
 void

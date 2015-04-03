@@ -21,9 +21,7 @@
 
 // utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // C++ headers
 #include <string>
@@ -31,7 +29,6 @@
 
 // boost headers
 #include <boost/tuple/tuple.hpp>
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 
 #include <utility/vector1.hh>
 

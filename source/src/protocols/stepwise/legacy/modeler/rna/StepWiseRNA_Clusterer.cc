@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file StepWiseRNA_Clusterer
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 
@@ -1275,7 +1275,6 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 	}
 
 
-
 	/////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_Clusterer::output_silent_file( std::string const & silent_file ){
@@ -1752,7 +1751,6 @@ SlicedPoseWorkingParameters::~SlicedPoseWorkingParameters() {}
 		std::map< core::Size, bool > const & is_prepend_map =   ( optimize_memory_usage_ ) ? sliced_pose_job_params_.sliced_pose_is_prepend_map: working_parameters_->is_prepend_map();
 		return is_prepend_map ;
 	}
-
 
 
 	//////////////////////////////////////////////

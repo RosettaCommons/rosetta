@@ -111,7 +111,6 @@ public:
 		) const;
 
 
-
 	virtual
 	void
 	evaluate_rotamer_intrares_energy_maps(

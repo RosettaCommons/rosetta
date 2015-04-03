@@ -24,7 +24,6 @@
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 
 //STL Headers
-// AUTO-REMOVED #include <vector>
 #include <list>
 
 //ObjexxFCL Headers
@@ -419,7 +418,6 @@ protected:
 	}
 
 
-
 private:
 	int num_commits_since_last_update_;
 	core::PackerEnergy total_energy_current_state_assignment_;
@@ -607,8 +605,6 @@ FASTERNode::project_deltaE_for_substitution(
 	return alternate_state_total_energy_ - curr_state_total_energy_;
 
 }
-
-
 
 
 } // namespace interaction_graph

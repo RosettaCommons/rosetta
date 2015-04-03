@@ -14,12 +14,9 @@
 #ifndef INCLUDED_protocols_toolbox_InteratomicVarianceMatrix_hh
 #define INCLUDED_protocols_toolbox_InteratomicVarianceMatrix_hh
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <ObjexxFCL/FArray3.fwd.hh>
 
@@ -58,10 +55,10 @@ private:
   core::Size n_atoms_;
   ObjexxFCL::FArray2D_double ivm_;
 
-	///@brief order parameter to given value epsilon
+	/// @brief order parameter to given value epsilon
 	ObjexxFCL::FArray1D_double T_;
 
-	///@brief
+	/// @brief
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 	// core::Real epsilon_;
 

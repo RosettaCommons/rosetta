@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Nikolaos Sgourakis
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_PalesEvaluator_hh
@@ -30,14 +29,12 @@
 #include <core/pose/Pose.fwd.hh>
 
 
-
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

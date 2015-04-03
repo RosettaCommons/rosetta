@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -74,7 +74,6 @@ fragment::FragSetCOP LoopFragmentClaimer::loop_frags( kinematics::MoveMap& movem
 	movemap=*mover().movemap();
 	return mover().fragments();
 }
-
 
 
 } //topology_broker

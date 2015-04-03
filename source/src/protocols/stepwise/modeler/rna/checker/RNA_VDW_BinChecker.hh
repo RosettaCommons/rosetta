@@ -9,14 +9,13 @@
 
 /// @file RNA_VDW_BinChecker.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripkaddevong
 
 
 #ifndef INCLUDED_protocols_stepwise_rna_RNA_VDW_BinChecker_hh
 #define INCLUDED_protocols_stepwise_rna_RNA_VDW_BinChecker_hh
-
 
 
 #include <protocols/stepwise/modeler/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
@@ -84,7 +83,6 @@ namespace checker {
 	};
 
 
-
   class RNA_VDW_BinChecker: public utility::pointer::ReferenceCount {
 
 	 public:
@@ -130,7 +128,6 @@ namespace checker {
 												utility::vector1< bool > const list_of_is_prepend,
 				                 numeric::xyzVector< core::Real > const & reference_xyz,
 												bool const verbose );
-
 
 
 		//fast version
@@ -227,7 +224,6 @@ namespace checker {
 															core::pose::Pose const & working_pose,
 															std::map< core::Size, core::Size > & full_to_sub,
 															bool const verbose ) const;
-
 
 
 		private:

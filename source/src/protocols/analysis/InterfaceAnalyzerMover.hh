@@ -12,7 +12,6 @@
 /// @author Steven Lewis, Bryan Der, Ben Stranges, Jared Adolf-Bryfogle
 
 
-
 #ifndef INCLUDED_protocols_analysis_InterfaceAnalyzerMover_HH
 #define INCLUDED_protocols_analysis_InterfaceAnalyzerMover_HH
 
@@ -26,15 +25,12 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <set>
 
 #include <core/id/AtomID.fwd.hh>
-
 
 
 namespace protocols {
@@ -49,9 +45,9 @@ namespace analysis {
 
 	};
 
-	///@brief All per residue interface data and residue averages.
+	/// @brief All per residue interface data and residue averages.
 	///  Interface Residues only
-	///@details Vector1 correspond to residues in the pose.  avg vector1 sets correspond to InterfaceRegion enums: total, side1, side
+	/// @details Vector1 correspond to residues in the pose.  avg vector1 sets correspond to InterfaceRegion enums: total, side1, side
 	struct PerResidueInterfaceData {
 		vector1< bool > interface_residues;
 
@@ -59,18 +55,17 @@ namespace analysis {
 		vector1< Real > complexed_sasa;
 		vector1< Real > dSASA;
 		vector1< Real > dSASA_sc;
-		///@brief 'Hydrophobic' dSASA
+		/// @brief 'Hydrophobic' dSASA
 		vector1< Real > dhSASA;
 		vector1< Real > dhSASA_sc;
 		
 		
-		///@brief Relative Hydrophobic dSASA.  Calculated by: rel_dSASA = atom_dSASA*(1 - atom_charge).
+		/// @brief Relative Hydrophobic dSASA.  Calculated by: rel_dSASA = atom_dSASA*(1 - atom_charge).
 		///Subtracting this by the real dSASA gives you the relative polar dSASA.
 		vector1< Real > dhSASA_rel_by_charge;
 		
 		vector1< Real > SASA;
 		vector1< Real > dSASA_fraction; //fraction of SASA separated to SASA buried.  If all of it is buried, fraction is 1.0 (dSASA[i]/separated_sasa[i])
-
 
 
 		//Complex/Separated energies of Interface residues only.
@@ -79,40 +74,40 @@ namespace analysis {
 		vector1< Real > dG;
 
 
-		///@brief Average per residue change in energy in each InterfaceRegion
+		/// @brief Average per residue change in energy in each InterfaceRegion
 		vector1<Real> regional_avg_per_residue_dG;
-		///@brief Average per residue energy of the complexed interface in each InterfaceRegion
+		/// @brief Average per residue energy of the complexed interface in each InterfaceRegion
 		vector1<Real> regional_avg_per_residue_energy_int;
-		///@brief Average per residue energy of the separated interface in each InterfaceRegion
+		/// @brief Average per residue energy of the separated interface in each InterfaceRegion
 		vector1<Real> regional_avg_per_residue_energy_sep;
 
-		///@brief Average per residue change in solvent accessible surface area in each InterfaceRegion
+		/// @brief Average per residue change in solvent accessible surface area in each InterfaceRegion
 		vector1<Real> regional_avg_per_residue_dSASA;
-		///@brief Average per residue SASA of the complexed interface in each InterfaceRegion
+		/// @brief Average per residue SASA of the complexed interface in each InterfaceRegion
 		vector1<Real> regional_avg_per_residue_SASA_sep;
 		vector1<Real> regional_avg_per_residue_SASA_int;
 
 	};
 
-	///@brief All interface data. Unless otherwise specified, they refer specifically to the interface
-	///@details All vectors correspond to InterfaceRegion enums
+	/// @brief All interface data. Unless otherwise specified, they refer specifically to the interface
+	/// @details All vectors correspond to InterfaceRegion enums
 	struct InterfaceData {
 
-		///@brief Number of residues in each InterfaceRegion
+		/// @brief Number of residues in each InterfaceRegion
 		vector1< Size > interface_nres;
 
-		///@brief Boolean of interface residues [side1][2]
+		/// @brief Boolean of interface residues [side1][2]
 		vector1< vector1< bool > > interface_residues;
 
-		///@brief Change in Solvent Accessible Surface Area upon complexion in each InterfaceRegion
+		/// @brief Change in Solvent Accessible Surface Area upon complexion in each InterfaceRegion
 		vector1< Real > dSASA;
 		vector1< Real > dSASA_sc;
 		
-		///@brief 'Hydrophobic' dSASA
+		/// @brief 'Hydrophobic' dSASA
 		vector1< Real > dhSASA;
 		vector1< Real > dhSASA_sc;
 		
-		///@brief Relative Hydrophobic dSASA.  Calculated by: sum(atom_dSASA*(1 - atom_charge)).
+		/// @brief Relative Hydrophobic dSASA.  Calculated by: sum(atom_dSASA*(1 - atom_charge)).
 		/// Note that this includes hydrogens, and subtracting this by the real dSASA gives you the relative polar dSASA.
 		vector1< Real > dhSASA_rel_by_charge;
 		
@@ -120,39 +115,39 @@ namespace analysis {
 		Real complexed_SASA;
 		Real separated_SASA;
 
-		///@brief Change in energy upon complexion in each InterfaceRegion
+		/// @brief Change in energy upon complexion in each InterfaceRegion
 		vector1<Real > dG;
 		Real gly_dG; //Energy of a all Gly interface
 
-		///@brief Centroid_dG of interface
+		/// @brief Centroid_dG of interface
 		Real centroid_dG;
 
 		Real dG_dSASA_ratio;
 
-		///@brief Number of unsaturated hbonds in complex
+		/// @brief Number of unsaturated hbonds in complex
 		Size delta_unsat_hbonds;
 
-		///@brief Total energy of interface Hbonds
+		/// @brief Total energy of interface Hbonds
 		Real total_hb_E;
 
 		Real hbond_E_fraction;
 
-		///@brief Shape Complementarity value
+		/// @brief Shape Complementarity value
 		Real sc_value;
 
-		///@brief PackStat value of the interface
+		/// @brief PackStat value of the interface
 		Real packstat;
 
-		///@brief Total energy of the complex in each InterfaceRegion
+		/// @brief Total energy of the complex in each InterfaceRegion
 		vector1< Real > complex_total_energy;
 
-		///@brief Total energy of the separated pose in each InterfaceRegion
+		/// @brief Total energy of the separated pose in each InterfaceRegion
 		vector1< Real > separated_total_energy;
 
 		Real crossterm_interface_energy;
 		Real crossterm_interface_energy_dSASA_ratio;
 
-		///@brief pymol style selections
+		/// @brief pymol style selections
 		std::string pymol_sel_interface;
 		std::string pymol_sel_hbond_unsat;
 		std::string pymol_sel_packing;
@@ -163,21 +158,21 @@ namespace analysis {
 		vector1< Size > aromatic_nres;
 		vector1< Real > aromatic_dSASA_fraction;
 
-		///@brief Aromatic contribution to dG in each InterfaceRegion
+		/// @brief Aromatic contribution to dG in each InterfaceRegion
 		vector1< Real > aromatic_dG_fraction;
 
 		vector1< Size > ss_helix_nres;
 		vector1< Size > ss_loop_nres;
 		vector1< Size > ss_sheet_nres;
 
-		///@brief Fraction of interface nres to total surface residues in separated pose for total, side1 and side2.
+		/// @brief Fraction of interface nres to total surface residues in separated pose for total, side1 and side2.
 		vector1< Real > interface_to_surface_fraction;
 
 
 	};
 
 
-///@brief Class for analyzing interfaces of a pose.  Many metrics are calculated and accessible after the apply method.
+/// @brief Class for analyzing interfaces of a pose.  Many metrics are calculated and accessible after the apply method.
 class InterfaceAnalyzerMover : public protocols::moves::Mover {
 
 public:
@@ -186,8 +181,8 @@ public:
 	typedef std::pair< one_group, one_group > group_pair;
 	typedef utility::vector1< group_pair > group_set;
 
-	///@brief Constructor for 2 chain poses, separates them by jump number
-	///@details pack_separated and pack_input only pack the detected interface residues.
+	/// @brief Constructor for 2 chain poses, separates them by jump number
+	/// @details pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
 		Size interface_jump = 1,
 		bool const tracer = false,
@@ -198,8 +193,8 @@ public:
 		bool use_jobname = true
 	);
 
-	///@brief Constructor for poses with >= 1 jump, keeps defined chains together
-	///@details pack_separated and pack_input only pack the detected interface residues.
+	/// @brief Constructor for poses with >= 1 jump, keeps defined chains together
+	/// @details pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
 		std::set<int> fixed_chains,
 		bool const tracer = false,
@@ -210,7 +205,7 @@ public:
 		bool use_jobname = true
 	);
 
-	///@brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
+	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
 	/// @details Can be used for subsets of interfaces, for example L_H in a LHA pose.
 	/// pack_separated and pack_input only pack the detected interface residues.
 	InterfaceAnalyzerMover(
@@ -231,7 +226,7 @@ public:
 	//virtual bool
 	//reinitialize_for_new_input() const {return true;}
 	
-	///@brief Explicitly initialize settings on apply - not at the constructor, since this can hold state, and some protocols use apply multiple times.
+	/// @brief Explicitly initialize settings on apply - not at the constructor, since this can hold state, and some protocols use apply multiple times.
 	void
 	init_on_new_input(const pose::Pose & pose);
 	
@@ -244,11 +239,11 @@ public:
 		protocols::moves::Movers_map const &,
 		pose::Pose const & );
 
-	///@brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
+	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
 	virtual void
 	apply( pose::Pose & pose );
 
-	///@brief Apply method for const pose.  Used by InterfaceFeatures reporter
+	/// @brief Apply method for const pose.  Used by InterfaceFeatures reporter
 	virtual void
 	apply_const(pose::Pose const & pose);
 
@@ -268,7 +263,6 @@ public:
 	///////////////////////////////////////////////////
 	//Setters for various computations and options.
 	//Each computation is expensive, so you can turn them off if desired
-	//
 	//
 
 	void
@@ -295,16 +289,16 @@ public:
 	void
 	set_compute_interface_delta_hbond_unsat(bool const IDHU) {compute_interface_delta_hbond_unsat_ = IDHU;}
 
-	///@brief Repack the interface of the complex before separation.
+	/// @brief Repack the interface of the complex before separation.
 	void
 	set_pack_input(bool const pack_input);
 
-	///@brief Repack the interface of the complex after separation.
+	/// @brief Repack the interface of the complex after separation.
 	void
 	set_pack_separated(bool const pack_separated);
 
-	///@brief Repack any interface between ignored chains and others.  Used by dock_chains constructor if the dock_chains interface is less than the total number of pose chains.
-	///@details Ex:  LHA pose, pass L_H dock_chains to get the interface between L and H.  A will be translated away from the L H interface to do the calculation.
+	/// @brief Repack any interface between ignored chains and others.  Used by dock_chains constructor if the dock_chains interface is less than the total number of pose chains.
+	/// @details Ex:  LHA pose, pass L_H dock_chains to get the interface between L and H.  A will be translated away from the L H interface to do the calculation.
 	/// If this option is set - it will repack any SC that would make an LH_A interface after separation
 	// Undefined, commenting out to fix PyRosetta build  void set_pack_intermediate_separated(bool const pack_separated);
 
@@ -328,15 +322,14 @@ public:
 	///////////////////////////////////////////////////
 	//Getters for the various parameters used by the analyzer
 	//
-	//
 
-	///@brief Get all interface data.
+	/// @brief Get all interface data.
 	InterfaceData
 	get_all_data() {
 		return data_;
 	};
 
-	///@brief Get all per residue interface data.
+	/// @brief Get all per residue interface data.
 	PerResidueInterfaceData
 	get_all_per_residue_data() {
 		return per_residue_data_;
@@ -356,7 +349,7 @@ public:
 	Real
 	get_complex_energy();
 
-	///@brief return the average per residue interface energy
+	/// @brief return the average per residue interface energy
 	Real
 	get_per_residue_energy();
 
@@ -376,7 +369,7 @@ public:
 	get_crossterm_interface_energy_ratio();
 
 
-	///@brief Return the interface energy of an all glycine interface (like bb-bb energies)
+	/// @brief Return the interface energy of an all glycine interface (like bb-bb energies)
 	Real
 	get_gly_interface_energy();
 
@@ -386,7 +379,6 @@ public:
 
 	Size
 	get_interface_delta_hbond_unsat();
-
 
 
 	Real
@@ -415,14 +407,14 @@ public:
 	Real
 	get_interface_dG() const;
 
-	///@brief Return boolean if a multichain (fixedchain) constructor was used
+	/// @brief Return boolean if a multichain (fixedchain) constructor was used
 	bool
 	get_multichain_constructor();
 
 	std::set<int>
 	get_fixed_chains();
 
-	///@brief Get the residues at the interface in question
+	/// @brief Get the residues at the interface in question
 	std::set<Size>
 	get_interface_set();
 
@@ -432,41 +424,41 @@ public:
 	bool
 	get_pack_input();
 
-	///@brief
+	/// @brief
 	Real
 	get_centroid_dG();
 
-	///@brief
+	/// @brief
 	// Undefined, commenting out to fix PyRosetta build  Real get_interface_Hbond_sasa();
 
-	///@brief the exposure/possible ratio avg for hbonds in the interface
+	/// @brief the exposure/possible ratio avg for hbonds in the interface
 	//Real get_Hbond_exposure_ratio();
-	///@brief total hbond energy for pose
+	/// @brief total hbond energy for pose
 
 
 private:
 
-	///@brief registers the posemetric calculators
+	/// @brief registers the posemetric calculators
 	void register_calculators();
 	void register_intergroup_calculator();
 
-	///@brief sets up the packer task.  Used for both sep and tog pose
+	/// @brief sets up the packer task.  Used for both sep and tog pose
 	pack::task::PackerTaskOP
 	setup_task(pose::Pose & pose);
 
-	///@brief functions to make interface sets needed
+	/// @brief functions to make interface sets needed
 	virtual void
 	make_multichain_interface_set( pose::Pose & Pose, std::set<int> & fixed_chains );
 
-	///@brief makes the interface sets for either constructor and sets up any other basic interface info.  (chains, upstream chains, etc.)
+	/// @brief makes the interface sets for either constructor and sets up any other basic interface info.  (chains, upstream chains, etc.)
 	virtual void
 	make_interface_set( pose::Pose & pose );
 
-	///@brief assigns the complexed and separated poses for the entire mover
+	/// @brief assigns the complexed and separated poses for the entire mover
 	virtual pose::Pose
 	make_separated_pose( pose::Pose & pose, Size interface_jump, Size step_size = 1000 );
 
-	///@brief reorder the fold tree to allow multichain interfaces to be evaluated
+	/// @brief reorder the fold tree to allow multichain interfaces to be evaluated
 	///       returns the jump number to use to define the interface
 	virtual Size
 	reorder_foldtree_find_jump( pose::Pose & pose, std::set<int> & fixed_chains);
@@ -475,10 +467,9 @@ private:
 	///////////////////////////////////////////////////
 	//Interface Computations
 	//
-	//
 
-	///@brief find the interface shape compementarity value between the chains using old fortran SC score.
-	///@details (From the wiki) Calculates the Lawrence & Coleman shape complementarity using a port of the original Fortran code from CCP4's sc.
+	/// @brief find the interface shape compementarity value between the chains using old fortran SC score.
+	/// @details (From the wiki) Calculates the Lawrence & Coleman shape complementarity using a port of the original Fortran code from CCP4's sc.
 	///
 	void
 	compute_interface_sc( Size & interface_jump, pose::Pose const & complexed_pose);
@@ -499,11 +490,11 @@ private:
 	score_separated_chains(pose::Pose & complexed_pose, pose::Pose & separated_pose);
 
 	
-	///@brief Calculate the average energy per residue in the interface as well as other data.
+	/// @brief Calculate the average energy per residue in the interface as well as other data.
 	void
 	calc_per_residue_and_regional_data( pose::Pose & complexed_pose, pose::Pose & separated_pose);
 
-	///@brief calculates dSASA for each residue
+	/// @brief calculates dSASA for each residue
 	vector1< Real >
 	calc_per_residue_dSASA(const pose::Pose & complexed_pose, const vector1< Real >  & separated_sasa, const vector1< Real >&  complexed_sasa);
 
@@ -521,12 +512,12 @@ private:
 	void
 	calc_hbond_sasaE( pose::Pose & pose );
 
-	///@brief report the dG of a centroid pose with score3
+	/// @brief report the dG of a centroid pose with score3
 	void
 	calc_centroid_dG ( pose::Pose const & complex_pose, pose::Pose const & separated_pose );
 
-	///@brief Calculate the number of residues in the interface vs the surface based on SASA cutoff (40A^2 as per LayerDesign and selection operations).
-	///@details Correct way to calculate this though is through % maximal SASA buried, but calculations will need to be done later to find these values.
+	/// @brief Calculate the number of residues in the interface vs the surface based on SASA cutoff (40A^2 as per LayerDesign and selection operations).
+	/// @details Correct way to calculate this though is through % maximal SASA buried, but calculations will need to be done later to find these values.
 	void
 	calc_interface_to_surface_fraction(pose::Pose const & separated_pose, const vector1<Real> & separated_sasa);
 
@@ -535,39 +526,39 @@ private:
 	void print_pymol_selection_of_packing( pose::Pose const & pose,	utility::vector1< Real > & interface_pack_scores );
 
 
-	///@brief mutate all residue in the interface to Gly and recalc the energy - not used right now
+	/// @brief mutate all residue in the interface to Gly and recalc the energy - not used right now
 	void mut_to_gly( pose::Pose complex_pose, pose::Pose separated_pose );
 
-	///@brief sets up the pose information such as the name and chain ids
+	/// @brief sets up the pose information such as the name and chain ids
 	void
 	set_pose_info( pose::Pose const & pose );
 
-	///@brief Initialize the per residue data structure
+	/// @brief Initialize the per residue data structure
 	void
 	init_per_residue_data( pose::Pose const & pose);
 
-	///@brief Initialize the data structure
+	/// @brief Initialize the data structure
 	void
 	init_data(const pose::Pose & pose);
 
-	///@brief Setup the scorefunction to include hbond energies in the EnergyGraph.  Yay forums and Rocco for this bug fix!
+	/// @brief Setup the scorefunction to include hbond energies in the EnergyGraph.  Yay forums and Rocco for this bug fix!
 	void
 	setup_scorefxn();
 
-	///@brief Setup for the dock_chains constructor
+	/// @brief Setup for the dock_chains constructor
 	void
 	setup_for_dock_chains(pose::Pose & pose, std::string dock_chains);
 
 private:
-	///@brief jump to define which interface is interesting
+	/// @brief jump to define which interface is interesting
 	Size interface_jump_;
-	///@brief what chains are fixed in an interface
+	/// @brief what chains are fixed in an interface
 	std::set<int> fixed_chains_;
 
-	///@brief the ligand chain that will be moved in an interface
+	/// @brief the ligand chain that will be moved in an interface
 	///In this scheme, everything else is fixed
 	std::string ligand_chain_;
-	///@brief scorefunction
+	/// @brief scorefunction
 	scoring::ScoreFunctionOP sf_;
 
 	utility::file::FileName posename_;
@@ -579,74 +570,73 @@ private:
 	std::set<Size> upstream_chains_; //fixed chains
 	std::set<Size> downstream_chains_; //other chains
 	std::set<Size> ignored_chains_; //Ignored chains from the dock_chains constructor.  These will be a part of fixed chains.
-	///@brief output to tracer or PDB/silent file
+	/// @brief output to tracer or PDB/silent file
 	bool tracer_;
-	///@brief are calculators ready?
+	/// @brief are calculators ready?
 	bool calcs_ready_;
 
-	///@brief bother with computing packstat
+	/// @brief bother with computing packstat
 	bool compute_packstat_;
-	///@brief bother with computing interface sc
+	/// @brief bother with computing interface sc
 	bool compute_interface_sc_;
 
-	///@brief skip this expensive calculation
+	/// @brief skip this expensive calculation
 	bool compute_separated_sasa_;
-	///@brief skip this expensive calculation
+	/// @brief skip this expensive calculation
 	bool compute_interface_energy_;
-	///@brief skip this expensive calculation
+	/// @brief skip this expensive calculation
 	bool calc_hbond_sasaE_;
-	///@brief skip this expensive calculation
+	/// @brief skip this expensive calculation
 	bool compute_interface_delta_hbond_unsat_;
 
-	///@brief hush!  be quiet!  silence!
+	/// @brief hush!  be quiet!  silence!
 	bool skip_reporting_;
 
 	//bool is_compute_hbond_unsat_;
-	///@brief which constructor are we using
+	/// @brief which constructor are we using
 	bool explicit_constructor_;
-	///@brief pack the input pose
+	/// @brief pack the input pose
 	bool pack_input_;
-	///@brief pack the separated poses default is false
+	/// @brief pack the separated poses default is false
 	bool pack_separated_;
-	///@brief just the jobname (true value) or the pose name (flase value)
+	/// @brief just the jobname (true value) or the pose name (flase value)
 	bool use_jobname_;
-	///@brief use a resfile during the pack_input and pack_separated operations
+	/// @brief use a resfile during the pack_input and pack_separated operations
 	bool use_resfile_;
-	///@brief skip the centroid_dG step, for incoming poses not centroid convertible
+	/// @brief skip the centroid_dG step, for incoming poses not centroid convertible
 	bool use_centroid_;
 
 	InterfaceData data_;
 	PerResidueInterfaceData per_residue_data_;
 
-	///@brief avg hbond exposure ratio
+	/// @brief avg hbond exposure ratio
 	//Real hbond_exposure_ratio_;
 	//Real total_hb_sasa_;
 
 	Size included_nres_;
-	///@brief set of residues at the interface in question
+	/// @brief set of residues at the interface in question
 	std::set< Size > interface_set_;
 	utility::vector1< bool > include_residue_; //All residues in the pose minus any that are ignored from dock_chains constructor, or any other function that changes this value.
 
-	///@brief group of residue ids of fixed chains and mobile chains (see typedef)
+	/// @brief group of residue ids of fixed chains and mobile chains (see typedef)
 	group_set chain_groups_;
 	
 	
 	//name strings for PoseMetricCalculators
-	///@brief Sasa calculator name string
+	/// @brief Sasa calculator name string
 	std::string Sasa_;
-	///@brief InterfaceNeighborDefinition calculator name string
+	/// @brief InterfaceNeighborDefinition calculator name string
 	std::string InterfaceNeighborDefinition_;
-	///@brief InterfaceSasaDefinition calculator name string
+	/// @brief InterfaceSasaDefinition calculator name string
 	std::string InterfaceSasaDefinition_;
-	///@brief InterfaceDeltaEnergetics calculator name string
+	/// @brief InterfaceDeltaEnergetics calculator name string
 	std::string InterfaceDeltaEnergetics_;
-	///@brief NumberHBonds calculator name string
+	/// @brief NumberHBonds calculator name string
 	std::string NumberHBonds_;
-	///@brief BuriedUnsatisfiedPolars calculator name string
+	/// @brief BuriedUnsatisfiedPolars calculator name string
 	std::string BuriedUnsatisfiedPolars_;
-	///@brief InterGroupNeighborsCalculator calculator name string
+	/// @brief InterGroupNeighborsCalculator calculator name string
 	std::string InterGroupNeighborsCalculator_;
-
 
 
 }; //class InterfaceAnalyzerMover

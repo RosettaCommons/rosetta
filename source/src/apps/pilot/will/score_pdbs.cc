@@ -11,7 +11,6 @@
 /// @brief
 
 
-
 #include <core/chemical/ChemicalManager.hh>
 //#include <protocols/moves/ResidueMover.hh>
 
@@ -81,7 +80,6 @@ typedef std::map< std::string, std::map< std::string, numeric::xyzVector< Real >
 typedef vector1< std::string > Strings;
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 score_pdb( std::string pdb )
@@ -104,10 +102,6 @@ score_pdb( std::string pdb )
 	std::cout << emap_orig << std::endl;
 
 }
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

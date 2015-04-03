@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 
-
 static thread_local basic::Tracer TR( "protocols.topology.StrandPairing" );
 
 using namespace core;
@@ -550,7 +549,6 @@ StrandPairingSet::size() const
 }
 
 
-
 /// @brief return spairset_name_
 String
 StrandPairingSet::name() const
@@ -639,7 +637,7 @@ StrandPairingSet::finalize()
 	// sort strand_parings_ by name_ of StrandPairingOP
 	std::sort( strand_pairings_.begin(), strand_pairings_.end(), pointer_sorter );
 
-	//
+
 	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),	ite=strand_pairings_.end(); it != ite; ++it ) {
 
 		StrandPairing spair(**it);
@@ -719,7 +717,6 @@ StrandPairingSet::drop_strand_pairs( StrandPairings const & drop_spairs )
 
 	finalize();
 }
-
 
 
 /// @brief
@@ -820,7 +817,6 @@ StrandPairingSet::initialize_by_dimer_pairs( SS_Info2 const & ssinfo, DimerPairi
 	finalize();
 
 }
-
 
 
 } // namespace topology

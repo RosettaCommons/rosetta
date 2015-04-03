@@ -44,7 +44,7 @@ namespace task_operations {
 
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation() {}
 
-///@details this ctor assumes a pregenerated Neighborhood and Neighbors calculators - if you want a particular non-default cutoff distance, assemble those calculators separately then pass them to this operation.
+/// @details this ctor assumes a pregenerated Neighborhood and Neighbors calculators - if you want a particular non-default cutoff distance, assemble those calculators separately then pass them to this operation.
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::string const & calculator )
 	: parent(), calculator_name_(calculator)
 {
@@ -54,7 +54,7 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::string co
 // 	}
 }
 
-///@details this ctor generates calculators (easier to use but will rely on defaults, including default distance cutoff)
+/// @details this ctor generates calculators (easier to use but will rely on defaults, including default distance cutoff)
 RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues )
 	: parent(), calculator_name_("")
 {
@@ -69,7 +69,7 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( std::set< core
 
 RestrictToNeighborhoodOperation::~RestrictToNeighborhoodOperation() {}
 
-///@details be warned if you use clone that you'll not get a new interface calculator
+/// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToNeighborhoodOperation::clone() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToNeighborhoodOperation( *this ) );
@@ -81,7 +81,7 @@ RestrictToNeighborhoodOperation::RestrictToNeighborhoodOperation( RestrictToNeig
 	*this = rhs;
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 RestrictToNeighborhoodOperation & RestrictToNeighborhoodOperation::operator=(
 	RestrictToNeighborhoodOperation const & rhs ){
 
@@ -93,7 +93,7 @@ RestrictToNeighborhoodOperation & RestrictToNeighborhoodOperation::operator=(
 	return *this;
 }
 
-///@details private helper function to make calculator - runs in the ctor
+/// @details private helper function to make calculator - runs in the ctor
 void RestrictToNeighborhoodOperation::make_calculator(
 	std::set< core::Size > const & central_residues,
 	core::Real dist_cutoff
@@ -110,7 +110,7 @@ void RestrictToNeighborhoodOperation::make_calculator(
 	}
 }
 
-///@details private helper function to make calculator - runs in the ctor
+/// @details private helper function to make calculator - runs in the ctor
 void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > const & central_residues ) {
 	make_name( central_residues );
 
@@ -124,7 +124,7 @@ void RestrictToNeighborhoodOperation::make_calculator( std::set< core::Size > co
 	}
 }
 
-///@details private helper function to name calculator- runs in the ctor
+/// @details private helper function to name calculator- runs in the ctor
 void RestrictToNeighborhoodOperation::make_name( std::set< core::Size > const & central_residues ) {
 	calculator_name_ = "RTNhO_calculator";
 
@@ -176,7 +176,7 @@ core::Real RestrictToNeighborhoodOperation::get_distance_cutoff() const {
 	return get_calculator()->dist_cutoff();
 }
 
-///@brief reskin of normal make_calculator
+/// @brief reskin of normal make_calculator
 void  RestrictToNeighborhoodOperation::set_neighborhood_parameters(
 	SizeSet const & central_residues,
 	core::Real dist_cutoff )
@@ -184,7 +184,7 @@ void  RestrictToNeighborhoodOperation::set_neighborhood_parameters(
 	make_calculator(central_residues, dist_cutoff);
 }
 
-///@brief reskin of normal make_calculator
+/// @brief reskin of normal make_calculator
 void  RestrictToNeighborhoodOperation::set_neighborhood_parameters( SizeSet const & central_residues )
 {
 	make_calculator(central_residues);

@@ -166,7 +166,7 @@ ContinuousRotamerSet::get_n_residue_types() const
 	return n_restypes_;
 }
 
-///
+
 //Size
 //ContinuousRotamerSet::get_residue_type_begin( Size which_restype ) const
 //{
@@ -217,7 +217,6 @@ ContinuousRotamerSet::restype_for_rotblock( Size rotblock ) const
 {
 	return restype_for_rotblock_[ rotblock ];
 }
-
 
 
 dunbrack::DunbrackRotamerSampleData const &

@@ -18,8 +18,6 @@
 #include <core/fragment/picking_old/vall/eval/VallFragmentEval.fwd.hh>
 
 // package headers
-// AUTO-REMOVED #include <core/fragment/picking_old/concepts/Extent.hh>
-// AUTO-REMOVED #include <core/fragment/picking_old/vall/VallLibrary.hh>
 #include <core/fragment/picking_old/vall/VallSection.hh>
 #include <core/fragment/picking_old/vall/scores/VallFragmentScore.hh>
 
@@ -29,7 +27,6 @@
 #include <core/fragment/picking_old/concepts/Extent.fwd.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

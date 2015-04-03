@@ -24,7 +24,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
@@ -35,7 +34,6 @@
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 // Utility headers
 #include <utility/file/FileName.hh>
@@ -204,9 +202,8 @@ FlexPepDockingPoseMetrics::best_Kmer_rms
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @begin calculate phi/psi torsion-RMSD over peptide
 ///
-//  @detailed
+//  @details
 //  Calculate the RMSD in phi.psi angle over specified residues
 //
 //  @param

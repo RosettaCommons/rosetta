@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/NcontactsFilter.cc
 /// @brief filter structures by sheet topology
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -27,7 +27,6 @@
 #include <utility/tag/Tag.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cmath>
 #include <map>
 
 #include <utility/vector0.hh>
@@ -127,7 +126,6 @@ NcontactsFilterCreator::create_filter() const { return protocols::filters::Filte
 
 std::string
 NcontactsFilterCreator::keyname() const { return "Ncontacts"; }
-
 
 
 } // filters

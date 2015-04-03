@@ -40,7 +40,7 @@ TrialCounter::reset()
 	energy_drop_counter_.clear();
 }
 
-///@detail return number of trials since last reset
+/// @detail return number of trials since last reset
 core::Size
 TrialCounter::total_trials() const {
 	Size ntrials( 0 );

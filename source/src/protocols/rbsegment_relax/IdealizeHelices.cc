@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 #include <protocols/rbsegment_relax/IdealizeHelices.hh>

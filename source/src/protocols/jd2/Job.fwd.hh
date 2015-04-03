@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_jd2_Job_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

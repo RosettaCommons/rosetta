@@ -27,7 +27,6 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 
 #include <cmath>

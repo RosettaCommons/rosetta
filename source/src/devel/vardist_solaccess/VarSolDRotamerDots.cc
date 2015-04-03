@@ -44,17 +44,13 @@
 // Numeric Headers
 #include <numeric/constants.hh> // pi
 #include <numeric/xyzVector.hh> // to get distance
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/vector1.functions.hh>
 #include <utility/string_util.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <cstring>
 #include <vector>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <algorithm>
 
@@ -84,7 +80,7 @@ namespace vardist_solaccess {
 // No longer static -KH
 //bool VarSolDRotamerDots::sasa_arrays_initialized_ = false;
 
-/// @detailed
+/// @details
 /// One RotamerDots object get allocated for every state of a first class IG Node, for all first class IG Nodes of a
 /// protein being designed. That's potentially a very large number of states. This class should only hold the information
 /// it needs to hold to do its job.
@@ -144,15 +140,10 @@ VarSolDRotamerDots::VarSolDRotamerDots(
 }
 
 ///
-/// @begin RotamerDots::~RotamerDots
-///
 VarSolDRotamerDots::~VarSolDRotamerDots() {
 	//TR_RD << "called destructor" << std::endl;
 }
 
-
-///
-/// @begin RotamerDots::RotamerDots
 ///
 /// @brief
 /// copy constructor
@@ -175,8 +166,6 @@ VarSolDRotamerDots::VarSolDRotamerDots( VarSolDRotamerDots const & rhs ) :
 {}
 
 ///
-/// @begin RotamerDots::copy
-///
 /// @brief
 /// Copy method for the RotamerDots class. Also used by the assignment operator.
 ///
@@ -186,8 +175,6 @@ void VarSolDRotamerDots::copy( VarSolDRotamerDots const & rhs ) {
 	atom_coverage_ = rhs.atom_coverage_;
 }
 
-///
-/// @begin RotamerDots::operator=
 ///
 VarSolDRotamerDots const &
 VarSolDRotamerDots::operator= ( VarSolDRotamerDots const & rhs ) {
@@ -201,7 +188,7 @@ VarSolDRotamerDots::operator= ( VarSolDRotamerDots const & rhs ) {
 /// @brief
 /// Returns true if this RotamerDots object has any sphere overlap with the passed in RotamerDots object.
 ///
-/// @detailed
+/// @details
 /// This method only checks to see if two RotamerDots objects are within touching distance of each other. It is used
 /// to determine whether Edges or BGEdges should be created in the IG. Calculate this using the expanded polar atom
 /// radii. If we don't, there's a chance that a state substitution on a Node may cause SASA changes (when expanded polars
@@ -219,17 +206,12 @@ bool VarSolDRotamerDots::overlaps( VarSolDRotamerDots const & other ) const {
 	return false;
 }
 
-
-///
-/// @begin RotamerDots::rotamer
 ///
 core::conformation::ResidueCOP
 VarSolDRotamerDots::rotamer() const {
 	return rotamer_;
 }
 
-///
-/// @begin RotamerDots::state_unassigned
 ///
 /// @brief
 /// Is the state of this RotamerDots object unassigned?
@@ -241,8 +223,6 @@ VarSolDRotamerDots::rotamer() const {
 //}
 
 ///
-/// @begin RotamerDots::get_num_atoms
-///
 /// @brief
 /// Returns the number of atoms this RotamerDots object is keeping SASA for.
 ///
@@ -250,8 +230,6 @@ Size VarSolDRotamerDots::get_num_atoms() const {
 	return num_atoms_;
 }
 
-///
-/// @begin RotamerDots::get_atom_coords_xyz
 ///
 /// @brief
 /// Return the xyz coordinates of an atom in this RotamerDots instance.
@@ -264,14 +242,11 @@ VarSolDRotamerDots::get_atom_coords_xyz( Size atom_index ) const {
 	return rotamer_->xyz( atom_index );
 }
 
-
-///
-/// @begin RotamerDots::get_atom_collision_radius
 ///
 /// @brief
 /// Returns the collision radius for the passed in atom type.
 ///
-/// @detailed
+/// @details
 /// Many of the functions in this class iterate over 1 .. num_atoms_.
 /// That's not the same thing as an atom type index which is what the radii vector is indexed with. So before we can return
 /// the radius, we have to convert the passed in atom_index into the right atom in the residue and then use that to get the
@@ -317,7 +292,7 @@ VarSolDRotamerDots::get_dot_covered(
 /// @brief
 /// Initializes the pointers to the angles and masks FArrays used by sasa.cc and inits the dot sphere coordinates.
 ///
-/// @detailed
+/// @details
 /// This call should only occur once (when the first RotamerDots object get constructed) and never again.
 ///
 void VarSolDistSasaCalculator::initialize_sasa_arrays() {
@@ -480,7 +455,7 @@ VarSolDRotamerDots::interaction_radii_squared(
 /// computes and stores self-induced dot coverage. uses a vector1 of vector1s of vector1s of
 /// ubytes to store the calculated overlap information.
 ///
-/// @detailed
+/// @details
 /// uses overlap_atoms() which in turn uses get_atom_overlap_masks()
 void VarSolDRotamerDots::increment_self_overlap() {
 
@@ -880,7 +855,7 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 	CalculatorFactory::Instance().register_calculator( "bur_unsat_calc_default_sasa_calc", core::pose::metrics::PoseMetricCalculatorOP( new VarSolDistSasaCalculator() ) );
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
@@ -888,7 +863,6 @@ void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {}
-
 
 
 } // vardist_solaccess

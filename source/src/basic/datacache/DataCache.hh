@@ -25,8 +25,6 @@
 // type headers
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -50,7 +48,6 @@
 #include <iosfwd>
 #include <vector>
 #include <basic/datacache/CacheableData.fwd.hh>
-
 
 
 namespace basic {

@@ -9,7 +9,7 @@
 
 /// @file StepWiseLegacyClusterer
 /// @brief Not particularly fancy, just filters a list of poses.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 

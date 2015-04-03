@@ -13,7 +13,6 @@
 /// @author Andrew Leaver-Fay
 
 
-
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -21,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/SuckerEnergy.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
-// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
@@ -30,7 +28,6 @@
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-
 
 
 #define DIST_TH 6.0
@@ -133,7 +130,7 @@ inline bool count_atom( int const & atype ) {
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 SuckerEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,

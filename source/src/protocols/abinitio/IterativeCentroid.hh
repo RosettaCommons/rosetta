@@ -9,7 +9,7 @@
 
 /// @file AbrelaxMover
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -66,7 +66,7 @@ public:
 		 bool fullatom
 	);
 
-	///@brief save and restore archive to file-system
+	/// @brief save and restore archive to file-system
 	virtual void save_to_file( std::string suffix = "" );
 	virtual bool restore_from_file();
 
@@ -77,7 +77,7 @@ protected:
  	  std::string const& tag
 	);
 
-	///@brief call to insert structure at position given by iterator
+	/// @brief call to insert structure at position given by iterator
 	virtual void add_structure_at_position (
     SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,
@@ -87,12 +87,11 @@ protected:
 	virtual void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
 
 private:
-	///@brief also have to keep the stage2 decoys for the stage2 resampling (stages IV and VI)
+	/// @brief also have to keep the stage2 decoys for the stage2 resampling (stages IV and VI)
 	SilentStructs stage2_decoys_;
 
 	IterativeFullatom* fullatom_pool_ptr_;
 };
-
 
 
 }

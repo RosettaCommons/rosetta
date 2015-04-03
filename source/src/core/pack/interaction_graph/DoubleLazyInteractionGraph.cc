@@ -31,12 +31,11 @@ namespace interaction_graph {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::(InteractionGraphBase *, int, int)
 ///
 /// @brief
 /// main constructor, no default or copy constructors
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -48,9 +47,8 @@ namespace interaction_graph {
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 DoubleLazyNode::DoubleLazyNode(
 	InteractionGraphBase * owner,
@@ -110,11 +108,10 @@ DoubleLazyNode::print() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::getMemoryUsageInBytes
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -126,9 +123,8 @@ DoubleLazyNode::print() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 unsigned int
@@ -163,11 +159,10 @@ DoubleLazyNode::aatype_for_state( int state ) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::assign_zero_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -179,9 +174,8 @@ DoubleLazyNode::aatype_for_state( int state ) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::assign_zero_state()
@@ -205,11 +199,10 @@ DoubleLazyNode::assign_zero_state()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::assign_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -221,9 +214,8 @@ DoubleLazyNode::assign_zero_state()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::assign_state(int new_state)
@@ -256,11 +248,10 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::partial_assign_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -272,9 +263,8 @@ debug_assert( new_state >= 0 && new_state <= get_num_states());
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::partial_assign_state( int new_state )
@@ -298,11 +288,10 @@ DoubleLazyNode::partial_assign_state( int new_state )
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::complete_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -314,9 +303,8 @@ DoubleLazyNode::partial_assign_state( int new_state )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void DoubleLazyNode::complete_state_assignment()
 {
@@ -333,13 +321,11 @@ void DoubleLazyNode::complete_state_assignment()
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::commit_considered_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -351,9 +337,8 @@ void DoubleLazyNode::complete_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::commit_considered_substitution()
@@ -405,11 +390,10 @@ debug_assert( alternate_state_is_being_considered_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::compute_pair_energy_for_current_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -421,9 +405,8 @@ debug_assert( alternate_state_is_being_considered_ );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyNode::compute_pair_energy_for_current_state(
@@ -440,11 +423,10 @@ DoubleLazyNode::compute_pair_energy_for_current_state(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::acknowledge_neighbors_partial_state_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -456,9 +438,8 @@ DoubleLazyNode::compute_pair_energy_for_current_state(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::acknowledge_neighbors_partial_state_substitution(
@@ -476,11 +457,10 @@ DoubleLazyNode::acknowledge_neighbors_partial_state_substitution(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::print_internal_energies
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -492,9 +472,8 @@ DoubleLazyNode::acknowledge_neighbors_partial_state_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::print_internal_energies() const
@@ -513,11 +492,10 @@ DoubleLazyNode::print_internal_energies() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::update_internal_energy_sums
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -529,9 +507,8 @@ DoubleLazyNode::print_internal_energies() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyNode::update_internal_energy_sums()
@@ -547,11 +524,10 @@ debug_assert( get_edge_vector_up_to_date() );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyNode::update_internal_vectors
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -563,9 +539,8 @@ debug_assert( get_edge_vector_up_to_date() );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void DoubleLazyNode::update_internal_vectors()
 {
@@ -596,11 +571,10 @@ DoubleLazyNode::calc_deltaEpd( int alternate_state )
 core::PackerEnergy const DoubleLazyEdge::NOT_YET_COMPUTED_ENERGY = -1234;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::DoubleLazyEdge
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -612,9 +586,8 @@ core::PackerEnergy const DoubleLazyEdge::NOT_YET_COMPUTED_ENERGY = -1234;
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 DoubleLazyEdge::DoubleLazyEdge(
 	InteractionGraphBase * owner,
@@ -887,13 +860,11 @@ DoubleLazyEdge::set_edge_weight( Real weight )
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::get_current_two_body_energy
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -905,9 +876,8 @@ DoubleLazyEdge::set_edge_weight( Real weight )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyEdge::get_current_two_body_energy() const
@@ -916,11 +886,10 @@ DoubleLazyEdge::get_current_two_body_energy() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::acknowledge_state_change
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -932,9 +901,8 @@ DoubleLazyEdge::get_current_two_body_energy() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyEdge::acknowledge_state_change(
@@ -973,11 +941,10 @@ DoubleLazyEdge::acknowledge_state_change(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::acknowledge_state_zeroed
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -989,9 +956,8 @@ DoubleLazyEdge::acknowledge_state_change(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyEdge::acknowledge_state_zeroed( int node_ind )
@@ -1014,11 +980,10 @@ DoubleLazyEdge::acknowledge_state_zeroed( int node_ind )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::acknowledge_partial_state_change
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1030,9 +995,8 @@ DoubleLazyEdge::acknowledge_state_zeroed( int node_ind )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void DoubleLazyEdge::acknowledge_partial_state_change(
 	int node_ind,
@@ -1055,11 +1019,10 @@ void DoubleLazyEdge::acknowledge_partial_state_change(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::get_energy_following_partial_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1071,9 +1034,8 @@ void DoubleLazyEdge::acknowledge_partial_state_change(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyEdge::get_energy_following_partial_state_assignment()
@@ -1096,11 +1058,10 @@ DoubleLazyEdge::get_energy_following_partial_state_assignment()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::get_two_body_table_size
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1112,9 +1073,8 @@ DoubleLazyEdge::get_energy_following_partial_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int DoubleLazyEdge::get_two_body_table_size() const
 {
@@ -1123,11 +1083,10 @@ int DoubleLazyEdge::get_two_body_table_size() const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyEdge::get_energy_for_state_pair
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1139,9 +1098,8 @@ int DoubleLazyEdge::get_two_body_table_size() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyEdge::get_energy_for_state_pair(
@@ -1258,11 +1216,10 @@ DoubleLazyEdge::aa_indices_from_submatrix_index( int submat_ind ) const
 //-------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::DoubleLazyInteractionGraph
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1274,9 +1231,8 @@ DoubleLazyEdge::aa_indices_from_submatrix_index( int submat_ind ) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 DoubleLazyInteractionGraph::DoubleLazyInteractionGraph(
 	int numNodes
@@ -1288,11 +1244,10 @@ DoubleLazyInteractionGraph::DoubleLazyInteractionGraph(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::DoubleLazyInteractionGraph
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1304,9 +1259,8 @@ DoubleLazyInteractionGraph::DoubleLazyInteractionGraph(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 DoubleLazyInteractionGraph::~DoubleLazyInteractionGraph()
 {
@@ -1356,7 +1310,7 @@ DoubleLazyInteractionGraph::prepare_for_simulated_annealing()
 }
 
 
-/// @detailed
+/// @details
 void
 DoubleLazyInteractionGraph::blanket_assign_state_0()
 {
@@ -1367,11 +1321,10 @@ DoubleLazyInteractionGraph::blanket_assign_state_0()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::set_state_for_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1383,9 +1336,8 @@ DoubleLazyInteractionGraph::blanket_assign_state_0()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
@@ -1396,11 +1348,10 @@ DoubleLazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::set_network_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1412,9 +1363,8 @@ DoubleLazyInteractionGraph::set_state_for_node(int node_ind, int new_state)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_states)
@@ -1432,11 +1382,10 @@ DoubleLazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_sta
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::consider_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1448,9 +1397,8 @@ DoubleLazyInteractionGraph::set_network_state( ObjexxFCL::FArray1_int & node_sta
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyInteractionGraph::consider_substitution(
@@ -1470,11 +1418,10 @@ DoubleLazyInteractionGraph::consider_substitution(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::commit_considered_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1486,9 +1433,8 @@ DoubleLazyInteractionGraph::consider_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyInteractionGraph::commit_considered_substitution()
@@ -1507,11 +1453,10 @@ DoubleLazyInteractionGraph::commit_considered_substitution()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::get_energy_current_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1523,9 +1468,8 @@ DoubleLazyInteractionGraph::commit_considered_substitution()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyInteractionGraph::get_energy_current_state_assignment()
@@ -1538,11 +1482,10 @@ DoubleLazyInteractionGraph::get_energy_current_state_assignment()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::get_edge_memory_usage
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1554,9 +1497,8 @@ DoubleLazyInteractionGraph::get_energy_current_state_assignment()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int
 DoubleLazyInteractionGraph::get_edge_memory_usage() const
@@ -1570,11 +1512,10 @@ DoubleLazyInteractionGraph::get_edge_memory_usage() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::print_current_state_assignment
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1586,9 +1527,8 @@ DoubleLazyInteractionGraph::get_edge_memory_usage() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyInteractionGraph::print_current_state_assignment() const
@@ -1614,11 +1554,10 @@ core::PackerEnergy DoubleLazyInteractionGraph::get_energy_PD_current_state_assig
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::set_errorfull_deltaE_threshold
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1630,20 +1569,18 @@ core::PackerEnergy DoubleLazyInteractionGraph::get_energy_PD_current_state_assig
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyInteractionGraph::set_errorfull_deltaE_threshold( core::PackerEnergy )
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::get_energy_sum_for_vertex_group
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1655,9 +1592,8 @@ DoubleLazyInteractionGraph::set_errorfull_deltaE_threshold( core::PackerEnergy )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 core::PackerEnergy
 DoubleLazyInteractionGraph::get_energy_sum_for_vertex_group( int group_id )
@@ -1711,11 +1647,10 @@ DoubleLazyInteractionGraph::get_aa_submatrix_energies_for_edge(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::getMemoryUsageInBytes()
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1727,9 +1662,8 @@ DoubleLazyInteractionGraph::get_aa_submatrix_energies_for_edge(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 
 unsigned int
@@ -1789,11 +1723,10 @@ void DoubleLazyInteractionGraph::note_submatrix_accessed(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::create_new_node( int node_index, int num_states)
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1805,9 +1738,8 @@ void DoubleLazyInteractionGraph::note_submatrix_accessed(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase*
 DoubleLazyInteractionGraph::create_new_node( int node_index, int num_states)
@@ -1816,11 +1748,10 @@ DoubleLazyInteractionGraph::create_new_node( int node_index, int num_states)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::create_new_edge( int index1, int index2)
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1832,9 +1763,8 @@ DoubleLazyInteractionGraph::create_new_node( int node_index, int num_states)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase*
 DoubleLazyInteractionGraph::create_new_edge( int index1, int index2)
@@ -1843,11 +1773,10 @@ DoubleLazyInteractionGraph::create_new_edge( int index1, int index2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DoubleLazyInteractionGraph::update_internal_energy_totals
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1859,9 +1788,8 @@ DoubleLazyInteractionGraph::create_new_edge( int index1, int index2)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 DoubleLazyInteractionGraph::update_internal_energy_totals()

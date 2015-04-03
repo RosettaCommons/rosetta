@@ -18,9 +18,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 
 #include <protocols/jobdist/Jobs.fwd.hh>
@@ -31,9 +29,7 @@ namespace protocols {
 namespace jobdist {
 
 
-
-
-///@brief Handles loading and writing of silent files and or PDB files - superseeds the bottom two
+/// @brief Handles loading and writing of silent files and or PDB files - superseeds the bottom two
 /// functions.
 
 void register_options_universal_main();
@@ -43,14 +39,14 @@ int universal_main(
 	float thinout_factor = 0.0
 );
 
-///@brief Reads inputs from -s/-l/-nstruct and writes (possibly gzipped) PDB files.
+/// @brief Reads inputs from -s/-l/-nstruct and writes (possibly gzipped) PDB files.
 /// Supplied Mover is used to transform input structure into output structure.
 int main_plain_mover(
 	protocols::moves::Mover & mover,
 	bool random_permutation = true
 );
 
-///@brief Reads inputs from -s/-l/-nstruct and writes (possibly gzipped) PDB files.
+/// @brief Reads inputs from -s/-l/-nstruct and writes (possibly gzipped) PDB files.
 /// Supplied Mover is used to transform input structure into output structure.
 int main_plain_pdb_mover(
 	protocols::moves::Mover & mover,
@@ -58,20 +54,20 @@ int main_plain_pdb_mover(
 );
 
 
-///@brief Reads inputs from -s/-l/-nstruct and writes atomtree_diff silent files.
+/// @brief Reads inputs from -s/-l/-nstruct and writes atomtree_diff silent files.
 /// Supplied Mover is used to transform input structure into output structure.
 /// undefined - commenting out to make pyrosetta compile...
 //int main_atomtree_diff_mover(	protocols::moves::Mover & mover, 	core::scoring::ScoreFunctionOP scorefxn);
 
 
-///@brief Makes BasicJob objects from command line flags -s, -l, and -nstruct.
+/// @brief Makes BasicJob objects from command line flags -s, -l, and -nstruct.
 utility::vector1< BasicJobOP > load_s_and_l();
 
 
-///@brief Helper function to safely get current output tag that's cached in Pose.
+/// @brief Helper function to safely get current output tag that's cached in Pose.
 std::string get_output_tag(core::pose::Pose const & pose);
 
-///@brief Helper function to safely get score_map that's cached in Pose.
+/// @brief Helper function to safely get score_map that's cached in Pose.
 std::map < std::string, core::Real > get_score_map(core::pose::Pose const & pose);
 
 } // namespace jobdist

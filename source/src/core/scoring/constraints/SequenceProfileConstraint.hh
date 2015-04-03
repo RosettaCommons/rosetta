@@ -17,10 +17,6 @@
 #include <core/scoring/constraints/SequenceProfileConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
-
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
@@ -31,7 +27,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-///@brief
+/// @brief
 class SequenceProfileConstraint : public core::scoring::constraints::Constraint {
 public:
 	typedef core::sequence::SequenceProfile SequenceProfile;
@@ -67,7 +63,7 @@ public:
 
 	virtual std::string type() const { return "SequenceProfile"; }
 
-	///@brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
+	/// @brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
 	virtual void
 	read_def(
 		std::istream &,

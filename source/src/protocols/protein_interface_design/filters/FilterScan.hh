@@ -44,7 +44,7 @@ public:
 	FilterScanFilter();
 	virtual ~FilterScanFilter();
 
-	///@brief Constructor with a single target residue
+	/// @brief Constructor with a single target residue
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;

@@ -29,16 +29,12 @@
 #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
 #include <core/fragment/SecondaryStructure.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/conformation/util.hh> //idealize
@@ -141,7 +137,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 	}
 }
 
-///@brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
+/// @brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
 void select_loop_frags(
 				 loops::Loops const& loops,
 				 core::fragment::FragSet& source,

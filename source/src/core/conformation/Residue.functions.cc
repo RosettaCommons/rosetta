@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 // Project headers
 #include <core/chemical/AtomICoor.hh>

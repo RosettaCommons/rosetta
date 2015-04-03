@@ -45,7 +45,7 @@ namespace protocols {
 	namespace helical_bundle {
 		namespace parameters {
 
-			///@brief  BundleParametersSet class, used to store sets of parameters for parametric helical bundle generation.
+			/// @brief  BundleParametersSet class, used to store sets of parameters for parametric helical bundle generation.
 			///
 			class BundleParametersSet : public core::conformation::parametric::ParametersSet
 			{

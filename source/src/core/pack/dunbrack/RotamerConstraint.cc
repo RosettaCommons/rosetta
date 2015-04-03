@@ -15,11 +15,9 @@
 
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
 #include <basic/Tracer.hh>
@@ -36,7 +34,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

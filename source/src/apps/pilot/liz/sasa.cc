@@ -204,7 +204,6 @@ main( int argc, char* argv [] )
 	}
 
 
-
 	ScoreFunctionOP scfxn = get_score_function();
 
 	//	set_lk_dgfree_to_1();
@@ -265,7 +264,6 @@ main( int argc, char* argv [] )
 		}
 
 		//end get fa-sol and fa-atr
-
 
 
 	id::AtomID_Map< Real > atom_sasa;

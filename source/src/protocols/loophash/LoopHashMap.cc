@@ -12,7 +12,6 @@
 /// @author Mike Tyka
 
 
-
 // libRosetta headers
 #include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/BackboneDB.hh>
@@ -20,29 +19,20 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 
-// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
 #include <numeric/HomogeneousTransform.hh>
 //#include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
@@ -58,7 +48,6 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 
@@ -70,7 +59,6 @@
 #endif
 
 
-
 using namespace protocols::moves;
 using namespace core::scoring;
 using namespace core;
@@ -80,18 +68,11 @@ using namespace kinematics;
 using namespace protocols::frag_picker;
 
 
-
-
-
 namespace protocols {
 namespace loophash {
 
 
-
-
 static thread_local basic::Tracer TR( "LoopHashMap" );
-
-
 
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues.
@@ -205,7 +186,6 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 	// indicate success
 	return true;
 }
-
 
 
 /// @brief This takes a pose and two residue positions and determines the rigid body transform of the Leap described by those two residues
@@ -355,7 +335,6 @@ get_rt_over_leap_without_foldtree_bs(
 
 	return true;
 }
-
 
 
 LoopHashMap::LoopHashMap( core::Size loop_size){

@@ -15,22 +15,16 @@
 #define INCLUDED_core_scoring_trie_trie_vs_path_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrie.hh>
 
 // Project Headers
 #include <core/types.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <iostream>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <utility/vector1_bool.hh>

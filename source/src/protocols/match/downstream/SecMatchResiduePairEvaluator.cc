@@ -15,19 +15,13 @@
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/ActiveSiteGrid.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
 
 #include <utility/vector1_bool.hh>
 

@@ -22,10 +22,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.hh>

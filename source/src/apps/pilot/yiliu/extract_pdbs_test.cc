@@ -105,7 +105,6 @@ virtual void apply( core::pose::Pose & pose ) {
 }; // class SilentProlineFixMover
 
 
-
 int
 main( int argc, char* argv [] )
 {

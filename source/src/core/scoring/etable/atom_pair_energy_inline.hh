@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin atom_pair_energy_inline.hh
 ///
 /// @brief
 /// A class for scoring fa_atr, fa_rep, fa_sol
 ///
-/// @detailed
+/// @details
 /// This class is invoked when scoring. The terms that it is responsible for are fa_atr,
 /// fa_rep, fa_sol. The class is highly optimized for speed and will break if you are not
 /// careful. It calls functions within BaseEtableEnergy, which actually does the scoring.
@@ -20,26 +19,22 @@
 /// terms. This is modified once the scores are tallied in BaseEtableEnergy.
 ///
 ///
-/// @authors
+/// @author
 /// Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// Kevin P. Hinshaw (KevinHinshaw@gmail.com)
 /// Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// Steven Combs - comments and skipping of virtual atoms
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 #ifndef INCLUDED_core_scoring_etable_atom_pair_energy_inline_hh
 #define INCLUDED_core_scoring_etable_atom_pair_energy_inline_hh
 
 #include <core/scoring/types.hh>
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/etable/CoarseEtableEnergy.hh>
 
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
 
@@ -117,8 +112,6 @@ residue_fast_pair_energy_attached_H(
 		}
 	}
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -23,8 +23,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/DenseEnergyContainer.hh>
@@ -112,7 +110,6 @@ GenBornEnergy::defines_residue_pair_energy(
 }
 
 
-///
 void
 GenBornEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -156,7 +153,7 @@ GenBornEnergy::update_residue_for_packing(
 
 }
 
-///
+
 void
 GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -187,7 +184,6 @@ GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 }
 
 
-///
 void
 GenBornEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -198,7 +194,7 @@ GenBornEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & )
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 GenBornEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,

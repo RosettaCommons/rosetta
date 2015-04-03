@@ -65,7 +65,6 @@ MatchResidues::MatchResidues()
 MatchResidues::~MatchResidues() {}
 
 
-
 core::Real 
 MatchResidues::compute_comb( core::pose::Pose const & pose, VecSize const & comb ) const
 {

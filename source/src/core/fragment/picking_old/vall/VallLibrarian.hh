@@ -14,7 +14,6 @@
 #ifndef INCLUDED_core_fragment_picking_old_vall_VallLibrarian_hh
 #define INCLUDED_core_fragment_picking_old_vall_VallLibrarian_hh
 
-// AUTO-REMOVED #include <time.h>
 
 // unit headers
 #include <core/fragment/picking_old/vall/VallLibrarian.fwd.hh>
@@ -26,7 +25,6 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/picking_old/concepts/Librarian.hh>
-// AUTO-REMOVED #include <core/fragment/picking_old/vall/util.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.hh>
 #include <core/fragment/picking_old/vall/VallResidue.hh>
 #include <core/fragment/picking_old/vall/eval/VallFragmentEval.hh>
@@ -37,7 +35,6 @@
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <functional>

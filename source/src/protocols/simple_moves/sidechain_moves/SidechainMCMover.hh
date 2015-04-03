@@ -28,11 +28,9 @@
 
 
 // Core Headers
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
@@ -41,9 +39,6 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>

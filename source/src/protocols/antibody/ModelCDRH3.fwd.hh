@@ -10,10 +10,10 @@
 
 /// @file protocols/antibody/Ab_ModelCDRH3.fwd.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///// @author Jianqing Xu (xubest@gmail.com)
-//
+
 
 #ifndef INCLUDED_protocols_antibody_ModelCDRH3_fwd_hh
 #define INCLUDED_protocols_antibody_ModelCDRH3_fwd_hh

@@ -18,9 +18,7 @@
 // Package Headers
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -39,8 +37,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-
-
 
 
 // C++ Headers
@@ -135,7 +131,7 @@ KinematicWrapper::get_name() const {
 	return "KinematicWrapper";
 }
 
-///@details this function compares positions in the allowed_positions vector with the movemap, and removes non-mobile positions
+/// @details this function compares positions in the allowed_positions vector with the movemap, and removes non-mobile positions
 void KinematicWrapper::respect_this_movemap( core::kinematics::MoveMapCOP mm )
 {
 	init_allowed_pos(); //reset the vector
@@ -154,7 +150,7 @@ void KinematicWrapper::respect_this_movemap( core::kinematics::MoveMapCOP mm )
 }
 
 using namespace basic::options;
-///@brief ctor with Loop
+/// @brief ctor with Loop
 KinematicWrapper::KinematicWrapper(
                                    KinematicMoverOP kinmover_in,
                                    protocols::loops::Loop loop_in,
@@ -165,7 +161,7 @@ KinematicWrapper::KinematicWrapper(
 	ctor();
 }
 
-///@brief ctor with explicit loop begin/end
+/// @brief ctor with explicit loop begin/end
 KinematicWrapper::KinematicWrapper(
                                    KinematicMoverOP kinmover_in,
 																	 core::Size loop_begin,
@@ -177,7 +173,7 @@ KinematicWrapper::KinematicWrapper(
 	ctor();
 }
 
-///@details trivial wrapper around stuff needed in two ctors (de-duplicating the code)
+/// @details trivial wrapper around stuff needed in two ctors (de-duplicating the code)
 void KinematicWrapper::ctor(){
 	Mover::type( "KinematicWrapper" );
 	runtime_assert((loop_end_ - loop_begin_ +1) >=3 );
@@ -187,7 +183,7 @@ void KinematicWrapper::ctor(){
 	return;
 }
 
-///@details initializes the allowed_positions vector with every position in the loop as an allowed pivot
+/// @details initializes the allowed_positions vector with every position in the loop as an allowed pivot
 void KinematicWrapper::init_allowed_pos(){
 	allowed_positions_.clear();
 	allowed_positions_.reserve(loop_end_ - loop_begin_);

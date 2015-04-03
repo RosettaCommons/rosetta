@@ -285,15 +285,11 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
   sf->set_weight(core::scoring::res_type_constraint,worig);
 
 
-
-
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
   movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
   protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
-
-
 
 
 }
@@ -350,7 +346,6 @@ void dock(Pose init, std::string const & fn) {
   vector1<Hit> hits;
 
   if(false) { /////////////////////////////////////////////////////////////////////////////////////////
-
 
 
   for(Size ir = 1; ir <= init.n_residue(); ++ir) {

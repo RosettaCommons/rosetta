@@ -77,9 +77,8 @@ static thread_local basic::Tracer TR( "core.scoring.elec.FA_ElecEnergy" );
 ///
 /// Hacky (hence the name) implementation of distance dependant dielectric electrostatics,
 /// with near and far distance cutoffs.
-///
 
-//
+
 //     alternatives: WARSHEL (from ligand.cc)
 //     E = 322.0637*q1*q2/r/e(r)
 //     if ( r < 3 ) e(r) = 16.55
@@ -187,7 +186,6 @@ FA_ElecEnergy::setup_for_minimizing(
 }
 
 
-///
 void
 FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
 {
@@ -198,7 +196,7 @@ FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & s
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
@@ -274,7 +272,7 @@ FA_ElecEnergy::update_residue_for_packing(
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 FA_ElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -420,7 +418,6 @@ FA_ElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) co
 {
 	return pose.energies().use_nblist_auto_update();
 }
-
 
 
 bool
@@ -1124,7 +1121,7 @@ FA_ElecEnergy::create_rotamer_trie(
 	}
 }
 
-///@details Create a one-residue rotamer trie
+/// @details Create a one-residue rotamer trie
 trie::RotamerTrieBaseOP
 FA_ElecEnergy::create_rotamer_trie(
 	conformation::Residue const & res,

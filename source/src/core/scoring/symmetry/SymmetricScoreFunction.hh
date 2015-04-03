@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -56,7 +55,7 @@ private:
 
 public:
 
-	///@brief NOT FOR GENERAL USE
+	/// @brief NOT FOR GENERAL USE
 	/// Copy the information about src into the current score function.
 	/// There are deep interactions with subclasses,
   /// (the subclass information doesn't necessarily get copied)
@@ -65,7 +64,7 @@ public:
   virtual void
   assign( ScoreFunction const & src);
 
-	///@brief NOT FOR GENERAL USE
+	/// @brief NOT FOR GENERAL USE
 	virtual void
 	assign( SymmetricScoreFunction const & src);
 
@@ -88,14 +87,14 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
-	///
+
 	void
 	eval_twobody_neighbor_energies( pose::Pose & pose ) const;
 
 	void
 	eval_long_range_twobody_energies( pose::Pose & pose ) const;
 
-	///
+
 	void
 	eval_onebody_energies( pose::Pose & pose ) const;
 

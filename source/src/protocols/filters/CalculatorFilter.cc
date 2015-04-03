@@ -35,7 +35,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.CalculatorFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 CalculatorFilter::CalculatorFilter() :
 	Filter( "CalculatorFilter" ),
 	threshold_(0)

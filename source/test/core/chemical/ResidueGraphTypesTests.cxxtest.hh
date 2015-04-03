@@ -106,7 +106,6 @@ public:
 		TS_ASSERT_EQUALS(atom.name(), " ND2");
 
 
-
 	}
 
 	void test_heavy_atom_with_hydrogens_filter(){

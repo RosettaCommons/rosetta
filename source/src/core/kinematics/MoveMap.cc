@@ -82,7 +82,7 @@ MoveMap::set_jump( id::JumpID const & jump, bool const setting ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details Set a specific TorsionType movable or not, e.g., "CHI".
+/// @details Set a specific TorsionType movable or not, e.g., "CHI".
 /// Setting this TorsionType will clear data for individual MoveMapTorsionID and
 /// TorsionID with this TorsionType to keep these three maps in sync.  Then query
 /// for a specific TorsionID or MoveMapTorsionID will turn to setting for TorsionType.
@@ -217,7 +217,7 @@ MoveMap::get_jump( id::JumpID const & jump ) const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details get setting for a specific TorsionType, such as "BB"
+/// @details get setting for a specific TorsionType, such as "BB"
 /// return false if no setting has been set for this TorsionType.
 bool
 MoveMap::get( TorsionType const & t ) const
@@ -230,7 +230,7 @@ MoveMap::get( TorsionType const & t ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details get TorsionType flexible or fixed for one residue, eg BB torsions for residue 10
+/// @details get TorsionType flexible or fixed for one residue, eg BB torsions for residue 10
 /// if no setting for this MoveMapTorsionID, use the setting for the TorsionType
 /// to which this MoveMapTorsionID belongs to.
 bool
@@ -245,7 +245,7 @@ MoveMap::get( MoveMapTorsionID const & id ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details get an individual torsion movable or not, eg BB torsion 2 of residue 4
+/// @details get an individual torsion movable or not, eg BB torsion 2 of residue 4
 /// if no setting for this specific TorsionID, use setting for the MoveMapTorsionID.
 /// eg, no setting for BB torsion 2 of residue 4, check setting for BB torsions of
 /// residue 4; if still not set, use setting for BB torsion type.
@@ -262,7 +262,7 @@ MoveMap::get( TorsionID const & id ) const
 	return i->second;
 }
 
-///@details get setting for this type of DOF, eg "PHI"
+/// @details get setting for this type of DOF, eg "PHI"
 /// return false if no setting has been set to this DOF_type
 bool
 MoveMap::get(
@@ -277,7 +277,7 @@ MoveMap::get(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details get the setting for an individual dof, eg, PHI of Atom 3 in Residue 5
+/// @details get the setting for an individual dof, eg, PHI of Atom 3 in Residue 5
 /// if no setting for this specific DOF_ID, get setting for the DOF type to
 /// which this DOF_ID belongs to.
 bool

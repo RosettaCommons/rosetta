@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 #ifndef INCLUDED_protocols_simple_moves_CartesianMDCreator_hh
 #define INCLUDED_protocols_simple_moves_CartesianMDCreator_hh
 

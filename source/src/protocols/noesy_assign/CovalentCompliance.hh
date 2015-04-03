@@ -42,7 +42,7 @@ public:
 	friend class utility::SingletonBase< CovalentCompliance >;
 
 private:
-  /// @breif Private constructor for singleton class
+  /// @brief Private constructor for singleton class
   CovalentCompliance();
 
 	/// @brief private singleton creation function to be used with

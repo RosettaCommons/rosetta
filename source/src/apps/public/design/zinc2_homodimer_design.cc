@@ -55,8 +55,6 @@
 #include <utility/vector0.hh>
 
 
-
-
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -75,8 +73,7 @@ basic::options::RealOptionKey const fav_nat_bonus("fav_nat_bonus");
 basic::options::IntegerOptionKey const nstruct_iterations("nstruct_iterations");
 
 
-
-///@brief
+/// @brief
 class zinc2_homodimer_design : public protocols::moves::Mover {
 public:
   zinc2_homodimer_design()
@@ -186,7 +183,6 @@ public:
 	}
 
 
-
 	//setup
 	void
 	setup_taskfactory_scorefunction_movers( Pose & pose ){
@@ -263,7 +259,6 @@ public:
 		sym_minmover_ = protocols::simple_moves::symmetry::SymMinMoverOP( new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true ) );
 
 
-
 		return;
 	}
 
@@ -271,7 +266,6 @@ public:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////   END SETUP   ///////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////

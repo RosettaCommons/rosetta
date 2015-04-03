@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 
 // Project headers
 #include <core/types.hh>

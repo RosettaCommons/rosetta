@@ -26,7 +26,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 

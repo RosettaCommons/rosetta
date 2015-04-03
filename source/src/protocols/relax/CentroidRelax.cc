@@ -252,7 +252,6 @@ namespace relax {
     CentroidRelax::apply(Pose& pose){
 
 
-
 	if (use_increased_vdw_radii_){
 	    setup_increased_vdw_radii();
 	}
@@ -272,8 +271,6 @@ namespace relax {
         if (vdw_weight==0){
             set_ramp_vdw(false);
         }
-
-
 
 
         MonteCarloOP cen_mc;

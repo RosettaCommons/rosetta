@@ -93,7 +93,6 @@ class BondLengthsTests : public CxxTest::TestSuite {
 	}
 
 
-
 };
 
 

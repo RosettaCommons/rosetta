@@ -68,7 +68,7 @@ typedef std::string String;
 class AtomInformation
 {
 public:
-	///@brief default constructor to initialize all values
+	/// @brief default constructor to initialize all values
 	AtomInformation() :
 	isHet( false ),
 	serial( 0 ),
@@ -121,7 +121,7 @@ typedef std::vector<AtomInformation> AtomChain;
 class ResidueInformation
 {
 public:
-	///@brief default constructor to initialize all values
+	/// @brief default constructor to initialize all values
 	ResidueInformation();
 
 	ResidueInformation(AtomInformation const & ai);
@@ -276,7 +276,7 @@ public:
 	ResidueInformation get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
 			bool use_PDB=true, bool renumber_chains=false) const;
 
-	///@brief Append pdb information to FileData for a single residue.
+	/// @brief Append pdb information to FileData for a single residue.
 	void append_residue(
 			core::conformation::Residue const & rsd,
 			core::Size & atom_index,
@@ -320,7 +320,7 @@ public:
 
 	bool update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options ) const;
 
-	///@brief randomize missing density
+	/// @brief randomize missing density
 	void randomize_missing_coords( AtomInformation & ai ) const;
 
 	/// @brief Debug printing

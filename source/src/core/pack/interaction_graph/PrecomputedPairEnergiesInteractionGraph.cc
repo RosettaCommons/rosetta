@@ -15,9 +15,7 @@
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 
 // STL Headers
 #include <iostream>
@@ -102,7 +100,7 @@ void PrecomputedPairEnergiesInteractionGraph::set_two_body_energy_for_edge(
 /// @param state_node1 - [in] - state on smaller-indexed node
 /// @param state_node2 - [in] - state on larger-indexed node
 ///
-/// @authors jk
+/// @author jk
 ///
 void PrecomputedPairEnergiesInteractionGraph::clear_two_body_energy_for_edge(
 	int node1,

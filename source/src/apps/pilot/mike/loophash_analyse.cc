@@ -96,7 +96,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
@@ -240,7 +239,6 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 			}
 
 
-
 			{
 			core::Size retrieve_index;
 			core::Size count_full = 0;
@@ -288,8 +286,6 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 
 
 			}  // expansion loop
-
-
 
 
 			// go through ALL the fragments and find the best.
@@ -410,9 +406,7 @@ LoopHash_Analyze::apply( core::pose::Pose& pose )
 	}
 
 
-
 }
-
 
 
 int
@@ -443,7 +437,6 @@ main( int argc, char * argv [] )
 	}
 
 #endif
-
 
 
 	utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();

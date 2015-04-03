@@ -47,8 +47,6 @@ SasaCalc::SasaCalc(SasaMethodEnum method):
 SasaCalc::~SasaCalc(){}
 
 
-
-
 void
 SasaCalc::set_defaults() {
 	using namespace basic::options;
@@ -353,8 +351,6 @@ SasaCalc::calc_per_res_sasas(const pose::Pose & pose) {
 		
 	} //for residue
 }
-
-
 
 
 //SasaCalc::calculate(const pose::Pose& pose, id::AtomID_Map<Real>& atom_sasa) {

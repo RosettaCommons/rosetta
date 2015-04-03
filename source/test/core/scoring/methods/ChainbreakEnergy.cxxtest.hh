@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/ChainbreakEnergy.hh>
 
 #include <platform/types.hh>
 
@@ -25,21 +24,11 @@
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

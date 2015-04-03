@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/NoOpStepWiseSampler.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/sampler/NoOpStepWiseSampler.hh>

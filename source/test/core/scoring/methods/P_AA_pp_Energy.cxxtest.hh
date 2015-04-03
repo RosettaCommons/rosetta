@@ -26,15 +26,6 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
 #include <numeric/conversions.hh>
 
@@ -127,7 +118,6 @@ class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 			//std::cout << "residue " << ii << " emap[ p_aa_pp ] = " << emap[ p_aa_pp ] << std::endl;
 			TS_ASSERT_DELTA( emap[ p_aa_pp ], correct_answers[ ii - 1 ], TOLERATED_ERROR );
 		}
-
 
 
 	}

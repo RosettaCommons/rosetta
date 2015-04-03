@@ -21,9 +21,6 @@
 #include <utility/vector1.hh>
 
 
-// Commented by inclean daemon #include <utility/vector1.hh>
-// Commented by inclean daemon #include <utility/pointer/ReferenceCount.hh>
-
 namespace core {
 namespace chemical {
 
@@ -32,10 +29,10 @@ class AutomorphismIterator; // fwd declaration
 typedef utility::pointer::shared_ptr< AutomorphismIterator > AutomorphismIteratorOP;
 typedef utility::pointer::shared_ptr< AutomorphismIterator const > AutomorphismIteratorCOP;
 
-///@brief Enumerates the automorphisms of a residue, which are basically
+/// @brief Enumerates the automorphisms of a residue, which are basically
 /// chemical symmetries that affect RMSD calculations.
 ///
-///@details Common automorphisms include flipping a phenyl ring (think Phe chi2)
+/// @details Common automorphisms include flipping a phenyl ring (think Phe chi2)
 /// or rotating a methyl group (or CF3, if you don't care about H).
 /// However, they can be much more complicated than that,
 /// and some cannot be imitated by rotation about a bond.

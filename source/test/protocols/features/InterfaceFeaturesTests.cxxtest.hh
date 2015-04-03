@@ -12,7 +12,6 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/InterfaceFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>

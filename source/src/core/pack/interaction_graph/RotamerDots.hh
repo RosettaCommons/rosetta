@@ -16,14 +16,12 @@
 #define INCLUDED_core_pack_interaction_graph_RotamerDots_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pack/interaction_graph/RotamerDots.fwd.hh>
 #include <core/types.hh>
 
 // Objexx Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/ubyte.hh>
 
 #ifdef PYROSETTA
@@ -31,7 +29,6 @@
 #endif
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 //Utilitiy Headers
 #include <utility/SingletonBase.hh>
@@ -51,12 +48,10 @@ namespace pack {
 namespace interaction_graph {
 
 ///
-/// @begin DotSphere
-///
 /// @brief
 /// Represents the sphere of dots on the vdW surface of an atom, for use in the LeGrand and Merz method of calculating SASA.
 ///
-/// @detailed
+/// @details
 /// For every atom in a protein, the vdW surface is patterned with dots. Each dot has to keep track of how many other
 /// residues are "covering" this dot. So, that's 1 character for each dot.  Each character is the count of the number of
 /// residues overlapping with this dot.  An assumption we're making here is that a single atom (or really, dot) will never
@@ -112,15 +107,11 @@ private:
 
 std::ostream & operator<< ( std::ostream & os, DotSphere const & ds );
 
-
-
-///
-/// @begin RotamerDots
 ///
 /// @brief
 /// Handles sphere-sphere overlap calculations for the HPatchInteractionGraph.
 ///
-/// @detailed
+/// @details
 /// One big change from the r++ version of this class is that this class now includes all of the information that was
 /// previously stored in the RotamerCoords class. Since I'm not storing atoms in trie ordering (perhaps I'll add this
 /// later), there is no need to have a separate class for the rotamer coordinates.
@@ -265,14 +256,11 @@ public:	/// TEMP!
 
 std::ostream & operator<< ( std::ostream & os, RotamerDots const & rd );
 
-
-///
-/// @begin RotamerDotsRadiusData
 ///
 /// @brief
 /// A singleton class which reads in database SASA radii files and provides accessors for those values to the RotamerDots class.
 ///
-/// @detailed
+/// @details
 /// The RotamerDots class keeps track of the SASA of some rotamer using DotSphere objects and lots of get overlap calls
 /// on atoms. The SASA of a given atom (or residue) depends on what radii are used for the atoms. Different program use
 /// different sets of radii, and for the hpatch score, the polar atom radii are expanded. Previously RotamerDots objects
@@ -328,14 +316,11 @@ private:
 
 };
 
-
-///
-/// @begin RotamerDotsCache
 ///
 /// @brief
 /// A lightweight version of the RotamerDots class. Used to cache overlap between interaction graph Nodes and BGNodes.
 ///
-/// @detailed
+/// @details
 /// During packing, when a first class node has to respond to another Node changing state, it's faster to decrement the
 /// coverage the previous state produced and increment the coverage the new state produces than to completely recalculate
 /// how the new state overlaps the node. But instead of holding that coverage information in a RotamerDots object (which
@@ -369,9 +354,6 @@ private:
 
 };
 
-
-///
-/// @begin InvRotamerDots
 ///
 /// @brief
 /// Used to determine whether the overlap between two atoms is buried or exposed.

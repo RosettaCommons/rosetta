@@ -86,7 +86,7 @@ operator<< (std::ostream & out, const AtomType & atom_type ){
 }
 
 
-// ///@brief is atom type virtual?
+// /// @brief is atom type virtual?
 // bool AtomType::is_virtual() const
 // {
 //   return (atom_is_virtual_);

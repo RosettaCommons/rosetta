@@ -9,14 +9,13 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
 #include <protocols/topology_broker/CutBiasClaimer.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/SequenceNumberResolver.hh>
-
 
 
 // Package Headers

@@ -19,20 +19,16 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/MMAtomType.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 #include <map>
 
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <utility/vector1_bool.hh>
-
 
 
 namespace core {

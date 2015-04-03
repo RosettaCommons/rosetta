@@ -9,7 +9,7 @@
 
 /// @file IterativeAbrelax
 /// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
@@ -38,7 +38,6 @@
 
 //// C++ headers
 #include <string>
-
 
 
 static thread_local basic::Tracer tr( "protocols.iterative" );
@@ -173,7 +172,7 @@ bool IterativeCentroid::restore_from_file() {
 	return Parent::restore_from_file();
 }
 
-	///@brief call to insert structure at position given by iterator
+	/// @brief call to insert structure at position given by iterator
 void IterativeCentroid::add_structure_at_position (
     SilentStructs::iterator iss,
 		core::io::silent::SilentStructOP new_decoy,

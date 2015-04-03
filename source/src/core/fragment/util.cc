@@ -350,7 +350,6 @@ void dump_frames_as_pdb(
 } //dump_frames_as_pdb
 
 
-
 /// @details this is a little tricky: this should support functionality for both creating a frameset entirely from
 /// @details the input pdb (i.e. with no prior information about frag data length or srfds ), but it should also
 /// @details  be possible to pass in non_empty frames such that the information in the pdb will generate FragData
@@ -483,7 +482,7 @@ void read_std_frags_from_cmd( FragSetOP& fragset_large, FragSetOP& fragset_small
 /// contigues piece JUMP contig. piec JUMP contig. piece.
 /// then good candidates for  cutpoints are the last contig.piece residue before a jump
 void make_simple_fold_tree_from_jump_frame( Frame const& frame, Size total_residue, kinematics::FoldTree& new_fold_tree ) {
-	///@brief how many actual jumps are in this Frame?
+	/// @brief how many actual jumps are in this Frame?
 	utility::vector1< core::Size > ups;
 	utility::vector1< core::Size > downs;
 	utility::vector1< core::Size > cuts;

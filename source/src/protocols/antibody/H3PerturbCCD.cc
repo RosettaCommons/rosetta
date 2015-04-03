@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/H3PerturbCCD.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #include <protocols/antibody/H3PerturbCCD.hh>
@@ -58,11 +57,6 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 
 
-
-
-
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -70,13 +64,9 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.antibody.H3PerturbCCD" );
 
 
-
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
 
 
 // default constructor
@@ -106,13 +96,10 @@ H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in,
 }
 
 
-
 void H3PerturbCCD::init( ) {
 	set_default();
 
 }
-
-
 
 
 void H3PerturbCCD::set_default() {
@@ -130,7 +117,6 @@ void H3PerturbCCD::set_default() {
 	H3_filter_          = true;
 
 
-
 	if(!user_defined_) {
 		lowres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 		lowres_scorefxn_->set_weight( scoring::chainbreak, 10./3. );
@@ -139,18 +125,10 @@ void H3PerturbCCD::set_default() {
 }
 
 
-
-
-
 //clone
 protocols::moves::MoverOP H3PerturbCCD::clone() const {
 	return( protocols::moves::MoverOP( new H3PerturbCCD() ) );
 }
-
-
-
-
-
 
 
 void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {
@@ -161,8 +139,6 @@ void H3PerturbCCD::finalize_setup( pose::Pose & pose_in ) {
 	outer_mc_ = protocols::moves::MonteCarloOP( new protocols::moves::MonteCarlo( pose_in, *lowres_scorefxn_, Temperature_ ) );
 
 }
-
-
 
 
 void H3PerturbCCD::apply( pose::Pose & pose_in ) {
@@ -354,16 +330,11 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 }
 
 
-
-
-
-
 void H3PerturbCCD::read_and_store_fragments( ) {
 	using namespace chemical;
 	using namespace id;
 	using namespace fragment;
 	using namespace core::scoring;
-
 
 
 	// fragment initialization
@@ -373,7 +344,6 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 
 	Size frag_size = (ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()) + 3; //JQX: why +3??
 	TR<<frag_size<<std::endl;
-
 
 
 	FragSetOP offset_3mer_frags;
@@ -406,7 +376,6 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 	}
 
 
-
 	cdr_h3_frags_.push_back( offset_9mer_frags );
 	cdr_h3_frags_.push_back( offset_3mer_frags );
 
@@ -417,16 +386,7 @@ void H3PerturbCCD::read_and_store_fragments( ) {
 }
 
 
-
-
-
-
-
-
-
-
 }// namespace antibody
 }// namespace protocols
-
 
 

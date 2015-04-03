@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/SSShapeComplementarityFilter.cc
 /// @brief Tom's Denovo design protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 /// @author Vikram K. Mulligan (vmullig@uw.edu -- added threshhold option)
 

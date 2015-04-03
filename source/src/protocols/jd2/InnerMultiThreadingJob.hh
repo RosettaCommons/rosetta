@@ -13,7 +13,6 @@
 #ifndef INCLUDED_protocols_jd2_InnerMultiThreadingJob_hh
 #define INCLUDED_protocols_jd2_InnerMultiThreadingJob_hh
 
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/InnerMultiThreadingJob.fwd.hh>
 
@@ -31,7 +30,7 @@ namespace jd2 {
 
 class InnerMultiThreadingJob : public protocols::jd2::InnerJob {
 public:
-	///@brief ctor.  Note that it takes only the input tag and max nstruct,
+	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	/* InnerMultiThreadingJob(
 		std::string const & input_tag,
@@ -40,7 +39,7 @@ public:
 		utility::vector1< core::pose::Pose > const & templates
 	); */
 
-	///@brief ctor.
+	/// @brief ctor.
 	InnerMultiThreadingJob(
 		core::pose::PoseCOP,
 		std::string const & input_tag,

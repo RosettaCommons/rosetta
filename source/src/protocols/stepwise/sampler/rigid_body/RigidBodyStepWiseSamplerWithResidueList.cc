@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueList.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

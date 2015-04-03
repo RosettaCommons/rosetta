@@ -10,7 +10,7 @@
 /// @file MembraneJump
 /// @brief read jump-definition file   setups fold tree an chainbreak variants
 /// loop code didn't work because fold-tree to complicated ( overlapping loops )
-/// @detailed
+/// @details
 /// @author Bjorn Wallner
 
 
@@ -22,7 +22,6 @@
 #include <protocols/jumping/MembraneJump.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/jumping/PairingLibrary.fwd.hh>
 #include <protocols/jumping/PairingLibrary.hh>
 #include <core/scoring/dssp/PairingsList.fwd.hh>
 
@@ -40,10 +39,8 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
@@ -53,17 +50,14 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace jumping {
-
-
 
 
 class MembraneJump : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MembraneJump();
 MembraneJump();
 
@@ -99,7 +93,6 @@ private:
 	core::Size pairings_size_;
 	core::scoring::dssp::PairingList selected_pairings_;
 };
-
 
 
 } //jumping

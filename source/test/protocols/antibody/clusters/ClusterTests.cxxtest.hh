@@ -61,7 +61,6 @@ public:
 		using utility::sql_database::DatabaseSessionManager;
 
 
-
 		core_init();
 		core::import_pose::pose_from_pdb(ab_pose, "protocols/antibody/2j88.pdb");
 

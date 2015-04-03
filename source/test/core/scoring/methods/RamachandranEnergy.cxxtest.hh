@@ -26,21 +26,11 @@
 
 // Package Headers
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <numeric/conversions.hh>
 
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
@@ -136,7 +126,6 @@ class RamachandranEnergyTests : public CxxTest::TestSuite {
 			//std::cout << "residue " << ii << " emap[ rama ] = " << emap[ rama ] << std::endl;
 			TS_ASSERT_DELTA( emap[ rama ], correct_answers[ ii - 1 ], TOLERATED_ERROR );
 		}
-
 
 
 	}

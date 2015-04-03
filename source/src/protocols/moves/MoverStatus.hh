@@ -21,7 +21,7 @@
 namespace protocols {
 namespace moves {
 
-///@brief return status for movers - mover was successful, failed but can be retried, etc; used mostly by job dist.
+/// @brief return status for movers - mover was successful, failed but can be retried, etc; used mostly by job dist.
 // why not naming all thes flags MS_XXXX ???
 // probably because the MS part is encoded in the type! a related question: why
 // MS_SUCCESS and not just SUCCESS?

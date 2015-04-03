@@ -31,7 +31,7 @@ ContextDependentTwoBodyEnergy::ContextDependentTwoBodyEnergy( EnergyMethodCreato
 
 ContextDependentTwoBodyEnergy::~ContextDependentTwoBodyEnergy() {}
 
-///
+
 EnergyMethodType
 ContextDependentTwoBodyEnergy::method_type() const
 {

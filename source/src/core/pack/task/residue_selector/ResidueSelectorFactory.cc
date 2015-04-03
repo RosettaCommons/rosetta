@@ -84,7 +84,6 @@ ResidueSelectorFactory::ResidueSelectorFactory() :
 {}
 
 
-
 } //namespace residue_selector
 } //namespace task
 } //namespace pack

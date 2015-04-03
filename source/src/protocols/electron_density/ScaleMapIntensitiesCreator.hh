@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/ConstraintSetMoverConstraintSetMoverCreator.hh
-///@brief This class will create instances of Mover ConstraintSetMover for the MoverFactory
-///@author Yifan Song
+/// @file protocols/moves/ConstraintSetMoverConstraintSetMoverCreator.hh
+/// @brief This class will create instances of Mover ConstraintSetMover for the MoverFactory
+/// @author Yifan Song
 
 #ifndef INCLUDED_protocols_electron_density_ScaleMapIntensitiesCreator_hh
 #define INCLUDED_protocols_electron_density_ScaleMapIntensitiesCreator_hh

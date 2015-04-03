@@ -62,7 +62,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 using namespace core;
 using namespace basic::options;
 using namespace core::scoring;
@@ -228,7 +227,6 @@ main( int argc, char * argv [] )
 
 		protocols::moves::SequenceMoverOP repack_step( new SequenceMover );
         	repack_step->add_mover( pack_rottrial_trial );
-
 
 
 		protocols::moves::CycleMoverOP backrub_cycle( new CycleMover );

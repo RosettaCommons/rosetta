@@ -38,7 +38,6 @@
 #include <basic/options/option.hh>
 
 
-
 namespace protocols {
 namespace simple_moves {
 namespace asym_fold_and_dock {

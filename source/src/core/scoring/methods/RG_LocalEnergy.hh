@@ -95,7 +95,6 @@ public:
 	) const;
 
 
-
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/

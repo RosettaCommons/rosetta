@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/HelixPairingFilter.hh
 /// @brief header file for HelixPairingFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 
@@ -128,7 +128,6 @@ public:// virtual main operation
 
 	/// @brief
 	Real compute( Pose const & pose ) const;
-
 
 
 	// @brief returns true if the given pose passes the filter, false otherwise.

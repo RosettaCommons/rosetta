@@ -9,7 +9,7 @@
 
 /// @file loopRNA_relaxer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -84,7 +84,6 @@ private:
 	bool simple_rmsd_cutoff_relax_;
 
 }; // class RNA_Relaxer
-
 
 
 } //farna

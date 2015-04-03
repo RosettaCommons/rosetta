@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/o2prime/O2PrimePacker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

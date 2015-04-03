@@ -11,25 +11,21 @@
 /// @brief method declarations for ExtraThreadingMover.
 /// @author James Thompson
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ExtraThreadingMover.hh>
 
 #include <core/types.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/Sequence.hh>
@@ -49,8 +45,6 @@
 #include <string>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
 

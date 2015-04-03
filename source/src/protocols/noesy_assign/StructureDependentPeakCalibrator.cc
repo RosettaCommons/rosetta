@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -19,7 +19,6 @@
 #include <protocols/noesy_assign/StructureDependentPeakCalibrator.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 
 // Project Headers
@@ -45,12 +44,8 @@ using namespace basic;
 //using namespace basic::options::OptionKeys;
 
 
-
-
 namespace protocols {
 namespace noesy_assign {
-
-
 
 
 void StructureDependentPeakCalibrator::init_calibrator() {

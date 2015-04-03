@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -27,8 +27,6 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>

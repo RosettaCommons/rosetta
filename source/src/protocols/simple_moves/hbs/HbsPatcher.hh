@@ -30,12 +30,12 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position );
 
 
-///@details
+/// @details
 class HbsPatcher : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	HbsPatcher( core::Size hbs_pre_position );
 
 	virtual ~HbsPatcher();
@@ -48,8 +48,6 @@ private:
 	core::Size const hbs_pre_pos_;
 	core::Size const hbs_post_pos_;
 };//end HbsPatcher
-
-
 
 
 }//namespace hbs

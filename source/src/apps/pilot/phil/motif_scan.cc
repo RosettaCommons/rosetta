@@ -15,75 +15,32 @@
 #include <devel/dna/protocols.hh>
 #include <devel/dna/util.hh>
 //#include <devel/dna/util.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/viewer/viewers.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
 #include <core/scoring/dna/BasePartner.hh>
-// AUTO-REMOVED #include <core/scoring/dna/DNA_BasePotential.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairAll.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 //#include <core/scoring/etable/count_pair/CountPair1BC4.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -95,9 +52,6 @@
 #include <basic/options/util.hh>
 //#include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 
 #include <devel/init.hh>
 
@@ -107,7 +61,6 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <numeric/random/random.hh>
 
@@ -131,7 +84,6 @@
 // option key includes
 
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -144,11 +96,6 @@
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
-
-
-
-
 
 
 ////////////////////////////////////////////////
@@ -256,7 +203,7 @@ parse_pdb_pos( pose::Pose const & pose )
 
 ///////////////////////////////////////////////////////////////////////////////
 // sets a default foldtree
-//
+
 
 void
 make_dna_only_pose( pose::Pose const & pose, Pose & dna_pose )//, vector1< Size > & old2new )
@@ -409,10 +356,6 @@ single_position_motif_scan(
 }
 
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 MotifColumn
 contact_model_prediction( Pose const & pose, Size const seqpos )
@@ -463,7 +406,6 @@ contact_model_prediction( Pose const & pose, Size const seqpos )
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 motif_scan()
@@ -494,7 +436,6 @@ motif_scan()
 
 
 		scoring::dna::set_base_partner( pose );
-
 
 
 		//// optionally pre-optimize the complex
@@ -636,8 +577,6 @@ motif_scan()
 		} // motif matches for this pdb
 
 	} // pdbfiles
-
-
 
 
 }

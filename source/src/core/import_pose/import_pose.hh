@@ -20,18 +20,13 @@
 
 // C++ headers
 #include <iosfwd>
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <basic/Tracer.fwd.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

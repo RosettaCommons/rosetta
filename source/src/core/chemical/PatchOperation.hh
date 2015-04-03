@@ -34,7 +34,7 @@ namespace chemical {
 /// @brief  A single operation that needs to be applied in a residue patch
 class PatchOperation : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PatchOperation();
 
 	/// @brief Returns true to signal failure, false to indicate success.

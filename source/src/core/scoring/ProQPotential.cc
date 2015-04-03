@@ -10,7 +10,6 @@
 /// @file   core/scoring/methods/EnvPairPotential.cc
 /// @brief  Membrane Potential
 /// @author Bjorn Wallner
-///
 
 
 // Unit headers
@@ -20,7 +19,6 @@
 
 // Package headers
 
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 //#include <core/scoring/EnvPairPotential.hh>
 
 // Project headers
@@ -34,10 +32,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 
-
 //symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -87,7 +83,6 @@ ProQPotential::ProQPotential()
 		svm_model_=basic::options::option[basic::options::OptionKeys::ProQ::svmmodel](); 
 		cross_val_=true;
 	}
-
 
 
 	std::string tag,line;

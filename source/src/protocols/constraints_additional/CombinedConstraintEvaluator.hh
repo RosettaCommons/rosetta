@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_constraints_additional_CombinedConstraintEvaluator_hh
@@ -32,13 +31,10 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 
 #ifdef WIN32	// for visual studio
 #else
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.fwd.hh>
 #endif
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 
@@ -50,7 +46,6 @@
 
 #include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

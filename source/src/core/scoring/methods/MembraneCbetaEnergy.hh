@@ -38,14 +38,14 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class MembraneCbetaEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
 
 public:
 
-	///
+
 	MembraneCbetaEnergy();
 
 

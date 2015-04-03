@@ -23,7 +23,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Numeric headers
 #include <numeric/xyzVector.hh>

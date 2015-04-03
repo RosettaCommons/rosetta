@@ -22,11 +22,9 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -39,7 +37,6 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 //Auto Headers
@@ -47,11 +44,11 @@ namespace protocols {
 namespace noesy_assign {
 
 
-///@brief shared information about CrossPeak (one for each proton dimension)
+/// @brief shared information about CrossPeak (one for each proton dimension)
 class CrossPeakInfo : public utility::pointer::ReferenceCount {
 public:
 
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~CrossPeakInfo();
   CrossPeakInfo( std::string const& proton, std::string const& label, core::Real max_noe_distance, core::Real proton_tolerance, core::Real label_tolerance ) :
 

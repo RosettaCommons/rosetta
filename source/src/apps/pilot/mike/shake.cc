@@ -38,7 +38,6 @@ using basic::Error;
 using basic::Warning;
 
 
-
 using namespace core;
 using namespace core::fragment;
 using namespace protocols;
@@ -49,14 +48,12 @@ using utility::vector1;
 using core::io::pdb::dump_pdb;
 
 
-
 namespace protocols {
 namespace moves {
 
 
 } // moves
 } // protocols
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

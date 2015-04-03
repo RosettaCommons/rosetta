@@ -46,11 +46,11 @@ public:
 
 	virtual ~TaskOperationFeatures();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -76,7 +76,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,

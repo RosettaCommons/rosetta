@@ -35,7 +35,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_JR_SuiteEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy parent;
@@ -58,7 +58,7 @@ public:
 		EnergyMap &
 	) const {};
 
-	///
+
 	virtual	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,

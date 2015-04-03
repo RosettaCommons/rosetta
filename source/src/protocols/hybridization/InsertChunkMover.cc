@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Align a random jump to template
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #include <protocols/hybridization/InsertChunkMover.hh>
@@ -33,7 +33,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-//
+
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 

@@ -37,64 +37,64 @@ public:
 
 	virtual ~ResidueDatabaseIO();
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
 
 private:
-	///@brief generate the residue_type table schema
+	/// @brief generate the residue_type table schema
 	void
 	write_residue_type_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_atom table schema
+	/// @brief generate the residue_type_atom table schema
 	void
 	write_residue_type_atom_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_bond table schema
+	/// @brief generate the residue_type_bond table schema
 	void
 	write_residue_type_bond_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_cut_bond table schema
+	/// @brief generate the residue_type_cut_bond table schema
 	void
 	write_residue_type_cut_bond_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_chi table schema
+	/// @brief generate the residue_type_chi table schema
 	void
 	write_residue_type_chi_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_chi_rotamer table schema
+	/// @brief generate the residue_type_chi_rotamer table schema
 	void
 	write_residue_type_chi_rotamer_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_proton_chi table schema
+	/// @brief generate the residue_type_proton_chi table schema
 	void
 	write_residue_type_proton_chi_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_property table schema
+	/// @brief generate the residue_type_property table schema
 	void
 	write_residue_type_property_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_variant_type table schema
+	/// @brief generate the residue_type_variant_type table schema
 	void
 	write_residue_type_variant_type_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the residue_type_icoor table schema
+	/// @brief generate the residue_type_icoor table schema
 	void
 	write_residue_type_icoor_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
 public:
-	///@brief write the schema
+	/// @brief write the schema
 	void initialize(utility::sql_database::sessionOP db_session);
 
 	core::Real get_version();
@@ -261,7 +261,6 @@ private:
 	std::map<std::pair<std::string,core::Size>, std::string > atom_name_id_cache_;
 
 };
-
 
 
 }

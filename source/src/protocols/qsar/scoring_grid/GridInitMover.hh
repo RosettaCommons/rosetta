@@ -54,5 +54,4 @@ private:
 }
 
 
-
 #endif /* GRIDINITMOVER_HH_ */

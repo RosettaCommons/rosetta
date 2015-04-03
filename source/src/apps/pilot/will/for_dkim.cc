@@ -47,7 +47,6 @@ sheffler_voids( core::pose::Pose & pose ) {
 }
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <iostream>
 
 #include <core/import_pose/import_pose.hh>

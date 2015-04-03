@@ -166,6 +166,5 @@ ResidueFeatures::delete_record(
 }
 
 
-
 } // namesapce
 } // namespace

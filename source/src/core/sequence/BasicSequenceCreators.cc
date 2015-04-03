@@ -13,7 +13,6 @@
 
 #include <core/sequence/BasicSequenceCreators.hh>
 
-// AUTO-REMOVED #include <core/sequence/SequenceFactory.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>

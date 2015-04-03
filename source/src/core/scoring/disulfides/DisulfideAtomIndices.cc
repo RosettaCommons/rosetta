@@ -63,7 +63,6 @@ DisulfideAtomIndices::derivative_atom( Size atom_index ) const
 }
 
 
-
 } // namespace disulfides
 } // namespace scoring
 } // namespace core

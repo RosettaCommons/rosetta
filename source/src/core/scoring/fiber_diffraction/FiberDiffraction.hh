@@ -39,7 +39,7 @@ namespace fiber_diffraction {
 		 /// @brief constructor
     FiberDiffraction();
 
-		///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+		/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 		virtual ~FiberDiffraction();
 
 		/// @brief Initialize map from cmd line options

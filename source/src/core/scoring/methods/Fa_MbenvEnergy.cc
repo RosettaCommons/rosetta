@@ -22,7 +22,6 @@
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh> //pba
 #include <core/scoring/methods/EnergyMethodOptions.hh> //pba
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/etable/Etable.hh>
@@ -31,7 +30,6 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh> //pba
@@ -87,7 +85,7 @@ Fa_MbenvEnergy::clone() const {
 // methods for ContextDependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 Fa_MbenvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

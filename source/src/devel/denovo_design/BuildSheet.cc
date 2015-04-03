@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/BuildSheet.cc
 /// @brief Parametric generation of beta sheets
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

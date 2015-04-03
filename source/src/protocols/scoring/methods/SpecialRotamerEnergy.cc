@@ -25,7 +25,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace scoring {
 namespace methods {
@@ -64,7 +63,7 @@ SpecialRotamerEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 SpecialRotamerEnergy::residue_energy(
 	core::conformation::Residue const & rsd,
@@ -78,7 +77,6 @@ SpecialRotamerEnergy::residue_energy(
 }
 
 
-///
 core::Real
 SpecialRotamerEnergy::eval_dof_derivative(
 	core::id::DOF_ID const &,// dof_id,

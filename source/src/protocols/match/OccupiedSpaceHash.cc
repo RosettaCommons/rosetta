@@ -23,7 +23,6 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/LexicographicalIterator.hh>
 
 // C++ headers
 #include <fstream>
@@ -456,7 +455,6 @@ OccupiedSpaceHash::calc_bin_index(  numeric::geometry::hashing::Bin6D const & bi
 	}
 	return index;
 }
-
 
 
 }

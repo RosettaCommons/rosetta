@@ -10,7 +10,7 @@
 /// @file src/numeric/kdtree/KDPoint.cc
 /// @brief
 /// @author James Thompson
-//
+
 
 #include <numeric/types.hh>
 #include <numeric/kdtree/WrappedReal.hh>

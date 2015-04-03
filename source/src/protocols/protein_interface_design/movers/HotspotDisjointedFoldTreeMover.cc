@@ -23,14 +23,12 @@
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <string>
 #include <protocols/loops/loops_main.hh>
 #include <boost/foreach.hpp>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 //#include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/datacache/DataMap.hh>
@@ -40,7 +38,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 
 
@@ -85,7 +82,7 @@ std::string HotspotDisjointedFoldTreeMover::get_name() const {
 	return HotspotDisjointedFoldTreeMoverCreator::mover_name();
 }
 
-///@details generates a foldtree that links the nearest residues on chain 1 to key residues on chain 2 and breaks the chain around the key residues on chain 2
+/// @details generates a foldtree that links the nearest residues on chain 1 to key residues on chain 2 and breaks the chain around the key residues on chain 2
 core::kinematics::FoldTreeOP
 HotspotDisjointedFoldTreeMover::make_disjointed_foldtree( core::pose::Pose const & pose ) const
 {

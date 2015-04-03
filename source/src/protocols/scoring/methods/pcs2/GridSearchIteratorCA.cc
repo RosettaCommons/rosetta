@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/GridSearchIteratorCA.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -41,7 +39,6 @@
 #include <utility/exit.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>

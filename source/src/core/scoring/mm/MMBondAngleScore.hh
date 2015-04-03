@@ -22,21 +22,17 @@
 
 // Project headers
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 //#include <core/scoring/ScoringManager.hh>
 
 #include <core/types.hh>
 
 // Utility header
-// AUTO-REMOVED #include <utility/keys/Key4Tuple.hh>
-// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace core {
@@ -52,7 +48,7 @@ class MMBondAngleScore : public utility::pointer::ReferenceCount
 {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MMBondAngleScore();
 
 	/// @brief Default ctor

@@ -67,7 +67,6 @@ WriteToDB_AA_to_terminal_loops (
 	core::Size residue_end);
 
 
-
 core::Size
 WriteToDB_ending_loop(
 	StructureID	struct_id,
@@ -157,8 +156,6 @@ WriteToDB_number_of_core_heading_FWY_in_sw(
 	StructureID	struct_id,
 	utility::sql_database::sessionOP	db_session,
 	core::Size sw_can_by_sh_id);
-
-
 
 
 core::Size

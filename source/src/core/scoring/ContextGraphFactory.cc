@@ -19,7 +19,6 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <iostream>
 
 // Utility Headers
 #include <utility/exit.hh>

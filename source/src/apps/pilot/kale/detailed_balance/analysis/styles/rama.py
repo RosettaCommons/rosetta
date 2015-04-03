@@ -27,5 +27,3 @@ style = {
         'omega3':   dict(**omega_style) }
 
 
-
-

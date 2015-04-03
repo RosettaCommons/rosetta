@@ -11,7 +11,6 @@
 /// @brief  forward declarations for fragment stuff
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_core_fragment_JumpingFrame_fwd_hh
@@ -19,8 +18,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
-
-
 
 
 namespace core {

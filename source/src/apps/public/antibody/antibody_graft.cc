@@ -13,7 +13,6 @@
 /// 09/09/2011 - 2013
 
 
-
 #include <protocols/antibody/GraftCDRLoopsProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
@@ -61,6 +60,5 @@ main( int argc, char * argv [] )
 		return -1;
 	}
 }
-
 
 

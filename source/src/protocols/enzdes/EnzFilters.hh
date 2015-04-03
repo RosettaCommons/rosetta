@@ -326,7 +326,6 @@ public:
 	clear_rnl_pose();
 
 
-
 private:
 
 	void
@@ -363,7 +362,7 @@ private:
 
 };
 
-///@brief filter that figures out which rotamer of a given
+/// @brief filter that figures out which rotamer of a given
 ///rotamer lib is in the pose at apply time, and can be used
 ///to filter on it. supposed to be used for ligands,
 ///and for now only tested for them, but

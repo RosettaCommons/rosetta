@@ -25,7 +25,6 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -83,8 +82,6 @@ private:
 } //namespace constraints
 } //namespace forge
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_forge_constraints_NtoC_RCG_HH

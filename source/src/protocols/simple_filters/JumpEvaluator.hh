@@ -9,12 +9,11 @@
 
 /// @file JumpEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_JumpEvaluator_hh
@@ -31,10 +30,8 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/kinematics/RT.hh>
 
 #include <core/io/silent/silent.fwd.hh>
-
 
 
 // ObjexxFCL Headers
@@ -43,7 +40,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

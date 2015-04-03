@@ -9,7 +9,7 @@
 
 /// @file core/scoring/methods/FreeDOF_Options.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -63,7 +63,6 @@ namespace methods {
 	}
 
 
-///
 void
 FreeDOF_Options::show( std::ostream & out ) const
 {

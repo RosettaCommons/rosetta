@@ -131,7 +131,6 @@ using namespace core;
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 using namespace devel::option;
 
 class ThisApplication  {
@@ -544,9 +543,9 @@ void ThisApplication::fold() {
 	// ==========================================================================
 	// ==========================================================================
 
-	//
+
 	//     Start running abinitio
-	//
+
 
 	using protocols::jobdist::BasicJob;
 	using protocols::jobdist::BasicJobOP;

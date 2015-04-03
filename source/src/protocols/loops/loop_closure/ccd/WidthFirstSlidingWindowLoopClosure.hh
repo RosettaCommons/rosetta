@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -25,7 +25,6 @@
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -45,7 +44,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -55,14 +53,14 @@ namespace loops {
 namespace loop_closure {
 namespace ccd {
 
-///@detail
+/// @detail
 // ths derivation from SlidingWindowLoopClosure changes the order of sampling... instead of all attempts with a certain window size first
 /// it will switch between different windows. If nothing good is found after one sweep of window sizes we bail out... (assuming that it is fruitless)
 /// if things look promising more sampling time is spend to find a good loop
 class WidthFirstSlidingWindowLoopClosure : public SlidingWindowLoopClosure {
 	typedef SlidingWindowLoopClosure Parent;
 public:
-	///@brief constructor: supply fragsets for fragment moves
+	/// @brief constructor: supply fragsets for fragment moves
 	WidthFirstSlidingWindowLoopClosure(
 		core::fragment::FragSetCOP fragset,
 		core::scoring::ScoreFunctionOP scorefxn,

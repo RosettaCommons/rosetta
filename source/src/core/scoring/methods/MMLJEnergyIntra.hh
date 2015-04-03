@@ -16,8 +16,6 @@
 
 // Unit headers
 #include <core/scoring/methods/MMLJEnergyIntra.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMLJLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMLJEnergyTable.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -32,7 +30,6 @@
 
 #include <core/scoring/mm/MMLJEnergyTable.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -59,7 +56,7 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
-  ///
+
   virtual
   void
   residue_pair_energy(

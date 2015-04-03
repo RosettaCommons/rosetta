@@ -15,11 +15,8 @@
 // C++ Headers
 #include <cmath>
 #include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
-// AUTO-REMOVED #include <utility>
 #include <vector>
-// AUTO-REMOVED #include <list>
 #include <string>
 #include <map>
 #include <sstream>
@@ -28,14 +25,10 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -48,7 +41,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 

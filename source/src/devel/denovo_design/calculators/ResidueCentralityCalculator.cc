@@ -9,7 +9,7 @@
 
 /// @file devel/denovo_design/calculators/ResidueCentralityCalculator.cc
 /// @brief calculate centrality for all (or a subset of) residues
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Unit Headers

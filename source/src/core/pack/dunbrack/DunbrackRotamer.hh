@@ -21,13 +21,10 @@
 // Package headers
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/types.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 
 // Numeric headers
@@ -39,14 +36,11 @@
 // Utility headers
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector1_bool.hh>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-
 
 
 namespace core {

@@ -25,7 +25,7 @@
 namespace numeric {
 namespace fourier {
 
-///@brief 1D fft c->c double
+/// @brief 1D fft c->c double
 void fft(ObjexxFCL::FArray1D< std::complex<double> > &X , ObjexxFCL::FArray1D< std::complex<double> > &fX) {
 	kiss_fft_state fft_params;
 	fft_params.resize( X.I1().size(), 0 );
@@ -33,7 +33,7 @@ void fft(ObjexxFCL::FArray1D< std::complex<double> > &X , ObjexxFCL::FArray1D< s
 	kiss_fft(&fft_params, &X[0], &fX[0] );
 }
 
-///@brief 1D inverse fft c->c double
+/// @brief 1D inverse fft c->c double
 void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D< std::complex<double> > &X) {
 	kiss_fft_state ifft_params;
 	ifft_params.resize( fX.I1().size(), 1 );
@@ -45,7 +45,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
 }
 
-///@brief 1D fft r->c double
+/// @brief 1D fft r->c double
 void fft(ObjexxFCL::FArray1D< double > &X , ObjexxFCL::FArray1D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size());
@@ -54,7 +54,7 @@ void fft(ObjexxFCL::FArray1D< double > &X , ObjexxFCL::FArray1D< std::complex<do
 	fft(Xcpx,fX);
 }
 
-///@brief 1D inverse ifft c->r double
+/// @brief 1D inverse ifft c->r double
 void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D< double > &X) {
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	ifft( fX,Xcpx );
@@ -63,7 +63,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 	for (int i=0; i<dimsProd; ++i) X[i] = (float)Xcpx[i].real();
 }
 
-///@brief 1D fft r->c float .. wraps double version
+/// @brief 1D fft r->c float .. wraps double version
 void fft(ObjexxFCL::FArray1D< float > &X , ObjexxFCL::FArray1D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size());
@@ -72,7 +72,7 @@ void fft(ObjexxFCL::FArray1D< float > &X , ObjexxFCL::FArray1D< std::complex<dou
 	fft(Xcpx,fX);
 }
 
-///@brief 1D inverse ifft c->r float ... wraps double version
+/// @brief 1D inverse ifft c->r float ... wraps double version
 void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D< float > &X) {
 	ObjexxFCL::FArray1D< std::complex<double> > Xcpx;
 	ifft( fX,Xcpx );
@@ -84,7 +84,7 @@ void ifft(ObjexxFCL::FArray1D< std::complex<double> > &fX , ObjexxFCL::FArray1D<
 ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////
 
-///@brief 2D fft c->c double
+/// @brief 2D fft c->c double
 void fft2(ObjexxFCL::FArray2D< std::complex<double> > &X , ObjexxFCL::FArray2D< std::complex<double> > &fX) {
 	kiss_fftnd_state fft_params;
 	std::vector< int > dims(2);
@@ -94,7 +94,7 @@ void fft2(ObjexxFCL::FArray2D< std::complex<double> > &X , ObjexxFCL::FArray2D< 
 	kiss_fftnd(&fft_params, &X[0], &fX[0] );
 }
 
-///@brief 2D inverse fft c->c double
+/// @brief 2D inverse fft c->c double
 void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D< std::complex<double> > &X) {
 	kiss_fftnd_state ifft_params;
 	std::vector< int > dims(2);
@@ -108,7 +108,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 	for (int i=0; i<dimsProd; ++i) X[i] /= (double)dimsProd;
 }
 
-///@brief 2D fft r->c double
+/// @brief 2D fft r->c double
 void fft2(ObjexxFCL::FArray2D< double > &X , ObjexxFCL::FArray2D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size());
@@ -117,7 +117,7 @@ void fft2(ObjexxFCL::FArray2D< double > &X , ObjexxFCL::FArray2D< std::complex<d
 	fft2(Xcpx,fX);
 }
 
-///@brief 2D inverse ifft c->r double
+/// @brief 2D inverse ifft c->r double
 void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D< double > &X) {
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	ifft2( fX,Xcpx );
@@ -126,7 +126,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 	for (int i=0; i<dimsProd; ++i) X[i] = (double)Xcpx[i].real();
 }
 
-///@brief 2D fft r->c float
+/// @brief 2D fft r->c float
 void fft2(ObjexxFCL::FArray2D< float > &X , ObjexxFCL::FArray2D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size());
@@ -135,7 +135,7 @@ void fft2(ObjexxFCL::FArray2D< float > &X , ObjexxFCL::FArray2D< std::complex<do
 	fft2(Xcpx,fX);
 }
 
-///@brief 2D inverse ifft c->r float
+/// @brief 2D inverse ifft c->r float
 void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D< float > &X) {
 	ObjexxFCL::FArray2D< std::complex<double> > Xcpx;
 	ifft2( fX,Xcpx );
@@ -148,7 +148,7 @@ void ifft2(ObjexxFCL::FArray2D< std::complex<double> > &fX , ObjexxFCL::FArray2D
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
-///@brief 3D fft c->c double
+/// @brief 3D fft c->c double
 void fft3(ObjexxFCL::FArray3D< std::complex<double> > const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
 	kiss_fftnd_state fft_params;
 	std::vector< int > dims(3);
@@ -158,7 +158,7 @@ void fft3(ObjexxFCL::FArray3D< std::complex<double> > const &X , ObjexxFCL::FArr
 	kiss_fftnd(&fft_params, &X[0], &fX[0] );
 }
 
-///@brief 3D inverse fft c->c double
+/// @brief 3D inverse fft c->c double
 void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< std::complex<double> > &X) {
 	kiss_fftnd_state ifft_params;
 	std::vector< int > dims(3);
@@ -175,7 +175,7 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FA
 /////////////////////////////////////
 //3D FFT and inverse-FFT with dynamic variable allocation.
 //Avoiding static variables occpupy unnecessary space when the data is large.
-///@brief 3D fft c->c double with no static
+/// @brief 3D fft c->c double with no static
 void fft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
 	kiss_fftnd_state fft_params;
 	std::vector< int > dims(3);
@@ -185,7 +185,7 @@ void fft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &X , ObjexxFCL::FA
 	kiss_fftnd(&fft_params, &X[0], &fX[0] );
 }
 
-///@brief 3D inverse fft c->c doublewith no static
+/// @brief 3D inverse fft c->c doublewith no static
 void ifft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::FArray3D< std::complex<double> > &X) {
 	kiss_fftnd_state ifft_params;
 	std::vector< int > dims(3);
@@ -200,7 +200,7 @@ void ifft3_dynamic(ObjexxFCL::FArray3D< std::complex<double> > &fX , ObjexxFCL::
 }
 //////////////////////////////////
 
-///@brief 3D fft r->c double
+/// @brief 3D fft r->c double
 void fft3(ObjexxFCL::FArray3D< double > const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size(),X.I3().size());
@@ -209,7 +209,7 @@ void fft3(ObjexxFCL::FArray3D< double > const &X , ObjexxFCL::FArray3D< std::com
 	fft3(Xcpx,fX);
 }
 
-///@brief 3D inverse ifft c->r double
+/// @brief 3D inverse ifft c->r double
 void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< double > &X) {
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	ifft3( fX,Xcpx );
@@ -218,7 +218,7 @@ void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FA
 	for (int i=0; i<dimsProd; ++i) X[i] = (double) Xcpx[i].real();
 }
 
-///@brief 3D fft r->c float
+/// @brief 3D fft r->c float
 void fft3(ObjexxFCL::FArray3D< float > const &X , ObjexxFCL::FArray3D< std::complex<double> > &fX) {
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	Xcpx.dimension (X.I1().size(),X.I2().size(),X.I3().size());
@@ -227,7 +227,7 @@ void fft3(ObjexxFCL::FArray3D< float > const &X , ObjexxFCL::FArray3D< std::comp
 	fft3(Xcpx,fX);
 }
 
-///@brief 3D inverse ifft c->r float
+/// @brief 3D inverse ifft c->r float
 void ifft3(ObjexxFCL::FArray3D< std::complex<double> > const &fX , ObjexxFCL::FArray3D< float > &X) {
 	ObjexxFCL::FArray3D< std::complex<double> > Xcpx;
 	ifft3( fX,Xcpx );

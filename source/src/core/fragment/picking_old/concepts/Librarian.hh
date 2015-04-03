@@ -26,8 +26,6 @@
 #include <core/types.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <algorithm>

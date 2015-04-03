@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Cubic_spline
 ///
 /// @brief
 /// read the header file!
@@ -18,9 +17,8 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 ///
-/// @last_modified August 20 2010
 /////////////////////////////////////////////////////////////////////////
 #include <numeric/interpolation/spline/Cubic_spline.hh>
 #include <numeric/MathVector_operations.hh>
@@ -31,8 +29,6 @@
 namespace numeric {
 namespace interpolation {
 namespace spline {
-
-
 
 
 //  train CubicSpline
@@ -120,9 +116,6 @@ CubicSpline &CubicSpline::train
 }
 
 
-
-
-
 /// @brief return value at certain ARGUMENT
 /// @param ARGUMENT x value
 /// @return function value at ARGUMENT
@@ -204,8 +197,6 @@ Real CubicSpline::F( const Real &ARGUMENT) const
 
 	return Function( i - 1, i, dxp);
 }
-
-
 
 
 /// @brief return derivative at certain ARGUMENT
@@ -299,7 +290,6 @@ std::pair< Real, Real> CubicSpline::FdF( const Real &ARGUMENT) const
 }
 
 
-
 ///////////////////////
 // helper  functions //
 ///////////////////////
@@ -321,7 +311,6 @@ Real CubicSpline::Function( const int INDEX_LEFT, const int INDEX_RIGHT, const R
 			dxm * values_( INDEX_LEFT) + DXP  * values_( INDEX_RIGHT)
 			+ dx3m * dsecox_( INDEX_LEFT) + dx3p * dsecox_( INDEX_RIGHT);
 }
-
 
 
 /// @brief calculate derivative between two cells

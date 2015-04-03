@@ -11,7 +11,7 @@
 /// @brief  a collection classes of the FragData and SingleResidueFragData class hirachy
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/SingleResidueFragData.hh>
@@ -21,7 +21,6 @@
 #include <core/fragment/Frame.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 

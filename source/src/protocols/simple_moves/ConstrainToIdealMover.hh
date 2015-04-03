@@ -48,7 +48,7 @@ namespace simple_moves {
 //test with cen and fa poses
 //check RNA assumptions in i_want_this_atom_to_move
 
-///@details Idealization is generally performed by adding constraints to the Pose that keep bond lengths and angles within the appropriate ranges; then freeing those DOFs and performing minimization or sampling.  This protocols::moves::Mover creates bond and angle constraints compatible with idealization; it does not modify the input Pose other than by adding constraints.  If your pose is already ideal, this is likely to unidealize it.  Also, it will add a LOT of degrees of freedom to your minimization, which may lead to significant slowdowns!
+/// @details Idealization is generally performed by adding constraints to the Pose that keep bond lengths and angles within the appropriate ranges; then freeing those DOFs and performing minimization or sampling.  This protocols::moves::Mover creates bond and angle constraints compatible with idealization; it does not modify the input Pose other than by adding constraints.  If your pose is already ideal, this is likely to unidealize it.  Also, it will add a LOT of degrees of freedom to your minimization, which may lead to significant slowdowns!
 
 class ConstrainToIdealMover : public protocols::moves::Mover {
 
@@ -68,10 +68,10 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 	virtual moves::MoverOP clone() const;
 
-	///@brief setter for AllowInsert; makes a shallow copy
+	/// @brief setter for AllowInsert; makes a shallow copy
 	void set_allow_insert( protocols::toolbox::AllowInsertCOP allow_insert );
 
-	///@brief getter for AllowInsert
+	/// @brief getter for AllowInsert
 	protocols::toolbox::AllowInsertCOP get_allow_insert() const;
 
 	void set_score_type( core::scoring::ScoreType const setting );
@@ -80,26 +80,26 @@ public:
 
 private:
 
-	///@most of the work happens here.  This modifies the movemap and adds constraints to the Pose that will gently idealize angles and bond lengths
+	/// @most of the work happens here.  This modifies the movemap and adds constraints to the Pose that will gently idealize angles and bond lengths
 	void
 	vary_bond_geometry(
 		core::pose::Pose & pose,
 		core::kinematics::MoveMap & mm,
 		core::pose::Pose const & pose_reference ) const;
 
-	///@brief this function generates a "reference pose" for the input pose that has the same chemistry (as best as possible), but has ideal angles and bond lengths.  These are then used to generate the constraints later.  Virtual in case you want to make the reference in a different fashion.
+	/// @brief this function generates a "reference pose" for the input pose that has the same chemistry (as best as possible), but has ideal angles and bond lengths.  These are then used to generate the constraints later.  Virtual in case you want to make the reference in a different fashion.
 	virtual
 	void
 	create_pose_reference(
 		core::pose::Pose const & pose,
 		core::pose::Pose & pose_reference );
 
-	///@brief maps to other version of function; should this type of atom be moved during idealization?
+	/// @brief maps to other version of function; should this type of atom be moved during idealization?
 	virtual
 	bool
 	i_want_this_atom_to_move( core::pose::Pose const & pose, core::id::AtomID const & atom_id ) const;
 
-	///@brief returns whether or not this atom should move during idealiation categorically; mostly boils down to "don't move the sidechains".  Virtual in case you want to deny using a different metric.
+	/// @brief returns whether or not this atom should move during idealiation categorically; mostly boils down to "don't move the sidechains".  Virtual in case you want to deny using a different metric.
 	virtual
 	bool
 	i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k ) const;
@@ -153,7 +153,7 @@ private:
 		core::scoring::constraints::ConstraintSetOP & cst_set ) const;
 
 private:
-	///@brief allow_insert has info on which atoms should move; complementary to move_map (which instead focuses on DOFs).
+	/// @brief allow_insert has info on which atoms should move; complementary to move_map (which instead focuses on DOFs).
 	protocols::toolbox::AllowInsertCOP allow_insert_;
 
 	core::Real const bond_length_sd_;

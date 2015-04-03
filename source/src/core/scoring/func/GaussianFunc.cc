@@ -12,7 +12,6 @@
 /// @author James Thompson
 
 
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/GaussianFunc.hh>
 
 #include <core/scoring/constraints/util.hh>
@@ -21,9 +20,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ Headers
 

@@ -17,7 +17,6 @@
 // Unit headers
 #include <protocols/simple_moves/ScoreMover.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <platform/types.hh>

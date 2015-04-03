@@ -15,15 +15,11 @@
 #define INCLUDED_protocols_ligand_docking_ligand_options_interface_distance_functions_hh
 
 //// Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 
 /// Project Headings
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <map>
-// AUTO-REMOVED #include <set>
 
 #include <core/conformation/Residue.fwd.hh>
 

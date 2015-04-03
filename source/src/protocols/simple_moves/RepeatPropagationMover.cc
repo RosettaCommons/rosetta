@@ -62,8 +62,6 @@
 #include <string>
 
 
-
-
 using namespace core;
 using namespace std;
 using utility::vector1;

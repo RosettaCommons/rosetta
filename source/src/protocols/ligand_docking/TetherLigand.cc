@@ -28,7 +28,6 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>

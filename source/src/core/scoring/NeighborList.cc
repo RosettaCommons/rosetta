@@ -16,15 +16,12 @@
 #include <core/scoring/NeighborList.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh> // necessary?
 //#include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <basic/options/option.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 // option key includes
@@ -32,9 +29,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
-
-
 
 
 namespace core {

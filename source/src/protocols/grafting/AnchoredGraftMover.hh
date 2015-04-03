@@ -43,7 +43,7 @@ namespace grafting {
 	using protocols::simple_moves::MinMoverOP;
 	using protocols::simple_moves::SmallMoverOP;
 	
-///@brief Grafting class adapted from Steven Lewis' pose_into_pose algorithm.
+/// @brief Grafting class adapted from Steven Lewis' pose_into_pose algorithm.
 ///
 /// 1) Inserts the pose piece into the scaffold pose, deleting any overhang residues or residues in the region the insertion will occur between.
 /// 2) Connects the left side of the piece to the scaffold by inserting ideal geometry 
@@ -66,7 +66,7 @@ namespace grafting {
 ///
 /// see also: grafting/util.hh.
 ///
-///@details Uses a single arm to close the loop by default.
+/// @details Uses a single arm to close the loop by default.
 /// ****Nter_loop_start---->Piece----> | Cter_loop_end****
 /// Default movemap keeps insert Frozen in dihedral angle space, But think of the insert as part of a CCD giant arm.
 /// Default flexibility on Nter and Cter is only two residues (--> part of diagram).
@@ -82,7 +82,7 @@ public:
     
 	AnchoredGraftMover();
 	
-	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
+	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	AnchoredGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
 
 	AnchoredGraftMover(
@@ -99,7 +99,7 @@ public:
 	virtual void 
 	set_defaults();
 	
-	///@brief Grafts the piece into the pose, uses CCD to close the connection.  Insert does not change dihedral space, but DOES change cartesian space by default.
+	/// @brief Grafts the piece into the pose, uses CCD to close the connection.  Insert does not change dihedral space, but DOES change cartesian space by default.
 	///Does not repack any sidechains.
 	///Deletes overhang and region between start and end if residues are present.
 	virtual void 
@@ -125,18 +125,18 @@ public:
 	
 	
 public:
-	///@brief Stop at closure of both ends? 
+	/// @brief Stop at closure of both ends? 
 	/// Default True.
 	void stop_at_closure(bool stop_at_closure);
 	
-	///@brief Stop at closure of both ends?
+	/// @brief Stop at closure of both ends?
 	bool stop_at_closure();
 	
-	///@brief Pack sidechains of flexible residues, insert and neighbors at end?
+	/// @brief Pack sidechains of flexible residues, insert and neighbors at end?
 	/// Default True.
 	void final_repack(bool final_repack);
 	
-	///@brief Pack sidechains of flexible residues, insert and neighbors at end?
+	/// @brief Pack sidechains of flexible residues, insert and neighbors at end?
 	bool final_repack();
 	
 	void idealize_insert(bool idealize);
@@ -151,23 +151,23 @@ public:
     
 	virtual void set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
 	
-	///@brief Sets the mintype for the MinMover
+	/// @brief Sets the mintype for the MinMover
 	void set_mintype(std::string mintype);
 
-	///@brief Sets the mover to skip the small mover sampling step.
+	/// @brief Sets the mover to skip the small mover sampling step.
 	void set_skip_sampling(bool skip_sampling);
 	
 public:
 
-	///@brief Sets scaffold flexiblity on either end of scaffold
+	/// @brief Sets scaffold flexiblity on either end of scaffold
 	virtual void set_scaffold_flexibility(Size const Nter_scaffold_flexibility, Size const Cter_scaffold_flexibility);
 	
-	///@brief Sets insert flexibility on either end of insert
+	/// @brief Sets insert flexibility on either end of insert
 	virtual void set_insert_flexibility(Size const Nter_insert_flexibility, Size const Cter_insert_flexibility);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///@brief Advanced way to set flexibility and residues used for CCD
-	///@details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
+	/// @brief Advanced way to set flexibility and residues used for CCD
+	/// @details Will combine the movemaps for apply, and renumber everything. Flexible residues in multiple chains not recommended.
 	/// From the first bb flexible residue to the last will act as one giant CCD arm, 
 	///  using those residues for minimization and CCD that have bb true in movemap. 
 	///  This can be amazing as you can use loop regions in various parts of your protein to help the graft complete.
@@ -176,7 +176,7 @@ public:
 	
 	virtual void set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
 
-	///@brief Neighbor distance for any repacking of side-chains.
+	/// @brief Neighbor distance for any repacking of side-chains.
 	void neighbor_dis(core::Real dis);
 	core::Real neighbor_dis() const;
 	
@@ -185,7 +185,7 @@ public:
 	
 	Size get_cterm_scaffold_flexibility() ;
 
-	///@returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
+	/// @returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
 	Size get_Cter_loop_end();
 
 	protocols::loops::Loops
@@ -202,7 +202,7 @@ protected:
     	virtual void 
 	set_default_fa_scorefunction();
 	
-	///@brief Smooth version of Steven's original scorefunction used for grafting
+	/// @brief Smooth version of Steven's original scorefunction used for grafting
 	virtual void
 	set_default_cen_scorefunction();
 	
@@ -215,19 +215,19 @@ protected:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	
-	///@brief sets up either the default movemap or a new combined movemap at apply time.  Updates regions as needed.
+	/// @brief sets up either the default movemap or a new combined movemap at apply time.  Updates regions as needed.
 	virtual void 
 	setup_movemap_and_regions(Pose & pose);
 	
-	///@brief Sets up the default movemap
+	/// @brief Sets up the default movemap
 	virtual void 
 	set_default_movemap();
 
-	///@brief Sets up the regions at apply using insert variables and flexibility.
+	/// @brief Sets up the regions at apply using insert variables and flexibility.
 	virtual void 
 	set_regions_from_flexibility();
     
-	///@brief Sets up region variables from the class movemap for the combined pose.  
+	/// @brief Sets up region variables from the class movemap for the combined pose.  
 	virtual void 
 	set_regions_from_movemap(Pose & pose);
 
@@ -235,7 +235,7 @@ protected:
 protected:
 	//Testing
 		
-	///@brief TESTING ONLY Sets the protocol to 'randomize' the flexible residues before trying to graft.  This is used to test the protocol by grafting a piece of a protein back onto itself and looking at RMSD.
+	/// @brief TESTING ONLY Sets the protocol to 'randomize' the flexible residues before trying to graft.  This is used to test the protocol by grafting a piece of a protein back onto itself and looking at RMSD.
 	void 
 	set_test_control_mode(bool test_control_mode);
 	

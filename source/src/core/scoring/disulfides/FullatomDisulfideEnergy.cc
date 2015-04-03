@@ -113,7 +113,6 @@ FullatomDisulfideEnergyCreator::score_types_for_method() const {
 }
 
 
-
 FullatomDisulfideEnergy::FullatomDisulfideEnergy( FullatomDisulfidePotential const & potential )
 :
 	parent( methods::EnergyMethodCreatorOP( methods::EnergyMethodCreatorOP( new FullatomDisulfideEnergyCreator ) ) ),
@@ -410,7 +409,6 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 		F2 += f2;
 	}
 }
-
 
 
 Real

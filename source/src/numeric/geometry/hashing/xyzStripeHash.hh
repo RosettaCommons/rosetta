@@ -230,7 +230,6 @@ class xyzStripeHash : public utility::pointer::ReferenceCount {
  };
 
 
-
 } // namespace hashing
 } // namespace geometry
 } // namespace numeric

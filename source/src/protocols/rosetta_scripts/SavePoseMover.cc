@@ -18,7 +18,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 

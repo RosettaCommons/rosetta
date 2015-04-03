@@ -50,7 +50,7 @@ P_AA_EnergyCreator::score_types_for_method() const {
 }
 
 
-///@remarks
+/// @remarks
 /// get_P_AA calls a method in ScoringManager which create a new object of type P_AA.  The constructor for that created object
 /// reads in the three database files: p_aa, p_aa_pp, and p_aa_n.  That object is returned and then stored as a private member
 /// variable here.
@@ -81,7 +81,7 @@ P_AA_Energy::residue_energy(
 }
 
 
-///@remarks no DOF to vary for P_AA, so just return 0.0 like the reference energy does
+/// @remarks no DOF to vary for P_AA, so just return 0.0 like the reference energy does
 Real
 P_AA_Energy::eval_dof_derivative(
 	id::DOF_ID const & ,// dof_id,

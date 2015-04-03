@@ -113,7 +113,6 @@ Vector SurfaceOrientMover::calculate_recenter_vector( core::Vector const & total
 	}
 
 
-
 }	//surfaceDockingProtocol
 
 }	//protocol

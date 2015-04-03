@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/CoreDunbrackFilter.hh
 /// @brief header file for CoreDunbrackFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

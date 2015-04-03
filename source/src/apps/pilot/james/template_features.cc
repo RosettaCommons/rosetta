@@ -15,11 +15,8 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -27,12 +24,9 @@
 
 #include <core/sequence/util.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 
@@ -48,7 +42,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
 //Auto Headers

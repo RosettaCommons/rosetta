@@ -46,7 +46,7 @@ public:
 	typedef WholeStructureEnergy  parent;
 public:
 
-	///
+
 	DirectReadoutEnergy();
 
 

@@ -52,7 +52,6 @@ enum HBDefType {
 };
 
 
-
 class HBondFeatures : public protocols::features::FeaturesReporter {
 public:
 	HBondFeatures();
@@ -64,11 +63,11 @@ public:
 
 	virtual ~HBondFeatures();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -111,25 +110,25 @@ private:
 		utility::sql_database::sessionOP db_session) const;
 
 public:
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief get what criteria should be used to define what
+	/// @brief get what criteria should be used to define what
 	///constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  HBDefType definition_type() const;
 
-	///@brief set what criteria should be used to define what
+	/// @brief set what criteria should be used to define what
 	///constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  void definition_type( HBDefType definition_type );
 
 
-	///@brief get the definition threshold that should be
+	/// @brief get the definition threshold that should be
 	///used to define what constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  core::Real definition_threshold() const;
 
-	///@brief set the definition threshold that should be
+	/// @brief set the definition threshold that should be
 	///used to define what constitutes a hydrogen bond
 	// Undefined, commenting out to fix PyRosetta build  void definition_threshold( core::Real definition_threshold );
 
@@ -141,7 +140,7 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,

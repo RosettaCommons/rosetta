@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_LJ_BaseEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;

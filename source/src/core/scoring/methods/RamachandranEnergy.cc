@@ -75,7 +75,7 @@ RamachandranEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 RamachandranEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -149,7 +149,6 @@ RamachandranEnergy::eval_residue_dof_derivative(
 	return numeric::conversions::degrees( weights[ rama ] * deriv );
 
 }
-
 
 
 Real

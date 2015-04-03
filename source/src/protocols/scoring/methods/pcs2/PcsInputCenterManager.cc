@@ -8,14 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsInputCenterManager.cc
  ///
  /// @brief Singleton that hold everything about the input PCS
  /// This avoid multiple reading of the input file.
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -25,9 +24,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 

@@ -17,7 +17,6 @@
 //unit headers
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobOutputterObserver.hh>
-// AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -67,7 +66,7 @@ public:
 
 	virtual ~Job();
 
-	///@brief Note: only compare if the pointers to the poses are to the
+	/// @brief Note: only compare if the pointers to the poses are to the
 	///same location
 	friend
 	bool
@@ -87,44 +86,44 @@ public:
 	operator << ( std::ostream & out, const Job & job );
 
 
-	///@brief access to inner-job ... use is discouraged - use sparingly!
+	/// @brief access to inner-job ... use is discouraged - use sparingly!
 	/// --- DO NOT use my_job->inner_job()->get_pose()
 	/// INSTEAD use my_job->get_pose()
 	InnerJobCOP inner_job() const;
 
-	///@brief return the input tag (a short string, generally)
+	/// @brief return the input tag (a short string, generally)
 	std::string const & input_tag() const;
 
-	///@brief nonconst access is intended only for the JobInputter to load poses into the InnerJob, and the Parser to add constraints, and the JobDistributor to delete completed inputs (recycle memory)
+	/// @brief nonconst access is intended only for the JobInputter to load poses into the InnerJob, and the Parser to add constraints, and the JobDistributor to delete completed inputs (recycle memory)
 	InnerJobOP inner_job_nonconst();
 
 	///get_pose : will return
 	// 1)  a pose saved in Job-Object ... if available
 	// 2)  re-route the call to the JobInputter::pose_from_job
 
-	///@brief return a COP to the input pose
+	/// @brief return a COP to the input pose
 	core::pose::PoseCOP get_pose() const;
 
-	///@brief in-place copy of input pose
+	/// @brief in-place copy of input pose
 	void get_pose( core::pose::Pose& ) const;
 
 	core::Size nstruct_index() const;
-	///@brief
+	/// @brief
 	core::Size nstruct_max() const;
 
 	///////////////////////////THIS SECTION OF FUNCTIONS IS MEANT TO BE USED BY MOVERS/////////////////////////////
 	//It is safe to call these functions even in the absence of a job distributor - it will store the data in a dummy object.  You are not making your protocol dependent on JD2 by using these functions (although this extra output might get "lost" if you do not emit it by another method like the Tracers.) -- SML 10/20/11
 	//functions for loading output info into the job
-	///@brief add an output string
+	/// @brief add an output string
 	void add_string( std::string const & string_in );
 
-	///@brief add output strings
+	/// @brief add output strings
 	void add_strings( Strings const & );
 
-	///@brief add a string/string pair
+	/// @brief add a string/string pair
 	void add_string_string_pair( std::string const & string1, std::string const & string2 );
 
-	///@brief add a string/real pair
+	/// @brief add a string/real pair
 	void add_string_real_pair( std::string const & string_in, core::Real const real_in );
 
 
@@ -189,9 +188,9 @@ public:
 private:
 	//InnerJobCOP inner_job() const;
 	//bookkeeping data
-	///@brief a pointer to the "heavy" InnerJob which maintains the starting pose for the job (shared across nstruct)
+	/// @brief a pointer to the "heavy" InnerJob which maintains the starting pose for the job (shared across nstruct)
 	InnerJobOP inner_job_;
-	///@brief which nstruct is this?
+	/// @brief which nstruct is this?
 	core::Size const nstruct_index_;
 
 	std::string status_prefix_;
@@ -200,14 +199,14 @@ private:
 	// put these into an extra class and store a pointer ... NULL if nothing has been stored yet?
 	// cleanup after job is written to output... OL 6/2/09
 	//Storage units for output data
-	///@brief used for arbitrary string data (stuff you've preformatted).  Intended to be appended to the end of a PDB or dumped to a tracer if not in a PDB output mode.
+	/// @brief used for arbitrary string data (stuff you've preformatted).  Intended to be appended to the end of a PDB or dumped to a tracer if not in a PDB output mode.
 	Strings long_strings_;
-	///@brief string-string pairs.  Inserted into SCORE: lines in scorefiles/silentfiles.
+	/// @brief string-string pairs.  Inserted into SCORE: lines in scorefiles/silentfiles.
 	StringStringPairs string_string_pairs_;
-	///@brief string-real pairs (scoretype/score pairs).  Inserted into SCORE: lines in scorefiles/silentfiles
+	/// @brief string-real pairs (scoretype/score pairs).  Inserted into SCORE: lines in scorefiles/silentfiles
 	StringRealPairs string_real_pairs_;
 
-	///@brief container of evaluators
+	/// @brief container of evaluators
 	//Oliver??
 
 	bool completed_;
@@ -224,7 +223,6 @@ extern JobCOP const JD2_BOGUS_JOB;
 
 } // namespace jd2
 } // namespace protocols
-
 
 
 #endif //INCLUDED_protocols_jd2_Job_HH

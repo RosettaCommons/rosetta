@@ -23,19 +23,10 @@
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 /// ObjexxFCL headers
@@ -44,7 +35,6 @@
 #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
-
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -79,7 +69,6 @@ int mpi_npes(){
 }
 
 
-
 core::Real get_time(){
 	#ifdef USEMPI
 	 return MPI_Wtime();
@@ -87,12 +76,6 @@ core::Real get_time(){
 	 return (core::Real) time(NULL);
 	#endif
 }
-
-
-
-
-
-
 
 
 MPI_WorkUnitManager::MPI_WorkUnitManager( char machine_letter  ):
@@ -123,14 +106,9 @@ machine_letter_( machine_letter )
 }
 
 
-
-
 char MPI_WorkUnitManager::get_machine_letter(){
 	return machine_letter_;
 }
-
-
-
 
 
 void
@@ -206,9 +184,6 @@ MPI_WorkUnitManager::process_incoming_msgs( bool MPI_ONLY( wait_until_message ) 
 	}
 #endif
 }
-
-
-
 
 
 void MPI_WorkUnitManager::send_MPI_workunit( const WorkUnitBaseOP& MPI_ONLY(wu), int MPI_ONLY( dest_rank ) ) const {
@@ -376,7 +351,6 @@ void MPI_WorkUnitManager::send_next_WU_on_request( ){
 }
 
 
-
 core::Real MPI_WorkUnitManager::start_timer( MPI_TIMING timing_mode ) const
 {
 	core::Real current_time = get_time();
@@ -464,7 +438,6 @@ void MPI_WorkUnitManager::print_stats( )
 		std::endl;
 
 }
-
 
 
 } // namespace wum

@@ -9,7 +9,7 @@
 
 /// @file SWA_PoseMinimizer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

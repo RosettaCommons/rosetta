@@ -27,12 +27,11 @@
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
-//
+
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <sstream>
-
 
 
 static thread_local basic::Tracer TR( "fpd_bbg" );

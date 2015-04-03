@@ -9,7 +9,7 @@
 
 /// @file RNA de novo fragment assembly
 /// @brief protocols that are specific to CoarseRNA_DeNovoProtocol
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -52,7 +52,6 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // External library headers
 
@@ -513,7 +512,6 @@ CoarseRNA_DeNovoProtocol::initialize_constraints( core::pose::Pose & pose ) {
 	}
 
 }
-
 
 
 } // namespace rna

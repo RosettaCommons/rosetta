@@ -694,7 +694,6 @@ void RemodelLoopMover::repeat_propagation( //utility function
 	using namespace core::scoring::methods;
 
 
-
 	//repeat_pose.dump_pdb("repeatPose_in_rep_propagate.pdb");
 
 	Size segment_length = repeat_length_/repeat_number;
@@ -931,9 +930,6 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		} */
 }
 
-
-///
-/// @begin RemodelLoopMover::apply
 ///
 /// @remarks Sets protocols::moves::MS_SUCCESS upon successful closure of all loops, otherwise sets protocols::moves::FAIL_RETRY.
 ///
@@ -1355,8 +1351,6 @@ RemodelLoopMover::get_name() const {
 }
 
 ///
-/// @begin RemodelLoopMover::randomize_stage
-///
 /// @brief
 /// randomize loops
 ///
@@ -1498,8 +1492,6 @@ fast_clash_check(
   }
   return false;
 }
-
-
 
 
 /// @brief independent stage: single loop movement prior to MC accept/reject
@@ -2280,7 +2272,6 @@ simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, t
 				}
 		}
 }
-
 
 
 /// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
@@ -3299,7 +3290,7 @@ RemodelLoopMover::Size RemodelLoopMover::count_moveable_residues(
 	return n_moveable;
 }
 
-///@brief copies phi,psi,omega from a starting pose.
+/// @brief copies phi,psi,omega from a starting pose.
 void RemodelLoopMover::set_starting_pdb(Pose & pose){
 		using namespace basic::options;
 		using namespace OptionKeys::remodel;
@@ -3319,7 +3310,7 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 		pose.set_secstruct(1,inputPose->secstruct(repeatRes));
 }
 
-///@brief sets helices to there ideal value before any sampling begins.
+/// @brief sets helices to there ideal value before any sampling begins.
 void RemodelLoopMover::set_ideal_helices(Pose & pose){
 		using namespace basic::options;
 		using namespace OptionKeys::remodel;

@@ -85,8 +85,6 @@ DONE
 // }
 
 
-
-
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
@@ -289,7 +287,6 @@ void xform_pose_rev( core::pose::Pose & pose, core::kinematics::Stub const & s )
 }
 
 
-
 void trans_pose( Pose & pose, Vecf const & trans, Size start=1, Size end=0 ) {
 	if(0==end) end = pose.n_residue();
 	for(Size ir = start; ir <= end; ++ir) {
@@ -382,8 +379,6 @@ struct LMAX {
 int compareLMAX(const LMAX a,const LMAX b) {
 	return a.score > b.score;
 }
-
-
 
 
 struct TCDock {
@@ -492,8 +487,6 @@ struct TCDock {
 				return;
 			}
 		}
-
-
 
 
 		cmp1name_ = utility::file_basename(cmp1pdb);
@@ -882,7 +875,6 @@ struct TCDock {
 			// symm.dump_pdb("test_sym.pdb");
 		}
 		core::io::pdb::dump_pdb(symm,option[out::file::o]()+"/"+fname);
-
 
 
 		if(lnscore_){
@@ -1637,11 +1629,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-
-
 
 

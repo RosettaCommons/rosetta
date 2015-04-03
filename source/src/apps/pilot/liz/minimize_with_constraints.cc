@@ -16,17 +16,11 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -40,35 +34,22 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/PDBSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 // Auto-header: duplicate removed #include <core/io/silent/ProteinSilentStruct.hh>
 // Auto-header: duplicate removed #include <core/io/silent/SilentFileData.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/comparative_modeling/ConstraintRemodelMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 using basic::T;
@@ -76,7 +57,6 @@ using basic::Warning;
 using basic::Error;
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -90,7 +70,6 @@ using basic::Error;
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <utility/io/mpistream.hh>
-
 
 
 int

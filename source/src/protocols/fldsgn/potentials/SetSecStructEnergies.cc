@@ -45,12 +45,10 @@
 #include <utility>
 
 // boost
-// AUTO-REMOVED #include <boost/lexical_cast.hpp>
 
 #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -356,7 +354,7 @@ SetSecStructEnergies::parse_my_tag(
 	sfx_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );
 	TR << "score function, " << sfxn << ", is used. " << std::endl;
 
-	///
+
 	if( tag->hasOption( "natbias_ss" ) ) ss_weight_ = tag->getOption< Real >( "natbias_ss" );
 	if( tag->hasOption( "natbias_hh" ) ) hh_weight_ = tag->getOption< Real >( "natbias_hh" );
 	if( tag->hasOption( "natbias_hs" ) ) hs_weight_ = tag->getOption< Real >( "natbias_hs" );

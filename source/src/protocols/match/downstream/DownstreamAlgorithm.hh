@@ -28,12 +28,9 @@
 
 #include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/ExternalGeomSampler.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
@@ -41,7 +38,6 @@
 
 // C++ headers
 #include <list>
-// AUTO-REMOVED #include <string>
 
 #include <core/id/AtomID.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>

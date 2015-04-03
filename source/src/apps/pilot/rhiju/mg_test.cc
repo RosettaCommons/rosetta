@@ -573,7 +573,6 @@ mg_scan_test()
 	using namespace core::scoring::methods;
 
 
-
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
 	std::string pdb_file = option[ in::file::s ]()[1];
 	std::string silent_file = option[ out::file::silent ]();

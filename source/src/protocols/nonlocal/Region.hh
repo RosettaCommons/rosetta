@@ -30,7 +30,7 @@ class Region : public utility::pointer::ReferenceCount {
   typedef core::Size Size;
 
  public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Region();
   /// @brief Creates a new region with the specified start/stop residues
   Region(Size start_pos, Size stop_pos);

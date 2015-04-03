@@ -30,5 +30,4 @@ typedef  utility::pointer::shared_ptr< GasteigerAtomTypeData const >  GasteigerA
 } // core
 
 
-
 #endif

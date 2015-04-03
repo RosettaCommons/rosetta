@@ -31,7 +31,6 @@
 #include <numeric/numeric.functions.hh>
 #include <numeric/interpolation/interpolation.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // option key includes
 
@@ -40,8 +39,6 @@
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
-
-
 
 
 namespace core {
@@ -207,7 +204,6 @@ debug_assert( res2.is_polar() || res2.is_aromatic() ); // Only for polar amino a
 	{
 		return Energy( 0.0 );
 	}
-
 
 
 	if ( pair_score_min_sep_ > 1 ) { // Short-circuit for speed

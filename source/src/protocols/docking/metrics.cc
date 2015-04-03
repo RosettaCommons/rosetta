@@ -9,7 +9,7 @@
 
 /// @file metrics
 /// @brief protocols that are specific to docking low resolution
-/// @detailed
+/// @details
 /// @author Brian Weitzner
 
 // Unit Headers

@@ -24,31 +24,23 @@
 //// Rosetta Headers
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 #include <basic/Tracer.hh>
 
 //Utility Headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++ Headers
 #include <iostream>
@@ -57,7 +49,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -66,7 +57,6 @@
 #include <utility/keys/Key3Vector.hh>
 
 //Auto Headers
-
 
 
 namespace protocols {

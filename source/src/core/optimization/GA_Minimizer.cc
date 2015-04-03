@@ -190,7 +190,6 @@ void GA_Minimizer::step(std::vector<EItem> &pop, int &c_time, int &mres, EItem &
 }
 
 
-
 void GA_Minimizer::mutate(EItem &V)
 {
 	for(Size i=1; i<=V.v.size(); i++) {

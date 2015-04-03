@@ -23,9 +23,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

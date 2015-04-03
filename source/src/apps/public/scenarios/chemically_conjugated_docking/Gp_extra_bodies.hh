@@ -43,7 +43,7 @@ namespace chemically_conjugated_docking {
 
 
 ////////////////////////////extra bodies/////////////////////////////////////////////////
-///@brief The purpose of this code is to allow for static extra things
+/// @brief The purpose of this code is to allow for static extra things
 ///in the system; for its original incarnations, to allow for a RING
 ///domain to occlude its site on E2 and a GAP (+MG +GDP) to occlude ras
 utility::vector1< core::Size > add_extra_bodies( core::pose::Pose & pose, basic::Tracer & TR ) {

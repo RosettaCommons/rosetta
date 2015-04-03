@@ -18,7 +18,6 @@
 #include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // STL Headers
 #include <iosfwd>

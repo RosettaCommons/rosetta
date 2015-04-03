@@ -30,8 +30,6 @@
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecondaryMatcherToDownstreamResidue.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/GeometrySecMatchRPE.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/ScoringSecMatchRPE.hh>
 #include <protocols/match/downstream/SecMatchEvaluatorFactory.hh>
 
 #include <protocols/match/output/MatchProcessor.hh>
@@ -42,7 +40,6 @@
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -54,10 +51,8 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
@@ -71,7 +66,6 @@
 
 // C++ headers
 #include <map>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -155,7 +149,6 @@ void Matcher::set_original_scaffold_build_points_for_constraint(
 	std::copy( uniq_resids.begin(), uniq_resids.end(), pose_build_resids_.begin() );
 
 }
-
 
 
 void Matcher::set_n_geometric_constraints( Size n_constraints )
@@ -1195,7 +1188,6 @@ bool Matcher::find_hits()
 
 	return generate_hits();
 }
-
 
 
 void

@@ -27,7 +27,6 @@
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
@@ -106,7 +105,6 @@ private:
 };
 
 typedef utility::pointer::shared_ptr< ExtractATD > ExtractATDOP;
-
 
 
 int

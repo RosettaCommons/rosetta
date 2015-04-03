@@ -158,8 +158,6 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 //  Set up constraints when gap is 1,2, etc.
 //
 //  encapsulate -- move into a namespace? lay out plans for others?
-//
-
 
 
 // A lot of these options should be placed into an 'official' namespace
@@ -373,7 +371,6 @@ swa_rna_sample()
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
@@ -541,6 +538,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
 
 

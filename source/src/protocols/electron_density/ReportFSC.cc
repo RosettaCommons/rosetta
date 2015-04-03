@@ -136,7 +136,7 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	pose.pdb_info()->remarks().push_back( remark );
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ReportFSC::parse_my_tag(
 		TagCOP const tag,

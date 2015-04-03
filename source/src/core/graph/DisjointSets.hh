@@ -15,10 +15,8 @@
 #define INCLUDED_core_graph_DisjointSets_hh
 
 // Project Headers
-// AUTO-REMOVED #include <platform/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
@@ -84,7 +82,6 @@ private:
 	mutable utility::vector1< DS_Node > nodes_;
 
 };
-
 
 
 }

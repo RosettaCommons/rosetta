@@ -16,25 +16,21 @@
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
-
 
 
 static basic::Tracer TR("core.import_pose.atom_tree_diffs.atom_tree_diff.cxxtest");

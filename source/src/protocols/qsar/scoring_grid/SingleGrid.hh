@@ -66,7 +66,7 @@ public:
 	virtual void deserialize(utility::json_spirit::mObject data);
 	/// @brief return a constant reference to the grid
 	core::grid::CartGrid<core::Real> const &  get_grid();
-	///@brief set the grid type
+	/// @brief set the grid type
 	void set_type(std::string type);
 	/// @brief return the grids type
 	virtual std::string get_type();

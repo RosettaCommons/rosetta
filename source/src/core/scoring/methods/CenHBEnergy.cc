@@ -16,18 +16,10 @@
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
 #include <core/scoring/CenHBPotential.hh>
 
-// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 
 #include <numeric/xyz.functions.hh>
@@ -35,7 +27,6 @@
 #include <numeric/conversions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
-// AUTO-REMOVED #include <numeric/deriv/dihedral_deriv.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <utility/vector1.hh>
@@ -87,21 +78,19 @@ CenHBEnergy::CenHBEnergy( CenHBEnergy const & src ):
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 CenHBEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 	pose.update_residue_neighbors();
 }
 
 
-///
 void
 CenHBEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
 	pose.update_residue_neighbors();
 }
 
 
-///
 void
 CenHBEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -294,7 +283,6 @@ core::Size
 CenHBEnergy::version() const { 
 	return 1; // Initial versioning
 }
-
 
 
 }

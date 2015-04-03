@@ -1,4 +1,3 @@
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -9,7 +8,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>

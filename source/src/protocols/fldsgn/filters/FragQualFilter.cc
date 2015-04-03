@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/FragQualFilter.cc
 /// @brief filter structures by packstat score
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -20,9 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>
 
 // Utility headers

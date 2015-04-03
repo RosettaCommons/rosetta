@@ -21,7 +21,6 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
 // STL Headers

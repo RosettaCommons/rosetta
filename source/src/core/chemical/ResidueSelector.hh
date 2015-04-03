@@ -31,7 +31,7 @@
 ///
 ///     The individual constraints that make up the ResidueSelector object are subclasses of
 ///     ResidueSelectorSingle; ResidueSelector has a vector1 of ResidueSelectorSingleOP's
-///
+
 
 #ifndef INCLUDED_core_chemical_ResidueSelector_hh
 #define INCLUDED_core_chemical_ResidueSelector_hh
@@ -358,7 +358,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueSelector & // allow chaining
 	set_name1( char const n )
 	{
@@ -366,7 +366,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueSelector & // allow chaining
 	set_aa( AA const aa )
 	{
@@ -375,7 +375,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueSelector & // allow chaining
 	set_property( std::string const property )
 	{
@@ -384,7 +384,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueSelector & // allow chaining
 	exclude_variants()
 	{
@@ -392,7 +392,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueSelector & // allow chaining
 	match_variants( ResidueType const & rsd_type_to_match )
 	{
@@ -400,7 +400,7 @@ public:
 		return *this;
 	}
 
-	//
+
 	ResidueTypeCOPs
 	select( ResidueTypeSet const & rsd_set );
 

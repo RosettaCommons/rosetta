@@ -1349,7 +1349,6 @@ struct MatchSet {
     }
 
 
-
     sf->set_weight(core::scoring::atom_pair_constraint, 0.0 );
     sf->set_weight(core::scoring::    angle_constraint, 0.0 );
     sf->set_weight(core::scoring:: dihedral_constraint, 0.0 );
@@ -1368,7 +1367,6 @@ struct MatchSet {
       core::scoring::packstat::output_packstat_pdb(outpose,out);
     }
     out.close();
-
 
 
     core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -1692,7 +1690,6 @@ struct MatchSet {
     outpose.replace_residue(   b.ligs[idx2].rsd2,move.residue(2),true);
     outpose.replace_residue(end1+ligs[idx1].rsd1,fixd.residue(1),true);
     outpose.replace_residue(end1+ligs[idx1].rsd2,fixd.residue(2),true);
-
 
 
     Pose native = outpose;
@@ -2032,7 +2029,6 @@ int main (int argc, char *argv[])
           }
 
 
-
           Vec rot_cen  = mai.cen;
           Vec rot_axis = (h.xyz(AtomID(natm,1))-mai.cen).normalized();
           vector1<Vec> FXD1,FXD2,CA;
@@ -2045,7 +2041,6 @@ int main (int argc, char *argv[])
             CA.push_back(pose.residue(i).xyz("CA"));
           }
           // h.dump_pdb("h3.pdb");
-
 
 
           for(Size ich1 = 1; ich1 <= CHI1.size(); ++ich1) {
@@ -2284,7 +2279,6 @@ int main (int argc, char *argv[])
                 }
 
 
-
                 // Mat rot = rotation_matrix( rot_axis, ang );
                 // m1 = rot*m1;
                 // m2 = rot*m2;
@@ -2383,13 +2377,5 @@ int main (int argc, char *argv[])
 	}
 
 }
-
-
-
-
-
-
-
-
 
 

@@ -15,7 +15,6 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/disulfides/FullatomDisulfideEnergy.hh>
 
 #include <platform/types.hh>
 
@@ -24,17 +23,6 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
 #include <utility/vector1.fwd.hh>

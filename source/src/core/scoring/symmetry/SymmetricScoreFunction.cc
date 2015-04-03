@@ -24,13 +24,8 @@
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -45,7 +40,6 @@
 #include <basic/prof.hh>
 
 // Symmetry extras
-// AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh> // TMP HACK
 #include <core/scoring/EnvPairPotential.hh>
 #include <basic/datacache/CacheableData.hh> //TMP HACK
 #include <basic/options/option.hh>
@@ -54,7 +48,6 @@
 //#include <core/scoring/symmetry/NBListCache.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -86,7 +79,7 @@ SymmetricScoreFunction::clone() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-///@detail INTERNAL USE ONLY
+/// @detail INTERNAL USE ONLY
 void
 SymmetricScoreFunction::assign( SymmetricScoreFunction const & src )
 {
@@ -94,7 +87,7 @@ SymmetricScoreFunction::assign( SymmetricScoreFunction const & src )
 	// Add symmetry specific copy items here.
 }
 
-///@detail INTERNAL USE ONLY
+/// @detail INTERNAL USE ONLY
 void
 SymmetricScoreFunction::assign( ScoreFunction const & src )
 {

@@ -55,14 +55,14 @@ SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
 
 SecondaryStructureSegmentFeatures::~SecondaryStructureSegmentFeatures(){}
 
-///@brief return string with class name
+/// @brief return string with class name
 std::string
 SecondaryStructureSegmentFeatures::type_name() const
 {
 	return "SecondaryStructureSegmentFeatures";
 }
 
-///@brief generate the table schemas and write them to the database
+/// @brief generate the table schemas and write them to the database
 void
 SecondaryStructureSegmentFeatures::write_schema_to_db(
 	utility::sql_database::sessionOP db_session) const
@@ -118,7 +118,7 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	secondary_structure_segments.write(db_session);
 }
 
-///@brief return the set of features reporters that are required to
+/// @brief return the set of features reporters that are required to
 ///also already be extracted by the time this one is used.
 utility::vector1<std::string>
 SecondaryStructureSegmentFeatures::features_reporter_dependencies() const
@@ -138,7 +138,7 @@ SecondaryStructureSegmentFeatures::parse_my_tag(
 	core::pose::Pose const & /*pose*/)
 {}
 
-///@brief Return true if the dssp code is irregular (blank), hydrogen
+/// @brief Return true if the dssp code is irregular (blank), hydrogen
 ///bonded turn(T) or bend(S)
 bool
 SecondaryStructureSegmentFeatures::is_loop(std::string dssp_code){
@@ -157,7 +157,7 @@ SecondaryStructureSegmentFeatures::is_helix(std::string dssp_code){
 		dssp_code == "G";
 }
 
-///@brief collect all the feature data for the pose
+/// @brief collect all the feature data for the pose
 core::Size
 SecondaryStructureSegmentFeatures::report_features(
 	core::pose::Pose const & /*pose*/,

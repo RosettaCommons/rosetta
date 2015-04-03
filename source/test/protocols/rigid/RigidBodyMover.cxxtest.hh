@@ -72,7 +72,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief test a RigidBodyPerturbMover without rot_center calculated at the interface
+	/// @brief test a RigidBodyPerturbMover without rot_center calculated at the interface
 	void test_RigidBodyPerturbMover_no_int() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -93,7 +93,7 @@ public:
 
 	}//end test_RigidBodyPerturbMover_no_int
 
-	///@brief test a RigidBodyPerturbMover with rot_center calculated at the interface
+	/// @brief test a RigidBodyPerturbMover with rot_center calculated at the interface
 	void test_RigidBodyPerturbMover_int() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -119,7 +119,7 @@ public:
 
 	}//end test_RigidBodyPerturbMover_int
 
-	///@brief test a RigidBodyPerturbNoCenterMover
+	/// @brief test a RigidBodyPerturbNoCenterMover
 	void test_RigidBodyPerturbNoCenterMover() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -139,7 +139,7 @@ public:
 
 	}//end test_RigidBodyPerturbNoCenterMover
 
-	///@brief test a RigidBodyRandomizeMover
+	/// @brief test a RigidBodyRandomizeMover
 	void test_RigidBodyRandomizeMover() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -158,7 +158,7 @@ public:
 
 	}//end test_RigidBodyRandomizeMover
 
-	///@brief test a RigidBodySpinMover
+	/// @brief test a RigidBodySpinMover
 	void test_RigidBodySpinMover() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -176,7 +176,7 @@ public:
 
 	}//end test_RigidBodySpinMover
 
-	///@brief test a RigidBodyTransMover
+	/// @brief test a RigidBodyTransMover
 	void test_RigidBodyTransMover() {
 
 		////////////////////////RBmover///////////////////////////////////////////////
@@ -194,7 +194,7 @@ public:
 
 	}//end test_RigidBodyTransMover
 
-	///@brief test parsing RigidBodyTransMover
+	/// @brief test parsing RigidBodyTransMover
 	void test_RigidBodyTransMover_parse() {
 
 		////////////////////////RBmover///////////////////////////////////////////////

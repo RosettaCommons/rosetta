@@ -9,7 +9,7 @@
 
 /// @file loopRNA_minimizer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -27,7 +27,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -141,7 +140,6 @@ private:
 	core::Real gap_distance_cutoff_;
 	bool fast_scan_;
 }; // class RNA_LoopCloser
-
 
 
 } //farna

@@ -23,15 +23,12 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/packing/PoseBalls.hh>
-// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -41,8 +38,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 // Auto-header: duplicate removed #include <core/scoring/dssp/Dssp.hh>
 #include <pstream.h>
-// AUTO-REMOVED #include <time.h>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 //Auto Headers
@@ -467,7 +462,6 @@ main (int argc, char *argv[])
 	}
 
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

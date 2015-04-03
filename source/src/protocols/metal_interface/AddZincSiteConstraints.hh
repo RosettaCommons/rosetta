@@ -32,7 +32,7 @@ using namespace core;
 namespace protocols {
 namespace metal_interface {
 
-///@brief Add metalsite geometry constraints to pose
+/// @brief Add metalsite geometry constraints to pose
 class AddZincSiteConstraints : public utility::pointer::ReferenceCount {
 
 public:

@@ -17,10 +17,8 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/pack/annealer/AnnealerFactory.hh>
@@ -39,13 +37,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/sasa.hh>
 
 #include <core/types.hh>
 
 // ObjexxFCL Header
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -125,11 +121,11 @@ public:
 		// a mute here because the interaction graphs generate tons of debugging output (in DEBUG mode anyway).
 		core_init_with_additional_options( "-no_optH -mute core.io core.init core.mm -restore_pre_talaris_2013_behavior -override_rsd_type_limit" );
 
-		//
+
 		// To create a HPatch Interaction Graph object, we need to create a few other objects like a Pose, a ScoreFunction,
 		// a PackerTask and a RotamerSets object.  Create all of these objects here in the suite-level fixture since they'll
 		// get reused throughout the suite.
-		//
+
 
 		// --- Pose ---
 		// since this is a test suite, we don't want to read in PDB files from the command line.  just hardcode the tests to use
@@ -161,13 +157,13 @@ public:
 		rotsets->prepare_sets_for_packing( pose, *scorefxn );
 		TR << "\tbuilt " << rotsets->nrotamers() << " rotamers at " << rotsets->nmoltenres() << " positions." << std::endl;
 
-		//
+
 		// Most of the tests in this suite need an interaction graph (more specifically, a Pairwise-decomposable IG).
 		// Create the PDIG in the suite-fixture and then for the test fixture, just call blanket_assign_state_0.
 		// That will "reset" the interaction graph to the clean state for each test. This saves alot of time because
 		// the expensive graph creation (including creating nodes and edges and subsequently dropping edges) only happens
 		// once.
-		//
+
 
 		// --- InteractionGraph ---
 		TR << "Instantiating PDHPatchInteractionGraph..." << std::endl;
@@ -179,12 +175,12 @@ public:
 		// compute_energies() does some initialization of the interaction graph and computes the energies
 		rotsets->compute_energies( pose, *scorefxn, packer_neighbor_graph, static_cast< interaction_graph::InteractionGraphBaseOP >(pdhig) );
 
-		//
+
 		// Now that we have an interaction graph, a pose, scorefunction, etc, we have everything we need to run the
 		// packer except for an annealer. Use just a plain FixbbAnnealer. Go ahead and create a FixbbSA here.  In the
 		// test case that uses linmem_ig we'll have to recreate the annealer but this state is common to the rest of
 		// the tests since they all use a standard PD IG.
-		//
+
 
 		// initialize some other variables that are used in the SimAnnealers constructor
 		bestrotamer_at_seqpos.dimension( pose.total_residue() );
@@ -203,7 +199,6 @@ public:
 		threshold_for_deltaE_inaccuracy = std::sqrt( annealer->get_temperature() );
 
 	}
-
 
 
 	// --------------- Test Fixture --------------- //
@@ -232,7 +227,7 @@ public:
 	// --------------- Test Cases --------------- //
 
 
-	/// @detailed
+	/// @details
 	/// Tests to make sure when doing a design on only some residues that certain residues are indeed being treated and set
 	/// as background nodes. If this array returns the wrong indices, background nodes are not being set properly.
 	///
@@ -243,7 +238,7 @@ public:
 		TS_ASSERT( pdhig->bg_node_2_resid(7) == 13 );
 	}
 
-	/// @detailed
+	/// @details
 	/// Tests to make sure the graph is properly calculating SASA for all the nodes and bgnodes.
 	/// Obtains the sasa for all nodes and bgnodes when calculated with the RotamerDots. Then we compare those values
 	/// to what gets computed for the residues by calc_per_atom_sasa in sasa.cc.
@@ -296,7 +291,7 @@ public:
 
 	}
 
-	/// @detailed
+	/// @details
 	/// Tests the function get_curr_state_hphobes() as well as the alternate state one.
 	void test_curr_state_hphobes() {
 		TR << "Running test_curr_state_hphobes..." << std::endl;
@@ -384,7 +379,7 @@ public:
 	}
 
 
-	/// @detailed
+	/// @details
 	/// Tests the function get_curr_state_exp_hphobes() as well as the alternate state one. This test is similar to the
 	/// one above but this one tests whether the determination of exposed or not is happening correctly.
 	///
@@ -519,8 +514,8 @@ public:
 
 	}
 
-	///
-	/// @detailed
+
+	/// @details
 	/// Tests the function consider_substitution() (hereafter cs()).
 	/// cs() takes a position and a new state and updates the SASA for that node and all its neighboring nodes/bgnodes.
 	/// It's possible that cs() will procrastinate the calculation if the change in the PD energy is really bad, but
@@ -605,8 +600,8 @@ public:
 
 	}
 
-	///
-	/// @detailed
+
+	/// @details
 	/// Tests the function calculate_alt_state_hpatch_score(). Have to make 6 commits minimum before the score gets evaluated
 	/// because the score only gets calculated if all the nodes are in some state (not the unassigned state).
 	///
@@ -659,8 +654,7 @@ public:
 	}
 
 
-	///
-	/// @detailed
+	/// @details
 	/// The main things to test with commit sub() is that the total energy returned is correct and that the node counts (for
 	/// the changing node *and* all neighboring nodes) are updated.  It's possible that consider doesn't actually compute
 	/// the correct energy because of computation procrastination.  That would also mean the node counts would be inaccurate
@@ -738,7 +732,7 @@ public:
 
 	}
 
-	/// @detailed
+	/// @details
 	/// Near the end of sims, lots of rotamers are tried (which change the alt state counts) but then aren't committed.
 	/// This test ensures that the graph is resetting state correctly in those cases.
 	/// blanket_reset is implicitly tested in the unit tests above...
@@ -747,7 +741,7 @@ public:
 	//	TR << "Running test_blanket_reset_alt_state_counts..." << std::endl;
 	//}
 
-	/// @detailed
+	/// @details
 	/// Make some random commits and make sure the total energy current state assignment method is returning the same
 	/// thing that was computed in commit_sub().
 	///

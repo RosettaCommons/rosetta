@@ -15,7 +15,6 @@
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <utility/vector1.hh>
@@ -86,7 +85,6 @@ CountPairAll::residue_atom_pair_energy_backbone_backbone(
 }
 
 
-
 void
 CountPairAll::residue_atom_pair_energy_sidechain_sidechain(
 	conformation::Residue const & res1,
@@ -144,7 +142,6 @@ CountPairAll::residue_atom_pair_energy_backbone_backbone(
 {
 	inline_residue_atom_pair_energy_backbone_backbone( res1, res2, etable_energy, *this, emap );
 }
-
 
 
 void

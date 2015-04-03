@@ -17,7 +17,6 @@
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/CSTalosIO.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/CS2ndShift.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
@@ -28,7 +27,6 @@
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -44,7 +42,7 @@ class AmbigCSScore: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a Phi-Psi-based scoring function.
-	/// @detailed Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
+	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 
 	AmbigCSScore(Size, Real, bool, CSTalosIO&, CSTalosIO&);
 	void do_caching(VallChunkOP);

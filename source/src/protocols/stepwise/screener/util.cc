@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/StepWiseScreenerUtil.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

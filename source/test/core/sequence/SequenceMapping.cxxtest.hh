@@ -15,15 +15,12 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -58,7 +55,6 @@
 #include <limits>
 #include <string>
 #include <vector>
-
 
 
 static basic::Tracer TR("test.core.sequence.SequenceMapping");

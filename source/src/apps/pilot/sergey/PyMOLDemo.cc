@@ -108,7 +108,6 @@ int main( int argc, char * argv [] )
 }
 
 
-
 int _main( int argc, char * argv [] )
 {
 	using namespace core;

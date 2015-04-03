@@ -12,14 +12,10 @@
 /// @author Grant Murphy g.s.murphy@gmail.com
 
 
-
 // Unit Headers
 #include <devel/denovo_protein_design/DesignRelaxMover.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/init/init.hh>
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
 #include <basic/options/option.hh>
@@ -38,18 +34,12 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
@@ -57,7 +47,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -80,7 +69,7 @@ namespace denovo_protein_design {
 
 using namespace core::pack::task;
 
-///@details
+/// @details
 void DesignRelaxMover::apply( core::pose::Pose & pose )
 {
 	using core::pack::task::operation::TaskOperationCOP;
@@ -254,7 +243,7 @@ DesignRelaxMover::get_name() const {
 	return "DesignRelaxMover";
 }
 
-///@brief default ctor
+/// @brief default ctor
 
 DesignRelaxMover::DesignRelaxMover() : Mover()
 {
@@ -269,7 +258,7 @@ DesignRelaxMover::DesignRelaxMover() : Mover()
 	relaxfxn_ = fullfxn;
 }
 
-///@brief ctor with hand made designtaskfactory and default design/relax scorefunctions
+/// @brief ctor with hand made designtaskfactory and default design/relax scorefunctions
 DesignRelaxMover::DesignRelaxMover( core::pack::task::TaskFactoryOP designtaskfactory
 ) : Mover(), designtaskfactory_( designtaskfactory )
 {

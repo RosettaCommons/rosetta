@@ -340,10 +340,6 @@ def RemoveListItem(LisIn):
     
 
 
-
-
-
-
 class MainProtocols():
     def __init__(self, main):
         self.main = main

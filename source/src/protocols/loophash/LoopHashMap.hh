@@ -18,11 +18,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 //#include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 //#include <protocols/match/SixDHasher.hh>
 #include <boost/unordered_map.hpp>
-// AUTO-REMOVED #include <boost/cstdint.hpp>
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
@@ -84,7 +81,7 @@ struct LegacyLeapIndex{
 };
 
 /// @brief the loop hash map stores LeapIndexes and a hashmap to access those LeapIndexes quickly by their 6D coordinates.
-///
+
 
 class LoopHashMap{
 	public:
@@ -201,11 +198,8 @@ public:
 };
 
 
-
-
 } // namespace loops
 } // namespace protocols
-
 
 
 #endif

@@ -21,18 +21,13 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/rtmin.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -40,9 +35,7 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>

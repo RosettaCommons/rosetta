@@ -24,7 +24,6 @@
 // Project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
@@ -32,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/optimize_weights/OptEData.hh>
-// AUTO-REMOVED #include <protocols/optimize_weights/NestedEnergyTermOptEData.hh>
 
 /// Utility headers
 #include <utility/exit.hh>
@@ -45,7 +43,6 @@
 #include <ObjexxFCL/format.hh> // F
 
 // C++ headers
-// AUTO-REMOVED #include <cmath>
 #include <fstream>
 #include <ostream>
 
@@ -54,7 +51,6 @@
 
 //Auto Headers
 #include <basic/options/option.hh>
-
 
 
 using namespace core;
@@ -73,9 +69,6 @@ static thread_local basic::Tracer TR( "protocols.optimize_weights.OptEMultifunc"
 using namespace numeric::expression_parser;
 //#undef NDEBUG
 
-
-///
-/// @begin OptEMultifunc::OptEMultifunc
 ///
 OptEMultifunc::OptEMultifunc(
 	OptEData & opte_data_in,
@@ -111,9 +104,6 @@ OptEMultifunc::OptEMultifunc(
 #endif
 }
 
-
-///
-/// @begin OptEMultifunc::OptEMultifunc
 ///
 OptEMultifunc::OptEMultifunc(
 	OptEData & opte_data_in,
@@ -148,9 +138,6 @@ OptEMultifunc::OptEMultifunc(
 #endif
 }
 
-
-///
-/// @begin OptEMultifunc::operator()
 ///
 /// @brief
 /// The objective function for optE. Called in IterativeOptEDriver when optimizing the weights. Sums over all of the
@@ -300,9 +287,6 @@ OptEMultifunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) const
 
 }
 
-
-///
-/// @begin OptEMultifunc::get_dofs_from_energy_map()
 ///
 /// @brief Extract variable weights from an Energy Map
 ///
@@ -324,8 +308,6 @@ OptEMultifunc::get_dofs_from_energy_map( EnergyMap const & start_vals ) const
 	return dofs;
 }
 
-///
-/// @begin OptEMultifunc::get_energy_map_from_dofs()
 ///
 /// @brief Expand free variables and combine with fixed to make an Energy Map.  Used by the IterativeOptEDriver at the
 /// end of weight minimization to create an EnergyMap that uses the new weight set.  This EnergyMap then gets output
@@ -931,6 +913,5 @@ WrappedOptEExpressionCreator::set_wrapping_optE_multifunc( WrapperOptEMultifuncA
 
 } // namespace optimize_weights
 } // namespace protocols
-
 
 

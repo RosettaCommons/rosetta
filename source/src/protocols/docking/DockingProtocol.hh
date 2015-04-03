@@ -58,7 +58,7 @@ namespace protocols {
 namespace docking {
 
 /// @brief This is the standard RosettaDock protocol
-/// @detailed RosettaDock protocol based on [refs...Gray2003, Wang2005, Chaudhury 2007 ... ]
+/// @details RosettaDock protocol based on [refs...Gray2003, Wang2005, Chaudhury 2007 ... ]
 class DockingProtocol : public moves::Mover
 {
 public:
@@ -108,13 +108,13 @@ public:
 
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	virtual bool reinitialize_for_new_input() const;// {return true;};
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	DockingProtocol( DockingProtocol const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	DockingProtocol & operator=( DockingProtocol const & rhs );
 
 	/// @brief Associates relevant options with the DockingProtocol class

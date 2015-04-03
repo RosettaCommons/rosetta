@@ -13,7 +13,6 @@
 /// @author Daniel J. Mandell
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <cmath>
 // Utility headers
 #include <utility/vector1.hh>
@@ -647,12 +646,11 @@ void rotateZ(const utility::vector1<utility::vector1<Real> >& R, const Real& c, 
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin bridgeObjects
 ///
 /// @brief
 /// Solve the triaxial loop closure problem for a system of atoms
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in] atoms - matrix of cartesian coordiantes of N-CA-C atoms indexed as atoms[atom][dimension]
 /// @param[in] dt - desired torsions for each atom
@@ -681,7 +679,6 @@ void rotateZ(const utility::vector1<utility::vector1<Real> >& R, const Real& c, 
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 ///
-/// @last_modified June 08, 2008
 ////////////////////////////////////////////////////////////////////////////////
 
 void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,

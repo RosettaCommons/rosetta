@@ -9,7 +9,7 @@
 
 /// @file RNA de novo fragment assembly Structure Parameters
 /// @brief User input parameters for RNA structure inference
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -131,7 +131,6 @@ RNA_DataReader::read_backbone_info( std::istringstream & line_stream,
 	}
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -355,7 +354,6 @@ get_rna_data_info( pose::Pose & pose, std::string const & rna_data_file,
 
 	return rna_data_info;
 }
-
 
 
 } //rna

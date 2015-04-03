@@ -16,20 +16,16 @@
 
 #include <core/scoring/CenHBPotential.fwd.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <numeric/constants.hh>
 
-// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 
 #include <utility/vector1_bool.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-
 
 
 namespace core {
@@ -124,7 +120,6 @@ private:
 	utility::vector1< numeric::xyzVector< Real > > sr_mus_, sr_sigmas_;
 	Real cutoff_sr_, cutoff_lr_;
 };
-
 
 
 } // ns scoring

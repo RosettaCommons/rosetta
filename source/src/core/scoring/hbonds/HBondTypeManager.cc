@@ -30,8 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace core {
 namespace scoring {
 namespace hbonds{
@@ -218,7 +216,7 @@ HBondTypeManager::name_from_weight_type( HBondWeightType type )
 	return weight_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_weight_type( string const & name )
 {
@@ -226,7 +224,6 @@ HBondTypeManager::is_weight_type( string const & name )
 	map< string, HBondWeightType >::const_iterator iter( name2weight_type_.find( name ) );
 	return iter != name2weight_type_.end();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -249,7 +246,7 @@ HBondTypeManager::name_from_deriv_type( HBDerivType type )
 	return deriv_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_deriv_type( string const & name )
 {
@@ -257,8 +254,6 @@ HBondTypeManager::is_deriv_type( string const & name )
 	map< string, HBDerivType >::const_iterator iter( name2deriv_type_.find( name ) );
 	return iter != name2deriv_type_.end();
 }
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -281,7 +276,7 @@ HBondTypeManager::name_from_don_chem_type( HBDonChemType type )
 	return don_chem_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_don_chem_type( string const & name )
 {
@@ -311,7 +306,7 @@ HBondTypeManager::name_from_acc_chem_type( HBAccChemType type )
 	return acc_chem_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_acc_chem_type( string const & name )
 {
@@ -340,7 +335,7 @@ HBondTypeManager::name_from_seq_sep_type( HBSeqSep type )
 	return seq_sep_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_seq_sep_type( string const & name )
 {
@@ -371,7 +366,7 @@ HBondTypeManager::name_from_hybridization_type( Hybridization type )
 	return hybridization_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_hybridization_type( string const & name )
 {
@@ -400,7 +395,7 @@ HBondTypeManager::name_from_geo_dim_type( HBGeoDimType type )
 	return geo_dim_type2name_[ type ];
 }
 
-///@brief
+/// @brief
 bool
 HBondTypeManager::is_geo_dim_type( string const & name )
 {
@@ -408,7 +403,6 @@ HBondTypeManager::is_geo_dim_type( string const & name )
 	map< string, HBGeoDimType >::const_iterator iter( name2geo_dim_type_.find( name ) );
 	return iter != name2geo_dim_type_.end();
 }
-
 
 
 } // hbonds

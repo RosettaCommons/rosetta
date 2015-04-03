@@ -31,7 +31,7 @@ namespace rotamer_set {
 
 class WaterAnchorInfo : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~WaterAnchorInfo();
 	typedef chemical::AA AA;
 	typedef chemical::ResidueType ResidueType;

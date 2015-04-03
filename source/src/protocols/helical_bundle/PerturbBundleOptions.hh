@@ -47,7 +47,7 @@ namespace protocols {
 			pt_undefined_perturbation //keep this last
 		};
 
-		///@brief  PerturbBundleOptions class, which stores options for the PerturbBundle mover.
+		/// @brief  PerturbBundleOptions class, which stores options for the PerturbBundle mover.
 		///
 		class PerturbBundleOptions : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< PerturbBundleOptions >
 		{

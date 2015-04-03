@@ -43,7 +43,6 @@
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -60,14 +59,12 @@
 #include <core/pose/Pose.hh>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
 // using namespace basic::options;
 // using namespace basic::options::OptionKeys;
-
 
 
 class MyScoreMover : public Mover {
@@ -176,7 +173,6 @@ main( int argc, char * argv [] )
 	using namespace protocols::jd2;
 
 	//rayyrw: when rescoring ignore those residues which were being defined as replsive energy only
-
 
 
 	// Make sure the default JobOutputter is SilentJobOutputter to ensure that when score_jd2

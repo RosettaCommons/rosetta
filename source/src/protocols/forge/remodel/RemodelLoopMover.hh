@@ -32,7 +32,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -219,7 +218,6 @@ public: // accessors
 	}
 
 
-
 public: // mutators
 
 	// @brief for building repeat structures stored in private variable
@@ -234,7 +232,6 @@ public: // mutators
 
 	// @brief for updating repeat angles from a monomeric copy
 	void repeat_propagation( Pose & pose, Pose & repeat_pose, Size repeat_number);
-
 
 
 	/// @brief the ScoreFunction to use during modeling
@@ -417,7 +414,7 @@ protected: // loop modeling stages
 					Pose & pose
 					);
 
-	///@ brief sets up ncs constraints
+	/// @ brief sets up ncs constraints
 	protocols::simple_moves::symmetry::SetupNCSMover generate_ncs_csts(Pose & pose);
 
 	/// @brief small_move stage: only small moves
@@ -652,11 +649,11 @@ private: // data
 	/// @brief RemodelGlobalFrame for helical definitions
 	RemodelGlobalFrame RGF_;
 
-	///@brief whether to keep the FoldTree untouched, i.e. trust the
+	/// @brief whether to keep the FoldTree untouched, i.e. trust the
 	///user to supply a decent FoldTree
 	bool keep_input_foldtree_;
 
-	///@brief whether to (true) generate a sealed fold tree or (false) keep the cut fold tree (default=true)
+	/// @brief whether to (true) generate a sealed fold tree or (false) keep the cut fold tree (default=true)
 	bool seal_foldtree_;
 };
 

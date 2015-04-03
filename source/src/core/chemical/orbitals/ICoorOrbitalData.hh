@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomTypeSet
 ///
 /// @brief
 /// A class for reading in the orbital type properties
 ///
-/// @detailed
+/// @details
 /// This class contains the ORBITALS INTERNAL_ICOOR data that is read in from residue_io.cc. Actually,
 /// the data is set when residue_io.cc calls the command from residuetype.cc set_orbital_icoor. The data
 /// is set and chills out in memory until needed. The actual xyz coordinates are not stored at this point.
@@ -30,24 +29,18 @@
 /// must be actual atoms and not orbitals!!!!! (design feature or flaw? you decide)
 ///
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
-/// @last_modified December 12 2010
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 #define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <core/types.hh>
 #include <string>
@@ -77,8 +70,6 @@ public:
 		VD v2,
 		VD v3
 	);
-
-
 
 
 	Real phi() const;
@@ -161,11 +152,7 @@ private:
 	VD vertex3_;
 
 
-
-
 };
-
-
 
 
 }

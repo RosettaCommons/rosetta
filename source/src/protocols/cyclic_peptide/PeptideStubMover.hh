@@ -42,7 +42,7 @@ public:
 	virtual void
 	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
 
-	///
+
 	/// @brief Reset mover data
 	void reset_mover_data()
 	{
@@ -54,7 +54,7 @@ public:
 		return;
 	}
 
-	///
+
 	/// @brief Sets whether the pose gets reset (i.e. all residues deleted) or not.
 	void set_reset_mode( bool reset_mode )
 	{
@@ -62,7 +62,7 @@ public:
 		return;
 	}
 
-	///
+
 	/// @brief Sets whether pdb numbering gets updated or not.
 	void set_update_pdb_numbering_mode( bool mode )
 	{
@@ -70,7 +70,7 @@ public:
 		return;
 	}
 
-	///
+
 	/// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
 	void add_residue(
 		std::string const &stubmode,
@@ -86,7 +86,7 @@ public:
 private:
     bool reset_;
 
-		///
+
 		/// @brief As residues are added, should the PDB numbering be updated?  Default true.
 		bool update_pdb_numbering_;
     
@@ -101,11 +101,11 @@ private:
 
 //Private functions:
 
-	///
+
 	/// @brief Rebuilds all atoms that are dependent on bonds between residue_index and any other residues (including atoms on the other residues).
 	virtual void rebuild_atoms( core::pose::Pose &pose, core::Size const residue_index) const;
 
-	///
+
 	/// @brief Updates the PDB numbering (PDB number/chain ID) as residues are added.
 	virtual void update_pdb_numbering ( core::pose::Pose &pose ) const;
 

@@ -17,16 +17,11 @@
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -48,11 +43,9 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-// AUTO-REMOVED #include <protocols/jd2/MultiThreadingJob.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/MultiThreadingMover.hh>
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>

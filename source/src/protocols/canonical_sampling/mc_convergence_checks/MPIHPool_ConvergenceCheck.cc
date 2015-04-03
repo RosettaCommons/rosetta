@@ -18,8 +18,6 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // MPI only headers (wrapping these headers in an ifdef block will prevent my #inclusion-removal script from removing them)
 #ifdef USEMPI
@@ -48,10 +46,6 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
-// AUTO-REMOVED #include <ctime>
 
 #include <utility/vector1.hh>
 
@@ -71,7 +65,7 @@ namespace mc_convergence_checks{
 
   MPI_Comm   protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD::MPI_COMM_POOL;
   using namespace basic;
-  //
+
 
   //specified silent-file assumed to contain top-level structures only
   MPIHPool_RMSD::MPIHPool_RMSD( std::string const& silent_file, core::Size levels ):
@@ -805,7 +799,6 @@ namespace mc_convergence_checks{
   MPIHPool_RMSD::send_silent_struct_to_rank( core::io::silent::SilentFileData& send_ss, core::io::silent::SilentStructOP & ss, Address& ss_addr, core::Size& new_level ) {
     send_silent_struct_to_rank( send_ss, ss, ss_addr, new_level, MPI_OUTPUT_RANK );
   }
-
 
 
   void

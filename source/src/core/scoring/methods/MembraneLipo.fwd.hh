@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
-//
+
 
 /// @file   core/scoring/methods/EnvEnergy.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class MembraneLipo;
 
 }

@@ -34,7 +34,6 @@
 ///#include <ObjexxFCL/format.hh> // apl needed?
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <map>
 
 namespace protocols {
@@ -128,13 +127,13 @@ public:
 
 public:
 	Entity();
-	////@brief construct a duplicate Entity from another entity
+	//// @brief construct a duplicate Entity from another entity
 	Entity( Entity const & entity );
 	Entity const & operator = ( Entity const & );
 
 	virtual ~Entity();
 
-	////@brief construct Entity from std::string (e.g. from file)
+	//// @brief construct Entity from std::string (e.g. from file)
 	Entity( std::string const & line );
 
 	virtual OP clone() const;
@@ -163,7 +162,7 @@ private:
 std::ostream & operator << ( std::ostream & os, Entity const & entity );
 
 
-///@brief for sorting owning pointers by that to which they point
+/// @brief for sorting owning pointers by that to which they point
 template <typename T>
 bool lt_OP_deref(
 	utility::pointer::shared_ptr<T> const & a,
@@ -176,7 +175,7 @@ bool lt_OP_deref(
 	return *a < *b;
 }
 
-///@brief for assessing equality between owning pointers by that to which they point
+/// @brief for assessing equality between owning pointers by that to which they point
 template <typename T>
 bool eq_OP_deref(
 	utility::pointer::shared_ptr<T> const & a,

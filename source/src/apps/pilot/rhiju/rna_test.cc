@@ -139,7 +139,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -436,7 +435,6 @@ figure_out_icoord_test( ){
 		dump_pdb( pose, "testCHI"+string_of(j)+".pdb" );
 		std::cout << "DUMPED PDB" << j << std::endl;
 	}
-
 
 
 }
@@ -974,7 +972,6 @@ rna_fullatom_multiscore_test()
 
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1515,7 +1512,6 @@ print_internal_coord_test()
 	}
 
 
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1553,7 +1549,6 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////
 void
 copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose, pose::Pose & src_pose)
@@ -1570,9 +1565,6 @@ copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose
 		new_pose.set_torsion( my_ID, src_pose.torsion( input_ID ) );
 	}
 }
-
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1995,7 +1987,6 @@ rna_jumping_test(){
 	}
 
 
-
 	//Prepare starting structure from scratch --> read from fasta.
 	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
 	make_pose_from_sequence(extended_pose,fasta_sequence.sequence(),	*rsd_set );
@@ -2360,7 +2351,6 @@ output_benchmark_stuff( pose::Pose const & pose,
 	// Need to do a quick check -- what if two segments separated by
 	// a chainbreak have no potential canonical pairing? Could
 	// be a problem -- create a "stem" with appropriate tertiary pairings?
-
 
 
 	params_out.close();
@@ -2943,7 +2933,6 @@ rna_filter_base_pairs_test()
 	}
 
 
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3136,7 +3125,7 @@ sasa_test()
 			// OP2/OP1
 			// A or C watson/crick N (DMS)
 			// G watson/crick N
-			//
+
 
 			std::cout << std::endl;
 
@@ -3250,8 +3239,6 @@ env_sugar_test()
 		}
 
 	}
-
-
 
 
 }
@@ -3601,7 +3588,6 @@ dinucleotide_test()
 	}
 
 
-
 }
 
 ////////////////////////////////////////////////////
@@ -3671,8 +3657,6 @@ void vary_geometry_RNA( pose::Pose & pose, kinematics::MoveMap & mm )
 	pose.constraint_set( cst_set );
 
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3872,7 +3856,6 @@ build_next_nucleotide_test()
 
 		//dump_pdb( pose, "nomin_"+tag+".pdb" );
 	}
-
 
 
 }

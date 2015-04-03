@@ -22,7 +22,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/rotamer_trials.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -38,11 +37,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 using basic::T;

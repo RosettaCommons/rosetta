@@ -9,7 +9,7 @@
 
 /// @file   utility/file/FileName.cxxtest.hh
 /// @brief  FileName unit test suite
-/// @authors Amanda Duran Alyssa Lokits
+/// @author Amanda Duran Alyssa Lokits
 
 // Package headers
 #include <cxxtest/TestSuite.h>

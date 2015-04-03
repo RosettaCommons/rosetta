@@ -247,7 +247,6 @@ LigandConformer::global_orientation_from_frame3(
 	global_coords[ 6 ] = euler_angles( 3 );
 
 
-
 	/*if ( false ) {
 
 		Vector oat1_coord = frame3 * oats_in_at3_frame_[ 1 ];
@@ -418,7 +417,6 @@ core::chemical::ResidueType
 LigandConformer::get_lig_restype() const{
 	return * ligand_restype_;
 }
-
 
 
 }

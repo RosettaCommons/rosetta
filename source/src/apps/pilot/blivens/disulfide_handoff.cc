@@ -30,7 +30,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 
-
 //Command line Options
 #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

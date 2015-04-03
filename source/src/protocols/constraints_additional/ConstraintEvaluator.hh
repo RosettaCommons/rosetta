@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_constraints_additional_ConstraintEvaluator_hh
@@ -33,7 +32,6 @@
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 
@@ -45,7 +43,6 @@
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

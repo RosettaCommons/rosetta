@@ -9,7 +9,7 @@
 
 /// @file SymDockingHiRes
 /// @brief protocols that are specific to high resolution docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 /// 	Also contains docking mcm protocol
 /// @author Monica Berrondo
@@ -24,7 +24,6 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/conformation/Interface.hh>
 
 #include <basic/options/option.hh>
 
@@ -32,17 +31,12 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -50,7 +44,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymDof.hh>
 
@@ -59,23 +52,14 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-// AUTO-REMOVED #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_Backrub.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -86,7 +70,6 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <basic/Tracer.hh>
 using basic::T;
@@ -322,9 +305,8 @@ void SymDockingHiRes::set_protocol( pose::Pose & pose ){
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin docking high resolution apply function
 /// @brief
-/// @detailed
+/// @details
 ///		decides what to call according to options
 void SymDockingHiRes::apply( core::pose::Pose & pose )
 {
@@ -350,10 +332,9 @@ SymDockingHiRes::get_name() const {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin minimize_trial
 ///
 /// @brief main entrance for normal rigid-body minimization
-/// @detailed
+/// @details
 ///		retrieve the structure in the low array and do the normal minimization
 ///		by calling using a min_mover to optimize the score accourding to the
 ///		scorefunction that has been set
@@ -363,10 +344,9 @@ SymDockingHiRes::get_name() const {
 /// @references docking_minimize_trial from docking_minimize.cc
 ///				pose_docking_minimize_trial from pose_docking.cc
 ///
-/// @authors Monica Berrondo June 14 2007, modified for symmetric docking by
+/// @author Monica Berrondo June 14 2007, modified for symmetric docking by
 ///					 Ingemar Andre
 ///
-/// @last_modified October 15 2007
 /////////////////////////////////////////////////////////////////////////////////
 void SymDockingHiRes::set_dock_min_protocol() {
 	using namespace moves;
@@ -380,10 +360,9 @@ void SymDockingHiRes::set_dock_min_protocol() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin dock_mcm_protocol
 ///
 /// @brief main entrance to do monte carlo minimization
-/// @detailed
+/// @details
 ///			a total of 50 cycles of monte-carlo minimization will be
 ///			carried out if the minimized structure can pass the filter
 ///			after the first and fifth cycle.  Then it is rigid-body minimized
@@ -394,10 +373,9 @@ void SymDockingHiRes::set_dock_min_protocol() {
 /// @references docking_mcm_protocol from docking_minimize.cc
 ///				pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
-/// @authors Sid Chaudhury May 28 2009, modified for symmetric docking
+/// @author Sid Chaudhury May 28 2009, modified for symmetric docking
 ///					 by Ingemar Andre
 ///
-/// @last_modified April 30 2008
 /////////////////////////////////////////////////////////////////////////////////
 void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	using namespace moves;
@@ -592,7 +570,6 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	if (scmin_) docking_highres_protocol_mover_->add_mover( scmin_mover );
 	docking_highres_protocol_mover_->add_mover( translate_back );
 }
-
 
 
 } // namespace docking

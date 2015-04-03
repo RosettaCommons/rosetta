@@ -57,8 +57,6 @@
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <unistd.h>
-// AUTO-REMOVED #include <cctype>
 #endif
 
 #include <fstream>
@@ -311,7 +309,7 @@ MPI_Refine_Master::process_round(){
 		}
 	}
 
-	//
+
 	if( roundtype.compare("search") == 0 ){
 		//scheduler_.clear();
 		//scheduler_.prepare_search_stage( master_rank() );

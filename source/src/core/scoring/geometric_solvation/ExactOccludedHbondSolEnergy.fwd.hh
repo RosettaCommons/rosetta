@@ -10,11 +10,11 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-///
+
 /// @brief Forward header file for class ExactOccludedHbondSolEnergy
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
-///
+
 
 #ifndef INCLUDED_ExactOccludedHbondSolEnergyCOP_fwd_hh
 #define INCLUDED_ExactOccludedHbondSolEnergyCOP_fwd_hh

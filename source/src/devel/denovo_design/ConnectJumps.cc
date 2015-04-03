@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/ConnectJumps.cc
 /// @brief The ConnectJumps
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

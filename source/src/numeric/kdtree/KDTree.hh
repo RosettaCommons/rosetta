@@ -32,7 +32,7 @@ namespace kdtree {
 class KDTree : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~KDTree();
 
 
@@ -61,7 +61,7 @@ public:
 
 	/// @brief Returns the HyperRectangle that bounds all of the points in the
 	/// kd-tree.
-	/// @detailed A HyperRectangle is defined as two vectors upper and lower, with
+	/// @details A HyperRectangle is defined as two vectors upper and lower, with
 	/// each dimension of lower having the minimum value seen in each dimension,
 	/// and each dimension of higher having the maximum value seen in each
 	/// dimension.

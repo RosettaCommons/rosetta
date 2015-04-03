@@ -31,10 +31,8 @@
 #include <utility/vector1.hh>
 
 //Objexx headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-
 
 
 // Utility headers
@@ -44,7 +42,7 @@ namespace core {
 namespace scoring {
 namespace packing {
 
-///
+
 class HolesEnergyRes : public methods::WholeStructureEnergy {
 public:
 	typedef methods::WholeStructureEnergy parent;

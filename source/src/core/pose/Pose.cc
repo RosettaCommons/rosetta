@@ -893,8 +893,8 @@ debug_assert( residue_type(seqpos).is_protein() || residue_type(seqpos).is_pepto
 	}
 }
 
-///@brief For a beta-amino acid, get the theta backbone dihedral angle.
-///@details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
+/// @brief For a beta-amino acid, get the theta backbone dihedral angle.
+/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
 Real
 Pose::theta( Size const seqpos ) const
 {
@@ -910,8 +910,8 @@ debug_assert( residue_type(seqpos).is_beta_aa() );
 	}
 }
 
-///@brief For a beta-amino acid, set the theta backbone dihedral angle.
-///@details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
+/// @brief For a beta-amino acid, set the theta backbone dihedral angle.
+/// @details Theta is defined as N(n)-CA(n)-CM(n)-C(n).
 void
 Pose::set_theta( Size const seqpos, Real const setting)
 {
@@ -1152,7 +1152,7 @@ Pose::set_torsion( TorsionID const & id, Real const setting )
 /////////////////////////////////////////////////////////////////////////////
 // jumps
 
-///
+
 void
 Pose::set_jump(
 	int const jump_number,
@@ -1162,14 +1162,14 @@ Pose::set_jump(
 	conformation_->set_jump( jump_number, new_jump );
 }
 
-///
+
 kinematics::Jump const &
 Pose::jump( int const jump_number ) const
 {
 	return conformation_->jump( jump_number );
 }
 
-///
+
 void
 Pose::set_jump(
 	AtomID const & id,
@@ -1179,7 +1179,7 @@ Pose::set_jump(
 	conformation_->set_jump( id, new_jump );
 }
 
-///
+
 kinematics::Jump const &
 Pose::jump( AtomID const & id ) const
 {
@@ -1324,7 +1324,7 @@ Pose::update_residue_neighbors()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details called by the ScoreFunction at the start of scoring.  If the score
+/// @details called by the ScoreFunction at the start of scoring.  If the score
 /// function has changed since the last round of scoring, then cached energies
 /// may have become invalidated -- the Energies object makes that decision.
 void

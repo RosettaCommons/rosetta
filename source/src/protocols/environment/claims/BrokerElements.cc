@@ -9,7 +9,7 @@
 
 /// @file BrokerElements.cc
 /// @brief some implementation details of the BrokerElements (such as they are).
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Justin Porter
 
 // Unit Headers

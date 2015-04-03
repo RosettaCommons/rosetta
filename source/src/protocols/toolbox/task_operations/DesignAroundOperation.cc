@@ -20,8 +20,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -31,13 +29,7 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <boost/foreach.hpp>
@@ -82,7 +74,7 @@ core::pack::task::operation::TaskOperationOP DesignAroundOperation::clone() cons
 	return core::pack::task::operation::TaskOperationOP( new DesignAroundOperation( *this ) );
 }
 
-///@brief restricts to repacking all residues outside of design_shell_ around each residue
+/// @brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {

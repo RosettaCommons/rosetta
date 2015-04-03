@@ -21,7 +21,6 @@
 // Package headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 
 // Project headers
@@ -30,7 +29,6 @@
 #include <core/id/AtomID.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

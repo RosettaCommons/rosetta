@@ -19,7 +19,7 @@
 namespace numeric {
 namespace interpolation {
 
-///@brief given a file, return a 2D spline
+/// @brief given a file, return a 2D spline
 spline::SplineGenerator spline_from_file(std::string const & filename, platform::Real const & bin_size);
 }
 }

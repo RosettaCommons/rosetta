@@ -13,7 +13,6 @@
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 /// @modified Tom Linsky, tlinsky@uw.edu
 
-// AUTO-REMOVED #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 
 #include <core/pose/Pose.hh>

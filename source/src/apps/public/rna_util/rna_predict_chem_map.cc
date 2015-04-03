@@ -91,7 +91,6 @@ using ObjexxFCL::format::F;
 //  into C++ code.
 //
 // TO DO: Need to set up interpolation, using function(s) from numeric/interpolation/spline/
-//
 
 
 void
@@ -297,7 +296,6 @@ predict_chem_map_test()
 	}
 
 
-
 }
 
 
@@ -309,7 +307,6 @@ my_main( void* )
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

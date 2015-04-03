@@ -91,9 +91,6 @@
 	using namespace protocols::sic_dock;
 
 
-
-
-
 static numeric::Xforms SYMOCT;
 static numeric::Xforms SYMTET;
 static numeric::Xforms SYMICS;
@@ -450,7 +447,6 @@ void initsyms(){
 	};
 
 
-
 	// move1 slides along comp1 3fold
 	// move2 slides perp to axes
 	class ArchP6m_32d : public ArchP6_32 {
@@ -784,7 +780,6 @@ static thread_local basic::Tracer TR( "symdock_enum" );
 	int compareLMAX(const LMAX a,const LMAX b) {
 		return a.score > b.score;
 	}
-
 
 
 Real sphere_coverage(vector1<Vec> points, vector1<Xform> const & xforms){
@@ -2217,7 +2212,5 @@ int main (int argc, char *argv[]) {
     }
     return 0;
 }
-
-
 
 

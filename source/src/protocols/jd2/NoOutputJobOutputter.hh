@@ -32,7 +32,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details the NoOutputJobOutputter class is responsible for NOT dealing with output
+/// @details the NoOutputJobOutputter class is responsible for NOT dealing with output
 class NoOutputJobOutputter : public JobOutputter {
 public:
 
@@ -41,22 +41,22 @@ public:
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
-	///@brief this function takes a string and writes it to disk (separately from Tracer output).
+	/// @brief this function takes a string and writes it to disk (separately from Tracer output).
 	///use some sort of extention option system - default .dat?  .data?
 	virtual
 	void file( JobCOP, std::string const & )  {};
 
-	///@brief this function outputs the final result of a job.
+	/// @brief this function outputs the final result of a job.
 	virtual
 	void final_pose( JobOP, core::pose::Pose const &, std::string const & ) {};
 
-	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
+	/// @brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
 	void other_pose( JobOP, core::pose::Pose const & , std::string const &, int /*copy_count = -1*/, bool /*score_only = false*/  ) {};
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 
-	///@brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.
+	/// @brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.
 	virtual
 	bool job_has_completed( JobCOP ) { return false; };
 

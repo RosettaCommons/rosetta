@@ -182,7 +182,6 @@ Rama2BOffset::aapair_to_table_index( chemical::AA const res_aa1, chemical::AA co
 }
 
 
-///
 /// load tables
 void
 Rama2BOffset::read_r2bo_tables( ) {

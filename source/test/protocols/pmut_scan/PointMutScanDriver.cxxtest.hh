@@ -110,7 +110,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	// --------------- Test Cases --------------- //
 
-	///@brief tests the function fill_mutations_list for whether it reads in mutant list file properly. in particular,
+	/// @brief tests the function fill_mutations_list for whether it reads in mutant list file properly. in particular,
 	/// make sure single, double and higher order mutants are read in correctly.
 	void test_fill_mutations_list() {
 		TR << "Running test_fill_mutations_list..." << std::endl;
@@ -138,7 +138,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 		TS_ASSERT( *it == m ); // also tests the operator== function!
 	}
 
-	///@brief tests the function scan_for_mutations for whether single mutant scanning is set up correctly
+	/// @brief tests the function scan_for_mutations for whether single mutant scanning is set up correctly
 	void test_fill_mutations_list_single_mutant_scan() {
 		TR << "Running test_fill_mutations_list_single_mutant_scan..." << std::endl;
 
@@ -149,7 +149,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	}
 
-	///@brief tests the function scan_for_mutations for whether double mutant scanning is set up correctly
+	/// @brief tests the function scan_for_mutations for whether double mutant scanning is set up correctly
 	void test_fill_mutations_list_double_mutant_scan() {
 		TR << "Running test_fill_mutations_list_double_mutant_scan..." << std::endl;
 
@@ -163,7 +163,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	}
 
-	///@brief tests the function are_residues_neighbors
+	/// @brief tests the function are_residues_neighbors
 	void test_calculate_neighbor_table() {
 		TR << "Running test_calculate_neighbor_table..." << std::endl;
 
@@ -178,7 +178,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	}
 
-	///@brief tests the function make_specific_mutant
+	/// @brief tests the function make_specific_mutant
 	void test_make_specific_mutant() {
 		TR << "Running test_make_specific_mutant..." << std::endl;
 
@@ -206,7 +206,7 @@ class PointMutScanDriverTests : public CxxTest::TestSuite {
 
 	}
 
-	///@brief tests that the function make_specific_mutant for making mutants listed in a mutants.txt file is working
+	/// @brief tests that the function make_specific_mutant for making mutants listed in a mutants.txt file is working
 	void test_make_specific_mutant_insertion_code() {
 		TR << "Running test_make_specific_mutant_insertion_code..." << std::endl;
 

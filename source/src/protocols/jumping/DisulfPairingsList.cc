@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -40,7 +40,6 @@
 // #include <numeric/random/random.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>

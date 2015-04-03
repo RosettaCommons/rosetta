@@ -16,8 +16,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>

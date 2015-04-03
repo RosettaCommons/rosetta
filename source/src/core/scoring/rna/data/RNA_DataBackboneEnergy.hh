@@ -31,13 +31,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace rna {
 namespace data {
 
-///
 
 typedef numeric::xyzVector< core::Real > Vector;
 
@@ -46,7 +44,7 @@ public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	RNA_DataBackboneEnergy();
 
 

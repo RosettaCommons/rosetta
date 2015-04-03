@@ -22,7 +22,6 @@
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/vector0.hh>
 

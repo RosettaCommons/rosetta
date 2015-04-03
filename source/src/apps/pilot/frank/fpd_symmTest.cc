@@ -16,7 +16,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 class CustomMover : public protocols::moves::Mover {

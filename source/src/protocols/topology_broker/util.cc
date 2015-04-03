@@ -98,7 +98,6 @@ private:
 	std::string label_;
 
 
-
 };
 
 //some modifiers for the fragment reading can be read from the stream

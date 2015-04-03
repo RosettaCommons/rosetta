@@ -14,9 +14,7 @@
 #define INCLUDED_protocols_qsar_qsarMap_hh
 
 #include <map>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
 
@@ -32,23 +30,23 @@ namespace qsar {
 class qsarPoint : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~qsarPoint();
 	qsarPoint(std::string type, core::Real value, std::string name, core::conformation::ResidueOP residue );
-	///@brief set the value of the qsar point
+	/// @brief set the value of the qsar point
 	void set_value(core::Real value);
 
 
-	///@brief return the value of the qsar point
+	/// @brief return the value of the qsar point
 	core::Real get_value();
 
-	///@brief return the type of the qsar point
+	/// @brief return the type of the qsar point
 	std::string get_type();
 
-	///@brief return the name of the atom the qsar point is associated with
+	/// @brief return the name of the atom the qsar point is associated with
 	std::string get_name();
 
-	///@brief return a pointer to the residue the qsar point is associated with
+	/// @brief return a pointer to the residue the qsar point is associated with
 	core::conformation::ResidueOP get_residue();
 
 private:
@@ -62,41 +60,40 @@ private:
 class qsarMap : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~qsarMap();
 	qsarMap(std::string map_name, core::conformation::ResidueOP residue);
 
-	///@brief get size of map
+	/// @brief get size of map
 	core::Size size();
 
-	///@brief initialize grid so that every point has a constant value for every atom and every qsarType. mostly for debugging
+	/// @brief initialize grid so that every point has a constant value for every atom and every qsarType. mostly for debugging
 	void fill_with_value(core::Size value,utility::vector1<std::string> grids_to_use);
 
 	// MolData no longer exists - if you need this, look into the string properties of the restype
 	// brief initialize grid using data from the mol_data object attached to a residue (if availible)
 	// bool fill_from_mol_data(core::chemical::sdf::MolData mol_data);
 
-	///@brief add a new qsar point to the map
+	/// @brief add a new qsar point to the map
 	void add_point(std::string point_name, qsarPointOP new_point);
 
-	///@brief clear the qsar map
+	/// @brief clear the qsar map
 	void clear();
 
-	///@brief return a point in the map from the point name
+	/// @brief return a point in the map from the point name
 	qsarPointOP get_point(std::string const point_name);
 
-	///@brief return a point in the map from the atom_id and qsarType
+	/// @brief return a point in the map from the atom_id and qsarType
 	qsarPointOP get_point(core::Size const atom_id, std::string const type);
 
-	///@brief return the residue associated with the qsarMap
+	/// @brief return the residue associated with the qsarMap
 	core::conformation::ResidueOP get_residue();
 
-	///@brief return a vector of points associated with a given atom_id
+	/// @brief return a vector of points associated with a given atom_id
 	utility::vector1<qsarPointOP> find_points_for_atom(core::Size const atom_id);
 
-	///@brief return a vector of all points associated with a given qsarType;
+	/// @brief return a vector of all points associated with a given qsarType;
 	utility::vector1<qsarPointOP> find_points_of_type(std::string const type);
-
 
 
 private:
@@ -112,7 +109,6 @@ private:
 
 }
 }
-
 
 
 #endif

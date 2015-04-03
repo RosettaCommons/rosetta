@@ -175,11 +175,11 @@ private:
 };
 
 
-///@brief Reroot the Icoord records of a ResidueType on the given atom
+/// @brief Reroot the Icoord records of a ResidueType on the given atom
 /// We need direct access to the ResidueGraph, so this function can only be called by
 /// ResidueType itself
 ///
-///@details Doing a depth first search here because that's what molfile_to_params.py does:
+/// @details Doing a depth first search here because that's what molfile_to_params.py does:
 /// "Protein residues appear to go depth first, so that all chi angles ride on each other."
 /// RM: Doing a breadth first search would likely result in a shallower tree, but with possibly
 /// different behavior on how ring atom trees are built.
@@ -299,7 +299,7 @@ bool has_assigned_coords(ICoorAtomID const & stub, std::set< VD > const & assign
 	return false; // make the compilier happy.
 }
 
-///@details Contains logic originally from read_topology_file()
+/// @details Contains logic originally from read_topology_file()
 void
 fill_ideal_xyz_from_icoor(
 		core::chemical::ResidueType & restype,

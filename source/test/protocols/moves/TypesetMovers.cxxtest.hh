@@ -53,7 +53,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief take a pose, convert it to centroid (and check the pose), run ReturnSidechainMover to return its sidechains (and check the pose again)
+	/// @brief take a pose, convert it to centroid (and check the pose), run ReturnSidechainMover to return its sidechains (and check the pose again)
 	void test_TypesetMovers() {
 
 		core::pose::Pose const posecopy(pose);

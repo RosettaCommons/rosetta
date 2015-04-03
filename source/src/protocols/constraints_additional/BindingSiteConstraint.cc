@@ -21,14 +21,11 @@
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <numeric/model_quality/rms.hh>
 
 #include <utility/string_util.hh>
@@ -45,7 +42,6 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 static thread_local basic::Tracer tr( "core.io.constraints" );
@@ -127,7 +123,7 @@ BindingSiteConstraint::BindingSiteConstraint(
 	tgt_pos_centroid_(tgt_pos_centroid)
 {}
 
-///
+
 void
 BindingSiteConstraint::score( core::scoring::func::XYZ_Func const&, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const {
 	// filler
@@ -298,7 +294,7 @@ BindingSiteConstraint::type() const {
 	return "BindingSite";
 }
 
-///
+
 core::Size
 BindingSiteConstraint::natoms() const
 {
@@ -322,7 +318,7 @@ BindingSiteConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) co
 		return NULL;
 }
 
-///
+
 core::id::AtomID const &
 BindingSiteConstraint::atom( core::Size const n ) const
 {
@@ -358,7 +354,7 @@ BindingSiteConstraint::show_violations( std::ostream& /*out*/, core::pose::Pose 
 }
 
 /*
-///@details one line definition "BindingSite atom1 res1 ... atomN resN"
+/// @details one line definition "BindingSite atom1 res1 ... atomN resN"
 void
 BindingSiteConstraint::read_def(
 	std::istream& data,
@@ -420,7 +416,6 @@ BindingSiteConstraint::read_def(
 	atms_ = atms;
 	init( pose );
 }
-
 
 
 }

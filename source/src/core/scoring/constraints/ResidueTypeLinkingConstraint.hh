@@ -30,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-///@brief This class favors a particular residue identity at a particular position by reducing its res_type energy.
+/// @brief This class favors a particular residue identity at a particular position by reducing its res_type energy.
 class ResidueTypeLinkingConstraint : public Constraint
 {
 public:

@@ -318,8 +318,6 @@ int main(int argc, char *argv[]) {
 				std::cout << safe_nbcount << " " << hash_nbcount << " " << ifc_nbcount << std::endl;
 
 
-
-
 				CollectNeighbors cn; xyzhash.visit(rv,cn);
 				utility::vector1<Vec> ref(slow_nbget(xyzhash,DIST,rv)), tst(cn.nbrs);
 
@@ -337,8 +335,6 @@ int main(int argc, char *argv[]) {
 					}
 					if(!i_in) std::cout << "REF NOT IN TST: " << ObjexxFCL::format::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
 				}
-
-
 
 
 				utility_exit_with_message("FAIL after "+ObjexxFCL::format::I(10,iter)+"!!!");

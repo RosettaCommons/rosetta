@@ -10,7 +10,7 @@
 /// @file protocols/forge/remodel/RemodelAccumulator.hh
 /// @brief
 /// @author Possu Huang ( possu@uw.edu )
-///
+
 
 #ifndef INCLUDED_protocols_forge_remodel_RemodelAccumulator_hh
 #define INCLUDED_protocols_forge_remodel_RemodelAccumulator_hh

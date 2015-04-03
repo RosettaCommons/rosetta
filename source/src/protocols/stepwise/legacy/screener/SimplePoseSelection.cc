@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/screener/SimplePoseSelection.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

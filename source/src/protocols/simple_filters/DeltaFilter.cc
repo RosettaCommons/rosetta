@@ -29,7 +29,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.DeltaFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 DeltaFilter::DeltaFilter() :
 	parent( "Delta" ),
 	filter_( /* NULL */ ),

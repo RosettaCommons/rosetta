@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/MinPackMoverCreator.hh
-///@brief This class will create instances of protocols::moves::Mover MinPackMover for the protocols::moves::MoverFactory
-///@author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @file protocols/simple_moves/MinPackMoverCreator.hh
+/// @brief This class will create instances of protocols::moves::Mover MinPackMover for the protocols::moves::MoverFactory
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_MinPackMoverCreator_hh
 #define INCLUDED_protocols_simple_moves_MinPackMoverCreator_hh

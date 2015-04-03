@@ -20,20 +20,15 @@
 
 // Package headers
 #include <numeric/expression_parser/Arithmetic.hh>
-// AUTO-REMOVED #include <protocols/optimize_weights/OptEData.hh>
 
 // Project headers
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh> // there is no .fwd.hh for this
-// AUTO-REMOVED #include <basic/prof.hh>
 
 /// C++ headers
 #include <map>
 #include <set>
-// AUTO-REMOVED #include <string>
 #include <iosfwd>
 
 #include <core/scoring/EnergyMap.hh>
@@ -180,7 +175,7 @@ private: // data
 	ScoreTypes const & score_list_;
 	ScoreTypes const & fixed_score_list_;
 
-	///
+
 	bool fix_reference_energies_;
 	utility::vector1< Real > starting_reference_energies_;
 
@@ -430,8 +425,6 @@ private:
 	WrapperOptEMultifuncAP multifunc_;
 
 };
-
-
 
 
 } // namespace optimization

@@ -9,7 +9,7 @@
 
 /// @file    protocols/normalmode/NormalModeRelaxMover.cc
 /// @brief   Normal Mode Perturbation + Relax
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 #include <protocols/normalmode/NormalMode.hh>

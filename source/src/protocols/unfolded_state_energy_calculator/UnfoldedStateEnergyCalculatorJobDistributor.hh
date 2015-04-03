@@ -44,23 +44,23 @@ class UnfoldedStateEnergyCalculatorJobDistributor : public protocols::jd2::FileS
 public:
 	typedef	std::map<std::string, utility::vector1< core::scoring::EMapVector > >::iterator uem_iter;
 
-///@brief ctor is protected; singleton pattern
+/// @brief ctor is protected; singleton pattern
   UnfoldedStateEnergyCalculatorJobDistributor();
 
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
   virtual ~UnfoldedStateEnergyCalculatorJobDistributor();
 
-	///@brief
+	/// @brief
   virtual
   void
   go( protocols::moves::MoverOP mover );
 
-	///@brief
+	/// @brief
 	void
 	add_unfolded_energy_data( std::string tlc, core::scoring::EMapVector const & scores );
 
-	///@brief
+	/// @brief
 	void
 	set_energy_terms( core::scoring::EMapVector const & weights );
 

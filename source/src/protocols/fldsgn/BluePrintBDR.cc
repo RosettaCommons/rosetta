@@ -21,16 +21,12 @@
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
-// AUTO-REMOVED #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/forge/methods/pose_mod.hh>
-// AUTO-REMOVED #include <protocols/forge/methods/util.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // project headers
 #include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -49,7 +45,6 @@
 #include <protocols/forge/constraints/InvrotTreeRCG.hh>
 #include <protocols/fldsgn/SheetConstraintsRCG.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
-// AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/toolbox/match_enzdes_util/AlignPoseToInvrotTreeMover.hh>
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>
@@ -65,7 +60,6 @@
 #include <utility>
 
 // boost
-// AUTO-REMOVED #include <boost/lexical_cast.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

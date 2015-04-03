@@ -15,7 +15,6 @@
 // Unit headers
 #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/string.functions.hh>

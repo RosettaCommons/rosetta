@@ -16,22 +16,17 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/CSTalosIO.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <utility/io/ozstream.hh>
 
 
 // option key includes
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // Boost
 #include <boost/tuple/tuple.hpp>

@@ -30,12 +30,12 @@
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 class SequenceFitnessMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	SequenceFitnessMover(
 	);
 

@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -148,7 +148,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-
 
 
 #define OPT(akey)							\

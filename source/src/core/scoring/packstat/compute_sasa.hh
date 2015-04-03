@@ -22,7 +22,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -30,17 +29,13 @@
 #include <numeric/constants.hh>
 #include <numeric/trig.functions.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/ubyte.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/Fmath.hh>
 
-// AUTO-REMOVED #include <map>
 
 #include <core/id/AtomID_Map.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -195,7 +190,6 @@ namespace packstat {
 		}
 
 	} // end namespace old
-
 
 
 	using core::pose::Pose;

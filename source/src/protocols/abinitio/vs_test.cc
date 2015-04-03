@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief stupid test file for visual studio c++
-/// @detailed
+/// @details
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -17,8 +17,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 
@@ -41,20 +39,16 @@
 
 #include <string>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-
 
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
-
 
 
 using namespace basic::options;

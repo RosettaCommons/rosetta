@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -31,13 +31,11 @@
 #include <core/id/AtomID.fwd.hh>
 
 
-
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -55,7 +53,7 @@ class PCA : public utility::pointer::ReferenceCount {
   typedef core::Real matrix[3][3];
   typedef core::Real rvec[3];
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PCA();
   typedef utility::vector1< core::Real > ProjectionVector;
 

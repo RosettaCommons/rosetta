@@ -17,8 +17,6 @@
 
 // Project headers
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/pose/Pose.hh>
 
 // Numeric headers
@@ -51,10 +49,8 @@
 #include <core/pose/util.tmpl.hh>
 
 
-
 namespace core {
 namespace optimization {
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -100,7 +96,6 @@ MinimizerMap::zero_torsion_vectors()
 		}
 	}
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

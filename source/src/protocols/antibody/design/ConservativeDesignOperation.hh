@@ -32,16 +32,16 @@ namespace design {
 	using core::chemical::AA;
 
 	
-///@brief A TaskOperation that sets the allowed amino acids of designable residues to the native amino acid's conservative mutations.
+/// @brief A TaskOperation that sets the allowed amino acids of designable residues to the native amino acid's conservative mutations.
 ///
-///@details Default is to act on all designable residues.  Use limit_to_positions to limit this.
+/// @details Default is to act on all designable residues.  Use limit_to_positions to limit this.
 /// Default is to replace the allowed_aas with these conservative mutations. 
 ///
 class ConservativeDesignOperation : public core::pack::task::operation::TaskOperation {
 
 public:
 	
-	///@brief Default constructor.  Will use native aa from apply (Changes each pack if tf is passed).
+	/// @brief Default constructor.  Will use native aa from apply (Changes each pack if tf is passed).
 	ConservativeDesignOperation();
 	
 	virtual ~ConservativeDesignOperation();
@@ -62,23 +62,23 @@ public:
 	
 
 	
-	///@brief Limit to a subset of residue positions, already set to designable.
+	/// @brief Limit to a subset of residue positions, already set to designable.
 	void
 	limit_to_positions(vector1< Size > const positions);
 	
-	///@brief Clear any set positions.
+	/// @brief Clear any set positions.
 	void
 	clear_positions();
 	
-	///@brief Add to the allowed amino acids list instead of replacing it.  Default false.
+	/// @brief Add to the allowed amino acids list instead of replacing it.  Default false.
 	void
 	add_to_allowed_aas(bool const & setting);
 	
-	///@brief Include native amino acid in the allowed_aas list.  Default true.
+	/// @brief Include native amino acid in the allowed_aas list.  Default true.
 	void
 	include_native_aa(bool const & setting);
 
-	///@brief Will use native residues from the this pose to determine conserved aa.
+	/// @brief Will use native residues from the this pose to determine conserved aa.
 	void
 	use_pose_sequence_as_native(core::pose::Pose const & pose);
 	
@@ -115,7 +115,6 @@ private:
 } //task_operations
 } //toolbox
 } //protocols
-
 
 
 #endif	//INCLUDED_protocols_antibody_design_ConservativeDesignOperation_hh

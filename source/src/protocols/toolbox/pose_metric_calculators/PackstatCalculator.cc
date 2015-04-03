@@ -16,12 +16,8 @@
 #include <core/scoring/packstat/compute_sasa.hh>
 
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/NumberHBondsCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-
 
 
 // Utility headers
@@ -35,7 +31,6 @@
 #include <utility/assert.hh>
 
 #include <utility/vector1.hh>
-
 
 
 using namespace core;
@@ -101,7 +96,6 @@ PackstatCalculator::lookup(
    }
 
 } //lookup
-
 
 
 std::string

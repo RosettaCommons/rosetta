@@ -20,12 +20,10 @@
 #include <core/id/AtomID_Map.hh>
 
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <core/graph/DisjointSets.hh>
@@ -39,7 +37,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
@@ -174,7 +171,7 @@ void SurfacePotential::read_average_res_hASA_database_file() {
 
 /// @brief Reads in the database file which contains the scores for a distribution of patch sizes.
 ///
-/// @detailed
+/// @details
 /// Not assuming any particular length to the database file so that if I want to increase
 /// the maximum of the distribution or shrink it, the vector will dynamically resize to what it needs
 /// to be.
@@ -215,7 +212,7 @@ void SurfacePotential::read_hASA_score_database_file() {
 
 /// @brief Reads in the database file for the hpatch score, yet another version of the surface energy.
 ///
-/// @detailed
+/// @details
 /// Not assuming any particular length to the database file so that if I want to increase
 /// the maximum of the distribution or shrink it, the vector will dynamically resize to what it needs
 /// to be.
@@ -243,9 +240,6 @@ void SurfacePotential::read_hpatch_score_database_file() {
 
 }
 
-
-///
-/// @begin SurfacePotential::average_residue_hASA
 ///
 /// @brief
 /// Returns the average surface energy for the given residue type and number of neighbors.
@@ -268,8 +262,6 @@ debug_assert( num_nbs <= BURIED_RESIDUE_NO_HSASA_CUTOFF );
 }
 
 ///
-/// @begin SurfacePotential::hASA_patch_energy
-///
 /// @brief
 /// Returns the energy for a given patch size.  The calling function must ensure that an out-of-bounds error will not occur.
 ///
@@ -284,9 +276,6 @@ debug_assert( patch_area <= MAX_PATCH_SURFACE_AREA );
 	return hASA_to_score_[ (Size)(patch_area / SURFACE_SCORE_BIN_SIZE ) ][ num_nbs ];
 }
 
-
-///
-/// @begin SurfacePotential::hpatch_score
 ///
 /// @brief
 /// Returns the score for a given patch size.  The calling function must ensure that an out-of-bounds error will not occur.
@@ -302,9 +291,6 @@ debug_assert( patch_area <= MAX_HPATCH_AREA );
 	return patcharea_to_score_[ (Size)(patch_area / HPATCH_SCORE_BIN_SIZE) ];
 }
 
-
-///
-/// @begin SurfacePotential::compute_residue_surface_energy
 ///
 /// @brief
 /// Calculates the surface energy for a single residue within a Pose object. Used only by the RotamerSet_::compute_one_body_energy_maps
@@ -369,9 +355,6 @@ void SurfacePotential::compute_residue_surface_energy( conformation::Residue con
 
 }
 
-
-///
-/// @begin compute_pose_surface_energy
 ///
 /// @brief
 /// helper method for computing surface score. in the optE protocol we don't care about the total vs. residue
@@ -531,9 +514,6 @@ SurfacePotential::compute_pose_hpatch_score(
 	return total_hpatch_score;
 }
 
-
-///
-/// @begin compute_pose_hpatch_score
 ///
 /// @brief
 /// Uses the src/core/pack/interaction_graph/RotamerDots classes to determine exact SASAs and then uses a graph-based

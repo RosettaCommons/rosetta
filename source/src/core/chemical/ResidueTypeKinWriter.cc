@@ -78,7 +78,6 @@ void ResidueTypeKinWriter::write_kin_header(
 }
 
 
-
 void
 ResidueTypeKinWriter::write_restype(
 	std::ostream & ostr,

@@ -155,7 +155,7 @@ public:
     core::Size const loop_num
   ) const;
 
-  ///@brief return number of residues in all loops of this definition -- sum_i( loop_size( i ) )
+  /// @brief return number of residues in all loops of this definition -- sum_i( loop_size( i ) )
   core::Size loop_size() const;
 
   core::Size size() const;
@@ -260,12 +260,12 @@ public:
     /// Note: if this method is called on an instance without any Loop's, returns (0,0,0).
     void center_of_mass(const core::pose::Pose& pose, numeric::xyzVector<core::Real>* center) const;
 
-  ///@brief set each loop-residue in the vector to val.
+  /// @brief set each loop-residue in the vector to val.
   /// input vector of nres length ( if shorter last residues of loop are ignored )
   template< class T >
   void transfer_to_residue_vector( utility::vector1< T >&, T val ) const;
 
-  ///@brief add all residues within this loop definition into selection
+  /// @brief add all residues within this loop definition into selection
   void get_residues( utility::vector1< Size>& selection ) const;
 
   // i know this encourages old style for-loops (i.e. without iterators) but so much of the code

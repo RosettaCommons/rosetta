@@ -190,7 +190,6 @@ LinkerScore::LinkerScore(
 }
 
 
-
 core::Real
 LinkerScore::score(
 	Xforms const & x1s,
@@ -288,8 +287,6 @@ LinkerScore::dump_linkers(
 }
 
 
-
-
 class NoPoseXYX_Func : public core::scoring::func::XYZ_Func {
  public:
  	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords_;
@@ -365,9 +362,6 @@ class NoPoseXYX_Func : public core::scoring::func::XYZ_Func {
 	}
 
 
-
-
-
 // void
 // LinkerScore::dump_linkers(
 // 	Xform const & x1,
@@ -439,7 +433,6 @@ void JointScore::show(std::ostream & out, Xforms const & x1, Xforms const & x2, 
 		out << " ";
 	}
 }
-
 
 
 } // namespace sic_dock

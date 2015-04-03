@@ -27,7 +27,7 @@
 //static basic::Tracer TR("apps.pilot.smlewis.HECT");
 
 
-///@brief HECT mover
+/// @brief HECT mover
 class HECTAllMover : public HECTMover {
 
 	typedef HECTMover parent;
@@ -35,7 +35,7 @@ class HECTAllMover : public HECTMover {
 public:
 	HECTAllMover() : parent() {}
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 	virtual
 	void
 	init_on_new_input(core::pose::Pose & pose) {

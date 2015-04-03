@@ -35,7 +35,6 @@
 #include <iostream>
 #include <string>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 

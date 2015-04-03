@@ -10,7 +10,7 @@
 /// @file protocols/forge/remodel/RemodelGlobalFrame.hh
 /// @brief
 /// @author Possu Huang ( possu@uw.edu )
-///
+
 
 #ifndef INCLUDED_protocols_forge_remodel_RemodelGlobalFrame_hh
 #define INCLUDED_protocols_forge_remodel_RemodelGlobalFrame_hh
@@ -33,7 +33,6 @@ using namespace std;
 namespace protocols {
 namespace forge {
 namespace remodel {
-
 
 
 numeric::xyzVector< core::Real >

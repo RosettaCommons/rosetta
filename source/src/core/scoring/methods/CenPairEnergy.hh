@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_methods_CenPairEnergy_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <core/scoring/methods/EnvPairEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -33,18 +32,17 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class CenPairEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	CenPairEnergy();
 
 

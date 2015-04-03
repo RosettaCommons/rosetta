@@ -81,8 +81,8 @@ namespace protocols {
 			return "BundleGridSampler";
 		}
 
-		///
-		///@brief Creator for BundleGridSampler mover.
+
+		/// @brief Creator for BundleGridSampler mover.
 		BundleGridSampler::BundleGridSampler():
 			Mover("BundleGridSampler"),
 			reset_mode_(true),
@@ -112,7 +112,7 @@ namespace protocols {
 			sfxn_()
 		{}
 
-		///
+
 		/// @brief Copy constructor for BundleGridSampler mover.
 		BundleGridSampler::BundleGridSampler( BundleGridSampler const & src ):
 			protocols::moves::Mover( src ),
@@ -154,18 +154,18 @@ namespace protocols {
 			for(core::Size i=1,imax=src.delta_t_.size(); i<=imax; ++i) delta_t_.push_back( src.delta_t_[i]->clone() );
 		}
 
-		///
-		///@brief Destructor for BundleGridSampler mover.
+
+		/// @brief Destructor for BundleGridSampler mover.
 		BundleGridSampler::~BundleGridSampler() {}
 
-		///
-		///@brief Clone operator to create a pointer to a fresh BundleGridSampler object that copies this one.
+
+		/// @brief Clone operator to create a pointer to a fresh BundleGridSampler object that copies this one.
 		protocols::moves::MoverOP BundleGridSampler::clone() const {
 			return protocols::moves::MoverOP( new BundleGridSampler( *this ) );
 		}
 
-		///
-		///@brief Fresh_instance operator to create a pointer to a fresh BundleGridSampler object that does NOT copy this one.
+
+		/// @brief Fresh_instance operator to create a pointer to a fresh BundleGridSampler object that does NOT copy this one.
 		protocols::moves::MoverOP BundleGridSampler::fresh_instance() const {
 			return protocols::moves::MoverOP( new BundleGridSampler );
 		}
@@ -174,7 +174,7 @@ namespace protocols {
 		//          APPLY FUNCTION                                                    //
 		////////////////////////////////////////////////////////////////////////////////
 
-		///
+
 		/// @brief Actually apply the mover to the pose.
 		void BundleGridSampler::apply (core::pose::Pose & pose)
 		{
@@ -450,8 +450,8 @@ namespace protocols {
 
 		////////////////////////////////////////////////////////////////////////////////
 
-		///
-		///@brief Returns the name of this mover ("BundleGridSampler").
+
+		/// @brief Returns the name of this mover ("BundleGridSampler").
 		std::string BundleGridSampler::get_name() const{
 			return "BundleGridSampler";
 		}
@@ -460,7 +460,7 @@ namespace protocols {
 		//          PARSE MY TAG FUNCTION                                            ///
 		////////////////////////////////////////////////////////////////////////////////
 
-		///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+		/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 		///
 		void
 		BundleGridSampler::parse_my_tag(

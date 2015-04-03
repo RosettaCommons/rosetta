@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/PseudocontactShiftEnergy.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
@@ -141,7 +139,6 @@ PCS_Energy::finalize_total_energy(core::pose::Pose & pose,
 	totals[ core::scoring::pcs ] = calculate_pcs_score( pose, false );
 
 } // finalize_total_energy
-
 
 
 PCS_data &

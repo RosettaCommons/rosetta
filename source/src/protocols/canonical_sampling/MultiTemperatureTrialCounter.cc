@@ -16,7 +16,6 @@
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
 
 
-
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh> //Pretty output.

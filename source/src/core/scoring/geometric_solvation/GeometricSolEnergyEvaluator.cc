@@ -9,7 +9,7 @@
 
 /// @file core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 // Unit Headers
@@ -88,7 +88,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-///@brief copy c-tor
+/// @brief copy c-tor
 GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( methods::EnergyMethodOptions const & opts ) :
 	options_( opts ),
 	hb_database_( HBondDatabase::get_database( opts.hbond_options().params_database_tag() )),
@@ -894,7 +894,7 @@ GeometricSolEnergyEvaluator::atom_is_heavy( conformation::Residue const & rsd, S
 }
 
 // COPIED OVER FROM HBondEnergy.cc ==> comment is not rhiju's!
-///@brief HACK!  MAX_R defines the maximum donorH to acceptor distance.
+/// @brief HACK!  MAX_R defines the maximum donorH to acceptor distance.
 // The atomic_interaction_cutoff method is meant to return the maximum distance
 // between two *heavy atoms* for them to have a zero interaction energy.
 // I am currently assuming a 1.35 A maximum distance between a hydrogen and the

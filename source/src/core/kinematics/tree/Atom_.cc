@@ -544,7 +544,7 @@ Atom_::stub_defined() const
 	// have to handle a couple of cases here:
 
 	// note -- in counting dependent atoms, exclude JumpAtom's
-	//
+
 
 	// 1. no dependent atoms --> no way to define new coord sys
 	//    on this end. ergo take parent's M and my xyz
@@ -558,7 +558,7 @@ Atom_::stub_defined() const
 	//
 	//    b) otherwise, use
 	//       myself, my first atom, my second atom
-	//
+
 
 	if ( is_jump() ) {
 		AtomCOP first = get_nonjump_atom(0);

@@ -17,7 +17,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 //#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 #include <core/scoring/Energies.hh>
@@ -28,8 +27,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh> //temporary include
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -40,7 +37,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.enzdes.DesignVsNativeComparison" );

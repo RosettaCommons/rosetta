@@ -20,7 +20,6 @@
 #include <core/io/silent/SilentFileData.hh>
 
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/file/gzip_util.hh>
 #include <utility/file/file_sys_util.hh>
 

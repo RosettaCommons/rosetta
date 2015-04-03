@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/TensorsOptimizer.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -48,12 +46,8 @@
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <iomanip>
 
 #include <utility/vector1.hh>
-
-
-
 
 
 namespace protocols{
@@ -230,7 +224,6 @@ TensorsOptimizer::dfunc(core::optimization::Multivec const & vars,
 }
 
 
-
 core::Real
 TensorsOptimizer::operator ()( core::optimization::Multivec const & vars ) const{
 	return(func(vars));
@@ -247,8 +240,6 @@ TensorsOptimizer::dfunc_exact(core::optimization::Multivec const & vars,
 	core::Real r5, r2, r3;
 
 	utility::vector1<core::Real> A(5, 0);
-
-
 
 
 	n_la = pcs_d_c_.get_n_lanthanides();

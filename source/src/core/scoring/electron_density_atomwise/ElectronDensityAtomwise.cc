@@ -38,7 +38,7 @@
 
 #include <core/scoring/electron_density/SplineInterp.hh>
 
-//
+
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // Utility headers
@@ -62,7 +62,6 @@
 #endif
 
 
-
 namespace core {
 namespace scoring {
 namespace electron_density_atomwise {
@@ -76,7 +75,6 @@ using namespace basic::options;
 
 
 static thread_local basic::Tracer TR( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );
-
 
 
 /// null constructor

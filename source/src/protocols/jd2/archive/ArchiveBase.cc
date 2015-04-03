@@ -16,19 +16,13 @@
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
-// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 
 
-
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -48,7 +42,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //C++
-// AUTO-REMOVED #include <iterator>
 
 static thread_local basic::Tracer tr( "protocols.jd2.Archive" );
 using basic::mem_tr;
@@ -64,7 +57,6 @@ using basic::mem_tr;
 #include <core/kinematics/Jump.hh>
 
 
-//
 OPT_1GRP_KEY( Integer, iterative, pool_size )
 
 bool protocols::jd2::archive::ArchiveBase::options_registered_( false );
@@ -117,7 +109,7 @@ ArchiveBase::ArchiveBase( ArchiveManagerAP ptr ) :
 
 ArchiveBase::~ArchiveBase() {}
 
-///@brief count the structure for the acceptance statistics
+/// @brief count the structure for the acceptance statistics
 ///   only count if not from expired batch
 void ArchiveBase::count_structure( Batch const& batch, bool accepted ) {
 	if ( still_interested( batch ) ) {
@@ -137,7 +129,7 @@ void ArchiveBase::count_structure( Batch const& batch, bool accepted ) {
 	}
 }
 
-///@brief count the structure for the acceptance statistics
+/// @brief count the structure for the acceptance statistics
 ///   only count if not from expired batch
 void ArchiveBase::count_removed_structures( core::Size n_removed ) {
 	if ( accepts_since_last_batch() > n_removed ) accepts_since_last_batch()-=n_removed;

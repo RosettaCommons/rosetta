@@ -69,7 +69,6 @@ class Tester:
         return pid
 
 
-
     # Try to identity plaform by using scons compiliation feature.
     def getPlatformID(self):
         if Options.CMake:
@@ -421,7 +420,6 @@ class Tester:
         '''
 
 
-
     def printSummary(self):
         total = 0
         failed = 0
@@ -636,7 +634,6 @@ def main(args):
     if not Options.one: T.printSummary()
 
     print "Done!"
-
 
 
 if __name__ == "__main__": main(sys.argv)

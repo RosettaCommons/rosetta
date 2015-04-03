@@ -19,16 +19,12 @@
 #include <core/id/JumpID.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/id/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 
 // C++ headers
 #include <iostream>
 
 #include <core/types.hh>
-
 
 
 namespace core {

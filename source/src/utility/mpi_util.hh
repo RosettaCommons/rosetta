@@ -34,7 +34,7 @@ mpi_rank();
 int
 mpi_nprocs();
 
-///@brief Use MPI to wait until some node sends an integer -- usually its own mpi_rank
+/// @brief Use MPI to wait until some node sends an integer -- usually its own mpi_rank
 /// so that it can send further messages.
 int
 receive_integer_from_anyone();

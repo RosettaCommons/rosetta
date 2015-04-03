@@ -24,8 +24,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
 #include <core/types.hh>

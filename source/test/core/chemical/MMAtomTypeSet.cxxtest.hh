@@ -27,7 +27,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers, for debugging your tests
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 

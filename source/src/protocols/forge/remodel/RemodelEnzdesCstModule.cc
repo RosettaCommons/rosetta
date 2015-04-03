@@ -17,12 +17,8 @@
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/vector1.hh>
@@ -33,7 +29,6 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -197,7 +192,6 @@ void
 RemodelEnzdesCstModule::use_all_blocks(){
 	backbone_only_ = false;
 }
-
 
 
 } //namespace protocols

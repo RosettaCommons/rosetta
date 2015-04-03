@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the AngleToVectorFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_AngleToVectorFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_AngleToVectorFilterCreator_hh
 

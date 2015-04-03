@@ -12,7 +12,6 @@
 
 #include <protocols/viewer/viewers.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>

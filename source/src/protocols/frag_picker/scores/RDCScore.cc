@@ -16,7 +16,6 @@
 
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
@@ -24,13 +23,9 @@
 #endif
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
 
@@ -118,7 +113,7 @@ bool RDCScore::score(
 	//////////////////////////////////////////////////////////////
 	//
 	// store rdc for a given query_sequence
-	//
+
 
 	// rdc data handling
 	core::scoring::ResidualDipolarCoupling::RDC_lines rdc_data_given_fragment_lines;

@@ -40,8 +40,6 @@ print '---------------------------------------------'
 print 'CI1B_Method Score:', sf_new.score(pose)
 
 
-
-
 @rosetta.EnergyMethod()
 class CI2B_Method(ContextIndependentTwoBodyEnergy):
     def __init__(self):
@@ -57,12 +55,10 @@ class CI2B_Method(ContextIndependentTwoBodyEnergy):
     def eval_intrares_energy(self, rsd, pose, sfxn, emap): pass
 
 
-
 sf_new = ScoreFunction()
 sf_new.set_weight(CI2B_Method.scoreType, 1)
 print '---------------------------------------------'
 print 'CI2B_Method Score:', sf_new.score(pose)
-
 
 
 @rosetta.EnergyMethod()

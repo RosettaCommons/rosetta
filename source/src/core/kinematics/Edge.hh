@@ -19,8 +19,6 @@
 // Unit headers
 #include <core/kinematics/Edge.fwd.hh>
 
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
-
 
 // // C++ Headers
 #include <utility/assert.hh>
@@ -183,7 +181,7 @@ public:
 		return ( label_ > 0 );
 	}
 
-	///
+
 	inline
 	bool
 	is_chemical_bond() const

@@ -16,7 +16,6 @@
 #include <core/optimization/cartesian_minimize.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
@@ -27,7 +26,6 @@
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/DerivVectorPair.hh>
@@ -60,8 +58,8 @@ namespace optimization {
 static thread_local basic::Tracer TR( "core.optimization" );
 
 /////////////////////////////////////////////////////////////////////////////
-/// @detailed
-///
+/// @details
+
 
 void
 cartesian_dfunc(
@@ -537,8 +535,6 @@ tors_deriv_to_cartesian( Real dE_dtor, VectorQuad const & coords, VectorQuad & d
 	boost::get<2>(dE_dxs) = fj-fab;
 	boost::get<3>(dE_dxs) = -fj;
 }
-
-
 
 
 } // namespace optimization

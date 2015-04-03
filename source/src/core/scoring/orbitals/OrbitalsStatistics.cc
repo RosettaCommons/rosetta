@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin OrbitalStatistics
 ///
 /// @brief
 /// A class for generating statistics from orbitals
 ///
-/// @detailed
+/// @details
 /// This is an attempt to be transparent in how the orbital-hydrogen interactions were converted into
 /// a KBP. In general terms, a set of proteins from PDB were taken and the shortest distance from an
 /// orbital to a polar or aromatic hydrogen was recorded and binned. In addition to the shortest distance,
@@ -37,7 +36,7 @@
 /// convoluted than this because I had no idea how to program. I wrote this piece for clarity. I have tested
 /// it and it produces the same results.
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
@@ -55,8 +54,6 @@
 //utility headers
 #include <utility/vector1.hh>
 
-
-// AUTO-REMOVED #include <math.h> // REQUIRED FOR WINDOWS
 
 #include <map>
 
@@ -104,10 +101,7 @@ OrbitalsStatistics::OrbitalsStatistics()
 	orbital_type_2_enum_["S.p.sp3"]=S_p_sp3;
 
 
-
 }
-
-
 
 
 numeric::histograms::TwoDHistogram<core::Size, core::SSize> OrbitalsStatistics::get_2D_histogram()
@@ -126,7 +120,7 @@ core::Size OrbitalsStatistics::get_number_of_histograms()
 }
 
 
-///@brief increment the orbital histogram bin based upon a distance and angle.
+/// @brief increment the orbital histogram bin based upon a distance and angle.
 /// Currently the statistics are best with .1 incremented bins
 void OrbitalsStatistics::increment_histogram_bin(
 		core::Real & distance,
@@ -204,7 +198,7 @@ void OrbitalsStatistics::increment_histogram_bin(
 }
 
 
-///@brief get statistics based upon hydrogen to orbital distance/angle
+/// @brief get statistics based upon hydrogen to orbital distance/angle
 void
 OrbitalsStatistics::sc_H_orbital( core::pose::Pose & pdb )
 {

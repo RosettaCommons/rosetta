@@ -65,7 +65,7 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-///@ brief constructor for EnzConstraintIO class, builds up function types
+/// @ brief constructor for EnzConstraintIO class, builds up function types
 EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set) {
 	restype_set_ = src_restype_set;
 	//favor_native_constraints_.clear();
@@ -164,7 +164,6 @@ EnzConstraintIO::read_enzyme_cstfile( std::string fname ) {
 } //funtion read enzyme cst
 
 
-
 toolbox::match_enzdes_util::MatchConstraintFileInfoListCOP
 EnzConstraintIO::mcfi_list( core::Size block ) const
 {
@@ -173,7 +172,6 @@ EnzConstraintIO::mcfi_list( core::Size block ) const
 
 	return mcfi_lists_[ block ];
 }
-
 
 
 /// @brief reads the residue numbers that the constraints will be applied to.
@@ -353,7 +351,6 @@ EnzConstraintIO::generate_pose_specific_data(
 		generate_pose_specific_data_for_block( pose, scofx, block );
 	}
 }// end check consistency function
-
 
 
 void

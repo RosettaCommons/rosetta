@@ -41,7 +41,6 @@
 #include <utility/exit.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
@@ -53,7 +52,7 @@
 namespace core {
 namespace pose {
 
-///@brief info about an atom in a unrecognized res (not in pose, but we want to remember it)
+/// @brief info about an atom in a unrecognized res (not in pose, but we want to remember it)
 class UnrecognizedAtomRecord {
 
 public:

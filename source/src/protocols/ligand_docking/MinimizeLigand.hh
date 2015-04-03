@@ -33,7 +33,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 class MinimizeLigand : public protocols::moves::Mover
 {
 public:

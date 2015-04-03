@@ -19,11 +19,9 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
 #include <core/scoring/sasa/util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -37,7 +35,6 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh> // temp
 
 // C++ Headers
 #include <cmath>
@@ -70,9 +67,8 @@ namespace sasa {
 ///  Convenience Functions
 ///	
 ///
-///
 
-///@brief Calculate the sidechain and backbone sasa from atom sasa
+/// @brief Calculate the sidechain and backbone sasa from atom sasa
 std::pair<Real, Real>
 get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
 	
@@ -132,7 +128,6 @@ get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & ato
 	std::pair<utility::vector1<Real>, utility::vector1<Real> > split_sasa = std::make_pair(sc_sasa, bb_sasa);
 	return split_sasa;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,8 +214,6 @@ ObjexxFCL::FArray2D_int angles( num_phi, num_theta );
 ObjexxFCL::FArray2D_ubyte masks( num_bytes, num_overlaps * num_orientations );
 
 ///
-/// @begin get_masks
-///
 /// @brief
 /// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
@@ -231,8 +224,6 @@ ObjexxFCL::FArray2D_ubyte const & get_legrand_sasa_masks() {
 }
 
 ///
-/// @begin get_angles
-///
 /// @brief
 /// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
 /// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
@@ -242,8 +233,7 @@ ObjexxFCL::FArray2D_int const & get_legrand_sasa_angles() {
 	return angles;
 }
 
-/// @begin sasa.cc::input_sasa_dats
-///
+
 /// @brief
 /// Reads in the SASA database files sampling/SASA-angles.dat and sampling/SASA-masks.dat into FArrays above.
 ///
@@ -289,9 +279,7 @@ void input_legrand_sasa_dats() {
 }
 
 ///
-/// @begin sasa.cc::get_overlap
-///
-/// @detailed
+/// @details
 /// getting overlap from a to b (or i to j, as the atoms are referred to in calc_per_atom_sasa below).
 /// this returns the degree of overlap between two atoms adapted from erics code in area.c GetD2 and returns value
 /// from 1 to 100. This calculation is based on the law of cosines.
@@ -358,14 +346,11 @@ get_legrand_atomic_overlap( Real const radius_a, Real const radius_b, Real const
 	}
 }
 
-
-///
-/// @begin sasa.cc::get_orientation
 ///
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// ronj This function is used to get two indexes (phi and theta) which are used to get the index of a dot on the
 /// ronj surface of the 'a' sphere. When calculating how much surface area sphere b covers on a, we can get the degree
 /// ronj of overlap from the function above, but it's not necessarily the case that the vector that connects the center
@@ -477,14 +462,11 @@ void get_legrand_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 #endif
 }
 
-
-///
-/// @begin sasa.cc::get_2way_orientation
 ///
 /// @brief
 /// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 ///
-/// @detailed
+/// @details
 /// ronj This function is the same as the function above but get the orientation of a to b simultaneously with the
 /// ronj orientation of b to a.  The same result could be achieved by making two separate get_legrand_2way_orientation() calls
 /// ronj but this method does it more efficiently by avoiding an atan2 and acos call.  Instead, once you compute the
@@ -598,8 +580,6 @@ get_legrand_2way_orientation( Vector const & a_xyz, Vector const & b_xyz, int & 
 
 }
 	
-
-
 
 
 }

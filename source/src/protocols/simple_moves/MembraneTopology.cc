@@ -56,7 +56,7 @@ MembraneTopologyCreator::mover_name()
 
 MembraneTopology::~MembraneTopology() {}
 
-///@brief default ctor
+/// @brief default ctor
 MembraneTopology::MembraneTopology() :
 	parent(),
 	span_file_("")

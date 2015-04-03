@@ -69,7 +69,6 @@ void all_pair_energies(
 }
 
 
-
 int
 main( int argc, char* argv [] ) {
 	try {

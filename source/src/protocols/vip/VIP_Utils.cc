@@ -140,8 +140,6 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	}
 
 
-
 }}
-
 
 

@@ -19,20 +19,16 @@
 
 //package headers
 #include <core/pack/task/operation/TaskOperation.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 //project headers
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/ddg/ddGData.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <iostream>
 
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 

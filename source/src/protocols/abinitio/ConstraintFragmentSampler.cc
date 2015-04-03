@@ -9,7 +9,7 @@
 
 /// @file ConstraintFragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 /// @author Oliver Lange
@@ -50,7 +50,6 @@
 // Auto Headers
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
-// AUTO-REMOVED #include <utility/io/mpistream.hh>
 
 #include <utility/vector1.hh>
 

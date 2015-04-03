@@ -49,7 +49,7 @@ static thread_local basic::Tracer TR( "protocols.jd2.MPIWorkPartitionJobDistribu
 namespace protocols {
 namespace jd2 {
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land (later used in job determination).  Note that all processors will have the same
 ///internal Jobs object (set by the parent class); this class merely iterates over it differently.
 MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
@@ -84,13 +84,13 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
 		 << " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
 }
 
-///@brief dtor
+/// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor()
 {}
 
-///@details All processors will get the same Jobs object; this function determines which slice belongs to a particular
+/// @details All processors will get the same Jobs object; this function determines which slice belongs to a particular
 ///processor determined solely by its mpi rank and the number of processors, no communication needed
 /// EXAMPLE CASE: 18 jobs, 4 processors
 /// processor rank   number of jobs   assigned range in Jobs vector
@@ -149,7 +149,7 @@ MPIWorkPartitionJobDistributor::go( protocols::moves::MoverOP mover )
 #endif
 }
 
-///@details determine which job to assign next: increment until we run out of available jobs
+/// @details determine which job to assign next: increment until we run out of available jobs
 core::Size
 MPIWorkPartitionJobDistributor::get_new_job_id()
 {
@@ -183,7 +183,7 @@ MPIWorkPartitionJobDistributor::mark_current_job_id_for_repetition()
 	clear_current_job_output();
 }
 
-///@details this function handles the FAIL_BAD_INPUT mover status by removing other jobs with the same input from
+/// @details this function handles the FAIL_BAD_INPUT mover status by removing other jobs with the same input from
 ///consideration.  This function DOES NOT percolate across processors - so if multiple processors have jobs starting
 ///with the same bad input, you will get multiple hits through this function.  This is less efficient than it
 ///theoretically could be (but it's good enough).

@@ -19,7 +19,6 @@
 #include <protocols/fibril/SetupForFibrilMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/fibril/fibril_util.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <protocols/loops/Loops.fwd.hh>

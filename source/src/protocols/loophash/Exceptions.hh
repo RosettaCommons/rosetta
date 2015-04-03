@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/loophash/Exceptions.hh
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Ken Jung
 /// @author Christopher Miles (cmiles@uw.edu)
 #ifndef INCLUDED_protocols_loophash_Exceptions_HH

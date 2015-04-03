@@ -30,7 +30,6 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
-
 namespace protocols {
 namespace simple_filters {
 

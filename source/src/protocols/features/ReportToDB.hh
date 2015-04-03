@@ -195,13 +195,13 @@ public:
 	void
 	initialize_database();
 
-	///@brief initialize the pose and set the relevant residues
+	/// @brief initialize the pose and set the relevant residues
 	void
 	initialize_pose(
 		Pose & pose
 	) const;
 
-	///@brief initialize the relevant residues of the pose and store save for later.
+	/// @brief initialize the relevant residues of the pose and store save for later.
 	utility::vector1< bool >
 	initialize_relevant_residues(
 		Pose const & pose
@@ -260,7 +260,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1< bool > relevant_residues_;
 
-	///@brief This indicates which features should be reported given the
+	/// @brief This indicates which features should be reported given the
 	///relevant residue specification:
 	///
 	///   Exclusive: All residues in a feature must be specified as

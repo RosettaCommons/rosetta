@@ -18,22 +18,18 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <protocols/scoring/Interface.hh>
 
 #include <utility/vector0.hh>
 #include <utility/options/IntegerVectorOption.hh>
-
 
 
 namespace protocols {

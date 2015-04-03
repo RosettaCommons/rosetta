@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -26,7 +26,6 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 // ObjexxFCL Headers
 
 // Utility headers
@@ -194,8 +193,6 @@ void SequenceClaimer::generate_claims( claims::DofClaims& new_claims ) {
 
 } //topology_broker
 } //protocols
-
-
 
 
 //bool SequenceClaimer::allow_claim( claims::DofClaim const& foreign_claim ) {

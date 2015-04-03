@@ -28,12 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>

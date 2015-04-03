@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/components/util.hh
 /// @brief util functions for building structures from components
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 // package headers
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
@@ -32,11 +31,11 @@ namespace frag_picker {
 namespace scores {
 
 /// @brief  ConstScore adds a constant to the total score for each position
-/// @detailed The total ConstScore for a fragment = n_frag_res * score_const
+/// @details The total ConstScore for a fragment = n_frag_res * score_const
 class ConstScore: public FragmentScoringMethod {
 public:
 	/// @brief the value used to score each position
-	/// @detailed You don't have to change the value
+	/// @details You don't have to change the value
 	/// here as you can always rescale the score by a weight provided in a score configuration file
 	static const int CONST_SCORE = 1;
 
@@ -45,7 +44,7 @@ public:
 	}
 
 	/// @brief Computes the score i.e. returns a constant times the number of residues in a fragment
-	/// @detailed the method returns ALWAYS TRUE which is inconsistent with other methods derived from
+	/// @details the method returns ALWAYS TRUE which is inconsistent with other methods derived from
 	/// FragmentScoringMethod base class. The other option (i.e. returning false when a score is too high)
 	/// doesn't make any sense in this case.
 	virtual bool score(FragmentCandidateOP f, FragmentScoreMapOP empty_map) {

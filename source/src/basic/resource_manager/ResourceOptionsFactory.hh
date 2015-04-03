@@ -86,5 +86,4 @@ private:
 } // namespace basic
 
 
-
 #endif //INCLUDED_basic_resource_manager_ResourceOptionsFactory_hh

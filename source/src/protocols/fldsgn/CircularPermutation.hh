@@ -146,7 +146,6 @@ public: //parser
 										 Pose const & );
 
 
-
 private: // data
 
 

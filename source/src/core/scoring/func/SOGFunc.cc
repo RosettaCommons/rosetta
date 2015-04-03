@@ -12,14 +12,12 @@
 /// @author James Thompson
 
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <numeric/util.hh>
 
 #include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/func/SOGFunc_Impl.hh>
 #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

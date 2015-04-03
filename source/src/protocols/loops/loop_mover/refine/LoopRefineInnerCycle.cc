@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loop_mover/refine/LoopRefineInnerCycle.cc
 /// @brief Abstract class to define interface for all types of "inner cycle" operations used for loop refinement.
-/// @detailed
+/// @details
 ///
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
@@ -49,19 +49,19 @@ namespace refine {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 LoopRefineInnerCycle::LoopRefineInnerCycle() : Mover()
 {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 LoopRefineInnerCycle::LoopRefineInnerCycle( LoopRefineInnerCycle const & rhs ) : Mover(rhs)
 {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 LoopRefineInnerCycle & LoopRefineInnerCycle::operator=( LoopRefineInnerCycle const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -79,7 +79,7 @@ std::string LoopRefineInnerCycle::get_name() const
 	return type();
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool LoopRefineInnerCycle::reinitialize_for_new_input() const
 {
 	return true;

@@ -16,7 +16,6 @@
 
 // package headers
 #include <protocols/frag_picker/LazySortedVector1.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/BoundedPriorityQueue.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/BoundedCollector.fwd.hh>
@@ -28,7 +27,6 @@
 // utility headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
@@ -44,7 +42,7 @@ namespace frag_picker {
 
 
 /// @brief Keeps the N best fragments candidates for the final selection
-/// @detailed The purpose of a collector is to keep the best fragment candidates to the end
+/// @details The purpose of a collector is to keep the best fragment candidates to the end
 /// of vall processing. In particular, the capacity of this collector may be larger than
 /// the number of fragments one wants to get
 template< class StrictWeakOrdering >

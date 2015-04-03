@@ -21,7 +21,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/RelativeConnectRight.hh>

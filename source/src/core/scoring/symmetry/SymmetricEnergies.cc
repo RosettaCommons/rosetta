@@ -16,7 +16,6 @@
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/Energies.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Package Headers
 #include <core/scoring/ContextGraph.hh>
@@ -36,7 +35,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 
 // Utility headers
@@ -89,7 +87,7 @@ SymmetricEnergies::same_type_as_me( Energies const & other, bool recurse  /* = t
 }
 
 
-///@details make a copy of this Energies( allocate actual memory for it )
+/// @details make a copy of this Energies( allocate actual memory for it )
 EnergiesOP
 SymmetricEnergies::clone() const
 {

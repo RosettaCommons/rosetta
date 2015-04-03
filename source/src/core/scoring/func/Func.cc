@@ -20,7 +20,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 

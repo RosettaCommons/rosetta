@@ -17,8 +17,6 @@
 #include <test/util/pose_funcs.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <protocols/jumping/util.hh>
 
@@ -26,7 +24,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-
 
 
 static basic::Tracer TR("test.protocols.jumping.DsspTests");

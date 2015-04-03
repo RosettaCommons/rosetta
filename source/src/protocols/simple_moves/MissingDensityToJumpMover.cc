@@ -24,13 +24,9 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 

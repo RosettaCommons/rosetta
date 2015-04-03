@@ -38,7 +38,6 @@
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -786,7 +785,6 @@ RotamerSets::compute_proline_correction_energies_for_otf_graph(
 
 	}*/
 }
-
 
 
 uint RotamerSets::nrotamers() const { return nrotamers_;}

@@ -17,7 +17,6 @@
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -37,7 +36,6 @@ typedef utility::vector1< RBSegment >::iterator RBIt;
 typedef utility::vector1< RBSegment >::const_iterator RBConsIt;
 
 class RBSegmentRelax;
-
 
 
 } // ns moves

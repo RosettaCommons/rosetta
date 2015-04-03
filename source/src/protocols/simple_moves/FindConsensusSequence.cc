@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/FindConsensusSequence.cc
-///@brief Takes in multiple poses from the MSDJobDistributor and finds the consensus sequence that optimizes energy of all input poses
-///@author Alex Sevy (alex.sevy@gmail.com)
+/// @file protocols/simple_moves/FindConsensusSequence.cc
+/// @brief Takes in multiple poses from the MSDJobDistributor and finds the consensus sequence that optimizes energy of all input poses
+/// @author Alex Sevy (alex.sevy@gmail.com)
 
 #include <protocols/simple_moves/FindConsensusSequence.hh>
 #include <protocols/simple_moves/FindConsensusSequenceCreator.hh>

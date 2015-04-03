@@ -38,7 +38,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class ContextDependentTwoBodyEnergy : public ShortRangeTwoBodyEnergy {
 public:
 	typedef ShortRangeTwoBodyEnergy parent;
@@ -48,7 +48,7 @@ public:
 
 	virtual ~ContextDependentTwoBodyEnergy();
 
-	///
+
 	EnergyMethodType
 	method_type() const;
 

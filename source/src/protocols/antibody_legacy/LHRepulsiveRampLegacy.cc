@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/LHRepulsiveRampLegacy.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -62,13 +62,8 @@ using namespace ObjexxFCL::format;
 #include <protocols/antibody/util.hh>
 
 
-
-
-
-
 #include <core/chemical/VariantType.hh>
 //JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
 
 
 using basic::T;
@@ -83,12 +78,10 @@ namespace protocols {
 namespace antibody {
 
 
-
 // default constructor
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy() : Mover() {
 
 }
-
 
 
 LHRepulsiveRampLegacy::LHRepulsiveRampLegacy(loops::Loops loops_in ) : Mover() {
@@ -141,9 +134,6 @@ protocols::moves::MoverOP LHRepulsiveRampLegacy::clone() const {
 }
 
 
-
-
-
 void LHRepulsiveRampLegacy::init(loops::Loops loops_in, bool camelid ) {
 	set_default();
 
@@ -176,13 +166,9 @@ void LHRepulsiveRampLegacy::set_default() {
 }
 
 
-
-
 std::string LHRepulsiveRampLegacy::get_name() const {
 	return "LHRepulsiveRampLegacy";
 }
-
-
 
 
 void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
@@ -210,7 +196,6 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 		cdr_dock_map_->set_jump( ii, false );
 
 
-
 	//set up sidechain movers for rigid body jump and loop & neighbors
 	utility::vector1_size rb_jump;
 	rb_jump.push_back( 1 );
@@ -231,15 +216,12 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////
-/// @begin repulsive_ramp
 ///
 /// @brief ramping up the fullatom repulsive weight slowly to allow the
 ///        partners to relieve clashes and make way for each other
 ///
-/// @detailed This routine is specially targetted to the coupled
+/// @details This routine is specially targetted to the coupled
 ///           optimization of docking partners and the loop region.  The
 ///           loop modelling & all previous  steps  involve mainly
 ///           centroid  mode .On switching  on fullatom mode, one is bound
@@ -259,9 +241,8 @@ void LHRepulsiveRampLegacy::finalize_setup(pose::Pose & pose ) {
 ///
 /// @references
 ///
-/// @authors Aroop 07/13/2010
+/// @author Aroop 07/13/2010
 ///
-/// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
 
 void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
@@ -293,7 +274,6 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	}
 
 
-
 	core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
 	core::scoring::ScoreFunctionOP temp_scorefxn = dock_scorefxn_->clone();
 
@@ -309,9 +289,6 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 	TR<<"finish apply function !!!"<<std::endl;
 
 }
-
-
-
 
 
 //JQX: since the scorefxn needs to be changed, you have to
@@ -346,11 +323,8 @@ void LHRepulsiveRampLegacy::snugfit_MC_min(pose::Pose & pose, core::scoring::Sco
 	simple_mcm_repeat( new RepeatMover( rb_mover_min_trial, num_repeats_ ) );
 
 
-
 	simple_mcm_repeat->apply( pose );
 }
-
-
 
 
 void LHRepulsiveRampLegacy:: set_task_factory(pack::task::TaskFactoryCOP tf) {
@@ -358,12 +332,7 @@ void LHRepulsiveRampLegacy:: set_task_factory(pack::task::TaskFactoryCOP tf) {
 }
 
 
-
-
 } // namespace antibody
 } // namespace protocols
-
-
-
 
 

@@ -13,7 +13,6 @@
 /// @author Sagar Khare
 
 
-
 #ifndef INCLUDED_protocols_toolbox_task_operations_SetIGTypeOperation_FWD_HH
 #define INCLUDED_protocols_toolbox_task_operations_SetIGTypeOperation_FWD_HH
 

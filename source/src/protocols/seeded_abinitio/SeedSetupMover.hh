@@ -27,7 +27,6 @@
 #include <protocols/loops/Loops.hh>
 
 
-
 namespace protocols {
 namespace seeded_abinitio {
 

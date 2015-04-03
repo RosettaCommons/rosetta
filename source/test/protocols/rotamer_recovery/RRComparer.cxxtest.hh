@@ -58,7 +58,6 @@
 #include <basic/Tracer.fwd.hh>
 
 
-
 static basic::Tracer TR("protocols.rotamer_recovery.RRComparer.cxxtest");
 
 class RRComparerTests : public CxxTest::TestSuite {

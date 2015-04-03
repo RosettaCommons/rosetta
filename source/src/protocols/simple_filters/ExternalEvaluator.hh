@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_ExternalEvaluator_hh
@@ -37,7 +36,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

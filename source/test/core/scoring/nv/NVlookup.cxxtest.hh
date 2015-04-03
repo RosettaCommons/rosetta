@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 // --------------- Test Class --------------- //
 
 // using declarations
@@ -72,7 +71,6 @@ public:
 	void test_lookup_values() {
 
 		float const TOLERATED_ERROR = 0.0001;
-
 
 
 		EnergyMap emap;

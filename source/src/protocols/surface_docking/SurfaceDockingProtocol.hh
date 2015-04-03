@@ -133,7 +133,6 @@ private:
 	protocols::rigid::RigidBodyTransMoverOP position_above_surface_;
 
 
-
 };
 
 

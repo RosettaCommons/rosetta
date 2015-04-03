@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/optimization/types.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 #include <core/optimization/DOF_Node.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
@@ -27,12 +26,10 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <core/optimization/MinimizerMap.fwd.hh>
 #include <core/optimization/Multifunc.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

@@ -25,7 +25,6 @@
 #include <core/pose/Pose.hh>
 
 
-
 namespace protocols {
 namespace grafting {
 	using core::Size;
@@ -35,15 +34,15 @@ namespace grafting {
 	using core::kinematics::MoveMapOP;
 	using core::kinematics::MoveMap;
 	
-///@brief Fairly abstract base class for GraftMover classes
+/// @brief Fairly abstract base class for GraftMover classes
 class GraftMoverBase: public moves::Mover {
 
 public:
 	
-	///@brief Default constructor for RosettaScripts
+	/// @brief Default constructor for RosettaScripts
 	GraftMoverBase(std::string mover_name);
 	
-	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
+	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
 	GraftMoverBase(Size const start, Size const end, std::string mover_name);
 
 	GraftMoverBase(Size const start, Size const end, std::string mover_name,
@@ -56,8 +55,8 @@ public:
 	//@brief copy ctor
 	//GraftMoverBase( GraftMoverBase const & rhs);
 
-	///@brief Sets the piece that will be inserted, and any overhang residues.
-	///@details Overhang residues are residues not being inserted into the scaffold. 
+	/// @brief Sets the piece that will be inserted, and any overhang residues.
+	/// @details Overhang residues are residues not being inserted into the scaffold. 
 	/// These residues are deleted before insertion and are used by classes usually for superposition or
 	/// Initial orientation of the insert relative to the scaffold.  
 	virtual void 
@@ -66,7 +65,7 @@ public:
 	virtual void
 	set_insert_region(Size const start, Size const end);
 	
-	///@brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted. 
+	/// @brief Copy PDBInfo from the pose piece into pose during graft.  If false(default), PDBInfo will be obsoleted. 
 	void
 	copy_pdbinfo(bool copy_pdbinfo);
 	
@@ -113,18 +112,18 @@ private:
    	//Reference of the pose piece.  Should be changed to local copy, but I'm not sure how to do that.
 	PoseOP piece_;
 
-	///@brief Residue insertion will start from
+	/// @brief Residue insertion will start from
 	Size start_;
-	///@brief Residue insertion will end before here. Updates after insertion.
+	/// @brief Residue insertion will end before here. Updates after insertion.
 	Size end_;
-	///@brief some functions need to only work on the original numbers. (combine movemaps)
+	/// @brief some functions need to only work on the original numbers. (combine movemaps)
 	Size original_end_;
 
 	Size insertion_length_;
 	
-	///@brief Number of overhang residues on N terminus.  Updates on delete_overhang_residues
+	/// @brief Number of overhang residues on N terminus.  Updates on delete_overhang_residues
 	Size Nter_overhang_length_;
-	///@brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
+	/// @brief Number of overhang residues on C terminus.  Updates on delete_overhang_residues
 	Size Cter_overhang_length_;
 	bool copy_pdbinfo_;
 	

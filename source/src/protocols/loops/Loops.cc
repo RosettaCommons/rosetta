@@ -42,7 +42,6 @@
 #include <string>
 
 
-
 namespace protocols {
 namespace loops {
 
@@ -237,7 +236,6 @@ Loops::write_loops_to_stream(
          << it->skip_rate() << " " << it->is_extended() << std::endl;
   }
 }
-
 
 
 void
@@ -674,7 +672,6 @@ void Loops::grow_loop_away_from_sheets(
   }
   grow_loop( pose.total_residue(), loop, magL, magR );
 }
-
 
 
 /// @brief Extend a loop

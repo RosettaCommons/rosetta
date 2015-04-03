@@ -21,7 +21,7 @@
 
 namespace utility {
 
-//
+
 // Base class for any showable object. To add ability to print to your object - just inherit
 // this class, and overload 'show' method.
 //

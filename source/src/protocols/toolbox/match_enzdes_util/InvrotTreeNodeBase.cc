@@ -63,7 +63,6 @@ InvrotCollector::set_invrots_for_listnum(
 }
 
 
-
 InvrotTreeNodeBase::InvrotTreeNodeBase(
   InvrotTreeNodeBaseCAP parent_node )
   : ReferenceCount(), parent_node_(parent_node ), location_in_parent_node_(1)

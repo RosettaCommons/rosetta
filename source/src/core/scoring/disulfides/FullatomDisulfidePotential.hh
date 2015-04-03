@@ -147,7 +147,6 @@ public:
 	) const;
 
 
-
 private:
 
 	void
@@ -282,7 +281,6 @@ private:
 	numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
 	fa_ssdist_scores_deriv();
 };
-
 
 
 } // namespace disulfides

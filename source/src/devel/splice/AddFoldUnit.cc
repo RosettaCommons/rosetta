@@ -24,7 +24,6 @@ static thread_local basic::Tracer TR("devel.splice.AddFoldUnitMover");
 
 #include <utility/tag/Tag.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -48,7 +47,7 @@ using namespace core;
 using namespace std;
 using utility::vector1;
 
-///@brief return a subset of entries that match all of the selection criteria
+/// @brief return a subset of entries that match all of the selection criteria
 vector1< Size >
 FoldUnitUtils::entry_subset() const{
 	typedef boost::unordered_multimap< Size, Size > UM;
@@ -101,7 +100,7 @@ FoldUnitUtils::entry_subset() const{
 }
 
 
-///@brief return a subset of entries that match all of the selection criteria
+/// @brief return a subset of entries that match all of the selection criteria
 vector1< Size >
 FoldUnitUtils::entry_subset_slow() const{
 	utility::vector1< Size > bb_dof_entries;
@@ -456,7 +455,7 @@ PoseFragmentInfo::load_fragment_info_from_pose( core::pose::Pose const & pose ){
 	 TR<<"loaded "<<count<<" fragment definitions from pose"<<std::endl;
 }
 
-///@brief first delete then write from scratch the fragment_definition comments to the pose
+/// @brief first delete then write from scratch the fragment_definition comments to the pose
 void
 PoseFragmentInfo::set_fragment_info_in_pose( core::pose::Pose & pose )const{
 

@@ -17,11 +17,9 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <boost/shared_ptr.hpp>
 
 #include <utility/vector1.fwd.hh>

@@ -126,4 +126,3 @@ for jobnum in xrange(1, len(input_jobs)+1):
 	#input_pose.dump_pdb(input_jobs[jobnum].output_tag(0) + "_postidealizesc.pdb")
 
 
-

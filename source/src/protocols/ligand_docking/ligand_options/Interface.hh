@@ -18,14 +18,11 @@
 #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 //// Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <string>
 #include <sstream>
 
 #include <utility/vector1_bool.hh>
@@ -38,7 +35,7 @@ namespace ligand_docking {
 namespace ligand_options {
 
 
-///@brief info for each residue- is it part of the interface and if so, what ligands is it near
+/// @brief info for each residue- is it part of the interface and if so, what ligands is it near
 struct InterfaceInfo{
 	enum Type{
 		non_interface,
@@ -53,7 +50,7 @@ struct InterfaceInfo{
 	InterfaceInfo(Type t): type(t){};
 };
 
-///@brief For each residue is it in the interface, a mobile region or a non-mobile region?
+/// @brief For each residue is it in the interface, a mobile region or a non-mobile region?
 class Interface: public utility::vector1<InterfaceInfo>{
 
 public:

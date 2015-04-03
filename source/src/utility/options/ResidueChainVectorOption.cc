@@ -12,7 +12,6 @@
 /// @author Modified by Rhiju Das (rhiju@stanford.edu)
 
 
-
 // Unit headers
 #include <utility/options/ResidueChainVectorOption.hh>
 #include <utility/string_util.hh>
@@ -87,6 +86,5 @@ namespace options {
 
 } // namespace options
 } // namespace utility
-
 
 

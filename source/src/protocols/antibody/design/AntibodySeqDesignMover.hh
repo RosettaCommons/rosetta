@@ -35,7 +35,7 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-///@brief Designs antibody CDR structures using a variety of different methods.  Main methods involve using cluster-based sequence probability statistics and conservative design strategies 
+/// @brief Designs antibody CDR structures using a variety of different methods.  Main methods involve using cluster-based sequence probability statistics and conservative design strategies 
 /// to limit unknown structural effects caused by aggressive design.  Uses North_AHO numbering and cluster-based design.  Part of Rosetta Antibody Designer.
 /// ->  Will be replaced by SnugDesign Mover in the application, but still useful in it's own right.
 ///
@@ -52,7 +52,7 @@ public:
 	
 	virtual ~AntibodySeqDesignMover();
 	
-	///@brief Sets defaults, Reads defaultInstruction file, read user-passed instruction file.
+	/// @brief Sets defaults, Reads defaultInstruction file, read user-passed instruction file.
 	void
 	set_defaults();
 	
@@ -72,21 +72,21 @@ public:
 	//
 	//
 	
-	///@brief Set the CDR-specific settings for SeqDesign
+	/// @brief Set the CDR-specific settings for SeqDesign
 	void
 	set_seq_designer_options(AntibodyCDRSeqDesignOptions options);
 	
 	
-	///@brief Set any paratope CDRs.  If not set, will use all CDRs as the paratope where needed.
+	/// @brief Set any paratope CDRs.  If not set, will use all CDRs as the paratope where needed.
 	void
 	set_paratope_cdrs(utility::vector1<bool> const & cdrs);
 	
-	///@brief Set any epitope residues in PDB numbering.  If not set, they will be detected automatically.
+	/// @brief Set any epitope residues in PDB numbering.  If not set, they will be detected automatically.
 	void
 	set_epitope_residues(utility::vector1<PDBNumbering > epitope_residues);
 	
 	
-	///@brief Repack neighbors of CDR's being designed within this distance.
+	/// @brief Repack neighbors of CDR's being designed within this distance.
 	void
 	neighbor_detection_dis(core::Real const neighbor_distance);
 	
@@ -103,30 +103,30 @@ public:
 	// -These could each be a (configurable) step instead-
 	//
 	
-	///@brief Type of design method used.  Acceptable options - relaxed_design, fixbb, flxbb
+	/// @brief Type of design method used.  Acceptable options - relaxed_design, fixbb, flxbb
 	void
 	set_design_method(DesignTypeEnum const design_method);
 	
-	///@brief Sets the designer to not use our fancy taskops and statistics.  Only use basic design with all residues turned on. 
+	/// @brief Sets the designer to not use our fancy taskops and statistics.  Only use basic design with all residues turned on. 
 	/// Use for benchmarking.
 	void
 	set_basic_design(bool const setting);
 	
-	///@brief Should we use the cdr cluster CircularHarmonic constraints?  Default true - this is mainly used for benchmarking.
+	/// @brief Should we use the cdr cluster CircularHarmonic constraints?  Default true - this is mainly used for benchmarking.
 	void
 	set_use_cluster_constraints(bool const setting);
 	
 	
 private:
 	
-	///@brief Set cluster-based harmonic dihedral constraints if known cluster or set coordinate constraints.
+	/// @brief Set cluster-based harmonic dihedral constraints if known cluster or set coordinate constraints.
 	void
 	setup_cdr_constraints(core::pose::Pose & pose);
 	
 	void
 	read_command_line_options();
 	
-	///@brief Call DesignInstructionParser to determine settings for the design run.
+	/// @brief Call DesignInstructionParser to determine settings for the design run.
 	void
 	setup_options_classes();
 	

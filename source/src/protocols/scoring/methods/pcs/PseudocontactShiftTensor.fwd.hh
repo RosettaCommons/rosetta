@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file PseudocontactShiftTensor.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 

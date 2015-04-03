@@ -17,7 +17,6 @@
 #include <test/core/init_util.hh>
 //#include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 //#include <core/kinematics/MoveMap.hh>
 
@@ -28,8 +27,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 #include <basic/options/option.hh> //needed to set option
@@ -50,7 +47,6 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <time.h>
 
 
 #include <basic/Tracer.hh>
@@ -63,9 +59,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
-
 
 
 using basic::T;

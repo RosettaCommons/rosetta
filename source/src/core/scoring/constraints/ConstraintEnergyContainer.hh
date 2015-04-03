@@ -23,9 +23,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

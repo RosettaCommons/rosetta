@@ -17,11 +17,9 @@ namespace interpolation {
 namespace spline {
 
 
-
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric
-
 
 
 #endif /* BICUBIC_SPLINE_FWD_HH_ */

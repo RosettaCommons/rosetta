@@ -42,10 +42,10 @@ namespace protocols{
         using core::pose::Pose;
         using utility::vector1;
            
-///@brief Relax a pose using Frank Dimaio's smooth centroid statistics.
+/// @brief Relax a pose using Frank Dimaio's smooth centroid statistics.
 ///Currently under optimization.
 ///
-///@details Minimize a centroid representation of a pose. Ramp VDW/Rama or both.  
+/// @details Minimize a centroid representation of a pose. Ramp VDW/Rama or both.  
 ///
 ///May tweak structure by up to ~2.5 A without constraints.  
 ///Use custom constraints or coordinate constraints through relax options for best results.
@@ -70,48 +70,48 @@ public:
     
     void set_rounds(Size rounds);
     
-    ///@brief use larger VDW radii for atoms - bb for now - default True (Courtesy of Frank Dimaio)
+    /// @brief use larger VDW radii for atoms - bb for now - default True (Courtesy of Frank Dimaio)
     void set_use_increased_vdw_radii(bool use);
     
-    ///@brief Sets to use Rama2b instead of Rama - default True
+    /// @brief Sets to use Rama2b instead of Rama - default True
     void set_use_rama2b(bool use);
     
-    ///@brief Ramp Rama according to centroid relax parameters
+    /// @brief Ramp Rama according to centroid relax parameters
     void set_ramp_rama(bool use);
     
-    ///@brief Ramp VDW according to centroid relax parameters
+    /// @brief Ramp VDW according to centroid relax parameters
     void set_ramp_vdw(bool use);
     
-    ///@brief Sets main scorefunction used for centroid minimization.
+    /// @brief Sets main scorefunction used for centroid minimization.
     void set_score_function(ScoreFunctionOP cen_score);
     
-    ///@brief Sets fullatom scorefunction - only used for scoring the full atom pose before and after protocol.
+    /// @brief Sets fullatom scorefunction - only used for scoring the full atom pose before and after protocol.
     void set_fa_score_function(ScoreFunctionOP fa_score);
 
-    ///@brief Sets the minimizer type.
+    /// @brief Sets the minimizer type.
     void set_min_type(string min);
     
-    ///@brief Sets to use the cartesian minimizer.
+    /// @brief Sets to use the cartesian minimizer.
     void set_cartesian(bool cart);
     
-    ///@brief If a fullatom pose is passed, should we repack sidechains according to movemap?
+    /// @brief If a fullatom pose is passed, should we repack sidechains according to movemap?
     void do_final_repack(bool repack_sc);
     
-    ///@brief Applies the protocol, See notes
+    /// @brief Applies the protocol, See notes
     ///
-    ///@details Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol 
+    /// @details Setting ramp_rama and ramp_vdw to false switches to the BASIC protocol 
     /// which is rounds of the centroid minmover
     virtual void apply( Pose & pose );
 
 private:
     
-    ///@brief Load the default parameters from the default file.
+    /// @brief Load the default parameters from the default file.
     void read_default_parameters();
     
-    ///@brief used internally to setup extra stuff for movemap.
+    /// @brief used internally to setup extra stuff for movemap.
     void setup_class_movemap_and_constraints(Pose & pose);
     
-    ///@brief increase VDW radii for backbone to help geometry and decrease rmsd
+    /// @brief increase VDW radii for backbone to help geometry and decrease rmsd
     void setup_increased_vdw_radii();
     
     bool use_increased_vdw_radii_;
@@ -125,7 +125,7 @@ private:
     MoveMapOP movemap_;
     ScoreType rama_type_;
     
-    ///@brief Container for ramp settings
+    /// @brief Container for ramp settings
     struct parameters{
         vector1< Real > vdw_params;
         vector1< Real > rama_params;

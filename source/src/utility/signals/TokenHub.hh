@@ -133,7 +133,6 @@ public: // token copy
 public: // connection management
 
 
-
 	/// @brief number of tokenized connections
 	inline
 	Size

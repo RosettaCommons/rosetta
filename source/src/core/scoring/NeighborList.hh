@@ -20,14 +20,11 @@
 
 // Package headers
 
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.fwd.hh>
 
 
 // Project Headers
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
@@ -35,14 +32,12 @@
 
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
-
 
 
 namespace core {
@@ -115,14 +110,13 @@ public:
 	{}
 
 
-	///
 	int
 	rsd() const
 	{
 		return rsd_;
 	}
 
-	///
+
 	int
 	atomno() const
 	{
@@ -135,7 +129,7 @@ public:
 		return path_dist_;
 	}
 
-	///
+
 	Real
 	weight() const
 	{
@@ -190,7 +184,7 @@ public:
 	// like, for example, Energies.
 	NeighborListOP clone() const { return NeighborListOP( new NeighborList( *this ) ); }
 
-	///
+
 	AtomNeighbors const &
 	atom_neighbors(
 		int const pos,
@@ -200,7 +194,7 @@ public:
 		return nblist_[ pos ][ atomno ];
 	}
 
-	///
+
 	AtomNeighbors const &
 	atom_neighbors(
 		id::AtomID const & id
@@ -218,7 +212,7 @@ public:
 		return upper_nblist_[ pos ][ atomno ];
 	}
 
-	///
+
 	AtomNeighbors const &
 	upper_atom_neighbors(
 		id::AtomID const & id
@@ -236,7 +230,7 @@ public:
 		return intrares_upper_nblist_[ pos ][ atomno ];
 	}
 
-	///
+
 	AtomNeighbors const &
 	intrares_upper_atom_neighbors(
 		id::AtomID const & id
@@ -244,7 +238,6 @@ public:
 	{
 		return intrares_upper_nblist_[ id.rsd() ][ id.atomno() ];
 	}
-
 
 
 	/// @brief Initialize the nblist so that it reflects the current coordinates in the pose.
@@ -256,21 +249,20 @@ public:
 		T_Etable const & etable_method
 	) const;
 
-	///
+
 	void
 	check_domain_map(
 		kinematics::DomainMap const & domain_map_in
 	) const;
 
 
-	///
 	void
 	clear()
 	{
 		nblist_.clear();
 	}
 
-	///
+
 	kinematics::DomainMap const &
 	domain_map() const
 	{

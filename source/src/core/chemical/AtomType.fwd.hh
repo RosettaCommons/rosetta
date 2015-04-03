@@ -23,5 +23,4 @@ class AtomType;
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_AtomType_FWD_HH

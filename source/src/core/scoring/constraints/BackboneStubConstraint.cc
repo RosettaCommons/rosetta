@@ -15,11 +15,7 @@
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/PeriodicFunc.hh>
 #include <basic/Tracer.hh>
 
@@ -211,7 +207,6 @@ debug_assert( rsd.is_protein() );
 	//atom_ids_.push_back( backbone_atom1_id_ );
 
 
-
 	// need a fixed reference point on the pose
 	atom_ids_.push_back(fixed_atom_id_);
 	// we don't actually need to save the coors of the reference point,
@@ -393,7 +388,6 @@ BackboneStubConstraint::operator == ( Constraint const & other_cst ) const
 
 	return true;
 }
-
 
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into

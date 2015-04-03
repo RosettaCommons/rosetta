@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file src/devel/denovo_design/filters/FoldabilityFilter.cc
 /// @brief Tom's Denovo design protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 // Unit headers

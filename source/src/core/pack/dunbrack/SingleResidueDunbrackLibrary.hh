@@ -335,7 +335,7 @@ public:
 	void prob_to_accumulate_buried( Real );
 	void prob_to_accumulate_nonburied( Real );
 
-	///@brief Hard coded specifics about the amino acids
+	/// @brief Hard coded specifics about the amino acids
 	static
 	void
 	n_rotamer_bins_for_aa(
@@ -396,7 +396,6 @@ private:
 	utility::vector1< utility::vector1< Size > > packed_rotno_2_rotwell_;
 
 };
-
 
 
 } // dunbrack

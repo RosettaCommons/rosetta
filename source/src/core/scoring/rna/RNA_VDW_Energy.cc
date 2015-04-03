@@ -106,7 +106,6 @@ RNA_VDW_Energy::setup_for_packing( pose::Pose & pose,	utility::vector1< bool > c
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_VDW_Energy::residue_pair_energy(
@@ -280,7 +279,6 @@ RNA_VDW_Energy::eval_atom_derivative(
 	} // loop over nbrs of rsd1
 
 }
-
 
 
 /// @brief RNA_VDW_Energy distance cutoff

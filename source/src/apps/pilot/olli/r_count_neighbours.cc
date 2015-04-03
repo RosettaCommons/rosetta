@@ -12,17 +12,11 @@
 /// @author Oliver Lange
 
 #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.hh>
-// AUTO-REMOVED #include <protocols/abinitio/PairingStatistics.hh>
-// AUTO-REMOVED #include <protocols/abinitio/StrandConstraints.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
@@ -33,14 +27,10 @@
 
 
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
-// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 
 // Utility headers
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
@@ -52,16 +42,13 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/EnvSmoothEnergy.hh>
 
 // Package headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Atom.hh>
-// AUTO-REMOVED #include <core/scoring/EnvPairPotential.hh>
 //#include <core/scoring/CachedData.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -76,14 +63,12 @@
 
 // Utility headers
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //Auto Headers
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/io/mpistream.hh>
-
 
 
 static thread_local basic::Tracer tr( "main" );
@@ -115,7 +100,6 @@ void register_options() {
   NEW_OPT( in::top, "read topology from this file for checking", "");
   //NEW_OPT( viol_type, "work only on these types of constraints", "");
 }
-
 
 
 Distance const start_sig = 9.8;
@@ -260,7 +244,6 @@ void EnvToolMover::apply( core::pose::Pose &pose ) {
 
 
 }
-
 
 
 void run() {

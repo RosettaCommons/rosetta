@@ -29,12 +29,11 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
 
-//
+
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/optimization/AtomTreeMinimizer.hh>
 //#include <core/optimization/MinimizerOptions.hh>
@@ -46,7 +45,6 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -78,7 +76,6 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <fstream>
 
 //Auto Headers

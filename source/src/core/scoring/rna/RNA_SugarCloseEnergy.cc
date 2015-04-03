@@ -229,7 +229,6 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 }
 
 
-
 void RNA_SugarCloseEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const{}
 
 core::Size

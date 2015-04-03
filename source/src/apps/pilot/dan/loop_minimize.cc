@@ -67,8 +67,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 using namespace core;
 
 static thread_local basic::Tracer TR( "procotols.looprelax" );
@@ -240,7 +238,7 @@ set_secstruct_from_psipred_ss2(
 
 
 /////////////////////////////////////////////////////////////////////////////
-///@details use 10A CB distance cutoff as neighboring residue defintion. The function
+/// @details use 10A CB distance cutoff as neighboring residue defintion. The function
 ///is used for conveniently setting up sidechain movable residues in loop modeling.
 /////////////////////////////////////////////////////////////////////////////////
 void

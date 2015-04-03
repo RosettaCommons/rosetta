@@ -22,10 +22,7 @@
 // Project headers
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopsFileIO.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
@@ -35,24 +32,17 @@
 #include <basic/Tracer.hh>
 
 
-
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 //#include <iostream.h>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 static thread_local basic::Tracer tr( "core.scoring.ResidualDipolarCouplingRigidSegments" );
@@ -92,7 +82,6 @@ extern ResidualDipolarCouplingRigidSegmentsOP retrieve_RDC_segments_from_pose(co
 	};
 	return NULL;
 }
-
 
 
 	Real ResidualDipolarCouplingRigidSegments::compute_pairwise_score() const{

@@ -9,7 +9,7 @@
 
 /// @file Mike Tyka
 /// @brief
-///
+
 
 /// Note: This is an extremely crude and slow implementation of cartesian MD in rosetta.
 /// I make no promises as to this codes correctness. use at own risk.
@@ -18,18 +18,14 @@
 
 // Unit headers
 #include <protocols/cartesian/md.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
 // Package headers
 #include <core/id/AtomID.hh>
 #include <core/optimization/types.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -37,23 +33,15 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 // // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <iostream>
 #include <fstream>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/Tracer.hh>
 
@@ -98,25 +86,6 @@ pose( inputpose )
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MolecularDynamics::createCartesianArray( )
 {
  	using namespace core;
@@ -155,7 +124,6 @@ void MolecularDynamics::setCartesianPositionsFromPose( )
 		cartom[i].position = pose->xyz( cartom[i].atom_id );
 	}
 }
-
 
 
 void MolecularDynamics::setPosePositionsFromCartesian( )
@@ -458,11 +426,7 @@ void MolecularDynamics::getCartesianDerivatives(
 	} // loop over map
 
 
-
 }
-
-
-
 
 
 void MolecularDynamics::createBondList( )
@@ -542,7 +506,6 @@ void MolecularDynamics::createBondList( )
 	}
 
 
-
 }
 
 
@@ -605,7 +568,6 @@ void MolecularDynamics::createAngleList( )
 	}
 
 
-
 }
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
@@ -661,7 +623,6 @@ MD_HarmonicDihedral MolecularDynamics::createDihedral(
 	newdihed.angle = 0;
 	return newdihed;
 }
-
 
 
 MD_HarmonicDihedral MolecularDynamics::createDihedral(
@@ -819,7 +780,6 @@ void MolecularDynamics::createDihedralList(  )
 				 dihedrallist.push_back( createDihedral( rsd,    "HD2","CD2",  "NE2","CE1"    ) );
 
 
-
 				}
 		}
 		//if( rsd.aa() == chemical::aa_ile )
@@ -869,7 +829,6 @@ void MolecularDynamics::createDihedralList(  )
 			 dihedrallist.push_back( createDihedral( rsd,  "NH2",   "CZ", "NE",  "HE"   ) );
 			 dihedrallist.push_back( createDihedral( rsd,  "NH1",    "CZ", "NE",  "CD"   ) );
 			 dihedrallist.push_back( createDihedral( rsd,  "NH2",    "CZ", "NE",  "HE"   ) );
-
 
 
 		};
@@ -957,11 +916,9 @@ void MolecularDynamics::createDihedralList(  )
 		}
 
 
-
 	}
 
 }
-
 
 
 void MolecularDynamics::setDihedralDerivatives( ){
@@ -1030,9 +987,6 @@ void MolecularDynamics::setDihedralDerivatives( ){
 }
 
 
-
-
-
 void MolecularDynamics::doBondDerivatives( float &totalepot )
 {
  	using namespace core;
@@ -1078,7 +1032,6 @@ void MolecularDynamics::doAngleDerivatives(	float &totalepot )
 	}
 
 }
-
 
 
 void MolecularDynamics::doDihedralDerivatives(
@@ -1297,9 +1250,7 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 	}
 
 
-
 }
-
 
 
 void MolecularDynamics::setInitialSpeeds(double tgtTemp )
@@ -1540,7 +1491,6 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 }
 
 
-
 void MolecularDynamics::applyForces_ConjugateGradient(
 	int Step,
  	float &current_energy,
@@ -1632,8 +1582,6 @@ void MolecularDynamics::applyForces_ConjugateGradient(
 }
 
 
-
-
 void MolecularDynamics::doMinimising(
  	core::scoring::ScoreFunction const & scorefxn
 )
@@ -1693,9 +1641,6 @@ void MolecularDynamics::doMinimising(
 }
 
 
-
-
-
 void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 	         int Steps,
 					 float startTemp,
@@ -1752,33 +1697,6 @@ void MolecularDynamics::doMD( core::scoring::ScoreFunction const & scorefxn,
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn )
 {
 	using namespace core;
@@ -1826,7 +1744,6 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 	std::cout << "STARTSCORE: --------- " << std::endl;
 	start_score = scorefxn( *pose );
 	scorefxn.show(std::cout, *pose);
-
 
 
  	//std::cout << "setup_for_scoring" << std::endl;
@@ -1909,14 +1826,6 @@ void MolecularDynamics::testCartesianDerivatives( core::scoring::ScoreFunction c
 
 
 }
-
-
-
-
-
-
-
-
 
 
 } // namespace optimization

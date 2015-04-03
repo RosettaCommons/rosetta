@@ -13,7 +13,6 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -23,7 +22,6 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -69,7 +67,7 @@ using utility::vector1;
 using utility::vector0;
 using std::pair;
 
-///@brief default ctor
+/// @brief default ctor
 PointMutationCalculator::PointMutationCalculator() :
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
@@ -778,7 +776,6 @@ PointMutationCalculator::calc_point_mut_filters(
 */
 
 }
-
 
 
 } // design_opt

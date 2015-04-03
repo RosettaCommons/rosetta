@@ -10,7 +10,7 @@
 /// @file cyclic_sampler.cc
 /// @brief run Monte Carlo for sampling protein conformation
 /// @author Yuan Liu
-/// @detailed
+/// @details
 /// Modified backbone Gaussian sampler for cyclic peptide
 /// 0. currently only work for full-atom
 /// 1. randomly select N(>=4) hinge residues

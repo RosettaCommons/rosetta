@@ -41,7 +41,7 @@ namespace mm {
 class MMBondLengthScore : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MMBondLengthScore();
 
 	MMBondLengthScore();

@@ -24,6 +24,4 @@ class GridInitMover;
 }
 
 
-
-
 #endif /* GRIDINITMOVER_FWD_HH_ */

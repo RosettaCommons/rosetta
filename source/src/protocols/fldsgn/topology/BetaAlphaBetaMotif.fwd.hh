@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_fldsgn_topology_BetaAlphaBetaMotif_fwd_hh
 
 // utitlity headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1.fwd.hh>

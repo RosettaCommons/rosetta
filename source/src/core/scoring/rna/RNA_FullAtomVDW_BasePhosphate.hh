@@ -33,7 +33,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_FullAtomVDW_BasePhosphate : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
@@ -68,7 +68,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -76,7 +76,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -114,10 +114,8 @@ private:
 
 /*
 
-	///
+
 ///////////////////////////////////////////////////////////////////////////////
-
-
 
 
 */

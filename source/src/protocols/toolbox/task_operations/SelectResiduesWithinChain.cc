@@ -65,7 +65,7 @@ core::pack::task::operation::TaskOperationOP SelectResiduesWithinChainOperation:
 	return core::pack::task::operation::TaskOperationOP( new SelectResiduesWithinChainOperation( *this ) );
 }
 
-///@brief restricts to repacking all residues outside of design_shell_ around each residue
+/// @brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {

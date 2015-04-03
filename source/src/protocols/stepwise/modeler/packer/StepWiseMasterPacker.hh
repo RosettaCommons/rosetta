@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/packer/StepWiseMasterPacker.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -30,7 +30,7 @@ namespace scoring {
 namespace rna {
 namespace data {
 
-///
+
 class RNA_DataBackboneEnergy;
 
 } //data

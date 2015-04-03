@@ -23,12 +23,9 @@
 #include <core/types.hh>
 
 // Unit headers
-// AUTO-REMOVED #include <protocols/scoring/methods/InterchainEnvEnergy.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers

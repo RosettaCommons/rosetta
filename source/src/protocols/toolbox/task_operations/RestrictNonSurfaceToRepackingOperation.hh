@@ -35,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to allow design of only surface exposed positions
+/// @details this class is a TaskOperation to allow design of only surface exposed positions
 class RestrictNonSurfaceToRepackingOperation : public core::pack::task::operation::TaskOperation {
 
 public:

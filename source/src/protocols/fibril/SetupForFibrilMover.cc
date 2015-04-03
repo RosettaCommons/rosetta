@@ -16,7 +16,6 @@
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // ObjexxFCL Headers

@@ -16,7 +16,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/PhiPsiTalosIO.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
@@ -40,7 +39,7 @@ class MidPhiOut: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a Phi-Psi-based scoring function.
-	/// @detailed Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
+	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 	MidPhiOut(Size priority, Real lowest_acceptable_value, bool use_lowest);
 
 	void do_caching(VallChunkOP);

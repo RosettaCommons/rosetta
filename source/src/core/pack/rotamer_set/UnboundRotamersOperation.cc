@@ -16,7 +16,6 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/file_data.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>

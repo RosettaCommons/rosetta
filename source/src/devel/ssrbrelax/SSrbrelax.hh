@@ -9,7 +9,7 @@
 
 /// @file looplooprelax_protocols.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Srivatsan Raman
 

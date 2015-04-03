@@ -76,7 +76,6 @@ struct AtomPairEnergy {
 };
 
 
-
 template < class Derived >
 class BaseEtableEnergy : public methods::ContextIndependentTwoBodyEnergy
 {
@@ -178,7 +177,7 @@ public:
 		ScoreFunction const & sfxn
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(
@@ -332,7 +331,7 @@ public:
 		utility::vector1< DerivVectorPair > & r2_at_derivs
 	) const;
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// backbone of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -345,7 +344,7 @@ public:
 	) const;
 
 
-	///@brief Evaluates the interaction between the backbone of rsd1 and the
+	/// @brief Evaluates the interaction between the backbone of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -357,7 +356,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///@brief Evaluates the interaction between the sidechain of rsd1 and the
+	/// @brief Evaluates the interaction between the sidechain of rsd1 and the
 	/// sidechain of rsd2 and accumulates the unweighted energy.
 	virtual
 	void
@@ -497,7 +496,7 @@ public:
 		static_cast< Derived const* > (this) -> derived_prepare_for_residue_pair(res1,res2,pose);
 	}
 
-	///
+
 	inline
 	void
 	atom_pair_energy(
@@ -543,7 +542,6 @@ public:
 	}
 
 
-	///
 	//inline
 	//void
 	//pair_energy_H(
@@ -572,7 +570,7 @@ public:
 	// 	pair_energy_H(atom1, atom2, weight, ape.attractive, ape.repulsive, ape.solvation, ape.bead_bead_interaction);
 	// }
 
-	///
+
 	inline
 	void
 	pair_energy_H(
@@ -586,7 +584,7 @@ public:
 		(static_cast< Derived const * > (this))->interres_evaluator().atom_pair_energy( atom1, atom2, weight, emap, d2 );
 	}
 
-	///
+
 	Real
 	hydrogen_interaction_cutoff2() const
 	{
@@ -700,7 +698,7 @@ protected: //protected methods that may be used by derived classes
 
 protected:
 
-	///
+
 	inline
 	Real
 	eval_dE_dR_over_r_(
@@ -1004,7 +1002,6 @@ private:
 //	emap[st_sol_]+=solv;
 //	emap[ coarse_beadlj ]+=bb;
 //}
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

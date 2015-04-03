@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -82,8 +81,6 @@ using ObjexxFCL::FArray2D_float;
 using namespace core;
 using namespace pose;
 using namespace conformation;
-
-
 
 
 void
@@ -283,7 +280,6 @@ main( int argc, char* argv [] )
 		dssp.insert_ss_into_pose( pdb );
 
 
-
 		Epos1(1,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(1);
  		Epos1(2,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(2);
 		Epos1(3,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(3);
@@ -317,7 +313,6 @@ main( int argc, char* argv [] )
 												distance_squared( this_rt.get_rotation().col(2), disulfides[1].get_rotation().col(2) ) +
 												distance_squared( this_rt.get_rotation().col(3), disulfides[1].get_rotation().col(3) ) );
 		mrt_dist = core::kinematics::distance( this_rt, disulfides[1] );
-
 
 
 		std::cout << "START " << this_rt << " RT " << std::endl;

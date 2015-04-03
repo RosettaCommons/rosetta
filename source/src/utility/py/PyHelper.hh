@@ -41,8 +41,6 @@ namespace utility { namespace py {
 //template< class T > boost::python::object & to_py_object( T & o) { return boost::python::object( boost::python::handle<>(boost::python::borrowed(o) ) ); }
 
 
-
-
 // template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
 template< class T > utility::pointer::shared_ptr<T> wrap_access_pointer_get_function( utility::pointer::weak_ptr<T> rs ) {  return rs.lock(); }
 template< class T > utility::pointer::shared_ptr<T const> wrap_access_const_pointer_get_function( utility::pointer::weak_ptr<T const> rs ) {  return rs.lock(); }

@@ -23,9 +23,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 //#include <core/scoring/etable/count_pair/CountPair1BC4.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/types.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -36,7 +33,6 @@
 #include <core/id/AtomID.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -88,7 +84,7 @@ HybridVDW_Energy::HybridVDW_Energy( HybridVDW_Energy const & src ):
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 HybridVDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -97,7 +93,6 @@ HybridVDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) 
 }
 
 
-///
 void
 HybridVDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -106,7 +101,6 @@ HybridVDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const 
 }
 
 
-///
 void
 HybridVDW_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1, //_in,
@@ -236,7 +230,6 @@ HybridVDW_Energy::eval_atom_derivative(
 }
 
 
-
 /// @brief HybridVDW_Energy distance cutoff
 Distance
 HybridVDW_Energy::atomic_interaction_cutoff() const
@@ -255,7 +248,6 @@ HybridVDW_Energy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 }

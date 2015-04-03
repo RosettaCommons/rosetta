@@ -18,7 +18,6 @@
 #include <protocols/noesy_assign/DistanceScoreMover.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 //#include <protocols/noesy_assign/PeakAssignment.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -41,7 +40,7 @@
 namespace protocols {
 namespace noesy_assign {
 
-///@brief maintains a list of constraints_ (each PeakAssignment yields one) and peak_constraints_ ( each
+/// @brief maintains a list of constraints_ (each PeakAssignment yields one) and peak_constraints_ ( each
 /// cross peak with multiple assignments creates one AmbiguousNMRConstraint ).
 /// the DistanceMover (prepare scoring and apply directly interacts with the Dk term in CrossPeak (set_decoy_compatibility)
 
@@ -52,15 +51,15 @@ public:
 
   DistanceScoreMover( CrossPeakList&, core::pose::Pose const& pose, core::Real dcut );
 
-	///@brief set decoy_compatibility in PeakAssignments to zero
+	/// @brief set decoy_compatibility in PeakAssignments to zero
 	///
   void prepare_scoring( bool use_for_calibration = false );
 
-	///@brief sum up decoy_compatibility score in PeakAssignments
+	/// @brief sum up decoy_compatibility score in PeakAssignments
   void apply( core::pose::Pose& pose );
 
 	//	void find_violators_with_individual_dist_cutoff( PoseVector poses );
-	///@brief normalize decoy_compatibility of PeakAssignments by count_decoys_
+	/// @brief normalize decoy_compatibility of PeakAssignments by count_decoys_
   void finalize_scoring() const;
 
 	//core::Real compute_violation_percentage() const;
@@ -90,11 +89,11 @@ private:
 	//	PeakConstraints peak_constraints_;
 
 
-	///@brief count for each peak how many decoys have violated
+	/// @brief count for each peak how many decoys have violated
 	typedef utility::vector1< core::Size > PeakViolationCounts;
 	PeakViolationCounts peak_violation_counts_;
 
-	///@brief cumulative sum of peak_violation_counts_;
+	/// @brief cumulative sum of peak_violation_counts_;
 	core::Size total_violation_count_;
 
 	//	typedef utility::vector1< core::Real > VectorReal;

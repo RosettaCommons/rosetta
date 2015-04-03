@@ -17,21 +17,15 @@
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnvPairPotential.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/rms_util.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <utility/exit.hh>
 
 
@@ -43,7 +37,6 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {

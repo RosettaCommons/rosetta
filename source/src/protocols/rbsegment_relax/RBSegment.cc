@@ -12,23 +12,15 @@
 /// @author Frank DiMaio
 /// @author Srivatsan Raman
 #include <protocols/rbsegment_relax/RBSegment.hh>
-// AUTO-REMOVED #include <protocols/rbsegment_Moves/RBSegmentMover.hh>
 
 // Rosetta Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
-//
+
 #include <string>
 #include <fstream>
 
@@ -48,13 +40,13 @@ static thread_local basic::Tracer TR_seg( "RBSegment" );
 
 
 /////////////////////
-///@brief helper function
+/// @brief helper function
 inline core::Real square( core::Real X ) {
 	return X*X;
 }
 
 //////////////////////////////////////////////////////////
-///@brief Helper function tokenizes a str
+/// @brief Helper function tokenizes a str
 /////////////////////////////////////////////////////////
 // don't use use string_utils.hh:split or string_split instead
 void Tokenize(const std::string              &str,
@@ -94,9 +86,8 @@ void RBSegment::get_movement( core::Real &sigAxisR, core::Real &sigAxisT, core::
 }
 
 
-
 //////////////////////////////////////////////////////////
-///@brief Parses an RB segment file into a vector of RBsegments
+/// @brief Parses an RB segment file into a vector of RBsegments
 /////////////////////////////////////////////////////////
 void read_RBSegment_file(
 	utility::vector1< RBSegment > &rbsegs,
@@ -338,7 +329,7 @@ void read_RBSegment_file(
 
 
 //////////////////////////////////////////////////////////
-///@brief Select a single RB segment to perturb + attached loops
+/// @brief Select a single RB segment to perturb + attached loops
 /////////////////////////////////////////////////////////
 void select_RBsegments(
 	utility::vector1< RBSegment > const &rbsegs_in,
@@ -378,7 +369,6 @@ void select_RBsegments(
 	std::cerr << rbsegs_selected.size() << " rigid body segments input\n";
 	std::cerr << loops_selected.size() << " loops\n";
 } // void LoopRebuild::select_loops
-
 
 
 RBSegment RBSegment::remap( core::id::SequenceMapping const &mapping ) const {

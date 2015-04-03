@@ -814,7 +814,6 @@ void run_zn2his() {
                 viz = cen               ; out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' ' << " ZN"<<' '<<"A"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 
 
-
                 out << "ENDMDL" << std::endl;
               }
             }
@@ -907,7 +906,6 @@ void run_tyr_his() {
   TR << "ALLOW TYR:     resi " << allowed_res_tyr[1];
   for(Size i = 2; i <= allowed_res_tyr.size(); ++i) TR << "+" << allowed_res_tyr[i];
   TR << std::endl;
-
 
 
   ScoreFunctionOP sf = core::scoring::get_score_function();
@@ -1119,7 +1117,6 @@ void run_tyr_his() {
               }
 
 
-
               TR << "remembering..." << std::endl;
               count++;
               foundcen.push_back(cenj);
@@ -1154,7 +1151,6 @@ void run_tyr_his() {
               // viz = cenj-orij*4+orii*2; out<<"HETATM"<<I(5,9998)<<' '<<"VIZ "<<' ' <<  "VIZ"<<' '<<"A"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 
               out << "ENDMDL" << std::endl;
-
 
 
               // short design step
@@ -1735,7 +1731,6 @@ void run_diiron_glu() {
                     viz = cen               ; out<<"HETATM"<<I(5,9999)<<' '<<"ZN  "<<' ' << " ZN"<<' '<<"Z"<<I(4,3)<<"    "<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 
 
-
                     out << "ENDMDL" << std::endl;
 
                   }
@@ -1773,17 +1768,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

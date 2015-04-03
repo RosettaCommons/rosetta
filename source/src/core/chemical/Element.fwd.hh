@@ -30,5 +30,4 @@ typedef  utility::pointer::shared_ptr< Element const >  ElementCOP;
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_Atom_FWD_HH

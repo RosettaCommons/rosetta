@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief RBSegmentRelax protocol
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -21,25 +21,18 @@
 #define INCLUDED_protocols_rbsegment_relax_RBSegmentRelax_hh
 
 // Package headers
-// AUTO-REMOVED #include <protocols/rbsegment_Moves/RBSegmentMover.hh>
 #include <protocols/rbsegment_relax/RBSegment.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 //C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <map>
 #include <list>
-// AUTO-REMOVED #include <vector>
-// AUTO-REMOVED #include <cmath>
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -87,7 +80,7 @@ public:
 	void set_cst_width ( core::Real width );
 	//void set_cst_type  ( std::string type );
 
-	//
+
 	void set_randomize( core::Size rand ) { rand_ = rand; }
 	void set_bootstrap( bool boot ) { bootstrap_ = boot; }
 	void set_skip_lr( bool skip ) { no_lr_ = skip; }

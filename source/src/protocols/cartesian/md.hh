@@ -19,7 +19,6 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/MinimizerMap.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 #include <core/optimization/DOF_Node.hh>
 
 // Project headers
@@ -29,7 +28,6 @@
 #include <core/kinematics/MoveMap.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -93,8 +91,6 @@ public:
     );
 
 
-
-
 private: //functions
 
     void createCartesianArray( );
@@ -129,12 +125,9 @@ private: //functions
     void setDihedralDerivatives( );
 
 
-
-
     void doBondDerivatives( float &totalepot );
     void doAngleDerivatives(float &totalepot );
     void doDihedralDerivatives( float &totalepot );
-
 
 
     void createCartesianDerivatives( core::pose::Pose & pose,
@@ -160,7 +153,6 @@ private: //functions
         float &temp);
 
 
-
     void applyForces_ConjugateGradient(
         int Step,
         float &current_energy,
@@ -180,8 +172,6 @@ public:
                          float endTemp);
 
     void testCartesianDerivatives( core::scoring::ScoreFunction const & scorefxn );
-
-
 
 
 private:  //data

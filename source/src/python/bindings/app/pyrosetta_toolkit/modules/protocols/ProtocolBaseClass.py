@@ -25,7 +25,6 @@ import os.path
 #Tkinter Imports
 
 
-
 #Toolkit Imports
 #from window_main.IO.GUIInput import GUIInput
 from app.pyrosetta_toolkit.window_main.IO.GUIOutput import GUIOutput

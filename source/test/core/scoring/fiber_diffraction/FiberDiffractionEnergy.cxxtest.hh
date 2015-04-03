@@ -42,7 +42,6 @@
 #include <utility/excn/EXCN_Base.hh>
 
 
-
 static basic::Tracer TR("test.scoring.fiber_diffraction.FiberDiffractionEnergy");
 
 using namespace core;

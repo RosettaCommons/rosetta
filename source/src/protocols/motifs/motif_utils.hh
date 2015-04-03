@@ -32,12 +32,10 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
 #include <utility/file/FileName.fwd.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers

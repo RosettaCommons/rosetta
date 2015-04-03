@@ -540,7 +540,6 @@ my $latticeY = mapply( $localLatticeR, $masterY );
 my $latticeZ = mapply( $localLatticeR, $masterZ );
 
 
-
 # redirection to second shell
 if ($secondShell == 1) {
 	my $myZ = $masterZ;

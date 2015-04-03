@@ -176,22 +176,22 @@ public:
 	virtual void restrict_nonnative_canonical_aas( utility::vector1< bool > const & allowed_aas) = 0;
 
 
-	///@brief disables designing to nucleic acid residues not in the passed list
+	/// @brief disables designing to nucleic acid residues not in the passed list
 	virtual void restrict_absent_nas( utility::vector1< chemical::AA > const & keep_nas ) = 0;
 
 	// only let this residue repack -- prevent redesign
 	virtual void restrict_to_repacking() = 0;
 
-	///@brief
+	/// @brief
 	virtual bool is_original_type( chemical::ResidueTypeCOP type ) const = 0;
 
-	///@brief
+	/// @brief
 	virtual chemical::ResidueTypeSet const & get_original_residue_set() const = 0;
 
-	///@brief
+	/// @brief
 	virtual chemical::AA const & get_original_residue() const = 0;
 
-	///@brief expand (or) the list of available residue types for non-cannonicals
+	/// @brief expand (or) the list of available residue types for non-cannonicals
 	virtual void allow_noncanonical_aa(
 		std::string const & interchangeability_group,
 		chemical::ResidueTypeSet const & residue_set // who gives this reference to the rlt?; maybe rlt holds a rts (what is an rlt?)
@@ -200,10 +200,10 @@ public:
 	/// @brief expand (or) the list of available residue types for non-cannonicals.  Assumes same restypeset as original residue
 	virtual void allow_noncanonical_aa(	std::string const & aaname ) = 0;
 
-	///@brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
+	/// @brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_
 	virtual void allow_noncanonical_aa( chemical::AA aa ) = 0;
 
-	///@brief explicitly disallow all NCAAs
+	/// @brief explicitly disallow all NCAAs
 	virtual void disallow_noncanonical_aas() = 0;
 
 	// expand (or) the list of rsdtypes by including types with this aa and which variant-match the original rsd

@@ -458,7 +458,6 @@ rna_build_helix_test_OLD(){
 }
 
 
-
 /////////////////////////////////////////////////
 void
 rna_build_helix_test_precompute(){
@@ -650,7 +649,6 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

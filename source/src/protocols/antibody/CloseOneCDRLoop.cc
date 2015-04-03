@@ -9,9 +9,8 @@
 
 /// @file protocols/antibody/CloseOneCDRLoop.cc
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #include <protocols/antibody/CloseOneCDRLoop.hh>
@@ -45,7 +44,6 @@ CloseOneCDRLoop::CloseOneCDRLoop( ) : Mover( "CloseOneCDRLoop" ) {
 } // CloseOneCDRLoop default constructor
 
 
-
 CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "CloseOneCDRLoop" ) {
 	set_default();
 	cdr_loop_start_ = query_start;
@@ -55,14 +53,8 @@ CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "C
 } // CloseOneCDRLoop default constructor
 
 
-
-
 // CloseOneCDRLoop default destructor
 CloseOneCDRLoop::~CloseOneCDRLoop() {}
-
-
-
-
 
 
 void CloseOneCDRLoop::set_default() {
@@ -74,18 +66,10 @@ void CloseOneCDRLoop::set_default() {
 } // CloseOneCDRLoop::set_default
 
 
-
-
 std::string
 CloseOneCDRLoop::get_name() const {
 	return "CloseOneCDRLoop";
 }
-
-
-
-
-
-
 
 
 void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
@@ -156,8 +140,6 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	// reset to original foldtree
 	pose_in.fold_tree( f );
 } // CloseOneCDRLoop::apply
-
-
 
 
 }  // namespace antibody

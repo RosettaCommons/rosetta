@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/SetTorsionSetTorsionCreator.hh
-///@brief This class will create instances of protocols::moves::Mover SetTorsion for the protocols::moves::MoverFactory
+/// @file protocols/simple_moves/SetTorsionSetTorsionCreator.hh
+/// @brief This class will create instances of protocols::moves::Mover SetTorsion for the protocols::moves::MoverFactory
 
 #ifndef INCLUDED_protocols_simple_moves_SetTorsionCreator_hh
 #define INCLUDED_protocols_simple_moves_SetTorsionCreator_hh

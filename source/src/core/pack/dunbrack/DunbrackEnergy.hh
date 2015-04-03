@@ -35,7 +35,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-///
+
 class DunbrackEnergy : public scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef ContextIndependentOneBodyEnergy  parent;
@@ -58,7 +58,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(

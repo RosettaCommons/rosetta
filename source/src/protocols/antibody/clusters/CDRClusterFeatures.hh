@@ -54,7 +54,7 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 	
-	///@brief Specify specific CDRs to load and analyze, with cdr_definition and scheme
+	/// @brief Specify specific CDRs to load and analyze, with cdr_definition and scheme
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -65,11 +65,11 @@ public:
 
 public:
 	
-	///@brief Limit CDRs being analyzed.
+	/// @brief Limit CDRs being analyzed.
 	void
 	set_cdrs_to_use(vector1< CDRNameEnum > cdrs );
 	
-	///@brief set the numbering scheme used by the pose.
+	/// @brief set the numbering scheme used by the pose.
 	void
 	set_numbering_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
 	

@@ -72,7 +72,7 @@ void CreateAngleConstraint::apply( core::pose::Pose & pose )
     }
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 CreateAngleConstraint::parse_my_tag(
 	TagCOP tag,

@@ -115,7 +115,6 @@ ProtocolFeatures::features_reporter_dependencies() const {
 }
 
 
-
 string
 ProtocolFeatures::indices() const {
 	return "";

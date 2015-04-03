@@ -790,6 +790,5 @@ protocols::moves::MoverOP CartesianHybridize::clone() const { return protocols::
 protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return protocols::moves::MoverOP( new CartesianHybridize ); }
 
 
-
 }
 }

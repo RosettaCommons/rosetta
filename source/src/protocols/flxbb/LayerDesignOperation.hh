@@ -35,19 +35,16 @@
 //   HelixCapping: DNST
 
 
-
 #ifndef INCLUDED_protocols_flxbb_LayerDesignOperation_hh
 #define INCLUDED_protocols_flxbb_LayerDesignOperation_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/flxbb/LayerDesignOperation.fwd.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
-// AUTO-REMOVED #include <iostream>
 #include <utility/vector1.hh>
 
 #include <string>
@@ -150,7 +147,7 @@ public:
 		use_original_ = true;
 	}
 
-	///@brief make pymol scripts showing the different layers
+	/// @brief make pymol scripts showing the different layers
 	void  make_pymol_script(bool value) { make_pymol_script_ = value; }
 
 public:
@@ -198,9 +195,9 @@ private:
 
 private:
 
-	///@brief utility function to transform a vector of position into a pymol selection command
+	/// @brief utility function to transform a vector of position into a pymol selection command
 	std::string pos2select( utility::vector1< Size > const & pos) const;
-	///@brief write a pymol command with the different layers as selections
+	/// @brief write a pymol command with the different layers as selections
 	void write_pymol_script( Pose const & pos, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification,bool las_ligand, std::string const & filename ) const;
 
 	/// @brief add helix capping ?
@@ -209,7 +206,7 @@ private:
 	/// @brief use original sequence for not designed layer ?
 	bool use_original_;
 
-	///@brief
+	/// @brief
 	bool repack_non_designed_residues_;
 
 	bool verbose_;

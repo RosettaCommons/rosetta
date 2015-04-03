@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/sugar/SugarInstantiateMover.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

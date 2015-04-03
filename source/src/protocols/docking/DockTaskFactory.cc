@@ -9,7 +9,7 @@
 
 /// @file DockTaskFactory
 /// @brief sets up the task factory for docking movers
-/// @detailed
+/// @details
 ///		This contains the functions that set up the taskfactory for docking
 ///		movers depending on the command line options
 /// @author Krishna Kilambi
@@ -23,14 +23,9 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -41,7 +36,6 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 // option key includes
 #include <basic/options/keys/docking.OptionKeys.gen.hh>

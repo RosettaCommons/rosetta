@@ -161,7 +161,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 /****** <end> writing sheet ******/
 
 
-
 /****** <begin> writing sw_can_by_sh (sandwich candidate by sheets) ******/
 	// Columns
 	// id of sw_can_by_sh
@@ -341,7 +340,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column R_surface_heading  ("R_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 
 
-
 	Column S_core_heading  ("S_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 	Column S_surface_heading  ("S_surface_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
 	Column T_core_heading  ("T_core_heading", DbDataTypeOP( new DbInteger() ), true /*could be null*/, false /*don't autoincrement*/);
@@ -367,7 +365,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	Column residue_begin("residue_begin", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
 	Column residue_end  ("residue_end", DbDataTypeOP( new DbInteger() ), false /*not null*/, false /*don't autoincrement*/);
-
 
 
 	Column number_of_hydrophobic_res	("number_of_hydrophobic_res",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
@@ -605,9 +602,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 /****** <end> writing sandwich ******/
 
 
-
-
-
 /****** <begin> writing rkde_in_strands ******/
 
 	// Columns
@@ -642,7 +636,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	rkde_in_strands.write(db_session);
 /****** <end> rkde_in_strands ******/
-
 
 
 /****** <begin> writing rkde ******/
@@ -720,9 +713,6 @@ SandwichFeatures::process_decoy(
 {
 	scorefxn( dssp_pose );
 } // process_decoy
-
-
-
 
 
 void
@@ -824,7 +814,6 @@ SandwichFeatures::parse_my_tag(
 					//	<note> if true, it takes more time, but ~50 sandwiches this can be used within ~ minutes.
 
 
-
 	///////// strictness options ///////
 	do_not_write_resfile_of_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("do_not_write_resfile_of_sandwich_that_has_non_canonical_LR", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
@@ -907,7 +896,6 @@ SandwichFeatures::parse_my_tag(
 	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
 
 
-
 	///////// writing options ///////
 	write_all_info_files_ = tag->getOption<bool>("write_all_info_files", false);
 					//	definition: if true, write all below
@@ -968,7 +956,7 @@ SandwichFeatures::parse_my_tag(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////				SandwichFeatures			///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief collect all the feature data for the pose
+/// @brief collect all the feature data for the pose
 core::Size
 SandwichFeatures::report_features(
 	core::pose::Pose const & pose,
@@ -1007,7 +995,6 @@ SandwichFeatures::report_features(
 		pose::Pose dssp_pose ( pose ); //copy of pose, since the original pose is called as 'const'
 		core::scoring::dssp::Dssp dssp( dssp_pose );
 		dssp.insert_ss_into_pose( dssp_pose );
-
 
 
 		if (no_helix_in_pdb_){
@@ -1357,7 +1344,6 @@ SandwichFeatures::report_features(
 				utility::vector1<SandwichFragment> strands_from_sheet_j = get_full_strands_from_sheet(struct_id, db_session, all_distinct_sheet_ids[j]);
 
 
-
 				// <begin> check whether strands are too distant to each other
 				bool these_2_sheets_are_too_distant = false; // temporary 'false' designation
 				avg_dis_between_sheets = 0;
@@ -1397,7 +1383,6 @@ SandwichFeatures::report_features(
 					}
 				} // for(Size ii=1; ii<=strands_from_sheet_i.size(); ++ii)
 				// <end> check whether strands are too distant to each other
-
 
 
 					//TR.Info << "avg_dis_between_sheets: " << avg_dis_between_sheets << endl;
@@ -1547,8 +1532,6 @@ SandwichFeatures::report_features(
 	/////////////////// <end> assignment of sheet into sw_can_by_sh
 
 
-
-
 	/////////////////// <begin> fill a table 'sandwich' by secondary_structure_segments
 			TR.Info << "<begin> fill a table 'sandwich' by secondary_structure_segments" << endl;
 
@@ -1654,7 +1637,6 @@ SandwichFeatures::report_features(
 				sandwich_PK_id_counter++;
 			}
 		}	//!write_phi_psi_of_E_
-
 
 
 		if (count_AA_with_direction_)
@@ -2060,7 +2042,6 @@ SandwichFeatures::report_features(
 				// <end> mark beta-sandwiches that is not connected by continuous atoms like 1A78
 
 
-
 				WriteToDB_dssp_ratio_in_sw(struct_id,	db_session,	dssp_pose,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
@@ -2328,7 +2309,6 @@ SandwichFeatures::report_features(
 		// <end> write AA_distribution_without_direction to a file
 
 
-
 		// refactored
 		//// <begin> WriteToDB number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 		if (count_AA_with_direction_ && canonical_sw_extracted_from_this_pdb_file)
@@ -2343,7 +2323,6 @@ SandwichFeatures::report_features(
 				max_CA_CA_dis_);
 		}
 		//// <end> WriteToDB number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
-
 
 
 		// refactored
@@ -2374,7 +2353,6 @@ SandwichFeatures::report_features(
 		// <end> write resfile automatically
 
 
-
 		// development
 		// <begin> assign SS to blueprint file
 		ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
@@ -2387,7 +2365,6 @@ SandwichFeatures::report_features(
 			//TR << std::endl;
 		// <end> assign SS to blueprint file
 		// development
-
 
 
 			TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;

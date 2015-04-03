@@ -35,23 +35,23 @@
 namespace devel {
 namespace splice {
 
-///@brief FloppyTail mover
+/// @brief FloppyTail mover
 
 class TailSegmentMover : public protocols::moves::Mover {
 
 public:
-	///@brief ctor with no arguments
+	/// @brief ctor with no arguments
 	TailSegmentMover();
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	TailSegmentMover( TailSegmentMover const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	TailSegmentMover & operator=( TailSegmentMover const & rhs );
 
 	virtual ~TailSegmentMover();
     
-    ///@brief set the movemap instead of initializing it from cmd-line
+    /// @brief set the movemap instead of initializing it from cmd-line
 	virtual void set_movemap(core::kinematics::MoveMapOP const movemap);
     
 	virtual void set_fa_scorefxn(core::scoring::ScoreFunctionOP const fa_scorefxn);
@@ -73,9 +73,6 @@ public:
 	void set_task_factory( core::pack::task::TaskFactoryCOP task_factory_in );
 
 
-
-
-
 private:
 	core::Size start_;
 	core::Size stop_;
@@ -86,7 +83,7 @@ private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_lesstail_;
-	///@brief stored so that it can be generated in the init_on_new_input function
+	/// @brief stored so that it can be generated in the init_on_new_input function
 	core::kinematics::FoldTreeOP foldtree_;
 	core::Real temp_initial_, temp_final_;
 

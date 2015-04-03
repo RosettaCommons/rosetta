@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/Filter.hh
 /// @brief header file for Filter base class
-/// @detailed
+/// @details
 ///
 ///
 ///

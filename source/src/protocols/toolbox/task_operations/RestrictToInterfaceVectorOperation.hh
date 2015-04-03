@@ -38,7 +38,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
 class RestrictToInterfaceVectorOperation : public InterfaceTaskOperation
 {
 public:
@@ -90,7 +90,7 @@ public:
 	void nearby_atom_cutoff(core::Real nearby_atom_cutoff);
 	void vector_angle_cutoff(core::Real vector_angle_cutoff);
 	void vector_dist_cutoff(core::Real vector_dist_cutoff);
-	///@brief parse_tag function for rosetta scripts
+	/// @brief parse_tag function for rosetta scripts
 	void parse_tag( TagCOP tag , DataMap & );
 
     /*
@@ -101,7 +101,7 @@ public:
 
 private:
 
-	///@brief private data used to pass to the definition function
+	/// @brief private data used to pass to the definition function
 	//chain ids of the interface lower=chain1 upper=chain2 for most purposes.
 	utility::vector1<core::Size> lower_chains_;
 	utility::vector1<core::Size> upper_chains_;

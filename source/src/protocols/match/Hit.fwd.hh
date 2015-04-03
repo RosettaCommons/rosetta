@@ -25,7 +25,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers

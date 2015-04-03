@@ -24,7 +24,6 @@
 #include <numeric/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

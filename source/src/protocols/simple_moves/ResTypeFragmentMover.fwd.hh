@@ -11,7 +11,6 @@
 /// @brief  swaps both BBangles and residue types
 /// @author TJ Brunette (olange@u.washington.edu)
 /// @date   3/22/10
-///
 
 
 #ifndef INCLUDED_protocols_simple_moves_ResTypeFragmentMover_fwd_hh

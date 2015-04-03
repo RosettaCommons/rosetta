@@ -45,7 +45,6 @@ namespace core {
 namespace pack {
 
 
-
 /// @brief Constructs a graph where edges represent the possibility of interactions between
 /// residue pairs
 graph::GraphOP

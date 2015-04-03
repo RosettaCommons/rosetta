@@ -436,7 +436,7 @@ ddG::sum_ddG() const
 	return sum_energy;
 }
 
-///
+
 /// @brief compute the energy of the repacked complex in the bound and unbound states
 /// @param pose_in  The base pose.
 /// @return Nothing, but the base pose's cache be augmented with extra cached data if the scorefunction

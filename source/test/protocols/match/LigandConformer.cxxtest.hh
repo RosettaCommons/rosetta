@@ -18,10 +18,8 @@
 #include <protocols/match/Hit.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>

@@ -24,7 +24,6 @@
 #include <protocols/pack_daemon/util.hh>
 
 // Project headers
-// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #ifdef USEMPI
@@ -526,7 +525,6 @@ void DaemonSet::add_npdpro_calculator_creator(
 {
 	npd_calculator_creators_[ creator->calculator_name() ] = creator;
 }
-
 
 
 /// @brief Each daemon is associated with an index representing its position in

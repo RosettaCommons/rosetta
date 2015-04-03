@@ -50,7 +50,7 @@ typedef point axis;
 
 using namespace core;
 
-///@brief
+/// @brief
 class ZincMatchFilter : public protocols::moves::Mover {
 public:
   ZincMatchFilter()
@@ -102,7 +102,6 @@ public:
   Real get_angle_stdev()       { return angle_stdev_;        }
   Real get_dihedral_stdev()    { return dihedral_stdev_;     }
   Real get_tetrahedral_stdev() { return tetrahedral_stdev_;  }
-
 
 
   virtual
@@ -220,8 +219,6 @@ public:
     }
 
 
-
-
     //calculate angles
     Size number_of_angles( 0 );
     for ( Size i(1); i <= number_of_ligands; ++i ) {
@@ -301,7 +298,6 @@ public:
 	virtual
 	std::string
 	get_name() const { return "ZincMatchFilter"; }
-
 
 
 private:

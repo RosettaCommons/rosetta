@@ -18,12 +18,10 @@
 
 // Rosetta Headers
 #include <basic/datacache/CacheableStringFloatMap.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/types.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -42,7 +40,6 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector0.hh>

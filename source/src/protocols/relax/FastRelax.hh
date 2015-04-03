@@ -9,7 +9,7 @@
 
 /// @file src/protocols/relax/FastRelax.hh
 /// @brief The FastRelax Protocol
-/// @detailed
+/// @details
 /// @author Mike Tyka
 
 
@@ -101,8 +101,8 @@ public:
 	/// @brief Force us to batchrelax with nonideal geometry (using additional memory)
 	void set_force_nonideal( bool val ) { force_nonideal_ = val; }
 
-	///@brief Use the dualspace (Dihedral + Cartesian) relax protocol (Default false)
-	///@details
+	/// @brief Use the dualspace (Dihedral + Cartesian) relax protocol (Default false)
+	/// @details
 	/// Sets to use the lbfgs_armijo_nonmonotone if true or FR default if false
 	/// Recommended to set max_iter to 200.
 	/// Recommended to set minimize_bond_angles to true as well.
@@ -248,8 +248,6 @@ private:   // other data
 	std::vector <RelaxScriptCommand> script_;
 	utility::tag::TagCOP movemap_tag_; // this cannot be parsed before apply b/c the fold tree is likely to change during a run
 };
-
-
 
 
 }

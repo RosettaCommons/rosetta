@@ -13,17 +13,14 @@
 #include <test/UTracer.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/cluster/APCluster.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 
 #include <algorithm>
-// AUTO-REMOVED #include <fstream>
 
 //Auto Headers
-
 
 
 static basic::Tracer TR("protocols.cluster.APClusterTest.cxxtest");

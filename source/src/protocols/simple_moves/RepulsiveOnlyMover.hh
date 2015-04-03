@@ -19,12 +19,9 @@
 #include <protocols/simple_moves/RepulsiveOnlyMover.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -33,7 +30,6 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 

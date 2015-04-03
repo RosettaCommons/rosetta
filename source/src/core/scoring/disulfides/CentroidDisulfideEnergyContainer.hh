@@ -30,9 +30,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 
 #include <core/pose/Pose.fwd.hh>
 

@@ -13,7 +13,6 @@
 
 //core headers
 #include <core/scoring/ResidualDipolarCoupling_Rohl.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
@@ -129,7 +128,6 @@ void ResidualDipolarCoupling_Rohl::read_RDC_file()
 	}
 
 }
-
 
 
 //////////////////////////////////////////////////////

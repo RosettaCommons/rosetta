@@ -16,10 +16,8 @@
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_MetricValueGetter_hh
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.fwd.hh>
 
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 #include <ostream>

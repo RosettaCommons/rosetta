@@ -1094,7 +1094,6 @@ void SegmentInsert::modify_impl( Pose & pose ) {
   }
 
 
-
 	// Mark flanking regions and any existing connecting residues at left-1 and right
 	// needing omega correction.  Omega correction is not actually performed until
 	// bond length/angle corrections are done.

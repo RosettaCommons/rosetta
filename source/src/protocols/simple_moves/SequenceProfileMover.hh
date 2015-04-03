@@ -11,7 +11,7 @@
 /// @brief  BS mover to get around a stupid "mover" that was embedded in the parser
 /// @author Brian Weitzner brian.weitzner@gmail.com, Steven Lewis smlewi@gmail.com
 /// @date   Rebased to next year.
-///
+
 
 #ifndef INCLUDED_protocols_simple_moves_SequenceProfileMover_HH
 #define INCLUDED_protocols_simple_moves_SequenceProfileMover_HH

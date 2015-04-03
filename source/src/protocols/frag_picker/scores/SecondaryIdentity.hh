@@ -30,13 +30,13 @@ namespace frag_picker {
 namespace scores {
 
 /// @brief  SequenceIdentity score counts how many residues share the same secondary structure
-/// @detailed Resulting score is the number of residues
+/// @details Resulting score is the number of residues
 /// on corresponding positions in a vall fragment and a query sequence
 /// that are annotated with the same secondary structure
 class SecondaryIdentity: public FragmentScoringMethod {
 public:
 	/// @brief will be added if the two residues are in the same secondary structure
-	/// @detailed the REWARD value is 0 because we are minimizing the score and the perfect match should be 0
+	/// @details the REWARD value is 0 because we are minimizing the score and the perfect match should be 0
 	static const int REWARD = 0;
 	/// @brief will be added if the two residues are NOT in the same secondary structure
 	static const int PENALTY = 1;
@@ -51,7 +51,7 @@ public:
 	virtual bool score(FragmentCandidateOP, FragmentScoreMapOP);
 
 	/// @brief prints a detailed explanation how a fragment score has been computed
-	/// @detailed besides extensive output, the method should return the same result as score()
+	/// @details besides extensive output, the method should return the same result as score()
 	bool describe_score(FragmentCandidateOP, FragmentScoreMapOP, std::ostream&);
 
         inline std::string& get_prediction_name() { return prediction_name_; };

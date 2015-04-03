@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin MathMatrix_operations
 ///
 /// @brief
 /// Mathmatical functions for the MathMatrix class
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm that was taken from BCL (Jens Meiler)
 /// The Matrix is construction is found in numeric/MathVector.hh. These are mathematical functions
 /// that can be used by the MathVector class. ***Note that these are outside of class, but having the
@@ -25,9 +24,8 @@
 /// Nils Woetzl
 /// Jens Meiler
 ///
-/// @authors Steven Combs, Nils Woetzl, Jens Meiler
+/// @author Steven Combs, Nils Woetzl, Jens Meiler
 ///
-/// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -37,7 +35,6 @@
 #include <numeric/MathVector.hh>
 
 namespace numeric{
-
 
 
 //////////////////////
@@ -121,8 +118,6 @@ inline	MathVector< T > MakeVector( T const & X, T const & Y, T const & Z)
 
 	return newvector;
 }
-
-
 
 
 ///////////////

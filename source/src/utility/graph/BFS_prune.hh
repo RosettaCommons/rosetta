@@ -29,13 +29,11 @@
 namespace utility {
 namespace graph {
 
-///@brief Class to raise to do an immediate stop of a breadth first search.
+/// @brief Class to raise to do an immediate stop of a breadth first search.
 /// ONLY THROW FROM WITHIN A VISITOR PASSED TO breadth_first_visit_prune/breadth_first_search_prune
 class EXCN_Stop_BFS : public utility::excn::EXCN_Msg_Exception {
 	EXCN_Stop_BFS(): EXCN_Msg_Exception("Uncaught BFS Stop exception") {}
 };
-
-
 
 
 /// @brief breadth_first_visit_prune is a slightly
@@ -195,7 +193,6 @@ public:
 	bool finish_vertex(Vertex , Graph& ) { return false; }
 
 };
-
 
 
 template< class Graph>

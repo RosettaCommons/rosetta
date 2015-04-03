@@ -18,10 +18,8 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <string>
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1.hh>
 
@@ -55,7 +53,7 @@ namespace raw_data {
 ///
 /// Question from rhiju, 2014 -- I don't see handling of '12A' or SSBOND cases in
 ///  DisulfideFile.cc -- is someone going to check that in?
-///
+
 
 class DisulfideFile {
 private:

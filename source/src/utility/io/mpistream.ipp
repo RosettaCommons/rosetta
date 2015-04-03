@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 #ifndef INCLUDED_utility_io_mpistream_IPP
 #define INCLUDED_utility_io_mpistream_IPP
 
@@ -248,7 +247,6 @@ buffer_
 // 		MPI_Send(buf, 4, MPI_INT, master_rank_, MPI_STREAM_TAG, MPI_COMM_WORLD );
 // 		#endif
 // 	}
-
 
 
 	template<

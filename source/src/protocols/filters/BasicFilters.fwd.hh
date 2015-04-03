@@ -18,7 +18,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <string>
 
 
 namespace protocols {

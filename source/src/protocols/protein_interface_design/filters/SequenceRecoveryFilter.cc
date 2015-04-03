@@ -13,8 +13,6 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -30,7 +28,6 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -42,7 +39,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.SequenceRecoveryFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 SequenceRecoveryFilter::SequenceRecoveryFilter() :
 	parent( "SequenceRecovery" ),
 	task_factory_( /* NULL */ ),

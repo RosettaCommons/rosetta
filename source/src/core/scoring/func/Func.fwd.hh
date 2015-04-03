@@ -25,7 +25,6 @@ namespace core {
 namespace scoring {
 namespace func {
 
-///
 
 class Func;
 typedef utility::pointer::shared_ptr< Func > FuncOP;

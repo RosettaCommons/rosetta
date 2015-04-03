@@ -30,14 +30,12 @@
 #include <boost/unordered_map.hpp>
 
 
-
 namespace core {
 namespace scoring {
 namespace rna {
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-///
 
 class RNA_FullAtomStackingEnergy : public methods::ContextDependentTwoBodyEnergy  {
 public:
@@ -45,7 +43,7 @@ public:
 
 public:
 
-	///
+
 	RNA_FullAtomStackingEnergy();
 
 

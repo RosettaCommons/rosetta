@@ -116,7 +116,7 @@ public:
         //Chris Miles' star fold-tree, medal mover
         //detect interface residues/secondary structures
         //figure out interface (does it work on centroid models? )
-        //
+
 
 	//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD);
 
@@ -150,7 +150,6 @@ public:
                 std::cout << is_interface(i);
         }        
 	std::cout<< std::endl;
-
 
 
         //identify secondary structures

@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -248,7 +247,6 @@ main( int argc, char* argv [] )
 						//																	 (pose.residue(jj).xyz("N")-pose.residue(jj).xyz("C")).normalize() ) );
 				    //Real pose_dotproduct3( dot_product( (pose.residue(ii).xyz("CEN")-pose.residue(ii).xyz("CA")).normalize(),
 						//																	 (pose.residue(jj).xyz("CEN")-pose.residue(jj).xyz("CA")).normalize() ) );
-
 
 
 						outstream << "DISTANCE " << res1 << " " << res2 << " " << ii + res1 - 1 << " " << jj + res1 - 1<< " " << pose_distance;// << " " << pose_dotproduct << " " << pose_dotproduct2 << " " << pose_dotproduct3;

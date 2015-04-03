@@ -19,35 +19,27 @@
 #include <cstdlib>
 
 // Unit Headers
-// AUTO-REMOVED #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 
 // Project Headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 
 // option key includes
@@ -58,7 +50,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
-
 
 
 using namespace core;
@@ -98,7 +89,6 @@ std::ostream & writeYamlValue(std::ostream & S, std::string name, bool value)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
 int isHydroNonPolar(std::string const & resname ){
 	if (resname == "VAL" || resname == "ILE" || resname == "LEU" ||
 			resname == "MET" || resname == "PHE" || resname == "GLY" ||
@@ -130,7 +120,6 @@ int isPositive(std::string const & resname ){
 	}
 	else return 0;
 }
-
 
 
 int isBoundary(Size const & neighbor ) {

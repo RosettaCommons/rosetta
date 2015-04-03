@@ -16,11 +16,8 @@
 
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

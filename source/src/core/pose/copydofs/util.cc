@@ -9,7 +9,7 @@
 
 /// @file core/pose/copydofs/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

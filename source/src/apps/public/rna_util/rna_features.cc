@@ -223,7 +223,6 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 		}
 
 
-
 		// What is hydrogen bonded?
 		bool ade_n1_hbonded = is_nt[1] && rna_dms_potential.check_hbonded( pose, i, " N1 ", true /*acceptor*/ );
 
@@ -434,7 +433,6 @@ my_main( void* )
 	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -23,15 +23,10 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-
 
 
 // --------------- Test Class --------------- //

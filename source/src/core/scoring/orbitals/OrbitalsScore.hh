@@ -12,17 +12,13 @@
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/orbitals/OrbitalsScore.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <map>
-// AUTO-REMOVED #include <list>
 
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <utility/vector1.hh>
@@ -322,29 +318,17 @@ private:
 	core::Real max_dist_squared_; //the maximum distance squared which orbitals are scored. based on atom distance
 
 
-
 	//core::scoring::etable::EtableEnergy lookup_Etable_;
 	//core::scoring::etable::EtableCAP etable_;
 	//mutable utility::vector1< utility::vector1< Vector> > orbital_coords_;
 
 
-
-
-
-
-	//
-
-
 };
-
-
-
 
 
 }//namespace orbitals
 }//namespace scoring
 }//namespace core
-
 
 
 #endif /* ORBITALSSCORE_HH_ */

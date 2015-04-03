@@ -40,7 +40,6 @@
 // Platform Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
 #include <map>

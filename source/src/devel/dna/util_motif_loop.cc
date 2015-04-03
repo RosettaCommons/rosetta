@@ -104,7 +104,6 @@ core::pack::rotamer_set::RotamerSetOP get_aa_rotset( std::string & AA)
 }
 
 
-
 std::map< std::string, core::pack::rotamer_set::RotamerSetOP >  build_all_aa_rotamers()
 {
 	//Builds the rotamers of each amino acid

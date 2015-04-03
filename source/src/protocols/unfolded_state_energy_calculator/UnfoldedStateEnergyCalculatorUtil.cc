@@ -20,9 +20,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/assert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -87,7 +84,7 @@ calc_all_averages( utility::vector1< core::scoring::EMapVector > unweighted_ener
 }
 
 
-///@brief assumes sorted array
+/// @brief assumes sorted array
 core::Real
 calc_vector_mean( utility::vector1< core::Real> const & data )
 {
@@ -103,7 +100,7 @@ calc_vector_mean( utility::vector1< core::Real> const & data )
   return sum/data.size();
 }
 
-///@brief assumes sorted array
+/// @brief assumes sorted array
 core::Real
 calc_vector_median(  utility::vector1< core::Real> const & /*data*/ )
 {
@@ -112,7 +109,7 @@ calc_vector_median(  utility::vector1< core::Real> const & /*data*/ )
   return 0.0;
 }
 
-///@brief assumes sorted array
+/// @brief assumes sorted array
 core::Real
 calc_vector_mode( utility::vector1< core::Real> const & /*data*/ )
 {
@@ -125,7 +122,7 @@ calc_vector_mode( utility::vector1< core::Real> const & /*data*/ )
   return 0.0;
 }
 
-///@brief assumes sorted array
+/// @brief assumes sorted array
 core::Real
 calc_vector_boltzmann( utility::vector1< core::Real> const & data )
 {

@@ -15,8 +15,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 
@@ -25,9 +23,7 @@
 
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/types.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -36,8 +32,6 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/relax/FastRelax.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -56,11 +50,8 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>  // for string split
-// AUTO-REMOVED #include <boost/algorithm/string/detail/classification.hpp>  // for is_any_of
 
 // option keys includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <protocols/moves/Mover.hh>
@@ -88,9 +79,7 @@ class HBondReporter : public protocols::moves::Mover {
 
 public:
 
-///
-/// @begin HBondReporter::HBondReporter()
-///
+
 HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
 	scfxn = core::scoring::ScoreFunctionOP( new ScoreFunction );
 	scfxn->set_weight( core::scoring::hbond_lr_bb, 1.17 );
@@ -100,22 +89,15 @@ HBondReporter() : allowNonProtein_( true ), relevant_chains_("*") {
 }
 
 
-///
-/// @begin HBondReporter::~HBondReporter()
-///
 virtual ~HBondReporter(){};
 
-///
-/// @begin get_name() function required for MoverCreator framework
-///
+
 virtual
 std::string get_name() const {
 	return "HBondReporter";
 }
 
-///
-/// @begin HBondReporter::load_job_data()
-///
+
 /// @brief
 /// What is this for?
 ///
@@ -157,9 +139,6 @@ void load_job_data( Pose & pose ){
 }
 
 
-///
-/// @begin HBondReporter::pose_name()
-///
 /// @brief
 /// Returns a string representing the name of this pose.  Uses the pdb_info object or the job distributor tag if
 /// no pdb_info object exists.
@@ -177,9 +156,6 @@ std::string pose_name( pose::Pose& pose ) {
 }
 
 
-///
-/// @begin HBondReporter::decoyify()
-///
 /// @brief
 /// Runs a "simple multi relax" protocol on the whole pose, or if the relevant chains flag was used
 /// on just the relevant chains. But only if the relax flag was specified.
@@ -212,9 +188,7 @@ void decoyify( pose::Pose& pose ) {
 }
 */
 
-///
-/// @begin HBondReporter::bfactor()
-///
+
 /// @brief
 /// Given a pose and a residue position, returns the bfactor for that residue.
 /// Why do we care about bfactors?
@@ -232,9 +206,6 @@ Real bfactor( pose::Pose& pose, Size resNum, Size atm, bool is_backbone ) {
 }
 
 
-///
-/// @begin HBondReporter::apply()
-///
 /// @brief
 ///
 ///

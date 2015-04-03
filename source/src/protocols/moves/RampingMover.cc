@@ -310,7 +310,6 @@ RampingMover::parse_my_tag(
 		}
 
 
-
 		utility::vector0< TagCOP > const & rampterm_tags( tag->getTags() );
 		for( utility::vector0< TagCOP >::const_iterator
 				rampterm_it=rampterm_tags.begin(), rampterm_it_end = rampterm_tags.end();

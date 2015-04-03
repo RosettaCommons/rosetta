@@ -199,7 +199,7 @@ LoophashLoopInserter::apply(
 	TR << "Deviations after initial loop insert: " << deviations.first << " " << deviations.second << std::endl;
 }
 
-///@brief get a random fragment length and fragment retrieval index from the given hash bucket.
+/// @brief get a random fragment length and fragment retrieval index from the given hash bucket.
 std::pair<core::Size,core::Size>
 LoophashLoopInserter::get_random_fragment(
 	HashBuckets hash_buckets

@@ -45,15 +45,13 @@ static thread_local basic::Tracer TR( "apps.pilot.bder.BuriedUnsatPolarsFinder" 
 using namespace core;
 
 
-
-///@brief
+/// @brief
 class BuriedUnsatPolarsFinder : public protocols::moves::Mover {
 public:
   BuriedUnsatPolarsFinder()
   {
   }
   virtual ~BuriedUnsatPolarsFinder(){};
-
 
 
   virtual
@@ -105,7 +103,6 @@ public:
 		Size total_number_buried_unsats = buried_unsat_atom_ids.size();
 
 
-
 		TR << "PYMOL_SELECTION: select " << pymol_bunsat_selection << ",";
 
 		for(Size i(1); i <= buried_unsat_atom_ids.size(); ++i) {
@@ -135,7 +132,6 @@ public:
 	virtual
 	std::string
 	get_name() const { return "BuriedUnsatPolarsFinder"; }
-
 
 
 private:

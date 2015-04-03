@@ -19,7 +19,6 @@
 #include <boost/foreach.hpp>
 
 
-
 namespace protocols {
 namespace ligand_docking {
 namespace ligand_options {
@@ -133,7 +132,6 @@ std::string Interface::get_python_string() const{
 		python_stream<< *j << '+';
 	}
 	python_stream<< std::endl;
-
 
 
 	return python_stream.str();

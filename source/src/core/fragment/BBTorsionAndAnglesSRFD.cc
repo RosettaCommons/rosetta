@@ -11,7 +11,7 @@
 /// @brief
 /// @author Florian Richter (floric@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/BBTorsionAndAnglesSRFD.hh>

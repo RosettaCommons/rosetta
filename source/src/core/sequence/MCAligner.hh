@@ -50,7 +50,7 @@ public:
 	/// @brief Align these two Sequences using the given ScoringScheme. Rather
 	/// than finding an optimal alignment, MCAligner uses a stochastic algorithm
 	/// to generate an alignment at a given kT.
-	/// @detailed The Needleman-Wunsch algorithm uses dynamic programming to
+	/// @details The Needleman-Wunsch algorithm uses dynamic programming to
 	/// generate an optimal alignment between two scoring sequences under a given
 	/// scoring scheme.  Rather than making the best decision at each element of
 	/// the dynamic programming matrix, MCAligner makes a stochastic decision

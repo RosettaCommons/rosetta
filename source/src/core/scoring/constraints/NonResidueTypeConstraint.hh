@@ -20,11 +20,9 @@
 #include <core/scoring/constraints/NonResidueTypeConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/id/AtomID.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -33,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-///@brief This class favors a particular residue identity at a particular position by reducing its res_type energy.
+/// @brief This class favors a particular residue identity at a particular position by reducing its res_type energy.
 class NonResidueTypeConstraint : public Constraint
 {
 public:

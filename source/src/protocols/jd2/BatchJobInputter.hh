@@ -22,7 +22,6 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 #include <utility/options/OptionCollection.hh>
 
 #include <utility/vector1.hh>
@@ -33,7 +32,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details This is the simplest implementation of JobInputter, which reads from -s/-l and Batch files.
+/// @details This is the simplest implementation of JobInputter, which reads from -s/-l and Batch files.
 class BatchJobInputter : public protocols::jd2::JobInputter
 {
 public:

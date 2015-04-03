@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loop_mover/refine/LoopRefineInnerCycle.cc
 /// @brief Perform a small move followed CCD closure, packing and minimization
-/// @detailed
+/// @details
 ///
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
@@ -62,19 +62,19 @@ namespace refine {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 SmallMinCCDTrial::SmallMinCCDTrial() : LoopRefineInnerCycle()
 {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 SmallMinCCDTrial::SmallMinCCDTrial( SmallMinCCDTrial const & rhs ) : LoopRefineInnerCycle(rhs)
 {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 SmallMinCCDTrial & SmallMinCCDTrial::operator=( SmallMinCCDTrial const & rhs ){
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -99,14 +99,14 @@ SmallMinCCDTrial::clone() const
 	return protocols::moves::MoverOP( new SmallMinCCDTrial( *this ) );
 }
 
-///@brief fresh_instance returns a default-constructed object for JD2
+/// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SmallMinCCDTrial::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new SmallMinCCDTrial() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool SmallMinCCDTrial::reinitialize_for_new_input() const
 {
 	return true;

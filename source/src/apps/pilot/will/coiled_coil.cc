@@ -130,7 +130,6 @@ inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & an
 }
 
 
-
 core::pose::Pose make_helix(std::string seq) {
 	core::pose::Pose pose;
 	core::pose::make_pose_from_sequence(pose,seq,"centroid",true);

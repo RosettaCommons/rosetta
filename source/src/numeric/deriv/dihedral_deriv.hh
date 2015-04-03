@@ -255,7 +255,7 @@ dihedral_p2_cosine_deriv_first(
 	//                      n12 * n23
 	//
 	// where theta is our dihedral angle
-	//
+
 
 	{ // derivatives of the numerator
 		// v1 and v2 both depend on position of p2
@@ -329,7 +329,6 @@ dihedral_p2_cosine_deriv(
 	dihedral_deriv_second( p1, p2, p3, p4, x, theta, f1, f2 );
 
 }
-
 
 
 }

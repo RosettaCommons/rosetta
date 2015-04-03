@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/RefineBetaBarrel.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -32,7 +32,6 @@
 using namespace core;
 namespace protocols {
 namespace antibody {
-
 
 
 class RefineBetaBarrel: public moves::Mover {
@@ -64,7 +63,6 @@ public:
 	void turn_off_repulsive_ramp() {
 		repulsive_ramp_ = false;
 	}
-
 
 
 	void set_sc_min(bool sc_min) {
@@ -102,8 +100,6 @@ private:
 
 }// namespace antibody
 }// namespace protocols
-
-
 
 
 #endif

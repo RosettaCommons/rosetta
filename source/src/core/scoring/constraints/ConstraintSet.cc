@@ -40,9 +40,6 @@
 #include <core/conformation/signals/LengthEvent.hh>
 
 
-
-
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -314,7 +311,7 @@ ConstraintSet::setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scf
 	non_residue_pair_constraints_.setup_for_derivatives( confxyz, scfxn );
 }
 
-///
+
 void
 ConstraintSet::residue_pair_energy(
 	Residue const & rsd1,
@@ -398,7 +395,6 @@ ConstraintSet::deprecated_eval_atom_derivative_for_residue_pairs(
 }
 
 
-///
 void
 ConstraintSet::eval_intrares_energy(
 	conformation::Residue const & rsd,
@@ -413,7 +409,7 @@ ConstraintSet::eval_intrares_energy(
 	}
 }
 
-///
+
 void
 ConstraintSet::eval_intrares_energy(
 	conformation::Residue const & rsd,
@@ -425,7 +421,6 @@ ConstraintSet::eval_intrares_energy(
 		it->second->intra_residue_energy( rsd, emap /*dummy -- not actually used in this function? */, emap );
 	}
 }
-
 
 
 /// Does *NOT* zero the emap values, just adds the additional contribution to the
@@ -491,7 +486,7 @@ add_constraint_to_residue_constraints(
 	residue_constraints.find( seqpos )->second->add_constraint( cst );
 }
 
-///
+
 /// private
 // this function is called twice with interchanged pos1/pos2 parameters ---> all constraints are added symmetrically
 void
@@ -513,14 +508,14 @@ ConstraintSet::add_constraints( ConstraintCOPs cst_list ) {
 	}
 }
 
-///@details copy another constraint set into this one
+/// @details copy another constraint set into this one
 void
 ConstraintSet::add_constraints( ConstraintSetCOP const cst_set ) {
 	add_constraints(cst_set->get_all_constraints());
 	return;
 }
 
-///
+
 void
 ConstraintSet::add_constraint( ConstraintCOP cst )
 {
@@ -569,7 +564,7 @@ remove_constraint_from_residue_constraints(
 	return false;
 }
 
-///
+
 /// private
 // this function is called twice with interchanged pos1/pos2 parameters ---> all constraints are removed symmetrically
 bool
@@ -600,7 +595,6 @@ ConstraintSet::remove_residue_pair_constraint(
 }
 
 
-
 bool
 ConstraintSet::remove_constraints(
 	ConstraintCOPs cst_list,
@@ -619,7 +613,6 @@ ConstraintSet::remove_constraints(
 } //remove_constraints function
 
 
-///
 bool
 ConstraintSet::remove_constraint(
 	ConstraintCOP cst,
@@ -648,7 +641,7 @@ ConstraintSet::remove_constraint(
 	return success;
 }
 
-///
+
 void
 ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreType const & t )
 {

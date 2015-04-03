@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_Minimizer
-/// @detailed
+/// @details
 /// @author Rhiju Das (rhiju@stanford.edu), Parin Sripakdeevong (sripakpa@stanford.edu)
 
 

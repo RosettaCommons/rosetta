@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_ResidueInfo.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripakdeevong
 

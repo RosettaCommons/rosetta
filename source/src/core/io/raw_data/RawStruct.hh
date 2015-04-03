@@ -19,15 +19,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/io/raw_data/Raw.fwd.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 #include <map>

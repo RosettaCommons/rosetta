@@ -13,7 +13,6 @@
 /// @author Brian D. Weitzner (brian.weitzner@gmail.com)
 
 
-
 #include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>

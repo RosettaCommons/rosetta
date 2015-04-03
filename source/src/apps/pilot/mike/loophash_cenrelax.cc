@@ -94,7 +94,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
@@ -253,7 +252,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		std::cout << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 
-
     if((  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
        (  option[ OptionKeys::lh::centroid_only ]() )){
 
@@ -282,8 +280,6 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
       select_lib_structs[bestcenindex]->fill_pose( pose );
 			continue;
 		}
-
-
 
 
 		/// For fullatom goodness, continue

@@ -24,7 +24,6 @@
 #endif
 
 
-
 // Core headers
 #include <core/types.hh>
 
@@ -44,7 +43,6 @@
 #include <numeric/random/random.hh>
 
 
-
 using namespace core;
 using namespace core::pose;
 using namespace core::chemical;
@@ -54,11 +52,11 @@ using namespace utility;
 namespace protocols {
 namespace unfolded_state_energy_calculator {
 
-///@brief dtor
+/// @brief dtor
 UnfoldedStateEnergyCalculatorMover::~UnfoldedStateEnergyCalculatorMover()
 {}
 
-///@brief cctor
+/// @brief cctor
 UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover( UnfoldedStateEnergyCalculatorMover const & usecm ) :
 	//utility::pointer::ReferenceCount(),
 	Mover( "UnfoldedStateEnergyCalculatorMover" ),
@@ -74,7 +72,7 @@ UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover( Unfolded
 	sequence_matched_fragments_( usecm.sequence_matched_fragments_ )
 {}
 
-///@brief alternate ctor
+/// @brief alternate ctor
 UnfoldedStateEnergyCalculatorMover::UnfoldedStateEnergyCalculatorMover(
 #ifdef USEMPI
 	UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor & job_dist,

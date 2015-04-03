@@ -19,7 +19,6 @@
 #include <protocols/loops/Loops.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -31,7 +30,6 @@
 
 
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -42,7 +40,6 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // C++ Headers
 #include <sstream>
@@ -89,7 +86,7 @@ LoopAnalyzerMover::LoopAnalyzerMover( protocols::loops::Loops const & loops, boo
 
 LoopAnalyzerMover::~LoopAnalyzerMover() {}
 
-///@brief do not use a default constructor with this class - function exists as part of the remove #include drive
+/// @brief do not use a default constructor with this class - function exists as part of the remove #include drive
 LoopAnalyzerMover::LoopAnalyzerMover() : tracer_(false) { utility_exit_with_message("do not use default constructor of class LoopAnalyzerMover"); }
 
 LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
@@ -120,7 +117,7 @@ void LoopAnalyzerMover::set_sf(){
 	return;
 }
 
-///@details LoopAnalyzerMover is mostly a container for other movers for the anchored design protocol.
+/// @details LoopAnalyzerMover is mostly a container for other movers for the anchored design protocol.
 void LoopAnalyzerMover::apply( core::pose::Pose & input_pose )
 {
 	TR << "running LoopAnalyzerMover" << std::endl;

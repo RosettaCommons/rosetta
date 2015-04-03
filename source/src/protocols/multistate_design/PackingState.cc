@@ -20,7 +20,6 @@
 #ifdef WIN32
 #include <core/scoring/ScoreFunction.hh>
 #endif
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/vector0.hh>

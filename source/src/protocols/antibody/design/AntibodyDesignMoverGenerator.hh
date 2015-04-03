@@ -45,7 +45,7 @@ namespace antibody {
 namespace design {
 	
 
-///@brief Generates pre-configured general MoverOPs for use in AntibodyDesign and modeling
+/// @brief Generates pre-configured general MoverOPs for use in AntibodyDesign and modeling
 /// Helper functions for setting up FoldTrees.
 /// Can set the generated mover to apply, which will include the needed FoldTree and any changing of typeset.
 /// FoldTree stuff will eventually be refactored in favor of the TopologyBroker/Environment system.
@@ -61,12 +61,12 @@ public:
 	
 	virtual ~AntibodyDesignMoverGenerator();
 
-	///@brief Set the last setup mover as the current mover to call during apply.
+	/// @brief Set the last setup mover as the current mover to call during apply.
 	/// Default is True.  See apply for more details.
 	void
 	set_as_mover( bool setting );
 	
-	///@brief Apply the last mover generated or run the set mover.
+	/// @brief Apply the last mover generated or run the set mover.
 	/// Will do the following:
 	/// 1) Run any set ChangeFoldTreeMover.  This is set by any generated class if needed.
 	/// 2) Will call set_cutpoint_variants.  If there are none, no harm done.
@@ -77,7 +77,7 @@ public:
 	virtual void
 	apply( core::pose::Pose & pose );
 	
-	///@brief Generate a ChangeAndResetFoldTreeMover from any set mover, FoldTree mover, and ScoreFunction.
+	/// @brief Generate a ChangeAndResetFoldTreeMover from any set mover, FoldTree mover, and ScoreFunction.
 	/// Be careful of needed cutpoint variants.  If needed, generate everything manually!!
 	simple_moves::ChangeAndResetFoldTreeMoverOP
 	generate_protocol_mover() const;
@@ -87,11 +87,11 @@ public:
 	set_defaults();
 	
 	
-	///@brief Set to model CDRs.  Default is all of them false.
+	/// @brief Set to model CDRs.  Default is all of them false.
 	void
 	set_cdr( CDRNameEnum const cdr, bool setting );
 	
-	///@brief Set to model only one cdr, or all others but one.
+	/// @brief Set to model only one cdr, or all others but one.
 	void
 	set_cdr_only( CDRNameEnum const cdr, bool setting );
 	
@@ -103,17 +103,17 @@ public:
 	set_scorefunction( core::scoring::ScoreFunctionCOP scorefxn );
 	
 	
-	///@brief Set the mover for apply
+	/// @brief Set the mover for apply
 	/// Generator functions will set this themselves, but can be changed before apply.
 	virtual void
 	set_mover( protocols::moves::MoverOP mover );
 	
-	///@brief Get the currently set mover
+	/// @brief Get the currently set mover
 	virtual protocols::moves::MoverOP
 	mover() const;
 	
 	
-	///@brief Set the particular ChangeFoldTreeMover to use.
+	/// @brief Set the particular ChangeFoldTreeMover to use.
 	/// Generator functions will set this themselves or to NULL, but can be changed before apply.
 	void
 	set_ft_mover( protocols::moves::ChangeFoldTreeMoverOP ft_mover );
@@ -128,9 +128,9 @@ public:
 	//
 	//
 	
-	///@brief
+	/// @brief
 	/// Override the TaskFactory that will be created and use this instead (for everything that uses a task!)
-	///@details
+	/// @details
 	/// Hack for graft cdrs extremely specialized tf for design and to limit the amount of casting that would be done otherwise.
 	/// Use of AntibodySeqDesignTFCreator or helper utility functions for TF creation are recommended.
 	/// A better way here is preferred.
@@ -142,7 +142,7 @@ public:
 	//
 	//
 	
-	///@brief Set a value for interface detection across the class.
+	/// @brief Set a value for interface detection across the class.
 	void
 	interface_detection_dis( core::Real interface_distance );
 	
@@ -151,7 +151,7 @@ public:
 		return interface_dis_;
 	}
 	
-	///@brief Set a value for neighbor detection across the class.
+	/// @brief Set a value for neighbor detection across the class.
 	void
 	neighbor_detection_dis( core::Real neighbor_distance );
 	
@@ -166,11 +166,11 @@ public:
 	//
 	//
 	
-	///@brief How many residues on either side of the CDR to include in CDR - modeling? (2 is a good number - more if not North)
+	/// @brief How many residues on either side of the CDR to include in CDR - modeling? (2 is a good number - more if not North)
 	void
 	stem_size( core::Size overhang );
 	
-	///@brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
+	/// @brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
 	void
 	ab_dock_chains( std::string ab_dock_chains );	
 	
@@ -180,30 +180,30 @@ public:
 	//
 	//
 	
-	///@brief Set to minimize the set interface (during minimization/relax)
+	/// @brief Set to minimize the set interface (during minimization/relax)
 	/// Not implemented while minimizing CDRs as well.
 	void
 	set_min_interface( bool min_interface );
 	
-	///@brief Set to minimize sidechains (add to movemap)
+	/// @brief Set to minimize sidechains (add to movemap)
 	void
 	set_min_sc( bool min_sc );
 	
-	///@brief Set to include neighbor side chains during any regional repacking
+	/// @brief Set to include neighbor side chains during any regional repacking
 	void
 	set_include_neighbor_sc( bool include_neighbor_sc );
 	
-	///@brief Use cartesian minimization for MinMovers
+	/// @brief Use cartesian minimization for MinMovers
 	/// Setup appropriate scorefunction and min settings
 	void
 	set_cartmin( bool cartmin );
 	
-	///@brief Use DualSpace relax during FastRelax
+	/// @brief Use DualSpace relax during FastRelax
 	/// Setup appropriate scorefunction and settings
 	void
 	set_dualspace( bool dualspace );
 	
-	///@brief Set to use starting coordinate constraints during relax
+	/// @brief Set to use starting coordinate constraints during relax
 	void
 	set_start_coord_csts( bool coord_csts );
 	
@@ -214,12 +214,12 @@ public:
 	void
 	set_dock_high_res_scorefunction( core::scoring::ScoreFunctionCOP scorefxn );
 	
-	///@brief Set the outer cycles for DockMCM.
+	/// @brief Set the outer cycles for DockMCM.
 	/// Normal in docking is 4.
 	void
 	set_high_res_dock_outer_cycles( core::Size first_cycle = 3 );
 	
-	///@brief Set the inner cycles for DockMCM.
+	/// @brief Set the inner cycles for DockMCM.
 	/// Normal in docking is 45.
 	void
 	set_high_res_dock_inner_cycles( core::Size second_cycle = 10 );
@@ -243,7 +243,7 @@ public:
 	//
 	
 	
-	///@brief Generate a packer and optionally set as the current mover
+	/// @brief Generate a packer and optionally set as the current mover
 	simple_moves::PackRotamersMoverOP
 	generate_repack_cdrs( core::pose::Pose const & pose );
 	
@@ -252,36 +252,36 @@ public:
 	setup_repack_cdrs( core::pose::Pose const & pose, simple_moves::PackRotamersMoverOP packer );
 
 	
-	///@brief Get a pre-configured Packer to repack the interface between Antibody and Antigen.
+	/// @brief Get a pre-configured Packer to repack the interface between Antibody and Antigen.
 	/// If set_as_mover is true, will set the needed ab-ag foldtree to this class which the task op will use.
 	protocols::simple_moves::PackRotamersMoverOP
 	generate_repack_antigen_ab_interface( Pose const & pose );
 	
-	///@brief Configure a packer to repack the interface between Antibody and Antigen
+	/// @brief Configure a packer to repack the interface between Antibody and Antigen
 	/// If set_as_mover is true, will set the needed ab-ag foldtree to this class which the task op will use.
 	void
 	setup_repack_antigen_ab_interface( core::pose::Pose const & pose, simple_moves::PackRotamersMoverOP packer );
 	
 	
-	///@brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
+	/// @brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
 	/// If set_as_mover is true, will set the appropriate FoldTree to this class.
 	simple_moves::MinMoverOP
 	generate_minimizer( core::pose::Pose const & pose );
 	
-	///@brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
+	/// @brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
 	/// If set_as_mover is true, will set the appropriate FoldTree to this class.
 	void
 	setup_minimizer( core::pose::Pose const & pose, simple_moves::MinMoverOP min_mover);
 	
 	
-	///@brief Generate FastRelax of CDRs +/or Interface.  
-	///@details Any Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
+	/// @brief Generate FastRelax of CDRs +/or Interface.  
+	/// @details Any Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
 	/// All coordinate constraints on the pose will then be removed in this classes apply.
 	relax::FastRelaxOP
 	generate_relax( core::pose::Pose const & pose );
 	
-	///@brief Setup FastRelax of CDRs +/or Interface.  
-	///@details Any Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
+	/// @brief Setup FastRelax of CDRs +/or Interface.  
+	/// @details Any Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
 	/// All coordinate constraints on the pose will then be removed in this classes apply.
 	void
 	setup_relax( core::pose::Pose const & pose, relax::FastRelaxOP rel);
@@ -292,7 +292,7 @@ public:
 	//
 	//
 	
-	///@brief Configure a low-res docking mover.  No repacking, but will switch chains.
+	/// @brief Configure a low-res docking mover.  No repacking, but will switch chains.
 	/// Using A for designation of Antigen chains. Not full antigen chains. (L_A, LH_A, L_H, etc.)
 	docking::DockingLowResOP
 	generate_dock_low_res( core::pose::Pose const & pose );
@@ -301,7 +301,7 @@ public:
 	setup_dock_low_res( core::pose::Pose const & pose, docking::DockingLowResOP docker );
 	
 	
-	///@brief Configure a high-res, DockMCMProtocol for docking.
+	/// @brief Configure a high-res, DockMCMProtocol for docking.
 	docking::DockMCMProtocolOP
 	generate_dock_high_res( core::pose::Pose const & pose );
 	
@@ -316,7 +316,7 @@ public:
 	//
 	//
 	
-	///@brief Set a range of CDRs.
+	/// @brief Set a range of CDRs.
 	void
 	set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting);
 	
@@ -395,7 +395,6 @@ private:
 }
 }
 }
-
 
 
 #endif //INCLUDED_protocols_antibody_design_AntibodyDesignMover_hh

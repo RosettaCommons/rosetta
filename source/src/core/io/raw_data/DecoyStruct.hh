@@ -18,25 +18,17 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/io/raw_data/RawStruct.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <vector>
 #include <string>
 #include <map>
 

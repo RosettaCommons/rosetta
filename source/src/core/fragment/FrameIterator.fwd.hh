@@ -11,7 +11,7 @@
 /// @brief
 /// @author Sergey Lyskov
 /// @date   Tue Sep 08 08:59:43 EDT 2009 @583 /Internet Time/
-///
+
 
 #ifndef INCLUDED_core_fragment_FrameIterator_FWD_HH
 #define INCLUDED_core_fragment_FrameIterator_FWD_HH

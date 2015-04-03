@@ -43,5 +43,4 @@ make_new_symmetric_PackerTask_by_requested_method(
 } // core
 
 
-
 #endif

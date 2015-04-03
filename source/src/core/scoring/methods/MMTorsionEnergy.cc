@@ -75,28 +75,28 @@ MMTorsionEnergy::clone() const
 	return EnergyMethodOP( new MMTorsionEnergy );
 }
 
-///
+
 void
 MMTorsionEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 MMTorsionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 MMTorsionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
-///
+
 bool
 MMTorsionEnergy::defines_intrares_energy( EnergyMap const & ) const
 {
@@ -340,7 +340,6 @@ MMTorsionEnergy::residue_pair_energy(
 				mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
 
 
-
 		}
 		} // end Scope section 2.
 
@@ -369,7 +368,6 @@ MMTorsionEnergy::residue_pair_energy(
 
 			energy += potential_.core::scoring::mm::MMTorsionScore::score(
 				mm::mm_torsion_atom_quad( mmat1, mmat2, mmat3, mmat4 ), angle );
-
 
 
 		}

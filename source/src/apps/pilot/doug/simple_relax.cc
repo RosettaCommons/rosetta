@@ -17,19 +17,13 @@
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <basic/Tracer.hh>
 
 // utility headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // c++ headers
 #include <iostream>

@@ -14,14 +14,9 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>

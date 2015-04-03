@@ -115,7 +115,6 @@ ElectronDensityOptions::parse_my_tag(
 }
 
 
-
 } // namespace
 } // namespace
 } // namespace

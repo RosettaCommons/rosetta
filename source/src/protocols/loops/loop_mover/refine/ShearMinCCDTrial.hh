@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loop_mover/refine/ShearMinCCDTrial.hh
 /// @brief Concrete class derived from LoopRefineInnerCycle to implement the CCD min trial flavor of inner cycle refinement.  
-/// @detailed
+/// @details
 ///
 /// @author Michael Pacella (mpacella88@gmail.com)
 
@@ -68,7 +68,7 @@ public: // boiler plate / virtuals
 	virtual void apply( Pose & pose );
 	virtual std::string get_name() const;
 
-	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	virtual bool reinitialize_for_new_input() const;
 	
 	// clone and fresh instance

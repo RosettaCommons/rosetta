@@ -20,7 +20,6 @@
 #include <protocols/optimize_weights/OptEData.hh>
 
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 
 #include <utility/vector1.hh>
 
@@ -29,7 +28,7 @@ namespace protocols {
 namespace optimize_weights {
 
 
-///@brief Score a "bound" and an "unbound" structure, and minimize the squared error
+/// @brief Score a "bound" and an "unbound" structure, and minimize the squared error
 /// between the difference in their scores and the experimental delta_G of binding.
 class DGBindOptEData : public OptEPositionData
 {

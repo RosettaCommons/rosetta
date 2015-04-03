@@ -79,7 +79,6 @@ using namespace core;
 #include <utility/excn/Exceptions.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void*
 build_template( void* )

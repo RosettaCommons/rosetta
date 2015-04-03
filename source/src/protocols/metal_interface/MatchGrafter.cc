@@ -62,7 +62,7 @@ MatchGrafter::~MatchGrafter()
 }
 
 
-///@brief Takes match pose (2 residues + zinc) and partner pose, grafts match onto partner, returns grafted partner
+/// @brief Takes match pose (2 residues + zinc) and partner pose, grafts match onto partner, returns grafted partner
 Pose
 MatchGrafter::graft( Pose & match,
 						Pose & partner_ungrafted ) {
@@ -102,7 +102,7 @@ MatchGrafter::graft( Pose & match,
 	return partner;
 }//graft
 
-///@brief Takes two matches (for residue number info) and two grafted poses, overlays the zinc atoms, and uses a partner2 fold tree to combine the two poses
+/// @brief Takes two matches (for residue number info) and two grafted poses, overlays the zinc atoms, and uses a partner2 fold tree to combine the two poses
 Pose
 MatchGrafter::build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & partner2 ) { //pass match1, match2???
 

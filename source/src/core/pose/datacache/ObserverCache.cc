@@ -16,12 +16,10 @@
 #include <core/pose/datacache/ObserverCache.hh>
 
 // project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/pose/datacache/CacheableObserver.hh>
 #include <utility/vector1.hh>
 #include <iostream>
-
 
 
 namespace core {

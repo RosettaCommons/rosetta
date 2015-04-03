@@ -36,9 +36,6 @@
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //unnecessary include
 #include <core/chemical/ResidueConnection.hh>
-// AUTO-REMOVED #include <protocols/backrub/BackrubMover.hh> //unnecessary include
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh> //unnecessary include
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh> //unnecessary include
 
 //#include <protocols/enzdes/EnzdesBaseProtocol.hh>
 //#include <protocols/enzdes/EnzConstraintIO.hh>
@@ -60,10 +57,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh> //debug
 #include <core/fragment/util.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -75,7 +70,6 @@
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/datacache/cacheable_observers.hh>
 
 #include <protocols/simple_filters/ScoreCutoffFilter.hh>
 #include <protocols/simple_filters/PackerNeighborGraphFilter.hh>
@@ -102,7 +96,6 @@
 #include <core/graph/Graph.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/string_util.hh>
-
 
 
 namespace devel{
@@ -611,7 +604,6 @@ utility::vector1< core::Size >
  }
 
 
-
 void
 EnzdesRemodelMover::set_target_inverse_rotamers(utility::vector1< std::list < core::conformation::ResidueCOP > > & inv_rot)
 {
@@ -674,8 +666,6 @@ EnzdesRemodelMover::refine_pose(
 	//pose.dump_pdb("pose_aft_fa_refine.pdb");
 	return true;
 } //refine pose
-
-
 
 
 /// @detail  NOTE: the pose is reduced to poly a representation in this function
@@ -745,7 +735,6 @@ EnzdesRemodelMover::examine_initial_conformation(
 	for( core::Size i = 1; i <= pose.total_residue(); ++i ) start_to_current_smap_->push_back( i );
 
 } //examine initial conformation
-
 
 
 /// @details PackerNeighborGraphFilter, somewhat unusual/complicated:
@@ -1116,7 +1105,6 @@ EnzdesRemodelMover::setup_postdesign_filters(
 	postdesign_filters_->clear();
 
 
-
 } //setup_postdesign_filters
 
 
@@ -1400,7 +1388,6 @@ core::id::SequenceMappingCOP
 EnzdesRemodelMover::get_seq_mapping() const {
   return start_to_current_smap_;
 }
-
 
 
 } //namespace enzdes

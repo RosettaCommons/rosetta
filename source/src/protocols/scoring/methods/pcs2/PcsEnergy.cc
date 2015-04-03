@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsEnergy.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -41,7 +39,6 @@
 #include <protocols/scoring/methods/pcs2/PcsDataCenter.hh>
 #include <protocols/scoring/methods/pcs2/PcsInputCenterManager.hh>
 #include <protocols/scoring/methods/pcs2/PcsTensor.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/GridSearchIterator.hh>
 #include <protocols/scoring/methods/pcs2/GridSearchIteratorCA.hh>
 #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcs2/TensorsOptimizerSvd.hh>
@@ -160,7 +157,6 @@ PcsEnergy::finalize_total_energy(core::pose::Pose & pose,
 	totals[ core::scoring::pcs2 ] = 0;
 
 
-
 	//for ( i_multi_data = 1; i_multi_data <= pcs_d_c_m_s.get_n_multi_data(); ++i_multi_data){
 	for ( i_multi_data = 1; i_multi_data <= pcs_d_c_m.get_n_multi_data(); ++i_multi_data){
 		//PcsDataCenter & pcs_d_c = (pcs_d_c_m_s.get_PCS_data_all())[i_multi_data];
@@ -170,11 +166,8 @@ PcsEnergy::finalize_total_energy(core::pose::Pose & pose,
 	}
 
 
-
 	TR_PcsEnergy << "Score found: " << totals[core::scoring::pcs2] << std::endl;
 }
-
-
 
 
 PcsDataCenterManager &
@@ -193,7 +186,6 @@ PcsEnergy::PCS_multi_data_from_pose(core::pose::Pose & pose) const{
 	}
 
 	//	TR_PcsEnergy << "PcsDataCenterManager was NOT cached" << std::endl;
-
 
 
 	using namespace basic::options;
@@ -274,7 +266,6 @@ PcsEnergy::dump_PCS_info(
 	using namespace core;
 	core::Size i, j;
 	static core::Size n_rescore(1);
-	//
 
 
 	if( option[ basic::options::OptionKeys::PCS::write_extra ].user() ){
@@ -475,8 +466,6 @@ PcsEnergy::minimize_tensors_fix_from_PCS_data(	utility::vector1<PcsTensor> & vec
 }
 
 
-
-
 //This will be called for each new pose
 core::Real
 PcsEnergy::CA_search_scores_and_tensors(utility::vector1<core::Real> & vec_best_score,
@@ -665,7 +654,6 @@ PcsEnergy::CA_search_scores_and_tensors(utility::vector1<core::Real> & vec_best_
 	}
 	return (best_score);
 }
-
 
 
 core::Real

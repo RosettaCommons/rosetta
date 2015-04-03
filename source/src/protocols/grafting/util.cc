@@ -92,7 +92,6 @@ delete_region(Pose & pose, Size const start, Size const end){
 }
 
 
-
 Pose
 return_region(Pose & pose, Size const start, Size const end){
 
@@ -167,8 +166,8 @@ insert_pose_into_pose(
 	return insert_pose_into_pose(scaffold_pose, insert_pose, insert_point, insert_point+1, copy_pdbinfo);
 }
 
-///@author Steven Lewis smlewi@gmail.com
-///@details brief inserts one pose into another pose, returning the product as a new value. The insert pose will be added immediately after insert_point and before insert_point_end.
+/// @author Steven Lewis smlewi@gmail.com
+/// @details brief inserts one pose into another pose, returning the product as a new value. The insert pose will be added immediately after insert_point and before insert_point_end.
 Pose
 insert_pose_into_pose(
 	Pose const & scaffold_pose,
@@ -419,7 +418,6 @@ delete_overhang_residues(Pose & piece, Size Nter_overhang, Size Cter_overhang){
 }
 
 
-
 MoveMapOP
 combine_movemaps_post_insertion(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm,
 	Size start, Size original_end,
@@ -645,8 +643,6 @@ setup_single_loop_double_arm_remodeling_foldtree(Pose & pose, Size const Nter_lo
 	TR << remodeling_tree << std::endl;
 	pose.fold_tree(remodeling_tree);
 }
-
-
 
 
 } //grafting

@@ -16,20 +16,13 @@
 
 // Unit Headers
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.fwd.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/Resonance.hh>
 
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

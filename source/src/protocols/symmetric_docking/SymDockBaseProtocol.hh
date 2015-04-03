@@ -18,8 +18,6 @@
 
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/scoring/ScoreFunction.hh>

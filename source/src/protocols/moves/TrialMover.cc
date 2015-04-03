@@ -15,10 +15,8 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
@@ -165,10 +163,9 @@ void TrialMover::set_mc( MonteCarloOP mc_in ) {
 }
 
 
-/// @begin TrialMover::apply()
 /// @brief:
 /// 	the apply function for a trial
-///	@detailed:
+///	@details:
 ///		the trial object is created with an mc object
 ///		the mover is applied before doing an mc.boltzmann
 ///

@@ -17,10 +17,8 @@
 
 // project headers
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

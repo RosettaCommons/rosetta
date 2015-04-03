@@ -22,11 +22,8 @@
 // ObjexxFCL Headers
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 

@@ -15,39 +15,22 @@
 
 #include <protocols/viewer/viewers.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
-
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
-
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/MixtureFunc.hh>
 
 #include <core/scoring/constraints/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>

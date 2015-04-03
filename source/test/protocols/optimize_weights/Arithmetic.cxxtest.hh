@@ -12,7 +12,6 @@
 /// @author Ron Jacak (ron.jacak@gmail.com)
 
 
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 
@@ -20,7 +19,6 @@
 #include <numeric/expression_parser/Arithmetic.hh>
 
 /// C++ headers
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 

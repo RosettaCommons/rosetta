@@ -22,8 +22,6 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -36,7 +34,6 @@
 #include <core/kinematics/Jump.hh>
 
 
-
 //#include <map>
 
 namespace core {
@@ -47,7 +44,6 @@ class LocalCoordinateConstraint;
 typedef utility::pointer::shared_ptr< LocalCoordinateConstraint > LocalCoordinateConstraintOP;
 typedef utility::pointer::shared_ptr< LocalCoordinateConstraint const > LocalCoordinateConstraintCOP;
 
-///
 
 class LocalCoordinateConstraint : public Constraint {
 public:
@@ -97,7 +93,7 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
- 	///
+
 	void show( std::ostream& out ) const
 	{
 		out << "LocalCoordinateConstraint ("
@@ -112,7 +108,7 @@ public:
 	// ConstraintIO machinery.
 	virtual void read_def( std::istream &, pose::Pose const &,func::FuncFactory const & );
 
-	///
+
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
 	// @brief take coordinates, distances, angles, etc from given pose
@@ -121,7 +117,7 @@ public:
 
 	using Constraint::score;
 
-	///
+
 	Real
 	score(
 		Vector const & xyz, //target
@@ -130,7 +126,7 @@ public:
 		Vector const & s3 //fixed_stub.c
 	) const;
 
-	///
+
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 	{
@@ -169,15 +165,13 @@ public:
 	}
 
 
-
-	///
 	Size
 	natoms() const
 	{
 		return 4;
 	}
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const
 	{

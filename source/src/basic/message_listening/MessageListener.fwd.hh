@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_basic_message_listening_MessageListener_FWD_HH
 #define INCLUDED_basic_message_listening_MessageListener_FWD_HH
 
@@ -22,7 +21,7 @@
 namespace basic {
 namespace message_listening {
 
-///@brief MessageListener id tags
+/// @brief MessageListener id tags
 ///note: please add string conversion to util.cc/hh
 enum listener_tags {
 	DATABASE_PROTOCOL_AND_BATCH_ID_TAG = 42

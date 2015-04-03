@@ -24,7 +24,6 @@
 #include <core/scoring/func/XYZ_Func.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <utility/vector1.hh>
 

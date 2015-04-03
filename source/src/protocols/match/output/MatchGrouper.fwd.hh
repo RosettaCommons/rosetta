@@ -19,10 +19,8 @@
 // you cannot #include yourself #include <protocols/match/output/MatchGrouper.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
 
 #include <utility/pointer/owning_ptr.hh>
 

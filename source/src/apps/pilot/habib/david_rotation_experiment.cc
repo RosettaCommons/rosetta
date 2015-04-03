@@ -199,7 +199,6 @@ main( int argc, char * argv [] )
   std::string resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 
 
-
   std::vector< conformation::ResidueOP > tmpresidues = protocols::pockets::PocketGrid::getRelaxResidues(input_pose, resid);
   if ( tmpresidues.size() == 0 ) {
     std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
@@ -294,6 +293,5 @@ main( int argc, char * argv [] )
   }
 	return 0;
 }
-
 
 

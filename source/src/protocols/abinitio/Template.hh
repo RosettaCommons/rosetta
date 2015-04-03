@@ -22,20 +22,15 @@
 #include <core/types.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/SingleResidueFragData.fwd.hh>
 
 #include <core/sequence/DerivedSequenceMapping.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #ifdef  WIN32
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #endif
 
-// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 
 // ObjexxFCL Headers
 
@@ -43,11 +38,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 
-
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.fwd.hh>
@@ -56,13 +48,12 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace abinitio {
 
 class Template : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Template();
 	typedef utility::vector1< core::scoring::constraints::AtomPairConstraintOP > AtomPairConstraintList;
 	typedef utility::vector1< core::scoring::constraints::Obsolet_NamedAtomPairConstraintOP > NamedAtomPairConstraintList;

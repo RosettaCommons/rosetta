@@ -20,7 +20,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSetFactory.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/make_symmetric_task.hh>
@@ -33,8 +32,6 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -50,8 +47,6 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-
 
 
 // STL headers

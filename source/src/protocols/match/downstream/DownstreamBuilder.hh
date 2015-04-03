@@ -21,7 +21,6 @@
 
 // Package headers
 #include <protocols/match/BumpGrid.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/OccupiedSpaceHash.fwd.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/RigidLigandBuilder.fwd.hh>
@@ -30,7 +29,6 @@
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

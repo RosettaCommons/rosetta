@@ -12,9 +12,8 @@
  ///
  /// @file protocols/scoring/PseudocontactShiftEnergy.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 

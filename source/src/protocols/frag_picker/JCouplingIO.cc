@@ -28,7 +28,6 @@
 #include <utility/exit.hh>
 
 // boost headers
-// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 

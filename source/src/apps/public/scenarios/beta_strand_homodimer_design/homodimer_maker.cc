@@ -20,9 +20,6 @@
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
 //#include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
@@ -31,7 +28,6 @@
 //#include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -45,19 +41,16 @@
 
 #include <core/id/AtomID_Map.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 //#include <core/scoring/etable/CoarseEtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 
 //protocols
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -66,31 +59,25 @@
 #include <protocols/moves/StructureRestrictor.hh>
 
 //options
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Job distributor
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 
 
 // Utility Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 
 // C++ headers
 #include <sstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <stdlib.h>
 
 //Auto Headers
 #include <utility/vector0.hh>

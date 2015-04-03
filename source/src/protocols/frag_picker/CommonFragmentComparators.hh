@@ -34,7 +34,7 @@ class CompareQueryPosition : public FragmentComparatorBase {
 public:
 
 	/// @brief compares two fragment candidates
-	/// @detailed returns true if second_candidate starts on the later residue than first_candidate
+	/// @details returns true if second_candidate starts on the later residue than first_candidate
 	/// Using this comparator to sort fragment candidates orders them ascending by their sequence position
 	bool operator()(
 			ScoredCandidate first_candidate,
@@ -46,19 +46,19 @@ public:
 };
 
 /// @brief comparator based on the total score of fragments
-/// @detailed returns true if first pair has lower total score than the second one
+/// @details returns true if first pair has lower total score than the second one
 class CompareTotalScore : public FragmentComparatorBase {
 
 public:
 	/// @brief Sets up the comparator for a given FragmentScoreManager.
-	/// @detailed Only the scoring manager knows how to calculate the total score
+	/// @details Only the scoring manager knows how to calculate the total score
 	/// from a vector of small scores (those gathered in a FragmentScoreMap object)
 	CompareTotalScore(scores::FragmentScoreManagerOP scoring) {
 		scoring_ = scoring;
 	}
 
 	/// @brief compares two fragment candidates
-	/// @detailed returns true if second pair has greater total score than the first one.
+	/// @details returns true if second pair has greater total score than the first one.
 	/// Using this comparator to sort fragment candidates order them descending according
 	/// to their total score
 	bool operator()(
@@ -74,12 +74,12 @@ private:
 };
 
 /// @brief comparator based on the linear combination of some score components
-/// @detailed returns true if first pair has lower weighted score than the second one
+/// @details returns true if first pair has lower weighted score than the second one
 class CompareByScoreCombination : public FragmentComparatorBase {
 
 public:
 	/// @brief Sets up the comparator for a given FragmentScoreManager.
-	/// @detailed Only the scoring manager knows how to calculate the total score
+	/// @details Only the scoring manager knows how to calculate the total score
 	/// from a vector of small scores (those gathered in a FragmentScoreMap object)
 	CompareByScoreCombination(utility::vector1<Size> which_components,utility::vector1<Real> weights) {
 
@@ -91,7 +91,7 @@ public:
 	}
 
 	/// @brief compares two fragment candidates
-	/// @detailed returns true if second pair has greater total score than the first one.
+	/// @details returns true if second pair has greater total score than the first one.
 	/// Using this comparator to sort fragment candidates order them descending according
 	/// to their total score
 	bool operator()(
@@ -115,7 +115,7 @@ private:
 
 
 /// @brief comparator based on one of the score components calculated for  fragments
-/// @detailed returns true if first pair has lower score component than the second one
+/// @details returns true if first pair has lower score component than the second one
 class CompareScoreComponent : public FragmentComparatorBase {
 
 public:
@@ -125,7 +125,7 @@ public:
 	}
 
 	/// @brief compares two fragment candidates
-	/// @detailed returns true if second pair has greater total score than the first one.
+	/// @details returns true if second pair has greater total score than the first one.
 	/// Using this comparator to sort fragment candidates order them ascending according
 	/// to their total score
 	bool operator()(

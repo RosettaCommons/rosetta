@@ -27,7 +27,6 @@
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 
-
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 //#include <protocols/relax/SequenceRelax.hh>
@@ -113,7 +112,6 @@ void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,  
 static thread_local basic::Tracer TR( "reportFragments" );
 
 
-
 int main( int argc, char * argv[] ) {
     try {
   // init option system
@@ -175,7 +173,6 @@ int main( int argc, char * argv[] ) {
         return 0;
 
 }
-
 
 
 void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,   utility::vector1<core::fragment::ConstantLengthFragSetOP> &fragSets){
@@ -267,6 +264,5 @@ void get_fragment_sets(core::pose::Pose &_pose, string _polyAminoAcidSequence,  
   cout << "Get Fragments for "<<_pose.pdb_info()->number(1)<<endl;
   fragSets = pickIt->getFragSet(_pose.pdb_info()->number(1));
 }
-
 
 

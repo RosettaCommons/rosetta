@@ -27,12 +27,12 @@
 namespace protocols {
 namespace moves {
 
-///@details
+/// @details
 class MoverStub : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	MoverStub(
 	);
 

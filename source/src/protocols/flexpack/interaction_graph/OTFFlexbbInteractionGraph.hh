@@ -24,7 +24,6 @@
 
 /// Package headers
 #include <protocols/flexpack/interaction_graph/FlexbbInteractionGraph.hh>
-// AUTO-REMOVED #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.fwd.hh>
 #include <protocols/flexpack/OtherContextScoreFunction.hh> /// CREATE THE .FWD.HH FILE
 
 /// Project headers

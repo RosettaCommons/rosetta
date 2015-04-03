@@ -19,16 +19,11 @@
 // Project Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/conformation/Atom.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/util.hh>
 
@@ -43,7 +38,6 @@
 #include <ObjexxFCL/FArray2A.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-
 
 
 static thread_local basic::Tracer TR( "core.scoring.disulfides.CentroidMatchingPotential" );
@@ -361,7 +355,6 @@ RT_helper::RT_from_epos( ObjexxFCL::FArray2A_float Epos1, ObjexxFCL::FArray2A_fl
 
 	return rt;
 }
-
 
 
 } // disulfides

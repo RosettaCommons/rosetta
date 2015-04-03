@@ -15,7 +15,6 @@
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 // Symmetry headers
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
 
@@ -23,7 +22,6 @@
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/symmetry/SymAtomTreeMultifunc.hh>
 #include <core/optimization/symmetry/SymMinimizerMap.hh>
 

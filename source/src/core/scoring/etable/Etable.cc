@@ -7,27 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Etable.cc
 ///
 /// @brief
 /// A class for generating the table for fa_atr/rep and fa_sol
 ///
-/// @detailed
+/// @details
 /// This class is called upon by the ScoringManager. Since actual calculating of the LJ potential
 /// is time consuming if done multiple times, this class precomputes and discritizes the potential
 /// (meaning that the potential is broken down into bins). Once the bins have been created, it will
 /// smooth out the bins, for better interpolation.
 ///
 ///
-/// @authors
+/// @author
 /// I dont know?
 /// Steven Combs - comments and skipping of virtual atoms
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
-
-
-
 
 
 // Unit Headers
@@ -318,11 +313,10 @@ Etable::cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin Etable::make_pairenergy_table
 ///
 /// @brief calculate fast lookup arrays for vdw and solvation energy
 ///
-/// @detailed
+/// @details
 ///
 /// Several energies are precomputed when fullatom mode is initialized and
 /// stored in lookup tables to speed fullatom calculation. Currently
@@ -346,9 +340,8 @@ Etable::cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const
 ///
 /// @references
 ///
-/// @authors ctsa 10-2003
+/// @author ctsa 10-2003
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::make_pairenergy_table()
@@ -374,7 +367,7 @@ Etable::make_pairenergy_table()
 	//  etable parameters
 	TR << "Starting energy table calculation" << std::endl;
 
-	//
+
 // 	std::TR << "Energy table parameter set: " << etable_label << ' ' <<
 // 	 etable_revision.substr( 1, etable_revision.length() - 3 ) << ' ' <<
 // 	 etable_date.substr( 1, etable_date.length() - 3 ) << std::endl;
@@ -673,11 +666,10 @@ debug_assert( ljatr_.size() != 0 );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin modify_pot
 ///
 /// @brief modify Etable to better treat 0-0, C-C, and H-H interactions
 ///
-/// @detailed
+/// @details
 ///$$$ the Etables are  modified in three ways:
 ///$$$ (1) the LK solvation energy is set to a constant below 4.2A to avoid shifting the position
 ///$$$ of the minimum on the LJatr potential.  in refined decoys the peak in the C C pair
@@ -710,7 +702,7 @@ debug_assert( ljatr_.size() != 0 );
 //db  all three modifications are based on inspection of the atom pair distributions
 //db  after extensive refinement.
 
-///
+
 /// @global_read
 /// pdbstatistics_pack.h:  ljatr,dljatr,ljrep, dljrep, solv1,solv2,dsolv
 ///
@@ -721,9 +713,8 @@ debug_assert( ljatr_.size() != 0 );
 ///
 /// @references
 ///
-/// @authors ctsa 10-2003
+/// @author ctsa 10-2003
 ///
-/// @last_modified
 void
 Etable::modify_pot_one_pair(
 	Size const atype1,
@@ -1249,11 +1240,10 @@ Etable::smooth_etables_one_pair(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin output_etable
 ///
 /// @brief output an etable data file in the same format used in input_etable
 ///
-/// @detailed
+/// @details
 ///$$$ file first line is <etable> <etable_disbins>
 ///$$$ other lines are <atom type 1> <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
@@ -1265,9 +1255,8 @@ Etable::smooth_etables_one_pair(
 ///
 /// @references
 ///
-/// @authors sheffler mar 19 2006
+/// @author sheffler mar 19 2006
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::output_etable(
@@ -1295,11 +1284,10 @@ Etable::output_etable(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin input_etable
 ///
 /// @brief read in etable from a datafile
 ///
-/// @detailed
+/// @details
 ///$$$ file first line is <etable> <etable_disbins>
 ///$$$ other lines are <atom type 1> <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
@@ -1313,9 +1301,8 @@ Etable::output_etable(
 ///
 /// @references
 ///
-/// @authors sheffler mar 19 2006
+/// @author sheffler mar 19 2006
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::input_etable(
@@ -1377,14 +1364,11 @@ Etable::input_etable(
 }
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin precalc_etable_coefficients
 ///
 /// @brief precalculate non-distance dependent coefficients of energy functions
 ///
-/// @detailed
+/// @details
 ///
 /// @param[out]   lj_sigma - out - for atomtypes i and j: (radius_i+radius_j)
 /// @param[out]   lj_r6_coeff - out - precalced coefficient on the (1/dis)**6 term in lj
@@ -1408,9 +1392,8 @@ Etable::input_etable(
 ///
 /// @references
 ///
-/// @authors ctsa 10-2003
+/// @author ctsa 10-2003
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::precalc_etable_coefficients(
@@ -1585,11 +1568,10 @@ Etable::precalc_etable_coefficients(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin calc_etable_value
 ///
 /// @brief calc all etable values given a distance and atom-type pair
 ///
-/// @detailed
+/// @details
 ///
 /// given a pair of atom types and the squared inter-atomic separation
 /// distance (and a whole bunch of pre-computed coeffecients), this returns
@@ -1632,9 +1614,8 @@ Etable::precalc_etable_coefficients(
 ///
 /// @references
 ///
-/// @authors ctsa 10-2003
+/// @author ctsa 10-2003
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 Etable::calc_etable_value(
@@ -1853,8 +1834,6 @@ void Etable::interpolated_analytic_etable_evaluation(
 	lj_repE = alpha * ljrepE_hi + (1-alpha) * ljrepE_lo;
 	fa_solE = alpha * fasolE_hi + (1-alpha) * fasolE_lo;
 }
-
-
 
 
 } // etable

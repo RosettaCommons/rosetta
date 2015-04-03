@@ -9,7 +9,7 @@
 
 /// @file RNA_DeNovo_Protocol.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -18,7 +18,6 @@
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_DeNovoProtocol_HH
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -34,10 +33,8 @@
 #include <utility/vector1.hh>
 
 //Oooh.
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 //Auto Headers
@@ -99,7 +96,6 @@ public:
 
 	void
 	set_input_res( 	utility::vector1< core::Size > const & setting ){ input_res_ = setting; }
-
 
 
 	void
@@ -219,7 +215,6 @@ private:
 	utility::vector1< core::Real > pairing_dists_;
 
 }; // class CoarseRNA_DeNovoProtocol
-
 
 
 }

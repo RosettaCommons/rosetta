@@ -77,7 +77,6 @@ using basic::Error;
 #include <utility/excn/Exceptions.hh>
 
 
-
 int
 main( int argc, char * argv [] )
 {

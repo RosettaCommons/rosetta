@@ -38,5 +38,4 @@ class ResidueConnection;
 #endif
 
 
-
 #endif

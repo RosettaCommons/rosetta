@@ -35,5 +35,4 @@ class VallResidues;
 } // core
 
 
-
 #endif /* INCLUDED_core_fragment_picking_old_vall_VallResidue_FWD_HH */

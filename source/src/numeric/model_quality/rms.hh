@@ -11,7 +11,7 @@
 /// @brief  RMS stuff imported from rosetta++
 /// @author James Thompson
 /// @date   Wed Aug 22 12:10:37 2007
-///
+
 
 #ifndef INCLUDED_numeric_model_quality_rms_HH
 #define INCLUDED_numeric_model_quality_rms_HH
@@ -123,11 +123,10 @@ MatrixMult(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin det3
 ///
 /// @brief determinant of a 3x3 matrix
 ///
-/// @detailed
+/// @details
 /// cute factoid: det of a 3x3 is the dot product of one row with the cross
 /// product of the other two. This explains why a right hand coordinate system
 /// has a positive determinant. cute huh?
@@ -144,20 +143,18 @@ MatrixMult(
 ///
 /// @references
 ///
-/// @authors charlie strauss 2001
+/// @author charlie strauss 2001
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 double
 det3( ObjexxFCL::FArray2A< double > m );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin rmsfitca2
 ///
 /// @brief computes the rms between two weighted point vectors.
 ///
-/// @detailed
+/// @details
 ///   xx_0,yy_0 are the input vectors of of points and ww is their weights
 ///   xx,yy are by product output vectors of the same points offset to remove center of mass
 ///   det is an out value of the determinant of the cross moment matrix
@@ -186,9 +183,8 @@ det3( ObjexxFCL::FArray2A< double > m );
 ///
 /// @references
 ///
-/// @authors charlie strauss 2001
+/// @author charlie strauss 2001
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 rmsfitca2(
@@ -201,11 +197,10 @@ rmsfitca2(
 );
 
 //////////////////////////////////////////////////////////////////
-/// @begin rmsfitca3
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///   This function gets its alignment info via a namespace!
 ///   Alignment (rotation matrix) and rms(esq) are computed on the basis
 ///   of residues previously designated by calls to add_rms().
@@ -235,9 +230,8 @@ rmsfitca2(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 rmsfitca3(
@@ -251,11 +245,10 @@ rmsfitca3(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin rsym_eigenval
 ///
 /// @brief computes the eigen values of a real symmetric 3x3 matrix
 ///
-/// @detailed
+/// @details
 /// the method used is a deterministic analytic result that I hand factored.(whew!)
 /// Amusingly, while I suspect this factorization is not yet optimal in the
 /// number of calcs required
@@ -277,9 +270,8 @@ rmsfitca3(
 ///
 /// @references
 ///
-/// @authors charlie strauss 2001
+/// @author charlie strauss 2001
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 rsym_eigenval(
@@ -288,11 +280,10 @@ rsym_eigenval(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin rsym_rotation
 ///
 /// @brief finds a (proper) rotation matrix that minimizes the rms.
 ///
-/// @detailed this computes the rotation matrix based on the eigenvectors of m that gives the
+/// @details this computes the rotation matrix based on the eigenvectors of m that gives the
 /// the mimimum rms.  this is determined using mm the cross moments matrix.
 ///
 /// for best results the third eigen value should be the
@@ -312,9 +303,8 @@ rsym_eigenval(
 ///
 /// @references
 ///
-/// @authors charlie strauss (cems) 2001
+/// @author charlie strauss (cems) 2001
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 rsym_rotation(
@@ -325,7 +315,6 @@ rsym_rotation(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin rsym_evector
 ///
 /// @brief
 /// Author: charlie strauss (cems) 2001
@@ -356,7 +345,7 @@ rsym_rotation(
 ///   that results is a pure orthonormal rotation matrix, which for most applications
 ///   is the most important form of accuracy.
 ///
-/// @detailed
+/// @details
 ///
 /// @param  m - [in/out]? -
 /// @param  ev - [in/out]? -
@@ -370,9 +359,8 @@ rsym_rotation(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 
 void

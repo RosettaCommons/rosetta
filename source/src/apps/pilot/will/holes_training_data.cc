@@ -35,8 +35,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 std::map<std::string,utility::io::ozstream*> outs;
 
 void test( std::string fname ) {
@@ -140,7 +138,6 @@ main (int argc, char *argv[])
 	try {
 
 
-
 	devel::init( argc, argv );
 
   using namespace basic::options;
@@ -170,7 +167,6 @@ main (int argc, char *argv[])
 	}
 
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

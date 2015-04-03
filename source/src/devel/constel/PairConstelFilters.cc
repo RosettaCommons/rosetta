@@ -26,7 +26,7 @@ using core::Real;
 namespace devel {
 namespace constel {
 
-///
+
 /// @brief tells whether a constellation satisfies the requirements for being
 /// 	 rescued by compounds containing an indole group and a carboxylic group.
 ///
@@ -124,7 +124,6 @@ bool FilterByIndoleCOO::sat(Pose const& ps,
 }
 
 
-///
 /// @brief Tells whether a constellation satisfies the requirements for being
 /// 	 rescued by tryptamine.
 ///
@@ -203,7 +202,6 @@ bool FilterByTryptamine::sat(Pose const& ps,
 }
 
 
-///
 /// @brief Tells whether a constellation satisfies the requirements for being
 /// 	 rescued by amphetamine.
 ///
@@ -282,7 +280,6 @@ bool FilterByAmphetamine::sat(Pose const& ps,
 }
 
 
-///
 /// @brief Tells whether a constellation satisfies the requirements for being
 /// 	 rescued by histamine.
 ///

@@ -38,7 +38,6 @@
 static thread_local basic::Tracer TR( "apps.pilot.nmarze.hemagg_trimer" );
 
 
-
 class HemaggTrimer : public protocols::moves::Mover {
 public:
 	// default constructor

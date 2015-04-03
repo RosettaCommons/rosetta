@@ -192,7 +192,7 @@ public:
 
 private:
 
-  //
+
   void set_default();
 
 	void

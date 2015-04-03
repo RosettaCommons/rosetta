@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -46,14 +45,12 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragCache.hh> // for FragStore
 
-// AUTO-REMOVED
 #include <core/fragment/SecondaryStructure.hh>
 
 //*only for debug structures
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
-// AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 
 #include <basic/options/option.hh> // for quick-test from run:dry_run
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -67,7 +64,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/io/ozstream.hh>
 
 //numeric headers
@@ -84,7 +80,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 namespace protocols {
@@ -300,7 +295,6 @@ SlidingWindowLoopClosure::apply( Pose& more_cut, Pose& less_cut ) {
 	}
 
 
-
   scoring::ScoreFunctionOP frag_scorefxn = setup_frag_scorefxn();
   tr.Debug << "Trying loop-sizes: " << loop_ << std::endl;
   tr.Info << "---------------- LOOP SAMPLING based on this scorefunction: ----------------\n";
@@ -322,7 +316,6 @@ SlidingWindowLoopClosure::apply( Pose& more_cut, Pose& less_cut ) {
   tr.Debug << "LESSFOLDTREE: " << less_cut.fold_tree();
   if ( evaluator_ && tr.Debug.visible() ) evaluate_pose( more_cut, *evaluator_, tr.Debug );
   if ( evaluator_ && tr.Debug.visible() ) evaluate_pose( less_cut, *evaluator_, tr.Debug );
-
 
 
 	sample_loops( more_cut, less_cut );

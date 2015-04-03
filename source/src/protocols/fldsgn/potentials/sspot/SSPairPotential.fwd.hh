@@ -19,7 +19,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-
 namespace protocols {
 namespace fldsgn {
 namespace potentials {

@@ -27,13 +27,12 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace pose {
 namespace datacache {
 
 
-///@brief pose *
+/// @brief pose *
 class CacheablePoseRawPtr : public basic::datacache::CacheableData
 {
 public:

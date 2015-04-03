@@ -16,7 +16,6 @@
 #include <core/chemical/sdf/mol_writer.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <core/types.hh>
 #include <list>
 
@@ -26,7 +25,6 @@
 namespace core {
 namespace chemical {
 namespace sdf {
-
 
 
 class MolWriter

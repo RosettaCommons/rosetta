@@ -24,11 +24,9 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <set>
 
@@ -78,9 +76,9 @@ class LigandBaseProtocol; // fwd declaration
 typedef utility::pointer::shared_ptr< LigandBaseProtocol > LigandBaseProtocolOP;
 typedef utility::pointer::shared_ptr< LigandBaseProtocol const > LigandBaseProtocolCOP;
 
-///@brief Shared functionality for protocols that dock ligands.
+/// @brief Shared functionality for protocols that dock ligands.
 ///
-///@details Includes score function setup, interface definitions, and ligand flexibility.
+/// @details Includes score function setup, interface definitions, and ligand flexibility.
 ///
 class LigandBaseProtocol : virtual public protocols::moves::Mover
 {

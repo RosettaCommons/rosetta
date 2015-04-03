@@ -65,7 +65,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 // option key includes
 
 //#include <basic/options/keys/pick.OptionKeys.gen.hh>
@@ -117,7 +116,6 @@ void ThisApplication::register_options() {
   NEW_OPT( pick::no_idealize, "idealize structure", false );
   NEW_OPT( pick::size, "size of fragments to pick", 9 );
 }
-
 
 
 void make_your_own_alignment( id::SequenceMapping &mapping ) {

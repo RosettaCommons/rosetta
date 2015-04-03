@@ -9,7 +9,7 @@
 
 /// @file protocols/toolbox/rigid_body/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -128,7 +128,6 @@ namespace rigid_body {
 
 	void
 	translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i );
-
 
 
 } //rigid_body

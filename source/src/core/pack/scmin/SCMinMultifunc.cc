@@ -15,14 +15,11 @@
 #include <core/pack/scmin/SCMinMultifunc.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/atom_tree_minimize.hh>

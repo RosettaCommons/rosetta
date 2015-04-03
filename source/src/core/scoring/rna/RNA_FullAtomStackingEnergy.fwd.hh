@@ -29,7 +29,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_FullAtomStackingEnergy;
 
 } //rna

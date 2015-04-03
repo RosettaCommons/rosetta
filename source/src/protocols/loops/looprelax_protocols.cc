@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to LoopRebuild
-/// @detailed
+/// @details
 /// @author Mike Tyka
 /// @author James Thompson
 /// @author Srivatsan Raman
@@ -92,8 +92,6 @@ static thread_local basic::Tracer TR( "protocols.looprelax_protocols" );
 
 using namespace core;
 using io::pdb::dump_pdb;
-
-
 
 
 using namespace protocols::loops;
@@ -860,7 +858,6 @@ bool LoopRebuild::select_one_loop(
 		// or terminal loops longer than 12
 
 
-
 		if ( numeric::random::uniform() < num_of_loops_to_combine/(num_loops-1+1e-10 ) ) {
 
 			loop_begin = Loops_in_[selected_loop].start();
@@ -1114,7 +1111,6 @@ bool LoopRebuild::shorten_long_terminal_loop() {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
 void LoopRebuild::extend_barcode_regions_if_chain_break(
 	core::pose::Pose & pose,
@@ -1253,7 +1249,7 @@ void LoopRebuild::set_extended_loop( bool val ) {
 
 
 //////////////////////////////////////////////////////////
-///@brief Helper function tokenizes a str
+/// @brief Helper function tokenizes a str
 /////////////////////////////////////////////////////////
 // don't use use string_util.hh:split or string_split instead
 //
@@ -1294,14 +1290,14 @@ void LoopRebuild::set_default_settings(){
 
 
 ///////////////////////////////////////////////////////////////////////
-///@brief sets mc object
+/// @brief sets mc object
 void LoopRebuild::set_default_mc( core::pose::Pose & pose )
 {
 	m_Temperature_ = 2.0;
 	mc_ = protocols::moves::MonteCarloOP( new moves::MonteCarlo( pose, *scorefxn_, m_Temperature_ ) );
 }
 ///////////////////////////////////////////////////////////////////////
-///@brief Full atom loop refinement
+/// @brief Full atom loop refinement
 void LoopRefine::apply(
 	core::pose::Pose & pose
 )

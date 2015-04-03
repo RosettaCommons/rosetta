@@ -1232,7 +1232,6 @@ struct HubDenovo {
 			}
 
 
-
 			if(tmp.energies().total_energy() > option[OptionKeys::hub_cen_energy_cut]() ) {
 				TR << "CEN fail " << tmp.energies().total_energy() << endl;
 				continue;

@@ -9,7 +9,7 @@
 
 /// @file protocols/RosettaScripts/util.cc
 /// @brief Utility functions useful in RosettaScripts.
-/// @authors Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu),
+/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu),
 ///					Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
 
 // Unit Headers
@@ -365,7 +365,7 @@ parse_movemap(
 	foreach_movemap_tag( *tag_it, pose, mm );
 }
 
-///@details modifies an existing movemap according to tag
+/// @details modifies an existing movemap according to tag
 /// the movemap defaults to move all bb, chi, and jumps.
 void
 parse_movemap(

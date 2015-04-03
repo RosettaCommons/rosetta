@@ -9,7 +9,7 @@
 
 /// @file CoarseRNA_LoopCloser
 /// @brief protocols that are specific to CoarseRNA_LoopCloser
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 // Unit headers
@@ -21,7 +21,6 @@
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
@@ -39,7 +38,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>

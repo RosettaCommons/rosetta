@@ -117,7 +117,6 @@
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <basic/MetricValue.fwd.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <utility/Bound.fwd.hh>

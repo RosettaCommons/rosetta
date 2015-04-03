@@ -34,14 +34,14 @@ namespace devel {
 namespace metal_interface {
 
 
-///@details
+/// @details
 class ZincSecondShell : public utility::pointer::ReferenceCount {
 
 public:
 
 	typedef core::pose::Pose Pose;
 
-  ///@brief
+  /// @brief
   ZincSecondShell( core::pose::Pose const & pose, utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr );
 
   virtual ~ZincSecondShell();
@@ -61,8 +61,6 @@ public:
 	virtual void report_buried_unsat( utility::vector1< core::id::AtomID > atom_ids );
 
 	virtual core::Size satisfaction_cutoff( std::string atom_type );
-
-
 
 
 private:

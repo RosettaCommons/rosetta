@@ -16,15 +16,11 @@
 #include <basic/options/util.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <utility/excn/Exceptions.hh>
@@ -33,21 +29,17 @@
 // Auto-header: duplicate removed #include <basic/options/util.hh>
 
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <utility/file/FileName.hh>
 
 #include <numeric/xyzVector.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ReturnSidechainMover.hh>
 
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
@@ -67,7 +59,6 @@
 //Auto Headers
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
-
 
 
 //namespaces

@@ -31,7 +31,6 @@
 namespace pathways {
 
 
-
 /********************* Pdbres_id struct *******************/
 class Pdbres_id {
 public:

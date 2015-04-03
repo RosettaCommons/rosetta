@@ -23,7 +23,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>

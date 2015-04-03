@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/MSDMover.hh
-///@brief Multistate design mover used for restrained multistate design
-///@brief Takes in multiple poses, applies residue linking constraints based on
-///@brief sequence of all input poses and runs a design submover that has been specified in the tag
-///@author Alex Sevy (alex.sevy@gmail.com)
+/// @file protocols/simple_moves/MSDMover.hh
+/// @brief Multistate design mover used for restrained multistate design
+/// @brief Takes in multiple poses, applies residue linking constraints based on
+/// @brief sequence of all input poses and runs a design submover that has been specified in the tag
+/// @author Alex Sevy (alex.sevy@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_MSDMover_hh
 #define INCLUDED_protocols_simple_moves_MSDMover_hh

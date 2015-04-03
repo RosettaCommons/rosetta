@@ -111,8 +111,6 @@
 #include <string>
 
 
-
-
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
 using namespace core;
@@ -210,7 +208,7 @@ dump_hbond_pdb(
 	using id::THETA;
 	using id::D;
 
-	//
+
 	scoring::hbonds::HBondSet hbond_set;
 	pose.update_residue_neighbors();
 	scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
@@ -226,8 +224,6 @@ dump_hbond_pdb(
 	dump_pdb( pose, out );
 	out.close();
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -399,8 +395,6 @@ test_rama()
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 test_scorefxn_io()
@@ -476,11 +470,10 @@ simple_rotamer_test()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///
+
 
 void
 set_fullatom_flag_test()
@@ -875,7 +868,7 @@ dna_deriv_test_old()
 
 	using core::Real;
 
-	//
+
 	Pose pdb_pose;
 	core::import_pose::pose_from_pdb( pdb_pose, start_file()); // eg 1qn4
 	Size const nres( pdb_pose.total_residue() );
@@ -985,8 +978,6 @@ dna_deriv_test_old()
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 dna_deriv_test()
@@ -1006,7 +997,7 @@ dna_deriv_test()
 
 	using core::Real;
 
-	//
+
 	Pose pdb_pose;
 	core::import_pose::pose_from_pdb( pdb_pose, "input/1aay.pdb" ); // use 1qn4 for massive dna bend
 	Size const nres( pdb_pose.total_residue() );
@@ -1102,8 +1093,6 @@ dna_deriv_test()
 	}
 
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1323,7 +1312,7 @@ dna_design_test_old( pose::Pose & pose )
 
 	return;
 
-	//
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1697,7 +1686,6 @@ fa_scorefxn_test()
 	using namespace chemical;
 	using namespace scoring;
 	using namespace pose;
-
 
 
 	ScoreFunction scorefxn;
@@ -2695,8 +2683,6 @@ bk_test2()
 	}
 
 
-
-
 	exit(0);
 }
 
@@ -2721,7 +2707,6 @@ ligrot_test()
 	}
 	out.close();
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2760,7 +2745,6 @@ proclose_test()
 
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -2896,7 +2880,6 @@ lk_ball_wtd_deriv_test()
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
@@ -2906,7 +2889,7 @@ atom_types_test()
 	using namespace core;
 	using namespace chemical;
 
-	///
+
 	ResidueTypeSet const & rsd_set( *ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 	AtomTypeSet const & atom_set( *ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ) );
 

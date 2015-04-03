@@ -10,7 +10,6 @@
 /// @file protocols/antibody/ModelCDRH3.hh
 /// @brief
 ///// @author Jianqing Xu ( xubest@gmail.com )
-//
 
 
 #ifndef INCLUDED_protocols_antibody_ModelCDRH3_hh
@@ -32,8 +31,6 @@
 #include <protocols/antibody/H3CterInsert.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/loops/loop_mover/IndependentLoopMover.fwd.hh>
-
-
 
 
 using namespace core;
@@ -158,16 +155,11 @@ private:
 }; // class ModelCDRH3
 
 
-
-
-
 // JQX: make a class, which inherits from abstract class "loop_mover"
 //class my_LoopMover: public protocols::loops::loop_mover::LoopMover {
 //protected:
 //    virtual basic::Tracer & tr() const;
 //};
-
-
 
 
 } // antibody

@@ -57,10 +57,10 @@ public:
 
 	void factory_register(GridCreatorOP creator);
 
-	///@brief create Grid given grid tag
+	/// @brief create Grid given grid tag
 	GridBaseOP new_grid(utility::tag::TagCOP tag) const;
 
-	///@brief create Grid given a serialized grid object
+	/// @brief create Grid given a serialized grid object
 	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;
 
 private:

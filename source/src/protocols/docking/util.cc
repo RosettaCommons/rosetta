@@ -76,7 +76,7 @@ using protocols::scoring::InterfaceInfoOP;
 /// identification). The foldtree is set up such that the jump points
 /// are at the center of masses of the two partners
 ///
-/// @detailed
+/// @details
 ///  if partner_chainID == '_' -> use the first movable jump as the cutpoint
 ///  if partner_chainID is of the form (pdb_chain_id)+_(pdb_chain_id)+
 ///      then use the jump between the last chain of the first partner

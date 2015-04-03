@@ -39,12 +39,11 @@
 #include <basic/datacache/CacheableData.fwd.hh>
 
 
-
 namespace basic {
 namespace datacache {
 
 
-///@brief Wrapper for std::string
+/// @brief Wrapper for std::string
 class CacheableString : public CacheableData
 {
 public:

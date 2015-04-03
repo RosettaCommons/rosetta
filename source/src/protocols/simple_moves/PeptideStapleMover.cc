@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_moves/PeptideStapleMover.cc
 /// @brief Peptide Staples are covalent links between i/i+[4,7] residues in a helix. Applying a PeptideStapleMover creates one of these links.
-/// @authors Jacob Corn and Andrew Leaver-Fay
+/// @author Jacob Corn and Andrew Leaver-Fay
 
 // Unit Headers
 #include <protocols/simple_moves/PeptideStapleMover.hh>
@@ -27,7 +27,6 @@
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -40,8 +39,6 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

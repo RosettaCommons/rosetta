@@ -53,23 +53,13 @@ RotamerRecoveryMoverCreator::mover_name()
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RRProtocol.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
@@ -89,12 +79,10 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
 // C++ Headers
 #include <algorithm>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 
 //Auto Headers
 #include <core/kinematics/Jump.hh>

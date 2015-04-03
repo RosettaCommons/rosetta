@@ -245,7 +245,7 @@ DualMonteCarlo::MC() const
 // 	energy_drop_counter.clear();
 // }
 
-// ///@detail return number of trials since last reset
+// /// @detail return number of trials since last reset
 // core::Size
 // DualMonteCarlo::total_trials() const {
 // 	Size ntrials( 0 );
@@ -278,7 +278,6 @@ DualMonteCarlo::MC() const
 // 		} // else
 // 	} // for
 // }
-
 
 
 } // namespace moves

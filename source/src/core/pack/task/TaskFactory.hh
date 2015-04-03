@@ -23,7 +23,6 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers

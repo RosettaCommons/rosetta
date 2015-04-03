@@ -23,7 +23,6 @@
 //#include <protocols/jd2/JobInputter.fwd.hh>
 //#include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributorFactory.fwd.hh>
 
 //#include <protocols/moves/Mover.fwd.hh>
 
@@ -74,13 +73,13 @@ public:
 	friend class JobDistributorFactory; // calls protected ctor
 protected:
 
-	///@brief This function is called upon a successful job completion; it has been virtualized so BOINC and MPI can delay/protect output
+	/// @brief This function is called upon a successful job completion; it has been virtualized so BOINC and MPI can delay/protect output
 	///base implementation is just a call to the job outputter
 	virtual
 	void
 	job_succeeded( core::pose::Pose & pose, core::Real run_time, std::string const & tag );
 
-	///@brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
+	/// @brief This function is called when we five up on the job;  it has been virtualized so BOINC and MPI can delay/protect output
 	virtual
 	void
 	job_failed( core::pose::Pose & pose, bool will_retry );
@@ -91,7 +90,7 @@ private:
 	/// @brief delete all temporary files for this job
 	void delete_in_progress_files();
 
-	///@brief tacks an extension (.in_progress) on to filename - for multiple process/one directory behaviour
+	/// @brief tacks an extension (.in_progress) on to filename - for multiple process/one directory behaviour
 	std::string const temporary_file_name( JobCOP job ) const;
 
 	std::string extension_;

@@ -35,10 +35,10 @@ namespace core {
 namespace scoring {
 namespace sasa {
 
-///@brief LeGrand SASA approximation method
+/// @brief LeGrand SASA approximation method
 ///  Used by SasaCalc but can be used by itself.
 ///
-///@details LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
+/// @details LeGrand S, Merz KM. Rapid approximation to molecular surface area via the use of Boolean logic and look-up tables.
 ///   J Comput Chem 1993;14:349-352.
 ///
 ///  Fortran Implementation: Jerry Tsai
@@ -57,7 +57,7 @@ public:
 	//Real
 	//calculate(const pose::Pose & pose);
 
-	///@brief Calculate Sasa.  Atoms not calculated have -1 sasa.  This is carried over for compatability purposes.
+	/// @brief Calculate Sasa.  Atoms not calculated have -1 sasa.  This is carried over for compatability purposes.
 	virtual Real
 	calculate(
 		const pose::Pose & pose,
@@ -70,14 +70,14 @@ public:
 
 public:
 
-	///@brief
+	/// @brief
 	/// Returns const access to the angles FArray, which contains the information in the SASA database file sampling/SASA-angles.dat.
 	/// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 	///
 	ObjexxFCL::FArray2D_int const &
 	get_angles() const;
 
-	///@brief
+	/// @brief
 	/// Returns const access to the masks FArray, which contains the information in the SASA database file sampling/SASA-masks.dat.
 	/// Adding this in so that the values in the SASA database files can be used in SASA-based scores. (ronj)
 	ObjexxFCL::FArray2D_ubyte const &
@@ -107,7 +107,7 @@ public:
 	/// @brief
 	/// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 	///
-	/// @detailed
+	/// @details
 	/// This function is used to get two indexes (phi and theta) which are used to get the index of a dot on the
 	/// surface of the 'a' sphere. When calculating how much surface area sphere b covers on a, we can get the degree
 	/// of overlap from the function above, but it's not necessarily the case that the vector that connects the center
@@ -149,7 +149,7 @@ public:
 	/// @brief
 	/// Gets the orientation of a to b (i to j, see below). Does this by calculating two angles, aphi and theta. (j)
 	///
-	/// @detailed
+	/// @details
 	/// This function is the same as the function above but get the orientation of a to b simultaneously with the
 	/// orientation of b to a.  The same result could be achieved by making two separate get_2way_orientation() calls
 	/// but this method does it more efficiently by avoiding an atan2 and acos call.  Instead, once you compute the
@@ -160,7 +160,6 @@ public:
 	void
 	get_2way_orientation( Vector const & a_xyz, Vector const & b_xyz,
 		int & phi_a2b_index, int & theta_a2b_index, int & phi_b2a_index, int & theta_b2a_index, Real distance_ijxyz ) const;
-
 
 
 	void
@@ -176,20 +175,20 @@ public:
 
 private:
 
-	///@brief Initialize the class - allows alternate constructors, copy constructors, etc.
+	/// @brief Initialize the class - allows alternate constructors, copy constructors, etc.
 	void
 	init();
 
-	///@brief Read angles db file into private FArray
+	/// @brief Read angles db file into private FArray
 	void
 	read_angles();
 
-	///@brief Read masks db file into private FArray
+	/// @brief Read masks db file into private FArray
 	void
 	read_masks();
 
 
-	///@brief
+	/// @brief
 	/// helper method to try to confirm that the dots are being overlapped and bits are being set correctly (ronj).
 	///
 	void

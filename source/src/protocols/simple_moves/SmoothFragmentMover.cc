@@ -14,27 +14,22 @@
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/simple_moves/ClassicAbinitio.hh>
 
 // Project Headers
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 #include <basic/prof.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh> // SequenceMover
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
 
 //// C++ headers

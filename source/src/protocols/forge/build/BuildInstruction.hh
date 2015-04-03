@@ -24,21 +24,18 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
 #include <utility/signals/Link.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <set>
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

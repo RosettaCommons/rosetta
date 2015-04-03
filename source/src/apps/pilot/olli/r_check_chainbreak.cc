@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @author Oliver Lange
 
 // keep these headers first for compilation with Visual Studio C++
@@ -109,9 +109,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
-
-
 namespace protocols {
 namespace abinitio {
 
@@ -135,7 +132,7 @@ private:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( File, fold_tree )
-///@details registering of options that are relevant for Application
+/// @details registering of options that are relevant for Application
 void protocols::abinitio::Application::register_options() {
     OPT( in::file::native );
   NEW_OPT( fold_tree, "a fold-tree","fold_tree.dat");
@@ -156,14 +153,13 @@ using namespace basic::options;
 //using namespace basic::options::OptionKeys;
 
 
-
-///@detail c'stor - nothing special
+/// @detail c'stor - nothing special
 Application::Application() :
   native_pose_( NULL )
 {}
 
 
-///@details setup of Application data that is used for both, fold() and run()
+/// @details setup of Application data that is used for both, fold() and run()
 /// this is mainly stuff for scoring and evaluation ( process_decoys(), evaluator_ )
 void Application::setup() {
   using namespace basic::options::OptionKeys;
@@ -178,7 +174,7 @@ void Application::setup() {
 }
 
 
-///@detail called by setup_fold() if option[ start_native ] is active
+/// @detail called by setup_fold() if option[ start_native ] is active
 /// the routine defines a fragment of the length of the structure
 /// steals the fragment from the native and applies it to the decoy
 /// native needs to be idealized!

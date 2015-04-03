@@ -9,7 +9,7 @@
 
 /// @file docking_initialization_protocols
 /// @brief initialization protocols for docking
-/// @detailed
+/// @details
 /// @author  Ingemar Andre
 
 
@@ -30,7 +30,6 @@
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.fwd.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.fwd.hh>
 
 // For symmetry
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>

@@ -9,7 +9,7 @@
 
 /// @file RNA_BasePairClassifier.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace constraints_additional {
 
@@ -66,7 +65,7 @@ public:
 		return core::scoring::constraints::ConstraintOP( new BindingSiteConstraint( atms_, tgt_pos_, tgt_pos_centroid_ ) );
 	}
 
-	///
+
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
 
@@ -94,7 +93,7 @@ public:
 
 	std::string type() const;
 
-	///
+
 	Size
 	natoms() const;
 
@@ -102,7 +101,7 @@ public:
 	core::scoring::constraints::ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const;
 

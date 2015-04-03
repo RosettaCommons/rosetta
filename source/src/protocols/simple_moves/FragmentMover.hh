@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
@@ -42,7 +41,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief abstract base class for FragmentMovers
+/// @brief abstract base class for FragmentMovers
 class FragmentMover : public moves::MoveMapMover {
   typedef moves::MoveMapMover Parent;
 public:
@@ -50,20 +49,20 @@ public:
 
 	using Parent::apply;
 
-	///@brief apply a fragment at pos to movemable dofs
+	/// @brief apply a fragment at pos to movemable dofs
 	virtual bool apply( core::pose::Pose&, Size pos ) const; // apply fragment at seqpos ( if possible )
 	virtual std::string get_name() const;
 
-	///@brief apply at all movemable positions --- honors movemap
+	/// @brief apply at all movemable positions --- honors movemap
 	virtual Size apply_at_all_positions( core::pose::Pose& ) const; //apply one fragment at each insertable position
 
-	///@brief accessor to the fragment set
+	/// @brief accessor to the fragment set
 	core::fragment::FragSetCOP fragments() const;
 
-	///@brief setter for the fragment set
+	/// @brief setter for the fragment set
 	virtual void set_fragments( core::fragment::FragSetCOP new_frags_ );
 
-	///@brief setter for the movemap
+	/// @brief setter for the movemap
 	virtual void set_movemap( core::kinematics::MoveMapCOP movemap );
 
 	core::kinematics::MoveMapCOP movemap() const;
@@ -85,7 +84,7 @@ protected:
 		std::string type
 	);
 
-	///@brief constructor
+	/// @brief constructor
 	FragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
@@ -160,12 +159,12 @@ public:
 	// Not defined, commenting out to make Python binding compile
 	//bool apply( core::pose::Pose &, Size pos );
 
-	///@brief check_ss controls whether fragment insertions are rejected that create short helices (<3) or strands (<2)
+	/// @brief check_ss controls whether fragment insertions are rejected that create short helices (<3) or strands (<2)
 	void set_check_ss( bool setting ) {
 		check_ss_=setting;
 	}
 
-	///@brief accessor
+	/// @brief accessor
 	bool
 	check_ss() const {
 		return check_ss_;
@@ -186,25 +185,25 @@ public:
 		bApplyEndBias_ = setting;
 	}
 
-	///@brief min_overlap controls the behaviour  fragset->region()
+	/// @brief min_overlap controls the behaviour  fragset->region()
 	void set_min_overlap( Size setting ) {
 		min_overlap_ = setting;
 	}
 
-	///@brief min_frag_length controls the behaviour  fragset->region()
+	/// @brief min_frag_length controls the behaviour  fragset->region()
 	void set_min_frag_length( Size setting ) {
 		min_frag_length_ = setting;
 	}
 
 protected:
-	///@brief alternative Constructor to be used by derived classes
+	/// @brief alternative Constructor to be used by derived classes
 	ClassicFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		core::kinematics::MoveMapCOP movemap,
 		std::string type
 	);
 
-	///@brief alternative Constructor to be used by derived classes
+	/// @brief alternative Constructor to be used by derived classes
 	ClassicFragmentMover(
 		core::fragment::FragSetCOP fragset,
 		std::string type
@@ -257,13 +256,13 @@ public: //this is actually protected: but need public for some unit-testing
 		return true;
 	}
 
-	///@brief is called from set_fragments()
+	/// @brief is called from set_fragments()
 	void on_new_fragments() {
 	}
 
 	virtual bool end_bias_check( core::pose::Pose const&, Size window_start ) const;
 
-	///@brief returns true if the ss string is acceptable
+	/// @brief returns true if the ss string is acceptable
 	virtual bool
 	valid_ss( std::string const & new_ss ) const;
 

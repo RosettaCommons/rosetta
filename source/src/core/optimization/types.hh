@@ -21,10 +21,8 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //#include <vector>

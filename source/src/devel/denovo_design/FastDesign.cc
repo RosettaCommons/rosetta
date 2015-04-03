@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/FastDesign.cc
 /// @brief The FastDesign
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

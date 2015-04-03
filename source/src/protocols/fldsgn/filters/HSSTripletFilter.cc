@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/HSSTripletFilter.cc
 /// @brief filter structures by hsstriplets angle and distance
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers

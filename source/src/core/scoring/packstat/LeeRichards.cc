@@ -18,13 +18,9 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/packstat/types.hh>
-// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
-
-// AUTO-REMOVED #include <time.h>
 
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
@@ -319,7 +315,6 @@ Slice::compute_events()
 
 	return;
 }
-
 
 
 void
@@ -617,8 +612,6 @@ compute_packing_score_leerichards(
 
 	// accum->show(std::cerr);
 }
-
-
 
 
 } // namespace packstat

@@ -130,7 +130,6 @@ calc_dist( core::conformation::Residue res1, core::conformation::Residue res2 )
 }
 
 
-
 // super simple class to grab and print stuff
 class PeptoidRotamerRecoverer : public protocols::moves::Mover {
 public:

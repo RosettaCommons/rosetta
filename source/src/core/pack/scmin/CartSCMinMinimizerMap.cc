@@ -286,7 +286,6 @@ void CartSCMinMinimizerMap::reset_dof_nodes()
 }
 
 
-
 } // namespace scmin
 } // namespace pack
 } // namespace core

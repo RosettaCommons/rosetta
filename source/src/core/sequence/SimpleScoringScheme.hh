@@ -9,7 +9,7 @@
 
 /// @file SimpleScoringScheme.hh
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Scoring scheme based on comparing single characters from two sequences
+/// @details Scoring scheme based on comparing single characters from two sequences
 /// with three types of score:
 /// - score for a match (characters are equal)
 /// - score for a mismatch (characters are not equal)
@@ -20,7 +20,6 @@
 #define INCLUDED_core_sequence_SimpleScoringScheme_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/ScoringScheme.hh>
 

@@ -47,7 +47,6 @@ namespace devel {
 namespace constel {
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -66,7 +65,6 @@ core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 }
 
 
-///
 /// @brief Outputs all pair-constellations between a given pair of residues
 ///
 /// @param[in] i pose index of the 1st residue.
@@ -121,7 +119,6 @@ void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 }
 
 
-///
 /// @brief Outputs to file a constellation obtained from mutating a pair of
 /// 	residues.
 ///
@@ -187,7 +184,6 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 }
 
 
-///
 /// @brief Outputs all triple-constellations among a given triple of residues
 ///
 /// @param[in] i pose index of the 1st residue.
@@ -264,7 +260,6 @@ void triple_constel_set_idx3(Size const i, Size const j, Size const k,
 }
 
 
-///
 /// @brief Outputs to file a constellation obtained from mutating a triple of
 /// 	residues.
 ///
@@ -343,7 +338,6 @@ void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
 core::scoring::hbonds::HBondDatabaseCOP HBondCommon::hb_database;
 
 
-///
 /// @brief Initializes the data structures of this class.
 ///
 void HBondCommon::init() {
@@ -353,7 +347,6 @@ void HBondCommon::init() {
 }
 
 
-///
 /// @brief Given a residue's moiety in a constellation, returns true if it forms
 /// 	at least a hydrogen bond; returns false otherwise.
 ///
@@ -449,7 +442,6 @@ bool HBondCommon::is_rmoi_hbonded(Pose const& ps,
 }
 
 
-///
 /// @brief Tells whether atom 'low' is closer to atom 'tgt' than atom 'hi' is.
 ///
 /// @param[in] low Cartesian coordinates of a first atom.
@@ -469,7 +461,6 @@ bool OrientCommon::is_closer_to_tgt(numeric::xyzVector<Real> const& low,
 }
 
 
-///
 /// @brief Records the presence of given amino acid types in a given
 /// 	constellation.
 ///
@@ -515,7 +506,6 @@ bool PresenceCommon::are_aa_pres(core::pose::Pose const& ps,
 }
 
 
-///
 /// @brief Records the presence of given atoms in a given residue.
 ///
 /// @param[in] res: a residue.

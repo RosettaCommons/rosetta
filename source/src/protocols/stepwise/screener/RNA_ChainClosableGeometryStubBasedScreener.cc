@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/RNA_ChainClosableGeometryStubBasedScreener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -24,9 +24,6 @@
 #include <core/conformation/Residue.hh>
 #include	<core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -105,7 +102,6 @@ UpstreamDownstreamCollisionFilter::set_downstream_builder(
 	runtime_assert( dsbuilders_.size() >= geomcst_id && geomcst_id > 0 );
 	dsbuilders_[ geomcst_id ] = builder;
 }
-
 
 
 bool

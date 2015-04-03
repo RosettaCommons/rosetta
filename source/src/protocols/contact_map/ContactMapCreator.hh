@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/ContactMapCreator.hh
-///@brief This class will create instances of Mover ContactMap for the MoverFactory
-///@author Joerg Schaarschmidt (joerg.schaarschmidt@medizin.uni-leipzig.de)
+/// @file protocols/moves/ContactMapCreator.hh
+/// @brief This class will create instances of Mover ContactMap for the MoverFactory
+/// @author Joerg Schaarschmidt (joerg.schaarschmidt@medizin.uni-leipzig.de)
 
 #ifndef INCLUDED_protocols_contact_map_ContactMapCreator_hh
 #define INCLUDED_protocols_contact_map_ContactMapCreator_hh

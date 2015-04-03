@@ -17,11 +17,9 @@
 
 // Project Headers
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <core/fragment/FragData.hh>

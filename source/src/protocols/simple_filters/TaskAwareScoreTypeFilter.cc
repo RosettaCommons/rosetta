@@ -52,7 +52,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.TaskAwareScoreTypeFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 TaskAwareScoreTypeFilter::TaskAwareScoreTypeFilter() :
 	parent( "TaskAwareScoreType" ),
 	task_factory_( /* NULL */ ),

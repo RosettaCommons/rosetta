@@ -25,10 +25,7 @@
 #include <cstdlib>
 
 // Unit Headers
-// AUTO-REMOVED #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -39,7 +36,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -47,7 +43,6 @@
 #include <basic/options/option.hh>
 
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 // ObjexxFCL headers
@@ -57,8 +52,6 @@
 // option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
-
 
 
 namespace core {

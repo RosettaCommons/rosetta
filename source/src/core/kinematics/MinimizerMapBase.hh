@@ -28,9 +28,6 @@
 
 // Project headers
 //#include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 //#include <core/id/AtomID_Map.hh>
 //#include <core/id/DOF_ID_Map.hh>
 
@@ -41,8 +38,6 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
-
-
 
 
 namespace core {
@@ -95,35 +90,35 @@ public:
 		return dof_nodes_.begin();
 	}
 
-	///
+
 	const_iterator
 	end() const
 	{
 		return dof_nodes_.end();
 	}
 
-	///
+
 	iterator
 	begin()
 	{
 		return dof_nodes_.begin();
 	}
 
-	///
+
 	iterator
 	end()
 	{
 		return dof_nodes_.end();
 	}
 
-	///
+
 	DOF_Nodes const &
 	dof_nodes() const
 	{
 		return dof_nodes_;
 	}
 
-	///
+
 	DOF_Nodes &
 	dof_nodes()
 	{
@@ -134,7 +129,7 @@ public:
 	void
 	link_torsion_vectors();
 
-	///
+
 	void
 	zero_torsion_vectors();
 
@@ -142,21 +137,21 @@ public:
 	void
 	reset( pose::Pose const & pose );
 
-	///
+
 	void
 	copy_dofs_from_pose(
 		pose::Pose const & pose,
 		Multivec & dofs
 	) const;
 
-	///
+
 	void
 	copy_dofs_to_pose(
 		pose::Pose & pose,
 		Multivec const & dofs
 	) const;
 
-	///
+
 	inline
 	int
 	nangles() const
@@ -164,7 +159,7 @@ public:
 		return dof_nodes_.size();
 	}
 
-	///
+
 	void
 	reset_jump_rb_deltas(
 		pose::Pose & pose,
@@ -177,7 +172,7 @@ public:
 		DOF_Node const & tor
 	) const; */
 
-	///
+
 	virtual
 	kinematics::DomainMap const &
 	domain_map() const = 0;
@@ -210,7 +205,7 @@ private:
 	/// pointer from DOF_ID to the corresponding DOF_Node*
 	id::DOF_ID_Map< DOF_Node* > dof_node_pointer_;
 
-	///
+
 	kinematics::DomainMap domain_map_;
 
 	void

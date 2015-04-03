@@ -23,9 +23,6 @@
 #include <utility/vector1.hh>
 
 
-
-
-
 namespace protocols {
 namespace wum {
 
@@ -43,8 +40,6 @@ class MoverList{
  protected:
 		std::map< std::string, moves::MoverCOP > mover_list_;
 };
-
-
 
 
 }

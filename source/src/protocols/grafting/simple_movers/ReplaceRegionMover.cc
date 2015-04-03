@@ -20,7 +20,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 
-
 #include <protocols/grafting/util.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/tag/Tag.hh>

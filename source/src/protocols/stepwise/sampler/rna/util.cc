@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/rna/RNA_StepWiseSamplerSamplerUtil.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -9,7 +9,7 @@
 
 /// @file RNA_O2PrimeMover.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

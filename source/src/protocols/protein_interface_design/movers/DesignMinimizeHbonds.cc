@@ -37,7 +37,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

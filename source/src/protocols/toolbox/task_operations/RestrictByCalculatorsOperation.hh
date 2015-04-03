@@ -23,12 +23,8 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <utility> //std::pair
 
 #include <utility/vector1.hh>
 
@@ -37,7 +33,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues according to std::set< core::Size >-returning PoseMetricCalculators
+/// @details this class is a TaskOperation to prevent repacking of residues according to std::set< core::Size >-returning PoseMetricCalculators
 class RestrictByCalculatorsOperation : public RestrictOperationsBase
 {
 public:

@@ -18,7 +18,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // Package headers

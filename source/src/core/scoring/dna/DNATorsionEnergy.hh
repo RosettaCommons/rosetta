@@ -38,13 +38,13 @@ namespace core {
 namespace scoring {
 namespace dna {
 
-///
+
 class DNATorsionEnergy : public methods::ContextIndependentTwoBodyEnergy {
 public:
 	typedef ContextIndependentTwoBodyEnergy parent;
 public:
 
-	///
+
 	DNATorsionEnergy();
 
 	/// clone
@@ -65,7 +65,7 @@ public:
  	void
  	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
 
-	//
+
 //	virtual
 //	void
 //	setup_for_packing( pose::Pose & pose, pack::task::PackerTask const & ) const;
@@ -80,7 +80,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(

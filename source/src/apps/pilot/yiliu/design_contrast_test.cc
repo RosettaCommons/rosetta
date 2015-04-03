@@ -13,7 +13,6 @@
 /// @author Yi Liu
 
 
-
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -53,7 +52,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 using namespace core;

@@ -203,7 +203,7 @@ void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( d
 bool MinMover::deriv_check() const { return min_options_->deriv_check(); }
 
 
-///@details restrict the move map by the packer task:
+/// @details restrict the move map by the packer task:
 ///If a residue is not designable, the backbone is fixes
 ///If a residue is not packable, the sidechain is fixed
 ///
@@ -439,7 +439,7 @@ void MinMover::parse_chi_and_bb( TagCOP const tag )
 	}
 }
 
-///@detail helper function for parse_of_tasks
+/// @detail helper function for parse_of_tasks
 void
 MinMover::parse_dof_task_type(
 	std::string const & tag_name,

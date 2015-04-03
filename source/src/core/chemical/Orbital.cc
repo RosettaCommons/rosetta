@@ -7,28 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Orbital
 ///
 /// @brief
 /// A class for defining atom parameters, known as atom_types
 ///
-/// @detailed
+/// @details
 /// This class contains the "chemical" information for atoms. This does not contain the actual
 /// xyz coordinates of the class (xyz found in core/conformation/Orbital.hh. The atom_type properties
 /// are assigned by the class OrbitalSet which is initiated from the ChemicalManager. Orbital type properties
 /// are currently are read in from the file located chemical/atom_type_sets/fa_standard/atom_properties.txt.
 /// These properties contain the the properties of LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, LK_VOLUME.
 /// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable (core/scoring/etable/Etable.hh)
-/// Additional parameters are acceptor/donor, hybridzation, and orbital paramaters.
+/// Additional parameters are acceptor/donor, hybridization, and orbital parameters.
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - comments
 ///
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 
 // Rosetta headers

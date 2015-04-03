@@ -99,7 +99,6 @@ private:
 };
 
 
-
 } // namespace scmin
 } // namespace pack
 } // namespace core

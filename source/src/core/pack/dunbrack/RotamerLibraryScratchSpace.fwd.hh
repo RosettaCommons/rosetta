@@ -19,7 +19,6 @@
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
 #include <utility/fixedsizearray1.fwd.hh>
 

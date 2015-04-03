@@ -17,30 +17,25 @@
 // Project headers
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <utility/assert.hh>
 
-// AUTO-REMOVED #include <basic/options/keys/MM.OptionKeys.gen.hh>
 
 #include <core/chemical/MMAtomType.hh>
 

@@ -35,7 +35,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh> //for observing conformation length changes
@@ -63,7 +62,7 @@ namespace constraints {
 
 class ResidueConstraints : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ResidueConstraints();
 	typedef std::map< Size, ConstraintsOP > Map;
 	typedef Map::const_iterator const_iterator;
@@ -127,7 +126,6 @@ public:
 private:
 	Map map_;
 };
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -238,7 +236,7 @@ public:
  	virtual void
  	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(
@@ -289,7 +287,6 @@ public:
 	) const;*/
 
 
-	///
 	virtual bool
 	residue_pair_constraint_exists( int const pos1, int const pos2 ) const
 	{
@@ -298,7 +295,7 @@ public:
 			residue_pair_constraints_[ pos1 ]->has( pos2 ) );
 	}
 
-	///
+
 	virtual bool
 	residue_pair_constraints_exists( Size const pos ) const {
 		return ( (residue_pair_constraints_.size() >= pos ) &&
@@ -306,7 +303,7 @@ public:
 		);
 	}
 
-	///
+
 	virtual void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
@@ -315,7 +312,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	void
 	eval_intrares_energy(
 											 conformation::Residue const & rsd,
@@ -331,14 +328,14 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	void
 	add_constraint( ConstraintCOP cst );
 
 	void
 	add_constraints( ConstraintCOPs cst_list );
 
-	///@brief add another constraint set to this constraint set
+	/// @brief add another constraint set to this constraint set
 	void
 	add_constraints( ConstraintSetCOP const cst_set );
 

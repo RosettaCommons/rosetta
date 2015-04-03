@@ -120,5 +120,4 @@ private:
 } // core
 
 
-
 #endif

@@ -20,8 +20,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -161,7 +159,6 @@ LimitAromaChi2Operation::parse_def( utility::lua::LuaObject const & def)
 	chi2max( def["chi2max"] ? def["chi2max"].to<Real>() : 110.0 );
 	chi2min( def["chi2min"] ? def["chi2min"].to<Real>() : 70.0 );
 }
-
 
 
 } // TaskOperations

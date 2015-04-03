@@ -16,33 +16,21 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/chemical/rna/util.hh>
 
 //Mmmm.. constraints.
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -50,8 +38,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -62,15 +48,10 @@
 
 #include <core/options/option.hh>
 #include <core/options/after_opts.hh>
-// AUTO-REMOVED #include <core/options/util.hh>
 
 #include <core/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/util/basic.hh>
-
-// AUTO-REMOVED #include <core/io/database/open.hh>
 
 
 #include <devel/init.hh>
@@ -81,15 +62,12 @@
 #include <utility/io/ozstream.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/farna/RNA_FragmentsClasses.hh>
-// AUTO-REMOVED #include <protocols/farna/RNA_DeNovoProtocol.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>
@@ -121,7 +99,6 @@ using core::util::T;
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 using core::util::Error;
@@ -219,7 +196,6 @@ rna_protein_prepack_test()
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 
-
 	//First push the protein and the RNA far apart.
 	utility::vector1<Size> rna_residues, protein_residues;
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
@@ -264,8 +240,6 @@ rna_protein_prepack_test()
 
 
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -520,10 +494,6 @@ rna_protein_rb_test(){
 
 	return;
 }
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -947,7 +917,6 @@ juke_sam_test(){
 	}
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -40,7 +40,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
-
 ///C++ headers
 //#include <string>
 //#include <sstream>
@@ -183,7 +182,7 @@ void FileJobOutputter::scorefile(
 }
 
 
-///@details this base class implementation will try to _append_ whatever string it gets to a file named after the job, with a user-specified suffix.
+/// @details this base class implementation will try to _append_ whatever string it gets to a file named after the job, with a user-specified suffix.
 void FileJobOutputter::file(
 				  JobCOP job,
 				  std::string const & data ){

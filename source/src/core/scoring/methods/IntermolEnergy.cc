@@ -140,7 +140,6 @@ IntermolEnergy::version() const
 }
 
 
-
 } // methods
 } // scoring
 } // core

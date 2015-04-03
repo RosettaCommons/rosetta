@@ -95,9 +95,6 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 }
 
 
-
-
-
 void MolWriter::output_residue(utility::io::ozstream & output_stream, core::chemical::ResidueTypeOP residue_type)
 {
 	using namespace core::conformation;

@@ -16,11 +16,9 @@
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/output/PoseInserter.hh>
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // Project headers
@@ -56,7 +54,6 @@ void
 ScaffoldBuildPoint::index( Size setting ) {
 	index_ = setting;
 }
-
 
 
 }

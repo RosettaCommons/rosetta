@@ -70,7 +70,6 @@
     #endif
 
 
-
 	// #include <core/pack/task/PackerTask.hh>
 	// #include <core/pack/packer_neighbors.hh>
 	// #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -449,7 +448,6 @@ Real6 get_bins(Real c, Real a){
  }
 
 
-
 core::id::AtomID_Mask get_motif_atom_mask( Pose const & motif_pose, RPM_Type const & type, bool with_Hpol ){
 	core::id::AtomID_Mask mask; {
 		core::pose::initialize_atomid_map(mask,motif_pose,false);
@@ -689,7 +687,6 @@ Real align_motif_pose( Pose & motif_pose, Pose const & paln1, Size const & ir, P
 	// return align_motif_pose_by_one_frame(motif_pose,paln1,ir,paln2,jr,type);
 	return align_motif_pose_super(motif_pose,paln1,ir,paln2,jr,type);
  }
-
 
 
 core::Real aa_trustworthiness(char aa){

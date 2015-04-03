@@ -33,7 +33,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
 
@@ -193,7 +192,6 @@ bool compare( std::map< Size, Real >::const_iterator a, std::map< Size, Real >::
 {
 	return ( (*a).second < (*b).second );
 }
-
 
 
 /// @brief calc helix cycle against sheet. Helix cycle is classified as 0, 1, 2, 3, 4,

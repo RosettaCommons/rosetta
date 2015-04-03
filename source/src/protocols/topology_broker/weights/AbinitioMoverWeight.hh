@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           maintains list of ToplogyClaimers
 ///           maintains AbinitioMoverWeights -- exclusive or non-exclusively markedup dofs like BackboneClaim, IntraResClaim, JumpClaim
 ///           generates FoldTree, MoveMap, and collects samplers provided by AbinitioMoverWeights
@@ -33,7 +33,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 
 #include <utility/pointer/access_ptr.fwd.hh>
 

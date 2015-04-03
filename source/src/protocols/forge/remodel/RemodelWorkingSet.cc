@@ -66,8 +66,6 @@ RemodelWorkingSet::RemodelWorkingSet()
 }
 
 ///
-/// @begin RemodelWorkingSet::RemodelWorkingSet( RemodelWorkingSet )
-///
 /// @brief
 /// copy constructor.
 ///
@@ -112,9 +110,6 @@ RemodelWorkingSet & RemodelWorkingSet::operator= ( RemodelWorkingSet const & rva
 	return *this;
 }
 
-
-///
-/// @begin RemodelWorkingSet::workingSetGen
 ///
 /// @brief
 /// checks value of option -remodel::generic_aa
@@ -539,9 +534,6 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	return;
 }
 
-
-///
-/// @begin RemodelWorkingSet::manualPackerTaskGen
 ///
 /// @brief
 /// Takes in a pose and remodel data objects and constructs a packer task for that pose. Uses the resfile string

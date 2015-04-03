@@ -26,9 +26,9 @@ namespace protocols {
 namespace optimize_weights {
 
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class PNatLigPoseOptEData : public PNatStructureOptEData
 {

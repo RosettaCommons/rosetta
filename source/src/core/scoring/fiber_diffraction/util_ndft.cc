@@ -163,7 +163,6 @@ ndft_1d(
 }
 
 
-
 } // fiber_diffraction
 } // scoring
 } // core

@@ -7,23 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomTypeSet
 ///
 /// @brief
 /// A class for reading in the orbital type properties
 ///
-/// @detailed
+/// @details
 /// This class reads in the orbital_properties.txt file which contains the "chemical" information for orbitals.
 /// This does not contain the actual properties, but sets the properties through the OrbitalType class.
 /// This class is called by the ChemicalManager. Modeled off of atomtypeset.
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
-/// @last_modified December 12 2010
 /////////////////////////////////////////////////////////////////////////
 
 

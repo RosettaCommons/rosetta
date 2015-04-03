@@ -15,11 +15,9 @@
 #define INCLUDED_core_io_silent_BasicSilentStructCreators_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructCreator.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

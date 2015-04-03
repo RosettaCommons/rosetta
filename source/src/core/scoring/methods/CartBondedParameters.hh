@@ -201,7 +201,6 @@ typedef  utility::pointer::shared_ptr< CartBondedParameters > CartBondedParamete
 typedef  utility::pointer::shared_ptr< CartBondedParameters const > CartBondedParametersCOP;
 
 
-
 } // namespace methods
 } // namespace scoring
 } // namespace core

@@ -18,9 +18,7 @@
 #include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
@@ -30,7 +28,6 @@
 //archive headers
 #include <protocols/abinitio/IterativeAbrelax.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

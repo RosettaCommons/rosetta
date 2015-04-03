@@ -9,7 +9,7 @@
 
 /// @file ShortestPathInFoldTree.cc
 /// @brief helper class to FoldTree: allows to measure distance in fold-trees
-/// @detailed This class provides a fast mechanism to determine the distance between residues
+/// @details This class provides a fast mechanism to determine the distance between residues
 /// according to a given fold-tree
 /// instead of storing a full NxN matrix with N number of residues
 /// we store only MxM matrix for distances between jump_residue (at most M=2*J J nr of jumps)
@@ -18,8 +18,6 @@
 /// a single dist-evaluation requires to check only 4 possible pathways
 ///
 /// @author Oliver Lange
-///
-
 
 
 // Unit Headers
@@ -29,17 +27,13 @@
 #include <core/kinematics/FoldTree.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <basic/Tracer.hh>
@@ -51,7 +45,6 @@ namespace format {
 }
 using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 namespace core {
@@ -75,7 +68,6 @@ ShortestPathInFoldTree::ShortestPathInFoldTree(
 		build_peptide_table( f );
 	}
 }
-
 
 
 /// @detail the core of the distance cache is build here: node_dist_
@@ -114,7 +106,7 @@ ShortestPathInFoldTree::build_jumpres_distmap( core::kinematics::FoldTree const&
     Size const stop ( f.jump_edge( jump ).stop() );
     tr.Trace << "add jump " << start << "-" << stop << std::endl;
 
-    //
+
     // search in our list of jump-residues, assign to my_start/my_stop if we got it already
     //
     // setup
@@ -170,7 +162,7 @@ ShortestPathInFoldTree::build_jumpres_distmap( core::kinematics::FoldTree const&
 }
 
 
-///@detail initialize dist map with dist 1 for each pair of residues connected by jumps
+/// @detail initialize dist map with dist 1 for each pair of residues connected by jumps
 /// as stored in the EdgeList
 void
 ShortestPathInFoldTree::init_dist_map( EdgeList const& edges ) {
@@ -262,7 +254,7 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 //   }
 }// compute_dist_map
 
-///@detail build table that gives for each residue the distance to
+/// @detail build table that gives for each residue the distance to
 /// upstream and downstream jump-residues (if available)
 ///
 /// format:
@@ -347,7 +339,7 @@ ShortestPathInFoldTree::build_peptide_table( core::kinematics::FoldTree const& f
 // }
 }
 
-///@detail distance between two residues
+/// @detail distance between two residues
 /// with the help of our pre-computed data
 /// this only requires comparison of 4 possible pathways:
 /// go via upstream/downstream jump-residue for pos1/pos2

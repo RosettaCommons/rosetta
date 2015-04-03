@@ -48,7 +48,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 /// energy method creator
 methods::EnergyMethodOP FACTSEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
@@ -65,7 +65,6 @@ ScoreTypes FACTSEnergyCreator::score_types_for_method() const {
 }
 
 
-///
 /// energy method definition
 FACTSEnergy::FACTSEnergy( FACTSEnergy const & src ):
 	parent( src ),
@@ -82,7 +81,6 @@ FACTSEnergy::FACTSEnergy( EnergyMethodOptions const & options ):
 }
 
 
-///
 void
 FACTSEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -110,7 +108,7 @@ void FACTSEnergy::update_residue_for_packing(
 	potential_.update_residue_for_packing( pose, resid );
 }
 
-//
+
 void FACTSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 //std::cerr << "FACTSEnergy::setup_for_scoring" << std::endl;
 	potential_.setup_for_scoring( pose, false );

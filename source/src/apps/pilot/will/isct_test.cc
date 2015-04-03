@@ -11,7 +11,6 @@
 /// @brief docks trimer center and pentamer center together
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/id/AtomID.hh>
@@ -39,7 +38,6 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 #include <apps/pilot/will/will_util.ihh>
-
 
 
 static thread_local basic::Tracer TR( "isct_test" );

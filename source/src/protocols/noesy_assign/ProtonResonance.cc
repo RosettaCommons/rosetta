@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -61,7 +61,7 @@ ProtonResonance::ProtonResonance(
 ProtonResonance::~ProtonResonance() {}
 
 
-///@brief match the proton and corresponding label atom at same time
+/// @brief match the proton and corresponding label atom at same time
 bool ProtonResonance::match2D(
 		core::Real proton_freq,
 		core::Real proton_error,

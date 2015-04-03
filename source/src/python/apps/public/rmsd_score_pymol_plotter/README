@@ -20,8 +20,6 @@ Features:
 4) Extendible to do clustering other data visualization?
 
 
-
-
 TO USE:
 
 Following a design run,
@@ -52,6 +50,5 @@ Filename    	   score, rms
 Note:
 The first line in the file should be the headers ( which are not read in )
 the separators need to be just a single space!
-
 
 

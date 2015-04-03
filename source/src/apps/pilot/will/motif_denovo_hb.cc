@@ -279,8 +279,7 @@ inline void dump_pdb_atom(
 }
 
 
-
-///@brief generate BCC lattice "hyper-ring" to sample rotationr around
+/// @brief generate BCC lattice "hyper-ring" to sample rotationr around
 /// the hbond axis as well as tilting the axis a up to tolang
 utility::vector1<numeric::xyzMatrix<double> >
 get_hbond_rotation_samples( double tolang, double reslang ){

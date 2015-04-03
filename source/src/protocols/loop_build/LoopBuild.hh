@@ -12,8 +12,6 @@
 #ifndef INCLUDED_protocols_loop_build_LoopBuild_HH
 #define INCLUDED_protocols_loop_build_LoopBuild_HH
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover.fwd.hh>
 
 namespace protocols {
 namespace loop_build {

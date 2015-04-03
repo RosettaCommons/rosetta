@@ -22,14 +22,12 @@
 // Utility headers
 //#include <core/util/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
 
 
 #include <utility/assert.hh>
 
 #include <utility/vector1.hh>
-
 
 
 using namespace core;
@@ -97,7 +95,6 @@ ChargeCalculator::lookup(
 	}
 
 } //lookup
-
 
 
 std::string

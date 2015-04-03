@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/methods/pcs2/PcsDataCenter.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsDataCenter_fwd_hh

@@ -70,7 +70,6 @@ public:
 	//core::kinematics::FoldTree standard_loop_fold_tree() const;
 
 
-	///
 	// Revisit by Sachko 03/29/2013
 	// Whey are these all public???
 	///

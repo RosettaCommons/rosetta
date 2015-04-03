@@ -12,8 +12,6 @@
 /// @author John Karanicolas
 
 
-
-
 // NOTES FOR IMPROVED PERFORMANCE / POTENTIAL IMPROVEMENTS....
 
 // The GeometricSolvation implementation was context-dependent,
@@ -39,15 +37,12 @@
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/DerivVectorPair.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // Package headers
 
@@ -85,7 +80,6 @@ OccludedHbondSolEnergyCreator::score_types_for_method() const {
 	sts.push_back( occ_sol_fitted );
 	return sts;
 }
-
 
 
 Vector dummy_deriv_vector_;
@@ -264,7 +258,6 @@ OccludedHbondSolEnergy::eval_intrares_derivatives(
 {
 	eval_residue_pair_derivatives_one_way( rsd, rsd, weights, atom_derivs, atom_derivs );
 }
-
 
 
 Real
@@ -599,7 +592,6 @@ OccludedHbondSolEnergy::get_cos_angle(
 }
 
 
-
 // Helper function that should live inside conformation::Residue (Rhiju's comment)
 bool OccludedHbondSolEnergy::atom_is_donor_h( conformation::Residue const & rsd, Size const atom ) const {
 	for ( chemical::AtomIndices::const_iterator hnum = rsd.Hpos_polar().begin(), hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
@@ -637,7 +629,6 @@ OccludedHbondSolEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } // geometric_solvation

@@ -34,7 +34,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/string_util.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/sort_predicates.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -187,12 +186,5 @@ using namespace id;
     }
     return 0;
 }
-
-
-
-
-
-
-
 
 

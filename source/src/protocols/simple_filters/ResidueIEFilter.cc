@@ -181,7 +181,6 @@ ResidueIEFilter::apply( core::pose::Pose const & pose ) const
 }
 
 
-
 void
 ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
@@ -197,7 +196,6 @@ ResidueIEFilter::report_sm( core::pose::Pose const & pose ) const
 	core::Real const penalty( compute( pose ) );
 	return( penalty );
 }
-
 
 
 core::Real
@@ -291,7 +289,6 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
       {
 				EnergyEdge const * Eedge = static_cast< EnergyEdge const * > (*egraph_it);
 				res_intE += Eedge->dot( curr_weights );
-
 
 
         if (in_pose.chain(Eedge->get_other_ind(res)) == res_chain)

@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Bjorn Wallner
 /// @author Christopher Miles (cmiles@uw.edu)
 

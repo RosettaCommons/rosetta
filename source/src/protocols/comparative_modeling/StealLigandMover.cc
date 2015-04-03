@@ -12,16 +12,13 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealLigandMover.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

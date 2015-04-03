@@ -29,7 +29,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace trie {

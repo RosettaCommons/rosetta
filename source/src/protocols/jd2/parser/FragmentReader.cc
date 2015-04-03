@@ -15,9 +15,7 @@
 #include <protocols/jd2/parser/FragmentReader.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
@@ -25,7 +23,6 @@
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FragID.hh> // REQUIRED FOR WINDOWS
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -37,7 +34,6 @@
 #include <core/fragment/picking_old/vall/util.hh>
 
 #include <protocols/jd2/parser/BluePrint.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/string_util.hh>
@@ -124,7 +120,7 @@ FragmentReader::parse_tag( TagCOP const & tag )
 		// using abego definition which is given by blueprint file
 		use_abego_ = tag->getOption<bool>( "use_abego", 0 );
 
-		//
+
 		if( ss_.empty() ) {
 			ss_ = tag->getOption<String>( "ss", "" );
 		}

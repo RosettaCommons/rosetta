@@ -12,11 +12,10 @@
 /// @author Steven Lewis
 
 
-
 //Unit headers
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
-//
+
 #include <core/pose/Pose.hh>
 
 #include <basic/MetricValue.hh>

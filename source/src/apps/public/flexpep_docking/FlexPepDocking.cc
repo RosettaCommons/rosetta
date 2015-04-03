@@ -28,24 +28,20 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableString.hh>
-// AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 #include <protocols/moves/Mover.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <devel/init.hh>
 
 // C++ headers
 //#include <cstdlib>
 #include <algorithm>
-// AUTO-REMOVED #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -74,7 +70,6 @@ using basic::Warning;
 
 //typedef utility::pointer::owning_ptr< BaseJobDistributor< BasicJobOP > > BaseJobDistributorOP
 static thread_local basic::Tracer TR( "pilot_apps.FlexPepDock" );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

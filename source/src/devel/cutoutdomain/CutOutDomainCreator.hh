@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file devel/cutoutdomain/CutOtuDomain
-///@brief
-///@author gideon Lapidoth
+/// @file devel/cutoutdomain/CutOtuDomain
+/// @brief
+/// @author gideon Lapidoth
 
 #ifndef INCLUDED_devel_cutoutdomain_CutOutDomainCreator_hh
 #define INCLUDED_devel_cutoutdomain_CutOutDomainCreator_hh

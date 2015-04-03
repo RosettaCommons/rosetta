@@ -17,7 +17,6 @@
 #include <protocols/jd2/PoseInputStreamJobInputterCreator.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/chemical/util.hh>

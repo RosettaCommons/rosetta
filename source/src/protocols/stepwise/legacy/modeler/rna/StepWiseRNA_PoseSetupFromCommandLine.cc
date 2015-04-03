@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu, based on Parin Sripakdeevong's work
 
 // libRosetta headers
@@ -377,7 +377,6 @@ get_silent_file_tags(){
 		} else{
 			TR << "Open \"" << filtered_tag_file << "\" successful!" << std::endl;
 		}
-
 
 
 		//Be careful here... job_queue_ID start from ZERO!
@@ -901,7 +900,6 @@ setup_pose_setup_class( stepwise::modeler::working_parameters::StepWiseWorkingPa
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Conventionally, SWA only outputted structures from a full enumeration, and
 //  its own classes ('StepWiseRNA_Minimizer') handled the final output.
@@ -976,7 +974,6 @@ ensure_directory_for_out_silent_file_exists(){
 	}
 
 }
-
 
 
 } //rna

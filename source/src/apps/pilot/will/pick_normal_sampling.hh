@@ -282,10 +282,6 @@ int pick_normal_sampling(double tgtcover){
 }
 
 
-
-
-
 #endif
-
 
 

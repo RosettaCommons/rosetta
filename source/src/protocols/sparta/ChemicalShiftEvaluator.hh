@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_sparta_ChemicalShiftEvaluator_hh
@@ -39,7 +38,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

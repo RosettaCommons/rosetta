@@ -36,7 +36,7 @@ class FragmentRmsd : public utility::pointer::ReferenceCount {
   typedef boost::unordered_map<core::Size, FrameCOP > FrameMap;
 
  public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentRmsd();
   FragmentRmsd(FragSetCOP fragments);
 

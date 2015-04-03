@@ -28,7 +28,6 @@
 #include <core/scoring/ContextGraphTypes.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
@@ -60,7 +59,7 @@ public:
 	// Explicit assignmnet operator to avoid #include .hh's
 	virtual Energies const & operator = ( Energies const & rhs );
 
-	///@details determine whether my type is the same as another Conformation's
+	/// @details determine whether my type is the same as another Conformation's
 	virtual
 	bool
 	same_type_as_me( Energies const & other, bool recurse = true ) const;

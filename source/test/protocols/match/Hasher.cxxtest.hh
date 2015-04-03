@@ -40,8 +40,6 @@
 #include <boost/unordered/unordered_map_fwd.hpp>
 
 
-
-
 // The code in namespace hash_examples are copy-righted under the boost liscense, as is
 // struct word_info and the testing code contained in the unit test test_boost_unordered_map.
 //
@@ -93,10 +91,6 @@ namespace hash_examples
         std::locale locale_;
     };
 }
-
-
-
-
 
 
 // --------------- Test Class --------------- //
@@ -244,7 +238,6 @@ class HasherTests : public CxxTest::TestSuite {
 		for ( Size ii = 1; ii <= 6; ++ii ) { TS_ASSERT( recoverA[ ii ] == binA[ ii ] ); }
 		for ( Size ii = 1; ii <= 6; ++ii ) { TS_ASSERT( recoverB[ ii ] == binB[ ii ] ); }
 		for ( Size ii = 1; ii <= 6; ++ii ) { TS_ASSERT( recoverC[ ii ] == binC[ ii ] ); }
-
 
 
 		Size3 euler_offsets2( 0 );
@@ -657,7 +650,6 @@ class HasherTests : public CxxTest::TestSuite {
 		TS_ASSERT( binC[ 1 ] == 4 );  TS_ASSERT( binC[ 2 ] == 12 ); TS_ASSERT( binC[ 3 ] == 4 );
 		TS_ASSERT( binC[ 4 ] == 33 ); TS_ASSERT( binC[ 5 ] == 22 ); TS_ASSERT( binC[ 6 ] == 0 );
 		TS_ASSERT( indexC == 28668564 );
-
 
 
 		//boost::uint64_t indexA = binner.bin_index( pA );

@@ -255,7 +255,6 @@ PerturbRotamerSidechainMover::compute_rotdensities(
 }
 
 
-
 } // sidechain_moves
 } // simple_moves
 } // protocols

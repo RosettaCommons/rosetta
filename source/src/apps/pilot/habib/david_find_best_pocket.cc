@@ -60,7 +60,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 using namespace core;
 using namespace basic::options;
 using namespace core::scoring;
@@ -206,6 +205,5 @@ std::filebuf fb,fb2;
 
 	return 0;
 }
-
 
 

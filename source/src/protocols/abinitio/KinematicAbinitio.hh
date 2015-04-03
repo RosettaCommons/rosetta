@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief Abinitio - Type sampling controlled by KinematicControl object
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 #ifndef INCLUDED_protocols_abinitio_KinematicAbinitio_hh
@@ -41,7 +40,6 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 
-
 #include <core/fragment/FragSet.fwd.hh>
 
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.hh>
@@ -58,7 +56,6 @@
 // Utility headers
 
 //// C++ headers
-
 
 
 namespace protocols {
@@ -132,7 +129,7 @@ public:
 	virtual moves::TrialMoverOP
 	stage4_mover( core::pose::Pose &pose, int kk, moves::TrialMoverOP trials_in );
 
-	///@brief set the closure_protocol... if not set no closure...
+	/// @brief set the closure_protocol... if not set no closure...
 	void
 	closure_protocol( loops::loop_closure::ccd::SlidingWindowLoopClosureOP closure_protocol ) {
 		closure_protocol_ = closure_protocol;
@@ -179,7 +176,6 @@ private:
 };
 
 
-
 class JumpingFoldConstraintsWrapper : public KinematicAbinitio {
 	typedef KinematicAbinitio Parent;
 public:
@@ -214,7 +210,6 @@ private:
 	jumping::BaseJumpSetupOP jump_def_;
 	//loops::SlidingWindowLoopClosureOP closure_protocol_;
 };
-
 
 
 } //abinitio

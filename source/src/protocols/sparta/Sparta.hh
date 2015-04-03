@@ -123,7 +123,6 @@ public: ///{ most of the original SPARTA class goes into SpartaLib -- to be reus
     GDB FIT_Tab; // talble for "fitting parameters"
 
 
-
     int firstRes, lastRes; // First/last RESID to use for prediction
 
     int r1,rN; // first and last RESID in seqList

@@ -22,12 +22,9 @@
 #include <protocols/match/output/OutputWriter.hh>
 #include <protocols/match/output/MatchEvaluator.hh>
 #include <protocols/match/output/MatchScoreWriter.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh> // REQUIRED FOR WINDOWS
 
 //Project headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh> // REQUIRED FOR WINDOWS
 
 
 // Utility headers

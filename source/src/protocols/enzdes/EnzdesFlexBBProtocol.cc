@@ -16,7 +16,6 @@
 #include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 #include <protocols/flexpack/FlexPacker.hh>
@@ -24,7 +23,6 @@
 #include <core/fragment/BBTorsionAndAnglesSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/fragment/util.hh>
@@ -57,12 +55,10 @@
 #include <protocols/loops/Loops.hh> //input file reading
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
-// AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 #include <numeric/random/random.hh>
@@ -79,7 +75,6 @@
 #include <numeric/statistics/functions.hh>
 
 //C++ Headers
-// AUTO-REMOVED #include <ctime>
 //#include <math.h> //std::min ?
 // option key includes
 
@@ -345,7 +340,6 @@ EnzdesFlexBBProtocol::register_options()
 }
 
 
-
 bool
 EnzdesFlexBBProtocol::is_flexible( core::Size seqpos ) const
 {
@@ -493,7 +487,6 @@ EnzdesFlexBBProtocol::modified_task(
 
 	return mod_task;
 }
-
 
 
 void
@@ -679,7 +672,6 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 	tr << flex_regions_.size() << " flexible regions in total." << std::endl;
 
 } //determine_flexible_regions function
-
 
 
 void
@@ -1657,7 +1649,6 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 } //sort_enseble_by_designability
 
 
-
 core::Real
 EnzdesFlexibleRegion::calculate_rotamer_set_design_targets_partition_sum(
 	core::pose::Pose const & pose,
@@ -1975,7 +1966,6 @@ EnzdesFlexibleRegion::examine_new_loopconf(
 } //examine_new_loopconf
 
 
-
 /// @details minimize the backbone of this pose over the fragment residues, including the
 /// @details bond angles around Calpha if desired. NOTE: CA ANGLE MINIMIZATION UNTESTED
 /// a chainbreak at the end of the region will be introduced. chainbreak weight will be
@@ -2229,8 +2219,6 @@ EnzdesFlexibleRegion::get_10A_neighbors(
 	}
 	return ten_A_neighbors;
 } //determine_10A_neighbors(
-
-
 
 
 void

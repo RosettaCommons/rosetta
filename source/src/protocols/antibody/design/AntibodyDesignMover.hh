@@ -44,7 +44,7 @@ using std::string;
 using utility::vector1;
 
 
-///@brief Main AntibodyDesignMover, tieing together individual movers and classes.  Main mover for application.
+/// @brief Main AntibodyDesignMover, tieing together individual movers and classes.  Main mover for application.
 ///
 class AntibodyDesignMover : public protocols::moves::Mover {
 	
@@ -80,19 +80,19 @@ public:
 	//
 	//
 	
-	///@brief Use low-resolution graft designer for structural sampling.  Default true.
+	/// @brief Use low-resolution graft designer for structural sampling.  Default true.
 	void
 	set_use_graft_designer(bool setting);
 	
-	///@brief Use high-resolution sequence designer for sequence sampling. Default true.
+	/// @brief Use high-resolution sequence designer for sequence sampling. Default true.
 	void
 	set_use_sequence_designer(bool setting);
 	
-	///@brief Run dock/min modeling step after the graft design step if run.
+	/// @brief Run dock/min modeling step after the graft design step if run.
 	void
 	set_do_post_graft_design_modeling(bool setting);
 	
-	///@brief Run dock/min modeling step after sequence design if run.
+	/// @brief Run dock/min modeling step after sequence design if run.
 	void
 	set_do_post_design_modeling(bool setting);
 	
@@ -112,14 +112,14 @@ private:
 	void
 	read_cmd_line_options();
 	
-	///@brief Sets command line driven CDR design.   This is mainly for testing, but makes the whole algorithm controllable without a specific instruction file.
+	/// @brief Sets command line driven CDR design.   This is mainly for testing, but makes the whole algorithm controllable without a specific instruction file.
 	void
 	setup_options_classes();
 	
 	void
 	setup_design_classes();
 	
-	///@brief Set constraint and chainbreak score on scorefunction if not already set.
+	/// @brief Set constraint and chainbreak score on scorefunction if not already set.
 	void
 	setup_scorefxns();
 	
@@ -130,11 +130,11 @@ private:
 	////////////////////////////////////////////////////////////////////////
 	
 	
-	///@brief Post-graft step modeling.  If no graft step, no need to do post-graft modeling.  Default false.
+	/// @brief Post-graft step modeling.  If no graft step, no need to do post-graft modeling.  Default false.
 	void
 	model_post_graft(core::pose::Pose & pose);
 	
-	///@brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
+	/// @brief Post-design step modeling.  Less aggressive, more high resolution.  Default false.
 	void
 	model_post_design(core::pose::Pose & pose);
 	
@@ -142,11 +142,11 @@ private:
 	void
 	init_on_new_input( core::pose::Pose const & pose );
 	
-	///@brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
+	/// @brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
 	void
 	output_ensemble( vector1< core::pose::PoseOP > ensemble, Size range_start, Size range_end, std::string prefix);
 	
-	///@brief add cluster info to the pose.  Needs to go into pose and not jd2 due to Ensemble generation.
+	/// @brief add cluster info to the pose.  Needs to go into pose and not jd2 due to Ensemble generation.
 	void
 	add_cluster_comments_to_pose(core::pose::Pose & pose);
 	

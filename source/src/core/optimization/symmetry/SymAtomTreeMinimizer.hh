@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/optimization/MinimizerOptions.fwd.hh>
-// AUTO-REMOVED #include <core/optimization/types.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 // Symmetry
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
@@ -29,7 +28,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

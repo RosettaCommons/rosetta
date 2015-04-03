@@ -31,9 +31,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <utility/keys/Key3Vector.hh>
 
 // Numeric Headers
@@ -94,7 +91,7 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief get the segment ID for a given starting and ending atom
-	/// @detailed
+	/// @details
 	/// if the segment ID does not exist, 0 is returned
 	Size
 	segment_id(

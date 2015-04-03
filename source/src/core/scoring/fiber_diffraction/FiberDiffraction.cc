@@ -71,7 +71,7 @@ FiberDiffraction& getFiberDiffractionData( core::Real c, core::Real res_cutoff_h
 	}
 }
 
-//
+
 FiberDiffraction& getFiberDiffractionData_legacy(core::Real c, core::Real res_cutoff_high, core::Real res_cutoff_low, bool force_reload ) {
 	static FiberDiffraction theFiberDiffractionData;
 

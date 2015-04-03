@@ -35,13 +35,13 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class GaussianOverlapEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	GaussianOverlapEnergy();
 	~GaussianOverlapEnergy();
 

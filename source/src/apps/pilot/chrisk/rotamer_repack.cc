@@ -1074,7 +1074,6 @@ RotamerAnalysis()
 			 */
 
 
-
 		}
 	}
 }

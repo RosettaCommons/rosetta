@@ -138,7 +138,7 @@ core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chai
 	return ((core::Real)rms);
 }
 
-//
+
 // filter definition
 SymmetricMotifFilter::SymmetricMotifFilter() :
 	protocols::filters::Filter( "SymmetricMotif" )
@@ -213,7 +213,6 @@ SymmetricMotifFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
 }
 
 
-//
 // compute
 bool
 SymmetricMotifFilter::compute( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const {
@@ -223,7 +222,7 @@ SymmetricMotifFilter::compute( core::pose::Pose const & pose, core::Real &best_s
 	return false;  // added to remove compiler warning; I assume false is warranted here? ~ Labonte
 }
 
-//
+
 // compute
 bool
 SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const {
@@ -478,8 +477,6 @@ SymmetricMotifFilter::compute_d2( core::pose::Pose const & pose, core::Real &bes
 }
 
 
-
-//
 // process_motifs
 //fpd currently only D2 is supported!
 //fpd at some point more spacegroups will be supported
@@ -580,7 +577,7 @@ SymmetricMotifFilter::process_motifs() {
 	}
 }
 
-//
+
 // parse_my_tag
 void
 SymmetricMotifFilter::parse_my_tag(

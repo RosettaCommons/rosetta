@@ -33,11 +33,11 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief  represents a chunk of residues extracted from a vall.
-/// @detailed VallChunk contains a vector of VallResidue objects and provides a basic ways to access them
+/// @details VallChunk contains a vector of VallResidue objects and provides a basic ways to access them
 class VallChunk: public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< VallChunk >
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~VallChunk();
 
 	VallChunk(VallProviderAP provider);
@@ -83,13 +83,13 @@ public:
 	std::string& get_sequence();
 
 	/// @brief  returns amino acid profile of this chunk
-	/// @detailed the profile object is created when this function is called for the first time
+	/// @details the profile object is created when this function is called for the first time
 	/// and then cached within a VallProvider object.
 	/// Every time this method is called for a new chunk, VallProvider caches new data
 	core::sequence::SequenceProfileOP get_profile();
 
 	/// @brief  returns a pose created for this chunk
-	/// @detailed the pose object is created when this function is called for the first time
+	/// @details the pose object is created when this function is called for the first time
 	/// and then cached within a VallProvider object
 	/// Every time this method is called for a new chunk, VallProvider caches new data
 	core::pose::PoseOP get_pose();

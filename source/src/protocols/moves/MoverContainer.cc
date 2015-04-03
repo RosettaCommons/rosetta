@@ -9,7 +9,7 @@
 
 /// @file MoverContainer.cc
 /// @brief apply functions for classes of type MoverContainer
-/// @detailed
+/// @details
 /// @author Monica Berrondo
 
 #include <protocols/moves/MoverContainerCreator.hh>
@@ -28,7 +28,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 
-//
+
 #include <string>
 
 #include <utility/vector0.hh>
@@ -155,7 +155,6 @@ SequenceMover::get_name() const {
 }
 
 
-
 std::string RandomMoverCreator::mover_name() {
   return "RandomMover";
 }
@@ -247,7 +246,6 @@ RandomMover::parse_my_tag( utility::tag::TagCOP tag,
 		add_mover( mover, weight );
 	}
 }
-
 
 
 //ek added this function must be called AFTER apply

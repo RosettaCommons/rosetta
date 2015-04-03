@@ -7,24 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Etable.hh
 ///
 /// @brief
 /// A class for generating the table for fa_atr/rep and fa_sol
 ///
-/// @detailed
+/// @details
 /// This class is called upon by the ScoringManager. Since actual calculating of the LJ potential
 /// is time consuming if done multiple times, this class precomputes and discritizes the potential
 /// (meaning that the potential is broken down into bins). Once the bins have been created, it will
 /// smooth out the bins, for better interpolation.
 ///
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Andrew Leaver-Fay
 /// Steven Combs - comments and skipping of virtual atoms
 ///
-/// @last_modified August 2013
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -189,7 +187,7 @@ struct EtableParamsOnePair
 class Etable : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Etable();
 
 	///  constructor
@@ -1334,7 +1332,6 @@ Etable::analytic_params_for_pair(
 	Size index = (i1-1)*n_atomtypes_ + i2 - (i1*(i1-1)/2 );
 	return analytic_parameters[ index ];
 }
-
 
 
 } // etable

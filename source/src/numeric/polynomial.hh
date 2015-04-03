@@ -81,7 +81,7 @@ public:
 	utility::vector1< Real > const &
 	coefficients() const;
 
-	///@brief Evaluate the polynomial and its derivative
+	/// @brief Evaluate the polynomial and its derivative
 	void
 	operator()(
 		double const variable,

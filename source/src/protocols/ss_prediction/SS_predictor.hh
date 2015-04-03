@@ -9,7 +9,7 @@
 
 /// @file ss_predictor.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author TJ Brunette
 

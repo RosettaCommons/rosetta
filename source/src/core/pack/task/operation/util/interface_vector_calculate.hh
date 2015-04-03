@@ -30,7 +30,7 @@ namespace task{
 namespace operation{
 namespace util{
 
-///@details Calculates the residues at an interface between two protein chains or jump.
+/// @details Calculates the residues at an interface between two protein chains or jump.
 /// The calculation is done in the following manner.  First the point graph
 /// is used to find all residues within some big cutoff of residues on the other chain.
 /// For these residues near the interface, two metrics are used to decide if they are actually
@@ -41,11 +41,11 @@ namespace util{
 /// neighboring chain.  The dot product between these two vectors is then found and if the angle
 /// between them is less than some cutoff then they are classified as interface.
 
-///@details minimal chain number definition
+/// @details minimal chain number definition
 utility::vector1_bool
 calc_interface_vector( core::pose::Pose const & pose, core::Size const chain1_number, core::Size const chain2_number );
 
-///@details full runner that takes all of the inputs for chains
+/// @details full runner that takes all of the inputs for chains
 utility::vector1_bool
 calc_interface_vector(
 	core::pose::Pose const & pose,
@@ -53,7 +53,7 @@ calc_interface_vector(
 	core::Real const CB_dist_cutoff, core::Real const nearby_atom_cutoff,
 	core::Real const vector_angle_cutoff, core::Real const vector_dist_cutoff );
 
-///@details full runner that takes the jump
+/// @details full runner that takes the jump
 utility::vector1_bool
 calc_interface_vector(
 	core::pose::Pose const & pose,
@@ -63,11 +63,11 @@ calc_interface_vector(
 	core::Real const vector_angle_cutoff,
 	core::Real const vector_dist_cutoff );
 
-///@details minimal jump runner
+/// @details minimal jump runner
 utility::vector1_bool
 calc_interface_vector( core::pose::Pose const & pose, int const interface_jump );
 
-///@brief calculate the same thing but don't require an interface
+/// @brief calculate the same thing but don't require an interface
 utility::vector1_bool
 calc_interacting_vector(
 	core::pose::Pose const & pose,

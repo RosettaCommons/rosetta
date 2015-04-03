@@ -30,15 +30,15 @@
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 class FragmentSequenceMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
   FragmentSequenceMover();
 
-	///@brief
+	/// @brief
 	FragmentSequenceMover( core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap );
 
 	virtual ~FragmentSequenceMover();

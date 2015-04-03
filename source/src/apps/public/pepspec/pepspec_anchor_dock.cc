@@ -57,7 +57,6 @@
  #include <core/chemical/ResidueType.hh>
  #include <core/chemical/ResidueTypeSet.hh>
  #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
  #include <core/chemical/VariantType.hh>
  #include <core/chemical/util.hh>
  #include <core/chemical/ChemicalManager.hh>
@@ -117,18 +116,12 @@
 // //REMOVE LATER!
 // #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/NWAligner.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
-// AUTO-REMOVED #include <core/sequence/L1ScoringScheme.hh>
 #include <core/sequence/MatrixScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 // // C++ headers
  #include <cstdlib>
@@ -143,7 +136,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/pepspec.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers

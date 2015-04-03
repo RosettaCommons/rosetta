@@ -22,7 +22,6 @@
 // mini
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <protocols/frag_picker/JCouplingIO.hh>
 #include <utility/vector1.hh>
@@ -38,7 +37,7 @@ class JCoupling: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a
-	/// @detailed
+	/// @details
 	JCoupling(Size, Real, bool, JCouplingIO&);
 
 	void do_caching(VallChunkOP);

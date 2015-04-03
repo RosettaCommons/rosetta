@@ -17,11 +17,9 @@
 
 // Utility headers
 #include <core/conformation/symmetry/SymDof.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1_bool.hh>
 

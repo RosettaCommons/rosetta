@@ -12,7 +12,6 @@
 /// @author Hetu Kamisetty
 
 
-
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.fwd.hh>
@@ -20,25 +19,19 @@
 #include <protocols/simple_moves/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 //#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.fwd.hh>
 #include <utility/vector0.fwd.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-
-
 
 
 namespace protocols{

@@ -22,7 +22,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/graph/Graph.hh>
@@ -42,7 +41,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -101,9 +99,6 @@ namespace pmut_scan {
 
 static thread_local basic::Tracer TR( "protocols.pmut_scan.PointMutScanDriver" );
 
-
-///
-/// @begin PointMutScanDriver::PointMutScanDriver
 ///
 /// @brief
 /// Main constructor for the class. What all does it do?
@@ -144,9 +139,6 @@ PointMutScanDriver::PointMutScanDriver( utility::vector1< std::string > & pdb_fi
 
 }
 
-
-///
-/// @begin PointMutScanDriver::~PointMutScanDriver
 ///
 /// @brief
 /// Destructor. What all needs to be done here?
@@ -158,9 +150,6 @@ PointMutScanDriver::~PointMutScanDriver() {
 #endif
 }
 
-
-///
-/// @begin PointMutScanDriver::go()
 ///
 /// @brief
 /// Entry point for the pmut_scan protocol.  This is function the app calls to do the scan.
@@ -197,8 +186,6 @@ void PointMutScanDriver::go() {
 }
 
 ///
-/// @begin PointMutScanDriver::node_name()
-///
 std::string PointMutScanDriver::node_name( Size rank ) {
 
 	if ( rank == 0 ) {
@@ -211,8 +198,6 @@ std::string PointMutScanDriver::node_name( Size rank ) {
 }
 
 ///
-/// @begin PointMutScanDriver::barrier()
-///
 /// Make all processes stop and wait here.
 ///
 void PointMutScanDriver::barrier() {
@@ -224,9 +209,6 @@ void PointMutScanDriver::barrier() {
 
 }
 
-
-///
-/// @begin PointMutScanDriver::read_in_structures()
 ///
 /// @brief
 /// Reads in the structure (or list of structures) specified on the command line to a class member variable. Create
@@ -238,7 +220,7 @@ void PointMutScanDriver::barrier() {
 ///
 void PointMutScanDriver::read_in_structures() {
 
-	//
+
 	// read in all the PDB files into a vector of Pose objects
 	//
 	utility::vector1< std::string >::iterator input_pdb_filename, last_pdb;
@@ -250,9 +232,6 @@ void PointMutScanDriver::read_in_structures() {
 
 }
 
-
-///
-/// @begin PointMutScanDriver::fill_mutations_list
 ///
 /// @brief
 /// Determines whether the user specified a list of mutants or just wants to do a scan over all possible combinations.
@@ -413,9 +392,6 @@ void PointMutScanDriver::fill_mutations_list() {
 
 }
 
-
-///
-/// @begin PointMutScanDriver::read_mutants_list_file()
 ///
 /// @brief
 /// If the user specified mutants, it reads the lines in the mutant list file and parses those lines to get mutation
@@ -499,8 +475,6 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 }
 
 ///
-/// @begin PointMutScanDriver::calculate_neighbor_table
-///
 /// @brief
 /// Calculates the 10A neighbor graph using the given pose object and then sets values in a 2D array to indicate which
 /// resids are neighbors.
@@ -565,9 +539,6 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 
 }
 
-
-///
-/// @begin PointMutScanDriver::divide_up_mutations
 ///
 /// @brief
 /// This function takes the vector of all possible mutants and splits them up as evenly as possible among all the CPUs.
@@ -629,7 +600,6 @@ void PointMutScanDriver::divide_up_mutations() {
 
 #ifdef USEMPI
 ///
-/// @begin PointMutScanDriver::send_mutant_data_to_node
 ///
 /// @brief
 /// Takes a Mutant and a destination and constructs the MPI_Send call.
@@ -666,8 +636,6 @@ void PointMutScanDriver::send_mutant_data_to_node( int destination, const protoc
 
 }
 
-///
-/// @begin PointMutScanDriver::receive_mutant_data_to_node
 ///
 /// @brief
 /// Receive mutant data from the master node.  First find out how many mutations are in this mutant and then actually
@@ -710,9 +678,6 @@ Mutant PointMutScanDriver::receive_mutant_data_from_node( int source ) {
 
 #endif
 
-
-///
-/// @begin PointMutScanDriver::make_mutants
 ///
 /// @brief
 /// Calls make_specific_mutant on all mutants assigned to this node.
@@ -748,9 +713,6 @@ void PointMutScanDriver::make_mutants() {
 
 }
 
-
-///
-/// @begin PointMutScanDriver::make_specific_mutant
 ///
 /// @brief
 /// Function which takes in a mutation to make (either single, double or more) and calls itself recursively until the desired
@@ -878,9 +840,6 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 
 }
 
-
-///
-/// @begin PointMutScanDriver::make_mutant_structure
 ///
 /// @brief
 /// Given mutant and native pose references and the mutation to make, this function constructs all the necessary PackerTask
@@ -999,7 +958,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 //Virtual functions, refactored out so they can be overridden by child AlterSpecDisruptionDriver
 
-///@brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
+/// @brief score the pose for the purposes of determining if a mutation is "good" or not.  In the base implementation, it's just a scorefunction call, but in child implementations it may be fancier (for example, calculating a binding energy instead)
 core::Energy PointMutScanDriver::score(core::pose::Pose & pose) {
 	return (*scorefxn_)(pose);
 }
@@ -1009,9 +968,6 @@ void PointMutScanDriver::set_ddG_cutoff( Real threshold ) {
 	DDG_cutoff_ = threshold;
 }
 
-
-///
-/// @begin PointMutScanDriver::mutants_begin
 ///
 /// @brief
 /// returns a const iterator to the beginning of the Mutant data member variable vector
@@ -1020,9 +976,6 @@ utility::vector1< Mutant >::const_iterator PointMutScanDriver::mutants_begin() c
 	return all_mutants_.begin();
 }
 
-
-///
-/// @begin PointMutScanDriver::mutants_end
 ///
 /// @brief
 /// returns a const iterator to the end of the Mutant data member variable vector
@@ -1031,9 +984,6 @@ utility::vector1< Mutant >::const_iterator PointMutScanDriver::mutants_end() con
 	return all_mutants_.end();
 }
 
-
-///
-/// @begin PointMutScanDriver::n_mutants
 ///
 /// @brief
 /// returns the size of the Mutant data member variable vector

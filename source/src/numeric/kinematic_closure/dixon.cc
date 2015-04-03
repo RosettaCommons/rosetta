@@ -13,9 +13,7 @@
 /// @author Daniel J. Mandell
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 //#include <basic/Tracer.hh> // tracer output
 
 // Unit headers

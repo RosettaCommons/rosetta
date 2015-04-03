@@ -17,15 +17,12 @@
 #define INCLUDED_core_pack_dunbrack_DunbrackRotamer_fwd_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
-
 
 
 namespace core {

@@ -44,7 +44,7 @@ public:
 
 public:
 
-	///
+
 	PackStatEnergy();
 
 	/// clone

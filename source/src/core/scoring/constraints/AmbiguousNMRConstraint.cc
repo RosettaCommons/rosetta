@@ -19,7 +19,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/prof.hh>
 
@@ -197,7 +196,7 @@ AmbiguousNMRConstraint::fill_f1_f2(
 // }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
+/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of
 void
 AmbiguousNMRConstraint::read_def(
 	std::istream& data,

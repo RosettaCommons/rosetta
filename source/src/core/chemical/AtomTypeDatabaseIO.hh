@@ -35,7 +35,7 @@ public:
 
 public: // store in a database information associated with an atom type set
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -59,7 +59,7 @@ private:
 
 
 public:
-	///@brief write the schema
+	/// @brief write the schema
 	void
 	initialize(
 		utility::sql_database::sessionOP db_session) const;

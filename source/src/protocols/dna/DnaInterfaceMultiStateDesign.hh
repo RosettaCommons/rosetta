@@ -22,7 +22,6 @@
 
 #include <protocols/multistate_design/MultiStatePacker.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-// AUTO-REMOVED #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -36,7 +35,7 @@
 namespace protocols {
 namespace dna {
 
-///@brief wraps DNA-interface specific considerations around the general multistate design / genetic algorithm framework
+/// @brief wraps DNA-interface specific considerations around the general multistate design / genetic algorithm framework
 // could also derive from DnaInterfacePacker(?)
 class DnaInterfaceMultiStateDesign : public protocols::simple_moves::PackRotamersMover {
 public:
@@ -53,16 +52,16 @@ public:
 	void copy_targeted_dna( DnaDesignDefOPs const & );
 	void output_results( Pose & );
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP fresh_instance() const;
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual moves::MoverOP clone() const;
 
 private:

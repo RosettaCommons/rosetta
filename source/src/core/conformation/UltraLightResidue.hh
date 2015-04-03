@@ -39,7 +39,7 @@ public:
 
 	virtual ~UltraLightResidue() {};
 
-	///@brief update conformation with current coords. Slow.
+	/// @brief update conformation with current coords. Slow.
 	void update_conformation(Conformation & conformation) const;
 
 	//@brief apply some transformation matrix and translation perturbation
@@ -63,25 +63,25 @@ public:
 		return coords_[index];
 	}
 
-	///@brief return a constant pointer to the base residue
+	/// @brief return a constant pointer to the base residue
 	ResidueCOP residue() const
 	{
 		return residue_;
 	}
 
-	///@brief return number of atoms in ultralight residue
+	/// @brief return number of atoms in ultralight residue
 	core::Size natoms() const
 	{
 		return coords_.size();
 	}
 
-	///@brief get centerpoint of residue
+	/// @brief get centerpoint of residue
 	PointPosition center() const
 	{
 		return center_;
 	}
 
-	///@brief get const ref to residue coords
+	/// @brief get const ref to residue coords
 	utility::vector1<PointPosition> const & coords_vector() const
 	{
 		return coords_;

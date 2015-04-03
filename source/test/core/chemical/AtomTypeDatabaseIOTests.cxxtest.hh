@@ -66,8 +66,6 @@ class AtomTypeDatabaseIOTests : public CxxTest::TestSuite {
 	}
 
 
-
-
 	// --------------- Test Cases --------------- //
 
 	void test_atom_type_set_name() {

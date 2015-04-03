@@ -576,7 +576,6 @@ namespace devel {
 			cout << " ";
 
 
-
 			core::scoring::EMapVector const& emap_2b = energies.residue_total_energies(i);
 			cout << " emap_2b:\t";
 			for( Size k = 1; k <= score_types.size(); ++k ) {

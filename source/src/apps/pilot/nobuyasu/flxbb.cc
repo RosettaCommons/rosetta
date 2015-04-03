@@ -25,10 +25,8 @@
 //#include <protocols/moves/Mover.hh>
 
 
-
 // Utility Headers
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>

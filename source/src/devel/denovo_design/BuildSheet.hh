@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/BuildSheet.hh
 /// @brief The BuildSheet Protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

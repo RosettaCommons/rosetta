@@ -20,7 +20,6 @@
 #include <core/fragment/Frame.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/BaseCacheUnit.hh>
 
 // Project Headers
@@ -47,8 +46,6 @@
 
 // C++ STL Headers
 #include <map>
-// AUTO-REMOVED #include <set>
-// AUTO-REMOVED #include <ostream>
 
 #include <core/types.hh>
 #include <core/fragment/FragData.fwd.hh>
@@ -70,14 +67,12 @@ namespace fragment {
 	 Raising Exceptions would be better. But I think we are still free of exceptions...
 */
 //WARNING: when fragments inside of a frame are deleted the FragID of that frame will be fucked up
-//
+
 
 // if deleting of fragments in a frame is really needed a lot one could
 // introduce a second class with a slightly different implementation
 // DeletableFrame that maps frag_id --> frag_nr
 // but for most purposes it will probably suffice to make a new frame that contains all wanted fragments
-//
-
 
 
 /// @brief Frame couples a list of FragData-instances to a certain alignment frame, i.e., position in sequence space
@@ -104,11 +99,10 @@ namespace fragment {
 ///                       i.e., the M_fragdata<= M_pose would tell us that the fragment is applicable to the Pose.
 
 
-
 class Frame : public utility::pointer::ReferenceCount {
 	typedef	std::map<std::string, BaseCacheUnitOP > CacheMap;
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Frame();
 
 	Frame();
@@ -132,7 +126,7 @@ public:
 	/// @brief clone method, new frame with same alignment position, one fragments is copied as template ( valid() == false )
 	virtual FrameOP clone_with_template();
 
-	///@brief type() is specifying the output name of the Frame in FragmentIO ("FRAME", "JUMPFRAME", etc)
+	/// @brief type() is specifying the output name of the Frame in FragmentIO ("FRAME", "JUMPFRAME", etc)
 	virtual std::string type() const;
 
 	static std::string _static_type_name();
@@ -229,7 +223,7 @@ public:
 	/// @brief last sequence position affected by this frame
 	core::Size end() const;
 
-	///	///@brief set stop position
+	///	/// @brief set stop position
 	//	core::Size stop( core::Size setting );
 
 	/// @brief last sequence position affected by this frame
@@ -270,14 +264,14 @@ public:
 
 	bool merge( Frame const& other );
 
-	///@brief change frames residue numbers accoriding to map
+	/// @brief change frames residue numbers accoriding to map
 	virtual
 	bool align( core::id::SequenceMapping const& map );
 
-	///@brief generate_sub_frame of length from start ( internal numbers )
+	/// @brief generate_sub_frame of length from start ( internal numbers )
 	FrameOP generate_sub_frame( Size length, Size start = 1 ) const;
 
-	///@brief NOT IMPLEMENTED YET: generate_sub_frame according to mapping ( residue numbers ) returns NULL if mapping invalid
+	/// @brief NOT IMPLEMENTED YET: generate_sub_frame according to mapping ( residue numbers ) returns NULL if mapping invalid
 	// Commenting out to make Python bindings compile
 	//FrameOP generate_sub_frame( core::id::SequenceMapping const& map );
 
@@ -295,9 +289,6 @@ protected:
 	virtual bool is_compatible( FragDataCOP new_frag ) const;
 
 	void init_length( core::Size start, core::Size end, core::Size length );
-
-
-
 
 
 private:
@@ -326,10 +317,6 @@ inline std::ostream& operator<< ( std::ostream& out, Frame const& frame ) {
 	frame.show( out );
 	return out;
 }
-
-
-
-
 
 
 } //fragment

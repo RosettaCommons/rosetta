@@ -39,7 +39,7 @@ class MidPsiOut: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a Psi-Psi-based scoring function.
-	/// @detailed Psi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
+	/// @details Psi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 	MidPsiOut(Size priority, Real lowest_acceptable_value, bool use_lowest);
 
 	void do_caching(VallChunkOP);

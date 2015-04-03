@@ -76,14 +76,14 @@ public:
 		core::Size new_anchor
 	);
 	
-	///@brief design and minimize the loop region
+	/// @brief design and minimize the loop region
 	core::Real
 	refine_loop(
 		core::pose::Pose & pose,
 		protocols::loops::Loop loop
 	);
 	
-	///@brief return the most recently created loop
+	/// @brief return the most recently created loop
 	protocols::loops::Loop
 	get_last_created_loop() const;
 	

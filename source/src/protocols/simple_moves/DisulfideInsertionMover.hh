@@ -37,7 +37,7 @@ enum DisulfideCyclizationViability {
 	DCV_ALREADY_CYCLIZED
 };
 
-/// @detailed a mover that given a receptor peptide pose mutates the peptides edge residues to cysteins,
+/// @details a mover that given a receptor peptide pose mutates the peptides edge residues to cysteins,
 ///           if needed, and enforces disulfide bonding by constrained minimization of the bond and the interaction
 class DisulfideInsertionMover : public protocols::moves::Mover {
 public:

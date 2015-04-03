@@ -213,7 +213,6 @@ get_n_pep_nbrs(
 }
 
 
-
 void
 dump_efactor_pdb(
 	pose::Pose & pose,

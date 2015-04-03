@@ -9,7 +9,7 @@
 
 /// @file mm_params
 /// @brief Test code for reading molecular mechanics bond angle atom types/parameters
-/// @detailed
+/// @details
 /// This app will dump all bond angles in all amino acid types. It will then construct a MMBondAngleResidueTypeParam
 /// object assuming the use of residue type theta0 angles and dump that as well. This command only requres a single
 /// command line flag, -in:path:database. There are two optional flags, -use_residue_type_theta0 and

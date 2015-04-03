@@ -15,10 +15,6 @@
 #include <core/types.hh>
 #include <protocols/moves/ResId.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/protein_interface_design/DockDesign.hh>
-// AUTO-REMOVED #include <boost/foreach.hpp>
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>

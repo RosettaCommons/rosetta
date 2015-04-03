@@ -26,7 +26,7 @@
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 
-///@brief Wrapper to AntibodySeqDesignMover due to needed ab_info object.  Designs CDRs based on cluster using probability and conservative strategies.
+/// @brief Wrapper to AntibodySeqDesignMover due to needed ab_info object.  Designs CDRs based on cluster using probability and conservative strategies.
 ///
 class Designer : public protocols::moves::Mover {
 
@@ -52,8 +52,6 @@ class Designer : public protocols::moves::Mover {
 	}
 
 };
-
-
 
 
 int main(int argc, char* argv[]){

@@ -16,9 +16,7 @@
 /// @code convert2centroid -s fa.pdb -o centroid.pdb -database db @endcode
 
 
-
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 //Utility
 #include <devel/init.hh>
@@ -32,7 +30,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-
 
 
 using namespace core;

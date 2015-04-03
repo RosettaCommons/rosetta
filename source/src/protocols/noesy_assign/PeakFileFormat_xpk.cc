@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -22,7 +22,6 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/Exceptions.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -32,7 +31,6 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -45,10 +43,8 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <utility/vector1.hh>

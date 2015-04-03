@@ -12,7 +12,6 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_loophash_LoopHashSampler_hh
 #define INCLUDED_protocols_loophash_LoopHashSampler_hh
 
@@ -31,10 +30,8 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace loophash {
-
 
 
 class LoopHashSampler : public utility::pointer::ReferenceCount  {
@@ -119,9 +116,6 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
 		core::Size nprefilter_;
 		core::scoring::ScoreFunctionOP score_filt_;
 };
-
-
-
 
 
 }

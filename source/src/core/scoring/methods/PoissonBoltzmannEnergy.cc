@@ -216,7 +216,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 
 	const Size atom_index = 2;  // alpha carbon
 
-	//
+
 	// Solve PB
 	//
 	// use cached data if the bound comformation hasn't changed.
@@ -262,7 +262,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		//pose_is_proper = false;
 	//}
 
-	//
+
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );
 	Energies & energies( pose.energies() );
@@ -404,7 +404,6 @@ const
 {}
 
 
-///
 /// Compare if two poses are close in fold within tolerance.
 ///
 /// To be specific, it returns True if for all a in A and b in B,

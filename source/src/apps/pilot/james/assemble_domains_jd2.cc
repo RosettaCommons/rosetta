@@ -15,43 +15,21 @@
 #include <protocols/domain_assembly/PostDockAssemblyScorer.hh>
 //#include <protocols/domain_assembly/CombineChainsMover.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/docking/stateless/SaneDockingProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/relax/FastRelax.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
-
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/func/LinearPenaltyFunction.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-
-
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/CompositionMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ConstraintSetMover.hh>
 
 #include <devel/init.hh>
 
@@ -59,7 +37,6 @@
 #include <iostream>
 #include <string>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
@@ -67,7 +44,6 @@
 
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <basic/options/option.hh>

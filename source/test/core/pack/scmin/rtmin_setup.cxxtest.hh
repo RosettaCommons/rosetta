@@ -16,7 +16,6 @@
 // Package headers
 #include <core/pack/scmin/SCMinMultifunc.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
-// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
 
 #include <core/pack/rtmin.hh>
 
@@ -28,38 +27,26 @@
 #include <platform/types.hh>
 
 #include <core/graph/Graph.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/packer_neighbors.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 
 /// Etable
 #include <core/scoring/ResidueNeighborList.hh>
@@ -69,23 +56,15 @@
 #include <core/optimization/AtomTreeMultifunc.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/Minimizer.hh>
 #include <core/optimization/atom_tree_minimize.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>
 
 // Numeric headers
 // Auto-header: duplicate removed #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 
 //Auto Headers
 #include <core/kinematics/DomainMap.hh>

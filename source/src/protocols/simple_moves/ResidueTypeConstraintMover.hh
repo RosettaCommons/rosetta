@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Assigns a ResidueTypeConstraint to a pose. 
-///@author Doo Nam Kim (doonam.kim@gmail.com)
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_ResidueTypeConstraintMover_hh
 #define INCLUDED_protocols_simple_moves_ResidueTypeConstraintMover_hh
@@ -22,7 +22,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

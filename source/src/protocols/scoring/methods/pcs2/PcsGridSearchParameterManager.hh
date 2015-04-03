@@ -10,9 +10,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/methods/pcs2/PcsGridSearchParameterManager.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsGridSearchParameterManager_hh

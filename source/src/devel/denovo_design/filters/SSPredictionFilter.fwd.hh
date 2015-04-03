@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/filters/SSPredictionFilter.fwd.hh
 /// @brief header file for filter to determine agreement with psipred for secondary structure prediction
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_devel_denovo_design_filters_sspredictionfilter_fwd_hh

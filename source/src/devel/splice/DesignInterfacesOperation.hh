@@ -36,7 +36,7 @@
 namespace devel {
 namespace splice {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
     class DesignInterfacesOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
 {
 public:

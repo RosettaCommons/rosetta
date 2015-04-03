@@ -19,7 +19,6 @@
 // Unit header
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/KofNConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/id/AtomID.hh>
@@ -36,7 +35,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -51,7 +49,7 @@ public:
 	/// @brief Constructor
   KofNConstraint( ConstraintCOPs & cst_in, core::Size K=0 );
 
-	///
+
 	void
 	setK( core::Size K ) {
 		K_ = K;
@@ -62,7 +60,7 @@ public:
 		return K_;
 	}
 
-	///
+
 	virtual
 	ConstraintOP clone() const {
 		return ConstraintOP( new KofNConstraint(*this) );

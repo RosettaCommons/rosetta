@@ -30,7 +30,7 @@ using protocols::filters::Filter;
 using protocols::filters::FilterOP;
 using protocols::filters::Filters_map;
 
-///@brief returns the residues aligned to a segment on the input pdb to the source pdb
+/// @brief returns the residues aligned to a segment on the input pdb to the source pdb
 class RelativeSegmentFilter : public Filter
 {
 public:

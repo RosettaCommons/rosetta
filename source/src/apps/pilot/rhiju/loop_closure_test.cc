@@ -237,7 +237,6 @@ setup_pose_with_loop( pose::Pose & pose,
 // 	pose.dump_pdb( "copy_dofs.pdb" );
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 ccd_loop_close( pose::Pose & pose,
@@ -267,7 +266,6 @@ ccd_loop_close( pose::Pose & pose,
 												 forward_deviation, backward_deviation, torsion_delta, rama_delta );
 	pose.dump_pdb( "ccd_closed.pdb" );
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -488,7 +486,6 @@ loop_closure_test(){
 }
 
 
-
 void
 output_to_silent( Size const count,
 									pose::Pose const & pose,
@@ -629,7 +626,6 @@ modeler_closure_test(){
 
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////

@@ -227,7 +227,7 @@ private:
 	graph::ArrayPool< Real >                     energy_array_pool_;
 
 	ScoreTypes              active_2b_score_types_;
-	///@brief these are flag values; <0 has a special meaning, so they need to be ints
+	/// @brief these are flag values; <0 has a special meaning, so they need to be ints
 	utility::vector1< int > score_type_2_active_;
 };
 
@@ -257,7 +257,6 @@ EnergyEdge::store_active_energies( EnergyMap const & emap, ScoreTypes const & su
 	}
 
 }
-
 
 
 /// @details Only load the non-zero terms -- the zero entries are already
@@ -298,7 +297,6 @@ void EnergyEdge::add_to_energy_map( EnergyMap & emap, ScoreTypes const & subset 
 	}
 
 }
-
 
 
 /// @details The owner stores a map from score types to indices indicating

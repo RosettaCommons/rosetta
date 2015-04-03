@@ -13,8 +13,6 @@
 /// 09/09/2011 - 2013
 
 
-
-
 #include <core/pose/Pose.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/metrics.hh>
@@ -38,7 +36,6 @@
 // non JD2 includes
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
 
 
 static thread_local basic::Tracer TR( "protocols.antibody_metrics" );
@@ -85,8 +82,6 @@ main( int argc, char* argv[] ){
 }
 
 
-//
-//
 //int
 //main( int argc, char * argv [] )
 //{

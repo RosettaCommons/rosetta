@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
 
 
@@ -41,14 +40,14 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class MembraneEnvEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
 
 public:
 
-	///
+
 	MembraneEnvEnergy();
 
 

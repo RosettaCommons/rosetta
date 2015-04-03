@@ -142,7 +142,6 @@ VectorExpressionCOP VectorFunction2::vec_ex1() const { return vec_ex1_; }
 VectorExpressionCOP VectorFunction2::vec_ex2() const { return vec_ex2_; }
 
 
-
 IterativeVectorExpression::IterativeVectorExpression( std::string const & name ) : parent( name ) {}
 
 IterativeVectorExpression::~IterativeVectorExpression() {}
@@ -1690,7 +1689,6 @@ DynamicAggregateFunction::save_vector_variable( std::string const & varname, cor
 }
 
 
-
 /// @details This function reads the contents of a state-vector file.  The input
 /// parameter vec_varname refers to the variable name associated with the file named
 /// by the second input parameter -- this pairing occurred somewhere in the
@@ -2407,8 +2405,6 @@ DynamicAggregateFunctionDriver::initialize_daemon_with_all_states(
 		throw e;
 	}
 }
-
-
 
 
 ////////////////////////////////////////////////

@@ -37,7 +37,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.MutationsFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 MutationsFilter::MutationsFilter() :
 	parent( "Mutations" ),
 	task_factory_( /* NULL */ ),

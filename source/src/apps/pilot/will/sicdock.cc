@@ -158,7 +158,6 @@ inline Xform get_cx_xform(Xform const & x1, Xform const & x2, int sym){
 }
 
 
-
 inline
 Real
 get_rmsd(

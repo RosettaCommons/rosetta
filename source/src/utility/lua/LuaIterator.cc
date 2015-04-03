@@ -103,6 +103,5 @@ LuaIterator & LuaIterator::operator++() {
 }
 
 
-
 } //lua
 } //utility

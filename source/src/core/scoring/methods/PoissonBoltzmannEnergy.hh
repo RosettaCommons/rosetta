@@ -65,7 +65,7 @@ private:
 	std::string energy_state_;
 };
 
-///
+
 class PoissonBoltzmannEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
 	typedef ContextIndependentLRTwoBodyEnergy  parent;
@@ -73,7 +73,7 @@ public:
 	typedef core::scoring::methods::PBLifetimeCacheOP PBLifetimeCacheOP;
 public:
 
-	///
+
 	PoissonBoltzmannEnergy();
 
 
@@ -119,7 +119,7 @@ public:
 						 EnergyMap & emap
 						 ) const ;
 
-	///
+
 	virtual void residue_pair_energy(
 									 conformation::Residue const & rsd1,
 									 conformation::Residue const & rsd2,
@@ -156,7 +156,7 @@ public:
 
 private:
 
-	///
+
 	/// Compare if two poses are close in fold within tolerance.
 	///
 	/// To be specific, it returns True if for all a in A and b in B, std::abs(a.xyz - b.xyz) <= tol,

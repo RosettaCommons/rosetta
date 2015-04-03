@@ -30,8 +30,6 @@ typedef utility::pointer::shared_ptr< ResidualDipolarCoupling_Rohl const > Resid
 class RDC_Rohl;
 
 
-
-
 } // scoring
 } // core
 

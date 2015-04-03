@@ -53,7 +53,7 @@ struct SerializedLoop {
 /// single loop definition
 class Loop : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Loop();
   /// default constructor
 	Loop():
@@ -133,7 +133,7 @@ public:
 		return !(*this == other );
 	}
 
-	///@brief add all residues within this loop definition into selection
+	/// @brief add all residues within this loop definition into selection
 	void get_residues( utility::vector1< Size>& selection ) const;
 
 	/// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't

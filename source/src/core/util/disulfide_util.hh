@@ -30,7 +30,6 @@
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1.hh>
 

@@ -30,7 +30,6 @@
 
 //#include <core/conformation/symmetry/SymmetryInfo.hh>
 //#include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -47,17 +46,14 @@
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <core/optimization/DOF_Node.hh> // REQUIRED FOR WINDOWS
 
 // util
 #include <basic/Tracer.hh>
 
 /// ObjexxFCL
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Numeric
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -342,7 +338,6 @@ get_residue_current_energy(
 #endif
 
 
-
 	/// 1.
 	scmin::ResidueAtomTreeCollection & ratc = atc->residue_atomtree_collection( resid );
 	Size curr_rot = curr_state.orig_rotamer_id_for_moltenres( moltenres_id );
@@ -603,7 +598,6 @@ n_inner_iterations( Real, Size nrotamers )
 
 	return scale * nrotamers;
 }
-
 
 
 void compare_mingraph_and_energy_graph(

@@ -12,7 +12,6 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>

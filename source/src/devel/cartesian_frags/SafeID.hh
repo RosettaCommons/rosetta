@@ -40,7 +40,7 @@ public:
 		seqpos(0)
 	{}
 
-	///
+
 	SafeAtomID( std::string const & name_in, int const seqpos_in );
 
 	/// SUBTRACT SEQPOS_OFFSET
@@ -50,7 +50,7 @@ public:
 	core::id::AtomID
 	id( core::conformation::Conformation const & conf, int const seqpos_offset = 0 ) const;
 
-	///
+
 	friend
 	bool
 	operator< ( SafeAtomID const & a, SafeAtomID const & b )
@@ -59,7 +59,6 @@ public:
 	}
 
 
-	///
 	friend
 	bool
 	operator== ( SafeAtomID const & a, SafeAtomID const & b )
@@ -67,7 +66,7 @@ public:
 		return ( a.seqpos == b.seqpos && a.name == b.name );
 	}
 
-	//
+
 	friend
 	std::ostream &
 	operator << ( std::ostream & os, SafeAtomID const & a );
@@ -104,7 +103,6 @@ public:
 
 
 };
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +216,7 @@ public:
 		return atom1; // wont get here
 	}
 
-	//
+
 	friend
 	bool
 	operator==( SafeStubID const & a, SafeStubID const & b )
@@ -226,7 +224,7 @@ public:
 		return ( ( a.atom1 == b.atom1 ) && ( a.atom2 == b.atom2 ) && ( a.atom3 == b.atom3 ) );
 	}
 
-	//
+
 	friend
 	bool
 	operator!=( SafeStubID const & a, SafeStubID const & b )
@@ -234,7 +232,7 @@ public:
 		return ( !( a == b ) );
 	}
 
-	//
+
 	friend
 	std::ostream &
 	operator << ( std::ostream & os, SafeStubID const & a );

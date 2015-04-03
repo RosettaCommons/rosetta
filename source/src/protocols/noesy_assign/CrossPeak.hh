@@ -19,7 +19,6 @@
 
 // Package Headers
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
@@ -27,7 +26,6 @@
 #include <core/types.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -37,7 +35,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 //#include <list>
 //#include <map>
@@ -52,23 +49,23 @@ namespace noesy_assign {
 
 class CrossPeak : public utility::pointer::ReferenceCount {
 public:
-  ///@brief a single dimension of a multidimensional peak, stores putative assignments as indices into Resonance table
+  /// @brief a single dimension of a multidimensional peak, stores putative assignments as indices into Resonance table
   class Spin {
   public:
     Spin( core::Real freq );
     Spin();
     ~Spin();
 
-    ///@brief resonance frequency of peak
+    /// @brief resonance frequency of peak
     core::Real freq() const { return freq_; }
     void set_freq( core::Real freq ) { freq_ = freq; }
 
-    ///@brief add index-pointer into Resonance table to assign peak to putative spin
+    /// @brief add index-pointer into Resonance table to assign peak to putative spin
     void add_assignment( core::Size assignment ) {
       assignments_.push_back( assignment );
     }
 
-    ///@brief return index-pointer into Resonance table
+    /// @brief return index-pointer into Resonance table
     core::Size assignment( core::Size nr ) const {
       return assignments_[ nr ];
     }
@@ -124,12 +121,12 @@ public:
   Spin& proton( core::Size i ) { return i>=2 ? proton2_ : proton1_ ; }
   bool has_proton( core::Size ) const;
 
-  ///@brief flat access to spins in [ a, b, h(a), h(b) ] order
+  /// @brief flat access to spins in [ a, b, h(a), h(b) ] order
   Spin const& spin( core::Size i ) const { return i>2 ? label( i-2 ) : proton( i ); }
   Spin& spin( core::Size i )  { return i>2 ? label( i-2 ) : proton( i ); }
 
   core::Size dimension() const { return has_label( 1 ) ? ( has_label( 2 ) ? 4 : 3 ) : 2; }
-  ///@brief expect res_ids in order: spin1, spin2, label1, label2
+  /// @brief expect res_ids in order: spin1, spin2, label1, label2
   virtual void add_full_assignment( core::Size res_ids[] );
 
   FoldResonance const& folder( core::Size i ) {
@@ -173,7 +170,7 @@ public:
   //provide array with spin 1 spin 2 label 1 label 2 -- returns index in assignment list
   virtual core::Size assign_spin( core::Size spin_id, core::Size res_ids[] );
 
-  ///@brief the measured integral of the peak
+  /// @brief the measured integral of the peak
   core::Real volume() const { return volume_; }
   void set_volume( core::Real val ) { volume_ = val; }
 
@@ -183,7 +180,7 @@ public:
 
   ResonanceList const& resonances() const { return *resonances_; }
 
-  ///@brief the cumulative cyana-type weights for all assignments Vk
+  /// @brief the cumulative cyana-type weights for all assignments Vk
   core::Real cumulative_peak_volume() const {
     return cumulative_peak_volume_;
   }
@@ -192,7 +189,7 @@ public:
     cumulative_peak_volume_ = setting;
   }
 
-  ///@brief the largest volume contribution (normalized) any of the assignments has
+  /// @brief the largest volume contribution (normalized) any of the assignments has
   core::Real max_volume_contribution() const;
 
   core::Real probability() const;
@@ -215,7 +212,7 @@ public:
     return elimination_candidate_;
   }
 
-  ///@brief returns true if this peak is to be ignored due to points (i)-(iv) on p215 of JMB 2002, 319,209-227
+  /// @brief returns true if this peak is to be ignored due to points (i)-(iv) on p215 of JMB 2002, 319,209-227
   /// do_not_compute ... for outputter that does not want to change state...
   bool eliminated( bool recompute = false, bool do_not_compute = false ) const;
   std::string elimination_reason() const;
@@ -233,13 +230,13 @@ public:
        bool fa_only = false
   ) const;
 
-//   ///@brief number of assigned protons
+//   /// @brief number of assigned protons
 //   core::Size n_assigned() const { runtime_assert( proton1_.n_assigned() == proton2_.n_assigned() ); return proton1_.n_assigned(); }
 
-//   ///@brief number of valid assignments
+//   /// @brief number of valid assignments
 //   core::Size n_valid_assigned() const { return proton1_.n_valid_assigned(); }
 
-//   ///@brief return the index for the next valid assigned spin.  -- return 0 for last
+//   /// @brief return the index for the next valid assigned spin.  -- return 0 for last
 //   core::Size next_assigned( core::Size last = 0 ) const {
 //     return proton1_.next_assigned( last );
 //   }
@@ -249,7 +246,7 @@ public:
   bool ambiguous() const { return assignments_.size() > 1; }
   core::Size n_assigned() const { return assignments_.size(); }
 #endif
-  ///@brief number of assignments with peak volume higher than params.min_volume_
+  /// @brief number of assignments with peak volume higher than params.min_volume_
   core::Size n_Vmin_assignments();
 
   //void invalidate_assignment( Size assignment );

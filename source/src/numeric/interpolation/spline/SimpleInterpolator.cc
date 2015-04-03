@@ -10,7 +10,7 @@
 /// @file   src/numeric/interpolation/spline/SimpleInterpolator.cc
 /// @brief  Interpolation with cubic splines
 /// @author Will Sheffler
-///
+
 
 #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <numeric/interpolation/spline/spline_functions.hh>

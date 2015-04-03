@@ -12,39 +12,14 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <devel/dna/protocols.hh>
-// AUTO-REMOVED #include <devel/dna/ProteinDNA_Relax.hh>
-// AUTO-REMOVED #include <devel/dna/util.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
-// AUTO-REMOVED #include <core/scoring/dna/DNA_BasePotential.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 //#include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -55,49 +30,20 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-
-// AUTO-REMOVED #include <basic/database/open.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
 
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 //#include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 
 #include <devel/init.hh>
 
@@ -107,17 +53,13 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 #include <set>
@@ -133,7 +75,6 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 #include <basic/options/keys/OptionKeys.hh>
-
 
 
 using namespace core;

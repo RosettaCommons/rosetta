@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_ScoreEvaluator_hh
@@ -26,12 +25,9 @@
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/RDC_Evaluator.hh>
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -49,7 +45,7 @@
 namespace protocols {
 namespace simple_filters {
 
-///@brief that rewrites the whole pss struct all previous entries will be lost... probably not what one wants...
+/// @brief that rewrites the whole pss struct all previous entries will be lost... probably not what one wants...
 class ScoreEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
 	ScoreEvaluator( std::string tag, core::scoring::ScoreFunctionOP scorefxn, bool fullname=false );
@@ -67,7 +63,7 @@ public:
 
 	TruncatedScoreEvaluator( std::string tag, core::scoring::ResidueSelectionVector const&, core::scoring::ScoreFunctionOP scorefxn=NULL, bool fullname=false );
 	virtual ~TruncatedScoreEvaluator();
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 private:
 	core::scoring::ResidueSelectionVector selection_;

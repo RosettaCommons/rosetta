@@ -322,7 +322,7 @@ ResidueScoresFeatures::report_features(
 	return 0;
 }
 
-///@details
+/// @details
 ///
 /// * Score types are either one body, two body, or whole structure and
 /// can either dependend on the context or not.
@@ -707,8 +707,6 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	}
 	insert_twobody_longrange.write_to_database(db_session);
 }
-
-
 
 
 } // namesapce

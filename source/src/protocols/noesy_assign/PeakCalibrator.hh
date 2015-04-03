@@ -58,7 +58,7 @@ namespace noesy_assign {
 
 class PeakCalibrator : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PeakCalibrator();
 
   typedef std::bitset< MAX_TYPE > TypeCumulator;
@@ -123,7 +123,7 @@ private:
 class PeakCalibratorMap : public utility::pointer::ReferenceCount {
   typedef std::map < std::string, PeakCalibratorOP > CalibratorMap;
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PeakCalibratorMap();
   PeakCalibratorMap( CrossPeakList&, PeakCalibratorOP );
   void set_new_upper_bounds();
@@ -133,7 +133,6 @@ public:
 private:
   CalibratorMap calibrators_;
 };
-
 
 
 }

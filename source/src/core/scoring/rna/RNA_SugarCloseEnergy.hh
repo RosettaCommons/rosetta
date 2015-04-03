@@ -37,7 +37,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_SugarCloseEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
@@ -59,7 +59,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -68,7 +68,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	void
 	residue_energy(
@@ -82,7 +81,7 @@ public:
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 ///////////////////////////////////////////////////////////////////////////////
 	virtual
 	void

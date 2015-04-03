@@ -26,7 +26,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -40,7 +39,6 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -60,7 +58,6 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <stdlib.h>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>

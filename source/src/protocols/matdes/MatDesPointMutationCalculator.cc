@@ -15,7 +15,6 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -27,7 +26,6 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -84,7 +82,7 @@ using utility::vector1;
 using utility::vector0;
 using std::pair;
 
-///@brief default ctor
+/// @brief default ctor
 MatDesPointMutationCalculator::MatDesPointMutationCalculator() :
 	task_factory_( /* NULL */ ),
 	scorefxn_( /* NULL */ ),
@@ -932,7 +930,6 @@ MatDesPointMutationCalculator::calc_point_mut_filters(
 */
 
 }
-
 
 
 } // matdes

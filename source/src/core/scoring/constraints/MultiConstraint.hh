@@ -21,7 +21,6 @@
 // Unit header
 #include <core/scoring/constraints/Constraint.hh>
 
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/id/AtomID.hh>
@@ -59,7 +58,7 @@ public:
 	/// @brief Constructor
 	MultiConstraint( const ConstraintCOPs & cst_in, ScoreType const & t = dof_constraint );
 
-	///
+
 	virtual
 	ConstraintOP clone() const {
 		if ( member_constraints_.size() > 0 ) {
@@ -113,7 +112,7 @@ public:
 	//@brief translates the atom-names into numbers
 	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
 
-	///@brief add individual constraint into MultiConstraint
+	/// @brief add individual constraint into MultiConstraint
 	virtual
 	void
 	add_individual_constraint( ConstraintCOP cst_in );
@@ -176,7 +175,7 @@ private:
 	utility::vector1< AtomID > member_atoms_;
 	std::map< AtomID, ConstraintCOPs > AtomID_to_Csts_;
 
-	//
+
 	core::Size report_this_as_effective_sequence_separation_;
 
 }; //MultiConstraint

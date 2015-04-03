@@ -28,7 +28,6 @@
 #include <boost/math/constants/constants.hpp>
 
 
-
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -205,7 +204,6 @@ core::Real ChargeGrid::score(core::conformation::UltraLightResidue const & resid
 		if(this->get_grid().is_in_grid(atom_coord.x(),atom_coord.y(),atom_coord.z()))
 		{
             core::Real protein_charge = this->get_point(atom_coord.x(),atom_coord.y(),atom_coord.z());
-
 
 
 			score += protein_charge*residue.residue()->atomic_charge(atom_index);

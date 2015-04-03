@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #ifndef INCLUDED_core_scoring_rna_chemical_shift_RNA_CS_RingCurrent_HH
 #define INCLUDED_core_scoring_rna_chemical_shift_RNA_CS_RingCurrent_HH
 

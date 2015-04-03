@@ -681,7 +681,6 @@ if ($ncs_mode == 1) {
 	}
 
 
-
 	#######################################
 	## symm file gen
 	## write output symm file
@@ -839,7 +838,6 @@ if ($ncs_mode == 1) {
 		}
 
 
-
 		#
 		#
 		#
@@ -858,9 +856,6 @@ if ($ncs_mode == 1) {
 		#close(OUTMON);
 	}
 }
-
-
-
 
 
 if ($cryst_mode == 1) {
@@ -1226,8 +1221,6 @@ if ($cryst_mode == 1) {
 	}
 	close(OUTPDB);
 }
-
-
 
 
 if ($helix_mode == 1) {
@@ -2072,7 +2065,6 @@ if ($helix_mode == 1) {
 	print "\n";
 
 
-
 	########################################
 	# output complete symm complex
 	########################################
@@ -2182,7 +2174,6 @@ if ($helix_mode == 1) {
 }
 
 
-
 if ($pseudo_mode == 1) {
 	###############
 	### PSEUDO mode!
@@ -2207,7 +2198,6 @@ if ($pseudo_mode == 1) {
 		push @Rs, $Rinv;
 		push @Ts, $COM_i;
 	}
-
 
 
 	#######################################
@@ -2311,7 +2301,6 @@ if ($pseudo_mode == 1) {
 	print "\n";
 
 
-
 	########################################
 	##
 	## write output pdb
@@ -2363,9 +2352,6 @@ if ($pseudo_mode == 1) {
 	}
 
 }
-
-
-
 
 
 #############################################################################
@@ -2426,7 +2412,6 @@ sub apply_transformation {
 		apply_transformation( $child, $R, $T_about, $T_post, $prefix);
 	}
 }
-
 
 
 ##########
@@ -2504,7 +2489,6 @@ sub tree_traverse_by_depth_recursive {
 		tree_traverse_by_depth_recursive( $child, $nodes_by_depth , $curr_depth+1 );
 	}
 }
-
 
 
 ##########
@@ -2748,7 +2732,6 @@ sub get_com {
 }
 
 
-
 ###################################################################################
 ###################################################################################
 ###
@@ -2818,7 +2801,6 @@ sub cross {
 	          $b->[0]*$c->[1] - $b->[1]*$c->[0] ];
 	return $a;
 }
-
 
 
 # ($nlist,$mov_com, $mov_to_ref, $R, $E0) = setup_rotation( $ref_xlist, $mov_xlist )
@@ -2980,7 +2962,6 @@ sub jacobi3 {
 }
 
 
-
 # ($eigen_vec, $eigenval) = diagonalize_symmetric( $matrix )
 sub diagonalize_symmetric {
 	my $matrix = shift;
@@ -3092,7 +3073,6 @@ sub calculate_rotation_matrix {
 
 	return ($U,$residual);
 }
-
 
 
 ###################################################################################
@@ -3258,7 +3238,6 @@ sub mmult {
 }
 
 
-
 # matrix inversion
 sub minv {
 	my $M = shift;
@@ -3393,7 +3372,6 @@ sub crystparams {
 
 	return ($f2c,$c2f);
 }
-
 
 
 ###################################################################################

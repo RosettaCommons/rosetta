@@ -35,7 +35,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.SavePoseConstraintToFileFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 SavePoseConstraintToFileFilter::SavePoseConstraintToFileFilter() :
 	parent( "SavePoseConstraintToFile" )
 {}
@@ -104,7 +104,6 @@ SavePoseConstraintToFileFilterCreator::create_filter() const { return protocols:
 
 std::string
 SavePoseConstraintToFileFilterCreator::keyname() const { return "SavePoseConstraintToFile"; }
-
 
 
 } // filters

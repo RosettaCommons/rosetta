@@ -18,7 +18,6 @@ namespace devel {
 namespace constel {
 
 
-///
 /// @brief Returns true if a constellation is shared by multiple chains;
 /// 	returns false otherwise.
 ///

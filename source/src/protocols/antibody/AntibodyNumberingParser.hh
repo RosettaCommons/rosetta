@@ -39,18 +39,18 @@ namespace antibody {
 	};
 	
 
-///@brief Class responsible for reading database Numbering Scheme definitions and their transforms from the database.
+/// @brief Class responsible for reading database Numbering Scheme definitions and their transforms from the database.
 class AntibodyNumberingParser : public utility::pointer::ReferenceCount {
 	
 public:
 	
-	///@brief Default constructor.  We pass the enum manager which is constructed in AbInfo so we only should have one instance of it. 
+	/// @brief Default constructor.  We pass the enum manager which is constructed in AbInfo so we only should have one instance of it. 
 	/// Its not a singleton, so instead of global data, we are careful where and when we pass it around. 
 	AntibodyNumberingParser(AntibodyEnumManagerCOP enum_manager);
 	
 	virtual ~AntibodyNumberingParser();
 	
-	///@brief Read numbering file and return AntibodyNumbering structure
+	/// @brief Read numbering file and return AntibodyNumbering structure
 	AntibodyNumbering
 	get_antibody_numbering(AntibodyNumberingSchemeEnum const numbering_scheme, CDRDefinitionEnum const cdr_definition);
 
@@ -64,11 +64,11 @@ private:
 	read_numbering_scheme_file(std::string const file_path, AntibodyNumbering & numbering);
 	
 	
-	///@brief Reads lines defining start/end of each CDR and the relative transforms to the numbering schemes defined by the TRANSFORM line.
+	/// @brief Reads lines defining start/end of each CDR and the relative transforms to the numbering schemes defined by the TRANSFORM line.
 	void
 	read_cdr_definition_numbering_line(vector1< std::string> const & lineSP, AntibodyNumbering & numbering) const;
 	
-	///@brief Reads line corresponding to TRANSFORM, which lists columns for which the transform to another numbering scheme is defined.
+	/// @brief Reads line corresponding to TRANSFORM, which lists columns for which the transform to another numbering scheme is defined.
 	void
 	read_cdr_definition_transform_line(vector1< std::string> const & lineSP, AntibodyNumbering & numbering);
 	
@@ -80,15 +80,15 @@ private:
 	read_scheme_defines_line(vector1< std::string > const & lineSP);
 	
 	
-	///@brief Check to make sure the path to the numbering scheme file is good.
+	/// @brief Check to make sure the path to the numbering scheme file is good.
 	void
 	check_path(std::string const numbering_file_path) const;
 	
 	AntibodyNumberingSchemeEnum
 	get_numbering_scheme_used_for_cdr_definition(CDRDefinitionEnum) const;
 	
-	///@brief Gets equivalent landmark from that defined in landmark_to_match
-	///@details.  Ex.  landmark_to_match defines a CDR start point in Chothia_scheme.  Our numbering must be in Kabat.  What is the PDBLandmark for the same residue?
+	/// @brief Gets equivalent landmark from that defined in landmark_to_match
+	/// @details.  Ex.  landmark_to_match defines a CDR start point in Chothia_scheme.  Our numbering must be in Kabat.  What is the PDBLandmark for the same residue?
 	PDBLandmarkOP
 	get_equivalent_landmark(
 		AntibodyNumbering & numbering,
@@ -112,13 +112,13 @@ private:
 };
 
 
-///@brief Class that was once a struct; Used for matching pdb information between numbering schemes and cdr definitions.
+/// @brief Class that was once a struct; Used for matching pdb information between numbering schemes and cdr definitions.
 class PDBLandmark : public utility::pointer::ReferenceCount {
 
 public:
 	PDBLandmark(char chain, core::Size resnum,  char insertion_code);
 	
-	///@brief Alternative constructor to hold numbering scheme type as well.
+	/// @brief Alternative constructor to hold numbering scheme type as well.
 	PDBLandmark(char chain, core::Size resnum, char insertion_code, AntibodyNumberingSchemeEnum scheme);
 	
 	virtual ~PDBLandmark();
@@ -160,7 +160,6 @@ private:
 
 } //antibody
 } //protocols
-
 
 
 #endif	//INCLUDED_protocols_antibody_AntibodyNumberingParser.hh

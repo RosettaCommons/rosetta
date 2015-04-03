@@ -87,7 +87,7 @@ SymmetricConformation::operator=( Conformation const & src )
 	return *this;
 }
 
-///@details make a copy of this conformation( allocate actual memory for it )
+/// @details make a copy of this conformation( allocate actual memory for it )
 ConformationOP
 SymmetricConformation::clone() const
 {
@@ -1113,7 +1113,6 @@ SymmetricConformation::detect_disulfides()
 
 
 }
-
 
 
 }

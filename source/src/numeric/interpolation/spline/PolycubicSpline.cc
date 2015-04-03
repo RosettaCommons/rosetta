@@ -5,7 +5,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 //////////////////////////////////////////////////////////////////////
-/// @begin PolycubicSpline
 ///
 /// @brief
 /// read the header file!
@@ -15,11 +14,10 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 /// ported to Rosetta by Andrew Leaver-Fay
 /// generalized to N dimensions by Andrew Watkins
 ///
-/// @last_modified November 2014
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -255,7 +253,6 @@ void PolycubicSpline::train
     }
     return;
 }
-
 
 
 //! return value at certain (x, y, z)

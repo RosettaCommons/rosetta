@@ -20,7 +20,6 @@
 #endif
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
@@ -72,7 +71,7 @@ ResLvlTaskOperationFactory::ResLvlTaskOperationFactory() {}
 
 ResLvlTaskOperationFactory::~ResLvlTaskOperationFactory(){}
 
-///@brief add a ResLvlTaskOperation prototype, using its default type name as the map key
+/// @brief add a ResLvlTaskOperation prototype, using its default type name as the map key
 void
 ResLvlTaskOperationFactory::add_creator( ResLvlTaskOperationCreatorOP rltoc )
 {
@@ -85,7 +84,7 @@ bool ResLvlTaskOperationFactory::has_type( std::string const & type ) const
 	return ( rltoc_map_.find( type ) != rltoc_map_.end() );
 }
 
-///@brief return new ResLvlTaskOperation by key lookup in rltoc_map_ (new ResLvlTaskOperation parses Tag if provided)
+/// @brief return new ResLvlTaskOperation by key lookup in rltoc_map_ (new ResLvlTaskOperation parses Tag if provided)
 ResLvlTaskOperationOP
 ResLvlTaskOperationFactory::newRLTO( std::string const & type ) const
 {

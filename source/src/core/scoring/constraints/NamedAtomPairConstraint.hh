@@ -18,10 +18,8 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 
@@ -30,7 +28,6 @@
 #include <core/id/NamedAtomID.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // C++ Headers
@@ -52,7 +49,7 @@ class Obsolet_NamedAtomPairConstraint : public utility::pointer::ReferenceCount 
   typedef core::id::NamedAtomID NamedAtomID;
   typedef core::id::SequenceMapping SequenceMapping;
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~Obsolet_NamedAtomPairConstraint();
   Obsolet_NamedAtomPairConstraint( AtomPairConstraintOP, core::pose::Pose const& );
   Obsolet_NamedAtomPairConstraint( NamedAtomID const& atom1, NamedAtomID const& atom2, AtomPairConstraintOP cst );

@@ -268,7 +268,6 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 }
 
 
-
 void
 design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utility::vector1<Size> & design_pos) {
 
@@ -326,7 +325,6 @@ design_using_resfile(Pose & pose, ScoreFunctionOP sf, std::string resfile, utili
   packer->apply(pose);
 
 }
-
 
 
 void repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
@@ -477,7 +475,6 @@ Pose get_neighbor_subs(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, P
 }
 
 
-
 // Find residues with buried polar atoms.
 Real
 get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, string fn){
@@ -516,7 +513,6 @@ get_unsat_polars( Pose const &bound, Pose const &unbound, Size nres_monomer, str
 	return buried_unsat_polars;
 
 }
-
 
 
 Real get_atom_packing_score(Pose const &pose, Sizes intra_subs1, Sizes intra_subs2, Pose const & p1, Pose const & p2, Real cutoff=9.0){
@@ -904,12 +900,9 @@ void *dostuff(void*) {
 							ddG = bounde - ubounde;
 
 
-
 						// Calculate the number of hbonding groups buried by the interface, also prints them to TR
 						Size nres_monomer = sym_info->num_independent_residues();
 						Real buried_unsat_polars = get_unsat_polars(boundpose, unboundpose, nres_monomer, fn);
-
-
 
 
 						// Calculate per-residue energies for interface residues
@@ -976,6 +969,5 @@ main (int argc, char *argv[])
 	}
 
 }
-
 
 

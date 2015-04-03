@@ -78,8 +78,6 @@ class real_traits {
 };
 
 
-
-
 template< typename T, class Symmetrie , class Type >
 	class LapackFunctions {
  public:

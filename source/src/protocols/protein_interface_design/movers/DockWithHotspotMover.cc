@@ -28,7 +28,6 @@
 
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -89,7 +88,7 @@ DockWithHotspotMoverCreator::mover_name()
 	return "DockWithHotspotMover";
 }
 
-///@brief default ctor
+/// @brief default ctor
 DockWithHotspotMover::DockWithHotspotMover() :
 	protocols::moves::Mover( DockWithHotspotMoverCreator::mover_name() )
 { 

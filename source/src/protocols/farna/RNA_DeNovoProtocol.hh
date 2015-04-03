@@ -9,7 +9,7 @@
 
 /// @file RNA_DeNovo_Protocol.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

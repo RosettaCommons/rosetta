@@ -35,7 +35,6 @@ std::string RowDataBase::get_column_name() const
 }
 
 
-
 }
 }
 }

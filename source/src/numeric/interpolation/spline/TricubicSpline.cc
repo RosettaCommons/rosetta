@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Bicubic_spline
 ///
 /// @brief
 /// read the header file!
@@ -18,10 +17,9 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 /// ported to Rosetta by Andrew Leaver-Fay
 ///
-/// @last_modified August 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -168,7 +166,6 @@ void TricubicSpline::train
 	}
 	return;
 }
-
 
 
 //! return value at certain (x, y, z)
@@ -692,7 +689,6 @@ double TricubicSpline::dFdz( const double x, const double y, const double z) con
 		+dx3m*(dy3m*dsecoxyz_( (i-1)%dimx, (j-1)%dimy, k%dimz)+dy3p*dsecoxyz_( (i-1)%dimx, j%dimy, k%dimz))
 		+dx3p*(dy3m*dsecoxyz_(i%dimx    , (j-1)%dimy, k%dimz)+dy3p*dsecoxyz_(i%dimx    , j%dimy, k%dimz)));
 }
-
 
 
 }//end namespace spline

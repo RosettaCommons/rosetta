@@ -18,52 +18,28 @@
 // libRosetta headers
 #include <protocols/loophash/Mover_LoopHashRefine.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/BinarySilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/relax/FastRelax.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 // #include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/util.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -80,10 +56,8 @@
 
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <cstdio>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -295,7 +269,6 @@ int loophash_main(){
 
 	return 0;
 }
-
 
 
 }

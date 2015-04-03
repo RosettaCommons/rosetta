@@ -42,7 +42,6 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
@@ -88,7 +87,7 @@ ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
 }
 
 
-///@brief copy c-tor
+/// @brief copy c-tor
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts
 ) :
 	parent( methods::EnergyMethodCreatorOP( new ContextDependentGeometricSolEnergyCreator ) ),
@@ -145,7 +144,7 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 	precalculated_bb_bb_energy_ = evaluator_->precalculate_bb_bb_energy_for_design( pose );
 }
 
-///
+
 void
 ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -424,7 +423,7 @@ ContextDependentGeometricSolEnergy::eval_intrares_energy(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
-///@brief GeometricSolEnergy is context sensitive
+/// @brief GeometricSolEnergy is context sensitive
 void
 ContextDependentGeometricSolEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & context_graphs_required

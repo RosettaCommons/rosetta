@@ -27,7 +27,6 @@
 #else
 #include <core/pose/Pose.fwd.hh>
 #endif
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -37,9 +36,9 @@ namespace pack {
 namespace rotamer_set {
 
 
-///@brief Adds in rotamers from the "unbound" or native structure(s),
+/// @brief Adds in rotamers from the "unbound" or native structure(s),
 /// pulled from one or more PDBs supplied on the command line.
-///@details Sequence numbering matters -- rotamers will only be added
+/// @details Sequence numbering matters -- rotamers will only be added
 /// if sequence numbers match AND the ResidueType is allowed by the PackerTask.
 /// By itself, this class does NOT grant a Dunbrack energy bonus to the native rotamer(s).
 class UnboundRotamersOperation : public core::pack::rotamer_set::RotamerSetOperation

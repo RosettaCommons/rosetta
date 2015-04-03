@@ -25,7 +25,6 @@ namespace loops {
 namespace loops_definers {
 
 
-
 class LoopsDefinerLoaderCreator : public jd2::parser::DataLoaderCreator
 {
 public:

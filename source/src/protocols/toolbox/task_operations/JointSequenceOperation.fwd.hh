@@ -30,7 +30,4 @@ typedef utility::pointer::shared_ptr< JointSequenceOperation > JointSequenceOper
 } // protocols
 
 
-
-
-
 #endif

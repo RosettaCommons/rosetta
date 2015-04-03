@@ -12,32 +12,22 @@
 /// @author Mike Tyka
 
 #include <protocols/loophash/WorkUnit_LoopHash.hh>
-// AUTO-REMOVED #include <protocols/loophash/Exceptions.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/relax/FastRelax.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 
@@ -49,8 +39,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
-
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif
@@ -60,7 +48,6 @@ namespace loophash {
 
 
 static thread_local basic::Tracer TR( "WorkUnit_LoopHash" );
-
 
 
 WorkUnit_LoopHash::WorkUnit_LoopHash( core::Size start_ir, core::Size end_ir, core::Size ssid ):
@@ -185,9 +172,6 @@ WorkUnit_LoopHash::run()
 		}
 	}
 }
-
-
-
 
 
 }

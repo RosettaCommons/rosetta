@@ -63,7 +63,7 @@ AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
 }
 
 /// @brief Prepare an AtomPair constraint - based score that utilizes N, C, CA, O && CB atoms
-/// @detailed These atoms that will be cached when a new
+/// @details These atoms that will be cached when a new
 /// chunk is considered (i.e. at every do_caching() call)
 /// @param priority - the priority for this scoring method. The lower the priority, the later the score will be evaluated
 /// Because a fragment may be discarded when a score is too low, the most accurate && meaningful scores should have the highest priority
@@ -81,7 +81,7 @@ AtomPairConstraintsScore::AtomPairConstraintsScore(Size priority,
 }
 
 /// @brief Calculates a score for a given fragment.
-/// @detailed Resulting value is written into a given score map.
+/// @details Resulting value is written into a given score map.
 /// @param fragment - fragment to be scored
 /// @param scores - resulting score will be stored here
 bool AtomPairConstraintsScore::cached_score(FragmentCandidateOP fragment,

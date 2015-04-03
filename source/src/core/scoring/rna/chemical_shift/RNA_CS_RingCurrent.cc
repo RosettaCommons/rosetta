@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #include <core/scoring/rna/chemical_shift/RNA_CS_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.hh>
 #include <ObjexxFCL/format.hh>

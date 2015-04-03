@@ -53,6 +53,3 @@ print "!! Not testing VIP"
 print "\n Complete \n"
 
 
-
-
-

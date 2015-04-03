@@ -17,11 +17,9 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 //Auto Headers
 #include <core/types.hh>
-
 
 
 namespace core {

@@ -167,7 +167,6 @@ void GridManager::make_new_grid(utility::tag::TagCOP tag)
 	}
 
 
-
 }
 
 void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
@@ -269,7 +268,6 @@ core::Real GridManager::total_score(core::conformation::Residue const & residue)
 		return total_score;
 	}
 }
-
 
 
 core::Real GridManager::total_score(core::pose::Pose const & pose, core::Size const chain_id)

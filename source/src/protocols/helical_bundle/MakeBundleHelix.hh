@@ -78,7 +78,7 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///
+
 	/// @brief Actually apply the mover to the pose.
 	virtual void apply(core::pose::Pose & pose);
 

@@ -27,7 +27,6 @@
 #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -36,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
 class RestrictChainToRepackingOperation : public RestrictOperationsBase
 {
 public:

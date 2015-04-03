@@ -23,7 +23,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -43,7 +42,7 @@ public:
 
 public:
 
-	///
+
 	MembraneEnvPenalties();
 
 	/// clone

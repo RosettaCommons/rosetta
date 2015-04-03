@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/dna/DnaInterfaceMultiStateDesignDnaInterfaceMultiStateDesignCreator.hh
-///@brief This class will create instances of Mover DnaInterfaceMultiStateDesign for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @file protocols/dna/DnaInterfaceMultiStateDesignDnaInterfaceMultiStateDesignCreator.hh
+/// @brief This class will create instances of Mover DnaInterfaceMultiStateDesign for the MoverFactory
+/// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_dna_DnaInterfaceMultiStateDesignCreator_hh
 #define INCLUDED_protocols_dna_DnaInterfaceMultiStateDesignCreator_hh

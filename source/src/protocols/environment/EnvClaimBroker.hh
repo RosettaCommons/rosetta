@@ -152,10 +152,10 @@ private:
   claims::EnvClaims collect_claims( MoverPassMap const& movers_and_passes,
                                     core::pose::Pose& pose );
 
-  ///@brief broker new residues
+  /// @brief broker new residues
   void build_new_residues( claims::EnvClaims const& claims, FoldTreeSketch& fts, SequenceAnnotationOP ann );
 
-  ///@brief use accepted claims to build DofPassport objects for movers.
+  /// @brief use accepted claims to build DofPassport objects for movers.
   void assign_passports( claims::EnvClaims const&, ProtectedConformation const& );
 
   void add_chainbreak_variants( core::Size cut, core::conformation::Conformation& conf ) const;

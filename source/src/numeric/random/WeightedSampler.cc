@@ -90,7 +90,6 @@ WeightedSampler::operator=(
 }
 
 
-
 // void owning_ptr_acquire(WeightedSampler * p)
 // {
 // }

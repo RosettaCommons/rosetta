@@ -23,7 +23,6 @@
 #include <protocols/docking/DockingEnsemble.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <protocols/moves/ConformerSwitchMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>

@@ -26,7 +26,6 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
@@ -198,7 +197,6 @@ get_y_axis(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 Vector
 get_base_pair_y_axis_atom_xyz(
@@ -293,7 +291,6 @@ get_z_axis(
 }
 
 
-
 	/// helper fxn
 bool
 is_orthonormal(
@@ -315,7 +312,7 @@ is_orthonormal(
 
 ///////////////////////////////////////////////////////////////////////////////
 // stolen/borrowed from Alex Morozov!
-//
+
 
 kinematics::Stub
 get_base_stub(
@@ -709,7 +706,6 @@ get_base_pair_params(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // aa1 is in strand1, aa2 is in strand2
@@ -735,7 +731,6 @@ debug_assert( rsd21.seqpos() == rsd11.seqpos() + 1 && rsd12.seqpos() == rsd22.se
 												params );
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -909,7 +904,7 @@ show_dna_geometry(
 /// D.M.Blow Acta Cryst. (1960) 13, 168
 ///
 /// Note: no guarantee about the orientation of the returned vector...
-///
+
 
 Vector
 lsf_normal(
@@ -1407,7 +1402,6 @@ debug_assert( is_orthonormal( MBT, 1e-3 ) );
 	return kinematics::Stub( MBT, 0.5f*( stub1.v + stub2.v ) );
 
 }
-
 
 
 } // namespace dna

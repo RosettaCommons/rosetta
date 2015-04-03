@@ -49,7 +49,7 @@ public:
 
 	virtual ~BetaTurnDetection();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	virtual std::string
 	type_name() const;
 

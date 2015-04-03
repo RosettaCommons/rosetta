@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief RBSegmentRelax protocol
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -117,7 +117,7 @@ RBSegmentRelax::RBSegmentRelax(
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief setup_RBSegmentRelax; initialize movesets to defaults
+/// @brief setup_RBSegmentRelax; initialize movesets to defaults
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::initialize( utility::vector1< core::fragment::FragSetOP > const &frag_libs , core::Real rnd)
 {
@@ -179,9 +179,8 @@ void RBSegmentRelax::set_cst_width ( core::Real width ) {
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
-///@brief apply method
+/// @brief apply method
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 	using namespace basic::options;
@@ -499,7 +498,7 @@ RBSegmentRelax::get_name() const {
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::add_helixMover( RBSegmentMoverOP newMover ) {
 	HelixMoveSet_.push_back( newMover );
@@ -507,7 +506,7 @@ void RBSegmentRelax::add_helixMover( RBSegmentMoverOP newMover ) {
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::add_strandMover( RBSegmentMoverOP newMover ) {
 	StrandMoveSet_.push_back( newMover );
@@ -515,7 +514,7 @@ void RBSegmentRelax::add_strandMover( RBSegmentMoverOP newMover ) {
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::add_genericRBMover( RBSegmentMoverOP newMover ) {
 	GenericRBMoveSet_.push_back( newMover );
@@ -523,14 +522,14 @@ void RBSegmentRelax::add_genericRBMover( RBSegmentMoverOP newMover ) {
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::add_compositeSegmentMover( RBSegmentMoverOP newMover ) {
 	CompositeSegmentMoveSet_.push_back( newMover );
 }
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::add_wholeStructureMover( protocols::moves::MoverOP newMover ) {
 	WholeStructureMoveSet_.push_back( newMover );
@@ -538,7 +537,7 @@ void RBSegmentRelax::add_wholeStructureMover( protocols::moves::MoverOP newMover
 
 
 //////////////////////////////////////////////////////////////////////////
-///@brief
+/// @brief
 //////////////////////////////////////////////////////////////////////////
 void RBSegmentRelax::clear_movesets() {
 	HelixMoveSet_.clear();

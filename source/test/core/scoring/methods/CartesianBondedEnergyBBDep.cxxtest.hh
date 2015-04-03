@@ -203,7 +203,6 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 	}
 
 
-
 };
 
 

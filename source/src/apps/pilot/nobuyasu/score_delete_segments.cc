@@ -86,7 +86,6 @@ class DeleteSegments : public protocols::moves::Mover {
 public: // typedef
 
 
-
 public: // constructor/deconstructor
 
 

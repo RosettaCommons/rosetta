@@ -16,8 +16,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
@@ -186,8 +184,6 @@ private:
 };
 
 typedef utility::pointer::shared_ptr< JDtestmover > JDtestmoverOP;
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -71,7 +71,6 @@ MinimizerBenchmark_dfpmin_armijo_nonmonotone MinimizerBenchmark_dfpmin_armijo_no
 DockingBenchmark_low DockingLow("protocols.docking.DockingLowRes");
 DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
-// AUTO-REMOVED #include <apps/benchmark/performance/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
 #include <apps/benchmark/performance/LigandDock.bench.hh>
@@ -98,14 +97,11 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 using basic::T;
@@ -307,7 +303,7 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }
 
-///
+
 /// Generting report file in python dict format: i.e: { 'Bench1': 1.5, 'Bench2': 1.6 }
 ///
 std::string PerformanceBenchmark::getReport()
@@ -327,7 +323,7 @@ std::string PerformanceBenchmark::getReport()
 	return res;
 }
 
-///
+
 /// Generting report file in python dict format: i.e: { 'Bench1': 1.5, 'Bench2': 1.6 }
 ///
 std::string PerformanceBenchmark::getOneReport(std::string const & name)

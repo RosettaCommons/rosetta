@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/TensorsOptimizer.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,16 +23,14 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
 // Unit headers
 #include <protocols/scoring/methods/pcs/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS
 // Package headers
 
 // Project headers
@@ -49,7 +46,6 @@
 
 // C++ headers
 #include <sstream>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 
@@ -305,8 +301,6 @@ TensorsOptimizer::dfunc_test(optimization::Multivec const & vars) const{
 			PCS_calc = A[1]*Xxx + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;
 			PCS_exp = fstyle_b(j);
 			common = 2.0 * (PCS_calc - PCS_exp) * weight;
-
-
 
 
 			PCS_calc_p_d = A[1]*(Xxx+delta) + A[2]*Xxy + A[3]*Xxz + A[4]*Xyy + A[5]*Xyz;

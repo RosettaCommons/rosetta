@@ -26,7 +26,6 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>

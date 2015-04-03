@@ -15,13 +15,11 @@
 #define INCLUDED_protocols_scoring_ImplicitFastClashCheck_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTriple.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <platform/types.hh>
@@ -36,7 +34,7 @@ namespace scoring {
 class ImplicitFastClashCheck : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ImplicitFastClashCheck();
 
 	ImplicitFastClashCheck(

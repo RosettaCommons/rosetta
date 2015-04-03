@@ -73,7 +73,6 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 //Auto using namespaces end
 
 
-
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
@@ -161,7 +160,6 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 	std::cout << "Wrote stats to: " << sequence_recovery_file << std::endl;
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

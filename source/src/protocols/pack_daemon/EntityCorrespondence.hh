@@ -24,7 +24,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers

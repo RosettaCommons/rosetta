@@ -25,7 +25,7 @@
 namespace protocols {
 namespace dna {
 
-///@brief command-line dna_defs are of the format "C.501.ADE"
+/// @brief command-line dna_defs are of the format "C.501.ADE"
 /// they are parsed here into this little class for convenience
 class DnaDesignDef : public utility::pointer::ReferenceCount {
 public:

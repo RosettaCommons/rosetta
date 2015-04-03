@@ -20,10 +20,8 @@
 
 // Package Headers
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -61,7 +59,7 @@ public:
 
 	virtual ~CountPairGeneric();
 
-	///@brief function required by templated functions in atom_pair_energy_inline
+	/// @brief function required by templated functions in atom_pair_energy_inline
 	inline
 	bool
 	operator () (

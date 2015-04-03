@@ -24,7 +24,6 @@
 // project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -43,7 +42,6 @@
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.fwd.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 // --------------- Test Class --------------- //
@@ -159,7 +157,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief
+	/// @brief
 	void test_NeighborsByDistanceCalculators() {
 		//the strings and magic numbers are the return values from calling the calculator
 		std::string const bur_nbr("42 43 44 54 55 58 102 138 139 140 142 183 190 191 193 194 195 196 197 198 199 211 212 213 214 215 216 226 227 228 229 262 263 264 ");

@@ -12,8 +12,6 @@
 /// @author Oliver Lange
 #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
-// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
@@ -23,10 +21,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -38,9 +33,6 @@
 
 #include <basic/prof.hh>
 
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -176,7 +168,6 @@ void run_old() {
 //   }
 
 
-
 // 	if ( basic::options::option[ basic::options::OptionKeys::assign ].user() ) {
 // 		std::string assign_strategy( basic::options::option[ basic::options::OptionKeys::assign ]() );
 // 		if ( assign_strategy == "simple" ) {
@@ -228,7 +219,6 @@ void run_old() {
 // 	core::util::switch_to_residue_type_set( centroid_pose, core::chemical::CENTROID );
 // 	core::scoring::constraints::ConstraintIO::write_constraints(  basic::options::option[ basic::options::OptionKeys::cst_out ]().name()
 // 		+ ".centroid", *centroid_cstset, centroid_pose );
-
 
 
 // 	utility::io::ozstream output_file( basic::options::option[ basic::options::OptionKeys::o ]() );

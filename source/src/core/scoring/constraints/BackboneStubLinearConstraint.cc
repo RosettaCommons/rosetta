@@ -15,11 +15,7 @@
 
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/func/PeriodicFunc.hh>
 #include <basic/Tracer.hh>
 

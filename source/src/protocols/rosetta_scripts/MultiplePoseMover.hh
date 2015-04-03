@@ -66,7 +66,7 @@ public:
 
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-	///@brief Used by RosettaScripts to set the previous mover to pull poses from
+	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
 	void set_previous_mover( protocols::moves::MoverOP const m ) { previous_mover_ = m; }
 
 	/// @brief sets rosettascripts tag

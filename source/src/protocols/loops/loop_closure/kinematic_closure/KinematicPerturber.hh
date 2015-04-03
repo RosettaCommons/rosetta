@@ -120,7 +120,6 @@ private:
 };
 
 
-
 /// @brief torsion sampling kinematic perturber
 class TorsionSamplingKinematicPerturber : public KinematicPerturber {
 
@@ -135,10 +134,10 @@ public:
 	std::string perturber_type() const {
 		return "TorsionSampleKinematicPerturber"; }
 
-	///@brief Varies torsions of a beta-amino acid residue based on minimia in the beta-amino acid Ramachandran cube.  This randomly picks a minimum, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.
+	/// @brief Varies torsions of a beta-amino acid residue based on minimia in the beta-amino acid Ramachandran cube.  This randomly picks a minimum, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.
 	void perturb_beta_residue (core::Real &phi, core::Real &theta, core::Real &psi, const core::Size beta_residue_type) const;
 
-	///@brief Initialize positions of minima in the beta-amino acid Ramachandran cube.
+	/// @brief Initialize positions of minima in the beta-amino acid Ramachandran cube.
 	void initialize_betaresidue_minima (
 		utility::vector1 < core::Real > &philist, //outputs -- will be cleared by this function
 		utility::vector1 < core::Real > &thetalist, //outputs -- will be cleared by this function
@@ -146,7 +145,7 @@ public:
 		const core::Size mode //mode 1 initializes for beta-3-amino acids.
 	) const;
 
-	///@brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap.
+	/// @brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap.
 	void
 	perturb_chain(
 		core::pose::Pose const & pose,
@@ -194,7 +193,7 @@ public:
 	std::string perturber_type() const {
 		return "VicinitySampleKinematicPerturber"; }
 
-	///@brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap. -- note that the analytic closure and pivot selection currently do not respect movemaps though
+	/// @brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap. -- note that the analytic closure and pivot selection currently do not respect movemaps though
 	void
 	perturb_chain(
 		core::pose::Pose const & pose,
@@ -233,12 +232,11 @@ private:
 };
 
 
-
 /// @brief WARNING WARNING UNTESTED!!!! torsion sweeping kinematic perturber
 /// @brief WARNING WARNING UNTESTED!!!! used to work in other implementation
 /// @brief probably works now, but to make sure you shoud doublecheck
 //  @brief if you plan to use
-///@details Here's some commentary on why the TorsionSweepingKinematicPerturber is Fun and Awesome to use!  Basically, you take the loop as given and search for solutions nearby.  Its purpose is not to produce large changes, but instead to produce small perturbations to find the bottom of the current energy well.  It's not meant to be used for the original KIC protocol, in which the pivots are changed regularly: you can't sweep through nonpivot torsion space if the pivots don't stay the same.
+/// @details Here's some commentary on why the TorsionSweepingKinematicPerturber is Fun and Awesome to use!  Basically, you take the loop as given and search for solutions nearby.  Its purpose is not to produce large changes, but instead to produce small perturbations to find the bottom of the current energy well.  It's not meant to be used for the original KIC protocol, in which the pivots are changed regularly: you can't sweep through nonpivot torsion space if the pivots don't stay the same.
 class TorsionSweepingKinematicPerturber : public KinematicPerturber {
 
 public:
@@ -249,7 +247,7 @@ public:
 	std::string perturber_type() const {
 		return "TorsionSweepingKinematicPerturber"; }
 
-	///@brief movemap control NOT IMPLEMENTED in TorsionSweepingKP.  It is also NOT NEEDED because you can use set_nonpivot_res_to_sweep instead.
+	/// @brief movemap control NOT IMPLEMENTED in TorsionSweepingKP.  It is also NOT NEEDED because you can use set_nonpivot_res_to_sweep instead.
 	void
 	perturb_chain(
 		core::pose::Pose const & pose,
@@ -276,7 +274,6 @@ private:
 	mutable utility::LexicographicalIterator sweep_iterator_;
 
 }; // TorsionSweepingKinematicPerturber
-
 
 
 /// @author Amelie Stein
@@ -499,7 +496,6 @@ private:
 	core::scoring::Ramachandran const & rama_;
 
 };
-
 
 
 /// @brief Neighbor-dependent Taboo-sampling kinematic perturber (still samples randomly, but only

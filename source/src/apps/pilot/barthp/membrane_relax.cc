@@ -124,16 +124,12 @@ using basic::Error;
 using basic::Warning;
 
 
-
 using namespace core;
 using namespace protocols;
 
 using utility::vector1;
 
 using io::pdb::dump_pdb;
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

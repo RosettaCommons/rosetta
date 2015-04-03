@@ -158,7 +158,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
  using basic::T;
  using basic::Error;
  using basic::Warning;
@@ -292,7 +291,6 @@ get_n_pep_nbrs(
 	}
 	return n_pep_nbrs;
 }
-
 
 
 void

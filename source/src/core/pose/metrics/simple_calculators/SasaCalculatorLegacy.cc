@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 //#include <core/conformation/Residue.hh>
 

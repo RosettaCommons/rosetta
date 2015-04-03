@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author Jared Adolf-Bryfogle
+/// @author Jared Adolf-Bryfogle
 /*!
 
 @page pyrosetta_toolkit Documentation for the PyRosetta Toolkit GUI
@@ -35,7 +35,6 @@ The application is available in both rosetta_source/GUIs/pyrosetta_toolkit and i
 
 @section refs References
 Jared Adolf-Bryfogle and Roland Dunbrack (2013) "The PyRosetta Toolkit: A Graphical User Interface for the Rosetta Software Suite. " PloS-ONE RosettaCON2012 special collection (Submitted)
-
 
 
 @section purpose Purpose
@@ -179,7 +178,6 @@ Server Links:
  @li Interface Alanine Scan
  @li DNA Interface Scan
  @li Scaffold Select
-
 
 
 @subsection pdblist_menu PDBList Menu

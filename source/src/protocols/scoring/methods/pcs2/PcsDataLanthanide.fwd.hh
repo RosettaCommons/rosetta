@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/methods/pcs2/PcsDataLanthanide.fwd.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 

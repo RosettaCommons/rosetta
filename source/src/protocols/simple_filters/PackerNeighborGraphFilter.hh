@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_filters/PackerNeighborGraphFilter.hh
 /// @brief header file for packer neighbor graph based filter
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -30,7 +30,6 @@
 
 // Utility headers
 //#include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <string>
@@ -42,7 +41,6 @@
 
 namespace protocols {
 namespace simple_filters {
-
 
 
 /// @details helper class for PackerNeighborGraphFilter
@@ -116,7 +114,6 @@ public:
 
 	filters::FilterOP fresh_instance() const {
 		return filters::FilterOP( new PackerNeighborGraphFilter() ); }
-
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

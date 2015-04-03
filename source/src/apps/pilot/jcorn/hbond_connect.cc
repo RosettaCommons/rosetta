@@ -10,9 +10,8 @@
 /// @file   apps/pilot/jcorn
 /// @brief  looks at connectedness of h-bonds at an interface
 /// @author Jacob Corn (jecorn@u.washington.edu)
-///
 
-//
+
 #include <devel/init.hh>
 #include <core/pose/Pose.hh>
 

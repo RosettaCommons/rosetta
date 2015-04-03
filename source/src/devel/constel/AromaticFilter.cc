@@ -22,7 +22,7 @@ namespace constel {
 using core::conformation::Residue;
 using core::chemical::aa_his;
 
-///
+
 /// @brief: returns true if the given constellation contains at least one aromatic
 /// 	ring; returns false otherwise.
 ///

@@ -13,8 +13,6 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -24,7 +22,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
 
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -33,8 +30,6 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <string>
 
 #include <devel/domain_assembly/DomainAssemblyReader.hh>
@@ -69,7 +64,7 @@ using namespace chemical;
 
 static thread_local basic::Tracer TR_da( "DomainAssemblySetup" );
 
-///@brief adds linkers and/or truncates a domain
+/// @brief adds linkers and/or truncates a domain
 ///  instructions are contained in the DomainInfo member variables
 void
 DomainInfo::process_domain( )
@@ -165,7 +160,7 @@ DomainInfo::process_domain( )
 	processed_pose_ = temp_pose;
 }
 
-///@brief calls process domain to add linkers/truncate domains
+/// @brief calls process domain to add linkers/truncate domains
 void
 process_domains(
 		utility::vector1< DomainInfo > & domains
@@ -176,7 +171,7 @@ process_domains(
 	}
 }
 
-///@brief connect the domains
+/// @brief connect the domains
 ///If using with pdbs files that contain RNA.  The RNA must either be at the beginning of the first pdb input
 ///or at the end of the last pdb input, otherwise the connect domains function will fail and crash
 void
@@ -231,7 +226,7 @@ connect_domains(
 		} // for loop over domains
 }
 
-///@brief  A stand alone setup protocol for domain assembly.
+/// @brief  A stand alone setup protocol for domain assembly.
 ///  Reads in a set of pdb files and connects them with specified
 ///  linkers.  The multidomain pose is output as a pdb file that
 ///  can be used as the input file for assemble_domains_optimize()

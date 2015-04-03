@@ -9,7 +9,7 @@
 
 /// @file protocols/hotspot_hashing/movers/PlaceProbeMover.cc
 /// @author Alex Ford fordas@uw.edu
-//
+
 
 #include <sstream>
 

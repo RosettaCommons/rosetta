@@ -36,7 +36,6 @@
 #include <basic/options/keys/SSrbrelax.OptionKeys.gen.hh>
 
 
-
 using namespace core;
 using basic::T;
 using basic::Error;
@@ -422,7 +421,6 @@ namespace ssrbrelax {
 	}
 
 
-
 	/////////////////////////////////////////////////////////////////////////////////
 	Vector const RbSegments::Z_axis(
 																	core::pose::Pose & pose
@@ -456,7 +454,6 @@ namespace ssrbrelax {
 		Z_axis = cross( this->X_axis( pose ), this->Z_axis( pose ) );
 		return Z_axis;
 	}
-
 
 
 	/////////////////////////////////////////////////////////////////////////////////

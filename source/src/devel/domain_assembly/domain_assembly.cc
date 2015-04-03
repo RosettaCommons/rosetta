@@ -13,10 +13,6 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -32,19 +28,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueConnection.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/TenANeighborGraph.hh>
 
@@ -62,8 +51,6 @@
 #include <core/chemical/ResidueType.hh>
 
 
-// AUTO-REMOVED #include <devel/domain_assembly/DomainAssemblyReader.hh>
-// AUTO-REMOVED #include <devel/domain_assembly/domain_assembly_setup.hh>
 #include <devel/domain_assembly/domain_assembly.hh>
 
 #include <utility/vector1.hh>
@@ -88,7 +75,6 @@
 
 //Auto Headers
 #include <protocols/viewer/GraphicsState.hh>
-
 
 
 using namespace core;
@@ -127,7 +113,7 @@ read_movemap_from_da_linker_file()
 	return mm;
 }
 
-///@brief reads in file that specifies which regions of the protein will
+/// @brief reads in file that specifies which regions of the protein will
 ///  will move during domain assembly
 ///  Each line of the file should have the start and end position for a linker region
 bool
@@ -159,7 +145,7 @@ read_linker_file(
   return true;
 }
 
-///@brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
+/// @brief function that parses the rna regions specified into a boolean array to be used by a RNA Fragment Mover Object
 ObjexxFCL::FArray1D_bool
 set_moveable_rna(
   pose::Pose & full_pose,
@@ -184,8 +170,7 @@ set_moveable_rna(
 }
 
 
-
-///@brief sets movemap true for regions specified in linker file
+/// @brief sets movemap true for regions specified in linker file
 void
 set_movemap_for_linkers(
   utility::vector1< std::pair < Size, Size > > const & linker_ranges,
@@ -201,7 +186,7 @@ set_movemap_for_linkers(
 	}
 }
 
-///@brief centroid mode optimization of linkers
+/// @brief centroid mode optimization of linkers
 void
 optimize_linkers_centroid_mode(
   kinematics::MoveMapOP & mm,
@@ -281,7 +266,7 @@ optimize_linkers_centroid_mode(
 	// protocols::viewer::add_conformation_viewer( full_pose.conformation(), "full_pose", 400, 400 );
 }
 
-///@brief a helper function for the domain assembly protocol. Selects
+/// @brief a helper function for the domain assembly protocol. Selects
 ///residues near linkers and domain interfaces for repacking
 void
 da_residues_to_repack(
@@ -318,7 +303,7 @@ da_residues_to_repack(
 	}   // for over all residues
 }
 
-///@brief a helper function for the domain assembly protocol.  For each residue
+/// @brief a helper function for the domain assembly protocol.  For each residue
 /// it finds the closest N-terminal and C-terminal movable residue (as specified
 /// in the input movemap)
 void
@@ -374,8 +359,6 @@ optimize_linkers_fullatom_mode(
 
 	// Add the constraints, if any, to the score function
 	core::scoring::constraints::add_fa_constraints_from_cmdline(full_pose, *scorefxn);
-
-
 
 
 	MonteCarloOP mc( new MonteCarlo( full_pose, *scorefxn, 0.8 /*temperature*/ ) );
@@ -628,7 +611,7 @@ optimize_linkers_rna_fullatom_mode(
 }
 
 
-///@brief optimizes linkers in a multidomain protein
+/// @brief optimizes linkers in a multidomain protein
 /// expects an input pdb with multi-domains and an
 /// input file specifying which torsion angles to optimize
 void

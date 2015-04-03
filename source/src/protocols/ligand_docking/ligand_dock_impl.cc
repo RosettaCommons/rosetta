@@ -20,7 +20,6 @@
 // Package Headers
 
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 #include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
 
@@ -34,9 +33,6 @@
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
 
 // Utility Headers
 

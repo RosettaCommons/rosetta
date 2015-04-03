@@ -18,11 +18,9 @@
 // Unit headers
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/downstream/ScoringSecMatchRPE.fwd.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -30,11 +28,8 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

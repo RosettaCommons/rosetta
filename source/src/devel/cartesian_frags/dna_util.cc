@@ -19,8 +19,6 @@
 
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/CircularPowerFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -34,7 +32,6 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>

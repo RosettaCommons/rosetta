@@ -9,7 +9,7 @@
 
 /// @file SheetFilter.cc
 /// @brief runs reject or accept filters on pose
-/// @detailed
+/// @details
 ///	  Contains currently: SheetFilter
 ///
 ///
@@ -44,12 +44,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
-
-
-
-
-
 
 
 static thread_local basic::Tracer tr( "protocols.simple_filters.SheetFilter" );
@@ -194,12 +188,11 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 ////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_diamers
 ///
 /// @brief
 ///     THIS PROGRAM IDENTIFIES THE STRAND DIAMERS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  strnm - [in/out]? -
@@ -219,9 +212,8 @@ bool SheetFilter::apply( core::pose::Pose const & pose ) const {
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 10/31/00
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_diamers(
@@ -283,12 +275,11 @@ SheetFilter::ingo_diamers(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_find_dir
 ///
 /// @brief
 ///     THIS PROGRAM FINDS THE DIRECTIONS OF THE STRANDS IN THE SHEETS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  shnm - [in/out]? -
 /// @param  hm - [in/out]? -
@@ -308,9 +299,8 @@ SheetFilter::ingo_diamers(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_find_dir(
@@ -379,12 +369,11 @@ SheetFilter::ingo_find_dir(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_find_ord
 ///
 /// @brief
 ///     THIS PROGRAM FINDS THE ORDER OF THE STRANDS IN THE SHEETS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  shnm - [in/out]? -
 /// @param  hm - [in/out]? -
@@ -405,9 +394,8 @@ SheetFilter::ingo_find_dir(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_find_ord(
@@ -516,12 +504,11 @@ SheetFilter::ingo_find_ord(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_hand
 ///
 /// @brief
 ///     THIS PROGRAM CHECKS THE HANDEDNESS OF A SHEET
 ///
-/// @detailed
+/// @details
 ///
 /// @param  k - [in/out]? -
 /// @param  shnm - [in/out]? -
@@ -548,9 +535,8 @@ SheetFilter::ingo_find_ord(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_hand(
@@ -703,12 +689,11 @@ SheetFilter::ingo_hand(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_ident_sheets
 ///
 /// @brief
 ///     THIS PROGRAM IDENTIFIES THE SHEETS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  nstr - [in/out]? -
@@ -728,9 +713,8 @@ SheetFilter::ingo_hand(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_ident_sheets(
@@ -783,7 +767,6 @@ SheetFilter::ingo_ident_sheets(
 //js            goto L1234;
 //js         }
 	}
-
 
 
 //      rubbish = 0
@@ -877,13 +860,12 @@ SheetFilter::ingo_ident_sheets(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_lnl
 ///
 /// @brief
 ///     THIS PROGRAM DETERMINES THE NUMBER OF LOCALS AND NONLOCAL
 ///     STRAND PAIRS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  hm - [in/out]? -
 /// @param  order - [in/out]? -
@@ -898,9 +880,8 @@ SheetFilter::ingo_ident_sheets(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_lnl(
@@ -922,12 +903,11 @@ SheetFilter::ingo_lnl(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_locations
 ///
 /// @brief
 ///     THIS FUNCTION DETERMINES THE CA LOCATION OF EACH RESIDUE
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  natm - [in/out]? -
@@ -943,9 +923,8 @@ SheetFilter::ingo_lnl(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/00
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_locations(
@@ -972,13 +951,12 @@ SheetFilter::ingo_locations(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_number_of_strands
 ///
 /// @brief
 ///     THIS FUNCTION COUNTS THE NUBER OF STRANDS IN THE
 ///     PROTEIN/DECOY
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  scstr - [in/out]? -
@@ -992,9 +970,8 @@ SheetFilter::ingo_locations(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_number_of_strands(
@@ -1014,13 +991,12 @@ SheetFilter::ingo_number_of_strands(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_proper_sheets
 ///
 /// @brief
 ///     THIS PROGRAM CHECKS THE CONFIGURATION OF THE STRANDS FROM
 ///     THE SECONDARY STRUCTURE PREDICTION
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nstr - [in/out]? -
 /// @param  nsht - [in/out]? -
@@ -1047,9 +1023,8 @@ SheetFilter::ingo_number_of_strands(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_proper_sheets(
@@ -1151,12 +1126,11 @@ SheetFilter::ingo_proper_sheets(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_sheet_stuff
 ///
 /// @brief
 ///     THIS FUNCTION SPITS OUT THE BETA SHEET INFORMATION
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  scstr - [in/out]? -
@@ -1184,9 +1158,8 @@ SheetFilter::ingo_proper_sheets(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/23/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_sheet_stuff(
@@ -1360,13 +1333,12 @@ SheetFilter::ingo_sheet_stuff(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_start_stop
 ///
 /// @brief
 ///     THIS FUNCTION IDENTIFIES THE START AND END POINTS OF THE
 ///     STRANDS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  scstr - [in/out]? -
@@ -1383,9 +1355,8 @@ SheetFilter::ingo_sheet_stuff(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_start_stop(
@@ -1432,12 +1403,11 @@ SheetFilter::ingo_start_stop(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_strand_dirs
 ///
 /// @brief
 ///     THIS PROGRAM DETERMINES THE STRAND DIRECTIONS
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  nstr - [in/out]? -
@@ -1454,9 +1424,8 @@ SheetFilter::ingo_start_stop(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 10/31/00
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_strand_dirs(
@@ -1481,12 +1450,11 @@ SheetFilter::ingo_strand_dirs(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_strand_dists_min
 ///
 /// @brief
 ///     THIS PROGRAM DETERMINES THE MINIMUM STRAND DISTANCES
 ///
-/// @detailed
+/// @details
 ///
 /// @param  nres - [in/out]? -
 /// @param  nstr - [in/out]? -
@@ -1504,9 +1472,8 @@ SheetFilter::ingo_strand_dirs(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 11/26/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_strand_dists_min(
@@ -1571,12 +1538,11 @@ SheetFilter::ingo_strand_dists_min(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin ingo_clean_ss
 ///
 /// @brief
 ///     THIS PROGRAM CLEANS THE SECONDARY STRUCTURE OF DECOYS
 ///
-/// @detailed
+/// @details
 ///car notes from ingo
 ///
 ///$$$ If I understand my notes
@@ -1611,9 +1577,8 @@ SheetFilter::ingo_strand_dists_min(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified 12/10/01
 /////////////////////////////////////////////////////////////////////////////////
 void
 SheetFilter::ingo_clean_ss(

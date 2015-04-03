@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/checker/RNA_ChainClosureChecker.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

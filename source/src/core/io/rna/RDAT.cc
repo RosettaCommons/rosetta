@@ -9,7 +9,7 @@
 
 /// @file core/io/rna/RDAT.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -715,7 +715,6 @@ RDAT::check_annotation( Annotation const & annotation ) const {
 		}
 		return tags;
 	}
-
 
 
 } //rna

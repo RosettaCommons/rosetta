@@ -9,7 +9,7 @@
 
 /// @file src/protocols/jumping/PairingTemplate
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -64,7 +64,7 @@ public:
 
 class BaseDisulfPairingLibrary : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~BaseDisulfPairingLibrary();
 
 	//Not currently using base class as copied from PairingLibrary, it's hanging

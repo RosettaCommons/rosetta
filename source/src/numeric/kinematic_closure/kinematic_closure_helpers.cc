@@ -12,8 +12,6 @@
 /// @author Daniel J. Mandell
 
 // C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <iostream>
 // Utility headers
 #include <utility/vector1.hh>
 // Rosetta Headers

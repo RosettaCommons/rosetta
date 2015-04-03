@@ -619,7 +619,6 @@ struct python_istream_wrapper
 };
 
 
-
 }} // boost_adaptbx::python
 
 #endif // GUARD
@@ -641,8 +640,6 @@ void Q_Test_EnergyMethodCreator(core::scoring::methods::EnergyMethodCreatorOP cr
 }
 
 
-
-
 template< class T >
 T * getCAP( pointer::access_ptr<T> rs ) {
   T & rs_ref( *rs );
@@ -651,7 +648,7 @@ T * getCAP( pointer::access_ptr<T> rs ) {
 }
 
 // std::pair ---------------------------------------------------------------------------------------------------
-//
+
 
 //vector1 wrapper requires ostream '<<' operator
 

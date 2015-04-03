@@ -41,7 +41,7 @@ my_main( void* ) {
 	return 0;
 }
 
-//
+
 //@brief main function
 int
 main( int argc, char* argv[] )

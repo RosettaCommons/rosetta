@@ -34,9 +34,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
-// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 // // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -46,7 +43,6 @@
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -56,7 +52,6 @@
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
-
 
 
 using basic::T;
@@ -75,7 +70,7 @@ typedef id::DOF_ID DOF_ID;
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @detailed
+/// @details
 ///car note that this calculates the deriv for all torsion angles even
 ///car those that are fixed. Because of the way that the derivative is
 ///car calculated, I don't believe this is a significant slow down (ie
@@ -119,7 +114,7 @@ typedef id::DOF_ID DOF_ID;
 ///
 ///car if two atoms are fixed relatively in cartesian space, then dr/dphi = 0
 ///car and there is no contribution to the derivative
-///
+
 
 void
 atom_tree_dfunc(
@@ -188,7 +183,6 @@ debug_assert (pose::symmetry::is_symmetric( pose ) );
 		}
 		runtime_assert( imap == symm_min_map.nangles() ); // sanity check
 	}
-
 
 
 	/////////////////////////////////////////////////////////////////////////////

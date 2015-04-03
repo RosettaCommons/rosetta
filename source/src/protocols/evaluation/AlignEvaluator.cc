@@ -15,17 +15,13 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/id/types.hh>

@@ -16,7 +16,6 @@
 
 // Unit Headers
 #include <core/scoring/Ramachandran.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ProteinTorsion.hh>
 
 // Project Headers
 #include <core/types.hh>

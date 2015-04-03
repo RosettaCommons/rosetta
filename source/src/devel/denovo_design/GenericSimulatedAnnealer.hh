@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 /// @file src/devel/simple_moves/GenericSimulatedAnnealer.hh
 /// @brief perform a given mover and sample structures by MonteCarlo with simulated annealing of acceptance temperatures
-/// @detailed The "score" evaluation of pose during MC after applying mover is done by
+/// @details The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Tom Linsky (tlinsky@uw.edu)

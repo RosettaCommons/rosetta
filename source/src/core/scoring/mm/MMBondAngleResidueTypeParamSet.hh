@@ -20,8 +20,6 @@
 
 // Project headers
 #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>

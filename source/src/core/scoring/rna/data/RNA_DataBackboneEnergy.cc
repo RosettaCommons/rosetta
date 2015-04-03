@@ -120,7 +120,6 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -132,7 +131,7 @@ RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
 	pose.update_residue_neighbors();
 }
 
-///
+
 void
 RNA_DataBackboneEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -149,7 +148,6 @@ RNA_DataBackboneEnergy::setup_for_packing(
 {
 	pose.update_residue_neighbors();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -334,7 +332,6 @@ debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 		}
 
 
-
 		if ( rna_data_backbone_burial( j )  ) { // other residue's sugar atoms might be buried.
 
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
@@ -380,8 +377,6 @@ debug_assert( rna_data_backbone_burial.size() == pose.total_residue() );
 	}
 
 }
-
-
 
 
 /// @brief RNA_DataBackboneEnergy distance cutoff

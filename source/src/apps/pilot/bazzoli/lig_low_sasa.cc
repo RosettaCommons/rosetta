@@ -74,7 +74,6 @@ using std::string;
 static thread_local basic::Tracer TR( "apps.pilot.lig_low_sasa.main" );
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.

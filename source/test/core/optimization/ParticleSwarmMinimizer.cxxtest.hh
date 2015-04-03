@@ -19,8 +19,6 @@
 #include <utility/exit.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <cmath>
 
 //Auto Headers
 #include <utility/vector1.hh>

@@ -50,7 +50,6 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-
 static thread_local basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
 
 bool verify_identical(Pose& pose1, Pose& pose2)

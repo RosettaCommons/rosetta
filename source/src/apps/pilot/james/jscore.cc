@@ -16,7 +16,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 #include <devel/init.hh>
 

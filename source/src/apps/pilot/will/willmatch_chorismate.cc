@@ -14,11 +14,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
@@ -34,17 +32,13 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
@@ -83,7 +77,6 @@ typedef numeric::xyzMatrix<Real> Mat;
 static thread_local basic::Tracer TR( "willmatch_chorismate" );
 
 
-
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
   add_lower_terminus_type_to_pose_residue(pose,1);
   add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
@@ -91,8 +84,6 @@ void myoptH(Pose & pose, ScoreFunctionOP sf) {
   remove_lower_terminus_type_from_pose_residue(pose,1);
   remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
 }
-
-
 
 
 void run() {
@@ -105,7 +96,6 @@ void run() {
   // Real const MXDSMTL = tmpdis*tmpdis;
   // Real const MXAGMTL = option[willmatch::max_ang_metal]();
   // Real const MATCH_OVERLAP_DOT = cos(numeric::conversions::radians(option[willmatch::match_overlap_ang]()));
-
 
 
   core::io::silent::SilentFileData sfd;
@@ -207,7 +197,6 @@ void run() {
         cbnbrs[*rit]--; // self nbr
       }
     }
-
 
 
     Real cbcb_thresh2 = 11.5*11.5;
@@ -319,7 +308,6 @@ void run() {
   }
 
 }
-
 
 
 int main (int argc, char *argv[]) {

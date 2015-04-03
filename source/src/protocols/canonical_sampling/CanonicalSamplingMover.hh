@@ -15,24 +15,17 @@
 #ifndef INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH
 #define INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH
 
-// AUTO-REMOVED #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
 
 
 namespace protocols {

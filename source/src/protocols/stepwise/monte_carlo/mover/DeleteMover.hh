@@ -9,7 +9,7 @@
 
 /// @file DeleteMover.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

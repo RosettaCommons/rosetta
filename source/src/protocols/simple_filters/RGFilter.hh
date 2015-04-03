@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/RGFilters.hh
 /// @brief header file for SheetRGFilter class.
-/// @detailed
+/// @details
 /// @author Robert Vernon
 /// @author James Thompson
 
@@ -21,7 +21,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>

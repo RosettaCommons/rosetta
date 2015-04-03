@@ -25,7 +25,6 @@
 #include <utility/exit.hh>
 
 
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

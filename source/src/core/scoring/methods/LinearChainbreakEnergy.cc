@@ -17,11 +17,8 @@
 #include <core/scoring/methods/chainbreak_util.hh>
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
-// AUTO-REMOVED #include <boost/unordered/unordered_set.hpp>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -31,21 +28,17 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 #include <basic/Tracer.hh>
 
 #include <algorithm>
 #include <iostream>
-// AUTO-REMOVED #include <iterator>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
-
-
 
 
 namespace core {

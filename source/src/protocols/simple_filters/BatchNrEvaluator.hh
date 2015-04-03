@@ -9,12 +9,11 @@
 
 /// @file JumpEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_BatchNrEvaluator_hh
@@ -40,7 +39,6 @@
 #include <utility/vector1.hh>
 
 
-
 //// C++ headers
 
 namespace protocols {
@@ -55,7 +53,6 @@ public:
 	virtual std::string name( core::Size ) const { return "batch"; };
 private:
 };
-
 
 
 //@brief yields a column with the number of the batch decoy was evaluated in

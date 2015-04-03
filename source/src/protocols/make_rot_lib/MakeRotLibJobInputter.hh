@@ -32,7 +32,7 @@
 namespace protocols {
 namespace make_rot_lib {
 
-///@details JobInputter that creats jobs based on MakeRotLib option files.
+/// @details JobInputter that creats jobs based on MakeRotLib option files.
 class MakeRotLibJobInputter : public protocols::jd2::JobInputter
 {
 public:
@@ -41,10 +41,10 @@ public:
 
   virtual ~MakeRotLibJobInputter();
 
-  ///@brief this function is responsible for filling the pose reference with the pose indicated by the job
+  /// @brief this function is responsible for filling the pose reference with the pose indicated by the job
   virtual void pose_from_job( core::pose::Pose & pose, jd2::JobOP job );
 
-  ///@brief Determines what jobs exist from the make_rot_lib options file
+  /// @brief Determines what jobs exist from the make_rot_lib options file
   virtual void fill_jobs( jd2::Jobs & jobs );
 
   /// @brief Return the type of input source that the MakeRotLibJobInputter is currently using.

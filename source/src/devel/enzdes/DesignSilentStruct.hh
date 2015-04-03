@@ -17,22 +17,17 @@
 #define INCLUDED_devel_enzdes_DesignSilentStruct_hh
 
 
-
-
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 

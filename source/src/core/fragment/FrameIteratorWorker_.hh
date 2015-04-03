@@ -11,7 +11,7 @@
 /// @brief  set of fragments
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_FrameIteratorWorker__HH
 #define INCLUDED_core_fragment_FrameIteratorWorker__HH
@@ -20,25 +20,17 @@
 #include <core/fragment/FrameIteratorWorker_.fwd.hh>
 
 // type headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // Package Headers
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-
-// AUTO-REMOVED #include <core/fragment/FrameIterator.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/Frame.fwd.hh>
 #include <iostream>

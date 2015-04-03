@@ -38,7 +38,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-// AUTO-REMOVED #include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>

@@ -14,11 +14,6 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -28,15 +23,10 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
@@ -49,7 +39,6 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 // ObjexxFCL headers
@@ -72,7 +61,6 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector0.hh>
-
 
 
 using basic::T;
@@ -108,7 +96,6 @@ std::ostream & writeYamlValue(std::ostream & S, std::string name, bool value)
 	S << "'" << name << "' : " << sv << ", ";
 	return S;
 }
-
 
 
 ////////////////////////// ddG Functions ////////////////////////////////////////
@@ -148,7 +135,7 @@ store_energies( ObjexxFCL::FArray2D< Real > &two_d_e_arrays,
 			num_score_components++;
 		}
 	}
-	//
+
 
 	two_d_e_arrays.dimension(num_score_components,size_to_expect);
 
@@ -278,7 +265,6 @@ void correlation(std::string ddg_out){
 		yaml << "}\n";
 	}
 }
-
 
 
 ///////////////// Main ////////////////////////////////
@@ -459,7 +445,6 @@ main( int argc, char * argv [] )
 			//store components of energy breakdown in 2D array for easy averaging later on
 			store_energies(wt_score_components, (*score_structure_scorefxn), temporary_pose,i,num_iterations);
 			//end store components
-
 
 
 			if(debug_output){

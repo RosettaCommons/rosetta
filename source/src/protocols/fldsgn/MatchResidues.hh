@@ -63,7 +63,6 @@ public:// constructor/destructor
 	virtual ~MatchResidues();
 
 
-
 public:// parser
 
 	void parse_my_tag( TagCOP tag,

@@ -20,7 +20,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
@@ -37,7 +36,6 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {
@@ -79,9 +77,9 @@ public:
 	/// @brief pair each stub set with a position on the scaffold
 	/// @brief if no mutually exclusive matches are found for all sets, return false
 	bool pair_sets_with_positions( core::pose::Pose & pose );
-///@brief conducts user-specified design movers. Returns true if the energy per residue filter passes for each of the placed hotspots
+/// @brief conducts user-specified design movers. Returns true if the energy per residue filter passes for each of the placed hotspots
 	void design( core::pose::Pose & pose );
-	///@brief will be removed
+	/// @brief will be removed
 	bool place_stubs( core::pose::Pose & pose ) const;
 	virtual void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
@@ -89,7 +87,7 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
 	void final_cleanup( core::pose::Pose & pose );
-	///@brief removes and reinstates coordinate constraints for all placed hotspots according to coord_sdev
+	/// @brief removes and reinstates coordinate constraints for all placed hotspots according to coord_sdev
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev );
 	core::pack::task::PackerTaskOP create_task_for_hotspot_packing( core::pose::Pose const & );
 	core::pack::task::PackerTaskOP create_task_for_allhotspot_packing( core::pose::Pose const & );

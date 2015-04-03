@@ -23,7 +23,6 @@
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/OrderedTuple.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

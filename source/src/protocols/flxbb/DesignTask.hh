@@ -10,7 +10,7 @@
 /// @file protocols/flxbb/DesignTask.hh
 /// @brief
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
-///
+
 
 #ifndef INCLUDED_protocols_flxbb_DesignTask_hh
 #define INCLUDED_protocols_flxbb_DesignTask_hh
@@ -167,7 +167,6 @@ private:
 
 
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

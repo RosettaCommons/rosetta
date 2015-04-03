@@ -50,7 +50,6 @@
 #include <utility/vector0.hh>
 
 
-
 using namespace core;
 using namespace protocols::seeded_abinitio;
 static thread_local basic::Tracer TR( "protocols.seeded_abinitio.SwapSegment" );

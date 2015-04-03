@@ -32,7 +32,6 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
@@ -40,7 +39,6 @@
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
@@ -51,7 +49,6 @@
 
 // C++ Headers
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
 #include <utility/fixedsizearray1.hh>
 
 #include <core/id/TorsionID_Range.hh>
@@ -201,7 +198,7 @@ SidechainMover::parse_my_tag(
 	set_change_chi_without_replacing_residue( tag->getOption<core::Real>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
 }
 
-/// @detailed
+/// @details
 /// Check to make sure that a packer task exists and matches the numer of residues in
 /// the given pose. If that isn't the case, create a new one with the task factory.
 /// Exits with an error if no task factory exists.
@@ -595,7 +592,7 @@ SidechainMover::perturb_rot_within_well(
 		return task_initialized_;
 	}
 
-/// @detailed
+/// @details
 void
 SidechainMover::apply(
 	Pose & pose
@@ -759,7 +756,7 @@ SidechainMover::proposal_density(
 	return density;
 }
 
-/// @detailed
+/// @details
 void
 SidechainMover::test_move(
 	Pose &
@@ -768,7 +765,7 @@ SidechainMover::test_move(
 
 }
 
-/// @detailed
+/// @details
 /// all sidechains that might be changed are replaced with ideal coordinates that have
 /// the original chi angles
 void
@@ -1043,7 +1040,7 @@ SidechainMover::last_proposal_density_ratio()
 	return last_proposal_density_ratio_;
 }
 
-/// @detailed
+/// @details
 /// All move types are prefixed with "sc". Sections are divided by underscores.
 /// The next section indicates whether a mutation was made ("mut") or not ("chi").
 /// The last section indicates wehter chi sampling was uniform ("unif"), used
@@ -1118,7 +1115,6 @@ SidechainMover::update_type()
 	//	TR.Debug << "Set residue chi angles to:";
 	//	for (Size i = 1; i <= residue_type->nchi(); ++i) TR.Debug << " " << degrees(last_chi_angles_[i]);
 	//	TR.Debug << std::endl;
-
 
 
 } // sidechain_moves

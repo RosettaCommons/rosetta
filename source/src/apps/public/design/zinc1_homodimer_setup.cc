@@ -56,7 +56,7 @@ typedef point axis;
 
 basic::options::StringOptionKey const scaffold_pdb("scaffold_pdb");
 
-///@brief
+/// @brief
 class zinc1_homodimer_setup : public protocols::moves::Mover {
 public:
   zinc1_homodimer_setup()
@@ -157,7 +157,6 @@ public:
 
     return;
   }
-
 
 
 	virtual

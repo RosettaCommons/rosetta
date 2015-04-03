@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs/PseudocontactShiftEnergy.hh
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs_PseudocontactShiftEnergy_hh
@@ -137,8 +135,6 @@ core::Size version() const;
 };
 
 
-
-
 class PCS_Energy_parameters_manager {
 public:
 	static
@@ -212,8 +208,6 @@ public:
 	utility::vector1< bool >
 	get_vector_exclude_residues();
 	//rvernon
-
-
 
 
 	void

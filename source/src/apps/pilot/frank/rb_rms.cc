@@ -16,46 +16,30 @@
 #include <core/types.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/rbsegment_Moves/RBSegmentMover.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/viewer/viewers.hh>
 #include <protocols/jobdist/Jobs.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <utility/excn/Exceptions.hh>
 
 
-
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 
@@ -65,7 +49,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/rbsegment_relax.hh>
-
 
 
 int main(int argc, char **argv) {
@@ -103,14 +86,13 @@ int main(int argc, char **argv) {
 				core_reses.push_back( k );
 
 
-
 	MetaPoseInputStream input = streams_from_cmd_line();
 
 	SilentFileData sfd_out;
 	while( input.has_another_pose() ) {
 		input.fill_pose( current_pose, *rsd_set );
 
-		//
+
 		if ( option[ in::file::native ].user() ) {
 			core::Real CA_rmsd = core::scoring::CA_rmsd( native_pose, current_pose );
 			core::Real CA_core_rmsd = core::scoring::CA_rmsd( native_pose, current_pose , core_reses );

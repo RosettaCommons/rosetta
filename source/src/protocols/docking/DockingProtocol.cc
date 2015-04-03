@@ -28,44 +28,28 @@
 #include <protocols/docking/DockMinMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockingHighResLegacy.hh>
-// AUTO-REMOVED #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingProtocolCreator.hh> // Support the scriptor
 
 // Project Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/RepackSidechainsMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -77,7 +61,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
@@ -86,16 +69,13 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -620,25 +600,25 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 //destructor
 DockingProtocol::~DockingProtocol() {}
 
-///@brief clone operator, calls the copy constructor
+/// @brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 DockingProtocol::clone() const {
 	//return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) ); This is bad do not clone this way.
 	return protocols::moves::MoverOP( new DockingProtocol(*this) );
 }
 
-///@brief fresh_instance returns a default-constructed object for the JD2
+/// @brief fresh_instance returns a default-constructed object for the JD2
 protocols::moves::MoverOP
 DockingProtocol::fresh_instance() const {
 	return protocols::moves::MoverOP( new DockingProtocol() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool DockingProtocol::reinitialize_for_new_input() const {
 	return true;
 }
 
-///@brief copy ctor
+/// @brief copy ctor
 DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
 	Mover(rhs),
 	if_ensemble_( false ) // valgrind complains about uninitialized variable w/o this.
@@ -646,7 +626,7 @@ DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 DockingProtocol & DockingProtocol::operator=( DockingProtocol const & rhs ){
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -901,11 +881,10 @@ void DockingProtocol::add_constraints_to_scorefunction()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin Docking apply
 ///
 /// @brief main docking protocol
 ///
-/// @detailed
+/// @details
 /// Main function for docking. Includes the following steps:
 ///      0) prepack mode: prepare a starting structure for later runs
 ///   OR:

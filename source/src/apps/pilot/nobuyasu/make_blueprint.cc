@@ -110,7 +110,7 @@ main( int argc, char * argv [] )
 	BetaAlphaBetaMotifSet bab( ssinfo, sheet_set );
 	output << bab;
 
-	//
+
 	core::sequence::ABEGOManager am;
 	Size level( option[ abego ]() );
 	utility::vector1< std::string > abego = core::sequence::get_abego( pose, level );

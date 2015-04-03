@@ -10,7 +10,7 @@
 /// @file L1ScoringScheme.hh
 /// @brief class definition for a profile-profile scoring scheme for
 /// comparing two sequence profiles using the L1 city-block distance.
-/// @detailed Simply based on comparing single profiles from two protein
+/// @details Simply based on comparing single profiles from two protein
 /// sequences by computing the sum of P(A) - P(B) for all matching probabilities
 /// in the profiles A and B. Also includes with affine gap penalties of the form
 /// penalty = A + Bk, where A represents the penalty for starting a gap, and B
@@ -22,7 +22,6 @@
 #define INCLUDED_core_sequence_L1ScoringScheme_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/sequence/ScoringScheme.hh>
 
 namespace core {

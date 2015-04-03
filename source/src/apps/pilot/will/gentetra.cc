@@ -263,7 +263,6 @@ vector1<std::pair<Vec,Vec> > intersecting_disulfide_axes(Vec CB, Vec SG, Vec sym
 }
 
 
-
 void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
   // core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
@@ -303,7 +302,6 @@ std::pair<Size,Size> makesplitwork_3bpy(Size total) {
   TR << "SIZE " << size1 << " " << size2 << std::endl;
   return std::pair<Size,Size>(size1,size2);
 }
-
 
 
 void run() {
@@ -505,13 +503,11 @@ void run() {
           }
 
 
-
         }
         // utility_exit_with_message("debug SG");
       } else {
         //matches?;
       }
-
 
 
     }
@@ -543,17 +539,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

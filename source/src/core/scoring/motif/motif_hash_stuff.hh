@@ -159,7 +159,6 @@ namespace motif {
 	};
 
 
-
 class ResPairMotif {
  private:
 	/*  4 */ char ss1_,ss2_,aa1_,aa2_;
@@ -579,23 +578,10 @@ class MotifHashManager {
 	void load_motifs(string const & fname, ResPairMotifs & motifs, ResPairMotifsStringMap * map=NULL);
 
 
-
-
-
 }
 }
 }
 
 #endif
-
-
-
-
-
-
-
-
-
-
 
 

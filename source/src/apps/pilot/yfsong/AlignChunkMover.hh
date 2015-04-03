@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Align a random jump to template
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #ifndef apps_pilot_yfsong_AlignChunkMover_HH

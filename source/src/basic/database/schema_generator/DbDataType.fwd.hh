@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_basic_database_schema_generator_DbDataType_FWD_HH
 #define INCLUDED_basic_database_schema_generator_DbDataType_FWD_HH
 

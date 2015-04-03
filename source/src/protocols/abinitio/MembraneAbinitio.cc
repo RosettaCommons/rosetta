@@ -9,7 +9,7 @@
 
 /// @file MembraneAbinitio.cc
 /// @brief ab-initio fragment assembly protocol for membrane proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Membrane Abinitio
 ///
 ///
@@ -18,7 +18,6 @@
 
 // Unit Headers
 #include <protocols/abinitio/MembraneAbinitio.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/SymmetricFragmentMover.hh>
 #include <protocols/simple_moves/GunnCost.hh>
 
 // Package Headers
@@ -35,8 +34,6 @@
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -44,7 +41,6 @@
 // Option headers
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -56,8 +52,6 @@
 #include <protocols/viewer/viewers.hh>
 #endif
 
-// AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
-// AUTO-REMOVED #include <protocols/jumping/MembraneJump.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -67,11 +61,7 @@
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -96,8 +86,6 @@
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
-
 
 
 static thread_local basic::Tracer tr( "protocols.membrane.abinitio", basic::t_info );
@@ -299,11 +287,6 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 //		if ( option[ OptionKeys::abinitio::only_stage1_2 ] ) return success;
 
 
-
-			//
-			//
-
-
 		// part 2 ----------------------------------------
 
 
@@ -325,7 +308,6 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 				{
 					PROF_START( basic::STAGE2 );
 					clock_t starttime = clock();
-
 
 
 					prepare_stage2( pose );
@@ -355,7 +337,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 					//BW ADD ALLOW FRAGMENT INSERTION IN ALL INSERTED REGIONS
 					move_all_inserted(pose);
 
-					//
+
 					// moved checkpointing into do_stage3_cycles because of structure store
 					// part 3 ----------------------------------------
 					tr.Info <<  "\n===================================================================\n";
@@ -673,7 +655,6 @@ void MembraneAbinitio::set_default_options() {
 }
 
 
-
 void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 
 	//using namespace common_regions;
@@ -692,8 +673,6 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 	core::scoring::MembraneTopology & topology( nonconst_MembraneTopology_from_pose(pose) );
 	Size const total_tmhelix=topology.tmhelix();
 	Size const total_residue=pose.total_residue();
-
-
 
 
 	tr.Info << "Adding region tmh:" << total_tmhelix << " tmh_inserted: " << topology.tmh_inserted() << " nres: " << total_residue << " num_jumps: " << num_jumps << std::endl;
@@ -961,7 +940,6 @@ void MembraneAbinitio::add_spanning_region( core::pose::Pose & pose) {
 		}
 	}
 	//bw This are important for scoring still...
-
 
 
 	mres_start=1;
@@ -1289,8 +1267,6 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 }
 
 
-
-
 /*! @detail stage3 cycles:
 	nloop1 : outer iterations
 	nloop2 : inner iterations
@@ -1383,7 +1359,6 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
  }
 
 
-
 int MembraneAbinitio::do_stage3b_cycles( pose::Pose &pose ) {
 	// interlaced score2 / score 5 loops
 
@@ -1459,7 +1434,6 @@ int MembraneAbinitio::do_stage3b_cycles( pose::Pose &pose ) {
 	}; // loop 1
 	return nloop1*nloop2*cycles; //stage3_cycles();
 }
-
 
 
 moves::TrialMoverOP

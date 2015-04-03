@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace wum {
 
@@ -154,7 +153,7 @@ class MPI_WorkUnitManager : public WorkUnitManager {
 		/// @brief Total number of sends
 		mutable core::Real send_wu_time_n_;
 
-		///@brief Total time spent in MPI_Recv
+		/// @brief Total time spent in MPI_Recv
 		mutable core::Real recv_wu_time_;
 
 		/// @brief Total time of receives
@@ -162,11 +161,6 @@ class MPI_WorkUnitManager : public WorkUnitManager {
 
 		char machine_letter_;
 };
-
-
-
-
-
 
 
 }

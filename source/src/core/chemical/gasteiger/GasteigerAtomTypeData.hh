@@ -483,8 +483,6 @@ bool is_gasteiger_type_; //!< Is the type a proper gasteiger type
 PiContributionType pi_contribution_; //!< Contribution of this atom type to a pi-conjugated system
 
 
-
-
 }; // class AtomTypeData
 
 inline std::ostream &
@@ -493,7 +491,6 @@ operator<< (std::ostream & out, GasteigerAtomTypeData const & obj ){
 }
 
 // No operator>> because we also need to pass a ElementSet in order to parse the element types.
-
 
 
 } // gasteiger

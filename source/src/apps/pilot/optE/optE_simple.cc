@@ -15,40 +15,21 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <devel/init.hh>
 
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -60,15 +41,9 @@
 
 #include <core/graph/Graph.hh>
 
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/mm/MMTorsionLibrary.hh>
-// AUTO-REMOVED #include <core/mm/MMTorsionLibrary.fwd.hh>
 
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
@@ -80,9 +55,6 @@
 
 #include <core/options/util.hh>
 
-// AUTO-REMOVED #include <core/util/basic.hh>
-
-// AUTO-REMOVED #include <core/io/database/open.hh>
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>

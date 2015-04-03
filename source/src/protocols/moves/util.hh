@@ -17,11 +17,8 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/types.hh>
 #include <protocols/filters/Filter.fwd.hh>

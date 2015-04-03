@@ -30,5 +30,3 @@ typedef utility::pointer::shared_ptr< H3RefineCCD const > H3RefineCCDCOP;
 #endif
 
 
-
-

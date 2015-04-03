@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_scoring_methods_EnsembleEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

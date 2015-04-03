@@ -25,7 +25,6 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>

@@ -74,7 +74,6 @@ namespace rotamer_recovery {
 static Tracer TR("protocol.rotamer_recovery.RRReporterHuman");
 
 
-
 PerNativeRRReporterHuman::PerNativeRRReporterHuman() :
 	initialized_( false ),
 	native_pose_(),
@@ -115,7 +114,7 @@ PerNativeRRReporterHuman::PerNativeRRReporterHuman(
 {}
 
 
-///@detail returns
+/// @detail returns
 /// 'O' <- cis-omega
 /// 'G' <- alpha-L
 /// 'E' <- E
@@ -145,7 +144,6 @@ PerNativeRRReporterHuman::torsion2big_bin(
 	}
 	return 'X';
 }
-
 
 
 void

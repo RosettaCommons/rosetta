@@ -71,7 +71,7 @@ using core::Real;
 
 static thread_local basic::Tracer TR( "rblinker2_overlay_bound" );
 
-//
+
 // inline void xform_pose( core::pose::Pose & pose, Stub const & s ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -104,8 +104,6 @@ static thread_local basic::Tracer TR( "rblinker2_overlay_bound" );
 // 	s.v = r2.xyz(2)-s.M*r1.xyz(2);
 // 	return s;
 // }
-
-
 
 
 class SimpleBBMover : public protocols::moves::Mover {
@@ -516,7 +514,6 @@ void* doit(void*) {
 
 	return NULL;
 }
-
 
 
 int main( int argc, char * argv [] ) {

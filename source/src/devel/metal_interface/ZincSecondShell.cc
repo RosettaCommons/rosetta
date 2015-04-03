@@ -40,8 +40,6 @@
 #include <sstream>
 
 
-
-
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -57,7 +55,7 @@ using namespace core;
 namespace devel {
 namespace metal_interface {
 
-///@brief
+/// @brief
 
 
 ZincSecondShell::ZincSecondShell( core::pose::Pose const & pose, utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr)
@@ -227,7 +225,6 @@ ZincSecondShell::fill_second_shell_atom_ids() {
 }
 
 
-
 void
 ZincSecondShell::calculate_hbonds_and_sasa(	Pose const & pose ) {
 
@@ -292,7 +289,6 @@ ZincSecondShell::report_buried_unsat(	utility::vector1< id::AtomID > atom_ids) {
 }
 
 
-
 core::Size
 ZincSecondShell::satisfaction_cutoff( std::string atom_type )
 {
@@ -302,7 +298,6 @@ ZincSecondShell::satisfaction_cutoff( std::string atom_type )
 	//everything else we expect to have 3 bonded/h-bonded neighbours to count as satisfied
 	else return 3;
 }
-
 
 
 } //metal_interface

@@ -16,7 +16,6 @@
 
 // Unit headers
 #include <core/scoring/methods/MMLJEnergyInter.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMLJLibrary.hh>
 #include <core/scoring/mm/MMLJEnergyTable.hh>
 
 #include <core/scoring/mm/mmtrie/MMEnergyTableAtom.hh>
@@ -26,8 +25,6 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrie.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/TrieCountPairBase.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -64,7 +61,7 @@ public:
 		kinematics::MinimizerMapBase const & min_map
 	) const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing(
@@ -87,7 +84,7 @@ public:
 	void
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
 
-  ///
+
   virtual
   void
   residue_pair_energy(

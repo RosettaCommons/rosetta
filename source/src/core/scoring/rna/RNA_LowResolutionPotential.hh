@@ -52,7 +52,7 @@ class RNA_LowResolutionPotential : public utility::pointer::ReferenceCount {
 public:
 	RNA_LowResolutionPotential();
 
-	///
+
 	void
 	update_rna_centroid_info(
 		pose::Pose & pose

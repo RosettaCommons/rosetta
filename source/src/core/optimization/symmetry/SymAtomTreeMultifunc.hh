@@ -17,8 +17,6 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
-// AUTO-REMOVED #include <core/optimization/symmetry/sym_atom_tree_minimize.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -52,7 +50,6 @@ public: // Creation
 		deriv_check_( deriv_check_in ),
 		deriv_check_verbose_( deriv_check_verbose_in )
 	{}
-
 
 
 	/// @brief Destructor

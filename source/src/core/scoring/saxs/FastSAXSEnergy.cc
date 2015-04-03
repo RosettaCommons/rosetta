@@ -15,7 +15,6 @@
 #include <core/scoring/saxs/FastSAXSEnergy.hh>
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -29,31 +28,19 @@
 #include <core/chemical/AA.hh>
 
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
-// AUTO-REMOVED #include <numeric/interpolation/spline/Interpolator.hh>
-// AUTO-REMOVED #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
 
 
 // Utility headers
-// AUTO-REMOVED #include <basic/prof.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>

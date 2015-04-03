@@ -38,7 +38,7 @@ using utility::receive_string_from_node;
 
 static thread_local basic::Tracer TR( "basic.message_listening" );
 
-///@brief used for message passing to the
+/// @brief used for message passing to the
 ///MPIWorkPoolJobDistributor. This function will ask the head node for
 ///data.  The type of data returned is based on the type of listener
 ///created based on the listener_tags of the MessageListenerFactory
@@ -97,7 +97,6 @@ listener_tag_to_name(listener_tags tag)
 			return "Unrecognized listener_tag: " + boost::lexical_cast<std::string>(tag);
 	}
 }
-
 
 
 listener_tags

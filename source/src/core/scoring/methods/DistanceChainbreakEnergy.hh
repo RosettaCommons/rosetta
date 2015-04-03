@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-
 //#include <ObjexxFCL/FArray3D.hh>
 
 namespace core {

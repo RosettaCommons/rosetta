@@ -34,7 +34,7 @@ public:
 	ResidueLoader() {}
 	virtual ~ResidueLoader() {}
 
-	///@brief returns a pointer to a ResidueType object originated from the data_source specified to the ResourceManager
+	/// @brief returns a pointer to a ResidueType object originated from the data_source specified to the ResourceManager
 	virtual
 	utility::pointer::ReferenceCountOP
 	create_resource(

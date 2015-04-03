@@ -123,7 +123,6 @@ BatchFeatures::features_reporter_dependencies() const {
 }
 
 
-
 string
 BatchFeatures::indices() const {
 	return "";

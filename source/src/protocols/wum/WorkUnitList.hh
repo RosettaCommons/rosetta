@@ -22,7 +22,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace wum {
 
@@ -58,8 +57,6 @@ class WorkUnitList{
     /// An STL map is used to associate the WUs with strings.
 		std::map< std::string, WorkUnitBaseCOP > work_unit_list_;
 };
-
-
 
 
 }

@@ -120,7 +120,6 @@ private: // Static fields
 utility::factory::Registrant< Product > const ProductA::factory_registrant_( "ProductA", ProductA::factory_create );
 
 
-
 /// @brief Concrete Product B
 class ProductB : public Product {
 

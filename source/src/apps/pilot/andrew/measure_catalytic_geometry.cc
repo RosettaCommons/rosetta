@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 #include <devel/init.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -51,7 +50,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 OPT_1GRP_KEY( String, measure, D1 )

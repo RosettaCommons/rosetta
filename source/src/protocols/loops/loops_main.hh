@@ -19,17 +19,13 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/frags/TorsionFragment.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 
 #include <utility/vector1.fwd.hh>
 
-// AUTO-REMOVED #include <map>
 #include <vector>
 
 #include <utility/vector1.hh>
@@ -38,11 +34,11 @@
 namespace protocols {
 namespace loops {
 
-///@brief the main function for perform loop modeling
+/// @brief the main function for perform loop modeling
 ////voi/d
 ///loops_main( core::pose::Pose & pose );
 
-///@brief construct a fold tree from loop definition
+/// @brief construct a fold tree from loop definition
 void
 fold_tree_from_loops(
 	core::pose::Pose const & pose,
@@ -75,7 +71,7 @@ void add_single_cutpoint_variant( core::pose::Pose & pose, const Loop & loop );
 void add_single_cutpoint_variant( core::pose::Pose & pose, const core::uint cutpoint );
 
 
-///@brief create a MoveMap for use of minimization based on loop definition (wrapper)
+/// @brief create a MoveMap for use of minimization based on loop definition (wrapper)
 void
 loops_set_move_map(
 	core::pose::Pose & pose,
@@ -96,7 +92,7 @@ loops_set_move_map(
 	core::Real neighbor_dist = 10.0
 );
 
-///@brief create a MoveMap for use of minimization based on loop definition
+/// @brief create a MoveMap for use of minimization based on loop definition
 void
 loops_set_move_map(
 	Loops const & loops,
@@ -139,7 +135,7 @@ set_move_map_for_centroid_loop(
 	core::kinematics::MoveMap & mm
 );
 
-///@brief add flank stem residues to the loop movemap
+/// @brief add flank stem residues to the loop movemap
 void //made by JQX
 add_loop_flank_residues_bb_to_movemap(
     Loops const & loops,
@@ -147,7 +143,7 @@ add_loop_flank_residues_bb_to_movemap(
     core::Size flank_size=2
 );
 
-///@brief close loops by the CCD mechanism
+/// @brief close loops by the CCD mechanism
 void
 ccd_close_loops(
 	core::pose::Pose & pose,
@@ -216,7 +212,6 @@ set_secstruct_from_dssp(
 	core::pose::Pose & pose,
 	std::string const & filename
 );
-
 
 
 /// @details   set ideal BB geometry; this must occur so that loops with missing density work.

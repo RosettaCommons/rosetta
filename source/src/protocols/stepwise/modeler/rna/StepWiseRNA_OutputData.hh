@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_OutputData.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripakdeevong
 

@@ -112,7 +112,6 @@
  #include <numeric/xyzVector.hh>
  #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
  #include <core/scoring/constraints/ConstraintSet.hh>
  #include <core/scoring/func/FlatHarmonicFunc.hh>
@@ -136,7 +135,6 @@
 
 #include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
@@ -531,7 +529,6 @@ make_sequence_change(
 		pose.replace_residue( seqpos, *new_rsd, false );
 	}
 }
-
 
 
 bool
@@ -993,7 +990,7 @@ refine_fa_pep_bb(
 }
 */
 
-///@brief helper code for fragments generation, copied from S.M.Lewis
+/// @brief helper code for fragments generation, copied from S.M.Lewis
 core::fragment::FragSetCOP
 make_frags(
 	core::Size const start,
@@ -1453,7 +1450,6 @@ get_binding_score(
 }
 
 
-
 void
 print_pep_analysis(
 	std::string pdb_name,
@@ -1608,7 +1604,6 @@ RunPepSpec()
 			pep_coord_csts.push_back( pep_cst );
 		}
 	}
-
 
 
 	//define scoring functions//

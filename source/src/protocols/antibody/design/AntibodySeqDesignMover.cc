@@ -370,9 +370,6 @@ AntibodySeqDesignMover::apply(core::pose::Pose& pose){
 }
 
 
-
-
-
 } //design
 } //antibody
 } //protocols

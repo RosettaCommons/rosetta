@@ -85,7 +85,6 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 }
 
 
-///
 BfactorMultifunc::BfactorMultifunc(
 		core::pose::Pose & pose_in,
 		core::Real wt_adp,
@@ -131,7 +130,6 @@ BfactorMultifunc::BfactorMultifunc(
 }
 
 
-///
 ///  pose with B factors --> multivec
 void
 BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimization::Multivec &y ) const {
@@ -148,8 +146,6 @@ BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimizati
 }
 
 
-
-///
 ///   multivec ---> pose B factors
 void
 BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, core::pose::Pose & pose ) const {
@@ -166,7 +162,7 @@ BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, co
 	}
 }
 
-///
+
 ///  B factor optimization multifunc
 core::Real
 BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const {
@@ -419,7 +415,6 @@ BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimizat
 }
 
 
-
 BfactorFittingMover::BfactorFittingMover() : moves::Mover() {
 	init();
 }
@@ -515,7 +510,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	symmetrizeBfactors( pose );
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &, Filters_map const &,
 		moves::Movers_map const &, Pose const &)
@@ -555,7 +550,7 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 		deriv_check_ = tag->getOption<bool>("deriv_check");
 	}
 
-	//
+
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");
 	}

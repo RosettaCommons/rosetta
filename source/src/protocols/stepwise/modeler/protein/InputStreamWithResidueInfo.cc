@@ -9,7 +9,7 @@
 
 /// @file StepWiseProteinPoseSetup
 /// @brief Sets up pose and job parameters for protein or RNA stepwise building.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 /// @author Parin Sripakdeevong
 
@@ -431,7 +431,6 @@ namespace protein {
 	InputStreamWithResidueInfo::set_backbone_only(  bool const setting ){
 		backbone_only_ = setting;
 	}
-
 
 
 } //protein

@@ -20,8 +20,6 @@
 
 #include <core/pack/task/PackerTask.hh>
 
-// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -62,7 +60,7 @@ RestrictByCalculatorsOperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation );
 }
 
-///@details be warned if you use clone that you'll not get new calculators
+/// @details be warned if you use clone that you'll not get new calculators
 core::pack::task::operation::TaskOperationOP RestrictByCalculatorsOperation::clone() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictByCalculatorsOperation( *this ) );

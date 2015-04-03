@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/FavorSymmetricSequenceCreator.hh
-///@brief apply constraints to enforce a symmetric sequence
-///@author Sam DeLuca
+/// @file protocols/simple_moves/FavorSymmetricSequenceCreator.hh
+/// @brief apply constraints to enforce a symmetric sequence
+/// @author Sam DeLuca
 
 #ifndef INCLUDED_protocols_simple_moves_FavorSymmetricSequenceCreator_hh
 #define INCLUDED_protocols_simple_moves_FavorSymmetricSequenceCreator_hh

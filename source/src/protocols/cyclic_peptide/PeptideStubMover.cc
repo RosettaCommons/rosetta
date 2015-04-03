@@ -204,8 +204,8 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 		if(update_pdb_numbering_) update_pdb_numbering(pose); //If residues have been added, they need PDB chain IDs and numbers to be updated.
 }
 
-///
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 PeptideStubMover::parse_my_tag(
 	TagCOP tag,
@@ -253,7 +253,7 @@ PeptideStubMover::parse_my_tag(
     }
 }
 
-///
+
 /// @brief Adds a residue to the list of residues to be appended, prepended, or inserted.
 void PeptideStubMover::add_residue(
 	std::string const &stubmode,
@@ -350,7 +350,7 @@ void PeptideStubMover::rebuild_atoms(
 	return;
 }
 
-///
+
 /// @brief Updates the PDB numbering (PDB number/chain ID) as residues are added.
 void PeptideStubMover::update_pdb_numbering (
 	core::pose::Pose &pose

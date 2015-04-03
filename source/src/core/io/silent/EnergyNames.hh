@@ -16,7 +16,6 @@
 #define INCLUDED_core_io_silent_EnergyNames_hh
 
 // mini headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/io/silent/SharedSilentData.hh>
 
 // C++ Headers

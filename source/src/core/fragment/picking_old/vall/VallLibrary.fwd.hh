@@ -31,5 +31,4 @@ class VallLibrary;
 } // core
 
 
-
 #endif /* INCLUDED_core_fragment_picking_old_vall_VallLibrary_FWD_HH */

@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/ConnectJumps.hh
 /// @brief The ConnectJumps Protocol, for connecting oligomeric structures
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

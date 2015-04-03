@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/working_parameters/StepWiseWorkingParameters.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

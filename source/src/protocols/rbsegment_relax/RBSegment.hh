@@ -30,13 +30,13 @@ namespace protocols {
 namespace rbsegment_relax {
 
 //////////////////////////////////////////////////////////
-///@brief Enumeration of RB types
+/// @brief Enumeration of RB types
 /////////////////////////////////////////////////////////
 enum RBSegmentType { RB_HELIX=1, RB_SHEET, RB_DEFAULT };
 
 
 //////////////////////////////////////////////////////////
-///@brief RB residue range
+/// @brief RB residue range
 /////////////////////////////////////////////////////////
 class RBResidueRange {
 public:
@@ -63,7 +63,7 @@ private:
 
 
 //////////////////////////////////////////////////////////
-///@brief Rigid-body segments in a protein
+/// @brief Rigid-body segments in a protein
 /////////////////////////////////////////////////////////
 class RBSegment {
 public:
@@ -144,7 +144,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////
-///@brief Parses an RB segment file into a vector of RBsegments
+/// @brief Parses an RB segment file into a vector of RBsegments
 /////////////////////////////////////////////////////////
 void read_RBSegment_file(
 	utility::vector1< RBSegment > &rbsegs,
@@ -161,7 +161,6 @@ void select_RBsegments(
 	utility::vector1< RBSegment > &rbsegs_selected,
 	protocols::loops::Loops &loops_selected
 );
-
 
 
 }

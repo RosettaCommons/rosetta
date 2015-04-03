@@ -28,7 +28,6 @@
 
 // C++ headers
 //#include <list>
-// AUTO-REMOVED #include <string> // REQUIRED FOR WINDOWS
 
 #include <utility/vector1.hh>
 

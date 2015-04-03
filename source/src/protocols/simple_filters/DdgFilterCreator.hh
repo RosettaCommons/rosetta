@@ -25,7 +25,6 @@
 #include <string>
 
 
-
 namespace protocols {
 namespace simple_filters {
 

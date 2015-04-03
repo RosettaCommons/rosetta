@@ -12,22 +12,16 @@
 /// @author Oliver Lange
 
 #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
-// AUTO-REMOVED #include <protocols/abinitio/StrandConstraints.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/dssp/PairingsList.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 
 // Utility headers
@@ -41,7 +35,6 @@
 #include <utility/excn/Exceptions.hh>
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 
@@ -50,9 +43,6 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-
-
-
 
 
 static thread_local basic::Tracer tr( "main" );

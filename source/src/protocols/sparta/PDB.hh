@@ -15,7 +15,6 @@
 #ifndef PDB_H
 #define PDB_H
 
-// AUTO-REMOVED #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>

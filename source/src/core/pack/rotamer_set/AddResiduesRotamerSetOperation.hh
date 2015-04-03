@@ -29,7 +29,7 @@ namespace core {
 namespace pack {
 namespace rotamer_set {
 
-///@brief Adds in rotamers from a list of Residues,
+/// @brief Adds in rotamers from a list of Residues,
 class AddResiduesRotamerSetOperation : public core::pack::rotamer_set::RotamerSetOperation
 {
 public:

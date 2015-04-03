@@ -27,9 +27,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -53,7 +51,7 @@ namespace upstream {
 class UpstreamResTypeGeometry : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~UpstreamResTypeGeometry();
 	typedef core::Size                            Size;
 	typedef core::Real                            Real;
@@ -202,7 +200,6 @@ private:
 	Size HA_atom_id_;
 
 };
-
 
 
 }

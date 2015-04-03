@@ -128,7 +128,7 @@ void spline_coeffs(
            ObjexxFCL::FArray4D< double > & coeffs);
 
 
-///@brief templated helper function to FFT resample a map
+/// @brief templated helper function to FFT resample a map
 template<class S, class T>
 void resample(
       ObjexxFCL::FArray3D< S > const &density,
@@ -200,7 +200,6 @@ void resample(
 	// ifft
 	numeric::fourier::ifft3(Fnewmap, newDensity);
 }
-
 
 
 } // namespace constraints

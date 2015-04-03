@@ -17,12 +17,8 @@
 #include <protocols/moves/WhileMover.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // tracer
 #include <basic/Tracer.hh>

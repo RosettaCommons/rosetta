@@ -97,7 +97,5 @@ public:
 		numeric::xyzVector<platform::Real> real_random_rgb(0.14,0.25,0.58);
 
 
-
-
 	}
 };

@@ -210,7 +210,6 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
 
 
-
 	virtual
 	void
 	resolve_trie_vs_path(
@@ -356,7 +355,6 @@ public:
 		etable::TableLookupEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector);
-
 
 
 	//////////////////////////////////// CoarseEtableEnergy /////////////////////////////////
@@ -433,7 +431,6 @@ public:
 		etable::AnalyticEtableEvaluator const & sfxn,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table);
-
 
 
 	virtual

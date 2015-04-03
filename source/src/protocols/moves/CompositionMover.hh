@@ -14,13 +14,11 @@
 #ifndef INCLUDED_protocols_moves_CompositionMover_hh
 #define INCLUDED_protocols_moves_CompositionMover_hh
 
-// AUTO-REMOVED #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>

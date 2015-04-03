@@ -23,5 +23,4 @@ class ElectronConfiguration;
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_Atom_FWD_HH

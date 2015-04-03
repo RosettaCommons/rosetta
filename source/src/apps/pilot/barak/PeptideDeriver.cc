@@ -287,6 +287,3 @@ core::pose::PoseOP get_subPose(
 }
 
 
-
-
-

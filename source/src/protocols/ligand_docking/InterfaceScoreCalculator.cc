@@ -67,7 +67,7 @@ InterfaceScoreCalculatorCreator::mover_name()
 	return "InterfaceScoreCalculator";
 }
 
-///@brief
+/// @brief
 InterfaceScoreCalculator::InterfaceScoreCalculator():
 		Mover("InterfaceScoreCalculator"),
 		chains_(),
@@ -115,7 +115,7 @@ void InterfaceScoreCalculator::score_fxn(core::scoring::ScoreFunctionOP const & 
 }
 
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceScoreCalculator::parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -284,7 +284,6 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 
 
 }
-
 
 
 } //namespace ligand_docking

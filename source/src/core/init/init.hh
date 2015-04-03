@@ -10,7 +10,6 @@
 /// @file   src/core/init/init.hh
 /// @brief  Core Init functions
 /// @author Sergey Lyskov
-///
 
 
 #ifndef INCLUDED_core_init_init_hh

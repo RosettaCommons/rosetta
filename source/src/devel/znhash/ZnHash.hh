@@ -103,7 +103,7 @@ private:
 
 class ZnHash : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ZnHash();
 	typedef core::Real Real;
 	typedef core::Size Size;

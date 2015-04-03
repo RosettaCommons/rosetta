@@ -264,7 +264,7 @@ ChiralMover::get_name() const {
 	return "ChiralMover";
 }
 
-///@brief
+/// @brief
 ChiralMover::ChiralMover( 
 		core::Size chiral_seq_position 
 	): Mover(), chiral_seq_pos_( chiral_seq_position ), chirality_( FLIP_CHIRALITY ), orient_functional_group_(false)

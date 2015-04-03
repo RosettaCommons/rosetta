@@ -28,7 +28,6 @@
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -253,7 +252,6 @@ AddGood2BPairEnergyRotamers::rotamer_set_contains_rotamer(
 	} //loop over resgroups
 	return false;
 }
-
 
 
 } //namespace rotamer_set_operations

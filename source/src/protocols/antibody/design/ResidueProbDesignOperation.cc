@@ -22,7 +22,6 @@
 #include <numeric/random/random.hh>
 
 
-
 static thread_local basic::Tracer TR( "protocols.toolbox.TaskOperations.ResidueProbDesignOperation" );
 
 namespace protocols {
@@ -91,7 +90,6 @@ ResidueProbDesignOperation::init_for_equal_operator_and_copy_constructor(Residue
 ////////////////////////////////////////////////////////////////////////////
 // Probability Settings
 //
-//
 
 void
 ResidueProbDesignOperation::set_aa_probabilities(const Size resnum, AAProbabilities aa_probs) {
@@ -112,7 +110,6 @@ ResidueProbDesignOperation::set_overall_aa_probabilities(AAProbabilities aa_prob
 ////////////////////////////////////////////////////////////////////////////
 // Reset Probabilities
 //
-//
 
 void
 ResidueProbDesignOperation::clear_prob_set() {
@@ -127,7 +124,6 @@ ResidueProbDesignOperation::clear_overall_prob_set() {
 
 ////////////////////////////////////////////////////////////////////////////
 // General Options
-//
 //
 
 void

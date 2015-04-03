@@ -19,7 +19,6 @@
 
 ///Project headers
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
 ///Utility headers
@@ -50,7 +49,7 @@ protocols::jd2::PDBJobInputter::PDBJobInputter(){
 
 protocols::jd2::PDBJobInputter::~PDBJobInputter(){}
 
-///@details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
+/// @details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -73,7 +72,7 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 	}
 }
 
-///@details this function determines what jobs exist from -s/-l
+/// @details this function determines what jobs exist from -s/-l
 void protocols::jd2::PDBJobInputter::fill_jobs( Jobs & jobs ){
 	TR << "PDBJobInputter::fill_jobs" << std::endl;
 

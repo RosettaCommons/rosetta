@@ -31,7 +31,6 @@
 #include <basic/Tracer.hh>
 
 // numeric headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // C++ headers
 #include <cmath>
@@ -40,7 +39,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -149,8 +147,6 @@ restore_residues(
 	using core::pack::pack_rotamers;
 
 	typedef std::map< core::Size, core::Size > Old2New;
-
-
 
 
 	for ( Old2New::const_iterator i = old2new.begin(), ie = old2new.end(); i != ie; ++i ) {

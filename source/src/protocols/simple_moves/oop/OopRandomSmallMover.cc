@@ -56,7 +56,7 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
-///@details
+/// @details
 void OopRandomSmallMover::apply( core::pose::Pose & pose ){
 
 	using numeric::conversions::radians;
@@ -111,7 +111,7 @@ OopRandomSmallMover::get_name() const {
 	return "OopRandomSmallMover";
 }
 
-///@brief
+/// @brief
 OopRandomSmallMover::OopRandomSmallMover(
 ) : Mover()
 {

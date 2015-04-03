@@ -13,8 +13,6 @@
 /// @author Florian Richter, floric@u.washington.edu, april 2009
 
 
-
-
 #ifndef INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesLoopsFile_hh
 #define INCLUDED_protocols_toolbox_match_enzdes_util_EnzdesLoopsFile_hh
 
@@ -22,15 +20,11 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzdesBaseProtocol.fwd.hh>
-
 
 //#include <core/conformation
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/io/izstream.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <string>
 
@@ -181,7 +175,7 @@ class EnzdesLoopInfo : public utility::pointer::ReferenceCount
 
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~EnzdesLoopInfo();
 
 	EnzdesLoopInfo();
@@ -311,7 +305,7 @@ class EnzdesLoopsFile : public utility::pointer::ReferenceCount
 {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~EnzdesLoopsFile();
 
 	EnzdesLoopsFile();
@@ -345,8 +339,6 @@ private:
 } //match_enzdes_util
 } //toolbox
 } //protocols
-
-
 
 
 #endif //

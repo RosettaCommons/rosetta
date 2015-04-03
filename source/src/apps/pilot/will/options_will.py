@@ -1260,8 +1260,6 @@ Options = Option_Group( '',
 	)
 
 
-
-
   ),
 ## --------------------------  END OF fragment picking --------------
 
@@ -4446,7 +4444,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # gpu
 
 
-
 ) # end options
 
 
@@ -4596,14 +4593,12 @@ Option('Real', name='score_contact_distance', group='abinitio',
     ),
 
 
-
 #type? File or Boolean?
     Option('dock_des_min_inter', '',
            desc='Protocol for interface design: dock and then interface design using
                              the design_minimize_interface protocol.  Uses docking site
                              constraints if provided in .cst file.',
     ),
-
 
 
 # multiple defaults?
@@ -4652,7 +4647,6 @@ Option('score_delta5', 'Real',
 	options_rosetta defaults:None
 
 
-
 Can not have namespace and option with the same name (possible that this is just dublication in Docs)
 relax mode:
   -looprlx                   Run only the loop relax protocol
@@ -4673,8 +4667,6 @@ justify grouping into a nested score_contact group/namespace.
 . Similarly, the *_reweight options are probably best put
 in a abinitio:reweight group: abinitio:reweight:vdw and
 so forth.
-
-
 
 
 """

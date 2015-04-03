@@ -19,7 +19,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-
 namespace protocols {
 namespace grafting {
 namespace simple_movers {
@@ -34,8 +33,5 @@ typedef utility::pointer::shared_ptr< KeepRegionMover const > KeepRegionMoverCOP
 }
 
 #endif	
-
-
-
 
 

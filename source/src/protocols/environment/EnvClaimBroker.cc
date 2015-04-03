@@ -344,7 +344,6 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
                                   core::conformation::Conformation const& input_conf ) {
 
 
-
   utility::vector1< core::Size > const datamap_autocuts = introduce_datamap_cuts( fts, datacache );
   for( Size i = 1; i <= datamap_autocuts.size(); ++i ){
     core::Size const autocut = datamap_autocuts[ i ];

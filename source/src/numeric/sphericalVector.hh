@@ -340,8 +340,6 @@ public: // Methods
 	}
 
 
-
-
 	/// @brief sphericalVector + sphericalVector
 	friend
 	inline
@@ -651,9 +649,6 @@ public: // Properties: accessors
 	{
 		return radius_;
 	}
-
-
-
 
 
 public: // Properties: value assignment

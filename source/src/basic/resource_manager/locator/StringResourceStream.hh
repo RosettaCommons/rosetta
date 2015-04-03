@@ -53,7 +53,7 @@ public:
 	}
 
 private:
-	///@brief This is private. The StringResourceStream shouldn't be copied
+	/// @brief This is private. The StringResourceStream shouldn't be copied
 	StringResourceStream(
 		StringResourceStream const & src);
 
@@ -80,7 +80,6 @@ private: // members
 } // namespace locator
 } // namespace resource_manager
 } // namespace basic
-
 
 
 #endif //INCLUDED_basic_resource_manager_locator_StringResourceStream_hh

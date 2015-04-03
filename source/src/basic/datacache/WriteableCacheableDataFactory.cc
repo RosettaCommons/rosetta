@@ -52,7 +52,7 @@ WriteableCacheableDataFactory::create_singleton_instance()
   return new WriteableCacheableDataFactory;
 }
 
-///@brief add a WriteableCacheableData prototype, using its default type name as the map key
+/// @brief add a WriteableCacheableData prototype, using its default type name as the map key
 void
 WriteableCacheableDataFactory::factory_register( WriteableCacheableDataCreatorOP creator )
 {
@@ -69,7 +69,7 @@ WriteableCacheableDataFactory::factory_register( WriteableCacheableDataCreatorOP
   data_creator_map_[ data_type ] = creator;
 }
 
-///@brief return new Data instance by key lookup in data_creator_map_
+/// @brief return new Data instance by key lookup in data_creator_map_
 WriteableCacheableDataOP
 WriteableCacheableDataFactory::new_data_instance( std::string const & data_type, std::istream &in )
 {

@@ -210,7 +210,6 @@ ParatopeSiteConstraintMover::setup_constraints(core::pose::Pose const & pose, co
 }
 
 
-
 } //constraints
 } //antibody
 } //protocols

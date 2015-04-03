@@ -13,7 +13,6 @@
 ///
 /// @remarks
 ///  @li -
-///
 
 
 #ifndef INCLUDED_numeric_random_random_hh

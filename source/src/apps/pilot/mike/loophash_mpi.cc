@@ -11,8 +11,6 @@
 /// @brief
 
 
-
-
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 #include <protocols/wum/WorkUnitList.hh>
@@ -85,10 +83,6 @@ class MPI_LoopHash_Launcher {
 		wulist.register_work_unit( "batchrelax", batchrelax );
 
 
-
-
-
-
 		WorkUnitManagerOP wu_manager;
 
 		// Now define the structure of the algorithm, i.e. assign roles to individual nodes
@@ -147,7 +141,5 @@ main( int argc, char * argv [] )
     }
     return 0;
 }
-
-
 
 

@@ -57,7 +57,7 @@ namespace selector {
 
 static thread_local basic::Tracer TR( "protocols.generalized_kinematic_closure.selector.GeneralizedKICselector" );
 
-///@brief Constructor for GeneralizedKICselector.
+/// @brief Constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector():
 		selectortype_(no_selector),
 		selector_sfxn_(),
@@ -65,7 +65,7 @@ GeneralizedKICselector::GeneralizedKICselector():
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
-///@brief Copy constructor for GeneralizedKICselector.
+/// @brief Copy constructor for GeneralizedKICselector.
 GeneralizedKICselector::GeneralizedKICselector( GeneralizedKICselector const &src ):
 		utility::pointer::ReferenceCount(),
 		selectortype_(src.selectortype_),
@@ -74,7 +74,7 @@ GeneralizedKICselector::GeneralizedKICselector( GeneralizedKICselector const &sr
 		//TODO -- make sure above data are copied properly when duplicating this mover.
 {}
 
-///@brief Destructor for GeneralizedKICselector mover.
+/// @brief Destructor for GeneralizedKICselector mover.
 GeneralizedKICselector::~GeneralizedKICselector() {}
 
 /// @brief Clone function for GeneralizedKICselector:
@@ -84,12 +84,12 @@ GeneralizedKICselectorOP GeneralizedKICselector::clone() const
 	return GeneralizedKICselectorOP( new GeneralizedKICselector(*this) );
 }
 
-///@brief Returns the name of this class ("GeneralizedKICselector").
+/// @brief Returns the name of this class ("GeneralizedKICselector").
 std::string GeneralizedKICselector::get_name() const{
 	return "GeneralizedKICselector";
 }
 
-///
+
 /// @brief Given a selector type, return its name.  Returns "unknown_selector" if not recognized.
 std::string GeneralizedKICselector::get_selector_type_name( core::Size const selector_type ) const {
 	std::string returnstring = "";
@@ -119,7 +119,7 @@ std::string GeneralizedKICselector::get_selector_type_name( core::Size const sel
 	return returnstring;
 }
 
-///
+
 /// @brief Given the name of a selector type, return the selector type enum.  Returns unknown_selector if not recognized.
 selector_type GeneralizedKICselector::get_selector_type_by_name( std::string const &selectorname ) const {
 	for(core::Size i=1, imax=end_of_selector_list; i<imax; ++i) {
@@ -128,7 +128,7 @@ selector_type GeneralizedKICselector::get_selector_type_by_name( std::string con
 	return unknown_selector;
 }
 
-///
+
 /// @brief Sets the selector type for this selector.
 void GeneralizedKICselector::set_selector_type( selector_type const &stype) {
 	runtime_assert_string_msg(stype > 0 && stype < end_of_selector_list, "Selector type not recognized.  Error in GeneralizedKICselector::set_selector_type().");
@@ -136,7 +136,7 @@ void GeneralizedKICselector::set_selector_type( selector_type const &stype) {
 	return;
 }
 
-///
+
 /// @brief Sets the selector type for this selector by name.
 void GeneralizedKICselector::set_selector_type( std::string const &stypename) {
 	selector_type stype = get_selector_type_by_name(stypename);

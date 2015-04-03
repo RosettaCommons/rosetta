@@ -167,7 +167,6 @@ disp_symmop( core::kinematics::RT const &rt ) {
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 struct Quat {
 	Real x_,y_,z_,w_;
@@ -916,9 +915,6 @@ try {
 	return 0;
 }
 
-
-///
-///
 ///
 void get_symmops(
 		std::string name_,

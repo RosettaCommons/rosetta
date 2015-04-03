@@ -1100,7 +1100,6 @@ ResidueDatabaseIO::read_residue_type_properties(
 }
 
 
-
 void
 ResidueDatabaseIO::report_residue_type_variant(
 	std::string const & residue_type_set_name,

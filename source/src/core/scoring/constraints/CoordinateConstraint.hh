@@ -28,7 +28,6 @@
 #include <cstdlib>
 #include <iostream>
 //#include <map>
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -39,7 +38,7 @@ namespace scoring {
 namespace constraints {
 
 
-///@details CoordinateConstraint compares the coordinates of a given atom (AtomID atom_) to a fixed coordinate triplet (Vector xyz_target_).  Its other argument, fixed_atom_, is somewhat nonobvious.  CoordinateConstraints are meant to be used with a Pose that has a nonmoving virtual root residue.  An AtomID in this virtual root residue should be passed as fixed_atom_.  CoordinateConstraint does not use fixed_atom_, but the ScoreFunction code detects when fixed_atom_ and atom_ move relative to one another, and trigger re-scoring at that time.  In other words, CoordinateConstraints are really context-independent one body energies, but we wish them to be evaluated as context-independent two-body energies.  (Ideally, ScoreFunction would detect when atom_ moves relative to xyz_target_, but since ScoreFunction functions on atoms and not floating coordinate triplets, this is a good workaround.) -- SML
+/// @details CoordinateConstraint compares the coordinates of a given atom (AtomID atom_) to a fixed coordinate triplet (Vector xyz_target_).  Its other argument, fixed_atom_, is somewhat nonobvious.  CoordinateConstraints are meant to be used with a Pose that has a nonmoving virtual root residue.  An AtomID in this virtual root residue should be passed as fixed_atom_.  CoordinateConstraint does not use fixed_atom_, but the ScoreFunction code detects when fixed_atom_ and atom_ move relative to one another, and trigger re-scoring at that time.  In other words, CoordinateConstraints are really context-independent one body energies, but we wish them to be evaluated as context-independent two-body energies.  (Ideally, ScoreFunction would detect when atom_ moves relative to xyz_target_, but since ScoreFunction functions on atoms and not floating coordinate triplets, this is a good workaround.) -- SML
 class CoordinateConstraint : public Constraint {
 public:
 
@@ -69,7 +68,6 @@ public:
 	virtual ConstraintOP remapped_clone( pose::Pose const& src, pose::Pose const& dest, id::SequenceMappingCOP map=NULL ) const;
 
 
- 	///
 	void show( std::ostream& out ) const;
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
@@ -82,20 +80,20 @@ public:
 	/// of pointer comparison
 	bool operator == ( Constraint const & other_cst) const;
 
-	///
+
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
 	// @brief take coordinates, distances, angles, etc from given pose
 	///
 	virtual void steal_def( pose::Pose const& );
 
-	///
+
 	Real
 	non_virtual_score(
 		Vector const & xyz
 	) const;
 
-	///
+
 	virtual
 	void
 	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
@@ -111,7 +109,7 @@ public:
 		EnergyMap const & weights
 	) const;
 
-	///
+
 	Size
 	natoms() const;
 
@@ -119,7 +117,7 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const;
 

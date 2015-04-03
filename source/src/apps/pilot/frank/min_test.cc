@@ -68,7 +68,6 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 
-
 // C++ headers
 //#include <cstdlib>
 #include <fstream>
@@ -244,7 +243,6 @@ my_main( void* ) {
 
 	return 0;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

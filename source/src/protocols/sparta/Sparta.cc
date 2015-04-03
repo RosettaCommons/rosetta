@@ -29,14 +29,11 @@
 // string functions were weird ... potential memory problems... replaced in util.cc where fishy...
 
 
-
-
 /// @author Oliver Lange
 
 // Unit Headers
 #include <protocols/sparta/Sparta.hh>
 #include <protocols/sparta/SpartaUtil.hh>
-// AUTO-REMOVED #include <protocols/sparta/util.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -51,15 +48,11 @@
 #include <cstdlib>
 #include <string>
 #include <algorithm>    // std::min
-// AUTO-REMOVED #include <cmath>
 
 #ifdef WIN32
 #include <direct.h>
 #include <ctime>
 #else
-// AUTO-REMOVED #include <dirent.h>
-// AUTO-REMOVED #include <sys/stat.h>
-// AUTO-REMOVED #include <sys/timeb.h>
 #endif
 
 
@@ -627,7 +620,6 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 }
 
 
-
 // run ANN prediction for a single protein chain
 //void Sparta::runANN_Prediction() {
 // 	clock_t start/*, finish*/;
@@ -887,7 +879,6 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 // }
 
 
-
 // Initiate an ANN prediction for a single protein using its file name
 //void Sparta::runANN_Prediction(const string& pName)
 //{
@@ -905,7 +896,6 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 //	run_A_ANN_Prediction();
 //}
-
 
 
 void Sparta::SpartaLib::init_PredErrorSurface()
@@ -938,12 +928,10 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 }
 
 
-
 float Sparta::SpartaLib::getANN_PredError(float phi, float psi, string aa, string aName)
 {
 	return SPARTA_ERR_SURF[aa][aName][5*int(phi/5)][5*int(psi/5)];
 }
-
 
 
 // get random coil chemical shift for atom 'aName' of residue 'resName'
@@ -957,7 +945,6 @@ float Sparta::SpartaLib::getRC(const string& resName, const string& aName)
 }
 
 
-
 float Sparta::SpartaLib::getRCadj(const string& resName, const string& aName)
 {
 	GDB::GDB_Entry temp = ADJ_Tab.getEntry("RESNAME",resName,1);
@@ -968,7 +955,6 @@ float Sparta::SpartaLib::getRCadj(const string& resName, const string& aName)
 }
 
 
-
 float Sparta::SpartaLib::getPrevRCadj(const string& prev_rName, const string& aName)
 {
 	GDB::GDB_Entry temp = PREV_Tab.getEntry("RESNAME",prev_rName,1);
@@ -977,7 +963,6 @@ float Sparta::SpartaLib::getPrevRCadj(const string& prev_rName, const string& aN
 
   return 0.0;
 }
-
 
 
 float Sparta::SpartaLib::getNextRCadj(const string& next_rName, const string& aName)

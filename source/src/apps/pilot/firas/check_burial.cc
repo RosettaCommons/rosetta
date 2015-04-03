@@ -13,31 +13,15 @@
 
 #include <protocols/viewer/viewers.hh>
 
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
-
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -64,7 +48,6 @@
 #include <ObjexxFCL/format.hh>
 
 #include <utility/excn/Exceptions.hh>
-
 
 
 using namespace ObjexxFCL::format;

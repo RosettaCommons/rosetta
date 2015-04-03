@@ -241,7 +241,7 @@ CoupledSidechainProtocol::setup_objects() {
 	counters_.set_temperature_observer( tempering_ );
 }
 
-/// @detailed
+/// @details
 void
 CoupledSidechainProtocol::apply(
 	Pose & pose

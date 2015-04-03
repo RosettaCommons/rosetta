@@ -19,10 +19,8 @@
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -163,7 +161,7 @@ public:
 		return orientation_frame * points_in_global_orintation_frame_[ restype_atomno ];
 	}
 
-	///@ brief helper function to get the coordinates in 2D FArray format
+	/// @ brief helper function to get the coordinates in 2D FArray format
 	void
 	get_global_coords_as_FArray2D(
 		ObjexxFCL::FArray2D< numeric::Real > & coords,

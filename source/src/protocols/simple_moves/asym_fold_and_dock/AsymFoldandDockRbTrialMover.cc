@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>

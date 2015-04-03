@@ -38,7 +38,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>

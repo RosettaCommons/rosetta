@@ -22,7 +22,6 @@
 // Package Headers
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 //// Project Headers
 #include <protocols/moves/Mover.hh>
@@ -41,7 +40,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 class MinimizeBackbone : public protocols::moves::Mover
 {
 public:

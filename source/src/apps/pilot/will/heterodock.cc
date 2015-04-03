@@ -149,9 +149,6 @@ make_olig(
 }
 
 
-
-
-
 // info about a "hit"
 struct Hit {
 	Real iori,irot,islide;

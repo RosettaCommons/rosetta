@@ -158,7 +158,6 @@ ProcessorFactory::create_grouper(
 }
 
 
-
 MatchEvaluatorOP
 ProcessorFactory::create_evaluator(
 	MatcherCOP matcher,

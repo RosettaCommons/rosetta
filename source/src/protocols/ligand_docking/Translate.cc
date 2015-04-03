@@ -66,7 +66,7 @@ TranslateCreator::mover_name()
 	return "Translate";
 }
 
-///@brief
+/// @brief
 Translate::Translate():
 		//utility::pointer::ReferenceCount(),
 		Mover("Translate"),
@@ -105,7 +105,7 @@ std::string Translate::get_name() const{
 	return "Translate";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Translate::parse_my_tag(
 		utility::tag::TagCOP tag,

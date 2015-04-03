@@ -291,7 +291,7 @@ enum ScoreType {
 	interchain_pair,
 	interchain_vdw,
 
-	//
+
 	// end short ranged two body scores
 	n_shortranged_2b_score_types = interchain_vdw, // keep this guy at the end of the sr ci/cd 2b scores
 	// 30 as of 1/7/2007 -- don't ever code using the literal "30", this is just a helpful count
@@ -448,7 +448,7 @@ enum ScoreType {
 	// centroid interhcain 1b (docking) scores -- Demonstrate that these improve performance or remove them
 	interchain_env,
 	interchain_contact,
-	//
+
 
 	chainbreak,
 	linear_chainbreak,

@@ -36,26 +36,19 @@ using namespace protocols::multistate_design;
 
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/scoring/dna/setup.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
@@ -67,7 +60,6 @@ static thread_local basic::Tracer TR( "app.sequence_tolerance" );
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
 
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 #include <list> // PackerTask allowed_residue_types
@@ -75,7 +67,6 @@ static thread_local basic::Tracer TR( "app.sequence_tolerance" );
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <utility/excn/Exceptions.hh>
@@ -97,7 +88,6 @@ using namespace protocols::toolbox::pose_metric_calculators;
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <basic/MetricValue.hh>
-
 
 
 OPT_1GRP_KEY(RealVector, seq_tol, fitness_master_weights)

@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -32,7 +32,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // option key includes
@@ -59,7 +58,7 @@ public:
 		return TopologyClaimerOP( new FibrilModelingClaimer( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -82,7 +81,7 @@ public:
 
   virtual void generate_claims( claims::DofClaims& new_claims );
 
-	///@brief has to decline foreign BB claims for slave regions
+	/// @brief has to decline foreign BB claims for slave regions
 	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
 
 protected:
@@ -91,17 +90,17 @@ protected:
 
 private:
 
-	///@brief monomer pose
+	/// @brief monomer pose
   core::pose::Pose input_pose_;
 
-	///@brief regions that can be used for rigid core
+	/// @brief regions that can be used for rigid core
 	loops::Loops rigid_core_, input_rigid_core_;
 
-	///@brief align to the monomer before create symmetry
+	/// @brief align to the monomer before create symmetry
 	bool bAlign_;
 	int sequence_shift_;
 
-	///@brief symmetry information
+	/// @brief symmetry information
 	core::conformation::symmetry::SymmetryInfoOP symminfo_;
 
 };

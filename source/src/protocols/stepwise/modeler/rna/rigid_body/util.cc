@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_Dinculeotide_Sampler_Util
 /// @brief Not particularly fancy, just minimizes a list of poses.
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong
 
 

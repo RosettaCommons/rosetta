@@ -906,6 +906,5 @@ dunbrack_print( RotVec  & final_rotamers, RotVec & centroids, std::string aa_nam
 }
 
 
-
 } // namespace make_rot_lib
 } // namespace protocols

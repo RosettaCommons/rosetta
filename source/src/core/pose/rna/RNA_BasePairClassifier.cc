@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief Implementation of Leontis/Westhof nucleic acid base-pair classification
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -342,7 +342,6 @@ figure_out_number_base_contacts(
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -541,14 +540,13 @@ bases_are_coplanar(
 	static Real const COS_THETA_CUTOFF( 0.6 );
 	if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_  && std::abs( cos_theta ) > COS_THETA_CUTOFF ) return true;
 
-	//
+
 	//	static Real const rna_basepair_stagger_cutoff_loose_( 3.5 );
 	//	static Real const COS_THETA_CUTOFF_STRICT( 0.65 );
 	//	if ( std::abs(dist_z) < rna_basepair_stagger_cutoff_loose_ && std::abs( cos_theta ) > COS_THETA_CUTOFF_STRICT ) return true;
 
 	return false;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////

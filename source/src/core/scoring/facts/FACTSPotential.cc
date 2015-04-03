@@ -958,7 +958,7 @@ void FACTSPotential::calculate_GBpair_fast(
 //
 // Then derivative for distance dependent part will be took into account during setup_for_scoring
 // This is only for Context-dependent part: Born Radius & SASA dependent terms
-//
+
 
 // Calculate polar interaction between rsd1 & rsd2 using Born Radius information
 void FACTSPotential::calculate_GBpair_v1trunk(

@@ -10,7 +10,7 @@
 /// @file
 /// @brief
 /// @author Sergey Lyskov
-///
+
 
 #include "boost/python.hpp"
 

@@ -22,8 +22,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MakePolyXMover.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -31,7 +29,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -41,11 +38,9 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/Energies.hh>
 
 // Neil headers 110621
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
@@ -69,7 +64,7 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.simple_filters.RotamerBoltzmannWeight" );
 
-///@brief default ctor
+/// @brief default ctor
 RotamerBoltzmannWeight::RotamerBoltzmannWeight() :
 	parent( "RotamerBoltzmannWeight" ),
 	task_factory_( /* NULL */ ),

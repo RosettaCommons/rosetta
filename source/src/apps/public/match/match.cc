@@ -20,12 +20,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -42,10 +38,6 @@
 #include <protocols/match/output/MatchProcessor.hh>
 
 
-// AUTO-REMOVED #include <core/io/pdb/pdb_dynamic_reader.hh>
-
-
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 
 #include <basic/Tracer.hh>

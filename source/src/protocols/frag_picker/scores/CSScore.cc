@@ -18,7 +18,6 @@
 #include <protocols/frag_picker/CSTalosIO.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <utility/io/ozstream.hh>
 
 
@@ -28,7 +27,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // Boost
 #include <boost/tuple/tuple.hpp>

@@ -14,30 +14,21 @@
 // Unit headers
 #include <protocols/fibril/fibril_util.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
 
 // Utility functions
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Package Headers
 #include <core/kinematics/Edge.hh>

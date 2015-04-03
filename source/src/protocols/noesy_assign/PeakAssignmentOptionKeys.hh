@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -51,7 +51,6 @@ OPT_2GRP_KEY( RealVector, noesy_weights, defaults, network_min )
 OPT_2GRP_KEY( RealVector, noesy_weights, defaults, network_atom_min )
 OPT_2GRP_KEY( RealVector, noesy_weights, defaults, dcalibrate )
 OPT_2GRP_KEY( RealVector, noesy_weights, defaults, calibration_target )
-
 
 
 OPT_1GRP_KEY( Real, noesy_weights, centroid_padding )

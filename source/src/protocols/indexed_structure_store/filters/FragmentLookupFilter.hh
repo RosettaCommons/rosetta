@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/indexed_structure_store/filters/FragmentLookupFilter.hh
 /// @brief Header for FragmentLookupFilter class.
-/// @detailed
+/// @details
 /// @author Alex Ford (fordas@uw.edu) and Daniel Adriano Silva (dadriano@uw.edu)
 
 

@@ -781,9 +781,7 @@ SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 	}
 
 
-
 }//end parse_my_tag
-
 
 
 std::string
@@ -802,7 +800,6 @@ SymDockProtocolCreator::mover_name()
 {
     return "SymDockProtocol";
 }
-
 
 
 } // symmetric_docking

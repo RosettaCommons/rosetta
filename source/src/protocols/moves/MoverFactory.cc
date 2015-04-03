@@ -15,8 +15,6 @@
 #include <protocols/moves/Mover.hh>
 
 // required for passing to Mover::parse_my_tag
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 #include <basic/Tracer.hh>
 
@@ -84,7 +82,7 @@ MoverFactory::MoverFactory()
 
 MoverFactory::~MoverFactory(){}
 
-///@brief add a Mover prototype, using its default type name as the map key
+/// @brief add a Mover prototype, using its default type name as the map key
 void
 MoverFactory::factory_register( MoverCreatorOP creator )
 {
@@ -103,7 +101,7 @@ MoverFactory::factory_register( MoverCreatorOP creator )
 }
 
 
-///@brief return new Mover by key lookup in mover_prototype_map_ (new Mover parses Tag if provided)
+/// @brief return new Mover by key lookup in mover_prototype_map_ (new Mover parses Tag if provided)
 MoverOP
 MoverFactory::newMover(	std::string const & mover_type )
 {
@@ -127,7 +125,7 @@ MoverFactory::newMover(	std::string const & mover_type )
 	}
 }
 
-///@brief return new Mover by Tag parsing
+/// @brief return new Mover by Tag parsing
 MoverOP
 MoverFactory::newMover(
 	TagCOP const tag,

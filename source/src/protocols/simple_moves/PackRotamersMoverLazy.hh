@@ -22,11 +22,8 @@
 // Project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 //#ifdef __clang__
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 //#endif
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -35,7 +32,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -47,7 +43,7 @@ namespace simple_moves {
 class PackRotamersMoverLazy: public protocols::simple_moves::PackRotamersMover{
 
 public:
-	///@brief default constructor
+	/// @brief default constructor
 
   PackRotamersMoverLazy(
 		ScoreFunctionCOP scorefxn,
@@ -56,7 +52,7 @@ public:
 	);
 	PackRotamersMoverLazy();
 
-	///@brief constructor with typename
+	/// @brief constructor with typename
 	// Undefinede, commenting out to fix PyRosetta build  PackRotamersMoverLazy( std::string const & );
 
 	// destructor (important for properly forward-declaring smart-pointer members)

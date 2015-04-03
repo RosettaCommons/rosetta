@@ -56,16 +56,10 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/tools/make_vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <core/types.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists

@@ -28,7 +28,7 @@ namespace protocols {
 namespace grafting {
 namespace simple_movers {
 
-///@brief Keep a contiguous region of a pose, delete the rest.
+/// @brief Keep a contiguous region of a pose, delete the rest.
 /// Re-detect disulfides
 class KeepRegionMover : public protocols::moves::Mover {
 public:
@@ -46,21 +46,21 @@ public:
 	
 public:
 	
-	///@brief Set the region of the pose where we keep the residues
+	/// @brief Set the region of the pose where we keep the residues
 	void
 	region(core::Size res_start, core::Size res_end);
 	
 	std::pair<core::Size, core::Size>
 	region() const;
 	
-	///@brief Set the first residue that we will keep
+	/// @brief Set the first residue that we will keep
 	void
 	start(core::Size res_start);
 	
 	core::Size
 	start() const;
 	
-	///@brief Set the last residue that we will keep
+	/// @brief Set the last residue that we will keep
 	void
 	end(core::Size res_end);
 	
@@ -104,10 +104,5 @@ private:
 
 
 #endif
-
-
-
-
-
 
 

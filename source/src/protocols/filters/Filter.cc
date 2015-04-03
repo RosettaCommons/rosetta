@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/Filter.cc
 /// @brief
-/// @detailed
+/// @details
 ///	  Contains currently:
 ///
 ///
@@ -19,7 +19,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 // Boost Headers

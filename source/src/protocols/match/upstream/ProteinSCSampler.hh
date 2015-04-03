@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

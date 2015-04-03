@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks {

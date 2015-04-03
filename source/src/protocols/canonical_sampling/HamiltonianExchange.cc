@@ -665,7 +665,6 @@ bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
 }
 
 
-
 void HamiltonianExchange::show( std::ostream& os ) const {
 	using namespace ObjexxFCL::format;
 	// All osput will be 80 characters - 80 is a nice number, don't you think?

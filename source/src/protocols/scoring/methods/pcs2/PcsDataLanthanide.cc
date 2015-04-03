@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsDataLanthanide.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -36,7 +34,6 @@
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsTensor.hh>
 #include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputCenter.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -239,8 +236,6 @@ PcsDataLanthanide::calculate_tensor_only_with_svd(PcsTensor &pcs_t){
 	utility::vector1<core::Real> const & f (svd_s_.get_svd_solution());
 	pcs_t.reset_tensor(f[1], f[2], f[3], f[4], f[5]);
 }
-
-
 
 
 core::Size

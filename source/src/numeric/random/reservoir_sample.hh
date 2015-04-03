@@ -10,9 +10,9 @@
 /// @file   numeric/random/reservoir_sample.hh
 /// @brief  Randomly select the best N elements from a stream of elements using one
 /// pass over a dataset.
-/// @detailed
+/// @details
 /// @author James Thompson
-///
+
 
 #ifndef INCLUDED_numeric_random_reservoir_sample_hh
 #define INCLUDED_numeric_random_reservoir_sample_hh
@@ -30,7 +30,7 @@ namespace numeric {
 namespace random {
 
 /// @brief Simple container for keeping K random values.
-/// @detailed Values are stochastically preserved so that the probability of
+/// @details Values are stochastically preserved so that the probability of
 /// any value existing is always 1 / N, where N is the number of values seen.
 template< typename T >
 class ReservoirSampler {
@@ -77,7 +77,7 @@ private:
 
 /// @brief Returns the probability that the Nth value in a sequence
 /// should be accepted using the reservoir sampling criterion.
-/// @detailed If we've seen N values and we want to keep K of them,
+/// @details If we've seen N values and we want to keep K of them,
 /// the probability of the Nth value being accepted is min(K/N,1.0).
 inline numeric::Real
 reservoir_sample_accept_prob(

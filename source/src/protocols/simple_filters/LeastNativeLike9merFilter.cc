@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/LeastNativeLike9merFilter
 /// @brief filter structures by IntraRepeatContacts
-/// @detailed
+/// @details
 /// @author TJ Brunette
 
 // Unit Headers

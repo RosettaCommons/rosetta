@@ -31,7 +31,6 @@
 
 #include <string>
 #include <sstream> //stringstreams can convert integers into strings type-safely for comparisons en masse
-// AUTO-REMOVED #include <iterator>
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>

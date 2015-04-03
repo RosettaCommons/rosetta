@@ -45,7 +45,7 @@
 #include <numeric/statistics/functions.hh>
 #include <numeric/fourier/FFT.hh>
 
-//
+
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
@@ -168,7 +168,7 @@ ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
 	}
 }
 
-//
+
 ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 	static ElectronDensity theDensityMap;
 
@@ -214,7 +214,6 @@ ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 
 	return theDensityMap;
 }
-
 
 
 /// null constructor
@@ -708,7 +707,6 @@ numeric::xyzMatrix< core::Real > ElectronDensity::rotAlign2DPose(
 
 	return rotation;
 }
-
 
 
 /////////////////////////////////////
@@ -1554,7 +1552,6 @@ ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, 
 }
 
 
-
 core::Real
 ElectronDensity::getRSCC( ObjexxFCL::FArray3D< double > const &density2,  ObjexxFCL::FArray3D< double > const &mask) {
 	runtime_assert( density.u1()==density2.u1() && density.u2()==density2.u2() && density.u3()==density2.u3() );
@@ -1589,7 +1586,6 @@ ElectronDensity::maxNominalRes() {
 }
 
 
-//
 void
 ElectronDensity::calcRhoC(
 			poseCoords const &pose,
@@ -1721,7 +1717,6 @@ ElectronDensity::calcRhoC(
 }
 
 
-
 /// get Fdrho_d(xyz)
 ///      compute if not already computed
 ///      returns pointers to FArray
@@ -1798,7 +1793,6 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 }
 
 
-//
 void ElectronDensity::setup_fastscoring_first_time(Real scalefactor) {
 	fastgrid = grid;
 	fastorigin = origin;
@@ -2066,7 +2060,6 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 		}
 	}
 }
-
 
 
 /////////////////////////////////////
@@ -2744,7 +2737,6 @@ core::Real ElectronDensity::matchPoseToPatterson(
 }
 
 
-
 ///  Rematch the pose to a patterson map, using previous rho_calc with only rsd changed
 ///   do not change rho_calc or update cache
 ///  DOES NOT WORK WITH MASK!
@@ -3013,8 +3005,6 @@ void ElectronDensity::updateCachedDensity( core::conformation::Residue const &rs
 		}
 	}
 }
-
-
 
 
 /////////////////////////////////////

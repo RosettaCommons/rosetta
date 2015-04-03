@@ -31,13 +31,13 @@ class DbMoverMessageListener : public MessageListener{
 public:
 	DbMoverMessageListener();
 
-	///@brief receive the protocol id and batch id from the slave
+	/// @brief receive the protocol id and batch id from the slave
 	virtual
 	void
 	receive(
 		std::string const & data);
 
-	///@brief check to see if we have a protocol id and batch id. If we
+	/// @brief check to see if we have a protocol id and batch id. If we
 	///have them then tell them to the slave. If we don't have them then
 	///tell the slave to make them
 	virtual

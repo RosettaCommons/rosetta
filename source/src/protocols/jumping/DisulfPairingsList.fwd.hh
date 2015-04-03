@@ -18,8 +18,6 @@
 
 // Utility headers
 //#include <utility/pointer/access_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 
@@ -29,7 +27,7 @@ namespace jumping {
 
 // Forward
 //class BaseJumpSetup;
-///@brief list of pairings
+/// @brief list of pairings
 class DisulfPairing;
 typedef utility::vector1<DisulfPairing> DisulfPairingsList;
 
@@ -41,7 +39,6 @@ typedef utility::vector1<DisulfPairing> DisulfPairingList;
 // NO DisulfPairingsList is not a Ref-Counted class
 //typedef  utility::pointer::owning_ptr< DisulfPairingsList >  DisulfPairingsListOP;
 //typedef  utility::pointer::owning_ptr< DisulfPairingsList const >  DisulfPairingsListCOP;
-
 
 
 } // namespace jumping

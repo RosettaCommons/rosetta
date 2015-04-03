@@ -18,30 +18,19 @@
 #include <mpi.h> //keep this first
 #endif
 
-// AUTO-REMOVED #include <utility/assert.hh> //MPI_ONLY macro
 
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 
 /// ObjexxFCL headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
-
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -174,11 +163,7 @@ MPI_WorkUnitManager_Slave::request_new_jobs()
 }
 
 
-
-
 } // namespace wum
 } // namespace protocols
-
-
 
 

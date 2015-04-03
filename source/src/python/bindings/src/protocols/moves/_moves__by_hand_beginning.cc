@@ -83,7 +83,6 @@ void __moves_by_hand_beginning__()
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 
 
-
 	bp::implicitly_convertible< utility::pointer::owning_ptr<  Wrapper_PyMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 

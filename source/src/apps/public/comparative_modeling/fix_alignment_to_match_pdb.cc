@@ -18,28 +18,20 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 #include <core/sequence/SWAligner.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -50,7 +42,6 @@
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
 #include <map>

@@ -42,10 +42,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <utility>
 #include <list>
 
 // Boost headers

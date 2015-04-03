@@ -14,7 +14,6 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 
 #include <core/scoring/sasa.hh>
@@ -26,9 +25,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <pstream.h>
-
-// AUTO-REMOVED #include <time.h>
 
 // option key includes
 
@@ -36,8 +32,6 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-
-
 
 
 std::map<std::string,utility::io::ozstream*> outs;
@@ -78,7 +72,6 @@ main (int argc, char *argv[])
 	try {
 
 
-
 	devel::init( argc, argv );
 
   using namespace basic::options;
@@ -108,7 +101,6 @@ main (int argc, char *argv[])
 	}
 
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -265,7 +265,6 @@ class ThisApplication {
 		}
 
 
-
 int
 main ( int argc, char* argv[] ){
 	try {

@@ -7,10 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh
-///@brief This class will create instances of Mover MetropolisHastingsMover for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
-///@author Rocco Moretti (rmoretti@u.washington.edu)
+/// @file protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh
+/// @brief This class will create instances of Mover MetropolisHastingsMover for the MoverFactory
+/// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_canonical_sampling_MetropolisHastingsMoverCreator_hh
 #define INCLUDED_protocols_canonical_sampling_MetropolisHastingsMoverCreator_hh

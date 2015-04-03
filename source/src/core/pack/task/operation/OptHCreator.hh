@@ -19,7 +19,6 @@
 #include <string>
 
 
-
 namespace core {
 namespace pack {
 namespace task {

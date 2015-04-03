@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/GenericSimulatedAnnealer.cc
 /// @brief perform a given mover and sample structures by MonteCarlo with gradual simulated annealing
-/// @detailed The score evaluation of pose during MC after applying mover is done by
+/// @details The score evaluation of pose during MC after applying mover is done by
 /// either FilterOP that can do report_sm() or ScoreFunctionOP.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Tom Linsky (tlinsky@uw.edu)

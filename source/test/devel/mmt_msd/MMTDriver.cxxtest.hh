@@ -94,7 +94,6 @@ public:
 	}
 
 
-
 private:
 	std::list< std::string > seqs_;
 

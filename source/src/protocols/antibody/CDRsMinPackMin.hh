@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/CDRsMinPackMin.hh
 /// @brief Main CDR minimization method in protocols/antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -96,7 +96,6 @@ private:
 	std::string min_type_;
 	core::Real Temperature_;
 	core::Real min_tolerance_;
-
 
 
 }; // class CDRsMinPackMin

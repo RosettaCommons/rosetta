@@ -9,7 +9,7 @@
 
 /// @file ClassicAbinitio.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -32,7 +32,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
@@ -54,7 +53,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 
-// AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -63,8 +61,6 @@
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/prof.hh>
@@ -82,7 +78,6 @@
 #endif
 
 //debug
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <utility/vector0.hh>
@@ -353,7 +348,6 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 
 	if ( !bSkipStage2_ ) {
 
-		//
 		//
 		// part 2 ----------------------------------------
 		tr.Info <<  "\n===================================================================\n";

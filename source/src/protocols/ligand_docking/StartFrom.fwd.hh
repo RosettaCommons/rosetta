@@ -26,6 +26,4 @@ typedef utility::pointer::shared_ptr<StartFrom> StartFromOP;
 }
 
 
-
-
 #endif /* STARTFROM_FWD_HH_ */

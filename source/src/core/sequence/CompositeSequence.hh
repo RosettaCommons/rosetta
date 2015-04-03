@@ -20,10 +20,8 @@
 
 #include <core/types.hh>
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 
 #include <utility/file/FileName.fwd.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 

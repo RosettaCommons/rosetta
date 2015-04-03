@@ -46,7 +46,6 @@ namespace scoring {
 namespace constraints {
 
 
-
 static thread_local basic::Tracer tr( "core.scoring.constraints.util" );
 
 /// @brief Returns the weighted value of a normal distribution evaluated
@@ -180,7 +179,7 @@ std::string get_cst_file_option(){
 	return cst_files[choice];
 }
 
-///@details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "centroid constraints" using the cst_file flag (will work fine with fa constraints, but uses the not-fa command line option).
+/// @details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "centroid constraints" using the cst_file flag (will work fine with fa constraints, but uses the not-fa command line option).
 void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
@@ -190,7 +189,7 @@ void add_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	}
 }
 
-///@details add constraints from command line to SCOREFUNCTION ONLY, if cst file is supplied by user.  Overwrites any constraint weights already in the scorefunction.  Assumed to be "centroid constraints" using the cst_weight flag (will work fine with fa constraints, but uses the not-fa command line option).
+/// @details add constraints from command line to SCOREFUNCTION ONLY, if cst file is supplied by user.  Overwrites any constraint weights already in the scorefunction.  Assumed to be "centroid constraints" using the cst_weight flag (will work fine with fa constraints, but uses the not-fa command line option).
 void add_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &scorefxn_  ) {
 	using namespace basic::options;
 	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
@@ -201,7 +200,7 @@ void add_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &sco
 	}
 }
 
-///@details add constraints from command line to SCOREFUNCTION AND POSE BOTH, if cst file is supplied by user.  Overwrites any constraints present in either.  Assumed to be "centroid constraints" using cst_file & cst_weight (will work fine with fa constraints, but uses the not-fa command line options).
+/// @details add constraints from command line to SCOREFUNCTION AND POSE BOTH, if cst file is supplied by user.  Overwrites any constraints present in either.  Assumed to be "centroid constraints" using cst_file & cst_weight (will work fine with fa constraints, but uses the not-fa command line options).
 void add_constraints_from_cmdline( core::pose::Pose & pose, core::scoring::ScoreFunction &scorefxn_  ) {
 	add_constraints_from_cmdline_to_pose( pose );
 	add_constraints_from_cmdline_to_scorefxn( scorefxn_ );
@@ -218,7 +217,7 @@ std::string get_cst_fa_file_option() {
 	return cst_files[choice];
 }
 
-///@details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "fullatom constraints" using the cst_fa_file flag (will work fine with centroid constraints otherwise)
+/// @details add constraints from command line to POSE ONLY, if cst file is supplied by user.  Overwrites any constraints already in the Pose.  Assumed to be "fullatom constraints" using the cst_fa_file flag (will work fine with centroid constraints otherwise)
 void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
@@ -230,7 +229,7 @@ void add_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	}
 }
 
-///@details add constraints from command line to SCOREFUNCTION ONLY, if cst file is supplied by user.  Overwrites any constraint weights already in the scorefunction.  Assumed to be "fullatom constraints" because it uses the cst_fa_weight flag, but will work with centroids otherwise.
+/// @details add constraints from command line to SCOREFUNCTION ONLY, if cst file is supplied by user.  Overwrites any constraint weights already in the scorefunction.  Assumed to be "fullatom constraints" because it uses the cst_fa_weight flag, but will work with centroids otherwise.
 void add_fa_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction & scorefxn_  ) {
 	using namespace basic::options;
 	if ( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
@@ -242,7 +241,7 @@ void add_fa_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &
 }
 
 
-///@details add constraints from command line to SCOREFUNCTION AND POSE BOTH, if cst file is supplied by user.  Overwrites any constraints present in either.  Assumed to be "fullatom constraints" because it uses the cst_fa_file & cst_fa_weight flags, but will work with centroids otherwise.
+/// @details add constraints from command line to SCOREFUNCTION AND POSE BOTH, if cst file is supplied by user.  Overwrites any constraints present in either.  Assumed to be "fullatom constraints" because it uses the cst_fa_file & cst_fa_weight flags, but will work with centroids otherwise.
 void add_fa_constraints_from_cmdline(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction & scorefxn_
@@ -258,7 +257,7 @@ void add_fa_constraints_from_cmdline(
 
 ////////// Centroid constraints
 
-///@details merge centroid constraints from commandline (cst_file) to pose: read the user-specified constraints file, and merge those to the Pose's ConstraintSet.  Creates a ConstraintSet normally, then merges it to the Pose's set.
+/// @details merge centroid constraints from commandline (cst_file) to pose: read the user-specified constraints file, and merge those to the Pose's ConstraintSet.  Creates a ConstraintSet normally, then merges it to the Pose's set.
 void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
@@ -268,7 +267,7 @@ void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	}
 }
 
-///@details weight merging helper function - only sets previously-nonzero weights!
+/// @details weight merging helper function - only sets previously-nonzero weights!
 void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreFunction &scorefxn_ ){
 
 	if( scorefxn_.has_zero_weight( atom_pair_constraint  ) ) scorefxn_.set_weight( atom_pair_constraint , weight );
@@ -312,7 +311,7 @@ void merge_csts_to_scorefunction( core::Real const weight, core::scoring::ScoreF
 }
 
 
-///@details "merge" constraint weights for scorefunction.  I don't know what "merge" means here, so it will only modify the zero weights; nonzero weights are untouched.  Reads -cst_weight from command line, and sets nonzero constraint weights to the new value
+/// @details "merge" constraint weights for scorefunction.  I don't know what "merge" means here, so it will only modify the zero weights; nonzero weights are untouched.  Reads -cst_weight from command line, and sets nonzero constraint weights to the new value
 void merge_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &scorefxn_  ) {
 	using namespace basic::options;
 	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
@@ -322,7 +321,7 @@ void merge_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &s
 	return;
 }
 
-///@details perform both pose and scorefunction updates in merge mode for centroid flags -cst_file and -cst_weight
+/// @details perform both pose and scorefunction updates in merge mode for centroid flags -cst_file and -cst_weight
 void merge_constraints_from_cmdline( core::pose::Pose & pose, core::scoring::ScoreFunction &scorefxn_  ) {
 	merge_constraints_from_cmdline_to_pose( pose );
 	merge_constraints_from_cmdline_to_scorefxn( scorefxn_ );
@@ -330,7 +329,7 @@ void merge_constraints_from_cmdline( core::pose::Pose & pose, core::scoring::Sco
 
 ////////// FA constraints
 
-///@details merge fullatom constraints from commandline (cst_fa_file) to pose: read the user-specified constraints file, and merge those to the Pose's ConstraintSet.  Creates a ConstraintSet normally, then merges it to the Pose's set.
+/// @details merge fullatom constraints from commandline (cst_fa_file) to pose: read the user-specified constraints file, and merge those to the Pose's ConstraintSet.  Creates a ConstraintSet normally, then merges it to the Pose's set.
 void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
@@ -340,7 +339,7 @@ void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose ) {
 	}
 }
 
-///@details "merge" constraint weights for scorefunction.  I don't know what "merge" means here, so it will only modify the zero weights; nonzero weights are untouched.  Reads -cst_fa_weight from command line, and sets nonzero constraint weights to the new value
+/// @details "merge" constraint weights for scorefunction.  I don't know what "merge" means here, so it will only modify the zero weights; nonzero weights are untouched.  Reads -cst_fa_weight from command line, and sets nonzero constraint weights to the new value
 void merge_fa_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &scorefxn_  ) {
 	using namespace basic::options;
 	if ( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
@@ -350,7 +349,7 @@ void merge_fa_constraints_from_cmdline_to_scorefxn( core::scoring::ScoreFunction
 	return;
 }
 
-///@details perform both pose and scorefunction updates in merge mode for centroid flags -cst_fa_file and -cst_fa_weight
+/// @details perform both pose and scorefunction updates in merge mode for centroid flags -cst_fa_file and -cst_fa_weight
 void merge_fa_constraints_from_cmdline(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction & scorefxn_
@@ -479,7 +478,7 @@ bool combinable( Constraint const& cst, utility::vector1< Size > exclude_res ) {
 	return false;
 }
 
-///@brief combine constraints randomly into AmbiguousConstraints N -> 1 this greatly decreases the odds to have a wrong constraint
+/// @brief combine constraints randomly into AmbiguousConstraints N -> 1 this greatly decreases the odds to have a wrong constraint
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in ) {
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
 		Constraint& cst = const_cast< Constraint& >( (**it) );
@@ -495,7 +494,7 @@ inline core::Size bin_by_seq_separation( core::Size sep ) {
 	return 4;
 }
 
-///@brief combine constraints randomly into AmbiguousConstraints N -> 1 this greatly decreases the odds to have a wrong constraint
+/// @brief combine constraints randomly into AmbiguousConstraints N -> 1 this greatly decreases the odds to have a wrong constraint
 void combine_constraints(
 			 ConstraintCOPs& in,
 			 core::Size combine_ratio,
@@ -684,7 +683,7 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-///@details example of how to go through a pose constraint set and print out stuff.
+/// @details example of how to go through a pose constraint set and print out stuff.
 void
 print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out /* = std::cout */ ){
 	ConstraintSetCOP cst_set = pose.constraint_set();

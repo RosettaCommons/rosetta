@@ -24,7 +24,6 @@
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 // Numeric headers
@@ -57,7 +56,6 @@ YHHPlanarityEnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// ctor
 YHHPlanarityEnergy::YHHPlanarityEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new YHHPlanarityEnergyCreator ) )
@@ -74,7 +72,7 @@ YHHPlanarityEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 YHHPlanarityEnergy::residue_energy(
 	conformation::Residue const & rsd,

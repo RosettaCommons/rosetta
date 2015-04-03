@@ -19,13 +19,11 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -60,7 +58,6 @@
 #include <boost/lexical_cast.hpp>
 
 // option key includes
-
 
 
 using ObjexxFCL::format::A;
@@ -345,8 +342,7 @@ FavorNonNativeResidue::add_residue_constraints( pose::Pose & pose ) const {
 }
 
 
-
-/// @detailed minimize the interface between two partners. If target_residues is defined
+/// @details minimize the interface between two partners. If target_residues is defined
 /// the fold_tree for minimization is set up between the central residue in the target residues and the nearest residue on the partner.
 /// if simultaneous minimization is true, then all dofs are minimized at once.
 void

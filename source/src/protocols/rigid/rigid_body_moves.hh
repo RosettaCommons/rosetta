@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 
-
 // ObjexxFCL Headers
 // #include <ObjexxFCL/FArray3A.hh>
 // #include <ObjexxFCL/FArray4D.hh>

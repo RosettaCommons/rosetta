@@ -9,12 +9,11 @@
 
 /// @file ClashEvaluator.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_PoseMetricEvaluator_hh
@@ -24,26 +23,18 @@
 // Unit Headers
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh> // replace this with .fwd by moving methods to .cc file!
 #include <basic/MetricValue.hh>
-
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/kinematics/RT.hh>
-
-// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 
 
 // ObjexxFCL Headers
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <list>
 
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <utility/vector1.hh>

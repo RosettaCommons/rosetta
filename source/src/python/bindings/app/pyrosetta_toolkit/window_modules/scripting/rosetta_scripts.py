@@ -12,7 +12,6 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
 class Rosetta_Script_Creator:
     def __init__(self):
         

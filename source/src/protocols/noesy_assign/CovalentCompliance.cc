@@ -83,7 +83,6 @@ bool fall_back( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const
 	if ( atom2.atom().find("A") != std::string::npos && atom1.atom().find("G") != std::string::npos ) return true;
 
 
-
   return false;
   //now what to do with QB, QG, etc. treat as one of the H with same name...
   // heavy atoms as main dimensions ( some of paolos data sets? )

@@ -100,7 +100,7 @@ public:
 		sdev_( sdev )
 	{}
 
-	///
+
 	Size
 	natoms() const {
 		return 6;

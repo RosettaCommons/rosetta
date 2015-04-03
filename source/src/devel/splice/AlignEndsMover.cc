@@ -21,7 +21,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "devel.splice.AlignEndsMover" );
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <string>

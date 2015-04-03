@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
 /// @author Christopher Miles (cmiles@uw.edu)
 

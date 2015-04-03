@@ -36,8 +36,4 @@ typedef utility::pointer::shared_ptr< ResfileContents const > ResfileContentsCOP
 } //namespace core
 
 
-
-
-
-
 #endif

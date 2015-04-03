@@ -27,12 +27,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
-// AUTO-REMOVED #include <map>
 
 #include <utility/vector1_bool.hh>
-
 
 
 namespace core {
@@ -66,7 +63,7 @@ public:
 		Vector & deriv
 	) const;
 
-	///@brief second declaration to allow skipping deriv; gcc 4.1.3 does not like setting default parameters for a pass-by-reference parameter
+	/// @brief second declaration to allow skipping deriv; gcc 4.1.3 does not like setting default parameters for a pass-by-reference parameter
 	Real get_potential(
 		Size const & atom_type,
 		Vector const & H_A_vector, //vector of hydrogen to acceptor

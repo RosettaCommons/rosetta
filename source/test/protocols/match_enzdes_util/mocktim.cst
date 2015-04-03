@@ -22,7 +22,6 @@ CST::BEGIN
 CST::END
 
 
-
 #block 2 for histidine proton shuttle
 
 CST::BEGIN
@@ -63,6 +62,5 @@ CST::BEGIN
   ALGORITHM_INFO::END
 
 CST::END
-
 
 

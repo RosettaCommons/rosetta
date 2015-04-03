@@ -21,22 +21,16 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <boost/foreach.hpp>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <core/chemical/AtomType.hh>
@@ -189,7 +183,7 @@ get_bbcsts( core::pose::Pose const & pose ) {
 	return new_csts;
 }
 
-/// @detailed a utility function to evaluate backbone_stub_constraints for each residue in a chain and return a vector with the top n_return residue numbers by cst score
+/// @details a utility function to evaluate backbone_stub_constraints for each residue in a chain and return a vector with the top n_return residue numbers by cst score
 /// note that this function is NOT guaranteed to return n_return residues! It will return the best n<=n_return
 utility::vector1< core::Size >
 best_bbcst_residues( core::pose::Pose const & pose, core::Size const chain, core::Size const n_return )

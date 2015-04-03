@@ -17,30 +17,14 @@
 #include <devel/cartesian_frags/CartesianFragment.hh>
 
 
-
 // libRosetta headers
-
-
-
-
-
-
-
-
 
 
 #include <core/pose/Pose.hh>
 
 
-
-
-
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-
-
 
 
 // // // C++ headers
@@ -59,7 +43,7 @@ namespace cartesian_frags {
 
 class DNA_FragLib : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~DNA_FragLib();
 
 	utility::vector1< CartesianFragment > const &

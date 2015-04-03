@@ -21,7 +21,7 @@ static basic::Tracer TR( "devel.constel.ResidueMask");
 namespace devel {
 namespace constel {
 
-///
+
 /// @brief: reads a residue mask from file
 ///
 /// @param[in] ps pose over whose residues the mask is defined
@@ -54,7 +54,6 @@ ResidueMask::ResidueMask(Pose& ps, std::string const &fname) :
 }
 
 
-///
 /// @brief: prints the residue mask as a binary string
 ///
 /// @param[out] os output stream
@@ -71,7 +70,6 @@ void ResidueMask::print(std::ostream& os) const {
 }
 
 
-///
 /// @brief: the mask's subscription operator
 ///
 /// @param[in] i index in mask

@@ -6,7 +6,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 
-
 // Rosetta Headers
 #include "cst_set.h" // pose constraints
 #include "minimize.h"
@@ -258,7 +257,6 @@ bool Single_tree_RRT::fulfilled_stop_condition_local_planner
 }
 
 
-
 Single_tree_RRT::Single_tree_RRT(pathways::Pathways* owner)
 {
 	using namespace std;
@@ -350,7 +348,6 @@ void  Single_tree_RRT::run()
 }
 
 
-//
 int Single_tree_RRT::fulfilled_stop_condition(int num_generated_nodes,int num_conseq_fails)
 {
 	static int i=0;
@@ -368,7 +365,6 @@ int Single_tree_RRT::fulfilled_stop_condition(int num_generated_nodes,int num_co
 }
 
 
-//
 RRT_node* Single_tree_RRT::generate_random_conformation()
 {
 	using namespace std;
@@ -680,7 +676,6 @@ int Single_tree_RRT::add_nodes_with_local_planner(RRT_node* from,RRT_node* to,
 }
 
 
-//
 void Single_tree_RRT::grow_DAG()
 {
 	using namespace std;
@@ -736,7 +731,6 @@ void Single_tree_RRT::grow_DAG()
 }
 
 
-//
 // meet_goal_criterions()
 //
 // does node meet most basic criteria for putative targets
@@ -757,7 +751,7 @@ int Single_tree_RRT::meet_goal_criterions(RRT_node* n){
 	return 1;
 }
 
-//
+
 // findPath()
 //
 // outputs a path from "ancestor" to "descendant"
@@ -852,7 +846,6 @@ int Single_tree_RRT::findPath(RRT_node* ancestor, RRT_node* descendant, std::vec
 //   }
 
 
-//
 RRT_node * Single_tree_RRT::find_best_conformation(std::vector<RRT_node *>& v_res_nodes){
 
 	v_res_nodes.clear();
@@ -929,7 +922,7 @@ double Single_tree_RRT::energy_function_between_flex_units(pose_ns::Pose* pose){
 
 }
 
-//
+
 // compute_energy_of_path()
 //
 // return the energy barrier in the path
@@ -965,7 +958,6 @@ biRRT::biRRT(Pathways* owner)
 }
 
 
-//
 // run()
 //
 // run the bi-RRT protocol for simultaneously growing a SOURCE
@@ -997,7 +989,6 @@ void biRRT::run()
 		cout << "Score target: " << score_T << endl;
 
 	template_pose_T.show_scores(std::cout);
-
 
 
 	RRT_node* root_S =
@@ -1065,7 +1056,6 @@ void biRRT::run()
 }
 
 
-//
 // dump_pathways()
 //
 // Dumps the pathways between root_S and root_T in the DAG
@@ -1128,7 +1118,6 @@ biRRT::dump_pathways(
 }
 
 
-//
 // grow_DAG()
 //
 // TODO: barak - maybe each node should contain a parent list too i.e. each edge = bidirected edge
@@ -1209,7 +1198,6 @@ void biRRT::grow_DAG(std::vector<RRT_node*>& connecting_nodes)
 }
 
 
-//
 // find_nearest_nodes_by_DOFs_vector()
 //
 // Synopsis:
@@ -1340,7 +1328,6 @@ void biRRT::find_nearest_nodes_between_trees(
 }
 
 
-//
 // try_to_connect_trees()
 //
 // params:
@@ -1450,7 +1437,6 @@ void biRRT::try_to_connect_trees(
 		std::cout<<"*** try_to_connect_trees(): END ***"<<std::endl;
 	}
 }
-
 
 
 // void biRRT::try_to_connect_trees(std::vector<std::vector<RRT_node *> >& generated_nodes_from_all_trees,
@@ -1627,8 +1613,6 @@ bool Towards_partial_data_RRT::fulfilled_stop_condition_local_planner
 }
 
 
-
-
 Towards_partial_data_RRT::Towards_partial_data_RRT(Pathways* owner)
 : Single_tree_RRT(owner)
 {_partial_data = owner->get_partial_data();
@@ -1723,7 +1707,6 @@ void Towards_partial_data_RRT::find_close_to_partial_data_conformations(std::vec
 	}
 	//std::cout<<"find_close_to_partial_data_conformations...3"<<std::endl;
 }
-
 
 
 double Towards_partial_data_RRT::measure_distance_from_partial_data(RRT_node* new_n)
@@ -1839,8 +1822,6 @@ Single_tree_RRT::is_forbidden_energy(float score)
 }
 
 
-
 } // namespace pathways
-
 
 

@@ -16,11 +16,9 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // mini
-// AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
 
 #include <core/types.hh>
 
@@ -45,11 +43,11 @@ class FragmentAllAtomCrmsd: public FragmentScoringMethod {
 public:
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to a given pose, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	FragmentAllAtomCrmsd(Size, Real, bool, std::string, core::pose::PoseOP);
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
 	FragmentAllAtomCrmsd(Size, Real, bool, std::string, utility::vector1< utility::vector1<Real> >);
 
 	~FragmentAllAtomCrmsd();

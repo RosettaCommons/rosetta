@@ -30,8 +30,6 @@
 #include <devel/init.hh>
 
 
-
-
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 

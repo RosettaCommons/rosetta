@@ -485,7 +485,6 @@ float score_test_nooctree( __constant float4  const * gatom,
 }
 
 
-
 __kernel void
 octree( __constant float4  const * gatom,
         __constant ushort2 const * gstripe,
@@ -518,6 +517,5 @@ octree( __constant float4  const * gatom,
   if( get_local_id(0)==0 ) output[get_global_id(0)/get_local_size(0)] = lsum[0];
 
 }
-
 
 

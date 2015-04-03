@@ -145,7 +145,6 @@ using namespace protocols::stepwise::sampling::rna;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 
-
 OPT_KEY( IntegerVector, delete_res )
 OPT_KEY( Real, surrounding_radius)
 OPT_KEY( IntegerVector, sample_res )
@@ -525,7 +524,6 @@ remove_all_variant_types(pose::Pose & pose){
 	using namespace core::pose;
 
 
-
 	for ( Size n = 1; n <= pose.total_residue(); n++  ) {
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", n );
@@ -618,7 +616,6 @@ hermann_phase_two_minimize(){
 	}
 
 
-
 	if ( !option[ lower_to_full_res ].user() ) utility_exit_with_message( "User must supply lower_to_full_res!" );
 	if ( !option[ upper_to_full_res ].user() ) utility_exit_with_message( "User must supply upper_to_full_res!" );
 	if ( !option[ cutpoint_closed ].user() ) utility_exit_with_message( "User must supply cutpoint_closed!" );
@@ -679,7 +676,6 @@ hermann_phase_two_minimize(){
 	std::string const filtered_tag_file=option[ filter_filename  ]();
 
 
-
 	//Copy DOF? (For now, take care of this with python..)
 
 	////////////////////////create score functions//////////////////////////////////////////////////////
@@ -695,7 +691,6 @@ hermann_phase_two_minimize(){
 
 	close_CB_scorefxn->set_weight( linear_chainbreak, 0.0); //no point having linear_CB since the torsion is not minimized anyways.
 	close_CB_scorefxn->set_weight( coordinate_constraint, 0.00 );
-
 
 
 	scorefxn_list.push_back(close_CB_scorefxn);
@@ -733,7 +728,6 @@ hermann_phase_two_minimize(){
 		scorefxn_list.push_back(final_scorefxn);
 
 	}
-
 
 
 	std::cout << "total_min_rounds= " << scorefxn_list.size() << " num_extra_rounds= " << num_extra_rounds << std::endl;
@@ -1232,7 +1226,6 @@ hermann_phase_two(){
 	if ( !option[ RMSD_res_pairs ].user() ) utility_exit_with_message( "User must supply RMSD_res_pairs!" );
 
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	utility::vector1< std::string > const RMSD_res_pair_list = option[ RMSD_res_pairs ]();
@@ -1552,8 +1545,6 @@ calculate_bulge_length_distribution(){
 	Size const max_angle=360;
 
 
-
-
 //	for(Size g3=min_angle; g3<=max_angle; g3+=bin_size){
 
 	for(Size b3=min_angle; b3<=max_angle; b3+=bin_size){
@@ -1660,7 +1651,6 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 			outfile << std::setw(spacing) << std::fixed << std::setprecision(3)  << std::left << C4_C3_distance;
 			outfile << std::setw(spacing) << std::fixed << std::setprecision(3)  << std::left << dot_product;
 			outfile << std::setw(spacing) << std::fixed << std::setprecision(3)  << std::left << dot_product_check;
-
 
 
 			outfile << "\n";
@@ -1830,9 +1820,7 @@ extract_clash_list(){
 	}//seq_num_1
 
 
-
 	}
-
 
 
 }
@@ -1963,11 +1951,9 @@ extract_hydrogen_bonds_statistic(){
 	std::cout << "------------------------------------------------------------------------------------------------------------------------------------------------------------ " << std::endl;
 
 
-
 	std::cout << "--------------------------Classify Base Pairs-------------------------- " << std::endl;
 
 	utility::vector1< core::scoring::rna::Base_pair> base_pair_list=classify_base_pairs_strict(pose, input_sample_res_list, hydrogen_bond_info_list, false);
-
 
 
 	if(double_count_BP==false){
@@ -2058,7 +2044,6 @@ extract_hydrogen_bonds_statistic(){
 	}
 
 
-
 	std::cout << "--------------------------Total_hbonds= " << hydrogen_bond_info_list.size() << "--------------------------" << std::endl;
 
 	if(( hbond_count.base_base			+	hbond_count.base_O2prime 		+ hbond_count.base_O4prime		+ hbond_count.base_phos+
@@ -2077,7 +2062,6 @@ extract_hydrogen_bonds_statistic(){
 	std::cout << "hbond_count.O2prime_O2prime= " << hbond_count.O2prime_O2prime << std::endl;
 	std::cout << "hbond_count.O2prime_O4prime= " << hbond_count.O2prime_O4prime << std::endl;
 	std::cout << "hbond_count.O2prime_phos= "   << hbond_count.O2prime_phos << std::endl;
-
 
 
 	Size const total_sample_res=input_sample_res_list.size();
@@ -2184,7 +2168,6 @@ silent_struct_slice(){
 			pose.conformation().delete_residue_slow(seq_num );
 		}
 	}
-
 
 
 }
@@ -2370,7 +2353,6 @@ hack_create_torsion_value_string(core::Real const & torsion_value){
 
 		return torsion_string;
 }
-
 
 
 std::string //silly function used for appending the rotamer value to the tag
@@ -2648,14 +2630,10 @@ is_new_cluster_center_second_stage(pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Ignore atoms that are within 3-bonds
 bool
 is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1, Size const seq_num_1, std::string const & atom_name_2, Size const seq_num_2){
-
 
 
 	if(is_O3prime_atom(atom_name_1)){
@@ -2738,7 +2716,6 @@ is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 	return false;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3049,8 +3026,6 @@ cluster_rotamers(bool const second_stage,
 	output_boolean("create_rotamer_silent_file= ", create_rotamer_silent_file, TR ); std::cout << std::endl;
 	output_boolean("VDW_rep_screening_slow_check= ", VDW_rep_screening_slow_check, TR ); std::cout << std::endl;
 	output_boolean("optimize_screening= ", optimize_screening ); std::cout << std::endl;
-
-
 
 
 	std::cout << "------------------------------------------------------" << std::endl;
@@ -3551,9 +3526,6 @@ main( int argc, char * argv [] )
 	NEW_OPT( dump, "dump pdb", false);
 
 
-
-
-
   ////////////////////////////////////////////////////////////////////////////
   // setup
   ////////////////////////////////////////////////////////////////////////////
@@ -3571,6 +3543,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
 
 

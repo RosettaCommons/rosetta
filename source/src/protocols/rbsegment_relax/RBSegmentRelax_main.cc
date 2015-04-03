@@ -163,8 +163,6 @@ RBSegmentRelax_main() {
 	//core::pose::set_ss_from_phipsi( start_pose );
 
 
-
-
 	////////////////////////
 	////////////////////////
 	// job distributor initialization
@@ -190,7 +188,6 @@ RBSegmentRelax_main() {
 	//protocols::jobdist::BasicJobOP prev_job, curr_job;
 	//int curr_nstruct;
 	//jobdist->startup();
-
 
 
 	/////

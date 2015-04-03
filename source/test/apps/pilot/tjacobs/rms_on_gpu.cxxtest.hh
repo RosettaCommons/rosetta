@@ -1414,7 +1414,6 @@ public:
 	}
 
 
-
 	void test_findUU() {
 		TS_ASSERT( true ); // for non-gpu builds
 #ifdef USEOPENCL

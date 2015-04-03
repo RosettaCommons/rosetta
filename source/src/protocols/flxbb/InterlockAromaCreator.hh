@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/flxbb/InterlockAromaCreator.hh
-///@brief This class will create instances of Mover InterlockAroma for the MoverFactory
-///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @file protocols/flxbb/InterlockAromaCreator.hh
+/// @brief This class will create instances of Mover InterlockAroma for the MoverFactory
+/// @author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_flxbb_InterlockAromaCreator_hh
 #define INCLUDED_protocols_flxbb_InterlockAromaCreator_hh

@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace forge {
 namespace build {
@@ -367,7 +366,6 @@ void SegmentSwap::init() {
 		}
 	}
 }
-
 
 
 } // namespace build

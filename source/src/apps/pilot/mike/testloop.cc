@@ -14,17 +14,14 @@
 // libRosetta headers
 
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <devel/init.hh>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/excn/Exceptions.hh>
-
 
 
 int

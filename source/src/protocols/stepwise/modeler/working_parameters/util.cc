@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/working_parameters/StepWiseRNA_WorkingParametersUtil.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

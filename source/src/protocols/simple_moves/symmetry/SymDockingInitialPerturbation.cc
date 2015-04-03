@@ -9,7 +9,7 @@
 
 /// @file DockingInitialPerturbation.cc
 /// @brief initial position functions
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 /// @author Ingemar Andre
 
@@ -28,7 +28,6 @@
 
 // for symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -96,7 +95,6 @@ namespace symmetry {
 SymDockingInitialPerturbation::~SymDockingInitialPerturbation(){}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin initial_perturbation
 ///
 /// @brief   Make starting perturbations for rigid body moves
 ///

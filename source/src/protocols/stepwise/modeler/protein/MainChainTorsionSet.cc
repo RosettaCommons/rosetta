@@ -9,7 +9,7 @@
 
 /// @file MainChainTorsionClasses
 /// @brief a few functions used by several StepWiseProteinAnsatz classes
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -19,7 +19,6 @@
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-
 
 
 #include <string>

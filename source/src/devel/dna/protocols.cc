@@ -31,9 +31,7 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -43,29 +41,19 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
 #include <core/scoring/dna/BasePartner.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 //#include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
 
 // Utility Headers
 #include <utility/vector1.hh>
 
 // c++ headers
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <vector>
 
@@ -114,7 +102,6 @@ repack_base_pair_neighbors(
 			is_base_pair_neighbor[i] = true;
 		}
 	}
-
 
 
 	//// setup the packer task
@@ -175,7 +162,7 @@ packing_specificity_test_fast(
 /// @details Try all possible dna basepairs at the motif positions
 /// evaluate their energies with a repack
 /// requires that the pose already have base partner info set
-///
+
 
 void
 packing_specificity_test_fast(
@@ -382,7 +369,7 @@ packing_specificity_test_fast(
 /// @details Try all possible dna basepairs at the motif positions
 /// evaluate their energies with a repack
 /// requires that the pose already have base partner info set
-///
+
 
 void
 packing_specificity_test(

@@ -19,10 +19,8 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -32,13 +30,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreTypeManager.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <string>
@@ -74,7 +68,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 static basic::Tracer TR("test.core.io.silent.protein_silent");
@@ -408,7 +401,6 @@ void test_save_and_restore_centroid() {
 
 		utility::file::file_delete( silent_outfile );
 	} // test_save_and_restore
-
 
 
 }; // ProteinSilentTests

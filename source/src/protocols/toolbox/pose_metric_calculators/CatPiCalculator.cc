@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin CatPiCalculator
 ///
 /// @brief
 /// How many cation-pi interactions are there?
 ///
-/// @detailed
+/// @details
 /// Not much detailed here. Iterate through the carbons of aromatic rings and compare that to
 /// the distance of the polar hydrogens in basic residues...histidine not considered. Default distance is 3.2A.
 /// Wait, you want to know how to use this? Well, within your protocol, you need to do the following:
@@ -30,7 +29,6 @@
 /// @author
 /// Steven Combs
 ///
-/// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
 #include <protocols/toolbox/pose_metric_calculators/CatPiCalculator.hh>
 #include <core/pose/Pose.hh>
@@ -53,7 +51,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 
-	///@brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
+	/// @brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
 	CatPiCalculator::CatPiCalculator() :
 		distance_cutoff_(5.0),
 		cat_pi_total_(0)
@@ -62,16 +60,13 @@ namespace pose_metric_calculators {
 	}
 
 
-	///@brief constructur where you define what the distance cutoff is for the pi pi
+	/// @brief constructur where you define what the distance cutoff is for the pi pi
 	CatPiCalculator::CatPiCalculator(core::Real dist_cutoff) :
 		distance_cutoff_(dist_cutoff),
 		cat_pi_total_(0)
 	{
 
 	}
-
-
-
 
 
 void CatPiCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
@@ -97,8 +92,7 @@ std::string CatPiCalculator::print( std::string const & key ) const{
 }
 
 
-
-///@brief not sure why they name this function recompute as you are actually computing the metric. Whateva
+/// @brief not sure why they name this function recompute as you are actually computing the metric. Whateva
 void CatPiCalculator::recompute(core::pose::Pose const & pose){
 	cat_pi_total_ = 0;
 	//start iterating through the residues

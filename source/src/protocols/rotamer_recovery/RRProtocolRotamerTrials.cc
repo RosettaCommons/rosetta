@@ -22,9 +22,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -33,7 +31,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers

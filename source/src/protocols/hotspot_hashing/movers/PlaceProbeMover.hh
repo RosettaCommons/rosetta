@@ -65,7 +65,7 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
     virtual bool reinitialize_for_new_input() const { return false; }
 
   protected:
-		///@brief Parses tag compoments for PlaceProbeMover
+		/// @brief Parses tag compoments for PlaceProbeMover
     void parse_place_probe_tag(
          utility::tag::TagCOP tag,
          basic::datacache::DataMap &,

@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -30,32 +30,20 @@
 #include <core/pose/Pose.hh>
 
 #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-
-
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <core/conformation/util.hh> //idealize
 
 #include <protocols/loops/Loop.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/JumpSample.hh>

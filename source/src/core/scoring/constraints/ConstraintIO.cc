@@ -26,8 +26,6 @@
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/func/MixtureFunc.hh>
-// AUTO-REMOVED #include <core/scoring/func/ScalarWeightedFunc.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -38,7 +36,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

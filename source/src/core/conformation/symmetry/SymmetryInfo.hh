@@ -29,7 +29,6 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -350,7 +349,6 @@ private:
 	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
 	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
 }; // SymmetryInfo
-
 
 
 } // symmetry

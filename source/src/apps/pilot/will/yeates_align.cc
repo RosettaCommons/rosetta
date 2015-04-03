@@ -13,7 +13,6 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
@@ -30,9 +29,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <sstream>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #include <numeric/xyz.functions.hh>
@@ -172,7 +169,6 @@ main (int argc, char *argv[]){
         utility_exit_with_message("test.pdb");
 
 
-
         Vec sax1 = Vec( 0.816496579408716,0, 0.57735027133783);
         Vec sax2 = Vec(-0.816496579408716,0,-0.57735027133783);
         Real da = numeric::dihedral(c2f1,Vec(0,0,0),Vec(0,0,1),(ang>90)?sax1:sax2);
@@ -196,7 +192,6 @@ main (int argc, char *argv[]){
   }
 
   return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

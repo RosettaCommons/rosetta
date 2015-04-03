@@ -115,7 +115,6 @@ RNA_Mg_Energy::setup_for_packing( pose::Pose & pose,	utility::vector1< bool > co
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_Mg_Energy::residue_pair_energy(
@@ -338,7 +337,6 @@ RNA_Mg_Energy::eval_atom_derivative(
 {
 	// NEED TO FILL THIS IN LATER!!
 }
-
 
 
 /// @brief RNA_Mg_Energy distance cutoff

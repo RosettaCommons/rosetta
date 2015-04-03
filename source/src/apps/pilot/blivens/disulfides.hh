@@ -21,17 +21,14 @@
 #include <core/pose/Pose.hh>
 
 //chemistry
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/disulfide_util.hh>
 #include <core/conformation/util.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //Auto Headers
 #include <core/chemical/VariantType.hh>
@@ -98,7 +95,6 @@ reasonable_disulfide_orientation( pose::Pose const& pose, Size residueA_pos, Siz
 	//All filters passed!
 	return true;
 } //end possible_disulfide
-
 
 
 /*! @brief Detect whether a disulfide bond could exist.

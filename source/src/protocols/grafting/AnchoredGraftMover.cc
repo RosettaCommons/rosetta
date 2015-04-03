@@ -605,7 +605,6 @@ AnchoredGraftMover::apply(Pose & pose){
 }
 
 
-
 ///////Accessors and Mutators of private data for derived classes
 
 void AnchoredGraftMover::movemap(MoveMapOP movemap){movemap_ = movemap;}

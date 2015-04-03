@@ -14,7 +14,6 @@
 #ifndef INCLUDED_core_scoring_etable_EtableOptions_hh
 #define INCLUDED_core_scoring_etable_EtableOptions_hh
 
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>

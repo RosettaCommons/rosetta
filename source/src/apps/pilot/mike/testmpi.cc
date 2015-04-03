@@ -11,7 +11,6 @@
 /// @brief
 
 
-
 #include <protocols/wum/MPI_Relax.hh>
 #include <cstdio>
 
@@ -37,7 +36,6 @@ main( int argc, char * argv [] )
 	//ObjexxFCL::FArray4D< double > monster_table( 100, 100, 100, 10 );
 
 
-
 	// Unique string ident:
 
 //	core::Real cl = clock()/CLOCKS_PER_SEC;
@@ -49,7 +47,6 @@ main( int argc, char * argv [] )
 //	std::cout << cl << "  " << ti << a.tv_sec << " " << a.tv_usec << "  " << tp.tv_sec << "  " << tp.tv_nsec << std::endl;
 
 	exit(0);
-
 
 
 	utility::vector1< float > myvec;
@@ -90,7 +87,5 @@ main( int argc, char * argv [] )
     }
     return 0;
 }
-
-
 
 

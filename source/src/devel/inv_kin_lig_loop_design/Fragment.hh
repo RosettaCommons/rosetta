@@ -17,7 +17,6 @@
 
 #include <iostream>
 #include <vector>
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // you cannot #include yourself #include <devel/InvKinLigLoopDesign/Fragment.hh>

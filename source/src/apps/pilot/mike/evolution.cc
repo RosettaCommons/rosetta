@@ -27,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 
 #include <devel/init.hh>
@@ -36,10 +35,8 @@
 
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -174,7 +171,6 @@ void fillPoseAndDataList(
 	}
 
 }
-
 
 
 void processChild(
@@ -542,9 +538,5 @@ main( int argc, char * argv [] )
     }
     return 0;
 }
-
-
-
-
 
 

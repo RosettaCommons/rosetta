@@ -25,12 +25,9 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/sort_predicates.hh>
-// AUTO-REMOVED #include <utility/vector1.functions.hh>
 
 // C++ headers
 #include <algorithm>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

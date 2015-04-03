@@ -17,7 +17,6 @@
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <protocols/ligand_docking/MinimizeLigand.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -79,7 +78,6 @@ std::string
 UnconstrainedTorsionsMover::get_name() const {
 	return "UnconstrainedTorsionsMover";
 }
-
 
 
 } // namespace ligand_docking

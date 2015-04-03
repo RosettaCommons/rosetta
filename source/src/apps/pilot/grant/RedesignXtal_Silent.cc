@@ -89,8 +89,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
-
 int
 main( int argc, char * argv [] )
 {
@@ -263,7 +261,6 @@ nativeParentMap.insert( nativerealpair );
  /// Now handled automatically.  scorefxn->accumulate_residue_total_energies( pose );
 
 
-
  std::string unsathbonds_string = pose.print_metric("unsat", "all_bur_unsat_polars");
  core::Real unsathbonds;
  std::stringstream convert_ss( unsathbonds_string );
@@ -362,8 +359,6 @@ if( currentseqdis[1] <= nativeseqdis[1]+sig*nativeseqdis[1] and currentseqdis[6]
 	 currentseqdis.empty();
 
   } // end nstruct for loop
-
-
 
 
   // when we are done will everything we can do some more stuff

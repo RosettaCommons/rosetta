@@ -74,8 +74,6 @@ public: // Creation
 private: // Creation
 
 
-
-
 public: // Methods: assignment
 
 
@@ -96,8 +94,6 @@ public: // Methods: assignment
 
 
 public: // Methods: comparison
-
-
 
 
 public: // Methods

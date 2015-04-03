@@ -24,11 +24,8 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <sstream>
 #include <vector>
 
 // Utility Headers
@@ -40,12 +37,12 @@ namespace moves {
 
 ///////////////////////////////////////////////////////////////////////////////
 // @brief MoverStatistics keeps track of the acceptance_rate for a mover
-//
+
 
 class MoverStatistics : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MoverStatistics();
 
 	// default constructor

@@ -17,8 +17,6 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>
 
@@ -35,7 +33,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <core/io/silent/SilentStruct.hh>

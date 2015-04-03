@@ -21,7 +21,6 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 
 // Utility headers

@@ -28,7 +28,6 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/optimization/types.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 #ifdef WIN32
 #include <core/pose/Pose.hh>
 #endif
@@ -38,14 +37,11 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/optimize_weights/OptEData.fwd.hh>
-// AUTO-REMOVED #include <protocols/optimize_weights/OptEMultifunc.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// STL Headers
 //#include <map>
-// AUTO-REMOVED #include <string>
 
 //Auto Headers
 #include <core/pose/Pose.fwd.hh>
@@ -73,7 +69,7 @@ public:
 	IterativeOptEDriver();
 	~IterativeOptEDriver();
 
-	///@brief take care when using a custom TaskFactory:
+	/// @brief take care when using a custom TaskFactory:
 	/// TaskOperations must not 'accumulate state' as they will be reused repeatedly
 	void task_factory( core::pack::task::TaskFactoryCOP );
 

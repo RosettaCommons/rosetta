@@ -20,7 +20,6 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
 
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
@@ -31,7 +30,6 @@
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/methods/Methods.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodCreator.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
@@ -895,7 +893,7 @@ debug_assert( dynamic_cast< Derived const* > (this) );
 	}
 }
 
-///@details Make sure that the neighborlist is up-to-date bfore evaluating derivatives
+/// @details Make sure that the neighborlist is up-to-date bfore evaluating derivatives
 template < class Derived >
 void
 BaseEtableEnergy< Derived >::setup_for_derivatives(
@@ -913,7 +911,6 @@ debug_assert( dynamic_cast< Derived const* > (this) );
 		nblist.prepare_for_scoring( pose, scfxn, *ptr );
 	}
 }
-
 
 
 // The EtableEnergy method stores a vector of rotamer trie objects in the Energies
@@ -1171,7 +1168,7 @@ BaseEtableEnergy< Derived >::determine_crossover_behavior(
 	}
 }
 
-///
+
 template < class Derived >
 void
 BaseEtableEnergy< Derived >::residue_pair_energy(
@@ -1564,7 +1561,6 @@ debug_assert( ! pose.energies().use_nblist() );
 	SC_SC_EnergyInvoker< typename Derived::Evaluator > invoker( rsd1, rsd2, static_cast< Derived const & > (*this).interres_evaluator(), emap );
 	count_pair::CountPairFactory::create_count_pair_function_and_invoke( rsd1, rsd2, crossover, invoker );
 }
-
 
 
 template < class Derived >
@@ -2005,8 +2001,6 @@ BaseEtableEnergy< Derived >::atomic_interaction_cutoff() const
 	return etable_.max_dis() +
 		( option[ score::fa_Hatr ] ? chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH * 2 : 0.0 ); /// HACK -- add in hydrogen/heavy max dist * 2
 }
-
-
 
 
 } // namespace etable

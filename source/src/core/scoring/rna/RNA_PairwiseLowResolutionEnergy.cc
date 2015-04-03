@@ -86,7 +86,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 //     that define the base coordinate system (for SPEED)
 //  â¢ Actually have the energy calculated in residue_pair_energy rather
 //     then the pre-cached values.
-//
+
 
 /// c-tor
 RNA_PairwiseLowResolutionEnergy::RNA_PairwiseLowResolutionEnergy() :
@@ -107,7 +107,6 @@ RNA_PairwiseLowResolutionEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -125,7 +124,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunc
 
 }
 
-///
+
 void
 RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -166,7 +165,6 @@ RNA_PairwiseLowResolutionEnergy::setup_for_packing(
 	}
 
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////////////////

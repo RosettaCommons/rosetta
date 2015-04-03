@@ -53,7 +53,6 @@ GridBaseOP HbdGridCreator::create_grid() const
 }
 
 
-
 std::string HbdGridCreator::grid_name()
 {
 	return "HbdGrid";
@@ -89,7 +88,6 @@ void HbdGrid::deserialize(utility::json_spirit::mObject data)
 	lj_spline_->deserialize(data["spline"].get_obj());
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
-
 
 
 void

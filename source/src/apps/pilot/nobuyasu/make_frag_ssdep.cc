@@ -132,7 +132,6 @@ FrameList pick_fragments(
 }
 
 
-
 int
 main( int argc, char * argv [] )
 {
@@ -146,13 +145,13 @@ main( int argc, char * argv [] )
 	Size frag_size = option[ size ];
 	Size n_frags = option[ nfrags ];
 
-	//
+
 	if( option[ blueprint ].user() && option[ in::file::s ].user() ){
 		TR << "You need to choose either options of -blueprint or -s " << std::endl;
 		runtime_assert( false );
 	}
 
-	//
+
 	Size naa( 0 );
 	String ss( "" );
     utility::vector1< String >abego;

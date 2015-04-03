@@ -9,7 +9,7 @@
 
 /// @file util.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 ///  @author Parin Sripakdeevong
 
@@ -68,7 +68,6 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 
 void
 analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

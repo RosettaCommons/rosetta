@@ -51,7 +51,6 @@ using basic::Error;
 using basic::Warning;
 
 
-
 // convert radians to degrees
 double rad2deg(double rad)
 {
@@ -147,7 +146,6 @@ printBondAngles(core::Size const seqpos, core::pose::Pose & pose)
 	      << "]  =  " << angle << " Deg" << std::endl;
   }
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

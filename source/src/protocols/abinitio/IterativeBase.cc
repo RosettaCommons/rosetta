@@ -9,7 +9,7 @@
 
 /// @file IterativeAbrelax
 /// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
@@ -34,7 +34,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ResidualDipolarCoupling.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -66,8 +65,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 
-
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/simple_filters/JumpEvaluator.hh>
@@ -111,8 +108,6 @@
 //// C++ headers
 #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <ctime>
-// AUTO-REMOVED #include <iterator>
 #include <vector>
 
 // Utility headers
@@ -257,7 +252,6 @@ void protocols::abinitio::IterativeBase::register_options() {
 		NEW_OPT8( iterative::staged_auto_noe_flags, "files with extra flags for each RASREC stage, say NONE for no option file", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE", "NONE" );
 		NEW_OPT( iterative::split_autoNOE_restraints, "split the generated restraints into HI and MED accuracy class and use restraint combination only on the 2nd class", false );
 		NEW_OPT( iterative::randomize_elimination_candidates, "put the elimination candidates into extra restraint file and only randomly activate them", 0 );
-
 
 
 		options_registered_ = true;
@@ -497,7 +491,7 @@ void IterativeBase::initialize() {
 	if ( evaluate_local() ) {
 		set_weight( "score", 1.0 );
 		//setup constraint-evaluation for filter-cst from the ConstraintClaimers ( -broker:setup )
-	///@brief set scorefxn used for evaluation
+	/// @brief set scorefxn used for evaluation
 		setup_filter_cst( overall_cstfilter_weight() );
 		//		set_weight( "prefa_clean_score3", option[ iterative::centroid_before_quickrelax_weight ]() );
 		add_evaluation( evaluation::PoseEvaluatorCOP( evaluation::PoseEvaluatorOP( new simple_filters::RDC_Evaluator("rdc") ) ), scorefxn->get_weight( scoring::rdc ) );
@@ -544,7 +538,7 @@ void IterativeBase::initialize() {
 
 IterativeBase::~IterativeBase() {}
 
-///@details ready for new batch .... if queue is empty batch will be generated any way, but otherwise we only generate if this yields true.
+/// @details ready for new batch .... if queue is empty batch will be generated any way, but otherwise we only generate if this yields true.
 ///  logic here: new batch at beginning, but only if we are in startup phase ( not a reload of a full archive )
 ///              otherwise make new batch if sufficiently many structures have been accepted since last batch
 // bool IterativeBase::ready_for_batch() const {
@@ -582,7 +576,7 @@ void IterativeBase::idle() {
 }
 ///  ----------------- stage control ----------------------
 // ---> outsource to extra class ?  --- might be reused by other protocols
-///@brief batch is expired ?
+/// @brief batch is expired ?
 bool IterativeBase::still_interested( Batch const& batch ) const {
 	return Parent::still_interested( batch ) && batch.id() >= first_batch_this_stage_;
 }
@@ -599,7 +593,7 @@ void IterativeBase::read_structures(
 	basic::show_time( tr,  "done reading into "+name() );
 }
 
-///@brief are we ready to switch to next stage ?
+/// @brief are we ready to switch to next stage ?
 void IterativeBase::test_for_stage_end() {
 	//switch to next stage ? want to have some significance to this ratio --- hence at least 1000 proposals
 	tr.Info << "current accept ratio: " << current_acceptance_ratio() << " this is "
@@ -622,7 +616,7 @@ void IterativeBase::test_for_stage_end() {
 	}
 }
 
-///@brief got to next stage
+/// @brief got to next stage
 void IterativeBase::increment_stage() {
 	if ( stage_ >= finish_stage_ ) return;
 	save_to_file( "_stage" + ObjexxFCL::string_of( stage_ ) );
@@ -655,7 +649,7 @@ void IterativeBase::increment_stage() {
 }
 
 /// ------------------------ end stage control
-///@detail rescore and sort archive
+/// @detail rescore and sort archive
 void  IterativeBase::rescore() {
   Parent::rescore();
   if ( hedge_archive_ ) {
@@ -677,7 +671,7 @@ void IterativeBase::collect_hedge_structures( core::io::silent::SilentStructOP e
 	hedge_archive_->add_evaluated_structure( evaluated_decoy, NULL, batch );
 }
 
-///@brief overload to check for pool_convergence data in incoming decoys
+/// @brief overload to check for pool_convergence data in incoming decoys
 bool IterativeBase::add_structure(
 	core::io::silent::SilentStructOP new_decoy,
 	core::io::silent::SilentStructOP alternative_decoy,
@@ -754,7 +748,7 @@ bool IterativeBase::add_structure(
 	return false; //should never get here
 }
 
-///@details generate new batch...
+/// @details generate new batch...
 /// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
 /// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
 ///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )
@@ -1012,7 +1006,7 @@ void IterativeBase::gen_diversity_pool( jd2::archive::Batch& batch, bool ) {
 		flags << std::endl;
 	}
 }
-///@brief in the comp. modelling protocol the topo-resampling stage might also contain a RigidChunkClaimer...
+/// @brief in the comp. modelling protocol the topo-resampling stage might also contain a RigidChunkClaimer...
 /// provide start-structures for this as -in:file:silent
 void IterativeBase::gen_start_structures( Batch& /*batch*/ ) {
 	// OBSOLETE
@@ -1076,7 +1070,7 @@ void IterativeBase::gen_enumerate_pairings( Batch& batch ) {
 	} //else (not enumerate::broker)
 }
 
-///@brief figure out beta-sheet topologies from pooled decoys and run with jumping
+/// @brief figure out beta-sheet topologies from pooled decoys and run with jumping
 void IterativeBase::gen_resample_topologies( Batch& batch) {
 	if ( !bDoBetaJumping_ ) return;
 	tr.Info << "resample topologies\n";
@@ -1110,7 +1104,7 @@ void IterativeBase::gen_resample_topologies( Batch& batch) {
 	}
 }
 
-///@brief restart runs from stage2-structures that correspond to those in the pool
+/// @brief restart runs from stage2-structures that correspond to those in the pool
 void IterativeBase::gen_resample_stage2( jd2::archive::Batch& batch ) {
 	tr.Info << "resample_stage2 " << std::endl;
 	mem_tr << "IterativeBase::gen_resample_stage2 start" << std::endl;
@@ -1242,7 +1236,6 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 
 	mem_tr << "IterativeBase::gen_resample_fragments end" << std::endl;
 }
-
 
 
 void IterativeBase::update_noesy_filter_files(
@@ -1700,7 +1693,6 @@ void IterativeBase::reassign_noesy_data( Batch& batch ) {
 }
 
 
-
 void IterativeBase::guess_pairings_from_secondary_structure(
 	core::fragment::FragSet const& frags,
 	std::string const& out_pairings_file,
@@ -2126,8 +2118,7 @@ void IterativeBase::cluster() {
 }
 
 
-
-///@detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
+/// @detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
 void IterativeBase::score( pose::Pose & pose ) const {
 	//to speed up things we cache the RDC data in the archive
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
@@ -2164,7 +2155,7 @@ IterativeBase::test_broker_settings( Batch const& batch ) {
 }
 
 
-///@detail load decoys into archive from -archive:input_pool or so
+/// @detail load decoys into archive from -archive:input_pool or so
 void IterativeBase::init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) {
 	//make bogus batch that contains init-file
 

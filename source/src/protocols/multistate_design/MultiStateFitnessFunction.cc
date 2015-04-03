@@ -17,7 +17,6 @@
 #include <protocols/multistate_design/SingleState.hh>
 #include <protocols/multistate_design/MultiStateEntity.hh>
 
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -121,7 +120,7 @@ MultiStateFitnessFunction::set_scorefxn( core::scoring::ScoreFunctionCOP sf ) { 
 core::scoring::ScoreFunctionCOP
 MultiStateFitnessFunction::scorefxn() const { return scorefxn_; }
 
-///@brief true const (read only) access to states
+/// @brief true const (read only) access to states
 SingleStateCOPs
 MultiStateFitnessFunction::const_states( bool positive_only /* = false */ ) const
 {

@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 #ifndef INCLUDED_protocols_topology_broker_RigidChunkClaimer_hh
@@ -34,8 +34,8 @@
 namespace protocols {
 namespace topology_broker {
 
-///@brief defines a rigid part of structure... imagine a loop-relax application core structure is fixed via jumps and loops can move
-///@detail the rigid chunk takes a definition of rigid regions in form of an instance of Loops (just taken as bunch of start-end residue numbers ---  here defining the rigid residues and not the loops).
+/// @brief defines a rigid part of structure... imagine a loop-relax application core structure is fixed via jumps and loops can move
+/// @detail the rigid chunk takes a definition of rigid regions in form of an instance of Loops (just taken as bunch of start-end residue numbers ---  here defining the rigid residues and not the loops).
 /// the rigid chunk to keep its integrity will need jumps, the claimer will reuse jumps if somebody else claims them,
 /// or submit in finalize_claims his own jumps, if not enough jumps are present.
 /// in "bExclusive_ mode" the RigidChunk will reclaim any jump claim that is useful and wihin the rigid region. (i.e., foreign claim is dissallowed but own claim with same residues is issued --- in this way the claimer uses e.g., beta-sheet jumps, where they are suggested
@@ -61,7 +61,7 @@ public:
 		return TopologyClaimerOP( new RigidChunkClaimer( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -73,29 +73,29 @@ public:
 	virtual void new_decoy();
 	virtual void new_decoy( core::pose::Pose const& );
 
-	///@brief generate DofClaims for BB
+	/// @brief generate DofClaims for BB
 	virtual void generate_claims( claims::DofClaims& ); //add to list ( never call clear() on list )
 
-	///@brief has to decline foreign BB claims for rigid regions, reclaim jumps where appropriate
+	/// @brief has to decline foreign BB claims for rigid regions, reclaim jumps where appropriate
 	virtual bool allow_claim( claims::DofClaim const& /*foreign_claim*/ );
 
-	///@brief issue jump-claims for jumps yet missing to keep rigid regions fixed
+	/// @brief issue jump-claims for jumps yet missing to keep rigid regions fixed
 	virtual void finalize_claims( claims::DofClaims& );
 
 	//	virtual void initialize_residues( core::pose::Pose&, DofClaims const& init_claims, DofClaims& failed_to_init );
-	///@brief initialize BB residues and rigid-internal jumps from starting structure --- copying atom-tree dofs
+	/// @brief initialize BB residues and rigid-internal jumps from starting structure --- copying atom-tree dofs
 	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
-	///@brief rigid-chunk can probably provide some side-chain info from full-length model
+	/// @brief rigid-chunk can probably provide some side-chain info from full-length model
 	virtual void switch_to_fullatom( core::pose::Pose&, utility::vector1< bool > bNeedToRepack ) const;
 
-	///@brief will fail if a BB torsion claim of the rigid region has been declined
+	/// @brief will fail if a BB torsion claim of the rigid region has been declined
 	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
 
-	///@brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
+	/// @brief multiply your bias to this -- if its zero don't change that, i.e., multiply only
 	virtual void manipulate_cut_bias( utility::vector1< core::Real >& cut_bias );
 
-	///@brief disallow torsion moves in relax if bRigidInRelax
+	/// @brief disallow torsion moves in relax if bRigidInRelax
 	virtual void adjust_relax_movemap( core::kinematics::MoveMap& ) const;
 
 	// will be required when we have the option to use coord. csts to fix the rigid chunk.
@@ -103,18 +103,18 @@ public:
 	//????	virtual void add_score_weights( core::scoring::ScoreFunction& );
 	virtual void receive_message( ClaimerMessage& cm );
 
-	///@brief Returns true if we are using loop definitions from ThreadingJob
+	/// @brief Returns true if we are using loop definitions from ThreadingJob
 	bool use_loops_from_threading_job() const {
 		return bUseThreadingJobLoops_;
 	}
 
-	///@brief Sets whether we should use loop definitions from ThreadingJob
+	/// @brief Sets whether we should use loop definitions from ThreadingJob
 	void use_loops_from_threading_job(bool setting) {
 		bUseThreadingJobLoops_ = setting;
 	}
 
 protected:
-	///@brief select sub-regions from rigid_core_, if skip-rate is specified
+	/// @brief select sub-regions from rigid_core_, if skip-rate is specified
 	void select_parts();
 
 	virtual bool read_tag( std::string tag, std::istream& is );
@@ -125,74 +125,74 @@ protected:
 
 
 private:
-	///@brief starting pose
+	/// @brief starting pose
 	core::pose::Pose input_pose_;
 
-	///@brief starting pose in centroid mode
+	/// @brief starting pose in centroid mode
 	core::pose::Pose centroid_input_pose_;
 
-	///@brief regions that can be used for rigid core
+	/// @brief regions that can be used for rigid core
 	loops::Loops rigid_core_;
 
-	///@brief if skip-rate is given (in loop-definitions) current_rigid_core_ will contain the current "choice" of regions... set in generate_claims()
+	/// @brief if skip-rate is given (in loop-definitions) current_rigid_core_ will contain the current "choice" of regions... set in generate_claims()
 	loops::Loops current_rigid_core_;
 
-	///@brief jumps used this round --- since generate_claims()
+	/// @brief jumps used this round --- since generate_claims()
 	claims::DofClaims current_jumps_;
 
-	///@brief flag used to specify if the rigid regions should really be treated exclusivity --- i.e., are they really rigid ?
-	///@brief changing this flag to false, will allow everything to move, but together with coordinate constraints this might yield
+	/// @brief flag used to specify if the rigid regions should really be treated exclusivity --- i.e., are they really rigid ?
+	/// @brief changing this flag to false, will allow everything to move, but together with coordinate constraints this might yield
 	/// a pose that is easier sampled ?
 	bool bExclusive_; //really rigid?
 
-	///@brief jump residues that are just next to rigid region are probably leading to impossibl fold-trees (not always -- but most of the time)
+	/// @brief jump residues that are just next to rigid region are probably leading to impossibl fold-trees (not always -- but most of the time)
 	/// if false we don't allow such jumps
 	bool bAllowAdjacentJumps_;
 
-	///@brief use the pose in new_decoy( pose )
+	/// @brief use the pose in new_decoy( pose )
 	bool bUseInputPose_;
 
-	///@brief use loop-definition from ThreadingJob
+	/// @brief use loop-definition from ThreadingJob
 	bool bUseThreadingJobLoops_;
 
-	///@brief min_loop_size for Threading-loops
+	/// @brief min_loop_size for Threading-loops
 	core::Size min_loop_size_;
 
-	///@brief same effect as OptionKeys::loops::random_grow_loops_by ]() for looprelax
+	/// @brief same effect as OptionKeys::loops::random_grow_loops_by ]() for looprelax
 	core::Real random_grow_loops_by_;
 
-	///@brief keep this chunk rigid in relax --- adjust movemap to keep BB-Torsions fixed...
+	/// @brief keep this chunk rigid in relax --- adjust movemap to keep BB-Torsions fixed...
 	bool bRigidInRelax_;
 
 
-	///@brief helper class -- computes if we have all jupms needed to rigidify the chosen chunk and generate more jumps if needed.
+	/// @brief helper class -- computes if we have all jupms needed to rigidify the chosen chunk and generate more jumps if needed.
 	class JumpCalculator : public utility::pointer::ReferenceCount { //helper class do we like this jump, do we need more ?
 	public:
 		JumpCalculator( loops::Loops const& rigid_,	bool bAllowAdjacentJumps );
 
-		///@brief only called for relevant jumps:
+		/// @brief only called for relevant jumps:
 		///*true* if this jump helps us keeping things rigid,
 		///*false* if this jump connects rigid regions
 		// that are already rigidified via a different jump.
 		bool good_jump( core::Size pos1, core::Size pos2 );
 
-		///@brief this jump doesn't help --- it doens't touch two of the rigid regions
+		/// @brief this jump doesn't help --- it doens't touch two of the rigid regions
 		bool irrelevant_jump( core::Size pos1, core::Size pos2 );
 
-		///@brief get the missing jumps
+		/// @brief get the missing jumps
 		void generate_rigidity_jumps( RigidChunkClaimer*, claims::DofClaims& extra_jumps, std::string );
 
 	private:
-		///@brief what should be rigid
+		/// @brief what should be rigid
 		loops::Loops rigid_;
 
-		///@brief which residues have already been connected via jumps
+		/// @brief which residues have already been connected via jumps
 		utility::vector1< Size > visited_;
 
-		///@brief how many new jumps
+		/// @brief how many new jumps
 		Size new_nr_;
 
-		///@brief use loop-definition from alignment in ThreadingJob
+		/// @brief use loop-definition from alignment in ThreadingJob
 		// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11
 		// bool bUseThreadingJobLoops_;
 		bool bAllowAdjacentJumps_;

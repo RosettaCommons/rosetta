@@ -20,7 +20,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace farna {
 
@@ -73,7 +72,7 @@ namespace farna {
 	class RNA_PairingTemplate : public utility::pointer::ReferenceCount {
 
 	public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_PairingTemplate();
 
 		RNA_PairingTemplate( core::kinematics::Jump const j, std::string const atom_name1, std::string const atom_name2 );
@@ -112,7 +111,7 @@ namespace farna {
 	///////////////////////////////////////////////////////////////////////////////////
 	class RNA_JumpLibrary : public utility::pointer::ReferenceCount {
 	public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RNA_JumpLibrary();
 		RNA_JumpLibrary( std::string const filename ){ read_jumps_from_file( filename ); };
 

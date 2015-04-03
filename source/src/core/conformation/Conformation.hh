@@ -187,13 +187,13 @@ public:  // General Properties
 		return residues_.empty();
 	}
 
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
 	bool is_residue_typeset( std::string tag ) const;
 
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
 	bool is_fullatom() const;
 
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	/// @brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
 	bool is_centroid() const;
 
 	/// @brief convenience test for if the conformation contains information for a membrane protein
@@ -912,7 +912,7 @@ public:  // ID access and conversions
 	id::AtomID
 	jump_atom_id( int jump_number ) const;
 
-	///@brief get four atoms which defined this torsion
+	/// @brief get four atoms which defined this torsion
 	bool
 	get_torsion_angle_atom_ids(
 		TorsionID const & tor_id,
@@ -922,7 +922,7 @@ public:  // ID access and conversions
 		AtomID & id4
 	) const;
 
-	///@brief get two atoms connect by jump
+	/// @brief get two atoms connect by jump
 	bool
 	get_jump_atom_ids(
 		core::Size jump_number,
@@ -1224,7 +1224,7 @@ private:
 	void
 	rebuild_polymer_bond_dependent_atoms( Size seqpos, int upper_lower );
 
-	///
+
 	void
 	insert_polymer_residue(
 		Residue const & new_rsd_in,
@@ -1254,7 +1254,7 @@ private:
 		Residue const & new_rsd
 	);
 
-	///
+
 	void
 	residues_insert(
 		Size seqpos,
@@ -1263,16 +1263,15 @@ private:
 		bool new_chain = false
 	);
 
-	///
+
 	void
 	residues_append( Residue const & new_rsd, bool start_new_chain, bool by_jump = false,
         std::string const & root_atom = "", id::NamedAtomID anchor_id = id::BOGUS_NAMED_ATOM_ID);
 
-	///
+
 	void
 	residues_delete( Size seqpos );
 	//////////////////////////////////////////////////////////////////////////////
-
 
 
 	/// @brief (re-)builds the AtomTree using the FoldTree and the Residues
@@ -1283,8 +1282,8 @@ private:
 	Real
 	atom_tree_torsion( TorsionID const & tor_id ) const;
 
-	///@brief get four backbone atoms which define this backbone torsion
-	///@note  Returns TRUE to signal FAILURE
+	/// @brief get four backbone atoms which define this backbone torsion
+	/// @note  Returns TRUE to signal FAILURE
 	bool
 	backbone_torsion_angle_atoms(
 		TorsionID const & id,
@@ -1484,7 +1483,7 @@ private:
 	/// @brief has the structure moved since the last call to reset_move_data?
 	mutable bool structure_moved_;
 
-	///
+
 	utility::vector1< char > secstruct_;
 
 	/// @brief ConnectionEvent observers

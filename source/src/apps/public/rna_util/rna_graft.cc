@@ -154,7 +154,6 @@ calculate_res_map( utility::vector1< Size > const & superimpose_resnum,
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////
 void
 superimpose_pdb( pose::Pose & pose1 /* the 'parent pose'*/,
@@ -423,9 +422,6 @@ rna_superimpose_and_graft_test(){
 	}
 
 }
-
-
-
 
 
 ///////////////////////////////////////////////////////////////

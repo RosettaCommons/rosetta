@@ -81,11 +81,6 @@ void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit:
 }
 
 
-
-
-
-
-
 // RPC Class
 
 static thread_local basic::Tracer TR( "rpc" );
@@ -101,8 +96,6 @@ BasicCmdLineInit::do_init(){
  //option_collection.load( argc_, argv_, false);
  return true;
 }
-
-
 
 
 JSON_RPC::JSON_RPC(const std::string &msg, bool capture_tracer, BasicInit *basic_init  ):
@@ -354,9 +347,6 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
   }
 
 
-
-
-
   void JSON_RPC::output_capture_start(){
       basic::Tracer::set_new_final_stream( &tracer_output_stream_ );
   }
@@ -422,8 +412,6 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
       provider->add_input_file( filename, contents );
     }
   }
-
-
 
 
 }

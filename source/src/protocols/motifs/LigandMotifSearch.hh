@@ -25,10 +25,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
@@ -76,7 +73,7 @@ public:
 		LigandMotifSearch const & src
 	);
 
-	//
+
 	void run(
 		Pose const & pose,
 	  utility::vector1< Size > & input_BPs

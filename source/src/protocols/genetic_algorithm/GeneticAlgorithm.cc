@@ -26,7 +26,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
 
 #include <numeric/random/random.fwd.hh>
@@ -160,7 +159,7 @@ GeneticAlgorithmBase::add_parents_from_current_generation()
 	);
 }
 
-///@brief add the best entities from the previous generation
+/// @brief add the best entities from the previous generation
 void
 GeneticAlgorithmBase::propagate_best_from_previous_generation( core::Size size /* = 1 */, bool unique /* = true */ )
 {
@@ -241,7 +240,7 @@ GeneticAlgorithmBase::fill_with_perturbations_of_existing_entities( core::Size s
 	}
 }
 
-///@brief add entities that are recombinants of fit parents
+/// @brief add entities that are recombinants of fit parents
 void
 GeneticAlgorithmBase::fill_by_crossover( core::Size size /* = 0 */ )
 {
@@ -262,7 +261,7 @@ GeneticAlgorithmBase::fill_by_crossover( core::Size size /* = 0 */ )
 	}
 }
 
-///@brief add entities that are mutants of fit parents
+/// @brief add entities that are mutants of fit parents
 void
 GeneticAlgorithmBase::fill_by_mutation( core::Size size /* = 0 */ )
 {
@@ -332,7 +331,7 @@ GeneticAlgorithmBase::complete()
 }
 
 
-///@brief returns variable number of best (const) entities via vector of pointers to them
+/// @brief returns variable number of best (const) entities via vector of pointers to them
 Entity::CAPs
 GeneticAlgorithmBase::best_entities( core::Size num ) // nonconst method to permit sort
 {
@@ -347,7 +346,7 @@ GeneticAlgorithmBase::best_entities( core::Size num ) // nonconst method to perm
 }
 
 
-///@brief pick two random entities from an unordered vector, return the one whose fitness is better
+/// @brief pick two random entities from an unordered vector, return the one whose fitness is better
 Entity const &
 GeneticAlgorithmBase::tournament_select(
 	utility::vector1< EntityCOP > const & pvec
@@ -368,7 +367,7 @@ GeneticAlgorithmBase::entity_cache() const { return entity_cache_; }
 utility::vector1<utility::vector1< EntityOP > > const &
 GeneticAlgorithmBase::generations() const { return generations_; }
 
-///@brief true const (read-only) access to entity population
+/// @brief true const (read-only) access to entity population
 Entity::COPs
 GeneticAlgorithmBase::population( core::Size gen_num ) const
 {
@@ -708,7 +707,6 @@ GeneticAlgorithm::evaluate_fitnesses()
 	}
 	write_entities_checkpoint();
 }
-
 
 
 } // namespace genetic_algorithm

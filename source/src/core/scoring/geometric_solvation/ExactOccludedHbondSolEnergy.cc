@@ -480,7 +480,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 
 }
 
-///
+
 /// @brief computes the SHO energy of a donor atom
 ///
 /// @param[in] polar_rsd residue to which the atom belongs
@@ -567,7 +567,6 @@ core::Real ExactOccludedHbondSolEnergy::compute_donor_atom_energy(
 }
 
 
-///
 /// @brief computes the SHO energy of an acceptor atom
 ///
 /// @param[in] polar_rsd residue to which the atom belongs
@@ -1222,7 +1221,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_grid_constant( HBEvalTuple const
 	//	  jk Rosetta incarnation) are all basically 5 divided by the number
 	//	  jk of protons / lone pairs (which I don't think L+K appreciated),
 	//	  jk so I just started using this instead of LK dG FREE.
-	//
+
 
 	// Compute Ebulk (using the LK energy)
 	core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );
@@ -1241,7 +1240,6 @@ ExactOccludedHbondSolEnergy::version() const
 }
 
 
-///
 /// @brief creates an ExactOccludedHbondSolEnergy object according to command-line options
 ///
 ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline() {

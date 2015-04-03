@@ -14,7 +14,7 @@
 //Unit headers
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 
-//
+
 #include <core/pose/Pose.hh>
 
 #include <basic/MetricValue.hh>

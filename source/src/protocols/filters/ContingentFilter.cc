@@ -13,7 +13,6 @@
 #include <protocols/filters/ContingentFilterCreator.hh>
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -30,7 +29,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.ContingentFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 ContingentFilter::ContingentFilter() :
 	parent( "ContingentFilter" ),
 	value_( false )
@@ -79,7 +78,6 @@ ContingentFilterCreator::create_filter() const { return FilterOP( new Contingent
 
 std::string
 ContingentFilterCreator::keyname() const { return "ContingentFilter"; }
-
 
 
 } // filters

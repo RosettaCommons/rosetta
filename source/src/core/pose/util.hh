@@ -95,7 +95,7 @@ void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose);
 /// @brief Returns true if <residue> is positionally conserved, false otherwise
 bool is_position_conserved_residue(const Pose& pose, core::Size residue);
 
-///@brief Create a subpose of the src pose.  PDBInfo is set as NULL.
+/// @brief Create a subpose of the src pose.  PDBInfo is set as NULL.
 void
 create_subpose(
 	Pose const & src,
@@ -104,13 +104,13 @@ create_subpose(
 	Pose & pose
 );
 
-///@brief Create a subpose of the src pose -- figures out a reasonable fold tree.
+/// @brief Create a subpose of the src pose -- figures out a reasonable fold tree.
 void
 pdbslice( pose::Pose & new_pose,
 					pose::Pose const & pose,
 					utility::vector1< Size > const & slice_res );
 
-///@brief Create a subpose of the src pose -- figures out a reasonable fold tree.
+/// @brief Create a subpose of the src pose -- figures out a reasonable fold tree.
 void
 pdbslice( pose::Pose & pose,
 					utility::vector1< Size > const & slice_res );
@@ -233,7 +233,7 @@ std::map< std::string, std::string > get_all_comments(
 
 
 /// @brief Sets a PDB-style REMARK entry in the Pose.
-/// @detailed This is different from a comment in its interpretation by the
+/// @details This is different from a comment in its interpretation by the
 /// silent-file output machinery. A REMARK is written on its own separate line
 /// in the output silent-file, while a comment is written as part of the Pose
 /// SCORE: lines.
@@ -312,23 +312,23 @@ bool is_ideal_position(
 											 core::pose::Pose const & pose
 );
 
-///@brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
+/// @brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
 void remove_nonprotein_residues( core::pose::Pose & pose );
 
-///@brief this function removes all residues with both UPPER and LOWER terminus types.  This is intended for removing ligands that are canonical residues.
+/// @brief this function removes all residues with both UPPER and LOWER terminus types.  This is intended for removing ligands that are canonical residues.
 void remove_ligand_canonical_residues( core::pose::Pose & pose );
 
-///@brief this function compares pose atom coordinates for equality; it is not the == operator because it does not compare all pose data.
-///@author Steven Lewis smlewi@gmail.com
-///@param[in] lhs one pose to compare
-///@param[in] rhs one pose to compare
-///@param[in] n_dec_places number of decimal places to compare for the coordinates (remember == doesn't work for float); defaults to 3 which is PDB accuracy
+/// @brief this function compares pose atom coordinates for equality; it is not the == operator because it does not compare all pose data.
+/// @author Steven Lewis smlewi@gmail.com
+/// @param[in] lhs one pose to compare
+/// @param[in] rhs one pose to compare
+/// @param[in] n_dec_places number of decimal places to compare for the coordinates (remember == doesn't work for float); defaults to 3 which is PDB accuracy
 bool compare_atom_coordinates(
 	Pose const & lhs,
 	Pose const & rhs,
 	Size const n_dec_places = 3);
 
-///@breif this function compares poses for equality up to the
+/// @brief this function compares poses for equality up to the
 ///information stored in the binary protein silent struct format.
 bool compare_binary_protein_silent_struct(
 	Pose const & lhs,
@@ -580,7 +580,7 @@ template< typename T >
 void
 initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const & value );
 
-///@brief returns a Distance
+/// @brief returns a Distance
 core::Real
 pose_max_nbr_radius( pose::Pose const & pose );
 
@@ -629,7 +629,7 @@ void
 initialize_disulfide_bonds(
 	Pose & pose);
 
-///@brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
+/// @brief Returns a string giving the pose's tag if there is such a thing or "UnknownTag" otherwise.
 std::string extract_tag_from_pose( core::pose::Pose &pose );
 
 /// @brief Create a sequence map of first pose onto the second, matching the PDBInfo

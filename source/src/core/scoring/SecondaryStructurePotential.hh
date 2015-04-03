@@ -17,7 +17,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/SS_Info.hh>
 #include <core/scoring/SecondaryStructureWeights.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -25,7 +24,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 

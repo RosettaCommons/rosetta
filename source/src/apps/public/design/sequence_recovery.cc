@@ -27,15 +27,11 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
@@ -67,7 +63,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/vector0.hh>
-
 
 
 static thread_local basic::Tracer TR( "sequence_recovery" );
@@ -112,8 +107,8 @@ void init_usage_prompt( std::string exe ) {
 }
 
 
-///@brief load custom TaskOperations according to an xml-like utility::tag file
-///@details The sequence recovery app can only handle taskops that do not use
+/// @brief load custom TaskOperations according to an xml-like utility::tag file
+/// @details The sequence recovery app can only handle taskops that do not use
 /// ResidueSelectors, unless they are anonymous (i.e. unnamed) ResidueSelectors
 /// that are declared as subtags of TaskOperations.
 core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
@@ -137,7 +132,7 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 }
 
 
-///@brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
+/// @brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
 void fill_num_neighbors( pose::Pose & pose, utility::vector1< core::Size > & num_nbs ) {
 
 	using core::conformation::PointGraph;
@@ -162,7 +157,7 @@ void fill_num_neighbors( pose::Pose & pose, utility::vector1< core::Size > & num
 	return;
 }
 
-///@brief return the set of residues that are designable based given pose
+/// @brief return the set of residues that are designable based given pose
 std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactoryOP & tf ) {
 
 	//we need to score the pose for many of the task operations passed from cmd line
@@ -188,7 +183,7 @@ std::set< Size > fill_designable_set( pose::Pose & pose, pack::task::TaskFactory
 }
 
 
-///@brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
+/// @brief iterates over all designed positions and determines identity to native. outputs recoveries to file.
 void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses ) {
 
 	// setup main arrays used for calculation

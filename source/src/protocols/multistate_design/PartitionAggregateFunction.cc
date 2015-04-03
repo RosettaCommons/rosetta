@@ -13,11 +13,8 @@
 
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 
-// AUTO-REMOVED #include <protocols/multistate_design/MultiStateAggregateFunction.tmpl.hh>
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/MultiStateFitnessFunction.tmpl.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>

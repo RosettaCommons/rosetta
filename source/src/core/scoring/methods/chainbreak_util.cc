@@ -16,7 +16,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <boost/unordered/unordered_set.hpp>
 
 #include <basic/options/option.hh>

@@ -18,7 +18,6 @@
 #include <protocols/frag_picker/scores/AdaptiveScoreHistogram.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
@@ -29,7 +28,7 @@ namespace frag_picker {
 namespace scores {
 
 /// @brief holds particular score components, weights and calculates the total score for a fragment candidate
-/// @detailed a fragment picker object needs exactly one fragment manager to pick fragments. Adding new scoring methods
+/// @details a fragment picker object needs exactly one fragment manager to pick fragments. Adding new scoring methods
 /// is supposed to be done FragmentPicker, which calls proper method from this class.
 class PValuedFragmentScoreManager: public FragmentScoreManager {
 public:
@@ -46,7 +45,7 @@ public:
 	bool score_fragment(FragmentCandidateOP, FragmentScoreMapOP);
 
 	/// @brief prints a flat table with all scores for all the fragments in a given vector
-	/// @detailed If the manager allows for annotations, they will be printed as well
+	/// @details If the manager allows for annotations, they will be printed as well
 	void describe_fragments(utility::vector1<std::pair<FragmentCandidateOP,
 			scores::FragmentScoreMapOP> > const&, std::ostream&);
 

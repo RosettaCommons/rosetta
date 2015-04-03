@@ -73,7 +73,7 @@ basic::options::RealOptionKey const loopness("loopness");
 basic::options::RealOptionKey const nbrs_per_residue("nbrs_per_residue");
 basic::options::StringOptionKey const bestoutfile("bestoutfile");
 
-///@brief AnchorFinder mover
+/// @brief AnchorFinder mover
 class AnchorFinderMover : public protocols::moves::Mover {
 public:
 	AnchorFinderMover() : out(basic::options::option[ bestoutfile ].value(), std::ios_base::app /*append*/) {

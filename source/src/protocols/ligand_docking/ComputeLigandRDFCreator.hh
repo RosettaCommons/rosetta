@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/ligand_docking/ComputeLigandRDFCreator.hh
-///@author Sam DeLuca (sam@decarboxy.com)
+/// @file protocols/ligand_docking/ComputeLigandRDFCreator.hh
+/// @author Sam DeLuca (sam@decarboxy.com)
 
 #ifndef INCLUDED_protocols_ligand_docking_ComputeLigandRDFCreator_hh
 #define INCLUDED_protocols_ligand_docking_ComputeLigandRDFCreator_hh

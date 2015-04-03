@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -45,7 +45,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 #include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>
@@ -139,7 +138,6 @@ void ConstraintClaimer::new_decoy() {
 		if ( old_filename != filename_ ) constraints_ = NULL;
 	}
 }
-
 
 
 void ConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
@@ -270,7 +268,6 @@ void ConstraintClaimer::set_combine_ratio( core::Size setting ) {
 void ConstraintClaimer::set_filter_weight( core::Real setting ) {
 	filter_weight_ = setting;
 }
-
 
 
 } //topology_broker

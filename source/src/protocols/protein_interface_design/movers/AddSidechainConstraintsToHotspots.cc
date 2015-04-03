@@ -26,7 +26,6 @@
 #include <core/conformation/Residue.hh>
 #include <boost/foreach.hpp>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/kinematics/FoldTree.hh>
 

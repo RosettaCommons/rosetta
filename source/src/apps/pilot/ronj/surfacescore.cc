@@ -63,7 +63,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 static thread_local basic::Tracer TR( "surface_app" );
 
 using namespace core;
@@ -125,9 +124,7 @@ void init_usage_prompt( std::string exe ) {
 
 }
 
-///
-/// @begin print_energies
-///
+
 /// @brief
 /// Helper method for the main function. Takes in a pose, the scorefunction, surface energies and weights and prints everything
 /// out in a pretty format.
@@ -214,7 +211,7 @@ void print_energies( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 }
 
 
-///@brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
+/// @brief helper method which uses the tenA nb graph in the pose object to fill a vector with nb counts
 void fill_num_neighbors( pose::Pose & pose, utility::vector1< int > & num_nbs ) {
 
 	// now that it's scored, we can get the number of neighbors each residue has (in the wt structure anyway)
@@ -228,7 +225,7 @@ void fill_num_neighbors( pose::Pose & pose, utility::vector1< int > & num_nbs ) 
 }
 
 
-///@brief helper method which pretty prints the surface scores
+/// @brief helper method which pretty prints the surface scores
 void print_surface_score_by_res( pose::Pose & pose, utility::vector1< int > & num_nbs,
 		basic::MetricValue< utility::vector1< core::Real > > & pose_residue_surface, Real surface_score_weight ) {
 
@@ -259,7 +256,7 @@ void print_surface_score_by_res( pose::Pose & pose, utility::vector1< int > & nu
 }
 
 
-///@brief Takes the input Pose and runs a fast repack protocol on it.
+/// @brief Takes the input Pose and runs a fast repack protocol on it.
 void repack_pose( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 
 	pack::task::PackerTaskOP repack_task = pack::task::TaskFactory::create_packer_task( pose );
@@ -280,7 +277,6 @@ main( int argc, char* argv[] ) {
 	try {
 
 
-	//
 	// add application specific options to options system
 	//
 	option.add( surface_app::surfacescore, "Score proteins with the surface score and score12." );
@@ -295,12 +291,11 @@ main( int argc, char* argv[] ) {
 	option.add( surface_app::use_reweighted_score12_score_function, "Use a reweighted score12 energy function." );
 
 
-	//
 	// options, random initialization
 	//
 	devel::init( argc, argv );
 
-	//
+
 	// concatenate -s and -l flags together to get total list of PDB files
 	// The advantage of parsing -s and -l separately is that users can specify a list and a single structure on the
 	// command line.
@@ -338,13 +333,13 @@ main( int argc, char* argv[] ) {
 		utility_exit_with_message_status( usage_string, 1 );
 	}
 
-	//
+
 	// create a surface metric calculator
 	//
 	pose::metrics::PoseMetricCalculatorOP surface_calculator = new protocols::toolbox::pose_metric_calculators::SurfaceCalculator;
 	pose::metrics::CalculatorFactory::Instance().register_calculator( "surface", surface_calculator );
 
-	//
+
 	// create a custom score function as well as a score12 scorefunction
 	//
 	TR << "Creating score functions." << std::endl;
@@ -466,7 +461,7 @@ main( int argc, char* argv[] ) {
 		// now we get to the part where we have to decide what we're actually doing
 		// check what "mode" the user ran: was -surfacescore, -surfacedesign, or -surfacescan specified.
 
-		///
+
 		/// surface design
 		///
 		if ( option[ surface_app::surfacedesign ] ) {
@@ -543,7 +538,6 @@ main( int argc, char* argv[] ) {
 			TR << "Whole run took " << ((double) stoptime - starttime )/CLOCKS_PER_SEC << " seconds" << std::endl;
 
 
-		///
 		/// surface scan
 		///
 		} else if ( option[ surface_app::surfacescan ] ) {
@@ -655,7 +649,7 @@ main( int argc, char* argv[] ) {
 				} // over aas
 			} // over resid
 
-		///
+
 		/// surface score
 		///
 		} else /* default behaviour is to score */ {

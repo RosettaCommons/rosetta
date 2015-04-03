@@ -16,23 +16,12 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
-
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 
 #include <numeric/random/random.hh>
@@ -51,10 +40,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
-
-
-
 
 
 namespace core {

@@ -45,9 +45,9 @@ operator<<( std::ostream & os, Stub const & a )
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@brief build a stub from a center points and other three points a, b, c
+/// @brief build a stub from a center points and other three points a, b, c
 ///
-///@details orthogonal coord frame M contains three unit vectors by column,
+/// @details orthogonal coord frame M contains three unit vectors by column,
 ///the first one is the unit vector from b pointing to a, the second one is the
 ///unit vector which is in the plane defined by vector b->a and b->c and
 ///perpendicular to b->a, the third one is the cross product of the first two.

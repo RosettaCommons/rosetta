@@ -18,12 +18,11 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 static thread_local basic::Tracer TR( "protocols.FilterMover" );
 
-//
+
 #include <string>
 
 #include <utility/vector1.hh>

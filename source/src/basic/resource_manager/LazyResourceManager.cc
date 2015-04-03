@@ -510,7 +510,6 @@ LazyResourceManager::show(
 }
 
 
-
 bool
 LazyResourceManager::has_resource_configuration( ResourceTag const & resource_tag ) const
 {

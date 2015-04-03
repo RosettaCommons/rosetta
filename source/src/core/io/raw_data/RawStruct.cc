@@ -18,8 +18,6 @@
 
 // mini headers
 #include <core/io/raw_data/RawStruct.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <ObjexxFCL/format.hh>
 

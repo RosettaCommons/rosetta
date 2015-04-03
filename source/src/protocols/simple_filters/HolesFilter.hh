@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/simple_filters/HolesFilter.hh
 /// @brief header file for HolesFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 
@@ -94,7 +94,6 @@ public:// accessor
 
 	// @brief get name of this filter
 	virtual std::string name() const { return "HolesFilter"; }
-
 
 
 public:// parser

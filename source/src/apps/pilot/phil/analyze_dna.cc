@@ -14,64 +14,29 @@
 // libRosetta headers
 
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
-
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
-
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <basic/options/util.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 
-
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 
 // // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 //silly using/typedef
 
@@ -86,7 +51,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/constraints/Constraint.hh>
-
 
 
 using basic::T;
@@ -104,7 +68,6 @@ using std::string;
 static thread_local basic::Tracer tt( "demo.phil.analyze_dna", basic::t_trace );
 static thread_local basic::Tracer td( "demo.phil.analyze_dna", basic::t_debug );
 static thread_local basic::Tracer ti( "demo.phil.analyze_dna", basic::t_info );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

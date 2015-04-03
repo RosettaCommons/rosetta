@@ -14,7 +14,6 @@
 /// 09/09/2011
 
 
-
 #include <protocols/ncaa_crosslink/NcaaPreCrosslink.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <devel/init.hh>
@@ -27,7 +26,6 @@
 // option key includes
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-
 
 
 int
@@ -56,11 +54,6 @@ main( int argc, char * argv [] )
 }
 
 
-
-
-
-
-
 /*
 
 int main( int argc, char * argv [] ) {
@@ -73,7 +66,6 @@ int main( int argc, char * argv [] ) {
 	core::scoring::ScoreFunctionCOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "mm_std") ;
 
 
-
 	core::pack::task::TaskFactoryOP tf = new core::pack::task::TaskFactory;
 
 	tf->push_back( new core::pack::task::operation::RestrictToRepacking );
@@ -82,12 +74,10 @@ int main( int argc, char * argv [] ) {
 	tf->push_back( new core::pack::task::operation::NoRepackDisulfides );
 
 
-
 	utility::vector1< core::Size > const movable_jumps(1);
 
 //	protocols::docking::DockJumps const movable_jumps  =  utility::vector1<core::Size> ;
 //	tf->push_back( new RestrictToInterface( movable_jumps() ) );
-
 
 
 //	protocols::docking::setup_foldtree( pose, "LH_J", movable_jumps );

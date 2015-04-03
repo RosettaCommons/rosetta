@@ -33,7 +33,6 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/assert.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -59,7 +58,7 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-///@details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
+/// @details constructor.  Notice it calls the parent class!  It also builds some internal variables for determining
 ///which processor it is in MPI land.
 MPIMultiCommJobDistributor::MPIMultiCommJobDistributor( core::Size sub_size ) {
 	setup_sub_communicators( sub_size );
@@ -106,7 +105,7 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 #endif //USEMPI
 }
 
-///@details master-job distributes job-ids as usual. sub-masters obtain a new job from master
+/// @details master-job distributes job-ids as usual. sub-masters obtain a new job from master
 /// all processes within a single communication context work on the same job-id. ( Bcast )
 core::Size
 MPIMultiCommJobDistributor::get_new_job_id() {
@@ -135,7 +134,7 @@ MPIMultiCommJobDistributor::get_new_job_id() {
 	return 0;
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run_time, std::string const & tag) {
 	if ( sub_rank() <= 0 ) {
@@ -143,7 +142,7 @@ MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run
   }
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 void
 MPIMultiCommJobDistributor::job_failed(core::pose::Pose &pose, bool retry ) {
 	if ( sub_rank() <= 0 ) {

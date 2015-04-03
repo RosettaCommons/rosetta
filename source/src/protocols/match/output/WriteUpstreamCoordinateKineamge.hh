@@ -19,12 +19,10 @@
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/ClassicMatchAlgorithm.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 
 // Project headers
 #ifdef WIN32
@@ -32,8 +30,6 @@
 #endif
 
 // C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <iostream>
 #include <fstream>
 
 #include <utility/vector1_bool.hh>

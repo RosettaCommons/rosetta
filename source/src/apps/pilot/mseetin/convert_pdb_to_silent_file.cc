@@ -107,7 +107,6 @@
 #include <core/pack/task/TaskFactory.hh>
 
 
-
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
 
@@ -274,6 +273,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
 
 

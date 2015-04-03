@@ -27,7 +27,6 @@
 #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -36,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
 class ProteinInterfaceDesignOperation : public RestrictOperationsBase
 {
 public:
@@ -47,11 +46,11 @@ public:
 	void repack_chain2( bool const repack );
 	void design_chain1( bool const design );
 	void design_chain2( bool const design );
-	///@brief allow all amino acids to be designed at all positions, do not exclude C, G, P
+	/// @brief allow all amino acids to be designed at all positions, do not exclude C, G, P
 	void allow_all_aas( bool const allow  );
-	///@brief allow design of all residues on input pose, do not exclude G,P
+	/// @brief allow design of all residues on input pose, do not exclude G,P
 	void design_all_aas( bool const design_all  );
-	///@brief distance cutoff for atom distance in an interface.
+	/// @brief distance cutoff for atom distance in an interface.
 	/// All residues an atoms less than the distance cutoff from an atom in the other chain are
 	/// defined as interface.
 	void interface_distance_cutoff( core::Real const dist );

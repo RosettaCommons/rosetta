@@ -56,11 +56,11 @@ simple_fold_tree(
     core::Size cutpoint,
     core::Size jumppoint2);
 
-///@brief Setup LH_A foldtree via docking.  Return dock_chains string.
+/// @brief Setup LH_A foldtree via docking.  Return dock_chains string.
 std::string
 setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
-///@brief Setup A_LH foldtree via docking. Return dock_chains string.
+/// @brief Setup A_LH foldtree via docking. Return dock_chains string.
 std::string
 setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
 
@@ -90,7 +90,7 @@ CDR_H3_cter_filter(
     const core::pose::Pose & pose_in,
     AntibodyInfoOP ab_info);
 
-///@brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
+/// @brief Get a set of loops for a boolean vector of CDRNameEnums including any stem residues.
 protocols::loops::LoopsOP
 get_cdr_loops(
 	AntibodyInfoCOP ab_info,
@@ -118,7 +118,7 @@ cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
 /////////////////////////////////// Epitope + Paratope ////////////////////////////////////////////////////////////////////
 
-///@brief Get the epitope residues using the InterGroupNeighborsCalculator.  
+/// @brief Get the epitope residues using the InterGroupNeighborsCalculator.  
 vector1<bool>
 select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance = 10.0);
 
@@ -127,7 +127,5 @@ select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, 
 
 
 #endif //INCLUDED_protocols_antibody_util_HH
-
-
 
 

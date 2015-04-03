@@ -20,8 +20,6 @@ import os
 import re
 
 
-
-
     
 def toCen(p):
     print "Switching to Centroid"

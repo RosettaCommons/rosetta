@@ -38,7 +38,6 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
@@ -101,7 +100,6 @@ LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(
 	protocols::moves::Mover::type("LoopMover_Perturb_QuickCCD");
 	set_default_settings();
 }
-
 
 
 LoopMover_Perturb_QuickCCD::LoopMover_Perturb_QuickCCD(

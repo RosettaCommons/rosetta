@@ -101,16 +101,16 @@ public:
 	void set_db_partition(platform::SSize db_partition) { db_partition_ = db_partition; }
 	bool is_db_partitioned() { return db_partition_ > 0; }
 
-	///@brief indicate that a transaction block has begun.
+	/// @brief indicate that a transaction block has begun.
 	void begin_transaction();
 
-	///@brief indicate that a transaction block has completed. NOTE:
+	/// @brief indicate that a transaction block has completed. NOTE:
 	///When in chunk transaction mode, this may not actually write to
 	///the database.
 	void
 	commit_transaction();
 
-	///@brief force a transaction to be committed. This should only
+	/// @brief force a transaction to be committed. This should only
 	///be used when writing data that is required by other processes,
 	///such as protocol and batch ids.
 	void
@@ -154,12 +154,12 @@ public:
 	// Warning this is not called because of the singleton pattern
 	virtual ~DatabaseSessionManager();
 
-	///@brief return singleton instance of session manager
+	/// @brief return singleton instance of session manager
 	static
 	DatabaseSessionManager *
 	get_instance();
 
-	///@brief Acquire a database session
+	/// @brief Acquire a database session
 	sessionOP
 	get_db_session(
 		DatabaseMode::e db_mode,
@@ -175,7 +175,7 @@ public:
 		platform::SSize db_partition = -1);
 
 
-	///@brief Acquire a sqlite3 database session
+	/// @brief Acquire a sqlite3 database session
 	sessionOP
 	get_session_sqlite3(
 		std::string const & database,
@@ -184,7 +184,7 @@ public:
 		bool const readonly=false,
 		platform::SSize db_partition=-1);
 
-	///@brief Acquire a mysql database session
+	/// @brief Acquire a mysql database session
 	sessionOP
 	get_session_mysql(
 		std::string const & database,
@@ -196,7 +196,7 @@ public:
 		platform::Size port);
 
 
-	///@brief Acquire a postgres database session
+	/// @brief Acquire a postgres database session
 	sessionOP
 	get_session_postgres(
 		std::string const & database,
@@ -217,17 +217,14 @@ private:
 	);
 
 
-
 #ifndef MULTITHREADED
 	static boost::scoped_ptr< DatabaseSessionManager > instance_;
 #endif
 };
 
 
-
 }
 }
-
 
 
 #endif

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/StubApplier.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -147,7 +147,6 @@ void detect_neighbors(
 }
 
 
-
 // modularized to simplify comparing structures from non-Rosetta-repacking
 // WARNING: if the native structure doesn't match the repacked structure in size etc., we have a problem --> assertion will fail, program will quit
 // NOTE: this now also checks whether the residue identity has changed or not, as we're testing design -- report both the native and the target residue, so that we can plot them in a heat map
@@ -208,8 +207,6 @@ void compare_residues_and_chi1_2_angles(
 		    res_info = chi_dev_details[i];
 		  else
 		    res_info = refres.name1();
-
-
 
 
 		  if (refres.name1() == rp_res.name1()) {
@@ -341,7 +338,6 @@ void repack_step (
 
 		// minimize with hard, same as above
 		min_mover->apply( repacked );
-
 
 
 	} else if ( option[ design_tight_clusters::backrub ]() ) {// note that backrub only makes sense for 8A repacking
@@ -583,7 +579,6 @@ void design_cluster(
 }
 
 
-
 int main( int argc, char * argv [] )
 {
 	try{
@@ -615,7 +610,6 @@ int main( int argc, char * argv [] )
 		NEW_OPT(design_tight_clusters::external_cluster, "provide all cluster positions in PDB numbering (chain pos vector)", utility::vector1<std::string>()); // half of these will be casted to chars, the other half to ints...
 		//	NEW_OPT(design_tight_clusters::evaluate_externally_repacked_structure, "evaluate chi1/2 of an externally repacked structure -- requires -in:file:native for the reference structure", false);
 		NEW_OPT(design_tight_clusters::soft_repack_min_hard_repack_min, "(hard repack to normalize, as for all runs, then) soft repack, hard minimize, hard repack w/ include_current, hard min", false);
-
 
 
 		// initialize Rosetta
@@ -650,7 +644,6 @@ int main( int argc, char * argv [] )
 
 
 		//p.dump_pdb( p_name+"_native.pdb" ); // only for debugging the odd rebuild-neighbor-count issues
-
 
 
 		if ( option[ out::path::pdb ].user() ) {
@@ -744,7 +737,6 @@ int main( int argc, char * argv [] )
 
 		// append to filtered_clusters in either case -- repacking or just evaluation will be checked inside the function
 		filtered_clusters[ext_cluster] = "external"; // we don't know whether this one is buried or intermediate
-
 
 
 		// repack all the filtered clusters (whether externally provided or detected in this run)

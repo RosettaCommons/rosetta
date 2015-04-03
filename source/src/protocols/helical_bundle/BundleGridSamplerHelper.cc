@@ -72,7 +72,7 @@ namespace protocols {
 		BundleGridSamplerHelper::~BundleGridSamplerHelper() {}
 
 
-		///@brief make a copy of this BundleGridSamplerHelper object (allocate actual memory for it)
+		/// @brief make a copy of this BundleGridSamplerHelper object (allocate actual memory for it)
 		///
 		BundleGridSamplerHelperOP
 		BundleGridSamplerHelper::clone() const

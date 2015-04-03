@@ -27,7 +27,6 @@
 #include <basic/database/schema_generator/Schema.hh>
 
 
-
 #include <utility/vector1.hh>
 
 // Boost Headers

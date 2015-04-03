@@ -34,7 +34,6 @@
 #include <boost/scoped_ptr.hpp>
 
 // C++ headers
-// AUTO-REMOVED #include <cstdlib>
 
 #include <utility/vector1.hh>
 

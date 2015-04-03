@@ -11,7 +11,6 @@
 /// @brief  reading/writing of Vall libraries
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
-// AUTO-REMOVED #include <time.h>
 // unit headers
 #include <core/fragment/picking_old/vall/vall_io.hh>
 

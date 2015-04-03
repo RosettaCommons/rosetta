@@ -102,7 +102,7 @@ void NamedAtomPairConstraint::show_def_nopose( std::ostream& out ) const {
 	func_->show_definition( out );
 }
 
-///@details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
+/// @details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
 void
 NamedAtomPairConstraint::read_def(
 	std::istream& data,

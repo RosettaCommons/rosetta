@@ -9,19 +9,14 @@
 
 /// @file protocols/antibody/LHSnugFitLegacy.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_antibody_LHSnugFitLegacy_hh
 #define INCLUDED_protocols_antibody_LHSnugFitLegacy_hh
-
-
-
-
 
 
 #include <core/pose/Pose.hh>
@@ -32,7 +27,6 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 
 #include <protocols/antibody_legacy/LHSnugFitLegacy.fwd.hh>
-
 
 
 using namespace core;
@@ -93,20 +87,9 @@ private:
 };
 
 
-
-
-
-
-
 } // namespace antibody
 } // namespace protocols
 
 #endif
-
-
-
-
-
-
 
 

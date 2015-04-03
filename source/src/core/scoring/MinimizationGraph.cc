@@ -15,13 +15,11 @@
 #include <core/scoring/MinimizationGraph.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
@@ -334,7 +332,6 @@ MinimizationNode::OneBodyEnergiesIterator
 MinimizationNode::sfs_req_1benmeths_end() const {
 	return sfs_req_1benmeths_.end();
 }
-
 
 
 MinimizationNode::OneBodyEnergiesIterator

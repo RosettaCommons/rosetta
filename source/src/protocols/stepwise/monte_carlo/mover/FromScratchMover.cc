@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/monte_carlo/mover/FromScratchMover.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

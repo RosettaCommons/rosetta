@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/PhosphateScreener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

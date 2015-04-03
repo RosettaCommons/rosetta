@@ -19,7 +19,6 @@
 
 //project headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/nv/NVlookup.hh>
 

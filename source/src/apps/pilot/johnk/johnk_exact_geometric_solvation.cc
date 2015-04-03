@@ -40,7 +40,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 using namespace core;
 using namespace core::scoring;
 using namespace basic::options;
@@ -167,6 +166,5 @@ main( int argc, char * argv [] )
     }
     return 0;
 }
-
 
 

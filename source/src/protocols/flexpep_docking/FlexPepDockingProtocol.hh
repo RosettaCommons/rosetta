@@ -24,20 +24,15 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <string>
-// AUTO-REMOVED #include <set>
 
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -90,7 +85,6 @@ private:
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
-	/// @begin create and apply prepack mover
 	///
 	/// @brief prepack protocol for flexpepdock
 	//         (0)  minimize all side-chains + peptide b.b., just to get a reference to best possible energy
@@ -98,7 +92,7 @@ private:
 	//         (ii)  repack + minimize side-chains of protein
 	//         (iii)  translate back (by 1000A)
 	///
-	//  @detailed
+	//  @details
 	//  Prepacking a docked structure
 	//
 	//  @param
@@ -214,7 +208,6 @@ private:
 	//
 	// @param pose[in,out] an input pose conformation to be optimized
 	void hires_fpdock_protocol(core::pose::Pose& pose);
-
 
 
 private:

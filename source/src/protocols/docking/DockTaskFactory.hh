@@ -9,7 +9,7 @@
 
 /// @file DockTaskFactory
 /// @brief sets up the task factory for docking movers
-/// @detailed
+/// @details
 ///		This contains the functions that set up the taskfactory for docking
 ///		movers depending on the command line options
 /// @author Krishna Kilambi
@@ -25,8 +25,6 @@
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>

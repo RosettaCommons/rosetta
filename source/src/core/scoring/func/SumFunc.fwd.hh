@@ -25,7 +25,6 @@ namespace core {
 namespace scoring {
 namespace func {
 
-///
 
 class SumFunc;
 typedef utility::pointer::shared_ptr< SumFunc > SumFuncOP;

@@ -1,5 +1,5 @@
 // Crappy doxygen comment {{{1
-/// @detailed Refines the polypeptide segments in the LoopMover_KIC::loops_ 
+/// @details Refines the polypeptide segments in the LoopMover_KIC::loops_ 
 /// class variable from their current conformations.  Uses Rosetta's all-atom 
 /// representation and high-resolution scoring function (with an up-weighted 
 /// chain break term). At the beginning of this stage, unless the flag 

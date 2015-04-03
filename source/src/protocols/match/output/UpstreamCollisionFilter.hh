@@ -107,7 +107,6 @@ private:
 	BumpGridOP bump_grid_;
 
 
-
 };
 
 /// @brief This class is used to detect collisions between the upstream residues

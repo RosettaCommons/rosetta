@@ -136,7 +136,6 @@ public:
 	///	SequenceOP new_seq_op( new SequenceProfile( *this ) );
 	///	return new_seq_op;
 	///}
-	//
 
 
 	virtual void read_from_file(utility::file::FileName const & fn, Real temp);

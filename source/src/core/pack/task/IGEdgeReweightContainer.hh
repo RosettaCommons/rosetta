@@ -28,7 +28,6 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -96,9 +95,6 @@ private:
 	Size nres_;
 
 };
-
-
-
 
 
 } //task

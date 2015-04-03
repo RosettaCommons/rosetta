@@ -393,7 +393,6 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags, Real temp
 }
 
 
-
 PoseWrap make_pose(Size Nprev, Size Npost) {
 	using namespace core;
 	using namespace chemical;
@@ -444,9 +443,7 @@ PoseWrap make_pose(Size Nprev, Size Npost) {
 	// pw.pose.dump_pdb("make_pose_helix.pdb");
 
 
-
 	core::pose::symmetry::make_symmetric_pose( pw.pose );
-
 
 
 	// pw.pose.dump_pdb("make_pose_symm.pdb");
@@ -553,7 +550,6 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
  	    << pose.sequence().substr(0,pw.nres) << std::endl;
 
 
-
 	if( score/nres_mono <= basic::options::option[basic::options::OptionKeys::in::file::silent_energy_cut]() ) {
 		using namespace basic::options;
 		// cenpose.dump_pdb(std::string(option[OptionKeys::out::file::o]())+"/bpy"+tag+"_cen.pdb.gz");
@@ -567,8 +563,6 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	}
 
 }
-
-
 
 
 std::string make_rand_ss(core::Size len) {

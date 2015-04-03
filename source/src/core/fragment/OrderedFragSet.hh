@@ -11,7 +11,7 @@
 /// @brief  yields a simple implementation of a fragset
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_OrderedFragSet_HH
 #define INCLUDED_core_fragment_OrderedFragSet_HH
@@ -31,7 +31,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 #include <map>
 
 #include <utility/vector1.hh>

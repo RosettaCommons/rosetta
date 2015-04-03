@@ -20,9 +20,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <string>

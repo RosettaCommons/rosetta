@@ -225,7 +225,6 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 }
 
 
-
 void
 setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff, float const cst_tol){
 	//create constraints for all residues
@@ -460,7 +459,6 @@ create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 	double avg_ca_rmsd = run_mc(p,s,temperature,basic::options::option[out::nstruct](),output_tag,true);
 //	std::cout << "average production run CA-rmsd to start: " << avg_ca_rmsd << std::endl;
 }
-
 
 
 int

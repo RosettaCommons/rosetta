@@ -9,7 +9,7 @@
 
 /// @file core/pose/full_model_info/FullModelParameters.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

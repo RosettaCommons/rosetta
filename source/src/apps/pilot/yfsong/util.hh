@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief pilot app utilities
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #ifndef apps_pilot_yfsong_util_HH

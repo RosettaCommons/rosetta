@@ -366,7 +366,7 @@ simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveM
 	out << std::endl;
 }
 
-///@brief linearizes (or defoliates, if you prefer) a FoldTree.  "default" FoldTrees produced by the PDB reader have all chains (peptide edges) starting from jumps relative to residue 1.  This code modifies the tree to instead have all the jumps be relative to the preceding edge.  It is not tested with ligands and will not work with "functional" jumps.  From A to B:
+/// @brief linearizes (or defoliates, if you prefer) a FoldTree.  "default" FoldTrees produced by the PDB reader have all chains (peptide edges) starting from jumps relative to residue 1.  This code modifies the tree to instead have all the jumps be relative to the preceding edge.  It is not tested with ligands and will not work with "functional" jumps.  From A to B:
 ///A:FOLD_TREE  EDGE 1 78 -1  EDGE 1 79 1   EDGE 79 454 -1  EDGE 1 455 2    EDGE 455 540 -1  EDGE 1 541 3    EDGE 541 697 -1
 ///B:FOLD_TREE  EDGE 1 78 -1  EDGE 78 79 1  EDGE 79 454 -1  EDGE 454 455 2  EDGE 455 540 -1  EDGE 540 541 3  EDGE 541 697 -1
 core::kinematics::FoldTree
@@ -652,8 +652,8 @@ visualize_fold_tree( FoldTree const & ft, std::map<Size,char> const & mark_jump_
 
 //////////////////////////// END sheffler visualize fold tree
 
-///@brief remodel a fold tree to account for a large insertion by adding the size of the insert to upstream positions
-///@author Steven Lewis smlewi@gmail.com as a favor for Jared
+/// @brief remodel a fold tree to account for a large insertion by adding the size of the insert to upstream positions
+/// @author Steven Lewis smlewi@gmail.com as a favor for Jared
 core::kinematics::FoldTree
 remodel_fold_tree_to_account_for_insertion(
 	core::kinematics::FoldTree const & input_tree, //return a remodeled version of this tree

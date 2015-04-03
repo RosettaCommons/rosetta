@@ -9,7 +9,7 @@
 
 /// @file SWA_PoseSetup.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -67,7 +67,6 @@ namespace protein {
     virtual void apply( core::pose::Pose & pose_to_visualize );
 
 	virtual std::string get_name() const;
-
 
 
 		stepwise::modeler::working_parameters::StepWiseWorkingParametersOP & working_parameters();

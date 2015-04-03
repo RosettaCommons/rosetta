@@ -24,7 +24,7 @@
 namespace protocols {
 namespace simple_filters {
 
-///@brief test whether a pose contains a comment that evaluates to a predefined value. This is useful in controlling execution flow in RosettaScripts.
+/// @brief test whether a pose contains a comment that evaluates to a predefined value. This is useful in controlling execution flow in RosettaScripts.
 class PoseComment : public filters::Filter
 {
   public:

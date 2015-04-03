@@ -19,30 +19,24 @@
 // Rosetta Headers
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/kinematics/CAlpha.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/EnergyGraph.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 
 #include <basic/options/option.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 
 //Utility Headers
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
@@ -55,7 +49,6 @@
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // option key includes
@@ -82,13 +75,12 @@ namespace scoring {
 static core::Size max_interchain_sites ( 2 );
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin calculate
 ///
 /// @brief base for calculating the interface
-/// @detailed
+/// @details
 ///				decide which type of an interface calculation to use
 ///
-/// @authors Monica Berrondo October 19 2007
+/// @author Monica Berrondo October 19 2007
 /////////////////////////////////////////////////////////////////////////////////
 void
 Interface::calculate( core::pose::Pose const & pose )
@@ -137,10 +129,9 @@ Interface::calculate( core::pose::Pose const & pose )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin protein_calculate
 ///
 /// @brief calculate the protein-protien interface
-/// @detailed
+/// @details
 ///				decide which type of an interface calculation to use
 ///				calculate the residues that are at the interface
 ///				this uses the CAlpha class (at least for now) which
@@ -155,9 +146,8 @@ Interface::calculate( core::pose::Pose const & pose )
 ///
 /// @references pose_docking_calc_interface from pose_docking.cc
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified October 19 2007
 /////////////////////////////////////////////////////////////////////////////////
 void
 Interface::protein_calculate( core::pose::Pose const & pose )
@@ -252,9 +242,8 @@ Interface::ligand_calculate(
 	}
 }
 
-/// @begin Interface:closest_interface_residue
 /// @brief find the nearest residue at the interface to a given residue
-/// @authors Monica Berrondo November 18, 2010
+/// @author Monica Berrondo November 18, 2010
 core::Size
 Interface::closest_interface_residue( core::pose::Pose const & pose, Size src_rsd, core::Real & distance )
 {
@@ -277,10 +266,8 @@ Interface::closest_interface_residue( core::pose::Pose const & pose, Size src_rs
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-/// @begin Interface::print
 /// @brief print out the interface information
-/// @authors Monica Berrondo November 07 2007
-/// @last_modified November 07 2007
+/// @author Monica Berrondo November 07 2007
 ////////////////////////////////////////////////////////////////////////////////////
 void
 Interface::print( core::pose::Pose const & pose )
@@ -311,16 +298,14 @@ Interface::show( core::pose::Pose const & pose )
 ////////////////////////////////////////////////////////////////////////////////////
 // need to check to make sure that the interface residues are actually interface
 // residues
-/// @begin set_pack
 ///
 /// @brief sets up which residues are to be packed
-/// @detailed
+/// @details
 ///
 /// @references pose_docking_repack from pose_docking.cc
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified June 29 2007
 /////////////////////////////////////////////////////////////////////////////////
 void
 Interface::set_pack(
@@ -392,19 +377,17 @@ Interface::is_pair(
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-/// @begin interface_center
 ///
 /// @brief calculates the center of mass of interface residues
-/// @detailed
+/// @details
 ///			 calculate the center of mass of the interface
 ///			 loops over all residues at the interface and gets the xyz coordinates for
 ///			 the c-alpha atom of that residue
 ///
 /// @references pose_docking_calc_interface from pose_docking.cc
 ///
-/// @authors Monica Berrondo June 14 2007
+/// @author Monica Berrondo June 14 2007
 ///
-/// @last_modified June 29 2007
 /////////////////////////////////////////////////////////////////////////////////
 // check to make sure this is working correctly
 core::Vector

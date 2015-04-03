@@ -400,8 +400,6 @@ private:
 };
 
 
-
-
 struct PoseWrap : public ReferenceCount {
 	string tag_;
 	core::pose::Pose pose,orig_pose,validate_reference_;
@@ -1700,7 +1698,6 @@ struct PoseWrap : public ReferenceCount {
 // 			}
 // 		}
 // 		if(ac.size()) pose.add_constraint(new AmbiguousConstraint(ac));
-//
 
 
 	}
@@ -3044,7 +3041,6 @@ cen_fold(PoseWrap & pw, Size NCYCLES, core::fragment::FragSetOP frags0, core::fr
 	// }
 
 
-
 	scoring::ScoreFunctionOP sf0 = scoring::ScoreFunctionFactory::create_score_function( "score0" );
 	scoring::ScoreFunctionOP sf1 = scoring::ScoreFunctionFactory::create_score_function( "score1" );
 	scoring::ScoreFunctionOP sf2 = scoring::ScoreFunctionFactory::create_score_function( "score2" );
@@ -3572,8 +3568,6 @@ fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 }
 
 
-
-
 ScoreFunctionOP flxbb_nobu(PoseWrap & pw) {
 	using namespace core::scoring;
 	ScoreFunctionOP sf3,sf4;
@@ -3697,7 +3691,6 @@ find_clashes( PoseWrap & pw ) {
 
 	return clashes;
 }
-
 
 
 void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Real censcore ) {
@@ -3840,8 +3833,6 @@ void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Rea
 	}
 
 }
-
-
 
 
 string make_rand_ss_hs(core::Size /*len*/) {
@@ -4032,7 +4023,6 @@ main( int argc, char * argv [] )
 	} else {
 		func(NULL);
 	}
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

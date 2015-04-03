@@ -35,7 +35,7 @@ namespace core {
 namespace io {
 namespace pdb {
 
-///@brief Information stored in the header records
+/// @brief Information stored in the header records
 ///http://www.wwpdb.org/documentation/format32/sect2.html
 ///HEADER    PEPTIDASE                               13-JAN-98   1A2Z
 class HeaderInformation : public utility::pointer::ReferenceCount {

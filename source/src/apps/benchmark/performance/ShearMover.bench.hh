@@ -81,7 +81,6 @@
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 //#include <core/scoring/constraints/Constraints.fwd.hh>
 //#include <basic/MetricValue.fwd.hh>
-//// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 //#include <basic/Tracer.fwd.hh>
 //#include <basic/datacache/BasicDataCache.fwd.hh>
 //#include <protocols/filters/Filter.fwd.hh>

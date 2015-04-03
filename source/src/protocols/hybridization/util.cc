@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Align a random jump to template
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #include <protocols/hybridization/util.hh>
@@ -773,7 +773,6 @@ core::Real get_gdtmm( core::pose::Pose & native, core::pose::Pose & pose, core::
 	core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	return core::scoring::xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 }
-
 
 
 } // hybridize

@@ -50,7 +50,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 int
 main( int argc, char * argv [] )
 {

@@ -12,7 +12,6 @@
 /// @author P. Douglas Renfrew ( renfrew@nyu.edu )
 
 
-
 // protocols header
 #include <protocols/jd2/JobDistributor.hh>
 

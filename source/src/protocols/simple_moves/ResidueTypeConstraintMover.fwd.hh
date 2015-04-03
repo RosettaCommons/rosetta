@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-///@author Doo Nam Kim (doonam.kim@gmail.com)
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 #ifndef INCLUDED_protocols_simple_moves_ResidueTypeConstraintMover_fwd_hh
 #define INCLUDED_protocols_simple_moves_ResidueTypeConstraintMover_fwd_hh

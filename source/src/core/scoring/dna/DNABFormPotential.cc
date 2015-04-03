@@ -69,7 +69,7 @@ TorsionFourierComponent::compute( Real const torsion_angle, Real & return_deriv 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///
+
 
 DNABFormPotential::DNABFormPotential()
 {
@@ -78,7 +78,7 @@ DNABFormPotential::DNABFormPotential()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///
+
 
 void
 DNABFormPotential::init_dna_bform_data()

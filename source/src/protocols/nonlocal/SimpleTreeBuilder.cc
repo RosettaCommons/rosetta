@@ -16,7 +16,6 @@
 // Project headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <utility/vector1.hh>
 

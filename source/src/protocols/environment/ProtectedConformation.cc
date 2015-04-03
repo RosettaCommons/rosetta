@@ -359,7 +359,6 @@ ResidueOP add_variant(
 }
 
 
-
 ResidueOP ProtectedConformation::match_variants(
   core::Size seqpos,
   Residue const& in_rsd ) const

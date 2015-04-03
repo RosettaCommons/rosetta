@@ -23,7 +23,6 @@
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.fwd.hh>
 #include <protocols/match/BumpGrid.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -35,7 +34,6 @@
 #endif
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

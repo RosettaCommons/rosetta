@@ -29,14 +29,14 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
-///
+
 class ElecDensEnergy : public methods::ContextIndependentLRTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	ElecDensEnergy();
 
 
@@ -84,7 +84,6 @@ public:
 	) const ;
 
 
-	///
 	virtual
 	void
 	residue_pair_energy(

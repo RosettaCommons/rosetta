@@ -16,34 +16,24 @@
 #include <core/scoring/packing/SurfEnergy.hh>
 #include <core/scoring/packing/SurfEnergyCreator.hh>
 
-// AUTO-REMOVED #include <core/scoring/packing/PoseBalls.hh>
 
 #include <core/scoring/packing/surf_vol.hh>
 
 //Package headers
 
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/CacheableAtomID_MapVector.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/scoring/packing/compute_holes_score_res.hh>
-
-// AUTO-REMOVED #include <basic/prof.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 //C++ headers
@@ -202,8 +192,6 @@ SurfEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
-
 
 
 } // packing

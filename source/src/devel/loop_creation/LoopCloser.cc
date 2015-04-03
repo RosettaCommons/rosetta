@@ -29,7 +29,7 @@ namespace loop_creation {
 	}
 	
 	
-	///@brief Was the most recent loop-closure attempt successful?
+	/// @brief Was the most recent loop-closure attempt successful?
 	bool
 	LoopCloser::success() const{
 		return success_;

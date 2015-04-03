@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @brief Definition of types SHOBuriedUnsatisfiedPolarsCalculatorOP and
 /// 	SHOBuriedUnsatisfiedPolarsCalculatorCOP
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
-///
+
 
 #ifndef INCLUDED_FWD_SHOBuriedUnsatisfiedPolarsCalculator_hh
 #define INCLUDED_FWD_SHOBuriedUnsatisfiedPolarsCalculator_hh

@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/CoreDunbrackFilter.cc
 /// @brief filter structures by packstat score
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -28,9 +28,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
-
 
 
 // Utility headers

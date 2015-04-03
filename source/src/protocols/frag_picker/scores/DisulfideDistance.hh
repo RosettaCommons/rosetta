@@ -16,7 +16,6 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/PhiPsiTalosIO.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
@@ -24,7 +23,6 @@
 // mini
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1.hh>
@@ -39,7 +37,7 @@ class DisulfideDistance: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a Calpha distance based scoring function.
-	/// @detailed Scores distance matches for short range disulfides (ie: within fragment)
+	/// @details Scores distance matches for short range disulfides (ie: within fragment)
 	DisulfideDistance(Size priority, Real lowest_acceptable_value, bool use_lowest,
 										utility::vector1< Size > disulfide_data, Size largest_fragment);
 

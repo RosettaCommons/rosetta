@@ -20,7 +20,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -29,9 +28,9 @@ namespace protocols {
 namespace cluster {
 
 
-///@brief Data structure for one similarity measurement (s_ik) for affinity propagation clustering.
+/// @brief Data structure for one similarity measurement (s_ik) for affinity propagation clustering.
 ///
-///@details There will be one instance of this class for each (finite) similarity between two input points,
+/// @details There will be one instance of this class for each (finite) similarity between two input points,
 /// up to a maximum of N*N instances if the similarity matrix is fully populated.
 ///
 class Exemplar //: public utility::pointer::ReferenceCount
@@ -59,9 +58,9 @@ public:
 }; // Exemplar
 
 
-///@brief Data structure for one input data point for affinity propagation clustering.
+/// @brief Data structure for one input data point for affinity propagation clustering.
 ///
-///@details There should be one instance of this class for each input point.
+/// @details There should be one instance of this class for each input point.
 /// Fields are public because it's a glorified struct -- clients shouldn't use this directly.
 ///
 class DataPoint //: public utility::pointer::ReferenceCount
@@ -101,9 +100,9 @@ public:
 }; // DataPoint
 
 
-///@brief Public interface for doing affinity propagation clustering.
+/// @brief Public interface for doing affinity propagation clustering.
 ///
-///@details Based on Frey and Dueck, "Clustering by Passing Messages Between Data Points", Science 315 (2007).
+/// @details Based on Frey and Dueck, "Clustering by Passing Messages Between Data Points", Science 315 (2007).
 /// Useful for choosing a set of representative data points (exemplars)
 /// out of a large set (e.g. all decoys from a large Rosetta run)
 /// given a measure of similarity (e.g. RMSD, maxsub, GDT, ...).

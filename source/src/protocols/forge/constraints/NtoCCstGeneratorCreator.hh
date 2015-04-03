@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/forge/constraints/NtoCCstGeneratorCreator.hh
-///@brief This class will create instances of the NtoC_RCG mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/constraints/NtoCCstGeneratorCreator.hh
+/// @brief This class will create instances of the NtoC_RCG mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_forge_constraints_NtoCCstGeneratorCreator_hh
 #define INCLUDED_protocols_forge_constraints_NtoCCstGeneratorCreator_hh
@@ -42,9 +42,9 @@ public:
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/forge/constraints/NtoCCstGeneratorCreator.hh
-///@brief This class will create instances of the NtoC_RCG mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/constraints/NtoCCstGeneratorCreator.hh
+/// @brief This class will create instances of the NtoC_RCG mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_forge_constraints_NtoCCstGeneratorCreator_hh
 #define INCLUDED_protocols_forge_constraints_NtoCCstGeneratorCreator_hh

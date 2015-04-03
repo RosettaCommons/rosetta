@@ -9,7 +9,7 @@
 
 /// @file DockMCMProtocol
 /// @brief protocols that are specific to high resolution docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -36,7 +36,6 @@
 #include <core/kinematics/FoldTree.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <protocols/jd2/util.hh>
 
@@ -53,7 +52,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/docking/DockTaskFactory.hh>
 #include <utility/exit.hh>
@@ -157,9 +155,8 @@ DockMCMProtocol::init()
 // JQX: rewrite the apply function
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin docking high resolution apply function
 /// @brief
-/// @detailed
+/// @details
 ///		decides what to call according to options
 void DockMCMProtocol::apply( core::pose::Pose& pose )
 {
@@ -264,8 +261,6 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 	jd2::write_score_tracer( pose, "DockMCM_final" );
 
 }
-
-
 
 
 void DockMCMProtocol::set_move_map(core::kinematics::MoveMapOP movemap){

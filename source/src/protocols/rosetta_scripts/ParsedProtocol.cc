@@ -107,7 +107,7 @@ ParsedProtocol::ParsedProtocol() :
 ParsedProtocol::~ParsedProtocol() {
 }
 
-/// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
+/// @details Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
 void
 ParsedProtocol::apply( Pose & pose )
@@ -433,7 +433,7 @@ ParsedProtocol::parse_my_tag(
 	TR.flush();
 }
 
-/// @detailed Looks for any submovers that have additional output poses to process.
+/// @details Looks for any submovers that have additional output poses to process.
 /// If any are found, run remainder of parsed protocol.
 core::pose::PoseOP
 ParsedProtocol::get_additional_output( )

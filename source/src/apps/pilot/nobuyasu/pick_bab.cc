@@ -510,7 +510,6 @@ main( int argc, char * argv [] )
 //		output_ << dsasa << " " << twist << " ";
 
 
-
 //    String spairs_string = option[ spairs ]();
 //		utility::vector1< String > sp( utility::string_split( spairs_string, '.' ) );
 //		if( sp.size() == 2 ) {

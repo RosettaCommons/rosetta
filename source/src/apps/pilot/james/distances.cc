@@ -14,8 +14,6 @@
 #include <protocols/viewer/viewers.hh>
 
 
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -28,20 +26,16 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <apps/pilot/james/james_util.hh>
 
@@ -60,7 +54,6 @@
 #include <utility/vector0.hh>
 
 #include <utility/excn/Exceptions.hh>
-
 
 
 using namespace ObjexxFCL::format;

@@ -8,15 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file basic/svd/SVD_Solver.fwd.hh
  ///
  /// @brief SVD solver class
  ///
- /// @authorsv Christophe Schmitz & Srivatsan Raman
+ /// @authorv Christophe Schmitz & Srivatsan Raman
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_basic_svd_SVD_Solver_fwd_hh

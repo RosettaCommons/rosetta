@@ -9,7 +9,7 @@
 
 /// @file src/protocols/jumping/ResiduePairJump.cc
 /// @brief a class to create jump transform from a pair of residues
-/// @detailed
+/// @details
 ///  This class is to create possible jump transforms between a pair of residues
 ///  when their sidechains are locked in certain geometry constraints. It starts
 ///  from the predefined constraints and takes backbone-independent rotamer conformation
@@ -25,7 +25,6 @@
 // Project Headers
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/fragment/Frame.hh>
@@ -41,14 +40,11 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 // Utility headers
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 //// C++ headers
@@ -68,7 +64,7 @@ ResiduePairJumpSingle::ResiduePairJumpSingle() {}
 ResiduePairJumpSingle::~ResiduePairJumpSingle() {}
 
 
-///@brief constructed by residue_type
+/// @brief constructed by residue_type
 ResiduePairJumpSingle::ResiduePairJumpSingle(
 	core::chemical::ResidueType const & residue_type
 ) :

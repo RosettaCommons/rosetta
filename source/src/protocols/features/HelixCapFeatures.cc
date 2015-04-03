@@ -27,7 +27,6 @@
 #include <cppdb/frontend.h>
 
 
-
 #ifdef WIN32
 #include <core/scoring/ScoreFunction.hh>
 #endif
@@ -60,14 +59,14 @@ HelixCapFeatures::HelixCapFeatures( HelixCapFeatures const & /*src*/ ) : Feature
 
 HelixCapFeatures::~HelixCapFeatures(){}
 
-///@brief return string with class name
+/// @brief return string with class name
 std::string
 HelixCapFeatures::type_name() const
 {
 	return "HelixCapFeatures";
 }
 
-///@brief generate the table schemas and write them to the database
+/// @brief generate the table schemas and write them to the database
 void
 HelixCapFeatures::write_schema_to_db(
 	utility::sql_database::sessionOP db_session) const
@@ -124,7 +123,7 @@ HelixCapFeatures::write_schema_to_db(
 	secondary_structure_punctuation.write(db_session);
 }
 
-///@brief return the set of features reporters that are required to
+/// @brief return the set of features reporters that are required to
 ///also already be extracted by the time this one is used.
 utility::vector1<std::string>
 HelixCapFeatures::features_reporter_dependencies() const
@@ -144,7 +143,7 @@ HelixCapFeatures::parse_my_tag(
 	core::pose::Pose const & /*pose*/)
 {}
 
-///@brief Return true if the dssp code is irregular (blank), hydrogen
+/// @brief Return true if the dssp code is irregular (blank), hydrogen
 ///bonded turn(T) or bend(S)
 bool
 HelixCapFeatures::is_loop(std::string dssp_code){
@@ -157,7 +156,7 @@ HelixCapFeatures::is_loop(std::string dssp_code){
 		dssp_code == " ";
 }
 
-///@brief collect all the feature data for the pose
+/// @brief collect all the feature data for the pose
 core::Size
 HelixCapFeatures::report_features(
 	core::pose::Pose const & pose,

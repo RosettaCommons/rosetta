@@ -736,7 +736,6 @@ HeaderInformation::fill_experimental_technique_records(
 }
 
 
-
 ////////// Helper Functions /////////////
 
 

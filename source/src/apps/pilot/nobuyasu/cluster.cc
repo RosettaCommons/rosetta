@@ -157,9 +157,6 @@ main( int argc, char * argv [] ) {
 	);
 
 
-
-
-
 	// Figure out the thinout factor,
 	//mjo commenting out 'thinout_factor' because it is unused and causes a warning
 	//core::Real 	thinout_factor = 0.0;

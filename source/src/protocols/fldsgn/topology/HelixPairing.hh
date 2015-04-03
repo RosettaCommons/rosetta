@@ -215,7 +215,6 @@ public:
 	String name() const;
 
 
-
 private:
 
 

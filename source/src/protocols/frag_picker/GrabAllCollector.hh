@@ -18,15 +18,12 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/CandidatesCollector.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -40,7 +37,7 @@ typedef utility::pointer::shared_ptr< GrabAllCollector const > GrabAllCollectorC
 
 
 /// @brief Keeps all fragments candidates for the final selection
-/// @detailed The purpose of a collector is to keep fragment candidates to the end
+/// @details The purpose of a collector is to keep fragment candidates to the end
 /// of vall processing. This simple implementation keeps all candidates which might
 /// use huge memory
 class GrabAllCollector: public CandidatesCollector {

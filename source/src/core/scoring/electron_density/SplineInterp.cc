@@ -229,7 +229,6 @@ static double	InitialAntiCausalCoefficient (
 }
 
 
-
 void ConvertToInterpolationCoefficients (
 		double c[],		    // input samples --> output coefficients
 		long   DataLength,// number of samples or coefficients

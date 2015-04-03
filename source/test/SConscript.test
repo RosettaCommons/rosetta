@@ -141,7 +141,6 @@ if "static" not in build.options.extras:
       build.toplevel + "/build/external/" + build.platform ]
 
 
-
 tests = env.Program(target, [cxx, main])
 
 # Lacking this, doing a build of '<project>' won't build the library,

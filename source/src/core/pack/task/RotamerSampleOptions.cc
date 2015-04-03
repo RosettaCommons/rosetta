@@ -17,8 +17,6 @@
 #include <core/types.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/vector0_bool.hh>
 

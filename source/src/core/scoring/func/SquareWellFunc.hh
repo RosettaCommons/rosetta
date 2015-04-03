@@ -57,7 +57,6 @@ private:
 };
 
 
-
 } // constraints
 } // scoring
 } // core

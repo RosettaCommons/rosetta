@@ -9,7 +9,7 @@
 
 /// @file PairScoringScheme.hh
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Scoring scheme based on comparing sequence columns based on
+/// @details Scoring scheme based on comparing sequence columns based on
 /// the additive combination of several ScoringScheme objects.
 /// @author James Thompson
 
@@ -21,7 +21,6 @@
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/PairScoringScheme.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 

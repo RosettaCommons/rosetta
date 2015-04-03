@@ -61,7 +61,7 @@ typedef numeric::xyzVector< core::Real > Vector;
 
 //basic::options::RealOptionKey const sasa_cutoff("bunsat_sasa_cutoff");
 
-///@brief
+/// @brief
 class KHSandbox : public protocols::moves::Mover {
 public:
 	KHSandbox() {}

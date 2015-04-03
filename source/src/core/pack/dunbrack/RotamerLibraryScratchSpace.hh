@@ -18,12 +18,9 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>

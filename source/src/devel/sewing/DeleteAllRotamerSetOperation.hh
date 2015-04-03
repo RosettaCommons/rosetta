@@ -27,7 +27,7 @@
 namespace devel {
 namespace sewing {
 
-///@brief Adds in rotamers from a list of Residues,
+/// @brief Adds in rotamers from a list of Residues,
 class DeleteAllRotamerSetOperation : public core::pack::rotamer_set::RotamerSetOperation
 {
 public:

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/align/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

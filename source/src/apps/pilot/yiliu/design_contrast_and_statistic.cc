@@ -13,7 +13,6 @@
 /// @author Yi Liu
 
 
-
 // C++ headers
 #include <fstream>
 #include <iostream>
@@ -60,7 +59,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 using namespace core;
 using namespace basic;
 
@@ -76,7 +74,6 @@ static thread_local basic::Tracer TR( "apps.pilot.yiliu.DC" );
 
 
 ///////////////////////////////////////////////////////////////////////////////
-
 
 
 int isHydroNonPolar(std::string const & resname ){
@@ -110,7 +107,6 @@ int isPositive(std::string const & resname ){
 	}
 	else return 0;
 }
-
 
 
 int isBoundary(Size const & neighbor ) {

@@ -22,7 +22,6 @@
 // Utility headers
 
 // ObjexxFCL header
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -51,7 +50,7 @@ void get_2way_orientation(
 	int & theta_b2a_index,
 	Real distance_ijxyz );
 
-///@brief Return total SASA
+/// @brief Return total SASA
 Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
 	Real const probe_radius, bool const use_big_polar_H = false );
 

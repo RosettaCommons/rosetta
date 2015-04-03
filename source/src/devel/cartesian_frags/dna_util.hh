@@ -16,7 +16,6 @@
 
 // libRosetta headers
 
-// AUTO-REMOVED #include <devel/cartesian_frags/SafeID.hh>
 #include <devel/cartesian_frags/CartesianFragment.fwd.hh>
 #include <devel/cartesian_frags/DNA_FragLib.fwd.hh>
 
@@ -29,7 +28,6 @@
 #include <core/types.hh>
 #include <devel/cartesian_frags/Direction.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace devel {

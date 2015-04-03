@@ -68,7 +68,7 @@ public:
 		residue_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 	}
 
-	///
+
 	/// @brief: Helper function, that execute test on a given Mover object
 	///
 	void one_mover_test(const char *file, unsigned line, protocols::moves::MoverOP mover,

@@ -7,23 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomTypeSet
 ///
 /// @brief
 /// A class for reading in the orbital type properties
 ///
-/// @detailed
+/// @details
 /// This class reads in the orbital_properties.txt file which contains the "chemical" information for orbitals.
 /// This does not contain the actual properties, but sets the properties through the OrbitalType class.
 /// This class is called by the ChemicalManager. Modeled off of atomtypeset.
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
-/// @last_modified December 12 2010
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_core_chemical_orbitals_OrbitalTypeSet_hh
@@ -32,7 +30,6 @@
 
 // Project headers
 #include <core/chemical/orbitals/OrbitalType.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 #include <core/types.hh>
@@ -47,13 +44,11 @@ namespace chemical{
 namespace orbitals{
 
 
-
 class OrbitalTypeSet : public utility::pointer::ReferenceCount {
 
 
-
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~OrbitalTypeSet();
 	OrbitalTypeSet(std::string const & directory);
 
@@ -96,12 +91,9 @@ private:
 };
 
 
-
 }
 }
 }
-
-
 
 
 #endif /* ORBITALTYPESET_HH_ */

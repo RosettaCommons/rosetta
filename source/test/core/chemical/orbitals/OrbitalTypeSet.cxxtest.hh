@@ -31,7 +31,6 @@
 #include <utility/pointer/owning_ptr.hh> // for some reason, atom_type_set.fwd.hh does not #include owning_ptr.hh
 
 // C++ headers, for debugging your tests
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -99,7 +98,6 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 	static void destroySuite( OrbitalTypeSetTests *suite ) {
 		delete suite;
 	}
-
 
 
 	// --------------- Fixtures --------------- //
@@ -215,6 +213,5 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 
 
 };
-
 
 

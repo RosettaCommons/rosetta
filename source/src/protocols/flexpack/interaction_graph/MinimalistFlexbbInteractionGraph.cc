@@ -15,7 +15,6 @@
 #include <protocols/flexpack/interaction_graph/MinimalistFlexbbInteractionGraph.hh>
 
 /// Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 /// C++ headers
 #include <iostream>
@@ -908,7 +907,6 @@ MinimalistFlexbbInteractionGraph::complete_deltaE_prediction_for_bbmove(
 	debug_note_projected_deltaE_of_considered_substitution( delta_energy, prev_flexseg_energy );
 #endif
 }
-
 
 
 MinimalistFlexbbInteractionGraph::PackerEnergy

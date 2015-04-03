@@ -14,13 +14,9 @@
 #define INCLUDED_devel_denovo_protein_design_SSClass_hh
 #include <devel/denovo_protein_design/SSClass.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
-// AUTO-REMOVED #include <core/id/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 // C++ Headers
 //#include <iosfwd>
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 #include <ostream>
@@ -47,8 +43,6 @@ public:
 		stop_( stop_in ),
 		sstype_( sstype_in )
 	{}
-
-
 
 
 	inline core::Size start() const { return start_; }
@@ -120,7 +114,6 @@ public:
 	// friend basic::VTracer & operator<<( basic::VTracer & os, const SSs & sss );
 
 
-
 	void read_ss_file(
 		std::string filename
 	);
@@ -169,7 +162,6 @@ public:
 
 	core::Size
 	ss_size() const;
-
 
 
 	core::Size size() const {

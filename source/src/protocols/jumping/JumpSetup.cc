@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -21,19 +20,15 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/ShortestPathInFoldTree.hh>
 
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/JumpingFrame.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
-// AUTO-REMOVED
 
 //#include <core/scoring/constraints/ConstraintForest.hh>
 
@@ -52,7 +47,6 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
-
 
 
 namespace protocols {
@@ -304,7 +298,7 @@ JumpSelector::create_jump_sample( ) const {
 	// determine cut-regions
 	// not quite optimal, yet
 	// a 1 CC 2 CC 2 CC 1  jump-setup will always be cut in first two loops, but it should sample both cut possibilities for jump 1
-	//
+
 
 	MetaCutList all_cuts;
 	std::map< int, bool > tag_list; // store all observed tags, only cut if one of these is found in downstream region (towards C-term)

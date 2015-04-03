@@ -154,13 +154,13 @@ private: //functions
 	void reset_DMC(	core::pose::Pose const & DMC_pose );
 
 private: //magic 4 functions, don't call these
-	///@brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
+	/// @brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
 	DualMonteCarlo & operator= (DualMonteCarlo const & rhs);
 
-	///@brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
+	/// @brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
 	DualMonteCarlo();
 
-	///@brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
+	/// @brief declared only for the #inclusion drive.  If you need this function implement it and move it to public.
 	DualMonteCarlo( DualMonteCarlo const & rhs);
 
 private:

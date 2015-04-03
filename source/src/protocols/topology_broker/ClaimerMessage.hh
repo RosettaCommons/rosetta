@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           maintains list of ToplogyClaimers
 ///           maintains ClaimerMessages -- exclusive or non-exclusively markedup dofs like BackboneClaim, IntraResClaim, JumpClaim
 ///           generates FoldTree, MoveMap, and collects samplers provided by ClaimerMessages
@@ -20,7 +20,6 @@
 
 // Unit Headers
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 
@@ -37,7 +36,6 @@
 //#include <utility/io/izstream.hh>
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 //#include <basic/Tracer.hh>
 //#include <basic/options/option.hh>
 //#include <utility/fix_boinc_read.hh>
@@ -50,7 +48,6 @@
 #include <typeinfo>
 
 #include <utility/vector1_bool.hh>
-
 
 
 // option key includes
@@ -67,7 +64,7 @@ public:
 	ClaimerMessage( std::string label );
 	virtual ~ClaimerMessage();
 
-	///@brief name of Claimer
+	/// @brief name of Claimer
 	virtual std::string type() const {
 		return typeid( *this ).name();
 	}
@@ -96,7 +93,7 @@ public:
 	friend std::ostream& operator << ( std::ostream& os, ClaimerMessage const& cm );
 
 private:
-	///@brief a user defined string, can be used to send messages from claimer to claimer
+	/// @brief a user defined string, can be used to send messages from claimer to claimer
 	std::string label_;
 
 	TopologyClaimerCAPs received_by_;

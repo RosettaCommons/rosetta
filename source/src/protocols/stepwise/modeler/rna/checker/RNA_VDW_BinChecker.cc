@@ -9,7 +9,7 @@
 
 /// @file RNA_VDW_BinChecker.cc
 /// @brief Very fast version of VWD repulsion screening
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong
 
 
@@ -386,8 +386,6 @@ namespace checker {
 
 
 	}
-
-
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1197,7 +1195,6 @@ namespace checker {
 	}
 
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	RNA_VDW_BinChecker::is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const {
@@ -1343,7 +1340,6 @@ namespace checker {
 
 		outfile.close();
 	}
-
 
 
 } //checker

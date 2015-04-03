@@ -67,7 +67,6 @@ def mfork():
     return pid
 
 
-
 _test_output_ = '.test.output/'  # dir to store test results
 
 def test_name(test): return os.path.basename(test)[:-3]

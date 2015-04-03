@@ -138,6 +138,5 @@ ElementSet::operator[] ( Size const index ) const
 }
 
 
-
 } // chemical
 } // core

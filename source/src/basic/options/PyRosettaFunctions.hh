@@ -32,7 +32,6 @@
 #include <vector>
 
 
-
 namespace basic {
 namespace options {
 

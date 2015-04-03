@@ -18,7 +18,7 @@
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.fwd.hh>
 
-//
+
 #include <core/pose/Pose.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
 
@@ -36,13 +36,13 @@ namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
 
-///@details this calculator determines the number and resids of residues within X angstroms of the given residue.  Its intended purpose is the backend for a TaskOperation that allows one to construct a PackerTask based on neighborhoods around a set of particular residues.  (It combines with a NeighborhoodByDistanceCalculator for that purpose).  It can return the identity of its seeded central residue and distance (just get functions) and calculate the neighbors and count of neighbors around that residue within that distance.  It uses the PointGraph class to do this; if you have a better/faster implementation please code it up and replace this one.  Note that returned data is INCLUSIVE of the central residue - it is part of the count and part of the std::set.
+/// @details this calculator determines the number and resids of residues within X angstroms of the given residue.  Its intended purpose is the backend for a TaskOperation that allows one to construct a PackerTask based on neighborhoods around a set of particular residues.  (It combines with a NeighborhoodByDistanceCalculator for that purpose).  It can return the identity of its seeded central residue and distance (just get functions) and calculate the neighbors and count of neighbors around that residue within that distance.  It uses the PointGraph class to do this; if you have a better/faster implementation please code it up and replace this one.  Note that returned data is INCLUSIVE of the central residue - it is part of the count and part of the std::set.
 class NeighborsByDistanceCalculator : public core::pose::metrics::StructureDependentCalculator {
 
 public:
 	typedef core::pose::metrics::StructureDependentCalculator parent;
 
-  ///@brief central_residue is the residue whose neighbors we find
+  /// @brief central_residue is the residue whose neighbors we find
   NeighborsByDistanceCalculator(
 		core::Size central_residue,
 		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
@@ -53,10 +53,10 @@ public:
 	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	//accessors for non-recomputed input data
-	///@brief return central residue
+	/// @brief return central residue
 	core::Size central_residue() const { return central_residue_; }
 
-	///@brief return distance cutoff
+	/// @brief return distance cutoff
 	core::Real dist_cutoff() const { return dist_cutoff_; }
 
 protected:
@@ -67,13 +67,13 @@ protected:
 
 private:
 
-  ///@brief stores the input - whose neighbors are we finding?
+  /// @brief stores the input - whose neighbors are we finding?
   core::Size const central_residue_;
-	///@brief stores the input - how far away is a neighbor?
+	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
-  ///@brief the number of neighbors, INCLUSIVE of this residue
+  /// @brief the number of neighbors, INCLUSIVE of this residue
   core::Size num_neighbors_;
-  ///@brief the set of neighbors, INCLUSIVE of this residue
+  /// @brief the set of neighbors, INCLUSIVE of this residue
   std::set< core::Size > neighbors_;
 
 };

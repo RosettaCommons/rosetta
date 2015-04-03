@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Helper class for FoldConstraints Protocol, filters constraints by sequence separation
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -28,15 +28,12 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.hh>
 
 // ObjexxFCL Headers
 
@@ -44,11 +41,9 @@
 #include <utility/vector1.fwd.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -86,7 +81,7 @@ public:
 		mark_revision_id_expired(); //force recompute of cached energies
 	}
 
-	///
+
 	void
 	residue_pair_energy(
 		Residue const & rsd1,
@@ -101,7 +96,7 @@ public:
 	Size
 	largest_possible_sequence_sep( core::pose::Pose const& pose ) const;
 
-  ///
+
 	bool
 	residue_pair_constraint_exists( int const pos1, int const pos2 ) const
 	{

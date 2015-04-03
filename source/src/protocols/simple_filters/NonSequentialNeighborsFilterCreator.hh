@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the NonSequentialNeighborsFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_NonSequentialNeighborsFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_NonSequentialNeighborsFilterCreator_hh
 

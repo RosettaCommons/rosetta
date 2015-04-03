@@ -20,18 +20,15 @@
 #include <utility/io/izstream.hh>
 
 
-
 //#include <devel/init.hh>
 
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/rms_util.hh>
@@ -39,7 +36,6 @@
 
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
@@ -51,7 +47,6 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <fstream>
 #include <map>
@@ -66,7 +61,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 static thread_local basic::Tracer tr( "AlignmentClustering" );

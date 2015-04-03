@@ -12,16 +12,13 @@
 /// @author Steven Lewis smlewi@gmail.com
 
 ///Unit headers
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerMultiThreadingJob.hh>
 
 ///Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 ///C++ headers
 #include <string>

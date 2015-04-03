@@ -23,7 +23,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -45,7 +44,7 @@ static thread_local basic::Tracer TR( "core.pack.pack_missing_sidechains" );
 namespace core {
 namespace pack {
 
-///@details this function will run rotamer trials on sidechains with missing density.  It first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to ignore missing virtual atoms
+/// @details this function will run rotamer trials on sidechains with missing density.  It first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to ignore missing virtual atoms
 void
 pack_missing_sidechains(
 	core::pose::Pose & pose,

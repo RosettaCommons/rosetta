@@ -63,9 +63,9 @@ public:
 	DisulfideFilter();
 	/// @brief copy ctor
 	DisulfideFilter(DisulfideFilter const& df);
-	///@brief Constructor with a single target residue
+	/// @brief Constructor with a single target residue
 	DisulfideFilter( core::Size targetResidue );
-	///@brief Constructor with multiple target residues
+	/// @brief Constructor with multiple target residues
 	/// @details targets may come from either binding partner. If no targets
 	///   are specified for one target, all residues on the interface will be
 	///   concidered.

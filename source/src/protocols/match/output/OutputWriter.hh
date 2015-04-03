@@ -49,7 +49,7 @@ public:
 	void
 	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer ) = 0;
 
-	///@brief evaluator and score writer are not passed in because single-downstream-position match
+	/// @brief evaluator and score writer are not passed in because single-downstream-position match
 	///currently have no way of being evaluated
 	virtual
 	void
@@ -81,7 +81,6 @@ public:
 	initialize_from_matcher_task(
 		MatcherTaskCOP mtask
 	);
-
 
 
 private:

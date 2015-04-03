@@ -29,7 +29,7 @@ namespace antibody {
 namespace constraints {
 	
 	
-///@brief Adds and removes ambiguous site constraints for the Antibody Paratope to antigen,
+/// @brief Adds and removes ambiguous site constraints for the Antibody Paratope to antigen,
 /// defined for simplicity as the CDRs, however a set of paratope residues can be given to the class to use instead.
 ///
 class ParatopeSiteConstraintMover : public protocols::moves::Mover {
@@ -41,13 +41,13 @@ public:
 	
 	~ParatopeSiteConstraintMover();
 	
-	///@brief Add AmbiguousSiteConstraints to specified paratope residues, or each CDR set.  Default is all of them.
+	/// @brief Add AmbiguousSiteConstraints to specified paratope residues, or each CDR set.  Default is all of them.
 	/// If there are already exits AmbiguousSiteConstraints from the antigen to the residue, add them. 
 	/// If they are missing, such as after a graft, add them.
 	void
 	apply(core::pose::Pose & pose);
 	
-	///@brief Remove constraints from each paratope residue and antigen chain set.  If reset_paratope_residues is true, then it will update the
+	/// @brief Remove constraints from each paratope residue and antigen chain set.  If reset_paratope_residues is true, then it will update the
 	/// set of paratope residues it has.  This is used after pose length changes such as CDR insertion or deletion.  
 	void
 	remove(core::pose::Pose & pose, bool reset_paratope_residues = false);
@@ -55,27 +55,27 @@ public:
 	
 public:
 	
-	///@brief Optionally use only these CDRs as the paratope.  Useful for constraining to Light or Heavy chain CDRs
+	/// @brief Optionally use only these CDRs as the paratope.  Useful for constraining to Light or Heavy chain CDRs
 	void
 	constrain_to_paratope_cdrs(utility::vector1<CDRNameEnum> const & paratope_cdrs);
 	
 	void
 	constrain_to_paratope_cdrs(utility::vector1<bool> const & paratope_cdrs);
 	
-	///@brief Optionally constrain to a set of pre-determined paratope residues
+	/// @brief Optionally constrain to a set of pre-determined paratope residues
 	void
 	constrain_to_paratope_residues(utility::vector1<bool> const & paratope_residues);
 	
-	///@brief Optionally constrain to a set of antigen chains instead of all of them
+	/// @brief Optionally constrain to a set of antigen chains instead of all of them
 	void
 	constrain_to_antigen_chains(utility::vector1<core::Size> const & antigen_chains);
 	
 	
-	///@brief Optionally set the Func that will be used for the constraint.  Default is the Flat_Harmonic at 0, 1, 5
+	/// @brief Optionally set the Func that will be used for the constraint.  Default is the Flat_Harmonic at 0, 1, 5
 	void
 	set_constraint_func(core::scoring::func::FuncOP constraint_func);
 	
-	///@brief Set the interface distance that will be only be used as the tolerance for the linear harmonic constraint 
+	/// @brief Set the interface distance that will be only be used as the tolerance for the linear harmonic constraint 
 	/// if no constraint func is set. 
 	void
 	set_interface_distance(core::Real interface_distance);
@@ -116,7 +116,6 @@ private:
 	
 	//core::scoring::constraints::ConstraintSetOP cst_set_; //Cannot attach to conformation as pose only gives out references - not OPs
 };	
-
 
 
 }

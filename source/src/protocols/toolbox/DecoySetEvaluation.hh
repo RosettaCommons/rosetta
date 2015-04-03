@@ -19,17 +19,13 @@
 #include <ObjexxFCL/FArray2P.hh>
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

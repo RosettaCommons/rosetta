@@ -78,7 +78,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 static thread_local basic::Tracer tr( "main" );
 
 class ThisApplication  {
@@ -118,8 +117,6 @@ void ThisApplication::register_options() {
   NEW_OPT( out::qual, "quality_data", "" );
 	NEW_OPT( cluster::in, "cluster file which determines which frags RDC scores are averaged", "");
 }
-
-
 
 
 //typedef utility::vector1< FragID > FragID_List;

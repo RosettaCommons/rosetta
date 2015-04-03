@@ -45,7 +45,7 @@ class SetTorsion : public protocols::moves::Mover
 private:
 	typedef protocols::moves::Mover parent;
 public:
-	///@brief default ctor
+	/// @brief default ctor
 	SetTorsion();
 	virtual ~SetTorsion();
 
@@ -81,7 +81,7 @@ public:
 	/// @details The FoldTree is reset afterwards (i.e. the mover does not permanently change the FoldTree).
 	void set_fold_tree_root(core::Size const root) { fold_tree_root_ = root; return; }
 
-	///
+
 	/// @brief Returns the residue index that will serve as the root of the FoldTree for the SetTorsion operation.
 	core::Size get_fold_tree_root() const { return fold_tree_root_; }
 
@@ -93,7 +93,7 @@ private:
     utility::vector1<Size> extending_;
     utility::vector1< utility::vector1< core::id::NamedAtomID > > torsion_atoms_;
 
-		///
+
 		/// @brief The root for the FoldTree during the operation.  If 0, the default FoldTree is used.  The FoldTree is reset to the input FoldTree after the operation.
 		core::Size fold_tree_root_;
 

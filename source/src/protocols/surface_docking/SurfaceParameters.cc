@@ -75,6 +75,5 @@ SurfaceParametersOP SurfaceParameters::clone() const
 SurfaceParameters::~SurfaceParameters(){}
 
 
-
 }// namespace surface_docking
 }// namespace protocols

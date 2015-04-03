@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/BasicFilters.cc
 /// @brief
-/// @detailed
+/// @details
 ///  Contains currently:
 ///
 ///

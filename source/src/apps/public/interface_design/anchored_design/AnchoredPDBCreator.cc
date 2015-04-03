@@ -57,8 +57,7 @@ basic::options::IntegerOptionKey const APDBC_cycles("AnchoredPDBCreator::APDBC_c
 }}}//basic::options::OptionKeys
 
 
-
-///@brief APDBC mover
+/// @brief APDBC mover
 class APDBCMover : public protocols::moves::Mover {
 
 private:

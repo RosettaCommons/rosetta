@@ -11,8 +11,6 @@
 /// @brief
 
 
-
-
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -102,7 +100,6 @@ get_resname1to3()
 }
 
 
-
 core::conformation::ResidueOP
 get_residue( std::string name ) {
 	using namespace core;
@@ -164,7 +161,6 @@ packing_score( Pose const & pose, core::Size const rsd_id = 0 )
 		return core::scoring::packstat::compute_residue_packing_score( pose, rsd_id, 1 );
 	}
 }
-
 
 
 void

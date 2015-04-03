@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampler/input_streams/InputStreamStepWiseSampler.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

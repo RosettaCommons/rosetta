@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
   sfd.read_file( silentin );
 
 
-
   core::Size K_level = option[ cluster::K_level ]();
   utility::vector1< core::Real > level_radii = option[ cluster::K_radius ]();
 

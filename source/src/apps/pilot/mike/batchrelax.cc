@@ -59,7 +59,6 @@
 #include <utility/vector1.hh>
 
 
-
 static thread_local basic::Tracer TR( "main" );
 
 int

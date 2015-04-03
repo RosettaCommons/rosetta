@@ -27,12 +27,12 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
-///@details
+/// @details
 class OopRandomPuckMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 	OopRandomPuckMover(
 	);
 

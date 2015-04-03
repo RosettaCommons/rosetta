@@ -129,7 +129,7 @@ DnaInterfacePackerCreator::mover_name()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief lightweight default constructor
+/// @brief lightweight default constructor
 DnaInterfacePacker::DnaInterfacePacker()
 	: protocols::simple_moves::PackRotamersMover( std::string("DnaInterfacePacker") ),
 		reference_pose_(/* 0 */),
@@ -151,7 +151,7 @@ DnaInterfacePacker::DnaInterfacePacker()
 		pdbname_("")
 {}
 
-///@brief functional constructor
+/// @brief functional constructor
 DnaInterfacePacker::DnaInterfacePacker(
 	ScoreFunctionOP scorefxn_in,
 	bool minimize,
@@ -192,17 +192,17 @@ DnaInterfacePacker::DnaInterfacePacker(
 	}
 }
 
-///@brief destructor
+/// @brief destructor
 DnaInterfacePacker::~DnaInterfacePacker(){}
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfacePacker::fresh_instance() const
 {
 	return moves::MoverOP( new DnaInterfacePacker );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DnaInterfacePacker::clone() const
 {
@@ -215,7 +215,6 @@ DnaInterfacePacker::get_name() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::apply
 /// @brief runs the packer, with support for efficiently looping over multiple explicit DNA sequences (provided that they can be represented by the RotamerSets/InteractionGraph)
 /// @author ashworth
 void
@@ -260,7 +259,6 @@ DnaInterfacePacker::standard_packing( Pose & pose )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::post_packing
 void
 DnaInterfacePacker::post_packing( Pose & pose, ResTypeSequence const & dnaseq, Size trial )
 {
@@ -352,7 +350,6 @@ DnaInterfacePacker::post_packing( Pose & pose, ResTypeSequence const & dnaseq, S
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::init_standard
 /// @brief standard initialization of the necessary member data
 /// @author ashworth
 /// @details pose is nonconst because it is so in pack_rotamers::setup()
@@ -472,7 +469,7 @@ DnaInterfacePacker::clear_initialization()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void DnaInterfacePacker::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
@@ -504,9 +501,8 @@ void DnaInterfacePacker::parse_my_tag(
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::make_dna_sequence_combinations
 /// @details looks for rotable DNA positions in the RotamerSets, generates a list of all canonical sequence combinations for them
-/// @authors ashworth
+/// @author ashworth
 void
 DnaInterfacePacker::make_dna_sequence_combinations()
 {
@@ -539,9 +535,8 @@ DnaInterfacePacker::make_dna_sequence_combinations()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::add_complementary_sequence
 /// @details turns single-stranded DNA sequences into double-stranded ones
-/// @authors ashworth
+/// @author ashworth
 void
 DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 {
@@ -569,7 +564,6 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::unbound_score
 /// @brief
 /// @author ashworth
 Real
@@ -601,7 +595,6 @@ DnaInterfacePacker::unbound_score(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::measure_specificity
 /// @brief This method returns the overall bolztmann probabilities for target bound and binding(if enabled) states vs. all single-basepair variant competitors. (For this + specifities for individual basepair positions, use the measure_bp_specificities method instead.)
 /// @author ashworth
 std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
@@ -652,7 +645,6 @@ std::pair< Real, Real > DnaInterfacePacker::measure_specificity( Pose & pose )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::measure_bp_specificities
 /// @brief Measures and calculates bound and binding specificities of the current protein sequence for its target DNA sequence, vs. single-basepair variant competitors. Also returns specificity scores for each individual basepair in a multiple-basepair target region.
 /// @author ashworth
 // return values: first maps bound specificities, second maps binding specificities
@@ -764,7 +756,6 @@ DnaInterfacePacker::measure_bp_specificities( Pose & pose )
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::measure_specificities
 /// @brief This requires that all DNA states to be searched are already represented in the rotamer set and interaction graph
 /// @author ashworth
 std::pair< SequenceScores, SequenceScores >
@@ -825,7 +816,6 @@ DnaInterfacePacker::measure_specificities( Pose & pose, ResTypeSequences const &
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::calculate_specificity
 /// @brief calculates specificity as a Boltzmann probability of the target sequence in the presence of competitors
 /// @author ashworth
 Real
@@ -1044,7 +1034,6 @@ DnaInterfacePacker::allowed_types() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::protein_scan
 /// @brief runs a single-residue scan of user-defined amino acid possibilities to estimate affinity and specificity of single mutants w/ respect to relevant DNA
 /// @author ashworth
 void
@@ -1246,7 +1235,7 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief makes hard copy to guarantee that the reference pose isn't changed from elsewhere
+/// @brief makes hard copy to guarantee that the reference pose isn't changed from elsewhere
 void DnaInterfacePacker::reference_pose( Pose const & pose ) { reference_pose_ = PoseCOP( PoseOP( new Pose( pose ) ) ); }
 PoseCOP DnaInterfacePacker::reference_pose() const { return reference_pose_; }
 
@@ -1256,9 +1245,8 @@ DnaDesignDefOPs const & DnaInterfacePacker::targeted_dna() const { return target
 void DnaInterfacePacker::pdboutput( PDBOutputOP pdboutput ) { pdboutput_ = pdboutput; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::dna_seq_tag
 /// @details similar to basic::dna_seq_str, but returns only top stranded sequence, delimited by "_". (safe for filenames)
-/// @authors ashworth
+/// @author ashworth
 std::string
 DnaInterfacePacker::dna_seq_tag( Pose const & pose, ResTypeSequence const & sequence ) const
 {
@@ -1280,9 +1268,8 @@ DnaInterfacePacker::dna_seq_tag( Pose const & pose, ResTypeSequence const & sequ
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin DnaInterfacePacker::get_targeted_sequence()
 /// @details returns DNA sequence that the PackerTask is configured to target (if any)
-/// @authors ashworth
+/// @author ashworth
 ResTypeSequence
 DnaInterfacePacker::get_targeted_sequence( Pose const & pose ) const
 {
@@ -1313,7 +1300,6 @@ DnaInterfacePacker::get_targeted_sequence( Pose const & pose ) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @begin current_working_sequence
 /// @brief current TOP-STRANDED DNA sequence of the pose, at PackerTask's 'targeted' or 'scan' positions
 /// @author ashworth
 ResTypeSequence

@@ -13,14 +13,9 @@
 
 
 #include <protocols/toolbox/InteratomicVarianceMatrix.hh>
-// AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 
 // ObjexxFCL Headers
@@ -29,8 +24,6 @@
 #include <basic/Tracer.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <numeric/model_quality/maxsub.hh>
 
 //// C++ headers
 #include <string>
@@ -50,7 +43,7 @@ static thread_local basic::Tracer tr( "protocols.evaluation.PCA", basic::t_info 
 using namespace core;
 using namespace numeric::model_quality; //for rms functions
 
-///@brief
+/// @brief
 //compute matrix of distance variances:
 // in: coords : 3 x natoms x ndecoys
 // out: ivm_ : natoms x natoms with ivm(i,j) = VAR_n ( | x_i( n ) - x_j ( n ) | )  n==decoys, i,j=atoms
@@ -86,7 +79,7 @@ void InteratomicVarianceMatrix::init( Size atoms_in, Size n_decoys, ObjexxFCL::F
 }
 
 
-///@brief compute order parameter for atom i, defined as number of j atoms whose ivm(i,j)<epsilon^2
+/// @brief compute order parameter for atom i, defined as number of j atoms whose ivm(i,j)<epsilon^2
 void InteratomicVarianceMatrix::order_parameter( Real epsilon, ObjexxFCL::FArray1_double& T ) {
 	Real const epsilon2( epsilon*epsilon );
 	tr.Debug << "T( " << epsilon <<  " )\n";
@@ -101,7 +94,7 @@ void InteratomicVarianceMatrix::order_parameter( Real epsilon, ObjexxFCL::FArray
 	tr.Debug << std::endl;
 }
 
-///@brief compute order parameter for atom i, defined as number of j atoms whose ivm(i,j)<epsilon^2
+/// @brief compute order parameter for atom i, defined as number of j atoms whose ivm(i,j)<epsilon^2
 Real InteratomicVarianceMatrix::kurtosis( ObjexxFCL::FArray1_double& T ) {
 	Real invn = 1.0/n_atoms();
 	Real second_moment = 0.0;

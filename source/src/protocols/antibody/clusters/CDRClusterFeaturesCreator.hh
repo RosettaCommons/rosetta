@@ -42,7 +42,5 @@ public:
 } //protocols
 
 
-
-
 #endif	//#ifndef INCLUDED_protocols/antibody_clusters_CDRCLUSTERFEATURESCREATOR_HH
 

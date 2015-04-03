@@ -26,7 +26,6 @@
 // Utility headers
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 
 namespace core {
@@ -88,7 +87,6 @@ public:
 		icoor_( icoor_in ),
 		index_( 0 )
 	{}*/
-
 
 
 	//DO NOT USE unless you add a vertex constructor with this!!!!!!
@@ -173,7 +171,6 @@ private:
 
 } // chemical
 } // core
-
 
 
 #endif

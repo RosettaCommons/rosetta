@@ -207,7 +207,6 @@ send_double_to_node(
 }
 
 
-
 utility::vector1< double >
 receive_doubles_from_node(
 	int source
@@ -382,7 +381,6 @@ send_integers_to_node(
 }
 
 
-
 double
 receive_double_from_node(
 	int source
@@ -433,7 +431,6 @@ send_doubles_to_node(
 
 
 #endif // USEMPI
-
 
 
 }

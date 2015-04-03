@@ -15,10 +15,8 @@
 #define INCLUDED_devel_dna_relax_util_hh
 
 
-
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/vector1.hh>
@@ -66,7 +64,6 @@ setup_dna_only_fold_tree( core::pose::Pose & jump_pose, bool const flip = false 
 /// @brief  together with their partners. Sets the intra-base jumps in the foldtree to support base-centric kinematics.
 void
 setup_dna_only_jump_pose( core::pose::Pose const & start_pose, core::pose::Pose & jump_pose );
-
 
 
 /// @brief  Delete unpaired DNA bases from the input pose

@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -80,8 +79,6 @@ using ObjexxFCL::FArray2D_float;
 using namespace core;
 using namespace pose;
 using namespace conformation;
-
-
 
 
 void

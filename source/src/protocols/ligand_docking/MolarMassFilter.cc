@@ -24,7 +24,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -79,7 +78,6 @@ MolarMassFilterCreator::create_filter() const { return protocols::filters::Filte
 
 std::string
 MolarMassFilterCreator::keyname() const { return "MolarMass"; }
-
 
 
 } // ligand_docking

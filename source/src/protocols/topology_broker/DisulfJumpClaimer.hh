@@ -9,7 +9,7 @@
 
 /// @file DisulfJumpClaimer
 /// @brief  Claimer for disulfide jump sampling
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Robert Vernon
 
 
@@ -51,7 +51,7 @@
 namespace protocols {
 namespace topology_broker {
 
-///@brief Claimer that works with the old system of BaseJumpSetup
+/// @brief Claimer that works with the old system of BaseJumpSetup
 /// it supports only JumpFrames of type  [ BBTorsion ] UpJump DownJump [ BBTorsion ]
 /// the class JumpSample is still used to transport the information jumps and jump_atoms, but cuts are ignored
 /// all functionality of JumpSample is not used anymore
@@ -70,7 +70,7 @@ public:
 	virtual void new_decoy( core::pose::Pose const& );
 	virtual void new_decoy();
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

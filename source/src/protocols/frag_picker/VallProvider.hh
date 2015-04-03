@@ -26,10 +26,8 @@
 
 // mini headers
 #include <core/sequence/SequenceProfile.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace frag_picker {
@@ -83,14 +81,14 @@ public:
 	}
 
 	/// @brief tries to find a chunk defined by PDB id, chain id and a residue
-	/// sequence id @detailed If this VallProvider does not contain a desired
+	/// sequence id @details If this VallProvider does not contain a desired
 	/// chunk, 0 is returned.
 	VallChunkOP find_chunk(std::string, char, Size);
 
 	/// @brief cache a sequence profile for a given chunk
 	core::sequence::SequenceProfileOP cache_profile(VallChunkOP source_chunk);
 
-	///@brief cache a pose for a given chunk
+	/// @brief cache a pose for a given chunk
 	core::pose::PoseOP cache_pose(VallChunkOP source_chunk);
 
 private:

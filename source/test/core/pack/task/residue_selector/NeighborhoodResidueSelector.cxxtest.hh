@@ -253,7 +253,6 @@ public:
 	}
 
 
-
 	bool
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,

@@ -46,9 +46,9 @@ void load_unboundrot(pose::Pose & pose);
 void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_poses);
 
 
-///@brief This class favors a particular rotamer at a particular position by reducing its Dunbrack energy.
+/// @brief This class favors a particular rotamer at a particular position by reducing its Dunbrack energy.
 ///
-///@details Specifically, the given rotamer well(s) receive a bonus equal to the
+/// @details Specifically, the given rotamer well(s) receive a bonus equal to the
 /// difference between their minimum energy (for the ideal rotamer in this well)
 /// and the minimum energy of any rotamer (at the current phi,psi).
 /// This class is used to implement the scoring component of the -unboundrot flag;

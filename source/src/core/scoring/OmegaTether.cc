@@ -110,7 +110,6 @@ core::Size OmegaTether::omega_index( core::conformation::Residue const &rsd ) co
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 ///
 Real
@@ -244,7 +243,7 @@ OmegaTether::eval_omega_score_residue(
 	}
 }
 
-///
+
 /// load bb-dep omega tables
 void
 OmegaTether::read_omega_tables( ) {

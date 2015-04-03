@@ -16,10 +16,8 @@
 #include <core/id/DOF_ID_Range.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <ostream>
 
 #include <iostream>
-
 
 
 namespace core {

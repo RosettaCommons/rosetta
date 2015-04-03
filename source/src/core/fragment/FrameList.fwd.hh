@@ -11,7 +11,6 @@
 /// @brief  forward declarations for class FrameList
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_core_fragment_FrameList_fwd_hh

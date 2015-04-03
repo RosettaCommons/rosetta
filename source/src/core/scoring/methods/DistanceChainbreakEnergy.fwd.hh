@@ -26,7 +26,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class DistanceChainbreakEnergy;
 
 } // methods

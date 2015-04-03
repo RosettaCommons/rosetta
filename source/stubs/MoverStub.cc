@@ -41,12 +41,12 @@ static numeric::random::RandomGenerator RG(MAKEMEANUMBERIFYOUNEEDME);
 namespace protocols {
 namespace moves {
 
-///@details
+/// @details
 void MoverStub::apply( core::pose::Pose & pose ){
 
 }//apply
 
-///@brief
+/// @brief
 MoverStub::MoverStub(
 ) : Mover()
 {

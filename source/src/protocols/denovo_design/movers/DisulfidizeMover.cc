@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/movers/DisulfidizeMover.cc
 /// @brief The DisulfidizeMover
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@uw.edu) -- Adapting code from remodelmover into a mover
 /// @author Gabe Rocklin (grocklin@uw.edu) -- Disulfide code
 

@@ -90,7 +90,7 @@ class BiasEnergy : public ThermodynamicObserver, public protocols::jd2::JobOutpu
 		core::Real delta_grid_;
 		core::Size ngrid_cells_;
 	};
-///@details
+/// @details
 
  public:
 	BiasEnergy();

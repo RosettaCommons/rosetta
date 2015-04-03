@@ -125,7 +125,7 @@ KromerMann get_km( std::string elt ) {
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 
-//
+
 bool factorsLTE5(int X) {
 	while (X != 1 && X%2 == 0) X /= 2;
 	while (X != 1 && X%3 == 0) X /= 3;
@@ -134,7 +134,7 @@ bool factorsLTE5(int X) {
 	return (X == 1);
 }
 
-//
+
 bool factorsLTE19(int X) {
 	while (X != 1 && X%2 == 0) X /= 2;
 	while (X != 1 && X%3 == 0) X /= 3;
@@ -148,7 +148,7 @@ bool factorsLTE19(int X) {
 	return (X == 1);
 }
 
-//
+
 int findSampling5(double MINSMP, int NMUL) {
 	if (MINSMP <= 0) return NMUL;
 
@@ -162,7 +162,7 @@ int findSampling5(double MINSMP, int NMUL) {
 	return N;
 }
 
-//
+
 int findSampling(double MINSMP, int NMUL) {
 	if (MINSMP <= 0) return NMUL;
 

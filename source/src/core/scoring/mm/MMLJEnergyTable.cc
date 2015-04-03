@@ -18,23 +18,16 @@
 // Project headers
 #include <core/chemical/MMAtomTypeSet.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // Utility header
-// AUTO-REMOVED #include <utility/keys/Key4Tuple.hh>
-// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <math.h>
 
 #include <core/scoring/mm/MMLJLibrary.hh>
 #include <utility/vector1.hh>

@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -33,30 +33,20 @@
 #include <core/kinematics/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
-
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh> //idealize
-
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
 
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 
 // option key includes
@@ -64,7 +54,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.general_abinitio", basic::t_info );
@@ -101,7 +90,6 @@ void DoubleLayerKinematicAbinitio::select_core_loops(
     loops_out = rigid_loops_;
   }
 } // void LoopRebuild::select_loops
-
 
 
 //@brief create a new fold-tree and movemap --- a KinematicControl object

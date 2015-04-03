@@ -21,12 +21,9 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace protocols{

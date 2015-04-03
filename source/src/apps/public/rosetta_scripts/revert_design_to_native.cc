@@ -23,7 +23,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <devel/init.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>

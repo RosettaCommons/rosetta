@@ -464,7 +464,6 @@ ScoreTypeManager::setup_score_type_names()
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////
 /// @brief give a ScoreType string name and return its enum type
 ScoreType
@@ -485,7 +484,7 @@ ScoreTypeManager::name_from_score_type( ScoreType score_type )
 	return score_type2name_[ score_type ];
 }
 
-///@brief
+/// @brief
 bool
 ScoreTypeManager::is_score_type( std::string const & name )
 {

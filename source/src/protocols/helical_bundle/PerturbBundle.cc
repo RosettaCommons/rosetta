@@ -71,8 +71,8 @@ PerturbBundleCreator::mover_name()
 	return "PerturbBundle";
 }
 
-///
-///@brief Creator for PerturbBundle mover.
+
+/// @brief Creator for PerturbBundle mover.
 PerturbBundle::PerturbBundle():
 		Mover("PerturbBundle"),
 		default_r0_( new PerturbBundleOptions ),
@@ -88,7 +88,7 @@ PerturbBundle::PerturbBundle():
 		bundleparametersset_index_(1)
 {}
 
-///
+
 /// @brief Copy constructor for PerturbBundle mover.
 PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	protocols::moves::Mover( src ),
@@ -116,18 +116,18 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	for(core::Size i=1,imax=src.delta_t_.size(); i<=imax; ++i) delta_t_.push_back( src.delta_t_[i]->clone() );
 }
 
-///
-///@brief Destructor for PerturbBundle mover.
+
+/// @brief Destructor for PerturbBundle mover.
 PerturbBundle::~PerturbBundle() {}
 
-///
-///@brief Clone operator to create a pointer to a fresh PerturbBundle object that copies this one.
+
+/// @brief Clone operator to create a pointer to a fresh PerturbBundle object that copies this one.
 protocols::moves::MoverOP PerturbBundle::clone() const {
 	return protocols::moves::MoverOP( new PerturbBundle( *this ) );
 }
 
-///
-///@brief Fresh_instance operator to create a pointer to a fresh PerturbBundle object that does NOT copy this one.
+
+/// @brief Fresh_instance operator to create a pointer to a fresh PerturbBundle object that does NOT copy this one.
 protocols::moves::MoverOP PerturbBundle::fresh_instance() const {
 	return protocols::moves::MoverOP( new PerturbBundle );
 }
@@ -136,7 +136,7 @@ protocols::moves::MoverOP PerturbBundle::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 void PerturbBundle::apply (core::pose::Pose & pose)
 {
@@ -189,8 +189,8 @@ void PerturbBundle::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("PerturbBundle").
+
+/// @brief Returns the name of this mover ("PerturbBundle").
 std::string PerturbBundle::get_name() const{
 	return "PerturbBundle";
 }
@@ -199,7 +199,7 @@ std::string PerturbBundle::get_name() const{
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
 
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 void
 PerturbBundle::parse_my_tag(
@@ -485,7 +485,6 @@ PerturbBundle::parse_my_tag(
 					}
 				}
 			}
-
 
 
 			if(!has_perturbable_dofs && TR.visible())

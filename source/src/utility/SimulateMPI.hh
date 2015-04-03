@@ -34,7 +34,7 @@
 
 namespace utility {
 
-///@detail This is for unit testing mpi code in a single processor. The
+/// @detail This is for unit testing mpi code in a single processor. The
 ///idea is to buffer the messages in the SimulateMPIData stored in the
 ///SimulateMPI. To use this class, call initialize_simulation( nprocs ),
 ///then set the mpi rank can be set manually, and the functions in
@@ -122,7 +122,7 @@ private:
 
 };
 
-///@brief singleton class storing simulated MPI state
+/// @brief singleton class storing simulated MPI state
 class SimulateMPI {
 
 private:

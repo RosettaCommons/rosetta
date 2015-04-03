@@ -9,20 +9,16 @@
 
 /// @file protocols/antibody/H3CterInsert.fwd.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
-
 
 
 #ifndef INCLUDED_protocols_antibody_H3CterInsert_fwd_hh
 #define INCLUDED_protocols_antibody_H3CterInsert_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-
-
 
 
 namespace protocols {
@@ -36,18 +32,6 @@ typedef utility::pointer::shared_ptr< H3CterInsert const > H3CterInsertCOP;
 }
 
 
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
 
 

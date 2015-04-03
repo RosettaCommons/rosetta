@@ -17,7 +17,6 @@
 #include <protocols/domain_assembly/CombineChainsMover.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <string>
 

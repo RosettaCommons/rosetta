@@ -26,8 +26,6 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
@@ -65,9 +63,6 @@ SetReturningPackRotamersMover::SetReturningPackRotamersMover(
 	repacked_poses_.resize( ndruns );
 }
 
-
-//
-// @begin apply
 //
 // @brief
 // The apply method for SetReturningPackRotamersMover.  Assumes that a valid score function and packer task were passed in.
@@ -127,9 +122,6 @@ SetReturningPackRotamersMover::get_name() const {
 	return "SetReturningPackRotamersMover";
 }
 
-
-//
-// @begin get_repacked_poses
 //
 // @brief
 // Copies the poses in repacked_poses into the passed in vector reference.
@@ -139,8 +131,6 @@ SetReturningPackRotamersMover::get_repacked_poses( utility::vector1< core::pose:
 	v = repacked_poses_;
 }
 
-//
-// @begin output_repacked_poses
 //
 // @brief
 // Writes out all of the poses in the repacked poses vector to PDB files.

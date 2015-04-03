@@ -69,7 +69,6 @@
 #include <numeric/constants.hh>
 
 
-
 #define DEG2RAD 0.0174532925199433
 #define RAD2DEG 57.295779513082323
 
@@ -216,9 +215,6 @@ private:
 	void get_symmops(utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc) const;
 };
 
-
-///
-///
 ///
 Spacegroup::Spacegroup() {
 	name_="";
@@ -327,9 +323,6 @@ void Spacegroup::set_parameters(core::Real a_in, core::Real b_in, core::Real c_i
 	}
 }
 
-
-///
-///
 ///
 void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc) const {
 	if ( name_ == "P1" ) {

@@ -125,7 +125,7 @@ void OperateOnCertainResidues::filter( ResFilterCOP filter_in )
 }
 
 
-///@brief tag parsing for factory construction of this class and its children
+/// @brief tag parsing for factory construction of this class and its children
 /*!
 Example Tag syntax for parser as of Summer 2009
 

@@ -18,9 +18,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -147,7 +144,7 @@ SymmLinearMemNode::count_dynamic_memory() const
 }
 
 
-///@brief puts the symmlinmemNode in the unassigned state
+/// @brief puts the symmlinmemNode in the unassigned state
 void
 SymmLinearMemNode::assign_zero_state()
 {
@@ -172,7 +169,7 @@ SymmLinearMemNode::assign_zero_state()
 }
 
 
-////@brief assigns a new state to the Node
+//// @brief assigns a new state to the Node
 void
 SymmLinearMemNode::assign_state(int new_state)
 {
@@ -549,7 +546,7 @@ SymmLinearMemNode::project_deltaE_for_substitution
 }
 
 
-///@brief commits the last substitution that was considered by this Node
+/// @brief commits the last substitution that was considered by this Node
 void
 SymmLinearMemNode::commit_considered_substitution()
 {
@@ -655,7 +652,6 @@ SymmLinearMemNode::acknowledge_neighbors_partial_state_substitution(
 }
 
 
-
 void SymmLinearMemNode::set_recent_history_size(
 	int num_states_to_maintain_in_recent_history
 )
@@ -697,7 +693,6 @@ debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ += curr_state_one_body_energy_;
 	return;
 }
-
 
 
 void SymmLinearMemNode::update_internal_vectors()
@@ -1180,7 +1175,7 @@ SymmLinearMemoryInteractionGraph::get_energy_current_state_assignment()
 	return total_energy_current_state_assignment_;
 }
 
-///@brief O(1) total energy report.  Protected read access for derived classes.
+/// @brief O(1) total energy report.  Protected read access for derived classes.
 core::PackerEnergy
 SymmLinearMemoryInteractionGraph::get_energy_PD_current_state_assignment()
 {

@@ -1472,7 +1472,6 @@ RotamericSingleResiduePeptoidLibrary< T, N >::enumerate_chi_sets(
 }
 
 
-
 template < Size T, Size N >
 void
 RotamericSingleResiduePeptoidLibrary< T, N >::chisamples_for_rotamer_and_chi(

@@ -63,7 +63,6 @@
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -98,7 +97,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <boost/foreach.hpp>
 
 //Auto Headers
@@ -110,7 +108,6 @@
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
-
 
 
 using basic::T;
@@ -171,7 +168,7 @@ void HotspotStubSet::add_stub_set( HotspotStubSet const & stubset ){
 void HotspotStubSet::score_threshold( core::Real const threshold ) { score_threshold_ = threshold; }
 
 /// @brief returns a new stub_set with stub scores recalculated by colony energy (Xiang, Soto, and Honig PNAS 2002)
-/// @detailed E = -ln (sum exp( -E(j) - rmsd(ij)^3/6L ) )
+/// @details E = -ln (sum exp( -E(j) - rmsd(ij)^3/6L ) )
 HotspotStubSetOP HotspotStubSet::colonyE( ) {
 	HotspotStubSetOP new_set( new HotspotStubSet );
 	core::pose::PoseOP nonconstpose; // for making our new stubs.
@@ -470,7 +467,7 @@ HotspotStubSet::get_best_energy_stub() const {
 	return( ret );
 }
 
-/// @detailed find stub nearest to residue based on CA-CA distance
+/// @details find stub nearest to residue based on CA-CA distance
 HotspotStubCOP
 HotspotStubSet::get_nearest_stub( core::conformation::ResidueCOP residue ) const {
 	using namespace core::conformation;
@@ -529,7 +526,7 @@ HotspotStubSet::get_stub( std::string const residue_name3, core::Real const scor
 	return( hs_it->second.find( score ) );
 }
 
-///@details removes the first occurence of stub in the stubset
+/// @details removes the first occurence of stub in the stubset
 bool
 HotspotStubSet::remove_stub( HotspotStubCOP stub ){
 	for( Hs_map::iterator datum( stub_set_.begin() ); datum!=stub_set_.end(); ++datum ){
@@ -966,7 +963,7 @@ core::Size HotspotStubSet::size( std::string const resname )
 	}
 }
 
-/// @detailed remove all stubs from stub_set_vec_ and repopulate it with stub_set_
+/// @details remove all stubs from stub_set_vec_ and repopulate it with stub_set_
 void
 HotspotStubSet::handshake_stub_sets(){
 	stub_set_vec_.clear();

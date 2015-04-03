@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/indexed_structure_store/filters/FragmentLookupFilter.cc
 /// @brief FragmentLookupFilter class implementation.
-/// @detailed
+/// @details
 /// @author Alex Ford (fordas@uw.edu)
 //
 #include <basic/Tracer.hh>
@@ -145,7 +145,6 @@ core::Size FragmentLookupFilter::compute( Pose const & pose ) const
 }
 
 
-
 void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & ) const
 {
 	using namespace core::indexed_structure_store;
@@ -247,7 +246,6 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
   }
 
 
-
   if (store_path != "")
   {
     target_lookup_ = StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name, store_path);
@@ -256,7 +254,6 @@ void FragmentLookupFilter::parse_my_tag( utility::tag::TagCOP tag,
   {
     target_lookup_ = StructureStoreManager::get_instance()->load_fragment_lookup(lookup_name);
   }
-
 
 
   if (lookup_mode == "" || lookup_mode == "first")

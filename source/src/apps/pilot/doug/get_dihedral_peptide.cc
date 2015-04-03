@@ -251,7 +251,6 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 			std::cout << "DEBUG AFTER RSD" << std::endl;
 
 
-
 			for ( Size j(1); j <= drsd.size(); ++j ) {
 
 				core::conformation::Residue resj( *rotamers[j] );

@@ -393,7 +393,6 @@ static thread_local basic::Tracer pss_tr( "core.io.silent" );
 //template class ProteinSilentStruct_Template<float>;
 
 
-
 template <class T>
 void
 ProteinSilentStruct_Template<T>::fill_struct(
@@ -1059,8 +1058,6 @@ core::Size ProteinSilentStruct_Template<T>::mem_footprint() const{
 	for( chi_iterator it = chi_.begin(); it < chi_.end(); ++it ) sum += (*it).capacity() * sizeof( T ) ;
 	return sum;
 }
-
-
 
 
 } // namespace silent

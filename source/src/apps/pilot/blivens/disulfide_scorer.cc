@@ -43,7 +43,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>

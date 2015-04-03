@@ -30,7 +30,7 @@
 namespace protocols {
 namespace simple_moves {
 
-/// @detailed This mover performas a variaty of functions related to cyclizing a chain in a pose.
+/// @details This mover performas a variaty of functions related to cyclizing a chain in a pose.
 class CyclizationMover : public protocols::moves::Mover {
 public:
 

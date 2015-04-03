@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/RefineOneCDRLoopCentroid.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #ifndef INCLUDED_protocols_antibody_RefineOneCDRLoopCentroid_hh
@@ -30,7 +29,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/RefineOneCDRLoopCentroid.fwd.hh>
-
 
 
 using namespace core;
@@ -95,9 +93,6 @@ private:
 	scoring::ScoreFunctionOP lowres_scorefxn_;
 
 };
-
-
-
 
 
 } // namespace antibody

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

@@ -78,8 +78,6 @@ using namespace basic::options::OptionKeys;
 static thread_local basic::Tracer TR( "bcorreia_fold_from_loops" );
 
 
-
-
 // Verifies if it is within the loop or a neighbor range
 
 bool is_loop_neighbor( protocols::loops::Loops & loops, Size & residue, Size & range);
@@ -88,7 +86,6 @@ bool is_loop_neighbor( protocols::loops::Loops & loops, Size & residue, Size & r
 // generates fold trees for topologies with several loops
 
 void fold_tree_generator( protocols::loops::Loops & loops , std::vector<Size> & cutpoints, core::pose::Pose & pose, kinematics::FoldTree & f);
-
 
 
 void fold_tree_generator(
@@ -115,10 +112,6 @@ void fold_tree_generator(
 }
 
 
-
-
-
-
 ////////////////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char* argv [] )
@@ -139,7 +132,6 @@ main( int argc, char* argv [] )
 	using protocols::jd2::JobDistributor;
 
 
-
 	pose::Pose nat_pose;
 
 	pose::Pose extended_pose;
@@ -148,7 +140,6 @@ main( int argc, char* argv [] )
 	core::import_pose::pose_from_pdb( nat_pose, basic::options::start_file() );
 
 	extended_pose = nat_pose; //making working copy
-
 
 
 	protocols::checkpoint::CheckPointer sliding_checkpoint("closing");
@@ -163,14 +154,11 @@ main( int argc, char* argv [] )
 	}
 
 
-
 	//Defining a fold tree
 	kinematics::FoldTree f;
 	f.clear();
 
 	std::vector<Size> cut_points;
-
-
 
 
 	//put an option here to protect the input
@@ -180,8 +168,6 @@ main( int argc, char* argv [] )
 	std::string swap_loops = option [OptionKeys::fold_from_loops::swap_loops ]().name();
 
 	core::import_pose::pose_from_pdb( target_loops , swap_loops );
-
-
 
 
 	fold_tree_cutpoints_generator(lr_loops_in, cut_points, extended_pose, f);
@@ -197,14 +183,10 @@ main( int argc, char* argv [] )
 			}
 
 
-
-
-
 	FragSetOP fragset_large_;
 	FragSetOP fragset_small_;
 
 	get_fragments(fragset_large_, fragset_small_ ); // reading_fragments
-
 
 
 	FoldFromLoopsMoverOP trial_mover = new FoldFromLoopsMover;
@@ -216,9 +198,7 @@ main( int argc, char* argv [] )
 	trial_mover->set_ca_csts( ca_cst );
 
 
-
 	//add the set up of the
-
 
 
 		JobDistributor::get_instance()->go( trial_mover );

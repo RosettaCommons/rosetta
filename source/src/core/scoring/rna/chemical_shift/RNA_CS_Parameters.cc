@@ -13,7 +13,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
 
-
 #include <core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh>
 #include <ObjexxFCL/format.hh>
 
@@ -656,7 +655,6 @@ namespace chemical_shift {
 	}
 
 
-
 	//destructor
   RNA_CS_parameters::~RNA_CS_parameters(){}
 	
@@ -680,7 +678,6 @@ namespace chemical_shift {
 		return CS_RGU_params_; //This is just for prevent compiler warning!
 
 	}
-
 
 
 } //chemical_shift

@@ -12,7 +12,7 @@
 /// @brief Determine the number of unsatified hydrogen bonds at an interface
 /// Works with both symmetric and asymmetric poses. 
 ///
-/// @detailed Note: the BuriedUnsatHbondFilter does not work properly for symmetric poses. 
+/// @details Note: the BuriedUnsatHbondFilter does not work properly for symmetric poses. 
 /// Options: “jump”: defaults to 1 and “threshold”: defaults to 20. 
 /// Takes the current pose, gets the dofs, uses the RigidBodyTransMover to translate the pose into its unbound state 
 /// (Note: does not repack in unbound state), goes through every heavy atom in the asymmetric unit and 
@@ -22,8 +22,6 @@
 /// 
 /// example usage: <SymUnsatHbonds name=uhb jump=1 cutoff=20 />
 ///
-/// @last_modified April 21 2012
-/// @last_modified April 29 2014
 /// 
 /// @author Jacob Bale (balej@u.washington.edu)
 

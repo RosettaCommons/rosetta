@@ -20,14 +20,11 @@
 #include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/jd2/archive/VarianceStatisticsArchive.fwd.hh>
 //#include <protocols/jd2/archive/NormalizedEvaluatedArchive.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Package headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Utility headers
 #include <core/types.hh>
@@ -50,11 +47,10 @@ namespace archive {
 //class ArchiveManager;
 
 
-
-///@brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
+/// @brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
 ///flagging as job as being a bad input
 
-///@details This job distributor is meant for running jobs where the machine you are using has a large number of
+/// @details This job distributor is meant for running jobs where the machine you are using has a large number of
 ///processors, the number of jobs is much greater than the number of processors, or the runtimes of the individual jobs
 ///could vary greatly. It dedicates the head node (whichever processor gets processor rank #0) to handling job requests
 ///from the slave nodes (all nonzero ranks). Unlike the MPIWorkPartitionJobDistributor, this JD will not work at all
@@ -66,36 +62,36 @@ class NormalizedEvaluatedArchive : public EvaluatedArchive {
 	typedef EvaluatedArchive Parent;
 public:
 
-	///@brief Constructor  and Destructor
+	/// @brief Constructor  and Destructor
 	NormalizedEvaluatedArchive( ArchiveManagerAP ptr );
 	NormalizedEvaluatedArchive();
 	~NormalizedEvaluatedArchive();
 
-	///@brief Archive specific options
+	/// @brief Archive specific options
 	static void register_options();
 
 	void init_from_options();
 
 	virtual	void initialize();
 
-	///@brief add decoy to Archive
-	///@detail evaluate decoy and call add_evaluated_structure
+	/// @brief add decoy to Archive
+	/// @detail evaluate decoy and call add_evaluated_structure
 	virtual bool add_evaluated_structure(
     core::io::silent::SilentStructOP from_batch,
 		core::io::silent::SilentStructOP alternative_decoy,
 		Batch const&
 	);
 
-	///@brief overloaded that we can sort the pool after reading
+	/// @brief overloaded that we can sort the pool after reading
 	virtual bool restore_from_file();
 
-	///@brief determine variation of scores (those that are non-zeros in select_weights_ )
+	/// @brief determine variation of scores (those that are non-zeros in select_weights_ )
 	bool determine_score_variations() const;
 
 	///overloaded to save / restore the variance_archive_
 	virtual void save_to_file( std::string suffix = "" );
 
-	///@brief recompute all score-values of all decoys and re-order the archive by (new) select_score
+	/// @brief recompute all score-values of all decoys and re-order the archive by (new) select_score
 	void rescore();
 
 	virtual WeightMap const& score_variations() const;
@@ -126,7 +122,7 @@ private:
 	bool lower_quartile_;
 	//for these scores we compute the variance as 0...Q3 instead of Q1..Q3
 	utility::vector1< std::string > positive_scores_;
-	///@brief keep track whether our options have been registered at start up
+	/// @brief keep track whether our options have been registered at start up
 	static bool options_registered_;
 };
 

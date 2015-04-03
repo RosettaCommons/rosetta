@@ -706,12 +706,11 @@ void to_degrees ( // {{{1
 
 // void bridge_objects ( // {{{1
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin bridge_objects
 ///
 /// @brief
 /// Solve the triaxial loop closure problem for a system of atoms
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in] atoms - matrix of cartesian coordinates of N-CA-C atoms indexed
 /// as atoms[atom][dimension]
@@ -741,7 +740,6 @@ void to_degrees ( // {{{1
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 ///
-/// @last_modified June 08, 2008
 ////////////////////////////////////////////////////////////////////////////////
 
 void bridge_objects (

@@ -17,7 +17,6 @@
 
 #include <test/core/init_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -28,20 +27,9 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/UTracer.hh>
@@ -58,7 +46,6 @@
 #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/Quaternion.fwd.hh>
 #include <numeric/all.fwd.hh>
-
 
 
 using basic::T;

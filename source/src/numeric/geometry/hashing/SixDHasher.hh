@@ -29,8 +29,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 /// Boost headers
-// AUTO-REMOVED #include <boost/cstdint.hpp>
-// AUTO-REMOVED #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
 /// C++ headers
@@ -95,7 +93,7 @@ class SixDOffsetTree {
 class SixDCoordinateBinner : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~SixDCoordinateBinner();
 	typedef numeric::Real                               Real;
 	typedef numeric::Size                               Size;

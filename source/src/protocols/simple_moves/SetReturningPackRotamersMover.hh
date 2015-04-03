@@ -21,7 +21,6 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pack/task/PackerTask.fwd.hh> // for PT COP
-// AUTO-REMOVED #include <core/pose/Pose.hh>  // needed because one function takes a vector of Pose objects, not a vector of Pose references or Pose OP's
 #include <core/scoring/ScoreFunction.fwd.hh> // for SF COP
 
 #include <core/pose/Pose.fwd.hh>

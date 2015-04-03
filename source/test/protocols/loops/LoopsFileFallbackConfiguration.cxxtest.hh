@@ -34,7 +34,6 @@
 #include <string>
 
 
-
 class LoopsFileFallbackConfigurationTest : public CxxTest::TestSuite {
 
 public:

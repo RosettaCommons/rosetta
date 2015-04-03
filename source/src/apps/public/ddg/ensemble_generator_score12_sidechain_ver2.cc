@@ -209,7 +209,6 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s){
 }
 
 
-
 void
 setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff, float const /*cst_tol */){
 	int nres = pose.total_residue();
@@ -411,8 +410,6 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 }
 
 
-
-
 void
 create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 
@@ -423,7 +420,6 @@ create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 	temperature = basic::options::option[OptionKeys::ddg::temperature]();
 	/*double avg_ca_rmsd =*/ run_mc(p,s,temperature,basic::options::option[out::nstruct](),output_tag,true);
 }
-
 
 
 int

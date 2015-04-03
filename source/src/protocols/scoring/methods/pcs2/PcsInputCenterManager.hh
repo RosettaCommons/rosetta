@@ -8,14 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsInputCenterManager.hh
  ///
  /// @brief Singleton that hold everything about the input PCS
  /// This avoid multiple reading of the input files.
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -25,9 +24,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputCenterManager_hh
@@ -48,7 +46,6 @@
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #ifdef MULTI_THREADED

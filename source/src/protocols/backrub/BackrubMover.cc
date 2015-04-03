@@ -18,7 +18,6 @@
 // Protocols Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
@@ -65,8 +64,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/keys/Key3Vector.hh>
-
-
 
 
 using namespace core;
@@ -232,7 +229,7 @@ protocols::backrub::BackrubMover::initialize_simulation(
 	optimize_branch_angles(pose);
 }
 
-/// @detailed
+/// @details
 void
 protocols::backrub::BackrubMover::apply(
 	Pose & pose
@@ -300,7 +297,7 @@ protocols::backrub::BackrubMover::get_name() const {
 	return "BackrubMover";
 }
 
-// /// @detailed
+// /// @details
 // void
 // BackrubMover::test_move(
 // 	Pose &
@@ -326,7 +323,7 @@ int tree_distance(
 	return -1;
 }
 
-/// @detailed
+/// @details
 /// The start atom MUST have all three stub atoms defined. However, the end atom
 /// may be at the very end of the chain. There must be at least one atom between
 /// start and end atoms.
@@ -1028,7 +1025,7 @@ protocols::backrub::BackrubMover::random_angle(
 	return angle;
 }
 
-/// @detailed
+/// @details
 /// The code currently does not do any optimization of branching atom bond angles.
 void
 protocols::backrub::BackrubMover::rotate_segment(
@@ -1205,7 +1202,7 @@ protocols::backrub::BackrubMover::last_angle() const
 	return last_angle_;
 }
 
-/// @detailed
+/// @details
 /// All move types are prefixed with "br". Sections are divided by underscores.
 /// The next two sections indicates the names of the atoms at the start and end
 /// of the backrub segment. The last section gives the size of the segment.
@@ -1226,7 +1223,7 @@ protocols::backrub::BackrubMover::update_type()
 	type(new_type);
 }
 
-/// @detailed
+/// @details
 /// PM1 & PM2 are the parent and grandparent atoms (respectively) of the pivot
 /// atom, P. PP1 and PP2 are the child and grandchiled atoms (respectively) of
 /// the pivot atom. PM2 and PP2 are optional and may be NULL. REF is the other
@@ -1470,7 +1467,7 @@ backrub_rotation_constants(
 	}
 }
 
-/// @detailed
+/// @details
 /// tau is the angular displacement
 void
 backrub_rotation_angles(

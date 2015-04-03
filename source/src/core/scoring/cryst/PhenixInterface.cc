@@ -43,7 +43,7 @@
 #include <numeric/xyzVector.io.hh>
 #include <numeric/statistics/functions.hh>
 
-//
+
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
 
 // Utility headers
@@ -1071,7 +1071,7 @@ void PhenixInterface::initialize_target_evaluator(
 	//core::Real rwork = getR();
 	//core::Real rfree = getRfree();
 
-	//
+
 	Py_XDECREF(pModule);
 
 	chdir("..");

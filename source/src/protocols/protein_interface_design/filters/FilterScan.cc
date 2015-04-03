@@ -13,24 +13,19 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
@@ -63,7 +58,7 @@ namespace filters {
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.FilterScanFilter" );
 static thread_local basic::Tracer TR_residue_scan( "ResidueScan" );
 
-///@brief default ctor
+/// @brief default ctor
 FilterScanFilter::FilterScanFilter() :
 	parent( "FilterScan" ),
 	task_factory_( /* NULL */ ),
@@ -206,7 +201,7 @@ FilterScanFilter::unbind( core::pose::Pose & pose ) const{
 	rbtm.apply( pose );
 }
 
-///@brief introduces a single-point subsitution and then performs the repack, rtmin, and relax moves that are requested.
+/// @brief introduces a single-point subsitution and then performs the repack, rtmin, and relax moves that are requested.
 void
 FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const{
 	using namespace core::chemical;

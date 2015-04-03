@@ -10,7 +10,6 @@
 /// @file   core/scoring/methods/MembraneTopology.cc
 /// @brief  MembraneTopology
 /// @author Bjorn Wallner
-///
 
 
 // Unit headers
@@ -29,7 +28,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // just for debugging
@@ -133,7 +131,6 @@ MembraneTopology::initialize(std::string const & spanfile)
 	stream.clear();
 
 
-
 	for ( Size reg1 = 1; reg1 <= total_tmhelix_; ++reg1 ) {
 		for ( Size reg2 = 1; reg2 <= total_tmhelix_; ++reg2 ) {
 				relative_tmh_ori_(reg1,reg2)=1;
@@ -206,9 +203,7 @@ MembraneTopology::initialize(std::string const & spanfile)
 		}
 
 
-
 	}
-
 
 
 	init_=true;
@@ -290,10 +285,7 @@ MembraneTopology::get_subset( utility::vector1< Size > & TMH_list, MembraneTopol
 		}
 
 
-
 	total_tmhelix_=TMH_list.size();
-
-
 
 
 }

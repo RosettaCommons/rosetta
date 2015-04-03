@@ -39,7 +39,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details this is a middle-layer implementation of JobOutputter for file-based output.  It handles scorefile output, as scorefiles are common to file-outputting methods.
+/// @details this is a middle-layer implementation of JobOutputter for file-based output.  It handles scorefile output, as scorefiles are common to file-outputting methods.
 class AtomTreeDiffJobOutputter : public protocols::jd2::FileJobOutputter
 {
 public:
@@ -50,29 +50,29 @@ public:
 
 	//////////////////////////////creating output functions/////////////////////////////////////////
 
-	///@brief this function outputs the final result of a job.
+	/// @brief this function outputs the final result of a job.
 	void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
-	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
+	/// @brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 
-	///@brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.  The base implementation looks for a pdb with the job's name already in existence.
+	/// @brief this function is not used for output, but it belongs here since it needs to check the same output locations as the class normally writes to.  This class checks wherever output goes to see if the job's expected output already exists (on disk or whatever).  This is the most basic form of checkpointing.  The base implementation looks for a pdb with the job's name already in existence.
 	bool job_has_completed( JobCOP job );
 
-	///@brief this is the master function for determining the unique output identifier for a job
+	/// @brief this is the master function for determining the unique output identifier for a job
 	std::string output_name( JobCOP job );
 
-	///@brief what precision should the atom_tree_diff be ouput at?
+	/// @brief what precision should the atom_tree_diff be ouput at?
 	void set_precision(int bb_precision, int sc_precision, int bondlen_precision);
 
-	///@brief use input as reference pose?
+	/// @brief use input as reference pose?
 	void use_input_for_ref(bool use_input=true);
 
 private:
 
-	///@brief Appends pose to the silent file
+	/// @brief Appends pose to the silent file
 	void
 	dump_pose(
 		std::string const & tag,
@@ -88,10 +88,10 @@ private:
 	core::pose::Pose last_ref_pose_;
 	core::import_pose::atom_tree_diffs::AtomTreeDiff atom_tree_diff_;
 
-	///@brief precision to output atom tree diff at.
+	/// @brief precision to output atom tree diff at.
 	int bb_precision_, sc_precision_, bondlen_precision_;
 
-	///@brief use input as reference pose? (default false)
+	/// @brief use input as reference pose? (default false)
 	bool use_input_;
 
 }; // AtomTreeDiffJobOutputter

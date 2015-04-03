@@ -118,7 +118,7 @@ VallData::read_file(
 ///if sequence does not match target sequence, penalize by seq_weight; if secstruct
 ///does not match target secstruct, penalize by ss_weight. In the end, picking top "nfrags"
 ///fragments with lowest penalty score (this internally uses a "heap" implementation).
-///
+
 
 /// SEE ALSO THE DUPLICATE COPY BELOW WHICH INCLUDES FILTERING BY TARGET TORSION ANGLES
 /// IE, IF YOU FIX A BUG HERE FIX IT DOWN THERE AS WELL (THANKS)
@@ -219,7 +219,7 @@ VallData::get_frags(
 		if ( nn == nfrags ) worst_score = -score;
 		else if ( nn == 1 ) best_score = -score;
 
-		//
+
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
 		for ( Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
@@ -367,7 +367,7 @@ VallData::get_frags(
 		if ( nn == nfrags ) worst_score = -score;
 		else if ( nn == 1 ) best_score = -score;
 
-		//
+
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
 		for ( Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
@@ -507,7 +507,7 @@ VallData::get_cheating_frags(
 		if ( nn == nfrags ) worst_score = -score;
 		else if ( nn == 1 ) best_score = -score;
 
-		//
+
 		TorsionFragmentOP fragment( new TorsionFragment( frag_size, 3 /* #bb torsions */ ) );
 		for ( Size k=0; k< frag_size; ++k ) {
 			fragment->set_torsion  ( k+1, 1, phi_   [ vall_pos + k ] );
@@ -631,7 +631,7 @@ dump_vall_fasta( std::string const & fasta_filename )
 
 	utility::vector1< Size > const & vall_chain( vall.chain() );
 
-	//
+
 	std::ofstream out( fasta_filename.c_str() );
 	Size chain_begin( 1 );
 	Size const vall_size( vall_sequence.size() );

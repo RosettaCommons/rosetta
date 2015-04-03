@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Bicubic_spline
 ///
 /// @brief
 /// Bicubic spline for all your hearts desires
 ///
-/// @detailed
+/// @details
 /// This is an implementation of an algorithm from Numerical Recipes. It relies heavily
 /// on the implementation of the cubic spline (from Numerical Recipes), the MathMatrix, and the
 /// MathVector. You MUST USE the MathVector and MathMatrix implementations to use this function.
@@ -51,9 +50,8 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 ///
-/// @last_modified August 20 2010
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_numeric_interpolation_spline_Bicubic_spline_hh
@@ -177,8 +175,6 @@ private:
 }//end namespace spline
 }//end namespace interpolation
 }//end namespace numeric
-
-
 
 
 #endif /* BICUBIC_SPLINE_HH_ */

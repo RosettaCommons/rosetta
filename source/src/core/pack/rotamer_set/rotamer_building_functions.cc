@@ -465,7 +465,7 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 		//
 		// even simpler, orthonormalize v1 and v2, then we start with e' and subtract off dot(e',v1)*v1 and
 		// dot(e',v2)*v2 and we are golden.
-		//
+
 
 		// normalize v1, compute dot product with v2
 		l1 = std::sqrt( l1 );
@@ -873,7 +873,6 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 		acceptors.size() << " nearby acceptors. Built " << new_rotamers.size() << " rotamers." << std::endl;
 
 
-
 }
 
 Vector
@@ -1089,7 +1088,6 @@ build_donor_acceptor_waters(
 				" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
 
 
-
 			// accept this rotamer
 			new_waters.push_back( rot );
 			new_waters.push_back( create_oriented_water_rotamer( h2o_type, hatm1_xyz, xyz_O, aatm2_xyz,
@@ -1196,7 +1194,6 @@ build_acceptor_acceptor_waters(
 					" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
 
 
-
 				// accept this rotamer
 				new_waters.push_back( rot );
 			} // step=0,nstep
@@ -1301,7 +1298,6 @@ debug_assert( h2o_type.natoms() == 3 ); // only works for this guy now
 	if ( nstep%2 == 1 ) ++nstep;
 
 	// who are we "attached to" ?
-	//
 	//
 
 	Size const i( water_info.anchor_residue() );
@@ -1486,7 +1482,6 @@ build_dependent_water_rotamers(
 		// new_rotamers );
 
 	}
-
 
 
 }

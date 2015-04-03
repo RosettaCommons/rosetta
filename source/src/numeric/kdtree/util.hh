@@ -49,7 +49,7 @@ KDNodeOP construct_kd_tree(
 /// @brief Transforms the list of points given into percentiles using
 /// a linear mapping from the input space to percentile-space for each
 /// variable.
-/// @detailed For each variable X in row R, replaces X with the quantity
+/// @details For each variable X in row R, replaces X with the quantity
 /// ( X - min(R) ) / ( max(R) - min(R) ). Runs in O(N) time.
 void transform_percentile(
 	utility::vector1< utility::vector1< numeric::Real > > & points

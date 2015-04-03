@@ -75,11 +75,7 @@
 // #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 
 
-
 namespace bp = boost::python;
-
-
-
 
 
 // #ifndef _MSC_VER
@@ -252,7 +248,7 @@ struct array_scalar_converter
 // }
 
 // std::pair ---------------------------------------------------------------------------------------------------
-//
+
 
 //vector1 wrapper requires ostream '<<' operator
 
@@ -308,7 +304,6 @@ template< class TT > inline typename utility::vector1<TT>::iterator vector1_end 
 
 template< class TT > inline void vector1_reserve( utility::vector1<TT> & v, platform::Size n) { v.reserve(n); }
 template< class TT > inline void vector1_resize( utility::vector1<TT> & v, platform::Size n) { v.resize(n); }
-
 
 
 template< class Htype, class CP, class CP_const>
@@ -470,7 +465,6 @@ void wrap_owning_pointer(char * name)
 }
 
 
-
 template <class T>
 void expose_number_type(std::string name)
 {
@@ -510,10 +504,6 @@ void expose_pair_types(std::string name_1, std::string name_2)
   wrap_vector1<std::pair<T1, T2>, CP_CNCR, CP_CCR>("vector1_pair_" + name_1 + "_" + name_2);
   wrap_std_map< T1, T2 >("map_" + name_1 + "_" + name_2);
 }
-
-
-
-
 
 
 // Some subclassing testing functions ------------------------------------------

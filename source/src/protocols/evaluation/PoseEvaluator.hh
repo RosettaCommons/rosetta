@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_evaluation_PoseEvaluator_hh
@@ -34,14 +33,12 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 //// C++ headers
 
 // due to template function
 #include <core/io/silent/SilentStruct.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -54,10 +51,10 @@ public:
 	// we may put a cache for user values into the pose, then it will just return a pose
 	// or return just the Map from strings to values...
 
-	///@brief evaluate pose and store values in Silent_Struct
+	/// @brief evaluate pose and store values in Silent_Struct
 	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const = 0;
 
-	///@brief direct application to SilentStruct...
+	/// @brief direct application to SilentStruct...
 	/// default implementation makes pose and calls "apply", you can overload if you don't need the pose-step
 	virtual void apply( core::io::silent::SilentStruct &pss) const;
 	virtual bool applicable( core::pose::Pose const& ) const { return true; }
@@ -72,14 +69,14 @@ class SingleValuePoseEvaluator : public PoseEvaluator {
 public:
 	SingleValuePoseEvaluator( std::string name = "UNSPECIFIED_SingleValuePoseEvaluator" ) : name_( name ) {};
 
-	///@brief evaluate pose and store values in Silent_Struct
+	/// @brief evaluate pose and store values in Silent_Struct
 	/// why is this specific to a specific type of SilentStruct? that seems needlessly pointless and overly constraining.
 	virtual void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 	//	void apply( core::pose::Pose&, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 	using PoseEvaluator::apply;
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual T apply( core::pose::Pose& ) const = 0;
 	virtual bool applicable( core::pose::Pose const& ) const { return true; }
 

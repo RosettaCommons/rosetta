@@ -82,7 +82,7 @@ basic::options::RealOptionKey const sulphur_dist_cutoff("bunsat_sulphur_dist_cut
 basic::options::RealOptionKey const metal_dist_cutoff("bunsat_metal_dist_cutoff");
  */
 
-///@brief
+/// @brief
 class BuriedUnsatPolarsFinder : public protocols::moves::Mover {
 public:
 	BuriedUnsatPolarsFinder() {}

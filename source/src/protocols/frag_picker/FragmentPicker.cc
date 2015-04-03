@@ -212,7 +212,6 @@ void FragmentPicker::keep_all_protocol() {
 }
 
 
-
 void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vector1<Candidates> const & fragment_set ) {
 	using namespace ObjexxFCL;
 
@@ -1626,7 +1625,7 @@ void FragmentPicker::parse_command_line() {
 }
 
 /// @brief sets the query sequence
-/// @detailed Well, it is a sequence profile, but the sequence can be extracted from it
+/// @details Well, it is a sequence profile, but the sequence can be extracted from it
 void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_sequence) {
 	query_profile_ = query_sequence;
 	query_seq_as_string_ = query_profile_->sequence();

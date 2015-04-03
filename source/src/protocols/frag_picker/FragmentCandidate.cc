@@ -56,11 +56,9 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 
-
 // Utility
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <cctype>
 
 #include <utility/vector1.hh>
 

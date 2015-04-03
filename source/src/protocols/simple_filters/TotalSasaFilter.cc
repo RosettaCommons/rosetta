@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/TotalSasaFilter.cc
 /// @brief
-/// @detailed (Based on InterfaceSasaFilter)
+/// @details (Based on InterfaceSasaFilter)
 /// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #include <protocols/simple_filters/TotalSasaFilter.hh>

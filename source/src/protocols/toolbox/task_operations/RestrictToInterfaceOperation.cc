@@ -21,7 +21,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -43,7 +42,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
+/// @details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
 RestrictToInterfaceOperation::RestrictToInterfaceOperation( std::string const & calculator )
 	: parent(), calculator_name_(calculator)
 {
@@ -53,14 +52,14 @@ RestrictToInterfaceOperation::RestrictToInterfaceOperation( std::string const & 
 // 	}
 }
 
-///@brief this ctor will generate the calculator for you (may use defaults)
+/// @brief this ctor will generate the calculator for you (may use defaults)
 RestrictToInterfaceOperation::RestrictToInterfaceOperation( core::Size upper_chain, core::Size lower_chain )
 	: parent(), calculator_name_("")
 {
 	make_calculator( upper_chain, lower_chain );
 }
 
-///@details private helper function to make calculator - runs in the ctor
+/// @details private helper function to make calculator - runs in the ctor
 void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core::Size lower_chain ) {
 	make_name( upper_chain, lower_chain );
 
@@ -74,7 +73,7 @@ void RestrictToInterfaceOperation::make_calculator( core::Size upper_chain, core
 	}
 }
 
-///@details private helper function to name calculator- runs in the ctor
+/// @details private helper function to name calculator- runs in the ctor
 void RestrictToInterfaceOperation::make_name( core::Size upper_chain, core::Size lower_chain ) {
 	calculator_name_ = "RTIO_interface_calculator_" + utility::to_string( upper_chain )
 		+ '_' + utility::to_string( lower_chain );
@@ -88,7 +87,7 @@ RestrictToInterfaceOperationCreator::create_task_operation() const
 	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation );
 }
 
-///@details be warned if you use clone that you'll not get a new interface calculator
+/// @details be warned if you use clone that you'll not get a new interface calculator
 core::pack::task::operation::TaskOperationOP RestrictToInterfaceOperation::clone() const
 {
 	return core::pack::task::operation::TaskOperationOP( new RestrictToInterfaceOperation( *this ) );

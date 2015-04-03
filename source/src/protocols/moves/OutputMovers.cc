@@ -9,7 +9,7 @@
 
 /// @file OutputMovers.cc
 /// @brief File to contain classes that deal with output and pdb dumping
-/// @detailed
+/// @details
 /// @author Monica Berrondo
 
 #include <protocols/moves/OutputMovers.hh>
@@ -23,7 +23,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 

@@ -20,7 +20,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

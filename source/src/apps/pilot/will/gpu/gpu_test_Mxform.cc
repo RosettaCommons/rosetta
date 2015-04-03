@@ -241,8 +241,6 @@ int main(int argc, char *argv[]) {
     }
 
 
-
-
     p = init;
     p.replace_residue(19,em1.residue(1),true);
     p.replace_residue(65,em2.residue(1),true);
@@ -320,7 +318,6 @@ int main(int argc, char *argv[]) {
   }
 
 
-
   float c11 = uniform()*360.0; float c21 = uniform()*360.0; float c31 = uniform()*360.0; float c41 = uniform()*360.0;
   float c12 = uniform()*360.0; float c22 = uniform()*360.0; float c32 = uniform()*360.0; float c42 = uniform()*360.0;
   p.replace_residue(19,hmd.residue(1),true);
@@ -355,15 +352,6 @@ int main(int argc, char *argv[]) {
 
   p.dump_pdb("testp.pdb");
   q.dump_pdb("testq.pdb");
-
-
-
-
-
-
-
-
-
 
 
 }

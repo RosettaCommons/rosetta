@@ -116,7 +116,7 @@ private:
 	/// having changed
 	void sleep_a_bit();
 
-	/// @breif Reset the amount of time the master thread is supposed to sleep
+	/// @brief Reset the amount of time the master thread is supposed to sleep
 	/// back to it's minimum
 	void reset_sleep_progression();
 

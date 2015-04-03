@@ -38,13 +38,13 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class DNA_BaseEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	DNA_BaseEnergy();
 
 

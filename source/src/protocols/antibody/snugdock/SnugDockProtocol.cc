@@ -10,7 +10,7 @@
 /// @file protocols/antibody/SnugDockProtocol.cc
 /// @brief Dock and antigen to an antibody while optimizing the rigid body orientation of the VH and VL chains and
 /// performing CDR loop minimization.
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -50,17 +50,17 @@ namespace antibody {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 SnugDockProtocol::SnugDockProtocol() : Mover() {
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 SnugDockProtocol::SnugDockProtocol( SnugDockProtocol const & rhs ) : Mover(rhs) {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 SnugDockProtocol & SnugDockProtocol::operator=( SnugDockProtocol const & rhs ) {
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -83,13 +83,13 @@ SnugDockProtocol::clone() const {
 	return protocols::moves::MoverOP( new SnugDockProtocol( *this ) );
 }
 
-///@brief fresh_instance returns a default-constructed object for JD2
+/// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDockProtocol::fresh_instance() const {
 	return protocols::moves::MoverOP( new SnugDockProtocol() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool SnugDockProtocol::reinitialize_for_new_input() const {
 	return true;
 }

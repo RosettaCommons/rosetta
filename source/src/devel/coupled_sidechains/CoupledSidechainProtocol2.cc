@@ -217,7 +217,7 @@ CoupledSidechainProtocol::setup_objects() {
 
 }
 
-/// @detailed
+/// @details
 void
 CoupledSidechainProtocol::apply(
 	Pose & pose

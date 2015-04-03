@@ -16,15 +16,9 @@
 // Unit headers
 #include <core/scoring/methods/CustomAtomPairEnergy.hh>
 #include <core/scoring/methods/CustomAtomPairEnergyCreator.hh>
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/PairEPotential.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Project headers
@@ -41,12 +35,9 @@
 #include <istream>
 
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
 
 #include <numeric/deriv/distance_deriv.hh>
 
@@ -89,7 +80,7 @@ CustomAtomPairEnergy::clone() const
 	return EnergyMethodOP( new CustomAtomPairEnergy(max_cst_seq_sep_) );
 }
 
-///
+
 void
 CustomAtomPairEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const
 {
@@ -110,7 +101,6 @@ void swap_seqpos(
 }
 
 
-///
 void
 CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -175,7 +165,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 	tr.flush_all_channels();
 }
 
-///
+
 void
 CustomAtomPairEnergy::setup_for_derivatives(
 	pose::Pose & pose, ScoreFunction const &

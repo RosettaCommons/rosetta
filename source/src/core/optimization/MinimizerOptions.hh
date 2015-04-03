@@ -31,7 +31,7 @@ namespace optimization {
 class MinimizerOptions : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MinimizerOptions();
 	/////////////////////////////////////////////////////////////////////////////
 	// c-tor's -- might want to add a number of c-tors or a string-switched
@@ -46,7 +46,7 @@ public:
 		bool const deriv_check_verbose_in = false
 	);
 
-	///
+
 	MinimizerOptionsOP
 	clone() const;
 

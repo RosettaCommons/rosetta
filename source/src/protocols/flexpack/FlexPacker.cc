@@ -19,8 +19,6 @@
 #include <protocols/flexpack/annealer/FlexbbSimAnnealer.hh>
 #include <protocols/flexpack/interaction_graph/FlexbbIGFactory.hh>
 #include <protocols/flexpack/interaction_graph/FlexbbInteractionGraph.hh>
-// AUTO-REMOVED #include <protocols/flexpack/interaction_graph/OTFFlexbbInteractionGraph.hh>
-// AUTO-REMOVED #include <protocols/flexpack/interaction_graph/PrecomputedFlexbbInteractionGraph.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 #include <protocols/flexpack/OtherContextScoreFunction.hh>
 #include <core/fragment/Frame.hh>
@@ -44,7 +42,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -199,7 +196,6 @@ FlexPacker::apply(
 	tr << std::endl;
 
 	//pose.dump_pdb( "flexpacked.pdb" );
-
 
 
 } //apply function

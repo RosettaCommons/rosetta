@@ -16,12 +16,10 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>

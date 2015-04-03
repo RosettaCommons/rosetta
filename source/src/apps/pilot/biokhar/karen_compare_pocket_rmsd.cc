@@ -126,7 +126,6 @@ core::Real heavyatom_rms = rmsd_with_super( pose1, pose2, is_interface_heavyatom
 TR << "All residue rmsd: " << CA_rms << " Interface rmsd: " << heavyatom_rms <<std::endl;
 
 
-
 TR << "Done computing rmsds" << std::endl;
 
     } catch ( utility::excn::EXCN_Base const & e ) {

@@ -189,7 +189,6 @@ main( int argc, char * argv [] ) {
   }
 
 
-//
 //Attempt to renumber ligand to 1 B, 2 B, etc...
 /*
 	vector1< Size > renumber_vector;

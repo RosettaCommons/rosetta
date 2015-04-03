@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/InterlockingAromaFilter.hh
 /// @brief header file for InterlockingAromaFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

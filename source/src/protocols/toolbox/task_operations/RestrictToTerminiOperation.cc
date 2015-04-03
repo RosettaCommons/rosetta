@@ -86,7 +86,7 @@ RestrictToTerminiOperation::clone() const {
 	return TaskOperationOP( new RestrictToTerminiOperation( *this ) );
 }
 
-///@brief restrict to pack only the N and/or C-termini
+/// @brief restrict to pack only the N and/or C-termini
 void
 RestrictToTerminiOperation::apply(
 	Pose const & pose,

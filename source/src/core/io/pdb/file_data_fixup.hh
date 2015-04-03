@@ -51,7 +51,6 @@
 // Some  useful functions below for fixing up H5'<-->H5'' ambiguities based on geometric
 //  comparisons to ideal coordinates.
 //
-//
 
 namespace core {
 namespace io {

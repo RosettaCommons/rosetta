@@ -38,11 +38,9 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
-
 
 
 class Rama2BOffsetEnergy : public ContextIndependentLRTwoBodyEnergy {
@@ -69,7 +67,7 @@ public:
 		Size res2
 	) const;
 
-	///
+
 	virtual	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,

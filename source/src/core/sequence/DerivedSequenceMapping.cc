@@ -14,16 +14,11 @@
 #include <core/types.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/DerivedSequenceMapping.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomWithDOFChange.hh>
 
 #include <algorithm> // for max_element
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 
@@ -34,7 +29,6 @@
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 namespace core {

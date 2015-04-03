@@ -11,7 +11,7 @@
 /// @brief  demo of True/False query class which handles basic boolean logic
 /// @author Will Sheffler (willsheffler@gmail.com)
 /// @date   Thu Aug  9 19:49:23 2007
-///
+
 
 #include <cstdlib>
 #include <iostream>
@@ -83,7 +83,6 @@ void test_Vec() {
 }
 
 
-
 int main (int argc, char const* argv[])
 {
 	argc++;
@@ -99,17 +98,5 @@ int main (int argc, char const* argv[])
 	return 0;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 

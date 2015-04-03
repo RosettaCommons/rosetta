@@ -25,7 +25,6 @@
 // Project headers
 // This has to come before boinc.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
@@ -33,40 +32,16 @@
 
 #include <protocols/jobdist/JobDistributors.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
 
-// AUTO-REMOVED #include <core/svn_version.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/io/atom_tree_diffs/atom_tree_diff.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/io/silent/util.hh>
-// AUTO-REMOVED #include <core/io/raw_data/DecoyFileData.hh>
-// AUTO-REMOVED #include <core/io/raw_data/ScoreFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/numeric.functions.hh>
-
-// AUTO-REMOVED #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <map>
 #include <set>
@@ -76,13 +51,10 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 #ifdef BOINC
@@ -96,9 +68,9 @@ If you got this message, something is wrong with your build settings.
 namespace protocols {
 namespace jobdist {
 
-///@brief Coordinates processing of jobs across multiple Rosetta processes.
+/// @brief Coordinates processing of jobs across multiple Rosetta processes.
 ///
-///@details
+/// @details
 /// Job distributors need to be customized in three different ways:
 ///  - by cluster architecture (none/Condor, MPI, BOINC, etc)
 ///  - by local test for job completion (PDB exists, tag already in silent file, etc)
@@ -129,35 +101,35 @@ public:
 	BaseJobDistributor( BaseJobDistributor const & );
 	virtual ~BaseJobDistributor();
 
-	///@brief If true, sets the next Job and nstruct number to be processed.
+	/// @brief If true, sets the next Job and nstruct number to be processed.
 	/// Deliberately not virtual:  should not be overriden.  Uses the "find_available_job"
 	/// method, which is common to both MPI and standard protocols, but used in slightly
 	/// different manners.
 	bool next_job(BasicJobOP & job, int & struct_n);
 
-	///@brief Must be called by client before first call to next_job().
+	/// @brief Must be called by client before first call to next_job().
 	/// If overriden by a subclass, it MUST call the superclass implementation.
 	virtual void startup();
 
-	///@brief Must be called by client after last call to next_job().
+	/// @brief Must be called by client after last call to next_job().
 	/// If overriden by a subclass, it MUST call the superclass implementation.
 	virtual void shutdown();
 
-	///@brief Signal that if at all possible, we would like to not be killed while in the critical section.
+	/// @brief Signal that if at all possible, we would like to not be killed while in the critical section.
 	/// If overriden by a subclass, it MUST call the superclass implementation.
 	virtual void begin_critical_section();
 
-	///@brief Signal that if at all possible, we would like to not be killed while in the critical section.
+	/// @brief Signal that if at all possible, we would like to not be killed while in the critical section.
 	/// If overriden by a subclass, it MUST call the superclass implementation.
 	virtual void end_critical_section();
 
-	///@brief Virtual function for dump_pose that is needed for main_plain_mover
+	/// @brief Virtual function for dump_pose that is needed for main_plain_mover
 	virtual void dump_pose_and_map( std::string const &, core::pose::Pose & );
 
-	///@brief Virtual function for temp_file main_plain_mover
+	/// @brief Virtual function for temp_file main_plain_mover
 	virtual void temp_file( std::string const & );
 
-	///@brief Virtual function for score_map that is needed for main_plain_mover
+	/// @brief Virtual function for score_map that is needed for main_plain_mover
 	/// sets the score_map
 	virtual void score_map( std::map < std::string, core::Real> & );
 
@@ -178,8 +150,8 @@ public:
 		proc_id_ = proc_id;
 		nproc_ = nproc;
 	}
-	///@brief get output_tag for current job's current nstruct
-	///@details by default return current_job's current_nstruct' output_tag.
+	/// @brief get output_tag for current job's current nstruct
+	/// @details by default return current_job's current_nstruct' output_tag.
 	///Overridden in derived PlainSilentFileJobDistributor to return names with "S_" at the beginning
 	virtual std::string get_current_output_tag();
 
@@ -187,20 +159,20 @@ public:
 
 protected:
 
-	///@brief Is the given nstruct number of the given input job already finished by the local process?
+	/// @brief Is the given nstruct number of the given input job already finished by the local process?
 	/// To be implemented by subclasses.
 	virtual bool is_finished(BasicJobOP const & job, int struct_n) = 0;
 
-	///@brief Restore state from checkpoint file, if it exists
+	/// @brief Restore state from checkpoint file, if it exists
 	virtual void checkpoint_read();
-	///@brief Save state to checkpoint file, overwriting previous
+	/// @brief Save state to checkpoint file, overwriting previous
 	virtual void checkpoint_write();
-	///@brief Remove checkpoint file (at end of batch)
+	/// @brief Remove checkpoint file (at end of batch)
 	virtual void checkpoint_clear();
 
-	///@brief accessor for current_nstruct_
+	/// @brief accessor for current_nstruct_
 	int current_nstruct() { return current_nstruct_; }
-	///@brief accessor for current_job owning pointer
+	/// @brief accessor for current_job owning pointer
 	BasicJobOP current_job();
 
 #ifdef USEMPI
@@ -226,7 +198,7 @@ protected:
 #endif
 
 private:
-	///@brief looks for a job that has not yet been started, and stores the index for the job, and the
+	/// @brief looks for a job that has not yet been started, and stores the index for the job, and the
 	/// nstruct index in the member variables.  Called by next_job() and by master_node_distribute_jobs().
 	bool find_available_job();
 
@@ -279,8 +251,8 @@ protected:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Distributor for use with atomtree_diff silent files.
-///@details This class is deliberately designed for each process to work on
+/// @brief Distributor for use with atomtree_diff silent files.
+/// @details This class is deliberately designed for each process to work on
 /// its own silent file (and preferrably in its own directory);
 /// unlike Rosetta++, we DO NOT share silent files among multiple processes.
 /// First, true atomic file locking is impossible on most distributed file systems (e.g. NFS),
@@ -304,7 +276,7 @@ public:
 	AtomTreeDiffJobDistributor(JobVector jobs, std::string outfile_name);
 	virtual ~AtomTreeDiffJobDistributor();
 
-	///@brief Appends pose to the silent file
+	/// @brief Appends pose to the silent file
 	virtual void dump_pose(
 		std::string const & tag,
 		std::map< std::string, core::Real > const & scores,
@@ -312,7 +284,7 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	///@brief Sets number of digits used in writing atomtree diff.
+	/// @brief Sets number of digits used in writing atomtree diff.
 	virtual void set_precision(
 		int bb_precision,
 		int sc_precision,
@@ -336,9 +308,9 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Distributor for use with plain old PDB files.
+/// @brief Distributor for use with plain old PDB files.
 /// Use is strongly discouraged in production environments!
-///@details This class is deliberately designed for each process to write
+/// @details This class is deliberately designed for each process to write
 /// its own PDB files in its own directory; it checks for pre-existing files only
 /// for use by stopped and re-started jobs, NOT for coordinating between processes.
 /// (To coordinate, it would have to "touch" the non-existant file in next_job()
@@ -358,21 +330,21 @@ public:
 	PlainPdbJobDistributor(JobVector jobs, std::string outfile_name="none");
 	virtual ~PlainPdbJobDistributor();
 
-	///@brief Allows setting of inprogress.
+	/// @brief Allows setting of inprogress.
 	virtual void startup();
 
 	using parent::get_output_filename;
 
-	///@brief Translates an output tag name to an output PDB file name.
+	/// @brief Translates an output tag name to an output PDB file name.
 	virtual std::string get_output_filename(std::string const & tag);
 
-	///@brief Writes pose and basic score data to a standard PDB file.
+	/// @brief Writes pose and basic score data to a standard PDB file.
 	virtual void dump_pose_and_map(
 		std::string const & tag,
 		core::pose::Pose & pose
 	);
 
-	///@brief Opens a temp file (.in_progress)
+	/// @brief Opens a temp file (.in_progress)
 	virtual void temp_file(std::string const & tag);
 
 	void score_map( std::map < std::string, core::Real > & score_map_in ) { score_map_ = score_map_in; }
@@ -380,7 +352,7 @@ protected:
 
 	virtual bool is_finished(BasicJobOP const & job, int struct_n );
 
-	///@brief Writes score data to PDB file in YAML format.
+	/// @brief Writes score data to PDB file in YAML format.
 	virtual void dump_scores(
 		utility::io::ozstream & out,
 		std::string const & tag,
@@ -397,8 +369,8 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Distributor for use with raw files.
-///@details This class is deliberately designed for each process to work on
+/// @brief Distributor for use with raw files.
+/// @details This class is deliberately designed for each process to work on
 /// its own silent file (and preferrably in its own directory);
 /// unlike Rosetta++, we DO NOT share silent files among multiple processes.
 /// First, true atomic file locking is impossible on most distributed file systems (e.g. NFS),
@@ -423,7 +395,7 @@ public:
 
 	virtual ~PlainRawJobDistributor();
 
-	///@brief Writes pose and basic score data to a standard silent file.
+	/// @brief Writes pose and basic score data to a standard silent file.
 	virtual void dump_pose_and_map(
 		std::string const & tag,
 		core::pose::Pose & pose
@@ -431,7 +403,7 @@ public:
 
 	using parent::get_output_filename;
 
-	///@brief Translates an output tag name to an output PDB file name.
+	/// @brief Translates an output tag name to an output PDB file name.
 	virtual std::string get_output_filename(std::string const & tag);
 	virtual std::string get_output_tag( int const & struct_n );
 
@@ -449,8 +421,8 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief Distributor for use with silent files.
-///@details This class is deliberately designed for each process to work on
+/// @brief Distributor for use with silent files.
+/// @details This class is deliberately designed for each process to work on
 /// its own silent file (and preferrably in its own directory);
 /// unlike Rosetta++, we DO NOT share silent files among multiple processes.
 /// First, true atomic file locking is impossible on most distributed file systems (e.g. NFS),
@@ -474,7 +446,7 @@ public:
 
 	virtual ~PlainSilentFileJobDistributor();
 
-	///@brief Writes pose and basic score data to a standard silent file.
+	/// @brief Writes pose and basic score data to a standard silent file.
 	virtual void dump_pose(
 		BasicJobOP const & job,
 		int const & nstruct,
@@ -482,7 +454,7 @@ public:
 		core::pose::Pose & pose
 	);
 
-	///@brief Writes the silent_struct to a silen file
+	/// @brief Writes the silent_struct to a silen file
 	void dump_silent(
 		int const & struct_n,
 		core::io::silent::SilentStruct & silent_struct

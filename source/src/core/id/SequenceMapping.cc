@@ -115,7 +115,7 @@ SequenceMapping::resize( Size const s1, Size const s2 )
 	mapping_.resize(s1,0);
 }
 
-///
+
 void
 SequenceMapping::reverse()
 {
@@ -172,7 +172,7 @@ SequenceMapping::size2() const
 	return size2_;
 }
 
-//
+
 bool
 SequenceMapping::all_aligned() const
 {
@@ -186,7 +186,7 @@ SequenceMapping::all_aligned() const
 	return aligned;
 }
 
-//
+
 bool
 SequenceMapping::is_identity() const {
 	bool identity( true );
@@ -367,7 +367,6 @@ combine_sequence_mappings(
 	return composite_smap;
 
 } //combine_sequence_mappings
-
 
 
 /// @details combine smap_to_add into smap,

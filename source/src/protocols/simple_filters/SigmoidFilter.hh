@@ -25,7 +25,7 @@
 namespace protocols {
 namespace simple_filters {
 
-///@brief transform the output from a regular filter into a sigmoid ranging from 0-1 according to:
+/// @brief transform the output from a regular filter into a sigmoid ranging from 0-1 according to:
 /// fx = 1/[1 + exp[ ( x - offset ) * steepness ]
 /// The function asymptotically reaches 1 at negative values and 0 at positive values. It's 0.5 at the offset and steepness determines its slope at the offset
 class Sigmoid : public filters::Filter

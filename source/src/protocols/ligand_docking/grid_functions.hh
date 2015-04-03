@@ -16,10 +16,6 @@
 #ifndef INCLUDED_protocols_ligand_docking_grid_functions_hh
 #define INCLUDED_protocols_ligand_docking_grid_functions_hh
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <iostream>
 
@@ -61,7 +57,7 @@ void rb_grid_score_atr_rep(
 	int max_rep = 9999
 );
 
-///@brief a cleaner implementation of rb_grid_score_atr_rep
+/// @brief a cleaner implementation of rb_grid_score_atr_rep
 std::pair<int, int> get_rb_atr_and_rep_scores(
 		core::grid::CartGrid<int> const & grid,
 		core::pose::Pose const & pose,

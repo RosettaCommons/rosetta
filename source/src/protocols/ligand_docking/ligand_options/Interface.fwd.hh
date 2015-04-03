@@ -20,10 +20,10 @@ namespace protocols {
 namespace ligand_docking {
 namespace ligand_options {
 
-///@brief info for each residue- is it part of the interface and if so, what ligands is it near
+/// @brief info for each residue- is it part of the interface and if so, what ligands is it near
 struct InterfaceInfo;
 
-///@brief For each residue is it in the interface, a mobile region or a non-mobile region?
+/// @brief For each residue is it in the interface, a mobile region or a non-mobile region?
 class Interface;
 
 } //namespace ligand_options

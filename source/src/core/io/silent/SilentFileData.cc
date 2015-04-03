@@ -200,7 +200,6 @@ SilentFileData::setup_extra_patches( utility::vector1< std::string > & all_patch
 }
 
 
-
 bool SilentFileData::read_tags_fast(
 	std::string const & filename,
 	utility::vector1< std::string > & tags_in_file
@@ -304,7 +303,6 @@ SilentFileData::matched_tags(
 	}
 	return tags_in_file.size();
 }
-
 
 
 //////////////////////////////////////////////////////
@@ -858,7 +856,7 @@ SilentFileData::read_stream(
 }
 
 
-///@detail The first remarks line in a silent file block
+/// @detail The first remarks line in a silent file block
 ///described the type of silent file that is comming. For example,
 /// REMARK BINARY SILENTFILE
 bool

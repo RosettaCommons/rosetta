@@ -20,7 +20,6 @@
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <set>
 

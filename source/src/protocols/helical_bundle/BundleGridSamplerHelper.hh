@@ -50,7 +50,7 @@ namespace protocols {
 			bgsh_undefined_dof //keep this last
 		};
 
-		///@brief  BundleGridSamplerHelper class, which stores options for the PerturbBundle mover.
+		/// @brief  BundleGridSamplerHelper class, which stores options for the PerturbBundle mover.
 		///
 		class BundleGridSamplerHelper : public utility::pointer::ReferenceCount, public utility::pointer::enable_shared_from_this< BundleGridSamplerHelper >
 		{

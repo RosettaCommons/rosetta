@@ -25,7 +25,6 @@
 //#include <core/chemical/AA.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>

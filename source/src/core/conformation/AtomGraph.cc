@@ -10,7 +10,7 @@
 /// @file   src/core/conformation/AtomGraph.cc
 /// @author Sam DeLuca
 
-///@detail right now there isnt a canonical mapping from nodes back to atom objects.
+/// @detail right now there isnt a canonical mapping from nodes back to atom objects.
 
 #include <core/conformation/AtomGraph.hh>
 #include <core/chemical/AtomType.hh>

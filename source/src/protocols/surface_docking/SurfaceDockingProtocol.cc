@@ -397,7 +397,6 @@ SurfaceDockingProtocol::create_surface_packer_task ( core::pose::Pose const & po
 	}
 
 
-
 }	//surface_docking
 
 }	//protocols

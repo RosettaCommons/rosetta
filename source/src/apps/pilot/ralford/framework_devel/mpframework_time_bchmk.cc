@@ -111,7 +111,6 @@ int main( int argc, char* argv[] )
         mp_score_duration = ( std::clock() - mp_score_start ) / (double) CLOCKS_PER_SEC;
 
 
-
         // Show Results
         TR << "Membrane Protein Framework: Benchmark Timing Test" << std::endl;
         TR << "=======================================================================" << std::endl;

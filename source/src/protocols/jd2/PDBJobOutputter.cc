@@ -17,12 +17,9 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
@@ -50,8 +47,6 @@
 
 #include <core/io/pdb/file_data.hh>
 #include <utility/vector1.hh>
-
-
 
 
 static thread_local basic::Tracer TR( "protocols.jd2.PDBJobOutputter" );
@@ -127,7 +122,7 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	}
 }
 
-///@details private function (just prevents code duplication) to fill ozstream
+/// @details private function (just prevents code duplication) to fill ozstream
 void protocols::jd2::PDBJobOutputter::dump_pose(
 	JobCOP job,
 	core::pose::Pose const & pose,
@@ -155,7 +150,7 @@ std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::str
 
 ////////////////////////////////////////score-related functions///////////////////////////////////
 
-///@brief this function extracts the pose's scores for printing
+/// @brief this function extracts the pose's scores for printing
 /// @details In order for this to work as expected, the Pose's cached energies
 /// must match up with the (current) conformation.
 /// A good time to do this is at the end of your protocol's apply() method:
@@ -169,7 +164,7 @@ void protocols::jd2::PDBJobOutputter::extract_scores(
 }
 
 //THIS FUNCTION WILL MOVE HIGHER IN THE HIERARCHY AT SOME POINT
-///@brief this function extracts the pose's scores and outputs them into the PDB
+/// @brief this function extracts the pose's scores and outputs them into the PDB
 void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility::io::ozstream & out ){
 	//TR << "protocols::jd2::PDBJobOutputter::extract_data_from_Job" << std::endl;
 
@@ -196,8 +191,8 @@ void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility
 }
 
 
-///@brief This function extracts the pose's extra data/scores and outputs them into the PDB
-///@details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScore().
+/// @brief This function extracts the pose's extra data/scores and outputs them into the PDB
+/// @details YOU are responsible for putting things into the pose's DataCache using core::pose::util::setPoseExtraScore().
 /// Both string_real and string_real pairs can be stored using setPoseExtraScore().
 void protocols::jd2::PDBJobOutputter::extract_extra_scores(
 	core::pose::Pose const & pose,

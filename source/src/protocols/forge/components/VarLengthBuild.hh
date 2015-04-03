@@ -29,8 +29,6 @@
 
 // project headers
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameList.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -39,14 +37,12 @@
 #include <protocols/moves/Mover.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 
 #include <core/fragment/FrameList.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

@@ -1462,7 +1462,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::enumerate_chi_sets(
 }
 
 
-
 template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::chisamples_for_rotamer_and_chi(

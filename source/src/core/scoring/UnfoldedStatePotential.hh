@@ -18,20 +18,16 @@
 #include <core/scoring/UnfoldedStatePotential.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
@@ -41,8 +37,6 @@ namespace core {
 namespace scoring {
 
 
-/// @begin UnfoldedStatePotential
-///
 /// @remarks
 /// making this a separate class because it relies on a database file. rather than putting the code to read the database file
 /// in the energy method class, it seems like the design we're following is to have a class like this one that reads the file
@@ -74,7 +68,7 @@ private:
 
 
 private:
-	///@brief Unfolded state energies by residue
+	/// @brief Unfolded state energies by residue
 	std::map< std::string, scoring::EnergyMap > unfolded_energy_;
 
 	/// @brief energy method weights listed in the energies file

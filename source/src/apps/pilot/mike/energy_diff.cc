@@ -159,7 +159,6 @@ main( int argc, char * argv [] )
 	TR << "| " << F(7,1,total_energy2) << std::endl;
 
 
-
 	TR <<  std::endl;
 
 	pose1.dump_pdb("pdb1.pdb");

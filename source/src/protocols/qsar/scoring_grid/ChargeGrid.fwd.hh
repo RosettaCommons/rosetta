@@ -26,5 +26,4 @@ class ChargeGrid;
 }
 
 
-
 #endif /* CHARGEGRID_FWD_HH_ */

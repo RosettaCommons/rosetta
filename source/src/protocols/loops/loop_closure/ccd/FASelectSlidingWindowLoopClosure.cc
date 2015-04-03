@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -27,10 +26,8 @@
 #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/fragment/FrameList.hh>
@@ -40,8 +37,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragCache.hh> // for FragStore
 
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
-//
+
 //#include <protocols/jumping/SecondaryStructure.hh>
 
 #include <basic/options/option.hh>
@@ -52,7 +48,6 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <utility/io/ozstream.hh>
@@ -63,7 +58,6 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>

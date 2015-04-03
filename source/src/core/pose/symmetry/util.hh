@@ -17,8 +17,6 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
@@ -81,7 +79,7 @@ make_asymmetric_pose(
   pose::Pose & pose
 );
 
-///@brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
+/// @brief extract the asu from a pose... unlike previous function symmetric clones are thrown out
 void
 extract_asymmetric_unit(core::pose::Pose const& pose_in, core::pose::Pose & pose_out, bool with_virtual_atoms=true);
 
@@ -265,7 +263,6 @@ utility::vector1<std::string> get_full_intracomponent_subs(core::pose::Pose cons
 } // symmetry
 } // pose
 } // core
-
 
 
 #endif

@@ -18,8 +18,6 @@
 // Utility headers
 #include <utility/exit.hh>
 
-// Commented by inclean daemon #include <ObjexxFCL/ObjexxFCL.hh>
-// Commented by inclean daemon #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 #include <string>
@@ -114,14 +112,14 @@ Adduct::phi() const
 	return phi_;
 }
 
-///
+
 Real
 Adduct::theta() const
 {
 	return theta_;
 }
 
-///
+
 Real
 Adduct::d() const
 {

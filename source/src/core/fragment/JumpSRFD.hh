@@ -27,19 +27,14 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh> // for ResidueSRFD
 
-// AUTO-REMOVED #include <core/kinematics/types.hh>
 #include <core/kinematics/RT.hh>
 
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -125,7 +120,7 @@ public:
 
 };
 
-//
+
 class DownJumpSRFD : public SingleResidueFragData {
 	typedef SingleResidueFragData Parent;
 public:
@@ -206,7 +201,7 @@ public:
 		return false;
 	}
 
-	//
+
 	virtual bool
 	is_applicable( kinematics::MoveMap const&, Size ) const {
 	debug_assert( 0 );

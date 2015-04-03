@@ -110,8 +110,6 @@ DisulfideEntropyFilter::tightness(
 }
 
 
-
-
 void
 DisulfideEntropyFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
@@ -297,7 +295,7 @@ DisulfideEntropyFilter::compute(
     // P_n = k^n det(m)^(-3/2)
     //
     // Return dimensionless entropy ln (P_n) rather than multiplying by R
-    //
+
 
     //TR << "t1 " << static_cast<float>(0.17827) << std::endl;
     //TR << "t2 " << static_cast<int>(disulf_config.size()) << std::endl;
@@ -312,7 +310,6 @@ DisulfideEntropyFilter::compute(
     return -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)));
 
 
-    //
 }
 
 

@@ -17,13 +17,10 @@
 
 
 // Unit headers
-//
+
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -31,19 +28,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 //for parse_task_operations
-// AUTO-REMOVED #include <boost/foreach.hpp>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 // Utility Headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <set>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 //Utility Headers
@@ -116,15 +106,15 @@ create_remark_headers_from_cstcache(
 std::string
 get_pdb_code_from_pose_tag( core::pose::Pose const & pose );
 
-///@TODO delete and use cctype functions
+/// @TODO delete and use cctype functions
 bool
 is_digit( char * cha );
 
-///@TODO delete and use cctype functions
+/// @TODO delete and use cctype functions
 bool
 is_uppercase_letter( char * cha);
 
-///@TODO delete and use cctype functions
+/// @TODO delete and use cctype functions
 bool
 is_lowercase_letter( char * cha );
 

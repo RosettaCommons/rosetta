@@ -15,7 +15,6 @@
 #include <protocols/flexpack/interaction_graph/OTFFlexbbInteractionGraph.hh>
 
 /// Package headers
-// AUTO-REMOVED #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 #include <protocols/flexpack/OtherContextScoreFunction.hh>
 
 /// Project headers
@@ -28,7 +27,6 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 
 #include <utility/string_util.hh>
@@ -183,7 +181,6 @@ OTFFlexbbEdge::OTFFlexbbEdge( OTFFlexbbInteractionGraph * owner, int node1, int 
 }
 
 OTFFlexbbEdge::~OTFFlexbbEdge() {}
-
 
 
 /// @details compute sc/sc energy while node 0 (first node) is
@@ -812,7 +809,6 @@ OTFFlexbbInteractionGraph::note_long_range_interactions_exist_for_edge(
 }
 
 
-
 void
 OTFFlexbbInteractionGraph::debug_note_considered_substitution( core::conformation::Residue const & alt_rotamer, int index )
 {
@@ -1045,7 +1041,6 @@ OTFFlexbbInteractionGraph::debug_note_rejected_substitution()
 	alt_rot_inds_.clear();
 	//std::cout << "REJECTED SUBSTITUTION" << std::endl;
 }
-
 
 
 }

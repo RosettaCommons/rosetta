@@ -20,7 +20,6 @@
 #include <boost/foreach.hpp>
 
 
-
 namespace numeric {
 namespace geometry {
 namespace hashing {

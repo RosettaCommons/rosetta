@@ -18,15 +18,12 @@
 // Package headers
 #include <protocols/rosetta_scripts/util.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -37,7 +34,6 @@
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {

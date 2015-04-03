@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ChemicalManager
 ///
 /// @brief
 /// Chemical manager class
 ///
-/// @detailed
+/// @details
 /// The Chemical Manager is a singleton class, which means that it can only been initialized once (exist once in memory). Once initialized,
 /// you can call it by simply access it via:
 ///
@@ -27,12 +26,11 @@
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Andrew Leaver-Fay (leaverfa@email.unc.edu)
 /// Steven Combs - comments
 ///
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -195,7 +193,7 @@ private: // data
 	/// @brief lookup map for querying element_type_set by name tag
 	ElementSets element_sets_;
 
-	///@brief lookup map for querying orbital_type_set by name tag.
+	/// @brief lookup map for querying orbital_type_set by name tag.
 	OrbitalTypeSets orbital_type_sets_;
 	/// @brief lookup map for querying mm_atom_type_set by name tag
 	MMAtomTypeSets mm_atom_type_sets_;

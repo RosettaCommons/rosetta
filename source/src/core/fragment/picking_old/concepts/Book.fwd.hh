@@ -31,5 +31,4 @@ class Book;
 } // core
 
 
-
 #endif /* INCLUDED_core_fragment_picking_old_concepts_Book_FWD_HH */

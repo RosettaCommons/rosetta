@@ -318,5 +318,4 @@ private:
 } // core
 
 
-
 #endif

@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PseudocontactShiftEnergyController.fwd.hh
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz & Oliver Lange
+ /// @authorv Christophe Schmitz & Oliver Lange
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_fwd_hh

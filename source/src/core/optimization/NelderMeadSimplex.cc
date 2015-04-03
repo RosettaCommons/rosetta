@@ -58,7 +58,6 @@ NelderMeadSimplex::NelderMeadSimplex(
 ) : func_( func_in ), options_( options_in ) {}
 
 
-
 Real
 NelderMeadSimplex::run(
 	Multivec & phipsi_inout,

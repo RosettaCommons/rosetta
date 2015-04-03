@@ -27,8 +27,6 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
@@ -37,7 +35,6 @@
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh> // typedefs for Bin3D.
 
 // C++ headers
-// AUTO-REMOVED #include <list>
 #include <string>
 #include <iosfwd>
 
@@ -337,7 +334,6 @@ fill_grid_with_backbone_heavyatom_spheres(
 	core::conformation::Residue const & residue,
 	BumpGrid & grid
 );
-
 
 
 class Bool3DGridKinemageWriter

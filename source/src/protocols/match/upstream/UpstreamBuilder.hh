@@ -20,14 +20,12 @@
 
 // Package headers
 #include <protocols/match/BumpGrid.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.fwd.hh>
 #include <protocols/match/upstream/ProteinUpstreamBuilder.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

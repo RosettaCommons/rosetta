@@ -31,7 +31,6 @@
 
 // Numeric headers
 #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>

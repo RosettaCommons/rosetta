@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -222,7 +222,6 @@ Loop LoopManager::VaryStems(
 		stem_vary_window_c = std::min( window_size, int( pose_.total_residue() -
 				ThisLoop.loop_end() ) );
 	}
-
 
 
 	Size loop_begin = ThisLoop.loop_begin() - Size( stem_vary_window_n*loopmanager_RG.uniform() );

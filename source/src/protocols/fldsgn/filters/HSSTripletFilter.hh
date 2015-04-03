@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/HSSTripletFilter.hh
 /// @brief header file for HSSTripletFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

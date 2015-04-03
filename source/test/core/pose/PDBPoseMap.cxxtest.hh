@@ -25,7 +25,6 @@
 //Auto Headers
 
 
-
 // --------------- Test Class --------------- //
 
 class PDBPoseMapTests : public CxxTest::TestSuite {

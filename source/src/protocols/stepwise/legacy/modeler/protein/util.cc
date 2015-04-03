@@ -9,7 +9,7 @@
 
 /// @file StepWiseProteinUtil
 /// @brief a few functions used by several StepWiseProteinAnsatz classes
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -223,7 +223,6 @@ namespace protein {
 		}
 		return false;
 	}
-
 
 
 } //protein

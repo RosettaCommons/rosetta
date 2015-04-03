@@ -80,8 +80,6 @@ private:
 };
 
 
-
-
 class CDRSeqDesignOptionsParser : public utility::pointer::ReferenceCount {
 public:
 
@@ -93,10 +91,9 @@ public:
 	CDRSeqDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
 
-	///@brief Parse default_instructions (mainly used for AbDesign) then parse user file
+	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRSeqDesignOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
-
 
 
 	///ALL CDRs
@@ -133,7 +130,6 @@ private:
 	bool default_and_user_;
 
 };
-
 
 
 }

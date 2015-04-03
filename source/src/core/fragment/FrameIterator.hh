@@ -11,7 +11,7 @@
 /// @brief
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_FrameIterator_HH
 #define INCLUDED_core_fragment_FrameIterator_HH
@@ -19,7 +19,6 @@
 // Unit Headers
 #include <core/fragment/FrameIterator.fwd.hh>
 
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 
 // Package Headers
 // no fwd here. The FrameIteratorWorker_ is really a HIDDEN detail. since this isn't a NODE header there is no danger of polluting the
@@ -35,11 +34,8 @@
 // ObjexxFCL Headers
 
 // Utility header
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIteratorWorker_.fwd.hh>

@@ -9,7 +9,7 @@
 
 /// @file SWA_BetaAntiparallelUtil.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

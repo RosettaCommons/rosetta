@@ -170,7 +170,6 @@ void dump_points_pdb_contacts(vector1<Vec> const & p, string fn) {
 }
 
 
-
 struct Hit {
 	Real cbc;
 	int iss,irt,sym;
@@ -271,11 +270,7 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 	TR << endl;
 
 
-
 	dump_points_pdb_contacts(bb0,"contacts.pdb");
-
-
-
 
 
 	for(Size ic = 1; ic <= syms.size(); ++ic) {
@@ -360,7 +355,6 @@ void dock(Pose const & init, std::string const & fn, SphereSampler const & ssamp
 
 
 	}
-
 
 
 }

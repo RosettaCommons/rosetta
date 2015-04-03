@@ -158,7 +158,6 @@ GaussianChainQuadrupleFunc::show_definition( std::ostream &out ) const {
 }
 
 
-
 } // namespace constraints
 } // namespace scoring
 } // namespace core

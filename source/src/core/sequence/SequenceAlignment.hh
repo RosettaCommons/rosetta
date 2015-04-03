@@ -15,8 +15,6 @@
 #define INCLUDED_core_sequence_SequenceAlignment_hh
 
 // C/C++ headers
-// AUTO-REMOVED #include <functional>
-// AUTO-REMOVED #include <iostream>
 #include <map>
 #include <string>
 

@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -43,7 +42,7 @@ public:
 	DockingScoreFunction();
 
 private:
-	///@brief Copy constructor and assignment operators private for *ScoreFunctions as they discard subtype info.
+	/// @brief Copy constructor and assignment operators private for *ScoreFunctions as they discard subtype info.
 	DockingScoreFunction &
 	operator=( DockingScoreFunction const & );
 
@@ -51,10 +50,10 @@ private:
 
 public:
 
-	///@brief INTERNAL USE ONLY
+	/// @brief INTERNAL USE ONLY
 	virtual void assign( ScoreFunction const & src);
 
-	///@brief INTERNAL USE ONLY
+	/// @brief INTERNAL USE ONLY
 	virtual void assign( DockingScoreFunction const & src);
 
 	virtual ScoreFunctionOP clone() const;

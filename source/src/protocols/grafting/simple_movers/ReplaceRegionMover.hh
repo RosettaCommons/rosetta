@@ -23,8 +23,8 @@ namespace protocols {
 namespace grafting {
 namespace simple_movers {
 
-///@brief Replace a region of residues with another from a pose piece.  Wrapper to grafting utility function
-///@details Specify the start residue of the source pose, the residue where replacement will begin,
+/// @brief Replace a region of residues with another from a pose piece.  Wrapper to grafting utility function
+/// @details Specify the start residue of the source pose, the residue where replacement will begin,
 ///  In addition to the number of residues (span) .
 ///
 class ReplaceRegionMover : public  protocols::moves::Mover {

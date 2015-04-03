@@ -9,7 +9,7 @@
 
 /// @file core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh
 /// @brief  Geometric solvation energy.
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -240,9 +240,6 @@ private:
                                                          pose::Pose const & pose ) const;
 
   ///////////////////////////////////////////////////////////
-
-
-
 
 
 	inline

@@ -10,28 +10,19 @@
 /// @file
 /// @brief app for motif-biased protein-DNA design
 /// @author sthyme
-///
+
 
 #include <devel/init.hh>
 
 // Project Headers (protocols)
 #include <protocols/dna/DnaInterfaceFinder.hh>
-// AUTO-REMOVED #include <protocols/dna/DnaInterfacePacker.hh>
-// AUTO-REMOVED #include <protocols/dna/PDBOutput.hh>
-// AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
-// AUTO-REMOVED #include <protocols/dna/util.hh>
 #include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifDnaPacker.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
@@ -39,7 +30,6 @@
 static thread_local basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // C++ Headers
 #include <string>
@@ -48,7 +38,6 @@ static thread_local basic::Tracer TR( "apps.pilot.motif_dna_packer_design" );
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 

@@ -38,7 +38,6 @@
 #include <basic/Tracer.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace nv {
@@ -105,7 +104,6 @@ void NVscore::setup_for_minimizing(pose::Pose & /*pose*/, ScoreFunction const & 
 {
 	//pose.update_residue_neighbors();
 }
-
 
 
 void NVscore::indicate_required_context_graphs(utility::vector1< bool > & context_graphs_required ) const

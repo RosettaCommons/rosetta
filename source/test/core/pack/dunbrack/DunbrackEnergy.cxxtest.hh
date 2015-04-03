@@ -39,7 +39,6 @@ class DunbrackEnergyTests : public CxxTest::TestSuite {
 public:
 
 
-
 	// --------------- Fixtures --------------- //
 
 	// Define a test fixture (some initial state that several tests share)

@@ -36,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace elec {
 
-///
+
 class FA_ElecEnergyAroAll : public FA_ElecEnergy  {
 public:
 	typedef FA_ElecEnergy parent;
@@ -44,10 +44,10 @@ public:
 
 public:
 
-	///
+
 	FA_ElecEnergyAroAll( methods::EnergyMethodOptions const & options );
 
-	///
+
 	FA_ElecEnergyAroAll( FA_ElecEnergyAroAll const & src );
 
 
@@ -64,7 +64,7 @@ public:
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;

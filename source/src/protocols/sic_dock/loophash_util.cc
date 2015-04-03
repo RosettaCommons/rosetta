@@ -238,7 +238,5 @@ Real linker_count2score(Size count){
 }
 
 
-
-
 } // sic_dock
 } // protocols

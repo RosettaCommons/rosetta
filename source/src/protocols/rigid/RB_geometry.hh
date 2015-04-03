@@ -24,7 +24,6 @@
 #include <numeric/xyzMatrix.fwd.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1.hh>
 

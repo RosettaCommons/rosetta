@@ -15,7 +15,7 @@
 //graphix
 #include <protocols/viewer/viewers.hh>
 
-//
+
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 //#include <devel/Gaussian/BBGaussianMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
@@ -25,33 +25,23 @@
 
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 
-// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/bbg.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 
@@ -60,16 +50,12 @@
 #include <utility/vector1.hh>
 
 
-
-
 #ifdef USEMPI
 #include <mpi.h>
 #endif
 
 
-
 using namespace basic::options;
-
 
 
 namespace protocols {

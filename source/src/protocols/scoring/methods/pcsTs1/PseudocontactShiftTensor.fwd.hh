@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file PseudocontactShiftTensor.fwd.hh
  ///
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  ///
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 

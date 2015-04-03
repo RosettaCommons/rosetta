@@ -20,7 +20,6 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 #include <core/scoring/ResidualDipolarCoupling.hh>
-// AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
 
 // type headers
 #include <core/types.hh>

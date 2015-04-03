@@ -38,7 +38,7 @@ public:
 		return "SandwichFeatures";
 	}
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
 
@@ -50,12 +50,12 @@ public:
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/);
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	virtual
 	core::Size
 	report_features(

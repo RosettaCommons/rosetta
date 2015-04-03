@@ -14,10 +14,9 @@
 // type headers
 #include <core/types.hh>
 
-//
+
 // unit headers
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <utility/excn/Exceptions.hh>
 
 // package headers
@@ -279,7 +278,7 @@ bool Pool_ConvergenceCheck::operator() ( core::pose::Pose const & fit_pose, move
 	return best_rmsd >= threshold_;
 }
 
-///@brief evaluate pose and store values in Silent_Struct
+/// @brief evaluate pose and store values in Silent_Struct
 void Pool_Evaluator::apply( core::pose::Pose& fit_pose, std::string, core::io::silent::SilentStruct &pss) const {
 	core::Real best_rmsd;
 	std::string best_decoy;
@@ -294,7 +293,7 @@ void Pool_Evaluator::apply( core::pose::Pose& fit_pose, std::string, core::io::s
 
 }
 
-///@brief evaluate pose and store values in Silent_Struct
+/// @brief evaluate pose and store values in Silent_Struct
 void Pool_Evaluator::apply( core::io::silent::SilentStruct &pss) const {
 	core::Real best_rmsd;
 	std::string best_decoy;

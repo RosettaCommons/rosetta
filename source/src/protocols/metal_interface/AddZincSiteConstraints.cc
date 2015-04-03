@@ -59,7 +59,7 @@ using core::id::AtomID;
 namespace protocols {
 namespace metal_interface {
 
-///@details Adds zinc coordination constraints to a pose.  Zinc site should be parsed with protocols/metal_interface/ZincSiteFinder, and the resulting vector of MetalSiteResidue objects is needed to initialize this class.
+/// @details Adds zinc coordination constraints to a pose.  Zinc site should be parsed with protocols/metal_interface/ZincSiteFinder, and the resulting vector of MetalSiteResidue objects is needed to initialize this class.
 AddZincSiteConstraints::AddZincSiteConstraints( utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr )
 	: msr_(msr)
 {
@@ -69,7 +69,7 @@ AddZincSiteConstraints::~AddZincSiteConstraints()
 {
 }
 
-///@details Adds distance, tetrahedral angle, angle, and dihedral constraints to pose metal site
+/// @details Adds distance, tetrahedral angle, angle, and dihedral constraints to pose metal site
 void
 AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
@@ -129,7 +129,6 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 	SG_devs.push_back( radians(15.0) );
 
 
-
 	core::scoring::func::FuncOP const S_dist_func( new core::scoring::func::HarmonicFunc( S_dist, S_dist_dev ) );
 	core::scoring::func::FuncOP const N_dist_func( new core::scoring::func::HarmonicFunc( N_dist, N_dist_dev ) );
 	core::scoring::func::FuncOP const O_dist_func( new core::scoring::func::HarmonicFunc( O_dist, O_dist_dev ) );
@@ -144,9 +143,6 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 	//FuncOP const NE2_func( new CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
 	//FuncOP const ND1_func( new CircularHarmonicFunc( ND1_dihedral, ND1_dev ) );
 	//FuncOP const SG_func( new MinMultiHarmonicFunc( SG_dihedrals, SG_devs ) );
-
-
-
 
 
 	//Print out what we've got in msr_ as a check
@@ -311,9 +307,7 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		}
 
 
-
 	}
-
 
 
 	//pose.constraint_set()->show(std::cout); //show and show_definition do not compile, for some reason
@@ -322,7 +316,6 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 	return;
 }
-
 
 
 void

@@ -17,7 +17,6 @@
 #include <protocols/anchored_design/Anchor.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/fragment/FragID.hh>  // REQUIRED FOR WINDOWS
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -26,8 +25,6 @@
 #include <core/id/types.hh> //used for movemap to set omega angle false
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -95,7 +92,7 @@ std::string const NEIGHBORHOOD_CALC("AnchoredDesign_NeighborhoodByDistanceCalcul
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////mechanicals (ctor, dtor)////////////////////////////////////////////////////////////
 
-///@brief empty, useless ctor.  You'll need to manually set all the data later.  Why did you make me waste my time writing this ctor?
+/// @brief empty, useless ctor.  You'll need to manually set all the data later.  Why did you make me waste my time writing this ctor?
 protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
 	utility::pointer::ReferenceCount(),
 	anchor_( /* 0 */ ),
@@ -128,7 +125,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData() :
 	super_secret_fixed_interface_mode_( false )
 {}
 
-///@details constructor takes an anchor and loop object and sets up internals reasonably; options boolean is optionally optional.  If you use this constructor, you will need to later manually give fragments to the AnchorMoversData object or use one of its fragments functions to determine what type of fragments to use.
+/// @details constructor takes an anchor and loop object and sets up internals reasonably; options boolean is optionally optional.  If you use this constructor, you will need to later manually give fragments to the AnchorMoversData object or use one of its fragments functions to determine what type of fragments to use.
 protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 	protocols::anchored_design::AnchorCOP anchor,
 	protocols::loops::Loops const & loops,
@@ -176,7 +173,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData(
 
 }
 
-///@details use pose and option system to set up loops and create anchor, then call set_loops_and_anchor and set_unset_defaults to set up internal data to reasonable defaults, with or without option system help
+/// @details use pose and option system to set up loops and create anchor, then call set_loops_and_anchor and set_unset_defaults to set up internal data to reasonable defaults, with or without option system help
 protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose const & pose ) :
 	utility::pointer::ReferenceCount(),
 	anchor_( /* 0 */ ),
@@ -236,7 +233,7 @@ protocols::anchored_design::AnchorMoversData::AnchorMoversData( core::pose::Pose
 
 protocols::anchored_design::AnchorMoversData::~AnchorMoversData(){}
 
-///@brief copy ctor
+/// @brief copy ctor
 AnchorMoversData::AnchorMoversData( AnchorMoversData const & rhs ) :
 	utility::pointer::ReferenceCount(rhs),
 	interface_calc_( INTERFACE_CALC ), //const; must be initialized here
@@ -245,7 +242,7 @@ AnchorMoversData::AnchorMoversData( AnchorMoversData const & rhs ) :
 	*this = rhs;
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 AnchorMoversData & AnchorMoversData::operator=( AnchorMoversData const & rhs ){
 
 	//abort self-assignment
@@ -289,7 +286,7 @@ protocols::anchored_design::AnchorMoversDataOP protocols::anchored_design::Ancho
 	return protocols::anchored_design::AnchorMoversDataOP( new AnchorMoversData(*this) );
 }
 
-///@brief randomly reset loop cutpoints.  Useful only when starting structure is well-closed.  Best for MPI-style runs
+/// @brief randomly reset loop cutpoints.  Useful only when starting structure is well-closed.  Best for MPI-style runs
 void protocols::anchored_design::AnchorMoversData::pick_new_cutpoints(bool reset_always){
 	TR << "checking/(re)setting loop cutpoints; loops become:" << std::endl;
 
@@ -307,7 +304,7 @@ void protocols::anchored_design::AnchorMoversData::pick_new_cutpoints(bool reset
 
 }
 
-///@brief randomly reset just one cutpoint; used by pick_new_cutpoints
+/// @brief randomly reset just one cutpoint; used by pick_new_cutpoints
 core::Size protocols::anchored_design::AnchorMoversData::pick_new_cutpoint( core::Size const loopstart, core::Size const loopend ){
 	core::Size newcutpoint(0);
 	do{
@@ -331,7 +328,7 @@ void protocols::anchored_design::AnchorMoversData::set_fullatom_scorefunction( c
 void protocols::anchored_design::AnchorMoversData::set_centroid_scorefunction( core::scoring::ScoreFunctionOP in )
 { centroid_scorefunction_ = in; }
 
-///@details set up kinematics' loops and anchors; these are combined because loop setup depends on anchor
+/// @details set up kinematics' loops and anchors; these are combined because loop setup depends on anchor
 void protocols::anchored_design::AnchorMoversData::set_loops_and_anchor( protocols::anchored_design::AnchorCOP anchor,
 	protocols::loops::Loops loops)
 {
@@ -384,10 +381,10 @@ protocols::loops::Loops const & protocols::anchored_design::AnchorMoversData::lo
 
 
 /////////////////////////////anchor functions//////////////////////////////////////////////
-///@details access for anchor start
+/// @details access for anchor start
 core::Size protocols::anchored_design::AnchorMoversData::anchor_start() const { return anchor_->start(); }
 
-///@details access for anchor end
+/// @details access for anchor end
 core::Size protocols::anchored_design::AnchorMoversData::anchor_end() const { return anchor_->end(); }
 
 ////////////////////////scfxn, packertask, fragments accessors//////////////////////////////
@@ -409,13 +406,13 @@ core::scoring::ScoreFunctionOP protocols::anchored_design::AnchorMoversData::get
 //access centroid scorefunction for minimization
 core::scoring::ScoreFunctionOP protocols::anchored_design::AnchorMoversData::get_centroid_scorefunction_min() const
 { return centroid_scorefunction_min_; }
-///@details runs the member factory to create a task
+/// @details runs the member factory to create a task
 core::pack::task::PackerTaskOP protocols::anchored_design::AnchorMoversData::get_task( core::pose::Pose const & pose) const
 {	return task_factory_->create_task_and_apply_taskoperations( pose ); }
 
 
 ////////////////////////private functions generate internal data from input and defaults///////////////
-///@details rearranges input loops data structure into the class's internal data structure
+/// @details rearranges input loops data structure into the class's internal data structure
 void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(protocols::loops::Loops const & loops )
 {
 	loops_and_fa_mms_.clear();
@@ -436,7 +433,7 @@ void protocols::anchored_design::AnchorMoversData::input_loops_into_tuples(proto
 	}
 }
 
-///@details determines which loop contains the anchor (this loop may be treated differently)
+/// @details determines which loop contains the anchor (this loop may be treated differently)
 void protocols::anchored_design::AnchorMoversData::locate_anchor_loop()
 {
 	core::Size const numloop = num_loops();
@@ -464,7 +461,7 @@ void protocols::anchored_design::AnchorMoversData::locate_anchor_loop()
 	utility_exit();
 }
 
-///@details sets all movemaps for the class - paired ones and single movemap_all_, also sets loop_or_notloop_
+/// @details sets all movemaps for the class - paired ones and single movemap_all_, also sets loop_or_notloop_
 void protocols::anchored_design::AnchorMoversData::setup_movemaps()
 {
 	movemap_fa_all_->clear();
@@ -670,7 +667,7 @@ void protocols::anchored_design::AnchorMoversData::set_unset_packertask_factory(
 	return;
 }
 
-///@details autogenerate_design_frags will use Andrew Ban's fragment picker to read the Vall and find fragments.  It looks for fragments of loop secondary structure (for now, just 3mers.).  This function is used in a design context and thus uses only secondary structure to define the fragments.
+/// @details autogenerate_design_frags will use Andrew Ban's fragment picker to read the Vall and find fragments.  It looks for fragments of loop secondary structure (for now, just 3mers.).  This function is used in a design context and thus uses only secondary structure to define the fragments.
 core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogenerate_design_frags(){
 
 	core::Size const frags_length(3); //magic number: 3mer fragments!!
@@ -703,7 +700,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	return fragset;
 }//autogenerate_design_frags
 
-///@details autogenerate_constseq_frags will use Andrew Ban's fragment picker to read the Vall and find fragments.  It looks for fragments of loop secondary structure and known, fixed sequence.  The string argument is the whole pose sequence.
+/// @details autogenerate_constseq_frags will use Andrew Ban's fragment picker to read the Vall and find fragments.  It looks for fragments of loop secondary structure and known, fixed sequence.  The string argument is the whole pose sequence.
 core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogenerate_constseq_frags(std::string const & seq){
 
 	core::Size const frags_length(3); //magic number: 3mer fragments!!
@@ -739,7 +736,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 }//autogenerate_design_frags
 
 
-///@details autogenerate_frags will determine from this object's state what fragments to use, and generate fragments as needed.  The logic was originally at the executeable level, src/apps/pilot/smlewis/AnchoredDesign.cc:116-136 SVN 40529
+/// @details autogenerate_frags will determine from this object's state what fragments to use, and generate fragments as needed.  The logic was originally at the executeable level, src/apps/pilot/smlewis/AnchoredDesign.cc:116-136 SVN 40529
 void protocols::anchored_design::AnchorMoversData::autogenerate_frags( core::pose::Pose const & pose ){
 
 	core::fragment::ConstantLengthFragSetOP fragset3mer;
@@ -767,58 +764,58 @@ void protocols::anchored_design::AnchorMoversData::autogenerate_frags( core::pos
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////option system replacement/////////////////////////////
-///@brief dye position used in dye modeling publication
+/// @brief dye position used in dye modeling publication
 void protocols::anchored_design::AnchorMoversData::set_akash_dyepos(core::Size const akash_dyepos){ akash_dyepos_ = akash_dyepos;}
-///@brief used for unbound mode
+/// @brief used for unbound mode
 void protocols::anchored_design::AnchorMoversData::set_unbound_mode(bool unbound_mode){ unbound_mode_ = unbound_mode;}
-///@brief used to test anchoring via constraints
+/// @brief used to test anchoring via constraints
 void protocols::anchored_design::AnchorMoversData::set_anchor_via_constraints(bool anchor_via_constraints){ anchor_via_constraints_ = anchor_via_constraints;}
-///@brief VDW weight in centroid scorefunction
+/// @brief VDW weight in centroid scorefunction
 void protocols::anchored_design::AnchorMoversData::set_VDW_weight(core::Real VDW_weight){ VDW_weight_ = VDW_weight;}
-///@brief chainbreak weight in fullatom scorefunction
+/// @brief chainbreak weight in fullatom scorefunction
 void protocols::anchored_design::AnchorMoversData::set_chainbreak_weight(core::Real chainbreak_weight){ chainbreak_weight_ = chainbreak_weight;}
-///@brief allow anchor to repack
+/// @brief allow anchor to repack
 void protocols::anchored_design::AnchorMoversData::set_allow_anchor_repack(bool allow_anchor_repack){ allow_anchor_repack_ = allow_anchor_repack;}
-///@brief resfile for design
+/// @brief resfile for design
 void protocols::anchored_design::AnchorMoversData::set_resfile_1(std::string const & resfile_1){ resfile_1_ = resfile_1;}
-///@brief later-stage resfile if desired
+/// @brief later-stage resfile if desired
 void protocols::anchored_design::AnchorMoversData::set_resfile_2(std::string const & resfile_2){ resfile_2_ = resfile_2;}
-///@brief loop file
+/// @brief loop file
 //void protocols::anchored_design::AnchorMoversData::set_loop_file(std::string const & loop_file){ loop_file_ = loop_file;}
-///@brief loop file
+/// @brief loop file
 void protocols::anchored_design::AnchorMoversData::set_frag3(std::string const & frag3){ frag3_ = frag3;}
-///@brief do not use fragments?
+/// @brief do not use fragments?
 void protocols::anchored_design::AnchorMoversData::set_no_frags(bool const no_frags) { no_frags_= no_frags;}
-///@brief special anchor_noise_constraints_mode
+/// @brief special anchor_noise_constraints_mode
 void protocols::anchored_design::AnchorMoversData::set_anchor_noise_constraints_mode(bool const anchor_noise_constraints_mode) { anchor_noise_constraints_mode_= anchor_noise_constraints_mode;}
-///@brief special super_secret_fixed_interface_mode
+/// @brief special super_secret_fixed_interface_mode
 void protocols::anchored_design::AnchorMoversData::set_super_secret_fixed_interface_mode(bool const super_secret_fixed_interface_mode) { super_secret_fixed_interface_mode_= super_secret_fixed_interface_mode;}
 
-///@brief dye position used in dye modeling publication
+/// @brief dye position used in dye modeling publication
 core::Size protocols::anchored_design::AnchorMoversData::get_akash_dyepos() const { return akash_dyepos_;}
-///@brief used for unbound mode
+/// @brief used for unbound mode
 bool protocols::anchored_design::AnchorMoversData::get_unbound_mode() const { return unbound_mode_;}
-///@brief used to test anchoring via constraints
+/// @brief used to test anchoring via constraints
 bool protocols::anchored_design::AnchorMoversData::get_anchor_via_constraints() const { return anchor_via_constraints_;}
-///@brief VDW weight in centroid scorefunction
+/// @brief VDW weight in centroid scorefunction
 core::Real protocols::anchored_design::AnchorMoversData::get_VDW_weight() const { return VDW_weight_;}
-///@brief chainbreak weight in fullatom scorefunction
+/// @brief chainbreak weight in fullatom scorefunction
 core::Real protocols::anchored_design::AnchorMoversData::get_chainbreak_weight() const { return chainbreak_weight_;}
-///@brief allow anchor to repack
+/// @brief allow anchor to repack
 bool protocols::anchored_design::AnchorMoversData::get_allow_anchor_repack() const { return allow_anchor_repack_;}
-///@brief resfile for design
+/// @brief resfile for design
 std::string const & protocols::anchored_design::AnchorMoversData::get_resfile_1() const { return resfile_1_;}
-///@brief later-stage resfile if desired
+/// @brief later-stage resfile if desired
 std::string const & protocols::anchored_design::AnchorMoversData::get_resfile_2() const { return resfile_2_;}
-///@brief loop file
+/// @brief loop file
 std::string const & protocols::anchored_design::AnchorMoversData::get_loop_file() const { return loop_file_;}
-///@brief frag3 file
+/// @brief frag3 file
 std::string const & protocols::anchored_design::AnchorMoversData::get_frag3() const { return frag3_;}
-///@brief do not use fragments?
+/// @brief do not use fragments?
 bool protocols::anchored_design::AnchorMoversData::get_no_frags() const { return no_frags_;}
-///@brief special anchor_noise_constraints_mode
+/// @brief special anchor_noise_constraints_mode
 bool protocols::anchored_design::AnchorMoversData::get_anchor_noise_constraints_mode() const { return anchor_noise_constraints_mode_;}
-///@brief special super_secret_fixed_interface_mode
+/// @brief special super_secret_fixed_interface_mode
 bool protocols::anchored_design::AnchorMoversData::get_super_secret_fixed_interface_mode() const { return super_secret_fixed_interface_mode_;}
 
 void protocols::anchored_design::AnchorMoversData::read_options() {
@@ -885,12 +882,12 @@ void protocols::anchored_design::AnchorMoversData::read_options() {
 	return;
 }
 
-///@brief get string name for neighborhood_calc_
+/// @brief get string name for neighborhood_calc_
 std::string const & protocols::anchored_design::AnchorMoversData::neighborhood_calc() const { return neighborhood_calc_;}
-///@brief get string name for interface_calc_
+/// @brief get string name for interface_calc_
 std::string const & protocols::anchored_design::AnchorMoversData::interface_calc() const { return interface_calc_;}
 
-///@details This function automatically generates constraints for an anchor from and for the given pose.  It is intended for use only with single-residue anchors.  The constraints are between the residue CA and the four closest cross-chain CA.  They are parabolic constraints with scores of 0.5 units at 1 Angstrom deviation.
+/// @details This function automatically generates constraints for an anchor from and for the given pose.  It is intended for use only with single-residue anchors.  The constraints are between the residue CA and the four closest cross-chain CA.  They are parabolic constraints with scores of 0.5 units at 1 Angstrom deviation.
 void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setup( core::pose::Pose & pose )
 {
 	//exclusion condition: can't use this mode with multi-residue anchor

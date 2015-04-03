@@ -37,7 +37,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -52,7 +51,7 @@ public:
     /// @brief Constructor
     SiteConstraintResidues( ConstraintCOPs & cst_in ) ;
 
-    ///
+
     virtual
     ConstraintOP clone() const {
         return ConstraintOP( new SiteConstraintResidues(*this) );
@@ -70,7 +69,6 @@ public:
     void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, func::FuncOP const & func );
 
 private:
-
 
 
 }; //SiteConstraintResidues

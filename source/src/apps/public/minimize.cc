@@ -12,15 +12,6 @@
 
 
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -30,21 +21,15 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <protocols/jd2/ScoreMap.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <string>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <core/kinematics/Jump.hh>

@@ -80,7 +80,7 @@ public:
     Vector & F2
   ) const;
 
-	///@brief Fa_MbenvEnergy is context independent; indicates that no context graphs are required
+	/// @brief Fa_MbenvEnergy is context independent; indicates that no context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/constraint_util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -102,8 +102,6 @@ namespace modeler {
 				//			} else if ( cst->score_type() == coordinate_constraint)  {
 
 
-
-
 		}
 
 
@@ -128,7 +126,6 @@ namespace modeler {
 		}
 
 	}
-
 
 
 } //modeler

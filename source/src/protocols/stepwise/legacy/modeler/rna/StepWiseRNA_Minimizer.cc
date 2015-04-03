@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_Minimizer
 /// @brief Not particularly fancy, just minimizes a list of poses.
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 

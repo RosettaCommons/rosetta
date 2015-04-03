@@ -40,7 +40,7 @@ namespace pose_reporters {
 ////////////////////////////////////////////////////////////////////////
 // EnergyReporter
 
-///@brief Report the pose score or a specific energy term 
+/// @brief Report the pose score or a specific energy term 
 
 class EnergyReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 
@@ -72,7 +72,7 @@ private:
 ////////////////////////////////////////////////////////////////////////
 // FilterReporter
 
-///@brief Use a RosettaScripts filter as a reporter
+/// @brief Use a RosettaScripts filter as a reporter
 
 class FilterReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 
@@ -103,7 +103,7 @@ private:
 ////////////////////////////////////////////////////////////////////////
 // RMSD reporter
 
-///@brief Report the RMSD between two poses
+/// @brief Report the RMSD between two poses
 
 class RMSDReporter : public protocols::rosetta_scripts::PosePropertyReporter {
 

@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/FastDesign.hh
 /// @brief The FastDesign Protocol, adapted from src/protocols/relax/FastRelax
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

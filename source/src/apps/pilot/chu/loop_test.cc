@@ -33,8 +33,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 void*
 my_main( void* )
 {

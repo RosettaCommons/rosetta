@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/screener/SimpleRMSD_Screener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -69,7 +69,6 @@ namespace screener {
 		if ( rmsd < rmsd_cutoff_ ) return true;
 		return false;
 	}
-
 
 
 	/////////////////////////////////////////////////////////////////////

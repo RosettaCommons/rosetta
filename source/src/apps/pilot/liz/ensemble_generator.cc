@@ -223,7 +223,6 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 }
 
 
-
 void
 setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff, float const cst_tol){
 	//create constraints for all residues
@@ -261,8 +260,6 @@ setup_movers(simple_moves::SmallMoverOP small, simple_moves::ShearMoverOP shear,
 	shear->angle_max( 'E', shear_E_angle_max); //def 2.0
 	shear->angle_max( 'L', shear_L_angle_max); //def 3.0
 }
-
-
 
 
 double
@@ -448,7 +445,6 @@ create_ensemble(pose::Pose & p, ScoreFunction & s, std::string output_tag){
 }
 
 
-
 int
 main( int argc, char* argv [] )
 {
@@ -476,7 +472,6 @@ main( int argc, char* argv [] )
 	scorefxn->set_weight(core::scoring::score_type_from_name("omega"), 1.0);
 	scorefxn->set_weight(core::scoring::score_type_from_name("fa_dun"), 1.0);
 	scorefxn->set_weight(core::scoring::score_type_from_name("p_aa_pp"), 2.0);
-
 
 
 	vector1<file::FileName> files;

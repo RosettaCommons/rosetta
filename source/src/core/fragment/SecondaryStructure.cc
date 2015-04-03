@@ -13,7 +13,7 @@
 ///      - fragments
 ///      - psipred files ? other stuff
 ///
-/// @detailed
+/// @details
 ///  from converting conformation_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -117,7 +117,7 @@ void SecondaryStructure::compute_fractions( core::fragment::FragSet const& frags
   }
 }
 
-///@brief returns regions (in loop-class format) that belong to contiguous pieces of ss-structure
+/// @brief returns regions (in loop-class format) that belong to contiguous pieces of ss-structure
 //loops::Loops SecondaryStructure::compute_ss_regions( core::Real max_loop_frac, core::Size min_length ) const {
 //	Size start( 0 );
 //	Size last( 0 );
@@ -155,7 +155,7 @@ char SecondaryStructure::secstruct( Size pos ) const {
   return ss;
 }
 
-///@detail read from file
+/// @detail read from file
 void SecondaryStructure::read_from_file( std::string fn ) {
   utility::io::izstream data( fn );
   if ( !data ) {
@@ -235,7 +235,7 @@ SecondaryStructure::SecondaryStructure( utility::vector1<SecondaryStructureOP> &
 }
 
 
-///@detail write to stream ( opposite from read_from_file )
+/// @detail write to stream ( opposite from read_from_file )
 void SecondaryStructure::show( std::ostream& os ) const {
   using namespace format;
   int const width( 10 );

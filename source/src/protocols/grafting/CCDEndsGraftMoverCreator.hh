@@ -26,7 +26,6 @@ public:
 	static std::string mover_name();
 
 
-
 };
 
 }

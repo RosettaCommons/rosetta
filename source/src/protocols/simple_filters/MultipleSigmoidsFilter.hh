@@ -32,7 +32,7 @@
 namespace protocols {
 namespace simple_filters {
 
-///@brief simply takes a list of pdbs and creates relative pose then extract sigmoids and call operator (product)
+/// @brief simply takes a list of pdbs and creates relative pose then extract sigmoids and call operator (product)
 class MultipleSigmoids : public filters::Filter
 {
   public:

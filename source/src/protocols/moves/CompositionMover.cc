@@ -12,7 +12,6 @@
 /// @author
 
 // Unit Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.hh>
 

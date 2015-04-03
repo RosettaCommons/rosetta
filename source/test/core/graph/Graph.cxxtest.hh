@@ -19,10 +19,8 @@
 #include <core/graph/Graph.hh>
 
 // C++ headers, for debugging your tests
-// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
-
 
 
 using namespace core::graph;

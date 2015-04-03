@@ -14,8 +14,6 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
 
 #include <basic/Tracer.hh>
 using basic::T;
@@ -24,7 +22,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.simple_moves.SwitchResidueTypeSetMover" );
 #include <utility/tag/Tag.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

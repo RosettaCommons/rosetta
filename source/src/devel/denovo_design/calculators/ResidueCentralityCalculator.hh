@@ -10,7 +10,7 @@
 /// @file src/devel/denovo_design/calculators/ResidueCentralityCalculator.hh
 /// @brief header file for ResidueCentralityCalculator class.
 /// Roughly, fragment quality is number of fragments which are close to a pose in rmsd
-/// @detailed
+/// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 

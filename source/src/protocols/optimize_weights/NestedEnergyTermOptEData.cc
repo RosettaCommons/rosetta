@@ -19,7 +19,6 @@
 #include <protocols/optimize_weights/NestedEnergyTermOptEData.hh>
 
 // Project headers
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <basic/Tracer.hh>
@@ -29,7 +28,6 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.functions.hh> // to get arg_min()
 
-// AUTO-REMOVED #include <numeric/numeric.functions.hh>
 
 // C++ headers
 #include <fstream>
@@ -43,7 +41,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
-
 
 
 using namespace core;
@@ -60,24 +57,14 @@ static thread_local basic::Tracer TR( "NestedEnergyTermOptEData" );
 #define CAP_FA_REP 1
 
 
-//
 // ------------------- NestedEnergyTermPNatAAOptEPositionData -----------------------//
-//
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::NestedEnergyTermPNatAAOptEPositionData()
 ///
 NestedEnergyTermPNatAAOptEPositionData::NestedEnergyTermPNatAAOptEPositionData() {}
 
 ///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::~NestedEnergyTermPNatAAOptEPositionData()
-///
 NestedEnergyTermPNatAAOptEPositionData::~NestedEnergyTermPNatAAOptEPositionData() {}
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::get_score()
 ///
 /// @brief
 /// Does actual work for OptE minimization
@@ -100,9 +87,6 @@ NestedEnergyTermPNatAAOptEPositionData::get_score(
 	return process_score( TR, false, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::print_score()
 ///
 /// @brief
 /// Special implementation of print_score that includes logic to handle unfolded state energy calculation.
@@ -124,9 +108,6 @@ NestedEnergyTermPNatAAOptEPositionData::print_score(
 	process_score( ostr, true, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list );
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::process_score()
 ///
 /// @brief
 /// One method to do the score processing which takes a boolean dictating whether to print to an ostream or not. With this function, changes
@@ -380,9 +361,6 @@ NestedEnergyTermPNatAAOptEPositionData::process_score(
 	return ( -1.0 * component_weights[ type() ] * std::log( numerator / partition ) );
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::type()
 ///
 /// @brief
 /// To be sure we create the right types when writing/reading from files, need to add a special OptEPositionData
@@ -393,9 +371,6 @@ NestedEnergyTermPNatAAOptEPositionData::type() const {
 	return prob_native_amino_acid_with_unfolded_energy;
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::write_to_file()
 ///
 /// @brief
 /// Add a special for loop to print out the unfolded state energy EnergyMap values.
@@ -424,9 +399,6 @@ NestedEnergyTermPNatAAOptEPositionData::write_to_file( std::ofstream & outfile )
 
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::read_from_file()
 ///
 /// @brief
 ///
@@ -503,9 +475,6 @@ NestedEnergyTermPNatAAOptEPositionData::read_from_file( std::ifstream & infile )
 	}
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::write_to_binary_file()
 ///
 /// @brief
 /// Leaving this unimplemented since I don't feel like figuring out how to output an EnergyMap in binary
@@ -515,8 +484,6 @@ void
 NestedEnergyTermPNatAAOptEPositionData::write_to_binary_file( std::ofstream & /* outfile */ ) const {}
 
 ///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::read_from_binary_file()
-///
 /// @brief
 /// Leaving this unimplemented since I don't feel like figuring out how to output an EnergyMap in binary
 /// and also because reading/writing binary files is not being used in the optE protocol currently.
@@ -524,9 +491,6 @@ NestedEnergyTermPNatAAOptEPositionData::write_to_binary_file( std::ofstream & /*
 void
 NestedEnergyTermPNatAAOptEPositionData::read_from_binary_file( std::ifstream & /* infile */ ) {}
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::memory_use()
 ///
 Size
 NestedEnergyTermPNatAAOptEPositionData::memory_use() const {
@@ -542,10 +506,8 @@ NestedEnergyTermPNatAAOptEPositionData::memory_use() const {
 }
 
 
-
 #ifdef USEMPI
 ///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::send_to_node()
 ///
 void
 NestedEnergyTermPNatAAOptEPositionData::send_to_node( int const destination_node, int const tag ) const {
@@ -626,9 +588,6 @@ NestedEnergyTermPNatAAOptEPositionData::send_to_node( int const destination_node
 	OptEPositionData::send_to_node( destination_node, tag );
 }
 
-
-///
-/// @begin NestedEnergyTermPNatAAOptEPositionData::receive_from_node()
 ///
 void
 NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node, int const tag ) {
@@ -733,23 +692,14 @@ NestedEnergyTermPNatAAOptEPositionData::receive_from_node( int const source_node
 #endif
 
 
-//
 // ------------------- NestedEnergyTermDDGMutationOptEData -----------------------//
-//
 
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::NestedEnergyTermDDGMutationOptEData()
 ///
 NestedEnergyTermDDGMutationOptEData::NestedEnergyTermDDGMutationOptEData() {}
 
 ///
-/// @begin NestedEnergyTermDDGMutationOptEData::~NestedEnergyTermDDGMutationOptEData()
-///
 NestedEnergyTermDDGMutationOptEData::~NestedEnergyTermDDGMutationOptEData() {}
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::get_score()
 ///
 /// @details
 /// This get_score() method needs to contain some extra logic for the unfolded state energy term.  Right now, the value
@@ -773,9 +723,6 @@ NestedEnergyTermDDGMutationOptEData::get_score(
 	return process_score( TR, false, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, free_score_list, fixed_score_list );
 }
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::print_score()
 ///
 void
 NestedEnergyTermDDGMutationOptEData::print_score(
@@ -795,9 +742,6 @@ NestedEnergyTermDDGMutationOptEData::print_score(
 	process_score( ostr, true, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, free_score_list, fixed_score_list );
 }
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::process_score()
 ///
 /// @brief
 /// One method to do the score processing which takes a boolean dictating whether to print to an ostream or not. With this function, changes
@@ -1040,18 +984,12 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 	return component_weights[ ddG_mutation_correlation_with_unfolded_energy ] * ddG_diff * ddG_diff;
 }
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::type()
 ///
 OptEPositionDataType
 NestedEnergyTermDDGMutationOptEData::type() const {
 	return ddG_mutation_correlation_with_unfolded_energy;
 }
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::memory_use()
 ///
 /// Only used for user feedback. Nothing in the code uses the result from this to allocate memory.
 ///
@@ -1079,7 +1017,6 @@ NestedEnergyTermDDGMutationOptEData::memory_use() const {
 
 #ifdef USEMPI
 ///
-/// @begin NestedEnergyTermDDGMutationOptEData::send_to_node()
 ///
 void
 NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, int const tag ) const {
@@ -1184,9 +1121,6 @@ NestedEnergyTermDDGMutationOptEData::send_to_node( int const destination_node, i
 
 }
 
-
-///
-/// @begin NestedEnergyTermDDGMutationOptEData::receive_from_node()
 ///
 void
 NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, int const tag )

@@ -14,7 +14,6 @@
 #include <core/scoring/func/EtableFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 
 #include <utility/exit.hh>

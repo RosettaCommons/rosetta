@@ -16,7 +16,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>

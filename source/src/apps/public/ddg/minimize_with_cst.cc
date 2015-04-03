@@ -18,10 +18,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -40,36 +37,25 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <ios>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <cstdlib>
 #include <string>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
-
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/sasa.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -78,11 +64,9 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 //#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -93,23 +77,17 @@
 //#include <core/util/basic.hh>
 //#include <core/io/database/open.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 
 
 //protocols
-// AUTO-REMOVED #include <protocols/simple_moves/RotamerTrialsMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 //new options stuff?
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -117,14 +95,12 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/casp.OptionKeys.gen.hh>
 // C++ headers
 
 //C++ filechek
 #include <sys/stat.h>
 
 #include <utility/vector0.hh>
-
 
 
 using namespace core;

@@ -160,7 +160,6 @@ get_cx_xform(Hit const & h){
 }
 
 
-
 // dock pose against rotated version of itself
 // rotate all different ways by looping over rotation axes on unit sphere point
 // samples in ssamp, then loopint over rotation magnitudes from 1-180°
@@ -304,7 +303,6 @@ dock(
 	xforms_out.close();
 
 
-
 }
 
 utility::vector1<Vec>
@@ -446,8 +444,6 @@ int main(int argc, char *argv[]) {
 	}
 
 }
-
-
 
 
 // core::Real

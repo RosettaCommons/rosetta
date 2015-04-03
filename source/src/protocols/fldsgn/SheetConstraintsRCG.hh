@@ -28,7 +28,6 @@
 #include <core/types.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -117,8 +116,6 @@ private:
 
 } //namespace fldsgn
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_fldsgn_SheetConstraintsRCG_HH

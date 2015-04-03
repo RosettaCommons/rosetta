@@ -552,7 +552,6 @@ void test_chi_xform() {
 // xform between stubs
 
 
-
 // ////  code for packing xform+32bits metadata into float8
 // struct TRANS {
 //   float xx,xy,xz,yx,yy,yz,zx,zy,zz,x,y,z;

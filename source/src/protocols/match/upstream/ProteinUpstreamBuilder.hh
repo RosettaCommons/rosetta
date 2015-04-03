@@ -25,9 +25,7 @@
 #include <protocols/match/upstream/ProteinSCSampler.fwd.hh>
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.fwd.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/UpstreamResTypeGeometry.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/match/SixDHasher.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -40,9 +38,7 @@
 #include <numeric/xyzVector.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -340,7 +336,7 @@ public:
 
 class FullChiSampleSet : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FullChiSampleSet();
 	typedef core::Size Size;
 	typedef core::Real Real;

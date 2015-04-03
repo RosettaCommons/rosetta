@@ -23,8 +23,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 // Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
@@ -32,7 +30,6 @@
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <iomanip>
 
 //Auto Headers
 #include <utility/vector1.hh>

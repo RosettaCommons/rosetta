@@ -12,7 +12,6 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 
-
 #ifndef INCLUDED_core_scoring_geometric_solvation_ContextIndependentGeometricSolEnergy_hh
 #define INCLUDED_core_scoring_geometric_solvation_ContextIndependentGeometricSolEnergy_hh
 
@@ -44,16 +43,16 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
-///
+
 class ContextIndependentGeometricSolEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	ContextIndependentGeometricSolEnergy( methods::EnergyMethodOptions const & options );
 
-	///@brief copy c-tor
+	/// @brief copy c-tor
 	ContextIndependentGeometricSolEnergy( ContextIndependentGeometricSolEnergy const & src );
 
 	/// clone
@@ -205,7 +204,6 @@ public:
 	*/
 
 
-
   void
   finalize_total_energy(
     pose::Pose & pose,
@@ -247,7 +245,7 @@ public:
 	virtual
 	core::Size version() const;
 
-	///@brief GeometricSolEnergy is context sensitive
+	/// @brief GeometricSolEnergy is context sensitive
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;

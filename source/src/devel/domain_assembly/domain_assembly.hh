@@ -11,9 +11,7 @@
 
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <protocols/farna/RNA_FragmentsClasses.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -23,7 +21,7 @@ namespace devel {
 namespace domain_assembly {
 
 
-///@brief optimizes linkers in a multidomain protein
+/// @brief optimizes linkers in a multidomain protein
 void assemble_domains_optimize();
 
 /// @brief Initialize a movemap reading from the command line option
@@ -32,7 +30,7 @@ void assemble_domains_optimize();
 core::kinematics::MoveMapOP
 read_movemap_from_da_linker_file();
 
-///@brief reads in file that specifies which regions of the protein will
+/// @brief reads in file that specifies which regions of the protein will
 ///  move during domain assembly
 ///  Each line of the file should have the start and end position for a linker region
 bool
@@ -41,14 +39,14 @@ read_linker_file(
   utility::vector1< std::pair < core::Size, core::Size > > & linker_ranges
 );
 
-///@brief sets movemap true for regions specified in linker file
+/// @brief sets movemap true for regions specified in linker file
 void
 set_movemap_for_linkers(
   utility::vector1< std::pair < core::Size, core::Size > > const & linker_ranges,
   core::kinematics::MoveMapOP & mm
 );
 
-///@brief centroid mode optimization of linkers
+/// @brief centroid mode optimization of linkers
 void
 optimize_linkers_centroid_mode(
   core::kinematics::MoveMapOP & mm,
@@ -74,7 +72,7 @@ optimize_linkers_rna_fullatom_mode(
   protocols::farna::RNA_FragmentsOP & all_rna_fragments
 );
 
-///@brief a helper function for the domain assembly protocol. Selects
+/// @brief a helper function for the domain assembly protocol. Selects
 ///residues near linkers and domain interfaces for repacking
 void
 da_residues_to_repack(
@@ -84,7 +82,7 @@ da_residues_to_repack(
   utility::vector1<bool> & repack_residues
 );
 
-///@brief a helper function for the domain assembly protocol.  For each residue
+/// @brief a helper function for the domain assembly protocol.  For each residue
 /// it finds the closest N-terminal and C-terminal movable residue (as specified
 /// in the input movemap)
 void

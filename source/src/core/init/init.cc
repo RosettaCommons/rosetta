@@ -10,7 +10,7 @@
 /// @file   core/init/init.cc
 /// @brief  options system initialization routines
 /// @author Sergey Lyskov
-///
+
 
 #ifdef USEMPI
 #include <mpi.h> // Must go first

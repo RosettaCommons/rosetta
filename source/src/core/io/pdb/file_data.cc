@@ -664,7 +664,6 @@ FileData::dump_pdb(
 }
 
 
-
 /// @details Debug/Info function.
 /// Output FileData object to TR like stream in human readable format.
 std::ostream&
@@ -680,7 +679,6 @@ operator <<(std::ostream &os, FileData const & fd)
 	os << "}";
 	return os;
 }
-
 
 
 /// @details Convert FileData in to set of residues, sequences, coordinates.
@@ -759,7 +757,6 @@ FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, File
 	}
 	return true;
 }
-
 
 
 // Helper Functions ///////////////////////////////////////////////////////////
@@ -1674,7 +1671,7 @@ build_pose_as_is1(
 }
 
 
-///@details The input rsd_type_list are all the residue types that have
+/// @details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
 ///non-empty and false otherwise.  If no residue types match, then
 ///either exit, ignore or remember the residue based on the following
@@ -1703,7 +1700,7 @@ is_residue_type_recognized(
 }
 
 
-///@details The input rsd_type_list are all the residue types that have
+/// @details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
 ///non-empty and false otherwise.  If no residue types match, then
 ///either exit, ignore or remember the residue based on the following

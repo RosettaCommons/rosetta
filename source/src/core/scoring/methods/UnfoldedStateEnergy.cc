@@ -66,9 +66,8 @@ UnfoldedStateEnergyCreator::score_types_for_method() const {
 }
 
 
-///
 /// UnfoldedStateEnergy class methods
-///
+
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 	parent( methods::EnergyMethodCreatorOP( new UnfoldedStateEnergyCreator ) ),

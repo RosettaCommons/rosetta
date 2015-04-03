@@ -15,16 +15,12 @@
 #define INCLUDED_core_id_AtomID_hh
 
 // Unit headers
-// AUTO-REMOVED #include <core/id/types.hh>
 #include <core/id/AtomID.fwd.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 #include <utility/exit.hh>
 // C++ headers
-// AUTO-REMOVED #include <iosfwd>
 
 #include <core/types.hh>
-
 
 
 namespace core {
@@ -277,10 +273,8 @@ public: // tmp hack -- phil fix this
 };
 
 
-
 /// @brief Globals
 extern StubID const BOGUS_STUB_ID;
-
 
 
 } // namespace id

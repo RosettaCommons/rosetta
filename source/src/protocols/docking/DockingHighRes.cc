@@ -9,7 +9,7 @@
 
 /// @file DockingHighRes
 /// @brief protocols that are specific to high resolution docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -25,7 +25,6 @@
 #include <protocols/docking/DockTaskFactory.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

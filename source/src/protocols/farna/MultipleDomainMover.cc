@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to MultipleDomainMover
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/farna/MultipleDomainMover.hh>
@@ -163,7 +163,6 @@ MultipleDomainMover::slide_back_to_origin( pose::Pose & pose ){
 }
 
 
-
 /////////////////////////////////////
 void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pose ){
 
@@ -291,7 +290,6 @@ MultipleDomainMover::close_all_loops( pose::Pose & pose ) {
 }
 
 
-
 /////////////////////////////////////
 void
 MultipleDomainMover::initialize_rigid_body_movers(){
@@ -319,7 +317,6 @@ MultipleDomainMover::update_rot_trans_mag( Real const & rot_mag, Real const & tr
 		rb_movers_[ n ]->trans_magnitude( rot_mag_ );
 	}
 }
-
 
 
 } //farna

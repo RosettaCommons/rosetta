@@ -21,7 +21,6 @@
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.fwd.hh>
 #include <protocols/ligand_docking/MinimizeLigand.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <set>
 
 #include <utility/vector1.hh>
@@ -30,9 +29,9 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief Juggles torsional constraints with packing or rotamer trials.
+/// @brief Juggles torsional constraints with packing or rotamer trials.
 ///
-///@details Adds torsional constraints to the specified residue in the pose,
+/// @details Adds torsional constraints to the specified residue in the pose,
 /// but then removes them before running the supplied mover.
 /// They are then either restored (if no conformational change) or re-initialized.
 /// The supplied child_mover is expected to be either a full repack or rotamer trials.
@@ -60,7 +59,7 @@ public:
 
 	virtual ~UnconstrainedTorsionsMover() {}
 
-	///@brief Removes its constraints, runs mover, restores constraints.
+	/// @brief Removes its constraints, runs mover, restores constraints.
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 

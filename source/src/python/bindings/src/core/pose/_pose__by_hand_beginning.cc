@@ -9,7 +9,7 @@
 //
 ///
 /// @author Sergey Lyskov
-///
+
 
 #include "boost/python.hpp"
 
@@ -29,7 +29,6 @@
 
 #include <core/pose/datacache/CacheableObserver.hh>
 #include <basic/datacache/DataCache.hh>
-
 
 
 //#include <core/io/pdb/pose_io.hh>
@@ -149,7 +148,6 @@ void PosePyObserverTesterFunction()
 
 	std::cout << "Yeah... we still alive...\n";
 }
-
 
 
 void __pose_by_hand_beginning__()

@@ -29,9 +29,6 @@
 // option key includes
 
 
-
-
-
 OPT_KEY( File, i )
 OPT_KEY( File, o )
 OPT_KEY( Integer, ntop )
@@ -42,7 +39,6 @@ using namespace core;
 using namespace fragment;
 using namespace pose;
 using namespace kinematics;
-
 
 
 using namespace basic::options;

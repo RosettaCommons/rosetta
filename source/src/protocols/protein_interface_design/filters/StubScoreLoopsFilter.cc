@@ -32,14 +32,13 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
-
 namespace protocols {
 namespace protein_interface_design{
 namespace filters {
 
 static thread_local basic::Tracer tr( "protocols.protein_interface_design.filters.StubScoreLoopsFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 StubScoreLoopsFilter::StubScoreLoopsFilter() :
 	cb_force_( 0.5 )
 {

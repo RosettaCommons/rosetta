@@ -287,6 +287,5 @@ read_H3_seq( std::string const Protein_family_path){
 }
 
 
-
 } //splice
 } //devel

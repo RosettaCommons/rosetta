@@ -30,7 +30,6 @@ enum orbital_type_enum{
 };
 
 
-
 }
 }
 }

@@ -47,10 +47,8 @@ public:
 };
 
 
-
 } // namespace resource_manager
 } // namespace basic
-
 
 
 #endif //INCLUDED_basic_resource_manager_ResourceLoaderRegistrator_hh

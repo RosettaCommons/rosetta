@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_match_downstream_ActiveSiteGrid_hh
 
 // Unit headers
-// AUTO-REMOVED #include <protocols/match/downstream/ExternalGeomSampler.fwd.hh>
 
 // Package headers
 #include <protocols/match/BumpGrid.fwd.hh>
@@ -30,7 +29,6 @@
 #include <numeric/geometry/BoundingBox.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers

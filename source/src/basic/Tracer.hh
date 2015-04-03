@@ -10,17 +10,15 @@
 /// @file   src/basic/Tracer.hh
 /// @brief  Tracer IO system
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_basic_Tracer_hh
 #define INCLUDED_basic_Tracer_hh
 
 #include <basic/Tracer.fwd.hh>
-// AUTO-REMOVED #include <utility/stream_util.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <sstream>
 
@@ -134,8 +132,6 @@ struct TracerOptions
 	/// @brief list of muted channels
 	utility::vector1<std::string> levels;
 };
-
-
 
 
 /// @brief Class for handling user debug/warnings/errors.

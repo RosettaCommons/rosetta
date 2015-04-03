@@ -37,7 +37,6 @@
 #include <utility/vector1.hh>
 
 
-
 using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
@@ -165,7 +164,6 @@ NonlocalContactsCalculator::lookup(
 	}
 
 } //lookup
-
 
 
 std::string

@@ -57,7 +57,7 @@
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 
-//
+
 #include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/viewer/viewers.hh>

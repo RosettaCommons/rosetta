@@ -23,15 +23,14 @@ namespace interface {
 
 //////////////// General Interface Tools ///////////////////////////
 	
-///@brief Get a set of interface residues using the dock_chains interface string: Ex: LH_A.
-///@details Uses Steven's InterGroupNeighborsCalculator.  Does not require pose to have specific foldtree.
+/// @brief Get a set of interface residues using the dock_chains interface string: Ex: LH_A.
+/// @details Uses Steven's InterGroupNeighborsCalculator.  Does not require pose to have specific foldtree.
 utility::vector1<bool>
 select_interface_residues(core::pose::Pose const & pose, std::string interface, core::Size interface_distance);
 
 	//Add other general methods for selecting interface residues here using different metrics, etc.
 
 //////////////// General Metrics ////////////////////////
-
 
 
 }

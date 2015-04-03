@@ -26,8 +26,6 @@
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -37,7 +35,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <utility/vector1.hh>
@@ -105,7 +102,7 @@ public:
 	Size
 	get_n_rotamers_for_residue_group( Size which_resgroup ) const;
 
-	///@brief given a rotamer id, return an int which represents a type for this rotamer.
+	/// @brief given a rotamer id, return an int which represents a type for this rotamer.
 	virtual
 	Size
 	get_residue_type_index_for_rotamer( Size which_rotamer ) const ;
@@ -217,7 +214,6 @@ private:
 	update_rotamer_offsets() const;
 
 
-
 public: // noop functions:
 
 	virtual
@@ -267,7 +263,6 @@ public: // noop functions:
 		task::PackerTask const & task,
 		graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< scoring::EnergyMap > & energies ) const;
-
 
 
 // DATA

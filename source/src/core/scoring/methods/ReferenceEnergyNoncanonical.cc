@@ -53,7 +53,6 @@ ReferenceEnergyNoncanonicalCreator::score_types_for_method() const {
 }
 
 
-
 ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical() :
 	parent( EnergyMethodCreatorOP( new ReferenceEnergyNoncanonicalCreator ) )
 {

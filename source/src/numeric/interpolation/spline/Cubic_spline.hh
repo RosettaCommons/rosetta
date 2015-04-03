@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin Cubic_spline
 ///
 /// @brief
 /// Cubic spline for all your evil desires
 ///
-/// @detailed
+/// @details
 /// The below comments are for the Bicubic spline but apply for the cubic spline.
 /// This is an implementation of an algorithm from Numerical Recipes. It relies heavily
 /// on the implementation of the cubic spline (from Numerical Recipes), the MathMatrix, and the
@@ -52,12 +51,9 @@
 /// Ralf Mueller
 ///
 ///
-/// @authors Steven Combs, Ralf Mueller, Jens Meiler
+/// @author Steven Combs, Ralf Mueller, Jens Meiler
 ///
-/// @last_modified August 20 2010
 /////////////////////////////////////////////////////////////////////////
-
-
 
 
 #ifndef INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
@@ -94,8 +90,6 @@ public:
       }
 
 
-
-
 	CubicSpline & train
 	      (
 	        const BorderFlag BORDER,
@@ -113,8 +107,6 @@ public:
     }
 
 
-
-
     //! @brief return derivative at ARGUMENT
     //! @param ARGUMENT x value
     //! @return derivative at ARGUMENT
@@ -128,7 +120,6 @@ public:
 	//////////////////
 	////data access/////
 	////////////////////
-
 
 
     //! @brief get the second order derivatives of the spline
@@ -167,7 +158,6 @@ private:
 	MathVector<Real> dsecox_; //!< second order derivatives
 
 
-
     //! @brief calculate function between two cells
     //! @param INDEX_LEFT index of left grid point
     //! @param INDEX_RIGHT index of right grid point
@@ -184,14 +174,11 @@ private:
     Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
 
-
-
 };
 
 }//namespace
 }
 }
-
 
 
 #endif

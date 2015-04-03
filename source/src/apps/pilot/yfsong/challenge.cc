@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocol to assign sequence
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #include <map>

@@ -14,8 +14,6 @@
 
 // Unit headers
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
-// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 //#include <core/chemical/ResidueType.hh>
 
 #include <utility/exit.hh>
@@ -29,13 +27,12 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace id {
 
 static thread_local basic::Tracer tr( "core.id.AtomID" );
 
-///
+
 AtomID const &
 BondID::other_atom( AtomID const & id ) const
 {

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/fldsgn/SheetCstGeneratorCreator.hh
-///@brief This class will create instances of the SheetConstraintsRCG mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/fldsgn/SheetCstGeneratorCreator.hh
+/// @brief This class will create instances of the SheetConstraintsRCG mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh
 #define INCLUDED_protocols_fldsgn_SheetCstGeneratorCreator_hh

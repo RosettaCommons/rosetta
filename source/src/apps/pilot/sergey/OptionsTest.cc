@@ -77,8 +77,6 @@
 // Utility headers
 
 
-
-
 static thread_local basic::Tracer TM( "TMemory" );
 
 static thread_local basic::Tracer TR_( "global" );
@@ -141,7 +139,7 @@ int main( int argc, char * argv [] )
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
 
-			//
+
 			if( option[ out::levels ].active() ) T("Levels:") << option[ out::levels ]() <<  std::endl;
 
 			//option[ out::levels ]( utility::tools::make_vector(std::string("some.namespace:info"), std::string("some.other.namespace:debug")) );

@@ -18,13 +18,7 @@
 
 // Rosetta Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -44,12 +38,7 @@
 
 #include <devel/init.hh>
 
-// AUTO-REMOVED #include <protocols/frags/TorsionFragment.hh>
-// AUTO-REMOVED #include <protocols/frags/VallData.hh>
 
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 #include <basic/Tracer.hh> // tracer output
 
 #include <utility/io/izstream.hh>
@@ -67,8 +56,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
-
 
 
 using namespace core;
@@ -242,7 +229,7 @@ set_secstruct_from_psipred_ss2(
 
 
 /////////////////////////////////////////////////////////////////////////////
-///@details use 10A CB distance cutoff as neighboring residue defintion. The function
+/// @details use 10A CB distance cutoff as neighboring residue defintion. The function
 ///is used for conveniently setting up sidechain movable residues in loop modeling.
 /////////////////////////////////////////////////////////////////////////////////
 void

@@ -27,5 +27,4 @@ typedef utility::pointer::shared_ptr< EnzdesJobOutputter > EnzdesJobOutputterOP;
 }//protocols
 
 
-
 #endif //INCLUDED_protocols_enzdes_EnzdesJobOutputter_FWD_HH

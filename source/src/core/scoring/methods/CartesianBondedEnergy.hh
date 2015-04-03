@@ -183,7 +183,6 @@ public:
 	}
 
 
-
 private:
 	utility::vector1< length_parameter  > length_params_;
 	utility::vector1< angle_parameter   > angle_params_;
@@ -352,8 +351,6 @@ private:
 };
 
 
-
-
 ///////////////////
 ///
 /// the energy method
@@ -379,7 +376,7 @@ public:
 	virtual void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const;
 
-	///@brief Idealize the virtual NV atom of every proline in the pose. This
+	/// @brief Idealize the virtual NV atom of every proline in the pose. This
 	///prevents innacurate pro-close scores when switching between cartesian
 	///and non-cartesian score functions.
 	void
@@ -395,7 +392,7 @@ public:
 		Size res2
 	) const;
 
-	///
+
 	virtual	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -733,7 +730,7 @@ private:
 	///       = 0.5 * K * std::abs(val-val0) otherwise
 	Real eval_score( Real val, Real K, Real val0 ) const;
 
-	/// @breif Evaluate the derivative for a
+	/// @brief Evaluate the derivative for a
 
 private:
 

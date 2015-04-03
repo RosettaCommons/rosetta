@@ -105,7 +105,7 @@ XMLprinterMover::XMLprinterMover(){
 	pymol_selection_ = option[ XMLprinter::print_pymol_selection ];
 }
 
-///@brief load custom TaskOperations according to an xml-like utility::tag file
+/// @brief load custom TaskOperations according to an xml-like utility::tag file
 core::pack::task::TaskFactoryOP
 XMLprinterMover::setup_tf( core::pack::task::TaskFactoryOP task_factory ) {
  using namespace core::pack::task::operation;
@@ -123,7 +123,7 @@ XMLprinterMover::setup_tf( core::pack::task::TaskFactoryOP task_factory ) {
  return task_factory;
 }
 
-///@brief return the set of residues that are designable based given pose
+/// @brief return the set of residues that are designable based given pose
 std::set< Size > XMLprinterMover::fill_designable_set( core::pose::Pose & pose, core::pack::task::TaskFactoryOP & tf ) {
 
   std::set< Size > designable_set;
@@ -143,7 +143,7 @@ std::set< Size > XMLprinterMover::fill_designable_set( core::pose::Pose & pose, 
 
 } // end fill_designable_set
 
-///@brief return the set of residues that are packable based given pose
+/// @brief return the set of residues that are packable based given pose
 std::set< Size > XMLprinterMover::fill_packable_set( core::pose::Pose & pose, core::pack::task::TaskFactoryOP & tf ) {
 
   std::set< Size > packable_set;
@@ -163,7 +163,7 @@ std::set< Size > XMLprinterMover::fill_packable_set( core::pose::Pose & pose, co
 
 } // end fill_packable_set
 
-///@brief, write individual files for each input structure
+/// @brief, write individual files for each input structure
 void XMLprinterMover::write_output_file(pose::Pose& pose, std::string filename, std::set<core::Size> design_set, std::set<core::Size> packable_set ){
   utility::io::ozstream output_stream;
   utility::io::ozstream packable_output_stream;

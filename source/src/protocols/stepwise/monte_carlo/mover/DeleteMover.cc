@@ -9,7 +9,7 @@
 
 /// @file DeleteMover
 /// @brief Deletes an RNA residue from a chain terminus.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/mover/DeleteMover.hh>

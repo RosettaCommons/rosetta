@@ -15,7 +15,6 @@
 
 
 #include <apps/benchmark/performance/performance_benchmark.hh>
-// AUTO-REMOVED #include <apps/benchmark/performance/init_util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/ligand_docking/LigandDockProtocol.hh>

@@ -42,7 +42,7 @@ namespace loophash {
 class LocalInserter : public utility::pointer::ReferenceCount	{
 public:
 
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LocalInserter();
 
 	LocalInserter(){
@@ -95,14 +95,14 @@ public:
 		set_default_score_functions();
 	}
 
-	///@brief set the score function for the first round of minimization
+	/// @brief set the score function for the first round of minimization
 	///during a loophash insert
 	void
 	scorefxn_rama_cst(
 		core::scoring::ScoreFunction const &  scorefxn
 	);
 
-	///@brief set the score function for the second round of minimization
+	/// @brief set the score function for the second round of minimization
 	///during a loophash insert
 	void
 	scorefxn_cen_cst(
@@ -147,7 +147,6 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_cen_cst_;
 	core::optimization::MinimizerOptions options2_;
 };
-
 
 
 }

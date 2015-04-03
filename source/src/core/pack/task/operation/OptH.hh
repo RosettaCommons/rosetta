@@ -25,12 +25,9 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
 
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

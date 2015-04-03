@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/SecondaryStructureCountFilter.hh
 /// @brief header file for SecondaryStructureCountFilter class.
-/// @detailed
+/// @details
 /// @author Lei Shi ( shilei@uw.edu )
 
 

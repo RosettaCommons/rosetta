@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -37,7 +37,6 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 
 //// C++ headers
@@ -193,7 +192,7 @@ core::scoring::constraints::AmbiguousNMRConstraintOP PeakAssignment::create_floa
 	return full_cst;
 }
 
-	///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
+	/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
 core::Size PeakAssignment::label_resonance_id( core::Size select ) const {
   runtime_assert( select == 1 || select == 2 );
   runtime_assert( crosspeak_ );

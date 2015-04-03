@@ -22,20 +22,17 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <protocols/forge/build/SegmentSwap.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
-// AUTO-REMOVED #include <protocols/forge/build/SegmentRebuild.hh>
 
 #include <protocols/forge/methods/fold_tree_functions.hh>
 
@@ -316,7 +313,6 @@ CircularPermutation::parse_my_tag(
   split_ = ( tag->getOption<Size>( "split_chain", 0 ) );
 
 }
-
 
 
 } // namespace fldsgn

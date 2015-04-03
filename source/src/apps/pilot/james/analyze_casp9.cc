@@ -16,9 +16,7 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

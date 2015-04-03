@@ -22,14 +22,11 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 
 // STL Headers
 #include <list>
-// AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <utility/assert.hh>
 
 // Utility Headers
@@ -170,13 +167,11 @@ void PDNode::zero_one_body_energies()
 }
 
 
-
 /// @param state - [in]
 core::PackerEnergy PDNode::get_one_body_energy( int state )
 {
 	return one_body_energies_[ state ];
 }
-
 
 
 /// @details updates internal edge vector + other vectorized edge information
@@ -213,8 +208,6 @@ PDNode::getMemoryUsageInBytes() const
 */
 
 
-
-
 /// @details zeros the edge-energy array, informs neighbors that it's in its unassigned
 /// state
 ///
@@ -244,8 +237,6 @@ void PDNode::assign_zero_state()
 
 	return;
 }
-
-
 
 
 /// @note updates its curr_state one and two body energies
@@ -292,7 +283,6 @@ float PDNode::get_one_body_energy_current_state() const
 {
 	return curr_state_one_body_energy_;
 }
-
 
 
 /// @brief tells the node that it should change its state to the last state it was
@@ -1076,11 +1066,6 @@ void PDEdge::acknowledge_state_zeroed( int node_ind )
 }
 
 
-
-
-
-
-
 ObjexxFCL::FArray2D_int const &
 PDEdge::get_offsets_for_aatypes( )
 {
@@ -1396,7 +1381,6 @@ debug_assert( ! energies_updated_since_last_prep_for_simA_ );
 }
 
 
-
 /// @brief drops any amino-acid neighbor submatrix of the two-body energy table
 /// when the magnitudes of the energies stored in that submatrix do not exceed
 /// the input parameter, epsilon.  Dropping submatrices that contain zero
@@ -1487,7 +1471,6 @@ PDInteractionGraph::initialize( rotamer_set::RotamerSetsBase const & rot_sets_ba
 	}
 
 }
-
 
 
 /// @details The actual meaning of the integers used to represent amino acid types
@@ -2056,7 +2039,6 @@ PDInteractionGraph::get_aa_submatrix_energies_for_edge(
 }
 
 
-
 /// @param node_index - [in] - the index of the node being created
 /// @param num_states - [in] - the total number of states for the new node
 ///
@@ -2077,14 +2059,11 @@ EdgeBase* PDInteractionGraph::create_new_edge( int index1, int index2)
 }
 
 
-
-
-
 // <directed_design>
 
 
 /// calls project_deltaE_for_substitution ( the weighted version )
-///
+
 
 void PDNode::project_deltaE_for_substitution
 (

@@ -178,7 +178,7 @@ SeparateDnaFromNonDna::get_name() const {
 	return SeparateDnaFromNonDnaCreator::mover_name();
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void SeparateDnaFromNonDna::parse_my_tag(
 	TagCOP const,
 	basic::datacache::DataMap &,
@@ -188,14 +188,14 @@ void SeparateDnaFromNonDna::parse_my_tag(
 )
 {}
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 SeparateDnaFromNonDna::fresh_instance() const
 {
 	return moves::MoverOP( new SeparateDnaFromNonDna );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 SeparateDnaFromNonDna::clone() const
 {

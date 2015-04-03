@@ -21,7 +21,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -68,8 +67,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -80,7 +77,7 @@ namespace protocols {
 namespace metal_interface {
 
 
-///@brief local helper function
+/// @brief local helper function
 void dump_chis( core::conformation::Residue const & res ){
 	for(core::Size i(1); i<=res.nchi(); ++i){TR << " chi" << i << " " << res.chi()[i];}
 	TR << std::endl;
@@ -268,7 +265,7 @@ ZincHeterodimerMover::get_name() const {
 	return "ZincHeterodimerMover";
 }
 
-///@details apply() needs to generate a centroid copy of the fullatom pose from time to time.  Some of the things in the fullatom pose are not centroid safe (metal atom, possible hydrogen-lacking metal ligand residues) and must be removed before centroid-ization.  This function takes care of that; unfortunately it needs a lot of help passed in.
+/// @details apply() needs to generate a centroid copy of the fullatom pose from time to time.  Some of the things in the fullatom pose are not centroid safe (metal atom, possible hydrogen-lacking metal ligand residues) and must be removed before centroid-ization.  This function takes care of that; unfortunately it needs a lot of help passed in.
 void ZincHeterodimerMover::copy_to_centroid(
 	core::pose::Pose const & pose,
 	core::pose::Pose & centroid,
@@ -322,7 +319,7 @@ void ZincHeterodimerMover::generate_factory(){
 	factory_ = task_factory; //store as COP so must wait for this
 }//generate_factory
 
-///@details constructor
+/// @details constructor
 ZincHeterodimerMover::ZincHeterodimerMover(
 																										 utility::vector1< core::Size > const & metal_site,
 																										 core::kinematics::Edge const & fixed_to_metal,

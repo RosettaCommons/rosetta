@@ -11,14 +11,12 @@
 /// @brief  set of fragments for a certain alignment frame
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_core_fragment_FragData_fwd_hh
 #define INCLUDED_core_fragment_FragData_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

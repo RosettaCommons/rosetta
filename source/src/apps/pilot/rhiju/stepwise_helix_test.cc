@@ -166,7 +166,6 @@ get_moment_of_inertia( pose::Pose const & pose,
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////
 void
 get_euler_axes( Matrix const moment_of_inertia,
@@ -441,7 +440,6 @@ check_filter_rmsd( Vector const & translation,
 	return true;
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////

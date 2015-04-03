@@ -17,12 +17,9 @@
 #include <core/scoring/packstat/SimplePDB_Atom.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace packstat {
-
-
 
 
 } // namespace packstat

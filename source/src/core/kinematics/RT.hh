@@ -157,7 +157,7 @@ public:
 		return translation;
 	}
 
-	///
+
 	Real
 	distance_squared( RT const & b ) const
 	{

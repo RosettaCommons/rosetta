@@ -20,7 +20,6 @@
 #include <core/pack/rotamer_set/ContinuousRotamerSet.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Project Headers
@@ -135,7 +134,7 @@ private:
 class ContinuousRotamerSets : public utility::pointer::ReferenceCount
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ContinuousRotamerSets();
 	ContinuousRotamerSets(
 		pose::Pose const & pose,

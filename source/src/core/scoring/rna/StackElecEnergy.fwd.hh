@@ -29,7 +29,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class StackElecEnergy;
 
 } //rna

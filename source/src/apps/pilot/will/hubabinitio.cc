@@ -115,7 +115,6 @@ void register_options() {
 }
 
 
-
 static core::io::silent::SilentFileData sfd;
 
 
@@ -529,13 +528,6 @@ int main(int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-
-
-
 
 
 	// for(Size ippo = 1; ippo <= 3; ++ippo ) {

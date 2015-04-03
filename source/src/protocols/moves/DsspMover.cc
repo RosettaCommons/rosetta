@@ -17,17 +17,13 @@
 
 // Project Headers
 #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
 // Parser headers
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 
-//
+
 #include <string>
 
 #include <utility/vector0.hh>

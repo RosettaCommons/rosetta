@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/MembranePotential.fwd.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -34,19 +33,18 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class MembraneEnvSmoothEnergy : public ContextDependentOneBodyEnergy  {
 public:
 	typedef ContextDependentOneBodyEnergy  parent;
 
 public:
 
-	///
+
 	MembraneEnvSmoothEnergy();
 
 	/// clone

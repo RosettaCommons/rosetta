@@ -24,7 +24,6 @@ namespace devel {
 namespace constel {
 
 ///
-///
 /// @brief returns the center of mass of a constellation
 ///
 /// @param[in] cnl pose residue indexes of the residues forming the

@@ -30,8 +30,6 @@
 #include <utility/io/izstream.hh>
 
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 #include <core/scoring/interpolation_util.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -149,7 +147,7 @@ CarbonHBondPotential::read_potential()
 		carbon_hbond_parameter_[ aro_index ]( j )  *= aroC_scale_factor_;
 	}
 
-	//
+
 	// Precalculate derivative. Would it make sense to do this and the interpolation via splines?
 	// And is the potential smooth enough?
 	//

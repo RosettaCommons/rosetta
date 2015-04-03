@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/options/StepWiseRNA_ModelerOptions.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

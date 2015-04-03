@@ -225,8 +225,8 @@ RotamerizeMover::get_name() const {
 	return "RotamerizeMover";
 }
 
-///@brief when the PackerTask was not generated locally, verify compatibility with pose
-///@details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
+/// @brief when the PackerTask was not generated locally, verify compatibility with pose
+/// @details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
 bool
 RotamerizeMover::task_is_valid( Pose const & pose ) const
 {
@@ -238,7 +238,7 @@ RotamerizeMover::task_is_valid( Pose const & pose ) const
 	return true;
 }
 
-///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
+/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 void RotamerizeMover::setup( Pose & pose )
 {
 	// jec update_residue_neighbors() required to update EnergyGraph (ensures graph_state == GOOD) when calling Interface.cc

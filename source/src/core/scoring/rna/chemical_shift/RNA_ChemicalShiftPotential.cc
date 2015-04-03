@@ -80,7 +80,6 @@ namespace rna {
 namespace chemical_shift {
 
 
-
 	/// c-tor
 	RNA_ChemicalShiftPotential::RNA_ChemicalShiftPotential():
 		rna_cs_params_( RNA_CS_parameters() ),
@@ -1958,7 +1957,6 @@ namespace chemical_shift {
 			this->neighbor_atoms_.insert( std::pair< std::string, bool  >( add_whitespaces( remove_whitespaces( neighbor ) ), true ) );
 		}
 	}
-
 
 
 } //chemical_shift

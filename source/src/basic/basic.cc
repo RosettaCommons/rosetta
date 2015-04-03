@@ -16,7 +16,6 @@
 #include <basic/basic.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.Project.hh>
 #include <ObjexxFCL/Fmath.hh>
 //#include <ObjexxFCL/format.hh>
 
@@ -39,22 +38,19 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 
 
 // C++ Headers
-// Commented by inclean daemon #include <cmath>
 
 namespace basic {
 
 
-//
 //     util_basic.cc - general utility functions that don't fit into any
 //     other util*.cc files
-//
+
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin calc_quadratic
 ///
 /// @brief calculates quadratic polynomial solutions
 ///
-/// @detailed
+/// @details
 ///
 ///     solves for solutions of x in the polynomial: a*x^2+b*x+c=0
 ///
@@ -68,9 +64,8 @@ namespace basic {
 ///
 /// @references
 ///
-/// @authors ctsa 8=19-03
+/// @author ctsa 8=19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 calc_quadratic(
@@ -95,11 +90,10 @@ calc_quadratic(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin subtract_degree_angles
 ///
 /// @brief subtract angles in degrees, restricting the range of the result
 ///
-/// @detailed
+/// @details
 ///
 ///     given angles a and b in degrees, get a-b restricted to
 ///     [-180.,180.), assuming that a-b=a-b+n*360, n=any integer
@@ -113,9 +107,8 @@ calc_quadratic(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 double
 subtract_degree_angles(
@@ -127,11 +120,10 @@ subtract_degree_angles(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin subtract_radian_angles
 ///
 /// @brief subtract angles in radians, restricting the range of the result
 ///
-/// @detailed
+/// @details
 ///
 ///     given angles a and b in degrees, get a-b restricted to
 ///     [-pi,pi), assuming that a-b=a-b+n*2*pi, n=any integer
@@ -145,9 +137,8 @@ subtract_degree_angles(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 double
 subtract_radian_angles(
@@ -160,11 +151,10 @@ subtract_radian_angles(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin periodic_range
 ///
 /// @brief  a is restricted to [-x/2,x/2), assuming that a=a+n*x, n=any integer
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in]   a - in - input value with periodicity x
 /// @param[in]   x - in - periodicity of a
@@ -175,9 +165,8 @@ subtract_radian_angles(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 double
 periodic_range(
@@ -190,10 +179,9 @@ periodic_range(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin unsigned_periodic_range
 ///
 ///
-/// @detailed
+/// @details
 ///
 /// @param[in]   a - in - input value with periodicity x
 /// @param[in]   x - in - periodicity of a
@@ -204,9 +192,8 @@ periodic_range(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 double
 unsigned_periodic_range(
@@ -231,7 +218,6 @@ angle_in_range( double & ang )
 	ang += double(180.0);
 	assert( ang <= double(180.0) && ang > double(-180.0));
 }
-
 
 
 } // namespace basic

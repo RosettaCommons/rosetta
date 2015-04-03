@@ -9,7 +9,7 @@
 
 /// @file  apps/pilot/rmoretti/residue_energy_breakdown.cc
 /// @brief Output score terms for residue self energies and residue-residue interaction as a silent scorefile
-/// @detailed Based on apps/pilot/james/per_residue_energies.cc by James Thompson
+/// @details Based on apps/pilot/james/per_residue_energies.cc by James Thompson
 /// @author Rocco Moretti (rmoretti@uw.edu)
 
 // App header

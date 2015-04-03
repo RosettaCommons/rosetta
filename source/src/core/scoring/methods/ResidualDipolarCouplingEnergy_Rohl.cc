@@ -22,7 +22,6 @@
 
 #include <core/conformation/Residue.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 
@@ -33,13 +32,9 @@
 #include <numeric/xyz.functions.hh>
 
 //utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 //Objexx headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/Fmath.hh>
 
 //C++ headers
@@ -314,7 +309,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_ordermatrix(
 //		score = 0.0;
 		return;
 	}
-
 
 
 }
@@ -693,7 +687,6 @@ void ResidualDipolarCouplingEnergy_Rohl::calc_orderparam(
 
 	Azz = val(1);
 	eta = (2.0/3.0) * (val(3)-val(2))/val(1);
-
 
 
 }

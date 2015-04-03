@@ -15,38 +15,18 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 //#include <protocols/frag_picker/PsiPsiTalosIO.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 
 // option key includes
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <protocols/Protocol.hh>
-
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // C++
-// AUTO-REMOVED #include <math.h>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <string.h>
 
 // Boost
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
-// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
 #include <utility/vector1.hh>
 

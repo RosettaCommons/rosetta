@@ -23,7 +23,6 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 // Project Headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
@@ -644,8 +643,6 @@ bool requires_CB_mapping( AmbiguousNMRDistanceConstraint::Atoms atoms, pose::Pos
 }
 
 
-	///
-
 void combine_NMR_atom_string( AmbiguousNMRDistanceConstraint::Atoms atoms, std::string &atom_str, pose::Pose const& pose) {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_NMR_STRING );
 	atom_str = " BOGUS ";
@@ -922,7 +919,6 @@ AmbiguousNMRDistanceConstraint::remap_resid( core::id::SequenceMapping const &sm
 }
 
 
-
 AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
     id::NamedAtomID const & a1, //digests names like "QG1"
 		id::NamedAtomID const & a2,
@@ -946,7 +942,7 @@ AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
 	}
 }
 
-///@details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
+/// @details one line definition "AmbiguousNMRDistance atom1 res1 atom2 res2 function_type function_definition"
 void
 AmbiguousNMRDistanceConstraint::read_def(
 	std::istream & data,

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/toolbox/task_operations/StoreTaskMoverCreator.hh
-///@brief This class will create instances of Mover StoreTaskMover for the MoverFactory
-///@author Neil King (neilking@uw.edu)
+/// @file protocols/toolbox/task_operations/StoreTaskMoverCreator.hh
+/// @brief This class will create instances of Mover StoreTaskMover for the MoverFactory
+/// @author Neil King (neilking@uw.edu)
 
 #ifndef INCLUDED_protocols_moves_StoreTaskMoverCreator_hh
 #define INCLUDED_protocols_moves_StoreTaskMoverCreator_hh

@@ -46,7 +46,6 @@ private:
 };
 
 
-
 } // symmetry
 //} // simple_moves
 } // rosetta

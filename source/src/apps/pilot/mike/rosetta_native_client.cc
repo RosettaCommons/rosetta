@@ -199,23 +199,6 @@ RosettaURLFileHandler::return_file_callback( const std::string &result_data, boo
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void* StartRosettaThread(void *rosettaInst) {
   RosettaInstance *inst = static_cast<RosettaInstance*>(rosettaInst);
   inst->RosettaThread();
@@ -245,7 +228,6 @@ void RosettaInstance::setup_file_handler(){
 
   }
 }
-
 
 
 // This method is called from the worker thread using CallOnMainThread.

@@ -65,7 +65,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
 using namespace ObjexxFCL::format;
 
 utility::vector1< int > calculate_burial(

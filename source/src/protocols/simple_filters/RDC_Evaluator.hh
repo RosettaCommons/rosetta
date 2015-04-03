@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_RDC_Evaluator_hh
@@ -25,8 +24,6 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/RDC_Evaluator.fwd.hh>
 // Package Headers
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
-// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
@@ -36,7 +33,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <list>
@@ -55,7 +51,7 @@ public:
   RDC_Evaluator( std::string tag = "rdc" );
 	//  RDC_Evaluator( utility::vector1< std::string > const& rdc_files, std::string tag = "rdc" );
 
-  ///@brief evaluate pose
+  /// @brief evaluate pose
   virtual core::Real apply( core::pose::Pose& ) const;
 
 private:
@@ -75,7 +71,7 @@ public:
   //work it out by yourself from missing density == whacky random coords
   SelectRDC_Evaluator( core::pose::Pose const&, std::string tag = "" );
 
-  ///@brief evaluate pose
+  /// @brief evaluate pose
   virtual core::Real apply( core::pose::Pose& ) const;
 
 private:

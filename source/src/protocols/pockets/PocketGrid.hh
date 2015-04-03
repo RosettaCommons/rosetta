@@ -18,15 +18,12 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <utility/vector1_bool.hh>
 #include <list>
@@ -39,7 +36,7 @@
 namespace protocols {
 namespace pockets {
 
-///@ Cluster of Pocket points
+/// @ Cluster of Pocket points
 class PCluster
 {
 
@@ -76,7 +73,7 @@ private:
 
 }; //PCluster
 
-///@ Set of cluster of pocket points
+/// @ Set of cluster of pocket points
 class PClusterSet
 {
 
@@ -102,7 +99,7 @@ private:
 
 }; //PClusterSet
 
-	///@ Cluster of exemplar points
+	/// @ Cluster of exemplar points
 	class CCluster
 	{
 		
@@ -143,7 +140,7 @@ private:
 		
 	}; //CCluster
 	
-	///@ Set of clusters of exemplar points
+	/// @ Set of clusters of exemplar points
 	class CClusterSet
 	{
 		
@@ -169,7 +166,7 @@ private:
 		
 	}; //CClusterSet
 	
-///@
+/// @
 class PocketGrid : public utility::pointer::ReferenceCount
 {
 
@@ -337,7 +334,7 @@ public:
 }; //class PocketGrid
 
 
-///@
+/// @
 class TargetPocketGrid : public PocketGrid
 {
 
@@ -355,7 +352,7 @@ public:
 
 }; //class TargetPocketGrid
 
-///@
+/// @
 class EggshellGrid : public PocketGrid
 {
 
@@ -437,7 +434,7 @@ public:
 
 }; //class ElectrostaticpotentialGrid
 
-///@
+/// @
 class ComparisonGrid {
 
 private:

@@ -30,7 +30,7 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 
-///@brief Interface to this class is in AntibodyInfo.  Should be a singleton.
+/// @brief Interface to this class is in AntibodyInfo.  Should be a singleton.
 class CDRClusterEnumManager : public utility::pointer::ReferenceCount {
 public:
 

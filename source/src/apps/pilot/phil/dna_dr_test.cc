@@ -138,7 +138,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -486,7 +485,6 @@ loop_modeling_test()
 	dump_pdb( pose, "start.pdb" );
 
 
-
 	Loops loops;
 
 	{ // figure out where the loops are
@@ -527,7 +525,6 @@ loop_modeling_test()
 
 	**/
 	utility::vector1<int> frag_sizes; //( option[ OptionKeys::loops::frag_sizes ] );
-
 
 
 	frag_sizes.push_back(3);

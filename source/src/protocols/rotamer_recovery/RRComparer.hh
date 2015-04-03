@@ -18,13 +18,11 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -34,7 +32,7 @@
 namespace protocols {
 namespace rotamer_recovery {
 
-///@brief The comparison functionality for the rotamer recovery test
+/// @brief The comparison functionality for the rotamer recovery test
 ///
 /// Besides implementing the interface given in the base class
 /// RRComparer each RRComparer should have an entry in the conevience
@@ -42,7 +40,7 @@ namespace rotamer_recovery {
 class RRComparer : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RRComparer();
 
 //	RRComparer();

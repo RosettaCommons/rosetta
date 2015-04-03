@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/NcontactsFilter.hh
 /// @brief header file for NcontactsFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

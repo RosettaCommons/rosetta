@@ -23,11 +23,9 @@
 #include <basic/Tracer.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/optE.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
-
 
 
 using namespace core;
@@ -42,8 +40,6 @@ static thread_local basic::Tracer TR( "DDGBindOptEData" );
 typedef core::chemical::AA AA;
 
 ///
-/// @begin DDGBindOptEData::DDGBindOptEData()
-///
 /// @brief
 /// Initialize all of the member variables to 0.
 ///
@@ -52,13 +48,8 @@ DDGBindOptEData::DDGBindOptEData():
 {}
 
 ///
-/// @begin DDGBindOptEData::~DDGBindOptEData()
-///
 DDGBindOptEData::~DDGBindOptEData() {}
 
-
-///
-/// @begin DDGBindOptEData::get_score()
 ///
 Real
 DDGBindOptEData::get_score(
@@ -77,8 +68,6 @@ DDGBindOptEData::get_score(
 }
 
 ///
-/// @begin DDGBindOptEData::print_score()
-///
 void
 DDGBindOptEData::print_score(
 	std::ostream & ostr,
@@ -96,9 +85,6 @@ DDGBindOptEData::print_score(
 	process_score( ostr, true, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, free_score_list, fixed_score_list );
 }
 
-
-///
-/// @begin DDGBindOptEData::process_score()
 ///
 /// @brief
 /// One method to do the score processing which takes a boolean dictating whether to print to an ostream or not. With this function, changes
@@ -269,18 +255,12 @@ DDGBindOptEData::process_score(
 
 }
 
-
-///
-/// @begin DDGBindOptEData::type()
 ///
 OptEPositionDataType
 DDGBindOptEData::type() const {
 	return ddG_bind_correlation;
 }
 
-
-///
-/// @begin DDGBindOptEData::range()
 ///
 /// @details
 /// Determine the upper and lower bounds on the unweighted component energy terms at this "position" and deposit them in the passed-in
@@ -303,17 +283,12 @@ DDGBindOptEData::range( ScoreTypes const & free_score_list, ScoreTypes const & f
 	}
 }
 
-
-///
-/// @begin DDGBindOptEData::size()
 ///
 core::Size
 DDGBindOptEData::size() const {
 	return wt_complexes_.size() + mutant_complexes_.size() + wt_unbounds_.size() + mutant_unbounds_.size();
 }
 
-///
-/// @begin DDGBindOptEData::memory_use()
 ///
 /// Only used for user feedback. Nothing in the code uses the result from this to allocate memory.
 ///
@@ -345,7 +320,6 @@ DDGBindOptEData::memory_use() const {
 
 #ifdef USEMPI
 ///
-/// @begin DDGBindOptEData::send_to_node()
 ///
 void
 DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const {
@@ -491,9 +465,6 @@ DDGBindOptEData::send_to_node( int const destination_node, int const tag ) const
 
 }
 
-
-///
-/// @begin DDGBindOptEData::receive_from_node()
 ///
 void
 DDGBindOptEData::receive_from_node( int const source_node, int const tag )
@@ -663,48 +634,40 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 #endif
 
 
-/// @begin DDGBindOptEData::set_experimental_ddg_bind()
-///
 void
 DDGBindOptEData::set_experimental_ddg_bind( Real exp_ddg_bind ) {
 	experimental_ddG_bind_ = exp_ddg_bind;
 }
 
-/// @begin DDGBindOptEData::add_mutation()
-///
+
 void
 DDGBindOptEData::add_mutation( std::pair< Size, std::pair < AA, AA > > mutation ) {
 	mutations_.push_back( mutation );
 }
 
-/// @begin DDGBindOptEData::add_wt_complex()
-///
+
 void
 DDGBindOptEData::add_wt_complex( SingleStructureDataOP wt ) {
 	wt_complexes_.push_back( wt );
 }
 
-/// @begin DDGBindOptEData::add_mutant_complex()
-///
+
 void
 DDGBindOptEData::add_mutant_complex( SingleStructureDataOP mut ) {
 	mutant_complexes_.push_back( mut );
 }
 
-/// @begin DDGBindOptEData::add_wt_unbounds()
-///
+
 void
 DDGBindOptEData::add_wt_unbounds( SingleStructureDataOP wt ) {
 	wt_unbounds_.push_back( wt );
 }
 
-/// @begin DDGBindOptEData::add_mutant_unbounds()
-///
+
 void
 DDGBindOptEData::add_mutant_unbounds( SingleStructureDataOP mut ) {
 	mutant_unbounds_.push_back( mut );
 }
-
 
 
 } // namespace optimize_weights

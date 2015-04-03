@@ -84,7 +84,6 @@ core::Size version() const;
 																	 ) const {};
 
 
-
 private:
 	ProQPotential const & potential_;
 	MembraneTopology topology_;
@@ -102,7 +101,6 @@ private:
 
 	bool all_inputs_ProQM_;
 	bool all_inputs_ProQ2_;
-
 
 
 	void initialize();

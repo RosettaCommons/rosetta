@@ -412,7 +412,6 @@ PoseConformationFeatures::load_sequence(
 			fullatom ? FA_STANDARD : CENTROID));
 
 
-
 	if(basic::database::table_exists(db_session, "residues")){
 		std::string statement_string =
 			"SELECT\n"
@@ -578,7 +577,6 @@ PoseConformationFeatures::load_chain_endings(
 
 	TR.Debug << "Chain endings loaded" << std::endl;
 }
-
 
 
 } // namespace

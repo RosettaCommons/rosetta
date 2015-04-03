@@ -16,17 +16,14 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/BB_Pos.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/DimerPairing.hh>
 #include <protocols/fldsgn/potentials/sspot/util.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -51,7 +48,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/SecondaryStructurePotential.hh>
-
 
 
 static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.sspot.NatbiasStrandPairPotential", basic::t_info );
@@ -188,7 +184,7 @@ NatbiasStrandPairPotential::pair_dp(
 	// unit vector of mid_vector
 	Vector const u_midvec( mid_vector.normalized_or_zero() );
 
-	//
+
 	Real dp1( 0.0 );
 	Real sdp1( 0.0 );
 	for ( Size i=ss1; i<=ss1+1; ++i ) {
@@ -204,7 +200,7 @@ NatbiasStrandPairPotential::pair_dp(
 	}
 	dp1 *= 0.5;
 
-	//
+
 	Real dp2( 0.0 );
 	Real sdp2( 0.0 );
 	for ( Size i=ss2; i<=ss2+1; ++i ) {
@@ -229,7 +225,6 @@ NatbiasStrandPairPotential::pair_dp(
 	sign1 = ( sdp1 > 0.0 ? 2 : 1 );
 	sign2 = ( sdp2 < 0.0 ? 2 : 1 );
 }
-
 
 
 /// @brief

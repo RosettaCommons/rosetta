@@ -104,8 +104,6 @@ BannedFiles = [
     'protocols/simple_moves/SymmetricFragmentMover.hh', # Somthing with linking/clang (gcc work fine)
 
 
-
-
     'utility/io', #/ozstream.hh',  # need bindings for std enum: std::_Ios_Openmode
     'utility/sql_database/DatabaseSessionManager.hh',  # SQLite have its own bindigs in Python
 
@@ -279,8 +277,6 @@ def namespace(ns):
     return ns in nslist
 
 
-
-
 exclude_header_list = []
 
 
@@ -349,7 +345,6 @@ def mb_exclude(path, mb, hfile):
             residue.add_registration_code( 'def( bp::self_ns::str( bp::self ) )' )
 
 
-
     if path == 'core/fragment':
         if hfile=='core/fragment/FragID_Iterator.hh':
             mb.class_("FragID_Iterator").exclude()
@@ -367,7 +362,6 @@ def mb_exclude(path, mb, hfile):
             for c in mb.class_("FragData").constructors(lambda x: pr(x)):
                 if c.access_type == 'protected': c.exclude()
                 #print c
-
 
 
         #E_(" mb.class_('SecstructSRFD').mem_funs('clone').exclude() ")
@@ -451,7 +445,6 @@ def mb_exclude(path, mb, hfile):
         if hfile=='core/import_pose/import_pose.hh':
             #E('free_functions', 'pose_from_pose', 'exclude')
             pass
-
 
 
     if path == 'core/pose':
@@ -561,8 +554,6 @@ def mb_exclude(path, mb, hfile):
             mb.var('HBEval_lookup').exclude()
 
 
-
-
     if path == 'core/scoring/rna':
         E('class_', "RNA_TorsionEnergy", 'member_function', "indicate_required_context_graphs", 'exclude')  #mb.class_( "RNA_TorsionEnergy" ).member_function( "indicate_required_context_graphs" ).exclude()
 
@@ -627,7 +618,6 @@ def mb_exclude(path, mb, hfile):
         except pygccxml.declarations.matcher.declaration_not_found_t: pass
         try: mb.class_("SimpleScoringScheme").mem_funs("score").exclude()
         except pygccxml.declarations.matcher.declaration_not_found_t: pass
-
 
 
     if path == 'protocols/abinitio':
@@ -737,7 +727,6 @@ def make_nonvirtual(c):
     assert False
 
 
-
 def removeProtectedConstructos(mb):
     try:
         for c in mb.classes():
@@ -774,14 +763,11 @@ def add_print_operators(mb, ns):
             #print 'arguments', type(o.arguments[0]), ' ~~~ ', o.arguments[0]
 
 
-
-
 def annotate(mb):
     try:
         for c in mb.classes():
             c.__WAS_ABSTRACT = c.is_abstract
     except RuntimeError: pass
-
 
 
 def getNameSpace(path, mb):
@@ -834,7 +820,6 @@ def exclude(path, mb, hfile):
         print '\nMaking Implicitly convertible:'
         for i in ic: print i
     mb.add_registration_code( "".join(ic) )
-
 
 
 def exclude_impls_(mb,ns):
@@ -1095,8 +1080,6 @@ def finalize2(fname, dest, path, module_name='_noname', add_by_hand=False, inclu
     f.close()
 
 
-
-
 def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, files=[], add_includes=True):
     files = files[:]
     #print 'finalize... add_by_hand=%s' % add_by_hand, files
@@ -1245,9 +1228,6 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
     #f.close()
 
 
-
-
-
 def finalize_old(fname, path, mb):
     ns = getNameSpace(path, mb)
 
@@ -1300,7 +1280,6 @@ def filter_code_creators(mb, path, wrappers):
         print cc
         print cc.declaration
         assert False
-
 
 
 def isinc(x):

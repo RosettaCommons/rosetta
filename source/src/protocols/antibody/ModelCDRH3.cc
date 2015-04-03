@@ -9,9 +9,8 @@
 
 /// @file protocols/antibody/ModelCDRH3.cc
 /// @brief models CDR H3 loop using loop modeling
-/// @detailed
+/// @details
 ///// @author Jianqing Xu ( xubest@gmail.com )
-//
 
 
 #include <protocols/antibody/ModelCDRH3.hh>
@@ -39,7 +38,6 @@
 #include <core/conformation/util.hh>
 
 
-
 static thread_local basic::Tracer TR( "protocols.antibody.ModelCDRH3" );
 
 using namespace core;
@@ -60,7 +58,6 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info) : Mover() {
 }
 
 
-
 ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,
                         core::scoring::ScoreFunctionCOP lowres_scorefxn) : Mover() {
 	user_defined_ = true;
@@ -69,8 +66,6 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,
 
 	init();
 }
-
-
 
 
 void ModelCDRH3::init( ) {
@@ -115,7 +110,6 @@ void ModelCDRH3::set_default() {
 }
 
 
-
 void ModelCDRH3::set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ) {
 	lowres_scorefxn_ = lowres_scorefxn->clone();
 }
@@ -126,11 +120,9 @@ void ModelCDRH3::set_task_factory(pack::task::TaskFactoryCOP tf) {
 }
 
 
-
 void ModelCDRH3::turn_off_H3_filter() {
 	h3_perturb_ccd_build_->turn_off_H3_filter();
 }
-
 
 
 void ModelCDRH3::apply( pose::Pose & pose_in ) {
@@ -280,8 +272,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	TR <<  "Finished Modeling Centroid CDR H3 loop" << std::endl;
 
 
-
-
 	//#############################  //JQX: this should not be here
 	if( is_camelid_ ) {
 		//RefineCDRH1Centroid refine_cdr_centroid( ab_info_->get_CDR_loop(h1) );
@@ -290,14 +280,11 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	//#############################
 
 
-
 	TR << "Finished applying CDR H3 modeler" << std::endl;
 
 
 	return;
 } // ModelCDRH3::apply()
-
-
 
 
 std::string ModelCDRH3::get_name() const {
@@ -310,12 +297,7 @@ std::string ModelCDRH3::get_name() const {
 //}
 
 
-
-
-
-
 } // namespace antibody
 } // namespace protocols
-
 
 

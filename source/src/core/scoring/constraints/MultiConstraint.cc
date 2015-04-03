@@ -28,7 +28,7 @@ namespace scoring {
 namespace constraints {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of ?????? (Please someone finish this)
+/// @details read definition of a multiconstraint. Since a MultiConstraint is essentially a vector of ?????? (Please someone finish this)
 void
 MultiConstraint::read_def(
 	std::istream& data,

@@ -29,9 +29,6 @@
 #include <basic/Tracer.hh>
 
 
-
-
-
 static thread_local basic::Tracer TR( "protocols.metal_interface.ZincSiteFinder" );
 
 typedef numeric::xyzVector<core::Real> point;
@@ -71,7 +68,7 @@ ZincSiteFinder::check_for_parse_error() { //allows pose to be skipped if metal s
 }
 
 
-///@details First finds zinc, then iterates through protein residues until a Cys/His/Asp/Glu sidechain atom (S, N, O) is within 3 Angstroms of the zinc.  Upon finding this residue, it appends the vector of MetalSiteResidue objects.
+/// @details First finds zinc, then iterates through protein residues until a Cys/His/Asp/Glu sidechain atom (S, N, O) is within 3 Angstroms of the zinc.  Upon finding this residue, it appends the vector of MetalSiteResidue objects.
 
 utility::vector1< protocols::metal_interface::MetalSiteResidueOP >
 ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
@@ -286,7 +283,6 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 
   return msr_;
 }//find_zinc_site
-
 
 
 }//namespace metal_interface

@@ -10,34 +10,26 @@
 /// @author Aroop Sircar ( aroopsircar@yahoo.com )
 
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragData.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/fragment/FragID.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
@@ -50,8 +42,6 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -62,16 +52,12 @@
 using namespace ObjexxFCL::format;
 
 #include <protocols/jd2/ScoreMap.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/antibody_legacy/AntibodyClass.hh>
 #include <protocols/antibody_legacy/AntibodyModeler.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
 //#include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -455,11 +441,10 @@ AntibodyModeler::setup_simple_fold_tree(
 } // setup_simple_fold_tree
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin relax_cdrs
 ///
 /// @brief relaxes all cdrs simultaneously
 ///
-/// @detailed based on the all_cdrs loop definiton, minimizes only
+/// @details based on the all_cdrs loop definiton, minimizes only
 ///           those regions. A standard dfpmin is utilized with the
 ///           given score function and chain -break and chain-overlap
 ///           set. The allow_bb/chi arrays are changed accordingly but
@@ -477,9 +462,8 @@ AntibodyModeler::setup_simple_fold_tree(
 ///
 /// @references
 ///
-/// @authors Aroop 02/15/2010
+/// @author Aroop 02/15/2010
 ///
-/// @last_modified 02/15/2010
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyModeler::relax_cdrs() {
@@ -553,11 +537,10 @@ AntibodyModeler::relax_cdrs() {
 } // relax_cdrs
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin all_cdr_VL_VH_fold_tree
 ///
 /// @brief change to all CDR and VL-VH dock fold tree
 ///
-/// @detailed
+/// @details
 ///
 /// @param[out]
 ///
@@ -569,9 +552,8 @@ AntibodyModeler::relax_cdrs() {
 ///
 /// @references
 ///
-/// @authors Aroop 07/13/2010
+/// @author Aroop 07/13/2010
 ///
-/// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyModeler::all_cdr_VL_VH_fold_tree(
@@ -651,12 +633,11 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 } // all_cdr_VL_VH_fold_tree
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin repulsive_ramp
 ///
 /// @brief ramping up the fullatom repulsive weight slowly to allow the
 ///        partners to relieve clashes and make way for each other
 ///
-/// @detailed This routine is specially targetted to the coupled
+/// @details This routine is specially targetted to the coupled
 ///           optimization of docking partners and the loop region.  The
 ///           loop modelling & all previous  steps  involve mainly
 ///           centroid  mode .On switching  on fullatom mode, one is bound
@@ -676,9 +657,8 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 ///
 /// @references
 ///
-/// @authors Aroop 07/13/2010
+/// @author Aroop 07/13/2010
 ///
-/// @last_modified 07/13/2010
 ///////////////////////////////////////////////////////////////////////////
 void
 AntibodyModeler::repulsive_ramp(
@@ -890,7 +870,6 @@ AntibodyModeler::snugfit_mcm_protocol(
 	tf_->push_back( TaskOperationCOP( new RestrictToInterface( rb_jump, loop_residues ) ) );
 
 
-
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial( new protocols::simple_moves::RotamerTrialsMover(
 	    pack_scorefxn, tf_ ) );
 
@@ -1071,7 +1050,6 @@ AntibodyModeler::display_constraint_residues() {
 
 	return;
 } // display_constraint_residues
-
 
 
 } // end antibody

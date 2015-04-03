@@ -24,5 +24,4 @@
 //Auto Headers
 
 
-
 #endif // INCLUDED_core_kinematics_DomainMap_HH

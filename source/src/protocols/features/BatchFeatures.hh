@@ -42,24 +42,24 @@ public:
 
 	virtual ~BatchFeatures();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session, core::Size batch_id) const;
 
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief return sql statements that setup helpful indices on the tables
+	/// @brief return sql statements that setup helpful indices on the tables
 	std::string
 	indices() const;
 
-	///@brief return sql statments that add indexes check invariants etc.
+	/// @brief return sql statments that add indexes check invariants etc.
 	//std::string cleanup() const;
 
 	core::Size

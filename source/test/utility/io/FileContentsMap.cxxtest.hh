@@ -72,7 +72,6 @@ public:
 	}
 
 
-
 	void test_FileContentsMap_refuse_file_failure() {
 		std::string fname = "utility/io/simple_input_file.txt";
 		utility::io::FileContentsMap fcm;

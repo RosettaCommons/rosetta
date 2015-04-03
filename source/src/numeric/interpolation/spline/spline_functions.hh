@@ -10,7 +10,7 @@
 /// @file   src/numeric/interpolation/spline_functions.hh
 /// @brief  Interpolation with cubic splines
 /// @author Will Sheffler
-///
+
 
 #ifndef INCLUDED_numeric_interpolation_spline_spline_functions_hh
 #define INCLUDED_numeric_interpolation_spline_spline_functions_hh
@@ -43,7 +43,6 @@ spline_interpolate(
  utility::vector1<Real> const & y2a,
  Real x, Real & y, Real & dy
 );
-
 
 
 } // end namespace spline

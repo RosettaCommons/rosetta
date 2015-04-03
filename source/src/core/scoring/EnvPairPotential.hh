@@ -21,7 +21,6 @@
 #include <core/scoring/EnvPairPotential.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Project headers
@@ -30,7 +29,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -149,7 +147,7 @@ class EnvPairPotential : public utility::pointer::ReferenceCount {
 public:
 	EnvPairPotential();
 
-	///
+
 	void
 	compute_centroid_environment(
 		pose::Pose & pose
@@ -158,7 +156,7 @@ public:
 	void
 	finalize( pose::Pose & pose ) const;
 
-	///
+
 	void
 	evaluate_env_and_cbeta_scores(
 		pose::Pose const & pose,
@@ -168,7 +166,7 @@ public:
 		Real & cb_score12
 	) const;
 
-	///
+
 	void
 	evaluate_pair_and_cenpack_score(
 		conformation::Residue const & rsd1,

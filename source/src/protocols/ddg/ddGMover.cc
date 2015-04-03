@@ -16,19 +16,14 @@
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <protocols/scoring/Interface.hh> //added ek for interface ddgs
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -48,7 +43,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/Func.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 
@@ -59,35 +53,23 @@
 #include <core/io/silent/BinarySilentStruct.hh>
 
 #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <ios>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //new includes for rotamer constraints
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -269,7 +251,7 @@ ddGMover::store_energies(
 		saved_weight = s.get_weight(atom_pair_cst);
 	}
 	s.set_weight( atom_pair_cst, (core::Real)0);
-	//
+
 
 	//all this to determine how many non-zero weights there are
 	int num_score_components = 0;

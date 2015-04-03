@@ -21,8 +21,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <iostream>
 #include <fstream>
 
 #include <utility/vector1.hh>

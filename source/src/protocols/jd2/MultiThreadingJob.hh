@@ -15,7 +15,6 @@
 
 //unit headers
 #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/InnerMultiThreadingJob.hh>
 #include <protocols/jd2/MultiThreadingJob.fwd.hh>
 
 //project headers

@@ -18,7 +18,6 @@
 
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/CavityBall.hh>
-// AUTO-REMOVED #include "core/scoring/packstat/SimplePDB_Atom.hh"
 
 #include <numeric/xyzVector.hh>
 

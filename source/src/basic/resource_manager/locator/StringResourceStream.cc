@@ -26,7 +26,7 @@ using std::string;
 using std::stringstream;
 using std::istream;
 
-///@detail This is private. The StringResourceStream shouldn't be copied
+/// @detail This is private. The StringResourceStream shouldn't be copied
 StringResourceStream::StringResourceStream(
 	StringResourceStream const & src
 ) :
@@ -34,7 +34,7 @@ StringResourceStream::StringResourceStream(
 	stream_()
 {}
 
-///@detail If you use this constructor be sure to set the string
+/// @detail If you use this constructor be sure to set the string
 ///before accessing the stream
 StringResourceStream::StringResourceStream() :
 	ResourceStream(),

@@ -14,15 +14,12 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/MembraneEnvEnergy.hh>
 #include <core/scoring/methods/MembraneEnvEnergyCreator.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 // Package headers
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -80,7 +77,6 @@ MembraneEnvEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 MembraneEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

@@ -24,10 +24,6 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/io/pdb/pose_io.hh> // pose_from_pdb
@@ -39,25 +35,15 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <devel/IntegratedLoop/LoopManager.hh>
-// AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
 // Auto-header: duplicate removed #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
 // Auto-header: duplicate removed #include <protocols/loops/looprelax_protocols.hh>
-// AUTO-REMOVED #include <protocols/loop_build/LoopBuild.hh>
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 //#include <protocols/frags/TorsionFragment.hh>
 
 #include <protocols/jobdist/Jobs.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/PDBSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
@@ -65,12 +51,10 @@
 #include "core/scoring/packstat/compute_sasa.hh"
 
 
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 static thread_local basic::Tracer TR( "apps.iterative_design" );
 
@@ -104,14 +88,11 @@ using utility::string_split;
 #include <core/import_pose/import_pose.hh>
 
 
-
-
 using namespace core;
 using namespace chemical;
 using namespace pack;
 using namespace scoring;
 using namespace protocols;
-
 
 
 // Job Distributor -> there is not many advantages at this point
@@ -126,8 +107,6 @@ using namespace protocols;
 */
 // Checkpoint Stuff
 // Iteration of perturbation-Design
-//
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +132,6 @@ main( int argc, char * argv [] )
 		Poses input_poses;
 
 
-
 		if ( option[ in::file::l ].user() ) {
 				Filenames listnames( option[ in::file::l ]().vector() );
 				for ( Filenames::const_iterator filename( listnames.begin() );
@@ -174,8 +152,6 @@ main( int argc, char * argv [] )
 				          << "to design a single pdb or a list of pdbs"
 				          << std::endl;
 			}
-
-
 
 
 		TR << "Reading Loop File" << '\n';
@@ -204,7 +180,6 @@ main( int argc, char * argv [] )
 			}
 
 
-
 		for ( Filenames::const_iterator filename( pdbnames.begin() );
 					filename != pdbnames.end(); ++filename ) {
 				std::cout << "Input pdb file " << *filename;
@@ -220,7 +195,6 @@ main( int argc, char * argv [] )
 				pose::Pose pose;
 				core::import_pose::pose_from_pdb( pose, *filename );
 				input_poses.push_back( pose );
-
 
 
 				std::cout << pdbprefix  <<std::endl;
@@ -264,7 +238,6 @@ main( int argc, char * argv [] )
 		mm.set_bb(false);
 
 
-
 		int pose_number = 0;
 
 		pose::Pose init_pose;
@@ -273,23 +246,14 @@ main( int argc, char * argv [] )
 		core::io::silent::SilentFileData sfd;
 
 
-
-
-
-
 		for ( Poses::const_iterator iter = input_poses.begin(); iter != input_poses.end(); ++iter)
 		{
-
-
 
 
 			std::string filename_init (pdb_prefix+ "_" + ObjexxFCL::right_string_of(pose_number,3,'0')+"_init");
 
 
-
-
 			TR << "***** Starting full-atom loop refinement protocol  ****" << std::endl;
-
 
 
 			nat_pose = *iter;
@@ -327,7 +291,6 @@ main( int argc, char * argv [] )
 				}//vector of loop residues
 
 
-
 			for ( int iter_res= 1; iter_res < (int)loop_residues.size(); ++iter_res  ){
 
 
@@ -345,8 +308,6 @@ main( int argc, char * argv [] )
 
 
 				}// vector of the neighbors
-
-
 
 
 			//clean redundancy on the neighbors vector
@@ -397,8 +358,6 @@ main( int argc, char * argv [] )
 				TR << "Residues after filtering "<< loops_nbr.size()<< std::endl;
 
 
-
-
 			if ( option [OptionKeys::loops::keep_natro ].user() ){
 				for (std::vector<Size>::iterator pos_loop= loop_residues.begin(); pos_loop != loop_residues.end(); ++pos_loop ){
 
@@ -415,9 +374,7 @@ main( int argc, char * argv [] )
 			}
 
 
-
 			for (Size iteration = 1 ; iteration <= refine_design_iterations ; ++iteration ) {
-
 
 
 				loops.auto_choose_cutpoints( init_pose );
@@ -457,8 +414,6 @@ main( int argc, char * argv [] )
 				core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( init_pose ));
 
 
-
-
 				for (core::Size j=0; j < loop_residues.size(); ++j ) {
 
 						TR <<"Loop to design " << loop_residues[j] << std::endl;
@@ -473,8 +428,6 @@ main( int argc, char * argv [] )
 					}//Design loops
 
 
-
-
 				for (core::Size j=0; j < loops_nbr.size(); ++j ) {
 
 						TR <<"neighbors to design " << loops_nbr[j] << std::endl;
@@ -486,7 +439,6 @@ main( int argc, char * argv [] )
 						mm.set_chi(loops_nbr[j],true);
 
 				}//Designing Neighbors
-
 
 
 			task->restrict_to_residues( residues_to_mutate );
@@ -506,7 +458,6 @@ main( int argc, char * argv [] )
 			protocols::loops::remove_cutpoint_variants( init_pose );
 
 			std::string filename_ref_des (pdb_prefix +"_"+ ObjexxFCL::right_string_of(pose_number,3,'0')+"_"+ObjexxFCL::right_string_of( iteration,3,'0') + "_ref_des");
-
 
 
 			(*scorefxn)(init_pose);
@@ -535,7 +486,6 @@ main( int argc, char * argv [] )
 			else {
 				pdb_silent_file = "test";
 			}
-
 
 
 			sfd.write_all(pdb_silent_file);

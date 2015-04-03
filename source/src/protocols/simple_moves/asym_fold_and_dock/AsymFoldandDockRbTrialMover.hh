@@ -19,7 +19,6 @@
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>

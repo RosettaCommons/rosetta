@@ -19,31 +19,20 @@
 //project Headers
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 #include <core/scoring/EnergyMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 
 
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <basic/options/option.hh>
 // Utility Headers
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Numeric Headers
 
@@ -53,12 +42,9 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <devel/DenovoProteinDesign/CreateStartingStructureMover.hh>
 #include <devel/denovo_protein_design/DesignRelaxMover.hh>
 
 //Auto Headers
@@ -68,7 +54,6 @@
 
 
 // Auto-header: duplicate removed #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 int
 main( int argc, char * argv [] )

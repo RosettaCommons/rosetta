@@ -329,7 +329,7 @@ MinimizeBackbone::create_fold_tree_with_ligand_jumps_from_attach_pts(
 	return new_fold_tree;
 }
 
-///@detail: residues that are near the interface residues will be allowed to move with restraint
+/// @detail: residues that are near the interface residues will be allowed to move with restraint
 void MinimizeBackbone::restrain_protein_Calphas(
 		ligand_options::Interface const & interface,
 		core::pose::Pose & pose

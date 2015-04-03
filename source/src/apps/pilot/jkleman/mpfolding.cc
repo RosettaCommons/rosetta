@@ -469,35 +469,6 @@ MPFoldingMover::apply( Pose & pose ) {
 	
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	
 }
 

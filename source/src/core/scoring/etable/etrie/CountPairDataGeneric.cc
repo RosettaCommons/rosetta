@@ -15,13 +15,11 @@
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/assert.hh>
 
 // STL Headers
 #include <iostream>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

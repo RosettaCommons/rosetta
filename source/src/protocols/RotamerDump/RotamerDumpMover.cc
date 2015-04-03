@@ -13,12 +13,10 @@
 #include <typeinfo>
 
 #include <protocols/RotamerDump/RotamerDumpMover.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -30,8 +28,6 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rotamerdump.OptionKeys.gen.hh>
@@ -115,7 +111,7 @@ void RotamerDumpMover::apply(core::pose::Pose & pose)
 
 }
 
-/// @detailed appends a line to the job in the form one_body num_items (resno, resn, rotno, energy) for each 1 body energy in the IG
+/// @details appends a line to the job in the form one_body num_items (resno, resn, rotno, energy) for each 1 body energy in the IG
 std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig ,
 														core::pack::rotamer_set::RotamerSetsOP rotamer_sets)
 {
@@ -151,7 +147,7 @@ std::string RotamerDumpMover::get_onebody_energy_table(core::pack::interaction_g
 	return table_type+" "+utility::to_string<core::Size>(elements)+" "+data;
 }
 
-/// @detailed appends a line to the job in the form two_body num_items (nres1,nrot1,resn1,nres2,nrot2,resn2,energy) for each 2 body energy in the IG
+/// @details appends a line to the job in the form two_body num_items (nres1,nrot1,resn1,nres2,nrot2,resn2,energy) for each 2 body energy in the IG
 std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_graph::InteractionGraphBaseOP ig,
 														core::pack::rotamer_set::RotamerSetsOP rotamer_sets)
 {
@@ -173,12 +169,10 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 		std::string residue_1_id_string = utility::to_string<core::Size>(residue_1_id);
 
 
-
 		for(core::Size node_2_id = node_1_id+2; node_2_id <= ig_size; ++node_2_id)
 		{
 			core::Size residue_2_id = rotamer_sets->moltenres_2_resid(node_2_id);
 			std::string residue_2_id_string = utility::to_string<core::Size>(residue_2_id);
-
 
 
 			core::Size const num_states_1(ig->get_num_states_for_node(node_1_id));
@@ -217,7 +211,7 @@ std::string RotamerDumpMover::get_twobody_energy_table(core::pack::interaction_g
 	return table_type+" "+utility::to_string<core::Size>(elements)+" "+data;
 }
 
-/// @detailed appends a line to the job in the form xyz_coord num_items xyz_coord (resno,rotno,resn,atomName,x,y,z) for each atom in the IG
+/// @details appends a line to the job in the form xyz_coord num_items xyz_coord (resno,rotno,resn,atomName,x,y,z) for each atom in the IG
 std::string RotamerDumpMover::get_xyz_coord_table(core::pack::rotamer_set::RotamerSetsOP rotamer_sets)
 {
 	std::string table_type("xyz_coord");
@@ -256,7 +250,7 @@ std::string RotamerDumpMover::get_xyz_coord_table(core::pack::rotamer_set::Rotam
 	return table_type+" "+utility::to_string<core::Size>(elements)+" "+data;
 }
 
-/// @detailed appends a line to the job in the form annealer_results num_items (nres,selected_nres, selected_resn) for each atom in the IG
+/// @details appends a line to the job in the form annealer_results num_items (nres,selected_nres, selected_resn) for each atom in the IG
 std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_graph::InteractionGraphBaseOP ig, core::pack::rotamer_set::RotamerSetsOP rotamer_sets,core::pose::Pose & pose , core::pack::task::PackerTaskCOP task)
 {
 	std::string table_type("annealer_results");

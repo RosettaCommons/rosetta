@@ -53,9 +53,7 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-
 static thread_local basic::Tracer TR( "thread_sidechains" );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

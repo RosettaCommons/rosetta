@@ -114,7 +114,7 @@ void FingerprintBase::print_to_pdb(std::string const & output_pdbname) const {
 		std::string code_for_insertion_of_residues = " ";
 		std::string gap3 = "   ";
 
-	//
+
 		out_stream<<"HETATM   "<<std::setw(2)<<1<<"  C   COM X   0    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.x()+translation.x()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.y()+translation.y()<<std::setw(8)<<std::fixed<<std::setprecision(3)<<CoM_.z()+translation.z()<<std::endl;
 		core::Size curr_origin_index = 1;
 		for (utility::vector1<numeric::xyzVector<core::Real> >::const_iterator i_mori = multi_origin_list_.begin(); i_mori != multi_origin_list_.end(); ++i_mori, ++curr_origin_index) {
@@ -2375,7 +2375,6 @@ core::Real PlaidFingerprint::rmsd(core::pose::Pose const & original_pose, core::
 //}
 
 
-
 // note: not used, also deprecated because we now express all angles in radians
 //void correct_phi_psi( core::Real & phi, core::Real & psi ){
 //	while ( phi < 0. ) {
@@ -2392,7 +2391,6 @@ core::Real PlaidFingerprint::rmsd(core::pose::Pose const & original_pose, core::
 //	while ( psi < -180. ) psi += 360.;
 //	while ( psi > 180. ) psi -= 360.;
 //}
-
 
 
 /* DEFINITIONS for the following code:

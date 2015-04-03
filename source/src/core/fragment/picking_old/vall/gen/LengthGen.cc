@@ -17,7 +17,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace fragment {
 namespace picking_old {
@@ -80,7 +79,6 @@ LengthGen::Extent LengthGen::operator ()( VallResidueIterator extent_begin, Vall
 
 	return extent;
 }
-
 
 
 } // namespace gen

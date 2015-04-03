@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_SewingDesigner_FWD_HH
 #define INCLUDED_SewingDesigner_FWD_HH
 

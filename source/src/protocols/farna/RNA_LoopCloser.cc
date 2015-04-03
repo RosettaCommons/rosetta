@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_LoopCloser
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/farna/RNA_LoopCloser.hh>
@@ -88,7 +88,6 @@ RNA_LoopCloser::RNA_LoopCloser():
 {
 	Mover::type("RNA_LoopCloser");
 }
-
 
 
 ////////////////////////////////////////////
@@ -570,7 +569,6 @@ RNA_LoopCloser::setup_variants_at_extra_cutpoints( pose::Pose & pose, utility::v
 
 	} // n
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////

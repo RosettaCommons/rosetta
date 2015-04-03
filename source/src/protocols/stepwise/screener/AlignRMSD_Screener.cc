@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/AlignRMSD_Screener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

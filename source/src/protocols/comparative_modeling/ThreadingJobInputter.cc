@@ -31,9 +31,7 @@
 
 ///Project headers
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
@@ -41,7 +39,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 #include <protocols/comparative_modeling/ExtraThreadingMover.hh>
 

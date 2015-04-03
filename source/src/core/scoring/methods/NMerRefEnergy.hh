@@ -46,13 +46,13 @@ public:
 
 public:
 
-	///
+
 	NMerRefEnergy();
 
-	///
+
 	NMerRefEnergy( std::map< std::string, core::Real > const & nmer_ref_energies_in );
 
-	///
+
 	virtual ~NMerRefEnergy();
 
 	virtual
@@ -63,7 +63,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -75,7 +75,7 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
 
-	///
+
 	virtual
 	Real
 	eval_dof_derivative(

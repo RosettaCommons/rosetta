@@ -57,7 +57,7 @@ namespace conformation {
 namespace symmetry {
 
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T>
 void
 comma_strings_to_vector_map(
@@ -109,7 +109,7 @@ comma_strings_to_vector_map(
 }
 
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T, class U>
 void
 comma_strings_to_pair_map(
@@ -152,7 +152,7 @@ comma_strings_to_pair_map(
 	}
 }
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T>
 void
 comma_strings_to_map(
@@ -193,7 +193,7 @@ comma_strings_to_map(
 }
 
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S>
 void
 comma_strings_to_vector(
@@ -274,7 +274,7 @@ comma_strings_to_map(
 	}
 }
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T>
 void vector_map_to_comma_strings(
 	std::ostream & out,
@@ -293,7 +293,7 @@ void vector_map_to_comma_strings(
 }
 
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T>
 void map_to_comma_strings(
 	std::ostream & out,
@@ -307,7 +307,7 @@ void map_to_comma_strings(
 	}
 }
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S, class T, class U>
 void pair_map_to_comma_strings(
 	std::ostream & out,
@@ -322,7 +322,7 @@ void pair_map_to_comma_strings(
 }
 
 
-///@details  helper function for symminfo serialization
+/// @details  helper function for symminfo serialization
 template<class S>
 void
 vector_to_comma_strings(
@@ -553,7 +553,7 @@ guess_torsion_type_of_dof_id( id::DOF_ID const & id, Conformation const & conf )
 	}
 }
 
-//
+
 void
 SymmetryInfo::update_score_multiply_factor()
 {
@@ -1583,7 +1583,6 @@ SymmetryInfo::get_dof_derivative_weight( DOF_ID const & id, Conformation const &
 }
 
 
-///
 bool
 SymmetryInfo::torsion_is_independent( TorsionID const & id ) const
 {

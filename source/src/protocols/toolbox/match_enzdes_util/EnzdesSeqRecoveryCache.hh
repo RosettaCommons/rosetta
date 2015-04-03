@@ -20,8 +20,6 @@
 //package headers
 
 //project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/types.hh>
 
 //utility headers

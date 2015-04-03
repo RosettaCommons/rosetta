@@ -16,7 +16,6 @@
 #include <protocols/match/output/PoseInserter.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers

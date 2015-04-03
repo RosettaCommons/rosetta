@@ -9,14 +9,13 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  MultiResolutionProtocol
 ///   if your protocol wants to switch between full-atom and centroid representation derive it from this one
 ///   functionality to copy side-chains for fixed residues from an initial fa-pose to an  post-centroid fa-pose is provided
 ///
 ///
 /// @author Oliver Lange
-///
 
 
 #ifndef INCLUDED_protocols_abinitio_ResolutionSwitcher_hh
@@ -68,23 +67,23 @@ public:
 
 
 private:
-	///@brief true if apply() method is called on centroid pose
+	/// @brief true if apply() method is called on centroid pose
 	bool apply_to_centroid_;
 
 
-	///@brief init_pose ( before the sampling started ) -- used to steal sidechains if fullatom
+	/// @brief init_pose ( before the sampling started ) -- used to steal sidechains if fullatom
 	core::pose::Pose init_pose_;
 
-	///@brief init_pose is full-atom
+	/// @brief init_pose is full-atom
 	bool init_fa_;
 
-	///@brief true if we want the start_pose() to be centroid
+	/// @brief true if we want the start_pose() to be centroid
 	bool start_centroid_;
 
-	///@brief full-atom scorefunction for repacking
+	/// @brief full-atom scorefunction for repacking
 	core::scoring::ScoreFunctionOP scorefxn_fa_;
 
-	///@brief repack sidechains at moved positions and x positions to left and right
+	/// @brief repack sidechains at moved positions and x positions to left and right
 	Size repack_buffer_;
 
 	bool map_cst_from_centroid_to_fa_;

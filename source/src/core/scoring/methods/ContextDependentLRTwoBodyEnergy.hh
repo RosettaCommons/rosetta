@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
@@ -40,7 +39,7 @@ public:
 
 	virtual ~ContextDependentLRTwoBodyEnergy();
 
-	///
+
 	EnergyMethodType
 	method_type() const
 	{

@@ -15,14 +15,11 @@
 #include <protocols/match/downstream/ScoringSecMatchRPE.hh>
 
 // Package headers
-// AUTO-REMOVED #include <stdio.h>
 
 // Project headers
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -30,14 +27,10 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // for debug usage
-// AUTO-REMOVED #include <protocols/match/Matcher.hh>
 #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -48,13 +41,9 @@
 #include <list>
 
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <time.h>
-// AUTO-REMOVED #include <stdlib.h>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <basic/Tracer.hh>
 
 #if (defined _WIN32) && (!defined WIN_PYROSETTA)
-// AUTO-REMOVED #include <windows.h>
 
 #include <utility/vector1.hh>
 
@@ -441,7 +430,6 @@ ScoringSecMatchRPE::eval_cd_2b_residues(
 
 	return true;
 }
-
 
 
 core::scoring::ScoreFunctionCOP

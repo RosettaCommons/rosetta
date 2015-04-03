@@ -15,12 +15,10 @@
 #define INCLUDED_protocols_ligand_docking_HeavyAtomFilter_hh
 
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <list>
 
 #include <utility/vector1.hh>
 

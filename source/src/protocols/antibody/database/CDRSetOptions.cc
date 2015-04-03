@@ -16,7 +16,6 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 
-
 namespace protocols {
 namespace antibody {
 

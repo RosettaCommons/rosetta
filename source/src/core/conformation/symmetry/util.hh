@@ -105,5 +105,4 @@ show_foldtree(
 } // core
 
 
-
 #endif

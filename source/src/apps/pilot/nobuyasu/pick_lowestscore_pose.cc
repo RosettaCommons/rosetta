@@ -39,7 +39,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 static thread_local basic::Tracer TR( "pick_lowestscore_pose" );
 
 typedef core::Size Size;
@@ -150,7 +149,7 @@ main( int argc, char * argv [] )
 	out2 << "binsize=" << rmsbin << std::endl;
 	out2 << "rms " << "decoynum " << "rms_lowestscore_pose " << "score " << "tag " << "output" << std::endl;
 
-	//
+
 	for( Size i=1; i<=maxbin; i++ ){
 		std::multimap< Real, String > data = datamap[ i ];
 		std::multimap< Real, String >::const_iterator ite = data.begin();

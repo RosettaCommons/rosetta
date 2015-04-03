@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/sasa/SasaCalc.hh>
 

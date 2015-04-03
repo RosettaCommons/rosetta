@@ -21,7 +21,6 @@
 // Package Headers
 #include <core/scoring/ScoreType.hh>
 
-// AUTO-REMOVED #include <string>
 #include <sstream>
 
 #include <core/types.hh>
@@ -47,7 +46,7 @@ public:
 	typedef Real* iterator;
 
 public:
-	///@brief default constructor, initializes the energies to 0
+	/// @brief default constructor, initializes the energies to 0
 	EMapVector()
 	{
 		clear();
@@ -407,7 +406,6 @@ operator << ( std::ostream & ost, EMapVector const &  emap )
 		}
 	return ost;
 }
-
 
 
 } // namespace scoring

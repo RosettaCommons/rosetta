@@ -31,7 +31,6 @@
 #include <protocols/viewer/viewers.hh>
 
 
-
 // JQX added below two lines for forcing the code
 // to use the constant seed in production mode
 // Sergey believes that in production run,
@@ -39,7 +38,6 @@
 // Please see the details in the Jump.cc file
 //#include <devel/init.hh>     //JQX
 //#include <numeric/random/random.hh> //JQX
-
 
 
 ///////////////////////////////////////////////////////////////

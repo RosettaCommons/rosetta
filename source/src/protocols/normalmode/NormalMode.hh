@@ -9,7 +9,7 @@
 
 /// @file    protocols/normalmode/NormalMode.hh
 /// @brief   initialization for NormalMode
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 #ifndef INCLUDED_protocols_normalmode_NormalMode_hh

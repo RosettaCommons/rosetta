@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -63,14 +63,14 @@ public:
 
 	virtual void generate_claims( claims::DofClaims& );
 
-	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
+	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	//virtual DofClaims finalize_claims( DofClaims& );
 
 	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
 	virtual bool accept_declined_claim( claims::DofClaim const& was_declined );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
@@ -102,8 +102,6 @@ public:
 	core::Size current_offset(){
 		return current_offset_;
 	}*/
-
-
 
 
 protected:
@@ -138,15 +136,15 @@ private:
 
 	claims::DofClaim::ClaimRight claim_right_; /*default CAN_INIT */
 
-	///@brief regions that can be used for fragment insertions
+	/// @brief regions that can be used for fragment insertions
 	loops::Loops region_;
 
-	///@brief if non-empty this claimer operates only on the sequences with these labels...
+	/// @brief if non-empty this claimer operates only on the sequences with these labels...
 	/// create std::set< Size > with residue numbers by get_sequence_region();
 	utility::vector1< std::string > active_sequence_labels_;
 
 	/*
-	///@brief Stores offset of current FragmentClaimer (based on global sequence)
+	/// @brief Stores offset of current FragmentClaimer (based on global sequence)
 	core::Size current_offset_;
 	*/
 

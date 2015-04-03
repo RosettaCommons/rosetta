@@ -167,11 +167,10 @@ interpolate_2d_func_of_angles(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin interpolate_get_angle_bins
 ///
 /// @brief get bin information for a periodic value w/ periodic bins
 ///
-/// @detailed
+/// @details
 ///
 ///     for 'x', an angle in degrees, and angular bins of width
 ///     'binrange' aligned to start bin 1 at a value of 0. degrees, find
@@ -191,9 +190,8 @@ interpolate_2d_func_of_angles(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -217,7 +215,7 @@ interpolate_get_angle_bins(
 //     ...this solves for the lowest of the two bracketing bin averages,
 //       rather  than the nearest bin average, and is thus only
 //       appropriate for interpolation
-//
+
 
 	double const xbin_real = 1.0 + ObjexxFCL::mod(
 	 ObjexxFCL::mod( (x-(0.5*binrange))/binrange, static_cast< double >(nbins) ) + nbins,
@@ -252,11 +250,10 @@ interpolate_get_angle_bins(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin interpolate_bilinear
 ///
 /// @brief get bilinear interpolate of a 2d periodic function
 ///
-/// @detailed
+/// @details
 ///
 ///     Value and derivatives of bilinear interpolation on a 2d binned
 ///     periodic function, represented as a 2d array.  (see Num. Recipes
@@ -295,9 +292,8 @@ interpolate_get_angle_bins(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -373,11 +369,10 @@ interpolate_trilinear(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin interpolate_2d_func_of_angles
 ///
 /// @brief get bilinear interpolate of a 2d function with degree angle arguments
 ///
-/// @detailed
+/// @details
 ///
 ///     Value and derivatives of bilinear interpolation on a 2d function
 ///     with degree angle arguments represented by a 2d array with binned
@@ -403,9 +398,8 @@ interpolate_trilinear(
 ///
 /// @references
 ///
-/// @authors ctsa 8-19-03
+/// @author ctsa 8-19-03
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 inline
 void

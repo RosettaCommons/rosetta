@@ -70,7 +70,6 @@ public:
 } // namespace vector
 
 
-
 class BitVectorTests : public CxxTest::TestSuite {
 
 	public:

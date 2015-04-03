@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_protocols_features_SmotifFeature_fwd_hh
 #define INCLUDED_protocols_features_SmotifFeature_fwd_hh
 

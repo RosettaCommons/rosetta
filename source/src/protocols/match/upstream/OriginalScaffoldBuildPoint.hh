@@ -19,7 +19,6 @@
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamBuilder.fwd.hh>
 

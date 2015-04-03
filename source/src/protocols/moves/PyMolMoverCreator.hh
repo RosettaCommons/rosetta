@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/IfMoverIfMoverCreator.hh
-///@brief This class will create instances of PyMolMover for the MoverFactory
-///@author P. Douglas Renfrew (renfrew@nyu.edu)
+/// @file protocols/moves/IfMoverIfMoverCreator.hh
+/// @brief This class will create instances of PyMolMover for the MoverFactory
+/// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 #ifndef INCLUDED_protocols_moves_PyMolMoverCreator_hh
 #define INCLUDED_protocols_moves_PyMolMoverCreator_hh

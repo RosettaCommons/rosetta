@@ -252,7 +252,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	}
 
 
-
 	// Centroid Loop Modeling {{{1
 	///////////////////////////////////////////////////////////////////////////////////////
 	////
@@ -476,7 +475,6 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		}
 
 
-
 		// Add coordinate constraints to non-loop regions if desired
 		core::Real constrain_rigid_segments_weight = option[ OptionKeys::loops::constrain_rigid_segments ]();
 		if( constrain_rigid_segments_weight > 0.0 ){
@@ -543,11 +541,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		}
 
 
-
-
 		// ----------------------------------------------------------
-
-
 
 
 		// do the same (again) for fit-to-density

@@ -12,7 +12,6 @@
 #include <protocols/frags/heap.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/FArray1A.hh>
 
 //Auto using namespaces
@@ -59,12 +58,11 @@ namespace frags {
 //------------------------------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_init
 ///
 /// @brief
 /// sets up an empty heap and stores the dimensioned size
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? -
 /// @param  coheap - [in/out]? -
@@ -78,9 +76,8 @@ namespace frags {
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_init(
@@ -97,13 +94,12 @@ heap_init(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_extract
 ///
 /// @brief
 /// modifes heap and last_val
 /// return val and err.
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? - convert to zero offset matrix
 /// @param  coheap - [in/out]? -
@@ -119,9 +115,8 @@ heap_init(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_extract(
@@ -160,13 +155,12 @@ heap_extract(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_insert
 ///
 /// @brief
 /// modifes heap and last_dummy, inserts val, returns err
 /// requires heap_max to be previously set via heap_init
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? - convert to zero offset matrix
 /// @param  coheap - [in/out]? -
@@ -182,9 +176,8 @@ heap_extract(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_insert(
@@ -214,11 +207,10 @@ heap_insert(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_replace
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? - convert to zero offset matrix
 /// @param  coheap - [in/out]? -
@@ -233,9 +225,8 @@ heap_insert(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_replace(
@@ -259,11 +250,10 @@ heap_replace(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_down
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? - convert to zero offset matrix
 /// @param  coheap - [in/out]? -
@@ -277,9 +267,8 @@ heap_replace(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_down(
@@ -333,11 +322,10 @@ heap_down(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin heap_up
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param  heap - [in/out]? - convert to zero offset matrix
 /// @param  coheap - [in/out]? -
@@ -351,9 +339,8 @@ heap_down(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 heap_up(

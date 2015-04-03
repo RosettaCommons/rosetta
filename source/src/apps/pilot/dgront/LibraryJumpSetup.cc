@@ -16,7 +16,6 @@
 #include "LibraryJumpSetup.hh"
 
 
-
 // Unit Headers
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/util.hh>
@@ -34,7 +33,6 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/JumpingFrame.hh>
 #include <core/fragment/OrderedFragSet.hh>
-
 
 
 // ObjexxFCL Headers

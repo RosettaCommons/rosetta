@@ -37,14 +37,12 @@
 #include <basic/prof.hh>
 
 //for DebugArchive
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 
 //for setup_default_evaluators
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //#include <core/scoring/ResidualDipolarCoupling.hh>
@@ -127,7 +125,7 @@ bool EvaluatedArchive::add_structure(
 	return added;
 }
 
-///@detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
+/// @detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
 void EvaluatedArchive::score( pose::Pose & pose ) const {
 	scorefxn()( pose );
 }
@@ -183,9 +181,7 @@ void EvaluatedArchive::read_structures(
 }
 
 
-
-
-///@details evaluate decoy... if non-local evaluation just copy silent-struct
+/// @details evaluate decoy... if non-local evaluation just copy silent-struct
 core::io::silent::SilentStructOP
 EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss ) const {
 	start_evaluation_timer();
@@ -233,7 +229,7 @@ EvaluatedArchive::evaluate_silent_struct( core::io::silent::SilentStructOP iss )
 
 }
 
-///@detail evaluate a pose ... store info in iss (and return the same for convenience )
+/// @detail evaluate a pose ... store info in iss (and return the same for convenience )
 core::io::silent::SilentStructOP
 EvaluatedArchive::evaluate_pose( core::io::silent::SilentStructOP iss, core::pose::Pose& pose ) const {
 	tr.Trace << "evaluate decoy " << iss->decoy_tag() << std::endl;
@@ -257,7 +253,7 @@ EvaluatedArchive::evaluate_pose( core::io::silent::SilentStructOP iss, core::pos
 	return iss;
 }
 
-///@detail compute the score of an evaluated decoy
+/// @detail compute the score of an evaluated decoy
 Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 
 	///are cached scores clean ?
@@ -306,7 +302,7 @@ void EvaluatedArchive::save_to_file( std::string suffix ) {
 	Parent::save_to_file( suffix );
 }
 
-///@detail restore archive and sort
+/// @detail restore archive and sort
 bool EvaluatedArchive::restore_from_file() {
 	bool b_have_restored = Parent::restore_from_file();
 	sort();
@@ -332,7 +328,7 @@ void EvaluatedArchive::sort() {
 // --------------------------- end sort ------------------------------
 
 
-///@detail rescore and sort archive
+/// @detail rescore and sort archive
 void EvaluatedArchive::rescore() {
 	tr.Debug << "rescore " << name() << " decoys " << std::endl;
 	tr.Info << "structures are rescored with the following weights: " << std::endl;

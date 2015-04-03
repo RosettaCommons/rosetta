@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief stupid test file for visual studio c++
-/// @detailed
+/// @details
 
 #ifndef INCLUDED_protocols_abinitio_vs_test_hh
 #define INCLUDED_protocols_abinitio_vs_test_hh

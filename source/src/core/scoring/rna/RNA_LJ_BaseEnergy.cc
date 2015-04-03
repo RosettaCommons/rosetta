@@ -115,7 +115,7 @@ RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( RNA_LJ_BaseEnergy const & src ):
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 RNA_LJ_BaseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -126,7 +126,7 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 ) const
 {
 
-	//
+
 	// Currently only works for RNA bases!!!
 	// Could easily make it more general by checking for atoms that are *aromatic*
 	// This information could be kept in the Residue (and ResidueType) class, e.g., is_aromatic( atom_index ).
@@ -329,8 +329,6 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////////////////
 // hacky hacky.
 Real
@@ -419,6 +417,5 @@ RNA_LJ_BaseEnergy::version() const
 } //rna
 } //scoring
 } //core
-
 
 

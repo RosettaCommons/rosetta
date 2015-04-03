@@ -24,15 +24,11 @@
 
 #include <basic/datacache/CacheableData.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1_bool.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-
 
 
 namespace core {
@@ -102,9 +98,7 @@ private:
 };
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 ////////////////////////
@@ -156,13 +150,13 @@ class SmoothEnvPairPotential : public utility::pointer::ReferenceCount {
 public:
 	SmoothEnvPairPotential();
 
-	///
+
 	void
 	compute_centroid_environment(
 		pose::Pose & pose
 	) const;
 
-	///
+
 	void
 	compute_dcentroid_environment(
 		pose::Pose & pose
@@ -171,7 +165,7 @@ public:
 	void
 	finalize( pose::Pose & pose ) const;
 
-	///
+
 	void
 	evaluate_env_and_cbeta_scores(
 		pose::Pose const & pose,
@@ -181,7 +175,7 @@ public:
 		Real & cb_score12
 	) const;
 
-	///
+
 	void
 	evaluate_pair_and_cenpack_score(
 		conformation::Residue const & rsd1,
@@ -191,7 +185,7 @@ public:
 		Real & cenpack_contribution
 	) const;
 
-	///
+
 	void
 	evaluate_env_and_cbeta_deriv(
 		pose::Pose const & pose,
@@ -201,7 +195,7 @@ public:
 		numeric::xyzVector<Real> & d_cb_score12
 	) const;
 
-	///
+
 	void
 	evaluate_pair_and_cenpack_deriv(
 		conformation::Residue const & rsd1,

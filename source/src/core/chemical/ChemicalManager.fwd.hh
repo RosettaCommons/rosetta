@@ -19,8 +19,6 @@
 // Package headers
 
 // C++
-// Commented by inclean daemon #include <map>
-// Commented by inclean daemon #include <string>
 #include <string>
 
 namespace core {

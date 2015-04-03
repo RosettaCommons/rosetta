@@ -52,7 +52,6 @@ RNA_BulgeEnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// ctor
 RNA_BulgeEnergy::RNA_BulgeEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_BulgeEnergyCreator ) ),
@@ -94,7 +93,6 @@ RNA_BulgeEnergy::residue_energy(
 	}
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -139,7 +137,6 @@ RNA_BulgeEnergy::version() const
 {
 	return 2; // Adding full_model_info.
 }
-
 
 
 } //rna

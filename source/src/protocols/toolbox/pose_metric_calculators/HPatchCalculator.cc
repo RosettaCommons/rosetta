@@ -25,7 +25,6 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <utility/assert.hh>
 #include <iostream>

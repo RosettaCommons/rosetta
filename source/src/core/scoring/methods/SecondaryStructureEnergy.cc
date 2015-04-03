@@ -29,10 +29,7 @@
 #include <utility/vector1.hh>
 
 
-
-
 // Utility headers
-
 
 
 // C++
@@ -90,7 +87,6 @@ SecondaryStructureEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 SecondaryStructureEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -123,7 +119,6 @@ SecondaryStructureEnergy::finalize_total_energy(
 }
 
 
-
 /// @brief SecondaryStructureEnergy distance cutoff
 Distance
 SecondaryStructureEnergy::atomic_interaction_cutoff() const
@@ -142,7 +137,6 @@ SecondaryStructureEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 }

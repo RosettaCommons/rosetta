@@ -1144,9 +1144,6 @@ output_local_minima(
 }
 
 
-
-
-
 void
 sweep_params_from_match_constraint_file(
 	utility::sql_database::sessionOP db_session,

@@ -16,7 +16,6 @@
 //core library
 
 
-
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>

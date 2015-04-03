@@ -20,7 +20,6 @@
 #include <core/sequence/SequenceAlignment.hh>
 
 //project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <protocols/jd2/Parser.fwd.hh> //for friendship
 
@@ -30,7 +29,6 @@
 
 //C++ headers
 #include <string>
-// AUTO-REMOVED #include <list>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
@@ -39,10 +37,10 @@
 namespace protocols {
 namespace comparative_modeling {
 
-///@details The InnerThreadingJob class is responsible for knowing input requirements for a given job - how many nstruct, and what the input is.  InnerThreadingJobs are relatively heavy; there is no need to duplicate a series of InnerThreadingJobs for each index into nstruct.  The companion ThreadingJob class handles the nstruct index and has a pointer to an InnerThreadingJob (which is shared across many ThreadingJobs).  InnerThreadingJob also holds a PoseOP to maintain the unmodified input pose for that job.
+/// @details The InnerThreadingJob class is responsible for knowing input requirements for a given job - how many nstruct, and what the input is.  InnerThreadingJobs are relatively heavy; there is no need to duplicate a series of InnerThreadingJobs for each index into nstruct.  The companion ThreadingJob class handles the nstruct index and has a pointer to an InnerThreadingJob (which is shared across many ThreadingJobs).  InnerThreadingJob also holds a PoseOP to maintain the unmodified input pose for that job.
 class ThreadingJob : public protocols::jd2::InnerJob {
 public:
-	///@brief ctor.  Note that it takes only the input tag and max nstruct,
+	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	ThreadingJob(
 		core::pose::PoseCOP template_pdb,
@@ -51,20 +49,20 @@ public:
 		core::Size nstruct_max
 	);
 
-	///@brief the alignment for this Job
+	/// @brief the alignment for this Job
 	core::sequence::SequenceAlignment const & alignment() const {
 		return *alignment_;
 	}
 
-	///@brief convenience : alignment id
+	/// @brief convenience : alignment id
 	std::string alignment_id() const {
 		return alignment().alignment_id();
 	}
 
-	///@brief returns the "standard" loop definition (as conservative as possible)
+	/// @brief returns the "standard" loop definition (as conservative as possible)
 	protocols::loops::Loops loops( core::Size nres ) const;
 
-	///@brief returns list of extra residues to steal
+	/// @brief returns list of extra residues to steal
 	utility::vector1< core::Size > const & extra_residues_to_steal() const;
 	void extra_residues_to_steal( utility::vector1< core::Size > const & res );
 

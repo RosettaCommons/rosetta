@@ -136,9 +136,6 @@ main( int argc, char * argv [] )
 	*/
 
 
-
-
-
 	TR << "Successfully finished repacking input." << std::endl;
 
 	return 0;
@@ -149,13 +146,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
-
-
-
-
-
-
-
 
 

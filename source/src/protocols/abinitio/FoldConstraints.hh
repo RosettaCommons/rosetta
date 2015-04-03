@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -25,7 +25,6 @@
 
 // Package Headers
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/SmoothFragmentMover.fwd.hh>
 //#include <protocols/simple_moves/GunnCost.fwd.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 //#include <protocols/abinitio/ConstraintFragmentMover.fwd.hh>
@@ -38,16 +37,12 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
 //#include <core/scoring/EnergyMap.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 
 // ObjexxFCL Headers
@@ -57,7 +52,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
@@ -65,12 +59,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace abinitio {
 
-///@brief extension of ClassicAbinitio Protocol to adapt the folding process for the presence of distance constraints
-///@detail Main Function: switch distance constraints based on distance in the FoldTree ( i.e., in sequence for simple FoldTrees )
+/// @brief extension of ClassicAbinitio Protocol to adapt the folding process for the presence of distance constraints
+/// @detail Main Function: switch distance constraints based on distance in the FoldTree ( i.e., in sequence for simple FoldTrees )
 ///     This is achieved by replacing the pose's ConstraintSet with the special purpose class MaxSeqSepConstraintSet
 ///     the latter class will only score constraints that are sufficiently close in FoldTree/Sequence
 ///     ( as controlled by the threshold with set_max_seq_sep()  )
@@ -84,7 +77,7 @@ public:
   typedef ClassicAbinitio Parent;
 
 public:
-	///@brief c'stor from Movers
+	/// @brief c'stor from Movers
 	FoldConstraints(
 		simple_moves::FragmentMoverOP brute_move_small,
 		simple_moves::FragmentMoverOP brute_move_large,
@@ -92,7 +85,7 @@ public:
 		int dummy /* otherwise the two constructors are ambigous */
 	);
 
-	///@brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
+	/// @brief c'stor from FragSets --- ClassicFragmentMover and SmoothFragmentMover will be created
 	FoldConstraints(
 		core::fragment::FragSetCOP fragset3mer,
 		core::fragment::FragSetCOP fragset9mer,
@@ -105,17 +98,17 @@ public:
 	/// @brief Explicit destructor to handle OPs
 	~FoldConstraints();
 
-  ///@brief ...
+  /// @brief ...
   virtual moves::MoverOP clone() const;
 
-	///@brief run the protocol
+	/// @brief run the protocol
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-  ///@brief sets the usual scores ( score0,score1, score2/5 etc. ) and additionally atom_pair_constraints to 1.0
+  /// @brief sets the usual scores ( score0,score1, score2/5 etc. ) and additionally atom_pair_constraints to 1.0
   void set_default_scores();
 
-  ///@brief
+  /// @brief
   void set_constraint_weight( core::Real setting ) {
     constraint_weight_ = setting;
     set_score_weight( core::scoring::atom_pair_constraint, constraint_weight_ );

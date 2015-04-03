@@ -430,7 +430,6 @@ TrieCountPair1BC3::resolve_trie_vs_path(
 }
 
 
-
 ///////////////////////// EtableEnergy -- analytic evaluation //////////////////////////////////
 
 void
@@ -821,7 +820,6 @@ TrieCountPair1BC3::resolve_trie_vs_path(
 {
 	utility_exit_with_message( "etable::etrie::TrieCountPair1BC3::resolve_trie_vs_path reached with HBondEnergy" );
 }
-
 
 
 /// Hack Elec E

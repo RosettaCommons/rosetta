@@ -21,7 +21,6 @@
 #include <protocols/topology_broker/claims/DofClaim.hh>
 
 
-
 // Package Headers
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>

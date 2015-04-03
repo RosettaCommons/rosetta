@@ -12,7 +12,6 @@
 /// @author Sam DeLuca <Samuel.l.deluca@vanderbilt.edu)
 
 
-
 #ifndef INCLUDED_protocols_simple_moves_AddJobPairData_fwd_hh
 #define INCLUDED_protocols_simple_moves_AddJobPairData_fwd_hh
 
@@ -27,7 +26,6 @@ typedef utility::pointer::shared_ptr< AddJobPairData const > AddJobPairDataCOP;
 
 }
 }
-
 
 
 #endif /* ADDJOBSTRINGPAIR_HH_ */

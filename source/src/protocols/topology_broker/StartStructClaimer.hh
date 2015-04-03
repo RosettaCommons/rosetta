@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -73,12 +73,12 @@ public:
 		return TopologyClaimerOP( new StartStructClaimer( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}
 
-	///@brief overloaded to allow perturbation of start structure
+	/// @brief overloaded to allow perturbation of start structure
 	virtual void initialize_dofs( core::pose::Pose&, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 	virtual void generate_claims( claims::DofClaims& );
 
@@ -98,10 +98,10 @@ protected:
 	void generate_init_frags( core::pose::Pose const& );
 private:
 
-	///@brief use the job input pose to get starting structure
+	/// @brief use the job input pose to get starting structure
 	bool bUseInputPose_;
 
-	///@brief perturb start torsions by gaussian()*perturb_
+	/// @brief perturb start torsions by gaussian()*perturb_
 	core::Real perturb_;
 
 	core::pose::Pose start_pose_;

@@ -9,11 +9,10 @@
 
 /// @file protocols/antibody/RefineOneCDRLoop.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
-
 
 
 #ifndef INCLUDED_protocols_antibody_RefineOneCDRLoop_hh
@@ -27,7 +26,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
-
 
 
 using namespace core;
@@ -111,11 +109,6 @@ private:
 	void finalize_setup( core::pose::Pose & pose );
 
 };
-
-
-
-
-
 
 
 } // namespace antibody

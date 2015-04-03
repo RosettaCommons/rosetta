@@ -15,10 +15,8 @@
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 
 //Project Headers
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
@@ -30,7 +28,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <core/types.hh>
-//
+
 
 // C++ Headers
 #include <map>

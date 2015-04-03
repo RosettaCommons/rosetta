@@ -30,7 +30,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
 
-//
+
 //// Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
@@ -47,16 +47,10 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 
 #include <basic/Tracer.hh>
 
@@ -72,7 +66,6 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
@@ -168,7 +161,7 @@ void  LoopMover_Perturb_KIC::set_extended_torsions(
 }
 
 
-/// @detailed
+/// @details
 /// Uses kinematic_mover to remodel a protein segment. If the 'extended' flag in the loop
 /// definition for the segment is set to '1', will idealize all bond lengths, bond angles, and phi,
 /// psi, and omega torsions before modeling. This stage is carried out entirely with a centroid

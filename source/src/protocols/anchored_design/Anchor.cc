@@ -16,7 +16,6 @@
 #include <protocols/anchored_design/Anchor.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
@@ -28,7 +27,6 @@
 #include <basic/options/option.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // C++ Headers
 #include <string>
@@ -84,17 +82,17 @@ protocols::anchored_design::Anchor::Anchor( core::pose::Pose const & pose):
 	read_anchorfile(pose);
 }
 
-///@details virtual destructors make c++ happy
+/// @details virtual destructors make c++ happy
 protocols::anchored_design::Anchor::~Anchor(){}
 
-///@brief copy ctor
+/// @brief copy ctor
 Anchor::Anchor( Anchor const & rhs ) :
 	utility::pointer::ReferenceCount(rhs)
 {
 	*this = rhs;
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 Anchor & Anchor::operator=( Anchor const & rhs ){
 
 	//abort self-assignment
@@ -106,14 +104,14 @@ Anchor & Anchor::operator=( Anchor const & rhs ){
 	return *this;
 }
 
-///@details read_anchorfile from internally stored anchorfile (from the option system)
+/// @details read_anchorfile from internally stored anchorfile (from the option system)
 void protocols::anchored_design::Anchor::read_anchorfile(
 			     core::pose::Pose const & pose)
 {
 	read_anchorfile(pose, anchorfile_);
 }
 
-///@details read_anchorfile reads in an anchor file (formatted as whitespace-delineated PDB-relevant start end chain information).  It queries the pose('s members) for the mapping from PDB numbers to pose resids.
+/// @details read_anchorfile reads in an anchor file (formatted as whitespace-delineated PDB-relevant start end chain information).  It queries the pose('s members) for the mapping from PDB numbers to pose resids.
 void protocols::anchored_design::Anchor::read_anchorfile(
 			     core::pose::Pose const & pose,
 			     std::string const & filename )
@@ -153,13 +151,13 @@ void protocols::anchored_design::Anchor::read_anchorfile(
 }
 
 
-///@brief setter for filename for anchorfile
+/// @brief setter for filename for anchorfile
 void protocols::anchored_design::Anchor::set_filename(std::string const & filename) {anchorfile_ = filename;}
 
-///@brief getter for filename for anchorfile
+/// @brief getter for filename for anchorfile
 std::string const & protocols::anchored_design::Anchor::get_filename() const {return anchorfile_;}
 
-///@brief read option system into internal data
+/// @brief read option system into internal data
 void protocols::anchored_design::Anchor::read_options() {
 	anchorfile_ = basic::options::option[ basic::options::OptionKeys::AnchoredDesign::anchor ].value();
 }

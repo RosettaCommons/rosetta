@@ -81,7 +81,7 @@ debug_assert( dynamic_cast< SurfaceEnergies const * > ( & rhs ) );
 	return *this;
 }
 
-///@details If recurse is true, then this is the first call to same_type_as_me;
+/// @details If recurse is true, then this is the first call to same_type_as_me;
 // determine if the other object is also a SurfaceEnergies object.  If recurse is false
 // then the other object is also of type SurfaceEnergies, so return true, otherwise,
 // ask the other objec to make sure it's the same type as me
@@ -101,7 +101,7 @@ SurfaceEnergies::same_type_as_me( Energies const & other, bool recurse /* = true
 
 SurfaceEnergies::~SurfaceEnergies() {}
 
-///@details make a copy of this Energies( allocate actual memory for it )
+/// @details make a copy of this Energies( allocate actual memory for it )
 EnergiesOP
 SurfaceEnergies::clone() const
 {
@@ -248,7 +248,6 @@ SurfaceEnergies::reset_surface_grid() const
 {
 
 } */
-
 
 
 } // solid_surface

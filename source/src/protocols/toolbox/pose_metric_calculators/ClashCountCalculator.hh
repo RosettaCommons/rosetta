@@ -19,13 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
-
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 

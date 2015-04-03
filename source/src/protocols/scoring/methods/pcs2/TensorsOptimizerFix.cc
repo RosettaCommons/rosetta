@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/TensorsOptimizerFix.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -47,7 +45,6 @@
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <iomanip>
 
 #include <utility/vector1.hh>
 
@@ -204,7 +201,6 @@ TensorsOptimizerFix::dfunc(core::optimization::Multivec const & vars,
 }
 
 
-
 core::Real
 TensorsOptimizerFix::operator ()( core::optimization::Multivec const & vars ) const{
 	return(func(vars));
@@ -250,7 +246,6 @@ TensorsOptimizerFix::dfunc_exact(core::optimization::Multivec const & vars,
 	if(n_la != pcs_d_l_vec.size()){
 		utility_exit_with_message("The number of lanthanides is inconsistent");
 	}
-
 
 
 	for (i = 1; i <= n_la; i++){

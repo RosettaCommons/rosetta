@@ -60,7 +60,6 @@ using core::Size;
 static thread_local basic::Tracer TR( "apps.pilot.nrg_res_set" );
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -79,7 +78,6 @@ core::Size get_pose_resnum(int const pdbnum, char const pdbchn, core::pose::Pose
 }
 
 
-///
 /// @brief Returns true if a vector of Size contains a given element; returns false
 /// 	otherwise
 /// @param[in] vec: the vector

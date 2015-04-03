@@ -30,7 +30,7 @@ namespace constel {
 
 static thread_local basic::Tracer TR( "src.devel.constel.SearchOptions" );
 
-///
+
 /// @brief Searches pair-constellations by target residue.
 ///
 /// @details Extracts all the constellations formed by a target residue. Each
@@ -60,7 +60,6 @@ void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
 }
 
 
-///
 /// @brief Searches pair-constellations by pair of mutations.
 ///
 /// @details Extracts from a pose all the constellations that correspond to a
@@ -127,7 +126,6 @@ void pair_constel_set( std::string const& tgtmuts, Pose& pose_init ) {
 }
 
 
-///
 /// @brief Searches for the triple-constellations of a target residue.
 ///
 /// @details Each constellation comprises a triple of spatially contiguous
@@ -183,7 +181,6 @@ void triple_constel_set(int const target_pdb_number,
 }
 
 
-///
 /// @brief Searches for a target constellation
 ///
 /// @param[in] tgtcnl_fil file specifying the target constellation.

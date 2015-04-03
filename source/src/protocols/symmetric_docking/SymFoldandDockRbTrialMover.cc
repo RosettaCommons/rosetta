@@ -167,8 +167,6 @@ SymFoldandDockRbTrialMover::get_name() const {
 	return "SymFoldandDockRbTrialMover";
 }
 
-///
-///
 
 std::string
 SymFoldandDockRbTrialMoverCreator::keyname() const {

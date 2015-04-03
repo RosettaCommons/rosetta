@@ -14,10 +14,8 @@
 #ifndef INCLUDED_core_sequence_BasicSequenceCreators_hh
 #define INCLUDED_core_sequence_BasicSequenceCreators_hh
 
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceCreator.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

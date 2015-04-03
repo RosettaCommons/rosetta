@@ -17,7 +17,6 @@
 #include <protocols/domain_assembly/PostDockAssemblyScorer.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <string>
 
 #include <utility/vector1.hh>

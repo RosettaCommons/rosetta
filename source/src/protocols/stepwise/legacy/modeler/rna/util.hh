@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/modeler/rna/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

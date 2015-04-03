@@ -16,7 +16,6 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
@@ -43,7 +42,7 @@ namespace matdes {
 
 static thread_local basic::Tracer TR( "protocols.matdes.InterfacePackingFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 InterfacePackingFilter::InterfacePackingFilter() :
 	parent( "InterfacePacking" ),
 	distance_cutoff_( 9.0 ),

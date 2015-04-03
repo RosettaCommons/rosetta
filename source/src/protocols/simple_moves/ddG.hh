@@ -81,7 +81,7 @@ public :
 	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
 
 private :
-	///@brief Helper method to appropriately form unbound complex. Returns false if monomer.
+	/// @brief Helper method to appropriately form unbound complex. Returns false if monomer.
 	bool unbind(Pose & pose) const;
 	void setup_task(Pose const & pose);
 

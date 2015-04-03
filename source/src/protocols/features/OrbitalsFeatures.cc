@@ -328,7 +328,7 @@ OrbitalsFeatures::report_features(
 }
 
 
-///@brief get statistics based upon polar hydrogen to orbital distance/angle
+/// @brief get statistics based upon polar hydrogen to orbital distance/angle
 void
 OrbitalsFeatures::report_hpol_orbital_interactions(
 		Pose const & pose,
@@ -342,7 +342,6 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 	statement orbital_orbital_statement(basic::database::safely_prepare_statement(orbita_orbital_string,db_session));
 	std::string orbita_Haro_string = "INSERT INTO HARO_orbital (struct_id, resNum1, orbName1, resNum2, haroNum2, resName1, orbNum1, resName2, htype2, orbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement orbital_Haro_statement(basic::database::safely_prepare_statement(orbita_Haro_string,db_session));
-
 
 
 	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
@@ -529,8 +528,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 }
 
 
-
-///@brief get statistics based upon aromatic hydrogen to orbital distance/angle
+/// @brief get statistics based upon aromatic hydrogen to orbital distance/angle
 void
 OrbitalsFeatures::report_haro_orbital_interactions(
 		Pose const & /* pose */,
@@ -606,7 +604,6 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 		}
 	}*/
 }
-
 
 
 void

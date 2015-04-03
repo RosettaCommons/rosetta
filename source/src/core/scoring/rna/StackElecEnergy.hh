@@ -30,14 +30,12 @@
 #include <numeric/xyzMatrix.fwd.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace rna {
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-///
 
 class StackElecEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
@@ -45,10 +43,10 @@ public:
 
 public:
 
-	///
+
 	StackElecEnergy( methods::EnergyMethodOptions const & options );
 
-	///
+
 	StackElecEnergy( StackElecEnergy const & src );
 
 	/// clone
@@ -222,7 +220,6 @@ private:
 												Real const & j_charge,
 												Matrix const & M_i,
 												Real & cos_kappa2 ) const;
-
 
 
 	Vector

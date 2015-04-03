@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftedStemOptimizer.hh
 /// @brief Optimize the CDR Grafted stem
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
@@ -28,10 +28,6 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-
-
-
-
 
 
 using namespace core;
@@ -63,11 +59,11 @@ public:
 		benchmark_ = setting;
 	}
 
-	///@brief users can pass their own scorefunction, foldtree, movemap, and taskfactory
+	/// @brief users can pass their own scorefunction, foldtree, movemap, and taskfactory
 	void
 	set_scorefxn(core::scoring::ScoreFunctionOP setting);
 
-	///@brief deep optimization will do small_share_ccd
+	/// @brief deep optimization will do small_share_ccd
 	void set_deep_optimization(bool const & setting) {
 		deep_optimization_ = setting;
 	}
@@ -92,15 +88,15 @@ public:
 	                     bool const & include_nb_sc = false) const;
 
 
-	///@brief stem that was replaced by the extra reesidues at the end of the
+	/// @brief stem that was replaced by the extra reesidues at the end of the
 	///       loop terminus. Default is "2"
 	void
 	set_stem_size(Size const & setting);
 
-	///@brief copy ctor
+	/// @brief copy ctor
 	GraftedStemOptimizer( GraftedStemOptimizer const & rhs );
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	GraftedStemOptimizer & operator=( GraftedStemOptimizer const & rhs );
 
 
@@ -130,13 +126,8 @@ private:
 }; // class GraftedStemOptimizer
 
 
-
-
-
 } // antibody
 } // protocols
-
-
 
 
 #endif

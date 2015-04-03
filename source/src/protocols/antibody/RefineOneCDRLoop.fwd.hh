@@ -30,5 +30,3 @@ typedef utility::pointer::shared_ptr< RefineOneCDRLoop const > RefineOneCDRLoopC
 #endif
 
 
-
-

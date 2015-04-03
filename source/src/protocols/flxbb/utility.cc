@@ -25,7 +25,6 @@
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/SS_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -38,7 +37,6 @@
 #include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 /// Numeric headers
 #include <numeric/xyzVector.hh>
@@ -147,7 +145,6 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 
 	return csts;
 } // constraint_sheet
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

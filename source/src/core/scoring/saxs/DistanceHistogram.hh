@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/saxs/FormFactor.hh
 /// @brief Collects histogram of distances between atoms of given SAXS-types, e.g. distances between  ARG-CEN and TRP-CEN
-/// @detailed The histogram is used in fast SAXS spectrum evaluation (slightly approximate)
+/// @details The histogram is used in fast SAXS spectrum evaluation (slightly approximate)
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
 
 #ifndef INCLUDED_core_scoring_saxs_DistanceHistogram_hh
@@ -22,10 +22,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <numeric/interpolation/spline/Interpolator.hh>
-
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

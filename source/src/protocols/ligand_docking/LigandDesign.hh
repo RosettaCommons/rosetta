@@ -31,9 +31,9 @@
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class LigandDesign : public protocols::moves::Mover{
 

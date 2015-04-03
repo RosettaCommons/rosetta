@@ -12,33 +12,17 @@
 /// @author
 
 #include <devel/dna/ProteinDNA_Relax.hh>
-// AUTO-REMOVED #include <devel/dna/util.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -51,11 +35,8 @@
 #include <protocols/moves/RepeatMover.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // c++ headers
 #include <iostream>
@@ -246,7 +227,6 @@ std::string
 ProteinDNA_Relax::get_name() const {
 	return "ProteinDNA_Relax";
 }
-
 
 
 } // namespace dna

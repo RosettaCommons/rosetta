@@ -23,13 +23,11 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
 #include <utility/vector1.hh>
@@ -41,17 +39,17 @@ namespace carbon_hbonds {
 
 static core::Vector DUMMY_VECTOR;
 
-///
+
 class CarbonHBondEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	CarbonHBondEnergy();
 
-	///@brief copy c-tor
+	/// @brief copy c-tor
 	CarbonHBondEnergy( CarbonHBondEnergy const & src );
 
 	/// clone
@@ -59,7 +57,7 @@ public:
 	methods::EnergyMethodOP
 	clone() const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
@@ -154,7 +152,7 @@ public:
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
 
-	///
+
 	//	virtual
 	//	void
 	//	finalize_total_energy(
@@ -189,7 +187,7 @@ public:
 
 	// Real hydrogen_interaction_cutoff2() const;
 
-	///@brief CarbonHBondEnergy is context sensitive
+	/// @brief CarbonHBondEnergy is context sensitive
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;

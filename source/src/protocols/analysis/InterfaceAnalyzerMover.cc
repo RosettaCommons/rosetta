@@ -99,7 +99,6 @@ static thread_local basic::Tracer TRinterface( "protocols.analysis.InterfaceAnal
 static thread_local basic::Tracer TRhbonds( "protocols.analysis.InterfaceAnalyzerMover.missing_hbonds" );
 
 
-
 ///stupid helper function needed because ternary operator does not allow variable return types
 std::ostream & which_ostream( std::ostream & ost, std::ostream & oss, bool const tracer){
   if(tracer) return ost;
@@ -429,7 +428,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	return;
 }
 
-///@details InterfaceAnalyzerMover computes various interface statistics and makes them available through getters
+/// @details InterfaceAnalyzerMover computes various interface statistics and makes them available through getters
 void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 {
 	apply_const(pose);
@@ -512,7 +511,7 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 }
 
 
-///@details makes the interface sets for either constructor
+/// @details makes the interface sets for either constructor
 //always will make a new interface set, make sure this is what you want
 void InterfaceAnalyzerMover::make_interface_set( core::pose::Pose & pose ){
 
@@ -617,7 +616,7 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 }//end make_multichain_interface_set
 
 
-///@details reorder the fold tree to allow multichain interfaces to be evaluated returns the new chain for the jump
+/// @details reorder the fold tree to allow multichain interfaces to be evaluated returns the new chain for the jump
 core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose & pose ,
 	std::set< int > & fixed_chains){
 	using namespace core;
@@ -683,7 +682,7 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 }//end reorder foldtree
 
 
-///@details  makes the complexed and separated poses for the mover
+/// @details  makes the complexed and separated poses for the mover
 core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose & pose, core::Size interface_jump, core::Size step_size /* 1000*/){
 	using namespace core;
 
@@ -698,7 +697,7 @@ core::pose::Pose InterfaceAnalyzerMover::make_separated_pose( core::pose::Pose &
 	return separated_pose;
 }
 
-///@detail Only want to register the calculators once, thus the 'if' statement in apply
+/// @detail Only want to register the calculators once, thus the 'if' statement in apply
 void InterfaceAnalyzerMover::register_calculators()
 {
 	using namespace core::pose::metrics;
@@ -762,7 +761,7 @@ void InterfaceAnalyzerMover::register_calculators()
 	return;
 }//register_calculators
 
-///@detail register calculator for multichain poses
+/// @detail register calculator for multichain poses
 void InterfaceAnalyzerMover::register_intergroup_calculator(){
 	using namespace core::pose::metrics;
 	using namespace protocols::toolbox::pose_metric_calculators;
@@ -775,7 +774,7 @@ void InterfaceAnalyzerMover::register_intergroup_calculator(){
 	}
 }
 
-///@details actual function to separate the chains based on the chosen jump and score
+/// @details actual function to separate the chains based on the chosen jump and score
 void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose ) {
 	//using namespace core::pack::task;
@@ -843,7 +842,7 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 }
 
 
-///@details computes the SASA by finding difference between complex and separated SASA
+/// @details computes the SASA by finding difference between complex and separated SASA
 /// also does the same thing for hydrophobic/polar SASA
 void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose){
@@ -1022,7 +1021,7 @@ InterfaceAnalyzerMover::calc_per_residue_dG( core::pose::Pose & complexed_pose, 
 	return dG;
 }
 
-///@details computes the interface energy of the interface
+/// @details computes the interface energy of the interface
 void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose )
 {
@@ -1042,7 +1041,7 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 	return;
 }
 
-///@details calculate the average energy per residue in the interface as well as other data
+/// @details calculate the average energy per residue in the interface as well as other data
 void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose ) {
 	using namespace core::scoring;
 	using namespace core;
@@ -1161,7 +1160,7 @@ void InterfaceAnalyzerMover::compute_interface_packstat( core::pose::Pose & pose
 	data_.packstat = interface_pack_score_sum / interface_num_res;
 }
 
-///@details If a polar atom at the interface is also "buried unsat" in the monomer, we don't count this one
+/// @details If a polar atom at the interface is also "buried unsat" in the monomer, we don't count this one
 void InterfaceAnalyzerMover::compute_interface_delta_hbond_unsat( core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose)
 {
@@ -1249,7 +1248,7 @@ InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose cons
 }
 
 
-///@details calculate the hbond energy and dampen it by exposure
+/// @details calculate the hbond energy and dampen it by exposure
 void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	using namespace core::scoring::hbonds;
 	using namespace core;
@@ -1471,7 +1470,7 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 }//end compute_interface_sc
 
 
-///@details  Mutate all residues to GLY rescore complex energy and separated energy
+/// @details  Mutate all residues to GLY rescore complex energy and separated energy
 void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::pose::Pose separated_pose ) {
 	using namespace core;
 	//need a copy of the pose to avoid screwing up the good one
@@ -1505,7 +1504,7 @@ void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::po
 	data_.gly_dG =(*sf_) ( copy_complex ) - (*sf_) ( copy_separate );
 }
 
-///@details
+/// @details
 void InterfaceAnalyzerMover::calc_centroid_dG ( core::pose::Pose const & complex_pose, core::pose::Pose const & separated_pose ){
 	if ( !use_centroid_ ) {
 		data_.centroid_dG = 0;
@@ -1526,7 +1525,7 @@ void InterfaceAnalyzerMover::calc_centroid_dG ( core::pose::Pose const & complex
 }
 
 
-///@details  sets up the packer task for the interface
+/// @details  sets up the packer task for the interface
 core::pack::task::PackerTaskOP
 InterfaceAnalyzerMover::setup_task( core::pose::Pose & pose ) {
 	using namespace core::pack::task;
@@ -1546,7 +1545,7 @@ InterfaceAnalyzerMover::setup_task( core::pose::Pose & pose ) {
 	return task;
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceAnalyzerMover::parse_my_tag(
 	TagCOP const tag,
@@ -1617,7 +1616,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	set_defaults();
 }
 
-///@details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
+/// @details reports all the cool stuff we calculate to tracer output OR puts it into the job object.
 void InterfaceAnalyzerMover::report_data(){
 	//make output
 	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
@@ -1687,7 +1686,7 @@ void InterfaceAnalyzerMover::report_data(){
 }
 
 
-///@details prints tracer output of pymol selction of interface residues, also builds a pymol selection that can be used from a file.
+/// @details prints tracer output of pymol selction of interface residues, also builds a pymol selection that can be used from a file.
 void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const interface_set )
 {
 	//make output
@@ -1748,7 +1747,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 }//end
 
 
-///@details This function reports a few things: a pymol sytle selection of the unstat atoms and reports to the tracer or job what these atoms are.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection.  Unsat hbonds to be shown as Spheres
+/// @details This function reports a few things: a pymol sytle selection of the unstat atoms and reports to the tracer or job what these atoms are.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection.  Unsat hbonds to be shown as Spheres
 void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::Pose & pose, utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector )
 {
 	//make output
@@ -1814,8 +1813,8 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 }
 
 
-///@details This function doesn't do the printing itself.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection
-///@details From best packing to worse packing, colors go as Blue, Purple, Pink, Red
+/// @details This function doesn't do the printing itself.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection
+/// @details From best packing to worse packing, colors go as Blue, Purple, Pink, Red
 void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose const & pose,	utility::vector1< core::Real >&  interface_pack_scores) {
 	std::ostringstream pymol_packing;
 	pymol_packing << std::endl;
@@ -1851,14 +1850,14 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 	return;
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 InterfaceAnalyzerMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new InterfaceAnalyzerMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 InterfaceAnalyzerMover::clone() const
 {
@@ -1867,7 +1866,7 @@ InterfaceAnalyzerMover::clone() const
 
 core::Real InterfaceAnalyzerMover::get_interface_dG() const { return data_.dG[ total ]; } //previous functionality: redundant with get_separated_interface_energy, but supports other protocols
 
-///@details getters
+/// @details getters
 core::Real InterfaceAnalyzerMover::get_complexed_sasa() { return data_.complexed_SASA; }
 core::Real InterfaceAnalyzerMover::get_interface_delta_sasa() { return data_.dSASA[ total ]; }
 core::Real InterfaceAnalyzerMover::get_separated_interface_energy() { return data_.dG[ total ]; }
@@ -1895,7 +1894,7 @@ core::Real InterfaceAnalyzerMover::get_total_Hbond_E() { return data_.total_hb_E
 
 bool InterfaceAnalyzerMover::get_use_centroid_dG() const {return use_centroid_;}
 
-///@details setters
+/// @details setters
 void InterfaceAnalyzerMover::set_use_resfile( bool const use_resfile ) { use_resfile_ = use_resfile; }
 void InterfaceAnalyzerMover::set_use_centroid_dG( bool const use_centroid ) { use_centroid_ = use_centroid; }
 void InterfaceAnalyzerMover::set_compute_packstat( bool const compute_packstat ) { compute_packstat_ = compute_packstat; }

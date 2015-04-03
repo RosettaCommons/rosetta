@@ -46,7 +46,6 @@
 #include <utility/vector1.functions.hh>
 
 /// C++ Headers
-// AUTO-REMOVED #include <ctime>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -422,7 +421,6 @@ GreenPacker::set_reference_round_task_factory( TaskFactoryOP factory )
 {
 	reference_task_factory_ = factory;
 }
-
 
 
 void
@@ -1157,7 +1155,6 @@ void GreenPacker::compare_input_pose_geometry_to_reference( Pose & pose )
 	}
 
 }
-
 
 
 }

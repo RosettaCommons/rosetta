@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/InterchainEnvEnergy.hh
 /// @brief  Statistically derived rotamer pair potentials
-/// @detailed For docking (or between chains) only those residues at the interface
+/// @details For docking (or between chains) only those residues at the interface
 ///						and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
@@ -39,13 +39,13 @@ namespace protocols {
 namespace scoring {
 namespace methods {
 
-///
+
 class InterchainEnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 public:
 
-	///
+
 	InterchainEnvEnergy();
 
 

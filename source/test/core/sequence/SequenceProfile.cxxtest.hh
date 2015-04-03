@@ -17,28 +17,21 @@
 #include <platform/types.hh>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 #include <utility/file/FileName.hh>
 
 // Package Headers
 
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-// AUTO-REMOVED #include <core/sequence/DPScoringScheme.hh>
 #include <core/sequence/ProfSimScoringScheme.hh>
 #include <core/sequence/NWAligner.hh>
 
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <core/conformation/signals/LengthEvent.fwd.hh>

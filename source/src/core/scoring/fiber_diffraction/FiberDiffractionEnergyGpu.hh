@@ -45,10 +45,10 @@ public:
 
 public:
 
-	///
+
 	FiberDiffractionEnergyGpu();
 
-	///
+
 	FiberDiffractionEnergyGpu( FiberDiffractionEnergyGpu const & src ) :
 		parent(src) {
 		chi2_ = src.chi2_;

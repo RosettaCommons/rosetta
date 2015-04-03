@@ -37,12 +37,12 @@ namespace simple_filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.AtomicDistanceFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 AtomicDistanceFilter::AtomicDistanceFilter() :
 	parent( "AtomicDistance" )
 {}
 
-///@brief
+/// @brief
 AtomicDistanceFilter::AtomicDistanceFilter( core::Size const res1, core::Size const res2, std::string atom_desig1, std::string atom_desig2, bool as_type1, bool as_type2, core::Real distance) :
 	parent( "AtomicDistance" ),
 	residue1_( res1 ),
@@ -183,7 +183,6 @@ AtomicDistanceFilterCreator::create_filter() const { return protocols::filters::
 
 std::string
 AtomicDistanceFilterCreator::keyname() const { return "AtomicDistance"; }
-
 
 
 } // filters

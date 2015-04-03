@@ -254,7 +254,6 @@ public:
 	}
 
 
-
 private:
 	core::pose::PoseOP pose_;
 

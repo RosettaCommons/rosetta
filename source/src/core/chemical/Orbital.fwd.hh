@@ -31,5 +31,4 @@ typedef  utility::vector1< OrbitalCOP >  OrbitalCOPs;
 } // core
 
 
-
 #endif // INCLUDED_core_chemical_Orbital_FWD_HH

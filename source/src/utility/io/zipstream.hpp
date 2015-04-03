@@ -47,7 +47,6 @@
 #include <zlib/zutil.h>
 
 
-
 // C++ headers
 #include <algorithm>
 #include <iostream>
@@ -59,7 +58,6 @@ namespace zlib_stream {
 
 /// @brief Default gzip buffer size, change this to suite your needs
 const size_t default_buffer_size = 921600; // Was 102400; Was 4096;
-
 
 
 /// Compression strategy, see zlib doc.

@@ -17,7 +17,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>

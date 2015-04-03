@@ -63,14 +63,12 @@ class my_test_options : public devel::option::OptionModule {
  };
 
 
-
 void my_test_basic::options::register_block(OptionBlock& block) {
 	OptionModule::register_block(block);
 	block.reg_opt(COPT("VARIOUS TEST OPTIONS"));
 	block.reg_opt(SOPT("title",title,"ubiquitin","this is the title"));
 	block.reg_opt(IOPT("cycles",number,3,"this defines the number of runs"));
 };
-
 
 
 START_OPT(module2_opt,"block1","another test module")
@@ -90,8 +88,6 @@ END_OPT(module2_opt)
 using namespace devel::option;
 
 int main( int argc, char** argv) {
-
-
 
 
 	std::cout << "vorher " << std::endl;

@@ -724,7 +724,6 @@ ResiduePairNeighborList::accurate(
 }
 
 
-
 /// @details Do not deallocate the space representing the atom-neighbors of either residue.
 /// This is a time-saving technique to avoid the use of new and delete where possible.
 void ResiduePairNeighborList::clear()

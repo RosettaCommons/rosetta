@@ -154,7 +154,6 @@ RestrictDesignToProteinDNAInterface::parse_tag( TagCOP tag , DataMap & )
 		forget_chains_and_interface_ = tag->getOption< bool >("forget_chains_and_interface");
 }
 
-/// @begin RestrictDesignToProteinDNAInterface::apply
 /// @brief determines the DNA interface residues and informs a PackerTask of their appropriate packing behavior
 /// @details
 /// Step 2: get info about DNA chains and set up DNA packing behavior

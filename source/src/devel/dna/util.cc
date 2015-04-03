@@ -9,55 +9,32 @@
 
 /// @file util.cc
 /// @details Miscellaneous 'public' functions related to DNA that aren't really protocols.  That is, functions here should be those that are expected to be included outside of this directory.  The rest should just be in util.  (The existence of two separate utility files is intended to minimize dependencies, and to make general use functions more obvious.)
-/// @authors ashworth
+/// @author ashworth
 
 #include <devel/dna/util.hh>
 
 #include <protocols/dna/util.hh>
-// AUTO-REMOVED #include <protocols/dna/DnaChains.hh>
 using namespace protocols::dna;
 
 #include <core/types.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreTypeManager.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/dna/BasePartner.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 using utility::vector1;
-// AUTO-REMOVED #include <utility/file/gzip_util.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -67,10 +44,8 @@ typedef numeric::xyzVector< core::Real > xyzVec;
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <list>
-// AUTO-REMOVED #include <ctime>
 
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
@@ -290,7 +265,7 @@ analyze_interface_sasa(
 //////////////////////////////////////////////////////////////////////////////////////////////
 /// @details
 /// uses sasa calculation to look at packing quality and unsatisfied hbonds
-///
+
 
 void
 analyze_interface_sasa(
@@ -449,7 +424,6 @@ randomize_motif_sequence(
 }
 
 
-///
 void
 check_residue_proximity_to_dna(
 															 core::Size const ppos,
@@ -466,9 +440,6 @@ check_residue_proximity_to_dna(
 }
 
 
-
-
-															 ///
 void
 check_residue_proximity_to_dna(
 															 core::Size const ppos,

@@ -18,7 +18,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 #include <core/scoring/func/Func.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>

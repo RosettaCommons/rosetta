@@ -23,17 +23,14 @@
 #include <core/fragment/FrameListIterator_.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>

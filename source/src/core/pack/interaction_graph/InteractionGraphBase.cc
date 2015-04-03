@@ -19,7 +19,6 @@
 
 //STL Headers
 #include <list>
-// AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <utility/assert.hh>
@@ -41,12 +40,11 @@ namespace interaction_graph {
 //bool output_interaction_graph_memory_usage = false;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::~NodeBase
 ///
 /// @brief
 /// virtual destructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -56,20 +54,18 @@ namespace interaction_graph {
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase::~NodeBase()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::NodeBase(InteractionGraphBase *, int, int)
 ///
 /// @brief
 /// Main constructor, no default constructor nor copy constructor
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// owner - [in] - the owning interaction graph
@@ -84,9 +80,8 @@ NodeBase::~NodeBase()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase::NodeBase(InteractionGraphBase * owner, int node_id, int num_states) :
 	node_index_(node_id), num_states_(num_states), num_incident_edges_(0),
@@ -97,12 +92,11 @@ NodeBase::NodeBase(InteractionGraphBase * owner, int node_id, int num_states) :
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::~get_num_states
 ///
 /// @brief
 /// returns the number of states for this node
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -112,19 +106,17 @@ NodeBase::NodeBase(InteractionGraphBase * owner, int node_id, int num_states) :
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int  NodeBase::get_num_states() const {return num_states_;}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::add_edge
 ///
 /// @brief adds edge pointer to edge list; returns an iterator to the new
 /// list element
 ///
-/// @detailed
+/// @details
 /// If the other node this node is attached to by edge_ptr has a higher index
 /// then the edge is added to the end of its edge list; if the node has a
 /// smaller index, the edge pointer is added to the front of the edge list.
@@ -141,9 +133,8 @@ int  NodeBase::get_num_states() const {return num_states_;}
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 std::list< EdgeBase* >::iterator NodeBase::add_edge(EdgeBase* edge_ptr)
 {
@@ -160,11 +151,10 @@ std::list< EdgeBase* >::iterator NodeBase::add_edge(EdgeBase* edge_ptr)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::drop_edge
 ///
 /// @brief removes an edge iterator from the node's edge list
 ///
-/// @detailed
+/// @details
 /// edges efficiently delete themselves from the edge lists of the nodes they
 /// are incident upon by keeping a pair of iterators.  Edges request nodes
 /// delete them by handing the iterator back to the node.
@@ -181,9 +171,8 @@ std::list< EdgeBase* >::iterator NodeBase::add_edge(EdgeBase* edge_ptr)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 {
@@ -199,12 +188,11 @@ void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::drop_all_edges
 ///
 /// @brief
 /// deletes all edges incident upon this node
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 //
@@ -216,9 +204,8 @@ void NodeBase::drop_edge(std::list< EdgeBase* >::iterator edge)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::drop_all_edges()
 {
@@ -232,13 +219,12 @@ void NodeBase::drop_all_edges()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::find_edge
 ///
 /// @brief a slow (linear) search for an edge.  The edge is identified by the
 /// index of the node to which the edge connects this node. Returns NULL when
 /// there is no such connecting edge.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// other_node - [in] - the index of the node that the desired
@@ -252,9 +238,8 @@ void NodeBase::drop_all_edges()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase* NodeBase::find_edge(int other_node) const
 {
@@ -267,13 +252,12 @@ EdgeBase* NodeBase::find_edge(int other_node) const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::depth_first_connected_component_counting
 ///
 /// @brief
 /// performs a depth first traversal of the graph.  Each node informs
 /// the graph that the traversal resulted in arriving at the node.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -285,9 +269,8 @@ EdgeBase* NodeBase::find_edge(int other_node) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::depth_first_connected_component_counting()
 {
@@ -319,11 +302,10 @@ NodeBase::edge_list_end()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::update_edge_vector
 ///
 /// @brief converts edge-list to edge-vector representation
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -335,9 +317,8 @@ NodeBase::edge_list_end()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void NodeBase::update_edge_vector()
 {
@@ -381,11 +362,10 @@ NodeBase::count_dynamic_memory() const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin NodeBase::NodeBase( NodeBase const & rhs)
 ///
 /// @brief copy constructor, do not use
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -397,9 +377,8 @@ NodeBase::count_dynamic_memory() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 //NodeBase::NodeBase( NodeBase const & ) {}
 
@@ -408,11 +387,10 @@ NodeBase::count_dynamic_memory() const
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::~EdgeBase
 ///
 /// @brief destructor
 ///
-/// @detailed removes all record of this edge from edge-lists of
+/// @details removes all record of this edge from edge-lists of
 /// the 1) nodes this edge is incident upon and 2) the owning
 /// interaction graph
 ///
@@ -426,9 +404,8 @@ NodeBase::count_dynamic_memory() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase::~EdgeBase()
 {
@@ -442,11 +419,10 @@ EdgeBase::~EdgeBase()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::EdgeBase(InteractionGraphBase, int, int)
 ///
 /// @brief main constructor for edge, no default nor copy constructors
 ///
-/// @detailed edge adds itself to the edge list of the two nodes its set to be
+/// @details edge adds itself to the edge list of the two nodes its set to be
 /// incident upon, and stores the list-iterators that the nodes return.
 ///
 /// @param
@@ -464,9 +440,8 @@ EdgeBase::~EdgeBase()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase::EdgeBase
 (
@@ -491,11 +466,10 @@ EdgeBase::EdgeBase
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::get_other_ind
 ///
 /// @brief returns the index of the other node that the edge is incident upon
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_ind - [in] - the node index of the node whose index is already known
@@ -508,9 +482,8 @@ EdgeBase::EdgeBase
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int EdgeBase::get_other_ind(int node_ind) const
 {      debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
@@ -518,11 +491,10 @@ int EdgeBase::get_other_ind(int node_ind) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::get_other_node
 ///
 /// @brief returns a pointer to the other node that the edge is incident upon
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_ind - [in] - the node index of the node whose index is already known
@@ -535,9 +507,8 @@ int EdgeBase::get_other_ind(int node_ind) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 NodeBase* EdgeBase::get_other_node(int node_ind) const
 { debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
@@ -545,11 +516,10 @@ NodeBase* EdgeBase::get_other_node(int node_ind) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::get_first_node_ind
 ///
 /// @brief returns the index of the smaller-indexed node
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -561,19 +531,17 @@ NodeBase* EdgeBase::get_other_node(int node_ind) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int EdgeBase::get_first_node_ind() const
 {       return node_indices_[0]; }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::get_second_node_ind()
 ///
 /// @brief returns the index of the larger-indexed node
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -585,19 +553,17 @@ int EdgeBase::get_first_node_ind() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int EdgeBase::get_second_node_ind() const
 {       return node_indices_[1]; }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::set_pos_in_owners_list
 ///
 /// @brief edge keeps iterator to its position in it's owner's edge list
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -609,9 +575,8 @@ int EdgeBase::get_second_node_ind() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_owners_list( std::list< EdgeBase* >::iterator iter )
 {
@@ -621,11 +586,10 @@ debug_assert( this == *iter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::set_pos_in_node_edgevector
 ///
 /// @brief edge keeps index it has in node_ind's edge vector
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_ind - [in] - the index of the node calling this method
@@ -640,9 +604,8 @@ debug_assert( this == *iter);
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void EdgeBase::set_pos_in_node_edgevector(int node_ind, int vect_position)
 {
@@ -653,12 +616,11 @@ debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin EdgeBase::same_edge
 ///
 /// @brief returns true if this edge connects nodes of index node1 and node2
 /// the order of node1 and node2 is not important
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node1 - [in] - index of one of the two nodes
@@ -673,9 +635,8 @@ debug_assert( node_ind == node_indices_[0] || node_ind == node_indices_[1]);
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 bool EdgeBase::same_edge(int node1, int node2) const
 {
@@ -708,11 +669,10 @@ EdgeBase::edge_weight( Real new_weight )
 //----------------------------------------------------------------------------//
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::~InteractionGraphBase
 ///
 /// @brief destructor
 ///
-/// @detailed deletes each edge in the graph and deletes each node
+/// @details deletes each edge in the graph and deletes each node
 ///
 /// @param
 ///
@@ -724,9 +684,8 @@ EdgeBase::edge_weight( Real new_weight )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 InteractionGraphBase::~InteractionGraphBase()
 {
@@ -744,11 +703,10 @@ InteractionGraphBase::~InteractionGraphBase()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::InteractionGraphBase
 ///
 /// @brief main constructor
 ///
-/// @detailed no default or copy constructors provided.
+/// @details no default or copy constructors provided.
 ///
 /// @param
 /// num_ig_nodes - [in] - number of nodes that this graph will contain
@@ -761,9 +719,8 @@ InteractionGraphBase::~InteractionGraphBase()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 InteractionGraphBase::InteractionGraphBase(int num_ig_nodes) :
 	num_ig_nodes_(num_ig_nodes),
@@ -775,13 +732,12 @@ InteractionGraphBase::InteractionGraphBase(int num_ig_nodes) :
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::set_num_states_for_node
 ///
 /// @brief sets the number of states for a node of a particular index
 /// NEW REQUIREMENT: Nodes must have their num-states set in ascending order by
 /// node index; that is, node 1 must go first, node 2 next, and so on.
 ///
-/// @detailed once the graph knows how many states a node has, it instantiates
+/// @details once the graph knows how many states a node has, it instantiates
 /// a new node using the NodeBase(int) constructor through the graph's
 /// factory method create_new_node()
 ///
@@ -798,9 +754,8 @@ InteractionGraphBase::InteractionGraphBase(int num_ig_nodes) :
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::set_num_states_for_node
 (
@@ -820,11 +775,10 @@ debug_assert (ig_nodes_[node_index] == NULL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::get_num_states_for_node
 ///
 /// @brief returns the number of states for a particular node
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_index - [in] - the index of the node in question
@@ -837,9 +791,8 @@ debug_assert (ig_nodes_[node_index] == NULL);
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int  InteractionGraphBase::get_num_states_for_node(int node_index) const
 {
@@ -848,12 +801,11 @@ debug_assert( ig_nodes_[node_index] );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::add_edge
 ///
 /// @brief creates a new edge between nodes index1 and index2.  Nodes do
 /// not have to be listed in order
 ///
-/// @detailed uses factory method create_new_edge and adds
+/// @details uses factory method create_new_edge and adds
 /// the created edge to the graph's edge list.
 ///
 /// @param
@@ -869,9 +821,8 @@ debug_assert( ig_nodes_[node_index] );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::add_edge(int index1, int index2)
 {
@@ -891,11 +842,10 @@ debug_assert( index1 != index2 );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::get_edge_exists
 ///
 /// @brief returns true if an edge between node1 and node2 exists
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node1 - [in] - index of the one of the nodes
@@ -909,9 +859,8 @@ debug_assert( index1 != index2 );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 bool InteractionGraphBase::get_edge_exists(int node1, int node2)
 {
@@ -920,12 +869,11 @@ bool InteractionGraphBase::get_edge_exists(int node1, int node2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::drop_all_edges_for_node
 ///
 /// @brief
 /// deletes all edges adjacent to the node specified
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node - [in] - index of the node
@@ -938,9 +886,8 @@ bool InteractionGraphBase::get_edge_exists(int node1, int node2)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::drop_all_edges_for_node( int node )
 {
@@ -972,11 +919,10 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::print_vertices
 ///
 /// @brief calls print() on each of the nodes in the graph
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -988,9 +934,8 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::print_vertices() const
 {
@@ -1000,11 +945,10 @@ void InteractionGraphBase::print_vertices() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::output_connectivity
 ///
 /// @brief writes out a list of all the edges in the graph
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// os - [in] - the output stream to write to
@@ -1017,9 +961,8 @@ void InteractionGraphBase::print_vertices() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::output_connectivity(std::ostream & os) const
 {
@@ -1034,12 +977,11 @@ void InteractionGraphBase::output_connectivity(std::ostream & os) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::output_dimacs
 ///
 /// @brief writes out a connectivity description of the graph in the famous
 /// dimacs format. (where the first column "DIMACS:" should be sed'ed out)
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// os - [in] - the output stream to write to
@@ -1052,9 +994,8 @@ void InteractionGraphBase::output_connectivity(std::ostream & os) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::output_dimacs(std::ostream & os) const
 {
@@ -1072,12 +1013,11 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::output_dimacs
 ///
 /// @brief
 /// Returns true if any node in the graph is in state 0, the unassigned state.
 ///
-/// @detailed
+/// @details
 /// Useful for debugging.  If simulated annealing completes, and any vertex
 /// remains in state 0, then the state assignment is not meaningful nor
 /// is the energy for that assignment.  The cases in which state-0 problems
@@ -1095,9 +1035,8 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 bool
 InteractionGraphBase::any_vertex_state_unassigned() const
@@ -1110,12 +1049,11 @@ InteractionGraphBase::any_vertex_state_unassigned() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::add_to_one_body_energies
 ///
 /// @brief
 /// takes one FArray of energies -- one energy for each state for each node
 ///
-/// @detailed
+/// @details
 /// The input array should have \sum_{v\inV} |S_v| entries, where S_v is the
 /// state-space for vertex v.  If the graph has two vertices, with 15 and 20
 /// states respectively, then entries 1 to 15 correspond to vertex 1, and
@@ -1133,9 +1071,8 @@ InteractionGraphBase::any_vertex_state_unassigned() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::add_to_one_body_energies
 (
@@ -1160,14 +1097,13 @@ void InteractionGraphBase::add_to_one_body_energies
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::add_to_one_body_energies
 ///
 /// @brief
 /// decrements the one body energies by the values held in old_energy1b,
 /// increments the one body energies by the values held in new_energy1b,
 /// and copies new_energy1b into old_energy1b.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// old_energy1b - [in/out] - the one body energies representing interactions
@@ -1185,9 +1121,8 @@ void InteractionGraphBase::add_to_one_body_energies
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::update_one_body_energies
 (
@@ -1361,7 +1296,6 @@ InteractionGraphBase::count_dynamic_memory() const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::set_number_of_energy_sum_vertex_groups
 ///
 /// @brief
 /// a user may define subsets of the vertex set for which they would like to
@@ -1382,7 +1316,7 @@ InteractionGraphBase::count_dynamic_memory() const
 /// Third, when you want to know the energy sum for the group in the graph's
 /// current state assignment, call get_energy_sum_for_vertex_group( group_id)
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// num_groups - [in] - the number of groups; set this at most once.
@@ -1395,9 +1329,8 @@ InteractionGraphBase::count_dynamic_memory() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 InteractionGraphBase::set_number_of_energy_sum_vertex_groups( int num_groups )
@@ -1410,7 +1343,6 @@ debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::
 ///   count_connected_components_and_initialize_vertex_groups
 ///
 /// @brief
@@ -1419,7 +1351,7 @@ debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
 /// to reflect the connected components.  Returns the number of connected
 /// components in the graph.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -1431,9 +1363,8 @@ debug_assert( num_energy_sum_groups_ == -1 && num_groups > 0 );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 int
 InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
@@ -1461,13 +1392,12 @@ InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::note_vertex_reached
 ///
 /// @brief
 /// marks a vertex as belonging to the connected component currently being
 /// traversed in the depth first traversal.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_index - [in] - the index of the node invoking this method.
@@ -1481,9 +1411,8 @@ InteractionGraphBase::count_connected_components_and_initialize_vertex_groups()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 InteractionGraphBase::note_vertex_reached( int node_index )
@@ -1495,7 +1424,6 @@ debug_assert( component_membership_( node_index ) == 0 );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::
 ///   vertex_already_reached
 ///
 /// @brief
@@ -1503,7 +1431,7 @@ debug_assert( component_membership_( node_index ) == 0 );
 /// number of connected components in the graph. returns true if the dft has
 /// already reached the node.
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 /// node_index - [in] - the index of the node calling the method.
@@ -1517,9 +1445,8 @@ debug_assert( component_membership_( node_index ) == 0 );
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 bool
 InteractionGraphBase::vertex_already_reached( int node_index )
@@ -1528,7 +1455,6 @@ InteractionGraphBase::vertex_already_reached( int node_index )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::set_vertex_member_of_group
 ///
 /// @brief
 /// a user may define subsets of the vertex set for which they would like to
@@ -1541,7 +1467,7 @@ InteractionGraphBase::vertex_already_reached( int node_index )
 /// if these edges are part of the graph.  The edge {a,d} will not be counted
 /// if it is part of the graph.)
 ///
-/// @detailed
+/// @details
 /// tell the graph which vertices you want to be part of which groups
 ///
 /// @param
@@ -1556,9 +1482,8 @@ InteractionGraphBase::vertex_already_reached( int node_index )
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void
 InteractionGraphBase::set_vertex_member_of_group( int vertex, int group )
@@ -1610,11 +1535,10 @@ InteractionGraphBase::getMemoryUsageInBytes() const
 */
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::drop_edge
 ///
 /// @brief removes edge from edge list at iterator iter
 ///
-/// @detailed
+/// @details
 /// each edge keeps track of its position in its owner's graph's edge list
 /// so it can efficiently delete itself should it need to.
 ///
@@ -1629,9 +1553,8 @@ InteractionGraphBase::getMemoryUsageInBytes() const
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 {
@@ -1645,12 +1568,11 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin InteractionGraphBase::find_edge
 ///
 /// @brief
 /// returns the edge connecting node1 and node2
 ///
-/// @detailed
+/// @details
 /// graph keeps a pointer to the last edge that was accessed to that search is
 /// fairly efficient.
 ///
@@ -1667,9 +1589,8 @@ void InteractionGraphBase::drop_edge(std::list< EdgeBase* >::iterator iter)
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 EdgeBase const * InteractionGraphBase::find_edge(int node1, int node2) const
 {

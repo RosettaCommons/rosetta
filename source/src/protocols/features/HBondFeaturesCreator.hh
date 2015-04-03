@@ -15,11 +15,9 @@
 #define INCLUDED_protocols_features_HBondFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/HBondFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

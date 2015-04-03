@@ -119,7 +119,7 @@ public:
 	JobInputterOP
 	job_inputter() const;
 
-	///@brief should the go() function call MPI_finalize()? It probably should, this is true by default.
+	/// @brief should the go() function call MPI_finalize()? It probably should, this is true by default.
 	virtual
 	void mpi_finalize(bool finalize);
 

@@ -9,9 +9,8 @@
  //////////////////////////////////////////////
  /// @file PseudocontactShiftData.fwd.hh
  ///
- /// @authorsv Christophe Schmitz , Kala Bharath Pilla
+ /// @authorv Christophe Schmitz , Kala Bharath Pilla
  ///
- /// @last_modified Mar 2014
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs4_PseudocontactShiftData_fwd_hh

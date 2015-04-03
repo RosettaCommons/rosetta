@@ -12,7 +12,6 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <devel/dna/util.hh>
 
 #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 
@@ -35,8 +34,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <utility/excn/Exceptions.hh>
-
-
 
 
 #include <core/pose/Pose.hh>
@@ -70,8 +67,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
-
 
 
 // //silly using/typedef

@@ -9,7 +9,7 @@
 
 /// @file core/scoring/loop_graph/Loop.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -94,7 +94,6 @@ namespace loop_graph {
 		core::Size landing_domain_;
 
 	};
-
 
 
 } //loop_graph

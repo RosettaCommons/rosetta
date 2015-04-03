@@ -19,7 +19,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/io/izstream.hh>
 
@@ -28,7 +27,6 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
 #include <utility/vector0.hh>
 

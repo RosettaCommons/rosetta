@@ -21,12 +21,10 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>

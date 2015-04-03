@@ -191,7 +191,7 @@ FA_GrpElecEnergy::setup_for_minimizing(
 
 }
 
-//
+
 void
 FA_GrpElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
@@ -277,7 +277,7 @@ FA_GrpElecEnergy::update_residue_for_packing(
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 FA_GrpElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,

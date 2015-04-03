@@ -23,7 +23,6 @@
 #include <numeric/xyzVector.hh>
 
 
-
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMover.hh>
@@ -38,14 +37,13 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
-
 namespace protocols {
 namespace protein_interface_design{
 namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.StubScoreFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 StubScoreFilter::StubScoreFilter() :
 	parent( "StubScore" ),
 	host_chain_( 2 ),

@@ -21,7 +21,6 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <boost/foreach.hpp>
 
 // Rosetta Headers
 #include <core/chemical/VariantType.hh>
@@ -39,18 +38,9 @@
 #include <core/fragment/FragSet.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
@@ -59,7 +49,6 @@
 
 //Utility and numeric Headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <iostream>
@@ -68,7 +57,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
@@ -113,7 +101,6 @@ LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(
 	protocols::moves::Mover::type("LoopMover_Perturb_CCD");
 	set_default_settings();
 }
-
 
 
 LoopMover_Perturb_CCD::LoopMover_Perturb_CCD(

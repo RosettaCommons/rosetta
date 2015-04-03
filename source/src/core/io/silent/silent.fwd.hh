@@ -17,10 +17,8 @@
 
 // mini headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <map>
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>

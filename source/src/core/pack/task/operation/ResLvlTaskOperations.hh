@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 #include <string>

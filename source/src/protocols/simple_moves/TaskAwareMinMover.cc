@@ -21,14 +21,11 @@
 // Project Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -37,7 +34,6 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
@@ -81,7 +77,7 @@ TaskAwareMinMover::TaskAwareMinMover()
 		bb_(false)
 {}
 
-///@brief constructor with TaskFactory
+/// @brief constructor with TaskFactory
 TaskAwareMinMover::TaskAwareMinMover(
 	protocols::simple_moves::MinMoverOP minmover_in,
 	core::pack::task::TaskFactoryCOP factory_in
@@ -97,7 +93,7 @@ TaskAwareMinMover::TaskAwareMinMover(
 
 TaskAwareMinMover::~TaskAwareMinMover(){}
 
-///@details apply will extract the movemap from your minmover, modify it to include sidechain DOFs that are packable according to some TaskFactory, run the minmover with this movemap, and revert the minmover to its original movemap.
+/// @details apply will extract the movemap from your minmover, modify it to include sidechain DOFs that are packable according to some TaskFactory, run the minmover with this movemap, and revert the minmover to its original movemap.
 void TaskAwareMinMover::apply( core::pose::Pose & pose ){
 	runtime_assert( minmover_ != 0 );
 	runtime_assert( factory_ != 0 );
@@ -153,7 +149,7 @@ TaskAwareMinMover::get_name() const {
 protocols::moves::MoverOP TaskAwareMinMover::fresh_instance() const { return protocols::moves::MoverOP( new TaskAwareMinMover ); }
 protocols::moves::MoverOP TaskAwareMinMover::clone() const { return protocols::moves::MoverOP( new protocols::simple_moves::TaskAwareMinMover( *this ) ); }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 TaskAwareMinMover::parse_my_tag(
 	TagCOP const tag,
@@ -207,7 +203,7 @@ void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,
 	}
 }
 
-///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 TaskAwareMinMover::parse_task_operations(
 	TagCOP const tag,

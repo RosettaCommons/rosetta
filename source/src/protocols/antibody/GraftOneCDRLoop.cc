@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/GraftOneCDRLoop.cc
 /// @brief grafts a cdr onto the template of an antibody framework
-/// @detailed
+/// @details
 /// @author Jianqing Xu (xubest@gmail.com)
 
 #include <protocols/antibody/GraftOneCDRLoop.hh>
@@ -26,7 +26,6 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 
-
 static thread_local basic::Tracer TRG( "protocols.antibody.GraftOneCDRLoop" );
 
 namespace protocols {
@@ -34,9 +33,7 @@ namespace antibody {
 using namespace core;
 
 
-
 GraftOneCDRLoop::GraftOneCDRLoop() {}
-
 
 
 GraftOneCDRLoop::GraftOneCDRLoop( CDRNameEnum const & cdr_name,
@@ -74,7 +71,6 @@ void GraftOneCDRLoop::set_default() {
 }
 
 
-
 void GraftOneCDRLoop::init() {
 
 	//idealize the loop
@@ -82,8 +78,6 @@ void GraftOneCDRLoop::init() {
 	idealizer.fast( false );
 
 }
-
-
 
 
 void GraftOneCDRLoop::finalize_setup() {
@@ -99,8 +93,6 @@ void GraftOneCDRLoop::finalize_setup() {
 }
 
 
-
-
 void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 
@@ -108,7 +100,6 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	TRG<<"flank_size: "<<flank_size_<<std::endl;
 
 	finalize_setup();
-
 
 
 	core::Size query_start = ab_info_->get_CDR_loop(cdr_name_).start();
@@ -138,7 +129,6 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	// create atom map for superimposing 2 flanking resiudes
 	id::AtomID_Map< id::AtomID > atom_map;
 	pose::initialize_atomid_map( atom_map, template_pose, id::BOGUS_ATOM_ID );
-
 
 
 	//   ****AAAAAAAAAAAAAAAAAAA****  the template pose should have 4 residues each side
@@ -232,13 +222,6 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 }
 
 
-
-
-
-
-
-
-
 std::string GraftOneCDRLoop::get_name() const {
 	return "GraftOneCDRLoop";
 }
@@ -249,7 +232,7 @@ GraftOneCDRLoop::GraftOneCDRLoop( GraftOneCDRLoop const & rhs ) : Mover(rhs) {
 }
 
 
-///@brief assignment operator
+/// @brief assignment operator
 GraftOneCDRLoop & GraftOneCDRLoop::operator=( GraftOneCDRLoop const & rhs ) {
 	//abort self-assignment
 	if (this == &rhs) return *this;
@@ -267,9 +250,6 @@ void GraftOneCDRLoop::initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & l
 	lhs.benchmark_=rhs.benchmark_;
 	lhs.stem_not_graft_=rhs.stem_not_graft_;
 }
-
-
-
 
 
 }  // namespace antibody

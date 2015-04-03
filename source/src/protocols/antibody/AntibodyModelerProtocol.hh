@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/AntibodyModelerProtocol.hh
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -28,7 +28,6 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
 #include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
-
 
 
 using namespace core;
@@ -198,8 +197,6 @@ private:
 	void echo_metrics_to_jd2( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
 }; // class
-
-
 
 
 } // namespace antibody

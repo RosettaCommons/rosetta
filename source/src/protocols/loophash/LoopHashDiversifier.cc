@@ -428,7 +428,6 @@ LoopHashDiversifier::parse_my_tag(
 }
 
 
-
 //Min RMS
 Real
 LoopHashDiversifier::min_rms() const{ return min_rms_; }

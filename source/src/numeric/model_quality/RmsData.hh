@@ -11,7 +11,7 @@
 /// @brief  Small object to hold data for RMS calculations.
 /// @author James Thompson
 /// @date   Thu Jan 10 06:55:37 2008
-///
+
 
 #ifndef INCLUDED_numeric_model_quality_RmsData_HH
 #define INCLUDED_numeric_model_quality_RmsData_HH
@@ -43,12 +43,11 @@ protected:
 
 public:
 	////////////////////////////////////////////////////////////////////////////////
-	/// @begin add_rms
 	///
 	/// @brief  computes a 3x3 matrix of cross moments between the x,y,z components of
 	///  the two input vectors.
 	///
-	/// @detailed  the output is the running sum of these matricies
+	/// @details  the output is the running sum of these matricies
 	///
 	/// @param  i - [in/out]? -
 	/// @param  xp - [in/out]? -
@@ -62,9 +61,8 @@ public:
 	///
 	/// @references
 	///
-	/// @authors
+	/// @author
 	///
-	/// @last_modified
 	/////////////////////////////////////////////////////////////////////////////////
 	void add_rms(
 		int i,

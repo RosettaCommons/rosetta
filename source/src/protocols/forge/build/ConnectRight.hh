@@ -28,13 +28,11 @@
 #include <core/pose/Pose.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

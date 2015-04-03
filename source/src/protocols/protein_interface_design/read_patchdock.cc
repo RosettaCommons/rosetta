@@ -41,7 +41,6 @@
 #include <numeric/xyz.functions.hh>
 
 
-
 using namespace core;
 using namespace core::scoring;
 using basic::options::option;
@@ -86,7 +85,7 @@ PatchdockReader::clear_internals()
 	saved_transformations_.clear();
 }
 
-///@detailed how many entries are there in the patchdock file?
+/// @details how many entries are there in the patchdock file?
 core::Size
 PatchdockReader::number_of_patchdock_entries()
 {
@@ -97,7 +96,7 @@ PatchdockReader::number_of_patchdock_entries()
 	return( saved_transformations_.size() );
 }
 
-///@detailed read a rigid-body transformation from a patchdock file.
+/// @details read a rigid-body transformation from a patchdock file.
 /// caches transformations in saved_transformations_ to avoid multiple disk access
 Transformation
 PatchdockReader::read_patchdock_entry()
@@ -141,7 +140,7 @@ PatchdockReader::read_patchdock_entry()
 	return( saved_transformations_[ patchdock_entry_num_ ] );
 }
 
-//@detailed transform a chain within the pose according to t. The transformation computed here is
+//@details transform a chain within the pose according to t. The transformation computed here is
 //based on patchdock's transOutput.pl and pdb_trans
 void
 PatchdockReader::transform_pose( core::pose::Pose & pose, core::Size const chain, Transformation const & t )

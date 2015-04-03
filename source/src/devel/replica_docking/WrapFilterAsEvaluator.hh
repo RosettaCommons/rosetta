@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Zhe Zhang
-
 
 
 #ifndef INCLUDED_devel_replica_docking_WrapFilterAsEvaluator_hh
@@ -37,7 +36,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

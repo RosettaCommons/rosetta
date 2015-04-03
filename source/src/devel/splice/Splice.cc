@@ -55,7 +55,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 
-
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -315,7 +314,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 			data.close();
 		}
 
-		///@brief controls which dbase entry will be used. Three options: 1. specific one according to user instruction; 2. randomized out of a subset of the dbase with fitting sequence lengths (if user specified 0); 3. iterating over dbase subset
+		/// @brief controls which dbase entry will be used. Three options: 1. specific one according to user instruction; 2. randomized out of a subset of the dbase with fitting sequence lengths (if user specified 0); 3. iterating over dbase subset
 		core::Size Splice::find_dbase_entry(core::pose::Pose const & pose) {
 			core::Size dbase_entry(database_entry());
 			if (first_pass_) {		/// setup the dbase subset where loop lengths fit the selection criteria
@@ -1713,7 +1712,6 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 			}
 
 
-
 			TR << "Finishing splice. Checking that there are only one chain break!!!" << std::endl;
 			core::Real tolerance = tolerance_; // 0.23 angstrom deviation from mean peptide bond length
      	bool fail_retry_if_found = true;
@@ -2171,7 +2169,7 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 			TR << "Finished reading torsion database with " << torsion_database_.size() << " entries" << std::endl;
 		}
 
-		///@Set a general fold tree to use for all antibodies, gideon, Apr2014
+		/// @Set a general fold tree to use for all antibodies, gideon, Apr2014
 		void Splice::set_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut) {
 			using namespace protocols::rosetta_scripts;
 			core::kinematics::FoldTree ft;
@@ -2279,7 +2277,7 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 			return;
 		}
 
-		///@brief Setup fold tree for segments at the termini of the protein, gdl, Apr2014
+		/// @brief Setup fold tree for segments at the termini of the protein, gdl, Apr2014
 		void Splice::tail_fold_tree(core::pose::Pose & pose, core::Size const vl_vh_cut, core::Size chain_break) const {
 			using namespace protocols::loops;
 			//	TR << "cut point after llc " << vl_vh_cut << std::endl;
@@ -2334,7 +2332,7 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 			return;
 		}
 
-		///@brief set the fold tree around start/stop/cut sites.
+		/// @brief set the fold tree around start/stop/cut sites.
 		/// presently makes a simple fold tree, but at one point may be a more complicated function to include two poses
 		void Splice::fold_tree(core::pose::Pose & pose, core::Size const start, core::Size const stop, core::Size const cut) const {
 			using namespace protocols::loops;
@@ -2755,7 +2753,7 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 			}
 		}
 
-		///@brief apply coordinate constraints on the segment being inserted. "to" and "from" are residue number of the pose(!), anchor residue number is also on the pose
+		/// @brief apply coordinate constraints on the segment being inserted. "to" and "from" are residue number of the pose(!), anchor residue number is also on the pose
 		void Splice::add_coordinate_constraints(core::pose::Pose & pose, core::pose::Pose const & source_pose, core::Size from, core::Size to, core::Size anchor, std::string atom_type, core::pack::task::PackerTaskOP task) {
 			//	if( !superimposed() ){
 			//		TR<<"The source pose is not superimposed on the template, so we're not using coordinate restraints, only dihedrals"<<std::endl;
@@ -3042,9 +3040,6 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 
 			return 0;
 		}
-
-
-
 
 
 	} //splice

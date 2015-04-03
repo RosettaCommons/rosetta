@@ -18,7 +18,6 @@
 #include <protocols/domain_assembly/AddAssemblyConstraints.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <string>
 

@@ -18,18 +18,12 @@
 #include <map>
 
 // mini headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <core/io/raw_data/DecoyStruct.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <numeric/model_quality/rms.hh>
 

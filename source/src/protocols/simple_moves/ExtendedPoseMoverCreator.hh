@@ -14,7 +14,6 @@
 #define INCLUDED_protocols_simple_moves_ExtendedPoseMoverCreator_HH
 
 // C/C++ headers
-// AUTO-REMOVED #include <string>
 
 // Package headers
 #include <protocols/moves/Mover.fwd.hh>

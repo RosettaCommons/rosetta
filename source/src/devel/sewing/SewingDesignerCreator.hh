@@ -13,7 +13,6 @@
 /// @author Tim Jacobs
 
 
-
 #ifndef INCLUDED_devel_loop_creation_SewingDesignerCreator_hh
 #define INCLUDED_devel_loop_creation_SewingDesignerCreator_hh
 

@@ -16,12 +16,7 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
@@ -56,7 +51,6 @@ superimpose_pose_on_subset_bb(
 
 } // fibril
 } // protocols
-
 
 
 #endif

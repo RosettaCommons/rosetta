@@ -36,7 +36,7 @@ sources = {
 		"Patch",
 		"PatchOperation",
 		"ResConnID",
-		"ResidueConnection",
+		#"ResidueConnection",
 		"residue_io",
 		"ResidueDatabaseIO",
 		"ResidueGraphTypes",

@@ -25,7 +25,6 @@
 
 // Utility Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -41,56 +40,56 @@ public:
 
 	virtual ~LoopAnalyzerMover();
 
-	///@brief do not use a default constructor with this class - function exists as part of the remove #include drive
+	/// @brief do not use a default constructor with this class - function exists as part of the remove #include drive
 	LoopAnalyzerMover();
 
 	LoopAnalyzerMover( LoopAnalyzerMover const & rhs );
 
 private:
-	///@brief not implemented and deliberately uncallable - the tracer boolean can't be reset; why do you need this anyway?
+	/// @brief not implemented and deliberately uncallable - the tracer boolean can't be reset; why do you need this anyway?
 	LoopAnalyzerMover & operator = ( LoopAnalyzerMover const & rhs );
 
 public:
-	///@brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
+	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects) although it may toss data into the DataCache or a Job object.
 	virtual void apply( core::pose::Pose & input_pose );
 
 	virtual std::string get_name() const;
 	
-	///@brief Return the total score found from the last apply call
+	/// @brief Return the total score found from the last apply call
 	core::Real get_total_score() const;
 	core::Real get_max_rama() const;
 	core::Real get_max_omega() const;
 	core::Real get_max_pbond() const;
 	core::Real get_max_chainbreak() const;
 
-	///@brief Return the vector of chainbreak scores
+	/// @brief Return the vector of chainbreak scores
 	utility::vector1<core::Real>
 	get_chainbreak_scores();
 	
 private:
-	///@brief places cutpoints in the loops, scores chainbreak, removes cutpoints
+	/// @brief places cutpoints in the loops, scores chainbreak, removes cutpoints
 	void calculate_all_chainbreaks( core::pose::Pose & pose );
 	
-	///@brief ctor helper: create scorefunction
+	/// @brief ctor helper: create scorefunction
 	void set_sf();
 
-	///@brief convert loops into positions (must wait until pose, thus not in ctor)
+	/// @brief convert loops into positions (must wait until pose, thus not in ctor)
 	void find_positions( core::pose::Pose const & pose );
 
 private:
-	///@brief used to store a copy of the input loops
+	/// @brief used to store a copy of the input loops
 	protocols::loops::LoopsCOP loops_;
 
-	///@brief output to tracer or PDB/silent file
+	/// @brief output to tracer or PDB/silent file
 	bool const tracer_;
 
-	///@brief used to calculate positions to examine - loops +- 1 position are interesting, but vary w/termini, etc
+	/// @brief used to calculate positions to examine - loops +- 1 position are interesting, but vary w/termini, etc
 	utility::vector1< core::Size > positions_;
 
-	///@brief scorefunction used to apply multiple individual terms at once, not as a cohesive unit
+	/// @brief scorefunction used to apply multiple individual terms at once, not as a cohesive unit
 	core::scoring::ScoreFunctionOP sf_;
 
-	///@brief scorefunction for chainbreak score
+	/// @brief scorefunction for chainbreak score
 	core::scoring::ScoreFunctionOP chbreak_sf_;
 
 	///brief remember chainbreak scores

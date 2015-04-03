@@ -19,13 +19,8 @@
 #include <core/scoring/carbon_hbonds/CarbonHBondEnergyCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
 
 // Project headers
 #include <ObjexxFCL/format.hh>
@@ -37,9 +32,7 @@
 
 #include <core/chemical/AtomType.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
@@ -82,7 +75,7 @@ CarbonHBondEnergyCreator::score_types_for_method() const {
 }
 
 
-///@brief copy c-tor
+/// @brief copy c-tor
 CarbonHBondEnergy::CarbonHBondEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new CarbonHBondEnergyCreator ) ),
 	carbon_hbond_potential_( ScoringManager::get_instance()->get_CarbonHBondPotential() ),
@@ -111,7 +104,7 @@ CarbonHBondEnergy::clone() const
 	return methods::EnergyMethodOP( new CarbonHBondEnergy( *this ) );
 }
 
-///
+
 void
 CarbonHBondEnergy::setup_for_scoring( pose::Pose & /*pose*/, ScoreFunction const & ) const
 {
@@ -576,7 +569,6 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 	if( don_rsd.is_virtual( don_h_atm) ) return false;
 
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	Vector const & don_h_atm_xyz( don_rsd.atom( don_h_atm ).xyz() );
@@ -664,7 +656,6 @@ CarbonHBondEnergy::atom_is_acceptor( conformation::Residue const & rsd, Size con
 	}
 	return false;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -880,7 +871,7 @@ CarbonHBondEnergy::eval_intrares_energy(
 
 }
 
-///@brief CarbonHBondEnergy is not context sensitive
+/// @brief CarbonHBondEnergy is not context sensitive
 void
 CarbonHBondEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /*context_graphs_required*/

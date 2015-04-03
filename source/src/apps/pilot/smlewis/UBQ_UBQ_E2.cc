@@ -124,7 +124,6 @@ private: //enum for atomID vector
 	};
 
 
-
 public:
 	UBQ_E2Mover()
 	: init_for_input_yet_(false),
@@ -158,7 +157,7 @@ public:
 		}
 	}
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 	virtual
 	void
 	init_on_new_input() {
@@ -662,7 +661,7 @@ private:
 
 	protocols::loops::Loop loop_;
 
-	///@brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions
+	/// @brief vector contains atomIDs for thioester bond and atoms before/after bond to determine various torsions
 	utility::vector1< core::id::AtomID > atomIDs;
 
 	core::pose::Pose starting_pose_; //maintained from run to run

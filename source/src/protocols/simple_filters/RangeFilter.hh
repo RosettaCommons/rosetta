@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/simple_filters/RangeFilter.hh
 /// @brief Range filter evaluates if the return value of a particular filter is between a specific range
-/// @detailed
+/// @details
 /// @author Javier Castellanos (javiercv@uw.edu)
 
 
@@ -90,7 +90,6 @@ public:// accessor
 
 	// @brief get name of this filter
 	virtual std::string name() const { return "RangeFilter"; }
-
 
 
 public:// parser

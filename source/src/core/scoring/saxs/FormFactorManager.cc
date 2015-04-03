@@ -22,7 +22,6 @@
 
 // C++
 #include <string>
-// AUTO-REMOVED #include <utility>
 #include <map>
 
 #include <utility/vector1.hh>

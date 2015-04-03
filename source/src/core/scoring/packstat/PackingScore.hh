@@ -16,9 +16,6 @@
 #ifndef INCLUDED_core_scoring_packstat_PackingScore_hh
 #define INCLUDED_core_scoring_packstat_PackingScore_hh
 
-// AUTO-REMOVED #include <core/scoring/packstat/types.hh>
-// AUTO-REMOVED #include "numeric/xyzVector.hh"
-// AUTO-REMOVED #include "utility/vector1.hh"
 
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -79,8 +76,6 @@ typedef utility::pointer::shared_ptr< PackingScore const > PackingScoreCOP;
 } // namespace packstat
 } // namespace scoring
 } // namespace core
-
-
 
 
 #endif

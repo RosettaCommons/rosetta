@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_moves/MonteCarloReset.hh
 /// @brief perform a given mover and sample structures by MonteCarlo
-/// @detailed The "score" evaluation of pose during MC after applying mover is done by
+/// @details The "score" evaluation of pose during MC after applying mover is done by
 /// ither FilterOP that can do report_sm() or ScoreFunctionOP you gave.
 /// By setting sample_type_ to high, you can also sample the pose that have higher score.
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
@@ -28,7 +28,6 @@
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Parser headers
 #include <basic/datacache/DataMap.fwd.hh>

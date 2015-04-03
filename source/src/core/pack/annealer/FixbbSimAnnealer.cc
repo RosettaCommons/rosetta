@@ -30,7 +30,6 @@
 
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <iostream>
 #include <fstream>
@@ -51,12 +50,11 @@ namespace pack {
 namespace annealer {
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin FixbbSimAnnealer::FixbbSimAnnealer()
 ///
 /// @brief
 /// constructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -66,9 +64,8 @@ namespace annealer {
 ///
 /// @references
 ///
-/// @authors
-///
-/// @last_modified
+/// @author
+
 
 ////////////////////////////////////////////////////////////////////////////////
 FixbbSimAnnealer::FixbbSimAnnealer(

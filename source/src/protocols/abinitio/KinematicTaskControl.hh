@@ -9,7 +9,7 @@
 
 /// @file KinematicTaskCenter
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -28,7 +28,6 @@
 #include <protocols/abinitio/KinematicTaskControl.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/abinitio/KinematicControl.hh>
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
@@ -38,23 +37,19 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // ObjexxFCL Headers
 //#include <ObjexxFCL/FArray1D.hh>
 //#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -121,7 +116,6 @@ private:
 	ProtocolOP sampling_protocol_;
 	bool b_input_is_fullatom_;
 };
-
 
 
 }

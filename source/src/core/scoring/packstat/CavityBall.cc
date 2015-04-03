@@ -16,15 +16,11 @@
 // Unit header or inline function header
 #include <core/scoring/packstat/CavityBall.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <iostream>
 #include <sstream>
 
 #include <ObjexxFCL/format.hh>
-
-
-
 
 
 namespace core {
@@ -145,7 +141,6 @@ string const CavityBall::hetero_atom_line( int const hetresnum, int const /*chai
 // 	}
 // 	return count;
 // }
-
 
 
 } // namespace packstat

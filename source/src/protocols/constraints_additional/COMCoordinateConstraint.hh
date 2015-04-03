@@ -79,7 +79,6 @@ public:
 		) const ;
 
 
-	///
 	void
 	score( scoring::func::XYZ_Func const & xyz,
 				 scoring::EnergyMap const &, scoring::EnergyMap & emap ) const;
@@ -104,7 +103,7 @@ public:
 
 	std::string type() const;
 
-	///
+
 	Size
 	natoms() const;
 
@@ -112,7 +111,7 @@ public:
 	scoring::constraints::ConstraintOP
 	remap_resid( id::SequenceMapping const & ) const { return NULL; }
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const;
 

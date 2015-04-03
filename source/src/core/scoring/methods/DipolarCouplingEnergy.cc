@@ -22,7 +22,6 @@
 
 #include <core/conformation/Residue.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 
@@ -40,7 +39,6 @@
 //Objexx headers
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <utility/io/ozstream.hh> //for dump_weights
 

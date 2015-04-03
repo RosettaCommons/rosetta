@@ -1229,7 +1229,6 @@ void qzval(
 /// Fortran source into C++.
 
 
-
 void qzvec(
 		int const& nm,
 		int const& n,

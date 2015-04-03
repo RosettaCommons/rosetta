@@ -19,7 +19,6 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
 

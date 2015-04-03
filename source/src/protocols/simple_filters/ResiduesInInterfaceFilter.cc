@@ -36,13 +36,11 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <boost/foreach.hpp>
 #include <core/chemical/AtomType.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -66,7 +64,6 @@
 #include <ObjexxFCL/format.hh>
 
 
-
 namespace protocols {
 namespace simple_filters {
 	
@@ -80,7 +77,7 @@ ResiduesInInterfaceFilterCreator::keyname() const { return "ResInInterface"; }
 
 ResiduesInInterfaceFilter::~ResiduesInInterfaceFilter() {}
 
-/// @detailed a utility for docking_filter
+/// @details a utility for docking_filter
 core::Size ResiduesInInterfaceFilter::compute( core::pose::Pose const & pose ) const
 {
 	Size interface_counter( 0 );

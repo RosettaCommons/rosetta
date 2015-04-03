@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_CombineLongLoopFilterer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 /// @author Rhiju Das (rhiju@stanford.edu)

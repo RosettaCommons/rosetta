@@ -15,7 +15,6 @@
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
 #include <utility/vector1.hh>

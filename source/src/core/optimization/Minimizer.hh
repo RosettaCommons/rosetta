@@ -18,13 +18,10 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
-// AUTO-REMOVED #include <core/optimization/LineMinimizer.hh>
 
 #include <core/optimization/LineMinimizer.fwd.hh>
 #include <core/optimization/Multifunc.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -127,7 +124,7 @@ private:
 //***  End  multivariate minimizer section ***
 //********************************************
 
-//
+
 // Data stored at each LBFGS iteration
 class lbfgs_iteration_data {
 public:

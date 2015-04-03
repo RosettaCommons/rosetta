@@ -22,7 +22,6 @@
 #include <utility/vector1.hh>
 
 
-
 using namespace core;
 using namespace core::graph;
 

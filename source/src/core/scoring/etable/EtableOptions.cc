@@ -14,7 +14,6 @@
 // Unit headers
 #include <core/scoring/etable/EtableOptions.hh>
 
-// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
@@ -146,7 +145,6 @@ operator<< ( std::ostream & out, const EtableOptions & options ){
 }
 
 
-///
 void
 EtableOptions::show( std::ostream & out ) const
 {

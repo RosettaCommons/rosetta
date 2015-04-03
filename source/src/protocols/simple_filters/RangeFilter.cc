@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/RangeFilter.cc
 /// @brief 
-/// @detailed
+/// @details
 /// @author Javier Castellanos	(javiercv@uw.edu)
 
 // Unit Headers
@@ -17,7 +17,6 @@
 #include <protocols/simple_filters/RangeFilterCreator.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 

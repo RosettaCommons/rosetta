@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 
-
 class SplineFuncTests : public CxxTest::TestSuite {
 
 public:

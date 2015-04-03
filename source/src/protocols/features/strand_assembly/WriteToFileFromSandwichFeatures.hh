@@ -71,7 +71,6 @@ namespace strand_assembly {
 		core::Size	sw_res_size);
 
 
-
 	core::Size
 	write_beta_sheet_capping_info_to_a_file(
 		string	tag,

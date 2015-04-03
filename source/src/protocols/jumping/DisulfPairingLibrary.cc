@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -22,13 +22,10 @@
 #include <protocols/jumping/util.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
@@ -41,7 +38,6 @@
 #include <core/fragment/JumpingFrame.hh>
 
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.hh>
@@ -59,15 +55,12 @@
 // numeric headers
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <numeric/xyzMatrix.io.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 //// C++ headers
 #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <ctime>
 
 #include <protocols/jumping/DisulfPairingsList.hh>
 #include <utility/vector1.hh>
@@ -123,7 +116,7 @@ BaseDisulfPairingLibrary::~BaseDisulfPairingLibrary() {}
 // likewise, multiplication by m^t = m inverse can be thought of
 // as expressing a vector given in absolute coords in terms of the
 // local coordinate system defined by m
-//
+
 
 void
 dis_get_coordinate_system(
@@ -356,9 +349,6 @@ DisulfTemplate::DisulfTemplate ( std::string const& c, std::string const& s1, st
 	atoms_downstream_.push_back( s3 );
 	atoms_upstream_ = atoms_downstream_;
 }
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

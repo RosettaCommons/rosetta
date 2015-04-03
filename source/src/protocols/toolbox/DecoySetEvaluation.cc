@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -644,7 +643,6 @@ using namespace basic::options::OptionKeys;
 // 		}
 // 	}
 // }
-
 
 
 } //evaluation

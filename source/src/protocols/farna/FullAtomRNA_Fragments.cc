@@ -9,7 +9,7 @@
 
 /// @file FullAtomRNA_Fragments
 /// @brief RNA fragments from database,
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -158,7 +158,6 @@ FragmentLibrary::~FragmentLibrary() {}
 
 		align_torsions_.push_back( torsion_set );
 	}
-
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////

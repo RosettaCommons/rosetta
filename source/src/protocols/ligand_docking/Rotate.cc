@@ -18,7 +18,6 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -27,7 +26,6 @@
 #include <core/scoring/rms_util.tmpl.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>
@@ -88,7 +86,7 @@ const & Ligand_info::get_residues() const{
 	return residues;
 }
 
-///@brief
+/// @brief
 Rotate::Rotate(): Mover("Rotate")
 {}
 
@@ -115,7 +113,7 @@ std::string Rotate::get_name() const{
 	return "Rotate";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Rotate::parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -190,7 +188,7 @@ void Rotate::apply(core::pose::Pose & pose){
 	}
 }
 
-///@brief for n random rotations, randomly pick one from among the best scoring set of diverse poses
+/// @brief for n random rotations, randomly pick one from among the best scoring set of diverse poses
 void Rotate::rotate_ligand(
 		utility::pointer::shared_ptr<core::grid::CartGrid<int> >  const & grid,
 		core::pose::Pose & pose

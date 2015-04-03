@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 
-
 // C++
 
 using namespace core::chemical::rna;
@@ -78,7 +77,7 @@ RG_Energy_RNA::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -120,7 +119,6 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 	// future.
 	rg_squared /= ( nres - 1 );
 	rg_ = sqrt( rg_squared ); //Save in this class
-
 
 
 }
@@ -193,7 +191,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	//
 	// Or alternatively, if I set up a base centroid virtual atom with a fixed
 	// geometry relative to the base first sidechain atom -- apply it there.
-	//
+
 
 	if ( atom_num_i == first_base_atom_index( rsd ) ) {
 
@@ -211,7 +209,6 @@ RG_Energy_RNA::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } //rna

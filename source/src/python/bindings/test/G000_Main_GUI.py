@@ -27,7 +27,6 @@ from rosetta import *
 rosetta.init()
 
 
-
 print "Running main GUI window"
 main_window_class = main_window()
 main_window_class.TR = MainTracer(main_window_class.output_textbox)

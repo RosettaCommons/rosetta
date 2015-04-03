@@ -19,9 +19,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodel.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
@@ -65,7 +63,6 @@ public:
 	void refine( bool const setting ) { refine_ = setting; }
 	bool hurry(){ return hurry_; }
 	void hurry( bool const setting ) { hurry_ = setting; }
-
 
 
 	protocols::moves::MoverOP clone() const;

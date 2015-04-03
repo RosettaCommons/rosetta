@@ -1,4 +1,3 @@
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -11,14 +10,11 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/saxs/SAXSEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
 
 #include <core/pose/Pose.hh>
 

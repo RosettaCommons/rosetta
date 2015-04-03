@@ -28,13 +28,8 @@
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/JobDistributors.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 
 // option key includes
 
@@ -47,7 +42,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <utility/excn/Exceptions.hh>
-
 
 
 static thread_local basic::Tracer tr( "pilotapps.flo.SecondaryMatcher" );

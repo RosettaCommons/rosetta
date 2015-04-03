@@ -125,28 +125,28 @@ void add_fa_constraints_from_cmdline(
 
 ////////// Centroid constraints (merge mode)
 
-///@brief merge cmdline constraints to pre-existing constraints
+/// @brief merge cmdline constraints to pre-existing constraints
 void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
 
-///@brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
+/// @brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
 void merge_constraints_from_cmdline_to_scorefxn(
 	core::scoring::ScoreFunction & scorefxn_
 );
-///@brief merge cmdline constraints to pre-existing constraints
+/// @brief merge cmdline constraints to pre-existing constraints
 void merge_constraints_from_cmdline(
 	core::pose::Pose & pose, core::scoring::ScoreFunction & scorefxn_
 );
 
 ////////// FA constraints (merge mode)
-///@brief merge cmdline constraints to pre-existing constraints
+/// @brief merge cmdline constraints to pre-existing constraints
 void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
 
-///@brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
+/// @brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
 void merge_fa_constraints_from_cmdline_to_scorefxn(
 	core::scoring::ScoreFunction & scorefxn_
 );
 
-///@brief merge cmdline constraints to pre-existing constraints
+/// @brief merge cmdline constraints to pre-existing constraints
 void merge_fa_constraints_from_cmdline(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction & scorefxn_
@@ -166,11 +166,11 @@ add_coordinate_constraints( core::pose::Pose & pose, core::Size const start_res,
 
 ////////// Constraint removal
 
-///@brief Remove all constraints of a given type from a pose.
+/// @brief Remove all constraints of a given type from a pose.
 void
 remove_constraints_of_type(core::pose::Pose & pose, std::string const type);
 
-///@brief Remove all constraints of a given type from a pose that involve start_res to end_res.  Useful for coordinate/dihedral constraints
+/// @brief Remove all constraints of a given type from a pose that involve start_res to end_res.  Useful for coordinate/dihedral constraints
 void
 remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core::Size const start_res, core::Size const end_res);
 
@@ -181,7 +181,7 @@ remove_nonbb_constraints( pose::Pose & pose) ;
 /// @brief call this on your constraints if you have MultiConstraints before running Abinitio -- already done by broker-type application
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in );
 
-///@brief combine constraints randomly into Ambiguous constraints...
+/// @brief combine constraints randomly into Ambiguous constraints...
 void combine_constraints(
   ConstraintCOPs& in,
 	core::Size combine_ratio,
@@ -189,11 +189,11 @@ void combine_constraints(
 	core::kinematics::ShortestPathInFoldTree const& sp
 );
 
-///@brief have at most one constraint per residue pair...
+/// @brief have at most one constraint per residue pair...
 void skip_redundant_constraints( ConstraintCOPs& in, core::Size total_residue, core::Size influence_width = 1 );
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
 
-///@brief example of how to go through a pose constraint set and print out stuff.
+/// @brief example of how to go through a pose constraint set and print out stuff.
 void print_atom_pair_constraints( pose::Pose const & pose, std::ostream & out = std::cout );
 
 

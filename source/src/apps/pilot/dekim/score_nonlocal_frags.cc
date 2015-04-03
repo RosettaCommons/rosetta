@@ -73,15 +73,12 @@
 #include <protocols/simple_filters/DdgFilter.hh>
 
 
-
-
 static thread_local basic::Tracer TR( "main" );
 
 using namespace protocols::moves;
 using namespace core::scoring;
 // using namespace basic::options;
 // using namespace basic::options::OptionKeys;
-
 
 
 class MyScoreMover : public Mover {

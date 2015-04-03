@@ -19,8 +19,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 #include <algorithm>
@@ -29,7 +27,6 @@
 #include <numeric/random/random.fwd.hh>
 
 //Auto Headers
-
 
 
 namespace protocols {
@@ -89,9 +86,9 @@ void add_loop(
 	loops.add_loop( seg_begin, seg_end, cut, 0, false );
 }
 
-///@brief add a set of loops 'built' around the provided residue indices
-///@details A maximum of gapsize residues are allowed between specified residues for any given loop, loop ends are extended by extend residues, and chain discontinuity starts a new loop
-///@author ashworth
+/// @brief add a set of loops 'built' around the provided residue indices
+/// @details A maximum of gapsize residues are allowed between specified residues for any given loop, loop ends are extended by extend residues, and chain discontinuity starts a new loop
+/// @author ashworth
 void loops_around_residues(
 	loops::Loops & loops,
 	pose::Pose const & pose,

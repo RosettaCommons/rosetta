@@ -22,7 +22,6 @@
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -60,7 +59,6 @@ EnvEnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// c-tor
 EnvEnergy::EnvEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new EnvEnergyCreator ) ),
@@ -81,7 +79,6 @@ EnvEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 EnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

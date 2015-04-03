@@ -36,8 +36,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
-
-
 namespace basic {
 namespace options {
 
@@ -156,7 +154,6 @@ start_files()
 		basic::T("basic.options.util") << "Use either -s or -l to designate one or more start_files" << std::endl;
 		utility_exit();
 	}
-
 
 
 	return filenames;

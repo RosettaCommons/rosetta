@@ -71,7 +71,7 @@ public:
   static
   bool is_claim( std::string const& name );
 
-  ///@brief Virtual destructor
+  /// @brief Virtual destructor
   virtual ~EnvClaim();
 
   EnvClaim( ClientMoverOP );

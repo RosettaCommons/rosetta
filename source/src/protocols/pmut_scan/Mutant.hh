@@ -17,21 +17,14 @@
 // Project Headers
 #include <protocols/pmut_scan/Mutant.fwd.hh>
 
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Utility headers
 
 // ObjexxFCL header
 
 // C++
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

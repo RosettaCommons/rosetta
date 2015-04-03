@@ -16,11 +16,8 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
 
 //Auto Headers
@@ -81,7 +78,6 @@ public: // tests
 		TS_ASSERT( ft.is_cutpoint( 20 ) );
 		TS_ASSERT( !ft.is_cutpoint( 41 ) );
 	}
-
 
 
 };

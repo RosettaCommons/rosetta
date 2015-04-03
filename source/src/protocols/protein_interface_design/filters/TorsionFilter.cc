@@ -16,7 +16,6 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -34,7 +33,7 @@ namespace filters {
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.Torsion" );
 static thread_local basic::Tracer TR_database( "protocols.protein_interface_design.filters.Torsion_database" );
 
-///@brief default ctor
+/// @brief default ctor
 Torsion::Torsion() :
 	parent( "Torsion" ),
 	lower_( false ),

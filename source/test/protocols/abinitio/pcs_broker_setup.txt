@@ -15,7 +15,6 @@ PCS_INPUT_FILE protocols/abinitio/pcs_data2.npc
 GRID_EDGE_SIZE 12 12 12 12
 
 
-
 # The size of the step of the grid search.
 # 4 strictly positif numbers (int or float) for the 4 stages.
 # If not set, default value is 3.0 for all stages
@@ -23,13 +22,11 @@ GRID_EDGE_SIZE 12 12 12 12
 GRID_STEP_SIZE 5 5 5 5
 
 
-
 # A spherical cutoff: skip points of the grid search within that sphere (centered on the center of the grid search)
 # 4 positif numbers (int or float) for the 4 stages.
 # If not set, default value is 0.0 for all stages
 
 GRID_SMALL_CUTOFF 3 3 3 3
-
 
 
 # A spherical cutoff: skip points of the grid search outside that sphere (centered on the center of the grid search)
@@ -47,7 +44,6 @@ GRID_LARGE_CUTOFF 6 6 6 6
 GRID_CONE_ANGLE_CUTOFF 180 180 180 180
 
 
-
 # The first atom that will determine the vector (used as axes of GRID_CONE_ANGLE_CUTOFF)
 # Must be specified
 
@@ -55,13 +51,11 @@ VECTOR_ATOM1_NAME CA CA CA CA
 VECTOR_ATOM1_RESIDUE_NUM 68 68 68 68
 
 
-
 # The first atom that will determine the vector (used as axes of GRID_CONE_ANGLE_CUTOFF)
 # Must be specified
 
 VECTOR_ATOM2_NAME CB CB CB CB
 VECTOR_ATOM2_RESIDUE_NUM 68 68 68 68
-
 
 
 # The center C of the grid search (which is also the center of the spheres) is specified by the following vector equality
@@ -73,13 +67,11 @@ VECTOR_ATOM2_RESIDUE_NUM 68 68 68 68
 K_VECTOR 0 0 0 0
 
 
-
 # At the end of the grid search, the best tensor found can be further minimize (including the lanthanide coordinate)
 # 4 boolean (0 for false, 1 for true) for the 4 stages.
 # If not set, default value is 0 (false) for all stages
 
 MINIMIZE_BEST_TENSOR 0 0 0 1
-
 
 
 # The weight to use for the PCS score.

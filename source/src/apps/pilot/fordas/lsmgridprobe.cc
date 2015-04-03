@@ -77,7 +77,6 @@ namespace protocols {
 namespace hotspot_hashing {
 
 
-
 bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspec)
 {
 	std::vector< std::string > vectors;

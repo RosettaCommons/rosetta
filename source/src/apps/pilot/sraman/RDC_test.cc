@@ -48,9 +48,6 @@
 #include <core/pose/annotated_sequence.hh>
 
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
 int
 main( int argc, char * argv [] )
@@ -110,6 +107,5 @@ main( int argc, char * argv [] )
 	}
 
 }
-
 
 

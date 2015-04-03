@@ -41,7 +41,7 @@ static thread_local basic::Tracer T( "core.pack.interaction_graph.otf_ig", basic
 
 /// @brief main constructor, no default or copy constructors
 ///
-/// @detailed
+/// @details
 OnTheFlyNode::OnTheFlyNode(
 	InteractionGraphBase * owner,
 	int node_id,
@@ -149,7 +149,6 @@ OnTheFlyNode::add_to_one_body_energy( int state, core::PackerEnergy energy )
 {
 	one_body_energies_[ state ] +=  energy;
 }
-
 
 
 void

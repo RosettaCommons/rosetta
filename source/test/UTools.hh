@@ -10,7 +10,7 @@
 /// @file   test/UTools.hh
 /// @brief  Unit test Tracer/Diff system
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_UTools_HH
 #define INCLUDED_UTools_HH

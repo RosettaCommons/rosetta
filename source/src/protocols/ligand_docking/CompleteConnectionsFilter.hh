@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_ligand_docking_CompleteConnectionsFilter_hh
 
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 

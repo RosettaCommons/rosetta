@@ -20,7 +20,6 @@
 // Unit header
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/SequenceMapping.fwd.hh>
@@ -34,7 +33,6 @@
 #include <numeric/xyzVector.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -53,7 +51,7 @@ public:
 		core::Size num_act_csts,
 		core::scoring::constraints::ConstraintCOPs & cst_in ) ;
 
-	///
+
 	virtual
 	core::scoring::constraints::ConstraintOP clone() const {
 		return core::scoring::constraints::ConstraintOP( new AmbiguousMultiConstraint(*this) );

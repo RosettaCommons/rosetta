@@ -99,8 +99,6 @@ AveragePathLengthFilter::path_tightness(
 }
 
 
-
-
 void
 AveragePathLengthFilter::parse_my_tag(
 	utility::tag::TagCOP tag,

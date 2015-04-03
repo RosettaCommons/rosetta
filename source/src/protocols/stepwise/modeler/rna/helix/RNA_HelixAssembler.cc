@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to RNA_HelixAssembler
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/modeler/rna/helix/RNA_HelixAssembler.hh>
@@ -475,7 +475,6 @@ RNA_HelixAssembler::remove_first_base_pair( std::string & full_sequence,
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_HelixAssembler::remove_last_base_pair( std::string & full_sequence,
@@ -797,8 +796,6 @@ RNA_HelixAssembler::fill_chain_info( pose::Pose & pose ){
 	FullModelInfoOP full_model_info( new FullModelInfo( pose ) );
 	set_full_model_info( pose, full_model_info );
 }
-
-
 
 
 } //helix

@@ -5,7 +5,6 @@
 namespace bp = boost::python;
 
 
-
 // core::scoring::constraints::ConstraintCOP rtest_COP( core::scoring::constraints::ConstraintCOP cst )
 // {
 // 	return cst;

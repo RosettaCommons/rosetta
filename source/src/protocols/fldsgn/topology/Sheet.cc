@@ -30,7 +30,6 @@
 // C++ headers
 #include <iostream>
 #include <map>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
@@ -510,7 +509,6 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 	set_sheet_number();
 
 } // SheetTopology::calc_sheetset
-
 
 
 } // namespace topology

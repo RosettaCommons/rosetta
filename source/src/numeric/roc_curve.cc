@@ -237,4 +237,3 @@ platform::Real RocCurve::calculate_auc()
 }
 
 
-

@@ -61,7 +61,7 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
-///@details
+/// @details
 void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 	
 	TR<< "in OopRandomPuckMover::apply" << std::endl;
@@ -120,7 +120,7 @@ OopRandomPuckMover::get_name() const {
 	return "OopRandomPuckMover";
 }
 
-///@brief
+/// @brief
 OopRandomPuckMover::OopRandomPuckMover(
 ) : Mover()
 {

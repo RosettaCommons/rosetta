@@ -31,7 +31,4 @@ typedef utility::pointer::shared_ptr< RestrictInterGroupVectorOperation const > 
 } // protocols
 
 
-
-
-
 #endif

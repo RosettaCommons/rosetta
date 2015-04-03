@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/H3CterInsert.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -35,24 +35,17 @@
 #include <basic/database/open.hh>
 
 
-
-
 static thread_local basic::Tracer TR( "protocols.antibody.H3CterInsert" );
 using namespace core;
-
 
 
 namespace protocols {
 namespace antibody {
 
 
-
-
-
 H3CterInsert::H3CterInsert() : Mover() {
 	user_defined_ = false;
 }
-
 
 
 H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info, bool camelid ) : Mover() {
@@ -61,12 +54,8 @@ H3CterInsert::H3CterInsert(antibody::AntibodyInfoOP  antibody_info, bool camelid
 }
 
 
-
-
 // H3CterInsert default destructor
 H3CterInsert::~H3CterInsert() {}
-
-
 
 
 void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark) {
@@ -87,9 +76,6 @@ void H3CterInsert::init(AntibodyInfoOP antibody_info, bool camelid, bool benchma
 }
 
 
-
-
-
 void H3CterInsert::set_default() {
 	is_camelid_ = false;
 	benchmark_ = false;
@@ -100,11 +86,9 @@ void H3CterInsert::set_default() {
 //}
 
 
-
 //void H3CterInsert::finalize_setup(core::pose::Pose & pose ){
 
 //}
-
 
 
 void H3CterInsert::apply(pose::Pose & pose) {
@@ -112,12 +96,9 @@ void H3CterInsert::apply(pose::Pose & pose) {
 //    finalize_setup(pose);
 
 
-
-
 	TR <<  "Inserting CDR H3 C-ter Fragments" << std::endl;
 
 	Size loop_begin(0), loop_end(0), cutpoint(0);
-
 
 
 	loop_begin = ab_info_->get_CDR_loop(h3).start()-1;  //JQX: to match R2_Antibody
@@ -171,21 +152,12 @@ void H3CterInsert::apply(pose::Pose & pose) {
 	return;
 
 
-
-
 }
-
-
 
 
 std::string H3CterInsert::get_name() const {
 	return "H3CterInsert";
 }
-
-
-
-
-
 
 
 /// FIXME: JQX the get_CDR_loop is so weird here
@@ -211,9 +183,6 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	TR<<"aa_1name.size()="<<aa_1name.length()<<std::endl;
 
 	TR<<aa_1name<<std::endl;
-
-
-
 
 
 	// used only when no length & kink match are found
@@ -337,8 +306,6 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	}
 
 
-
-
 	//for (int i=1;i<=H3_base_library_.size();i++) {
 	//    TR<<H3_base_library_[i]<<std::endl;
 	//}
@@ -363,25 +330,7 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }//antibody
 }//protocols
-
-
-
 
 

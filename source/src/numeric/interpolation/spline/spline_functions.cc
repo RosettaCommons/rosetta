@@ -10,7 +10,7 @@
 /// @file   src/numeric/interpolation/spline_functions.cc
 /// @brief  Interpolation with cubic splines
 /// @author Will Sheffler
-///
+
 
 #include <numeric/interpolation/spline/spline_functions.hh>
 
@@ -19,7 +19,6 @@
 namespace numeric {
 namespace interpolation {
 namespace spline {
-
 
 
 //Given arrays x[1..n] and y[1..n] containing a tabulated function,

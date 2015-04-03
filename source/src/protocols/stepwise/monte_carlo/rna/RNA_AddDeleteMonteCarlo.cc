@@ -9,7 +9,7 @@
 
 /// @file RNA_AddDeleteMonteCarlo
 /// @brief SWA Monte Carlo -- generalization of Monte Carlo to permit addition/deletion of RNA residues
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddDeleteMonteCarlo.hh>
@@ -246,7 +246,6 @@ namespace rna {
 
 		silent_file_data_->write_silent_struct( s, silent_file_, false /*score_only*/ );
 	}
-
 
 
 	std::string

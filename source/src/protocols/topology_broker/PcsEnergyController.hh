@@ -10,9 +10,8 @@
  //////////////////////////////////////////////
  /// @file protocols/topology_broker/PcsEnergyController.hh
  ///
- /// @authorsv Christophe Schmitz & Oliver Lange
+ /// @authorv Christophe Schmitz & Oliver Lange
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PcsEnergyController_hh
@@ -57,7 +56,7 @@ public:
 		return TopologyClaimerOP( new PcsEnergyController( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string
 	type() const {
 		return _static_type_name();

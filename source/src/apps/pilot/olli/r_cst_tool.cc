@@ -12,16 +12,13 @@
 /// @author Oliver Lange
 
 #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/abinitio/StrandConstraints.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -55,7 +52,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 //Auto Headers
 #include <core/scoring/func/FuncFactory.hh>
@@ -65,7 +61,6 @@
 
 
 #include <numeric/random/random.hh>
-
 
 
 static thread_local basic::Tracer tr( "main" );
@@ -224,7 +219,6 @@ void ConstraintToolMover::apply( core::pose::Pose &pose ) {
 		cstset_=filtered_cstset;
 	}
 }
-
 
 
 void run() {

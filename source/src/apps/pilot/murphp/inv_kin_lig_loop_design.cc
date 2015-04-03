@@ -51,8 +51,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 
-
-
 using namespace std;
 namespace {
 
@@ -73,13 +71,11 @@ namespace {
 }
 
 
-
 int main( int argc, char ** argv ) {
 	try {
   // Parses command line options and inits RNG.
   // Doesn't seem to hurt to do it again if already done once (?)
   devel::init(argc, argv);
-
 
 
   // Step 0 - read in parameter file

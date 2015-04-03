@@ -29,7 +29,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -53,8 +52,6 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-
-
 
 
 namespace protocols {
@@ -262,8 +259,6 @@ using core::conformation::get_anchor_atomno;
     protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
 	TR << "after star" << pose.fold_tree() << std::endl;
     }
-
-
 
 
 	// each call to the Manager's modify() is for a fresh Pose, so reset

@@ -51,11 +51,11 @@ public:
 public:
 	void factory_register( ResLvlTaskOperationCreatorOP );
 
-	///@brief add a prototype, using its default type name as the map key
+	/// @brief add a prototype, using its default type name as the map key
 	void add_creator( ResLvlTaskOperationCreatorOP );
 	bool has_type( std::string const & ) const;
 
-///@brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
+/// @brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
 	ResLvlTaskOperationOP newRLTO( std::string const & ) const;
 
 private:

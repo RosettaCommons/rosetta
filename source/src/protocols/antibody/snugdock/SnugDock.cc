@@ -56,7 +56,7 @@ namespace antibody {
 ////////////////////////////////////////////// BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@brief default constructor
+/// @brief default constructor
 SnugDock::SnugDock() :
 		docking::DockingHighRes(),
 		loop_refinement_method_( "refine_kic" ),
@@ -68,12 +68,12 @@ SnugDock::SnugDock() :
 	init();
 }
 
-///@brief copy constructor
+/// @brief copy constructor
 SnugDock::SnugDock( SnugDock const & rhs ) : docking::DockingHighRes(rhs) {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 SnugDock & SnugDock::operator=( SnugDock const & rhs ) {
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
@@ -96,13 +96,13 @@ SnugDock::clone() const {
 	return protocols::moves::MoverOP( new SnugDock( *this ) );
 }
 
-///@brief fresh_instance returns a default-constructed object for JD2
+/// @brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
 SnugDock::fresh_instance() const {
 	return protocols::moves::MoverOP( new SnugDock() );
 }
 
-///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 bool SnugDock::reinitialize_for_new_input() const {
 	return true;
 }
@@ -183,7 +183,7 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
 	if ( ! antibody_info_ ) antibody_info_ = AntibodyInfoOP( new AntibodyInfo( pose ) );
 
-	///
+
 	pre_minimization_ = antibody::CDRsMinPackMinOP( new CDRsMinPackMin( antibody_info_ ) );
 
 

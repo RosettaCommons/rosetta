@@ -103,8 +103,6 @@ public:
 	);
 
 
-
-
 private:
 	core::Real tightness_;
 	core::Real lower_bound_;

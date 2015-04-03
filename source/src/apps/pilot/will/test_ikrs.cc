@@ -1,16 +1,12 @@
 // includes
 	#include <basic/options/keys/in.OptionKeys.gen.hh>
-	// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 	#include <basic/options/keys/match.OptionKeys.gen.hh>
-	// AUTO-REMOVED #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 	#include <basic/options/option.hh>
-	// AUTO-REMOVED #include <basic/options/util.hh>
 	#include <basic/Tracer.hh>
 	#include <core/chemical/ChemicalManager.hh>
 	#include <core/chemical/ResidueTypeSet.hh>
 	#include <core/chemical/util.hh>
 	#include <core/conformation/Residue.hh>
-	// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 	#include <core/import_pose/import_pose.hh>
 	#include <devel/init.hh>
 	#include <core/io/pdb/pose_io.hh>
@@ -20,16 +16,10 @@
 	#include <core/pack/packer_neighbors.hh>
 	#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 	#include <core/pack/rotamer_set/RotamerSet.hh>
-	// AUTO-REMOVED #include <core/pack/optimizeH.hh>
-	// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-	// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-	// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 	#include <core/pack/task/PackerTask.hh>
 	#include <core/pack/task/TaskFactory.hh>
 	#include <core/pose/annotated_sequence.hh>
 	#include <core/pose/Pose.hh>
-	// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-	// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 	#include <core/pose/util.hh>
 	#include <core/scoring/Energies.hh>
 	#include <core/scoring/rms_util.hh>
@@ -38,7 +28,6 @@
 	#include <core/scoring/ScoreFunctionFactory.hh>
 	#include <core/scoring/ScoringManager.hh>
 	#include <core/scoring/constraints/AtomPairConstraint.hh>
-	// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 	#include <core/scoring/constraints/AngleConstraint.hh>
 	#include <core/scoring/constraints/CoordinateConstraint.hh>
 	#include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -52,12 +41,10 @@
 	#include <protocols/simple_moves/PackRotamersMover.hh>
 	#include <protocols/simple_moves/MinMover.hh>
 	#include <numeric/kinematic_closure/bridgeObjects.hh>
-	// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 	#include <sstream>
 	#include <utility/io/izstream.hh>
 	#include <utility/io/ozstream.hh>
 	#include <numeric/NumericTraits.hh>
-
 
 
 	// #include <devel/init.hh>

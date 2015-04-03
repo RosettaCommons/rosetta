@@ -101,8 +101,6 @@ using namespace core;
 //  -Robert Vernon (March 2010)
 
 
-
-//
 //	core::Real const ideal_ss_dist_in_disulfide = { 2.02 };
 //	 // mean sulfur-sulfur distance in natives // angstroms
 //

@@ -23,22 +23,18 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 // Rosetta Headers
-// AUTO-REMOVED #include <core/kinematics/Edge.hh>
-// AUTO-REMOVED #include <core/types.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // C++ Headers
 #include <map>
 
 #include <core/kinematics/Edge.fwd.hh>
-
 
 
 namespace core {
@@ -51,7 +47,7 @@ typedef utility::pointer::shared_ptr< ShortestPathInFoldTree > ShortestPathInFol
 
 class ShortestPathInFoldTree : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ShortestPathInFoldTree();
 
   // types

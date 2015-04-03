@@ -17,18 +17,13 @@
 
 // Package headers
 #include <core/scoring/saxs/DistanceHistogram.hh>
-// AUTO-REMOVED #include <core/scoring/saxs/FormFactorManager.hh>
 #include <core/scoring/saxs/FormFactor.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorCEN.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
-
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -110,7 +105,7 @@ protected:
     void read_spectrum(std::string &,utility::vector1<Real> &,utility::vector1<Real> &) const;
 
     /// @brief Takes two vectors: q and I(q) and returns  a SAXS spectrum as a function of Q as defined in this class
-    /// @detailed This is basically done by fiting  a spline and re-evaluating I(q) at different q values
+    /// @details This is basically done by fiting  a spline and re-evaluating I(q) at different q values
     void fit_intensities(const utility::vector1<Real> &,const utility::vector1<Real> &,utility::vector1<Real> &) const;
 
     /// @brief A shortcut that calls read_spectrum() and then fit_intensities()
@@ -120,7 +115,7 @@ protected:
     void compute_intensities(const core::pose::Pose &,utility::vector1<Real> &) const;
 
     /// @brief ce-calculates form factors 
-    /// @detailed This is necessary when :
+    /// @details This is necessary when :
     ///    - this is the first time
     ///    - an amino acid sequence within the scored pose has been changed
     ///    - teh q-value set has been affected

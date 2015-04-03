@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/environment/EnvMoverCreator.hh
-///@brief This class will create instances of the EnvMover for the MoverFactory
-///@author Justin Porter
+/// @file protocols/environment/EnvMoverCreator.hh
+/// @brief This class will create instances of the EnvMover for the MoverFactory
+/// @author Justin Porter
 
 #ifndef INCLUDED_protocols_environment_EnvMoverCreator_hh
 #define INCLUDED_protocols_environment_EnvMoverCreator_hh

@@ -425,8 +425,5 @@ utility::pointer::shared_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 }
 
 
-
-
-
 } // namespace ligand_docking
 } // namespace protocols

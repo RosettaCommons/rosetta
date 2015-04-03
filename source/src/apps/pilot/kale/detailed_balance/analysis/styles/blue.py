@@ -20,6 +20,3 @@ style = {
         'phi2':   dict(color=tango.blue[1], **nonpivot_line) }
 
 
-
-
-

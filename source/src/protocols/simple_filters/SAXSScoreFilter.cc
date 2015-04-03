@@ -9,7 +9,7 @@
 
 /// @file SAXSScoreFilter.cc
 /// @brief runs reject or accept filters on pose
-/// @detailed
+/// @details
 ///	  Contains currently: SAXSScoreFilter
 ///
 ///
@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
@@ -53,7 +52,6 @@
 
 //Auto Headers
 #include <core/scoring/saxs/FormFactorManager.hh>
-
 
 
 //// C++ headers

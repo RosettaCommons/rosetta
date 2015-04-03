@@ -12,7 +12,7 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @author James Thompson (tex@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/OrderedFragSet.hh>
@@ -21,10 +21,8 @@
 //#include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/OrderedFragSetIterator_.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 
@@ -32,7 +30,6 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/Tracer.hh>
 #include <ostream>
@@ -63,7 +60,7 @@ FragSetOP OrderedFragSet::empty_clone() const {
 	return FragSetOP( new OrderedFragSet() );
 }
 
-///@brief get fragments that start somewhere between start and end
+/// @brief get fragments that start somewhere between start and end
 Size OrderedFragSet::region(
   MoveMap const&,
   core::Size start,
@@ -113,7 +110,6 @@ FrameIterator OrderedFragSet::nonconst_end() {
 bool OrderedFragSet::empty() const {
 	return frames_.size()==0;
 }
-
 
 
 void OrderedFragSet::add_( FrameOP aframe )

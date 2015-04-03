@@ -307,7 +307,6 @@ public: //accessor
 private: //data
 
 
-
 	HSSTriplets hss_triplets_;
 
 

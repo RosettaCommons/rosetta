@@ -97,7 +97,6 @@
 #include <boost/function.hpp>
 
 
-
 namespace protocols {
 namespace moves {
 

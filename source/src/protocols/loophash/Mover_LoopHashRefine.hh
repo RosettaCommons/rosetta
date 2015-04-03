@@ -12,20 +12,16 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_loophash_Mover_LoopHashRefine_hh
 #define INCLUDED_protocols_loophash_Mover_LoopHashRefine_hh
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.hh>
-// AUTO-REMOVED #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 

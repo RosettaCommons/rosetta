@@ -42,13 +42,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 
-
 using namespace core;
 using namespace basic::options;
-
-
-
-
 
 
 int

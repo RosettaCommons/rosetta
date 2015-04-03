@@ -197,7 +197,7 @@ HbsPatcher::get_name() const {
 	return "HbsPatcher";
 }
 
-///@brief
+/// @brief
 HbsPatcher::HbsPatcher(
 		core::Size hbs_seq_position
 	): Mover(), hbs_pre_pos_(hbs_seq_position), hbs_post_pos_(hbs_seq_position+2)

@@ -19,24 +19,11 @@
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <utility/assert.hh>
-// AUTO-REMOVED #include <ios>
 #include <iostream>
 #include <fstream>
 
@@ -52,9 +39,6 @@ static thread_local basic::Tracer TR( "WorkUnitManager" );
 
 // 32 bit recognition integer to make sure we're infact about to read/write a WU to disk etc..
 const unsigned int WUB_magic_header_integer = 0xAF34B14C;
-
-
-
 
 
 WorkUnitBaseOP &
@@ -93,7 +77,6 @@ void WorkUnitQueue_Swapped::add( WorkUnitBaseOP new_wu )
 }
 
 
-
 void WorkUnitQueue_Swapped::add_to_swap( WorkUnitBaseOP new_wu ){
 	swap_buffer_.add( new_wu );
 
@@ -108,8 +91,6 @@ void WorkUnitQueue_Swapped::add_to_swap( WorkUnitBaseOP new_wu ){
 	}
 
 }
-
-
 
 
 void  WorkUnitManager::register_work_units( const protocols::wum::WorkUnitList &work_unit_list ){
@@ -157,7 +138,6 @@ void WorkUnitManager::write_queue( const WorkUnitQueue &the_queue, std::ostream 
 		write_work_unit( *it, out );
 	}
 }
-
 
 
 void WorkUnitManager::write_work_unit( const WorkUnitBaseOP& MPI_ONLY(wu), std::ostream& MPI_ONLY( out ) ) const {
@@ -281,7 +261,6 @@ WorkUnitQueue::mem_stats(
 
 
 }
-
 
 
 }

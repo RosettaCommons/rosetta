@@ -61,7 +61,7 @@ SetChiMoverCreator::mover_name()
 
 SetChiMover::~SetChiMover() {}
 
-///@brief default ctor
+/// @brief default ctor
 SetChiMover::SetChiMover() :
 	parent(),
 	angle_( 0 ),

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/packer/SideChainCopier.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

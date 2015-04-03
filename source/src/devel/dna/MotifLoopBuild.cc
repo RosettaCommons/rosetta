@@ -95,7 +95,6 @@ using namespace devel::dna;
 using namespace basic::options;
 
 
-
 MotifLoopBuild::MotifLoopBuild()
 {
 
@@ -164,7 +163,6 @@ void MotifLoopBuild::apply(core::pose::Pose & pose)
     std::cout << "\n***** Refining loop model******\n";
     //refine_pose(pose);
     (*scorefxnOP)(pose);
-
 
 
     utility::vector1< core::Size > design = get_flex_region();

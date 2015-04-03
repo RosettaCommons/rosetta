@@ -17,10 +17,7 @@
 
 // Package headers
 #include <core/optimization/types.hh>
-// AUTO-REMOVED #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
-// AUTO-REMOVED #include <core/optimization/DOF_Node.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/Atom.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -80,7 +77,6 @@ tors_deriv_to_cartesian(
 	Real dE_dtor,
 	VectorQuad const & coords,
 	VectorQuad & dE_dxs);
-
 
 
 } // namespace optimization

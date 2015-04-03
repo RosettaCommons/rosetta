@@ -20,7 +20,6 @@
 #include <utility/vector1.hh>
 
 
-
 typedef numeric::xyzVector<core::Real> point;
 
 namespace protocols{

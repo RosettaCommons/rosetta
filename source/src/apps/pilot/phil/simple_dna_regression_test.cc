@@ -145,9 +145,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
-
-
 using namespace core;
 using namespace protocols;
 using namespace ObjexxFCL;
@@ -190,8 +187,6 @@ score_test( pose::Pose & pose )
 	}
 
 
-
-
 }
 
 /// @details  The main routine, calls smaller tests.
@@ -221,15 +216,6 @@ run_tests()
 
 
 }
-
-
-
-
-
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -284,7 +270,6 @@ extract_pdb_id(
 
 	 pdb_id= file.substr( folder_ind, ext_ind-folder_ind ) ;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -388,7 +373,7 @@ show_clashes(
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Dump a pdb file with b-factor = total (weighted) repulsive energy per atom
 /// and with monitors between clashing atoms above clash_threshold
-///
+
 
 void
 dump_clash_pdb(
@@ -604,7 +589,7 @@ wriggle_test(
 	//
 	// even simpler, orthonormalize v1 and v2, then we start with e' and subtract off dot(e',v1)*v1 and
 	// dot(e',v2)*v2 and we are golden.
-	//
+
 
 	// normalize v1, compute dot product with v2
 	l1 = std::sqrt( l1 );
@@ -702,7 +687,6 @@ wriggle_test(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 dump_hbond_pdb(
@@ -717,7 +701,7 @@ dump_hbond_pdb(
 	using id::THETA;
 	using id::D;
 
-	//
+
 	scoring::hbonds::HBondSet hbond_set;
 	pose.update_residue_neighbors();
 	scoring::hbonds::fill_hbond_set( pose, false, hbond_set );
@@ -795,7 +779,7 @@ show_protein_DNA_interactions(
 	using namespace conformation;
 	using namespace scoring::hbonds;
 
-	//
+
 	HBondSet hbond_set;
 	pose.update_residue_neighbors();
 	fill_hbond_set( pose, false, hbond_set );
@@ -936,8 +920,6 @@ find_dna_rotamers(
 // 			Real const     chi( rsd.chi(1) );
 
 // 			Vector const o3( rsd.xyz( "O3'" ) ); // look at RotamerSet_.cc dna rotamer code for examples of getting positions
-
-
 
 
 // 			Matrix const transform( landing.M * takeoff.M.transposed() );
@@ -1110,7 +1092,6 @@ rescore_test()
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /**
 void
@@ -1126,9 +1107,6 @@ motif_scan()
 		core::import_pose::pose_from_pdb( pose, file );
 
 		// read the motif positions
-
-
-
 
 
 }
@@ -1293,7 +1271,6 @@ intra_dna_stats()
 	} // files[nn]
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1500,7 +1477,6 @@ kono_sarai_zscore()
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////////
 void
 phosphate_stats()
@@ -1564,8 +1540,6 @@ phosphate_stats()
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void
@@ -1585,7 +1559,6 @@ spec_test(
 
 	Size const nloop( 20 );
 	Size const nres( start_pose.total_residue() );
-
 
 
 	///////////////////////////////////////////////////////////////////////
@@ -1677,10 +1650,6 @@ spec_test(
 		dump_pdb( pose, "postpack.pdb" );
 		exit(0);
 	}
-
-
-
-
 
 
 	/**
@@ -1950,8 +1919,6 @@ idealize_tf_pose( pose::Pose & pose )
 		exit(0);
 
 
-
-
 		pose.set_phi( 47, pose.phi(47) + 15 );
 
 		std::cout << "end_score: " << scorefxn( pose ) << std::endl;
@@ -1991,11 +1958,7 @@ idealize_tf_pose( pose::Pose & pose )
 	}
 
 
-
 }
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2054,7 +2017,6 @@ zif268_test()
 	}
 
 
-
 	for ( Size j=1; j<= weights_files.size(); ++j ) {
 
 		ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( weights_files[j] ) );
@@ -2072,8 +2034,6 @@ zif268_test()
 
 
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2109,7 +2069,6 @@ bzip_test()
 	}
 
 
-
 	for ( Size j=1; j<= weights_files.size(); ++j ) {
 
 		ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( weights_files[j] ) );
@@ -2124,7 +2083,6 @@ bzip_test()
 																					weights_files[j] );
 
 	}
-
 
 
 }
@@ -2164,7 +2122,6 @@ endo_test()
 	}
 
 
-
 	for ( Size j=1; j<= weights_files.size(); ++j ) {
 
 		ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( weights_files[j] ) );
@@ -2188,7 +2145,6 @@ endo_test()
 																							 option[ post_minimize ], weights_files[j] /* tag */ );
 	}
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2290,7 +2246,7 @@ tf_specificity_test(
 			Size const i( pdb_pose.conformation().chain_begin( dna_chain ) - 1 + motif_positions[k] );
 			assert( pdb_pose.sequence()[ i-1 ] == motif_pdb_seq[k] );
 
-			//
+
 			if ( partner[i] ) chains.insert( pdb_pose.chain( partner[i] ) );
 
 			// check for protein contacts
@@ -2335,7 +2291,6 @@ tf_specificity_test(
 	} // scope
 
 	set_base_partner( pose );
-
 
 
 	dump_pdb( pose, "test.pdb" );
@@ -2734,7 +2689,6 @@ loop_modeling_test()
 	dump_pdb( pose, "start.pdb" );
 
 
-
 	Loops loops;
 
 	{ // figure out where the loops are
@@ -2775,7 +2729,6 @@ loop_modeling_test()
 
 	**/
 	utility::vector1<int> frag_sizes; //( option[ OptionKeys::loops::frag_sizes ] );
-
 
 
 	frag_sizes.push_back(3);
@@ -2958,7 +2911,6 @@ loop_rebuilding_test()
 ///////////////////////////////////////////////////////////////////////////////
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 luxr_setup()
@@ -3003,7 +2955,7 @@ luxr_setup()
 
 	// now retrieve the DNA chi angles from pdb pose
 	// take coordinates exactly if there's a sequence match -- actually that's already done
-	//
+
 
 	{
 		id::SequenceMapping m( mapping );
@@ -3250,7 +3202,6 @@ atom_vdw_test()
 	out.close();
 
 	exit(0);
-
 
 
 }
@@ -3632,7 +3583,6 @@ water_test_fixed_O()
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 interface_repack_test()
@@ -3751,7 +3701,6 @@ not1_test()
 	using namespace optimization;
  	using namespace scoring::dna;
  	using namespace pose;
-
 
 
 	// read structure
@@ -3977,7 +3926,6 @@ compare_dna_energies()
  	using namespace pose;
 
 
-
 	// read structure
 
 	Pose pose;
@@ -4030,7 +3978,6 @@ compare_energies()
 	using namespace optimization;
  	using namespace scoring::dna;
  	using namespace pose;
-
 
 
 	// read structure
@@ -4316,8 +4263,6 @@ find_dna_chainbreaks( pose::Pose const & pose )
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//
-//
 
 void
 cleanup_dna_chains( pose::Pose & pose )
@@ -4564,7 +4509,7 @@ not1_loop_test()
 	// setup the loops using -pdb_pos arg:
 	//
 	// -pdb_pos <loop1_begin> <loop1_end> <loop1_cut> <loop2_begin> <loop2_end> <loop2_cut> ...
-	//
+
 
 	Loops loops;
 	{
@@ -4675,7 +4620,6 @@ my_main( void* )
 		rescore_test();
 		exit(0);
 	}
-
 
 
 // 	// Open output files ....

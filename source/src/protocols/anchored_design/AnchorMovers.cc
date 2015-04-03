@@ -15,7 +15,6 @@
 #include <protocols/anchored_design/AnchorMovers.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/anchored_design/Anchor.hh>
 #include <protocols/anchored_design/AnchorMoversData.hh>
 #include <protocols/analysis/LoopAnalyzerMover.hh>
 #include <protocols/analysis/InterfaceAnalyzerMover.hh>
@@ -43,8 +42,6 @@
 
 //needed for a benchmarking thing
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-// AUTO-REMOVED #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -88,7 +85,6 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // C++ Headers
 #include <iostream>
@@ -128,7 +124,7 @@ int const ANCHOR_TARGET(1); //jump between anchor and target
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////local helper functions - generally these only run when the debug flag is passed/////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief a local helper function, not in the header
+/// @brief a local helper function, not in the header
 void debug_dump_pose(
 										 core::pose::Pose const & pose,
 										 core::pose::PoseOP posecopy,
@@ -141,7 +137,7 @@ void debug_dump_pose(
 	*posecopy = pose;
 }
 
-///@brief a local helper function for debugging, not in the header
+/// @brief a local helper function for debugging, not in the header
 void dump_cutpoint_info( core::pose::Pose const & pose)
 {
 	core::Size nres(pose.total_residue());
@@ -212,14 +208,14 @@ AnchoredDesignMover::AnchoredDesignMover() :
 	protocols::moves::Mover::type( "AnchoredDesign" );
 }
 
-///@brief copy ctor
+/// @brief copy ctor
 AnchoredDesignMover::AnchoredDesignMover( AnchoredDesignMover const & rhs ) :
 	Mover(rhs)
 {
 	*this = rhs;
 }
 
-///@brief assignment operator
+/// @brief assignment operator
 AnchoredDesignMover & AnchoredDesignMover::operator=( AnchoredDesignMover const & rhs ){
 
 	//abort self-assignment
@@ -271,7 +267,7 @@ void AnchoredDesignMover::init_on_new_input(core::pose::Pose const & pose) {
 	return;
 }
 
-///@details AnchoredDesignMover is mostly a container for other movers for the anchored design protocol.
+/// @details AnchoredDesignMover is mostly a container for other movers for the anchored design protocol.
 void AnchoredDesignMover::apply( core::pose::Pose & pose )
 {
 	clock_t starttime = clock();
@@ -438,7 +434,7 @@ AnchoredDesignMover::calculate_rmsd( core::pose::Pose const & pose, core::pose::
 	return;
 }
 
-///@details This is crazy.  Sometimes loop redesign is overly biased by the starting loop sequence, because the centroid phase won't change the sequence, and the rama term may remember the conformation to well due to sequence preferences.  This restricts sampling.  So, this function creates a random sequence in the designable positions, based on what the design PackerTask thinks they can become.  This code special cases histidine (to avoid double-allowing histidine, based on its two protonations).
+/// @details This is crazy.  Sometimes loop redesign is overly biased by the starting loop sequence, because the centroid phase won't change the sequence, and the rama term may remember the conformation to well due to sequence preferences.  This restricts sampling.  So, this function creates a random sequence in the designable positions, based on what the design PackerTask thinks they can become.  This code special cases histidine (to avoid double-allowing histidine, based on its two protonations).
 void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) const {
 
 	T_design << "entering randomize_input_sequence" << std::endl;
@@ -525,7 +521,7 @@ void AnchoredDesignMover::randomize_input_sequence(core::pose::Pose & pose ) con
 	return;
 }
 
-///@details For benchmarking, it is a minor sin to allow native sidechains to leak through from the starting structure.  AnchoredDesign runs best with use_input_sc because it does sidechain minimization, not because it needs starting sidechains.  This function deletes the native sidechains by repacking the interface with use_input_sc forcibly off.  DO NOT USE THIS FUNCTION for proper designs - it is meant for a specific benchmarking purpose.
+/// @details For benchmarking, it is a minor sin to allow native sidechains to leak through from the starting structure.  AnchoredDesign runs best with use_input_sc because it does sidechain minimization, not because it needs starting sidechains.  This function deletes the native sidechains by repacking the interface with use_input_sc forcibly off.  DO NOT USE THIS FUNCTION for proper designs - it is meant for a specific benchmarking purpose.
 void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & pose ) const {
 
 	//create a TaskFactory for the deletion.  Notice that it DOES NOT read all user inputs (ignoring the resfile and command line) and thus can only be used when you satisfy its assumptions.  The assumptions are that you are A) doing fixed-sequence benchmarking, and B) starting from the correct interface structure.  The factory is set up to detect the interface and repack those side chains, excepting the anchor, to with many rotamers.  It does NOT pay attention to the flags that allow repacking of the anchor.  It ASSUMES that the AnchorMoversData class has pregenerated some PoseMetricCalculators.
@@ -576,7 +572,7 @@ void AnchoredDesignMover::delete_interface_native_sidechains(core::pose::Pose & 
 	return;
 }
 
-///@details when using anchor_noise_constraints_mode, this function perturbs the initial anchor a bit.  Requested test by a reviewer.
+/// @details when using anchor_noise_constraints_mode, this function perturbs the initial anchor a bit.  Requested test by a reviewer.
 void AnchoredDesignMover::perturb_anchor( core::pose::Pose & pose ) const {
 
 	//I think if we take the Stubs out of the existing Jump, all we have to do is change the vector part
@@ -630,7 +626,7 @@ protocols::moves::MoverOP AnchoredDesignMover::clone() const {
 
 bool AnchoredDesignMover::reinitialize_for_each_job() const { return false; }
 
-///@details generally returns true; will return false for RMSD_only_this mode
+/// @details generally returns true; will return false for RMSD_only_this mode
 bool AnchoredDesignMover::reinitialize_for_new_input() const { return (RMSD_only_this_ == EMPTY_STRING); }
 
 void AnchoredDesignMover::filter( core::pose::Pose & pose ){
@@ -684,7 +680,7 @@ void AnchoredDesignMover::filter( core::pose::Pose & pose ){
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details uses fold_tree::tree_from_jumps_and_cuts to make the necessary fold tree and apply it to the pose
+/// @details uses fold_tree::tree_from_jumps_and_cuts to make the necessary fold tree and apply it to the pose
 void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 {
 	core::Size const nres = pose.total_residue();
@@ -767,7 +763,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	dump_cutpoint_info(pose);
 }//AnchoredDesignMover::set_fold_tree_and_cutpoints
 
-///@details implements the is_extended boolean for the Loop class.  If the boolean is on, this function resets phi/psi for those regions to be extended (-150phi, 150psi).  This function does not affect omega, or residues outside of defined loops, or the anchor.
+/// @details implements the is_extended boolean for the Loop class.  If the boolean is on, this function resets phi/psi for those regions to be extended (-150phi, 150psi).  This function does not affect omega, or residues outside of defined loops, or the anchor.
 void AnchoredDesignMover::forget_initial_loops( core::pose::Pose & pose ){
 
 	//for each loop
@@ -793,54 +789,54 @@ void AnchoredDesignMover::forget_initial_loops( core::pose::Pose & pose ){
 
 
 //option system replacement getters and setters
-///@brief run RMSD calculations
+/// @brief run RMSD calculations
 bool AnchoredDesignMover::get_rmsd() const {return rmsd_;}
-///@brief run only RMSD calculations against this input, don't do actual AnchoredDesign
+/// @brief run only RMSD calculations against this input, don't do actual AnchoredDesign
 std::string const & AnchoredDesignMover::get_RMSD_only_this() const {return RMSD_only_this_;}
-///@brief delete the input sidechains (independently from use_input_sc in the packer) - used to prevent leakage of sidechains in benchmarking mode
+/// @brief delete the input sidechains (independently from use_input_sc in the packer) - used to prevent leakage of sidechains in benchmarking mode
 bool AnchoredDesignMover::get_delete_interface_native_sidechains() const {return delete_interface_native_sidechains_;}
-///@brief show_extended demonstrates that the code really forgets the input structure
+/// @brief show_extended demonstrates that the code really forgets the input structure
 bool AnchoredDesignMover::get_show_extended() const {return show_extended_;}
-///@brief randomize_input_sequence to complement loop extension in forgetting the input
+/// @brief randomize_input_sequence to complement loop extension in forgetting the input
 bool AnchoredDesignMover::get_randomize_input_sequence() const {return randomize_input_sequence_;}
-///@brief pick a different cutpoint than the input; useful when you want to sample cutpoints
+/// @brief pick a different cutpoint than the input; useful when you want to sample cutpoints
 bool AnchoredDesignMover::get_vary_cutpoints() const {return vary_cutpoints_;}
-///@brief skip the perturbation step - useful when you already have a good structure
+/// @brief skip the perturbation step - useful when you already have a good structure
 bool AnchoredDesignMover::get_refine_only() const {return refine_only_;}
-///@brief filter based on total complex score
+/// @brief filter based on total complex score
 core::Real AnchoredDesignMover::get_filter_score() const {return filter_score_;}
-///@brief filter based on complex SASA
+/// @brief filter based on complex SASA
 core::Real AnchoredDesignMover::get_filter_SASA() const {return filter_SASA_;}
-///@brief filter based on omega angles in the loops - filter out cis omegas
+/// @brief filter based on omega angles in the loops - filter out cis omegas
 bool AnchoredDesignMover::get_filter_omega() const {return use_filter_omega_;}
-///@brief whether to automatically initialize from the options system; defaults to true
+/// @brief whether to automatically initialize from the options system; defaults to true
 bool AnchoredDesignMover::get_autoinitialize() const {return autoinitialize_;}
 
-///@brief run RMSD calculations
+/// @brief run RMSD calculations
 void AnchoredDesignMover::set_rmsd(bool const rmsd) { rmsd_ = rmsd;}
-///@brief run only RMSD calculations against this input, don't do actual AnchoredDesign
+/// @brief run only RMSD calculations against this input, don't do actual AnchoredDesign
 void AnchoredDesignMover::set_RMSD_only_this(std::string const & RMSD_only_this) { RMSD_only_this_ = RMSD_only_this;}
-///@brief delete the input sidechains (independently from use_input_sc in the packer) - used to prevent leakage of sidechains in benchmarking mode
+/// @brief delete the input sidechains (independently from use_input_sc in the packer) - used to prevent leakage of sidechains in benchmarking mode
 void AnchoredDesignMover::set_delete_interface_native_sidechains(bool const delete_interface_native_sidechains) { delete_interface_native_sidechains_ = delete_interface_native_sidechains;}
-///@brief show_extended demonstrates that the code really forsets the input structure
+/// @brief show_extended demonstrates that the code really forsets the input structure
 void AnchoredDesignMover::set_show_extended(bool const show_extended) { show_extended_ = show_extended;}
-///@brief randomize_input_sequence to complement loop extension in forgetting the input
+/// @brief randomize_input_sequence to complement loop extension in forgetting the input
 void AnchoredDesignMover::set_randomize_input_sequence(bool const randomize_input_sequence) { randomize_input_sequence_ = randomize_input_sequence;}
-///@brief pick a different cutpoint than the input { _ = ;} useful when you want to sample cutpoints
+/// @brief pick a different cutpoint than the input { _ = ;} useful when you want to sample cutpoints
 void AnchoredDesignMover::set_vary_cutpoints(bool const vary_cutpoints) { vary_cutpoints_ = vary_cutpoints;}
-///@brief skip the perturbation step - useful when you already have a good structure
+/// @brief skip the perturbation step - useful when you already have a good structure
 void AnchoredDesignMover::set_refine_only(bool const refine_only) { refine_only_ = refine_only;}
-///@brief filter based on total complex score
+/// @brief filter based on total complex score
 void AnchoredDesignMover::set_filter_score(core::Real const filter_score) {
 	filter_score_ = filter_score;
 	use_filter_score_ = true;}
-///@brief filter based on complex SASA
+/// @brief filter based on complex SASA
 void AnchoredDesignMover::set_filter_SASA(core::Real const filter_SASA) {
 	filter_SASA_ = filter_SASA;
 	use_filter_SASA_ = true;}
-///@brief filter based on omega angles in the loops - filter out cis omegas
+/// @brief filter based on omega angles in the loops - filter out cis omegas
 void AnchoredDesignMover::set_filter_omega(bool const filter_omega) { use_filter_omega_ = filter_omega;}
-///@brief whether to automatically initialize from the options system; defaults to true
+/// @brief whether to automatically initialize from the options system; defaults to true
 void AnchoredDesignMover::set_autoinitialize(bool const autoinitialize) { autoinitialize_ = autoinitialize;}
 
 void AnchoredDesignMover::read_options(){
@@ -907,7 +903,7 @@ AnchoredPerturbMover::AnchoredPerturbMover( protocols::anchored_design::AnchorMo
 
 AnchoredPerturbMover::~AnchoredPerturbMover() {}
 
-///@details AnchoredPerturbMover takes a pose, swaps it into centroid mode, and perturbs the structure of
+/// @details AnchoredPerturbMover takes a pose, swaps it into centroid mode, and perturbs the structure of
 ///its mobile loops.  The perturbation step is under Monte Carlo control so it won't finish with a terrible
 ///structure.  It adds sidechains back on (unchanged relative to the alpha carbon) at the end, but does not
 ///repack those sidechains.
@@ -1159,42 +1155,42 @@ AnchoredPerturbMover::get_name() const {
 }
 
 //option system replacement
-///@brief debugging mode activates a bunch of extra output
+/// @brief debugging mode activates a bunch of extra output
 bool AnchoredPerturbMover::get_debug() const { return debug_;}
-///@brief do not perform CCD style closure (use KIC only)
+/// @brief do not perform CCD style closure (use KIC only)
 bool AnchoredPerturbMover::get_perturb_CCD_off() const { return perturb_CCD_off_;}
-///@brief do not perform KIC style closure (use CCD only)
+/// @brief do not perform KIC style closure (use CCD only)
 bool AnchoredPerturbMover::get_perturb_KIC_off() const { return perturb_KIC_off_;}
-///@brief use nonpivot torsion sampling for KIC?
+/// @brief use nonpivot torsion sampling for KIC?
 bool AnchoredPerturbMover::get_nonpivot_torsion_sampling() const { return nonpivot_torsion_sampling_;}
-///@brief MC temperature
+/// @brief MC temperature
 core::Real AnchoredPerturbMover::get_perturb_temp() const { return perturb_temp_;}
-///@brief number of MC cycles
+/// @brief number of MC cycles
 core::Size AnchoredPerturbMover::get_perturb_cycles() const { return perturb_cycles_;}
-///@brief do not use fragments?
+/// @brief do not use fragments?
 bool AnchoredPerturbMover::get_no_frags() const { return no_frags_;}
-///@brief what minimizer type to use?
+/// @brief what minimizer type to use?
 std::string const & AnchoredPerturbMover::get_min_type() const { return min_type_;}
-///@brief show perturb result structure?
+/// @brief show perturb result structure?
 bool AnchoredPerturbMover::get_perturb_show() const { return perturb_show_;}
 
-///@brief debugging mode activates a bunch of extra output
+/// @brief debugging mode activates a bunch of extra output
 void AnchoredPerturbMover::set_debug(bool const debug) { debug_= debug;}
-///@brief do not perform CCD style closure (use KIC only)
+/// @brief do not perform CCD style closure (use KIC only)
 void AnchoredPerturbMover::set_perturb_CCD_off(bool const perturb_CCD_off) { perturb_CCD_off_= perturb_CCD_off;}
-///@brief do not perform KIC style closure (use CCD only)
+/// @brief do not perform KIC style closure (use CCD only)
 void AnchoredPerturbMover::set_perturb_KIC_off(bool const perturb_KIC_off) { perturb_KIC_off_= perturb_KIC_off;}
-///@brief use nonpivot torsion sampling for KIC?
+/// @brief use nonpivot torsion sampling for KIC?
 void AnchoredPerturbMover::set_nonpivot_torsion_sampling(bool const nonpivot_torsion_sampling) { nonpivot_torsion_sampling_= nonpivot_torsion_sampling;}
-///@brief MC temperature
+/// @brief MC temperature
 void AnchoredPerturbMover::set_perturb_temp(core::Real const perturb_temp) { perturb_temp_= perturb_temp;}
-///@brief number of MC cycles
+/// @brief number of MC cycles
 void AnchoredPerturbMover::set_perturb_cycles(core::Size const perturb_cycles) { perturb_cycles_= perturb_cycles;}
-///@brief do not use fragments?
+/// @brief do not use fragments?
 void AnchoredPerturbMover::set_no_frags(bool const no_frags) { no_frags_= no_frags;}
-///@brief what minimizer type to use?
+/// @brief what minimizer type to use?
 void AnchoredPerturbMover::set_min_type(std::string const & min_type) { min_type_= min_type;}
-///@brief show perturb result structure?
+/// @brief show perturb result structure?
 void AnchoredPerturbMover::set_perturb_show(bool const perturb_show) { perturb_show_= perturb_show;}
 
 void AnchoredPerturbMover::read_options(){
@@ -1211,7 +1207,7 @@ void AnchoredPerturbMover::read_options(){
 	//bool perturb_KIC_off_;
 	perturb_KIC_off_ = option[ perturb_KIC_off ].value();
 
-	///@brief use nonpivot torsion sampling for KIC?
+	/// @brief use nonpivot torsion sampling for KIC?
 	nonpivot_torsion_sampling_ = option[ OptionKeys::loops::nonpivot_torsion_sampling ].value();
 
 	//core::Real perturb_temp_;
@@ -1245,7 +1241,7 @@ AnchoredRefineMover::AnchoredRefineMover( protocols::anchored_design::AnchorMove
 AnchoredRefineMover::~AnchoredRefineMover() {}
 
 
-///@details
+/// @details
 void AnchoredRefineMover::apply( core::pose::Pose & pose )
 {
 	clock_t starttime = clock();
@@ -1505,46 +1501,46 @@ AnchoredRefineMover::get_name() const {
 }
 
 //option system replacement
-///@brief debugging mode activates a bunch of extra output
+/// @brief debugging mode activates a bunch of extra output
 bool AnchoredRefineMover::get_debug() const { return debug_;}
-///@brief do not perform CCD style closure (use KIC only)
+/// @brief do not perform CCD style closure (use KIC only)
 bool AnchoredRefineMover::get_refine_CCD_off() const { return refine_CCD_off_;}
-///@brief do not perform KIC style closure (use CCD only)
+/// @brief do not perform KIC style closure (use CCD only)
 bool AnchoredRefineMover::get_refine_KIC_off() const { return refine_KIC_off_;}
-///@brief use nonpivot torsion sampling for KIC?
+/// @brief use nonpivot torsion sampling for KIC?
 bool AnchoredRefineMover::get_nonpivot_torsion_sampling() const { return nonpivot_torsion_sampling_;}
-///@brief KIC use vicinity sampling?
+/// @brief KIC use vicinity sampling?
 bool AnchoredRefineMover::get_vicinity_sampling() const { return vicinity_sampling_;}
-///@brief KIC vicinity sampling degrees
+/// @brief KIC vicinity sampling degrees
 core::Real AnchoredRefineMover::get_vicinity_degree() const { return vicinity_degree_;}
-///@brief MC temperature
+/// @brief MC temperature
 core::Real AnchoredRefineMover::get_refine_temp() const { return refine_temp_;}
-///@brief number of MC cycles
+/// @brief number of MC cycles
 core::Size AnchoredRefineMover::get_refine_cycles() const { return refine_cycles_;}
-///@brief what minimizer type to use?
+/// @brief what minimizer type to use?
 std::string const & AnchoredRefineMover::get_min_type() const { return min_type_;}
-	///@brief how many cycles between repack/design opportunities?
+	/// @brief how many cycles between repack/design opportunities?
 core::Size AnchoredRefineMover::get_refine_repack_cycles() const { return refine_repack_cycles_;}
 
-///@brief debugging mode activates a bunch of extra output
+/// @brief debugging mode activates a bunch of extra output
 void AnchoredRefineMover::set_debug(bool const debug) { debug_= debug;}
-///@brief do not perform CCD style closure (use KIC only)
+/// @brief do not perform CCD style closure (use KIC only)
 void AnchoredRefineMover::set_refine_CCD_off(bool const refine_CCD_off) { refine_CCD_off_= refine_CCD_off;}
-///@brief do not perform KIC style closure (use CCD only)
+/// @brief do not perform KIC style closure (use CCD only)
 void AnchoredRefineMover::set_refine_KIC_off(bool const refine_KIC_off) { refine_KIC_off_= refine_KIC_off;}
-///@brief use nonpivot torsion sampling for KIC?
+/// @brief use nonpivot torsion sampling for KIC?
 void AnchoredRefineMover::set_nonpivot_torsion_sampling(bool const nonpivot_torsion_sampling) { nonpivot_torsion_sampling_= nonpivot_torsion_sampling;}
-///@brief KIC use vicinity sampling?
+/// @brief KIC use vicinity sampling?
 void AnchoredRefineMover::set_vicinity_sampling(bool const vicinity_sampling) { vicinity_sampling_= vicinity_sampling;}
-///@brief KIC vicinity sampling degrees
+/// @brief KIC vicinity sampling degrees
 void AnchoredRefineMover::set_vicinity_degree(core::Size const vicinity_degree) { vicinity_degree_= vicinity_degree;}
-///@brief MC temperature
+/// @brief MC temperature
 void AnchoredRefineMover::set_refine_temp(core::Real const refine_temp) { refine_temp_= refine_temp;}
-///@brief number of MC cycles
+/// @brief number of MC cycles
 void AnchoredRefineMover::set_refine_cycles(core::Size const refine_cycles) { refine_cycles_= refine_cycles;}
-///@brief what minimizer type to use?
+/// @brief what minimizer type to use?
 void AnchoredRefineMover::set_min_type(std::string const & min_type) { min_type_= min_type;}
-///@brief how many cycles between repack/design opportunities?
+/// @brief how many cycles between repack/design opportunities?
 void AnchoredRefineMover::set_refine_repack_cycles(core::Size const refine_repack_cycles) { refine_repack_cycles_= refine_repack_cycles;}
 
 void AnchoredRefineMover::read_options(){

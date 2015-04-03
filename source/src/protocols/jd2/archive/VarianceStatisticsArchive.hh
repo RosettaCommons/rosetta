@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @author Oliver Lange
 /// Archive class to collect structures such that variances of scores can be computed to determine normalized weights
 
@@ -36,7 +36,6 @@
 #include <string>
 
 
-
 namespace protocols {
 namespace jd2 {
 namespace archive {
@@ -55,7 +54,7 @@ public:
 	);
 
   virtual void generate_batch() {};
-	///@brief overloaded to make input decoys appear the same as decoys coming from batches
+	/// @brief overloaded to make input decoys appear the same as decoys coming from batches
 	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& ) {};
 
 	void set_insertion_prob( core::Real setting ) {

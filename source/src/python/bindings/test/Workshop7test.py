@@ -58,7 +58,6 @@ min_mover.score_function(scorefxn)
 print 'Done Applying MinMover!'
 
 
-
 '''
     #except rosetta.PyRosettaException: pass
     except RuntimeError: pass

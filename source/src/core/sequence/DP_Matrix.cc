@@ -15,7 +15,6 @@
 #include <core/sequence/DP_Matrix.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <ObjexxFCL/format.hh>

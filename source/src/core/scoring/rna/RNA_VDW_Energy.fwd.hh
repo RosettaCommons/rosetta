@@ -28,7 +28,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_VDW_Energy;
 
 } //rna

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief Application level code for relax-type protocols
-/// @detailed
+/// @details
 
 // keep these headers first for compilation with Visual Studio C++
 #include <protocols/jobdist/JobDistributors.hh>
@@ -168,7 +168,6 @@ using namespace basic::options;
 //using namespace basic::options::OptionKeys;
 
 
-
 class TestJD2Mover : public moves::Mover
 {
 public:
@@ -199,9 +198,6 @@ private:  //  Data
 
 typedef utility::pointer::owning_ptr< TestJD2Mover > TestJD2MoverOP;
 typedef utility::pointer::owning_ptr< TestJD2Mover const > TestJD2MoverCOP;
-
-
-
 
 
 void run() {

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/movemap/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -53,7 +53,6 @@ void
 check_move_map_against_working_parameters( core::pose::Pose const & pose ,
 																					 core::kinematics::MoveMapCOP minimize_map,
 																					 working_parameters::StepWiseWorkingParametersCOP working_parameters );
-
 
 
 } //movemap

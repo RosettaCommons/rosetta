@@ -20,7 +20,6 @@
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/moves/Mover.hh>
 

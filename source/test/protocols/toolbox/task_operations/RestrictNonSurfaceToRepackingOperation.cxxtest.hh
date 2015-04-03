@@ -21,7 +21,6 @@
 // project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
@@ -77,7 +76,7 @@ public:
 
 	// --------------- Test Cases --------------- //
 
-	///@brief this test applies the RestrictNonSurfaceToRepackingOperation task operation to a PackerTask and verifies
+	/// @brief this test applies the RestrictNonSurfaceToRepackingOperation task operation to a PackerTask and verifies
 	/// that all of the residues that have more neighbors than the cutoff have been set to repacking only and that all
 	/// the positions with neighbors fewer than the cutoff are designable.
 

@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
 
 
@@ -46,10 +45,10 @@ public:
 
 public:
 
-	///
+
 	ReferenceEnergyNoncanonical();
 
-	///
+
 	ReferenceEnergyNoncanonical( utility::vector1< Real > const & weight_list );
 	
 	///
@@ -63,7 +62,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -72,7 +71,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	virtual
 	Real
 	eval_dof_derivative(

@@ -15,7 +15,6 @@
 #include <protocols/viewer/SilentObserver.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 #include <core/types.hh>
 
@@ -25,7 +24,6 @@
 #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
 
 #include <ObjexxFCL/string.functions.hh>

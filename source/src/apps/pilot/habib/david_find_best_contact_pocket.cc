@@ -129,7 +129,6 @@ void define_interface( core::pose::Pose & input_pose ) {
 	input_pose.delete_polymer_residue(lig_res_num);
 
 
-
 }
 
 /// General testing code

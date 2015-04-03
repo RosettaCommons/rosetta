@@ -75,7 +75,6 @@ CDRGraftDesignOptions::CDRGraftDesignOptions(CDRGraftDesignOptions const & src):
 }
 
 
-
 CDRGraftDesignOptions::~CDRGraftDesignOptions() {}
 
 CDRGraftDesignOptionsOP
@@ -407,14 +406,5 @@ CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vec
 }
 }
 }
-
-
-
-
-
-
-
-
-
 
 

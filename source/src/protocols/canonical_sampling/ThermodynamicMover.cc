@@ -19,8 +19,6 @@
 // Package Headers
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
 
 
 // Utility Headers
@@ -43,7 +41,7 @@ using basic::Warning;
 namespace protocols {
 namespace canonical_sampling {
 
-///@brief
+/// @brief
 ThermodynamicMover::ThermodynamicMover(
 ) : Mover()
 {

@@ -20,7 +20,6 @@
 #include <protocols/frag_picker/PdbIdChunkFilter.fwd.hh>
 
 
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #include <utility/vector1_bool.hh>
@@ -33,7 +32,7 @@ namespace frag_picker {
 class PdbIdChunkFilter: public VallChunkFilter {
 public:
 	/// @brief Adds  a pdb id to the filter.
-	/// @detailed What that PDB id means it depends on the filter implementation
+	/// @details What that PDB id means it depends on the filter implementation
 	void add_pdb_id(std::string pdb_ids) {
 
 		pdb_hash_[pdb_ids] = true;
@@ -69,24 +68,24 @@ protected:
 };
 
 /// @brief Accepts a chunk based on the pdb id of the source protein
-/// @detailed If a given chunk comes from a registered pdb file then it will PASS the test.
+/// @details If a given chunk comes from a registered pdb file then it will PASS the test.
 /// Otherwise it will be rejected
 class AllowPdbIdFilter: public PdbIdChunkFilter {
 public:
 
 	/// @brief say if a given chunk looks promising.
-	/// @detailed Simply if its pdb id is on a list then it will pass the test
+	/// @details Simply if its pdb id is on a list then it will pass the test
 	bool test_chunk(VallChunkOP a_chunk);
 };
 
 /// @brief Denies a chunk based on the pdb id of the source protein
-/// @detailed If a given chunk comes from a registered pdb file then it will FAIL the test.
+/// @details If a given chunk comes from a registered pdb file then it will FAIL the test.
 /// Otherwise it will be accepted
 class DenyPdbIdFilter: public PdbIdChunkFilter {
 public:
 
 	/// @brief say if a given chunk looks promising.
-	/// @detailed Simply if its pdb id is on a list then it will be rejected
+	/// @details Simply if its pdb id is on a list then it will be rejected
 	bool test_chunk(VallChunkOP a_chunk);
 };
 

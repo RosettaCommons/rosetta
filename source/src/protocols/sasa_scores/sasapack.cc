@@ -249,7 +249,6 @@ load_sasapack_polynomial_coefficients(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 load_avge_polynomial_coefficients(
@@ -321,7 +320,6 @@ load_avge_polynomial_coefficients(
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 /// NOTE: this does not include the probe radius in the sasa value, hence somewhat specialized for sasapack
 void
@@ -345,7 +343,6 @@ compute_residue_sasas_for_sasa_scores(
 											include_probe_radius_in_atom_radii, use_lj_radii );
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -433,8 +430,6 @@ compute_avge_scores(
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 compute_sasapack_scores(
@@ -483,7 +478,6 @@ compute_sasapack_scores(
 		average_normsasa /= count;
 	}
 }
-
 
 
 } // ns sasa_scores

@@ -51,7 +51,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class GenBornEnergy : public ContextDependentLRTwoBodyEnergy  {
 public:
 	typedef ContextDependentLRTwoBodyEnergy  parent;
@@ -60,7 +60,7 @@ public:
 	/// for use by ScoringManager
 	GenBornEnergy( EnergyMethodOptions const & options );
 
-	///
+
 	GenBornEnergy( GenBornEnergy const & src );
 
 
@@ -82,7 +82,7 @@ public:
 	EnergyMethodOP
 	clone() const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing(
@@ -91,12 +91,12 @@ public:
 		utility::vector1< bool > const &
 	) const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
@@ -246,7 +246,7 @@ private:
 	// const-ref to scoring database
 	GenBornPotential const & potential_;
 
-	///
+
 	bool const exclude_DNA_DNA_;
 virtual
 core::Size version() const;

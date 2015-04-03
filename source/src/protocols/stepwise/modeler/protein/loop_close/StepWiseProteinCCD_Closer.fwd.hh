@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_Closer.fwd.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

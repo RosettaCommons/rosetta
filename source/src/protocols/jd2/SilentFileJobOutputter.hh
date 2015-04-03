@@ -35,7 +35,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details this is a implementation of JobOutputter for silent-file-based output.
+/// @details this is a implementation of JobOutputter for silent-file-based output.
 // todo:
 // read designated silent-file in beginning and implement method
 // job_completed()
@@ -48,11 +48,11 @@ public:
   SilentFileJobOutputter();
   virtual ~SilentFileJobOutputter();
 
-	///@brief this function flushes any internal buffers - see parent class for explanation
+	/// @brief this function flushes any internal buffers - see parent class for explanation
 	virtual void flush();
 
   //////////////////////////////creating output functions/////////////////////////////////////////
-  ///@brief this function outputs the final result of a job.
+  /// @brief this function outputs the final result of a job.
   virtual
   void final_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag );
 
@@ -136,10 +136,10 @@ private: // members
 	// ( from calls to other_pose )
   bool bWriteIntermediateStructures_;
 
-	///@brief toggle to switch off writing of structures
+	/// @brief toggle to switch off writing of structures
 	bool bWriteNoStructures_;
 
-	///@brief whether to write a separate scorefile that contains
+	/// @brief whether to write a separate scorefile that contains
 	///the scorelines from the silent file
 	bool write_separate_scorefile_;
 
@@ -158,7 +158,7 @@ private: // members
 	//utility::vector1< core::io::silent::SilentStructOP > saved_structs_;
 	utility::vector1< std::pair< core::io::silent::SilentStructOP, utility::file::FileName > > saved_structs_;
 
-	///@brief override choice of silent_struct_type
+	/// @brief override choice of silent_struct_type
 	std::string forced_silent_struct_type_;
 }; // SilentFileJobOutputter
 

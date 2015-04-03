@@ -50,7 +50,6 @@
 #include <utility/exit.hh>
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -445,8 +444,6 @@ void FullatomRelaxMover::copy_data(FullatomRelaxMover object_to_copy_to, Fullato
 		object_to_copy_to.inner_loop_cycles_ = object_to_copy_from.inner_loop_cycles_;
 		object_to_copy_to.surface_parameters_ = object_to_copy_from.surface_parameters_;
 	}
-
-
 
 
 } //surface_docking

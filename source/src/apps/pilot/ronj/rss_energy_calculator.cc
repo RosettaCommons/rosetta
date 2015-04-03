@@ -109,7 +109,7 @@ void init_usage_prompt( std::string exe ) {
 }
 
 
-///@brief Takes the input Pose and runs a fast repack protocol on it.
+/// @brief Takes the input Pose and runs a fast repack protocol on it.
 void repack_pose( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 
 	pack::task::PackerTaskOP repack_task = pack::task::TaskFactory::create_packer_task( pose );
@@ -336,7 +336,7 @@ main( int argc, char * argv [] ) {
 	// initialize
 	devel::init(argc, argv);
 
-	//
+
 	// concatenate -s and -l flags together to get total list of PDB files
 	// The advantage of parsing -s and -l separately is that users can specify a list and a single structure on the
 	// command line.  Not anymore.  To get an output file name that's based on the input structures, I have to use

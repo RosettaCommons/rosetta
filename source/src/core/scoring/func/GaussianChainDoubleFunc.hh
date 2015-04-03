@@ -63,7 +63,6 @@ private:
 };
 
 
-
 } // constraints
 } // scoring
 } // core

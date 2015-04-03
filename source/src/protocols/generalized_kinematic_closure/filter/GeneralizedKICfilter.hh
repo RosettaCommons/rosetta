@@ -25,8 +25,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
@@ -76,11 +74,11 @@ public:
 	~GeneralizedKICfilter();
 	GeneralizedKICfilterOP clone() const;
 
-	///
+
 	/// @brief Returns the name of this class.
 	std::string get_name() const;
 
-	///
+
 	/// @brief Given a filter type, return its name.  Returns "unknown_filter" if not recognized.
 	std::string get_filter_type_name( core::Size const filter_type ) const;
 	
@@ -88,31 +86,31 @@ public:
 	/// @brief Given the name of a filter type, return the filter type enum.  Returns unknown_filter if not recognized.
 	filter_type get_filter_type_by_name( std::string const &filtername ) const;
 
-	///
+
 	/// @brief Sets the filter type for this filter.
 	void set_filter_type( filter_type const &ftype);
 
-	///
+
 	/// @brief Sets the filter type for this filter by name.
 	void set_filter_type( std::string const &ftypename);
 
-	///
+
 	/// @brief Gets the filter type name for THIS filter.
 	std::string get_this_filter_type_name () const;
 
-	///
+
 	/// @brief Add a real-valued filter parameter.
 	void add_filter_param( std::string const &param_name, core::Real const &value );
 
-	///
+
 	/// @brief Add a integer-valued filter parameter.
 	void add_filter_param( std::string const &param_name, core::Size const value );
 
-	///
+
 	/// @brief Add a Boolean-valued filter parameter.
 	void add_filter_param( std::string const &param_name, bool const value );
 
-	///
+
 	/// @brief Add a string-valued filter parameter.
 	void add_filter_param( std::string const &param_name, std::string const &value );
 
@@ -180,23 +178,23 @@ private:
 //          PRIVATE VARIABLES                                                 //
 ////////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	/// @brief The filter type for this filter (see the filter_type enum for all types).
 	filter_type filtertype_;
 
-	///
+
 	/// @brief Real-valued filter parameters
 	utility::vector1 < std::pair<std::string, core::Real > > filter_params_real_;
 
-	///
+
 	/// @brief Integer-valued filter parameters
 	utility::vector1 < std::pair<std::string, core::Size > > filter_params_size_;
 
-	///
+
 	/// @brief Boolean-valued filter parameters
 	utility::vector1 < std::pair<std::string, bool > > filter_params_bool_;
 
-	///
+
 	/// @brief String-valued filter parameters
 	utility::vector1 < std::pair<std::string, std::string > > filter_params_string_;
 

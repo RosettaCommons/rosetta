@@ -22,29 +22,28 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 
-
 namespace protocols {
 namespace antibody {
 namespace constraints {
 	
-///@brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
+/// @brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
 bool
 cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNameEnum const cdr, std::string const constraint_type);
 
 
-///@brief Adds harmonic cluster constraint or coordinate cst if the cluster does not have constraints associated with it. 
+/// @brief Adds harmonic cluster constraint or coordinate cst if the cluster does not have constraints associated with it. 
 /// Requires AHO numbering.  
 void
 add_harmonic_cluster_cst_or_coordinate_cst(AntibodyInfoOP ab_info, core::pose::Pose & pose, CDRNameEnum const cdr, core::Real coord_cst_sd = .75);
 	
-///@brief Adds harmonic cluster constraint or coordinate cst if the cluster does not have constraints associated with it. 
+/// @brief Adds harmonic cluster constraint or coordinate cst if the cluster does not have constraints associated with it. 
 /// Requires AHO numbering.  
 void
 add_harmonic_cluster_cst_or_coordinate_cst(AntibodyInfoOP ab_info, core::pose::Pose & pose, CDRNameEnum const cdr, clusters::CDRClusterEnum const cluster, core::Real coord_cst_sd = .75);
 
 
-///@brief Add dihedral constraints to CDR with mean being the current phi/psi if no cluster constraints.
-///@details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
+/// @brief Add dihedral constraints to CDR with mean being the current phi/psi if no cluster constraints.
+/// @details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
 ///                   Mean SD for both dihedrals was 32.66 degrees
 ///                   Use this especially if doing cartesian-space minimization
 ///
@@ -54,8 +53,8 @@ add_harmonic_cluster_cst_or_dihedral_cst(
 	CDRNameEnum const cdr,
 	core::Real phi_sd_deg = 20.0, core::Real psi_sd_deg = 30.0);
 
-///@brief Add dihedral constraints to CDR with mean being the current phi/psi if no cluster constraints.
-///@details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
+/// @brief Add dihedral constraints to CDR with mean being the current phi/psi if no cluster constraints.
+/// @details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
 ///                   Mean SD for both dihedrals was 32.66 degrees
 ///                   Use this especially if doing cartesian-space minimization
 ///
@@ -66,8 +65,8 @@ add_harmonic_cluster_cst_or_dihedral_cst(
 	core::Real phi_sd_deg = 20.0, core::Real psi_sd_deg = 30.0);
 
 
-///@brief Add dihedral constraints to CDR with mean being the current phi/psi.
-///@details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
+/// @brief Add dihedral constraints to CDR with mean being the current phi/psi.
+/// @details Values for avg SD for each cluster not including H3 were 23 and 42 degrees respectively.  Values chosen here are conservative.
 ///                   Mean SD for both dihedrals was 32.66 degrees
 ///                   Use this especially if doing cartesian-space minimization
 ///
@@ -82,16 +81,14 @@ add_harmonic_dihedral_cst_general(
 // North CDR Cluster Constraints. 
 //                     Requires AHO numbering due to hardcoded constraint files.
 //
-//
-
 
 /// @brief Adds dihedral harmonic constraints to Pose CDRs using cluster info in AntibodyInfo
 /// @details Currently requires North_AHO numbering. Returns map of success/failure
 std::map<CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose);
 
-///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
-///@details Returns map of success/failure
+/// @brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
+/// @details Returns map of success/failure
 std::map<CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
 
@@ -101,8 +98,8 @@ add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, clusters::CDRClusterEnum const cluster);
 
-///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
-///@details Returns true or false depending on success
+/// @brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
+/// @details Returns true or false depending on success
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, clusters::CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
 

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/StepWiseSampleAndScreen.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -230,7 +230,6 @@ namespace stepwise {
 		}
 
 	}
-
 
 
 } //stepwise

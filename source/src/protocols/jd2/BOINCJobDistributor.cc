@@ -41,8 +41,6 @@ If you got this message, something is wrong with your build settings.
 #include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -63,7 +61,7 @@ static thread_local basic::Tracer TR( "protocols.jd2.BOINCJobDistributor" );
 namespace protocols {
 namespace jd2 {
 
-///@details constructor.  Notice it calls the parent class!
+/// @details constructor.  Notice it calls the parent class!
 BOINCJobDistributor::BOINCJobDistributor() :
   ShuffleFileSystemJobDistributor(),
   total_completed_nstruct_( 0 )
@@ -74,7 +72,7 @@ BOINCJobDistributor::BOINCJobDistributor() :
 #endif
 }
 
-///@brief dtor
+/// @brief dtor
 ///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 ///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
 BOINCJobDistributor::~BOINCJobDistributor() {}
@@ -160,7 +158,7 @@ BOINCJobDistributor::checkpoint_clear()
 #endif // BOINC
 }
 
-///@brief dummy for master/slave version
+/// @brief dummy for master/slave version
 core::Size
 BOINCJobDistributor::get_new_job_id()
 {

@@ -38,7 +38,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near a neighborhood.  Internally it just user NeighborhoodByDistanceCalculator to do all the work.  You are allowed a "calculator name" interface to tell it which you-constructed calculator to use, or you can give it a set of residues and a desired distance cutoff to have it define the calculator itself.  (There is no need to use both interfaces).
+/// @details this class is a TaskOperation to prevent repacking of residues not near a neighborhood.  Internally it just user NeighborhoodByDistanceCalculator to do all the work.  You are allowed a "calculator name" interface to tell it which you-constructed calculator to use, or you can give it a set of residues and a desired distance cutoff to have it define the calculator itself.  (There is no need to use both interfaces).
 class RestrictToNeighborhoodOperation : public RestrictOperationsBase
 {
 public:
@@ -51,14 +51,14 @@ public:
 
 	RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues, core::Real const dist_cutoff );
 
-	///@brief uses option system default for dist_cutoff
+	/// @brief uses option system default for dist_cutoff
 	RestrictToNeighborhoodOperation( std::set< core::Size > const & central_residues );
 
 	RestrictToNeighborhoodOperation( std::string const & calculator );
 
 	virtual ~RestrictToNeighborhoodOperation();
 
-	///@brief assignment operator
+	/// @brief assignment operator
 	RestrictToNeighborhoodOperation & operator=( RestrictToNeighborhoodOperation const & rhs );
 
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
@@ -68,32 +68,32 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 	//getters
-	///@brief this nontrivially checks the underlying calculator
+	/// @brief this nontrivially checks the underlying calculator
 	SizeSet const & get_central_residues() const;
-	///@brief this nontrivially checks the underlying calculator
+	/// @brief this nontrivially checks the underlying calculator
 	core::Real get_distance_cutoff() const;
-	///@brief trivially returns underlying calculator string name
+	/// @brief trivially returns underlying calculator string name
 	std::string const & get_calculator_name() const { return calculator_name_; };
-	///@brief look up actual calculator object
+	/// @brief look up actual calculator object
 	protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculatorCOP get_calculator() const;
 
 	//setters
-	///@brief reskin of normal make_calculator
+	/// @brief reskin of normal make_calculator
 	void set_neighborhood_parameters( SizeSet const & central_residues, core::Real dist_cutoff );
 
-	///@brief reskin of normal make_calculator
+	/// @brief reskin of normal make_calculator
 	void set_neighborhood_parameters( SizeSet const & central_residues );
 
 	void set_calculator_by_name(std::string const & calculator_name) { calculator_name_ = calculator_name; };
 
 private:
-	///@brief constructor helper function - makes the PoseMetricCalculator
+	/// @brief constructor helper function - makes the PoseMetricCalculator
 	void make_calculator( std::set< core::Size > const & central_residues, core::Real dist_cutoff );
 
-	///@brief constructor helper function - makes the PoseMetricCalculator
+	/// @brief constructor helper function - makes the PoseMetricCalculator
 	void make_calculator( std::set< core::Size > const & central_residues );
 
-	///@brief constructor helper function - names the PoseMetricCalculator
+	/// @brief constructor helper function - names the PoseMetricCalculator
 	void make_name( std::set< core::Size > const & central_residues );
 
 	std::string calculator_name_;

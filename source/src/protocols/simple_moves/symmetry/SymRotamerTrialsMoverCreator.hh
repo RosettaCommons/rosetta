@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file
-///@brief
-///@author
+/// @file
+/// @brief
+/// @author
 
 #ifndef INCLUDED_protocols_simple_moves_symmetry_SymRotamerTrialsMoverCreator_hh
 #define INCLUDED_protocols_simple_moves_symmetry_SymRotamerTrialsMoverCreator_hh

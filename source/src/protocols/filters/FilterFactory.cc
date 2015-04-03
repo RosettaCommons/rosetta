@@ -71,7 +71,7 @@ FilterFactory::FilterFactory()
 
 FilterFactory::~FilterFactory(){}
 
-///@brief add a Filter prototype, using its default type name as the map key
+/// @brief add a Filter prototype, using its default type name as the map key
 void
 FilterFactory::factory_register( FilterCreatorOP creator )
 {
@@ -87,7 +87,7 @@ FilterFactory::factory_register( FilterCreatorOP creator )
 }
 
 
-///@brief return new Filter by key lookup in filter_prototype_map_ (new Filter parses Tag if provided)
+/// @brief return new Filter by key lookup in filter_prototype_map_ (new Filter parses Tag if provided)
 FilterOP
 FilterFactory::newFilter(	std::string const & filter_type )
 {
@@ -110,7 +110,7 @@ FilterFactory::newFilter(	std::string const & filter_type )
 	}
 }
 
-///@brief return new Filter by Tag parsing
+/// @brief return new Filter by Tag parsing
 /*FilterOP
 FilterFactory::newFilter(
 	TagCOP const tag,
@@ -125,7 +125,7 @@ FilterFactory::newFilter(
 	return filter;
 	}*/
 
- ///@brief return new Filter by Tag parsing
+ /// @brief return new Filter by Tag parsing
 FilterOP
 FilterFactory::newFilter(
 	TagCOP const tag,

@@ -103,7 +103,6 @@ private:
 typedef utility::pointer::shared_ptr< CCDMoveWrapper >  CCDMoveWrapperOP;
 
 
-
 ///////////////////
 ///
 AutoRBMover::AutoRBMover() {

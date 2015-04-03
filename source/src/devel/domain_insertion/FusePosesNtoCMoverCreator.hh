@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file devel/enzdes/EnzdesRemodelMoverCreator.hh
-///@brief creates instances of FusePosesNtoCMover for the MoverFactory
-///@author Florian Richter, floric@u.washington.edu
+/// @file devel/enzdes/EnzdesRemodelMoverCreator.hh
+/// @brief creates instances of FusePosesNtoCMover for the MoverFactory
+/// @author Florian Richter, floric@u.washington.edu
 
 #ifndef INCLUDED_devel_domain_insertion_FusePosesNtoCMoverCreator_hh
 #define INCLUDED_devel_domain_insertion_FusePosesNtoCMoverCreator_hh

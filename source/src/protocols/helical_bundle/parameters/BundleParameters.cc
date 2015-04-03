@@ -83,7 +83,7 @@ namespace protocols {
 			BundleParameters::~BundleParameters() {}
 
 
-			///@brief make a copy of this residue( allocate actual memory for it )
+			/// @brief make a copy of this residue( allocate actual memory for it )
 			///
 			core::conformation::parametric::ParametersOP
 			BundleParameters::clone() const

@@ -36,15 +36,12 @@
 
 // Package headers
 #include <core/id/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/id/AtomID_Map.fwd.hh>
 #include <utility/vector1.fwd.hh>
-
 
 
 namespace core {

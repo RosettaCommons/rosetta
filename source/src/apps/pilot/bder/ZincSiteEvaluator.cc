@@ -47,8 +47,6 @@
 #include <numeric/xyz.functions.hh>
 
 
-
-
 //tracers
 using basic::Error;
 using basic::Warning;
@@ -77,11 +75,10 @@ basic::options::IntegerOptionKey const zinc_resnum( "zinc_resnum" );
 basic::options::IntegerOptionKey const n_ligands( "n_ligands" );
 
 
-
 }//local
 
 
-///@brief
+/// @brief
 class ZincSiteEvaluator : public protocols::moves::Mover {
 public:
   ZincSiteEvaluator()
@@ -126,7 +123,6 @@ public:
 		scorefxn_->score( pose );
 		return;
 	}
-
 
 
 	virtual
@@ -236,7 +232,6 @@ public:
 		utility::vector1< id::AtomID > second_shell( zinc_second_shell->get_second_shell_atom_ids() );
 
 
-
 		for(Size i(1); i <= second_shell.size(); ++i) {
 			TR << second_shell[i] << std::endl;
 		}
@@ -292,7 +287,6 @@ public:
 	}
 
 
-
   virtual
   void
   apply( Pose & pose ){
@@ -322,7 +316,6 @@ public:
 		// }
 
 
-
 		//Cross-zinc torsion preference?
 		// for(Size i(2); i <= msr_.size() - 1; ++i) {
 		// 	for(Size j(i+1); j <= msr_.size(); ++j) {
@@ -344,9 +337,6 @@ public:
 		// 		TR << "Cross-zinc Dihedral: " << "i, zn, j, j_pre: " << dihed2 << std::endl;
 		// 	}
 		// }
-
-
-
 
 
 		if(basic::options::option[local::evaluate_zinc_geometry]) {
@@ -417,7 +407,6 @@ public:
 	virtual
 	std::string
 	get_name() const { return "ZincSiteEvaluator"; }
-
 
 
 private:

@@ -10,7 +10,7 @@
 /// @file format_converter.cc
 /// @brief simple application for interconverting Rosetta recognized structure formats
 /// @author Matthew O'Meara
-///
+
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>

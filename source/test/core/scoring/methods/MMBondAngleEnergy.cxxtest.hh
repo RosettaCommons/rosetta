@@ -30,18 +30,12 @@
 #include <test/core/init_util.hh>
 
 #include <core/kinematics/DomainMap.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
 // Utility headers
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <iomanip>
 
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>

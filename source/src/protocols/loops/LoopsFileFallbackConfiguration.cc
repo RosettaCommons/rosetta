@@ -48,7 +48,6 @@ using basic::resource_manager::ResourceTag;
 using basic::resource_manager::ResourceOptionsTag;
 
 
-
 LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration()
 {}
 

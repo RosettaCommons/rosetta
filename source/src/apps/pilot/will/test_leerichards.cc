@@ -55,9 +55,6 @@
 #include <core/import_pose/import_pose.hh>
 
 
-
-
-
 using core::Real;
 using core::Size;
 using utility::vector1;
@@ -498,7 +495,6 @@ main (int argc, char *argv[])
 	try {
 
 
-
 	devel::init( argc, argv );
 
   using namespace basic::options;
@@ -536,7 +532,6 @@ main (int argc, char *argv[])
 
 	pthread_exit(NULL);
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

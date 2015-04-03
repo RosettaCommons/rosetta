@@ -13,19 +13,12 @@
 /// @author Matthew O'Meara
 
 
-
-
 // core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <protocols/relax_protocols.hh>
@@ -33,7 +26,6 @@
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/conformation/Residue.hh>
@@ -43,7 +35,6 @@
 // utility headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // c++ headers
 #include <iostream>
@@ -75,8 +66,6 @@ using utility::file::FileName;
 void dump_hbonds( std::string pdb_filename );
 
 
-
-
 int
 main( int argc, char * argv [] )
 {
@@ -105,7 +94,6 @@ main( int argc, char * argv [] )
 		}
 		data.close();
 	}
-
 
 
 	// run dump_hbonds for each name in list

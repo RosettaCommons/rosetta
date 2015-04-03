@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/InterchainPairEnergy.cc
 /// @brief  Statistically derived rotamer pair potentials
-/// @detailed For docking (or between chains) only those residues at the interface
+/// @details For docking (or between chains) only those residues at the interface
 ///						and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
@@ -26,15 +26,12 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
-
 
 
 // C++
@@ -78,7 +75,7 @@ InterchainPairEnergy::clone() const
 	return core::scoring::methods::EnergyMethodOP( new InterchainPairEnergy() );
 }
 
-///
+
 void
 InterchainPairEnergy::setup_for_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {

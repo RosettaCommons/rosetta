@@ -93,9 +93,6 @@ void WorkUnitBase::raw_data_load( const unsigned char * raw_data_ptr, unsigned i
 }
 
 
-
-
-
 void WorkUnitBase::run(){
 	TR.Debug << "WorkUnitBase was called." << std::endl;
 }
@@ -164,9 +161,6 @@ WorkUnitBase::raw_data_dump( unsigned char ** raw_data_ptr ) const
 }
 
 
-
-
-
 void
 WorkUnitBase::set_wu_type( const std::string &text ){
 	#ifndef __CYGWIN__ // Workaround for CygWin and GCC 4.5
@@ -212,9 +206,6 @@ core::Size WorkUnitBase::get_run_time(){
 }
 
 
-
-
-
 void WorkUnit_Wait::run(){
 	//TR << "Waiting for " << header.extra_data_1_ << std::endl;
 #ifdef _WIN32
@@ -225,22 +216,6 @@ void WorkUnit_Wait::run(){
 	sleep( header.extra_data_1_ );
 #endif
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // @brief write decoys into serial data store overwritinge whatever was there before. It b// @brief Read decoys from serial data store. Overwrite what's in the SilentStruct store. asically syncs the silent struct store with the derial data
@@ -257,15 +232,6 @@ WorkUnit_SilentStructStore::deserialize()
   decoys_.clear();
   decoys_.read_from_string( serial_data() );
 }
-
-
-
-
-
-
-
-
-
 
 
 WorkUnit_MoverWrapper::WorkUnit_MoverWrapper( protocols::moves::MoverOP the_mover ):
@@ -303,12 +269,6 @@ WorkUnit_MoverWrapper::run(){
   decoys().clear();
   decoys().add( result_store );
 }
-
-
-
-
-
-
 
 
 }

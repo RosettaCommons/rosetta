@@ -15,8 +15,6 @@
 
 #include <core/conformation/AtomGraph.fwd.hh>
 
-// AUTO-REMOVED #include <core/conformation/AtomGraphData.hh>
-// AUTO-REMOVED #include <core/graph/UpperEdgeGraph.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
 
@@ -32,7 +30,7 @@ atom_graph_from_conformation(
 	AtomGraphOP pg
 );
 
-///@brief create a pointgraph which consists of 1 node for every atom, plus 1 additional node which will be added as the last node.  The index of the additional node is returned
+/// @brief create a pointgraph which consists of 1 node for every atom, plus 1 additional node which will be added as the last node.  The index of the additional node is returned
 platform::Size
 annotated_atom_graph_from_conformation(
 		Conformation const & conformation,

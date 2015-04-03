@@ -59,7 +59,7 @@ RotatesCreator::mover_name()
 	return "Rotates";
 }
 
-///@brief
+/// @brief
 Rotates::Rotates(): Mover("Rotates")
 {}
 
@@ -82,7 +82,7 @@ std::string Rotates::get_name() const{
 	return "Rotates";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Rotates::parse_my_tag(
 		utility::tag::TagCOP tag,
@@ -134,7 +134,6 @@ void Rotates::apply(core::pose::Pose & pose){
 		rotate->apply(pose);
 	}
 }
-
 
 
 } //namespace ligand_docking

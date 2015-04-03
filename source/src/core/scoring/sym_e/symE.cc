@@ -17,19 +17,15 @@
 
 // Package headers
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AtomType.hh>
@@ -60,7 +56,6 @@ symECreator::score_types_for_method() const {
 	sts.push_back( symE_bonus );
 	return sts;
 }
-
 
 
 symEnergy::symEnergy() :

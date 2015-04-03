@@ -13,7 +13,6 @@
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 
 #include <ObjexxFCL/FArray1A.fwd.hh>
 

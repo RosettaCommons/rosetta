@@ -74,13 +74,13 @@ public:
 		MotifSearch const & src
 	);
 
-	//
+
 	void run(
 		Pose & pose,
 		Sizes & input_BPs
 	);
 
-	//
+
 	void initialize(
 		Pose & pose,
 		Sizes & input_BPs

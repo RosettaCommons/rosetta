@@ -31,7 +31,7 @@
 namespace protocols {
 namespace comparative_modeling {
 
-///@details This is the simplest implementation of JobInputter
+/// @details This is the simplest implementation of JobInputter
 class GenericJobInputter : public protocols::jd2::JobInputter
 {
 public:
@@ -44,7 +44,7 @@ public:
 	/// the reference.
  	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
-	///@brief this function determines what jobs exist
+	/// @brief this function determines what jobs exist
 	virtual void fill_jobs( protocols::jd2::Jobs & jobs );
 
 	/// @brief Return the type of input source that the GenericJobInputter is currently

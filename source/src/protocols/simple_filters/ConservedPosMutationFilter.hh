@@ -9,7 +9,7 @@
 
 /// @file src/protocols/simple_filters/ConservedPosMutationFilter.hh
 /// @brief header file for ConservedPosMutationFitler class.
-/// @detailed
+/// @details
 /// @author Florian Richter (floric@u.washington.edu), may 2011
 
 

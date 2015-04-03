@@ -43,10 +43,10 @@ public:
 
 public:
 
-	///
+
 	FiberDiffractionEnergy();
 
-	///
+
 	FiberDiffractionEnergy( FiberDiffractionEnergy const & src ) :
 		parent(src) {
 		chi2_ = src.chi2_;

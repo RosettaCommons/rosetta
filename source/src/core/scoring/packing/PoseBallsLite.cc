@@ -12,7 +12,6 @@
 /// @author
 
 #include <core/scoring/packing/PoseBallsLite.hh>
-// AUTO-REMOVED #include <core/scoring/packstat/AtomRadiusMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -21,7 +20,6 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
@@ -63,7 +61,6 @@ inline std::string strip_whitespace( std::string const & name )
 	left_justify( trimmed_name ); trim( trimmed_name ); // simpler way to dothis?
 	return trimmed_name;
 }
-
 
 
 PoseBallsLite::PoseBallsLite(

@@ -188,7 +188,7 @@ find_stub_transform(
 	//  R = M1^T * M2' = M1^T * A * M2  ==> A = M1 * R * M2^T
 	//
 	//  t = M1^T * ( v2' - v1 ) ==> v2' = M1 * t + v1, which with b = v2' - A*v2 gives b = M1 * t + v1 - A * v2
-	//
+
 
 	A = M1 * R * M2.transposed();
 	b = M1 * t + v1 - A * v2;
@@ -296,7 +296,7 @@ AtomTree::replace_residue_subtree(
 	for ( Size i=1; i<= outgoing.size(); ++i )debug_assert( outgoing[i].atom1.rsd() == seqpos );
 	for ( Size i=1; i<= new_atoms.size(); ++i )debug_assert( new_atoms[i]->id() == AtomID( i, seqpos ) );
 
-	//
+
 	AtomOP anchor_atom(0);
 	AtomOP old_root_atom(0);
 	AtomOP new_root_atom( new_atoms[ incoming.atom2.atomno() ] );
@@ -371,7 +371,7 @@ AtomTree::replace_residue_subtree(
 	atom_pointer_[ seqpos ].clear();
 	atom_pointer_[ seqpos ] = new_atoms;
 
-	//
+
 	// we've added the new atoms assuming that their xyz coords are
 	// valid, but their internal coords (especially at the junctions
 	// of the old and new) are likely to be messed up. This is also
@@ -577,7 +577,7 @@ debug_assert( !atom4->is_jump() &&
 		// atom2 = CA
 		// atom3 = CB
 		// atom4 = CG
-		//
+
 
 		// a little tricky: we don't want to access the positions,
 		// since we can't be sure that they are up to date in a routine
@@ -1045,7 +1045,7 @@ AtomTree::torsion_angle(
 
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @details This is done by releasing memories of all atoms including the root atom
 ///, and clearing atom_pointer map
 void
@@ -1062,7 +1062,7 @@ AtomTree::clear()
 
 /////////////////////////////////////////////////////////////////////////////
 /// @note this may trigger a coordinate update of src (access to root atom)
-///
+
 
 void
 AtomTree::copy_coords(
@@ -1754,7 +1754,7 @@ debug_assert( instub_frag_atom->parent() == instub_nonfrag_atom ); // sanity che
 		//  R = M1^T * M2' = M1^T * A * M2  ==> A = M1 * R * M2^T
 		//
 		//  t = M1^T * ( v2' - v1 ) ==> v2' = M1 * t + v1, which with b = v2' - A*v2 gives b = M1 * t + v1 - A * v2
-		//
+
 
 		Stub::Matrix const A( M1 * R * M2.transposed() );
 		Vector const b( M1 * t + v1 - A * v2 );

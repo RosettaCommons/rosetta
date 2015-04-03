@@ -211,7 +211,7 @@ Residue::Residue( Residue const & src ) :
 Residue::~Residue() {}
 
 
-///@details make a copy of this residue( allocate actual memory for it )
+/// @details make a copy of this residue( allocate actual memory for it )
 ResidueOP
 Residue::clone() const
 {
@@ -367,7 +367,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 	// GLC.  Such weird cases will have to be explicitly detected and handled.
 	//
 	// THIS REALLY NEEDS TO BE FIXED AT SOME POINT
-	//
+
 
 	if ( type().n_residue_connections() == src_rsd.type().n_residue_connections() ) {
 

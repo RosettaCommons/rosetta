@@ -85,7 +85,7 @@ CartesianFragment::get_seqpos_for_fragment_insertion( int const frag_seqpos, Com
 	//                 = component_local_seqpos                  + offsets[ component ]
 	//
 	// so the idea is that we are replacing component_root_seqpos with offsets[ component ]
-	//
+
 
 	int const component_index( 1 + ( ( frag_seqpos + BIG_OFFSET_/2 ) / BIG_OFFSET_ ) );
 	int const component_local_seqpos( frag_seqpos - ( component_index - 1 ) * BIG_OFFSET_ );
@@ -95,7 +95,6 @@ CartesianFragment::get_seqpos_for_fragment_insertion( int const frag_seqpos, Com
 					frag_seqpos );
 	return new_conf_seqpos;
 }
-
 
 
 /// @details  Given a TorsionStubID corresponding to one of the bonds that bounds a fragment, return
@@ -325,8 +324,6 @@ CartesianFragment::initialize(
 } // end of initialize(...)
 
 
-
-
 /// @details  (private)  Recursive routine that adds all the fragment atoms defined by a conformation and a set
 ///   of bonds to cut and extra connections to jump across.
 /// returns atomindex of new atom
@@ -418,7 +415,6 @@ CartesianFragment::add_frag_atom(
 }
 
 
-
 /// @details  Get the atomindex for the atom with the desired safeatomid
 ///
 Size
@@ -446,7 +442,6 @@ CartesianFragment::atom_index( SafeAtomID id ) const
 
 	return it - atom_ids_.begin() + 1;
 }
-
 
 
 /// @details  Set a torsion angle, used for updating a fragment with new torsions derived from some optimization

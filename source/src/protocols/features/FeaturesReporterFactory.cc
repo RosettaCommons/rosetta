@@ -18,7 +18,6 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -36,8 +35,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
-
-
 
 
 namespace protocols {

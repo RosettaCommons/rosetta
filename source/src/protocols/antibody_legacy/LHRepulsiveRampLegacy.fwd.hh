@@ -30,5 +30,3 @@ typedef utility::pointer::shared_ptr< LHRepulsiveRampLegacy const > LHRepulsiveR
 #endif
 
 
-
-

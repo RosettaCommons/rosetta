@@ -17,11 +17,6 @@
 #include <protocols/jobdist/JobDistributors.hh>
 
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/ozstream.hh>
@@ -30,18 +25,15 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/jobdist/Jobs.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 
 
-// AUTO-REMOVED #include <ctime>
 #include <fstream>
 #include <set>
 #include <sstream>
@@ -49,7 +41,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
@@ -58,8 +49,6 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/excn/Exceptions.hh>
-
-
 
 
 int

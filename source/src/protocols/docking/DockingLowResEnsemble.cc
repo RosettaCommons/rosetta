@@ -9,7 +9,7 @@
 
 /// @file DockingLowResEnsemble
 /// @brief protocols that are specific to low resolution ensemble docking
-/// @detailed
+/// @details
 /// @author Daisuke Kuroda
 
 #include <protocols/docking/DockingLowRes.hh>
@@ -19,10 +19,6 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
-
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -47,7 +43,6 @@
 #include <string>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>

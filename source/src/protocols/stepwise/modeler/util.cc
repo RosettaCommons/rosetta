@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNAResidueSampler
 /// @brief Not particularly fancy, just minimizes a list of poses.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -1623,7 +1623,6 @@ revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that th
 
 	return switch_moving_and_root_partitions;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////

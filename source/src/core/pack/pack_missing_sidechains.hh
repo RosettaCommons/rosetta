@@ -25,14 +25,14 @@
 namespace core {
 namespace pack {
 
-///@brief This function runs rotamer trials on residues missing sidechain density (as described by the AtomID_Mask)
+/// @brief This function runs rotamer trials on residues missing sidechain density (as described by the AtomID_Mask)
 void
 pack_missing_sidechains(
 	pose::Pose & pose,
 	id::AtomID_Mask const& missing
 );
 
-///@brief return vector of bools with true for each residue that has >=1 atom in to_repack that is not VIRTUAL, ORBS or LPbb
+/// @brief return vector of bools with true for each residue that has >=1 atom in to_repack that is not VIRTUAL, ORBS or LPbb
 bool figure_out_repackable_residues(
   core::pose::Pose & pose,
 	core::id::AtomID_Mask const& to_repack,

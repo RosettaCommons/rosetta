@@ -9,7 +9,7 @@
 
 /// @file     protocols/antibody_legacy/CDRH3Modeler.cc
 /// @brief    models CDR H3 loop using loop modeling
-/// @detailed
+/// @details
 /// @author   Aroop Sircar (aroopsircar@yahoo.com)
 
 // Unit headers
@@ -642,11 +642,10 @@ Real CDRH3Modeler::cutpoint_separation(
 } // cutpoint_separation
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin scored_frag_close
 ///
 /// @brief builds a loop from fragments file.
 ///
-/// @detailed Loop is built by a monte carlo simulation using fragments
+/// @details Loop is built by a monte carlo simulation using fragments
 ///           from a fragment files. CCD moves are used to close loops
 ///           with gaps at cutpoint.H3_check is enforced if H3_filter flag
 ///           is set in command line. Loop building results in many files
@@ -670,9 +669,8 @@ Real CDRH3Modeler::cutpoint_separation(
 ///
 /// @references
 ///
-/// @authors Aroop 02/04/2010
+/// @author Aroop 02/04/2010
 ///
-/// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
 void CDRH3Modeler::scored_frag_close (
     pose::Pose & pose_in,
@@ -850,11 +848,10 @@ void CDRH3Modeler::scored_frag_close (
 } // scored_frag_close
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin CDR_H3_filter
 ///
 /// @brief tests if a loop has H3 like base charachteristics
 ///
-/// @detailed Uses the Shirai rules to find out if the dihedral angle
+/// @details Uses the Shirai rules to find out if the dihedral angle
 ///           formed by CA atoms of residues n-2,n-1,n and n+1 conform to a
 ///           kinked/extended structure in accordance with the sequence. If
 ///           there is a match, a true value is returned
@@ -876,9 +873,8 @@ void CDRH3Modeler::scored_frag_close (
 ///             Hiroki Shirai, Akinori Kidera, Haruki Nakamura
 ///             FEBS Letters 399 (1996) 1-8
 ///
-/// @authors Aroop 02/04/2010
+/// @author Aroop 02/04/2010
 ///
-/// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
 bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 		Size const loop_begin,
@@ -1030,11 +1026,10 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 } // CDR_H3_filter
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin loop_fa_relax
 ///
 /// @brief actually relaxes the region specified
 ///
-/// @detailed This is all done in high resolution.Hence there are no rigid
+/// @details This is all done in high resolution.Hence there are no rigid
 ///           body moves relative to the docking partners. Only small moves
 ///           are carried out here to see if there are better fits.
 ///           Repacking is carried out extensively after each move.
@@ -1049,9 +1044,8 @@ bool CDRH3Modeler::CDR_H3_filter( const pose::Pose & pose_in,
 ///
 /// @references
 ///
-/// @authors Aroop 02/04/2010
+/// @author Aroop 02/04/2010
 ///
-/// @last_modified 02/04/2010
 ///////////////////////////////////////////////////////////////////////////
 void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
 {
@@ -1150,7 +1144,6 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 			        chemical::CUTPOINT_UPPER,
 			        cutpoint + 1 );
 	}
-
 
 
 	utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
@@ -1349,11 +1342,10 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 } //  CDRH3Modeler::loop_fa_relax
 
 ///////////////////////////////////////////////////////////////////////////
-/// @begin loop_centroid_relax
 ///
 /// @brief actually relaxes the region specified
 ///
-/// @detailed This is all done in low resolution. Intention was to give
+/// @details This is all done in low resolution. Intention was to give
 ///           camelid CDR H1 a larger perturbation.
 ///
 /// @param[in] pose, loop begin position, loop end position
@@ -1366,9 +1358,8 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 ///
 /// @references
 ///
-/// @authors Aroop 05/07/2010
+/// @author Aroop 05/07/2010
 ///
-/// @last_modified 05/07/2010
 ///////////////////////////////////////////////////////////////////////////
 void
 CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, Size const loop_end )
@@ -1420,7 +1411,6 @@ CDRH3Modeler::loop_centroid_relax( pose::Pose & pose_in, Size const loop_begin, 
 			        chemical::CUTPOINT_UPPER,
 			        cutpoint + 1 );
 	}
-
 
 
 	Real min_tolerance = 0.001;
@@ -1544,7 +1534,6 @@ CDRH3Modeler::setup_packer_task(
 	TR << "CDRH3Modeler Done: Setting Up Packer Task" << std::endl;
 
 } // setup_packer_task
-
 
 
 }  // namespace antibody

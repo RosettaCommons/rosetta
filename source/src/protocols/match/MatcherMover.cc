@@ -101,7 +101,7 @@ MatcherMover::MoverOP MatcherMover::fresh_instance() const
 	return MatcherMover::MoverOP( new MatcherMover() );
 }
 
-///
+
 void
 MatcherMover::apply( core::pose::Pose & pose )
 {

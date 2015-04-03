@@ -18,9 +18,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -154,7 +151,7 @@ LinearMemNode::count_dynamic_memory() const
 }
 
 
-///@brief puts the LinMemNode in the unassigned state
+/// @brief puts the LinMemNode in the unassigned state
 void
 LinearMemNode::assign_zero_state()
 {
@@ -179,7 +176,7 @@ LinearMemNode::assign_zero_state()
 }
 
 
-////@brief assigns a new state to the Node
+//// @brief assigns a new state to the Node
 void
 LinearMemNode::assign_state(int new_state)
 {
@@ -575,7 +572,7 @@ LinearMemNode::project_deltaE_for_substitution
 }
 
 
-///@brief commits the last substitution that was considered by this Node
+/// @brief commits the last substitution that was considered by this Node
 void
 LinearMemNode::commit_considered_substitution()
 {
@@ -700,7 +697,6 @@ LinearMemNode::acknowledge_neighbors_partial_state_substitution(
 }
 
 
-
 void LinearMemNode::set_recent_history_size(
 	int num_states_to_maintain_in_recent_history
 )
@@ -746,7 +742,6 @@ debug_assert( get_edge_vector_up_to_date() );
 	curr_state_total_energy_ += curr_state_one_body_energy_;
 	return;
 }
-
 
 
 void LinearMemNode::update_internal_vectors()
@@ -809,7 +804,6 @@ LinearMemNode::update_recent_history( int state )
 //-----------------------------------------------------------------//
 
 core::PackerEnergy const LinearMemEdge::NOT_YET_COMPUTED_ENERGY = -1234;
-
 
 
 LinearMemEdge::LinearMemEdge(
@@ -1167,7 +1161,6 @@ int LinearMemEdge::get_two_body_table_size() const
 }
 
 
-
 ObjexxFCL::FArray2D< unsigned char > const &
 LinearMemEdge::get_sparse_aa_neighbor_info( )
 {
@@ -1338,7 +1331,7 @@ LinearMemoryInteractionGraph::get_energy_current_state_assignment()
 	return total_energy_current_state_assignment_;
 }
 
-///@brief O(1) total energy report.  Protected read access for derived classes.
+/// @brief O(1) total energy report.  Protected read access for derived classes.
 core::PackerEnergy
 LinearMemoryInteractionGraph::get_energy_PD_current_state_assignment()
 {

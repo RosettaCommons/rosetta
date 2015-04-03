@@ -9,7 +9,7 @@
 
 /// @file DockMCMCycle
 /// @brief protocols that are specific to high resolution docking
-/// @detailed
+/// @details
 ///		This contains the functions that create initial positions for docking
 ///		You can either randomize partner 1 or partner 2, spin partner 2, or
 ///		perform a simple perturbation.
@@ -185,7 +185,6 @@ void DockMCMCycle::set_default()
 	}
 
 
-
 	// setup values for minimization
 	min_tolerance_ = 0.01;
 	min_type_ = std::string( "dfpmin_armijo_nonmonotone" );
@@ -201,9 +200,8 @@ void DockMCMCycle::set_default()
 
 void DockMCMCycle::set_move_map( core::kinematics::MoveMapOP movemap ) { movemap_ = movemap; }
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin docking high resolution apply function
 /// @brief
-/// @detailed
+/// @details
 ///		decides what to call according to options
 void DockMCMCycle::apply( core::pose::Pose & pose )
 {
@@ -248,10 +246,9 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-/// @begin dock_mcm_protocol
 ///
 /// @brief main entrance to do monte carlo minimization
-/// @detailed
+/// @details
 ///			single cycle of mcm minimization.  Then it is rigid-body minimized
 ///			to a stringent tolerance.
 ///
@@ -260,9 +257,8 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 /// @references docking_mcm_protocol from docking_minimize.cc
 ///				pose_docking_monte_carlo_minimize from pose_docking.cc
 ///
-/// @authors Monica Berrondo
+/// @author Monica Berrondo
 ///
-/// @last_modified August 19 2010
 /////////////////////////////////////////////////////////////////////////////////
 void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	using namespace moves;

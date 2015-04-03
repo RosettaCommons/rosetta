@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/IntegrationTestBreaker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <protocols/stepwise/screener/IntegrationTestBreaker.hh>

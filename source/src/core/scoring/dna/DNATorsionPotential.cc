@@ -172,7 +172,6 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 	// Need to add an improper dihedral to keep the hydrogens correct on C2'
 
 
-
 }
 ///////////////////////////////////////
 void
@@ -560,10 +559,6 @@ DNATorsionPotential::init_dna_torsion_parameters()
 
 	return true;
 }
-
-
-
-
 
 
 }

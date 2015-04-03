@@ -97,7 +97,7 @@ void encode6bit(const unsigned char* memory, unsigned int length, std::string &j
 // assumes memory already allocated!!!!
 int decode6bit(unsigned char* memory, const std::string &jar);
 
-///
+
 //////////////
 }
 

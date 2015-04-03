@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/SecondaryStructureHasResidueFilter.cc
 /// @brief filter structures by number of secondary structures
-/// @detailed use this filter to insure that each secondary element has one or more of a given set of residues
+/// @details use this filter to insure that each secondary element has one or more of a given set of residues
 ///  motivated by observation that alpha,beta elements without at least 1 h'phobic residue often do not fold in simulation
 ///  reports fraction of 2' struct elements that contain N or more residues from given residue list (default VILMFYM)
 /// @author Chris King ( chrisk1@uw.edu )
@@ -26,7 +26,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Utility headers
 #include <basic/Tracer.hh>

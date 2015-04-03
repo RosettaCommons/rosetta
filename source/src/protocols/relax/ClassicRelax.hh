@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Relax Baseclass, ClassicRelax Stage 1,2,3, ClassicRelax
 ///
 ///
@@ -40,7 +40,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -91,14 +90,12 @@ public:
 	virtual std::string get_name() const;
 
 
-
 	///////////////////////////////////////////////////////////////////////////////////
 	///
 	/// Set default options from outside
-	///
+
 
 	void set_default( bool const use_default_movemap = true );
-
 
 
 	void set_default_minimizer();
@@ -112,7 +109,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////
 	///
 	/// Set options from outside
-	///
+
 
 	void set_lj_ramp_cycles( int param )         { lj_ramp_cycles       = param; }
 
@@ -144,11 +141,10 @@ public:
 	};
 
 
-
 	///////////////////////////////////////////////////////////////////////////////////
 	///
 	/// Accessors
-	///
+
 
 	moves::MonteCarloOP get_mc( core::pose::Pose &pose );
 
@@ -229,7 +225,6 @@ private:
 	float filter_stage2_end;
 
 };
-
 
 
 }

@@ -51,7 +51,6 @@ private:
 };
 
 
-
 } // rotamer_set
 } // pack
 } // core

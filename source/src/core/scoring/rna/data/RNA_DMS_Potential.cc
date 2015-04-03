@@ -9,7 +9,7 @@
 
 /// @file core/scoring/rna/data/RNA_DMS_Potential.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 #include <core/scoring/rna/data/RNA_DMS_Potential.hh>
@@ -175,7 +175,7 @@ namespace data {
 		// indices are: is_bonded, DMS, occ, binding_energy
 		//
 		// log-odds score is: -kT log P( is_bonded, DMS, occ, binding_energy ) / [ P( DMS ) P( is_bonded, occ, binding_energy ) ]
-		//
+
 
 		// first of all, need to normalize everything to total.
 		Real DMS_stats_total( 0.0 );
@@ -280,7 +280,7 @@ namespace data {
 	void
 	RNA_DMS_Potential::initialize( core::pose::Pose const & pose ) {
 
-		//
+
 		// calculate H-bonds -- this is currently very inefficient, as we
 		// really only need to look at Hbond status of adenosine N1's.
 		//

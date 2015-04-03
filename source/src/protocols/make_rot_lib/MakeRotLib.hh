@@ -18,7 +18,6 @@
 #include <protocols/make_rot_lib/RotData.fwd.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

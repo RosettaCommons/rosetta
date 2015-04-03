@@ -16,7 +16,6 @@
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/match/downstream/ClassicMatchAlgorithm.hh>
 

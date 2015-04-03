@@ -78,7 +78,6 @@ change_sheet_id_if_possible( // combine_sheets_if_possible
 }	//change_sheet_id_if_possible
 
 
-
 //delete_this_sw_can_by_sh_id_from_sw_by_comp
 Size
 delete_this_sw_can_by_sh_id_from_sw_by_comp(
@@ -121,7 +120,6 @@ delete_this_struct_id(
 	basic::database::safely_write_to_database(select_statement);
 	return 0;
 } //delete_this_struct_id
-
 
 
 //prepare_WriteToDB_sandwich
@@ -187,7 +185,6 @@ prepare_WriteToDB_sandwich(
 	}
 	return all_strands;
 } //prepare_WriteToDB_sandwich
-
 
 
 // WriteToDB_AA_to_terminal_loops
@@ -331,7 +328,6 @@ WriteToDB_ending_loop (
 } // WriteToDB_ending_loop
 
 
-
 // WriteToDB_long_strand_id_in_each_sw
 Size
 WriteToDB_long_strand_id_in_each_sw (
@@ -467,8 +463,6 @@ WriteToDB_avg_b_factor_CB_at_each_component	(
 } //	WriteToDB_avg_b_factor_CB_at_each_component
 
 
-
-
 //WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets
 Size
 WriteToDB_dihedral_angle_between_core_strands_across_facing_sheets	(
@@ -584,8 +578,6 @@ WriteToDB_dssp_ratio_in_sw (
 
 	return 0;
 } // WriteToDB_dssp_ratio_in_sw
-
-
 
 
 Size
@@ -975,7 +967,6 @@ WriteToDB_number_of_core_heading_W_in_sw (
 } // WriteToDB_number_of_core_heading_W_in_sw
 
 
-
 Size
 WriteToDB_number_of_core_heading_charged_AAs_in_a_pair_of_edge_strands	(
 	StructureID struct_id,
@@ -1089,7 +1080,6 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands	(
 	return 0;
 
 } //	WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands
-
 
 
 //WriteToDB_number_of_sheets_that_surround_this_sheet
@@ -1441,7 +1431,6 @@ WriteToDB_sheet_id(
 } // WriteToDB_sheet_id
 
 
-
 //WriteToDB_sheet_connectivity
 //update intra/inter_sheet_connection part
 Size
@@ -1543,7 +1532,6 @@ WriteToDB_sheet_connectivity(
 } //WriteToDB_sheet_connectivity
 
 
-
 //WriteToDB_shortest_dis_between_facing_aro_in_sw
 Real
 WriteToDB_shortest_dis_between_facing_aro_in_sw	(
@@ -1590,8 +1578,6 @@ WriteToDB_shortest_dis_between_facing_aro_in_sw	(
 
 	return	round_to_Real(shortest_dis_between_facing_aro_in_sw);
 } //	WriteToDB_shortest_dis_between_facing_aro_in_sw
-
-
 
 
 //WriteToDB_starting_loop
@@ -1777,7 +1763,6 @@ WriteToDB_sandwich	(
 	basic::database::safely_write_to_database(insert_stmt);
 	return 0;
 } //WriteToDB_sandwich
-
 
 
 // WriteToDB_sandwich_by_AA_w_direction
@@ -1989,7 +1974,6 @@ WriteToDB_topology_candidate	(
 		vector_of_long_strand_id_from_sheet_1.push_back(long_strand_id_from_sheet_1);
 	}
 	//// <end> retrieve long_strand_id from sheet_id = 1
-
 
 
 	string	topology_candidate;
@@ -2260,7 +2244,6 @@ WriteToDB_topology_candidate	(
 } //	WriteToDB_topology_candidate
 
 
-
 void
 WriteToDB_turn_AA(
 	Pose const & pose,
@@ -2458,7 +2441,6 @@ WriteToDB_turn_AA(
 } //WriteToDB_turn_AA
 
 
-
 string
 WriteToDB_turn_type(
 	Pose const & pose,
@@ -2591,8 +2573,6 @@ WriteToDB_whether_sw_is_not_connected_with_continuous_atoms (
 
 	return 0;
 } // WriteToDB_whether_sw_is_not_connected_with_continuous_atoms
-
-
 
 
 } //namespace strand_assembly

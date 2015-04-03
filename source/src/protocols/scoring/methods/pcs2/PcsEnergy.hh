@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsEnergy.hh
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -40,7 +38,6 @@
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManager.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsTensor.fwd.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsDataLanthanide.fwd.hh>
 #include <protocols/scoring/methods/pcs2/GridSearchIteratorCA.fwd.hh>
 
 // Project headers

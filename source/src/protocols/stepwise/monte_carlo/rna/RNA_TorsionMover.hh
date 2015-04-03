@@ -9,7 +9,7 @@
 
 /// @file RNA_TorsionMover.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

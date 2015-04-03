@@ -18,13 +18,10 @@
 #include <core/sequence/DPScoringScheme.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
-// AUTO-REMOVED #include <complex>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

@@ -22,7 +22,6 @@
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 // Numeric headers
@@ -33,7 +32,6 @@
 #include <algorithm>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -146,7 +144,7 @@ public:
 
 
 	///////////////////////////////////////////////////////////////////////////
-	///@brief for minimizing, add DOF(RB) for a JumpAtom into the MinimizerMap
+	/// @brief for minimizing, add DOF(RB) for a JumpAtom into the MinimizerMap
 	virtual
 	void
 	setup_min_map(
@@ -155,7 +153,7 @@ public:
 		MinimizerMapBase & min_map
 	) const;
 
-	///@brief get rotation axis and end_pos for a JumpAtom.
+	/// @brief get rotation axis and end_pos for a JumpAtom.
 	virtual
 	void
 	get_dof_axis_and_end_pos(
@@ -196,7 +194,6 @@ public:
 	copy_coords( Atom const & src );
 
 
-
 	//protected:
 
 	///////////////////////////////////////////////////////////////////////////
@@ -206,7 +203,7 @@ public:
 	///////////////////////////////////////////////////////////////////////////
 
 	// useful helper function for manipulating stubs
-	///@brief  update the stub without actually updating coordinates
+	/// @brief  update the stub without actually updating coordinates
 	/** since for a jump atom, update internal coords or xyz dont change input
 			jump, so we do not do anything here*/
 	inline

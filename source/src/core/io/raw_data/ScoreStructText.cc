@@ -14,7 +14,6 @@
 /// @author Monica Berrondo
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 // mini headers

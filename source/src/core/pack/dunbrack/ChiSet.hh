@@ -17,14 +17,12 @@
 #define INCLUDED_core_pack_dunbrack_ChiSet_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // where ChiVector and RotVector live
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <utility/vector1_bool.hh>
-
 
 
 namespace core {

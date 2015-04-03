@@ -28,13 +28,11 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 static thread_local basic::Tracer TRA( "fold_from_loops", basic::t_info );
-
 
 
 void write_checkpoint( Size iter )

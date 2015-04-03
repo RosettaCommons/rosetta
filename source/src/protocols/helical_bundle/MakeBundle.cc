@@ -69,8 +69,8 @@ MakeBundleCreator::mover_name()
 	return "MakeBundle";
 }
 
-///
-///@brief Creator for MakeBundle mover.
+
+/// @brief Creator for MakeBundle mover.
 MakeBundle::MakeBundle():
 		Mover("MakeBundle"),
 		reset_pose_(true),
@@ -108,10 +108,10 @@ MakeBundle::MakeBundle():
 		last_apply_failed_(false)
 {}
 
-///
+
 /// @brief Copy constructor for MakeBundle mover.
 ///
-///@brief Creator for MakeBundle mover.
+/// @brief Creator for MakeBundle mover.
 MakeBundle::MakeBundle( MakeBundle const & src ):
 		protocols::moves::Mover(src),
 		reset_pose_(src.reset_pose_),
@@ -154,18 +154,18 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 	}
 }
 
-///
-///@brief Destructor for MakeBundle mover.
+
+/// @brief Destructor for MakeBundle mover.
 MakeBundle::~MakeBundle() {}
 
-///
-///@brief Clone operator to create a pointer to a fresh MakeBundle object that copies this one.
+
+/// @brief Clone operator to create a pointer to a fresh MakeBundle object that copies this one.
 protocols::moves::MoverOP MakeBundle::clone() const {
 	return protocols::moves::MoverOP( new MakeBundle( *this ) );
 }
 
-///
-///@brief Fresh_instance operator to create a pointer to a fresh MakeBundle object that does NOT copy this one.
+
+/// @brief Fresh_instance operator to create a pointer to a fresh MakeBundle object that does NOT copy this one.
 protocols::moves::MoverOP MakeBundle::fresh_instance() const {
 	return protocols::moves::MoverOP( new MakeBundle );
 }
@@ -174,7 +174,7 @@ protocols::moves::MoverOP MakeBundle::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 void MakeBundle::apply (core::pose::Pose & pose)
 {
@@ -244,8 +244,8 @@ void MakeBundle::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("MakeBundle").
+
+/// @brief Returns the name of this mover ("MakeBundle").
 std::string MakeBundle::get_name() const{
 	return "MakeBundle";
 }
@@ -254,7 +254,7 @@ std::string MakeBundle::get_name() const{
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
 
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 void
 MakeBundle::parse_my_tag(

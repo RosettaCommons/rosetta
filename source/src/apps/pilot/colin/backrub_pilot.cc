@@ -10,7 +10,7 @@
 /// @file backrub.cc
 /// @brief run backrub Monte Carlo
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
-/// @detailed
+/// @details
 /// Currently a work in progress. The goal is to match the features of rosetta++ -backrub_mc
 
 // Protocols Headers
@@ -29,17 +29,12 @@
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -53,13 +48,11 @@
 #include <basic/Tracer.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
 
 // Platform Headers
 #include <platform/types.hh>
@@ -72,17 +65,11 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/graph/Graph.fwd.hh>
-// AUTO-REMOVED #include <core/id/TorsionID_Range.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>
 #include <utility/keys/Key3Vector.hh>
-
-
 
 
 static thread_local basic::Tracer TR( "apps.backrub" );

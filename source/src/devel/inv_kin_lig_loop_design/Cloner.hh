@@ -18,10 +18,8 @@
 #include <vector>
 #include <map>
 
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <devel/inv_kin_lig_loop_design/ResID.hh>
 #include <devel/inv_kin_lig_loop_design/Loop.hh>

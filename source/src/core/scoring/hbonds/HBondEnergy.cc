@@ -13,7 +13,6 @@
 /// @author Andrew Leaver-Fay
 
 
-
 // Unit Headers
 #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
@@ -200,7 +199,7 @@ HBondEnergy::clone() const
 	return methods::EnergyMethodOP( new HBondEnergy( *this ) );
 }
 
-///
+
 void
 HBondEnergy::setup_for_packing(
 	pose::Pose & pose,
@@ -285,8 +284,6 @@ HBondEnergy::update_residue_for_packing( pose::Pose & pose, Size resid ) const
 }
 
 
-
-///
 void
 HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -1107,7 +1104,6 @@ debug_assert( set1.resid() != set2.resid() );
 }
 
 
-
 //@brief overrides default rotamer/background energy calculation and uses
 // the trie-vs-trie algorithm instead
 void
@@ -1191,7 +1187,6 @@ HBondEnergy::evaluate_rotamer_background_energies(
 }
 
 
-///
 void
 HBondEnergy::finalize_total_energy(
 	pose::Pose & pose,
@@ -1245,7 +1240,7 @@ HBondEnergy::finalize_total_energy(
 
 }
 
-///@brief HACK!  MAX_R defines the maximum donorH to acceptor distance.
+/// @brief HACK!  MAX_R defines the maximum donorH to acceptor distance.
 // The atomic_interaction_cutoff method is meant to return the maximum distance
 // between two *heavy atoms* for them to have a zero interaction energy.
 // I am currently assuming a 1.35 A maximum distance between a hydrogen and the
@@ -1268,7 +1263,7 @@ HBondEnergy::hydrogen_interaction_cutoff2() const
 }
 
 
-///@brief HBondEnergy is context sensitive
+/// @brief HBondEnergy is context sensitive
 void
 HBondEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & context_graphs_required
@@ -1468,7 +1463,7 @@ HBondEnergy::create_rotamer_trie(
 }
 
 
-///@brief code to evaluate a hydrogen bond energy for the trie that
+/// @brief code to evaluate a hydrogen bond energy for the trie that
 /// didn't belong in the header itself -- it certainly does enough work
 /// such that inlining it would not likely produce a speedup.
 Energy

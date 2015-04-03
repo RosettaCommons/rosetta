@@ -28,7 +28,6 @@
 
 //utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -42,7 +41,7 @@
 namespace protocols {
 namespace jd2 {
 
-///@details this is a implementation of Buffer for silent-file-based output.
+/// @details this is a implementation of Buffer for silent-file-based output.
 
 class SingleFileBuffer : public utility::pointer::ReferenceCount {
 protected:

@@ -59,7 +59,7 @@ public:
 		core::Size lh_fragment_end
 	);
 	
-	///@brief return all loophash fragments within the max_lh radius that also satisfy
+	/// @brief return all loophash fragments within the max_lh radius that also satisfy
 	///torsion rms to the flanking regions
 	HashBuckets
 	find_fragments(
@@ -70,7 +70,7 @@ public:
 		core::Size max_fragment_size
 	);
 
-	///@brief get a random fragment length and fragment retrieval index from the given hash bucket.
+	/// @brief get a random fragment length and fragment retrieval index from the given hash bucket.
 	std::pair<core::Size,core::Size>
 	get_random_fragment(
 		HashBuckets hash_buckets
@@ -81,7 +81,7 @@ public:
 		core::pose::Pose & pose
 	);
 	
-	///@brief build the specified loophash fragment into the pose. Return
+	/// @brief build the specified loophash fragment into the pose. Return
 	///the deviation from an ideal bond across the cut
 	std::pair<core::Real, core::Real>
 	build_loop(

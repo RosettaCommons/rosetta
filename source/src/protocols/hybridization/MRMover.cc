@@ -116,8 +116,6 @@ parse_res( core::pose::Pose const &pose, std::string resnum ) {
 	return pose.pdb_info()->pdb2pose( chain, num );
 }
 
-//
-//
 
 MRMover::MRMover() :
 		fragments_big_(/* NULL */),
@@ -160,7 +158,7 @@ MRMover::init(){
 	}
 }
 
-//
+
 // apply()
 void MRMover::apply( Pose &pose ) {
 	using namespace protocols::loops;
@@ -315,7 +313,6 @@ void MRMover::apply( Pose &pose ) {
 }
 
 
-//
 // repack any missing sidechains after threading (threading does not do this)
 void MRMover::pack_missing_sidechains( Pose & pose ) {
 	utility::vector1< bool > needToRepack( pose.total_residue() , false );
@@ -365,7 +362,6 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 }
 
 
-//
 // trim long gaps from input pose
 void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loops , core::Size max_gaplength ) {
 	using namespace protocols::comparative_modeling;
@@ -376,7 +372,7 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	utility::vector1< bool > to_trim(query_pose.total_residue(), false) ;
 	protocols::loops::Loops new_loops;
 
-	//
+
 	for (int i=1; i<=(int)loops.size(); ++i) {
 		if (loops[i].size() > max_gaplength ) {
 			for (int j=(int)loops[i].start()+1; j<= (int)loops[i].stop()-1; ++j) {

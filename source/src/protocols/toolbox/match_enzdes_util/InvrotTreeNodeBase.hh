@@ -39,7 +39,7 @@ namespace toolbox {
 namespace match_enzdes_util {
 
 
-///@ brief helper class for collecting all different definitions of invrots from a tree
+/// @ brief helper class for collecting all different definitions of invrots from a tree
 class InvrotCollector : public utility::pointer::ReferenceCount {
 
 public:
@@ -74,7 +74,6 @@ private:
 	std::vector< std::list<core::conformation::ResidueCOP> > invrots_;
 	std::map< InvrotTreeNodeBaseCOP, Size > owner_nodes_and_locations_;
 };
-
 
 
 /// @brief abstract base class for an inverse rotamer tree node.

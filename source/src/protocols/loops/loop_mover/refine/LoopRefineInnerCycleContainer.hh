@@ -10,7 +10,7 @@
 /// @file protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainer.hh
 /// @brief This class is a LoopRefineInnerCycle that contains one or more other LoopRefineInnerCycles to allow a developer to
 /// quickly string together existing LoopRefineInnerCycles in new ways to create new loop refinement protocols.
-/// @detailed
+/// @details
 ///
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
@@ -58,7 +58,7 @@ public: // boiler plate / virtuals
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
+	/// @brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	virtual bool reinitialize_for_new_input() const;
 
 	/// @brief Associates relevant options with the LoopRefineInnerCycleContainer class

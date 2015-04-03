@@ -36,7 +36,7 @@ bool SingResCnlCrea::stripped_;
 /// 	be zeroed	when the constellation is output to file.
 std::map<SingResCnlCrea::MutTyp, std::string> SingResCnlCrea::zeroed_occ_;
 
-///
+
 /// @brief initializes the static members of this class
 /// @param[in] stripped true if one wants to output stripped constellations;
 /// 	false if one wants to output full constellations.
@@ -65,7 +65,6 @@ void SingResCnlCrea::init(bool const stripped) {
 }
 
 
-///
 /// @brief Returns the list of amino acid types that a given amino acid
 /// 	type can be reduced to.
 ///
@@ -112,7 +111,6 @@ utility::vector1<char> SingResCnlCrea::list_allowable_mutations(
 }
 
 
-///
 /// @brief sets occupancy to 0 for a residue's backbone atoms and hydrogen
 /// 	atoms. Sets occupancy to 1 for the residue's remaining atoms.
 ///
@@ -133,7 +131,6 @@ void SingResCnlCrea::zero_occ_bb_h(Pose& ps, core::Size seqpos) {
 }
 
 
-///
 /// @brief Sets occupancy to zero for a residue's non-constellation atoms.
 ///
 /// @details Given a residue to be reduced to a smaller amino acid type, sets
@@ -234,7 +231,6 @@ void SingResCnlCrea::zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 }
 
 
-///
 /// @brief sets occupancy to zero for constellation atoms that are not
 /// 	to be printed on output.
 ///

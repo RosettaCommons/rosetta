@@ -298,8 +298,6 @@ public:
   /** *********************************************  **/
 
 
-
-
 // class for trees of conformations (in RRT algorithm, etc.)
 class RRT_conformation_DAG{
  private:
@@ -471,9 +469,6 @@ public:
      }
 
 };
-
-
-
 
 
 } // namespace pathways

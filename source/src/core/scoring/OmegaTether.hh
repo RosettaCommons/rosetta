@@ -37,7 +37,6 @@ namespace core {
 namespace scoring {
 
 
-
 class OmegaTether : public utility::pointer::ReferenceCount
 {
 public:

@@ -17,15 +17,12 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // C++ Headers
@@ -39,8 +36,6 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-
-///
 
 class AtomPairConstraint : public Constraint {
 public:
@@ -65,7 +60,7 @@ public:
 		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func_, score_type() ) );
 	}
 
-	///
+
 	virtual
 	ConstraintOP clone( core::scoring::func::FuncOP func ) const {
 		return ConstraintOP( new AtomPairConstraint( atom1_, atom2_, func, score_type() ) );
@@ -88,14 +83,14 @@ public:
 
 	using Constraint::score;
 
-	///
+
 	Real
 	score(
 		Vector const & xyz1,
 		Vector const & xyz2
 		) const;
 
-	///
+
 	void
 	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
@@ -118,7 +113,7 @@ public:
 		return "AtomPair";
 	}
 
-	///
+
 	Size
 	natoms() const
 	{
@@ -129,7 +124,7 @@ public:
 	ConstraintOP
 	remap_resid( core::id::SequenceMapping const &seqmap ) const;
 
-	///
+
 	AtomID const &
 	atom( Size const n ) const
 	{

@@ -48,7 +48,7 @@ DockingScoreFunction::clone() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-///@brief INTERNAL USE ONLY
+/// @brief INTERNAL USE ONLY
 void
 DockingScoreFunction::assign( DockingScoreFunction const & src )
 {
@@ -56,7 +56,7 @@ DockingScoreFunction::assign( DockingScoreFunction const & src )
 	// Add assignemnt of DockingScoreFunction specific values here.
 }
 
-///@brief INTERNAL USE ONLY
+/// @brief INTERNAL USE ONLY
 void
 DockingScoreFunction::assign( ScoreFunction const & src )
 {

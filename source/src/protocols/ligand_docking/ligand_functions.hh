@@ -19,11 +19,8 @@
 //#include <protocols/ligand_docking/ligand_functions.fwd.hh>
 //#include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

@@ -49,16 +49,16 @@ struct weight_triple
 	Real wsc_sc_;
 };
 
-///
+
 class FA_ElecEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	FA_ElecEnergy( methods::EnergyMethodOptions const & options );
 
-	///
+
 	FA_ElecEnergy( FA_ElecEnergy const & src );
 
   /// @brief Initilize constants.
@@ -87,7 +87,7 @@ public:
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing(

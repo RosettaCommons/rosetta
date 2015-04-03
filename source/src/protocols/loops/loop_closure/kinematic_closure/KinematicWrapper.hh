@@ -29,7 +29,6 @@
 
 // Utility Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 
@@ -39,18 +38,18 @@ namespace loops {
 namespace loop_closure {
 namespace kinematic_closure {
 
-///@details This class extends KinematicMover by composition (has-a KinematicMover).  The idea is to make KinematicMover useful when ONLY the apply() function is available (as in MoverContainers, etc.).  It will reapply KinematicMover until the KinematicMover reports a success.  This class uses searches through loop begin/middle/end points while searching for solutions.  You can pass a MoveMap; it will refuse to put pivots where the MoveMap is not mobile.
+/// @details This class extends KinematicMover by composition (has-a KinematicMover).  The idea is to make KinematicMover useful when ONLY the apply() function is available (as in MoverContainers, etc.).  It will reapply KinematicMover until the KinematicMover reports a success.  This class uses searches through loop begin/middle/end points while searching for solutions.  You can pass a MoveMap; it will refuse to put pivots where the MoveMap is not mobile.
 class KinematicWrapper : public protocols::moves::Mover {
 
 public:
-	///@brief ctor with Loop
+	/// @brief ctor with Loop
 	KinematicWrapper(
 		KinematicMoverOP kinmover_in,
 		protocols::loops::Loop loop,
 		core::Size cycles = 0 //0 is sentinel value to check options system
 	);
 
-	///@brief ctor with explicit loop begin/end
+	/// @brief ctor with explicit loop begin/end
 	KinematicWrapper(
 		KinematicMoverOP kinmover_in,
 		core::Size loop_begin,
@@ -60,33 +59,33 @@ public:
 
 	virtual ~KinematicWrapper();
 
-	///@brief re-applies KinematicMover with different pivots until success
+	/// @brief re-applies KinematicMover with different pivots until success
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	///@brief this function derives the allowed_positions_ vector from mm and the loop begin/end
+	/// @brief this function derives the allowed_positions_ vector from mm and the loop begin/end
 	void respect_this_movemap( core::kinematics::MoveMapCOP mm );
 
 private:
 
-	///@brief two ctors have same functions, just different initialization lists; de-duplicated here
+	/// @brief two ctors have same functions, just different initialization lists; de-duplicated here
 	void ctor();
 
-	///@brief initializes allowed positions - for constructors and resetting
+	/// @brief initializes allowed positions - for constructors and resetting
 	void init_allowed_pos();
 
-	///@brief OP for KinematicMover
+	/// @brief OP for KinematicMover
 	KinematicMoverOP kinmover_;
 
-	///@brief the loop this object-instance remodels
+	/// @brief the loop this object-instance remodels
 	core::Size const loop_begin_;
-	///@brief the loop this object-instance remodels
+	/// @brief the loop this object-instance remodels
 	core::Size const loop_end_;
 
-	///@brief a limit on the number of cycles the mover will run
+	/// @brief a limit on the number of cycles the mover will run
 	core::Size const limit_;
 
-	///@brief vector of positions allowed as pivots
+	/// @brief vector of positions allowed as pivots
 	utility::vector1<core::Size> allowed_positions_;
 };//end KinematicWrapper
 

@@ -12,16 +12,13 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <protocols/ligand_docking/RandomConformerMover.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
@@ -30,7 +27,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-
 
 
 static basic::Tracer TR("protocols.ligand_docking.ResidueTorsionRestraintsTest.cxxtest");

@@ -8,14 +8,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsInputFile.cc
  ///
  /// @brief Read all input from a .npc input file, and hold the data in the class
  /// One file per lanthanide data
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -25,9 +24,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 

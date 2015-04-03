@@ -23,11 +23,8 @@
 // Project headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 //#ifdef __clang__
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 //#endif
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -110,7 +107,7 @@ public:
 			utility::lua::LuaObject const & tasks,
 			protocols::moves::MoverCacheSP cache );
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,
@@ -118,7 +115,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -126,7 +123,7 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+	/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
 		TagCOP,
 		basic::datacache::DataMap const &,
@@ -134,10 +131,10 @@ public:
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	///@brief required in the context of the parser/scripting scheme
+	/// @brief required in the context of the parser/scripting scheme
 	virtual protocols::moves::MoverOP clone() const;
 
 	// setters
@@ -205,7 +202,7 @@ public:
 	InteractionGraphBaseCOP ig() const;
 
 protected:
-	///@brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
+	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
 
 // need a more elegant rot_to_pack implementation than this

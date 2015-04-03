@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 #include <protocols/rbsegment_relax/MakeStarTopology.hh>
@@ -102,7 +102,7 @@ void MakeStarTopologyMover::parse_my_tag(
 {
 	mode_ = tag->getOption<std::string>("mode", "default");
 
-	//
+
 	restore_ = tag->getOption<bool>("restore", false);
 	tag_ = tag->getOption<std::string>("tag", "nulltag");
 

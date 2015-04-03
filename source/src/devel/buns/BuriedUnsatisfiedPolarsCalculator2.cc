@@ -183,7 +183,6 @@ BuriedUnsatisfiedPolarsCalculator2::lookup(
 } //lookup
 
 
-
 std::string
 BuriedUnsatisfiedPolarsCalculator2::print( std::string const & key ) const
 {
@@ -306,8 +305,6 @@ BuriedUnsatisfiedPolarsCalculator2::recompute( Pose const & pose )
 //            }
 //        }
 //    }
-
-
 
 
 } //recompute

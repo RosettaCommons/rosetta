@@ -17,11 +17,6 @@
 #include <util/pose_funcs.hh>
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RRProtocol.hh>
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RRReporter.hh>
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RRComparer.hh>
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 
@@ -120,7 +115,6 @@
 #include <string>
 #include <vector>
 #include <basic/Tracer.fwd.hh>
-
 
 
 static basic::Tracer TR("protocols.rotamer_recovery.RotamerRecovery.cxxtest");

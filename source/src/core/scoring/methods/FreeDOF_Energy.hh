@@ -36,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class FreeDOF_Energy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
@@ -54,7 +54,7 @@ public:
 	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
-	///
+
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
@@ -63,7 +63,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(

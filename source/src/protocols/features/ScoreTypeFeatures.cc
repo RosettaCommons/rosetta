@@ -160,8 +160,6 @@ ScoreTypeFeatures::report_features(
 }
 
 
-
-
 void ScoreTypeFeatures::delete_record(
 	StructureID,
 	utility::sql_database::sessionOP ){}

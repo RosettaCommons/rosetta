@@ -10,7 +10,7 @@
 /// @file backrub.cc
 /// @brief run backrub Monte Carlo
 /// @author Colin A. Smith (colin.smith@ucsf.edu)
-/// @detailed
+/// @details
 /// Currently a work in progress. The goal is to match the features of rosetta++ -backrub_mc
 
 // Protocols Headers
@@ -33,15 +33,11 @@
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -470,7 +466,6 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 			//pose->dump_pdb(input_jobs[jobnum]->output_tag(structnum) + "_postminjump.pdb");
 		}
 	}
-
 
 
 	// reset the Monte Carlo object

@@ -86,9 +86,6 @@ private:
 typedef utility::vector1< WaterBuilder > WaterBuilders;
 
 
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +96,7 @@ typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
 	class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LKB_ResidueInfo();
 	typedef utility::vector1< Vector > Vectors;
 
@@ -181,8 +178,6 @@ private:
 
 typedef utility::pointer::shared_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 typedef utility::pointer::shared_ptr< const LKB_ResidueInfo > LKB_ResidueInfoCOP;
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

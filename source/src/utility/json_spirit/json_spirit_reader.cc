@@ -7,8 +7,6 @@
 #include "json_spirit_reader_template.h"
 
 
-
-
 namespace utility {
 //namespace json_spirit {
 

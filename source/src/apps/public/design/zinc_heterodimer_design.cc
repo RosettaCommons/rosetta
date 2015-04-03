@@ -65,8 +65,6 @@
 #include <core/pose/util.hh>
 
 
-
-
 //tracers
 using basic::Error;
 using basic::Warning;

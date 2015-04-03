@@ -9,7 +9,7 @@
 
 /// @file core/pose/copydofs/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -27,8 +27,8 @@ namespace pose {
 namespace copydofs {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
-///@author rhiju, 2009.
+/// @brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
+/// @author rhiju, 2009.
 void
 copy_dofs(
 					pose::Pose & pose,

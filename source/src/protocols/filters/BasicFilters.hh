@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/BasicFilters.hh
 /// @brief header file for very simple Filter classes
-/// @detailed
+/// @details
 /// @author Florian Richter, floric@u.washington.edu (feb 09 ), Sarel Fleishman sarelf@u.washington.edu, Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_filters_BasicFilters_hh
@@ -220,7 +220,7 @@ private:
 	utility::vector1< FilterCOP > thenfilters_;
 	utility::vector1< core::Real > values_;
 	utility::vector1< core::Real > weights_;
-	///@brief If true, invert the sense of the iffilter test.
+	/// @brief If true, invert the sense of the iffilter test.
 	utility::vector1< bool > invert_;
 
 	FilterCOP elsefilter_;
@@ -228,7 +228,7 @@ private:
 	core::Real elseweight_;
 
 	core::Real threshold_;
-	///@brief If true, threshold_ is a lower limit, rather than upper limit
+	/// @brief If true, threshold_ is a lower limit, rather than upper limit
 	bool floor_;
 };
 

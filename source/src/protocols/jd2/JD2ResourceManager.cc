@@ -377,8 +377,7 @@ JD2ResourceManager::read_resource_option_item(
 }
 
 
-
-///@detail Check if the loader type is defined with the ResourceLoaderFactory
+/// @detail Check if the loader type is defined with the ResourceLoaderFactory
 void
 JD2ResourceManager::check_resource_loader_type(
 	LoaderType const & loader_type
@@ -398,7 +397,7 @@ JD2ResourceManager::check_resource_loader_type(
 	}
 }
 
-///@details make sure the resource object has been given a tag and
+/// @details make sure the resource object has been given a tag and
 ///that no other resource object has been delecared with the same name.
 ResourceTag
 JD2ResourceManager::read_resource_tag_item(
@@ -427,7 +426,7 @@ JD2ResourceManager::read_resource_tag_item(
 	return resource_tag;
 }
 
-///@brief find the LocatorTag item from the resource tag. Based on the
+/// @brief find the LocatorTag item from the resource tag. Based on the
 ///LocatorTag fill the LocatorID.
 ///   locator item (&string):
 ///     FileSystemResourceLocator (default)

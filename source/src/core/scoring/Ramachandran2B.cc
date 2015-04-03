@@ -19,7 +19,6 @@
 // Package Headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ProteinTorsion.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -53,7 +52,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2A.hh>
-
 
 
 using namespace ObjexxFCL;
@@ -538,8 +536,6 @@ Ramachandran2B::eval_rama_score_residue(
 
 	IdealizeRamaEnergy( phi, psi, rama, drama_dphi, drama_dpsi, entropy, rama_for_res );
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

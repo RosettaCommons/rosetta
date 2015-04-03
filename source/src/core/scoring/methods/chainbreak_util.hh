@@ -15,8 +15,6 @@
 #define INCLUDED_core_scoring_methods_chainbreak_util_hh
 
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
 
 #include <core/types.hh>

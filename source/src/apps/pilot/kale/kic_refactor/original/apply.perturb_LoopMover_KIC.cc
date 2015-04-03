@@ -1,4 +1,4 @@
-/// @detailed
+/// @details
 /// Uses kinematic_mover to remodel a protein segment.  If the 'extended' flag 
 /// in the loop definition for the segment is set to '1', will idealize all 
 /// bond lengths, bond angles, and torsion angles before  modeling.  This stage 

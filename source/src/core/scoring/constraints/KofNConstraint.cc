@@ -21,11 +21,9 @@
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/conformation/Conformation.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -295,8 +293,6 @@ KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func:
 // 		std::cout << std::endl;
 // 	}
 // } // parse_ambigous_constraint
-
-
 
 
 } //constraints

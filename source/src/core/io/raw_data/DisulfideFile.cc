@@ -14,17 +14,14 @@
 #include <core/io/raw_data/DisulfideFile.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

@@ -38,7 +38,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
@@ -53,7 +52,7 @@ public:
     /// @brief Constructor
     FabConstraint(ConstraintCOPs & cst_in) ;
 
-    ///
+
     virtual
     ConstraintOP clone() const {
         return ConstraintOP( new FabConstraint(*this) );
@@ -80,7 +79,6 @@ public:
     setup_csts(core::pose::Pose const & pose, utility::vector1<Size> res1, utility::vector1<Size> res2, std::string antchains);
 
 private:
-
 
 
 }; //FabConstraint

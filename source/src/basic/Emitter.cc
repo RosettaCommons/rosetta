@@ -121,6 +121,5 @@ std::string Emitter::escape_string(std::string const & s, bool & needs_quotes_ou
 }
 
 
-
 } // basic
 

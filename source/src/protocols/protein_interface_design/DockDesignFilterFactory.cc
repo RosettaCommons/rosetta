@@ -35,7 +35,7 @@ DockDesignFilterFactory::DockDesignFilterFactory()
 
 DockDesignFilterFactory::~DockDesignFilterFactory(){}
 
-///@brief add a Filter prototype, using its default type name as the map key
+/// @brief add a Filter prototype, using its default type name as the map key
 void
 DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 {
@@ -47,7 +47,7 @@ DockDesignFilterFactory::add_type( FilterOP dock_design_filter )
 	dock_design_filter_map_[ type ] = dock_design_filter;
 }
 
-///@brief add a Filter prototype, using an arbitrary type name as the map key
+/// @brief add a Filter prototype, using an arbitrary type name as the map key
 void
 DockDesignFilterFactory::add_type( std::string const & type, FilterOP dock_design_filter )
 {
@@ -55,7 +55,7 @@ DockDesignFilterFactory::add_type( std::string const & type, FilterOP dock_desig
 	dock_design_filter_map_[ type ] = dock_design_filter;
 }
 
-///@brief return new Filter by key lookup in dock_design_filter_map_ (new Filter parses Tag if provided)
+/// @brief return new Filter by key lookup in dock_design_filter_map_ (new Filter parses Tag if provided)
 FilterOP
 DockDesignFilterFactory::newFilter(	std::string const & type )
 {
@@ -72,7 +72,7 @@ DockDesignFilterFactory::newFilter(	std::string const & type )
 	}
 }
 
-///@brief return new Filter by Tag parsing
+/// @brief return new Filter by Tag parsing
 FilterOP
 DockDesignFilterFactory::newFilter(
 	TagCOP const tag,

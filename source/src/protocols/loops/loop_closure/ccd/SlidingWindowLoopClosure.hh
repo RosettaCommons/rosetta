@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/SlidingWindowLoopClosure.hh
 /// @brief header file for SlidingWindowLoopClosure protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -24,7 +24,6 @@
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
@@ -43,7 +42,6 @@
 //#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
 
 // ObjexxFCL Headers
 
@@ -51,9 +49,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
 #include <protocols/loops/Loop.hh>
@@ -71,7 +67,7 @@ extern std::string const RMSD_FRAG_STORE;
 
 class SlidingWindowLoopClosure : public moves::Mover {
 public:
-   ///@brief constructor: supply fragsets for fragment moves
+   /// @brief constructor: supply fragsets for fragment moves
 	SlidingWindowLoopClosure(
 			core::fragment::FragSetCOP fragset,
 			core::scoring::ScoreFunctionOP scorefxn,
@@ -176,7 +172,6 @@ protected:
   void generate_window_list( Size loop_size, WindowList& window_list ) const;
 
 
-
 	void set_defaults();
 
 	/// @details also modifies the internal scorefxn_ variable
@@ -192,7 +187,7 @@ protected:
 		core::pose::Pose const& loop_pose
 	);
 
-//   ///@brief replace scorefxn
+//   /// @brief replace scorefxn
 //   void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
 //     scorefxn_ = scorefxn;
 //   }

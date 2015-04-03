@@ -47,7 +47,7 @@ class AtomGraphEdgeData : public PointGraphEdgeData
 public:
 	AtomGraphEdgeData() : PointGraphEdgeData() {}
 
-	///@brief inputs and outputs are distances squared
+	/// @brief inputs and outputs are distances squared
 	AtomGraphEdgeData(platform::Real d2) : PointGraphEdgeData(d2) {}
 };
 

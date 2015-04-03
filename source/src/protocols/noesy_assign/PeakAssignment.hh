@@ -25,9 +25,7 @@
 
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
@@ -41,9 +39,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <list>
 #include <map>
 #include <iostream>
 
@@ -55,12 +51,12 @@ namespace protocols {
 namespace noesy_assign {
 
 
-///@brief fast access to assignments that are stored in CrossPeak -- similar to FragID
+/// @brief fast access to assignments that are stored in CrossPeak -- similar to FragID
 /// WARNING WARNING WARNING THREAD UNSAFE.  THIS CLASS USES THE FUNCTION covalent_compliance
 /// WHICH RELIES ON THREAD-UNSAFE SINGLETON CovalentCompliance
 class PeakAssignment : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PeakAssignment();
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraintOP NmrConstraintOP;
 	typedef core::scoring::constraints::AmbiguousNMRDistanceConstraint NmrConstraint;
@@ -72,7 +68,7 @@ public:
     return select == 1 ? spin_assign_index1_ : spin_assign_index2_;
   }
 
-  ///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
+  /// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
   core::Size resonance_id( core::Size select ) const {
     runtime_assert( select == 1 || select == 2 );
     return select == 1 ? resonance1_ : resonance2_;
@@ -88,10 +84,10 @@ public:
 
 	core::Size float_ambiguity() const;
 
-	///@brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
+	/// @brief return resonance_id, i.e., pointer into Resonance list that will resolve in assigned atom
   core::Size label_resonance_id( core::Size select ) const;
 
- ///@brief returns atom 1 or 2 of the assigned cross-peak.  --- might throw Exception if atom not found in ResonanceList
+ /// @brief returns atom 1 or 2 of the assigned cross-peak.  --- might throw Exception if atom not found in ResonanceList
   core::id::NamedAtomID const& atom( core::Size iatom ) const{
     return resonances()[ resonance_id( iatom ) ].atom();
   }
@@ -122,7 +118,7 @@ public:
 		core::Size ifloat, //if float ambiguity is present enumerate all possible constraints with 1<=ifloat <=float_ambiguity()
 		core::scoring::func::FuncOP = NULL  ) const;
 
-  ///@brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
+  /// @brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
   core::Size resid( core::Size iatom ) const {
     return resonances()[ resonance_id( iatom ) ].resid();
   }
@@ -180,10 +176,10 @@ public:
 	void update_chemshiftscore_from_peak();
 	void update_upperdistance_score();
 
-	///@brief this is not normalized
+	/// @brief this is not normalized
 	core::Real peak_volume() const;
 
-	///@brief only correct if peak_volumes have been update in CrossPeaks.
+	/// @brief only correct if peak_volumes have been update in CrossPeaks.
 	core::Real normalized_peak_volume() const;
 
 	void show( std::ostream& os ) const;

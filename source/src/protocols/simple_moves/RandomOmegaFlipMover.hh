@@ -28,7 +28,7 @@
 namespace protocols {
 namespace simple_moves {
 
-///@details Simple class that flips a random omega selected from a movemap 180 degrees
+/// @details Simple class that flips a random omega selected from a movemap 180 degrees
 class RandomOmegaFlipMover : public protocols::moves::Mover {
 public:
 

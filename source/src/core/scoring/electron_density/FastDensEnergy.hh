@@ -31,7 +31,7 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
-///
+
 class FastDensEnergy : public methods::ContextIndependentLRTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentLRTwoBodyEnergy  parent;
@@ -97,7 +97,7 @@ public:
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
 
-	///
+
 	virtual void
 	finalize_total_energy(
 		pose::Pose & ,

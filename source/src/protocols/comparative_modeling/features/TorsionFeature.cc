@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <protocols/comparative_modeling/features/ResidueFeature.hh>
 #include <protocols/comparative_modeling/features/TorsionFeature.hh>

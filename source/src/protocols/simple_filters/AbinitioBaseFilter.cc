@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/Filters.hh
 /// @brief header file for Filters.cc
-/// @detailed
+/// @details
 ///	  Contains currently: Filters
 ///
 ///
@@ -23,19 +23,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 
 #include <protocols/simple_filters/AbinitioBaseFilter.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/RGFilter.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/COFilter.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/SheetFilter.hh>
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
 

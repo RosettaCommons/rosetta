@@ -345,7 +345,6 @@ FreeDOF_Energy::version() const
 }
 
 
-
 } // methods
 } // scoring
 } // core

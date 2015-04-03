@@ -41,7 +41,6 @@ typedef utility::pointer::shared_ptr< CB_Angle_Func > CB_Angle_FuncOP;
 typedef utility::pointer::shared_ptr< SG_Dist_Func > SG_Dist_FuncOP;
 
 
-
 } // namespace disulfides
 } // namespace scoring
 } // namespace core

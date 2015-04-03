@@ -107,7 +107,6 @@
 static thread_local basic::Tracer TR( "organopv" );
 
 
-
 void add_apc(core::pose::Pose & pose, core::id::AtomID aid1, core::id::AtomID aid2, core::Real mean, core::Real sd,
 			 core::scoring::ScoreType st = core::scoring::atom_pair_constraint)
 {
@@ -325,7 +324,6 @@ void* doit(void* /*x = NULL*/) {
 	// std::exit(-1);
 	return NULL;
 }
-
 
 
 int

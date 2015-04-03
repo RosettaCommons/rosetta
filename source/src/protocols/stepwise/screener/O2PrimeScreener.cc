@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/O2PrimeScreener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

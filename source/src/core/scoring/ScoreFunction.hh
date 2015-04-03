@@ -128,19 +128,19 @@ public:
 	// inline ScoreFunctionAP get_self_weak_ptr() { return ScoreFunctionAP( shared_from_this() ); }
 
 private:
-	///@brief The ScoreFunction copy constructor is explicitly private
+	/// @brief The ScoreFunction copy constructor is explicitly private
 	/// as using it to make a copy is just too attractive, but discards subclass information.
 	/// Use ScoreFunction::clone() instead.
 	ScoreFunction( ScoreFunction const & );
 
-	///@brief The ScoreFunction assignment operator is explicitly private
+	/// @brief The ScoreFunction assignment operator is explicitly private
 	/// as using it discards subclass information.
 	/// Rework your algorithm to use ScoreFunctionOP's instead.
 	ScoreFunction &
 	operator=( ScoreFunction const & );
 
 public:
-  ///@brief NOT FOR GENERAL USE
+  /// @brief NOT FOR GENERAL USE
 	/// Copy the information about src into the current score function.
 	/// There are deep interactions with subclasses,
 	/// (the subclass information doesn't necessarily get copied)
@@ -149,11 +149,11 @@ public:
 	virtual void
 	assign( ScoreFunction const & src);
 
-	///@brief Create a copy of the scorefunction
+	/// @brief Create a copy of the scorefunction
 	/// Virtual to keep subclass information.
 	virtual ScoreFunctionOP clone() const;
 
-  ///@brief If you *want* to discard subclass information, the following function is availible
+  /// @brief If you *want* to discard subclass information, the following function is availible
 	ScoreFunctionOP clone_as_base_class() const;
 
 	/// @brief Resets the ScoreFunction to default values
@@ -188,7 +188,7 @@ public:
 	void
 	set_etable( std::string const & etable_name );
 
-	///
+
 	void
 	set_method_weights( ScoreType const & t, utility::vector1< Real > const & wts );
 
@@ -536,7 +536,7 @@ public:
 	void
 	update_residue_for_packing( pose::Pose & pose, Size resid ) const;
 
-	///
+
 	//void
 	//setup_for_scoring( pose::Pose & pose ) const;
 
@@ -732,11 +732,10 @@ public:
 	show(pose::Pose & pose ) const { show(std::cout, pose); };
 
 
-	///
 	void
 	show_line_headers( std::ostream & out ) const;
 
-	///
+
 	void
 	show_line( std::ostream & out,  pose::Pose const & pose ) const;
 
@@ -900,7 +899,7 @@ public:
 		EnergyMap & emap
 	) const;
 
-	///
+
 	void
 	bump_check_full(
 		conformation::Residue const & rsd1,
@@ -934,7 +933,7 @@ public:
 		utility::vector1< EnergyMap > & emaps
 	) const;
 
-	///
+
 	void
 	evaluate_rotamer_pair_energies(
 		conformation::RotamerSetBase const & set1,
@@ -943,7 +942,7 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const;
 
-	///
+
 	void
 	evaluate_rotamer_background_energies(
 		conformation::RotamerSetBase const & set1,
@@ -959,7 +958,7 @@ public:
 		Size res2
 	) const;
 
-	///
+
 	virtual
 	void
 	eval_npd_atom_derivative(
@@ -970,7 +969,7 @@ public:
 		Vector & F2
 	) const;
 
-	///
+
 	Real
 	eval_dof_derivative(
 		id::DOF_ID const & dof_id,
@@ -978,7 +977,7 @@ public:
 		pose::Pose const & pose
 	) const;
 
-	///
+
 	ScoreTypes const &
 	score_types_by_method_type( methods::EnergyMethodType const & t ) const
 	{
@@ -1046,11 +1045,11 @@ public:
 
 private:
 
-	///
+
 	void
 	add_method( methods::EnergyMethodOP method );
 
-	///
+
 	void
 	remove_method( methods::EnergyMethodOP method );
 
@@ -1118,7 +1117,7 @@ private:
 	/// will be 0 for score_types without a method, ie ones with 0 weight
 	AllMethods methods_by_score_type_;
 
-	///
+
 	utility::vector1< ScoreTypes > score_types_by_method_type_;
 
 	mutable bool score_function_info_current_;

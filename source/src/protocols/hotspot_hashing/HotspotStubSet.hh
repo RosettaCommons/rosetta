@@ -25,8 +25,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // Utility Headers
@@ -34,8 +32,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // C++ Headers
 #include <map>
@@ -111,7 +107,7 @@ public:
 	/// @brief removes neighbors of stub based on repulsive energy between the pair of residues
 	void remove_stubs_from_set( std::set< std::pair< std::string, core::Real > > const );
 	void remove_random_stubs_from_set( int const num_to_remove );
-	///@brief removes a single stub. Reports false if stub is not found
+	/// @brief removes a single stub. Reports false if stub is not found
 	bool remove_stub( HotspotStubCOP stub );
 
 	/// @brief add to stubset by reading from a file

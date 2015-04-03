@@ -56,8 +56,6 @@ void ThisApplication::register_options() {
 }
 
 
-
-
 char get_label(vector1 <Real> ss_pred_pos){
 	char label = 'X';
 	if((ss_pred_pos[1] >= ss_pred_pos[2]) && (ss_pred_pos[1] >= ss_pred_pos[3]))

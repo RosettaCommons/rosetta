@@ -709,7 +709,6 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 } //make_constraint_covalent_helper
 
 
-
 void
 EnzConstraintParameters::show_definitions() const
 {
@@ -728,7 +727,6 @@ EnzConstraintParameters::generate_pose_specific_data(
 	resB_->get_pose_data(pose);
 	generate_active_pose_constraints( pose, scofx );
 }
-
 
 
 /// @brief function to determine the lowest scoring constraint in a vector of input constraints
@@ -759,7 +757,6 @@ EnzConstraintParameters::determine_best_constraint(
 	helper_scofx.set_weight( core::scoring::atom_pair_constraint, (*scofx)[core::scoring::atom_pair_constraint] );
 	helper_scofx.set_weight( core::scoring::angle_constraint, (*scofx)[core::scoring::angle_constraint] );
 	helper_scofx.set_weight( core::scoring::dihedral_constraint, (*scofx)[core::scoring::dihedral_constraint] );
-
 
 
 	bool first_pass = true;

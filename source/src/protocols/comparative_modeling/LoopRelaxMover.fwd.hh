@@ -25,7 +25,6 @@ typedef  utility::pointer::shared_ptr< LoopRelaxMover >  LoopRelaxMoverOP;
 typedef  utility::pointer::shared_ptr< LoopRelaxMover const >  LoopRelaxMoverCOP;
 
 
-
 class LoopRelaxThreadingMover;
 
 typedef  utility::pointer::shared_ptr< LoopRelaxThreadingMover >  LoopRelaxThreadingMoverOP;

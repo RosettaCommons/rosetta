@@ -25,11 +25,8 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Scoring grid headers
-// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 
 //// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <utility/vector1.hh>
 
 #include <set>

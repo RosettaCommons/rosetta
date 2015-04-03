@@ -37,7 +37,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace pack {
 namespace dunbrack {
@@ -63,7 +62,6 @@ DunbrackEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_dun_semi );
 	return sts;
 }
-
 
 
 /// ctor
@@ -98,7 +96,7 @@ DunbrackEnergy::residue_energy(
 		return;
 	}
 
-	//
+
 	//static boost::detail::atomic_count count_present( 0 );
 	//++count_present;
 	//std::cout << "D" << count_present << std::flush;
@@ -167,7 +165,6 @@ DunbrackEnergy::eval_residue_dof_derivative(
 }
 
 
-///
 Real
 DunbrackEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
@@ -182,7 +179,7 @@ DunbrackEnergy::eval_dof_derivative(
 		return 0.0;
 	}
 
-	//
+
 	//static boost::detail::atomic_count count_present( 0 );
 	//++count_present;
 	//std::cout << "dD" << count_present << std::flush;
@@ -234,7 +231,6 @@ DunbrackEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } // dunbrack

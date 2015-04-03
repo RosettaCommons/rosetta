@@ -17,29 +17,19 @@
 
 #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <protocols/rigid/RB_geometry.hh>
 
@@ -63,7 +53,6 @@
 #include <core/kinematics/Jump.hh>
 
 
-
 //silly using/typedef
 
 using namespace core;
@@ -76,7 +65,7 @@ typedef std::map< std::string, std::map< std::string, numeric::xyzVector< Real >
 typedef vector1< std::string > Strings;
 ///////////////////////////////////////////////////////////////////////////////
 // some silly helper routines:
-//
+
 
 ///////////////////////////////////////////////////////////////////////////////
 std::string readFile(std::string fname)
@@ -181,11 +170,10 @@ rb_test ()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin dock_structure
 ///
 /// @brief main docking protocol
 ///
-/// @detailed
+/// @details
 /// Main function for docking. Includes the following steps:
 ///      0) prepack mode: prepare a starting structure for later runs
 ///   OR:

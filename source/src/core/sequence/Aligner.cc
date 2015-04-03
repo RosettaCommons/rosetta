@@ -20,7 +20,6 @@
 #include <core/sequence/SequenceAlignment.hh>
 
 
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/exit.hh>

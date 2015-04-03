@@ -74,7 +74,6 @@ sub cross {
 }
 
 
-
 # ($nlist,$mov_com, $mov_to_ref, $R, $E0) = setup_rotation( $ref_xlist, $mov_xlist )
 sub setup_rotation {
 	my ( $ref_xlist, $mov_xlist ) = @_;
@@ -232,7 +231,6 @@ sub jacobi3 {
 	print STDERR "WARNING: Too many iterations in jacobi3!  You're bad and you should feel bad.\n";
 	exit -1;
 }
-
 
 
 # ($eigen_vec, $eigenval) = diagonalize_symmetric( $matrix )

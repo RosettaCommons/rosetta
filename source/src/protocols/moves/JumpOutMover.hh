@@ -25,8 +25,6 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // ObjexxFCL Headers
@@ -36,7 +34,6 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
 
@@ -60,7 +57,7 @@ public:
 	~JumpOutMover();
 
 	/// @brief Applies a move, and conditionally applies a second move.
-	/// @detailed This mover applies the first move, and checks if the score
+	/// @details This mover applies the first move, and checks if the score
 	/// difference between the initial score and the score after the first move is
 	/// within a tolerance. If the score after the first move is within the
 	/// tolerance, the second move is applied.

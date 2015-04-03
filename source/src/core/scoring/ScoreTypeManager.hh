@@ -19,10 +19,8 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
 #include <utility/vector1.hh>

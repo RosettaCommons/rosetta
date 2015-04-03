@@ -30,7 +30,7 @@ namespace frag_picker {
 
 /// TODO write collector for mixed fragment lengths
 /// @brief A base class for collecting fragments.
-/// @detailed The purpose of a collector is to keep fragment candidates to the end
+/// @details The purpose of a collector is to keep fragment candidates to the end
 /// of vall processing. Then a selector will go through all the candidates stored
 /// in a collector and select the final fragments
 /// @see GrabAll collector for a possible implementation

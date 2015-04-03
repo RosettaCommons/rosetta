@@ -237,7 +237,7 @@ bool TemplateJumpSetup::is_helix_jump( core::scoring::dssp::Pairing const& p ) c
 	return ( iter != helix_pairings_.end() );
 }
 
-///@brief returns an ordered FragSet that is compatible with the JumpSample
+/// @brief returns an ordered FragSet that is compatible with the JumpSample
 /// default: generate jumps from ss-library according to JumpSample
 core::fragment::FragSetOP
 TemplateJumpSetup::generate_jump_frags( JumpSample const& target_jumps, kinematics::MoveMap const& mm ) const {

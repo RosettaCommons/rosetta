@@ -27,7 +27,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace devel {
 namespace fold_from_loops {
 
@@ -41,8 +40,6 @@ public:
 	FoldFromLoopsMover();
 
 	virtual ~FoldFromLoopsMover();
-
-
 
 
 	void apply( core::pose::Pose & pose );
@@ -77,7 +74,6 @@ public:
 			ca_csts_ = ca_csts;
 
 	}
-
 
 
 private:

@@ -498,7 +498,7 @@ void RosettaScriptsParser::process_include_xml(
 	}
 }
 
-///@brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
+/// @brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
 void RosettaScriptsParser::instantiate_filter(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
@@ -521,7 +521,7 @@ void RosettaScriptsParser::instantiate_filter(
 	TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
-///@brief Instantiate a new mover and add it to the list of defined movers for this ROSETTASCRIPTS block
+/// @brief Instantiate a new mover and add it to the list of defined movers for this ROSETTASCRIPTS block
 void RosettaScriptsParser::instantiate_mover(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
@@ -545,7 +545,7 @@ void RosettaScriptsParser::instantiate_mover(
 }
 
 
-///@brief Instantiate a new task operation (used in IMPORT tag)
+/// @brief Instantiate a new task operation (used in IMPORT tag)
 void RosettaScriptsParser::instantiate_taskoperation(
 	TagCOP const & tag_ptr,
 	basic::datacache::DataMap & data,
@@ -569,7 +569,7 @@ void RosettaScriptsParser::instantiate_taskoperation(
 	TR << "Defined TaskOperation named \"" << user_defined_name << "\" of type " << type << std::endl;
 }
 
-///@brief Recursively find a specific tag by option name and valie in any ROSETTASCRIPTS tag that's a child of rootTag
+/// @brief Recursively find a specific tag by option name and valie in any ROSETTASCRIPTS tag that's a child of rootTag
 TagCOP RosettaScriptsParser::find_rosettascript_tag(
 	TagCOP tag_in,
 	const std::string & section_name,
@@ -697,7 +697,7 @@ void RosettaScriptsParser::import_tags(
 }
 
 
-///@brief Create a variable substituted version of the input stream, given a StringVectorOption formated list of variables
+/// @brief Create a variable substituted version of the input stream, given a StringVectorOption formated list of variables
 ///to substitiute. Each item in script_vars should be in the form of "variable=value", where "value" is the string to substitiute
 ///into the input stream whereever the string "%%variable%%" is found in the input.
 ///
@@ -747,7 +747,7 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & in, utility
 	TR.flush();
 }
 
-///@brief Factories avoid requiring compiler dependencies for all possible constructible derived classes,
+/// @brief Factories avoid requiring compiler dependencies for all possible constructible derived classes,
 ///by allowing runtime registration of derived class prototypes. However, this requires
 ///pre-registration of a derived type with the factory prior to asking the factory to return an
 ///instance of that type. This method registers those additional derived classes that are available for

@@ -69,7 +69,6 @@ ExternalGeomSampler::operator = ( ExternalGeomSampler const & rhs )
 }
 
 
-
 void ExternalGeomSampler::set_tor_U3D1_samples( utility::vector1< Real > const & tor_U3D1_samples )
 {
 	transforms_uptodate_ = false;

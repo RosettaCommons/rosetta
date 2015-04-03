@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_packing_surf_vol_hh
 
 //Unit headers
-// AUTO-REMOVED #include <core/scoring/packing/PoseBalls.hh>
 
 //Package headers
 #include <core/pose/Pose.fwd.hh>
@@ -27,8 +26,6 @@
 #include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace core {
@@ -80,7 +77,6 @@ namespace packing {
 		core::id::AtomID_Mask const & whichatoms,
 		core::Real const   probe_radius = 1.4
 	);
-
 
 
 }

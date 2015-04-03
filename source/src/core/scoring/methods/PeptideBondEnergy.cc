@@ -18,9 +18,7 @@
 //#include <core/scoring/ScoringManager.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/scoring/func/GaussianFunc.hh>

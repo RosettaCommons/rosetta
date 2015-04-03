@@ -29,7 +29,6 @@ Size FilterByProxTerm::nres_;
 std::map<char, bool> FilterByProxTerm::proxnc_;
 
 
-///
 /// @brief filter initialization.
 ///
 /// @param[in] ps pose containing the constellations to be filtered..
@@ -54,7 +53,6 @@ void FilterByProxTerm::init(Pose const &ps, Real dct, Real dtt, Size nres) {
 }
 
 
-///
 /// @brief tells whether a constellation satisfies the filter.
 ///
 /// @param[in] ps pose to which the constellation belongs.
@@ -122,7 +120,6 @@ bool FilterByProxTerm::sat(Pose const &ps, vector1<Size> const &cnl) {
 }
 
 
-///
 /// @brief Tells whether a chain has proximal N- and C-termini.
 ///
 /// @param[in] ps pose to which the chain belongs.

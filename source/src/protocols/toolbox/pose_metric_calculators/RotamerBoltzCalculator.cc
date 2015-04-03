@@ -16,7 +16,6 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -27,7 +26,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMoverLazy.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>

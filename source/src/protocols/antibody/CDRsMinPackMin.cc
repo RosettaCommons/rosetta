@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/CDRsMinPackMin.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu ( xubest@gmail.com )
@@ -46,8 +46,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -57,7 +55,6 @@ using namespace core;
 
 namespace protocols {
 namespace antibody {
-
 
 
 CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover() {
@@ -85,9 +82,7 @@ CDRsMinPackMin::CDRsMinPackMin(
 }
 
 
-
 CDRsMinPackMin::~CDRsMinPackMin() {}
-
 
 
 void CDRsMinPackMin::init() {
@@ -111,8 +106,6 @@ void CDRsMinPackMin::init() {
 		loop_scorefxn_highres_->set_weight( core::scoring::chainbreak, 10. / 3. );
 		loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 	}
-
-
 
 
 }
@@ -172,7 +165,6 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	if (!turnoff_minimization_ ) cdr_sequence_move_ -> add_mover(all_cdr_min_moves);
 
 
-
 	moves::MonteCarloOP mc( new moves::MonteCarlo(pose, *loop_scorefxn_highres_, Temperature_ ) );
 
 
@@ -195,7 +187,6 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 		moves::TrialMoverOP scmin_trial( new moves::TrialMover( scmin_mover, mc ) );
 		cdr_sequence_move_ -> add_mover(scmin_trial);
 	}
-
 
 
 }//finalize_setup

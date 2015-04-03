@@ -100,9 +100,9 @@ public:
 
 
 private:
-	///@brief number of statistics to put into matrix
+	/// @brief number of statistics to put into matrix
 	core::Size number_stats_;
-	///@brief number of elements in the KBP
+	/// @brief number of elements in the KBP
 	core::Size number_elements_;
 
 	utility::vector1< numeric::interpolation::spline::BicubicSpline  > DHO_Hpol_scOrbH_splines_;
@@ -124,11 +124,9 @@ private:
 };
 
 
-
 }
 }
 }
-
 
 
 #endif /* ORBITALSLOOKUP_HH_ */

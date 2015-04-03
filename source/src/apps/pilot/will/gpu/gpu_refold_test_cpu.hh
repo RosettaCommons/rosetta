@@ -208,12 +208,6 @@ Gfloat const DIS_C_N    = 1.3286850f;
 // }
 
 
-
-
-
-
-
-
 //__kernel
 void refold_first(
                   /*__global*/ const float *tor,
@@ -490,32 +484,5 @@ void refold_third(
 //   if(get_local_id(0)==0) scores[RG] = native_sqrt( scratchN[0] / (float)(N-1) );
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

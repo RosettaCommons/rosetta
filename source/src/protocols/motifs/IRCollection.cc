@@ -19,11 +19,9 @@
 #include <protocols/motifs/motif_utils.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -31,7 +29,6 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 
@@ -39,7 +36,6 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <map>
 #include <algorithm>

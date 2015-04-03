@@ -91,7 +91,6 @@ numeric::xyzVector< Real > RBSegmentMover::getCoM( core::pose::Pose const & pose
 }
 
 
-
 /// @brief Apply an arbitrary rotation specified by a rotation matrix
 void  RBSegmentMover::applyRotation( core::pose::Pose & pose, numeric::xyzMatrix< Real > rotation ) {
 	//	get transformation
@@ -242,7 +241,6 @@ void GaussianRBSegmentMover::getCoordinateTransformation(
 	coordinateTransform.yy(1);
 	coordinateTransform.zz(1);
 }
-
 
 
 ///////////////////////////////////////////

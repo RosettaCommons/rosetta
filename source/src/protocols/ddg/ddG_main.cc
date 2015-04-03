@@ -16,22 +16,14 @@
 #include <core/chemical/AA.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -46,18 +38,12 @@
 
 #include <basic/database/open.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <ios>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -168,7 +154,6 @@ ddG_main()
   using namespace basic::options::OptionKeys;
   using namespace core::pack::task;
   using namespace protocols::moves;
-
 
 
 	OPT(ddg::weight_file);

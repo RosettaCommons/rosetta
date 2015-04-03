@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/motifs/MotifDnaPackerCreator.hh
-///@brief This class will create instances of Mover MotifDnaPacker for the MoverFactory
-///@author sthyme (sthyme@gmail.com) copying Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
+/// @file protocols/motifs/MotifDnaPackerCreator.hh
+/// @brief This class will create instances of Mover MotifDnaPacker for the MoverFactory
+/// @author sthyme (sthyme@gmail.com) copying Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_motifs_MotifDnaPackerCreator_hh
 #define INCLUDED_protocols_motifs_MotifDnaPackerCreator_hh

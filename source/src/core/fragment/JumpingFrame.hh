@@ -25,7 +25,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -129,7 +128,7 @@ public:
   JumpingFrame( Size start, Size end, Size length )
 		: NonContinuousFrame( start, end, length ) {};
 
-	///@brief convience --- generate a matching FragData object dofs are unitialized!
+	/// @brief convience --- generate a matching FragData object dofs are unitialized!
 	//FragDataOP generate_fragdata( SingleResidueFragDataOP frag_res_type, SingleResidueFragDataOP jump_frag_type  )
 
   /// @brief clone method, new frame with same alignment position, fragments are not copied!
@@ -147,8 +146,6 @@ public:
 		return _static_type_name();
 	}
   /// fragment_as_pose ????
-
-
 
 
 }; //JumpingFrame

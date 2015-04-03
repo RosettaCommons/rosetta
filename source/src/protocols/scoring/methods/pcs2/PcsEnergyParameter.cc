@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsEnergyParameter.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -39,14 +37,12 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 
 // Numeric headers
 
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

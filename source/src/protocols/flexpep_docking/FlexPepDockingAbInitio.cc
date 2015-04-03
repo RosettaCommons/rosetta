@@ -27,11 +27,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -55,7 +52,6 @@
 #include <protocols/moves/TrialMover.hh>
 #include <utility/exit.hh>
 #include <string>
-// AUTO-REMOVED #include <cstdio>
 #include  <math.h>
 
 #include <utility/vector0.hh>
@@ -278,7 +274,6 @@ FlexPepDockingAbInitio::loopclosure_monte_carlo
   loop_relax_mover_->apply( pose );
 
 }
-
 
 
 ///////////////////////////////////////////

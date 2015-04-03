@@ -59,7 +59,6 @@ def mutate_residue(pose, mutant_position, mutant_aa,
         IOError( 'mutate_residue only works with fullatom poses' )
 
 
-
     # create a standard scorefxn by default
     if not pack_scorefxn:
         pack_scorefxn = get_fa_scorefxn() #  create_score_function('standard')

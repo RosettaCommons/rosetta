@@ -9,8 +9,8 @@
 
 /// @file DockingLowRes
 /// @brief protocols that are specific to docking low resolution
-/// @detailed This is to a very large extent a copy of the docking
-/// @detailed protocol. Should derive out of that class instead.
+/// @details This is to a very large extent a copy of the docking
+/// @details protocol. Should derive out of that class instead.
 /// @author Ingemar Andre
 
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
@@ -26,7 +26,6 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/OutputMovers.hh>
@@ -38,7 +37,6 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -47,7 +45,6 @@
 #include <string>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
@@ -67,7 +64,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.symetric_docking.SymDockingLowRes" );
 
 //     originally from dock_structure.cc Jeff Gray April 2001
-//
 //
 
 using namespace core;
@@ -172,11 +168,10 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
 }
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DockingLowRes.apply
 ///
 /// @brief Perform several cycles of rigid-body Monte Carlo moves
 ///       and adapt the step size.
-/// @detailed
+/// @details
 ///
 /// @remarks
 ///       currently used only in the low-resolution step (centroid mode)
@@ -184,9 +179,8 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 /// @references pose_docking_centroid_rigid_body_adaptive from pose_docking.cc and
 ///				rigid_body_MC_cycle_adaptive from dock_structure.cc
 ///
-/// @authors Monica Berrondo October 22 2007
+/// @author Monica Berrondo October 22 2007
 ///
-/// @last_modified October 22 2007
 /////////////////////////////////////////////////////////////////////////////////
 void SymDockingLowRes::apply( core::pose::Pose & pose )
 {
@@ -220,11 +214,10 @@ SymDockingLowRes::get_name() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin rigid_body_trial
 ///
 /// @brief Perform a cycle of rigid-body Monte Carlo moves
 ///
-/// @detailed  Performs a number (nattempts) of MC rigid-body moves
+/// @details  Performs a number (nattempts) of MC rigid-body moves
 ///       (of size trans_magnitude, rot_magnitude). The number of successful
 ///       attempts is stored in accept_rate_ and used in adaptive trials.
 ///
@@ -236,9 +229,8 @@ SymDockingLowRes::get_name() const {
 /// @references pose_docking_rigid_body_trial from pose_docking.cc and
 ///				rigid_body_MC_cycle from dock_structure.cc
 ///
-/// @authors Monica Berrondo October 22 2007
+/// @author Monica Berrondo October 22 2007
 ///
-/// @last_modified October 22 2007
 /////////////////////////////////////////////////////////////////////////////////
 void SymDockingLowRes::rigid_body_trial( core::pose::Pose & pose )
 {

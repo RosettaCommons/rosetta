@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/SAXSScoreFilters.hh
 /// @brief header file for SAXSScoreFilter class.
-/// @detailed Filters poses based on full atom SAXS energy
+/// @details Filters poses based on full atom SAXS energy
 /// @author Dominik Gront
 
 #ifndef INCLUDED_protocols_simple_filters_SAXSScoreFilter_hh
@@ -19,7 +19,6 @@
 #include <protocols/simple_filters/SAXSScoreFilter.fwd.hh>
 #include <core/scoring/saxs/SAXSEnergyFA.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>
 

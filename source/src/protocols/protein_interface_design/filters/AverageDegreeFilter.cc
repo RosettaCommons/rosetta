@@ -16,7 +16,6 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -32,7 +31,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.AverageDegreeFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 AverageDegreeFilter::AverageDegreeFilter() :
 	parent( "AverageDegree" ),
 	task_factory_( /* NULL */ ),

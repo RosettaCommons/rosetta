@@ -67,7 +67,7 @@ OPT_KEY (Boolean, set_bondlengths)
 OPT_KEY (Boolean, set_bondangles)
 OPT_KEY (Boolean, set_dihedrals)
 
-///
+
 /// @brief Set up the options for this pilot app.
 void register_options()
 {

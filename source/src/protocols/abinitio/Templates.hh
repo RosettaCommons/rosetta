@@ -24,13 +24,10 @@
 
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/SingleResidueFragData.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 #ifdef __clang__
 #include <core/pose/Pose.hh>
 #include <core/fragment/SecondaryStructure.hh>

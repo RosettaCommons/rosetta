@@ -15,7 +15,6 @@
 #define INCLUDED_core_sequence_util_hh
 
 // C/C++ headers
-// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -23,7 +22,6 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Package headers
 #include <core/sequence/Sequence.fwd.hh>

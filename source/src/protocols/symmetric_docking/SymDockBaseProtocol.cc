@@ -15,13 +15,10 @@
 
 #include <protocols/symmetric_docking/SymDockBaseProtocol.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>

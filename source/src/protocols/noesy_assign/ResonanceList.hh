@@ -28,7 +28,6 @@
 #include <core/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -41,8 +40,6 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace protocols {
@@ -57,7 +54,6 @@ used classes:
 Resonance is an atom with chemical shift information
 ResonanceIDs (typedef) is a map from ID to Resonance
 ResidueMap (typedef) is a map from residue number to a vector of Resonances.
-
 
 
 */
@@ -76,73 +72,73 @@ private:
 	ResonanceList& operator=( ResonanceList const& ) { return *this; };
 
 public:
-	///@brief Constructor
+	/// @brief Constructor
   ResonanceList( std::string const& sequence );
 
 	virtual ~ResonanceList();
 
-	///@brief read chemical shift assignments
+	/// @brief read chemical shift assignments
   void read_from_stream( std::istream& );
 
-	///@brief write chemical shift assignments
+	/// @brief write chemical shift assignments
   void write_to_stream( std::ostream& ) const;
 
-	///@brief write in talos format
+	/// @brief write in talos format
 	void write_talos_format( std::ostream&, bool backbone_only ) const;
 
-	///@brief retrieve a Resonance by ResonanceID --- throws EXCN_UnknonwResonance if atom not found
+	/// @brief retrieve a Resonance by ResonanceID --- throws EXCN_UnknonwResonance if atom not found
   Resonance const& operator[] ( core::Size key ) const;
 
-	///@brief retrive a Resonance by atom --- throws EXCN_UnknonwResonance if atom not found
+	/// @brief retrive a Resonance by atom --- throws EXCN_UnknonwResonance if atom not found
 	Resonance const& operator[] ( core::id::NamedAtomID const& ) const;
 
-	///@brief all resonances of a certain residue
-	///@detail --- requires that update_residue_map() has been called (which is done by read_from_stream() )
+	/// @brief all resonances of a certain residue
+	/// @detail --- requires that update_residue_map() has been called (which is done by read_from_stream() )
 	Resonances const& resonances_at_residue( core::Size resid ) const;
 
-	///@brief iterators
+	/// @brief iterators
 	typedef ResonanceIDs::const_iterator const_iterator;
 	//  typedef ResonanceIDs::iterator iterator;
   const_iterator begin() const { return map_.begin(); };
 
   const_iterator end() const { return map_.end(); };
 
-	///@brief have at least one resonance for residue "resi"
+	/// @brief have at least one resonance for residue "resi"
 	bool has_residue( core::Size resi ) const;
 
-	///@brief retrieve aminoacid of residue "resi"
+	/// @brief retrieve aminoacid of residue "resi"
   core::chemical::AA aa_from_resid( core::Size resi ) const;
 
-	///@brief retrieve the protein sequence
+	/// @brief retrieve the protein sequence
 	std::string const& sequence() const { return sequence_; }
 
-	///@brief number of Resonances
+	/// @brief number of Resonances
 	core::Size size() const { return map_.size(); };
 
-	///@brief first ResonanceID (given by input file)
+	/// @brief first ResonanceID (given by input file)
 	core::Size start_key() const { return map_.begin()->first; }
 
-	///@brief last ResonanceID ( given by input file )
+	/// @brief last ResonanceID ( given by input file )
 	core::Size last_key() const { return map_.rbegin()->first; }
 
 protected:
-	///@brief retrieve a Resonance by ResonanceID  --- no error checking
+	/// @brief retrieve a Resonance by ResonanceID  --- no error checking
   Resonance const& operator[] ( core::Size key ) { return *map_[ key ]; };
 
-	///@brief sort Resonances by residue number and store in by_resid_
+	/// @brief sort Resonances by residue number and store in by_resid_
 	void update_residue_map();
 
-	///@brief after this call the Proton- and LabelResonances have APs to point to their respectively connected resonance
+	/// @brief after this call the Proton- and LabelResonances have APs to point to their respectively connected resonance
 	void update_bond_connections();
 
 private:
-	///@brief master map...
+	/// @brief master map...
   ResonanceIDs map_;     //Resonances are ordered by resonancesID  < resID, Resonance >
 
-	///@brief slave map... created by update_residue_map()
+	/// @brief slave map... created by update_residue_map()
 	ResidueMap by_resid_;  //Resonances are ordered by residue < res_i, vector1<Resonance> >
 
-	///@brief sequence of the proteion
+	/// @brief sequence of the proteion
   std::string sequence_;
 };
 

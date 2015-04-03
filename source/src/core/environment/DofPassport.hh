@@ -67,8 +67,8 @@ public:
 
   std::set< core::id::DOF_ID >::const_iterator end() const { return accessible_dofs_.end(); }
 
-  ///@brief configure passport to allow access to a bond length or angle dof_id
-  ///@param id the DOF_ID to allow access to
+  /// @brief configure passport to allow access to a bond length or angle dof_id
+  /// @param id the DOF_ID to allow access to
   void add_dof_access( id::DOF_ID const& id );
 
   void revoke_all_access();

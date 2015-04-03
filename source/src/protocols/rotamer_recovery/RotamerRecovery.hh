@@ -14,7 +14,6 @@
 #define INCLUDED_protocols_rotamer_recovery_RotamerRecovery_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
 #include <protocols/rotamer_recovery/RRComparer.fwd.hh>
 #include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
@@ -22,7 +21,6 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,8 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace protocols {
 namespace rotamer_recovery {
 
@@ -41,19 +37,19 @@ class RotamerRecovery : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
 
-	///@brief default constructor
+	/// @brief default constructor
 	RotamerRecovery();
 
-	///@brief specify comparer and reporter
+	/// @brief specify comparer and reporter
 	RotamerRecovery(
 		RRProtocolOP protocol,
 		RRComparerOP comparer,
 		RRReporterOP reporter);
 
-	///@brief destructor
+	/// @brief destructor
 	virtual ~RotamerRecovery();
 
-	///@brief copy constructor
+	/// @brief copy constructor
 	RotamerRecovery( RotamerRecovery const & src);
 
 public: // public interface

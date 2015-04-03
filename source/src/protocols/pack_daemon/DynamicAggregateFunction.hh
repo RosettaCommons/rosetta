@@ -21,7 +21,6 @@
 
 // Package headers
 #include <protocols/pack_daemon/MultistateAggregateFunction.hh>
-// AUTO-REMOVED #include <protocols/pack_daemon/PackDaemon.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -36,7 +35,6 @@
 // C++ headers
 #include <map>
 #include <set>
-// AUTO-REMOVED #include <string>
 
 #include <protocols/pack_daemon/PackDaemon.fwd.hh>
 #include <utility/vector0.hh>
@@ -782,8 +780,6 @@ private:
 	void initialize_daemon_with_all_states(
 		DaemonSetOP daemon_set
 	);
-
-
 
 
 };

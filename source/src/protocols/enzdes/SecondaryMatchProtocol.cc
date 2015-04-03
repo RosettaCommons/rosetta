@@ -48,7 +48,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 
-// AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
@@ -418,7 +417,6 @@ SecondaryMatchProtocol::find_all_allowed_positions(
 } //find_neighbors function
 
 
-
 bool
 SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core::pose::PoseCOP ref_poseCOP )
 {
@@ -477,7 +475,6 @@ SecondaryMatchProtocol::generate_and_dump_pose_found_residues_combinations( core
 	return successful;
 
 } //generate_output_names_for_found_poses
-
 
 
 /// @brief rough check whether the two residues in question are close to each other
@@ -543,7 +540,6 @@ SecondaryMatchProtocol::residues_compatible(
 } //residues compatible
 
 
-
 /// @brief this function does clash checks between all residues that were found,
 /// and saves the information in a map
 void
@@ -593,7 +589,6 @@ SecondaryMatchProtocol::determine_found_residues_compatibility(
 	found_res_compatibility_determined_ = true;
 
 } // determine_found_residues_compatibility
-
 
 
 PoseFoundResiduesCombination::~PoseFoundResiduesCombination() {}
@@ -728,7 +723,6 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 	return false;
 
 } //construct and dump outpose
-
 
 
 } //namespace enzdes

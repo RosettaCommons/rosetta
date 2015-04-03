@@ -22,7 +22,6 @@
 // Unit headers
 #include <core/conformation/Atom.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
@@ -95,7 +94,7 @@ public:
 		TS_ASSERT_EQUALS( copy_atom.xyz().z(), 2.25 );
 	}
 
-	/// @breif test that atom returns the correct type
+	/// @brief test that atom returns the correct type
 	void test_ConformationAtom_type_getter() {
 		Atom atom( 1, 1 );
 		TS_ASSERT_EQUALS( atom.type(), 1 );

@@ -20,13 +20,11 @@
 
 // Package Headers
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
 
 // C++ STL Headers
-// AUTO-REMOVED #include <map>
 
 #include <core/fragment/FragID.fwd.hh>
 #include <core/types.hh>

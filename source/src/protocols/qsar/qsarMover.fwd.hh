@@ -28,5 +28,4 @@ typedef utility::pointer::shared_ptr<qsarMover const> qsarMoverCOP;
 }
 
 
-
 #endif /* QSARMOVER_FWD_HH_ */

@@ -14,7 +14,6 @@
 /// the e_periodic steps.
 
 
-
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>

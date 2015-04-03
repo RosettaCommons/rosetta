@@ -9,7 +9,7 @@
 
 /// @file src/protocols/abinitio/ClassicAbinitio.hh
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -23,12 +23,8 @@
 
 // Unit Headers
 
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/SmoothFragmentMover.fwd.hh>
 
 #include <core/types.hh>
 
@@ -36,7 +32,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
@@ -48,7 +43,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -130,7 +124,7 @@ public:
 		STAGE_4rot,
 		STAGE_5
 	};
-	///@brief This constructor does not work -- Fix it before using it.
+	/// @brief This constructor does not work -- Fix it before using it.
 	// constructor: supply mover classes for Fragment Moves
 	ClassicAbinitio(
 		simple_moves::FragmentMoverOP brute_move_small,
@@ -139,7 +133,7 @@ public:
 		int  /*dummy otherwise the two constructors are ambiguous */
 	);
 
-	///@brief constructor: supply fragsets for large and small fragment moves
+	/// @brief constructor: supply fragsets for large and small fragment moves
 	ClassicAbinitio(
 		core::fragment::FragSetCOP fragset_small,
 		core::fragment::FragSetCOP fragset_large,
@@ -403,7 +397,6 @@ protected:
 	core::Real stage4_cycles_pack_rate_;
 
 public:
-
 
 
 private:

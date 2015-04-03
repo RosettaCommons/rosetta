@@ -10,7 +10,7 @@
 /// @brief  metric for Gunn moves
 /// @author Oliver Lange ( olange@u.washington.edu )
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_protocols_simple_moves_GunnCost_HH
 #define INCLUDED_protocols_simple_moves_GunnCost_HH

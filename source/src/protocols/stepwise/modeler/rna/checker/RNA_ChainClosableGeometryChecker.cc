@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -299,7 +299,6 @@ namespace checker {
 				utility_exit_with_message( "Invalid dot_product!" );
 			}
 	}
-
 
 
 } //checker

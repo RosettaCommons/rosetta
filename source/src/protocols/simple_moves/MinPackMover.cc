@@ -15,16 +15,13 @@
 #include <protocols/simple_moves/MinPackMover.hh>
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/pack/min_pack.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
@@ -32,7 +29,6 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 // option key includes
 
@@ -173,8 +169,8 @@ MinPackMover::get_name() const {
 	return MinPackMoverCreator::mover_name();
 }
 
-///@brief when the PackerTask was not generated locally, verify compatibility with pose
-///@details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
+/// @brief when the PackerTask was not generated locally, verify compatibility with pose
+/// @details the pose residue types must be equivalent to the ones used to generate the ResidueLevelTasks, because of the way that prevent_repacking and its associated flags work
 bool
 MinPackMover::task_is_valid( Pose const & pose ) const
 {
@@ -186,7 +182,7 @@ MinPackMover::task_is_valid( Pose const & pose ) const
 	return true;
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MinPackMover::parse_my_tag(
 	TagCOP const tag,
@@ -215,7 +211,7 @@ MinPackMover::parse_my_tag(
 	}
 }
 
-///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 MinPackMover::parse_score_function(
 	TagCOP const tag,
@@ -230,7 +226,7 @@ MinPackMover::parse_score_function(
 	score_function( new_score_function );
 }
 
-///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
+/// @brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 MinPackMover::parse_task_operations(
 	TagCOP const tag,
@@ -245,14 +241,14 @@ MinPackMover::parse_task_operations(
 	task_factory( new_task_factory );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MinPackMover::fresh_instance() const
 {
 	return protocols::moves::MoverOP( new MinPackMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 protocols::moves::MoverOP
 MinPackMover::clone() const
 {

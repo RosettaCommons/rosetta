@@ -11,7 +11,6 @@
 /// @brief  forward declaration for MaxSeqSepConstraintSet class
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 #ifndef INCLUDED_protocols_constraints_additional_MaxSeqSepConstraintSet_fwd_hh

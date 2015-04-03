@@ -154,7 +154,6 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 
 
-
  using basic::T;
  using basic::Error;
  using basic::Warning;
@@ -213,7 +212,6 @@ get_n_pep_nbrs(
 	}
 	return n_pep_nbrs;
 }
-
 
 
 void
@@ -1059,7 +1057,6 @@ RunPepSpec()
 		if( option[ pep_spec::scan_analysis ] ) pep_scan_analysis( pose, soft_scorefxn, full_scorefxn, "WITH BUFFER", pep_begin, pep_anchor, pep_end );
 
 		if( option[ pep_spec::add_buffer_res ] ) remove_pep_buffer_res( pose, pep_begin, pep_anchor, pep_end, true, false );
-
 
 
 		//replace termini

@@ -25,7 +25,6 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

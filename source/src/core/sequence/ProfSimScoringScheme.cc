@@ -9,14 +9,13 @@
 
 /// @file ProfSimScoringScheme.hh
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Simply based on comparing single profiles from two protein
+/// @details Simply based on comparing single profiles from two protein
 /// sequences, along with affine gap penalties of the form penalty = A + Bk, where
 /// A represents the penalty for starting a gap, and B represents the penalty for
 /// extending a previously opened gap by k characters.
 /// @author James Thompson
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
@@ -24,14 +23,9 @@
 #include <core/sequence/ProfSimScoringScheme.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

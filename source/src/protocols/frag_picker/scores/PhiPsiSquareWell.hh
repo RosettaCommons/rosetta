@@ -39,7 +39,7 @@ class PhiPsiSquareWell: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a Phi-Psi-based scoring function.
-	/// @detailed Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
+	/// @details Phi-Psi angles from a fragment will be compared to relevant angles in a given pose, which should have the same number of residues a the query sequence
 	PhiPsiSquareWell(Size, Real, bool, PhiPsiTalosIO&);
 
 	PhiPsiSquareWell(Size, Real, bool, core::pose::PoseOP);

@@ -118,10 +118,10 @@ public:
 private:
 	void finish_protocol(Pose & pose);
   
-	///@brief apply the mover of the pair
+	/// @brief apply the mover of the pair
   void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
 
-  ///@brief apply the filter of the pair
+  /// @brief apply the filter of the pair
   bool apply_filter(Pose & pose, MoverFilterPair const & mover_pair);
   void sequence_protocol(Pose & pose, MoverFilterVector::const_iterator mover_it_in);
 

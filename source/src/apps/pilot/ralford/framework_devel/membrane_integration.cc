@@ -132,9 +132,6 @@ void test_membrane_scoring_lowres( core::pose::Pose & pose ) {
 }
 
 
-
-
-
 /// @brief   Top Level Testing for Constructing Membrane Proteins
 /// @details Runs applications with debug tracers contianing expected data. Will eventually
 ///          call the new object oriented code

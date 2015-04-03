@@ -9,7 +9,7 @@
 
 /// @file src/protocols/jumping/PairingTemplate
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -35,7 +35,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.fwd.hh>
@@ -52,8 +51,8 @@ namespace protocols {
 namespace jumping {
 
 
-///@brief select jumps to build a given topology
-///@detail this class encapsulates the functionality of choose_random_pairings in jumping_pairings.cc of Rosetta++
+/// @brief select jumps to build a given topology
+/// @detail this class encapsulates the functionality of choose_random_pairings in jumping_pairings.cc of Rosetta++
 class RandomSheetBuilder : public SheetBuilder {
 public:
 	RandomSheetBuilder( core::fragment::SecondaryStructureOP, core::scoring::dssp::PairingsList const&, SheetTopology const& );

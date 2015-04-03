@@ -43,7 +43,6 @@ namespace bp = boost::python;
 //using namespace core::io::pdb;
 
 
-
 template< typename T, typename K >
 T get_option(std::string const & id)
 {

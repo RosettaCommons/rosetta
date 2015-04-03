@@ -10,7 +10,7 @@
 /// @file   test/UTracer.hh
 /// @brief  Unit test Tracer/Diff system
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_UTracer_HH
 #define INCLUDED_UTracer_HH

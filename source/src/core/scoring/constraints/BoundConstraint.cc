@@ -17,7 +17,6 @@
 // Package Headers
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
@@ -34,7 +33,6 @@ static thread_local basic::Tracer tr( "core.constraints.BoundFunc", basic::t_inf
 namespace core {
 namespace scoring {
 namespace constraints {
-
 
 
 Real

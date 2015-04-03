@@ -408,6 +408,5 @@ SelectResiduesByLayer::compute( Pose const & pose, String secstruct )
 } // compute
 
 
-
 } // flxbb
 } // protocols

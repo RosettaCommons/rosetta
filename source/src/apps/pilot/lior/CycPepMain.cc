@@ -122,14 +122,12 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <devel/init.hh>
 
 // C++ headers
 //#include <cstdlib>
 #include <algorithm>
-// AUTO-REMOVED #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <map>

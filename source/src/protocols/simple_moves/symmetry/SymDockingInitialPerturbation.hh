@@ -15,15 +15,10 @@
 #define INCLUDED_protocols_simple_moves_symmetry_SymDockingInitialPerturbation_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>

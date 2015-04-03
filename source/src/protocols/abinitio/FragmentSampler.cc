@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 /// @author Oliver Lange
@@ -289,7 +289,7 @@ topology_broker::TopologyBroker const& FragmentSampler::topology_broker() {
 	return *topology_broker_;
 }
 
-/////@brief get membrane topology information
+///// @brief get membrane topology information
 //core::scoring::MembraneTopologyCOP
 //FragmentSampler::get_membrane_topology_from_pose(core::pose::Pose const& pose)
 //{

@@ -19,14 +19,11 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 
 // C++ headers
-
-
 
 
 namespace core {
@@ -102,7 +99,6 @@ public:
   }
 
 
-
   /// @brief input operator
   friend std::istream & operator >>(std::istream & is, NamedStubID& e);
 
@@ -116,7 +112,6 @@ public: // tmp hack -- phil fix this
   NamedAtomID atom2;
   NamedAtomID atom3;
 };
-
 
 
 } // namespace id

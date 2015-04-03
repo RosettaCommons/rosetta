@@ -302,7 +302,6 @@ Real ligand_rmsd (pose::Pose const & pose1, pose::Pose const & pose2) {
 }
 
 
-
 int main( int argc, char * argv [] ){
 	try{
 		NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.0000001 );

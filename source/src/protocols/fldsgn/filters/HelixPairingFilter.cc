@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/HelixPairingFilter.cc
 /// @brief filter structures by sheet topology
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 // Unit Headers
@@ -132,7 +132,7 @@ HelixPairingFilter::apply( Pose const & pose ) const
 	HelixPairingSet hpairset( *hpairset_ );
 	HelixPairings helix_pairings = hpairset.helix_pairings();
 
-	//
+
 	runtime_assert( ! helix_pairings.empty() );
 
 	// set secondary structure
@@ -176,7 +176,7 @@ HelixPairingFilter::apply( Pose const & pose ) const
 			}
 		}
 
-		//
+
 		if( hpair.dist() > dist_cutoff_ && dist_cutoff_ >= 0 ) filter = false;
 		if( hpair.cross_angle() > cross_angle_ && cross_angle_ >= 0 ) filter = false;
 
@@ -218,7 +218,7 @@ HelixPairingFilter::compute( Pose const & pose ) const
 	HelixPairingSet hpairset( *hpairset_ );
 	HelixPairings helix_pairings = hpairset.helix_pairings();
 
-	//
+
 	runtime_assert( ! helix_pairings.empty() );
 
 	// set secondary structure

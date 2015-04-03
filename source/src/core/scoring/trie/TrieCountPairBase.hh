@@ -847,7 +847,6 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector) = 0;
 
 
-
 	// called when hbonds and etable tries get confused
 	virtual
 	void

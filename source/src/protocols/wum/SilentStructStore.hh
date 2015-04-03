@@ -12,7 +12,6 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_wum_SilentStructStore_hh
 #define INCLUDED_protocols_wum_SilentStructStore_hh
 
@@ -20,13 +19,9 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <utility/exit.hh>
 #include <string>
 #include <vector>
@@ -50,7 +45,7 @@ private:
 
 class SilentStructStore : public utility::pointer::ReferenceCount  {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~SilentStructStore();
 	SilentStructStore()
 	{
@@ -164,20 +159,14 @@ public:
 	void all_sort_silent_scores( );
 
 
-
 private:
 	std::vector < core::io::silent::SilentStructOP > store_;
 };
 
 
-
-
 // Some additional tools!
 
 std::string generate_unique_structure_id();
-
-
-
 
 
 }

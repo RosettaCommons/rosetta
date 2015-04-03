@@ -56,7 +56,7 @@ private:
     Size kic_res1_;
     Size kic_res2_;
 
-		///
+
 		/// @brief Should the foldtree be rebuilt?
 		bool rebuild_fold_tree_;
 };

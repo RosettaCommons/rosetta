@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -26,20 +26,12 @@
 
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <protocols/jumping/ResiduePairJumpSetup.hh>
-// AUTO-REMOVED #include <protocols/jumping/ResiduePairJump.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
 
 #include <basic/Tracer.hh>
@@ -47,7 +39,6 @@
 //#include <basic/options/option.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 #include <protocols/jumping/JumpSetup.fwd.hh>
 #include <utility/vector1.hh>
@@ -140,7 +131,6 @@ void DensityScoringClaimer::init_after_reading() {
 	set_label( "ElectronDensityCenter" );
 	*/
 }
-
 
 
 } //topology_broker

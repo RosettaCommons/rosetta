@@ -39,7 +39,7 @@ namespace core {
 namespace scoring {
 namespace vdwaals {
 
-///
+
 class VDW_Energy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;

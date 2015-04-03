@@ -629,7 +629,6 @@ public:
 			core::pose::symmetry::make_symmetric_pose( symm_pose, symmdef );
 
 
-
 			//minimize
 			option[OptionKeys::symmetry::symmetry_definition].value( path_to_symdef );
 			core::pose::symmetry::make_symmetric_movemap( symm_pose, *movemap );

@@ -19,14 +19,11 @@
 // Package Headers
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
 
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 #include <utility/vector1.hh>
 
@@ -42,7 +39,7 @@ using basic::Warning;
 namespace protocols {
 namespace canonical_sampling {
 
-///@brief
+/// @brief
 ThermodynamicObserver::ThermodynamicObserver(
 ) : Mover()
 {

@@ -15,7 +15,7 @@
 
 // libRosetta headers
 //#include <core/options/option.hh>
-//
+
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -39,9 +39,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/CompositionMover.hh>
 
-//
+
 #include <protocols/relax/FastRelax.hh>
-//
+
 
 // arguments for program:
 // fast_relax_replonly.linuxgccrelease -in:file:s start.pdb -out:file:silent relax_replonly.out -out:file:silent_struct_type binary -nstruct 20

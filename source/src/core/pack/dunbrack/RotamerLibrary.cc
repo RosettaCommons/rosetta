@@ -334,7 +334,7 @@ debug_assert( res <= num_canonical_aas );
 // taken from rotamer_functions -- total temporary hack
 //
 // removed pser and rna
-//
+
 
 RotamerLibrary *
 RotamerLibrary::create_singleton_instance()
@@ -435,7 +435,7 @@ RotamerLibraryOP RotamerLibrary::coarsify(
 */
 //XRW_E_T1
 
-///
+
 void
 RotamerLibrary::add_residue_library(
 	AA const & aa,
@@ -2142,7 +2142,6 @@ RotamerLibrary::create_srdl(
 	}
 	return 0;
 }
-
 
 
 /// @details Hard code this data in a single place; adjust the booleans for the backbone

@@ -16,12 +16,9 @@
 
 //// Unit Headers
 #include <protocols/ligand_docking/LigandArea.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
 
 //// Package Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 //// Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

@@ -15,7 +15,6 @@
 #define INCLUDED_basic_TracerToFile_hh
 
 
-
 #include <basic/Tracer.hh>
 
 #include <utility/pointer/owning_ptr.hh>
@@ -53,7 +52,6 @@ protected:
 private:
   std::ofstream file_;
 };
-
 
 
 } // namespace basic

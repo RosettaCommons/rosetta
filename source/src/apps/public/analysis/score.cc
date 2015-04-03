@@ -14,29 +14,22 @@
 // libRosetta headers
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/simple_moves/TailsScoreMover.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
 
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/NullMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
-// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/file/FileName.hh>
 #include <utility/excn/Exceptions.hh>
@@ -47,7 +40,6 @@
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 

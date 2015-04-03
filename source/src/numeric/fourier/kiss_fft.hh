@@ -51,7 +51,6 @@ void kiss_fft_split(kiss_fftsplit_cfg cfg,
      int fout_stride);
 
 
-//
 // A more generic version of the above function. It reads its input from every Nth sample.
 void kiss_fft_stride(kiss_fft_cfg cfg,const kiss_fft_cpx *fin,kiss_fft_cpx *fout,int fin_stride);
 

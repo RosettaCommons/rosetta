@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
 
 
@@ -39,14 +38,14 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-///
+
 class RNA_Mg_Energy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	RNA_Mg_Energy();
 
 	/// clone

@@ -9,7 +9,7 @@
 
 /// @file Ubiquitin_E2C_Modeler.hh
 /// @brief Build model for di-ubiquitin and e2c enzyme complex
-/// @detailed
+/// @details
 ///
 ///
 /// @author Aroop Sircar
@@ -263,7 +263,6 @@ private:
 	core::Real monoub_calc_Lrmsd (
 	    const core::pose::Pose & pose_in,
 	    const core::pose::Pose & native_pose );
-
 
 
 	core::Size monoub_end_;

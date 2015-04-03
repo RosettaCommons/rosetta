@@ -29,7 +29,7 @@ namespace clusters {
 
 	using namespace protocols::antibody;
 	
-///@brief Simple class to hold and access CDRCluster info for a region of the pose.
+/// @brief Simple class to hold and access CDRCluster info for a region of the pose.
 class CDRCluster : public utility::pointer::ReferenceCount {
 public:
 	CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length, CDRClusterEnum const cluster, core::Size const start, core::Real const distance);
@@ -47,24 +47,24 @@ public:
 	cluster() const { return cluster_; }
 	
 	
-	///@brief return Rosetta start that was used for construction
+	/// @brief return Rosetta start that was used for construction
 	core::Size
 	start() const { return start_; }
 	
-	///@brief return Rosetta end that was used for construction
+	/// @brief return Rosetta end that was used for construction
 	core::Size
 	end() const { return end_; }
 	
 	
-	///@brief return PDB start.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
+	/// @brief return PDB start.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
 	core::Size
 	pdb_start() const { return pdb_start_; }
 	
-	///@brief return PDB end.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
+	/// @brief return PDB end.  Useful for CDR length changes in other parts of the antibody when combined with numbering scheme ala AbInfo
 	core::Size
 	pdb_end() const { return pdb_end_; }
 	
-	///@brief return PDB chain
+	/// @brief return PDB chain
 	char
 	chain() const {return chain_;}
 	

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/BaseBinMapUpdater.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -80,7 +80,6 @@ namespace screener {
 		base_bin.euler_gamma = (int)(rigid_body_values[1]);
 		update_base_bin_map( base_bin );
 	}
-
 
 
 } //screener

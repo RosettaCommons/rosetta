@@ -225,7 +225,7 @@ DesignProteinBackboneAroundDNA::get_name() const {
 	return DesignProteinBackboneAroundDNACreator::mover_name();
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void DesignProteinBackboneAroundDNA::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & datamap,
@@ -249,14 +249,14 @@ void DesignProteinBackboneAroundDNA::parse_my_tag(
 	parse_task_operations( tag, datamap, filters, movers, pose );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DesignProteinBackboneAroundDNA::fresh_instance() const
 {
 	return moves::MoverOP( new DesignProteinBackboneAroundDNA );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 DesignProteinBackboneAroundDNA::clone() const
 {

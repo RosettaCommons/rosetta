@@ -21,7 +21,6 @@
 // Utility Headers
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
 

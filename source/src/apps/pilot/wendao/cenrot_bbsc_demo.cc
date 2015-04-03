@@ -38,7 +38,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
-//
+
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

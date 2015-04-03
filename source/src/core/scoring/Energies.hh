@@ -18,12 +18,10 @@
 // Package Headers
 #include <core/scoring/Energies.fwd.hh>
 #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 
 #include <core/scoring/ContextGraph.fwd.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.fwd.hh>
 #include <core/scoring/methods/Methods.hh>
@@ -121,7 +119,7 @@ public:
 	// Explicit assignmnet operator to avoid #include .hh's
 	virtual Energies const & operator = ( Energies const & rhs );
 
-	///@details determine whether my type is the same as another Conformation's
+	/// @details determine whether my type is the same as another Conformation's
 	virtual
 	bool
 	same_type_as_me( Energies const & other, bool recurse = true ) const;
@@ -335,7 +333,7 @@ public:
 		pose::Pose const & pose
 	);
 
-	///
+
 	bool
 	residue_neighbors_updated() const
 	{
@@ -401,11 +399,11 @@ public:
 		return scoring_;
 	}
 
-	///
+
 	void
 	show( std::ostream & out ) const;
 
-	///
+
 	void
 	show( std::ostream & out, Size res ) const;
 
@@ -474,7 +472,7 @@ public:
 	void
 	clear();
 
-	///
+
 	bool
 	use_nblist() const
 	{
@@ -495,18 +493,18 @@ public:
 	void
 	set_minimization_graph( MinimizationGraphOP );
 
-	///
+
 	scoring::NeighborList const &
 	nblist( EnergiesCacheableDataType::Enum const & type ) const;
 
-	///
+
 	void
 	set_nblist(
 		EnergiesCacheableDataType::Enum const & type,
 		scoring::NeighborListOP nblist_in
 	);
 
-	///
+
 	void
 	set_use_nblist(
 		pose::Pose const & pose,
@@ -514,7 +512,7 @@ public:
 		bool const use_nblist_auto_update
 	);
 
-	///
+
 	void
 	reset_nblist();
 

@@ -42,7 +42,7 @@ public:
 	// default constructor
 	SymRotamerTrialsMover();
 
-	///@brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
+	/// @brief constructor with PackerTask. use a PackerTask ONLY for fixed-sequence work.
 	/// WARNING TO ANY DESIGNER WHO PASSES IN A TASK: YOUR DESIGN STEPS WILL BE UNDONE
 	/// AS THIS TASK CONCEIVES OF THE INPUT SEQUENCE THAT CORRESPONDS TO THE ORIGINAL SEQUENCE
 	SymRotamerTrialsMover(
@@ -50,7 +50,7 @@ public:
 		PackerTask & task_in
 	);
 
-	///@brief constructor with TaskFactory
+	/// @brief constructor with TaskFactory
 	SymRotamerTrialsMover(
 		ScoreFunctionCOP scorefxn_in,
 		TaskFactoryCOP factory_in

@@ -68,7 +68,7 @@ AsymFoldandDockClaimer::clone() const {
 	return TopologyClaimerOP( new AsymFoldandDockClaimer( *this ) );
 }
 
-///@brief type() is specifying the output name of the TopologyClaimer
+/// @brief type() is specifying the output name of the TopologyClaimer
 std::string
 AsymFoldandDockClaimer::type() const {
 	return _static_type_name();

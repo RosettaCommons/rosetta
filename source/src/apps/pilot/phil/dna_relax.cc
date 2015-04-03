@@ -12,15 +12,12 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <devel/dna/protocols.hh>
-// AUTO-REMOVED #include <devel/dna/ProteinDNA_Relax.hh>
 #include <devel/dna/relax_util.hh>
 #include <devel/dna/base_movers.hh>
 #include <devel/cartesian_frags/DNA_FragLib.hh>
 #include <utility/excn/Exceptions.hh>
 // #include <devel/dna/util.hh>
 // //#include <devel/dna/util.hh>
-// AUTO-REMOVED #include <protocols/loops/ccd_closure.hh>
 // #include <protocols/loops/loops_main.hh>
 // #include <protocols/loops/Loops.hh>
 // #include <protocols/frags/TorsionFragment.hh>
@@ -35,21 +32,14 @@
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 // #include <core/scoring/dna/DNA_BasePotential.hh>
 // #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 // #include <core/scoring/etable/Etable.hh>
 // #include <core/scoring/ScoringManager.hh>
 // #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 // #include <core/scoring/rms_util.hh>
 // #include <core/scoring/hbonds/hbonds.hh>
 // #include <core/scoring/hbonds/HBondSet.hh>
@@ -62,36 +52,23 @@
 
 // #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // #include <core/chemical/ResidueSelector.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // #include <core/chemical/AtomTypeSet.hh>
 // #include <core/chemical/MMAtomTypeSet.hh>
 // #include <core/chemical/AA.hh>
 
 // #include <core/conformation/util.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 // #include <core/conformation/ResidueMatcher.hh>
 
 // #include <core/pack/rotamer_trials.hh>
 // #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // #include <core/pack/rotamer_set/RotamerCouplings.hh>
 // #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -141,7 +118,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <ObjexxFCL/format.hh>
-
 
 
 using basic::T;

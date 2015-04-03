@@ -21,7 +21,6 @@
 #include <test/core/init_util.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -30,11 +29,8 @@
 //amw
 #include <core/pose/PDBInfo.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
@@ -45,10 +41,8 @@
 #include <core/types.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>

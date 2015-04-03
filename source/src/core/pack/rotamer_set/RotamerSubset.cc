@@ -66,7 +66,6 @@ RotamerSubset::add_rotamer(
 }
 
 
-
 Size
 RotamerSubset::get_n_residue_types() const
 {

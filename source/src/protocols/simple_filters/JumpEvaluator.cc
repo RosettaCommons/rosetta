@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -128,7 +127,6 @@ JumpNrEvaluator::apply(
 ) const {
 	return pose.num_jump();
 }
-
 
 
 }

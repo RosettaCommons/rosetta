@@ -19,9 +19,6 @@
 
 #include <core/conformation/ResidueMatcher.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-// AUTO-REMOVED #include <utility>
 
 #include <utility/vector1_bool.hh>
 

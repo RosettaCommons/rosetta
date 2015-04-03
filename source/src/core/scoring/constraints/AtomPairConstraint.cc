@@ -51,7 +51,7 @@ namespace constraints {
 using core::pose::atom_id_to_named_atom_id;
 using core::pose::named_atom_id_to_atom_id;
 
-///
+
 void
 AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
@@ -59,7 +59,7 @@ AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, Energy
 	emap[ this->score_type() ] += score_val;
 }
 
-///
+
 Real
 AtomPairConstraint::score(
 													Vector const & xyz1,
@@ -243,7 +243,7 @@ AtomPairConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
   }
 }
 
-///@details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
+/// @details one line definition "AtomPairs atom1 res1 atom2 res2 function_type function_definition"
 void
 AtomPairConstraint::read_def(
 	std::istream & data,

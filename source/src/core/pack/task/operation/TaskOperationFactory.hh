@@ -64,21 +64,21 @@ public:
 	static TaskOperationFactory * get_instance();
 	void factory_register( TaskOperationCreatorOP );
 
-	///@brief add a prototype, using its default type name as the map key
+	/// @brief add a prototype, using its default type name as the map key
 	void add_creator( TaskOperationCreatorOP );
 	bool has_type( std::string const & ) const;
-	///@brief pass through to child factories
+	/// @brief pass through to child factories
 	void add_creator( ResLvlTaskOperationCreatorOP );
 	void add_creator( ResFilterCreatorOP );
-///@brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
+/// @brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
 	TaskOperationOP newTaskOperation(
 		std::string const &,
 		basic::datacache::DataMap & datamap,
 		TagCOP = TagCOP( TagOP( new Tag() ) )
 	) const;
-///@brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
+/// @brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
 	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;
-///@brief fills vector with new TaskOperations from xml-like tag file
+/// @brief fills vector with new TaskOperations from xml-like tag file
 	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, std::string const & ) const;
 
 #ifdef MULTI_THREADED

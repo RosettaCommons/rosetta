@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace devel{
 namespace domain_assembly{
 

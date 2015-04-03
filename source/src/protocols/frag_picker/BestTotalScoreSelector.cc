@@ -21,12 +21,10 @@
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

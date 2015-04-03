@@ -15,7 +15,6 @@
 #define INCLUDED_basic_basic_hh
 
 
-
 // util_basic Function Declarations
 
 namespace basic {

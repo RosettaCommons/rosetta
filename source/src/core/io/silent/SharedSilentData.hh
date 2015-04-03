@@ -16,8 +16,6 @@
 #define INCLUDED_core_io_silent_SharedSilentData_hh
 
 // mini headers
-// AUTO-REMOVED #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers

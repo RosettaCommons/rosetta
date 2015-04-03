@@ -399,7 +399,6 @@ initialize_base_pair( pose::Pose & pose,
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 Matrix
 cycle( Matrix const & M0 ){
@@ -1179,7 +1178,6 @@ finely_sample_base_pair_test(){
 }
 
 
-
 ////////////////////////////////////////////////////////////////
 void
 fill_v_and_M( utility::vector1< utility::vector1< Real > > & rigid_body_settings,
@@ -1453,7 +1451,6 @@ save_torsions( pose::Pose const & pose,
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void
 save_torsion_M_v( pose::Pose const & pose,
@@ -1654,8 +1651,6 @@ apply_suite_torsions( utility::vector1< Real > const & torsion_set, pose::Pose &
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////
 void
 do_the_match(
@@ -1826,7 +1821,6 @@ brute_force_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void
 initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
@@ -1861,7 +1855,6 @@ initialize_for_grid_matcher(	Real & box_size, Real & box_spacing,
 
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////
@@ -2037,7 +2030,6 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	}
 
 }
-
 
 
 ///////////////////////////////////////////////////////////////
@@ -2351,7 +2343,6 @@ minimize_poses( pose::Pose & pose,
 	}
 
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -2670,7 +2661,6 @@ sample_state_to_state(
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void
 two_base_pairs_via_loop_closure_test(
@@ -2746,7 +2736,6 @@ two_base_pairs_via_loop_closure_test(
 		out << std::endl;
 	}
 	out.close();
-
 
 
 }

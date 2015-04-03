@@ -18,11 +18,8 @@
 #include <core/types.hh>
 
 #include <string>
-// AUTO-REMOVED #include <map>
 
 // boost headers
-// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 

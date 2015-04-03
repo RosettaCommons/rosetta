@@ -25,16 +25,16 @@
 namespace core {
 namespace util {
 
-///@brief get the optimal weight on the xtal ML energy
+/// @brief get the optimal weight on the xtal ML energy
 core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pose & );
 
-///@brief get the optimal weight on the xtal ML energy considering only movable DOFs
+/// @brief get the optimal weight on the xtal ML energy considering only movable DOFs
 core::Real getMLweight( core::scoring::ScoreFunction & scorefxn,  core::pose::Pose & , core::kinematics::MoveMap &);
 
-///@brief get the optimal weight on the xtal ML energy
+/// @brief get the optimal weight on the xtal ML energy
 core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose::Pose & );
 
-///@brief get the optimal weight on the xtal ML energy considering only movable DOFs
+/// @brief get the optimal weight on the xtal ML energy considering only movable DOFs
 core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose::Pose & , core::kinematics::MoveMap &);
 
 

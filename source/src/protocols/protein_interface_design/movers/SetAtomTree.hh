@@ -20,7 +20,6 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>
 

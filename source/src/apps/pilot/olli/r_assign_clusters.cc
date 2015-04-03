@@ -76,7 +76,7 @@ public:
   virtual void apply( core::pose::Pose& );
   virtual void apply( core::io::silent::SilentStruct const& );
 
-	///@brief returns true if this mover does not use the pose that is passed into the apply function
+	/// @brief returns true if this mover does not use the pose that is passed into the apply function
 	/// this allows the jobdistributor to safe time, because creating a pose can be bery slow
 	virtual bool accesses_jobinputter_in_apply() const {
 		return true;

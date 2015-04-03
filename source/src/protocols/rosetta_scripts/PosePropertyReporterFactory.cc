@@ -68,7 +68,7 @@ PosePropertyReporterFactory::PosePropertyReporterFactory(){}
 
 PosePropertyReporterFactory::~PosePropertyReporterFactory(){}
 
-///@brief add a PosePropertyReporter prototype, using its default type name as the map key
+/// @brief add a PosePropertyReporter prototype, using its default type name as the map key
 void
 PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP creator )
 {
@@ -84,7 +84,7 @@ PosePropertyReporterFactory::factory_register( PosePropertyReporterCreatorOP cre
 }
 
 
-///@brief return new PosePropertyReporter by key lookup in reporter_creator_map_ (new PosePropertyReporter parses Tag if provided)
+/// @brief return new PosePropertyReporter by key lookup in reporter_creator_map_ (new PosePropertyReporter parses Tag if provided)
 PosePropertyReporterOP
 PosePropertyReporterFactory::newPosePropertyReporter(	std::string const & pose_selector_type )
 {
@@ -105,7 +105,7 @@ PosePropertyReporterFactory::newPosePropertyReporter(	std::string const & pose_s
 	}
 }
 
-///@brief return new PosePropertyReporter by Tag parsing
+/// @brief return new PosePropertyReporter by Tag parsing
 PosePropertyReporterOP
 PosePropertyReporterFactory::newPosePropertyReporter(
 	TagCOP const tag,

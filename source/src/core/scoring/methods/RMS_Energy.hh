@@ -42,7 +42,7 @@ public:
 
 public:
 
-	///
+
 	RMS_Energy();
 
 	/// clone

@@ -11,7 +11,6 @@
 /// @brief
 
 // libRosetta headers
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
@@ -43,7 +42,6 @@ using namespace core;
 using namespace protocols;
 
 using utility::vector1;
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

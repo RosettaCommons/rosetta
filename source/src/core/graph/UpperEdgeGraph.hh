@@ -106,7 +106,7 @@ private:
 
 	/// @brief method for completing the construction of a vertex if the defaul ctor was used.
 	///
-	/// @detailed to be called by class UEGraph only
+	/// @details to be called by class UEGraph only
 	void
 	set_index_and_owner(
 		platform::Size index,
@@ -215,7 +215,7 @@ private:
 
 	/// @brief add an edge
 	///
-	/// @detailed do not try to use this method or the other add_edge method to add edges to
+	/// @details do not try to use this method or the other add_edge method to add edges to
 	/// a vertex; they are for class UpperEdgeGraph only.  Invoke add_edge on the graph itself.
 	void
 	add_edge( platform::Size upper_vertex_index ) // called by UpperEdgeGraph
@@ -531,7 +531,6 @@ private:
 	VertexVector vertices_;
 
 };
-
 
 
 }

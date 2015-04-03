@@ -25,7 +25,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Numeric headers
 #include <numeric/xyzVector.hh>
@@ -117,7 +116,6 @@ private: // DATA
 };
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct Strands {
@@ -141,7 +139,7 @@ struct Strands {
 	/// @brief default destructor
 	~Strands();
 
-	///
+
 	void
 	resize( Size const nres );
 
@@ -198,7 +196,7 @@ struct Helices {
 		int const & total_residue
 	);
 
-	///
+
 	void
 	resize( int const nres );
 
@@ -248,7 +246,7 @@ public:
 		helices_.resize( nres );
 	}
 
-	///
+
 	inline
 	BB_Pos const &
 	bb_pos() const
@@ -256,7 +254,7 @@ public:
 		return bb_pos_;
 	}
 
-	///
+
 	inline
 	BB_Pos &
 	bb_pos()
@@ -264,7 +262,7 @@ public:
 		return bb_pos_;
 	}
 
-	///
+
 	inline
 	Strands const &
 	strands() const
@@ -272,7 +270,7 @@ public:
 		return strands_;
 	}
 
-	///
+
 	inline
 	Strands &
 	strands()
@@ -280,7 +278,7 @@ public:
 		return strands_;
 	}
 
-	///
+
 	inline
 	Helices const &
 	helices() const
@@ -288,7 +286,7 @@ public:
 		return helices_;
 	}
 
-	///
+
 	inline
 	Helices &
 	helices()

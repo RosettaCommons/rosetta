@@ -116,7 +116,6 @@ static thread_local basic::Tracer TR( "VIP" );
 	}
 
 
-
 	void VIP_Mover::compute_number_cavities(){
 		core::Size numsuck = 0;
 		for( core::Size a = 1 ; a < (cavity_pose.total_residue()+1) ; a++ ){
@@ -128,14 +127,12 @@ static thread_local basic::Tracer TR( "VIP" );
 	}
 
 
-
 	void VIP_Mover::apply_holes(){
 		core::pose::Pose pose = initial_pose;
 		protocols::simple_moves::AddCavitiesMover cavget;
 		cavget.apply( pose );
 		cavity_pose = pose;
 	}
-
 
 
 	void VIP_Mover::get_cavity_positions(){
@@ -227,7 +224,6 @@ static thread_local basic::Tracer TR( "VIP" );
 	}
 
 
-
 	void VIP_Mover::try_point_mutants(){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
@@ -267,7 +263,6 @@ static thread_local basic::Tracer TR( "VIP" );
 		// TR << "Done try_point_mutants" << std::endl;
 
 	}
-
 
 
 	void VIP_Mover::print_pack_report(){
@@ -340,7 +335,6 @@ static thread_local basic::Tracer TR( "VIP" );
 		dump_pdb_to_file( final_pose, "final.pdb" );
 		final_energy = bestE;
 	}
-
 
 
 	void VIP_Mover::relax_favorable_poses(){

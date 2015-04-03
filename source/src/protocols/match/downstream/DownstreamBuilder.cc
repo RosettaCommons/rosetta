@@ -22,7 +22,6 @@
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/LigandConformerBuilder.hh>
-// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
 
 //Project header
 #include <basic/Tracer.hh>

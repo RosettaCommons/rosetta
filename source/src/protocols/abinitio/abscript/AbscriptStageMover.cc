@@ -215,7 +215,6 @@ void AbscriptStageMover::set_chainbreak_ramping( core::Real const slope, core::R
 }
 
 
-
 } // abscript
 } // abinitio
 } // protocols

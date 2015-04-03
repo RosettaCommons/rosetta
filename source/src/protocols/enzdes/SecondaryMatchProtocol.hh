@@ -18,7 +18,6 @@
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -27,7 +26,6 @@
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols{
@@ -41,7 +39,6 @@ typedef utility::pointer::weak_ptr< SecondaryMatchProtocol const > SecondaryMatc
 class PoseFoundResiduesCombination;
 
 typedef utility::pointer::shared_ptr< PoseFoundResiduesCombination > PoseFoundResiduesCombinationOP;
-
 
 
 class SecondaryMatchProtocol : public protocols::enzdes::EnzdesBaseProtocol

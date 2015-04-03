@@ -48,9 +48,6 @@ namespace protocols {
 namespace forge {
 namespace remodel {
 
-
-///
-/// @begin RemodelData::RemodelData
 ///
 /// @brief
 /// constructor
@@ -63,8 +60,6 @@ RemodelData::RemodelData()
 	natro_movemap_.set_chi( true );
 }
 
-///
-/// @begin RemodelData::splitString
 ///
 /// @brief
 /// Splits a string on the passed in delimeter and places the tokens in the passed in vector.
@@ -365,7 +360,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 
 }
 
-///
+
 /// @brief Reads in the blueprint file and passes the text data to the blueprint file parser
 void RemodelData::getLoopsToBuildFromFile( std::string filename) {
 	using namespace ObjexxFCL;  
@@ -390,9 +385,6 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename) {
 		getLoopsToBuildFromBlueprint(data.str());
 }
 
-
-///
-/// @begin RemodelData::updateWithDsspAssignment
 ///
 /// @brief
 /// Updates the dssp_updated_ss vector with secondary structure information. Uses the information obtained from 
@@ -460,9 +452,6 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 
 }
 
-
-///
-/// @begin RemodelData::collectInsertionPose
 ///
 /// @brief
 /// If users are trying to do domain insertion with remodel (by specifying the insert_segment_from_pdb command-line

@@ -15,18 +15,12 @@
 
 // Rosetta Headers
 #include <basic/datacache/CacheableStringFloatMap.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <core/id/types.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>

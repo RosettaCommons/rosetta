@@ -26,7 +26,6 @@
 #include <core/types.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/tools/make_vector1.hh>
 
@@ -119,7 +118,7 @@ public:
 		set_movable_jumps( utility::tools::make_vector1< int >( rb_jump_in ) );
 	}
 
-	///@brief Constructor with arguments for multiple jumps
+	/// @brief Constructor with arguments for multiple jumps
 	RestrictToInterface( utility::vector1_int rb_jump_in, core::Real distance_in
 		= 8 ) : parent(), distance_ ( distance_in ), loopy_interface_( false ) {
 		set_movable_jumps( rb_jump_in );

@@ -163,7 +163,7 @@ public:
 
 
 	///////////////////////////////////////////////////////////////////////////
-	///@brief  for minimizing,add DOF(PHI,THETA,D) for a BondedAtom into the MinimizerMap
+	/// @brief  for minimizing,add DOF(PHI,THETA,D) for a BondedAtom into the MinimizerMap
 	virtual
 	void
 	setup_min_map(
@@ -172,7 +172,7 @@ public:
 		MinimizerMapBase & min_map
 	) const;
 
-	///@brief get rotation axis and end_pos for a BondedAtom.
+	/// @brief get rotation axis and end_pos for a BondedAtom.
 	virtual
 	void
 	get_dof_axis_and_end_pos(

@@ -229,7 +229,6 @@ for ($i=1; $i<=9; $i++)
 }
 
 
-
 ########################################################################################
 # Read template namelines and HSPs (Evalue, score etc. and pairwise alignment)
 

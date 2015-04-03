@@ -94,4 +94,3 @@ sa_faraggi_max( char aa )
 } // protocols
 
 
-

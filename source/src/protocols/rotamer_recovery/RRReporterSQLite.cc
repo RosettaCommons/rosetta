@@ -126,7 +126,6 @@ RRReporterSQLite::RRReporterSQLite(
 {}
 
 
-
 RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 	RRReporter(),
 	output_level_( src.output_level_ ),

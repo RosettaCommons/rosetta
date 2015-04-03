@@ -14,8 +14,6 @@
 #ifndef INCLUDED_protocols_simple_moves_ModifyVariantTypeMover_FWD_HH
 #define INCLUDED_protocols_simple_moves_ModifyVariantTypeMover_FWD_HH
 // Utility Headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 

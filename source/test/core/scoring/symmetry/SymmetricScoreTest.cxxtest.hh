@@ -17,10 +17,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 
@@ -30,10 +26,7 @@
 #include <core/pose/symmetry/util.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
@@ -256,7 +249,7 @@ public:
 	hs_pair,
 	ss_pair,
 	rsigma,
-	//
+
 
 	chainbreak,
 	*/

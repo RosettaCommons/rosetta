@@ -126,7 +126,6 @@
 #include <vector>
 
 
-
 //==#ifdef BOINC
 //==#include <utility/boinc/boinc_util.hh>
 //==#include <protocols/boinc/boinc.hh>
@@ -178,7 +177,6 @@ int
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 main( int argc, char * argv [] )

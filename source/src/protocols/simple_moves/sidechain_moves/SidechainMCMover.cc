@@ -20,18 +20,11 @@
 // Core Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
@@ -41,20 +34,12 @@
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
-
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 
 // C++ Headers
 #include <ostream>
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
@@ -161,7 +146,7 @@ SidechainMCMover::fresh_instance() const {
 	return (protocols::moves::MoverOP( new SidechainMCMover ));
 }
 
-/// @detailed
+/// @details
 void
 SidechainMCMover::apply(
 	Pose & pose
@@ -197,7 +182,7 @@ SidechainMCMover::apply(
 	 // for debugging
 	pose::Pose temp(pose);
 	pose::Pose dummy(pose);
-	 //
+
 
 	for(core::Size itr = 1; itr <= pose.total_residue(); itr++){
 		current_[ itr ] = core::conformation::ResidueOP( new core::conformation::Residue(pose.residue( itr )) );

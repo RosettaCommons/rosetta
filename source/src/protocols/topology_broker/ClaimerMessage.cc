@@ -9,13 +9,12 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
 #include <protocols/topology_broker/ClaimerMessage.hh>
 #include <protocols/topology_broker/TopologyClaimer.hh>
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/claims/DofClaim.hh>
 
 #include <iostream>
@@ -30,7 +29,6 @@ ClaimerMessage::ClaimerMessage() : label_( "NoAddress" ) {}
 ClaimerMessage::ClaimerMessage( std::string label ) : label_( label ) {}
 
 ClaimerMessage::~ClaimerMessage() {}
-
 
 
 extern std::ostream& operator << ( std::ostream& os, ClaimerMessage const& cm ) {

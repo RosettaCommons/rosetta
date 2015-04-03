@@ -17,7 +17,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -39,8 +38,6 @@
 // Numeric Headers
 
 // Utility Headers
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -48,7 +45,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
 
 
 // --------------- Test Class --------------- //
@@ -67,7 +63,7 @@ public:
 	}
 
 	// ------------- Helper Functions ------------- //
-	///@brief check what happens to a packer task when the only instruction is that it should be repacked
+	/// @brief check what happens to a packer task when the only instruction is that it should be repacked
 	core::pack::task::PackerTaskOP
 	task_repack( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -75,7 +71,7 @@ public:
 		return task;
 	}
 
-	///@brief check what happens to a packer task when the fix_his function is called
+	/// @brief check what happens to a packer task when the fix_his function is called
 	core::pack::task::PackerTaskOP
 	task_repack_with_fixhis( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
@@ -84,7 +80,7 @@ public:
 		return task;
 	}
 
-	///@brief check what happens to a packer task when the resfile fix_his command is used
+	/// @brief check what happens to a packer task when the resfile fix_his command is used
 	core::pack::task::PackerTaskOP
 	task_repack_with_resfile( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));

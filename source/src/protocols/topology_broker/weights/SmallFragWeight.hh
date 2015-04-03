@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           maintains list of ToplogyClaimers
 ///           maintains SmallFragWeights -- exclusive or non-exclusively markedup dofs like BackboneClaim, IntraResClaim, JumpClaim
 ///           generates FoldTree, MoveMap, and collects samplers provided by SmallFragWeights

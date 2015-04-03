@@ -16,7 +16,6 @@
 #define INCLUDED_core_io_raw_data_Raw_fwd_hh
 
 // mini headers
-// AUTO-REMOVED #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // ObjexxFCL Headers

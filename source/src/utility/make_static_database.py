@@ -25,7 +25,6 @@ for file in sys.argv[1:] :
 	file = re.sub( '//', '/', file )
 
 
-
 	
 	print "Reading: ", file
 

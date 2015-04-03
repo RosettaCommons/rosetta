@@ -19,7 +19,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <map>
 #include <string>
 
 namespace protocols {
@@ -48,7 +47,7 @@ public:
 	inline void set_fraction(Size pool_id,Real fraction) { pool_weights_[pool_id] = fraction; }
 
 	/// @brief returns a fraction for a given pool
-	/// @detailed if the given string is not a valid name of a quota pool,
+	/// @details if the given string is not a valid name of a quota pool,
 	///	the method returns 0
 	inline Real get_fraction(std::string pool_name) {
 

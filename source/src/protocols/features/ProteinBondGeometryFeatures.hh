@@ -43,49 +43,49 @@ public:
 
 	virtual ~ProteinBondGeometryFeatures();
 
-	///@brief return string with class name
+	/// @brief return string with class name
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
+	/// @brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
 
 private:
-	///@brief generate the bond_intrares_angles table schema
+	/// @brief generate the bond_intrares_angles table schema
 	void
 	write_bond_intrares_angles_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the bond_interres_angles table schema
+	/// @brief generate the bond_interres_angles table schema
 	void
 	write_bond_interres_angles_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the bond_intrares_lengths table schema
+	/// @brief generate the bond_intrares_lengths table schema
 	void
 	write_bond_intrares_lengths_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the bond_interres_lengths table schema
+	/// @brief generate the bond_interres_lengths table schema
 	void
 	write_bond_interres_lengths_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
-	///@brief generate the bond_intrares_torsions table schema
+	/// @brief generate the bond_intrares_torsions table schema
 	void
 	write_bond_intrares_torsions_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
 
 public:
-	///@brief return the set of features reporters that are required to
+	/// @brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	report_features(
 		core::pose::Pose const & pose,

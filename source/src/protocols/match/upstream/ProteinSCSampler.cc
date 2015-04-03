@@ -20,7 +20,6 @@
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 

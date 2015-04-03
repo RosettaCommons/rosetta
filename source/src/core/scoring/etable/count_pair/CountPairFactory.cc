@@ -18,7 +18,6 @@
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPair1B.hh>
 #include <core/scoring/etable/count_pair/CountPairIntraRes.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
@@ -30,7 +29,6 @@
 // Project Headers
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/PseudoBond.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
 //Auto Headers

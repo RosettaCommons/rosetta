@@ -266,7 +266,6 @@ align_pose_general( core::pose::Pose const & static_pose, std::string const stat
 	};
 
 
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -684,7 +683,6 @@ calculate_pairwise_RMSD(){
 	Real const full_rmsd = full_length_rmsd_over_reside_list_general( native_pose, decoy_pose, rmsd_res_pair_list, true /*verbose*/,  false /*ignore_virtual_atom*/ );
 
 
-
 	if ( do_dump_pdb ){
 		dump_pdb( native_pose, "ALIGNED_native_" + native_tag + ".pdb" );
 		dump_pdb( decoy_pose, "ALIGNED_decoy_" + decoy_tag + ".pdb" );
@@ -752,7 +750,6 @@ o2prime_packer(){
 	utility::vector1< std::string > const	pdb_tags_from_disk( option[ in::file::s ]() );
 
 
-
 	for ( Size n = 1; n <= pdb_tags_from_disk.size(); n++ ){
 
 		std::string pose_name = pdb_tags_from_disk[n];
@@ -766,7 +763,6 @@ o2prime_packer(){
 			}
 			dump_pdb( pose, "RESETTED_BEFORE_o2prime_pack_" + pose_name );
 		}
-
 
 
 		o2prime_trials( pose, scorefxn ); //replace this on Jun 11, 2010
@@ -787,7 +783,6 @@ o2prime_packer(){
 */
 		dump_pdb( pose, "o2prime_pack_" + pose_name );
 	}
-
 
 
 }
@@ -872,7 +867,6 @@ mutate_residues_wrapper()
 
 void
 slice_ellipsoid_envelope(){
-
 
 
 	using namespace core::chemical;
@@ -1086,14 +1080,12 @@ slice_ellipsoid_envelope(){
 	}
 
 
-
 	for ( Size n = 1; n <= sample_res_final_seq_num.size(); n++ ){
 		std::cout << sample_res_list[n] << " --> " << sample_res_final_seq_num[n] << std::endl;
 	}
 
 	std::cout << "pose_name = " << pose_name << std::endl;
 	dump_pdb( pose, "input_" + pose_name );
-
 
 
 	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
@@ -1280,7 +1272,6 @@ slice_sample_res_and_surrounding(){
 
 	std::cout << "pose_name = " << pose_name << std::endl;
 	dump_pdb( pose, "input_" + pose_name );
-
 
 
 	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
@@ -1529,7 +1520,6 @@ rna_fullatom_minimize_test()
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
@@ -1606,7 +1596,6 @@ try {
 	NEW_OPT( minimizer_perform_minimizer_run, "minimizer_perform_minimizer_run", true );  //Parin Jan 20, 2012 (for testing purposes)
 
 
-
   ////////////////////////////////////////////////////////////////////////////
   // setup
   ////////////////////////////////////////////////////////////////////////////
@@ -1629,6 +1618,5 @@ try {
 	return -1;
 }
 }
-
 
 

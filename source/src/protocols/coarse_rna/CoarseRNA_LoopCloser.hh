@@ -9,7 +9,7 @@
 
 /// @file loopRNA_minimizer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 
@@ -29,7 +29,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 
@@ -189,7 +188,6 @@ private:
 	ObjexxFCL::FArray1D< bool > partition_definition_;
 
 }; // class CoarseRNA_LoopCloser
-
 
 
 } //rna

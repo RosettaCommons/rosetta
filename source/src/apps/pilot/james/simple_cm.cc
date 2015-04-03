@@ -78,7 +78,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 using std::map;
@@ -95,7 +94,6 @@ using namespace basic;
 using namespace core::sequence;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-
 
 
 int

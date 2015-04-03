@@ -26,9 +26,9 @@ namespace protocols {
 namespace ligand_docking {
 
 
-///@brief Replace the residue at the given position with a randomly selected
+/// @brief Replace the residue at the given position with a randomly selected
 /// conformer from its rotamer library.
-///@details Only tested on ligand residues.
+/// @details Only tested on ligand residues.
 /// If using torsion restraints, should be wrapped in an UnconstrainedTorsionsMover.
 class RandomConformerMover : public protocols::moves::Mover
 {

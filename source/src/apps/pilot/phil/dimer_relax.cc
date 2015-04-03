@@ -21,52 +21,24 @@
  **/
 
 
-
 // libRosetta headers
 #include <devel/dna/ProteinDNA_Relax.hh>
 
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// AUTO-REMOVED #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
-// AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/func/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/kinematics/visualize.hh>
 #include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -74,22 +46,18 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
 
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 
-
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 
 // // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 //silly using/typedef
 
@@ -124,10 +92,6 @@ static thread_local basic::Tracer ti( "demo.phil.dimer_relax", basic::t_info );
 static thread_local basic::Tracer tw( "demo.phil.dimer_relax", basic::t_warning );
 
 
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // danger USING /////////////////////////////////////////////////////////////////////////////////////////
 using namespace core;
@@ -147,8 +111,6 @@ using std::string;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
 /**
 void
 setup_dimer_relax_pose( Pose & pose )
@@ -158,7 +120,6 @@ setup_dimer_relax_pose( Pose & pose )
 	// foldtree: dont currently need dna-flexibility foldtree
 	//
 	// choose jump points for DNA->protein jumps
-	//
 
 
 	// requirements: >=4 chains total, 1st 2 protein and 1st 2 DNA taken as simulation chains

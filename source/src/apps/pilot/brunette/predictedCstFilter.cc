@@ -69,7 +69,6 @@ using namespace core::chemical;
 static thread_local basic::Tracer tr( "brunette.predictedCstFilter" );
 
 
-
 int main( int argc, char * argv [] ) {
   try {
 

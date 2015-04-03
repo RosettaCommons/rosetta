@@ -9,7 +9,7 @@
 
 /// @file protocols/antibody/RefineBetaBarrel.cc
 /// @brief Build a homology model of an antibody
-/// @detailed
+/// @details
 ///
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -85,8 +85,6 @@ void RefineBetaBarrel::init( ) {
 }
 
 
-
-
 void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	TR<<"   start finalize_setup function ..."<<std::endl;
 
@@ -96,8 +94,6 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 	// ************ MoveMap *************
 	cdr_dock_map_ = kinematics::MoveMapOP( new kinematics::MoveMap() );
 	*cdr_dock_map_=ab_info_->get_MoveMap_for_LoopsandDock(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
-
-
 
 
 	// ************ TaskFactory ************
@@ -121,7 +117,6 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 
 	core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 	//TR<<*my_task2<<std::endl; //exit(-1);
-
 
 
 	//************  FoldTree ************
@@ -155,8 +150,6 @@ void RefineBetaBarrel::finalize_setup(pose::Pose & pose ) {
 }
 
 
-
-
 void RefineBetaBarrel::apply( pose::Pose & pose ) {
 
 	finalize_setup(pose);
@@ -188,7 +181,6 @@ void RefineBetaBarrel::apply( pose::Pose & pose ) {
 }
 
 
-
 std::string RefineBetaBarrel::get_name() const {
 	return "RefineBetaBarrel";
 }
@@ -204,8 +196,6 @@ void RefineBetaBarrel::set_dock_score_func(core::scoring::ScoreFunctionCOP dock_
 void RefineBetaBarrel::set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn) {
 	pack_scorefxn_ = pack_scorefxn->clone();
 }
-
-
 
 
 }// namespace antibody

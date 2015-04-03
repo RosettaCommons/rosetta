@@ -12,43 +12,25 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-// AUTO-REMOVED #include <protocols/ligand_docking/ligand_dock_impl.hh>
-// AUTO-REMOVED #include <protocols/jobdist/JobDistributors.hh>
 
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <ctime>
 #include <fstream>
 
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <utility/vector0.hh>
-
 
 
 class LigandDockTest : public CxxTest::TestSuite {

@@ -15,15 +15,11 @@
 #define INCLUDED_core_sequence_AlignerFactory_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/sequence/Aligner.hh>
 #include <core/sequence/Aligner.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <map>
 
 #include <iostream>
 

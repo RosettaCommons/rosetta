@@ -576,7 +576,6 @@ public:
 	}
 
 
-
 	// In the Abe and Go derivative calculation, each score term must
 	// return two vectors, f1 and f2.  To understand what the f1 and f2
 	// vectors are, imagine the hydrogen and donor atoms are fixed and
@@ -584,7 +583,6 @@ public:
 	// dphi about an arbitrary vector Eab:=(Vb-Va).  How does the energy
 	// of the hydrogen bond change?  This is dE/dphi the quantity we are
 	// interested in.
-	//
 	//
 
 	// dE/dphi = Eab . f1  +  Eab x Vb . f2
@@ -606,7 +604,6 @@ public:
 		// Compute reference f1 f2 derivative vectors;
 		Vector f1( hbond.derivs().h_deriv.f1() );
 		Vector f2( hbond.derivs().h_deriv.f2() );
-
 
 
 		// Compute the three dE_d<hbond_geo_dim>
@@ -739,7 +736,6 @@ public:
 		Vector new_xH_f2( temp_f2*dE_dxH*sin(phi));
 
 		TR << "new_xH_f1: " << new_xH_f1[0] << " "<< new_xH_f1[1] << " " << new_xH_f1[2] << " new_xH_f2:" << new_xH_f2[0] << " " << new_xH_f2[1] << " " << new_xH_f2[2] << std::endl;
-
 
 
 		TR << "f1: " << f1[0] << " "<< f1[1] << " " << f1[2] << " f2:" << f2[0] << " " << f2[1] << " " << f2[2] << std::endl;

@@ -30,12 +30,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace scoring {
 namespace methods {
 
-///
+
 class SpecialRotamerEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
@@ -54,7 +53,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -64,7 +63,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	core::Real
 	eval_dof_derivative(

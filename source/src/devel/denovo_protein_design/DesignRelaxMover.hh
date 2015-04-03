@@ -20,11 +20,8 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <core/types.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -34,12 +31,12 @@
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 class DesignRelaxMover : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief
 
 	// default constructor will set designtask from commanline and resfile
 	// with design using softrep_design_wts+patch and relax using score12+patch

@@ -28,7 +28,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1_bool.hh>
 
@@ -46,7 +45,7 @@ public:
 	void
 	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
 
-	///@brief evaluator and score writer are not passed in because single-downstream-position match
+	/// @brief evaluator and score writer are not passed in because single-downstream-position match
 	///currently have no way of being evaluated
 	virtual
 	void

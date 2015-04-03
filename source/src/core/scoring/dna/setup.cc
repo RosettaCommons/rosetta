@@ -26,7 +26,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace dna {
@@ -121,9 +120,6 @@ find_basepairs(
 		}
 	}
 }
-
-
-
 
 
 } // namespace dna

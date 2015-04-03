@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           maintains list of ToplogyClaimers
 ///           maintains DofClaims -- exclusive or non-exclusively markedup dofs like BackboneClaim, IntraResClaim, JumpClaim
 ///           generates FoldTree, MoveMap, and collects samplers provided by TopologyClaimers
@@ -121,10 +121,10 @@ public:
 	inline TopologyBrokerAP get_self_weak_ptr() { return TopologyBrokerAP( shared_from_this() ); }
 
 	/// ---------------- Application Setup ------------------------------------
-	///@brief add new Claimers to the broker ---- useful before a job is started
+	/// @brief add new Claimers to the broker ---- useful before a job is started
 	void add( TopologyClaimerOP cl );
 
-	///@brief use the input pose from the job (i.e., call new_decoy( pose ) )
+	/// @brief use the input pose from the job (i.e., call new_decoy( pose ) )
 	void use_job_pose( bool setting ) {
 		bUseJobPose_ = setting;
 	}
@@ -155,7 +155,7 @@ public:
 	}
 
 	/// ----------------------- Job Setup ------------------------------------------
-	///@brief at the start of a job this is called, e.g., by the AbrelaxMover
+	/// @brief at the start of a job this is called, e.g., by the AbrelaxMover
 	/// it generates a pose with appropriate foldtree and initializes dofs, adds constraints, etc.
 	void apply( core::pose::Pose& );
 
@@ -165,28 +165,28 @@ public:
 	/// e.g., ConstraintClaimer will not add a Mover, JumpClaimer and RigidChunkClaimer will add chainbreaks
 	/// a basic FragmentClaimer will not
 
-	///@brief return a set of Movers ( RandomMover, i.e. container of movers )
+	/// @brief return a set of Movers ( RandomMover, i.e. container of movers )
 	moves::MoverOP mover( core::pose::Pose const&, abinitio::StageID, core::scoring::ScoreFunction const& scorefxn, core::Real progress ) const;
 
-	///@brief apply filter (TopologyClaimer::passes_filter() ) and raise exception EXCN_FILTER_FAILED if failed
+	/// @brief apply filter (TopologyClaimer::passes_filter() ) and raise exception EXCN_FILTER_FAILED if failed
 	void apply_filter( core::pose::Pose const&, abinitio::StageID, core::Real progress ) const;
 
-	///@brief if some claimer wants to influence the movemap for relax he can do it here:
+	/// @brief if some claimer wants to influence the movemap for relax he can do it here:
 	void adjust_relax_movemap( core::kinematics::MoveMap& ) const;
 
-	///@brief the SlidingWindowLoopClosure needs pure fragments, because it changes the the residue number in the ShortLoopClosure part
+	/// @brief the SlidingWindowLoopClosure needs pure fragments, because it changes the the residue number in the ShortLoopClosure part
 	/// thus extra hook for this --- > only some Claimers will answer
 	core::fragment::FragSetCOP loop_frags( core::kinematics::MoveMap& ) const;
 
-	///@brief do we need to close loops ( unphysical chainbreaks have been introduced? )
+	/// @brief do we need to close loops ( unphysical chainbreaks have been introduced? )
 	bool has_chainbreaks_to_close() const;
 
-	///@brief add chainbreak variant residue to the unphysical chainbreaks
+	/// @brief add chainbreak variant residue to the unphysical chainbreaks
 	void add_chainbreak_variants( core::pose::Pose &pose, core::Size max_dist = 0, core::kinematics::ShortestPathInFoldTreeCOP sp = NULL) const;
-	///@brief check that each chainbreak residue has a chainbreak variant
+	/// @brief check that each chainbreak residue has a chainbreak variant
 	bool check_chainbreak_variants( core::pose::Pose &pose ) const;
 
-	///@brief switch to fullatom --- some Claimers might help by providing template based side-chain information
+	/// @brief switch to fullatom --- some Claimers might help by providing template based side-chain information
 	void switch_to_fullatom( core::pose::Pose& );
 
 	bool does_final_fold_tree_exist() const
@@ -198,7 +198,7 @@ public:
 		return false;
 	}
 
-	///@brief access for hacky claimers
+	/// @brief access for hacky claimers
 	core::kinematics::FoldTree& final_fold_tree() const {
 		//std::cout << "Broker FinalFoldTree is:  ";
 		//final_fold_tree_->show(std::cout);
@@ -206,7 +206,7 @@ public:
 		return *final_fold_tree_;
 	};
 
-	///@brief get the sequence claim that is consistent with the label,
+	/// @brief get the sequence claim that is consistent with the label,
 	/// throws EXCN_Unknown_SequenceLabel if not found
 	claims::SequenceClaim& resolve_sequence_label( std::string const& label ) const;
 
@@ -227,82 +227,82 @@ public:
 	}
 
 private:
-	///@brief first round claims are collected
+	/// @brief first round claims are collected
 	void generate_sequence_claims( claims::DofClaims& all_claims );
 
-	///@brief collects symmetry claims
+	/// @brief collects symmetry claims
 	void generate_symmetry_claims( claims::SymmetryClaims& all_claims );
 
-	///@brief checks whether only one sequence claim is there, otherwise crashes.
+	/// @brief checks whether only one sequence claim is there, otherwise crashes.
     SymmetryClaimerOP resolve_symmetry_claims( claims::SymmetryClaims& symm_claims );
 
 	void make_sequence_symmetric( claims::DofClaims pre_accepted, core::pose::Pose& pose);
 
 
-	///@brief first round claims are collected
+	/// @brief first round claims are collected
 	void generate_round1( claims::DofClaims& all_claims );
 
-	///@brief second round claims are collected
+	/// @brief second round claims are collected
 	void generate_final_claims( claims::DofClaims& all_claims );
 
-	///@brief notify owner of accepted claims
+	/// @brief notify owner of accepted claims
 	void accept_claims( claims::DofClaims& claims );
 
-	///@brief run thru list of claims, ask all claimers if this claims is acceptable --- > returns accepted claims in pre_accepted
+	/// @brief run thru list of claims, ask all claimers if this claims is acceptable --- > returns accepted claims in pre_accepted
 	/// throws EXCN_ExclusiveClaimDeclined if the call to the owners TopologyClaimer::accept_declined_claim( declined_claim ) returns false
 	bool broking( claims::DofClaims const& all_claims, claims::DofClaims& pre_accepted );
 
-	///@brief creates a fold-tree from the Jump- and CutClaims
+	/// @brief creates a fold-tree from the Jump- and CutClaims
 	/// throws EXCN_InvalidFoldTree at failure
 	void build_fold_tree( claims::DofClaims& claims, Size nres );
 
 	void build_fold_tree_from_claimer(core::pose::Pose& pose, core::kinematics::FoldTree& fold_tree);
 
-	///@brief create new pose from SeqClaims
+	/// @brief create new pose from SeqClaims
 	void initialize_sequence( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
-	///@brief creates the list "to_be_closed_cuts_" from current fold-tree and CutClaims
+	/// @brief creates the list "to_be_closed_cuts_" from current fold-tree and CutClaims
 	void initialize_cuts( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
-	///@brief initialize dofs
+	/// @brief initialize dofs
 	void initialize_dofs( claims::DofClaims& claims, core::pose::Pose& new_pose );
 
-	///@brief add constraints --> referred to Claimers ( e.g., ConstraintClaimer, RigidChunkClaimer )
+	/// @brief add constraints --> referred to Claimers ( e.g., ConstraintClaimer, RigidChunkClaimer )
 	void add_constraints( core::pose::Pose& ) const;
 
 private:
-	///@brief vector of Claimers --- RigidChunkClaimer, FragmentClaimer, ConstraintClaimer, etc.
+	/// @brief vector of Claimers --- RigidChunkClaimer, FragmentClaimer, ConstraintClaimer, etc.
 	TopologyClaimers claimers_;
 
 	//=============================================================================
 	//all these are derived infos and change each time that we use apply ( generate a new pose with foldtree etc )
 
-	///@brief list of dof-claims currently active
+	/// @brief list of dof-claims currently active
 	claims::DofClaims current_claims_;
 
-	///@brief current pose has nres total_residues
+	/// @brief current pose has nres total_residues
 	core::Size nres_;
 
-	///@brief the current fold-tree
+	/// @brief the current fold-tree
 	core::kinematics::FoldTreeOP fold_tree_;
 
 	//// mutable here is hack to make wrong MembraneTopologyClaimer work --- don't want to clean up that guy right now...
-	///@brief current final-fold-tree --- after removal to_bel_closed_cuts_
+	/// @brief current final-fold-tree --- after removal to_bel_closed_cuts_
 	mutable core::kinematics::FoldTreeOP final_fold_tree_;
 
-	///@brief Scorefunction used in switch_to_fullatom
+	/// @brief Scorefunction used in switch_to_fullatom
 	core::scoring::ScoreFunctionOP repack_scorefxn_;
 
-	///@brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
+	/// @brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
 	utility::vector1< Size > to_be_closed_cuts_; //keeps the residue number not the cut-nr --- thats safer.
 
-	///@brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
+	/// @brief these cuts are not physical and should be closed ( i.e., chainbreak energy, loop-closing )
 	utility::vector1< Size > start_pose_cuts_; //keeps the residue number not the cut-nr --- thats safer.
 
 	claims::SequenceClaims sequence_claims_;
 
 	SequenceNumberResolverOP sequence_number_resolver_;
-	///@brief we restart from the input pose... call steal( pose ) for all claimers
+	/// @brief we restart from the input pose... call steal( pose ) for all claimers
 	bool bUseJobPose_;
 
 	bool use_fold_tree_from_claimer_;

@@ -29,13 +29,12 @@
 #include <utility/vector1.hh>
 
 
-
 ///////////////////////////////////////////////////////////////////////
 
 namespace protocols {
 namespace ligand_docking {
 
-///@brief
+/// @brief
 class TetherLigand : public protocols::moves::Mover
 {
 public:

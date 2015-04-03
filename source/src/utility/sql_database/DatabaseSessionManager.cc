@@ -374,7 +374,7 @@ DatabaseSessionManager::get_session_postgres(
 #endif
 }
 
-///@detail postgres does not allow queries between databases, instead
+/// @detail postgres does not allow queries between databases, instead
 /// it allows tables to be created in different namespaces called
 /// "schemas". By specifing the search path, statements will be
 /// executed in a specified namespace. Note setting the search path
@@ -397,7 +397,6 @@ DatabaseSessionManager::set_postgres_schema_search_path(
 	statement stmt(db_session->prepare(stmt_str.str()));
 	stmt.exec();
 }
-
 
 
 } // namespace

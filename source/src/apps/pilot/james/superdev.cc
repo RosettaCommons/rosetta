@@ -18,7 +18,6 @@
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/io/pdb/pose_io.hh>

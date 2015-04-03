@@ -9,7 +9,7 @@
 
 /// @file StepWiseRNA_Clusterer.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das, Parin Sripakdeevong
 

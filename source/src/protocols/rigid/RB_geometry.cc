@@ -15,7 +15,6 @@
 #include <protocols/rigid/RB_geometry.hh>
 
 // Rosetta Headers
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
@@ -48,7 +47,7 @@ using namespace ObjexxFCL;
 //     RB_geometry.cc: some supporting functions for rigid body moves
 
 //------------------------------------------------------------------------------
-//
+
 
 namespace protocols {
 namespace geometry {
@@ -226,7 +225,6 @@ centroids_by_jump_int(
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
 }
-
 
 
 } // namespace geometry

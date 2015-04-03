@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/rosetta_scripts/MultipleOutputWrapperCreator.hh
-///@brief This class will create instances of Mover MultipleOutputWrapper for the MoverFactory
-///@author Luki Goldschmidt 
+/// @file protocols/rosetta_scripts/MultipleOutputWrapperCreator.hh
+/// @brief This class will create instances of Mover MultipleOutputWrapper for the MoverFactory
+/// @author Luki Goldschmidt 
 
 #ifndef INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapperCreator_hh
 #define INCLUDED_protocols_rosetta_scripts_MultipleOutputWrapperCreator_hh

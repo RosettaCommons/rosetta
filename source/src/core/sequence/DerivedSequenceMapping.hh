@@ -24,11 +24,9 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 namespace core {

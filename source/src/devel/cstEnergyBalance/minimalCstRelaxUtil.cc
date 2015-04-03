@@ -15,8 +15,6 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/types.hh>
@@ -27,15 +25,12 @@
 //#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/SequenceMapping.hh>
 //#include <core/io/silent/SilentStruct.hh>
 //#include <core/io/silent/SilentFileData.hh>
@@ -57,10 +52,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
@@ -78,15 +70,11 @@
 //#include <core/init/init.hh>
 // option key includes
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <fstream>
 #include <map>
@@ -128,7 +116,7 @@ numeric::xyzVector< Real > get_centerOfMass(const Pose& pose ){
 	return massSum;
 }
 
-///@brief Gets the x,y,z center of mass from a partial thread.
+/// @brief Gets the x,y,z center of mass from a partial thread.
 numeric::xyzVector< Real > get_centerOfMass(const Pose& templatePose, const SequenceAlignment aln,const string query_sequence){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -225,7 +213,7 @@ std::set<Size> get_distDeviationResiduesToConstrain(const Real distDeviationThre
 	return residuesToConstrain;
 }
 
-///@brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
+/// @brief Generates a list of residues to constrain based on the center of the 3 residues clossest to the center of mass of contiguous regions
 std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviationThresh, Pose& relaxed_pose, const Pose& unmodified_pose){
 	//get all residues to constrain
 	std::set< Size >::iterator resSet_iter,tmp_resSet_iter;
@@ -432,7 +420,6 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 }
 
 
-
 /// @brief input coordinate constraints from file in standard coordinate
 /// constraint format saves the data as a list of CA to constrain.
 ///For this particular implementation of reading the constraints in I only
@@ -509,7 +496,7 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
   return(alns);
 }
 
-///@brief inputs the sequence alignments and keeps them ordered the way they
+/// @brief inputs the sequence alignments and keeps them ordered the way they
 /// were in the alingment.filt file.
 vector1<SequenceAlignment> input_alignments(){
   using namespace basic::options;
@@ -522,7 +509,7 @@ vector1<SequenceAlignment> input_alignments(){
   return(alns);
 }
 
-///@brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the first/last from the target or template.
+/// @brief gets the first and last residues from an alignment ignoring residues that are gapped alnIdx can be 1 or 2 depending if you want the first/last from the target or template.
 void get_terminal_aln_res(const SequenceAlignment aln,const Size alnIdx, Size & firstRes, Size & lastRes){
 	firstRes = 0;
 	lastRes = 0;
@@ -535,8 +522,6 @@ void get_terminal_aln_res(const SequenceAlignment aln,const Size alnIdx, Size & 
 		}
 	}
 }
-
-
 
 
 } //namespace cstEnergyBalance

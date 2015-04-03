@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace enzdes {
 
@@ -43,7 +42,7 @@ class PackRotamersMoverPartGreedy: public protocols::moves::Mover {
   typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
 public:
-	///@brief default constructors
+	/// @brief default constructors
 	 PackRotamersMoverPartGreedy(
 		ScoreFunctionOP scorefxn,
 		PackerTaskOP task,

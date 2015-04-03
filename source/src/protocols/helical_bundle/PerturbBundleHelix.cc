@@ -69,8 +69,8 @@ PerturbBundleHelixCreator::mover_name()
 	return "PerturbBundleHelix";
 }
 
-///
-///@brief Creator for PerturbBundleHelix mover.
+
+/// @brief Creator for PerturbBundleHelix mover.
 PerturbBundleHelix::PerturbBundleHelix():
 		Mover("PerturbBundleHelix"),
 		parameters_set_index_(0),
@@ -79,18 +79,18 @@ PerturbBundleHelix::PerturbBundleHelix():
 {
 }
 
-///
-///@brief Destructor for PerturbBundleHelix mover.
+
+/// @brief Destructor for PerturbBundleHelix mover.
 PerturbBundleHelix::~PerturbBundleHelix() {}
 
-///
-///@brief Clone operator to create a pointer to a fresh PerturbBundleHelix object that copies this one.
+
+/// @brief Clone operator to create a pointer to a fresh PerturbBundleHelix object that copies this one.
 protocols::moves::MoverOP PerturbBundleHelix::clone() const {
 	return protocols::moves::MoverOP( new PerturbBundleHelix( *this ) );
 }
 
-///
-///@brief Fresh_instance operator to create a pointer to a fresh PerturbBundleHelix object that does NOT copy this one.
+
+/// @brief Fresh_instance operator to create a pointer to a fresh PerturbBundleHelix object that does NOT copy this one.
 protocols::moves::MoverOP PerturbBundleHelix::fresh_instance() const {
 	return protocols::moves::MoverOP( new PerturbBundleHelix );
 }
@@ -99,7 +99,7 @@ protocols::moves::MoverOP PerturbBundleHelix::fresh_instance() const {
 //          APPLY FUNCTION                                                    //
 ////////////////////////////////////////////////////////////////////////////////
 
-///
+
 /// @brief Actually apply the mover to the pose.
 void PerturbBundleHelix::apply (core::pose::Pose & pose)
 {
@@ -181,8 +181,8 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-///
-///@brief Returns the name of this mover ("PerturbBundleHelix").
+
+/// @brief Returns the name of this mover ("PerturbBundleHelix").
 std::string PerturbBundleHelix::get_name() const{
 	return "PerturbBundleHelix";
 }
@@ -190,7 +190,7 @@ std::string PerturbBundleHelix::get_name() const{
 ////////////////////////////////////////////////////////////////////////////////
 //          PARSE MY TAG FUNCTION                                            ///
 ////////////////////////////////////////////////////////////////////////////////
-///@brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/Rosetta_scripting scheme)
 ///
 /*void
 PerturbBundleHelix::parse_my_tag(

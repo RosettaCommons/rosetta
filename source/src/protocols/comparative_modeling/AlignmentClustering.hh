@@ -18,11 +18,7 @@
 #include <protocols/comparative_modeling/AlignmentClustering.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <map>
@@ -34,7 +30,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
-
 
 
 namespace protocols {

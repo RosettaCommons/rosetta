@@ -177,7 +177,6 @@ static thread_local basic::Tracer TR( "motif_hash_util" );
 	 }
 
 
-
 char dssp_reduced(char const & c){
 	if( c == 'H' || c == 'G' || c == 'I' ) {
 		return 'H';

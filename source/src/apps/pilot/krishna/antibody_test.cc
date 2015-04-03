@@ -13,7 +13,6 @@
 /// 02/16/2013
 
 
-
 #include <protocols/antibody2/AntibodyInfo.hh>
 #include <protocols/antibody2/AntibodyUtil.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -102,6 +101,5 @@ main( int argc, char * argv [] )
 //	core::io::pdb::dump_pdb( pose, "separated_pose.pdb" );
 //	exit(-1);
 }
-
 
 

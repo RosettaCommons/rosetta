@@ -74,7 +74,6 @@
 #include <utility/excn/Exceptions.hh>
 
 
-
 int
 main( int argc, char * argv [] ) {
 	try {

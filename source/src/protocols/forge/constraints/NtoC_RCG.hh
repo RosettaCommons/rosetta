@@ -26,7 +26,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -86,8 +85,6 @@ private:
 } //namespace constraints
 } //namespace forge
 } //namespace protocols
-
-
 
 
 #endif // INCLUDED_protocols_forge_constraints_NtoC_RCG_HH

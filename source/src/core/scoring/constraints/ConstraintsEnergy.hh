@@ -12,7 +12,6 @@
 /// @author Andrew Leaver-Fay
 
 
-
 #ifndef INCLUDED_core_scoring_constraints_ConstraintsEnergy_hh
 #define INCLUDED_core_scoring_constraints_ConstraintsEnergy_hh
 
@@ -20,9 +19,6 @@
 #include <core/scoring/constraints/ConstraintsEnergy.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintEnergyContainer.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintGraph.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,7 +28,6 @@
 
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -40,7 +35,6 @@
 #include <core/id/TorsionID.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -73,7 +67,7 @@ public:
 		Size res2
 	) const;
 
-	///
+
 	virtual
 	void
 	residue_pair_energy(
@@ -375,7 +369,7 @@ public:
 	) const;
 
 
-	///@brief Evaluate dof derivatives when DOF_constraints are in use
+	/// @brief Evaluate dof derivatives when DOF_constraints are in use
 	Real
 	eval_dof_derivative(
 		id::DOF_ID const & id,
@@ -392,7 +386,6 @@ virtual
 core::Size version() const;
 
 };
-
 
 
 } // constraints

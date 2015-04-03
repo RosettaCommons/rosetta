@@ -10,11 +10,8 @@
 /// @file protocols/motifs/Motif.cc
 /// @brief Implementation of interaction motifs
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 
 #include <core/chemical/ResidueType.hh>
 
@@ -22,21 +19,9 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-
-// AUTO-REMOVED #include <core/pack/packer_neighbors.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
 #include <protocols/motifs/SingleMotif.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/tools/make_vector1.hh>
-// AUTO-REMOVED #include <utility/tools/make_map.hh>
 #include <sstream>
 
 #include <utility/vector1.hh>

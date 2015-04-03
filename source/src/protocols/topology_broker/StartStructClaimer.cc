@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -24,8 +24,6 @@
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -51,7 +49,6 @@
 
 
 //// C++ headers
-
 
 
 static thread_local basic::Tracer tr( "protocols.topo_broker", basic::t_info );

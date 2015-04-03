@@ -19,17 +19,14 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 #include <string>
 
 #include <utility/vector1.hh>

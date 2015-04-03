@@ -262,7 +262,6 @@ for l in combined_data:
 		else: range_data[n] = [ i ];
 
 
-
 perc_high = dict()
 perc_low  = dict()
 
@@ -286,6 +285,5 @@ for l in combined_data:
 			sys.stdout.write("%10s "%i )
 	
 	sys.stdout.write("\n")
-
 
 

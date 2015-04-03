@@ -12,11 +12,9 @@
 /// @author Monica Berrondo August 16 2007
 
 
-
 // Package headers
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -82,11 +80,8 @@ void MoverStatistics::print ( MonteCarloOP mc, std::string const type )
 }
 
 
-
-
 }
 
 }
-
 
 

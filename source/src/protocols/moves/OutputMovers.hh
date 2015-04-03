@@ -9,7 +9,7 @@
 
 /// @file OutputMovers.hh
 /// @brief File to contain classes that deal with output and pdb dumping
-/// @detailed
+/// @details
 /// @author Monica Berrondo
 
 
@@ -25,14 +25,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 //#include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <map>

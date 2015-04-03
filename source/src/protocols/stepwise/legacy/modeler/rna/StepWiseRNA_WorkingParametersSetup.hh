@@ -9,7 +9,7 @@
 
 /// @file SWA_WorkingParametersSetup.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripakdeevong
 /// @author Rhiju Das
@@ -36,7 +36,6 @@ namespace stepwise {
 namespace legacy {
 namespace modeler {
 namespace rna {
-
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////

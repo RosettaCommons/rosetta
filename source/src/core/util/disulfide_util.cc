@@ -20,14 +20,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/conformation/Interface.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -46,7 +40,6 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <utility>
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>

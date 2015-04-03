@@ -22,8 +22,6 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 #include <basic/database/open.hh>
 
@@ -32,7 +30,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-// AUTO-REMOVED #include <math.h>
 #include <string>
 
 #include <utility/vector1.hh>

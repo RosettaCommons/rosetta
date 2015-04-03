@@ -12,7 +12,6 @@
 /// @author havranek
 
 
-
 #ifndef INCLUDED_protocols_motifs_IRCollection_fwd_hh
 #define INCLUDED_protocols_motifs_IRCollection_fwd_hh
 

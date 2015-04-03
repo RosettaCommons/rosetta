@@ -23,7 +23,6 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers

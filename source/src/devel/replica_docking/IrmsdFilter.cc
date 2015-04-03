@@ -36,8 +36,6 @@
 // Project Headers
 
 
-
-
 static thread_local basic::Tracer TR( "devel.replica_docking.IrmsdFilter" );
 
 namespace devel {

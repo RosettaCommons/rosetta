@@ -21,10 +21,8 @@
 #include <core/io/raw_data/Raw.fwd.hh>
 #include <core/io/raw_data/RawStruct.hh>
 
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

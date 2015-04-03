@@ -38,4 +38,3 @@ typedef utility::pointer::shared_ptr< AntibodySeqDesignMover const > AntibodySeq
 #endif	//INCLUDED_protocols_antibody_design_AntibodySeqDesignMover.fwd.hh
 
 
-

@@ -308,7 +308,6 @@ AntibodyNumberingParser::read_cdr_definition_numbering_line(vector1<std::string>
 		PDBLandmarkOP new_landmark;
 
 
-
 		//TR << enum_manager_->cdr_definition_enum_to_string(definition) << std::endl;
 
 		if(definition == numbering.cdr_definition && scheme == numbering.numbering_scheme){

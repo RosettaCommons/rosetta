@@ -127,7 +127,7 @@ using namespace protocols::moves;
 ///////////////////////////////////////////////////////////////////////////
 /// @name ContainerMoversTest
 /// @brief: test for: SequenceMover
-/// @detailed
+/// @details
 /// @author Sergey Lyskov Fri Nov 02 2007
 ///////////////////////////////////////////////////////////////////////////
 class ContainerMoversTest : public CxxTest::TestSuite {

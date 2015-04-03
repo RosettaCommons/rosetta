@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PCS_main.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
@@ -76,11 +74,6 @@
 #include <protocols/abinitio/ConstraintFragmentSampler.hh>
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <protocols/abinitio/BrokerMain.hh>
-
-
-
-
-
 
 
 // keep these headers first for compilation with Visual Studio C++

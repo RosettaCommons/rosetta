@@ -9,7 +9,7 @@
 
 /// @file RNA_BaseCentroidChecker
 /// @brief Parameters to be passed between different modules of stepwise RNA building.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 

@@ -799,7 +799,7 @@ apply(
 	}
 	while (!pose.residue(nres).is_protein()) nres--;
 
-	//
+
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
 	if (fullatom_input && !fullatom_) {

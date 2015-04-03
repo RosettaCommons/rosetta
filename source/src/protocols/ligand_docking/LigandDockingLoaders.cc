@@ -139,6 +139,5 @@ std::string
 LigandAreaLoaderCreator::keyname() const { return "LIGAND_AREAS"; }
 
 
-
 } //namespace jd2
 } //namespace protocols

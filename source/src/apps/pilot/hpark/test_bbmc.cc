@@ -9,7 +9,7 @@
 /// @file test_bbmc.cc
 /// @brief run Monte Carlo for sampling protein conformation
 /// @author Yuan Liu
-/// @detailed
+/// @details
 /// Modified from Colin's backrub.cc, put all backbone algorithm(backrub, bbg, conrot)
 /// and all sidechain algorithm(sc, scmc), and MonteCarlo/ReplicaExchange together
 
@@ -230,7 +230,6 @@ my_main( void* )
 	}
 
 
-
 	//setup Monte Carlo
 	MonteCarloOP mc;
 	core::Real kT = option[ mc::kt ];
@@ -280,14 +279,5 @@ my_main( void* )
 	}
 	return 0;
 }
-
-
-
-
-
-
-
-
-
 
 

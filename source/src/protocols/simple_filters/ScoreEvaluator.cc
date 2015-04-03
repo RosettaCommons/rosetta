@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -31,7 +31,6 @@
 #include <basic/options/option.hh>
 
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
-// AUTO-REMOVED #include <iterator>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -48,7 +47,6 @@ static thread_local basic::Tracer tr( "protocols.evaluation.Score" );
 #include <protocols/simple_filters/RDC_Evaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <utility/vector1.hh>
-
 
 
 // ObjexxFCL Headers

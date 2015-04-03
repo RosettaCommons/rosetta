@@ -94,7 +94,6 @@ core::Size version() const;
 };
 
 
-
 } // namespace disulfides
 } // namespace scoring
 } // namespace core

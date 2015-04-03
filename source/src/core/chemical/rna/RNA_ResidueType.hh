@@ -7,14 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin RNA_residueType
 ///
 /// @brief
 /// RNA specific properties
 ///
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 ////////////////////////////////////////////////////////////////////////
-
 
 
 #ifndef INCLUDED_core_chemical_rna_RNA_ResidueType_hh
@@ -170,7 +168,6 @@ public:
 	Size chi_number_pseudozeta_;
 
 }; //RNA_ResidueType
-
 
 
 } // rna

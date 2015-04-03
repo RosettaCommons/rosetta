@@ -200,7 +200,6 @@ check_whether_this_sheet_is_too_short(
 	Size sheet_i);
 
 
-
 bool
 check_whether_sheets_are_connected_with_near_bb_atoms(
 	StructureID struct_id,
@@ -267,7 +266,6 @@ get_all_residues_in_this_sheet(
 	StructureID struct_id,
 	utility::sql_database::sessionOP	db_session,
 	Size sheet_id);
-
 
 
 utility::vector1<SandwichFragment>

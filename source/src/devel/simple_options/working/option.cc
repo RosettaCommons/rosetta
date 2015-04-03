@@ -15,7 +15,6 @@
 #include <queue>
 
 
-
 using namespace std;
 START_OPT(opt_help,"help","Options to manipulate splash screen behaviour")
 REG(BOPT("h",bHelp,false, "just print this help and exit"));

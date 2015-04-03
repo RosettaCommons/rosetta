@@ -69,16 +69,16 @@ private:
 	utility::vector1< utility::vector1< Size > > boundary_neighs_;
 };
 
-///
+
 class FA_GrpElecEnergy : public methods::ContextDependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextDependentTwoBodyEnergy  parent;
 public:
 
-	///
+
 	FA_GrpElecEnergy( methods::EnergyMethodOptions const & options );
 
-	///
+
 	FA_GrpElecEnergy( FA_GrpElecEnergy const & src );
 
   /// @brief Initilize constants.
@@ -107,7 +107,7 @@ public:
 	void
 	setup_for_derivatives( pose::Pose & pose, ScoreFunction const &scfxn ) const;
 
-	///
+
 	virtual
 	void
 	setup_for_packing(

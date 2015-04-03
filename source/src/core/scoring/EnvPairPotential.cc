@@ -29,12 +29,10 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
-// AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
 // Utility headers
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
-
 
 
 // just for debugging
@@ -195,7 +193,7 @@ EnvPairPotential::EnvPairPotential():
 }
 
 /// @brief fill the cenlist using interpolation
-/// @detailed
+/// @details
 ///cems--------------------------------------------------------------------------
 ///	 interpolation notes --Historically we have broken the
 ///	 centroid density statistics into three bins: i) pairs
@@ -531,7 +529,6 @@ EnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose )
 	return *cenlist;
 
 }
-
 
 
 }

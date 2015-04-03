@@ -29,12 +29,9 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <map>
 
 #include <utility/vector1.hh>
 
@@ -62,15 +59,15 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( Pose const &, PackerTask & ) const;
 
-	///@brief supports direct limitation of residues to be affected, without the need for a filter
+	/// @brief supports direct limitation of residues to be affected, without the need for a filter
 	void residue_indices( ResidueIndices const & );
 	ResidueIndices & residue_indices() { return residue_indices_; }
 	ResidueIndices const & residue_indices() const { return residue_indices_; }
 
-	///@brief sets the ResLvlTaskOperation that will be applied to residues
+	/// @brief sets the ResLvlTaskOperation that will be applied to residues
 	void op( ResLvlTaskOperationCOP );
 
-	///@brief sets an optional filter that is applied to each individual residue
+	/// @brief sets an optional filter that is applied to each individual residue
 	void filter( ResFilterCOP );
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter

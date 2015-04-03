@@ -33,25 +33,25 @@
 namespace protocols {
 namespace pmut_scan {
 
-///@details this subclass of Ron's PointMutScanDriver exists to tweak one aspect of his code: instead of looking for total-energy-stabilizing mutations, it looks for binding-energy-DEstabilizing point & pair mutations.
+/// @details this subclass of Ron's PointMutScanDriver exists to tweak one aspect of his code: instead of looking for total-energy-stabilizing mutations, it looks for binding-energy-DEstabilizing point & pair mutations.
 class AlterSpecDisruptionDriver: public PointMutScanDriver {
 
 public:
 	AlterSpecDisruptionDriver( utility::vector1< std::string > & pdb_file_names, bool double_mutant_scan, std::string list_file, bool output_mutant_structures );
 	~AlterSpecDisruptionDriver();
 
-  ///@brief return a score that is a ddG of binding, rather than a ddG of the interface.  It returns a reversed value because this class wants to find DEstabilizing mutations.
+  /// @brief return a score that is a ddG of binding, rather than a ddG of the interface.  It returns a reversed value because this class wants to find DEstabilizing mutations.
   virtual core::Energy score(core::pose::Pose & pose);
 
-	///@brief offers a chance for child classes to inject mutant selection logic
+	/// @brief offers a chance for child classes to inject mutant selection logic
 	virtual bool reject_mutant( Mutant const & mutant, core::pose::Pose const & pose );
 
 private:
 
-	///@brief reject Mutant based on chain IDs of constituent mutations
+	/// @brief reject Mutant based on chain IDs of constituent mutations
 	bool reject_on_chains( Mutant const & mutant );
 
-	///@brief reject Mutant based on interface-ness of constituent mutations
+	/// @brief reject Mutant based on interface-ness of constituent mutations
 	bool reject_on_interface( Mutant const & mutant, core::pose::Pose const & pose );
 
 	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;

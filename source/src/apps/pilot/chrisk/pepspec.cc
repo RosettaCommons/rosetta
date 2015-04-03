@@ -504,7 +504,6 @@ make_sequence_change(
 }
 
 
-
 bool
 has_clash(
 		pose::Pose pose,
@@ -968,7 +967,7 @@ refine_fa_pep_bb(
 }
 */
 
-///@brief helper code for fragments generation, copied from S.M.Lewis
+/// @brief helper code for fragments generation, copied from S.M.Lewis
 core::fragment::FragSetCOP
 make_frags(
 	core::Size const start,
@@ -1414,7 +1413,6 @@ get_binding_score(
 }
 
 
-
 void
 print_pep_analysis(
 	std::string pdb_name,
@@ -1566,7 +1564,6 @@ RunPepSpec()
 			pep_coord_csts.push_back( pep_cst );
 		}
 	}
-
 
 
 	//define scoring functions//

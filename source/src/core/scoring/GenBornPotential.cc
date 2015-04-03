@@ -27,7 +27,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 //#include <core/pack/task/PackerTask.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
@@ -43,9 +42,6 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
-
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +63,7 @@ namespace scoring {
 
 GenBornResidueInfo::~GenBornResidueInfo() {}
 
-///
+
 void
 GenBornResidueInfo::initialize( conformation::Residue const & rsd )
 {
@@ -264,7 +260,7 @@ GenBornPotential::get_all_born_radii(
 	//  * zeros born radii for start of calculations
 	//  * fills the atomic radii  (from the Pose/AtomTypeSet)
 	//  * fills the scale factors (from the Pose/AtomTypeSet)
-	//
+
 
 	GenBornPoseInfoOP gb_info;
 
@@ -456,7 +452,7 @@ GenBornPotential::update_residue_for_packing(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// uses placeholder info at positions i with gb_info.being_packed(i) == true
-///
+
 
 void
 GenBornPotential::get_single_rotamer_born_radii(
@@ -585,12 +581,11 @@ GenBornPotential::get_res_res_elecE(
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Calculates the interaction energy of two shells of charge.
 ///      Doesn't blow up as shells pass through each other
 ///
-/// @authors jjh 5/17/2004
+/// @author jjh 5/17/2004
 ///
 /////////////////////////////////////////////////////////////////////////////////
 Real

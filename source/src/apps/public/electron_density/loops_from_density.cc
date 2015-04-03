@@ -23,7 +23,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -31,7 +30,6 @@
 #include <devel/init.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 

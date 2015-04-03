@@ -24,7 +24,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
@@ -76,7 +75,6 @@ AtomCountFilterCreator::create_filter() const { return protocols::filters::Filte
 
 std::string
 AtomCountFilterCreator::keyname() const { return "AtomCount"; }
-
 
 
 } // ligand_docking

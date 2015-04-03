@@ -20,7 +20,7 @@
 namespace basic {
 namespace message_listening {
 
-///@brief send mpi message to head node in order to request data. The
+/// @brief send mpi message to head node in order to request data. The
 /// data sent back will be a string formatted by the listener
 /// specified in the listener_tags enum of MessageListenerFactory
 std::string

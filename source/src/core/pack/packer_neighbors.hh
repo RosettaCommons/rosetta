@@ -19,14 +19,12 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/graph/Graph.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 

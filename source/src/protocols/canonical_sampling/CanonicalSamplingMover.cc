@@ -8,8 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
 #include <protocols/jd2/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -41,7 +39,6 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -49,9 +46,7 @@
 #include <utility/file/PathName.hh>
 #include <utility/file/gzip_util.hh>
 
-// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
@@ -149,7 +144,7 @@ void CanonicalSamplingMover::register_options() {
     NEW_OPT( sampling::out::new_structures, "write structures above transition_threshold to this file", "discovered_decoys.out" );
     NEW_OPT( sampling::max_files_per_dir, "distribute traj and transition files into subdirectories with max N entries", 1000 );
 
-    //
+
     //debug ramping up temperature to equilibrate structure?
     NEW_OPT( sampling::ramp_temperature, "ramp up the temperature and use constraints to equilibrate structure", false);
     NEW_OPT( sampling::interval_increment_temp, "increment the temperature by 0.1 every x steps", 100000 );
@@ -163,7 +158,6 @@ void CanonicalSamplingMover::register_options() {
     **/
     options_registered_ = true;
   }
-
 
 
 }
@@ -257,7 +251,6 @@ CanonicalSamplingMover::periodic_range(
   core::Real const halfx = 0.5f * x;
   return ( ( a >= halfx || a < -halfx ) ? mod( mod( a, x ) + ( x + halfx ), x ) - halfx : a );
 }
-
 
 
   std::string CanonicalSamplingMover::get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop ) {

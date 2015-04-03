@@ -16,7 +16,6 @@
 #include <protocols/match/upstream/UpstreamResTypeGeometry.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
@@ -24,7 +23,6 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
 

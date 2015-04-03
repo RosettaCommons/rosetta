@@ -39,7 +39,6 @@
 
 // Utility Headers
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

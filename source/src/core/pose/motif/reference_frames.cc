@@ -387,7 +387,6 @@ AIDs get_atoms_tyr_downstream(PoseCR p, SizeCR i){ return get_AIDs(p,i,make_vect
 AIDs get_atoms_val_downstream(PoseCR p, SizeCR i){ return get_AIDs(p,i,make_vector1<std::string>("CG1","CG2","CB","CA"                                                     )); }
 
 
-
 } // motif
 } // pose
 } // core

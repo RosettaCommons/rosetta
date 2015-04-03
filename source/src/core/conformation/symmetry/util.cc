@@ -28,24 +28,17 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/id/AtomID.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzTriple.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -53,7 +46,6 @@
 #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -581,7 +573,6 @@ set_fold_tree_from_symm_data(
 		}
 
 		return f;
-
 
 
 	} else if( symmdata.get_num_components() > 1 ) {

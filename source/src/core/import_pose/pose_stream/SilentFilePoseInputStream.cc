@@ -192,7 +192,6 @@ void SilentFilePoseInputStream::fill_pose(
 } // fill_pose
 
 
-
 core::io::silent::SilentStructOP
 SilentFilePoseInputStream::next_struct()
 {

@@ -21,8 +21,6 @@
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // VC++ will not compile if these are forward declaration headers
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilterFactory.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

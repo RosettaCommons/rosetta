@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -108,7 +108,6 @@ public:
 	// output for ccd_closure
 	//	Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
 	//	Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
-
 
 
 };

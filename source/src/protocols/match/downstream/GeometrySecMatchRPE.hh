@@ -30,8 +30,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <string>
 
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -40,7 +38,6 @@
 namespace protocols {
 namespace match {
 namespace downstream {
-
 
 
 /// @brief helper class for GeometrySec

@@ -96,7 +96,6 @@ LKB_ResidueInfo::WaterBuilderMap LKB_ResidueInfo::water_builder_map_;
 LKB_ResidueInfo::AtomWeightsMap LKB_ResidueInfo::atom_weights_map_;
 
 
-
 void
 LKB_ResidueInfo::reset_arrays_danger_expert_only()
 {
@@ -359,7 +358,6 @@ LKB_ResidueInfo::LKB_ResidueInfo(
 LKB_ResidueInfo::LKB_ResidueInfo()
 {
 }
-
 
 
 /// called the first time we encounter a given ResidueType

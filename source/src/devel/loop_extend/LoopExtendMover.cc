@@ -22,9 +22,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -53,8 +50,7 @@ namespace devel{
 namespace loop_extend{
 
 
-
-///@details Extends a loop
+/// @details Extends a loop
 void LoopExtendMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::chemical;
@@ -101,7 +97,6 @@ std::string
 LoopExtendMover::get_name() const {
 	return "LoopExtendMover";
 }
-
 
 
 }//LoopExtend

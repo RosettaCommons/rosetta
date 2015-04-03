@@ -25,7 +25,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 
-//
+
 #include <core/conformation/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>

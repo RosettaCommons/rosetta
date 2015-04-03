@@ -28,7 +28,6 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/OrderedTuple.hh>
 #include <utility/vector1.hh>
 
 // C++ headers

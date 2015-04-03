@@ -12,7 +12,6 @@
 #include <cxxtest/TestSuite.h>
 
 
-
 #include <numeric/histograms/TwoDHistogram.hh>
 
 // --------------- Test Class --------------- //
@@ -64,8 +63,6 @@ public:
 
 		TS_ASSERT_EQUALS(counts, histogram_size.lookup_counts(1,2));
 		TS_ASSERT_EQUALS(counts, histogram_real.lookup_counts(1.5,2.5));
-
-
 
 
 	}

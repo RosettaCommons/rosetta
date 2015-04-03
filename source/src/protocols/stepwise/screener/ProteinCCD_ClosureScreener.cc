@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/screener/ProteinCCD_ClosureScreener.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

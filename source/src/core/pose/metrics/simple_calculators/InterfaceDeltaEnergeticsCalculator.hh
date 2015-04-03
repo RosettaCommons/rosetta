@@ -27,7 +27,6 @@
 #include <core/scoring/ScoreType.hh>
 
 
-
 namespace core{
 namespace pose {
 namespace metrics {

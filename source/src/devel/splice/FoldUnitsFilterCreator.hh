@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the FoldUnitsFilter
 
 
-
 #ifndef INCLUDED_devel_splice_FoldUnitsFilterCreator_hh
 #define INCLUDED_devel_splice_FoldUnitsFilterCreator_hh
 

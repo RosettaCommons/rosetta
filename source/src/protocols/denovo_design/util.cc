@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/util.cc
 /// @brief util functions for denovo design of structures
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

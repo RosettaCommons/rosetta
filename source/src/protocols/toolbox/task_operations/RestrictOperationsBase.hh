@@ -26,7 +26,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details This base class defines an interface for TaskOperations which use PoseMetricCalculators to pick out certain residues in a pose.  The apply function takes a vector of PoseMetricCalculators and a vector of calculation queries, and uses those queries to shape the PackerTask.  This was designed to work with NeighborsByDistanceCalculator, NeighborhoodByDistanceCalculator, and InterfaceNeighborDefinitionCalculator; in general it works when the calculators can return MetricValue< std::set< core::Size > > (a std::set of resids).
+/// @details This base class defines an interface for TaskOperations which use PoseMetricCalculators to pick out certain residues in a pose.  The apply function takes a vector of PoseMetricCalculators and a vector of calculation queries, and uses those queries to shape the PackerTask.  This was designed to work with NeighborsByDistanceCalculator, NeighborhoodByDistanceCalculator, and InterfaceNeighborDefinitionCalculator; in general it works when the calculators can return MetricValue< std::set< core::Size > > (a std::set of resids).
 class RestrictOperationsBase : public core::pack::task::operation::TaskOperation
 {
 public:
@@ -45,7 +45,7 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const = 0;
 
 protected:
-	///@brief this is the only real function - it takes a calculator name and calculation, and a PackerTask-compatible vector, and flips booleans in the vector according to the calculator
+	/// @brief this is the only real function - it takes a calculator name and calculation, and a PackerTask-compatible vector, and flips booleans in the vector according to the calculator
 	void
 	run_calculator(
 		core::pose::Pose const & pose,

@@ -23,7 +23,6 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_CCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
@@ -84,8 +83,6 @@
 
 //Auto Headers
 #include <protocols/simple_moves/DesignRepackMover.hh>
-
-
 
 
 namespace protocols {

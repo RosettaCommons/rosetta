@@ -76,7 +76,6 @@
 #include <utility/exit.hh>
 
 
-
 static thread_local basic::Tracer TM( "TMemory" );
 
 static thread_local basic::Tracer TR_( "global" );
@@ -292,16 +291,12 @@ int main( int argc, char * argv [] )
 		//mint = new boost::thread_specific_ptr< int >;
 
 
-
 	}
 	std::cout << "Done !-------------------------------" << std::endl;
 	return 0;
 
 
-
 	//TR << "clock:" << clock() << "\n";
-
-
 
 
 	test_Tracer();

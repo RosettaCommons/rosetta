@@ -31,10 +31,10 @@ class CCDLoopCloser : public LoopCloser
 {
 public:
 
-	///@brief default constructor
+	/// @brief default constructor
 	CCDLoopCloser();
 	
-	///@brief explicit constructor
+	/// @brief explicit constructor
 	CCDLoopCloser(
 		core::Size max_closure_attempts,
 		bool prevent_nonloop_modifications,
@@ -62,7 +62,7 @@ public:
 	void
 	apply ( core::pose::Pose & );
 	
-	///@brief parse tag for use in RosettaScripts
+	/// @brief parse tag for use in RosettaScripts
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,

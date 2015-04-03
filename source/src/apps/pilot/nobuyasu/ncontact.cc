@@ -23,7 +23,6 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/fldsgn/sspot/SS_Info2.hh>
@@ -34,7 +33,7 @@
 // C++ headers
 #include <cmath>
 
-//
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -255,7 +254,7 @@ void CountContact::apply ( pose::Pose & pose ){
 		} // loop for jaa
 	}// loop for iaa
 
-	//
+
 	Size tot( 0 );
 	for ( Size i=1 ;i<=max_ssele; ++i ) {
 		for ( Size j=1 ;j<=max_ssele; ++j ) {
@@ -263,7 +262,6 @@ void CountContact::apply ( pose::Pose & pose ){
 		}
 	}
 
-	//
 
 	float ss_entrpy( 0.0 );
 	for ( Size i=1 ;i<=max_ssele; ++i ) {

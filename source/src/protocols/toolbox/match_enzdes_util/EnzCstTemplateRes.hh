@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_toolbox_match_enzdes_util_EnzCstTemplateRes_hh
 
 
-
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 // Package headers
@@ -31,7 +30,6 @@
 
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //Utility Headers
@@ -59,7 +57,7 @@ namespace match_enzdes_util {
 class EnzCstTemplateResAtoms : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~EnzCstTemplateResAtoms();
 
 	friend class EnzCstTemplateRes; //::check_data_consistency(pose::Pose const & pose);
@@ -88,7 +86,7 @@ class EnzCstTemplateRes : public utility::pointer::ReferenceCount {
 
 	//friend class EnzConstraintParameters;
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~EnzCstTemplateRes();
 
 	typedef std::map< core::chemical::ResidueTypeCOP, utility::vector1< utility::vector1< core::Size > > > RestypeToTemplateAtomsMap;

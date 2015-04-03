@@ -31,7 +31,6 @@
 #include <numeric/constants.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace hbonds {
@@ -106,8 +105,8 @@ hbond_compute_energy(
 	Real & dchipen_dchi = DUMMY_DERIV
 );
 
-///@brief Fade the energy smoothly to zero over the energy range [-0.1, 0.1]
-///@detail Because of the additive functional form, in order to make
+/// @brief Fade the energy smoothly to zero over the energy range [-0.1, 0.1]
+/// @detail Because of the additive functional form, in order to make
 ///derivative continuous at the boundary of definition, we fade the
 ///energy function smoothly to zero.
 ///
@@ -150,13 +149,12 @@ fade_energy(
 
 
 //////////////////////////////////////////////////////////////////////////////
-///@begin bah_chi_compute_energy_sp2
 ///
-///@brief
+/// @brief
 ///Evaluate the Base-Acceptor-Hydrogen angle and Base-Acceptor
 ///torsion portion of the hydrogen bond energy and derivatives
 ///
-///@details
+/// @details
 /// Formula #11
 ///
 /// F (chi=0 or chi=pi)               | G (chi=pi/2 or chi=3*pi/2)  |

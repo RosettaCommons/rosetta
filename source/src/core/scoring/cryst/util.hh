@@ -26,7 +26,7 @@ namespace core {
 namespace scoring {
 namespace cryst {
 
-///@brief fix the hydrogen bfactors in the pose
+/// @brief fix the hydrogen bfactors in the pose
 void fix_bfactorsH( core::pose::Pose & );
 void fix_bfactorsMissing( core::pose::Pose & pose );
 

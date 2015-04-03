@@ -25,14 +25,10 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
-// AUTO-REMOVED
 #include <cstdio>
 #include <iostream>
-// AUTO-REMOVED #include <sstream>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace core {

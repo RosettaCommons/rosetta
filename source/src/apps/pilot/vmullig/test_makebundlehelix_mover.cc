@@ -52,7 +52,7 @@ OPT_KEY (RealVector, delta_z1_per_atom)
 OPT_KEY (Boolean, invert_helix)
 OPT_KEY (Real, delta_t)
 
-///
+
 /// @brief Set up the options for this pilot app.
 void register_options()
 {

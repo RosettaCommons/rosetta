@@ -19,7 +19,6 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>

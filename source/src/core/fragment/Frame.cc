@@ -11,7 +11,7 @@
 /// @brief  set of fragments for a certain alignment frame
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/Frame.hh>
@@ -21,7 +21,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
@@ -148,7 +147,7 @@ FrameOP Frame::clone_with_template() {
 	return newFrame;
 }
 
-///@brief type() is specifying the output name of the Frame in FragmentIO ("FRAME", "JUMPFRAME", etc)
+/// @brief type() is specifying the output name of the Frame in FragmentIO ("FRAME", "JUMPFRAME", etc)
 std::string Frame::type() const {
 	return _static_type_name();
 }
@@ -223,7 +222,7 @@ core::Size Frame::end() const {
 	return end_;
 }
 
-///	///@brief set stop position
+///	/// @brief set stop position
 //	core::Size stop( core::Size setting );
 
 /// @brief last sequence position affected by this frame
@@ -311,11 +310,6 @@ void Frame::init_length( core::Size start, core::Size end, core::Size length ) {
 }
 
 
-
-
-
-
-
 ////////////////////////////////////////// I M P L E M E N T A T I O N S ///////////////////////////////////////////////
 
 core::Size Frame::add_fragment( FragDataCOP new_frag ) {
@@ -326,7 +320,6 @@ debug_assert( new_frag );
 }
 
 
-//
 // void Frame::delete_fragment( core::Size frag_num )
 // {
 // 	std::cerr << "SPEED WARNING: fragment deleted -- cache invalidated"
@@ -363,7 +356,6 @@ core::Size Frame::apply( core::Size frag_num, pose::Pose & pose ) const {
 }
 
 
-
 core::Size Frame::apply_ss( kinematics::MoveMap const& mm, core::Size frag_num, std::string& ss ) const {
 	return fragment( frag_num ).apply_ss( mm, ss, *this );
 }
@@ -393,12 +385,9 @@ void Frame::shift_by( int offset ) {
 }
 
 
-
 // void show( std::ostream& out ) {
 //
 // }
-
-
 
 
 void Frame::fragment_as_pose(
@@ -479,7 +468,7 @@ bool Frame::merge( Frame const& other ) {
 	return true;
 }
 
-///@brief change frames residue numbers according to map
+/// @brief change frames residue numbers according to map
 bool Frame::align( core::id::SequenceMapping const& map) {
 	Size s( map[ start() ] );
   Size e( map[ end() ] );

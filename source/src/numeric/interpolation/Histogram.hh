@@ -372,7 +372,7 @@ public:
 		interpolator_(interp)
 	{ }
 
-	///@brief Copy Constructor
+	/// @brief Copy Constructor
 	inline Histogram( Histogram const& h) :
 		ReferenceCount(h),
 		densities_(h.densities_),
@@ -407,41 +407,41 @@ public:
 		set_params(params);
 	}
 
-	///@brief destructor
+	/// @brief destructor
 	inline ~Histogram() { }
 
 
-	///@brief The densities array.
+	/// @brief The densities array.
 	inline utility::vector1<Y> densities() const { return densities_; }
 	inline utility::vector1<Y> & densities() { return densities_; }
 
-	///@brief The x-value of the left corner of the first bin
+	/// @brief The x-value of the left corner of the first bin
 	inline X first_bin() const { return min_; }
 	inline X & first_bin() { return min_; }
 
-	///@brief The x-value of the left corner of the last bin
+	/// @brief The x-value of the left corner of the last bin
 	inline X last_bin() const { return X(min_ + step_*(nbins()-1) ); }
 
-	///@brief The x-value of the right corner of the last bin
+	/// @brief The x-value of the right corner of the last bin
 	inline X last_bin_right() const { return X(min_ + step_*nbins() ); }
 
-	///@brief Return the distance between two bins
+	/// @brief Return the distance between two bins
 	inline X step_size() const { return step_; }
 	inline X & step_size() { return step_; }
 
-	///@brief Return whether this histogram is periodic
+	/// @brief Return whether this histogram is periodic
 	inline bool periodic() const { return periodic_; }
 	inline bool & periodic() { return periodic_; }
 
-	///@brief The bin placement.
+	/// @brief The bin placement.
 	inline BinPlacement bin_placement() const { return bin_placement_; }
 	inline BinPlacement & bin_placement() { return bin_placement_; }
 
 	inline Interpolator interpolator() const { return interpolator_; }
 	inline Interpolator & interpolator() { return interpolator_; }
 
-	///@brief The smallest value for which we can interpolate
-	///@details All values of x where minimum()<=x<maximum() can be interpolated.
+	/// @brief The smallest value for which we can interpolate
+	/// @details All values of x where minimum()<=x<maximum() can be interpolated.
 	inline X minimum() const {
 		switch( interpolator_ ) {
 		case flat:
@@ -465,8 +465,8 @@ public:
 
 	}
 
-	///@brief The largest value for which we can interpolate.
-	///@details All values of x where minimum()<=x<maximum() can be interpolated.
+	/// @brief The largest value for which we can interpolate.
+	/// @details All values of x where minimum()<=x<maximum() can be interpolated.
 	inline X maximum() const {
 		switch( interpolator_ ) {
 		case flat:
@@ -490,7 +490,7 @@ public:
 
 	}
 
-	///@brief The number of bins
+	/// @brief The number of bins
 	inline size_type nbins() const{
 		return densities_.size();
 	}

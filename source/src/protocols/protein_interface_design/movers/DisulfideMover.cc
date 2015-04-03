@@ -94,20 +94,20 @@ DisulfideMoverCreator::mover_name()
 	return "DisulfideMover";
 }
 
-///@brief default ctor
+/// @brief default ctor
 DisulfideMover::DisulfideMover() :
 	parent(),
 	rb_jump_(1)
 {}
 
-///@brief copy ctor
+/// @brief copy ctor
 DisulfideMover::DisulfideMover(DisulfideMover const& dm) :
 	//utility::pointer::ReferenceCount(),
 	parent( dm ),
 	rb_jump_(dm.rb_jump_)
 {}
 
-///@brief Constructor with a single target residue
+/// @brief Constructor with a single target residue
 DisulfideMover::DisulfideMover( core::Size targetResidue ) :
 	parent(),
 	rb_jump_(1)
@@ -115,7 +115,7 @@ DisulfideMover::DisulfideMover( core::Size targetResidue ) :
 	target_residues_.push_back(targetResidue);
 }
 
-///@brief Constructor with multiple target residues
+/// @brief Constructor with multiple target residues
 DisulfideMover::DisulfideMover( utility::vector1<core::Size> const& targetResidues ) :
 	parent(),
 	rb_jump_(1)

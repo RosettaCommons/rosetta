@@ -14,12 +14,10 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/HPool.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/pool_util.hh>
 #include <core/pose/Pose.hh>
 
 
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>

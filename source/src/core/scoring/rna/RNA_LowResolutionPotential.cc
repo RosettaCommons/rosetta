@@ -436,8 +436,6 @@ debug_assert( res_j_bin > 0 );
 }
 
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
 RNA_LowResolutionPotential::get_rna_stack_score(
@@ -483,7 +481,6 @@ RNA_LowResolutionPotential::get_rna_stack_score(
 
 	return value;
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2374,7 +2371,6 @@ RNA_LowResolutionPotential::check_forming_base_pair(
 
 	return false;
 }
-
 
 
 } //rna

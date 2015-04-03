@@ -29,7 +29,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
@@ -37,7 +36,6 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -172,11 +170,11 @@ public:
 		bool preserve_detailed_balance
 	);
 
-	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	bool
 	change_chi_without_replacing_residue() const;
 
-	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	/// @brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
 	void
 	set_change_chi_without_replacing_residue(
 		bool const change_chi_without_replacing_residue
@@ -300,7 +298,6 @@ private:
 		utility::vector1<core::Real> & current_chi,
 		utility::vector1<core::Real> & new_chi
 	);
-
 
 
 private:

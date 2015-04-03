@@ -22,4 +22,3 @@ style = {
         'omega1':   dict(color=tango.brown[1], **nonpivot_line) }
 
 
-

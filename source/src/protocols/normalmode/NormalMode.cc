@@ -9,7 +9,7 @@
 
 /// @file    protocols/normalmode/NormalMode.cc
 /// @brief   
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 // Unit headers

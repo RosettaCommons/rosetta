@@ -16,10 +16,8 @@
 #include <boost/unordered_map.hpp>
 #include <protocols/sparta/PDB.hh>
 #include <fstream>
-// AUTO-REMOVED #include <cmath>
 #include <sstream>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 // Utility headers
 #include <basic/Tracer.hh>
 #include <protocols/sparta/util.hh>
@@ -214,12 +212,10 @@ bool PDB::isSSBonded(int /*conformerID*/, int resNum)
 }
 
 
-
 PDB_Entry PDB::getEntry(int conformerID, int rNum, const string &aName)
 {
   return ATOMS[conformerID][rNum][aName];
 }
-
 
 
 PDB_Entry PDB::getEntry(int conformerID, int aNum)
@@ -406,7 +402,6 @@ string PDB::getThreeAAName(char a)
 }
 
 
-
 string PDB::getOneAAName(const string& a)
 {
   if( a == "ALA") return "A";
@@ -581,7 +576,6 @@ void PDB::calcPlane(RingData *ringP)
 }
 
 
-
 float PDB::getOrbitalShift(int conformerID, int resNum, const string &aName)
 {
   Vec3 v;
@@ -644,12 +638,10 @@ float PDB::getOrbitalShift(int conformerID, int resNum, const string &aName)
 }
 
 
-
 float PDB::getDist(PDB_Entry A, PDB_Entry B)
 {
   return getDist(A.Coord, B.Coord);
 }
-
 
 
 float PDB::getDist(Vec3 A, Vec3 B)
@@ -661,7 +653,6 @@ float PDB::getDist(Vec3 A, Vec3 B)
 
   return Vec3Abs(v);
 }
-
 
 
 void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
@@ -745,7 +736,6 @@ float PDB::getHBondDist(int resNum, string atomName)
 }
 
 
-
 PDB_Entry PDB::isAcceptor(PDB_Entry A)
 {
   if(A.atomName == "O" || A.atomName == "OT1"  || A.atomName == "OT2" ) return ATOMS[1][A.resNum]["C"];
@@ -791,7 +781,6 @@ PDB_Entry PDB::isDonor(PDB_Entry D)
 
   return EMPTY;
 }
-
 
 
 long PDB::sgn(float x)
@@ -911,12 +900,6 @@ void PDB::Vec3ScaleAdd(Vec3 v1, float s, Vec3 v2)
   for (i = 0; i < 3; i++)
     v1[i] += s * v2[i];
 }
-
-
-
-
-
-
 
 
 // void PDB::initSurface( float rad_sol )
@@ -1467,7 +1450,6 @@ void PDB::calc_ElectricField()
 
     }
 }
-
 
 
 void PDB::collect_HN_S2_and_EF( )

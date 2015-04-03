@@ -44,7 +44,7 @@ public:
 
   virtual ~UnbiasedRigidBodyPerturbNoCenterMover();
 
-  ///@brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
+  /// @brief overload it to use random unit quaternion to unbiasedly sample rotation instead of Jump::gaussian_move
   virtual void apply( core::pose::Pose & pose );
 
   virtual std::string get_name() const;

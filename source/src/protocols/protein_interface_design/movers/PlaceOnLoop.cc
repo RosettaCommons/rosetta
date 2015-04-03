@@ -26,7 +26,6 @@
 #include <core/kinematics/Jump.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-// AUTO-REMOVED #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
@@ -41,9 +40,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -60,7 +57,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
 #include <basic/options/keys/OptionKeys.hh>
-
 
 
 namespace protocols {

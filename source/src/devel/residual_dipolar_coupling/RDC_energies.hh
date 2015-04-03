@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -24,7 +24,6 @@
 
 //Core
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 //Objexx headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -32,14 +31,10 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 #include <map>
 
 #include <core/pose/Pose.fwd.hh>

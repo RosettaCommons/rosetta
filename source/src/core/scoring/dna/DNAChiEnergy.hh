@@ -30,7 +30,7 @@ namespace core {
 namespace scoring {
 namespace dna {
 
-///
+
 class DNAChiEnergy : public methods::ContextIndependentOneBodyEnergy {
 public:
 	typedef ContextIndependentOneBodyEnergy parent;
@@ -51,7 +51,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -61,7 +61,6 @@ public:
 	) const;
 
 
-	///
 	virtual
 	Real
 	eval_dof_derivative(

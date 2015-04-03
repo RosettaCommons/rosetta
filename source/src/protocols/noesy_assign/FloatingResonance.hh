@@ -68,7 +68,7 @@ public:
 	}
 	virtual core::Size float_label( core::Size ifloat ) const;
 
-  ///@brief match the proton and corresponding label atom at same time
+  /// @brief match the proton and corresponding label atom at same time
   virtual bool match2D(
     core::Real proton_freq,
     core::Real proton_error,

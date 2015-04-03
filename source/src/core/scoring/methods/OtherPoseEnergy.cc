@@ -9,7 +9,7 @@
 
 /// @file core/scoring/methods/OtherPoseEnergy.cc
 /// @brief Way to handle scoring of a collection of poses, allowing shift of focus between poses.
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

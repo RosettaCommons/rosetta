@@ -17,12 +17,9 @@
 #include <core/scoring/methods/MembraneEnvPenaltiesCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
 
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 //#include <core/scoring/rms_util.hh>
 
 //#include <core/io/pdb/pose_io.hh>
@@ -30,7 +27,6 @@
 //#include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
@@ -87,7 +83,7 @@ MembraneEnvPenalties::clone() const
 /// is the difference between the RMSD and the target RMSD. Target RMSD is specified
 /// the option -score::rms_target.
 
-///
+
 	/*
 void
 MembraneEnvPenalties::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const

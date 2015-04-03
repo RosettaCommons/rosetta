@@ -22,11 +22,9 @@
 
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {
@@ -86,8 +84,6 @@ protected:
 	core::scoring::packstat::SasaOptions opts;
 
 };
-
-
 
 
 } // end namespace simple_moves

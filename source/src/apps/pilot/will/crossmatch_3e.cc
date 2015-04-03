@@ -220,8 +220,6 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 }
 
 
-
-
 int main (int argc, char *argv[])
 {
 
@@ -310,19 +308,5 @@ int main (int argc, char *argv[])
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

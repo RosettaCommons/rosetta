@@ -17,8 +17,6 @@
 // Unit headers
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

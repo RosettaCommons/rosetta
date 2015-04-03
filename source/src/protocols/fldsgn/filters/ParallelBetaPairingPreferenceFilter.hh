@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilter.hh
 /// @brief header file for ParallelBetaPairingPreferenceFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

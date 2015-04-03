@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_moves/CopyDofMover.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

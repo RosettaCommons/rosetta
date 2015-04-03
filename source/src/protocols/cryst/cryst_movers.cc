@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 // keep first
@@ -108,7 +108,6 @@ SetCrystWeightMoverCreator::mover_name() {
 	return "SetCrystWeight";
 }
 
-///
 
 std::string
 RecomputeDensityMapMoverCreator::keyname() const {
@@ -125,7 +124,6 @@ RecomputeDensityMapMoverCreator::mover_name() {
 	return "RecomputeDensityMap";
 }
 
-///
 
 std::string
 LoadDensityMapMoverCreator::keyname() const {
@@ -142,7 +140,6 @@ LoadDensityMapMoverCreator::mover_name() {
 	return "LoadDensityMap";
 }
 
-///
 
 std::string
 FitBfactorsMoverCreator::keyname() const {
@@ -159,7 +156,6 @@ FitBfactorsMoverCreator::mover_name() {
 	return "FitBfactors";
 }
 
-///
 
 std::string
 UpdateSolventMoverCreator::keyname() const {
@@ -176,7 +172,6 @@ UpdateSolventMoverCreator::mover_name() {
 	return "UpdateSolvent";
 }
 
-///
 
 std::string
 TagPoseWithRefinementStatsMoverCreator::keyname() const {
@@ -193,7 +188,6 @@ TagPoseWithRefinementStatsMoverCreator::mover_name() {
 	return "TagPoseWithRefinementStats";
 }
 
-///
 
 std::string
 SetRefinementOptionsMoverCreator::keyname() const {

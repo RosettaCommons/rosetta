@@ -9,7 +9,7 @@
 
 /// @file RNA_O2PrimeMover
 /// @brief O2Primes an RNA residue from a chain terminus.
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.hh>
@@ -27,7 +27,6 @@
 #include <basic/Tracer.hh>
 
 #include <numeric/random/random.hh>
-
 
 
 using namespace core;

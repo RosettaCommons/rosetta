@@ -34,7 +34,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 
@@ -69,7 +68,6 @@ using basic::T;
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/io/pdb/file_data.hh>
-
 
 
 using basic::Error;
@@ -230,8 +228,6 @@ void CheckPointer::checkpoint(
 #endif
 
 
-
-
 	////// Create Checkpoint in buffer.
 
 
@@ -286,7 +282,6 @@ void CheckPointer::checkpoint(
 		new_file.set_contents( ss_stream.str() );
 		file_buffer.push_back( new_file );
 	}
-
 
 
 	TR << "CHECK: " << " Created virtual checkpoint: " << checkpoint_id << std::endl;

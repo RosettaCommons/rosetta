@@ -23,7 +23,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/frag_picker/scores/GunnCost.hh>

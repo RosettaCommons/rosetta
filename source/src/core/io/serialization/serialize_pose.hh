@@ -17,10 +17,8 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <cstring>
-// AUTO-REMOVED #include <string>
 #include <vector>
 
 #include <utility/vector1.hh>

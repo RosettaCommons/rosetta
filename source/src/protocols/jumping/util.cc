@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -19,10 +18,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/Protocol.hh>
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -47,10 +44,8 @@
 #include <core/scoring/dssp/PairingsList.hh>
 #endif
 
-//
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -441,7 +436,7 @@ if ( orientation < 0 ) {
     //
     // But for some twisted strand pairs (see, e.g, 22,48 in 1brs.pdb),
     // the numbers get a little crazy...
-    //
+
 
     Real forientation, pleating1, pleating2;
     if ( pos1 < pos2 ) {

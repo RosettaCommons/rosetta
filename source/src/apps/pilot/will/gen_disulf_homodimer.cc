@@ -12,35 +12,18 @@
 
 #include <boost/tuple/tuple.hpp>
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -48,10 +31,6 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -59,49 +38,25 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
-// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
-// AUTO-REMOVED #include <protocols/flxbb/FlxbbDesign.hh>
-// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -252,7 +207,6 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 }
-
 
 
 void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
@@ -426,14 +380,12 @@ void run(std::string fname) {
   }
 
 
-
 }
 
 
 int main (int argc, char *argv[]) {
 
 	try {
-
 
 
   devel::init(argc,argv);
@@ -449,17 +401,5 @@ int main (int argc, char *argv[]) {
 	}
 
 }
-
-
-
-
-//
-//
-
-
-
-
-
-
 
 

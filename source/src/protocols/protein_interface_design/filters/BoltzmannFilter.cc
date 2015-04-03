@@ -11,10 +11,8 @@
 #include <protocols/protein_interface_design/filters/BoltzmannFilter.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
@@ -33,7 +31,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.filters.BoltzmannFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 BoltzmannFilter::BoltzmannFilter() :
 	temperature_( 0.6 ),
 	fitness_threshold_( 0.0 ),

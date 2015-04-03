@@ -12,7 +12,7 @@
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @author James Thompson (tex@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
+
 
 // Unit Headers
 #include <core/fragment/FragSetCollection.hh>
@@ -33,8 +33,6 @@
 
 //#include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <ostream>
-// AUTO-REMOVED #include <set>
 
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>

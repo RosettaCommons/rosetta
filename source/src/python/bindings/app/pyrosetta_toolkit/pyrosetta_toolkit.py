@@ -11,8 +11,6 @@
 ## @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
-
 #Rosetta Imports
 from rosetta import *
 
@@ -285,7 +283,6 @@ class MainTracer(rosetta.basic.PyTracer):
       #print s
    
       
-
 
 
 if __name__ == '__main__':

@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/monte_carlo/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

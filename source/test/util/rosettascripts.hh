@@ -82,7 +82,7 @@ using protocols::filters::TrueFilter;
 using protocols::filters::FalseFilter;
 using protocols::moves::NullMover;
 
-///@brief Generate a tagptr from a string
+/// @brief Generate a tagptr from a string
 /// For parse_my_tag tests, only do the relevant tag, not the full <ROSETTASCRIPTS> ... </ROSETTASCRIPTS> wrapped tag.
 inline TagCOP tagptr_from_string(std::string input) {
 	std::stringstream instream( input );
@@ -111,18 +111,18 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	return mover;
 }
 
-///@brief setup filters map with some of the the RosettaScript defaults
+/// @brief setup filters map with some of the the RosettaScript defaults
 inline void prime_Filters( Filters_map & filters ) {
 	filters["true_filter"] = protocols::filters::FilterOP( new protocols::filters::TrueFilter );
 	filters["false_filter"] = protocols::filters::FilterOP( new protocols::filters::FalseFilter );
 }
 
-///@brief setup movers map with some of the the RosettaScript defaults
+/// @brief setup movers map with some of the the RosettaScript defaults
 inline void prime_Movers( Movers_map & movers ) {
 	movers["null"] = protocols::moves::MoverOP( new protocols::moves::NullMover );
 }
 
-///@brief setup data map with *some* of the the RosettaScript defaults
+/// @brief setup data map with *some* of the the RosettaScript defaults
 
 inline void prime_Data( basic::datacache::DataMap & data ) {
 	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::get_score_function();
@@ -132,7 +132,7 @@ inline void prime_Data( basic::datacache::DataMap & data ) {
 	data.add( "scorefxns", "talaris2013", talaris2013 );
 }
 
-///@brief A simple filter for helping to test nested classes
+/// @brief A simple filter for helping to test nested classes
 /// will apply() with the given truth value,
 /// report_sm() with the given value,
 /// and report() with the truth,
@@ -161,7 +161,7 @@ public: // Yes, public - deliberately so people can easily change them, if they 
 typedef utility::pointer::shared_ptr< StubFilter >  StubFilterOP;
 typedef utility::pointer::shared_ptr< StubFilter const >  StubFilterCOP;
 
-///@brief A simple filter for helping to test nested classes
+/// @brief A simple filter for helping to test nested classes
 /// will apply() with the given truth value,
 /// When called, report_sm() will cycle through the given list of values
 

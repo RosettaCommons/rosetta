@@ -18,7 +18,6 @@
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
@@ -28,13 +27,9 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,10 +42,7 @@
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
 #include <list>
-// AUTO-REMOVED #include <map>
 
 #include <protocols/noesy_assign/CrossPeak.fwd.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
@@ -126,7 +118,7 @@ public:
 private:
   void update_assignment_list(); //after find_assignments or delete_diagonal_peaks()
 
-  ///@brief return average upper distance bound
+  /// @brief return average upper distance bound
   core::Real calibrate( PeakCalibrator const& calibrator );
   CrossPeaks peaks_;
   //probably good to have all things in this class?

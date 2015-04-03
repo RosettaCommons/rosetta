@@ -61,7 +61,7 @@ static void info(const char *fmt,...)
 static void info(const char *fmt,...) {}
 #endif
 
-//
+
 // Kernel Cache
 //
 // l is the number of total data items
@@ -187,7 +187,7 @@ void Cache::swap_index(int i, int j)
 	}
 }
 
-//
+
 // Kernel evaluation
 //
 // the static method k_function is for doing single kernel evaluation
@@ -1004,7 +1004,7 @@ double Solver::calculate_rho()
 	return r;
 }
 
-//
+
 // Solver for nu-svm classification and regression
 //
 // additional constraint: e^T \alpha = constant
@@ -1263,7 +1263,7 @@ double Solver_NU::calculate_rho()
 	return (r1-r2)/2;
 }
 
-//
+
 // Q matrices for various formulations
 //
 class SVC_Q: public Kernel
@@ -1437,7 +1437,7 @@ private:
 	double *QD;
 };
 
-//
+
 // construct and solve various formulations
 //
 static void solve_c_svc(
@@ -1638,7 +1638,7 @@ static void solve_nu_svr(
 	delete[] y;
 }
 
-//
+
 // decision_function
 //
 struct decision_function
@@ -2071,7 +2071,7 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 	free(data_label);
 }
 
-//
+
 // Interface functions
 //
 svm_model *svm_train(const svm_problem *prob, const svm_parameter *param)

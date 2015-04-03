@@ -31,7 +31,4 @@ typedef utility::pointer::shared_ptr< RestrictConservedLowDdgOperation > Restric
 } // protocols
 
 
-
-
-
 #endif

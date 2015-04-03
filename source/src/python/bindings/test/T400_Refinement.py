@@ -43,7 +43,6 @@ scorefxn = get_score_function()
 scorefxn(pose)
 
 
-
 print 'mover: SmallMover'
 movemap.set_bb(1)
 smallmover = protocols.simple_moves.SmallMover(movemap,kT,n_moves)

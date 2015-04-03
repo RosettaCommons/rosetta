@@ -13,7 +13,6 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/SmoothEnvEnergy.hh>
 #include <core/scoring/methods/SmoothEnvEnergyCreator.hh>
 
@@ -22,11 +21,9 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/Jump.hh>
@@ -60,7 +57,6 @@ SmoothEnvEnergyCreator::score_types_for_method() const {
 }
 
 
-
 /// c-tor
 SmoothEnvEnergy::SmoothEnvEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new SmoothEnvEnergyCreator ) ),
@@ -80,7 +76,6 @@ SmoothEnvEnergy::clone() const {
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs
@@ -88,7 +83,7 @@ SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 	potential_.compute_centroid_environment( pose );
 }
 
-///
+
 void
 SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs

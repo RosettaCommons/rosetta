@@ -25,12 +25,10 @@
 #include <core/conformation/Residue.hh>
 #include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 
@@ -42,7 +40,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.functions.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
@@ -365,7 +362,6 @@ LigandConformerBuilder::coordinates_from_hit(
 }
 
 
-
 core::pose::PoseCOP
 LigandConformerBuilder::downstream_pose_from_hit(
 	Hit const & hit
@@ -397,7 +393,6 @@ LigandConformerBuilder::n_possible_hits_per_at3frame() const
 {
 	return lig_conformers_.size();
 }
-
 
 
 void

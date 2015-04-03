@@ -18,7 +18,6 @@
 #include <core/pack/interaction_graph/HPatchEnergy.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -31,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace pack {
 namespace interaction_graph {
@@ -41,8 +39,6 @@ namespace interaction_graph {
 //---------------------- HPatchEnergy Class -----------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin HPatchEnergy
 ///
 /// @brief
 /// Defines a (pseudo) context-dependent one-body surface energy.  Really, this class

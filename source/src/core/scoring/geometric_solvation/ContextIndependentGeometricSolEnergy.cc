@@ -80,7 +80,7 @@ ContextIndependentGeometricSolEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
-///@brief copy c-tor
+/// @brief copy c-tor
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts) :
 	parent( methods::EnergyMethodCreatorOP( new ContextIndependentGeometricSolEnergyCreator ) ),
 	options_( opts ),
@@ -138,7 +138,7 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
 	precalculated_bb_bb_energy_ = evaluator_->precalculate_bb_bb_energy_for_design( pose );
 }
 
-///
+
 void
 ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -362,7 +362,7 @@ ContextIndependentGeometricSolEnergy::eval_intrares_energy(
 	emap[ geom_sol_fast ]           += emap_local[ geom_sol ];
 }
 
-///@brief ContextIndependentGeometricSolEnergy is not context sensitive, of course.
+/// @brief ContextIndependentGeometricSolEnergy is not context sensitive, of course.
 void
 ContextIndependentGeometricSolEnergy::indicate_required_context_graphs(utility::vector1< bool > &) const
 {}

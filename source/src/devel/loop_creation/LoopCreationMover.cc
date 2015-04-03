@@ -104,7 +104,7 @@ LoopCreationMoverCreator::mover_name()
 }
 //****END CREATOR METHODS****//
 
-///@brief default constructor
+/// @brief default constructor
 LoopCreationMover::LoopCreationMover():
 		loop_inserter_(/* NULL */),
 		loop_closer_(/* NULL */),
@@ -122,7 +122,7 @@ LoopCreationMover::LoopCreationMover():
 	init();
 }
 
-///@brief explicit constructor
+/// @brief explicit constructor
 LoopCreationMover::LoopCreationMover(
 	LoopInserterOP loop_inserter,
 	LoopCloserOP loop_closer,
@@ -400,7 +400,7 @@ LoopCreationMover::apply(
 	}//loop anchors
 }
 
-///@brief update the loops to reflect
+/// @brief update the loops to reflect
 ///the position changes after an insertion
 void
 LoopCreationMover::update_anchors(

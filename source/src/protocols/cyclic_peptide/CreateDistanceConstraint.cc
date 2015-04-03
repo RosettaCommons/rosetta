@@ -84,7 +84,7 @@ void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 	return;
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 CreateDistanceConstraint::parse_my_tag(
 	TagCOP tag,

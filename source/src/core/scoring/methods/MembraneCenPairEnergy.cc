@@ -14,14 +14,12 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/MembraneCenPairEnergy.hh>
 #include <core/scoring/methods/MembraneCenPairEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -33,7 +31,6 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <core/scoring/EnergyMap.hh>
@@ -41,9 +38,7 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
-
 
 
 // C++
@@ -91,7 +86,6 @@ MembraneCenPairEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 MembraneCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -99,7 +93,6 @@ MembraneCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
 	potential_.compute_membrane_embedding( pose );
-
 
 
 }

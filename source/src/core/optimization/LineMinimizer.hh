@@ -19,7 +19,6 @@
 
 // Package headers
 #include <core/optimization/types.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/Multifunc.hh>
 
 #include <core/optimization/LineMinimizer.fwd.hh>

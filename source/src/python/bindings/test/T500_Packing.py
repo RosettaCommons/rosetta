@@ -12,7 +12,6 @@ rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_see
 import os; os.chdir('.test.output')
 
 
-
 print 'Packing and Design ----------------------------------------------'
 
 print 'mover: PackRotamersMover'

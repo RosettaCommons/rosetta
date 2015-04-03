@@ -198,7 +198,6 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 }
 
 
-
 } // silent
 } // io
 } // core

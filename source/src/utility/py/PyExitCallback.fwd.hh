@@ -11,7 +11,7 @@
 /// @file   src/utility/PyExitCallback.fwd.hh
 /// @brief  Class to specify utility_exit callback in PyRosetta.
 /// @author Sergey Lyskov
-///
+
 
 #ifndef INCLUDED_utility_PyExitCallback_fwd_hh
 #define INCLUDED_utility_PyExitCallback_fwd_hh

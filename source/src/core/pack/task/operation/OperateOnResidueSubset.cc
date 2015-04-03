@@ -109,7 +109,7 @@ void OperateOnResidueSubset::selector( residue_selector::ResidueSelectorCOP rs_i
 	residue_selector_ = rs_in;
 }
 
-///@brief tag parsing for factory construction of this class and its children
+/// @brief tag parsing for factory construction of this class and its children
 /*!
 Example Tag syntax for parser as of October 2013
 

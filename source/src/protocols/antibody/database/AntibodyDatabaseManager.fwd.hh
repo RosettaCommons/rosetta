@@ -12,7 +12,6 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_antibody_database_AntibodyDatabaseManager_fwd_hh
 #define INCLUDED_protocols_antibody_database_AntibodyDatabaseManager_fwd_hh
 

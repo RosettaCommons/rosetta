@@ -10,7 +10,7 @@
 /// @file JumpSetup
 /// @brief read jump-definition file   setups fold tree an chainbreak variants
 /// loop code didn't work because fold-tree to complicated ( overlapping loops )
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 
@@ -19,9 +19,7 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/fragment/JumpingFrame.fwd.hh>
 
 #include <utility/vector1.hh>
 

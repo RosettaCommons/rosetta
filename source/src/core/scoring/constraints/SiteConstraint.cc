@@ -15,7 +15,6 @@
 
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -81,7 +80,6 @@ SiteConstraint::read_def(
 
     ConstraintIO::parse_residue( pose, tempres, res );
     TR.Info << "read: " << name << " " << res << " " << "constrain to chain: " << chain << " func: " << func_type << std::endl;
-
 
 
     func::FuncOP aFunc = func_factory.new_func( func_type );

@@ -9,7 +9,7 @@
 
 /// @file ScoringScheme.hh
 /// @brief abstract base class for representing scoring schemes for alignments.
-/// @detailed ScoringScheme objects contain two scoring rules:
+/// @details ScoringScheme objects contain two scoring rules:
 /// - a rule for comparing any character from a sequence to a gap character (usually
 /// liste as gap insertion and gap extension, or d and e)
 /// - a rule for scoring two elements from a sequence (simply S)
@@ -28,7 +28,6 @@
 #include <core/types.hh>
 #include <core/sequence/Sequence.fwd.hh>
 
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>

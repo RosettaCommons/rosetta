@@ -26,7 +26,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace devel {
 
   namespace inv_kin_lig_loop_design {

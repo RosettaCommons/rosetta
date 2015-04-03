@@ -35,7 +35,6 @@ using namespace basic::options::OptionKeys;
 static thread_local basic::Tracer TRA( "fold_from_loops", basic::t_info );
 
 
-
 void write_checkpoint( Size iter )
 {
 	if ( ! option[ OptionKeys::fold_from_loops::checkpoint ].user() ) return;

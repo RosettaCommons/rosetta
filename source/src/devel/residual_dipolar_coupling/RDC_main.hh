@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -22,20 +22,13 @@
 
 //Core
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/pointer/owning_ptr.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/numeric.functions.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <vector>
 #include <map>
 
 #include <utility/vector1_bool.hh>
@@ -221,7 +214,6 @@ core::Size get_RDC_data_type(
 	std::string const & atom1,
 	std::string const & atom2
 );
-
 
 
 } //ResidualDipolarCoupling

@@ -47,7 +47,6 @@
 #include <protocols/grafting/util.hh>
 
 
-
 static thread_local basic::Tracer TR( "protocols.grafting.GraftMoverBase" );
 
 namespace protocols {
@@ -104,7 +103,7 @@ GraftMoverBase::GraftMoverBase(const Size start, const Size end, std::string mov
 }
     
     
-///@brief copy ctor
+/// @brief copy ctor
 GraftMoverBase::GraftMoverBase( GraftMoverBase const & src ) :
 	Mover(src),
 	piece_(src.piece_),

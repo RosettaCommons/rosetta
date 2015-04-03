@@ -37,67 +37,67 @@ namespace cryst {
 
 class PhenixInterface {
 public:
-	///@brief constructor
+	/// @brief constructor
 	PhenixInterface();
 
-	///@brief score a structure
+	/// @brief score a structure
 	core::Real getScore (core::pose::Pose const & pose);
 
-	///@brief score a structure with derivatives
+	/// @brief score a structure with derivatives
 	core::Real getScoreAndDerivs (
 		core::pose::Pose const & pose,
 		utility::vector1 < utility::vector1 < numeric::xyzVector< core::Real > > > & grads);
 
-	///@brief fit bfactors
+	/// @brief fit bfactors
 	void fitBfactors (core::pose::Pose & pose);
 
-	///@brief dump r and rfree to a string for informational purposes
+	/// @brief dump r and rfree to a string for informational purposes
 	std::string getInfoLine();
 
-	///@brief dump r and rfree
+	/// @brief dump r and rfree
 	core::Real getR();
 	core::Real getRfree();
 
-	///@brief update fcalc
+	/// @brief update fcalc
 	void updateFcalc ();
 
-	///@brief update mask
+	/// @brief update mask
 	void updateSolventMask ();
 
-	///@brief update mask
+	/// @brief update mask
 	void updateSolventMask (core::pose::Pose const & pose);
 
-	///@brief optimize fmask
+	/// @brief optimize fmask
 	void optimizeSolventMask ();
 
-	///@brief explicitly recompute ksol/bsol
+	/// @brief explicitly recompute ksol/bsol
 	void optimizeSolvParams ();
 
-	///@brief explicitly recompute ksol/bsol and fmask
+	/// @brief explicitly recompute ksol/bsol and fmask
 	void optimizeSolvParamsAndMask ();
 
-	///@brief set the res limits
+	/// @brief set the res limits
 	void setResLimits(core::Real res_high=0.0, core::Real res_low=0.0);
 
-	///@brief set twin law
+	/// @brief set twin law
 	void setTwinLaw(std::string twin_law);
 
-	///@brief set sf calculation algorithm
+	/// @brief set sf calculation algorithm
 	void setAlgorithm(std::string twin_law);
 
-	///@brief set target function
+	/// @brief set target function
 	void set_map_type ( std::string map_type );
 
-	///@brief set strategy for adp refinement
+	/// @brief set strategy for adp refinement
 	void set_adp_strategy ( std::string adp_strat ) { adp_strategy_ = adp_strat; }
 
-	///@brief set target function
+	/// @brief set target function
 	void set_target_function ( std::string tgt_val ) { target_function_ = tgt_val; }
 
-	///@brief set target function
+	/// @brief set target function
 	void set_cif_files ( utility::vector1<std::string> cif_in ) { cif_files_ = cif_in; }
 
-	///@brief use pose to rephase data; calculate a new density map; return map file name
+	/// @brief use pose to rephase data; calculate a new density map; return map file name
 	std::string calculateDensityMap (core::pose::Pose & pose, bool no_sidechain=false);
 
 private:

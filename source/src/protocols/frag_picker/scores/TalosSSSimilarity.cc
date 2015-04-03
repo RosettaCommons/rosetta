@@ -24,10 +24,8 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // option key includes
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>

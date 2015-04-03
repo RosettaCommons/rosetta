@@ -66,7 +66,6 @@ namespace platform {
 	typedef unsigned int uint;
 
 
-
     // alsmost size_t, we can't use this version because GCC.64Bit and MSVC.64Bit defines size_t differently
 	// typedef std::size_t  Size;
 	// typedef ssize_t      SSize;

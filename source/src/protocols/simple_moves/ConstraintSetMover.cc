@@ -14,7 +14,6 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

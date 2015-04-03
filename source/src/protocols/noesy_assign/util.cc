@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -24,11 +24,6 @@
 // Project Headers
 #include <core/id/NamedAtomID.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 
 // Utility headers
 //#include <ObjexxFCL/format.hh>
@@ -40,7 +35,6 @@
 // #include <utility/pointer/ReferenceCount.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
 

@@ -15,9 +15,6 @@
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 
 // Utility header
-// AUTO-REMOVED #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>
 #include <algorithm>

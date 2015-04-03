@@ -179,7 +179,6 @@ TrieCountPairBase::resolve_trie_vs_path(
 }
 
 
-
 void
 TrieCountPairBase::resolve_trie_vs_path(
 	RotamerTrie< etable::etrie::EtableAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,

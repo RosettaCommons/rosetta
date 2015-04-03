@@ -15,7 +15,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

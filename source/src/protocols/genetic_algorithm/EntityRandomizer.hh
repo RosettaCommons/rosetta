@@ -19,11 +19,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
 
 #include <algorithm> // std::copy
 
@@ -76,7 +73,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief different set of choices at each position in Entity's traits
+/// @brief different set of choices at each position in Entity's traits
 class PositionSpecificRandomizer : public EntityRandomizer {
 public:
 	typedef utility::pointer::shared_ptr< PositionSpecificRandomizer > OP;

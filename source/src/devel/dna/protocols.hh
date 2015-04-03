@@ -14,21 +14,14 @@
 #ifndef INCLUDED_devel_dna_protocols_hh
 #define INCLUDED_devel_dna_protocols_hh
 
-// AUTO-REMOVED #include <protocols/dna/typedefs.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 //#include <protocols/moves/TrialMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 
@@ -76,7 +69,7 @@ packing_specificity_test_fast(
 	bool const dump_pdbs = true
 );
 
-///@brief Try all possible dna basepairs at the motif positions
+/// @brief Try all possible dna basepairs at the motif positions
 ///evaluate their energies with a repack
 ///requires that the pose already have base partner info set
 ///

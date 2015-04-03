@@ -23,14 +23,11 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/exit.hh>
 
 #include <protocols/loops/Loops.hh>
@@ -48,8 +45,6 @@ static thread_local basic::Tracer TR( "protocols.relax.Ramady" );
 namespace protocols {
 namespace relax {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_target_pose,  protocols::loops::Loops &exclude_regions ){
@@ -101,11 +96,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 		}
 
 
-
-
-
 	}
-
 
 
 bool rama_list_pred( const std::pair < core::Size, core::Real > &left, const std::pair < core::Size, core::Real > &right )
@@ -272,12 +263,8 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 		TR << "RAMADY " << rama_e << "  " << post_fix_rama_e << "  " << change_rms << std::endl;
 
 
-
-
 		//pose.dump_pdb("ramarep_" + utility::to_string( i ) + "_" + "post.pdb" );
 	}
-
-
 
 
 	// Final RamaCheck
@@ -300,7 +287,6 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 	}
 
 }
-
 
 
 }

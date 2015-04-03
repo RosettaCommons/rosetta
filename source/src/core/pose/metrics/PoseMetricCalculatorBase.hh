@@ -142,7 +142,6 @@ private:
 };
 
 
-
 } // namespace metrics
 } // namespace pose
 } // namespace core

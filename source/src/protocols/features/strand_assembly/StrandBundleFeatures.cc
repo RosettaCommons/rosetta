@@ -253,8 +253,6 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 /****** <end> writing strand_pairs ******/
 
 
-
-
 /****** <begin> writing sandwich ******/
 
 		// PrimaryKey
@@ -870,7 +868,6 @@ StrandBundleFeatures::get_nearest_res_from_strand(
 } //get_nearest_res_from_strand
 
 
-
 	
 bool
 StrandBundleFeatures::judge_facing(
@@ -1114,7 +1111,7 @@ StrandBundleFeatures::sheet_dis_by_terminals(
 
 		
 
-///@brief collect all the feature data for the pose
+/// @brief collect all the feature data for the pose
 core::Size
 StrandBundleFeatures::report_features(
 	core::pose::Pose const & pose,

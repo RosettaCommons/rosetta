@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief Application level code for relax-type protocols
-/// @detailed
+/// @details
 ///
 /// use JumpSpecificAbrelax in the following way:
 ///
@@ -154,7 +154,6 @@
 #include <protocols/simple_filters/SheetFilter.hh>
 
 
-
 //#include <protocols/simple_moves/MinMover.hh>
 
 //numeric headers
@@ -189,8 +188,6 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-
-
 
 
 static thread_local basic::Tracer tr( "protocols.abinitio.JumpSpecificAbrelax" );
@@ -283,7 +280,7 @@ OPT_1GRP_KEY( Integer,         process, nproc )
 OPT_1GRP_KEY( Boolean,         process, condor )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details registering of options that are relevant for JumpSpecificAbrelax
+/// @details registering of options that are relevant for JumpSpecificAbrelax
 void protocols::abinitio::JumpSpecificAbrelax::register_options() {
 
 	NEW_OPT( dgront::jump_cheat, "read specific jump point from a space-separated values",0);
@@ -457,7 +454,7 @@ private:
 	mutable ConstraintSetOP constraints_;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail c'stor - nothing special
+/// @detail c'stor - nothing special
 JumpSpecificAbrelax::JumpSpecificAbrelax() :
 	silent_score_file_( NULL ),
 	native_pose_( NULL ),
@@ -472,12 +469,12 @@ JumpSpecificAbrelax::JumpSpecificAbrelax() :
 	abrelax_checkpoints_( "Abrelax" )
 {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail add a PoseEvaluator derived instance for decoy-processing
+/// @detail add a PoseEvaluator derived instance for decoy-processing
 void JumpSpecificAbrelax::add_evaluation( PoseEvaluatorOP eval ) {
 	evaluator_->add_evaluation( eval );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@details setup of Application data that is used for both, fold() and run()
+/// @details setup of Application data that is used for both, fold() and run()
 /// this is mainly stuff for scoring and evaluation ( process_decoys(), evaluator_ )
 void JumpSpecificAbrelax::setup() {
 	using namespace basic::options::OptionKeys;
@@ -569,7 +566,7 @@ void JumpSpecificAbrelax::setup() {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// ///@detail minimizes pose with chainbreak score switched on
+// /// @detail minimizes pose with chainbreak score switched on
 // /// this reduces the score immensely if decoys are read from silent file --> somehow the
 // /// silent-file reader fucks up the chainbreaks... ( not noticable rmsd-wise )
 // /// it is probably due to random placement of the variant atoms -> short minimization and they sit in the right place
@@ -637,7 +634,7 @@ bool JumpSpecificAbrelax::close_loops( pose::Pose &pose, scoring::ScoreFunctionO
 	return success;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail run all evaluations on the decoy from this function
+/// @detail run all evaluations on the decoy from this function
 /// if you want these evaluations also available during internal stages of the protocols -->
 ///     put them into a PoseEvaluator and use add_evaluation in setup()
 /// otherwise you can also use "manual" code right here in process_decoy --> this will only appear in final
@@ -686,7 +683,7 @@ void JumpSpecificAbrelax::initialize_constraint_forest( pose::Pose & pose ) {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail  read constraints file (once) and constraints_set to the pose (each call)
+/// @detail  read constraints file (once) and constraints_set to the pose (each call)
 void JumpSpecificAbrelax::add_constraints( pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	using namespace basic::options::OptionKeys;
@@ -820,7 +817,7 @@ void JumpSpecificAbrelax::insert_template_frags( core::pose::Pose &pose, kinemat
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail loop over structures in silent-input file
+/// @detail loop over structures in silent-input file
 /// small trick is used to also have native structure in the set of analysis:
 /// it is added to the collection of silent_file-structures manually
 /// TODO we need to do something about difference between fullatom and centroid input!
@@ -938,7 +935,7 @@ void JumpSpecificAbrelax::do_rerun() {
 	if ( outsfd ) outsfd->write_all( option[ out::file::silent ]() );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail loop over structures in silent-input file
+/// @detail loop over structures in silent-input file
 /// small trick is used to also have native structure in the set of analysis:
 /// it is added to the collection of silent_file-structures manually
 /// TODO we need to do something about difference between fullatom and centroid input!
@@ -1093,7 +1090,7 @@ void JumpSpecificAbrelax::do_distributed_rerun() {
 	jobdist.shutdown();
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold() if option[ start_native ] is active
+/// @detail called by setup_fold() if option[ start_native ] is active
 /// the routine defines a fragment of the length of the structure
 /// steals the fragment from the native and applies it to the decoy
 /// native needs to be idealized!
@@ -1131,7 +1128,7 @@ void JumpSpecificAbrelax::copy_structure( core::pose::Pose & extended_pose, core
 	frag.apply( extended_pose, long_frame );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(): setup the decoy pose with correct target sequence and extended structure
+/// @detail called by setup_fold(): setup the decoy pose with correct target sequence and extended structure
 ///
 void JumpSpecificAbrelax::generate_extended_pose( core::pose::Pose &extended_pose, std::string const& sequence ) const {
 
@@ -1159,7 +1156,7 @@ void JumpSpecificAbrelax::generate_extended_pose( core::pose::Pose &extended_pos
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(): read fragment libraries, I strongly suggest to use different options than A and B
+/// @detail called by setup_fold(): read fragment libraries, I strongly suggest to use different options than A and B
 /// if option[ steal ] fragments from the native structure are added to the set.
 /// native structure needs to be idealized for this!
 void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& fragsetB ) const {
@@ -1281,7 +1278,7 @@ void JumpSpecificAbrelax::setup_fragments() {// FragSetOP& fragsetA, FragSetOP& 
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(). Read template definitions
+/// @detail called by setup_fold(). Read template definitions
 void JumpSpecificAbrelax::setup_templates() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -1307,7 +1304,7 @@ void JumpSpecificAbrelax::setup_templates() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
+/// @detail called by setup_fold(). Read jump definitions / barcodes (not yet) etc.
 /// if jump_def_ points to an object we will use JumpFoldConstraint-protocol in fold()
 void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 	using namespace basic::options;
@@ -1461,7 +1458,7 @@ void JumpSpecificAbrelax::setup_jumps(	pose::Pose const& extended_pose ) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail setup_fold() all initialization that is necessary to run abinitio production loop in fold()
+/// @detail setup_fold() all initialization that is necessary to run abinitio production loop in fold()
 /// read fragments, make pose from sequence, get constraints, set jumps, movemap .etc
 /// the two parameters are OUTPUT:
 ///    extended_pose to run A) with ( might actually contain native starting structure (option!) )
@@ -1707,7 +1704,7 @@ scoring::ScoreFunctionOP JumpSpecificAbrelax::generate_scorefxn( bool fullatom )
 	return scorefxn;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail everything happens in fold()!
+/// @detail everything happens in fold()!
 /// setup of stuff that is not needed for rerun()
 ///    read fragments
 ///    [ optional ] steal fragments ( take fragments from native pose )
@@ -1938,7 +1935,7 @@ bool sort_PoseWithScore( const PoseWithScore& left, const PoseWithScore& right )
 	return left.second < right.second;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail do fast relax on multiple structures that have been visited during abinitio-protocol.
+/// @detail do fast relax on multiple structures that have been visited during abinitio-protocol.
 /// MIKE: please give more documentation to this
 bool JumpSpecificAbrelax::multi_fast_relax(
 	 Protocol& abinitio_protocol,
@@ -2005,7 +2002,7 @@ bool JumpSpecificAbrelax::multi_fast_relax(
 	return endrun;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail full-atom relax of decoys
+/// @detail full-atom relax of decoys
 /// uses either ClassicRelax or FastRelax protocols.
 void JumpSpecificAbrelax::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {
 	using namespace basic::options::OptionKeys;
@@ -2044,7 +2041,7 @@ void JumpSpecificAbrelax::relax( pose::Pose& pose, core::scoring::ScoreFunctionO
 	}
 } // JumpSpecificAbrelax::relax
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail after setup() run either fold() or rerun()
+/// @detail after setup() run either fold() or rerun()
 void JumpSpecificAbrelax::run() {
 	using namespace basic::options::OptionKeys;
 	if ( !basic::options::option[ basic::options::OptionKeys::in::path::database ].user() ) {
@@ -2071,7 +2068,7 @@ void JumpSpecificAbrelax::run() {
 
 //============= Implementation of PoseEvaluators ======================================
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail
+/// @detail
 void ShowViolation::apply( pose::Pose &pose, std::string, io::silent::SilentStruct& ) const {
 	using namespace basic::options::OptionKeys;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
@@ -2080,7 +2077,7 @@ void ShowViolation::apply( pose::Pose &pose, std::string, io::silent::SilentStru
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-///@detail
+/// @detail
 void ComputeTotalDistCst::apply( pose::Pose &pose, std::string, io::silent::SilentStruct &pss ) const {
 	using namespace basic::options::OptionKeys;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {

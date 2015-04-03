@@ -17,7 +17,6 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>

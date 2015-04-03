@@ -21,14 +21,10 @@
 #include <core/pose/Pose.hh> // WIN32 INCLUDE
 #endif
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <fstream>
-// AUTO-REMOVED #include <iostream>
 #include <map>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector1.hh>
 
@@ -58,10 +54,10 @@ typedef std::pair<std::string, Size> TagScorePair;
 typedef std::map<std::string, Size> TagScoreMap;
 
 
-///@brief An object wrapper for reading atom_tree_diff files,
+/// @brief An object wrapper for reading atom_tree_diff files,
 /// complete with embedded reference structures.
 ///
-///@details Only works with uncompressed files, because we have to be able to
+/// @details Only works with uncompressed files, because we have to be able to
 /// to random access (seekg) to pull out single structures in random order.
 ///
 class AtomTreeDiff : public utility::pointer::ReferenceCount
@@ -72,7 +68,7 @@ public:
 	AtomTreeDiff(std::string filename);
 	virtual ~AtomTreeDiff();
 
-	///@brief returns true if a reference struct with the given tag is present
+	/// @brief returns true if a reference struct with the given tag is present
 	bool has_ref_pose(std::string const & tag) const;
 
 	/// @brief True if a (non-reference) structure with the given tag is present in the file
@@ -142,20 +138,20 @@ private:
 
 }; // class AtomTreeDiff
 
-///@brief Helper function for writing entries -- not usually called by clients.
+/// @brief Helper function for writing entries -- not usually called by clients.
 void dump_score_line(
 	std::ostream & out,
 	std::string const & pose_tag,
 	std::map< std::string, core::Real > const & scores
 );
 
-///@brief Helper function for writing entries -- not usually called by clients.
+/// @brief Helper function for writing entries -- not usually called by clients.
 /* void dump_score_line(
 	std::ostream & out,
 	std::string const & pose_tag
 ); */
 
-///@brief Embeds a reference pose as PDB coords + foldtree; will be used for reconstructing subsequent diffs.
+/// @brief Embeds a reference pose as PDB coords + foldtree; will be used for reconstructing subsequent diffs.
 void dump_reference_pose(
 	std::ostream & out,
 	std::string const & pose_tag,
@@ -163,7 +159,7 @@ void dump_reference_pose(
 	core::pose::Pose const & pose
 );
 
-///@brief Encodes pose relative to ref_pose by noting which atom_tree DOFs are different.
+/// @brief Encodes pose relative to ref_pose by noting which atom_tree DOFs are different.
 void dump_atom_tree_diff(
 	std::ostream & out,
 	std::string const & pose_tag,
@@ -175,7 +171,7 @@ void dump_atom_tree_diff(
 	int bondlen_precision = 2
 );
 
-///@brief Gets next tag and scores from the stream, or returns false if none.
+/// @brief Gets next tag and scores from the stream, or returns false if none.
 /// Call this to find desired structure, then call pose_from_atom_tree_diff().
 bool header_from_atom_tree_diff(
 	std::istream & in,
@@ -184,7 +180,7 @@ bool header_from_atom_tree_diff(
 );
 
 
-///@brief Sets pose = ref_pose and then starts modifying DOFs in pose to recreate a saved structure.
+/// @brief Sets pose = ref_pose and then starts modifying DOFs in pose to recreate a saved structure.
 /// Call after header_from_atom_tree_diff().  Returns false on error.
 bool pose_from_atom_tree_diff(
 	std::istream & in,
@@ -193,7 +189,7 @@ bool pose_from_atom_tree_diff(
 );
 
 
-///@brief Helper for dump_atom_tree_diff(), fills map with weighted score terms.
+/// @brief Helper for dump_atom_tree_diff(), fills map with weighted score terms.
 void map_of_weighted_scores(
 	core::pose::Pose & pose, //< pose is not modified but scoring is a non-const op
 	core::scoring::ScoreFunction const & sfxn,
@@ -201,18 +197,18 @@ void map_of_weighted_scores(
 );
 
 
-///@brief For use in deciding how many digits of precision you need when diffing an atom tree.
+/// @brief For use in deciding how many digits of precision you need when diffing an atom tree.
 void rms_error_with_noise(
 	core::pose::Pose const & ref_pose,
 	int bb_precision = 6,
 	int sc_precision = 4
 );
 
-///@brief Test if given file is an atom_tree_diff
+/// @brief Test if given file is an atom_tree_diff
 bool file_is_atom_tree_diff( std::string const & filename );
 
-///@brief Test if given stream is an atom_tree_diff
-///@details If everything goes right, after the call, the read position should be at the same place it was to start with
+/// @brief Test if given stream is an atom_tree_diff
+/// @details If everything goes right, after the call, the read position should be at the same place it was to start with
 bool file_is_atom_tree_diff( std::istream & in );
 
 } // silent

@@ -47,9 +47,7 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/LexicographicalIterator.fwd.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/vector1_bool.hh>
 
 // Numeric headers

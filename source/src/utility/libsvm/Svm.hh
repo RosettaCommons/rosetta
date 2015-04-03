@@ -46,7 +46,7 @@ struct svm_parameter
 	int probability; /* do probability estimates */
 };
 
-//
+
 // svm_model
 // 
 struct svm_model

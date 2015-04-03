@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/polar_hydrogens/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

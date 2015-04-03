@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.cc
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -49,7 +47,6 @@
 // Objexx headers
 
 // C++ headers
-// AUTO-REMOVED #include <iomanip>
 
 #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 #include <utility/vector1.hh>
@@ -201,7 +198,6 @@ TensorsOptimizerSvd::dfunc(core::optimization::Multivec const & vars,
 	std::cerr << std::endl;
 	*/
 }
-
 
 
 core::Real

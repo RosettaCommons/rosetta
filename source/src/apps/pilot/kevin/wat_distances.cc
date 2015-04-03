@@ -56,7 +56,7 @@ basic::options::BooleanOptionKey const use_varsoldist_sasa_calc( "use_varsoldist
 basic::options::BooleanOptionKey const water_dist_H( "water_dist_H_cutoff" );
 basic::options::BooleanOptionKey const water_dist_O( "water_dist_O_cutoff" );
 
-///@brief
+/// @brief
 class xtal_water_bunsat : public protocols::moves::Mover {
 public:
 	xtal_water_bunsat() {}

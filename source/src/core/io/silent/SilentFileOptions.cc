@@ -124,7 +124,6 @@ SilentFileOptions::parse_my_tag(
 }
 
 
-
 } // namespace
 } // namespace
 } // namespace

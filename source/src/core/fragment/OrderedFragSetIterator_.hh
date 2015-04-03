@@ -11,7 +11,7 @@
 /// @brief  yields a simple implementation of a fragset
 /// @author Oliver Lange ( olange@u.washington.edu)
 /// @date   Wed Aug 22 12:08:31 2007
-///
+
 
 #ifndef INCLUDED_core_fragment_OrderedFragSetIterator__HH
 #define INCLUDED_core_fragment_OrderedFragSetIterator__HH
@@ -27,9 +27,7 @@
 //#include <core/fragment/FragSet.hh>
 //#include <core/fragment/Frame.hh>
 //#include <core/fragment/Frame.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
-// AUTO-REMOVED #include <core/fragment/OrderedFragSet.fwd.hh>
 
 // Project Headers
 //#include <core/pose/Pose.hh>
@@ -43,7 +41,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 #include <core/fragment/Frame.hh>
 #include <utility/vector1.hh>

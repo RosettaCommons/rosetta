@@ -12,7 +12,6 @@
 /// @author
 
 
-
 // Unit Headers
 #include <protocols/canonical_sampling/BiasEnergy.hh>
 #include <protocols/canonical_sampling/BiasEnergy.tmpl.hh>

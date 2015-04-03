@@ -126,9 +126,6 @@ class FoldTreeTest : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS(fifty_foldtree_after, sixty_foldtree);
 
 
-
-
-
 		//Test a more complex case:
 		using core::kinematics::Edge;
 		core::Size const cbreak(25);//arbitrary chainbreak position
@@ -161,10 +158,8 @@ class FoldTreeTest : public CxxTest::TestSuite {
 			core::kinematics::remodel_fold_tree_to_account_for_insertion(twochain_tree, 30, 10));
 
 
-
 		//This next line tests that it crashes (as it should) if you try to insert on a jumping point using this simple algorithm
 		TS_ASSERT_THROWS_ANYTHING(core::kinematics::remodel_fold_tree_to_account_for_insertion(twochain_tree, 25, 10));
-
 
 
 		//Test complex case #1 (stolen from AnchoredDesign integration test)
@@ -184,9 +179,6 @@ class FoldTreeTest : public CxxTest::TestSuite {
 		//anchored_design_fold_tree.show(std::cout);
 		//anchored_design_fold_tree_10at80.show(std::cout);
 		//core::kinematics::remodel_fold_tree_to_account_for_insertion(anchored_design_fold_tree, 80, 10).show(std::cout);
-
-
-
 
 
 		//Test complex case #2 (stolen from UBQ_E2_thioester_extra_bodies integration test)

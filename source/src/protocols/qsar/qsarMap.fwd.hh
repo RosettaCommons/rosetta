@@ -20,8 +20,6 @@ namespace protocols {
 namespace qsar {
 
 
-
-
 class qsarPoint;
 
 class qsarMap;

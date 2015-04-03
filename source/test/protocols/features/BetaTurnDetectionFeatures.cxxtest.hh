@@ -25,7 +25,6 @@
 #include <string>
 
 
-
 class BetaTurnDetectionFeaturesTest : public CxxTest::TestSuite {
 
 public:

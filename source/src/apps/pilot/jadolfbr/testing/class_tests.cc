@@ -153,8 +153,6 @@ public:
 		tearDown();
 
 
-
-
 	}
 	//"/home/jadolfbr/Documents/modeling/databases/antibody_databases/PyIgClassify/DBOUT/renumbered_pdbs/1pg7L-1pg7H.pdb"
 	void setUp() {
@@ -227,10 +225,7 @@ private:
 };
 
 
-
 int main(int argc, char* argv[]){
-
-
 
 
 	try{

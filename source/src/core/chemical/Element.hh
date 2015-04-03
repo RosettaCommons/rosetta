@@ -216,8 +216,6 @@ ElectronConfiguration  electron_configuration_;                   //!< electron 
 utility::vector0< core::Real > properties_; //!< real-valued properties
 
 
-
-
 }; // class Element
 
 inline std::ostream &
@@ -229,8 +227,6 @@ inline std::istream &
 operator>> (std::istream & in, Element & obj ){
 	return obj.read( in );
 }
-
-
 
 
 } // namespace core

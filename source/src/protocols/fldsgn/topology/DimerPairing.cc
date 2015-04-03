@@ -19,7 +19,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace fldsgn {
 namespace topology {
@@ -147,7 +146,6 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 } // finalize
 
 
-
 std::ostream& operator<<( std::ostream & out, const DimerPairings &dps )
 {
   using ObjexxFCL::format::I;
@@ -168,7 +166,6 @@ std::ostream& operator<<( std::ostream & out, const DimerPairings &dps )
   }
 	return out;
 }
-
 
 
 } // ns topology

@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -32,7 +32,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.resonances" );
@@ -60,7 +59,7 @@ LabelResonance::LabelResonance(
 
 LabelResonance::~LabelResonance() {}
 
-///@brief match the proton and corresponding label atom at same time
+/// @brief match the proton and corresponding label atom at same time
 bool LabelResonance::match2D(
   	core::Real /*proton_freq*/, //proton_frequenices are ignored
 		core::Real proton_error,

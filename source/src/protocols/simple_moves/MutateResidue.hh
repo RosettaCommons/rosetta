@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 //parsing
 #include <utility/tag/Tag.fwd.hh>
@@ -40,11 +39,11 @@ class MutateResidue : public protocols::moves::Mover
 private:
 	typedef protocols::moves::Mover parent;
 public:
-	///@brief default ctor
+	/// @brief default ctor
 	MutateResidue();
-	///@brief copy ctor
+	/// @brief copy ctor
 	MutateResidue(MutateResidue const& dm);
-	///@brief Mutate a single residue to a new amino acid
+	/// @brief Mutate a single residue to a new amino acid
 	MutateResidue( core::Size const target, std::string const new_res );
 	MutateResidue( core::Size const target, int const new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
 	virtual ~MutateResidue() {};

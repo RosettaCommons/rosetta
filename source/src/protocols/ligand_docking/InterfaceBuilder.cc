@@ -10,7 +10,7 @@
 /// @file   core/pack/task/ResfileReader.cc
 /// @brief  implementation of resfile reader and its command classes
 /// @author Gordon Lemmon (glemmon@gmail.com)
-///
+
 
 // Project Headers
 #include <core/pose/Pose.hh>

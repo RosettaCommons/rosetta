@@ -17,20 +17,16 @@
 
 
 #include <core/scoring/dna/setup.hh>
-// AUTO-REMOVED #include <core/scoring/dna/base_geometry.hh>
 #include <core/scoring/dna/BasePartner.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-
 
 
 // // // C++ headers
@@ -171,7 +167,6 @@ setup_suite_pose(
 	vrt1->set_xyz("ORIG", Vector(6,2,0) );
 	suite_pose.append_residue_by_bond( *vrt3 );
 }
-
 
 
 } // ns cartesian_frags

@@ -20,12 +20,10 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -74,13 +72,13 @@ public:
 	virtual std::string get_name() const;
 	virtual void show(std::ostream & output=std::cout) const;
 
-	///@brief update the vector of movemaps, one for each loop in loops_
+	/// @brief update the vector of movemaps, one for each loop in loops_
 	void
 	update_movemap_vectors(
 		core::pose::Pose & pose,
 		utility::vector1<core::kinematics::MoveMap> & move_maps );
 
-	///@brief update the vector of vectors of moveable side-chain positions, one for each loop in loops_
+	/// @brief update the vector of vectors of moveable side-chain positions, one for each loop in loops_
 	void
 	update_allow_sc_vectors(
 		core::pose::Pose & pose,

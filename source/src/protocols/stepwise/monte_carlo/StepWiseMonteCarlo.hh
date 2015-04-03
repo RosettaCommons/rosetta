@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/monte_carlo/StepWiseMonteCarlo.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -61,7 +61,7 @@ namespace monte_carlo {
 		virtual
 		void apply ( core::pose::Pose & pose );
 
-		///@brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+		/// @brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
 		virtual void set_native_pose( core::pose::PoseCOP pose );
 
 		void

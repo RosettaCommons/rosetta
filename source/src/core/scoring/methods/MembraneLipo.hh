@@ -41,7 +41,7 @@ public:
 
 public:
 
-	///
+
 	MembraneLipo();
 
 	/// clone

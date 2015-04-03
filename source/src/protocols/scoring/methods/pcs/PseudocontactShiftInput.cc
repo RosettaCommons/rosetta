@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/PseudocontactShiftInput.cc
  ///
  /// @brief Read input .npc input file
  ///
- /// @detailed The following classes are responsable to read / parse the PCS input file (.npc format)
+ /// @details The following classes are responsable to read / parse the PCS input file (.npc format)
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 

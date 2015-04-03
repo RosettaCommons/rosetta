@@ -226,7 +226,6 @@ Tracer::calculate_tracer_visibilities()
 }
 
 
-
 /// @details Constructor of Tracer object.
 /// Since most of the Tracer object will be created as static - they Constuctor will be called before
 /// Option system is initialized. So we can't really calculate any vizibility or priority here.
@@ -522,7 +521,6 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 }
 
 
-
 /// @dtails Write the contents of str to sout prepending the channel
 /// name on each line if the print_channel_name flag is set.
 template <class out_stream>
@@ -548,8 +546,6 @@ void Tracer::prepend_channel_name( out_stream & sout, std::string const &str )
 		sout << str;
 	}
 }
-
-
 
 
 /// @details Inform Tracer that is contents was modified, and IO is in order.
@@ -581,8 +577,6 @@ T(std::string const & channel, TracerPriority priority)
 	t->begining_of_the_line_ = true;
 	return *t;
 }
-
-
 
 
 /// @details Set OStringStream object to which all Tracers output

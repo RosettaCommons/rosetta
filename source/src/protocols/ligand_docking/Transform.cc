@@ -205,7 +205,6 @@ void Transform::apply(core::pose::Pose & pose)
 	}
 
 
-
 	for(core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat)
 	{
 		pose = starting_pose;

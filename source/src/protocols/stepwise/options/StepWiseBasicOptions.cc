@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/options/StepWiseBasicOptions.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

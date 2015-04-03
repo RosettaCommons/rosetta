@@ -14,10 +14,8 @@
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResFilterCreator.hh>
 
-// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh>
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <core/pack/task/operation/ResFilter.hh>
 #include <utility/vector0.hh>
@@ -76,7 +74,7 @@ ResFilterFactory::factory_register( ResFilterCreatorOP creator )
 	add_creator( creator );
 }
 
-///@brief add a ResFilter prototype, using its default type name as the map key
+/// @brief add a ResFilter prototype, using its default type name as the map key
 void
 ResFilterFactory::add_creator( ResFilterCreatorOP creator )
 {
@@ -89,7 +87,7 @@ bool ResFilterFactory::has_type( std::string const & type ) const
 	return ( filter_creator_map_.find( type ) != filter_creator_map_.end() );
 }
 
-///@brief return new ResFilter by key lookup in filter_creator_map_ (new ResFilter parses Tag if provided)
+/// @brief return new ResFilter by key lookup in filter_creator_map_ (new ResFilter parses Tag if provided)
 ResFilterOP
 ResFilterFactory::newResFilter(
 	std::string const & type,

@@ -19,7 +19,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PeptideStapleMover.hh>
 
 #include <protocols/simple_moves/PeptideStapleMover.fwd.hh>
 #include <utility/vector1.hh>

@@ -16,9 +16,6 @@
 #define INCLUDED_protocols_kinmatch_FunGroupTK_hh
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
@@ -80,7 +77,7 @@ protected:
     std::map<std::string,utility::vector1<core::conformation::ResidueOP> > rsd_;
     core::chemical::ResidueTypeSetCAP frs_;
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FunGroupTK();
     FunGroupTK(
         core::pose::Pose & p_in,

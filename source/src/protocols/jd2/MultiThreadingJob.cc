@@ -12,10 +12,7 @@
 
 #include <protocols/jd2/MultiThreadingJob.hh>
 #include <protocols/jd2/MultiThreadingJob.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/types.hh>
 

@@ -20,7 +20,6 @@
 #include <protocols/fldsgn/topology/BB_Pos.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -42,7 +41,6 @@
 //Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 static thread_local basic::Tracer TR( "protocols.fldsgn.potentials.sspot.HSPairPotential", basic::t_info );

@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_enzdes_EnzdesMovers_hh
 
 #include <protocols/enzdes/EnzdesMovers.fwd.hh>
-// AUTO-REMOVED #include <protocols/enzdes/EnzdesBaseProtocol.fwd.hh>
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -26,23 +25,18 @@
 
 // Package headers
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <utility/vector1.hh>
 

@@ -47,7 +47,7 @@ static thread_local basic::Tracer tr( "MPIPool_ConvergenceCheck" );
 
   //bool protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD::options_registered_( false );
 
-  //
+
   core::Size MPIPool_RMSD::master_node_;
 
 using namespace ObjexxFCL;
@@ -67,10 +67,8 @@ int const MPI_FINISHED = 1008;
   //int const MASTER_NODE = master_node_;
 
 
-
 typedef FArray2P<double> FArray2P_double;
 typedef FArray2D<double> FArray2D_double;
-
 
 
 MPIPool_RMSD::MPIPool_RMSD( std::string silent_file ):

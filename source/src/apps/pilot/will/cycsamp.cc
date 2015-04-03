@@ -114,7 +114,6 @@ OPT_1GRP_KEY(Boolean,probabilities,use_hierarchical_clustering)
 OPT_1GRP_KEY(Integer, probabilities, hierarchical_max_cache_size)
 
 
-
 struct AbsFunc : public core::scoring::constraints::Func {
 	AbsFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
 	core::scoring::constraints::FuncOP
@@ -431,7 +430,6 @@ void* doit(void*) {
 	                sffastd->set_weight(core::scoring::fa_intra_rep,0.4); // up from tiny
 
 
-
 	// compute_num_bins(N);
 	// utility_exit_with_message("only computing num bins! remove these lines");
 
@@ -598,32 +596,11 @@ int main( int argc, char * argv [] ) {
 	}
 
 
-
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

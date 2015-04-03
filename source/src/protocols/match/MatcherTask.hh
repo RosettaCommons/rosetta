@@ -21,12 +21,10 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/geometry/BoundingBox.hh>

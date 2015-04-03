@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
@@ -31,7 +30,6 @@
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

@@ -63,7 +63,7 @@ SpecificResiduesNearInterfaceFilterCreator::keyname() const {
 /////////// End Creator /////////////////////
 
 
-///@brief default ctor
+/// @brief default ctor
 SpecificResiduesNearInterfaceFilter::SpecificResiduesNearInterfaceFilter() :
 	parent( "SpecificResiduesNearInterfaceFilter" ),
 	task_factory_(/* NULL */),

@@ -732,7 +732,6 @@ public: // Properties
 	}
 
 
-
 	/// @brief Legal value string representation
 	inline
 	std::string

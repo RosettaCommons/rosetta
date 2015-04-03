@@ -18,12 +18,9 @@
 // Unit headers
 #include <core/scoring/methods/SymmetricLigandEnergy.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodCreator.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
@@ -39,7 +36,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class SymmetricLigandEnergy : public ContextIndependentOneBodyEnergy {
 public:
 
@@ -60,7 +57,7 @@ public:
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
 
-	///
+
 	virtual
 	void
 	residue_energy(
@@ -88,7 +85,6 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 virtual
 core::Size version() const;
-
 
 
 };

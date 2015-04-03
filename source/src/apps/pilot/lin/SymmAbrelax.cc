@@ -14,7 +14,6 @@
 // libRosetta headers
 
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/fibril/fibril_util.hh>
@@ -24,10 +23,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <basic/options/util.hh>//option.hh>
@@ -35,28 +31,15 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 // packing
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Auto-header: duplicate removed #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
-// AUTO-REMOVED #include <protocols/abinitio/JumpingFoldConstraints.hh>
-// AUTO-REMOVED #include <protocols/abinitio/Templates.hh>
-// AUTO-REMOVED #include <protocols/abinitio/TemplateJumpSetup.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/jumping/util.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -66,13 +49,8 @@
 // Auto-header: duplicate removed #include <core/sequence/Sequence.hh>
 // Auto-header: duplicate removed #include <core/id/SequenceMapping.hh>
 
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
-// AUTO-REMOVED #include <core/fragment/JumpingFrame.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
@@ -318,7 +296,6 @@ SymmAbRelaxTest()
     }
   }
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

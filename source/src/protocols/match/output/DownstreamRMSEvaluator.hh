@@ -23,18 +23,14 @@
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <core/id/AtomID.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

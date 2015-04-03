@@ -18,8 +18,6 @@
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -27,9 +25,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
 #include <platform/types.hh>
@@ -42,7 +37,6 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-
 
 
 // --------------- Test Class --------------- //
@@ -107,7 +101,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 	}
 
 
-	///@brief old version of this test that uses a cutoff of 16nbs only for surface exposed residues
+	/// @brief old version of this test that uses a cutoff of 16nbs only for surface exposed residues
 	void x_test_hASA_patch_energy() {
 
 		// Values from the database file... 0-24 is 3.524; 25-50 is something else...

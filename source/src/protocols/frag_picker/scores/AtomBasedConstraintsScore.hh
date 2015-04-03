@@ -28,25 +28,24 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols {
 namespace frag_picker {
 namespace scores {
 
 /// @brief A base class for all scoring methods that need atom coordinates
-/// @detailed The base class provides an access to atom coordinates from the current chunk
+/// @details The base class provides an access to atom coordinates from the current chunk
 /// It takes care of caching proper atoms from the pose for fast access.
 class AtomBasedConstraintsScore: public CachingScoringMethod {
 public:
 
 	/// @brief Prepare an atom-based score that utilizes some user-defined atoms
-	/// @detailed User may provide names of atoms that will be cached when a new
+	/// @details User may provide names of atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	AtomBasedConstraintsScore(Size, Real, bool, Size, utility::vector1<
 			std::string>, std::string);
 
 	/// @brief Prepare an atom-based score that utilizes the following predefined atoms: N, CA, C, O and CB
-	/// @detailed These atoms that will be cached when a new
+	/// @details These atoms that will be cached when a new
 	/// chunk is considered (i.e. at every do_caching() call)
 	AtomBasedConstraintsScore(Size, Real, bool, Size, std::string);
 
@@ -78,20 +77,20 @@ public:
 	}
 
 	/// @brief Returns a map that defines all constrained atoms used by this scoring method
-	/// @detailed Returned map defines the order of atoms as they are stored inside this object.
+	/// @details Returned map defines the order of atoms as they are stored inside this object.
 	/// Indexes defined y this map can be used as arguments for has_atom() and get_atom_coordinates() methods.
 	inline std::map<std::string, Size> get_constrainable_atoms_map() {
 		return constrainable_atoms_;
 	}
 
 	/// @brief returns an internal ID assigned to a given atom name
-	/// @detailed this ID remains the same for all residues
+	/// @details this ID remains the same for all residues
         inline Size get_constrained_atom_id(std::string atom_name) {
 		return constrainable_atoms_.find(atom_name)->second;
 	}
 
 	/// @brief returns a name of a constrained atom when its internal ID is known
-	/// @detailed this is the oposite to get_constrained_atom_id(std::string)
+	/// @details this is the oposite to get_constrained_atom_id(std::string)
 	std::string get_constrained_atom_name(Size atom_id);
 
 	/// @brief provides an access to the size of the length of a query sequence

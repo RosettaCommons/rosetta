@@ -35,7 +35,6 @@
 #include <protocols/abinitio/BrokerMain.hh>
 
 
-
 int main(int argc, char *argv[]) {
 
 	try {

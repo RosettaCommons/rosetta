@@ -126,7 +126,6 @@ void spline_coeffs(
 }
 
 
-
 void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB) {
 debug_assert(mapA.u1() == mapB.u1());
 debug_assert(mapA.u2() == mapB.u2());
@@ -157,7 +156,6 @@ ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > cons
 }
 
 
-///
 /// 4D interpolants
 
 /// @brief spline interpolation with periodic boundaries

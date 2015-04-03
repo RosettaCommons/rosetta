@@ -25,7 +25,6 @@
 
 #include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>

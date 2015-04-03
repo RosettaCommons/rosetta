@@ -82,6 +82,4 @@ private:
 } //namespace protocols
 
 
-
-
 #endif // INCLUDED_protocols_forge_constraints_ConstraintFileRCG_HH

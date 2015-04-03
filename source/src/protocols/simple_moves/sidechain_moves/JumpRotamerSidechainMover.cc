@@ -245,9 +245,6 @@ JumpRotamerSidechainMover::compute_tempered_rotamer_probabilities(
 }
 
 
-
-
-
 } // sidechain_moves
 } // simple_moves
 } // protocols

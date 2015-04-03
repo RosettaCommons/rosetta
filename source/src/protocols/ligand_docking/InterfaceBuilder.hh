@@ -17,7 +17,6 @@
 //// Unit Headers
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/LigandArea.hh>
 
 //// Package Headers
 #include <core/types.hh>
@@ -32,7 +31,6 @@
 
 //// C++ headers
 #include <map>
-// AUTO-REMOVED #include <set>
 
 #include <protocols/ligand_docking/LigandArea.fwd.hh>
 
@@ -81,7 +79,7 @@ private:
 		core::pose::Pose const & pose
 	) const;
 
-	///@brief First call find_ligand_residues
+	/// @brief First call find_ligand_residues
 	void find_protein_residues(
 			ligand_options::Interface & interface,
 			core::Size ligand_residue_id,

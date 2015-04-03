@@ -12,7 +12,6 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
@@ -25,7 +24,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/cluster/cluster.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/file/FileName.hh>
@@ -70,7 +68,6 @@ using namespace basic::options;
 using namespace evaluation;
 
 static thread_local basic::Tracer tr( "protocols.cluster" );
-
 
 
 std::map< std::string, core::Real > read_template_scores( const std::string filename ){
@@ -821,24 +818,6 @@ void ClusterBase::create_constraints(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ClusterPhilStyle::ClusterPhilStyle() : ClusterBase()
 {
 
@@ -978,7 +957,6 @@ void ClusterPhilStyle::do_redistribution() {
 	}
 
 
-
 }
 
 
@@ -1025,34 +1003,6 @@ get_distance_measure(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 AssignToClustersMover::AssignToClustersMover( ClusterBaseOP cluster_base): GatherPosesMover()

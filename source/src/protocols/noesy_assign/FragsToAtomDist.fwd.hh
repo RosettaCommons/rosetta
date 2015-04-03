@@ -11,7 +11,6 @@
 /// @brief  simulate fragments and recored atom distances
 /// @author Zaiyong Zhang (zaiyong.zhang@tum.de)
 /// @date   Thr NOV 22 13:22:31 2012
-///
 
 
 #ifndef INCLUDED_protocols_noesy_assign_FragstoATomDist_fwd_hh

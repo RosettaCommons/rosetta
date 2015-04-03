@@ -66,7 +66,7 @@ using core::Size;
 using core::Real;
 
 static thread_local basic::Tracer tr2( "brunette.tj_util" );
-///@brief inputs the sequence alignments and keeps them ordered the way they
+/// @brief inputs the sequence alignments and keeps them ordered the way they
 /// were in the alingment.filt file.
 
 vector1<SequenceAlignment> input_alignments(){
@@ -164,7 +164,7 @@ std::map< std::string, core::pose::Pose > poses_from_cmd_line_noPDBtag(
   return poses;
 }
 
-///@add side chains onto partial threads
+/// @add side chains onto partial threads
 void add_side_chains_partialthread(Pose pose){
   using namespace core::scoring;
   ScoreFunctionOP scorefxn( get_score_function() );

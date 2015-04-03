@@ -57,7 +57,6 @@ private:
 }; //amber periodic func
 
 
-
 } // constraints
 } // scoring
 } // core

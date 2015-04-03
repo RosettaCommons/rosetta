@@ -31,12 +31,11 @@ namespace pack{
 namespace annealer{
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DebuggingAnnealer::DebuggingAnnealer()
 ///
 /// @brief
 /// constructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -46,9 +45,8 @@ namespace annealer{
 ///
 /// @references
 ///
-/// @authors
-///
-/// @last_modified
+/// @author
+
 
 ////////////////////////////////////////////////////////////////////////////////
 DebuggingAnnealer::DebuggingAnnealer(
@@ -100,12 +98,11 @@ DebuggingAnnealer::DebuggingAnnealer(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin DebuggingAnnealer::~DebuggingAnnealer()
 ///
 /// @brief
 /// virtual destructor
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -115,20 +112,18 @@ DebuggingAnnealer::DebuggingAnnealer(
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 DebuggingAnnealer::~DebuggingAnnealer()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin FixbbSimAnnealer::run
 ///
 /// @brief
 /// sim_annealing for fixed backbone design mode
 ///
-/// @detailed
+/// @details
 ///
 /// @global_read
 ///
@@ -138,9 +133,8 @@ DebuggingAnnealer::~DebuggingAnnealer()
 ///
 /// @references
 ///
-/// @authors
+/// @author
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 void DebuggingAnnealer::run()
 {
@@ -237,7 +231,6 @@ void DebuggingAnnealer::annealer_file( std::string const & fname )
 		trajectory_.push_back( rotsub );
 	}
 }
-
 
 
 }//end namespace annealer

@@ -95,7 +95,7 @@ SequenceProfileConstraint::clone() const {
 	return ConstraintOP( new core::scoring::constraints::SequenceProfileConstraint( *this ) );
 }
 
-///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
+/// @details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
 SequenceProfileConstraint::read_def(
 	std::istream & is,

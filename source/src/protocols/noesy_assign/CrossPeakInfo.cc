@@ -9,7 +9,7 @@
 
 /// @file FragmentSampler.cc
 /// @brief ab-initio fragment assembly protocol for proteins
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -25,10 +25,7 @@
 //#include <core/chemical/AA.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -41,14 +38,12 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
 // Third-party Headers
 #include <boost/functional/hash.hpp>
-
 
 
 static thread_local basic::Tracer tr( "protocols.noesy_assign.crosspeaks" );
@@ -81,7 +76,6 @@ void CrossPeakInfo::set_filename( std::string filename ) {
 	filename_ = filename;
 	exp_hash_ = boost::hash_value( filename );
 }
-
 
 
 std::ostream& operator<< ( std::ostream& os, CrossPeakInfo const& cpi ) {

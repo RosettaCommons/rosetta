@@ -9,12 +9,11 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_simple_filters_ChiWellRmsdEvaluator_hh
@@ -25,7 +24,6 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
@@ -35,7 +33,6 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
 #include <list>
@@ -53,7 +50,7 @@ public:
 	ChiWellRmsdEvaluator( core::pose::PoseCOP, core::Size nchi_max, core::Real sasa_threshold, std::string column_tag );
 	ChiWellRmsdEvaluator( core::pose::PoseCOP, core::Size nchi_max, core::Real sasa_threshold, utility::vector1< core::Size> const& selection, std::string column_tag );
 
-	///@brief evaluate pose
+	/// @brief evaluate pose
 	virtual core::Real apply( core::pose::Pose& ) const;
 
 private:

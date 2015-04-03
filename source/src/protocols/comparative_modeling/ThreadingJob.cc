@@ -18,7 +18,6 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loop.hh>
@@ -85,7 +84,7 @@ ThreadingJob::ThreadingJob(
 	// std::cerr << *alignment_ << std::endl;
 }
 
-///@brief returns the "standard" loop definition (as conservative as possible)
+/// @brief returns the "standard" loop definition (as conservative as possible)
 protocols::loops::Loops ThreadingJob::loops( core::Size nres ) const {
 	using namespace protocols::loops;
 	using namespace protocols::comparative_modeling;

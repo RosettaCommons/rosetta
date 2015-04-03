@@ -29,10 +29,8 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/FixedSizeLexicographicalIterator.fwd.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Boost headers
-// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 
 /// C++ headers

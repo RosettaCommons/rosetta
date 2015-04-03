@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/StepWiseModeler.fwd.hh
 /// @brief 
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

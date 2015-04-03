@@ -20,20 +20,15 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1Da.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 
 // STL Headers
 #include <list>
-// AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <utility/assert.hh>
 
 //Utility Headers
-// AUTO-REMOVED #include <utility/basic_sys_util.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -583,8 +578,6 @@ void DoubleDensePDEdge::acknowledge_state_zeroed( int node_ind )
 }
 
 
-
-
 /// @brief Returns a reference to the first element in the dense two-body energy
 /// table.  Used to create a proxy array on the nodes for cache efficiency.
 /*
@@ -771,7 +764,6 @@ core::PackerEnergy DoubleDensePDInteractionGraph::get_energy_current_state_assig
 	update_internal_energy_totals();
 	return total_energy_current_state_assignment_;
 }
-
 
 
 /// @details Iterates across nodes and then edges to look-up the energies

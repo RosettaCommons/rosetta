@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 
@@ -34,7 +34,6 @@
 
 //// C++ headers
 //#include <fstream>
-// AUTO-REMOVED #include <istream>
 #include <string>
 
 #include <utility/vector1.hh>
@@ -60,7 +59,7 @@ public:
 
 	virtual void generate_sequence_claims( claims::DofClaims& );
 
-	///@brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
+	/// @brief is called after all round1 claims have been approved or retracted -- additional claims can be issued in this round
 	///if this Sequence has been moved from position 1 --- needs to issue a fixed CUT in the fold-tree
 	virtual void generate_claims( claims::DofClaims& );
 
@@ -70,7 +69,7 @@ public:
 
 	// 	virtual void initialize_dofs( core::pose::Pose& pose, claims::DofClaims const& init_claims, claims::DofClaims& failed_to_init );
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

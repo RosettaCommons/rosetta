@@ -256,8 +256,6 @@ std::cout << "template\n";
 	TR << "set template pdb" << "    Number of residues: " << template_pose.total_residue() << std::endl;
 
 
-
-
   std::string const cfilename = option[ source_contact_list ];
   if ( cfilename != "" ){
 std::cout<<"source contact list\n";

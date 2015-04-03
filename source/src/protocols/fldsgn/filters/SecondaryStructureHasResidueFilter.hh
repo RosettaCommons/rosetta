@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/SecondaryStructureHasResidueFilter.hh
 /// @brief header file for SecondaryStructureHasResidueFilter class.
-/// @detailed
+/// @details
 /// @author Chris King ( chrisk1@uw.edu )
 
 

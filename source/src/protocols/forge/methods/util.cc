@@ -558,8 +558,6 @@ apply_transformation(
 }
 
 
-
-
 void cyclize_pose(core::pose::Pose & pose) {
 	using namespace core;
 	using namespace core::pose;
@@ -655,11 +653,8 @@ void cyclize_pose(core::pose::Pose & pose) {
 }
 
 
-
-
 //void lockdown_task_with_default_behaviors(){
 //}
-
 
 
 } // namespace methods

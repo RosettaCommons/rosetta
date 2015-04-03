@@ -486,7 +486,7 @@ ResiduePDBIndexIsCreator::create_res_filter() const {
 
 ResFilterOP ResiduePDBIndexIs::clone() const { return ResFilterOP( new ResiduePDBIndexIs( *this ) ); }
 
-///@brief the expected format for the 'indices' option is: indices=A.2,B.3,Z.-20
+/// @brief the expected format for the 'indices' option is: indices=A.2,B.3,Z.-20
 void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("indices") ) {

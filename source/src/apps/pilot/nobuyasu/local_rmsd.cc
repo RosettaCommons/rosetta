@@ -23,7 +23,6 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/rms_util.hh>
 
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
@@ -34,7 +33,6 @@
 // Utility Headers
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
@@ -132,10 +130,10 @@ public:
 		// set native pose
 		core::pose::Pose const & native_pose( *get_native_pose() );
 
-		//
+
 		Real overall_rmsd ( CA_rmsd( pose, native_pose ) );
 
-		//
+
 		Size ntrial( pose.total_residue()/skip_ );
 		utility::vector1< Real > local_rmsd;
 

@@ -12,7 +12,6 @@
 /// @author Nikolas Sgourakis
 
 #include <core/scoring/func/KarplusFunc.hh>
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 #include <core/types.hh>
 
 #include <iostream>

@@ -121,7 +121,6 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 );
 
 
-///
 void
 show_atom_tree( kinematics::tree::Atom const & atom, Conformation const & conf, std::ostream & os );
 
@@ -372,7 +371,6 @@ stub_id_to_named_stub_id(
 
 } // conformation
 } // core
-
 
 
 #endif

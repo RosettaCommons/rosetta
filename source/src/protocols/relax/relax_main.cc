@@ -9,7 +9,7 @@
 
 /// @file relax_protocols
 /// @brief protocols that are specific to relax
-/// @detailed
+/// @details
 /// @author Mike Tyka, Monica Berrondo
 /// @author Roland A. Pache
 
@@ -17,16 +17,9 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh> //pba
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh> //pba
-
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -43,7 +36,6 @@
 #include <protocols/jd2/util.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -132,7 +124,6 @@ Relax_main( bool ) {
 
 	return 0;
 }
-
 
 
 }

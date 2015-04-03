@@ -138,7 +138,6 @@ main( int argc, char* argv [] )
 	*/
 
 
-
 	core::kinematics::Stub stub1(
 		pose.residue( p1 ).atom( "CA" ).xyz(),
 		pose.residue( p1 ).atom( "N" ).xyz(),

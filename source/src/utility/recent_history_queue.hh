@@ -50,7 +50,6 @@ inline bool operator== (history_queue_struct const &a, history_queue_struct cons
 }
 
 
-
 /// @brief A class for keeping track of a subset of elements in a set that are
 /// pushed into a queue in a certain order, and which fall off the end of the queue
 /// in ther order in which they arrive.  Elements in the set can be bumped to the

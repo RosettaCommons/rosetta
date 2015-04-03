@@ -21,7 +21,6 @@
 #include <core/pose/Pose.hh>
 #include <utility/string_util.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
@@ -35,7 +34,6 @@
 #include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
 #include <utility/vector0.hh>
-
 
 
 using basic::Error;

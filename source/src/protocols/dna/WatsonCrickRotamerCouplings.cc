@@ -15,7 +15,6 @@
 
 #include <core/conformation/ResidueMatcher.hh> // WatsonCrickResidueMatcher
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -23,7 +22,6 @@
 #include <basic/Tracer.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

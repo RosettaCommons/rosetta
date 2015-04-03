@@ -26,13 +26,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/prof.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
@@ -102,7 +98,6 @@ SymMinMover::SymMinMover(
 		movemap_in, scorefxn_in, min_type_in,
 		tolerance_in, use_nb_list_in,
 		deriv_check_in, deriv_check_verbose_in ) {}
-
 
 
 void

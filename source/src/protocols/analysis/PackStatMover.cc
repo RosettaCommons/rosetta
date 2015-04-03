@@ -22,7 +22,6 @@
 
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
 
@@ -40,7 +39,6 @@ using basic::T;
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 using basic::Error;

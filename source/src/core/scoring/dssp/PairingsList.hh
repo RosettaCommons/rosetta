@@ -9,7 +9,7 @@
 
 /// @file src/core/scoring/dssp/PairingTemplate
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 /// @author Oliver Lange
@@ -33,7 +33,6 @@
 #include <ObjexxFCL/FArray1A.fwd.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib> //required by GCC 4.3.2
 #include <string>
 #include <cmath>
 
@@ -101,25 +100,25 @@ class Pairing {
 		pleating_ = pleating;
 	}
 
-	///@brief constant values that define orientation
+	/// @brief constant values that define orientation
 	static core::Size const ANTI = 1;
 	static core::Size const PARALLEL = 2;
 	static core::Size const OUTWARDS = 1;
 	static core::Size const INWARDS = 2;
 
-	///@brief reverses the Pairing
+	/// @brief reverses the Pairing
 	Pairing reverse();
 
-	///@brief returns a new reversed pairing
+	/// @brief returns a new reversed pairing
 	Pairing generate_reversed() const;
 
-	///
+
 	bool is_parallel() const {
 		runtime_assert( orientation_ );
 		return orientation_ == PARALLEL;
 	}
 
-	///
+
 	bool is_anti() const {
 		runtime_assert( orientation_ );
 		return orientation_ == ANTI;
@@ -160,11 +159,11 @@ class Pairing {
   Size pleating_;
 };
 
-///@brief list of pairings
+/// @brief list of pairings
 extern std::ostream& operator<< ( std::ostream& out, Pairing const& );
 extern std::ostream& operator<< ( std::ostream& out, PairingsList const& p);
 
-///@brief add pairings in pairing_file to list "pairings"
+/// @brief add pairings in pairing_file to list "pairings"
 extern void read_pairing_list( std::string pairing_file, PairingsList& pairings);
 extern void read_pairing_list( std::istream &is, PairingsList& pairings);
 

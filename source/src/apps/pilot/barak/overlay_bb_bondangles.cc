@@ -53,7 +53,6 @@ using basic::Warning;
 using core::pose::Pose;
 
 
-
 static thread_local basic::Tracer TR( "pilot_app.barak.overlay_sidechains" );
 
 
@@ -131,7 +130,6 @@ void overlay_bb_bondangles(
 	}
     }
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

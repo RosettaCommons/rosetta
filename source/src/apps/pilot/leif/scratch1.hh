@@ -12,10 +12,8 @@
 /// @author Leif Arthur Halvorsen (lah435@nyu.edu)
 
 
-
 #ifndef Rosetta_MyRosetta_hh
 #define Rosetta_MyRosetta_hh
-
 
 
 #endif

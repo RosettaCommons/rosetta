@@ -9,7 +9,7 @@
 
 /// @file src/devel/denovo_design/FastDesign.hh
 /// @brief The FastDesign Protocol
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 
@@ -181,8 +181,6 @@ private:   // other data
 	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 	//RestrictWorstRegionOP worst_region_mover_;
 };
-
-
 
 
 } // denovo_design

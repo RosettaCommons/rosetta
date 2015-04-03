@@ -22,18 +22,15 @@
 
 // unit headers
 #include <protocols/jd2/MpiFileBuffer.fwd.hh>
-// AUTO-REMOVED #include <protocols/jd2/SingleFileBuffer.hh>
 
 //project headers
 #include <core/types.hh>
 
 //utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 //#include <utility/io/mpistream.hh>
 
 //C++ headers
 
-// AUTO-REMOVED #include <string>
 #include <map>
 #include <list>
 

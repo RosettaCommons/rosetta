@@ -22,7 +22,6 @@ except ImportError:
     
 
 
-
 class SQLPDB:
     def __init__(self, pdbID, modelID, structID, memory=False, path=False):
         """
@@ -122,8 +121,6 @@ class SQLPDB:
         self.read_pdb_into_database_flat("PDB", read_header, header_only)
         
     
-
-
 
 
                     

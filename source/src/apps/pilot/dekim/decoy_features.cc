@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/init/init.hh>
@@ -158,7 +157,6 @@ public:
 	}
 
 
-
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const {
@@ -226,8 +224,6 @@ private:
 };
 
 typedef utility::pointer::shared_ptr< JDmover > JDmoverOP;
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

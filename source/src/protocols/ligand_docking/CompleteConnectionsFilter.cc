@@ -23,7 +23,6 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <utility/exit.hh>
 
@@ -78,7 +77,6 @@ CompleteConnectionsFilterCreator::create_filter() const { return protocols::filt
 
 std::string
 CompleteConnectionsFilterCreator::keyname() const { return "CompleteConnections"; }
-
 
 
 } // ligand_docking

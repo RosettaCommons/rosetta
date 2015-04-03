@@ -9,7 +9,7 @@
 
 /// @file     core/scoring/sc/ShapeComplementarityCalculator.cc
 /// @brief    Implementation of molecular surface calculation for shape complementarity.
-/// @detailed Lawrence & Coleman shape complementarity calculator (based on CCP4's sc)
+/// @details Lawrence & Coleman shape complementarity calculator (based on CCP4's sc)
 /// @author   Luki Goldschmidt <luki@mbi.ucla.edu>, refactored by Alex Ford (fordas@uw.edu)
 
 /// This code was ported from the original Fortran code found in CCP4:
@@ -65,7 +65,6 @@ std::vector<ATOM_RADIUS> MolecularSurfaceCalculator::radii_;  // static const
 // Public class functions
 ////////////////////////////////////////////////////////////////////////////
 
-/// @begin MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 /// @brief
 /// MolecularSurfaceCalculator constructor, initializes default settings
 
@@ -85,7 +84,6 @@ MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 	Reset();
 }
 
-/// @begin MolecularSurfaceCalculator::Init()
 /// @brief
 /// Initializes calculation and GPU (if used)
 /// Init() is also called implicitly by the static CalcSc() function.
@@ -105,11 +103,10 @@ MolecularSurfaceCalculator::~MolecularSurfaceCalculator()
 	Reset();
 }
 
-/// @begin MolecularSurfaceCalculator::Reset()
 /// @brief
 /// Reset calculator for another calculation.
 /// Must be used when the MolecularSurfaceCalculator instance is re-used.
-/// @detailed
+/// @details
 /// Atom, probe and surface dot vectors are reset here. We don't clear them
 /// after the calculation is finished in case the caller would like to use those
 /// data elsewhere.
@@ -133,9 +130,8 @@ void MolecularSurfaceCalculator::Reset()
 	run_.prevburied = 0;
 }
 
-/// @begin MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id = 0)
 /// @brief Generate molecular surfaces for the given pose.
-///// @detailed
+///// @details
 /// This function initializes the calculator, adds all residues in the given pose, and generates molecular surfaces.
 ///
 /// The pose is partitioned into separate molecules across the given jump. If the given jump is 0, the entire pose is
@@ -178,9 +174,8 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 	return Calc();
 }
 
-/// @begin MolecularSurfaceCalculator::Calc()
 /// @brief Generate molecular surfaces for loaded atoms.
-///// @detailed
+///// @details
 /// This function generates molecular surfaces for atoms added via AddAtom and AddResidue.
 ///
 /// Init() must be called before this function.
@@ -211,9 +206,8 @@ int MolecularSurfaceCalculator::Calc()
 }
 
 
-/// @begin MolecularSurfaceCalculator::GenerateMolecularSurfaces
 /// @brief Generate untrimmed surfaces for the defined molecules.
-///// @detailed
+///// @details
 /// This function should be called within a try/catch block for ShapeComplementarityCalculatorException.
 /// Raises exception on error.
 void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
@@ -242,7 +236,6 @@ void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
 	}
 }
 
-/// @begin MolecularSurfaceCalculator::ReadScRadii()
 /// @brief Read atom radius definitions from file
 /// @defailed
 /// This function is implicitly called, but can be overloaded or
@@ -280,9 +273,8 @@ int MolecularSurfaceCalculator::ReadScRadii()
 	return !radii_.empty();
 }
 
-/// @begin MolecularSurfaceCalculator::AddResidue()
 /// @brief Add a rosetta residue to a specific molecule
-/// @detailed
+/// @details
 /// Call this function when explicitly defining which residues belong to
 /// which the molecular surface. If partitioning by jump_id is sufficient
 /// for your application, you may use the Calc() or CalcSc() functions
@@ -348,9 +340,8 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 	return n;
 }
 
-/// @begin MolecularSurfaceCalculator::AddAtom()
 /// @brief Add an atom to a molecule for computation.
-/// @detailed
+/// @details
 /// Add an core::scoring::sc::Atom to the molecule.
 /// Normally this is called by AddResidue(). Explicit addition
 /// of atoms via this function is rarely needed.
@@ -1235,7 +1226,7 @@ void MolecularSurfaceCalculator::AddDot(
 	run_.dots[molecule].push_back(dot);
 }
 
-//
+
 // Calculate distance from point to line
 MolecularSurfaceCalculator::ScValue MolecularSurfaceCalculator::DistancePointToLine(
 		Vec3 const &cen,

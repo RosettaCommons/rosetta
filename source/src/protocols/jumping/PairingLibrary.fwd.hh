@@ -17,10 +17,8 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.fwd.hh>
 
 namespace protocols {
 namespace jumping {

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/SaneMinMoverSaneMinMoverCreator.hh
-///@brief This class will create instances of protocols::moves::Mover SaneMinMover for the protocols::moves::MoverFactory
-///@author James Thompson
+/// @file protocols/simple_moves/SaneMinMoverSaneMinMoverCreator.hh
+/// @brief This class will create instances of protocols::moves::Mover SaneMinMover for the protocols::moves::MoverFactory
+/// @author James Thompson
 
 #ifndef INCLUDED_protocols_simple_moves_SaneMinMoverCreator_hh
 #define INCLUDED_protocols_simple_moves_SaneMinMoverCreator_hh

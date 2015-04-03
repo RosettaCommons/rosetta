@@ -12,7 +12,6 @@
 #include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.fwd.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/pose/Pose.hh>
@@ -143,9 +142,6 @@
 #include <boost/function.hpp>
 
 
-
-
-
 namespace protocols {
 namespace canonical_sampling {
 namespace mc_convergence_checks {
@@ -217,7 +213,6 @@ core::Size evaluate_and_add(
   core::Real& best_rmsd,
   core::Real transition_threshold
 );
-
 
 
 private:

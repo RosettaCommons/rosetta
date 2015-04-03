@@ -47,7 +47,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-
 #include <basic/database/open.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/file_data.hh>

@@ -42,7 +42,7 @@ using std::string;
 using core::Real;
 using utility::vector1;
 
-///@brief Basic Class that can run modeling for various protocols.
+/// @brief Basic Class that can run modeling for various protocols.
 /// Does not do any design.
 /// Mainly deprecated by AntibodyDesignMoverGenerator for the new class.
 class AntibodyDesignModeler : public utility::pointer::ReferenceCount {
@@ -54,15 +54,15 @@ public:
 
 	
 	
-	///@brief Set to model CDRs.  Default is all of them false.
+	/// @brief Set to model CDRs.  Default is all of them false.
 	void
 	set_cdr(CDRNameEnum const cdr, bool setting);
 	
-	///@brief Set to model only one cdr, or all others but one.
+	/// @brief Set to model only one cdr, or all others but one.
 	void
 	set_cdr_only(CDRNameEnum const cdr, bool setting);
 	
-	///@brief Set a range of CDRs.
+	/// @brief Set a range of CDRs.
 	void
 	set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool setting);
 	
@@ -75,16 +75,16 @@ public:
 	
 	////////////////////////////////////////////////////////////////////////
 	
-	///@brief How many residues on either side of the CDR to include in CDR - modeling? (Default is 2)
+	/// @brief How many residues on either side of the CDR to include in CDR - modeling? (Default is 2)
 	void
 	cdr_overhang(CDRNameEnum const cdr, core::Size const overhang);
 	
-	///@brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
+	/// @brief Set the ab_dock chains, which will be used for any docking or minimization on the jump.  (LH_A, L_H, etc. - A for antigen)
 	void
 	ab_dock_chains(std::string ab_dock_chains);	
 	
 	
-	///@brief Set a value for interface detection across the class.
+	/// @brief Set a value for interface detection across the class.
 	void
 	interface_detection_dis(core::Real interface_distance);
 	
@@ -106,11 +106,11 @@ public:
 	//
 	//
 	
-	///@brief Repack the CDRs given.  Nothing special.
+	/// @brief Repack the CDRs given.  Nothing special.
 	void
 	repack_cdrs(Pose & pose, bool include_neighbor_sc = true);
 	
-	///@brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
+	/// @brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .001 tolerance (or lfbgs for cartmin).
 	void
 	minimize_cdrs(Pose & pose,
 		bool min_sc = true,
@@ -120,8 +120,8 @@ public:
 		bool use_talaris_cartmin = false) const;
 	
 
-	///@brief Relax CDRs using FastRelax.  CentroidRelax unfortunately does not work well.  Perhaps with centroid rotamers..
-	///@details Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
+	/// @brief Relax CDRs using FastRelax.  CentroidRelax unfortunately does not work well.  Perhaps with centroid rotamers..
+	/// @details Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
 	/// All coordinate constraints on the pose will then be removed.
 	void
 	relax_cdrs(Pose & pose, bool include_neighbor_sc = true,  bool starting_coordinate_constraints = false,  bool min_interface = false, bool dualspace = false) const;
@@ -135,15 +135,15 @@ public:
 	relax_interface(Pose & pose, bool min_interface_sc = true) const;
 	
 
-	///@brief Repack the interface between Antibody and Antigen. 
+	/// @brief Repack the interface between Antibody and Antigen. 
 	void
 	repack_antigen_ab_interface(Pose & pose) const;
 
-	///@brief Repack the interface between antibody and antigen, but only pack antigen.
+	/// @brief Repack the interface between antibody and antigen, but only pack antigen.
 	void
 	repack_antigen_interface(Pose & pose) const;
 	
-	///@brief Repack the interface between antibody and antigen, but only pack antibody.
+	/// @brief Repack the interface between antibody and antigen, but only pack antibody.
 	void
 	repack_antibody_interface(Pose & pose) const;
 	
@@ -153,7 +153,7 @@ public:
 	//
 	//
 	
-	///@brief Dock the antibody. Using A for designation of Antigen chains. Not full antigen chains. (L_A, LH_A, L_H, etc.)
+	/// @brief Dock the antibody. Using A for designation of Antigen chains. Not full antigen chains. (L_A, LH_A, L_H, etc.)
 	void
 	dock_low_res(Pose & pose, bool pack_interface = false) const;
 	
@@ -171,9 +171,8 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////
 	// Benchmarking
 	//
-	//
 
-	///@brief Randomizes the dihedrals of the CDR.
+	/// @brief Randomizes the dihedrals of the CDR.
 	void
 	extend_CDR(Pose & pose, CDRNameEnum cdr) const;
 	
@@ -186,17 +185,17 @@ public:
 	//
 	//
 	
-	///@brief Applies a docking foldtree..  Forked from AbInfo - Its version uses hardcoded order of the PDB.  However, this calls docking FT, which is hard coded as well for now.
+	/// @brief Applies a docking foldtree..  Forked from AbInfo - Its version uses hardcoded order of the PDB.  However, this calls docking FT, which is hard coded as well for now.
 	/// Fix Me.
 	void
 	apply_LH_A_foldtree(core::pose::Pose & pose) const;
 	
 	
-	///@brief Get CDR loops with cutpoint in the middle.
+	/// @brief Get CDR loops with cutpoint in the middle.
 	protocols::loops::LoopsOP
 	get_cdr_loops(Pose const & pose) const;
 	
-	///@brief Get CDR loops with set overhang with cutpoint at the stop position +1.
+	/// @brief Get CDR loops with set overhang with cutpoint at the stop position +1.
 	protocols::loops::LoopsOP
 	get_cdr_loops_with_overhang(Pose const & pose) const ;
 	
@@ -252,7 +251,6 @@ private:
 }
 }
 }
-
 
 
 #endif //INCLUDED_protocols_antibody_design_AntibodyDesignMover_hh

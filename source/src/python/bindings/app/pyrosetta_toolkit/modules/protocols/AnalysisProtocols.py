@@ -27,7 +27,6 @@ import tkSimpleDialog
 from ProtocolBaseClass import ProtocolBaseClass
 
 
-
 class AnalysisProtocols(ProtocolBaseClass):
     def __init__(self, pose, score_class, input_class, output_class):
         ProtocolBaseClass.__init__(self, pose, score_class, input_class, output_class)

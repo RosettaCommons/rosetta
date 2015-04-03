@@ -9,7 +9,7 @@
 
 /// @file protocols/loops/loops_definers/util.cc
 /// @brief Utility functions useful in LoopDefiner classes.
-/// @authors Matthew O'Meara (mattjomeara@gmail.com)
+/// @author Matthew O'Meara (mattjomeara@gmail.com)
 
 #include <protocols/loops/loops_definers/LoopsDefiner.hh>
 #include <protocols/loops/Loop.hh>
@@ -24,7 +24,6 @@
 namespace protocols {
 namespace loops {
 namespace loops_definers {
-
 
 
 LoopsOP

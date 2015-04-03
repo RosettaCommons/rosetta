@@ -32,8 +32,6 @@ from app.pyrosetta_toolkit.window_main import global_variables
 #from app.pyrosetta_toolkit.modules.RegionalScoring import *
 
 
-
-
 class ScoreFxnControl():
     """
     This is the class where you can pick from any of rosetta's energy functions and classes, as well as edit them on the fly, save them, and load

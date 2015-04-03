@@ -10,7 +10,7 @@
 /// @file JumpSetup
 /// @brief read jump-definition file   setups fold tree an chainbreak variants
 /// loop code didn't work because fold-tree to complicated ( overlapping loops )
-/// @detailed
+/// @details
 /// @author Oliver Lange
 
 
@@ -58,7 +58,7 @@ namespace jumping {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief two numbers, i.e., jump start end residue, or cut-regions...
+/// @brief two numbers, i.e., jump start end residue, or cut-regions...
 class Interval {
 public:
 	Interval() {};
@@ -79,16 +79,16 @@ class JumpSample;
 class JumpSetup;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief virtual base class: can create a set of jumps and cuts
+/// @brief virtual base class: can create a set of jumps and cuts
 class BaseJumpSetup : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~BaseJumpSetup();
 	virtual
 	JumpSample
 	create_jump_sample( ) const = 0;
 
-	///@brief returns an ordered FragSet that is compatible with the JumpSample
+	/// @brief returns an ordered FragSet that is compatible with the JumpSample
 	/// default: generate jumps from ss-library according to JumpSample
 	// if the movemap allows sampling of the down-residue but not the up-residue:
 	// include a jump with torsions only for the "down" residue
@@ -96,7 +96,7 @@ public:
 	virtual core::fragment::FragSetOP
 	generate_jump_frags( JumpSample const&, core::kinematics::MoveMap const& mm) const;
 
-	///@brief take from a given JumpSample only those Jumps, which could also have been created by create_jump_sample()
+	/// @brief take from a given JumpSample only those Jumps, which could also have been created by create_jump_sample()
 	virtual
 	JumpSample clean_jumps( JumpSample const& ) const = 0;
 

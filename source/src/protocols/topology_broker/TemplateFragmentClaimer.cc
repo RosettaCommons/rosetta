@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -26,7 +26,6 @@
 #include <core/fragment/FrameList.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 

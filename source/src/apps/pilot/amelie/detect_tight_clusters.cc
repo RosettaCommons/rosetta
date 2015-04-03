@@ -163,7 +163,6 @@ void detect_neighbors(
 }
 
 
-
 // modularized to simplify comparing structures from non-Rosetta-repacking
 // WARNING: if the native structure doesn't match the repacked structure in size etc., we have a problem --> assertion will fail, program will quit
 void compare_chi1_2_angles(
@@ -412,7 +411,6 @@ void repack_cluster(
 			min_mover->apply( repacked );
 
 
-
 		} else if ( option[ detect_tight_clusters::backrub ]() ) {// note that backrub only makes sense for 8A repacking
 
 			core::pose::Pose best_backrub(repacked);
@@ -497,7 +495,6 @@ void repack_cluster(
 						//TR << "Next segment: " << segment.start_atomid() << segment.end_atomid() << std::endl;
 
 
-
 						backrubmover.apply(*after_backrub);
 						move_type = backrubmover.type();
 
@@ -554,7 +551,6 @@ void repack_cluster(
 				if ( option[ detect_tight_clusters::debug ]() ) {
 					TR << bi << " -- current best backrub model " << best_backrub << std::endl; // debug
 				}
-
 
 
 				/*
@@ -693,7 +689,6 @@ void repack_cluster(
 }
 
 
-
 // simple function to check for b-factor and buried-ness
 // - also make sure that there are no Rosetta-rebuilt or occupancy-zero residues within 6A
 // - also recored #neighbors, for exposure classification -- per cluster, keep min #neighbors over the 4 pos
@@ -802,7 +797,6 @@ bool passes_quality_check(
 	//num_neighbors = num_cb_neighbors; // will be returned by reference -- for later classification
 	return acceptable;
 }
-
 
 
 void find_clusters(
@@ -1003,7 +997,6 @@ int main( int argc, char * argv [] )
 		NEW_OPT(detect_tight_clusters::soft_repack_min_hard_repack_min, "(hard repack to normalize, as for all runs, then) soft repack, hard minimize, hard repack w/ include_current, hard min", false);
 
 
-
 		// initialize Rosetta
 		devel::init(argc, argv);
 
@@ -1036,7 +1029,6 @@ int main( int argc, char * argv [] )
 
 
 		//p.dump_pdb( p_name+"_native.pdb" ); // only for debugging the odd rebuild-neighbor-count issues
-
 
 
 		if ( option[ out::path::pdb ].user() ) { // ?

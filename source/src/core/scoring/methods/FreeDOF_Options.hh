@@ -9,7 +9,7 @@
 
 /// @file core/scoring/methods/FreeDOF_Options.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

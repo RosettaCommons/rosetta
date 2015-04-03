@@ -30,7 +30,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/signals/Link.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <protocols/viewer/GraphicsState.hh>
 #include <protocols/viewer/triangle.hh>
@@ -38,7 +37,6 @@
 #include <utility/vector1_bool.hh>
 
 //Auto Headers
-
 
 
 // C++ Headers
@@ -99,14 +97,14 @@ public: // window management
 	void
 	display_if_necessary();
 
-	///
+
 	int
 	window() const
 	{
 		return my_window_;
 	}
 
-	///
+
 	void
 	window( int const setting )
 	{
@@ -130,7 +128,7 @@ public: // window management
 		return current_gs_;
 	}
 
-	///
+
 	std::string const &
 	name() const
 	{

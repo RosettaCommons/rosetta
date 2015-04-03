@@ -9,13 +9,12 @@
 
 /// @file src/protocols/jumping/PairingTemplate
 /// @brief header file for ClassicAbinitio protocol
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
 ///
 /// @author Oliver Lange
-
 
 
 #ifndef INCLUDED_protocols_jumping_PairingLibrary_hh
@@ -32,7 +31,6 @@
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -40,7 +38,6 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
@@ -48,7 +45,6 @@
 #include <cstdlib>
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <vector>
 
 #include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <utility/vector1.hh>

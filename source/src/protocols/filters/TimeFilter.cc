@@ -15,13 +15,10 @@
 
 // Project Headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 //parsing
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <time.h>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -32,7 +29,7 @@ namespace filters {
 
 static thread_local basic::Tracer TR( "protocols.filters.TimeFilter" );
 
-///@brief default ctor
+/// @brief default ctor
 TimeFilter::TimeFilter() :
 	Filter( "Time" ),
 	tic_( 0 ),

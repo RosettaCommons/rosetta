@@ -27,7 +27,6 @@
 #include <utility/vector1.fwd.hh>
 
 
-
 namespace protocols {
 namespace flexpack {
 namespace annealer {

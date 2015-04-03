@@ -17,7 +17,6 @@
 
 
 // type headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // unit headers
 #include <protocols/moves/MonteCarloExceptionConverge.fwd.hh>
@@ -26,14 +25,12 @@
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
 // #include "utility/basic_sys_util.h"
 
 // C++ headers
-// AUTO-REMOVED #include <map>
 #include <string>
 
 #include <utility/vector1.hh>

@@ -11,8 +11,6 @@
 #include <core/io/pdb/pose_io.hh>
 
 
-
-
 #include <core/types.hh>
 #include <devel/init.hh>
 
@@ -50,6 +48,5 @@ int main( int argc, char * argv [] )
 	}
 
 }
-
 
 

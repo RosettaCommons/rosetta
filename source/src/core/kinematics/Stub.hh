@@ -23,7 +23,6 @@
 // Numeric headers
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>  // Do not remove, it is required for global2local and local2global
 
 // C++ headers
 #include <cmath>
@@ -110,7 +109,7 @@ public: // Creation
 
 public: // Methods
 
-	///@brief build a stub from a center and other three points a, b, c
+	/// @brief build a stub from a center and other three points a, b, c
 	void
 	from_four_points(
 		Vector const & center,
@@ -119,7 +118,7 @@ public: // Methods
 		Vector const & c
 	);
 
-	///@brief check if the stub is orthogonal under the tolerance cutoff
+	/// @brief check if the stub is orthogonal under the tolerance cutoff
 	bool
 	is_orthogonal( double const & tolerance ) const
 	{
@@ -129,27 +128,27 @@ public: // Methods
 							 delta.col_z().length() ) < tolerance );
 	}
 
-	///@brief convert a global reference (lab) frame vector to our local (stub) frame
+	/// @brief convert a global reference (lab) frame vector to our local (stub) frame
 	Vector
 	global2local( Vector const & xyz ) const
 	{
 		return M.transposed() * ( xyz - v );
 	}
 
-	///@brief convert a local reference (stub) frame vector to the global (lab) frame
+	/// @brief convert a local reference (stub) frame vector to the global (lab) frame
 	Vector
 	local2global( Vector const & xyz ) const
 	{
 		return M * xyz + v;
 	}
 
-	///@brief  Build a vector in the global lab frame from the spherical coords used in the atomtree
+	/// @brief  Build a vector in the global lab frame from the spherical coords used in the atomtree
 	///
-	///@details theta is the angle between the postive x and the vector (0<=theta<=pi),
+	/// @details theta is the angle between the postive x and the vector (0<=theta<=pi),
 	///phi is the angle between the y-z plane projection of the vector and the positive y (0<=theta<=2*pi),
 	///d is the length of the vector
 	///
-	///@note  These are non-standard in the choice of axis for historical reasons --PB
+	/// @note  These are non-standard in the choice of axis for historical reasons --PB
 	Vector
 	spherical( Real const phi, Real const theta, Real const d ) const
 	{
@@ -166,16 +165,16 @@ public: // Methods
 
 
 public: // Fields
-	///@brief coord frame by 3x3 matrix, each column is a unit vector
+	/// @brief coord frame by 3x3 matrix, each column is a unit vector
 	Matrix M;
 
-	///@brief Coordinate frame rotation matrix.
+	/// @brief Coordinate frame rotation matrix.
 	Matrix rotation() const { return M; }
 
-	///@brief center point by a vector
+	/// @brief center point by a vector
 	Vector v;
 
-	///@brief Coordinate frame center.
+	/// @brief Coordinate frame center.
 	Vector center() const { return v; }
 }; // Stub
 

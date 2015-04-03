@@ -16,7 +16,6 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
@@ -35,7 +34,7 @@ namespace packing {
 
 class PoseBallsLite : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PoseBallsLite();
 
 	// hmode = 0 --> no hydrogens

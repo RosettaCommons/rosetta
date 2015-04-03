@@ -9,7 +9,7 @@
 
 /// @file   protocols/frag_picker/quota/QuotaPool.hh
 /// @brief provides a single pool used by quota
-/// @detailed a QuotaSelector is constructed with a few pools. At fragment selection procedure
+/// @details a QuotaSelector is constructed with a few pools. At fragment selection procedure
 ///		it tries to fit each fragment candidate into the pools by a round robin procedure
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
 
@@ -65,7 +65,7 @@ public:
 	virtual void push(ScoredCandidate) = 0;
 
 	/// @brief  Check how many candidates have been already collected for a given position
-	/// @detailed This is a very special case - collector will be used only for a given position.
+	/// @details This is a very special case - collector will be used only for a given position.
 	/// Thus it returns the total number of inserted candidates, as count_candidates() does
 	virtual Size count_candidates() const = 0;
 
@@ -77,7 +77,7 @@ public:
 	}
 
 	/// @brief prints information on which fragments can be accepted by this pool and how many of them
-	/// @detailed base class' impementation says the capacity that has left
+	/// @details base class' impementation says the capacity that has left
 	virtual void show_availability(std::ostream & where) const {
 		where << pool_name_<<" : "<< size_left()<<std::endl;
 	}
@@ -89,7 +89,7 @@ public:
 	virtual void set_fraction(Real new_fraction) { quota_fraction_ = new_fraction; }
 
 	/// @brief provides the score for a candidate that was used to sort a quota pool
-	/// @detailed This base class returns the most recent total score for a fragment
+	/// @details This base class returns the most recent total score for a fragment
 	inline virtual Real quota_score(ScoredCandidate candidate) const {
 	    return candidate.second->get_most_recent_total_score();
 	}

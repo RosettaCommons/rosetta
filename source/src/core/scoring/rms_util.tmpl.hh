@@ -462,7 +462,6 @@ rmsd_with_super(
 }
 
 
-
 /// @brief Select a subset atoms for RMS via a predicate function/functor.
 /// @details Calculates minimal rms, allowing rotation/translation for best fit.
 ///		Same as above function, but allows a subset of residues over which to

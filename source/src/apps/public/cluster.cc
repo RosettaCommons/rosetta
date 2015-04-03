@@ -16,7 +16,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -162,9 +161,6 @@ main( int argc, char * argv [] ) {
 	clustering->set_population_weight(
 		option[ basic::options::OptionKeys::cluster::population_weight ]()
 	);
-
-
-
 
 
 	// Figure out the thinout factor,

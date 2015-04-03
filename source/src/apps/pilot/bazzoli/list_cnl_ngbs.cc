@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @brief Lists the residues that are neighbor to a given constellation.
 ///
 /// @param[in] -s <PDBFIL>, where <PDBFIL> is the path to the PDB file
@@ -36,7 +36,7 @@
 /// 	chain identifier of ' ' in <PDBFIL>.
 ///
 /// @author Andrea Bazzoli (bazzoli@ku.edu)
-///
+
 
 #include <protocols/neighbor/Neighborhood.hh>
 #include <basic/Tracer.hh>
@@ -68,7 +68,6 @@ OPT_KEY(String, cnl_resfile)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -87,7 +86,6 @@ Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 }
 
 
-///
 /// @brief: prints the identifiers of a set of residues
 ///
 ///	@param[in]: vec indexes of the residues in the pose

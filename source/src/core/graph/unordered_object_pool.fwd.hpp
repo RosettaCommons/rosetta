@@ -6,19 +6,16 @@
 #ifndef BOOST_unordered_object_pool_fwd_hpp
 #define BOOST_unordered_object_pool_fwd_hpp
 
-// AUTO-REMOVED #include <boost/config.hpp> // for workarounds
 
 // std::size_t
-// AUTO-REMOVED #include <cstddef>
 
 // boost::details::pool::default_mutex
-// AUTO-REMOVED #include <boost/pool/detail/mutex.hpp>
 
 #include <boost/pool/poolfwd.hpp>
 
 namespace boost {
 
-//
+
 // Location: <boost/pool/unordered_object_pool.hpp>
 //
 template <typename T, typename UserAllocator = default_user_allocator_new_delete>

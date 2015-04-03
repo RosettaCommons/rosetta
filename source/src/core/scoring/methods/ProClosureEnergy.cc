@@ -18,12 +18,9 @@
 // Package Headers
 #include <core/scoring/DerivVectorPair.hh>
 //#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <numeric/constants.hh>
@@ -281,7 +278,6 @@ ProClosureEnergy::defines_intrares_energy( EnergyMap const & ) const
 }
 
 
-///
 void
 ProClosureEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
@@ -298,8 +294,6 @@ ProClosureEnergy::eval_intrares_energy(
 	}
 
 }
-
-
 
 
 bool

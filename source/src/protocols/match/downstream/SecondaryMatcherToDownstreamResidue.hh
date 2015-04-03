@@ -22,17 +22,14 @@
 
 // Package headers
 #include <protocols/match/Matcher.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/UpstreamBuilder.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

@@ -27,7 +27,6 @@ static thread_local basic::Tracer TR( "devel.splice.RBInMover" );
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>

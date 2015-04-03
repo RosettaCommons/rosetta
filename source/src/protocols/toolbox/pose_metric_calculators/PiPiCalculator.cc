@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin PiPiCalculator
 ///
 /// @brief
 /// How many pi-pi interactiosn are there? pi-stacking considered are T-stacking and offset.
 ///
-/// @detailed
+/// @details
 /// Not much detailed here. Iterate through the carbons of aromatic rings and compare that to
 /// the distance of the aromatic hydrogens. Default distance is 3.2A.
 /// Wait, you want to know how to use this? Well, within your protocol, you need to do the following:
@@ -30,7 +29,6 @@
 /// @author
 /// Steven Combs
 ///
-/// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
 #include <protocols/toolbox/pose_metric_calculators/PiPiCalculator.hh>
 #include <core/pose/Pose.hh>
@@ -53,7 +51,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 
-	///@brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
+	/// @brief default constructor sets distance_cutoff to 5.0. This is what is usually defined as a Hbond between heavy atom (carbon) and Hydrogen
 	PiPiCalculator::PiPiCalculator() :
 		distance_cutoff_(5.0),
 		pi_pi_total_(0)
@@ -62,16 +60,13 @@ namespace pose_metric_calculators {
 	}
 
 
-	///@brief constructur where you define what the distance cutoff is for the pi pi
+	/// @brief constructur where you define what the distance cutoff is for the pi pi
 	PiPiCalculator::PiPiCalculator(core::Real dist_cutoff) :
 		distance_cutoff_(dist_cutoff),
 		pi_pi_total_(0)
 	{
 
 	}
-
-
-
 
 
 void PiPiCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const{
@@ -97,8 +92,7 @@ std::string PiPiCalculator::print( std::string const & key ) const{
 }
 
 
-
-///@brief not sure why they name this function recompute as you are actually computing the metric. Whateva
+/// @brief not sure why they name this function recompute as you are actually computing the metric. Whateva
 void PiPiCalculator::recompute(core::pose::Pose const & pose){
 	pi_pi_total_ = 0;
 	//start iterating through the residues

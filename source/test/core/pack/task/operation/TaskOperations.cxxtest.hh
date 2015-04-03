@@ -23,21 +23,17 @@
 // project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
 // utility headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
 
 
-
 static basic::Tracer TR("test.core.pack.task.operation.TaskOperationsTests");
-
 
 
 // --------------- Test Class --------------- //
@@ -71,7 +67,7 @@ public:
 
   // --------------- Test Cases --------------- //
 
-  ///@brief this test applies the DisallowIfNonnative TaskOperation to a PackerTask and verifies that the task
+  /// @brief this test applies the DisallowIfNonnative TaskOperation to a PackerTask and verifies that the task
   /// reflects the proper designable residues
 
 void test_DisallowIfNonnativeTaskOperation() {
@@ -97,7 +93,7 @@ void test_DisallowIfNonnativeTaskOperation() {
 
 } //end test_DisallowIfNonnative
 
-	///@brief this test applies the ReplicateTask TaskOperation
+	/// @brief this test applies the ReplicateTask TaskOperation
 void test_ReplicateTaskTaskOperation(){
 	using namespace core;
 	using namespace core::pack::task;

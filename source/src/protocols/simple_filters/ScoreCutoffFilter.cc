@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/ScoreCutoffFilter.cc
 /// @brief
-/// @detailed
+/// @details
 ///	  Contains currently:
 ///
 ///
@@ -26,12 +26,10 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
@@ -43,7 +41,6 @@
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
-
 
 
 //// C++ headers
@@ -273,7 +270,6 @@ ScoreCutoffFilterCreator::create_filter() const { return filters::FilterOP( new 
 
 std::string
 ScoreCutoffFilterCreator::keyname() const { return "ScoreCutoffFilter"; }
-
 
 
 } // filters

@@ -23,8 +23,6 @@
 #include <string>
 
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
 // option key includes
 
 #include <basic/options/keys/relax.OptionKeys.gen.hh>

@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/PcsInputLine.hh
  ///
  /// @brief Class that hold a line data of the input file
  ///
- /// @detailed This class hold the information of a pcs value:
+ /// @details This class hold the information of a pcs value:
  /// atom name, residue name, PCS value, PCS experimental
  ///
  /// @param
@@ -25,9 +24,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_PcsInputLine_hh

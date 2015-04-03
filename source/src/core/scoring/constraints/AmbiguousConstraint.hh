@@ -20,7 +20,6 @@
 // Unit header
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/func/FuncFactory.fwd.hh>
@@ -39,12 +38,11 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace constraints {
 
-///@brief Nested constraint  where only the one with  lowest energy is considered.
+/// @brief Nested constraint  where only the one with  lowest energy is considered.
 class AmbiguousConstraint : public MultiConstraint {
 public:
 
@@ -54,7 +52,7 @@ public:
 	/// @brief Constructor
 	AmbiguousConstraint( ConstraintCOPs & cst_in ) ;
 
-	///
+
 	virtual
 	ConstraintOP clone() const {
 		return ConstraintOP( new AmbiguousConstraint(*this) );
@@ -109,7 +107,6 @@ public:
 	//	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
-
 
 
 private:

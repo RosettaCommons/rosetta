@@ -30,5 +30,3 @@ typedef utility::pointer::shared_ptr< H3PerturbCCD const > H3PerturbCCDCOP;
 #endif
 
 
-
-

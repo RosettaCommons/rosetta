@@ -9,7 +9,7 @@
 
 /// @file Residual Dipolar Coupling scoring
 /// @brief Residual Dipolar Coupling scoring
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -35,22 +35,16 @@
 #include <numeric/xyz.functions.hh>
 
 //Objexx headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/Fmath.hh>
 
 //C++ headers
 #include <string>
-// AUTO-REMOVED #include <sstream>
-// AUTO-REMOVED #include <fstream>
 #include <map>
 #include <vector>
 
 #include <utility/vector1.hh>
-
 
 
 using namespace core;

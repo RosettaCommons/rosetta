@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -36,7 +36,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopsFileIO.hh>
@@ -346,7 +345,7 @@ void CoordConstraintClaimer::superimpose( pose::Pose const& pose ) const {
 	constraints_ = new_set;
 }
 
-///@detail read setup file
+/// @detail read setup file
 /*
 	PDB_FILE   cst_pose
 	CST_FILE   definition of CoordinateConstraints: which atoms, which potential

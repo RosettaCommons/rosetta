@@ -74,7 +74,7 @@ using namespace chemical;
 using utility::vector1;
 using std::pair;
 
-///@brief default ctor
+/// @brief default ctor
 MatDesGreedyOptMutationMover::MatDesGreedyOptMutationMover() :
 	Mover( MatDesGreedyOptMutationMoverCreator::mover_name() ),
 	task_factory_( /* NULL */ ),

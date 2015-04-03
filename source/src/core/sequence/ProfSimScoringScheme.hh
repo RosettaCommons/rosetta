@@ -9,7 +9,7 @@
 
 /// @file ProfSimScoringScheme.hh
 /// @brief class definition for a given scoring scheme for an alignment.
-/// @detailed Simply based on comparing single profiles from two protein
+/// @details Simply based on comparing single profiles from two protein
 /// sequences, along with affine gap penalties of the form penalty = A + Bk, where
 /// A represents the penalty for starting a gap, and B represents the penalty for
 /// extending a previously opened gap by k characters.
@@ -62,7 +62,7 @@ public:
 	/// Published by Yona and Levitt in JMB, 2002 in a paper titled "Within the
 	/// Twilight Zone: A Sensitive Profile-Profile Comparison Tool Based on
 	/// Information Theory."
-	/// @detailed The basic idea for this score is that it incorporates both
+	/// @details The basic idea for this score is that it incorporates both
 	/// divergence of probability distributions at each position and the significance
 	/// of that divergence in order to construct a position-specific
 	/// profile-profile score. The divergence score is the J-S divergence between

@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/PackerNeighborGraphFilter.cc
 /// @brief
-/// @detailed
+/// @details
 ///	  Contains currently:
 ///
 ///
@@ -33,7 +33,6 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //// C++ headers

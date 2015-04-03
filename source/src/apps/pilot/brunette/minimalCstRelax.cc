@@ -99,7 +99,7 @@ namespace minimalCstRelax {
 	basic::options::BooleanOptionKey relax_pdb("minimalCstRelax:relax_pdb");
 }
 
-///@brief: gets the pose to relax.Returns either the input pose or if alignments exists a  subset of the input pose
+/// @brief: gets the pose to relax.Returns either the input pose or if alignments exists a  subset of the input pose
 void get_poseToRelax(core::pose::PoseOP & toRelax_poseOP, core::pose::PoseOP & input_poseOP,  core::import_pose::pose_stream::MetaPoseInputStream input, std::map<string, SequenceAlignment> alns,Size & offset){
 	using namespace core::chemical;
 	using utility::file_basename;
@@ -124,7 +124,7 @@ void get_poseToRelax(core::pose::PoseOP & toRelax_poseOP, core::pose::PoseOP & i
 	}
 }
 
-///@brief: outputs the ca atoms to constrain either with taking account the offset
+/// @brief: outputs the ca atoms to constrain either with taking account the offset
 void output_caAtomsToConstraint(const std::set< Size> caAtomsToConstrain,const Size offset,const string coordCstFile, const core::pose::PoseOP input_poseOP){
 	using namespace devel::cstEnergyBalance;
 	std::set < Size > adjusted_caAtomsToConstrain;

@@ -16,8 +16,6 @@
 // Unit headers
 #include <core/optimization/LineMinimizer.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/Fmath.hh>
 #include <basic/Tracer.hh>
 
@@ -32,7 +30,6 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
 
 
 //Auto using namespaces
@@ -902,9 +899,6 @@ LineMinimizationAlgorithm::cubic_interpolation(
 //														(deriv_high - deriv_low + 2.0*cubic_beta2 ) );
 	return  ( alpha_low + fraction * ( alpha_high - alpha_low ) );
 }
-
-
-
 
 
 } // namespace optimization

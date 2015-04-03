@@ -63,8 +63,7 @@ namespace core{ namespace options{ namespace OptionKeys{
 }}} // core::options::OptionKeys
 
 
-
-    ///@brief AbInitio_MPI mover
+    /// @brief AbInitio_MPI mover
 class AbInitio_MPI : public protocols::moves::Mover {
 public:
 	AbInitio_MPI() : init_for_input_yet_(false)
@@ -74,7 +73,7 @@ public:
 	virtual std::string get_name() const { return "AbInitio_MPI"; }
 
 
-	///@brief init_on_new_input system allows for initializing these details the first time apply() is called.
+	/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.
 	virtual
 	void
 	init_on_new_input( core::pose::Pose & pose) {

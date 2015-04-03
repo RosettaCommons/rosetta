@@ -17,8 +17,6 @@
 
 // Unit headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 #include <protocols/loops/Loop.hh>
 
 //#include <protocols/match/LoopGrid.fwd.hh>

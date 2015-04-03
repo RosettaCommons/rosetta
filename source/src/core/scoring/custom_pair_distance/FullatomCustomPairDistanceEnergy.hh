@@ -29,11 +29,8 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/OrderedTuple.hh>
-// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <numeric/interpolation/Histogram.hh>
 
 // C++ headers
@@ -83,7 +80,7 @@ private:
 typedef utility::pointer::shared_ptr< AtomPairFuncList > AtomPairFuncListOP;
 typedef utility::pointer::shared_ptr< AtomPairFuncList const > AtomPairFuncListCOP;
 
-///
+
 class FullatomCustomPairDistanceEnergy : public methods::ContextIndependentTwoBodyEnergy {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy parent;
@@ -98,7 +95,7 @@ public:
 
 	typedef std::map< ResTypePairTuple, AtomPairFuncListOP > PairFuncMap;
 
-	///
+
 	FullatomCustomPairDistanceEnergy();
 
 	FullatomCustomPairDistanceEnergy( FullatomCustomPairDistanceEnergy const & src );
@@ -259,7 +256,6 @@ private:
 };
 
 
-
 // stolen from Spencer's centroid disulfide stuff
 class DistanceFunc : public func::Func
 {
@@ -274,7 +270,6 @@ public:
 private:
 	numeric::interpolation::HistogramCOP<Real,Real>::Type scores_hist_;
 };
-
 
 
 /*class CacheableAtomPairFuncMap : public basic::datacache::CacheableData

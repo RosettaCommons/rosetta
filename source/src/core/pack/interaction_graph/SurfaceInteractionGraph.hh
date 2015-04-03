@@ -35,11 +35,9 @@
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 
 //C++ Headers
 #include <vector>
-// AUTO-REMOVED #include <typeinfo> //required by GCC 4.3.2
 
 #include <utility/vector1.hh>
 
@@ -70,8 +68,6 @@ template < typename V, typename E, typename G > class SurfaceInteractionGraph;
 //---------------------------- Surface Node Class ----------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin SurfaceNode
 ///
 /// @brief
 /// Defines a FirstClass node which will keep track of changes in the surface energy.
@@ -227,8 +223,6 @@ class SurfaceNode : public FirstClassNode< V, E, G > {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin SurfaceBackgroundNode
-///
 /// @brief
 /// Defines a BackgroundResidue node which will contribute to changes in surface energy
 /// due to state changes on neighboring nodes, and not because of state changes to it.
@@ -324,8 +318,6 @@ class SurfaceBackgroundNode : public BackgroundNode< V, E, G > {
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin SurfaceEdge
-///
 /// @brief
 /// Defines a Surface edge which will be used in determining surface energy.
 ///
@@ -395,18 +387,15 @@ class  SurfaceEdge : public FirstClassEdge< V, E, G > {
 };
 
 
-
 //----------------------------------------------------------------------------//
 //------------------- Surface Background Edge Class -----------------------//
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin SurfaceBackgroundEdge
-///
 /// @brief
 /// Defines an edge between a FirstClass (SurfaceNode) and a background node (SurfaceBackgroundNode)
 ///
-/// @detailed
+/// @details
 /// In addition to implementing the virtual base class methods, this class additionally defines methods
 /// relating to keeping track of data relating to surface.
 ///
@@ -471,19 +460,15 @@ class SurfaceBackgroundEdge : public BackgroundToFirstClassEdge< V, E, G > {
 };
 
 
-
-
 //----------------------------------------------------------------------------//
 //--------------------- Surface Interaction Graph -------------------------//
 //----------------------------------------------------------------------------//
 
 ///
-/// @begin SurfaceInteractionGraph
-///
 /// @brief
 /// Defines the interaction graph that will keep track of changes to the surface score.
 ///
-/// @detailed
+/// @details
 /// In addition to implementing the virtual base class methods, this class additionally defines methods
 /// relating to keeping track of data relating to surface.
 ///
@@ -626,9 +611,6 @@ int SurfaceNode< V, E, G >::num_surface_comps_procrastinated_( 0 );
 template < typename V, typename E, typename G >
 int SurfaceNode< V, E, G >::num_surface_comps_later_made_( 0 );
 
-
-///
-/// @begin SurfaceNode< V, E, G >::SurfaceNode
 ///
 /// @brief
 /// SurfaceNode constructor
@@ -663,9 +645,6 @@ SurfaceNode< V, E, G >::SurfaceNode( G* owner, int node_index, int num_states ) 
 #endif
 }
 
-
-///
-/// @begin SurfaceNode< V, E, G >::~SurfaceNode
 ///
 /// @brief
 /// destructor -- no dynamically allocated data, does nothing
@@ -673,9 +652,6 @@ SurfaceNode< V, E, G >::SurfaceNode( G* owner, int node_index, int num_states ) 
 template < typename V, typename E, typename G >
 SurfaceNode< V, E, G >::~SurfaceNode() {}
 
-
-///
-/// @begin SurfaceNode::prepare_for_simulated_annealing
 ///
 /// @brief
 /// invokes V's prep_for_simA method
@@ -722,15 +698,12 @@ void SurfaceNode< V, E, G >::prepare_for_simulated_annealing() {
 
 }
 
-
-///
-/// @begin SurfaceNode::detect_neighborship_with_node
 ///
 /// @brief
 /// Determines if this vertex neighbors the calling node
 /// Called by all other nodes, and if true is returned an Edge of some sort is created between the nodes.
 ///
-/// @detailed
+/// @details
 /// To determine whether the passed in fc node is neighbors with this one, we need to iterate through the
 /// list of neighbors in the tenA neighbor graph (a ContextGraph) that's stored in the Pose Energies object. Assumes
 /// that the Pose has already been scored by some ScoreFunction.
@@ -802,15 +775,11 @@ bool SurfaceNode< V, E, G >::detect_neighborship_with_node( int node_index, bool
 
 }
 
-
-
-///
-/// @begin SurfaceNode::assign_zero_state
 ///
 /// @brief
 /// Assign the node to state 0 -- the "unassigned" state.
 ///
-/// @detailed
+/// @details
 /// A node in state 0 produces no surface score.  Its neighbors have to adjust their scores appropriately. This method
 /// iterates over all the edges emanating from this node and tells them to acknowledge that they've been zeroed out.
 ///
@@ -841,9 +810,6 @@ void SurfaceNode< V, E, G >::assign_zero_state() {
 
 }
 
-
-///
-/// @begin SurfaceNode::acknowledge_neighbors_substitution_surface
 ///
 /// @brief
 /// bookkeeping to follow a neighbors state substitution.  this method gets called when a SurfaceNode commits a sub
@@ -882,14 +848,11 @@ void SurfaceNode< V, E, G >::acknowledge_neighbors_substitution_surface() {
 
 }
 
-
-///
-/// @begin SurfaceNode::assign_state_surface
 ///
 /// @brief
 /// Assigns the node to one of the states in its state space or to the unassigned state.
 ///
-/// @detailed
+/// @details
 /// Piggy backs on the standard project_deltaE/commit_considered_substitution protocol. Slightly inefficient; however,
 /// this code is executed once per simulated annealing run.  Not worth optimizing. (apl)
 ///
@@ -912,9 +875,6 @@ void SurfaceNode< V, E, G >::assign_state_surface( int state ) {
 	commit_considered_substitution_surface();
 }
 
-
-///
-/// @begin SurfaceNode::get_curr_state_surface_energy()
 ///
 /// @brief
 /// returns the surface energy for the node in its current state assignment
@@ -938,14 +898,11 @@ Real SurfaceNode< V, E, G >::get_curr_state_surface_energy() const {
 	return surface_energy_weight_ * hASA_energy( curr_state_total_hASA_ );
 }
 
-
-///
-/// @begin SurfaceNode::project_deltaE_for_substitution_surface
 ///
 /// @brief
 /// Returns the (possibly approximate) change in energy induced by changing a node from its current state into some alternate state.
 ///
-/// @detailed
+/// @details
 /// Iterates across the edges first to determine the sum of the pairwise
 /// decomposable (PD) energy.  If the PD difference implies a collision, then
 /// the SurfaceNode pretends as if the state substitution causes the best
@@ -1011,9 +968,6 @@ Real SurfaceNode< V, E, G >::project_deltaE_for_substitution_surface(
 	return deltaE_for_substitution_;
 }
 
-
-///
-/// @begin SurfaceNode< V, E, G >::project_surface_deltaE()
 ///
 /// @brief
 /// returns the change in surface score for this node and all of its neighbors produced by switching from its current
@@ -1142,11 +1096,8 @@ Real SurfaceNode< V, E, G >::project_surface_deltaE() {
 
 }
 
-
 ///
-/// @begin SurfaceNode< V, E, G >::decide_procrastinate_surface_computations()
-///
-/// @detailed
+/// @details
 /// Makes the decision whether or not to procrastinate calculating the surface score. Basically, if the PD energy got better (dE < 0)
 /// then return false so we don't procrastinate the calculation (because the alternate state probably will be accepted?). If the best
 /// guess for the surface deltaE also comes back better (dE < 0), then return false.  Finally, if the difference between the deltaE
@@ -1195,15 +1146,11 @@ bool SurfaceNode< V, E, G >::decide_procrastinate_surface_computations( Real con
 
 }
 
-
-
-///
-/// @begin SurfaceNode< V, E, G >::get_surface_deltaE_for_neighbors_state_substitution
 ///
 /// @brief
 /// returns the change in surface score for this node induced by a state substitution at a neighboring node.
 ///
-/// @detailed
+/// @details
 /// So a neighboring first class node that is changing is invoking (via the SurfaceEdge that connects them) this method
 /// so that this node can update its counts and then return a change in surface score for this node. This method needs
 /// to check if the alt_state that the connected node is considering is going to change the counts here and then perform
@@ -1294,14 +1241,11 @@ Real SurfaceNode< V, E, G >::get_surface_deltaE_for_neighbors_state_substitution
 	return get_surface_score_difference();
 }
 
-
-///
-/// @begin SurfaceNode::get_surface_score_difference
 ///
 /// @brief
 /// Returns the difference alt state score - current state score
 ///
-/// @detailed
+/// @details
 /// This method requires that the variables current_state_ and alternate_state_ hold the correct values. An assert guard
 /// checks to make sure an out-of-bounds exception won't occur.
 ///
@@ -1340,9 +1284,6 @@ Real SurfaceNode< V, E, G >::get_surface_score_difference() const {
 
 }
 
-
-///
-/// @begin SurfaceNode::commit_considered_substitution_surface
 ///
 /// @brief
 /// Sets the current state to the alternate state this node was asked to
@@ -1350,7 +1291,7 @@ Real SurfaceNode< V, E, G >::get_surface_score_difference() const {
 /// neighbors that it is going through with the state substitution it had been
 /// considering.
 ///
-/// @detailed
+/// @details
 /// If the node had procrastinated the surface deltaE computation because it
 /// thought the sim-annealer unlikely to accept the substitition, then the
 /// node must now do the work it procrastinated.
@@ -1413,10 +1354,6 @@ debug_assert( parent::considering_alternate_state() );
 	return deltaE_for_substitution_;
 }
 
-
-
-///
-/// @begin SurfaceNode< V, E, G >::verify_patch_areas_correct
 ///
 /// @brief
 /// Checks to make sure that the current state num se hp nbs is correct, by going through all residues in the Pose and
@@ -1452,7 +1389,7 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 	// the distance neighbor map that was created earlier to determine which nodes are close by.  No!  Can't do that
 	// because then we don't have two independent methods of checking the true count.  Iterate over all residues here
 	// and redo the expensive calculation.  The map is used to speed things up during the actual simulation.
-	//
+
 
 	//core::scoring::TenANeighborGraph const & tenA_neighbor_graph( get_surface_owner()->pose().energies().tenA_neighbor_graph() );
 
@@ -1646,9 +1583,6 @@ void SurfaceNode< V, E, G >::verify_patch_areas_correct( int node_id, int previo
 	}
 }
 
-
-///
-/// @begin SurfaceNode< V, E, G >::track_surface_E_min
 ///
 /// @brief
 /// Keeps track of the minimum surface score seen.  Every 100 substitutions, updates the variable surface_score_min_last_100.
@@ -1677,9 +1611,6 @@ void SurfaceNode< V, E, G >::track_surface_E_min() {
 
 }
 
-
-///
-/// @begin SurfaceNode::print
 ///
 /// @brief
 /// useful for debugging - writes information about a node to the tracer
@@ -1713,9 +1644,6 @@ void SurfaceNode< V, E, G >::print() const {
 	//std::cout << std::endl << std::endl;
 }
 
-
-///
-/// @begin SurfaceNode::count_static_memory
 ///
 /// @brief
 /// Returns the amount of static memory used by this Node object
@@ -1725,8 +1653,6 @@ unsigned int SurfaceNode< V, E, G >::count_static_memory() const {
 	return sizeof( SurfaceNode< V, E, G > );
 }
 
-///
-/// @begin SurfaceNode::count_dynamic_memory
 ///
 /// @brief
 /// Returns the amount of dynamic memory used by this Node object
@@ -1741,9 +1667,6 @@ unsigned int SurfaceNode< V, E, G >::count_dynamic_memory() const {
 	return total_memory;
 }
 
-
-///
-/// @begin SurfaceNode::getMemoryUsageInBytes
 ///
 /// @brief
 /// Not implemented, but needs to be!
@@ -1753,9 +1676,6 @@ unsigned int SurfaceNode< V, E, G >::getMemoryUsageInBytes() const {
 	return 0;
 }
 
-
-///
-/// @begin SurfaceNode::print_surface_avoidance_stats
 ///
 /// @brief
 /// reports on the level of success for surface score calculation procrastination
@@ -1781,9 +1701,6 @@ void SurfaceNode< V, E, G >::print_surface_avoidance_stats() {
 
 }
 
-
-///
-/// @begin SurfaceNode::reset_surface_avoidance_stats
 ///
 /// @brief
 /// resets static member variables of SurfaceNode that measure how worthwhile
@@ -1796,9 +1713,6 @@ void SurfaceNode< V, E, G >::reset_surface_avoidance_stats() {
 	num_surface_comps_later_made_ = 0;
 }
 
-
-///
-/// @begin SurfaceNode::set_rotamers
 ///
 /// @details
 /// Need to save a reference to the rotamer_set so that we can determine what a particular state change will do to the score
@@ -1830,8 +1744,6 @@ void SurfaceNode< V, E, G >::set_rotamers( rotamer_set::RotamerSetCOP rotamers )
 }
 
 ///
-/// @begin SurfaceNode::get_rotamer
-///
 /// @details
 /// Need to save a reference to the rotamer_set so that we can determine what a particular state change will do to the score
 ///
@@ -1840,11 +1752,6 @@ conformation::ResidueCOP SurfaceNode< V, E, G >::get_rotamer( int state ) const 
 	return rotamers_vector_[ state ];
 }
 
-
-
-
-///
-/// @begin SurfaceNode::is_surface_exposed
 ///
 /// @brief
 /// Returns the value of surface_exposed_ which gets set during the SIG initialize() method.
@@ -1855,8 +1762,6 @@ bool SurfaceNode< V, E, G >::is_surface_exposed() const {
 }
 
 ///
-/// @begin SurfaceNode::surface_exposed
-///
 /// @brief
 /// setter for the surface_exposed_ bool
 ///
@@ -1865,9 +1770,6 @@ void SurfaceNode< V, E, G >::surface_exposed( bool value ) {
 	surface_exposed_ = value;
 }
 
-
-///
-/// @begin SurfaceNode::is_below_buried_residue_no_hsasa_cutoff
 ///
 /// @brief
 /// Returns the value of is_below_buried_residue_no_hsasa_cutoff_ which gets set during the SIG initialize() method.
@@ -1878,8 +1780,6 @@ bool SurfaceNode< V, E, G >::is_below_buried_residue_no_hsasa_cutoff() const {
 }
 
 ///
-/// @begin SurfaceNode::is_below_buried_residue_no_hsasa_cutoff
-///
 /// @brief
 /// setter for the is_below_buried_residue_no_hsasa_cutoff_ bool
 ///
@@ -1888,9 +1788,6 @@ void SurfaceNode< V, E, G >::is_below_buried_residue_no_hsasa_cutoff( bool value
 	is_below_buried_residue_no_hsasa_cutoff_ = value;
 }
 
-
-///
-/// @begin SurfaceNode::reset_alt_state_total_hASA
 ///
 /// @brief
 /// Sets the alt state total hASA to the current state total hASA.  See comments in SIG and commit_considered_substitution_surface
@@ -1911,14 +1808,11 @@ void SurfaceNode< V, E, G >::reset_alt_state_total_hASA() {
 
 }
 
-
-///
-/// @begin SurfaceNode::initialize_num_neighbors_counting_self
 ///
 /// @brief
 /// Returns the number of neighbors within the interaction threshold, counting self.
 
-/// @detailed
+/// @details
 /// A member variable stores the value so that this method only has to run once and lookups can be performed thereafter.
 /// The reason we need to know the number of neighbors is that determining whether a residue is surface exposed depends
 /// on how many neighbors it has. For most applications, we have been using the approximation that residues with fewer
@@ -1968,9 +1862,6 @@ void SurfaceNode< V, E, G >::initialize_num_neighbors_counting_self() const {
 
 }
 
-
-///
-/// @begin SurfaceNode::num_neighbors_counting_self
 ///
 /// @brief
 /// Returns the value stored in the member variable.
@@ -1985,9 +1876,6 @@ int SurfaceNode< V, E, G >::num_neighbors_counting_self() const {
 	return num_neighbors_counting_self_;
 }
 
-
-///
-/// @begin SurfaceNode::init_hASA_variables
 ///
 template < typename V, typename E, typename G >
 void SurfaceNode< V, E, G >::init_hASA_variables() {
@@ -1997,9 +1885,7 @@ void SurfaceNode< V, E, G >::init_hASA_variables() {
 }
 
 ///
-/// @begin SurfaceNode::calculate_amount_total_hydrophobic_ASA
-///
-/// @detailed
+/// @details
 /// Iterates over all the edges emanating from a residues context graph and determines how many surface-exposed
 /// total neighbors that residue has including itself.  Uses the context graph in the Pose
 /// object because this function is only used for initialization.  After being calculated once, incrementing and
@@ -2095,12 +1981,10 @@ Real SurfaceNode<V, E, G>::calculate_amount_total_hydrophobic_ASA() {
 }
 
 ///
-/// @begin SurfaceNode::average_residue_hASA
-///
 /// @brief
 /// Returns the amount of hydrophobic ASA this node/residue adds to a patch.
 ///
-/// @detailed
+/// @details
 /// This method is oblivious to whether a given residue should contribute to the patch area.  This function just does
 /// the lookup for the hASA (using the SurfacePotential class).  Calls to this function should be surrounded by is-this-
 /// a-surface-exposed-hydrophobic checks.
@@ -2110,8 +1994,6 @@ Real SurfaceNode<V, E, G>::average_residue_hASA() const {
 	return average_residue_hASA( get_rotamer( parent::get_current_state() )->aa(), num_neighbors_counting_self() /* this nodes num nbs */ );
 }
 
-///
-/// @begin SurfaceNode::average_residue_hASA
 ///
 /// @brief
 /// Same function as above, but this one allows you to specify what type and num_nbs. This function is meant to be used
@@ -2124,9 +2006,6 @@ Real SurfaceNode<V, E, G>::average_residue_hASA( chemical::AA residue_type, Size
 	return SurfacePotential::get_instance()->average_residue_hASA( residue_type, num_nbs );
 }
 
-
-///
-/// @begin SurfaceNode::hASA_energy()
 ///
 /// @brief
 /// Calls a SurfacePotential class method to get the energy for a given patch area.
@@ -2145,7 +2024,6 @@ Real SurfaceNode< V, E, G >::hASA_energy( Real patch_area ) const {
 }
 
 
-
 //----------------------------------------------------------------------------//
 //----------------- Surface Background Node Class -------------------------//
 //----------------------------------------------------------------------------//
@@ -2157,9 +2035,6 @@ Real SurfaceBackgroundNode< V, E, G >::surface_energy_weight_ = 1.0;
 template < typename V, typename E, typename G >
 const int SurfaceBackgroundNode< V, E, G >::MAX_SURFACE_ENERGY = 100;
 
-
-///
-/// @begin SurfaceBackgroundNode::SurfaceBackgroundNode
 ///
 /// @brief
 /// main constructor.  No default constructor, copy constructor or assignment operator
@@ -2184,9 +2059,6 @@ SurfaceBackgroundNode< V, E, G >::SurfaceBackgroundNode( AdditionalBackgroundNod
 #endif
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::~SurfaceBackgroundNode
 ///
 /// @brief
 /// destructor - no dynamicly allocated memory to manage -> empty
@@ -2194,9 +2066,6 @@ SurfaceBackgroundNode< V, E, G >::SurfaceBackgroundNode( AdditionalBackgroundNod
 template < typename V, typename E, typename G >
 SurfaceBackgroundNode< V, E, G >::~SurfaceBackgroundNode() {}
 
-
-///
-/// @begin SurfaceBackgroundNode::prepare_for_simulated_annealing
 ///
 /// @brief
 /// Sets the hASA of surface exposed hydrophobic neighbors using the pose's neighbor graph. There's
@@ -2217,14 +2086,11 @@ void SurfaceBackgroundNode< V, E, G >::prepare_for_simulated_annealing() {
 
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::detect_neighborship
 ///
 /// @brief
 /// returns true if this background residue neighbors with any rotamer of a SurfaceNode
 ///
-/// @detailed
+/// @details
 /// If this node is in the list of neighbors for the passed in SurfaceNode, return true.  Leave the responsibility
 /// of figuring out neighborship to the first class node.
 ///
@@ -2233,14 +2099,11 @@ bool SurfaceBackgroundNode< V, E, G >::detect_neighborship( SurfaceNode< V, E, G
 	return node->detect_neighborship_with_node( parent::get_node_index(), false /* i.e. this node is not a FC node */ );
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::project_surface_deltaE_for_substitution
 ///
 /// @brief
 /// returns the change in surface induced by a SurfaceNode undergoing a state substitution.
 ///
-/// @detailed
+/// @details
 /// Is it possible for a background node to have a state of zero (or unassigned state).  Not really - there's no state
 /// for background nodes since they're not changing.
 /// What happens if the first class node undergoing sub is in the unassigned state?  We have to figure out what the wild-type
@@ -2383,9 +2246,6 @@ Real SurfaceBackgroundNode< V, E, G >::project_surface_deltaE_for_substitution(
 
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::acknowledge_substitution
 ///
 /// @brief
 /// bookkeeping to reflect a SurfaceNode's state substitution.
@@ -2395,9 +2255,6 @@ void SurfaceBackgroundNode< V, E, G >::acknowledge_substitution_surface() {
 	curr_state_total_hASA_ = alt_state_total_hASA_;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode< V, E, G >::get_surface_score
 ///
 /// @brief
 /// returns the surface score under the current state assignment
@@ -2416,9 +2273,6 @@ Real SurfaceBackgroundNode< V, E, G >::get_surface_score() const {
 	return surface_energy_weight_ * hASA_energy( curr_state_total_hASA_ );
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::print
 ///
 /// @brief
 /// used only for debugging
@@ -2432,16 +2286,11 @@ void SurfaceBackgroundNode< V, E, G >::print() const {
 }
 
 ///
-/// @begin SurfaceBackgroundNode::count_static_memory
-///
 template < typename V, typename E, typename G >
 unsigned int SurfaceBackgroundNode< V, E, G >::count_static_memory() const {
 	return sizeof( SurfaceBackgroundNode< V, E, G > );
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceBackgroundNode< V, E, G >::count_dynamic_memory() const {
@@ -2451,9 +2300,6 @@ unsigned int SurfaceBackgroundNode< V, E, G >::count_dynamic_memory() const {
 	return total_memory;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::is_surface_exposed
 ///
 /// @brief
 /// Returns the value of surface_exposed_ which gets set during the SIG initialize() method.
@@ -2463,9 +2309,6 @@ bool SurfaceBackgroundNode< V, E, G >::is_surface_exposed() const {
 	return surface_exposed_;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::surface_exposed
 ///
 /// @brief
 /// using this for debugging
@@ -2475,9 +2318,6 @@ void SurfaceBackgroundNode< V, E, G >::surface_exposed( bool value ) {
 	surface_exposed_ = value;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::is_below_buried_residue_no_hsasa_cutoff
 ///
 /// @brief
 /// Returns the value of is_below_buried_residue_no_hsasa_cutoff_ which gets set during the SIG initialize() method.
@@ -2488,8 +2328,6 @@ bool SurfaceBackgroundNode< V, E, G >::is_below_buried_residue_no_hsasa_cutoff()
 }
 
 ///
-/// @begin SurfaceBackgroundNode::is_below_buried_residue_no_hsasa_cutoff
-///
 /// @brief
 /// setter for the is_below_buried_residue_no_hsasa_cutoff_ bool
 ///
@@ -2498,9 +2336,6 @@ void SurfaceBackgroundNode< V, E, G >::is_below_buried_residue_no_hsasa_cutoff( 
 	is_below_buried_residue_no_hsasa_cutoff_ = value;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::reset_alt_state_total_hASA
 ///
 /// @brief
 /// Sets the alt state total hASA to the current state total hASA.  See comments in SIG and commit_considered_substitution_surface
@@ -2518,15 +2353,12 @@ void SurfaceBackgroundNode< V, E, G >::reset_alt_state_total_hASA() {
 
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::initialize_num_neighbors_counting_self
 ///
 /// @brief
 /// Returns the number of neighbors within the interaction threshold, counting self.  A member variable stores the
 /// value so that this method only has to run once and lookups can be performed thereafter.
 ///
-/// @detailed
+/// @details
 /// See comments in SurfaceNode::initialize_num_neighbors_counting_self for details.
 ///
 template < typename V, typename E, typename G >
@@ -2566,9 +2398,6 @@ void SurfaceBackgroundNode< V, E, G >::initialize_num_neighbors_counting_self() 
 
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::num_neighbors_counting_self
 ///
 /// @brief
 /// Returns the value stored in the member variable.
@@ -2583,9 +2412,6 @@ int SurfaceBackgroundNode< V, E, G >::num_neighbors_counting_self() const {
 	return num_neighbors_counting_self_;
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::init_hASA_variables
 ///
 template < typename V, typename E, typename G >
 void SurfaceBackgroundNode< V, E, G >::init_hASA_variables() {
@@ -2594,11 +2420,8 @@ void SurfaceBackgroundNode< V, E, G >::init_hASA_variables() {
 
 }
 
-
 ///
-/// @begin SurfaceBackgroundNode::calculate_amount_total_hydrophobic_ASA
-///
-/// @detailed
+/// @details
 /// See comments in SurfaceNode for more info.
 ///
 template < typename V, typename E, typename G >
@@ -2654,14 +2477,11 @@ Real SurfaceBackgroundNode<V, E, G>::calculate_amount_total_hydrophobic_ASA() {
 
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::average_residue_hASA
 ///
 /// @brief
 /// Returns the amount of hydrophobic ASA this residue adds to a patch.
 ///
-/// @detailed
+/// @details
 /// This method is oblivious to whether a given residue should contribute to the patch area.  This function just does
 /// the lookup for the hASA (using the SurfacePotential class).  Calls to this function should be surrounded by is-this-
 /// a-surface-exposed-hydrophobic checks.
@@ -2672,8 +2492,6 @@ Real SurfaceBackgroundNode<V, E, G>::average_residue_hASA() const {
 	return average_residue_hASA( wt_residue_for_node().aa(), num_neighbors_counting_self() /* this nodes num nbs */ );
 }
 
-///
-/// @begin SurfaceBackgroundNode::average_residue_hASA
 ///
 /// @brief
 /// Same function as above, but this one allows you to specify what type and num_nbs. This function is meant to be used
@@ -2686,9 +2504,6 @@ Real SurfaceBackgroundNode<V, E, G>::average_residue_hASA( chemical::AA residue_
 	return SurfacePotential::get_instance()->average_residue_hASA( residue_type, num_nbs );
 }
 
-
-///
-/// @begin SurfaceBackgroundNode::hASA_energy()
 ///
 /// @brief
 /// Calls a SurfacePotential class method to get the energy for a given patch area.
@@ -2707,13 +2522,10 @@ Real SurfaceBackgroundNode< V, E, G >::hASA_energy( Real patch_area ) const {
 }
 
 
-
 //----------------------------------------------------------------------------//
 //-------------------------- Surface Edge Class ---------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin SurfaceEdge::SurfaceEdge
 ///
 /// @brief
 /// main constructor.  No default, or copy constructors, no assignment operator
@@ -2741,16 +2553,10 @@ SurfaceEdge< V, E, G >::SurfaceEdge( G* owner, int node1, int node2 ) :
 
 }
 
-
-///
-/// @begin SurfaceEdge::~SurfaceEdge
 ///
 template < typename V, typename E, typename G >
 SurfaceEdge< V, E, G >::~SurfaceEdge() {}
 
-
-///
-/// @begin SurfaceEdge::prepare_for_simulated_annealing
 ///
 /// @brief
 /// drops zero submatrices of the AminoAcidNeighborSparseMatrix and if the two_body_energies_ member then holds nothing,
@@ -2776,9 +2582,6 @@ void SurfaceEdge< V, E, G >::prepare_for_simulated_annealing() {
 	}
 }
 
-
-///
-/// @begin SurfaceEdge::acknowledge_state_zeroed_surface
 ///
 /// @brief
 /// respond to when one of its vertices enters the "unassigned" state
@@ -2797,15 +2600,12 @@ void SurfaceEdge< V, E, G >::acknowledge_state_zeroed_surface( int node_that_cha
 	inform_non_changing_node_of_neighbors_change();
 }
 
-
-///
-/// @begin SurfaceEdge::get_surface_deltaE_for_neighbor
 ///
 /// @brief
 /// returns the change in surface score for the neighbor of a node that is
 /// produced by the state substitution it is considering.
 ///
-/// @detailed
+/// @details
 /// Need to tell the node that's not changing which node is considering the change and what the alternate state it
 /// might change to is.  Then that node can recompute it's change in se hp nb count and return a change in score.
 ///
@@ -2839,9 +2639,6 @@ Real SurfaceEdge< V, E, G >::get_surface_deltaE_for_neighbor( int node_consideri
 
 }
 
-
-///
-/// @begin SurfaceEdge::acknowledge_substitution_surface
 ///
 /// @brief
 /// bookkeeping following the decision to substitute a nodes current state with the alternate it was asked to consider.
@@ -2859,8 +2656,6 @@ void SurfaceEdge< V, E, G >::acknowledge_substitution_surface() {
 }
 
 ///
-/// @begin SurfaceEdge::inform_non_changing_node_of_neighbors_change
-///
 /// @brief
 /// tells the node that isn't considering a substitution or changing state
 /// that its neighbor who is has changed.
@@ -2871,10 +2666,6 @@ void SurfaceEdge< V, E, G >::inform_non_changing_node_of_neighbors_change() {
 	get_surface_node( node_not_changing_ )->acknowledge_neighbors_substitution_surface();
 }
 
-
-
-///
-/// @begin SurfaceEdge::track_max_magnitude_surface_deltaE
 ///
 /// @brief
 /// Keeps track of the maximum surface deltaE seen in the last 50 commits
@@ -2900,9 +2691,6 @@ void SurfaceEdge< V, E, G >::track_max_magnitude_surface_deltaE() {
 	}
 }
 
-
-///
-/// @begin SurfaceEdge::declare_energies_final
 ///
 /// @brief
 /// Reduces memory usage in the two body energy table after the energy
@@ -2922,18 +2710,12 @@ void SurfaceEdge< V, E, G >::declare_energies_final() {
 	parent::declare_energies_final_no_deletion();
 }
 
-
-///
-/// @begin SurfaceEdge::get_max_surface_deltaE_guess
 ///
 template < typename V, typename E, typename G >
 Real SurfaceEdge< V, E, G >::get_max_surface_deltaE_guess( int /*node_index*/ ) const {
 	return max_surface_deltaE_last_50_commits_[ node_changing_ ];
 }
 
-
-///
-/// @begin SurfaceEdge::getMemoryUsageInBytes
 ///
 /// @remarks
 /// Not implemented.
@@ -2943,18 +2725,12 @@ unsigned int SurfaceEdge< V, E, G >::getMemoryUsageInBytes() const {
 	return 0;
 }
 
-
-///
-/// @begin SurfaceEdge::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceEdge< V, E, G >::count_static_memory() const {
 	return sizeof( SurfaceEdge< V, E, G > );
 }
 
-
-///
-/// @begin SurfaceEdge::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceEdge< V, E, G >::count_dynamic_memory() const {
@@ -2966,13 +2742,10 @@ unsigned int SurfaceEdge< V, E, G >::count_dynamic_memory() const {
 }
 
 
-
 //----------------------------------------------------------------------------//
 //-------------------- SurfaceBackgroundEdge Class ------------------------//
 //----------------------------------------------------------------------------//
 
-///
-/// @begin SurfaceBackgroundEdge< V, E, G >::SurfaceBackgroundEdge
 ///
 /// @brief
 /// main constructor
@@ -2995,18 +2768,12 @@ SurfaceBackgroundEdge< V, E, G >::SurfaceBackgroundEdge
 	num_surface_deltaE_observations_since_update_ = 0;
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::~SurfaceBackgroundEdge
 ///
 /// @brief
 ///
 template < typename V, typename E, typename G >
 SurfaceBackgroundEdge< V, E, G >::~SurfaceBackgroundEdge() {}
 
-
-///
-/// @begin SurfaceBackgroundEdge::prepare_for_simulated_annealing
 ///
 /// @brief
 /// Invoked by AdditionalBackgroundNodesInteractionGraph::prepare_for_simulated_annealing.
@@ -3021,9 +2788,6 @@ SurfaceBackgroundEdge< V, E, G >::~SurfaceBackgroundEdge() {}
 template < typename V, typename E, typename G >
 void SurfaceBackgroundEdge< V, E, G >::prepare_for_simulated_annealing() {}
 
-
-///
-/// @begin SurfaceBackgroundEdge::acknowledge_state_change
 ///
 /// @brief
 /// bookkeeping in response to a SurfaceNode switching states (without having
@@ -3042,15 +2806,12 @@ void SurfaceBackgroundEdge< V, E, G >::acknowledge_state_change( int new_state )
 	acknowledge_substitution_surface();
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::get_surface_deltaE_for_substitution
 ///
 /// @brief
 /// returns the change in surface energy produced by a background node in response to a considered state
 /// substitution of the first class node
 ///
-/// @detailed
+/// @details
 /// Need to tell the bg node that's not changing that the fc node is considering a change and what the alternate state it
 /// might change to is.  Then that node can recompute it's change in se hp nb total hASA and return a change in score.
 /// Called once by acknowledge_state_change method in this class when blanket setting the state of all the nodes
@@ -3079,9 +2840,6 @@ Real SurfaceBackgroundEdge< V, E, G >::get_surface_deltaE_for_substitution( int 
 
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::acknowledge_substitution_surface
 ///
 /// @brief
 /// bookkeeping in response to the SurfaceNode committing the considered substitution
@@ -3096,9 +2854,6 @@ void SurfaceBackgroundEdge< V, E, G >::acknowledge_substitution_surface() {
 	track_max_magnitude_surface_deltaE();
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::track_max_magnitude_surface_deltaE
 ///
 /// @brief
 /// Keeps track of the maximum surface deltaE seen in the last 50 commits. Used possibly for procrastinating
@@ -3120,9 +2875,6 @@ void SurfaceBackgroundEdge< V, E, G >::track_max_magnitude_surface_deltaE() {
 	}
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::get_max_surface_deltaE_guess
 ///
 /// @brief
 /// Returns the value of max_surface_deltaE_last_50_commits_
@@ -3132,18 +2884,12 @@ Real SurfaceBackgroundEdge< V, E, G >::get_max_surface_deltaE_guess() const {
 	return max_surface_deltaE_last_50_commits_;
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceBackgroundEdge< V, E, G >::count_static_memory() const {
 	return sizeof( SurfaceBackgroundEdge< V, E, G > );
 }
 
-
-///
-/// @begin SurfaceBackgroundEdge::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceBackgroundEdge< V, E, G >::count_dynamic_memory() const {
@@ -3153,14 +2899,10 @@ unsigned int SurfaceBackgroundEdge< V, E, G >::count_dynamic_memory() const {
 }
 
 
-
 //----------------------------------------------------------------------------//
 //--------------------- Surface Interaction Graph -------------------------//
 //----------------------------------------------------------------------------//
 
-
-///
-/// @begin SurfaceInteractionGraph::SurfaceInteractionGraph
 ///
 /// @brief
 /// Main constructor
@@ -3183,18 +2925,12 @@ SurfaceInteractionGraph< V, E, G >::SurfaceInteractionGraph( int num_nodes ) :
 	surface_score_weight_( 1 )
 {}
 
-
-///
-/// @begin SurfaceInteractionGraph::~SurfaceInteractionGraph
 ///
 template < typename V, typename E, typename G >
 SurfaceInteractionGraph< V, E, G >::~SurfaceInteractionGraph() {}
 
-
 ///
-/// @begin SurfaceInteractionGraph::initialize()
-///
-/// @detailed
+/// @details
 /// This initialize() method needs to do two things: 1) it needs to set residues that are not changing as background
 /// residues and 2) it needs to save references to the rotamer set or sets so that nodes can later figure out whether
 /// a particular rotamer change is a hydrophobic or not.
@@ -3374,14 +3110,11 @@ void SurfaceInteractionGraph< V, E, G >::initialize( rotamer_set::RotamerSetsBas
 
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_num_residues_in_protein
 ///
 /// @brief
 /// tells the graph how many residues there are total in the protein
 ///
-/// @detailed
+/// @details
 /// The graph maintains its own enumeration for the background residues;
 /// but asks that anyone wanting to refer to them use their original resid.
 /// The graph has to switch back and forth between enumeration schemes and
@@ -3406,14 +3139,12 @@ void SurfaceInteractionGraph< V, E, G >::set_num_residues_in_protein( int num_re
 }
 
 ///
-/// @begin SurfaceInteractionGraph::set_num_background_residues
-///
 /// @brief
 /// tells the graph how many residues there are as part of the protein that are
 /// not part of the combinatorial optimization process -- they are part of the
 /// background
 ///
-/// @detailed
+/// @details
 /// The other half of switching between enumeration schemes for the background
 /// residues is knowing how many background residues there are.
 ///
@@ -3437,9 +3168,6 @@ void SurfaceInteractionGraph< V, E, G >::set_num_background_residues( int num_ba
 	}
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_residue_as_background_residue
 ///
 /// @brief
 /// informs the graph that a particular residue is part of the background.
@@ -3468,9 +3196,6 @@ debug_assert( resid_2_bgenumeration_[ residue ] == 0 );
 #endif
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::bg_node_2_resid
 ///
 /// @brief
 /// Provides read access to the bg to resid array. Returns -1 if the index is not in bounds.
@@ -3484,14 +3209,11 @@ int SurfaceInteractionGraph< V, E, G >::bg_node_2_resid( int node_index ) {
 	return bgenumeration_2_resid_[ node_index ];
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::prepare_for_simulated_annealing
 ///
 /// @brief
 /// Prepares the graph to begin simulated annealing.
 ///
-/// @detailed
+/// @details
 /// Invokes both base-class prepare_for_simulated_annealing subroutines:
 /// InteractionGraphBase first, to prepare the SurfaceNodes and SurfaceEdges.
 /// Then the AdditionalBackgroundNodesInteractionGraph, to prepare the
@@ -3542,9 +3264,6 @@ void SurfaceInteractionGraph< V, E, G >::prepare_for_simulated_annealing() {
 
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::detect_background_residue_and_first_class_residue_neighbors
 ///
 /// @brief
 /// iterates across all pairs of first- and second-class nodes to determine which should be considered neighbors.
@@ -3581,9 +3300,6 @@ void SurfaceInteractionGraph< V, E, G >::detect_background_residue_and_first_cla
 
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::blanket_assign_state_0
 ///
 /// @brief
 /// assigns state 0 -- the unassigned state -- to all (first class) vertices
@@ -3601,9 +3317,6 @@ void SurfaceInteractionGraph< V, E, G >::blanket_assign_state_0() {
 	update_internal_energy_totals_surface();
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::update_internal_energy_totals_surface
 ///
 /// @brief
 /// After every 2^10 commits, the graph traverses its nodes and edges and
@@ -3635,15 +3348,12 @@ void SurfaceInteractionGraph< V, E, G >::update_internal_energy_totals_surface()
 	num_commits_since_last_update_ = 0;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_errorfull_deltaE_threshold
 ///
 /// @brief
 /// Allows the sim-annealer to specify a deltaE threshold above which, it is
 /// no longer necessary to be very accurate.
 ///
-/// @detailed
+/// @details
 /// When the annealer asks the graph to consider a state substitution that
 /// produces a large collision, the graph may approximate the surface deltaE
 /// instead of recalculating it.  The deltaE returned by consider_substitution() will be
@@ -3664,15 +3374,12 @@ void SurfaceInteractionGraph< V, E, G >::set_errorfull_deltaE_threshold( Real de
 	deltaE_threshold_for_avoiding_surface_calcs_ = deltaE;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::consider_substitution
 ///
 /// @brief
 /// returns the change in energy induced by switching a particular node from its
 /// currently assigned state to some alternate state.
 ///
-/// @detailed
+/// @details
 /// Also returns the sum of the two body energies for the node in its current
 /// state; the sim-annealer accepts state substitutions at higher chance if the
 /// original state was also at a poor energy.
@@ -3710,14 +3417,11 @@ void SurfaceInteractionGraph< V, E, G >::consider_substitution( int node_ind, in
 
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::blanket_reset_alt_state_total_hASAs
 ///
 /// @brief
 /// Iterates through all Nodes and BGNodes and resets their alt state total hASA to the current state total hASA.
 ///
-/// @detailed
+/// @details
 /// the Node consider() function is the main entry point from the SIG when the annealer considers a sub. need to make sure that the
 /// node's alt_state hASA is the same as the current state before we start incrementing/decrementhing things or otherwise I wind
 /// up with total hASAs that are wrong. alt state will be the same as current state on the first time through because of
@@ -3746,9 +3450,6 @@ void SurfaceInteractionGraph< V, E, G >::blanket_reset_alt_state_total_hASAs() {
 	}
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::commit_considered_substitution
 ///
 /// @brief
 /// Commits the substitution that the sim annealer had previously asked the graph to consider.  Returns the accurate total
@@ -3773,9 +3474,6 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::commit_considered_substit
 	return total_energy_current_state_assignment_;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_network_state
 ///
 /// @brief
 /// Switch the state assignment of every first class node in the graph.
@@ -3806,9 +3504,6 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::set_network_state( Objexx
 	return total_energy_current_state_assignment_;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_state_for_node
 ///
 /// @brief
 /// Assign new_state to the first class node with index node_ind
@@ -3826,9 +3521,6 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::set_state_for_node( int n
 	return total_energy_current_state_assignment_;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::get_energy_current_state_assignment
 ///
 /// @brief
 /// returns the energy of the entire graph under the current network state
@@ -3839,15 +3531,12 @@ core::PackerEnergy SurfaceInteractionGraph< V, E, G >::get_energy_current_state_
 	return total_energy_current_state_assignment_;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::create_new_node
 ///
 /// @brief
 /// factory method pattern for instantiation of SurfaceNode objects, used by
 /// InteractionGraphBase class.
 ///
-/// @detailed
+/// @details
 /// The IGBase class calls this method for all residues that are designable.
 ///
 /// @param
@@ -3863,9 +3552,6 @@ SurfaceInteractionGraph< V, E, G >::create_new_node( int node_index, int num_sta
 	return new SurfaceNode< V, E, G >( this, node_index, num_states );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::create_new_edge
 ///
 /// @brief
 /// factory method pattern for instantiation of SurfaceEdge objects, used by
@@ -3884,9 +3570,6 @@ SurfaceInteractionGraph< V, E, G >::create_new_edge( int index1, int index2) {
 	return new SurfaceEdge< V, E, G >( this, index1, index2 );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::create_background_node
 ///
 /// @brief
 /// factory method pattern for instantiation of SurfaceBackgroundResidueNode
@@ -3903,9 +3586,6 @@ BackgroundNode< V, E, G >* SurfaceInteractionGraph< V, E, G >::create_background
 	return new SurfaceBackgroundNode< V, E, G >( this, node_index );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::create_background_edge
 ///
 /// @brief
 /// factory method pattern for instantiation of SurfaceBackgroundEdge
@@ -3923,9 +3603,6 @@ BackgroundToFirstClassEdge< V, E, G >* SurfaceInteractionGraph< V, E, G >::creat
 	return new SurfaceBackgroundEdge< V, E, G >( this, fc_node_index, bg_node_index );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::print_internal_energies_for_current_state_assignment
 ///
 /// @brief
 /// Prints out the one and two-body energies for every node and bgnode in the graph.
@@ -3968,9 +3645,6 @@ void SurfaceInteractionGraph< V, E, G >::print_internal_energies_for_current_sta
 	}
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::get_edge_memory_usage
 ///
 /// @brief
 /// Should return a measurement of the memory used by the interaction graph
@@ -3981,18 +3655,12 @@ int SurfaceInteractionGraph< V, E, G >::get_edge_memory_usage() const {
 	return 0;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::count_static_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceInteractionGraph< V, E, G >::count_static_memory() const {
 	return sizeof( SurfaceInteractionGraph< V, E, G > );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::count_dynamic_memory
 ///
 template < typename V, typename E, typename G >
 unsigned int SurfaceInteractionGraph< V, E, G >::count_dynamic_memory() const {
@@ -4004,9 +3672,6 @@ unsigned int SurfaceInteractionGraph< V, E, G >::count_dynamic_memory() const {
 	return total_memory;
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_pose
 ///
 template < typename V, typename E, typename G >
 void
@@ -4024,9 +3689,6 @@ SurfaceInteractionGraph<V, E, G>::set_pose( pose::Pose const & pose ) {
 	pose_ = pose::PoseOP( new pose::Pose( pose ) );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_packer_task
 ///
 /// @brief
 /// We need a copy of the packer task for 2 reasons: 1) to figure out what (if any) the weight on the surface score
@@ -4039,9 +3701,6 @@ SurfaceInteractionGraph<V, E, G>::set_packer_task( task::PackerTask const & the_
 	packer_task_ = the_task.clone();
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_rotamer_sets
 ///
 template < typename V, typename E, typename G >
 void
@@ -4049,9 +3708,6 @@ SurfaceInteractionGraph<V, E, G>::set_rotamer_sets( rotamer_set::RotamerSets con
 	rotamer_sets_ = rotamer_set::RotamerSetsOP( new rotamer_set::RotamerSets( rotsets ) );
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::print
 ///
 /// @brief
 /// useful for debugging
@@ -4073,13 +3729,10 @@ SurfaceInteractionGraph<V, E, G>::print() const {
 }
 
 
-
 // The below functions are only used for the unit tests. However, since most developers these days are running the unit
 // tests using release mode, I can't #ifdef these functions (to leave them out of release mode builds) or the unit
 // tests don't compile. So just compile them regardless of build mode.
 
-///
-/// @begin SurfaceNode::set_observed_sufficient_boolean_true
 ///
 /// @brief
 /// Sets the observed_sufficient_surface_E_to_predict_min_ to true. Only used by the unit tests.
@@ -4096,8 +3749,6 @@ void SurfaceNode<V, E, G>::set_observed_sufficient_boolean_true() {
 
 }
 
-///
-/// @begin SurfaceNode::get_hASA_for_node_and_nbs
 ///
 /// @brief
 /// Returns a vector of Reals containing the hASA of se hp nbs for this node in the first index, and then
@@ -4132,26 +3783,20 @@ std::vector< Real > SurfaceNode<V, E, G>::get_hASA_for_node_and_nbs() {
 	return hASA_vector;
 }
 
-/// @begin SurfaceNode::get_current_hASA
-///
+
 /// @brief
 /// Returns current hASA. Only used by the unit tests.  Should not exist in release mode.
 ///
 template< typename V, typename E, typename G >
 Real SurfaceNode<V, E, G>::get_current_hASA() { return curr_state_total_hASA_; }
 
-/// @begin SurfaceBackgroundNode::get_current_count
-///
+
 /// @brief
 /// Returns current hASA. Only used by the unit tests.  Should not exist in release mode.
 ///
 template< typename V, typename E, typename G >
 Real SurfaceBackgroundNode<V, E, G>::get_current_hASA() { return curr_state_total_hASA_; }
 
-
-
-///
-/// @begin SurfaceNode::get_alt_state_hASA_for_node_and_nbs
 ///
 /// @brief
 /// Returns a vector of Reals containing the hASA of se hp nbs for this node in the first index, and then
@@ -4187,25 +3832,19 @@ std::vector< Real > SurfaceNode<V, E, G>::get_alt_state_hASA_for_node_and_nbs() 
 }
 
 
-/// @begin SurfaceNode::get_alt_hASA
-///
 /// @brief
 /// Returns current hASA. Only used by the unit tests.  Should not exist in release mode.
 ///
 template< typename V, typename E, typename G >
 Real SurfaceNode<V, E, G>::get_alt_hASA() { return alt_state_total_hASA_; }
 
-/// @begin SurfaceBackgroundNode::get_alt_hASA
-///
+
 /// @brief
 /// Returns current hASA. Only used by the unit tests.  Should not exist in release mode.
 ///
 template< typename V, typename E, typename G >
 Real SurfaceBackgroundNode<V, E, G>::get_alt_hASA() { return alt_state_total_hASA_; }
 
-
-///
-/// @begin SurfaceInteractionGraph::get_network_state
 ///
 /// @brief
 /// Returns the state on each FCNode, but not necessarily in pose resid order. Only used by the unit tests.
@@ -4221,8 +3860,6 @@ std::vector< int > SurfaceInteractionGraph<V, E, G>::get_network_state() const {
 }
 
 ///
-/// @begin SurfaceInteractionGraph::get_hASA_for_node_and_nbs
-///
 /// @brief
 /// Sets the observed_sufficient_surface_E_to_predict_min_ to true. Only used by the unit tests.
 ///
@@ -4231,9 +3868,6 @@ std::vector< Real > SurfaceInteractionGraph<V, E, G>::get_hASA_for_node_and_nbs(
 	return get_surface_node( index )->get_hASA_for_node_and_nbs();
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::get_alt_state_hASA_for_node_and_nbs
 ///
 /// @brief
 /// Sets the observed_sufficient_surface_E_to_predict_min_ to true. Only used by the unit tests.
@@ -4243,9 +3877,6 @@ std::vector< Real > SurfaceInteractionGraph<V, E, G>::get_alt_state_hASA_for_nod
 	return get_surface_node( index )->get_alt_state_hASA_for_node_and_nbs();
 }
 
-
-///
-/// @begin SurfaceInteractionGraph::set_observed_sufficient_boolean_true
 ///
 /// @brief
 /// Sets the observed_sufficient_surface_E_to_predict_min_ to true. Only used by the unit tests.

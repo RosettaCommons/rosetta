@@ -13,7 +13,6 @@
 /// @author Jianqing Xu (xubest@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_antibody_RefineBetaBarrel_fwd_hh
 #define INCLUDED_protocols_antibody_RefineBetaBarrel_fwd_hh
 

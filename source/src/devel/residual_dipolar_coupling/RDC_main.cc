@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: LoopModeler
 ///
 ///
@@ -19,7 +19,6 @@
 #include <numeric/numeric.functions.hh>
 
 //C++ headers
-// AUTO-REMOVED #include <string>
 #include <sstream>
 #include <fstream>
 #include <map>

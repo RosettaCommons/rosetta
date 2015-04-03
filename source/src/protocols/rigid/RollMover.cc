@@ -25,7 +25,6 @@
 #include <numeric/xyz.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 // Random number generator
 #include <numeric/random/random.hh>
 // Utility Headers
@@ -50,7 +49,7 @@ using namespace core;
 namespace protocols {
 namespace rigid {
 
-///@details
+/// @details
 void RollMover::apply( core::pose::Pose & pose ){
 	
 	utility::vector1< utility::vector1< numeric::xyzVector< core::Real> > >  coords; // some of these will change for sure
@@ -201,21 +200,21 @@ RollMoverCreator::create_mover() const {
 	return protocols::moves::MoverOP( new RollMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::fresh_instance() const
 {
 	return moves::MoverOP( new RollMover );
 }
 
-///@brief required in the context of the parser/scripting scheme
+/// @brief required in the context of the parser/scripting scheme
 moves::MoverOP
 RollMover::clone() const
 {
 	return moves::MoverOP( new RollMover( *this ) );
 }
 
-///@brief
+/// @brief
 RollMover::RollMover(
 ) : Mover()
 {

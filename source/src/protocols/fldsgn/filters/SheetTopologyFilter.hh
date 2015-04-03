@@ -9,7 +9,7 @@
 
 /// @file ./src/protocols/fldsgn/filters/SheetTopologyFilter.hh
 /// @brief header file for SheetTopologyFilter class.
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
 

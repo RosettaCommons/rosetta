@@ -17,7 +17,6 @@
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

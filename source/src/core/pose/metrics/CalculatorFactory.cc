@@ -16,8 +16,6 @@
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -25,7 +23,6 @@
 
 // C++ Headers
 #include <map>
-// AUTO-REMOVED #include <list>
 #include <iostream>
 
 #include <utility/vector1.hh>
@@ -39,7 +36,6 @@ CalculatorFactory& CalculatorFactory::Instance() {
 	static CalculatorFactory singleton;
 	return singleton;
 }
-
 
 
 void CalculatorFactory::register_calculator( std::string const & calculator_name, PoseMetricCalculatorOP const new_calculator ) {
@@ -100,7 +96,6 @@ PoseMetricCalculatorOP CalculatorFactory::retrieve_calculator( std::string const
 	}
 	return calculator_iter->second->clone();
 }
-
 
 
 } // metrics

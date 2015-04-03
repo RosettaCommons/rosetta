@@ -20,7 +20,6 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // mini
-// AUTO-REMOVED #include <protocols/toolbox/superimpose.hh>
 
 #include <core/types.hh>
 
@@ -46,11 +45,11 @@ class FragmentCrmsd: public CachingScoringMethod {
 public:
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to a given pose, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to a given pose, which should have the same number of residues a the query sequence
 	FragmentCrmsd(Size, Real, bool, core::pose::PoseOP);
 
 	/// @brief  creates a crmsd-based scoring function.
-	/// @detailed fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
+	/// @details fragments will be compared to given coordinates, which should have the same number of residues a the query sequence
 	FragmentCrmsd(Size, Real, bool, utility::vector1< utility::vector1<Real> >);
 
 	~FragmentCrmsd();

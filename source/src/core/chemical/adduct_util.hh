@@ -15,7 +15,6 @@
 #define INCLUDED_core_chemical_adduct_util_hh
 
 // ObjexxFCL Headers
-// Commented by inclean daemon #include <ObjexxFCL/string.functions.hh>
 
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -23,14 +22,12 @@
 // Project headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
 
 #include <utility/options/StringVectorOption.fwd.hh>
 #include <map>
 
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 namespace core {
 namespace chemical {
@@ -56,7 +53,6 @@ namespace chemical {
 
 } // chemical
 } // core
-
 
 
 #endif

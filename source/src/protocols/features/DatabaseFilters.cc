@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 
 

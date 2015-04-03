@@ -17,7 +17,6 @@
 #include <core/scoring/packstat/SimplePDB.hh>
 #include <core/scoring/packstat/SimplePDB_Atom.hh>
 
-// AUTO-REMOVED #include "numeric/io.hh"
 
 #include <cstring>
 #include <iostream>
@@ -149,7 +148,6 @@ operator<< (
   out << "Sphere( " << sphere.xyz << ", " << sphere.radius << " )";
   return out;
 }
-
 
 
 } // namespace packstat

@@ -247,7 +247,6 @@ void ConformationKinWriter::write_virtual_atoms( bool setting ) { write_virtual_
 void ConformationKinWriter::master( std::string const & setting ) { master_ = setting; }
 
 
-
 } // conformation
 } // core
 

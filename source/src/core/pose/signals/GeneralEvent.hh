@@ -23,7 +23,7 @@
 
 // unit headers
 #include <core/pose/signals/GeneralEvent.fwd.hh>
-///
+
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>

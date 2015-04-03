@@ -29,5 +29,4 @@ typedef  utility::pointer::shared_ptr< OrbitalTypeSet const > OrbitalTypeSetCOP;
 }
 
 
-
 #endif /* ORBITALTYPESET_FWD_HH_ */

@@ -15,13 +15,11 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/VariantType.hh>
 
@@ -34,13 +32,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
-
 
 
 static basic::Tracer TR("test.core.io.silent.protein_silent");

@@ -36,7 +36,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 
-// AUTO-REMOVED #include <core/scoring/packing/surf_vol.hh>
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -237,7 +236,6 @@ ProQ_Energy::atomic_interaction_cutoff() const
 	return 6.0; /// now subtracted off 6.0 from cutoffs in centroid params files
 	// 	return 0.0; /// since all the cutoffs for centroid mode are rolled into the cendist check
 }
-
 
 
 core::Size
@@ -575,7 +573,6 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > feature_vector_orig(nres,174);
 
 
-
 	dssp::Dssp ss(pose);
 	ss.dssp_reduced();
 
@@ -778,7 +775,6 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	surf_feature(pose,rsd_sasa_rel,feature_vector,113);
 
 	for(Size i=1;i<=nres_;++i) {
-
 
 
 		//stride 33 3x11 (dssp) binary [helix -5, sheet -5, coil -5] .. [helix 5, sheet 5, coil 5]
@@ -1235,7 +1231,6 @@ Real ProQ_Energy::crd(pose::Pose & pose,Size i,Size j) const {
 			}
 		}
 	}
-
 
 
 	return mindist;

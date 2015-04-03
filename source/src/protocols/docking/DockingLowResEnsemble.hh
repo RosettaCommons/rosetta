@@ -9,9 +9,8 @@
 
 /// @file protocols/docking/DockinLowResEnsemble
 /// @brief low resolution mode for ensemble docking
-/// @detailed
+/// @details
 /// @author Daisuke Kuroda
-///
 
 
 #ifndef INCLUDED_protocols_docking_DockingLowRes_Ensemble_hh
@@ -32,14 +31,11 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/simple_filters/ScoreCutoffFilter.hh>
 
 #include <string>
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 #include <iostream>

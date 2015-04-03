@@ -12,7 +12,6 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
-
 #ifndef INCLUDED_protocols_antibody_design_AntibodyDesignMover_fwd_hh
 #define INCLUDED_protocols_antibody_design_AntibodyDesignMover_fwd_hh
 

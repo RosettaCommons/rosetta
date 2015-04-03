@@ -15,7 +15,6 @@
 // Unit headers
 #include <core/kinematics/Edge.hh>
 
-// AUTO-REMOVED #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 // C++ headers
@@ -33,7 +32,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

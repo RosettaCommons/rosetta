@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Oliver Lange, ported from dssp.cc in rosetta++ authored by Ben Blum (bblum)
 /// @author Christopher Miles (cmiles@uw.edu)
@@ -60,11 +60,10 @@ namespace scoring {
 namespace dssp {
 
 ///////////////////////////////////////////////////////////////
-/// @begin StrandPairingSet::StrandPairingSet
 ///
 /// @brief Constructor for set of StrandPairing objects
 ///
-/// @detailed
+/// @details
 /// The incoming hbonds matrix is indexed by (acceptor residue,
 /// donor residue).  Residues with energy less than threshold are
 /// considered paired, unless they are disallowed by the array
@@ -82,9 +81,8 @@ namespace dssp {
 ///
 /// @references
 ///
-/// @authors bblum
+/// @author bblum
 ///
-/// @last_modified
 ///////////////////////////////////////////////////////////////
 
 StrandPairingSet::StrandPairingSet( pose::Pose const& pose, Real threshold ) {
@@ -168,11 +166,10 @@ std::ostream & operator<<(std::ostream & out, const StrandPairingSet &sp) {
 }
 
 ///////////////////////////////////////////////////////////////
-/// @begin StrandPairingSet::add_pairing
 ///
 /// @brief Add a new pair of bonded residues to the set
 ///
-/// @detailed
+/// @details
 /// Look for a strand pairing to extend with the given pair of
 /// residues; if none exists, create a new one.
 ///
@@ -186,9 +183,8 @@ std::ostream & operator<<(std::ostream & out, const StrandPairingSet &sp) {
 ///
 /// @references
 ///
-/// @authors bblum
+/// @author bblum
 ///
-/// @last_modified
 ///////////////////////////////////////////////////////////////
 void StrandPairingSet::add_pairing( Size res1, Size res2, bool antiparallel, Size pleating) {
   bool addnew = true;
@@ -281,11 +277,10 @@ core::Size StrandPairing::contact_order() const {
 }
 
 ///////////////////////////////////////////////////////////////
-/// @begin StrandPairing::extend
 ///
 /// @brief If possible, extend this pairing by the given residues.
 ///
-/// @detailed
+/// @details
 /// If one of res1 or res2 is within 2 residues of the beginning
 /// or end of one of the strands of the pairing, and the other
 /// is within 5 residues, extend the pairing.  This is the dssp
@@ -304,9 +299,8 @@ core::Size StrandPairing::contact_order() const {
 ///
 /// @references
 ///
-/// @authors bblum
+/// @author bblum
 ///
-/// @last_modified
 ///////////////////////////////////////////////////////////////
 bool StrandPairing::extend( Size res1, Size res2, bool antiparallel, Size pleating ) {
 	StrandPairing old_copy( *this );

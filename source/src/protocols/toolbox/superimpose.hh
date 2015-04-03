@@ -14,13 +14,8 @@
 #ifndef INCLUDED_protocols_toolbox_superimpose_hh
 #define INCLUDED_protocols_toolbox_superimpose_hh
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -148,7 +143,7 @@ void reset_x(
      ObjexxFCL::FArray1_double& transvec
 );
 
-///@brief write a CA ALA pdb
+/// @brief write a CA ALA pdb
 void dump_as_pdb(
 		 std::string filename,
 		 core::Size n,

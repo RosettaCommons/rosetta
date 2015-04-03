@@ -17,7 +17,6 @@
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
@@ -27,7 +26,6 @@
 
 // C++
 #include <map>
-// AUTO-REMOVED #include <set>
 
 #include <utility/vector1_bool.hh>
 
@@ -37,11 +35,11 @@ namespace frag_picker {
 namespace scores {
 
 /// @brief holds particular score components, weights and calculates the total score for a fragment candidate
-/// @detailed a fragment picker object needs exactly one fragment manager to pick fragments. Adding new scoring methods
+/// @details a fragment picker object needs exactly one fragment manager to pick fragments. Adding new scoring methods
 /// is supposed to be done FragmentPicker, which calls proper method from this class.
 class FragmentScoreManager: public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FragmentScoreManager();
 
 	/// @brief precision used to display the total score for each fragment
@@ -67,7 +65,7 @@ public:
 	}
 
 	/// @brief Returns a desired scoring method
-	/// @detailed Allowed index values are [1,count_components()]
+	/// @details Allowed index values are [1,count_components()]
 	inline FragmentScoringMethodOP get_component(
 			Size index) {
 		return scores_[index];
@@ -79,7 +77,7 @@ public:
 	}
 
 	/// @brief prints a nice table showing the registered scores
-	/// @detailed the table shows also the order in which the scores are evaluated
+	/// @details the table shows also the order in which the scores are evaluated
 	void show_scoring_methods(std::ostream& out);
 
 	/// @brief calculates the total score
@@ -94,7 +92,7 @@ public:
 	virtual bool score_fragment(FragmentCandidateOP, FragmentScoreMapOP);
 
 	/// @brief those score metohods that have weight = 0.0 will be computed after the fragments are picked
-	/// @detailed if weight for a score is 0.0 than it does not affect the total score and thus has no
+	/// @details if weight for a score is 0.0 than it does not affect the total score and thus has no
 	/// 	effect on fragments sorting, quota, etc. Such scores may be computed after fragment picking is finished
 	//	By default it is set to false.
 	void use_late_scoring_for_zeros(const bool if_true) {
@@ -109,7 +107,7 @@ public:
 	}
 
 	/// @brief calculates all these small scores for a given fragment whose weight is 0.0
-	/// @detailed When use_late_scoring_for_zeros() was used to set the flag to true,
+	/// @details When use_late_scoring_for_zeros() was used to set the flag to true,
 	///	all fragment scoring methods neglects zero-weighted scores.
 	///	These will be evaluated by this function, that may be called after fragments are picked.
 	///	This way some time consuming computations (e.g. crmsd for fragments) may be computed
@@ -127,11 +125,11 @@ public:
 	void create_scores(std::string const &, FragmentPickerOP);
 
 	/// @brief calls do_caching() for each FragmentScoringMethod object, if it is possible
-	/// @detailed FragmentPicker calls this method when a new chunk is to be processed
+	/// @details FragmentPicker calls this method when a new chunk is to be processed
 	void do_caching(VallChunkOP chunk);
 
 	/// @brief calls clean_up() for each FragmentScoringMethod object, if it is possible
-	/// @detailed FragmentPicker calls this method when a given chunk has been processed
+	/// @details FragmentPicker calls this method when a given chunk has been processed
 	void clean_up();
 
 	/// @brief sets up a new number of characters spend to print fragment score value

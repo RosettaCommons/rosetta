@@ -14,19 +14,15 @@
 #define INCLUDED_PROTOCOLS_NONLOCAL_UTIL_HH
 
 // C/C++ headers
-// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/comparative_modeling/ThreadingJob.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <core/scoring/ScoreType.hh>

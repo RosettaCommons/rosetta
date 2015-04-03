@@ -7,12 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomTypeSet
 ///
 /// @brief
 /// A class for reading in the orbital type properties
 ///
-/// @detailed
+/// @details
 /// This class contains the ORBITALS INTERNAL_ICOOR data that is read in from residue_io.cc. Actually,
 /// the data is set when residue_io.cc calls the command from residuetype.cc set_orbital_icoor. The data
 /// is set and chills out in memory until needed. The actual xyz coordinates are not stored at this point.
@@ -30,13 +29,11 @@
 /// must be actual atoms and not orbitals!!!!! (design feature or flaw? you decide)
 ///
 ///
-/// @authors
+/// @author
 /// Steven Combs
 ///
 ///
-/// @last_modified December 12 2010
 /////////////////////////////////////////////////////////////////////////
-
 
 
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
@@ -44,8 +41,6 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -70,7 +65,6 @@ ICoorOrbitalData::ICoorOrbitalData():
 			vertex2_(0),
 			vertex3_(0)
 {}
-
 
 
 //Testing size orbitals
@@ -99,28 +93,26 @@ vertex3_(vertex3)
 }
 
 
-
-///@brief return the phi for a given orbital
+/// @brief return the phi for a given orbital
 Real ICoorOrbitalData::phi() const
 {
 	return phi_;
 }
 
-///@brief return the theta for a given orbital
+/// @brief return the theta for a given orbital
 Real ICoorOrbitalData::theta() const
 {
 	return theta_;
 }
 
-///@brief return the distance for a given orbital
+/// @brief return the distance for a given orbital
 Real ICoorOrbitalData::distance() const
 {
 	return distance_;
 }
 
 
-
-///@brief build the xyz coordinates for an orbital based upon the stub1, stub2, stub3 xyz coordinates.
+/// @brief build the xyz coordinates for an orbital based upon the stub1, stub2, stub3 xyz coordinates.
 /// @note NOTE!!!!!!!!!!! The internal coordinates cannot contain an orbital as the stub1, stub2, or stub3 atom.
 /// This is because the xyz coordinates are not updated when the conformation changes. The stub1, stub2, stub2 atoms
 /// must be actual atoms and not orbitals!!!!11111!!!!!!!11111!(design feature or flaw? you decide)
@@ -136,9 +128,6 @@ debug_assert( kinematics::Stub( stub1_xyz,
 
 	return kinematics::Stub(stub1_xyz, stub2_xyz, stub3_xyz).spherical(phi_, theta_, distance_);
 }
-
-
-
 
 
 }

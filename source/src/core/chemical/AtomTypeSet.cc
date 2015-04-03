@@ -7,19 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin AtomTypeSet
 ///
 /// @brief
 /// A class for reading in the atom type properties
 ///
-/// @detailed
+/// @details
 /// This class reads in the atom_properties.txt file which contains the "chemical" information for atoms.
 /// This does not contain the actual properties, but sets the properties through the AtomType class.
 /// This class is called by the ChemicalManager
 ///
 ///
 ///
-/// @authors
+/// @author
 /// Phil Bradley
 /// Steven Combs - comments
 ///

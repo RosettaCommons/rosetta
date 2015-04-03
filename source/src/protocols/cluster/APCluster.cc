@@ -19,8 +19,6 @@
 
 #include <utility/exit.hh>
 
-// AUTO-REMOVED #include <algorithm>
-// AUTO-REMOVED
 #include <cstdio>
 
 static thread_local basic::Tracer TR( "protocols.cluster.APCluster" );
@@ -408,7 +406,6 @@ core::Size APCluster::assign_exemplars()
 		//changes += 1; already counted in other steps
 		p.curr_exemplar = i;
 	}
-
 
 
 	return changes;

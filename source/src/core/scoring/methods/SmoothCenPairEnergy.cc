@@ -13,7 +13,6 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/SmoothCenPairEnergy.hh>
 #include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
 
@@ -21,16 +20,13 @@
 #include <core/scoring/SmoothEnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/DerivVectorPair.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -77,7 +73,6 @@ SmoothCenPairEnergy::clone() const {
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 SmoothCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

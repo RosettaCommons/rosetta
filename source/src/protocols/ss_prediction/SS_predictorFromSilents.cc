@@ -170,10 +170,7 @@ void SS_predictorFromSilents::output_training_data(){
                   hle_type = 3
 
 
-
-
 		}
-
 
 
 /// @brief helper function to get SS char at a position from a vector of reals

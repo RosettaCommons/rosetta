@@ -59,7 +59,6 @@ using basic::Warning;
 static thread_local basic::Tracer TR( "protocols.moves.ContactMap" );
 
 
-
 ///////////////////////////////  ContactMapCreator  ///////////////////////////////
 
 std::string ContactMapCreator::keyname() const {

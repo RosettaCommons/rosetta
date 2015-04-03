@@ -21,7 +21,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <utility/vector1_bool.hh>
 

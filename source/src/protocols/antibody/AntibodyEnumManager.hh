@@ -26,7 +26,7 @@
 namespace protocols {
 namespace antibody {
 
-///@brief Interface to this class is in AntibodyInfo.
+/// @brief Interface to this class is in AntibodyInfo.
 class AntibodyEnumManager : public utility::pointer::ReferenceCount {
 
 
@@ -115,9 +115,7 @@ public:
 private:
 
 
-
 	void setup();
-
 
 
 	utility::vector1< std::string >  cdr_name_to_string_;

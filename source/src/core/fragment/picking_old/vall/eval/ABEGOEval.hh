@@ -17,7 +17,6 @@
 
 // unit headers
 #include <core/fragment/picking_old/vall/eval/ABEGOEval.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/picking_old/vall/eval/IdentityEval.hh>
 #include <core/sequence/ABEGOManager.fwd.hh>
 
 // type headers
@@ -28,8 +27,6 @@
 #include <core/fragment/picking_old/vall/VallLibrary.fwd.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace core {

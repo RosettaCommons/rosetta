@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the ReportFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_ReportFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_ReportFilterCreator_hh
 

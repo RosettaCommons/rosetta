@@ -126,7 +126,6 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
 }
 
 
-
 void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> )
 {
     refresh(pose,center);

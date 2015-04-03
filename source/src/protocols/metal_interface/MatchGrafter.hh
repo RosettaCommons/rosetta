@@ -25,14 +25,14 @@ namespace protocols {
 namespace metal_interface {
 
 
-///@details
+/// @details
 class MatchGrafter : public utility::pointer::ReferenceCount {
 
 public:
 
 	typedef core::pose::Pose Pose;
 
-  ///@brief
+  /// @brief
   MatchGrafter();
 
   virtual ~MatchGrafter();

@@ -16,12 +16,9 @@
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
@@ -34,7 +31,7 @@ namespace dna {
 
 class DNA_BasePotential : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~DNA_BasePotential();
 	typedef numeric::xyzMatrix< Real > Matrix;
 	typedef utility::vector1< Real > Params;
@@ -46,21 +43,21 @@ public:
 	/// ctor
 	DNA_BasePotential();
 
-	///
+
 	Real
 	base_step_score(
 		Residue const & rsd1,
 		Residue const & rsd2
 	) const;
 
-	///
+
 	Real
 	base_pair_score(
 		Residue const & rsd1,
 		Residue const & rsd2
 	) const;
 
-	///
+
 	void
 	eval_base_step_derivative(
 		Residue const & rsd1,
@@ -70,7 +67,7 @@ public:
 		Real const external_sign_factor // should probably be +1 or -1
 	) const;
 
-	///
+
 	void
 	eval_base_pair_derivative(
 		Residue const & rsd1,
@@ -142,11 +139,11 @@ private:
 	void
 	get_array_indices( InteractionType const & t, std::string const & bases, int & i1, int & i2 ) const;
 
-	///
+
 	void
 	load_score_tables();
 
-	///
+
 	void
 	set_mean_and_stddev(
 		InteractionType const & type,
@@ -156,7 +153,7 @@ private:
 		Real stddev
 	);
 
-	///
+
 	void
 	set_stiffness(
 		InteractionType const & type,
@@ -166,7 +163,7 @@ private:
 		Real const val
 	);
 
-	///
+
 	Real
 	base_score(
 		InteractionType const & type,
@@ -181,7 +178,6 @@ private:
 	FArray4D_Real stiffness_; //( 6, 6, 2, 16 );
 
 };
-
 
 
 } // namespace dna

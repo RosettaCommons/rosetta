@@ -103,7 +103,6 @@ public: // mutator
 	void set_bendangle( Real r ) {	bend_angle_ = r; }
 
 
-
 public: // useful functions
 
 

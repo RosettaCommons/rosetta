@@ -9,7 +9,7 @@
 
 /// @file ResiduePairJumpSetup
 /// @brief setup jumps specifically to ResiduePairJump, read in definition file
-/// @detailed derived from BaseJumpSetup
+/// @details derived from BaseJumpSetup
 /// @author Chu Wang
 
 
@@ -34,7 +34,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

@@ -15,14 +15,10 @@
 #define INCLUDED_protocols_frag_picker_quota_ABEGO_SS_Map_hh
 
 #include <protocols/frag_picker/quota/ABEGO_SS_Map.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/quota/QuotaPool.hh>
 
 // package headers
-// AUTO-REMOVED #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/CommonFragmentComparators.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // utility headers
 #include <core/types.hh>
@@ -45,7 +41,7 @@ Size ss_index(char);
 /// @brief represents a single pool used by quota selector
 class ABEGO_SS_Map : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ABEGO_SS_Map();
 
 	ABEGO_SS_Map(utility::vector1< std::pair<Size,Size> >);

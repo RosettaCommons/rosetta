@@ -47,7 +47,7 @@ static thread_local basic::Tracer TR( "devel.DenovoProteinDesign.FragmentSequenc
 namespace devel {
 namespace denovo_protein_design {
 
-///@details
+/// @details
 void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 
 	// how do we respect the movemap?
@@ -92,22 +92,19 @@ void FragmentSequenceMover::apply( core::pose::Pose & pose ){
 
 }//apply
 
-///@brief
+/// @brief
 FragmentSequenceMover::FragmentSequenceMover(
 ) : Mover()
 {
 	Mover::type( "FragmentSequenceMover" );
 }
 
-///@brief
+/// @brief
 FragmentSequenceMover::FragmentSequenceMover( core::fragment::FragSetCOP fragset, core::kinematics::MoveMapCOP movemap
 																							) : Mover(), fragset_(fragset), movemap_(movemap)
 {
 	Mover::type( "FragmentSequenceMover" );
 }
-
-
-
 
 
 FragmentSequenceMover::~FragmentSequenceMover(){}

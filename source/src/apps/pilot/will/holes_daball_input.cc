@@ -14,36 +14,26 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <core/scoring/packing/HolesParamsRes.hh>
 
-// AUTO-REMOVED #include <core/scoring/packing/compute_holes_score_res.hh>
 
 #include <core/id/AtomID_Map.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
-
-// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <pstream.h>
 
-// AUTO-REMOVED #include <time.h>
 
 #include <sstream>
 #include <fstream>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
@@ -131,7 +121,6 @@ main (int argc, char *argv[])
 	}
 
 	return 0;
-
 
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

@@ -9,7 +9,7 @@
 
 /// @file src/protocols/filters/SheetFilters.hh
 /// @brief header file for SheetSheetFilter class.
-/// @detailed
+/// @details
 /// @author Robert Vernon
 /// @author James Thompson
 
@@ -22,14 +22,9 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray1A.fwd.hh>
@@ -38,9 +33,7 @@
 // Utility headers
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <utility/vector1.hh>
 

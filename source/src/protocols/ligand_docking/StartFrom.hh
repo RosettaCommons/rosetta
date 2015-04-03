@@ -20,7 +20,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 //// Scripter Headers

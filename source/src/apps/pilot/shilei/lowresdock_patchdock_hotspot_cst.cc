@@ -16,15 +16,11 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
@@ -34,7 +30,6 @@
 // Unit Headers
 //#include <protocols/hotspot_hashing/HotspotHashingConstraints.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>

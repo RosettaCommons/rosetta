@@ -9,7 +9,7 @@
 
 /// @file KinematicControl
 /// @brief  this class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -28,9 +28,6 @@
 #include <protocols/abinitio/KinematicControl.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/jumping/PairingLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -41,7 +38,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-// AUTO-REMOVED #include <core/fragment/FrameList.fwd.hh>
 
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 
@@ -50,15 +46,12 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

@@ -17,7 +17,6 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragID_Iterator.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
@@ -35,7 +34,6 @@
 
 #include <core/scoring/rms_util.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
@@ -711,8 +709,6 @@ FragSetOP filter_frags( FragSet const& frags_in, std::string const& filter_file 
 }
 
 
-
-
 int main( int argc, char** argv ) {
 	try{
 	ThisApplication::register_options();
@@ -781,7 +777,6 @@ int main( int argc, char** argv ) {
 			utility::io::ozstream out( option[ ss_content ]() );
 			ss_def.write_psipred_ss2( out, native.sequence() ); // << ss_def << std::endl;
 		}
-
 
 
 		FragSetOP predicted_frags = NULL;
@@ -855,7 +850,7 @@ int main( int argc, char** argv ) {
 		for ( PDB_IDS::const_iterator it= pdb_code.begin(), eit = pdb_code.end(); it!=eit; ++it ) {
 			std::cout << "MAPPING: " << it->second << " " << it->first << std::endl;
 		}
-//
+
 
 // 	Size max_pdb( 0 );
 // 		typedef std::map< std::string, Size > PDB_IDS;
@@ -1000,12 +995,6 @@ int main( int argc, char** argv ) {
 		return -1;
 	}
 }
-
-
-
-
-
-
 
 
 /* =================================================*/

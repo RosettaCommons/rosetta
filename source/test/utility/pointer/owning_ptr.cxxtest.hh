@@ -103,7 +103,6 @@ public:
 } // namespace owning_ptr_test
 
 
-
 // The tests live in the utility::pointer namespace, but
 // grant them access to our local namespace for classes/functions.
 using namespace owning_ptr_test;

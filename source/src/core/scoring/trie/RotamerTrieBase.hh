@@ -228,7 +228,6 @@ public:
 	) const = 0;
 
 
-
 	virtual
 	void
 	resolve_trie_vs_path(
@@ -362,7 +361,6 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
-
 
 
 	virtual
@@ -564,7 +562,6 @@ public:
 	) const = 0;
 
 
-
 	virtual
 	void
 	resolve_trie_vs_path(
@@ -584,7 +581,6 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
-
 
 
 	/// This function is called when non-elec tries get mixed up with the FA_ElecEnergy function
@@ -687,7 +683,6 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
-
 
 
 	virtual
@@ -800,7 +795,6 @@ public:
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;
-
 
 
 	virtual

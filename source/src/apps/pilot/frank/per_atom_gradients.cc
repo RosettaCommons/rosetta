@@ -58,8 +58,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 
 class CustomMover : public protocols::moves::Mover {

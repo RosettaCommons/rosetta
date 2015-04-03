@@ -10,9 +10,8 @@
  //////////////////////////////////////////////
  /// @file protocols/scoring/TensorsOptimizer.hh
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
@@ -23,7 +22,6 @@ namespace protocols{
 namespace scoring{
 namespace methods{
 namespace pcs{
-
 
 
 }//namespace pcs

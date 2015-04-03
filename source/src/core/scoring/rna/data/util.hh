@@ -9,7 +9,7 @@
 
 /// @file core/scoring/rna/data/util.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

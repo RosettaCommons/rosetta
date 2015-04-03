@@ -28,14 +28,14 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
-///
+
 class PattersonCorrEnergy : public methods::ContextDependentLRTwoBodyEnergy  {
 public:
 	typedef methods::ContextDependentLRTwoBodyEnergy  parent;
 
 public:
 
-	///
+
 	PattersonCorrEnergy();
 
 

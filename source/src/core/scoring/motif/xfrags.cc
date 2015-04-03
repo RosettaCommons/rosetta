@@ -483,8 +483,6 @@ namespace motif {
 		}
 
 
-
-
 		bool read_xfrag_binary (        string  const & fname , vector1<Xfrag>       & xfrag, vector1<Xfres>       & xfres){
 			utility::io::izstream in(fname,std::ios::in|std::ios::binary);
 			if(!in.good()){

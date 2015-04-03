@@ -12,7 +12,6 @@
 /// @author Nikolas Sgourakis
 
 
-
 //#include <basic/options/option.hh>
 //#include <core/scoring/ResidualDipolarCoupling.hh>
 #include <protocols/scoring/ResidualDipolarCouplingRigidSegments.hh>
@@ -36,15 +35,11 @@ public:
 	std::string get_name() const { return "RDCScoreMover"; }
 
 
-
-
-
 private:
 
 	ResidualDipolarCouplingRigidSegmentsOP rdcrs_;
 
 };
-
 
 
 RDCScoreMover::RDCScoreMover(ResidualDipolarCouplingRigidSegmentsOP rdcrs ):
@@ -59,9 +54,6 @@ void RDCScoreMover::apply( core::pose::Pose& pose ) {
 	std::cout  << protocols::jd2::current_output_name() << ' ' << rdcrs_->compute_total_score(pose) << ' ' <<rdcrs_->compute_pairwise_score()
    <<std::endl;
 }
-
-
-
 
 
 int main( int argc, char * argv []   ){

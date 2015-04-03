@@ -223,7 +223,7 @@ private:
 	core::Size num_jump_;
 };
 
-///@brief does a perturbation defined by the rotational and translational magnitudes
+/// @brief does a perturbation defined by the rotational and translational magnitudes
 /// 	without setting up the center
 ///		Can be defined through a move map or with rb_jump
 ///		Defining through a movemap with multiple jumps leads to a random jump being
@@ -332,7 +332,7 @@ public:
 	// default constructor
 	RigidBodySpinMover();
 
-	///@brief constructor with arguments
+	/// @brief constructor with arguments
 	///       spin axis is initialized to 0 and then calculated during apply()
 	RigidBodySpinMover( int const rb_jump_in );
 
@@ -359,7 +359,7 @@ public:
 	//default ctor
 	RigidBodyDeterministicSpinMover();
 
-	///@brief constructor with arguments
+	/// @brief constructor with arguments
 	/// spin axis is initialized to 0 then calculated during apply()
 	/// if spin_axis is not already set
 	RigidBodyDeterministicSpinMover( int const rb_jump_in, core::Vector spin_axis, core::Vector rotation_center, float angle_magnitude );
@@ -677,7 +677,7 @@ private:
 }; // class RigidBodyDofPerturbMover
 
 
-///@brief This Mover does a perturbation defined by the rotational and translational magnitudes.
+/// @brief This Mover does a perturbation defined by the rotational and translational magnitudes.
 ///   Allowed dofs are specified by a map.
 ///   Can be defined through a move map or with rb_jump. All jumps are selected in random order.
 class RigidBodyDofSeqPerturbMover : public RigidBodyMover{

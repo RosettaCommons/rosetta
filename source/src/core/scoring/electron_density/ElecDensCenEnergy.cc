@@ -31,7 +31,6 @@
 #include <numeric/statistics/functions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project headers
@@ -41,7 +40,6 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 
-//
 #include <basic/Tracer.hh>
 
 #include <core/scoring/electron_density/ElectronDensity.hh>

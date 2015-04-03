@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file PseudocontactShiftData.hh
  ///
  /// @brief  Hold the PCS data on which the SVD will be applyed
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -23,9 +22,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 
@@ -50,7 +48,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 
@@ -59,7 +56,6 @@
 	#include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.hh>
 	#include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
 #endif
-
 
 
 namespace protocols{
@@ -151,7 +147,6 @@ public:
 
 	//core::Real calculate_tensor_and_cost_with_svd_precalc(PCS_tensor &PCS_t);
 };
-
 
 
 class PCS_data : public basic::datacache::CacheableData {

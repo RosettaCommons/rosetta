@@ -28,7 +28,7 @@ namespace protocols {
 namespace frag_picker {
 
 /// @brief  a base class for a chunk filtering mechanism
-/// @detailed Chunk filtering is used to screen chunks before any fragment is evaluated
+/// @details Chunk filtering is used to screen chunks before any fragment is evaluated
 /// Therefore it is the fastest way to excluded unwanted proteins
 /// @see AllowPdbIdFilter and DenyPdbIdFilter for implementations
 class VallChunkFilter: public utility::pointer::ReferenceCount {

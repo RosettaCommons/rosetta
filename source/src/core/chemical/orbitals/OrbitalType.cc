@@ -7,7 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin OrbitalType.cc
 ///
 /// @brief
 /// A class that contains orbital parameters
@@ -39,7 +38,6 @@
 /// @author Steven Combs
 ///
 ///
-/// @last_modified December 15 2010
 /////////////////////////////////////////////////////////////////////////
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <utility/exit.hh>
@@ -51,14 +49,12 @@
 #include <utility/vector1.hh>
 
 
-
-
 namespace core{
 namespace chemical{
 namespace orbitals{
 
 //mjo commenting out 'atom_type_name' because it is not used and cause a warnings
-///@brief Constructor that is generally initialized in OrbitalTypeSet.hh. If you add a property,
+/// @brief Constructor that is generally initialized in OrbitalTypeSet.hh. If you add a property,
 /// you must initialize that property as false!!!!!!!!
 OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_name*/):
 			is_orbital_acceptor_(false),
@@ -82,9 +78,7 @@ OrbitalType::OrbitalType(std::string & orbital_name, std::string & /*atom_type_n
 }
 
 
-
-
-///@brief The parameters are the actual headings in the orbital_properties.txt. If you want to add more paramters,
+/// @brief The parameters are the actual headings in the orbital_properties.txt. If you want to add more paramters,
 /// you must edit orbital_properties.txt and add another heading. You also need to edit AtomTypeSet.txt so that
 /// it recognizes that parameter and parses it. The parameters are different form the properties in that they
 /// are Reals/Size and properties are strings.
@@ -102,8 +96,7 @@ OrbitalType::set_parameter(
 }
 
 
-
-///@brief Currently, these properties are not actually in the orbital_properties.txt. I have them here
+/// @brief Currently, these properties are not actually in the orbital_properties.txt. I have them here
 /// as an example on how to add properties. This is also a place holder as the ligand code will
 /// soon be using these properties. The Acceptor/Donor could refer to orbitals that have a lone pair
 /// and are donating to a hydrogen, or an electron defficient region. In order to add properties, one
@@ -128,7 +121,7 @@ OrbitalType::set_property(
 }
 
 
-///@brief returns the name of the orbital type. defined in orbital_properties.txt
+/// @brief returns the name of the orbital type. defined in orbital_properties.txt
 std::string OrbitalType::name() const
 {
 	return orbital_type_name_;
@@ -140,32 +133,29 @@ orbital_type_enum OrbitalType::orbital_enum() const
 }
 
 
-
-///@brief returns the distance from the atom the orbital comes off. defined in orbital_properties.txt
+/// @brief returns the distance from the atom the orbital comes off. defined in orbital_properties.txt
 Real OrbitalType::distance() const
 {
 	return distance_;
 }
 
-///@brief returns the atom_types associated with the orbital type. defined in orbital_properties.txt
+/// @brief returns the atom_types associated with the orbital type. defined in orbital_properties.txt
 utility::vector1<std::string> OrbitalType::atom_type_name() const
 {
 	return atom_type_name_;
 }
 
-///@brief returns hybrdiziation of atom the orbital is attached to
+/// @brief returns hybrdiziation of atom the orbital is attached to
 std::string OrbitalType::hybridization() const
 {
 	return hybridization_;
 }
 
-///@brief returns the orbital associated with the type
+/// @brief returns the orbital associated with the type
 std::string OrbitalType::orbital_name() const
 {
 	return orbital_name_;
 }
-
-
 
 
 }

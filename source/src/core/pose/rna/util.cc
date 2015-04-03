@@ -370,7 +370,7 @@ initialize_atoms_for_which_we_need_new_dofs(
 	using namespace id;
 	using namespace conformation;
 
-	//
+
 	// Which way does atom_tree connectivity flow, i.e. is sugar drawn after base,
 	// or after backbone?
 	// This is admittedly very ugly, and very RNA specific.
@@ -538,7 +538,7 @@ debug_assert( pucker_state <= 2 );
 }
 ////////////////////////////////////////////////////////////////////
 
-//
+
 	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
 	void
 	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak ){

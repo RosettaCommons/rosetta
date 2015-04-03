@@ -21,7 +21,6 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <core/kinematics/Edge.hh>
@@ -30,7 +29,6 @@
 #include <numeric/statistics/functions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project headers
@@ -42,7 +40,7 @@
 
 // Utility headers
 
-//
+
 #include <basic/Tracer.hh>
 
 #include <core/chemical/AtomType.hh>

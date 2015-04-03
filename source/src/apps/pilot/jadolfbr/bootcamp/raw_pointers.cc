@@ -3,9 +3,9 @@
 #include <vector>
 #include <iostream>
 
-///@brief A basic example class for bootcamp
+/// @brief A basic example class for bootcamp
 ///
-///@details Within Rosetta, would be expanded into a 'Mover' type of class to perturb a specific subset 
+/// @details Within Rosetta, would be expanded into a 'Mover' type of class to perturb a specific subset 
 ///  of residues in Cartesian Space.
 ///
 class CartPerturber {
@@ -28,7 +28,7 @@ public:
 	
 	~CartPerturber(){};
 	
-	///@brief Print info out - would apply some change to a pose. Will apply to all residues if no residues were given.
+	/// @brief Print info out - would apply some change to a pose. Will apply to all residues if no residues were given.
 	void
 	apply(/*a pose would be here*/) {
 		std::cout << "Applying CartPerturber for " << rounds_ << " rounds "<<std::endl;
@@ -82,9 +82,6 @@ private:
 //* calling a function of CartPerturber with the -> operator
 //* passing a pointer to CartPerturber into a function and having that function change CartPerturber
 //* having a CartPerturber shared between two other classes
-
-
-
 
 
 //////////////////////////////////// Example Completion/test (Remove before send) //////////////////////////////////

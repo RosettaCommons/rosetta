@@ -16,8 +16,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <basic/database/open.hh>
 #include <devel/init.hh>
@@ -32,7 +30,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
@@ -46,8 +43,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <basic/options/keys/OptionKeys.hh>

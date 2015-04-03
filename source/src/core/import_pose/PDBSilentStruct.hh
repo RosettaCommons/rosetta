@@ -21,7 +21,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>

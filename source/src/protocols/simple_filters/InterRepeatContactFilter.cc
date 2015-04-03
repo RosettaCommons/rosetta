@@ -9,7 +9,7 @@
 
 /// @file protocols/simple_filters/InterRepeatContactFilter
 /// @brief filter structures by InterRepeatContacts
-/// @detailed
+/// @details
 /// @author TJ Brunette
 
 // Unit Headers

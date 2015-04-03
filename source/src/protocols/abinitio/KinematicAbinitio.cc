@@ -9,9 +9,8 @@
 
 /// @file FoldConstraints.cc
 /// @brief ab-initio fragment assembly protocol for proteins under the influence of contraints (e.g., NOE)
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -34,7 +33,6 @@
 #include <core/types.hh>
 
 #include <core/fragment/OrderedFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragSetCollection.hh>
 #include <core/fragment/FragmentIO.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -42,7 +40,6 @@
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/WobbleMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-// AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
 
 #include <protocols/jumping/PairingLibrary.hh>
 #include <protocols/jumping/util.hh>
@@ -67,7 +64,6 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh> //for cheats
 #include <utility/io/ozstream.hh> //for dump_frags
 
 #include <basic/Tracer.hh>
@@ -78,7 +74,6 @@
 #include <basic/options/keys/fold_cst.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/idealize/IdealizeMover.hh>
@@ -271,7 +266,7 @@ KinematicAbinitio::set_max_seq_sep( core::pose::Pose& pose, Size max_dist ) {
   Parent::set_max_seq_sep( pose, max_dist );
 }
 
-///@details the native_pose_ is used to determine orientation and pleating of jumps
+/// @details the native_pose_ is used to determine orientation and pleating of jumps
 // void
 // KinematicAbinitio::set_native_pose( core::pose::Pose const& native_pose ) {
 //   native_pose_ = new core::pose::Pose( native_pose );
@@ -649,7 +644,6 @@ moves::TrialMoverOP KinematicAbinitio::stage4_mover( pose::Pose &pose, int kk, m
   }
   return moves::TrialMoverOP( new moves::TrialMover( moves, mc_ptr() ) );
 }
-
 
 
 void

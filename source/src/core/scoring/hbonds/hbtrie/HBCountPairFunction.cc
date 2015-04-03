@@ -447,7 +447,6 @@ HBCountPairFunction::resolve_trie_vs_trie(
 }
 
 
-
 void
 HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< EtableAtom, CountPairData_1_1 > const & /*trie1*/,
@@ -460,7 +459,6 @@ HBCountPairFunction::resolve_trie_vs_trie(
 {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
-
 
 
 void
@@ -634,7 +632,6 @@ HBCountPairFunction::resolve_trie_vs_trie(
 {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with CoarseEtable Energy" );
 }
-
 
 
 void
@@ -951,7 +948,6 @@ HBCountPairFunction::resolve_trie_vs_trie(
 }
 
 
-
 void
 HBCountPairFunction::resolve_trie_vs_trie(
 	trie::RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const &,
@@ -1047,7 +1043,6 @@ HBCountPairFunction::resolve_trie_vs_trie(
 {
 	utility_exit_with_message( "hbonds::hbtrie::HBCountPairFunction type resolution reached with FA_ElecEnergy" );
 }
-
 
 
 void

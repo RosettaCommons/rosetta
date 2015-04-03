@@ -16,14 +16,11 @@
 #define INCLUDED_core_scoring_saxs_SAXSEnergyCEN_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/saxs/FormFactorManager.hh>
 #include <core/scoring/saxs/FormFactor.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorCEN.hh>
 #include <core/scoring/saxs/SAXSEnergy.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

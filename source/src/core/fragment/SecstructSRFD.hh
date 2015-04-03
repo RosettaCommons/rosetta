@@ -26,10 +26,8 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/kinematics/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <iostream>
@@ -40,7 +38,7 @@
 namespace core {
 namespace fragment {
 
-//
+
 class SecstructSRFD : public SingleResidueFragData {
   typedef SingleResidueFragData Parent;
 public:
@@ -48,7 +46,7 @@ public:
     : SingleResidueFragData( sequence ), secstruct_ ( secstruct )
   {};
 
-  //
+
   SingleResidueFragDataOP clone() const {
     return SingleResidueFragDataOP( new SecstructSRFD( *this ) );
   };

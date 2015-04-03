@@ -27,7 +27,6 @@ using core::Real;
 static thread_local basic::Tracer TR( "protocols.neighbor" );
 
 
-///
 /// @brief Neighborhood's constructor.
 ///
 /// @param[in] set: pose indexes of the residues whose neighborhood is to be
@@ -71,7 +70,6 @@ Neighborhood::Neighborhood(vector1<Size> const& set, Pose const& ps,
 }
 
 
-///
 /// @brief: prints the neighbor mask as a binary string
 ///
 /// @details: the ith output digit equals 1 if the ith element in the mask is true;
@@ -86,7 +84,6 @@ void Neighborhood::print_ngb_mask() const {
 }
 
 
-///
 /// @brief: returns true iff r2 is a residue whose node in the energy graph is
 /// 	connected to r1's.
 ///
@@ -111,7 +108,6 @@ bool in_nrg_graph(Residue const& r1, Residue const& r2, Pose const& ps) {
 }
 
 
-///
 /// @brief: returns true iff r2's neighbor atom falls within a cutoff distance
 /// 	of r1's neighbor atom.
 ///

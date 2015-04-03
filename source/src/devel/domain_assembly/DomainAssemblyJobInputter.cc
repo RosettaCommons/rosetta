@@ -21,7 +21,6 @@
 #include <devel/domain_assembly/domain_assembly_setup.hh>
 #include <devel/domain_assembly/DomainAssemblyReader.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
 ///Utility headers
@@ -42,7 +41,6 @@
 #include <string>
 
 
-
 // option key includes
 
 static thread_local basic::Tracer TR( "devel.domain_assembly.DomainAssemblyJobInputter" );
@@ -56,7 +54,7 @@ devel::domain_assembly::DomainAssemblyJobInputter::DomainAssemblyJobInputter(){
 
 devel::domain_assembly::DomainAssemblyJobInputter::~DomainAssemblyJobInputter(){}
 
-///@details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
+/// @details This function will first see if the pose already exists in the Job.  If not, it will read it into the pose reference, and hand a COP cloned from that pose to the Job. If the pose pre-exists it just copies the COP's pose into it.
 void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job){
 	TR << "DomainAssemblyJobInputter::pose_from_job" << std::endl;
 
@@ -91,7 +89,7 @@ void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pos
 	}
 }
 
-///@details this function determines what jobs exist
+/// @details this function determines what jobs exist
 void devel::domain_assembly::DomainAssemblyJobInputter::fill_jobs( protocols::jd2::Jobs & jobs ){
 	TR << "DomainAssemblyJobInputter::fill_jobs" << std::endl;
 

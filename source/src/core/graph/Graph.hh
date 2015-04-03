@@ -21,11 +21,9 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // STL Headers
 #include <iosfwd>
-// AUTO-REMOVED #include <list>
 #include <utility/assert.hh>
 
 // Boost Headers
@@ -36,8 +34,6 @@
 #endif
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1_bool.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -46,7 +42,7 @@
 namespace core {
 namespace graph {
 
-	///@brief An extensible graph class
+	/// @brief An extensible graph class
 
 	/**
 		@li Nodes are identified by positive integers -- each node is assigned a unique integer starting at 1.
@@ -386,9 +382,9 @@ public:
 
 private:
 
-	///@brief Uncopyable -- private and unimplemented copy ctor
+	/// @brief Uncopyable -- private and unimplemented copy ctor
 	EdgeList( EdgeList const & );
-	///@brief Uncopyable -- private and unimplemented assignment operator
+	/// @brief Uncopyable -- private and unimplemented assignment operator
 	EdgeList const & operator = ( EdgeList const & );
 
 	/// @brief this edge-list-element-pool reference is handed to the list

@@ -18,7 +18,6 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
@@ -29,11 +28,8 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
@@ -79,7 +75,7 @@ core::pack::task::operation::TaskOperationOP ProteinInterfaceDesignOperation::cl
 	return core::pack::task::operation::TaskOperationOP( new ProteinInterfaceDesignOperation( *this ) );
 }
 
-///@brief the default taskoperation for protein-interface design. Sets up which chains to repack/design
+/// @brief the default taskoperation for protein-interface design. Sets up which chains to repack/design
 /// disable disulfides, prolines and glycines from design, restrict designable positions to all but pro/gly/cys
 void
 ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const

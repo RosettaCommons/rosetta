@@ -20,7 +20,6 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/kinematics/types.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
@@ -40,8 +39,6 @@
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector0.hh>
-// AUTO-REMOVED #include <utility/vector1.hh> // DOH! switch all to vector1
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/id/types.hh>
@@ -749,7 +746,6 @@ distance_squared( Atom const & atom1, Atom const & atom2 )
 {
 	return atom1.distance_squared( atom2 );
 }
-
 
 
 } // namespace tree

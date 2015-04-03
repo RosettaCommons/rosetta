@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/simple_moves/RepeatPropagationMoverCreator
-///@brief This class will create instances of Mover RepeatPropagationMover for the MoverFactory
-///@author Tj Brunette
+/// @file protocols/simple_moves/RepeatPropagationMoverCreator
+/// @brief This class will create instances of Mover RepeatPropagationMover for the MoverFactory
+/// @author Tj Brunette
 
 
 #ifndef INCLUDED_protocols_simple_moves_RepeatPropagationMoverCreator_hh

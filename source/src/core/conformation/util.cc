@@ -42,7 +42,6 @@
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/util.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
 
 // ObjexxFCL headers
 // #include <ObjexxFCL/FArray1A.hh>
@@ -232,7 +231,6 @@ insert_ideal_mainchain_bonds(
 		// bond length
 		conformation.set_bond_length( bb2, bb3, idl.bond_length( bb2_idl, bb3_idl ) );
 	}
-
 
 
 }
@@ -610,7 +608,7 @@ print_atom( id::AtomID const & id, Conformation const & conf, std::ostream & os 
 	return os;
 }
 
-///
+
 void
 show_atom_tree(
 	kinematics::tree::Atom const & atom,
@@ -728,7 +726,7 @@ remove_upper_terminus_type_from_conformation_residue(
 /// @details  Build an atom-tree from a fold-tree and a set of residues
 /// atoms in the tree are allocated with new (on the heap) and held in owning pointers in atom_pointer
 /// @note  atom_pointer is cleared at the beginning and then filled with AtomOPs to all the atoms
-///
+
 
 void
 build_tree(
@@ -965,7 +963,7 @@ get_root_atomno(
 /// It is sometimes useful to be able to control the atom chosen as the root of the atomtree, eg in graphics.
 /// The logic below uses atom_info stored in the foldtree for jump edges emanating from the root residue
 /// to override the default atom (if the root residue is a jump_point and said atom_info exists)
-///
+
 
 Size
 get_root_residue_root_atomno(
@@ -1353,7 +1351,6 @@ setup_links(
 					 is_hydrogen, chi_atoms, links );
 
 
-
 	// check for an atom that wasn't added
 	for ( Size i=1; i<= natoms; ++i ){
 		if ( !is_done[ i ] ) {
@@ -1729,7 +1726,7 @@ debug_assert( rsd_anchor.is_bonded( rsd_root ) );
 // to have their rsd1-atom represented in this map, so the atomtree
 // knows where to attach the child when rsd2 is put in.
 
-///
+
 /// @details only map by atom number, not by identity currently.
 void
 setup_corresponding_atoms(
@@ -1967,7 +1964,6 @@ named_stub_id_to_stub_id(
 		);
 	}
 }
-
 
 
 /// @brief Introduce cysteines at the specified location and define a

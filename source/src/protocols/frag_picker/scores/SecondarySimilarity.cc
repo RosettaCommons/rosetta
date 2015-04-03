@@ -24,7 +24,6 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 
 // project headers
 #include <basic/Tracer.hh>

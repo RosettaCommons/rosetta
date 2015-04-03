@@ -164,10 +164,10 @@ public:
 	JD2ResourceManagerJobInputter();
 	virtual ~JD2ResourceManagerJobInputter();
 
-	///@brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
+	/// @brief this function is responsible for filling the pose reference with the pose indicated by the job.  The Job object (within its InnerJob) contains a PoseCOP.  This function needs to either fill the pose reference from the InnerJob or, on first demand of a pose from that InnerJob, instantiate the pose, hand off a COP to the InnerJob, and fill the reference.
  	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
 
-	///@brief this function determines what jobs exist.  This function neither knows nor cares what jobs are already complete on disk/memory - it just figures out what ones should exist given the input.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  Note I said "should", not "must".
+	/// @brief this function determines what jobs exist.  This function neither knows nor cares what jobs are already complete on disk/memory - it just figures out what ones should exist given the input.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  Note I said "should", not "must".
 	virtual void fill_jobs( Jobs & jobs );
 
 	/// @brief return the type of input source that the JobInputter is currently
@@ -354,7 +354,7 @@ private:
 	) const;
 
 private:
-	///@brief save the last input tag so the resources loaded for it can
+	/// @brief save the last input tag so the resources loaded for it can
 	///be unloaded when we see a new input tag
 	std::string last_input_tag_;
 

@@ -27,11 +27,9 @@
 #include <core/types.hh>
 
 
-
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-
 
 
 using basic::T;

@@ -8,7 +8,7 @@
 // Author:   Joachim Wuttke 2004-2010
 //
 // Homepage: www.messen-und-deuten.de/lmfit
-//
+
 
 #ifndef INCLUDED_numeric_nls_LMMIN_HH
 #define INCLUDED_numeric_nls_LMMIN_HH

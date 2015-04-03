@@ -17,7 +17,6 @@
 
 // Unit headers
 #include <core/scoring/mm/MMTorsionLibrary.hh>
-// AUTO-REMOVED #include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -29,7 +28,6 @@
 #include <numeric/conversions.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 //Auto Headers

@@ -7,8 +7,6 @@
 //#include <apps/pilot/will/gpu/gpu_refold.hh>
 
 
-
-
 void gpu_score_test(xyzStripeHashPoseWithMetaMode pom) {
   using namespace basic::options;
   using core::pose::Pose;
@@ -33,7 +31,6 @@ void gpu_score_test(xyzStripeHashPoseWithMetaMode pom) {
 
   xyzStripeHashPoseWithMeta poc(GRADIUS,p,pom);
 //  protocols::scoring::ImplicitFastClashCheck ifc(p,GRADIUS);
-
 
 
   uint dim[8];

@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/InterchainEnergy.cc
 /// @brief  Statistically derived rotamer pair potentials
-/// @detailed For docking (or between chains) only those residues at the interface
+/// @details For docking (or between chains) only those residues at the interface
 ///						and between the two interfaces need to be evaluated
 /// @author Monica Berrondo
 
@@ -21,10 +21,8 @@
 // Unit headers
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <protocols/scoring/InterchainPotential.fwd.hh>
-// AUTO-REMOVED #include <protocols/scoring/InterfaceInfo.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -62,7 +60,7 @@ public:
 	void
 	finalize( core::pose::Pose & pose ) const;
 
-	///
+
 	void
 	evaluate_env_score(
 		core::pose::Pose const & pose,
@@ -70,14 +68,14 @@ public:
 		core::Real & env_score
 	) const;
 
-	///
+
 	void
 	evaluate_contact_score(
 		core::pose::Pose const & pose,
 		core::Real & contact_score
 	) const;
 
-	///
+
 	void
 	evaluate_pair_and_vdw_score(
 		core::pose::Pose const & pose,

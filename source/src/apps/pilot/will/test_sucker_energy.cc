@@ -21,7 +21,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
-
 using namespace core;
 using namespace scoring;
 using namespace ;

@@ -24,7 +24,6 @@
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 //#include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>

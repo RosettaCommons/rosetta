@@ -34,14 +34,14 @@ namespace pack {
 namespace task {
 namespace operation {
 
-///@details empty constructor need to call set_native_task to make it work
+/// @details empty constructor need to call set_native_task to make it work
 ReplicateTask::ReplicateTask() : parent(){}
 
-///@details constructor using an established PackerTask
+/// @details constructor using an established PackerTask
 ReplicateTask::ReplicateTask( core::pack::task::PackerTaskOP native_task ) :
 	parent(), native_task_( native_task->clone() ){}
 
-///@details contstructor that uses an TaskFactory and applies it to the native to get the task
+/// @details contstructor that uses an TaskFactory and applies it to the native to get the task
 ReplicateTask::ReplicateTask(core::pose::Pose & native_pose, core::pack::task::TaskFactoryOP task_factory ) :
 	parent()
 {
@@ -89,7 +89,7 @@ ReplicateTask::set_native_task( core::pack::task::PackerTaskOP native_task){
 	native_task_ = native_task;
 }
 
-///@brief does not work within parser framework so exit if try to use.
+/// @brief does not work within parser framework so exit if try to use.
 void
 ReplicateTask::parse_tag( TagCOP, DataMap & )
 {

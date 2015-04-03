@@ -59,7 +59,6 @@ DockMinMover::DockMinMover(
 }
 
 
-
 //JQX: made a new constructor, which can take the mc_ object
 DockMinMover::DockMinMover(
 	DockJumps const movable_jumps,
@@ -73,9 +72,6 @@ DockMinMover::DockMinMover(
 			    ( movemap_, scorefxn, min_type_, min_tolerance_, nb_list_ ) );
 	minimize_trial_ = moves::TrialMoverOP( new TrialMover( min_mover, mc_ ) );
 }
-
-
-
 
 
 DockMinMover::DockMinMover(

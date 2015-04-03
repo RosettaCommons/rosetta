@@ -231,7 +231,6 @@ bool Inline_File_Provider::get_sstream( const std::string& filename, std::string
   if( find_sstream( output_files, filtered_filename, the_stream) ) return true;
 
 
-
   return false;
 }
 

@@ -22,7 +22,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/ResId.hh>
 
 #include <utility/vector1.hh>
 

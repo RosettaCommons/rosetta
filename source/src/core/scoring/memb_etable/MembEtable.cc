@@ -593,7 +593,6 @@ MembEtable::output_etable(
 /// <atom type 1> <atomtype 1> <eval bin 1> <eval bin 2>...
 ///
 /// @author sheffler (last modified: mar 19 2006)
-/// @last_modified
 /////////////////////////////////////////////////////////////////////////////////
 void
 MembEtable::input_etable(
@@ -651,8 +650,6 @@ MembEtable::input_etable(
 	}
 	TR << "              read " << scount << " of " << count << " lines" << endl;
 }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -868,7 +865,6 @@ MembEtable::calc_etable_value(
 	inv_dis2 = inv_dis * inv_dis;
 
 
-
 	//  ctsa - switch to disulfide bonded atom types
 	//    when conditions are met
 // 	if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
@@ -945,7 +941,6 @@ MembEtable::max_hydrogen_lj_radius() const
 {
 	return max_hydrogen_lj_radius_;
 }
-
 
 
 } // etable

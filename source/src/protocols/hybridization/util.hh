@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief Align a random jump to template
-/// @detailed
+/// @details
 /// @author Yifan Song
 
 #ifndef INCLUDED_protocols_hybridization_util_hh

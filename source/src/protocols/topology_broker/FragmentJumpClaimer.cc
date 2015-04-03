@@ -9,7 +9,7 @@
 
 /// @file TopologyBroker
 /// @brief  top-class (Organizer) of the TopologyBroker mechanism
-/// @detailed responsibilities:
+/// @details responsibilities:
 /// @author Oliver Lange
 
 // Unit Headers
@@ -19,7 +19,6 @@
 #include <protocols/topology_broker/claims/DofClaim.hh>
 #include <protocols/topology_broker/claims/BBClaim.hh>
 #include <protocols/topology_broker/claims/JumpClaim.hh>
-
 
 
 // Project Headers
@@ -32,10 +31,8 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/jumping/JumpSetup.hh>
-
 
 
 // ObjexxFCL Headers
@@ -48,7 +45,6 @@
 //#include <basic/options/option.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 #include <core/fragment/Frame.hh>
 #include <utility/vector1.hh>

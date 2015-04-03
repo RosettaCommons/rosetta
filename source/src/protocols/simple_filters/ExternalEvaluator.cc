@@ -9,7 +9,7 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
@@ -34,8 +34,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <numeric/random/random.hh>
 
@@ -50,7 +48,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
-
 
 
 #ifdef  __native_client__ 

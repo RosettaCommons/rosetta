@@ -9,12 +9,11 @@
 
 
 //////////////////////////////////////////////////////////////////////
-/// @begin SequenceComparison
 ///
 /// @brief
 /// Compare the sequences between a native and designed protein
 ///
-/// @detailed
+/// @details
 /// This is an implementation taken from Ron Jacak, Douglas Renfrew, Matt O Mera.
 /// The main function that is called is the get_sequence_recovery() function. You can
 /// pass this function a list of native pdbs and designed pdbs, or just 1 native and 1
@@ -26,23 +25,18 @@
 /// "Native sequences are close to optimal" paper
 ///
 ///
-/// @authors
+/// @author
 /// Ron Jacak,
 /// Douglas Renfrew (renfrew@nyu.edu) ( added rotamer recovery, cleanup )
 /// Steven Combs (moved it into a general use class)
 ///
-/// @last_modified October 20 2010
 /////////////////////////////////////////////////////////////////////////
-
-
 
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_SequenceComparison_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_SequenceComparison_hh
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 // C++ headers
 #include <set>
@@ -50,7 +44,6 @@
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
 
 
 namespace protocols{
@@ -77,32 +70,29 @@ public:
 	}
 
 
-	///@brief main function that is called. calls measure_sequence_recovery
+	/// @brief main function that is called. calls measure_sequence_recovery
 	void get_sequence_recovery(utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses);
 
-	///@brief overflowed main function to compare only two proteins
+	/// @brief overflowed main function to compare only two proteins
 	void get_sequence_recovery(core::pose::Pose & native, core::pose::Pose & designed);
 
-	///@brief measures the sequence recovery of a list of native proteins and a list of designed proteins. Outputs files to sequencerecovery.txt
+	/// @brief measures the sequence recovery of a list of native proteins and a list of designed proteins. Outputs files to sequencerecovery.txt
 	void measure_sequence_recovery( utility::vector1<core::pose::Pose> & native_poses, utility::vector1<core::pose::Pose> & redesign_poses);
 	void fill_num_neighbors( core::pose::Pose & pose, utility::vector1< core::Size > & num_nbs );
 
-	///@brief sets up the task factory used for determing what the neighbor counts...what is on the surface and what is in the core
+	/// @brief sets up the task factory used for determing what the neighbor counts...what is on the surface and what is in the core
 	core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_factory_ );
 	std::set< core::Size > fill_designable_set( core::pose::Pose & pose, core::pack::task::TaskFactoryOP & tf );
 
 private:
 
-	///@brief what is the surface cutoff that you are using? default 16
+	/// @brief what is the surface cutoff that you are using? default 16
 	core::Size surface_exposure_;
 
-	///@brief what is the core cutoff that you are using? default 24
+	/// @brief what is the core cutoff that you are using? default 24
 	core::Size core_cutoff_;
 
 };
-
-
-
 
 
 }

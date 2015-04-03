@@ -100,7 +100,6 @@ using utility::vector1;
 using io::pdb::dump_pdb;
 
 
-
 class Protocol_MolecularDynamics: public moves::Mover {
 public:
 	Protocol_MolecularDynamics(
@@ -166,12 +165,6 @@ protected:
 
 	float rms_to_native(  core::pose::Pose & pose );
 };
-
-
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

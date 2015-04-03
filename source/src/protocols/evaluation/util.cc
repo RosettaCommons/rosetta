@@ -9,7 +9,7 @@
 
 /// @file relax_initialization_protocols
 /// @brief initialization protocols for relax
-/// @detailed
+/// @details
 ///	  Contains currently: Classic Abinitio
 ///
 ///
@@ -32,7 +32,6 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -64,7 +63,6 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/import_pose/import_pose.hh>
@@ -151,8 +149,6 @@ void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& o
 		pss->print_scores( os );
 		os << std::endl;
 }
-
-
 
 
 }

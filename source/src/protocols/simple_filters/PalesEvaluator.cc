@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Nikolas Sgourakis
-
 
 
 // Unit Headers
@@ -25,17 +24,12 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <utility/vector1.hh>
 
@@ -50,7 +44,6 @@ namespace protocols {
 namespace simple_filters {
 
 using namespace core;
-
 
 
 PalesEvaluator::PalesEvaluator( std::string tag, std::string pales_rdc_file )

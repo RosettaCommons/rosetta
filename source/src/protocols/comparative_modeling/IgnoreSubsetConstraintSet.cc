@@ -9,15 +9,14 @@
 
 /// @file IgnoreSubsetConstraintSet.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author James Thompson
-///
+
 
 // Package Headers
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 #include <protocols/comparative_modeling/IgnoreSubsetConstraintSet.hh>
@@ -91,7 +90,7 @@ IgnoreSubsetConstraintSet::eval_atom_derivative_for_residue_pairs (
 } // eval_atom_derivative_for_residue_pairs
 */
 
-///
+
 void
 IgnoreSubsetConstraintSet::residue_pair_energy(
    Residue const & rsd1,

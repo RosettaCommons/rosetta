@@ -200,7 +200,7 @@ public:
 	void omega( bool const b ){ omega_ = b; }
 
 protected:
-	///@brief for use with RosettaScripts current method of using
+	/// @brief for use with RosettaScripts current method of using
 	///TaskOperations to specify residue sets.
 	void
 	apply_dof_tasks_to_movemap(
@@ -216,7 +216,7 @@ private:
 	Real threshold_;
 	bool cartesian_;
 
-	///@details Until ResidueSubsetOperations are implemented,
+	/// @details Until ResidueSubsetOperations are implemented,
 	///RosettaScripts uses TaskOperations as a generic way to specify
 	///sets of residues, so it is necessary to have a method of
 	///controling a movemap from a set of task operations. This is not

@@ -12,7 +12,6 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/rms_util.hh>

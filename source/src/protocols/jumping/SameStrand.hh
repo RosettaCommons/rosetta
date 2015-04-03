@@ -13,7 +13,7 @@
 ///      - fragments
 ///      - psipred files ? other stuff
 ///
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///
@@ -27,7 +27,6 @@
 #include <protocols/jumping/SameStrand.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -51,30 +50,30 @@
 namespace protocols {
 namespace jumping {
 
-///@brief tiny helper class that knows the relative fractions of secondary structure  L,H,E
-///@detail
+/// @brief tiny helper class that knows the relative fractions of secondary structure  L,H,E
+/// @detail
 /// so far these fractions can be computed from a FragSet
 /// other input strategies are conceivable but not implemented, yet: eg. psipred files, a bunch of poses,
 class SameStrand : public utility::pointer::ReferenceCount {
 public:
-	///@brief c'stor compute fractions from fragments
+	/// @brief c'stor compute fractions from fragments
   SameStrand( core::fragment::SecondaryStructureOP );
 
-	///@brief explicit definitions of c'stor and d'stor
+	/// @brief explicit definitions of c'stor and d'stor
 	virtual ~SameStrand();
 	SameStrand( SameStrand const& );
 
 
-	///@brief print current choice to stream
+	/// @brief print current choice to stream
 	void show( std::ostream &os ) const;
 
-	///@brief new stochastic choices for strand boundaries
+	/// @brief new stochastic choices for strand boundaries
 	void redo() const;
 
-	///@brief return whether residue i and j are on the same strand
+	/// @brief return whether residue i and j are on the same strand
 	bool eval( core::Size i, core::Size j ) const;
 
-	///@brief ...
+	/// @brief ...
 	Size total_residue() const {
 		return total_residue_;
 	}
@@ -85,16 +84,16 @@ private:
   void do_strand_sum( core::fragment::SecondaryStructure const& ss ) const;
   void do_same_strand( ) const; //uses only strand_sum_
 
-  ///@brief store loop/strand
+  /// @brief store loop/strand
 	mutable ObjexxFCL::FArray2D_bool same_strand_;
 
-  ///@brief
+  /// @brief
   mutable ObjexxFCL::FArray1D_float strand_sum_;
 
-  ///@brief length of FArrays
+  /// @brief length of FArrays
   core::Size total_residue_;
 
-	///@brief ScondaryStructure information --- needed permanently for redo() method
+	/// @brief ScondaryStructure information --- needed permanently for redo() method
 	core::fragment::SecondaryStructureOP secondary_structure_;
 
 };

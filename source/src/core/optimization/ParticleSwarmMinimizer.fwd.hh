@@ -17,7 +17,6 @@
 #define INCLUDED_core_optimization_ParticleSwarmMinimizer_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.fwd.hh>
 

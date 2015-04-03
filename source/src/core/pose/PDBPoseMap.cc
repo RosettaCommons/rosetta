@@ -14,12 +14,10 @@
 // Unit headers
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Project headers
 

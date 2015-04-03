@@ -143,7 +143,7 @@ OopPatcher::get_name() const {
 	return "OopPatcher";
 }
 
-///@brief
+/// @brief
 OopPatcher::OopPatcher(
 		core::Size oop_seq_position
 	): Mover(), oop_pre_pos_(oop_seq_position), oop_post_pos_(oop_seq_position+1)

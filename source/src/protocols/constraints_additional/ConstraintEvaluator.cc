@@ -9,11 +9,10 @@
 
 /// @file PoseEvaluator
 /// @brief PoseEvaluator
-/// @detailed
+/// @details
 ///
 ///
 /// @author Oliver Lange
-
 
 
 // Unit Headers
@@ -31,7 +30,6 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/id/Exceptions.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 
@@ -39,16 +37,13 @@
 #include <core/scoring/ScoreType.hh>
 
 
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <core/id/SequenceMapping.hh>

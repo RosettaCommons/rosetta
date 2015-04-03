@@ -9,7 +9,7 @@
 
 /// @file loopLoopRebuild_protocols.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author James Thompson
 /// @author Srivatsan Raman
@@ -20,12 +20,8 @@
 
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/fragment/FragSet.fwd.hh>
@@ -35,17 +31,13 @@
 #endif
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
 
 
 namespace protocols {
-
-
 
 
 /// @brief The loop-rebuild protocol
@@ -64,13 +56,13 @@ public:
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
 
-	///@brief sets all the standard settings for LoopBuild
+	/// @brief sets all the standard settings for LoopBuild
 	void set_default_settings();
 
 	/// @brief Get the protocol's Monte Carlo object
 	protocols::moves::MonteCarloOP get_mc( core::pose::Pose & pose );
 
-	///@brief setting the mc object
+	/// @brief setting the mc object
 	void set_default_mc( core::pose::Pose & pose );
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
@@ -95,13 +87,11 @@ public:
 	void set_random_loop_flag(bool setting = true){ random_loop_flag_ = setting; }
 
 
-
 	/// @brief
 	int  get_allowed_failure_before_extend(){ return allowed_failure_before_extend_; }
 
 	/// @brief
 	void set_allowed_failure_before_extend(int setting ){ allowed_failure_before_extend_ = setting; }
-
 
 
 	/// @brief
@@ -111,15 +101,11 @@ public:
 	void set_allowed_failure_before_stop(int setting ){ allowed_failure_before_stop_ = setting; }
 
 
-
-
 	/// @brief
 	bool get_abort_on_failed_loop(){ return abort_on_failed_loop_; }
 
 	/// @brief
 	void set_abort_on_failed_loop(bool setting = true){ abort_on_failed_loop_ = setting; }
-
-
 
 
 	int allowed_failure_before_stop;
@@ -259,7 +245,7 @@ private:
 }; // class LoopRebuild
 
 ///////////////////////////////////////////////////////////////////
-///@brief class LoopRefine for fullatom loop refinement
+/// @brief class LoopRefine for fullatom loop refinement
 ///////////////////////////////////////////////////////////////////
 class LoopRefine: public protocols::moves::Mover {
 public:

@@ -318,7 +318,6 @@ convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info ){
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // @brief due to differences in different crystallography/NMR/modeling packages, labeling of sister atoms
 //  (like OP1 <--> OP2, or H41 <--> H42) in PDBs is totally wacky. This is an attempt to regularize...
@@ -452,10 +451,9 @@ get_closest_sister(  Vector const & xyz_sister1,
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
 // Utility functions for name remapping.
-//
+
 
 /// @brief Get theshold distance below which two atoms are considered bonded. (1.2*covalent)
 /// @details The closest distance of a non-bonded contact is likely to be something

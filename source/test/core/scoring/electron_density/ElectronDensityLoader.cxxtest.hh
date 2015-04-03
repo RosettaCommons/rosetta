@@ -50,7 +50,6 @@ public:
 	}
 
 
-
 	// @brief test default options and default locator
 	void test_ElectronDensityLoader() {
 

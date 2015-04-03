@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/protein/loop_close/StepWiseProteinCCD_MultiPoseCloser.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -30,7 +30,7 @@ static thread_local basic::Tracer TR( "protocols.stepwise.modeler.protein.loop_c
 // A 'temporary' class -- will be deprecated when CCD closer will become
 //  a StepWiseScreener (included inside the modeler loop) rather than a sampler
 //  in its own right.
-//
+
 
 using namespace core;
 

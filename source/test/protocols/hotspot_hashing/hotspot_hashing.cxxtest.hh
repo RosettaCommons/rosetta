@@ -189,7 +189,6 @@ namespace
 					TS_ASSERT_DELTA(ca_applied, Vector(0, 0, 0), 1e-3);
 					TS_ASSERT_DELTA(cb_applied.normalize(), Vector(1, 0, 0), 1e-3);
 
-					//
 
 					// Neighbor atom is CB and in force_nbr_orient mode.
 					// Only heavyatom neightbor is CA, will be nbr1, find next nbr.
@@ -525,7 +524,7 @@ namespace
 						TS_ASSERT_DELTA(c_location.dot(Vector(0, 0, 1)), 0, 1e-3);
 				}
 
-				//
+
 			}
 
       void test_lsmsearchpattern() 

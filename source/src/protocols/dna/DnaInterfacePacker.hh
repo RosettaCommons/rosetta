@@ -20,7 +20,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/dna/typedefs.hh>
-// AUTO-REMOVED #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaChains.fwd.hh>
 #include <protocols/dna/PDBOutput.fwd.hh>
 
@@ -80,7 +79,7 @@ public:
 
 	bool initialized() const;
 
-	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
 		TagCOP,
 		basic::datacache::DataMap &,

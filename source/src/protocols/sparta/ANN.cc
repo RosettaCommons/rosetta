@@ -23,14 +23,12 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <cmath>
 #include <stdio.h>
 
 #include <utility/vector0.hh>
 
 #include <protocols/sparta/GDB.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.sparta" );
@@ -161,7 +159,6 @@ void ANN::loadWeights() // load weighting and bias
 }
 
 
-
 // load weighting (N_W_row*N_W_col) and bias (N_B) from a given file contains all three sets data
 void ANN::loadWeightBias3( string const& fName,
 	ANN_Matrix &W1, ANN_Vector &B1,
@@ -194,8 +191,6 @@ void ANN::loadWeightBias3( string const& fName,
 	}
   //	if( index > row ) tr.Error << "Wrong size for matrix " << fName << " ... \n";
 }
-
-
 
 
 // perform 1st level ANN calculation
@@ -234,7 +229,6 @@ void ANN::calcLevel1()
 }
 
 
-
 // perform 2nd level ANN calculation
 // input ANN_IN_MTX_LEVEL2
 void ANN::calcLevel2()
@@ -271,8 +265,6 @@ void ANN::calcLevel2()
 }
 
 
-
-
 void ANN::runSpartaANN(ANN_Matrix &inMatrix)
 {
   ANN_IN_MTX_LEVEL1 = inMatrix;
@@ -282,7 +274,6 @@ void ANN::runSpartaANN(ANN_Matrix &inMatrix)
   calcLevel1();
 
 }
-
 
 
 //apply an ANN transformation for input inp and with transformation weights w, bias b
@@ -305,7 +296,6 @@ void ANN::applyANNTransformation( ANN_Vector &inp, ANN_Matrix &w, ANN_Vector &b,
 }
 
 
-
 //calculate 'confidence-averaged' utility::vector0 of three utility::vector0s v1, v2, v3
 void ANN::applyVecAverage(ANN_Vector &v1, ANN_Vector &v2, ANN_Vector &v3, ANN_Vector &vout)
 {
@@ -326,7 +316,6 @@ void ANN::applyVecAverage(ANN_Vector &v1, ANN_Vector &v2, ANN_Vector &v3, ANN_Ve
 }
 
 
-
 //apply normalization
 void ANN::applyVecNormalization(ANN_Vector &v)
 {
@@ -342,7 +331,6 @@ void ANN::applyVecNormalization(ANN_Vector &v)
 }
 
 
-
 float ANN::getConfidence(ANN_Vector &v)
 {
   //cout << v.size() << "\t" << v[0] << "\t" << v[1] << "\t" << v[2] << endl;
@@ -351,7 +339,6 @@ float ANN::getConfidence(ANN_Vector &v)
 
   return 2.0*MAX(v[0], MAX(v[1],v[2])) - (v[0]+v[1]+v[2]) + MIN(v[0], MIN(v[1],v[2]));
 }
-
 
 
 //check the number of atom without CS for a given residue
@@ -363,14 +350,12 @@ int ANN::getNumberMissCS(ANN_Vector &v)
 }
 
 
-
 // return a character string for an int type number
 char * ANN::itoa( int n, char *buff, int /*base*/ )
 {
   sprintf(buff, "%d", n);
   return buff;
 }
-
 
 
 // retrun a character string for a float type number

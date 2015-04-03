@@ -9,7 +9,7 @@
 
 /// @file CheckPointer
 /// @brief Application-level code for Abrelax, fold_cst and JumpingFoldCst protocols
-/// @detailed
+/// @details
 ///	   use -help to see options
 ///    usage of class:
 ///
@@ -40,8 +40,6 @@
 // Utility headers
 
 //// C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <vector>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
@@ -72,7 +70,6 @@ class FileBuffer {
 	bool gzipped_;
 	std::string contents_;
 };
-
 
 
 class CheckPointer : public utility::pointer::ReferenceCount {
@@ -145,7 +142,6 @@ public:
 	){
 		checkpoint( pose, NULL, current_tag, id, foldtree );
 	}
-
 
 
   std::string const& type() const {

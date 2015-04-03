@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling_Rohl.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -27,18 +26,12 @@
 
 #include <core/scoring/ScoreType.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //Objexx headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 #include <core/scoring/ResidualDipolarCoupling_Rohl.fwd.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
-
 
 
 // Utility headers
@@ -48,7 +41,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-///
+
 class ResidualDipolarCouplingEnergy_Rohl : public WholeStructureEnergy  {
 public:
 	typedef WholeStructureEnergy  parent;

@@ -9,7 +9,7 @@
 
 /// @file RNA de novo fragment assembly Structure Parameters
 /// @brief User input parameters for RNA structure inference
-/// @detailed
+/// @details
 /// @author Rhiju Das
 
 
@@ -1042,7 +1042,6 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 void
 RNA_StructureParameters::fill_in_default_jump_atoms( kinematics::FoldTree & f, pose::Pose const & pose ) const
@@ -1313,7 +1312,6 @@ RNA_StructureParameters::check_in_pairing_sets( utility::vector1 < utility::vect
 }
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< BasePairStep >
 RNA_StructureParameters::get_base_pair_steps() const {
@@ -1350,10 +1348,7 @@ RNA_StructureParameters::get_base_pair_steps() const {
 }
 
 
-
-
 } //farna
 } //protocols
-
 
 

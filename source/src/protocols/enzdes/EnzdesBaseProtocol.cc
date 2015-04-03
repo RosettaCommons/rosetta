@@ -76,7 +76,6 @@
 #include <utility/vector1.hh>
 
 
-
 namespace protocols{
 namespace enzdes{
 
@@ -366,7 +365,7 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 		-> set_designable_residues( designing_residues );
 }
 
-///@details This function will modify the fold tree and add constraints to the pose if used with the bb_min and minimize_ligand_torsions options. Be WARNED!
+/// @details This function will modify the fold tree and add constraints to the pose if used with the bb_min and minimize_ligand_torsions options. Be WARNED!
 core::kinematics::MoveMapOP
 EnzdesBaseProtocol::create_enzdes_movemap(
   core::pose::Pose & pose,
@@ -859,7 +858,6 @@ EnzdesBaseProtocol::remap_resid(
 	//cst_io_->remap_resid( smap );
 	design_targets( pose );
 }
-
 
 
 void

@@ -110,7 +110,6 @@ MissingEnergy::version() const
 }
 
 
-
 } // methods
 } // scoring
 } // core

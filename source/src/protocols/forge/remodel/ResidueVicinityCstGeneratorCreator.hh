@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh
-///@brief This class will create instances of the ResidueVicinityRCG mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh
+/// @brief This class will create instances of the ResidueVicinityRCG mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_moves_ResidueVicinityCstGeneratorCreator_hh
 #define INCLUDED_protocols_moves_ResidueVicinityCstGeneratorCreator_hh
@@ -42,9 +42,9 @@ public:
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh
-///@brief This class will create instances of the ResidueVicinityRCG mover
-///@author Tom Linsky (tlinsky@uw.edu)
+/// @file protocols/forge/remodel/ResidueVicinityCstGeneratorCreator.hh
+/// @brief This class will create instances of the ResidueVicinityRCG mover
+/// @author Tom Linsky (tlinsky@uw.edu)
 
 #ifndef INCLUDED_protocols_moves_ResidueVicinityCstGeneratorCreator_hh
 #define INCLUDED_protocols_moves_ResidueVicinityCstGeneratorCreator_hh

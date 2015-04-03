@@ -16,13 +16,9 @@
 #define INCLUDED_core_scoring_saxs_FastSAXSEnergy_hh
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -46,10 +42,10 @@ public:
 
 public:
 
-	///
+
 	FastSAXSEnergy();
 
-	///
+
 	FastSAXSEnergy( FastSAXSEnergy const & src ) :
 		parent(src) {
 		chi2 = src.chi2;

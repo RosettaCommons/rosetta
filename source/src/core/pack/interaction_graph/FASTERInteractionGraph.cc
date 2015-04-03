@@ -597,12 +597,10 @@ void FASTERNode::reset_relaxed_for_neighbors()
 }
 
 
-
 void FASTERNode::reset_relaxed()
 {
 	relaxed_state_ = current_state_;
 }
-
 
 
 void FASTERNode::tell_neighbors_to_prep_for_relaxation()
@@ -729,7 +727,6 @@ FASTERNode::get_deltaE_for_relaxed_state_following_perturbation()
 	deltaE += ( one_body_energies_[ relaxed_state_ ] - curr_state_one_body_energy_ );
 	return deltaE;
 }
-
 
 
 core::PackerEnergy FASTERNode::get_one_body_energy_for_relaxed_state() const
@@ -977,9 +974,6 @@ void FASTEREdge::acknowledge_state_zeroed( int node_ind )
 }
 
 
-
-
-
 /// @brief Returns a reference to the first element in the dense two-body energy
 /// table.  Used to create a proxy array on the nodes for cache efficiency.
 
@@ -1121,7 +1115,6 @@ FASTEREdge::swap_edge_energies(
 }
 
 
-
 /// @brief main constructor: no default nor copy constructors provided.
 ///
 /// @param num_nodes - [in] - the number of nodes in this graph
@@ -1258,7 +1251,6 @@ core::PackerEnergy FASTERInteractionGraph::get_energy_current_state_assignment()
 	update_internal_energy_totals();
 	return total_energy_current_state_assignment_;
 }
-
 
 
 /// @details Iterates across nodes and then edges to look-up the energies

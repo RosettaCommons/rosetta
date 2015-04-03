@@ -85,7 +85,7 @@ class EulerAngles : public xyzVector<T>
 	~EulerAngles()
 	{}
 
-	///
+
 	/// The equivalent rotation matrix representation of the euler angles would be:
 	///
 	/// FIGURE 1:

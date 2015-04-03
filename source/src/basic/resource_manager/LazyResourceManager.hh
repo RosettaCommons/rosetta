@@ -243,7 +243,6 @@ public: // Interface to for creating and accessing resources
 		LazyResourceManager const & resource_manager );
 
 
-
 public:
 	/// @brief has a ResourceConfiguration been provided to the LazyResourceManager for a Resource with a particular ResourceTag?
 	bool has_resource_configuration( ResourceTag const & resource_tag ) const;

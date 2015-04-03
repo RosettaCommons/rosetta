@@ -11,7 +11,6 @@
 /// @brief  FilterCreators for the MultipleSigmoidsFilter
 
 
-
 #ifndef INCLUDED_protocols_simple_filters_MultipleSigmoidsFilterCreator_hh
 #define INCLUDED_protocols_simple_filters_MultipleSigmoidsFilterCreator_hh
 

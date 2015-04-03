@@ -12,9 +12,7 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <protocols/relax_protocols.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -24,13 +22,11 @@
 
 #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <devel/init.hh>
 
 // C++ headers
 //#include <cstdlib>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 

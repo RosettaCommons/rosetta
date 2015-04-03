@@ -28,8 +28,6 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -49,7 +47,6 @@
 
 //#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 // #include <core/fragment/FragData.hh>
 // #include <core/fragment/FragCache.hh>
@@ -57,13 +54,9 @@
 // #include <protocols/abinitio/util.hh>
 
 
-
 // #include <core/pack/rotamer_trials.hh>
 // #include <core/pack/task/PackerTask.hh>
 // #include <core/pack/task/TaskFactory.hh>
-
-
-
 
 
 // #include <core/scoring/ScoreFunction.hh>
@@ -197,7 +190,7 @@ apply_ss_jumps( pose::Pose &pose, JumpSetup jump_def, std::string tag ) {
 } //apply_ss_jumps
 
 
-///@detail apply jumps from SS-pair library to a small protein fragment ( two strands forming a short sheet )
+/// @detail apply jumps from SS-pair library to a small protein fragment ( two strands forming a short sheet )
 /// the distances between O-HN for the jump residues are measured and compared to canned data
 /// if the library changes the canned data has to be updated accordingly.
 /// To this end copy files distance_xxx_dat (produced each time test runs) to gold_distance_xxx_dat

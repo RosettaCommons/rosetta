@@ -82,7 +82,6 @@ PerturbChiSidechainMoverCreator::mover_name() {
 }
 
 
-
 PerturbChiSidechainMover::PerturbChiSidechainMover() {
 	protocols::moves::Mover::type( "PerturbChiSidechain" );
 	set_defaults();

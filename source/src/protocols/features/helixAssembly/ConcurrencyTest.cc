@@ -67,7 +67,7 @@ namespace helixAssembly {
 
 	}
 
-	///@brief collect all the feature data for the pose
+	/// @brief collect all the feature data for the pose
 	core::Size
 	ConcurrencyTest::report_features(
 		core::pose::Pose const &,

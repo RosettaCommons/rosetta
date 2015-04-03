@@ -32,12 +32,12 @@
 namespace protocols {
 namespace simple_moves {
 
-///@brief Basic mover used primarily for setting up atomic protocols, especially in generator functions.
+/// @brief Basic mover used primarily for setting up atomic protocols, especially in generator functions.
 /// 
 /// As the Topology Broker system includes more claims and is more widely adopted,
 /// This should not be used in favor of the Broker system.
 ///
-///@details
+/// @details
 ///  1) Holds the Pose's original FoldTree
 ///  2) Applies its ChangeFoldTreeMover
 ///  3) Applies its Main mover
@@ -46,7 +46,7 @@ namespace simple_moves {
 class ChangeAndResetFoldTreeMover : public protocols::moves::MoverApplyingMover {
 public:
 
-	///@brief Basic Constructor.  
+	/// @brief Basic Constructor.  
 	ChangeAndResetFoldTreeMover();
 	
 
@@ -57,7 +57,7 @@ public:
 		protocols::moves::MoverOP main_mover,
 		protocols::moves::ChangeFoldTreeMoverOP ft_mover);
 	
-	///@brief Constructor with all needed classes as well as the optional scorefxn.
+	/// @brief Constructor with all needed classes as well as the optional scorefxn.
 	/// Note that the scorefxn is ONLY used for printing score information in apply.
 	///
 	ChangeAndResetFoldTreeMover(
@@ -71,24 +71,24 @@ public:
 
 public:
 	
-	///@brief Set the main mover to apply
+	/// @brief Set the main mover to apply
 	virtual void
 	set_mover(protocols::moves::MoverOP main_mover);
 	
-	///@brief Get the main mover
+	/// @brief Get the main mover
 	virtual protocols::moves::MoverOP
 	mover() const;
 	
-	///@brief Set the ChangeFoldTreeMover
+	/// @brief Set the ChangeFoldTreeMover
 	void
 	set_ft_mover(protocols::moves::ChangeFoldTreeMoverOP ft_mover);
 	
-	///@brief Get the ChangeFoldTreeMover
+	/// @brief Get the ChangeFoldTreeMover
 	protocols::moves::ChangeFoldTreeMoverOP
 	ft_mover() const;
 		
 
-	///@details
+	/// @details
 	///  1) Holds the Pose's original FoldTree
 	///  2) Applies the ChangeFoldTreeMover
 	///  3) Applies the Main mover
@@ -98,12 +98,12 @@ public:
 
 public:
 	
-	///@brief Set the ScoreFunction.
+	/// @brief Set the ScoreFunction.
 	/// Used ONLY for printing score information before and after the move!!
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
 	
-	///@brief Get the set ScoreFunction
+	/// @brief Get the set ScoreFunction
 	core::scoring::ScoreFunctionCOP
 	scorefxn()  const;
 	
@@ -136,7 +136,6 @@ private:
 
 } //simple_moves
 } //protocols
-
 
 
 #endif //INCLUDED_protocols_simple_moves_ChangeAndResetFoldTreeMover_hh

@@ -9,7 +9,7 @@
 
 /// @file SWA_PoseSetup.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Parin Sripakdeevong
 /// @author Rhiju Das

@@ -18,14 +18,8 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
-// AUTO-REMOVED #include <protocols/match/Hit.fwd.hh>
-// AUTO-REMOVED #include <protocols/match/Hit.hh>
-// AUTO-REMOVED #include <protocols/match/SixDHasher.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallChunk.hh>
 
-// AUTO-REMOVED #include <string>
 #include <vector>
 #include <map>
 
@@ -107,8 +101,6 @@ class BackboneSegment {
 };
 
 core::Real get_rmsd( const BackboneSegment &bs1, const BackboneSegment &bs2 );
-
-
 
 
 class BackboneDB

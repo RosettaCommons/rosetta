@@ -157,7 +157,6 @@ void get_helices(core::pose::Pose& pose, protocols::loops::LoopsOP helicesOP){
 }
 
 
-
 Real calculate_helical_tail_variance(core::pose::Pose pose, core::pose::Pose native_pose,Dock testDock){
 	using namespace core::scoring;
 	using namespace core::id;
@@ -217,7 +216,6 @@ core::pose::Pose minimize_to_close(core::pose::Pose pose){
     minimizer.run( pose, mm, *lowres_scorefxn, options_minilbfgs );
     return(pose);
 }
-
 
 
 void generate_combined_model(core::pose::Pose pose, core::pose::Pose native_pose,Dock & testDock){

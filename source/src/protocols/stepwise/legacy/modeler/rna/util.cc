@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/legacy/modeler/rna/util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -538,9 +538,6 @@ namespace rna {
 		if ( WP->protonated_H1_adenosine_list().size() > 0 ) output_seq_num_list( "protonated_H1_adenosine_list ", WP->protonated_H1_adenosine_list(), outstream );
 
 
-
-
-
 		output_is_prepend_map( "is_prepend_map = ", WP->is_prepend_map(), WP->full_sequence().size(), outstream );
 		output_seq_num_list( "calc_rms_res = ", 								WP->calc_rms_res() 								, outstream );
 
@@ -593,7 +590,6 @@ namespace rna {
 
 
 	}
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////

@@ -31,7 +31,6 @@
 #endif
 
 // Core Headers
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
@@ -40,7 +39,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Standard Library Headers
 #include <map>

@@ -20,21 +20,17 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
 
 // STL Headers
 #include <list>
-// AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <utility/assert.hh>
 
 //Utility Headers
 #include <utility/string_util.hh>
-// AUTO-REMOVED #include <utility/basic_sys_util.hh>
 
 #include <utility/vector1.hh>
 
@@ -565,8 +561,6 @@ void DensePDEdge::acknowledge_state_zeroed( int node_ind )
 }
 
 
-
-
 /// @brief Returns a reference to the first element in the dense two-body energy
 /// table.  Used to create a proxy array on the nodes for cache efficiency.
 FArray2A< core::PackerEnergy > DensePDEdge::get_edge_table_ptr() {
@@ -779,7 +773,6 @@ core::PackerEnergy DensePDInteractionGraph::get_energy_current_state_assignment(
 }
 
 
-
 /// @details Iterates across nodes and then edges to look-up the energies
 /// for the current state assignmnet removing any numerical drift which
 /// accumulated in the member variable total_energy_current_state_assignment_.
@@ -925,7 +918,6 @@ DensePDInteractionGraph::get_aa_submatrix_energies_for_edge(
 {
 	return get_dpd_edge( node1, node2 )->get_aa_submatrix_energies();
 }
-
 
 
 /// @brief factory method that instantiates a DensePDNode.

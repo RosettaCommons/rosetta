@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/nv/NVlookup.cc
 /// @brief  Neighbor Vector algorithm lookup table processing class
-/// @detailed The neighbor vector algorithm relies on a table of knowledge based potentials based on statistical analysis of the PDB
+/// @details The neighbor vector algorithm relies on a table of knowledge based potentials based on statistical analysis of the PDB
 /// This class loads the lookup table and provides an interface for accessing it.  In the future this should and will probably be implemented as a spline rather than a table
 /// @author Sam DeLuca (samuel.l.deluca@vanderbilt.edu)
 

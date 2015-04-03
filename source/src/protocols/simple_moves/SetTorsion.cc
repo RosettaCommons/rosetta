@@ -15,15 +15,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -49,7 +45,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
-
 
 
 // Utility Headers
@@ -91,7 +86,7 @@ SetTorsionCreator::mover_name()
 
 SetTorsion::~SetTorsion() {}
 
-///@brief default ctor
+/// @brief default ctor
 SetTorsion::SetTorsion() :
 	parent()
 {}

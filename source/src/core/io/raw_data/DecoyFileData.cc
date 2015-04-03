@@ -24,7 +24,6 @@
 #include <core/io/raw_data/DecoyStruct.hh>
 #include <core/io/raw_data/DecoyFileData.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>

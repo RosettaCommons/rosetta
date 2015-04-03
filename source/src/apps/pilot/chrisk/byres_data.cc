@@ -359,7 +359,6 @@ append_rsd_by_kinematic_hbond_jump_near_atom(
 						TR << "\tDxyz: " << Dxyz.x() << "," << Dxyz.y() << "," << Dxyz.z() << ")" << std::endl;
 
 
-
 						//get the ideal hbond RT
 						Stub don_frame( Hxyz, Hxyz, Dxyz, Real( 2 ) * Hxyz);
 

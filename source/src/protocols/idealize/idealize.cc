@@ -21,7 +21,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -35,21 +34,14 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/pose/PDBInfo.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh> // tracer output
 
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>

@@ -24,10 +24,8 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/WaterAdductHBondPotential.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
@@ -74,7 +72,7 @@ WaterAdductHBondEnergy::clone() const
 	return EnergyMethodOP( new WaterAdductHBondEnergy() );
 }
 
-///
+
 void
 WaterAdductHBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -85,7 +83,7 @@ WaterAdductHBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction 
 	pose.energies().data().set( H2O_HBOND_SET, h2o_hbond_set );
 }
 
-///
+
 void
 WaterAdductHBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
@@ -102,7 +100,7 @@ WaterAdductHBondEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< 
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-///
+
 void
 WaterAdductHBondEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -195,7 +193,6 @@ WaterAdductHBondEnergy::get_atom_h2o_hbond_derivative(
 }
 
 
-
 /// @brief distance cutoff
 Distance
 WaterAdductHBondEnergy::atomic_interaction_cutoff() const
@@ -213,7 +210,6 @@ WaterAdductHBondEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-
 
 
 } // methods

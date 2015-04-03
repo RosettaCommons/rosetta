@@ -15,7 +15,6 @@
 #include <core/scoring/saxs/SinXOverX.hh>
 
 // C++
-// AUTO-REMOVED #include <string>
 #include <cmath>
 
 #include <utility/vector1.hh>

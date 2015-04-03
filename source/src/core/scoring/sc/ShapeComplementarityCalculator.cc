@@ -9,7 +9,7 @@
 
 /// @file     core/scoring/sc/ShapeComplementarityCalculator.cc
 /// @brief    Headers for the Shape Complementarity Calculator
-/// @detailed Lawrence & Coleman shape complementarity calculator (based on CCP4's sc)
+/// @details Lawrence & Coleman shape complementarity calculator (based on CCP4's sc)
 /// @author   Luki Goldschmidt <luki@mbi.ucla.edu>
 
 /// This code was ported from the original Fortran code found in CCP4:
@@ -72,7 +72,6 @@ namespace sc {
 // Public class functions
 ////////////////////////////////////////////////////////////////////////////
 
-/// @begin ShapeComplementarityCalculator::ShapeComplementarityCalculator()
 /// @brief
 /// ShapeComplementarityCalculator constructor, initializes default settings
 
@@ -85,10 +84,9 @@ ShapeComplementarityCalculator::~ShapeComplementarityCalculator()
 {
 }
 
-/// @begin ShapeComplementarityCalculator::CalcSc()
 /// @brief
 /// Run the SC calculation on Pose and return just the sc statistic or -1 on error
-/// @detailed
+/// @details
 /// This is a static function and can be called without instantiating ShapeComplementarityCalculator.
 /// The jump_id is used to partition the pose into two molecular surfaces; the first jump (1)
 /// is used is no jump_id is explicity specified. Those desiring more control as to what residues
@@ -111,9 +109,8 @@ core::Real ShapeComplementarityCalculator::CalcSc(core::pose::Pose const & pose,
 		return -1;
 }
 
-/// @begin ShapeComplementarityCalculator::Calc()
 /// @brief Run the SC calculation on a Pose, partitionied by jump_id
-/// @detailed
+/// @details
 /// This non-static function requires an instance of the ShapeComplementarityCalculator class.
 /// The jump_id is used to partition the pose into two molecular surfaces. To control what
 /// residues make up either surface, use the AddResidue() or even add_atom() function instead.
@@ -134,9 +131,8 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 	return MolecularSurfaceCalculator::Calc(pose, jump_id);
 }
 
-/// @begin ShapeComplementarityCalculator::Calc
 /// @brief Run the SC calculation for previously defined molecules (via AddResidue or add_atom calls)
-/// @detailed
+/// @details
 /// This function should be called the residues / atoms making up the two molecular surfaces
 /// have been explicitly defined.
 /// Returns true on success.

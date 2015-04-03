@@ -20,7 +20,6 @@
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.fwd.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributorFactory.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 
@@ -39,7 +38,7 @@ namespace jd2 {
 class ShuffleFileSystemJobDistributor : public FileSystemJobDistributor
 {
 protected:
-  ///@brief ctor is protected; singleton pattern
+  /// @brief ctor is protected; singleton pattern
   ShuffleFileSystemJobDistributor();
 
   virtual void handle_interrupt() {}

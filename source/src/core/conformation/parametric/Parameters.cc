@@ -63,7 +63,7 @@ namespace core {
 			Parameters::~Parameters() {}
 
 
-			///@brief make a copy of this residue( allocate actual memory for it )
+			/// @brief make a copy of this residue( allocate actual memory for it )
 			///
 			ParametersOP
 			Parameters::clone() const

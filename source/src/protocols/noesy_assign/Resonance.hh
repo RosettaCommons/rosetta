@@ -54,7 +54,7 @@ public:
 
 	virtual ResonanceOP clone() = 0;
 
-	///@brief output
+	/// @brief output
   virtual void write_to_stream( std::ostream& ) const;
 
 	virtual void write_to_stream( std::ostream&, core::chemical::AA aa ) const;
@@ -62,25 +62,25 @@ public:
 	virtual core::Size ambiguity() const {
 		return 1;
 	}
-	///@brief ResonanceID
+	/// @brief ResonanceID
   core::Size label() const { return label_; }
 	virtual core::Size float_label( core::Size /*ifloat*/ ) const { return label_; }
-	///@brief Atom
+	/// @brief Atom
   core::id::NamedAtomID const& atom() const { return atom_; }
   core::Size resid() const { return atom_.rsd(); }
   std::string const& name() const { return atom_.atom(); }
 	bool is_proton() const { return is_proton_; }
-	///@brief resonance frequency (chemical shift)
+	/// @brief resonance frequency (chemical shift)
   core::Real freq() const { return freq_; }
 	core::Real error() const { return error_; }
 	core::Real tolerance() const { return error_; }
 
-	///@brief Resonance matches the given cross-peaks frequency
+	/// @brief Resonance matches the given cross-peaks frequency
 	bool match( core::Real freq, core::Real error, FoldResonance const& folder ) const {
 		return pmatch( freq, error, folder ) <= 1.0;
 	}
 
-	///@brief match the proton and corresponding label atom at same time
+	/// @brief match the proton and corresponding label atom at same time
 	virtual bool match2D(
 	  core::Real proton_freq,
 		core::Real proton_error,
@@ -107,14 +107,14 @@ public:
 	void combine( std::deque< ResonanceOP >& last_resonances, bool drain );
 
 	core::chemical::AA aa() const { return aa_; }
-	///@brief in ILV-labelled proteins, the both LV methyls are labelled randomly with 50% probability,
+	/// @brief in ILV-labelled proteins, the both LV methyls are labelled randomly with 50% probability,
 	/// whereas I delta methyls are labelled 100%
 	core::Real intensity() const { return intensity_; }
 	void set_intensity( core::Real setting ) {
 		intensity_ = setting;
 	}
 
-	///@brief classification for calibration... e.g., Backbone, sidechain, etc..
+	/// @brief classification for calibration... e.g., Backbone, sidechain, etc..
 	CALIBRATION_ATOM_TYPE calibration_atom_type() const { return calibration_atom_type_; }
 
 	core::Real _pmatch(  core::Real freq, core::Real error, FoldResonance const& folder ) const;

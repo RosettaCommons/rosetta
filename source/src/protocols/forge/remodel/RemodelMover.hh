@@ -27,7 +27,6 @@
 // package headers
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
-// AUTO-REMOVED #include <protocols/forge/build/Interval.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 
 // project headers
@@ -496,10 +495,6 @@ private: // data
 	bool use_match_rt_ ;
 	bool use_disulf_fa_score_;
 	core::Real disulf_fa_max_ ;
-
-
-
-
 
 
 struct instruction_flags {

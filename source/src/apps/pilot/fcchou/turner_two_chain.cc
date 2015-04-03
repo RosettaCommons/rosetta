@@ -622,7 +622,7 @@ MC_run () {
 	//	scorefxn_test -> set_weight( scoretypes[i], 1.0 );
 	//	scorefxns.push_back( scorefxn_test );
 	//}
-	//
+
 
 	Pose pose;
 	setup_pose(pose);

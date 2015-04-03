@@ -84,8 +84,6 @@ void AssignOrbitals::assign_orbitals( )
 				new_action.z() /= restype_->actcoord_atoms().size();
 
 
-
-
 				numeric::xyzVector<core::Real> vector_d( new_action - restype_->atom(atm_index2).ideal_xyz());
 				numeric::xyzVector<core::Real> vector_f( new_action - restype_->atom(atm_index3).ideal_xyz());
 
@@ -227,7 +225,6 @@ void AssignOrbitals::assign_orbitals( )
 			}
 
 
-
 			//std::cout << Aindex_ << " " << AOhybridization_  <<" " << Orbtype_ << " " << AOdist_ << std::endl;
 			if(AObondedatoms_.size()== 1 && AOhybridization_ == 2){
 				if(Orbtype_ == 1){
@@ -344,14 +341,9 @@ void AssignOrbitals::assign_orbitals( )
 		}
 
 
-
-
-
-
 	}
 	restype_->finalize();
 }
-
 
 
 void AssignOrbitals::assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype){
@@ -425,7 +417,6 @@ void AssignOrbitals::assign_sp2_orbitals_to_one_bonded_atom(/*OrbInfo const & or
 	utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = Coordinates_TriganolPlanar_bondedto1atom_helper(Aindex_,atm_index2,atm_index3,AOdist_);
 	add_orbitals_to_restype(atm_index2, atm_index3, /*orbital_info,*/ atmtype, "p",	orbital_xyz_vectors);
 }
-
 
 
 // To get a pair of pi orbitals, we calculate the cross products of two vectors both pointing towards the atom with an index of atm_index1.
@@ -527,7 +518,6 @@ void AssignOrbitals::set_orbital_type_and_bond(
 }
 
 
-
 void AssignOrbitals::calculate_orbital_icoor(
 		numeric::xyzVector<core::Real> const orbital_xyz,
 		core::Size const atm_index1,
@@ -573,7 +563,6 @@ void AssignOrbitals::calculate_orbital_icoor(
 
 	//restype_->add_orbital( orbital_element_name, );
 	//restype_->add_orbital_bond(stub1, orbital_element_name);
-
 
 
 	//tr << orbital << " " << stub_atom1 << " "<< stub_atom2 << " " <<stub_atom3 << " " <<distance << " " << phi << " " << theta <<std::endl;
@@ -675,11 +664,8 @@ utility::vector1< numeric::xyzVector<core::Real> >  AssignOrbitals::Coordinates_
  }
 
 
-
 }//namespace
 }//namespace
 }//namespace
-
-
 
 

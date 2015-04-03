@@ -11,7 +11,7 @@
 /// @author Oliver Lange
 /// @author Christopher Miles (cmiles@uw.edu)
 /// @brief This class will be handled to a SampleProtocol as a control instance
-/// @detailed responsibilities:
+/// @details responsibilities:
 ///           know which chainbreaks to penalize and close
 ///           know which jumps to use during sampling, which (if any) to keep after loop-closing
 ///           supply a JumpMover if jumps should be moved
@@ -24,14 +24,12 @@
 
 // Unit Headers
 #include <protocols/abinitio/AbrelaxMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/loop_closure/ccd/SlidingWindowLoopClosure.fwd.hh>
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
 // Package Headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
-// AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
 
 // Project Headers
 #include <core/types.hh>

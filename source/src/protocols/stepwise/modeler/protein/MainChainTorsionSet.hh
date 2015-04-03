@@ -9,7 +9,7 @@
 
 /// @file SWA_ProtocolUtil.hh
 /// @brief
-/// @detailed
+/// @details
 ///
 /// @author Rhiju Das
 

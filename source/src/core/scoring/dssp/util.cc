@@ -9,9 +9,8 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -19,18 +18,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
-// AUTO-REMOVED #include <core/fragment/JumpingFrame.hh>
-// AUTO-REMOVED #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/JumpSRFD.hh>
-// AUTO-REMOVED #include <core/conformation/util.hh>
-
-
-//
 
 // ObjexxFCL Headers
 
@@ -41,7 +29,6 @@
 
 //// C++ headers
 // #include <string>
-// AUTO-REMOVED #include <list>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
@@ -144,7 +131,6 @@ get_pairing_geometry(
 }
 
 
-
 void
 get_pleating(
 	       pose::Pose const& pose,
@@ -164,7 +150,7 @@ get_pleating(
   //
   // But for some twisted strand pairs (see, e.g, 22,48 in 1brs.pdb),
   // the numbers get a little crazy...
-  //
+
 
   Real forientation, pleating1, pleating2;
   if ( pos1 < pos2 ) {
@@ -193,7 +179,6 @@ get_pleating(
   tr.Debug << " orientation " << forientation << " pleating " << pleating << std::endl;
   orientation = forientation < 0 ? 1 : 2;
 }
-
 
 
 }

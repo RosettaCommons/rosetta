@@ -108,7 +108,7 @@ residue_selector_single_from_line( std::string const & line )
 	return 0;
 }
 
-///
+
 ResidueTypeCOPs
 ResidueSelector::select( ResidueTypeSet const & rsd_set )
 {

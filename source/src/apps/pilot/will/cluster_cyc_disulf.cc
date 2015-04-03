@@ -125,9 +125,6 @@ main( int argc, char * argv [] ) {
 	devel::init(argc, argv);
 
 
-
-
-
 // def bestalign(s1,s2):
 // 	ol1 = [x for x in cmd.get_object_list() if x.startswith(s1)]
 // 	ol2 = [x for x in cmd.get_object_list() if x.startswith(s2)]
@@ -171,13 +168,8 @@ main( int argc, char * argv [] ) {
 		}
 
 
-
 		return 0;
 	}
-
-
-
-
 
 
 	if ( !option[ out::output ].user() ) {
@@ -204,8 +196,6 @@ main( int argc, char * argv [] ) {
 	clustering->set_population_weight(
 		option[ basic::options::OptionKeys::cluster::population_weight ]()
 	);
-
-
 
 
 	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->

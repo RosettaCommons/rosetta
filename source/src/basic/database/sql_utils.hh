@@ -40,12 +40,12 @@
 namespace basic {
 namespace database {
 
-///@brief Aquire a database session using the command line options
+/// @brief Aquire a database session using the command line options
 /// transaction type is set to standard
 utility::sql_database::sessionOP
 get_db_session();
 
-///@brief Aquire a database session using the command line parameters
+/// @brief Aquire a database session using the command line parameters
 /// For postgres databases, the pq_schema acts like a namespace in the
 /// database. Transaction type set to standard
 utility::sql_database::sessionOP
@@ -53,7 +53,7 @@ get_db_session(
 	std::string const & db_name,
 	std::string const & pq_schema="");
 
-///@brief Aquire a database session using the command line parameters
+/// @brief Aquire a database session using the command line parameters
 /// For postgres databases, the pq_schema acts like a namespace in the
 /// database
 utility::sql_database::sessionOP
@@ -69,7 +69,7 @@ get_db_session(
 	std::string const & db_name,
 	std::string const & pq_schema="");
 
-///@brief Aquire a database session using the command line parameters
+/// @brief Aquire a database session using the command line parameters
 /// For postgres databases, the pq_schema acts like a namespace in the
 /// database
 utility::sql_database::sessionOP
@@ -80,13 +80,13 @@ get_db_session(
 	std::string const & db_name,
 	std::string const & pq_schema="");
 
-///@brief Returns partition identifer if in partitioned database mode, otherwise -1.
+/// @brief Returns partition identifer if in partitioned database mode, otherwise -1.
 //  Determines partition mode from user options 'inout::dbms::separate_db_per_mpi_process'
 //  and 'inout::dbms::db_partition'.
 platform::SSize db_partition_from_options(
 	utility::sql_database::DatabaseMode::e db_mode);
 
-///@brief Returns partition identifer from mpi rank if in partitioned database mode, or valid manual partition, otherwise -1.
+/// @brief Returns partition identifer from mpi rank if in partitioned database mode, or valid manual partition, otherwise -1.
 platform::SSize resolve_db_partition(
 		bool partition_by_mpi_process,
 		platform::SSize manual_partition = -1);
@@ -119,7 +119,7 @@ table_exists(
 	utility::sql_database::sessionOP db_session,
 	std::string const & table_name);
 
-///@brief set the number of 1kb pages to use for cache
+/// @brief set the number of 1kb pages to use for cache
 void
 set_cache_size(
 	utility::sql_database::sessionOP db_session,

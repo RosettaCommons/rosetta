@@ -36,6 +36,5 @@ typedef utility::pointer::shared_ptr< AntibodyDesignMoverGenerator const > Antib
 } //namespace protocols
 
 
-
 #endif	//INCLUDED_protocols_antibody_design_ANTIBODYDESIGNMODELER_FWD_HH
 

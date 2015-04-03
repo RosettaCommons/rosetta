@@ -1,7 +1,6 @@
 import sys
 
 
-
 import rosetta
 from rosetta import *
 

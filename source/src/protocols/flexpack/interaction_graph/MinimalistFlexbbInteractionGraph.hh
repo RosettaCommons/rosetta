@@ -155,7 +155,6 @@ protected:
 	get_altE_for_bb_move( PackerEnergy & curr_frag_etotal );
 
 
-
 private:
 
 

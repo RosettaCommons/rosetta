@@ -275,7 +275,7 @@ void FlexPepDockingProtocol::set_default()
 
 
 ///////////////////////////////////////////
-///@brief setup the peptide docking fold tree
+/// @brief setup the peptide docking fold tree
 // jumps are created from the receptor, and then
 // between consecutive peptide anchors:
 ///////////////////////////////////////////
@@ -377,7 +377,6 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 }
 
 
-
 ////////////////////////////////////////
 // set constraints to prevent receptor from changing too much from starting structure
 ////////////////////////////////////////
@@ -468,7 +467,6 @@ FlexPepDockingProtocol::minimize_only(
 
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin create and apply prepack mover
 ///
 /// @brief prepack protocol for flexpepdock
 //         (0)  minimize all side-chains + peptide b.b., just to get a reference to best possible energy
@@ -476,7 +474,7 @@ FlexPepDockingProtocol::minimize_only(
 //         (ii)  repack + minimize side-chains of protein
 //         (iii)  translate back (by 1000A)
 ///
-//  @detailed
+//  @details
 //  Prepacking a docked structure
 //
 //  @param
@@ -1137,7 +1135,6 @@ FlexPepDockingProtocol::peptide_random_loop_model(
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////////
 // @brief
 // The high-resolution protocol for docking a flexible peptide
@@ -1237,13 +1234,11 @@ FlexPepDockingProtocol::hires_fpdock_protocol(pose::Pose& pose)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////////
-// @begin FlexPepDocking apply
 //
 // @brief main flexible peptide docking protocol
 //
-// @detailed
+// @details
 // Main function for peptide docking. Includes the following steps:
 //      1) Optional centroid mode docking, with alternating MCM
 //         cycles of rigid-body movement and peptide torsion relaxation
@@ -1565,7 +1560,6 @@ FlexPepDockingProtocol::storeJobStatistics
 	FArray1D_bool superpos_partner ( native_pose.total_residue(), false );
 	FArray1D_bool native_interface_residues ( native_pose.total_residue(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
-
 
 
 	// start pose statistics:

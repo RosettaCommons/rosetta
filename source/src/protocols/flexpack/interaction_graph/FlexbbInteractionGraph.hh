@@ -24,14 +24,11 @@
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 
 /// Utility headers
-// AUTO-REMOVED #include <utility/vector0.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 
 /// C++ headers
 /// TEMP
-// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector0_bool.hh>
 #include <ObjexxFCL/FArray1A.fwd.hh>
@@ -680,7 +677,6 @@ FlexbbInteractionGraph const * FlexbbEdge::get_flexbbig_owner() const
 inline
 FlexbbInteractionGraph * FlexbbEdge::get_flexbbig_owner()
 {	return static_cast< FlexbbInteractionGraph * > (get_owner()); }
-
 
 
 }

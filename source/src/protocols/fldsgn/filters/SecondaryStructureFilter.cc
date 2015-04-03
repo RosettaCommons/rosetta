@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/SecondaryStructureFilter.cc
 /// @brief filter structures by sheet topology
-/// @detailed
+/// @details
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 /// @author Doo Nam Kim ( doonam.kim@gmail.com ) responsible for 'h' which is either 'E' or 'L'
 
@@ -26,7 +26,6 @@
 #include <core/pose/Pose.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Utility headers
 #include <basic/Tracer.hh>

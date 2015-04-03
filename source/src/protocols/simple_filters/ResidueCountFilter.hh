@@ -138,7 +138,7 @@ public:
   	bool const pack 
   );
 
-	///@brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
+	/// @brief Checks whether a residue type is present in the provided residue type set, and if so, adds it to res_types_
 	bool
 	add_residue_type_by_name(
 	  core::chemical::ResidueTypeSet const & res_type_set,

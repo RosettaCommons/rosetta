@@ -13,7 +13,6 @@
 
 #include <core/types.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/chemical/AA.hh>
 
@@ -80,8 +79,6 @@ using ObjexxFCL::FArray2D_float;
 using namespace core;
 using namespace pose;
 using namespace conformation;
-
-
 
 
 void
@@ -259,7 +256,6 @@ main( int argc, char* argv [] )
 
 		core::scoring::dssp::Dssp dssp( pdb );
 		dssp.insert_ss_into_pose( pdb );
-
 
 
 		Epos1(1,2) = pdb.residue(res1).atom(pdb.residue(res1).atom_index("CA")).xyz()(1);

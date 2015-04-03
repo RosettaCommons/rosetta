@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///
+
 /// @brief Prints the fraction of polar atoms in the ligand that are satisfied
 /// 	by a hydrogen bond.
 ///
@@ -67,7 +67,6 @@ using numeric::xyzVector;
 static thread_local basic::Tracer TR( "apps.pilot.lig_polar_sat" );
 
 
-///
 /// @brief returns the index in the residue of the atom designated to represent
 /// 	a target atom for	hydrogen bonding.
 ///
@@ -87,7 +86,6 @@ Size rep_hb_atom(Size const tgt, Residue const& res) {
 }
 
 
-///
 /// @brief Tells whether two atoms form a hydrogen bond.
 ///
 /// @param[in] don candidate donor atom.
@@ -142,7 +140,6 @@ bool is_hbond(AtomID const& don, AtomID const& acc, Pose const& ps,
 }
 
 
-///
 /// @brief computes and stores the number of hydrogen bonds for each
 /// 	representative atom of a residue.
 ///
@@ -240,7 +237,6 @@ void store_hb_counts(Size const ridx, Pose const& ps,
 }
 
 
-///
 /// @brief prints the contents of a storage of hydrogen bond counts
 ///
 /// @param[in] counts the storage of hydrogen bond counts
@@ -270,7 +266,6 @@ void print_hb_counts(std::map<AtomID, Size>& counts, Pose const& ps) {
 }
 
 
-///
 /// @brief given a hydrogen-bond-count storage, returns the number of atoms
 /// 	which have at least a hydrogen bond.
 ///

@@ -26,16 +26,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/kinematics/types.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <utility/fix_boinc_read.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <ostream>
 
 #include <utility/vector1.hh>
 
@@ -46,12 +41,12 @@ namespace fragment {
 
 typedef utility::vector1 < Size > PositionList;
 
-///@brief Base class for SRFD classes
-///@detail Instances of  SRFD classes contain information on specific dofs in
+/// @brief Base class for SRFD classes
+/// @detail Instances of  SRFD classes contain information on specific dofs in
 /// a single residue or a jump connected to a residue
 /// The classes' apply method will now how to implement the specified dofs in the give pose
 /// at the given residue position
-///
+
 
 /// TODO: change SRFD interface such that apply is called like this
 /// apply( pose, inframe_pos (1..length), Frame const& )
@@ -64,7 +59,7 @@ typedef utility::vector1 < Size > PositionList;
 
 class SingleResidueFragData : public utility::pointer::ReferenceCount {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~SingleResidueFragData();
 	SingleResidueFragData( char sequence )
 		: sequence_( sequence )

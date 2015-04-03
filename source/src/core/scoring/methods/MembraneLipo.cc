@@ -17,20 +17,16 @@
 #include <core/scoring/methods/MembraneLipoCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
 
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 //#include <core/scoring/rms_util.hh>
 
 //#include <core/io/pdb/pose_io.hh>
 
 //symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -95,7 +91,6 @@ MembraneLipo::clone() const
 /// is the difference between the RMSD and the target RMSD. Target RMSD is specified
 /// the option -score::rms_target.
 
-///
 
 void
 MembraneLipo::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const

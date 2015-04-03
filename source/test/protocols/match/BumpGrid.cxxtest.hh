@@ -30,9 +30,6 @@
 // C++ headers
 #include <string>
 #include <iostream>
-// AUTO-REMOVED #include <sstream>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <ctime>
 
 //Auto Headers
 #include <utility/vector1.hh>

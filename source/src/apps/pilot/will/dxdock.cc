@@ -106,7 +106,6 @@ void dump_points_pdb(vector1<Vec> & p, string fn, vector1<int> const & d, vector
 }
 
 
-
 void get_avail_don_acc(Pose & pose, std::set<Size> & actdon, std::set<Size> & actacc) {
 	core::scoring::dssp::Dssp dssp(pose);
 	dssp.insert_ss_into_pose(pose);

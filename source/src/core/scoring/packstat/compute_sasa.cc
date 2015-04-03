@@ -13,7 +13,6 @@
 /// @author will sheffler
 
 
-
 #include <cmath>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -34,16 +33,12 @@
 #include <iostream>
 #include <numeric/numeric.functions.hh>
 #include <numeric/NumericTraits.hh>
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/ubyte.hh>
 #include <set>
 #include <sstream>
-// AUTO-REMOVED #include <time.h>
-// AUTO-REMOVED #include <utility/basic_sys_util.hh>
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -64,7 +59,6 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
-
 
 
 namespace core {
@@ -237,7 +231,6 @@ pose_to_pack_data( Pose const & pose, int include_water ) {
 	p.labels = pdb.res_labels();
 	return p;
 }
-
 
 
 SasaResultOP
@@ -1281,7 +1274,6 @@ debug_assert(clusters.size() > 0);
 }
 
 
-
 void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 	using namespace core::scoring::packstat;
  	using namespace std;
@@ -1356,9 +1348,5 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
 } // namespace packstat
 } // namespace scoring
 } // namespace core
-
-
-
-
 
 

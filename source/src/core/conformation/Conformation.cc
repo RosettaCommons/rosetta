@@ -245,7 +245,7 @@ Conformation::operator=( Conformation const & src )
 	return *this;
 }
 
-///@details make a copy of this conformation( allocate actual memory for it )
+/// @details make a copy of this conformation( allocate actual memory for it )
 ConformationOP
 Conformation::clone() const
 {
@@ -364,7 +364,6 @@ Conformation::show_residue_connections() const
 }
 
 
-
 // Show each residue in the conformation and its connections.
 /// @note This method is a rewrite of an earlier version to include an argument
 ///  for desired output stream.  This is to be more consistent with typical
@@ -426,19 +425,19 @@ Conformation::sequence_matches( Conformation const & other ) const
 
 // General Properties ////////////////////////////////////////////////////////////////////////////////////////////////
 
-///@note this is not a good test --Doug
+/// @note this is not a good test --Doug
 bool
 Conformation::is_fullatom() const {
 	return is_residue_typeset( core::chemical::FA_STANDARD );
 }
 
-///@note this is not a good test --Doug
+/// @note this is not a good test --Doug
 bool
 Conformation::is_centroid() const {
 	return is_residue_typeset( core::chemical::CENTROID );
 }
 
-///@note this is not a good test --Doug
+/// @note this is not a good test --Doug
 bool
 Conformation::is_residue_typeset( std::string tag ) const {
 	// Empty poses aren't any residue typeset (special case prevents segfault)
@@ -1748,7 +1747,6 @@ Conformation::set_noncanonical_connection(
 }
 
 
-
 // Assigns disulfide bonds based on a pre-determined list
 /// @note works in centroid and full-atom modes
 void
@@ -2645,7 +2643,7 @@ Conformation::jump_atom_id( int const jump_number ) const
 	}
 }
 
-///@note  Returns TRUE to signal FAILURE.
+/// @note  Returns TRUE to signal FAILURE.
 bool
 Conformation::get_torsion_angle_atom_ids(
 		TorsionID const & tor_id,
@@ -2694,7 +2692,7 @@ Conformation::get_torsion_angle_atom_ids(
 }
 
 
-///@brief get two atoms connect by jump
+/// @brief get two atoms connect by jump
 bool
 Conformation::get_jump_atom_ids(
   core::Size const jump_number,
@@ -3684,7 +3682,7 @@ Conformation::update_residue_coordinates() const
 	//
 	// options: give the atomtree atoms links to the corresponding
 	// atoms in the Residue
-	//
+
 
 	PROF_START( basic::UPDATE_RESIDUE_COORDINATES );
 	for ( kinematics::ResidueListIterator iter = atom_tree_->residue_xyz_change_list_begin(),

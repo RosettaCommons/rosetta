@@ -49,8 +49,6 @@
 typedef protocols::contact_map::ContactMap ContactMap;
 
 
-
-
 // declare variables that need to be accessed outside the main routine
 static thread_local basic::Tracer tr( "contactMap" );
 

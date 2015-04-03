@@ -140,7 +140,6 @@ RNA_AtomVDW::bump_parameter( Size const atom1, Size const atom2,
 }
 
 
-
 } //rna
 } //scoring
 } //core

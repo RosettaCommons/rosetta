@@ -13,7 +13,7 @@
 ///      - fragments
 ///      - psipred files ? other stuff
 ///
-/// @detailed
+/// @details
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
 ///

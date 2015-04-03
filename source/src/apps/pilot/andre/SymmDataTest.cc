@@ -11,16 +11,9 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockProtocol.hh>
 //#include <protocols/symmetric_docking/SymDockProtocol.fwd.hh>
 //#include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 
 #include <basic/options/util.hh>//option.hh>
 #include <devel/init.hh>
@@ -29,24 +22,12 @@
 
 // packing
 
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 //#include <protocols/symmetrical_docking/SymRestrictTaskForDocking.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 //#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <utility/excn/Exceptions.hh>
 
 
@@ -66,7 +47,6 @@ using std::string;
 using core::import_pose::pose_from_pdb;
 
 static thread_local basic::Tracer TR( "apps.pilot.ingemar.symm_test" );
-
 
 
 ///////////////////////////////////////////////////////////////////////////////

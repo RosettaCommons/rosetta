@@ -502,11 +502,10 @@ LazyInteractionGraph * LazyEdge::get_lazy_ig_owner()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::acknowledge_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -518,9 +517,8 @@ LazyInteractionGraph * LazyEdge::get_lazy_ig_owner()
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -547,11 +545,10 @@ LazyEdge::acknowledge_substitution(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::acknowledge_neighbors_state_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -563,9 +560,8 @@ LazyEdge::acknowledge_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -586,11 +582,10 @@ LazyNode::acknowledge_neighbors_state_substitution(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::store_interaction_energy_first_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -602,9 +597,8 @@ LazyNode::acknowledge_neighbors_state_substitution(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -629,11 +623,10 @@ LazyEdge::store_interaction_energy_first_node(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::store_interaction_energy_second_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -645,9 +638,8 @@ LazyEdge::store_interaction_energy_first_node(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 void
@@ -671,11 +663,10 @@ LazyEdge::store_interaction_energy_second_node(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_alternate_state_energy_second_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -687,9 +678,8 @@ LazyEdge::store_interaction_energy_second_node(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 core::PackerEnergy
@@ -717,11 +707,10 @@ LazyEdge::get_alternate_state_energy_second_node(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::project_deltaE_for_substitution
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -733,9 +722,8 @@ LazyEdge::get_alternate_state_energy_second_node(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 core::PackerEnergy
@@ -878,11 +866,10 @@ LazyNode::project_deltaE_for_substitution
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyEdge::get_alternate_state_energy_first_node
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -894,9 +881,8 @@ LazyNode::project_deltaE_for_substitution
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 core::PackerEnergy
@@ -924,11 +910,10 @@ LazyEdge::get_alternate_state_energy_first_node(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @begin LazyNode::get_sparse_mat_info_for_curr_state
 ///
 /// @brief
 ///
-/// @detailed
+/// @details
 ///
 /// @param
 ///
@@ -940,9 +925,8 @@ LazyEdge::get_alternate_state_energy_first_node(
 ///
 /// @references
 ///
-/// @authors apl
+/// @author apl
 ///
-/// @last_modified
 ////////////////////////////////////////////////////////////////////////////////
 inline
 SparseMatrixIndex const &

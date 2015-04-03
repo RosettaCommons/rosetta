@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file protocols/scoring/methods/pcs2/TensorsOptimizerSvd.hh
  ///
  /// @brief
  ///
- /// @detailed
+ /// @details
  ///
  /// @param
  ///
@@ -24,9 +23,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz
+ /// @authorv Christophe Schmitz
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_scoring_methods_pcs2_TensorsOptimizerSvd_hh
@@ -34,7 +32,6 @@
 
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsDataCenter.fwd.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 
 // Project headers
 #include <core/optimization/Multifunc.hh>
@@ -42,7 +39,6 @@
 // Utility headers
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/constants.hh>
 
 #include <utility/vector1.hh>
 

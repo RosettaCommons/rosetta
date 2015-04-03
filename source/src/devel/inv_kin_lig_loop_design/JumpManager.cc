@@ -22,7 +22,6 @@
 #include <devel/inv_kin_lig_loop_design/ResID.hh>
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
@@ -35,7 +34,6 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-
 
 
 namespace devel {
@@ -119,7 +117,6 @@ namespace devel {
 
 		//       int jump_atom_from = get_jump_atom_for_hbond( pose, seqpos_from, hbond_atom_from );
 		//       int jump_atom_to   = get_jump_atom_for_hbond( pose, seqpos_to,   hbond_atom_to   );
-
 
 
 		//       return std::pair<int,int>( jump_atom_from, jump_atom_to );

@@ -18,7 +18,6 @@
 // Package headers
 #include <core/kinematics/Stub.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Rosetta Headers
 // #include "jump_classes.h"
@@ -35,14 +34,12 @@
 #include <numeric/random/random.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // C++ Headers
 #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -355,7 +352,7 @@ Jump::make_jump(
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///@note: we dont reset rb_center!!!!!!!!!
+/// @note: we dont reset rb_center!!!!!!!!!
 void
 Jump::from_stubs(
 	Stub const & stub1,
@@ -367,7 +364,7 @@ Jump::from_stubs(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details this function translate a virtual bond type constraints into jump
+/// @details this function translate a virtual bond type constraints into jump
 ///transformation.
 ///in atoms vector, A1, A2, A3, B1, B2, B3,
 ///and A1-B1 forms the virtual bond, like A3-A2-A1---B1-B2-B3

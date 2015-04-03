@@ -14,9 +14,9 @@
 /// @author Orly Marcu (orly.marcu@mail.huji.ac.il)
 /// @date   Jul. 30, 2014
 
-//
+
 // PeptideDeriverFilter
-//
+
 
 // Unit headers
 #include <protocols/analysis/PeptideDeriverFilter.hh>
@@ -1026,7 +1026,6 @@ PeptideDeriverFilter::derive_peptide(
 	// TODO : make sure that pose is output here if dump_peptide_pose is true --yuvals
 	output.end_chain_pair();
 }
-
 
 
 /// Given a two-monomer pose and a score function - the interface score is the

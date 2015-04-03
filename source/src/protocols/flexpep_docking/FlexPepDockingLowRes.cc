@@ -23,7 +23,6 @@
 #include <protocols/flexpep_docking/FlexPepDockingLowRes.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
@@ -44,7 +43,6 @@
 #include <protocols/moves/TrialMover.hh>
 #include <utility/exit.hh>
 #include <string>
-// AUTO-REMOVED #include <cstdio>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -206,7 +204,6 @@ FlexPepDockingLowRes::loopclosure_monte_carlo
   loop_relax_mover_->apply( pose );
 
 }
-
 
 
 ///////////////////////////////////////////

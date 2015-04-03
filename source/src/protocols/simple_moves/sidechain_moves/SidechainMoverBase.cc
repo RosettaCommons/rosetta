@@ -164,7 +164,7 @@ SidechainMoverBase::init_from_options() {
 }
 
 
-/// @detailed
+/// @details
 /// Check to make sure that a packer task exists and matches the numer of residues in
 /// the given pose. If that isn't the case, create a new one with the task factory.
 /// Exits with an error if no task factory exists.
@@ -198,7 +198,7 @@ core::Size SidechainMoverBase::suggest_residue_number( pose::Pose const& pose ) 
 	return resid;
 }
 
-/// @detailed
+/// @details
 void
 SidechainMoverBase::apply( Pose& pose ) {
 	using numeric::conversions::degrees;
@@ -221,7 +221,6 @@ SidechainMoverBase::apply( Pose& pose ) {
 		} //for
 	} //else
 } //apply
-
 
 
 conformation::ResidueOP
@@ -281,13 +280,12 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 }
 
 
-
 std::string
 SidechainMoverBase::get_name() const {
 	return "SidechainMoverBase";
 }
 
-/// @detailed
+/// @details
 /// all sidechains that might be changed are replaced with ideal coordinates that have
 /// the original chi angles
 void

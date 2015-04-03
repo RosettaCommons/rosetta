@@ -15,16 +15,12 @@
 #include <protocols/ligand_docking/CompoundTranslate.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/Translate.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
-// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random_permutation.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -62,7 +58,7 @@ CompoundTranslateCreator::mover_name()
 	return "CompoundTranslate";
 }
 
-///@brief
+/// @brief
 CompoundTranslate::CompoundTranslate():
 		//utility::pointer::ReferenceCount(),
 		Mover("CompoundTranslate")
@@ -90,7 +86,7 @@ std::string CompoundTranslate::get_name() const{
 	return "CompoundTranslate";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 CompoundTranslate::parse_my_tag(
 		utility::tag::TagCOP tag,

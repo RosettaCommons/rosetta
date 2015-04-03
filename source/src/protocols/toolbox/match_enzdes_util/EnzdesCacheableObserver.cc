@@ -334,7 +334,6 @@ EnzdesCacheableObserver::remove_favor_native_constraints(
 }
 
 
-
 } //match_enzdes_util
 } //toolbox
 } //protocols

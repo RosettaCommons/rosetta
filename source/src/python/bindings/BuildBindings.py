@@ -34,7 +34,6 @@ import tools.DoxygenExtractorPyPP
 import tools.CppParser
 
 
-
 from optparse import OptionParser
 
 
@@ -48,7 +47,6 @@ class NT:  # named tuple
         for i in dir(self):
             if not i.startswith('__') and not isinstance(getattr(self, i), types.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
         return r[:-2]+'|'
-
 
 
 # global include dict 'file' --> bool;  True mean include file, False - exclude
@@ -528,7 +526,6 @@ def print_(msg, color=None, background=None, bright=False, blink=False, action='
     else: return s
 
 
-
 def mFork(tag=None, overhead=0):
     ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
     '''
@@ -644,7 +641,6 @@ def get_compiler_defines():
     return ''.join( [sign + s for s in d] )
 
 
-
 def getCompilerOptions():
     #if Platform == 'linux':
     if Platform != 'macos':
@@ -690,8 +686,6 @@ def getLinkerOptions(dynamic=True):
     return add_loption
 
 
-
-
 def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
     ''' recursive build buinding for given dir name, and store them in dest.
     '''
@@ -716,7 +710,6 @@ def buildModules__old(path, dest, include_paths, libpaths, runtime_libpaths, gcc
                 print "Skipping new dir", dir_name
                 IncludeDictNew[dir_name] = (False, 999, [])
                 return
-
 
 
         #print "buildModules(...): '%s', " % dir_name
@@ -812,8 +805,6 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
             if not os.path.isdir(dname): os.makedirs(dname)
 
             IncludeDictNew.update( buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
-
-
 
 
 def get_all_rosetta_objs(mini_path):
@@ -1013,8 +1004,6 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
     #     os.symlink('./../../rosetta/'+l, './debug/rosetta/'+l)
 
 
-
-
 def getAllRosettaSourceFiles():
     ''' return two lists: ([external] [rosetta]) source files '''
     obj_suffix = ''
@@ -1082,7 +1071,6 @@ def calculate_source_modification_date(source, binding_source_path, ignore=set()
     return _source_modification_date_cache_[source]
 
 
-
 def get_vc_compile_options():
     #common = '/DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DBOOST_THREAD_DONT_USE_CHRONO /DBOOST_ERROR_CODE_HEADER_ONLY /DBOOST_SYSTEM_NO_DEPRECATED' # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
     #/env x64 /D "_WINDLL"
@@ -1147,7 +1135,6 @@ def split_obj_file_in_to_chunks(base_file_name, objs):
             res += '@' + fname + ' '
 
     return res
-
 
 
 def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
@@ -1243,7 +1230,6 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
         _SC_.wait()
 
 
-
     sources = [external] + sources;  # After this moment there is no point of trating 'external' as special...
     #sources = [ sum(sources, []) ];  sources[0].sort()
 
@@ -1294,7 +1280,6 @@ def BuildRosettaOnWindows(build_dir, bindings_path, binding_source_path):
     #     #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_vc_compile_options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
     #     execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_vc_compile_options(), pdb_test, pdb_test_exe, pdb_test_obj) )
     #     execute('Linking test executable %s' % pdb_test, 'link %s %s /out:%s' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
-
 
 
     print 'Building bindings...'
@@ -1431,7 +1416,6 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
                 res_and_output = _SC_.execute('Compiling {0}/{1}'.format(dir_name, f), command_line, return_= 'tuple' if Options.continue_ else False )
 
 
-
                 # res_and_output = _SC_.execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s' % (get_vc_compile_options(), source)  #  /D__PYROSETTA_ONE_LIB__
                 #                                                               #+ ' /I. /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
                 #                                                               + ' /I. /I../external/include /I../external/boost_1_55_0/ /I../external/dbio /Iplatform/windows/PyRosetta'
@@ -1476,7 +1460,6 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
                 else: sys.exit(1)
 
 
-
         if not Options.monolith: all_symbols.extend( file(symbols_file).read().split('\n') )
 
         if link:
@@ -1490,7 +1473,6 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
     return latest, objs
 
 
-
 #-c -pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC -DBOOST_PYTHON_MAX_ARITY=25 -I../external/include  -I../external/dbio
 #-I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include -I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include/boost
 #-I/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -I../src/platform/linux -I../src
@@ -1500,7 +1482,6 @@ def windows_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_di
 
     #global __global;  __global += 1
     #if __global>3: sys.exit(1)
-
 
 
 _TestInludes_ = ''
@@ -1525,7 +1506,6 @@ def buildModule(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_pa
     else:
         #print 'Using Clang...'
         return buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path)
-
 
 
 class ModuleBuilder:
@@ -1697,7 +1677,6 @@ class ModuleBuilder:
             self.all_at_once_relative_files.extend( [source_fwd_hh, source_hh, source_cc] )  # just collecting file names...
 
 
-
         self.all_at_once_relative_files.sort()
 
 
@@ -1779,7 +1758,6 @@ class ModuleBuilder:
             else:
                 generate();
                 SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
-
 
 
     def abs_source(self, source_, key):  # return one of the key from source files list normalized to to building paths
@@ -1935,7 +1913,6 @@ class ModuleBuilder:
                                python_lib=Options.python_lib, compiler=Options.compiler)
 
             execute("Linking...", linker_cmd % linker_dict)
-
 
 
 def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path, binding_source_path):
@@ -2282,13 +2259,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
             else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
 
-
-
     print 'Done!', new_headers
     return new_headers
-
-
-
 
 
 def buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxml_path):
@@ -2474,7 +2446,6 @@ def buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
                 sys.exit(1)
 
 
-
 #                 -lObjexxFCL -lutility -lstdc++ \
             #all_libs = '-lObjexxFCL -lutility -lnumeric -lcore -lprotocols'
             #if Platform == 'cygwin': all_libs = '-lmini'
@@ -2491,7 +2462,6 @@ def buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
                     python_lib=Options.python_lib,
                     )
                  )
-
 
 
     # Generate just one lib file -------------------------------------------------------------------
@@ -2718,8 +2688,6 @@ def buildModule_All(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
 # -lboost_python-gcc34-mt-1_34_1
 
 
-
-
 '''
 
 print 'Checking for ParallelPython...',
@@ -2741,7 +2709,6 @@ def build():
         #, gccxml_path=gccxml.executable ) #path to gccxml executable
 
     #mb.print_declarations()
-
 
 
     mb.build_code_creator( module_name='rosetta', doc_extractor=doxygen.doxygen_doc_extractor() )

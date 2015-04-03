@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief An object for reading/writing a simple xml-like language.
-/// @detailed
+/// @details
 ///  Reads simple xml-like files, such as:
 ///
 ///  <loop_design>

@@ -30,7 +30,6 @@
 // Project headers
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 #include <utility/LexicographicalIterator.hh>
 #include <utility/string_util.hh>
@@ -59,7 +58,6 @@
 #include <basic/options/option.hh>
 
 
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -82,8 +80,7 @@ PNatAAOptERotamerData::~PNatAAOptERotamerData() {}
 
 static thread_local basic::Tracer TR( "protocols.optimize_weights.OptEData" );
 
-///@begin (ostream operator for OptERotamerDataOP)
-///@author ashworth
+/// @author ashworth
 std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )
 {
 	os << rd->rot_number() << "," << rd->this_aa() << ",";
@@ -105,9 +102,9 @@ std::ostream & operator << ( std::ostream & os, PNatAAOptERotamerDataOP rd )
 	return os;
 }
 
-//
+
 // ------------------- OptEPositionData -----------------------//
-//
+
 
 OptEPositionData::OptEPositionData()
 {}
@@ -195,9 +192,8 @@ OptEPositionData::receive_from_node(
 #endif
 
 
-//
 // ------------------- PNatAAOptEPositionData -----------------------//
-//
+
 
 PNatAAOptEPositionData::PNatAAOptEPositionData()
 {}
@@ -665,7 +661,6 @@ PNatAAOptEPositionData::memory_use() const
 }
 
 
-
 #ifdef USEMPI
 
 void
@@ -821,9 +816,8 @@ PNatAAOptEPositionData::receive_from_node( int const source_node, int const tag 
 #endif
 
 
-//
 // ------------------- Position Specific Scoring Matrix -----------------------//
-//
+
 
 PSSMOptEPositionData::PSSMOptEPositionData() {}
 
@@ -1219,9 +1213,8 @@ PSSMOptEPositionData::receive_from_node( int const source_node, int const tag )
 #endif //USEMPI
 
 
-//
 // ------------------- P Native Rotamer -----------------------//
-//
+
 
 PNatRotOptEPositionData::PNatRotOptEPositionData() : phi_(0.0), psi_(0.0) {}
 
@@ -1378,7 +1371,6 @@ PNatRotOptEPositionData::print_score(
 		dE_dvars, num_energy_dofs, dummy1, dummy2,
 		fixed_terms, dummy3, fixed_score_list );
 }
-
 
 
 Real
@@ -1633,7 +1625,6 @@ PNatRotOptEPositionData::range(
 		upper_bound[ fixed_score_list[ ii ] ] = ii_max;
 	}
 }
-
 
 
 Size
@@ -2095,9 +2086,8 @@ PNatRotOptEPositionData::is_native_rotamer_well(
 }
 
 
-//
 // ------------------- PNatStructureOptEData-----------------------//
-//
+
 
 Real const PNatStructureOptEData::high_entropy_rms_cutoff_( 4.0 );
 Real PNatStructureOptEData::nativeness_rms_low_( 1.0 ); // Above this rms, nativeness starts to decline
@@ -3110,7 +3100,6 @@ ConstraintedOptimizationWeightFunc::size() const {
 }
 
 
-
 OptEPositionDataType
 ConstraintedOptimizationWeightFunc::type() const
 {
@@ -3201,9 +3190,8 @@ ConstraintedOptimizationWeightFunc::receive_from_node( int const /*source_node*/
 #endif
 
 
-//
 // ------------------- DDGMutationOptEData-----------------------//
-//
+
 
 DDGMutationOptEData::DDGMutationOptEData()
 :
@@ -3927,9 +3915,8 @@ DDGMutationOptEData::add_mutant( SingleStructureDataOP mut )
 }
 
 
-//
 // ------------------- OptEData-----------------------//
-//
+
 
 core::Size
 OptEData::num_rotamers() const
@@ -3943,9 +3930,8 @@ OptEData::num_rotamers() const
 }
 
 
-///@begin OptEData::read_from_file
-///@brief slow
-///@author ashworth
+/// @brief slow
+/// @author ashworth
 void
 OptEData::read_from_file( std::string filename )
 {
@@ -3996,9 +3982,8 @@ OptEData::read_from_file( std::string filename )
 	   << num_positions() << " positions from file " << filename << std::endl;
 }
 
-///@begin OptEData::write_to_file
-///@brief human-readable
-///@author ashworth
+/// @brief human-readable
+/// @author ashworth
 void
 OptEData::write_to_file( std::string filename ) const
 {
@@ -4034,9 +4019,8 @@ OptEData::write_to_file( std::string filename ) const
 }
 
 
-///@begin OptEData::write_to_binary_file
-///@brief writes out the optE data to a binary file
-///@author ashworth
+/// @brief writes out the optE data to a binary file
+/// @author ashworth
 void
 OptEData::write_to_binary_file( std::string filename ) const
 {
@@ -4054,9 +4038,8 @@ OptEData::write_to_binary_file( std::string filename ) const
 
 }
 
-///@begin OptEData::read_from_binary_file
-///@brief binary I/O should be faster
-///@author ashworth
+/// @brief binary I/O should be faster
+/// @author ashworth
 void
 OptEData::read_from_binary_file( std::string filename )
 {
@@ -4121,7 +4104,6 @@ OptEPositionDataFactory::create_position_data( OptEPositionDataType const type )
 }
 
 
-
 std::string const &
 OptEPositionDataFactory::optE_type_name( OptEPositionDataType const type )
 {
@@ -4170,7 +4152,6 @@ OptEPositionDataFactory::initialize_optE_type_name_map()
 		optE_type_name_map_[ optE_type_2_optE_type_name_[ ii ] ] = static_cast< OptEPositionDataType > ( ii );
 	}
 }
-
 
 
 }

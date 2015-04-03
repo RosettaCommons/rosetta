@@ -51,7 +51,7 @@ OPT_KEY (Real, omega1_guess)
 OPT_KEY (Real, dz1_guess)
 OPT_KEY (String, reference_atom)
 
-///
+
 /// @brief Set up the options for this pilot app.
 void register_options()
 {
@@ -77,7 +77,7 @@ void register_options()
 	return;
 }
 
-///
+
 /// @brief Actually build the geometry that we'll be working with.
 void build_polymer( core::pose::Pose &pose )
 {
@@ -109,7 +109,7 @@ void build_polymer( core::pose::Pose &pose )
 	return;
 }
 
-///
+
 /// @brief Sets the polymer conformation to the repeating conformation (helix) specified with
 /// the option[mainchain_torsions]() vector.
 void set_pose_conformation( core::pose::Pose &pose)
@@ -135,7 +135,7 @@ void set_pose_conformation( core::pose::Pose &pose)
 	return;
 }
 
-///
+
 /// @brief Add chains of Cu (a convenient single-atom residue) to the pose in the ideal positions of each
 /// mainchain atom, based on the fitted Crick parameters.
 void add_Cu_chains(

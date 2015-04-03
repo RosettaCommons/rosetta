@@ -213,6 +213,5 @@ FileContentsMap::get_file_contents_ref( std::string const & filename )
 }
 
 
-
 }
 }

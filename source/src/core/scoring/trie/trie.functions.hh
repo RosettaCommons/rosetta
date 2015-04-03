@@ -21,7 +21,6 @@
 // Package Headers
 #include <core/scoring/trie/CPDataCorrespondence.hh>
 #include <core/scoring/trie/RotamerDescriptor.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrie.hh>
 #include <core/scoring/trie/RotamerTrieBase.hh>
 
 // Project Headers

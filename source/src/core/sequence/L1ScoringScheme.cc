@@ -18,13 +18,11 @@
 #include <core/sequence/L1ScoringScheme.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <complex>
 
 #include <utility/vector1.hh>
-
 
 
 namespace core {

@@ -45,7 +45,6 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
@@ -1180,7 +1179,6 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 	core::pose::metrics::PoseMetricCalculatorOP charge_calc( new protocols::toolbox::pose_metric_calculators::ChargeCalculator() );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( charge_calc_name, charge_calc );
  }
-
 
 
 	//first general pose calculators

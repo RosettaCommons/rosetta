@@ -79,7 +79,7 @@ JumpAtom::dfs(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-///@note along n2c direction
+/// @note along n2c direction
 void
 JumpAtom::set_dof(
 	DOF_Type const type,
@@ -255,7 +255,7 @@ JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 
 
 /////////////////////////////////////////////////////////////////////////////
-///@details last torsion is the torsion( Phi for BondedAtom and RB for JumpAtom) of the
+/// @details last torsion is the torsion( Phi for BondedAtom and RB for JumpAtom) of the
 /// parent atom or the previous bonded sibling. Since unlike BondedAtom, JumpAtom's RB is independent from
 /// other sibling atoms, this will not modify last_torsion, unlike Atom::setup_min_map.
 /// recursively done all its offspring
@@ -289,10 +289,10 @@ JumpAtom::setup_min_map(
 
 
 /////////////////////////////////////////////////////////////////////////////
-///@li axis is the unit vector along the rotation axis for that DOF(Eab).
+/// @li axis is the unit vector along the rotation axis for that DOF(Eab).
 ///2li end_pos is the ending point of this unit vector(Vb).
 ///
-///@details RB1, RB2 and RB3 are translation along x, y and z axis in the jump_start
+/// @details RB1, RB2 and RB3 are translation along x, y and z axis in the jump_start
 ///(input_stub) frame, which are input_stub.col(1), input_stub.col(2) and
 ///input_stub.col(3).\n
 ///RB4, RB5 and RB6 are rotations along x, y and z axis in the input_stub frame, and
@@ -302,13 +302,13 @@ JumpAtom::setup_min_map(
 ///in the input_stub because these 3 DOFs are not independently applied. Here are how
 ///they are derived (by me and there might be other smarter way to think of it):
 ///
-///@li the jump rotation matrix is R = Rz(RB6) * Ry(RB5) * Rx(RB4) * rt.rotation.
+/// @li the jump rotation matrix is R = Rz(RB6) * Ry(RB5) * Rx(RB4) * rt.rotation.
 ///
-///@li if RB6 is perturbed by "d", the new rotation matrix is R' = Rz(d+RB6) * Ry(RB5) * Rx(RB4) * rt.rotation
+/// @li if RB6 is perturbed by "d", the new rotation matrix is R' = Rz(d+RB6) * Ry(RB5) * Rx(RB4) * rt.rotation
 /// = Rz(d) * Rz(RB6) * Ry(RB5) * Rx(RB4) * rt.rotation = Rz(d) * R. This is to say perturbing RB6 by d is equivalent
 /// to making an extra rotation around Z axis in the input_stub frame and therefore the axis is just input_stub.col(3).
 ///
-///@li if RB5 is perturbed by "d", the new rotation matrix is R' = Rz(RB6) * Ry(d+RB5) * Rx(RB4) * rt.rotation
+/// @li if RB5 is perturbed by "d", the new rotation matrix is R' = Rz(RB6) * Ry(d+RB5) * Rx(RB4) * rt.rotation
 /// = Rz(RB6) * Ry(d) * Ry(RB5) * Rx(RB4) * rt.rotation = Rz(RB6) * Ry(d) * Rz(RB6)^ * R. This is to say perturbing
 /// RB5 by d is equivalent to making an extra rotation Rz(RB6) * Ry(d) * Rz(RB6)^ in the input_stub frame and
 /// the axis of rotation is the one we try to get. what is it? Remember this rotation matrix is in the context of
@@ -316,7 +316,7 @@ JumpAtom::setup_min_map(
 /// for matrices (A*B)^ = B^ * A^, we get (M *Rz(RB6)) * Ry(d) * (M * Rz(RB6))^ and this is eqivanelent to making
 /// a rotation around y axis in the frame of (M *Rz(RB6)) and therefore the axis is (input_stub.M * Z_rotation ).col(2)
 ///
-///@li similarly, one can the axis for a perturbation to RB4 DOF.
+/// @li similarly, one can the axis for a perturbation to RB4 DOF.
 void
 JumpAtom::get_dof_axis_and_end_pos(
 	Vector & axis,

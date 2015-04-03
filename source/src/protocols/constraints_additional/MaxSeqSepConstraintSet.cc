@@ -9,9 +9,8 @@
 
 /// @file MaxSeqSepConstraintSet.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
@@ -42,23 +41,18 @@
 */
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/numeric.functions.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 
 //// C++ headers
 #include <cstdlib>
 #include <string>
-// AUTO-REMOVED #include <fstream>
 
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -138,7 +132,6 @@ MaxSeqSepConstraintSet::eval_atom_derivative_for_residue_pairs (
 }*/
 
 
-///
 void
 MaxSeqSepConstraintSet::residue_pair_energy(
    Residue const & rsd1,
@@ -211,8 +204,6 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 		if ( cst.effective_sequence_separation( shortest_path() ) < max_seq_sep() ) cst.score( xyz_func, sfxn.weights(), emap );
 	}
 }
-
-
 
 
 } //abinitio

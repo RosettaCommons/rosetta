@@ -20,7 +20,6 @@
 #include <string>
 #include <map>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // boost headers
 #include <boost/tuple/tuple.hpp>

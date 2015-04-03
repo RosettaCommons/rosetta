@@ -24,15 +24,9 @@
 
 #include <devel/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <basic/options/option.hh>
@@ -41,20 +35,12 @@
 
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 
-
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 //from comput_sasa.cc
-// AUTO-REMOVED #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/packstat/types.hh>

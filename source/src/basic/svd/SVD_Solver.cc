@@ -8,13 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
  //////////////////////////////////////////////
- /// @begin
  ///
  /// @file basic/svd/SVD_Solver.cc
  ///
  /// @brief SVD solver class
  ///`
- /// @detailed Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
+ /// @details Solve over-determined set of linear equation to minimize ||A x - b||^2, using Singular Value Decomposition (SVD) method.
  ///
  /// @param
  /// Specify the size of the problem in the constructor (M is the number of equations, N is the number of parameters to fit)
@@ -37,9 +36,8 @@
  ///
  /// @references
  ///
- /// @authorsv Christophe Schmitz & Srivatsan Raman
+ /// @authorv Christophe Schmitz & Srivatsan Raman
  ///
- /// @last_modified February 2010
  ////////////////////////////////////////////////
 
 
@@ -307,7 +305,6 @@ SVD_Solver::set_vector_b(FArray1D< double > const & b){
 }
 
 
-
 ///////////////////////////////////////////////
 /// @brief To minimize ||Ax - b||^2, you need to set the matrix A
 ///////////////////////////////////////////////
@@ -427,7 +424,6 @@ SVD_Solver::run_score_svd_on_matrix(utility::vector1< utility::vector1<double> >
 	}
 
 
-
 	return(sqrt(score));
 }
 
@@ -452,7 +448,6 @@ SVD_Solver::run_score_svd_on_matrix(FArray2D< double > const & A) const{
 		}
 		score += ( temp - cstyle_b_[i] ) * ( temp - cstyle_b_[i] ) ;
 	}
-
 
 
 	return(sqrt(score));

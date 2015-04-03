@@ -1349,7 +1349,6 @@ struct MatchSet {
 			}
 
 
-
 		sf->set_weight(core::scoring::atom_pair_constraint, 0.0 );
 		sf->set_weight(core::scoring::    angle_constraint, 0.0 );
 		sf->set_weight(core::scoring:: dihedral_constraint, 0.0 );
@@ -1368,7 +1367,6 @@ struct MatchSet {
 			core::scoring::packstat::output_packstat_pdb(outpose,out);
 		}
 		out.close();
-
 
 
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -1692,7 +1690,6 @@ struct MatchSet {
 		outpose.replace_residue(   b.ligs[idx2].rsd2,move.residue(2),true);
 		outpose.replace_residue(end1+ligs[idx1].rsd1,fixd.residue(1),true);
 		outpose.replace_residue(end1+ligs[idx1].rsd2,fixd.residue(2),true);
-
 
 
 		Pose native = outpose;
@@ -2278,7 +2275,6 @@ int main (int argc, char *argv[])
 							}
 
 
-
 							// Mat rot = rotation_matrix( rot_axis, ang );
 							// m1 = rot*m1;
 							// m2 = rot*m2;
@@ -2377,19 +2373,5 @@ int main (int argc, char *argv[])
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

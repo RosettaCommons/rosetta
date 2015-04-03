@@ -23,7 +23,6 @@
 // Utility headers
 
 // C++ headers
-// Commented by inclean daemon #include <string>
 
 
 namespace core {

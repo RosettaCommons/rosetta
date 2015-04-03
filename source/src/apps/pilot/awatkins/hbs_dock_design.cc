@@ -129,7 +129,6 @@ using utility::file::FileName;
 //   | | energy minimize the current conformation            | |
 //   | +-----------------------------------------------------+ |
 
-//
 
 // tracer - used to replace cout
 static thread_local basic::Tracer TR( "HDDM" );

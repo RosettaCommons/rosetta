@@ -27,8 +27,6 @@
 #include <iosfwd>
 
 
-// AUTO-REMOVED #include <istream>
-
 namespace basic {
 
 /// @brief check whether a MetricValue can be written to or read from a stream

@@ -9,7 +9,7 @@
 
 /// @file VirtualSugarSampler
 /// @brief
-/// @detailed
+/// @details
 /// @author Parin Sripakdeevong, Rhiju Das (rhiju@stanford.edu)
 
 
@@ -650,7 +650,6 @@ VirtualSugarSampler::bulge_chain_minimize_legacy( utility::vector1< PoseOP > & p
 	}
 	pose_list = output_pose_list;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

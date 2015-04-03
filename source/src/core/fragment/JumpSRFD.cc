@@ -11,14 +11,12 @@
 /// @brief  A fragment that changes a RigidBody Transform ( Jump )
 /// @author Oliver Lange (olange@u.washington.edu)
 /// @date   Wed Oct 20 12:08:31 2007
-///
 
 
 // Unit Headers
 #include <core/fragment/JumpSRFD.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 
 // Project Headers

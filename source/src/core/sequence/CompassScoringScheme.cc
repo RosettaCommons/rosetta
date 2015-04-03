@@ -12,21 +12,14 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/CompassScoringScheme.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/file/FileName.hh>
 
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <utility/vector1.hh>

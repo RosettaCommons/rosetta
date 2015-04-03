@@ -17,15 +17,12 @@
 #define INCLUDED_protocols_fldsgn_topology_SheetFoldTypeManager_hh
 
 // project headers
-// AUTO-REMOVED #include <core/types.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <iostream>
 #include <map>
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1_bool.hh>
 
@@ -91,13 +88,13 @@ enum SheetFoldType {
 	Rsmn3x3,
 	Ploop3x3,
 
-	///
+
 	UNFOLD,
 
-	///
+
 	NO_STRANDS,
 
-	///
+
 	UNKNOWN,
 
 	n_fold_types = UNKNOWN

@@ -471,7 +471,6 @@ ResidueType::ResidueType( ResidueType const & residue_type ):
 }
 
 
-///
 ResidueTypeSet const &
 ResidueType::residue_type_set() const
 {
@@ -735,11 +734,11 @@ ResidueType::abase2( Size const atomno ) const
 	return abase2_indices_[atomno];
 }
 
-///@brief Counts the number of virtual atoms and returns the count.
-///@details The virtual count is not stored in the residue type.  This count is performed on the fly, and
+/// @brief Counts the number of virtual atoms and returns the count.
+/// @details The virtual count is not stored in the residue type.  This count is performed on the fly, and
 ///can hurt performance if repeatedly carried out.  Not intended for use in large loops -- instead, call
 ///once and store the value.
-///@author Vikram K. Mulligan (vmullig@uw.edu)
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 Size
 ResidueType::n_virtual_atoms () const
 {
@@ -1269,8 +1268,8 @@ debug_assert(added);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@brief add an orbital bond between an atom and an orbital.
-///@note NOTE!!!!! This is indexed based upon atoms, not orbitals. That means that in your params file
+/// @brief add an orbital bond between an atom and an orbital.
+/// @note NOTE!!!!! This is indexed based upon atoms, not orbitals. That means that in your params file
 /// you must have the atom as the first and orbital as the second.
 void
 ResidueType::add_orbital_bond(
@@ -2282,7 +2281,6 @@ ResidueType::generate_atom_indices()
 	}
 
 
-
 	atom_base_indices_.clear();
 	for ( Size atomno=1; atomno<= natoms(); ++atomno ) {
 		{
@@ -3020,7 +3018,7 @@ ResidueType::requires_actcoord() const
 			actcoord_atoms_.size() != 0;
 }
 
-///@details average geometrical center of the set of actcoord_atoms_
+/// @details average geometrical center of the set of actcoord_atoms_
 void
 ResidueType::update_actcoord( conformation::Residue & rot ) const
 {

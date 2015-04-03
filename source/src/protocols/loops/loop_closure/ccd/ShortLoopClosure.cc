@@ -9,21 +9,17 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 /// @author Oliver Lange
-///
 
 
 // Unit Headers
 #include <protocols/loops/loop_closure/ccd/ShortLoopClosure.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/CCDLoopClosureMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -45,24 +41,19 @@
 
 
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // ObjexxFCL Headers
 
 // Utility headers
 #include <basic/Tracer.hh>
 //numeric headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-
-
 
 
 namespace protocols {

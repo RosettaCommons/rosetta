@@ -85,7 +85,7 @@ std::string AddHydrogens::get_name() const{
 	return "AddHydrogens";
 }
 
-///@brief parse XML (specifically in the context of the parser/scripting scheme)
+/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 AddHydrogens::parse_my_tag(
 		utility::tag::TagCOP tag,

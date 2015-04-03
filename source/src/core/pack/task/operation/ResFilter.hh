@@ -27,7 +27,6 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

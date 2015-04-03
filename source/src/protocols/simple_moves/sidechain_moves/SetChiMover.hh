@@ -37,7 +37,7 @@ class SetChiMover : public protocols::moves::Mover
 private:
 	typedef protocols::moves::Mover parent;
 public:
-	///@brief default ctor
+	/// @brief default ctor
 	SetChiMover();
 	virtual ~SetChiMover();
 

@@ -390,7 +390,6 @@ void interpolate_rotamers(
 }
 
 
-
 /* OL: I thought copying the whole chi_set_vector is unnecessary and made a new version of this function */
 void
 expand_proton_chi_oldversion(
@@ -507,7 +506,6 @@ debug_assert( samples.size() > 0 ); // or less harsh and just a return ?
 
 debug_assert( chi_set_vector.size()  == nsamples * nr_of_old_elem );
 }
-
 
 
 DunbrackRotamerSampleData::DunbrackRotamerSampleData() :

@@ -38,7 +38,7 @@ namespace protocols {
 namespace rbsegment_relax {
 
 //////////////////////////////////////////////////////////
-///@brief Performs a rigid-body movement on a segment of a protein
+/// @brief Performs a rigid-body movement on a segment of a protein
 ///       Derived classes must implement 'getCoordinateTransform' and 'apply'
 /////////////////////////////////////////////////////////
 class RBSegmentMover : public protocols::moves::Mover {
@@ -272,7 +272,7 @@ public:
 	void
 	apply( core::pose::Pose & pose, int shift );
 
-	///@brief  Set an extra block-shift penalty at certain residues
+	/// @brief  Set an extra block-shift penalty at certain residues
 	void
 	set_extra_penalty( utility::vector1< bool > const & penalty_res ) { penalty_res_ = penalty_res; }
 
@@ -430,7 +430,6 @@ public:
 		numeric::xyzMatrix< core::Real > &coordinateTransform
 	);
 };
-
 
 
 }

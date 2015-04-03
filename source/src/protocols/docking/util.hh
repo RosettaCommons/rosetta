@@ -9,7 +9,7 @@
 
 /// @file util
 /// @brief protocols that are specific to docking low resolution
-/// @detailed
+/// @details
 /// @author Brian Weitzner
 
 #ifndef INCLUDED_protocols_docking_util_hh
@@ -27,8 +27,6 @@
 #else
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #endif
-
-
 
 
 namespace protocols {

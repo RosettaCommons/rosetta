@@ -23,12 +23,10 @@
 #include <numeric/MathVector_operations.hh>
 
 
-
 // --------------- Test Class --------------- //
 
 
 class Cubic_spline_tests : public CxxTest::TestSuite {
-
 
 
 public:
@@ -86,14 +84,10 @@ public:
 		TS_ASSERT_DELTA(-0.0816911,  naturalspline.dF(179.70), .001 );
 
 
-
 		TS_ASSERT_EQUALS(36,  naturalspline.get_dsecox().size() );
 		TS_ASSERT_EQUALS(-180,  naturalspline.get_start() );
 		TS_ASSERT_EQUALS(10, naturalspline.get_delta());
 		TS_ASSERT_EQUALS(36, naturalspline.get_values().size());
-
-
-
 
 
 	}

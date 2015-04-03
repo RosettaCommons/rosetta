@@ -22,7 +22,6 @@
 #include <core/scoring/EnvPairPotential.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -33,9 +32,7 @@
 #include <utility/vector1.hh>
 
 
-
 // Utility headers
-
 
 
 // C++
@@ -83,7 +80,6 @@ CenPairEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-///
 void
 CenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {

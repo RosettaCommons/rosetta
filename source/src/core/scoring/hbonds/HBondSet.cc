@@ -20,7 +20,6 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 // Project headers
@@ -48,11 +47,8 @@
 #include <map> // what is the right header for std::pair ?
 
 // option key includes
-// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 //#include <set>
@@ -104,14 +100,14 @@ HBond::HBond(
 	derivs_( derivs_in )
 {}
 
-///
+
 Size
 HBond::don_res() const
 {
 	return don_res_;
 }
 
-///
+
 Size
 HBond::don_hatm() const
 {
@@ -144,14 +140,14 @@ HBond::don_hatm_is_backbone() const
 	return don_hatm_is_backbone_;
 }
 
-///
+
 Size
 HBond::acc_res() const
 {
 	return acc_res_;
 }
 
-///
+
 Size
 HBond::acc_atm() const
 {
@@ -191,7 +187,7 @@ HBond::energy() const
 	return energy_;
 }
 
-///
+
 Real
 HBond::weight() const
 {
@@ -205,14 +201,14 @@ HBond::derivs() const
 	return derivs_;
 }
 
-///
+
 HBEvalType
 HBond::eval_type() const
 {
 	return eval_tuple_.eval_type();
 }
 
-///
+
 HBEvalTuple const &
 HBond::eval_tuple() const
 {
@@ -220,7 +216,6 @@ HBond::eval_tuple() const
 }
 
 
-///
 bool
 HBond::atom_is_donorH( id::AtomID const & atom ) const
 {
@@ -228,7 +223,6 @@ HBond::atom_is_donorH( id::AtomID const & atom ) const
 }
 
 
-///
 bool
 HBond::atom_is_acceptor( id::AtomID const & atom ) const
 {
@@ -285,7 +279,7 @@ HBond::get_HAdist(core::pose::Pose const & pose) const {
 
 }
 
-///
+
 void
 HBond::show( std::ostream & out ) const
 {
@@ -367,14 +361,13 @@ HBond::show(
 }
 
 
-
 std::ostream &
 operator<< ( std::ostream & out, const HBond & hbond ){
 	hbond.show( out );
 	return out;
 }
 
-///
+
 bool
 operator==(HBond const & a, HBond const & b)
 {
@@ -400,10 +393,6 @@ operator==(HBond const & a, HBond const & b)
 		a.deriv_.second[1]              == b.deriv_.second[1]             &&
 		a.deriv_.second[2]              == b.deriv_.second[2]             );*/
 }
-
-
-
-
 
 
 HBondSet::HBondSet():
@@ -437,7 +426,7 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 	resize_bb_donor_acceptor_arrays( nres );
 }
 
-///@brief convenience constructor. If you need more controlled
+/// @brief convenience constructor. If you need more controlled
 ///construction please use one of the other constructors
 ///
 /// The pose must be non-const because the neighbor graph may need to
@@ -452,7 +441,7 @@ HBondSet::HBondSet(
 	setup_for_residue_pair_energies(pose, false, bb_only);
 }
 
-///@brief convenience constructor. If you need more controlled
+/// @brief convenience constructor. If you need more controlled
 ///construction please use one of the other constructors
 ///
 /// The pose must be non-const because the neighbor graph may need to
@@ -530,7 +519,6 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< bool > residue_mask 
 	// set this flag since we still have to setup the atommap
 	atom_map_init_ = false;
 }
-
 
 
 /// copy ctor
@@ -804,7 +792,7 @@ HBondSet::setup_atom_map() const // lazy updating
 	} // i=1.nhbonds
 }
 
-///
+
 void
 HBondSet::setup_for_residue_pair_energies(
 	pose::Pose const & pose,
@@ -818,7 +806,7 @@ HBondSet::setup_for_residue_pair_energies(
 	// bb-bb hbond
 	//
 	// sc-bb hbonds with these groups are disallowed
-	//
+
 
 	SSWeightParameters ssdep;
 	ssdep.ssdep_ = options_->length_dependent_srbb();
@@ -873,7 +861,7 @@ HBondSet::hbond_options() const {
 	return *options_;
 }
 
-/// @breif set the hbond options for this hbond set; clears all hbonds already stored
+/// @brief set the hbond options for this hbond set; clears all hbonds already stored
 void HBondSet::set_hbond_options( HBondOptions const & options )
 {
 	clear();
@@ -895,7 +883,7 @@ HBondSet::show(
 	}
 }
 
-///
+
 bool
 operator==(HBondSet const & a, HBondSet const & b)
 {
@@ -927,7 +915,7 @@ operator==(HBondSet const & a, HBondSet const & b)
 	return true;
 }
 
-///@detail Optionally print a header, and then a row for each hydrogen bond in the set using the iterprable version of the hbond show format formatted for easy parsing by R, Excel, etc.
+/// @detail Optionally print a header, and then a row for each hydrogen bond in the set using the iterprable version of the hbond show format formatted for easy parsing by R, Excel, etc.
 void
 HBondSet::show(
 	pose::Pose const & pose,
@@ -942,7 +930,7 @@ HBondSet::show(
 }
 
 
-///@detail Optionally print a header, and then a row for each hydrogen
+/// @detail Optionally print a header, and then a row for each hydrogen
 ///bond in the set using the iterprable version of the hbond show
 ///format formatted for easy parsing by R, Excel, etc.
 void
@@ -964,7 +952,6 @@ HBondSet::show(
 	}
 
 }
-
 
 
 }

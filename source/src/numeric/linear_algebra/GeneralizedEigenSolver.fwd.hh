@@ -26,5 +26,3 @@ class GeneralizedEigenSolver;
 #endif
 
 
-
-

@@ -10,9 +10,8 @@
  //////////////////////////////////////////////
  /// @file PseudocontactShiftEnergyController.hh
  ///
- /// @authorsv Christophe Schmitz & Oliver Lange
+ /// @authorv Christophe Schmitz & Oliver Lange
  ///
- /// @last_modified June 2009
  ////////////////////////////////////////////////
 
 #ifndef INCLUDED_protocols_topology_broker_PseudocontactShiftEnergyController_hh
@@ -24,7 +23,6 @@
 // Package Headers
 #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/claims/DofClaim.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -55,7 +53,7 @@ public:
 		return TopologyClaimerOP( new PseudocontactShiftEnergyController( *this ) );
 	}
 
-	///@brief type() is specifying the output name of the TopologyClaimer
+	/// @brief type() is specifying the output name of the TopologyClaimer
 	virtual std::string type() const {
 		return _static_type_name();
 	}

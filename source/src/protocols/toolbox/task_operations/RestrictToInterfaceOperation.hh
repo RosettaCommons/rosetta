@@ -35,7 +35,7 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+/// @details this class is a TaskOperation to prevent repacking of residues not near an interface.
 class RestrictToInterfaceOperation : public RestrictOperationsBase
 {
 public:
@@ -54,10 +54,10 @@ public:
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
 private:
-	///@brief constructor helper function - makes the PoseMetricCalculator
+	/// @brief constructor helper function - makes the PoseMetricCalculator
 	void make_calculator( core::Size upper_chain, core::Size lower_chain );
 
-	///@brief constructor helper function - names the PoseMetricCalculator
+	/// @brief constructor helper function - names the PoseMetricCalculator
 	void make_name( core::Size upper_chain, core::Size lower_chain );
 
 	std::string calculator_name_;

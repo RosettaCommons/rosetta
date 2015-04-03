@@ -459,7 +459,7 @@ public:
 		bool const lookup_bond_length = false
 	);
 
-	///
+
 	/// This code sorely belongs in Pose.cc
 	/// @brief Adds  <new_rsd_in>  to pose at  <seqpos>
 	void
@@ -471,7 +471,7 @@ public:
 		std::string const& root_atomno = ""
 	);
 
-    ///
+
 	/// This code sorely belongs in Pose.cc
 	/// @brief Adds  <new_rsd_in>  to pose at  <seqpos>
 	void
@@ -774,7 +774,7 @@ public:
 	///     Pose.is_centroid
 	///     Residue
 	///     ResidueType
-	///@brief this is nt a good test --Doug
+	/// @brief this is nt a good test --Doug
 	bool is_fullatom() const;
 
 	/// @brief Returns true if pose is ResidueType centroid
@@ -789,7 +789,7 @@ public:
 	///     Pose.is_fullatom
 	///     Residue
 	///     ResidueType
-	///@brief this is nt a good test --Doug
+	/// @brief this is nt a good test --Doug
 	bool is_centroid() const;
 
 
@@ -1189,7 +1189,6 @@ public:
 	///     AtomID
 	kinematics::Jump const &
 	jump( AtomID const & id ) const;
-
 
 
 	/// @brief Set the given residue's ring conformation, if appropriate.

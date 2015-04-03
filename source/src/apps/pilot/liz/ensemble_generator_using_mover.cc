@@ -14,8 +14,6 @@
 // libRosetta headers
 
 
-
-
 #include <core/types.hh>
 
 #include <core/conformation/Residue.hh>

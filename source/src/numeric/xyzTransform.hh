@@ -58,9 +58,6 @@ public:
 	xyzTransform(T6 const & _rt6){ rt6(_rt6); }
 
 
-
-
-
 	Transform & from_four_points(Vector const & c, Vector const & u, Vector const & v, Vector const & w){
 		Vector e1( u - v);
 		e1.normalize();
@@ -520,7 +517,6 @@ struct Xforms : public utility::vector1<xyzTransform<numeric::Real> > {
        Xforms(Size const & N, xyzTransform<numeric::Real> x = xyzTransform<numeric::Real>())
        : utility::vector1<xyzTransform<numeric::Real> >(N,x) {}
 };
-
 
 
 template<typename T, class OutputIterator>

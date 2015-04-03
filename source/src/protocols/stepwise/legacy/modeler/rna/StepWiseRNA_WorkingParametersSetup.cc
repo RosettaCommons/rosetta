@@ -9,7 +9,7 @@
 
 /// @file StepWiseWorkingParametersSetup
 /// @brief Sets up pose and job parameters for RNA stepwise building.
-/// @detailed
+/// @details
 /// @author Rhiju Das, Parin Sripakdeevong
 
 
@@ -305,7 +305,6 @@ namespace rna {
 				working_alignment.push_back( seq_num );
 			}
 		}
-
 
 
  		//Special case for building loop outward
@@ -1564,7 +1563,6 @@ namespace rna {
 			}
 		}
 	}
-
 
 
   //////////////////////////////////////////////////////////////////////////

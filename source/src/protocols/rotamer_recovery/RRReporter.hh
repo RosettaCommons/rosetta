@@ -24,12 +24,11 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 namespace protocols {
 namespace rotamer_recovery {
 
-///@brief The reporting functionality for the rotamer recovery test
+/// @brief The reporting functionality for the rotamer recovery test
 ///
 /// Besides implementing the interface given in the base class
 /// RRReporter each RRReporter should have an entry in the conevience
@@ -37,7 +36,7 @@ namespace rotamer_recovery {
 class RRReporter : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~RRReporter();
 
 public: // public interface

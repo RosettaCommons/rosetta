@@ -18,7 +18,6 @@
 #define INCLUDED_protocols_jd2_InnerJob_hh
 
 //unit headers
-// AUTO-REMOVED #include <protocols/jd2/Job.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +32,6 @@
 
 //C++ headers
 #include <string>
-// AUTO-REMOVED #include <list>
 
 #include <utility/vector1.hh>
 
@@ -51,17 +49,17 @@ namespace jd2 {
 class InnerJob : public utility::pointer::ReferenceCount {
 
 public:
-	///@brief ctor.  Note that it takes only the input tag and max nstruct,
+	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	InnerJob( std::string const & input_tag, core::Size nstruct_max );
 
-	///@brief ctor.  Note that it takes only the input tag and max nstruct,
+	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	InnerJob( core::pose::PoseCOP, std::string const & input_tag, core::Size nstruct_max );
 
 	virtual ~InnerJob();
 
-	///@brief Note: only compare if the pointers to the poses are to the
+	/// @brief Note: only compare if the pointers to the poses are to the
 	///same location
 	friend
 	bool
@@ -80,13 +78,13 @@ public:
 	std::ostream &
 	operator<< ( std::ostream & out, const InnerJob & inner_job );
 
-	///@brief return the input tag (a string of space separated PDB filenames)
+	/// @brief return the input tag (a string of space separated PDB filenames)
 	std::string const & input_tag() const;
 
-	///@brief
+	/// @brief
 	core::Size nstruct_max() const;
 
-	///@brief return a COP to the input pose
+	/// @brief return a COP to the input pose
 	/// DO NOT USE OUTSIDE OF JD2 NAMESPACE
 	core::pose::PoseCOP get_pose() const;
 

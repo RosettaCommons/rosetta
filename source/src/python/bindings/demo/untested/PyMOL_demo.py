@@ -10,7 +10,6 @@ import rosetta, rosetta.core.pose
 import rosetta.core.pose.signals
 
 
-
 def test(pose):
     pymol.update_energy = True
     for t in range(12000):
@@ -54,7 +53,6 @@ def coloring_demo(pose):
             time.sleep(.1)
 
 
-
 rosetta.init()
 
 pose = rosetta.Pose();  pose.name = 'CustomNamedPose'
@@ -86,8 +84,6 @@ po.add_observer(pose)
 
 
 #from rosetta import *
-
-
 
 
 scorefxn(pose_s)

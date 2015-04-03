@@ -38,7 +38,7 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -63,7 +63,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 	using namespace core::fragment;
 
-	//
+
 	if (option[ OptionKeys::MR::mode ].user() )
 		TR << "The flag -MR::mode is no longer used.  Ignoring." << std::endl;
 

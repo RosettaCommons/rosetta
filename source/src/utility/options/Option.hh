@@ -375,7 +375,6 @@ public: // Properties
 	equals_string() const = 0;
 
 
-
 	/// @brief Set access property to true.
 	void been_accessed() const { been_accessed_ = true; }
 	void set_accessed( bool setting ) const { been_accessed_ = setting; }
@@ -426,7 +425,6 @@ public: // Comparison
 	{
 		return ( a.key() < b.key() );
 	}
-
 
 
 private: // Private data members

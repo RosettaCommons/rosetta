@@ -111,7 +111,6 @@
 #include <basic/Tracer.fwd.hh>
 
 
-
 static basic::Tracer TR("protocols.rotamer_recovery.RRReporterSQLite.cxxtest");
 
 class RRReporterSQLiteTests : public CxxTest::TestSuite {

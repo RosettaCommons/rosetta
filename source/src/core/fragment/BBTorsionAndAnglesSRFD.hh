@@ -22,7 +22,6 @@
 
 // Package Headers
 //#include <core/fragment/Frame.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Project Headers
 //#include <core/pose/Pose.hh>
@@ -47,7 +46,7 @@
 namespace core {
 namespace fragment {
 
-//
+
 class BBTorsionAndAnglesSRFD : public BBTorsionSRFD {
 	typedef BBTorsionSRFD Parent;
     typedef std::pair<std::vector<Size>, Real> AngleInfo;
@@ -59,7 +58,7 @@ public:
 		: BBTorsionSRFD(nbb_in, secstruct, sequence), angles_(angles_in)
 	{};
 
-	//
+
 	SingleResidueFragDataOP clone() const {
 		return SingleResidueFragDataOP( new BBTorsionAndAnglesSRFD( *this ) );
 	};

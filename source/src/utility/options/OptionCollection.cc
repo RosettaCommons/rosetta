@@ -118,7 +118,6 @@ namespace options {
 //	}
 
 
-
 	/// @brief Check for problems in the option specifications
 	void
 	OptionCollection::check_specs() const
@@ -178,7 +177,6 @@ namespace options {
 
     load( std::string(argv[0]), arg_strings, free_args);
 	} // load
-
 
 
 	void
@@ -289,10 +287,7 @@ namespace options {
   }
 
 
-
-
-
-///@brief Load all options in a flags file
+/// @brief Load all options in a flags file
 void OptionCollection::load_options_from_stream(std::istream& stream, std::string const & file_string, std::string const & cid) {
 	using std::string;
 	typedef  std::string::size_type  size_type;
@@ -435,7 +430,7 @@ void OptionCollection::load_options_from_stream(std::istream& stream, std::strin
 	}
 }
 
-///@brief Load all options in a flags file
+/// @brief Load all options in a flags file
 void OptionCollection::load_options_from_file(std::string const & file_string, std::string const & cid){
 	try {
 		load_options_from_file_exception( file_string, cid );
@@ -444,7 +439,7 @@ void OptionCollection::load_options_from_file(std::string const & file_string, s
 	}
 }
 
-///@brief Load all options in a flags file
+/// @brief Load all options in a flags file
 void OptionCollection::load_options_from_file_exception(std::string const & file_string, std::string const & cid){
 
 	utility::io::izstream stream( file_string.c_str() );

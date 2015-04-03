@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/modeler/output_util.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

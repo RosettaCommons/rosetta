@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief
-/// @detailed
+/// @details
 ///
 ///
 ///
@@ -24,7 +24,6 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -39,7 +38,6 @@
 
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols" );

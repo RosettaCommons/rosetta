@@ -34,11 +34,11 @@ private:
     ClusteringTreeNode() {}
 
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ClusteringTreeNode();
 
     /// @brief Creates a node with no leaves
-    /// @detailed leaves are NULLs, parent is set to this
+    /// @details leaves are NULLs, parent is set to this
     static ClusteringTreeNodeOP
     newClusteringTreeNode() {
       ClusteringTreeNodeOP new_node( new ClusteringTreeNode() );
@@ -59,7 +59,7 @@ public:
     }
 
     /// @brief Creates a node with given leaves
-    /// @detailed parent of the newly created node is set to itself (this pointer); left and right nodes are also chilred of this
+    /// @details parent of the newly created node is set to itself (this pointer); left and right nodes are also chilred of this
     static ClusteringTreeNodeOP
     newClusteringTreeNode(Size id,ClusteringTreeNodeOP left,ClusteringTreeNodeOP right,Real distance = 0.0) {
 			ClusteringTreeNodeOP new_node = newClusteringTreeNode();

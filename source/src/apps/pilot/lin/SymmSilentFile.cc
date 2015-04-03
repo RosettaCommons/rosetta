@@ -21,22 +21,14 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/loops/loops_main.hh>
 
 #include <basic/options/util.hh>//option.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -45,27 +37,12 @@
 #include <core/scoring/rms_util.hh>
 
 // packing
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
 
 // Auto-header: duplicate removed #include <core/sequence/util.hh>
 // Auto-header: duplicate removed #include <core/sequence/Sequence.hh>
 // Auto-header: duplicate removed #include <core/id/SequenceMapping.hh>
 
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/util.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
-
-// AUTO-REMOVED #include <basic/prof.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file
-///@brief This class will create instances of Mover MetropolisHastingsMover for the MoverFactory
-///@author Zhe Zhang
+/// @file
+/// @brief This class will create instances of Mover MetropolisHastingsMover for the MoverFactory
+/// @author Zhe Zhang
 
 #ifndef INCLUDED_devel_replica_docking_TempWeightedMetropolisHastingsMoverCreator_hh
 #define INCLUDED_devel_replica_docking_TempWeightedMetropolisHastingsMoverCreator_hh

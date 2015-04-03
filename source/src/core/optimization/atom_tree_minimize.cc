@@ -29,13 +29,9 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>
-// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 // // ObjexxFCL headers
 // #include <ObjexxFCL/FArray1A.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 // #include <ObjexxFCL/FArray3A.hh>
 // #include <ObjexxFCL/Fmath.hh>
 #include <ObjexxFCL/format.hh>
@@ -43,7 +39,6 @@
 
 // // Numeric headers
 #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 // #include <numeric/xyzVector.hh>
 // #include <numeric/xyz.functions.hh>
 
@@ -74,7 +69,7 @@ namespace optimization {
 static thread_local basic::Tracer TR( "core.optimization" );
 
 /////////////////////////////////////////////////////////////////////////////
-/// @detailed
+/// @details
 ///car note that this calculates the deriv for all torsion angles even
 ///car those that are fixed. Because of the way that the derivative is
 ///car calculated, I don't believe this is a significant slow down (ie
@@ -118,7 +113,7 @@ static thread_local basic::Tracer TR( "core.optimization" );
 ///
 ///car if two atoms are fixed relatively in cartesian space, then dr/dphi = 0
 ///car and there is no contribution to the derivative
-///
+
 
 void
 atom_tree_dfunc(

@@ -166,7 +166,7 @@ DsspDesignOperation::get_restrictions( std::string const & ss_type ) const
 	return restrict_to_aa;
 }
 
-///@brief
+/// @brief
 void
 DsspDesignOperation::apply( core::pose::Pose const & input_pose, core::pack::task::PackerTask & task ) const
 {

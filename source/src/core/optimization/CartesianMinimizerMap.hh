@@ -19,7 +19,6 @@
 #include <core/optimization/CartesianMinimizerMap.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/types.hh>
 
 #include <core/id/TorsionID.hh>
@@ -31,14 +30,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-// AUTO-REMOVED #include <list>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
-
 
 
 namespace core {
@@ -48,14 +44,14 @@ class CartesianMinimizerMap : public kinematics::MinimizerMapBase
 {
 public:
 
-	///
+
 	CartesianMinimizerMap()
 	{}
 
-	///
+
 	~CartesianMinimizerMap();
 
-	///
+
 	virtual
 	kinematics::DomainMap const &
 	domain_map() const
@@ -77,7 +73,7 @@ public:
 		DOF_ID const & dof_id
 	);
 
-	///
+
 	void
 	setup(
 		pose::Pose & pose,
@@ -88,21 +84,21 @@ public:
 	void
 	reset( pose::Pose const & pose );
 
-	///
+
 	void
 	copy_dofs_from_pose(
 		pose::Pose const & pose,
 		Multivec & dofs
 	) const;
 
-	///
+
 	void
 	copy_dofs_to_pose(
 		pose::Pose & pose,
 		Multivec const & dofs
 	) const;
 
-	///
+
 	inline int
 	ndofs() const	{ return 3*moving_atoms_.size(); }
 
@@ -148,7 +144,7 @@ private:
 	/// list of all the moving atoms
 	utility::vector1<id::AtomID> moving_atoms_;
 
-	//
+
 	utility::vector1< utility::vector1< core::scoring::DerivVectorPair > > atom_derivatives_;
 
 	/// list of all moving torsions: dof ids and torsion ids
@@ -156,7 +152,7 @@ private:
 	utility::vector1<id::DOF_ID> moving_dofids_;
 	utility::vector1<id::TorsionID> moving_torsionids_;
 
-	///
+
 	kinematics::DomainMap domain_map_;
 
 }; // CartesianMinimizerMap

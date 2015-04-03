@@ -19,33 +19,23 @@
 #define INCLUDED_core_conformation_find_neighbors_fwd_hh
 
 // Package Headers
-// AUTO-REMOVED #include <core/conformation/PointGraph.fwd.hh>
 #include <core/types.hh>
 
 
-
 // Numeric headers
-// AUTO-REMOVED #include <numeric/numeric.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzTriple.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // ObjexxFCL headers
 //#include <ObjexxFCL/KeyFArray1D.hh>
 //#include <ObjexxFCL/KeyFArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 // Utility headers
 //#include <utility/pointer/access_ptr.hh>
 
 // boost headers
-// AUTO-REMOVED #include <boost/unordered_map.hpp>
 
 // C++ headers
 #include <utility/assert.hh>
-// AUTO-REMOVED #include <cmath>
-// AUTO-REMOVED #include <cstdlib>
 #include <limits>
-// AUTO-REMOVED #include <map>
 #include <vector>
 
 #include <core/graph/UpperEdgeGraph.fwd.hh>

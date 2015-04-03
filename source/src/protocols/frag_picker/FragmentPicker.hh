@@ -77,7 +77,7 @@ private:
 
 
 /// @brief The core of the fragment picking machinery
-/// @detailed FragmentPicker class does:\n
+/// @details FragmentPicker class does:\n
 ///    - know about query data: sequence, sequence profile, secondary structure.
 ///      All other query data must be loaded directly to the relevant scoring methods
 ///    - provide slots for 'plugable' parts of the machinery, like chunk filters, scoring methods and so on.
@@ -133,14 +133,14 @@ public:
 	void parse_command_line();
 
 	/// @brief Picks fragments and saves them into proper files - independently for each query position.
-	/// @detailed This protocol scores all vall data against a given position
+	/// @details This protocol scores all vall data against a given position
 	/// and keeps all the candidates unless they fail an energy filter
 	/// When all candidates for a positions are scored, it selects fragments
 	/// for the position and proceeds to the next position. Bounded queue is not used
 	void keep_all_protocol();
 
 	/// @brief Picks fragments and saves them into proper files - uses bounded queue.
-	/// @detailed This protocol scores all vall data against all query positions
+	/// @details This protocol scores all vall data against all query positions
 	/// and keeps a limited number of candidates per position using a bounded queue.
 	/// When all candidates for all positions are scored, it selects final fragments.
 	void bounded_protocol();
@@ -182,7 +182,7 @@ public:
 	// query sequence -----------------
 
 	/// @brief sets the query sequence
-	/// @detailed Well, it is a sequence profile, but the sequence can be extracted from it
+	/// @details Well, it is a sequence profile, but the sequence can be extracted from it
 	void set_query_seq(core::sequence::SequenceProfileOP query_sequence);
 
 	/// @brief sets the query sequence
@@ -281,7 +281,7 @@ public:
 	void set_picked_positions(utility::vector1<Size>);
 
 	/// @brief picks fragment candidates.
-	/// @detailed These basically become fragments if pass the final selection.
+	/// @details These basically become fragments if pass the final selection.
 	/// Fragment candidates are stored in a container that a user must plug into the picker
 
 	/// multi-threaded task
@@ -294,7 +294,7 @@ public:
 
 	/// @brief Calculates total score for a given vector of small scores
 	/// (FragmentScoreMap object pointer)
-	/// @detailed FragmentScoreManager that is stored inside the picker is used
+	/// @details FragmentScoreManager that is stored inside the picker is used
 	/// for this calculation. It particular it provides weights
 	double total_score(scores::FragmentScoreMapOP f, Size index=1);
 
@@ -423,7 +423,6 @@ private:
 	utility::vector1<utility::vector1<Real> >  atom_pair_constraint_contact_map_;
 
 };
-
 
 
 } // frag_picker

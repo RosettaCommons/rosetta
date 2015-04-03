@@ -16,13 +16,11 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
@@ -37,7 +35,6 @@
 
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <cstring>
 #include <fstream>
 #include <sstream>
 #include <cstdio>

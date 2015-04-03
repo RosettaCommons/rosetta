@@ -29,9 +29,9 @@ namespace protocols {
 namespace antibody {
 namespace constraints {
 	
-///@brief Add SiteConstraints from the Epitope to the Paratope and from the Paratope to the Epitope. 
+/// @brief Add SiteConstraints from the Epitope to the Paratope and from the Paratope to the Epitope. 
 /// Will only add the constraint if not already present.
-///@details
+/// @details
 /// If no paratope interface residues are given, detects the epitope at 10 A from antibody chain(s).
 /// Optionally constrain to paratope CDRs or a specific set of paratope residues.
 /// Uses a Linear Harmonic at 0, 1, 10 by default.  Which means epitope will have penalty at greater than 10 A. 
@@ -68,11 +68,11 @@ public:
 	void
 	constrain_to_paratope_residues(utility::vector1<bool> const & paratope_residues);
 	
-	///@Brief Manually set the epitope residues via PDB Numbering
+	/// @Brief Manually set the epitope residues via PDB Numbering
 	void
 	constrain_to_epitope_residues(utility::vector1<design::PDBNumbering> const & epitope_residues, core::pose::Pose const & pose);
 	
-	///@Brief Manually set the epitope residues via pose Numbering
+	/// @Brief Manually set the epitope residues via pose Numbering
 	void
 	constrain_to_epitope_residues(utility::vector1<bool> const & epitope_residues);
 	
@@ -81,7 +81,7 @@ public:
 	set_constraint_func(core::scoring::func::FuncOP constraint_func);
 	
 	
-	///@brief The interface distance for antigen epitope auto-detection and the distance at which the default
+	/// @brief The interface distance for antigen epitope auto-detection and the distance at which the default
 	///  at which the default flat-harmonic constraint will give a penalty.  10A default.
 	void
 	set_interface_distance(core::Size const distance);

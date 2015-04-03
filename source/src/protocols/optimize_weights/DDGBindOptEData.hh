@@ -19,7 +19,6 @@
 #include <protocols/optimize_weights/OptEData.hh>
 
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 
 #include <utility/vector1.hh>
 

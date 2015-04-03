@@ -27,7 +27,6 @@
 #include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
@@ -37,7 +36,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
@@ -48,7 +46,6 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 //Numeric headers
 #include <numeric/xyzVector.hh>
@@ -58,18 +55,14 @@
 #include <basic/Tracer.hh>
 
 //Protocols headers
-// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/StructureRestrictor.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 //protocols JD2
 #include <protocols/jd2/JobDistributor.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/util.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -77,7 +70,6 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-// AUTO-REMOVED #include <stdlib.h>
 #include <math.h>
 #include <utility>
 
@@ -414,7 +406,6 @@ bool ExposedStrandMover::is_exposed( pose::Pose & pose, Size & resid, vector1< R
                                      << "  SASA/atom:  "  << sasa_values[resid] / pose.residue(resid).natoms()
                                      << "   is_exposed?:  "<< exposed << std::endl;
 #endif
-
 
 
   return exposed;

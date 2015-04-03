@@ -17,15 +17,11 @@
 #include <protocols/simple_moves/symmetry/SymShakeStructureMover.fwd.hh>
 #include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <cstdlib>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //protocols
@@ -34,7 +30,6 @@
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 
 #include <utility/vector1.hh>
-
 
 
 namespace protocols {

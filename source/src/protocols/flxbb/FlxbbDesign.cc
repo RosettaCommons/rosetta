@@ -41,7 +41,6 @@
 
 // option key includes
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -262,7 +261,7 @@ void FlxbbDesign::initialize_filter( Size const filter_trial, String const & fil
 	}
 }
 
-///@details registering of options that are relevant for FlxbbDesign
+/// @details registering of options that are relevant for FlxbbDesign
 void FlxbbDesign::register_options()
 {
 	option.add_relevant( OptionKeys::flxbb::view );

@@ -24,7 +24,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>

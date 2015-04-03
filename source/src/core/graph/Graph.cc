@@ -15,8 +15,6 @@
 #include <core/graph/Graph.hh>
 
 //STL Headers
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <utility/assert.hh>
@@ -25,7 +23,6 @@
 #include <core/graph/unordered_object_pool.hpp>
 
 //ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 
 #include <platform/types.hh>
 #include <core/graph/Graph.fwd.hh>
@@ -217,7 +214,6 @@ Node::Node(Graph * owner, platform::Size node_id ) :
 /// derived classes must define their own version of this function
 //  to copy any data stored on nodes
 void Node::copy_from( Node const * ) {}
-
 
 
 /// @details If the other node this node is attached to by edge_ptr has a higher index
@@ -715,7 +711,6 @@ void Graph::drop_all_edges()
 		iter = iter_next;
 	}
 }
-
 
 
 /// @brief calls print() on each of the nodes in the graph

@@ -30,7 +30,6 @@
 #include <protocols/membrane/geometry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -51,7 +50,6 @@
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>

@@ -18,7 +18,7 @@
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.fwd.hh>
 
-//
+
 #include <core/pose/Pose.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
 
@@ -58,7 +58,7 @@ public:
 	typedef utility::vector1< group_pair > group_set;
 	//group_set = utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > >
 
-  ///@brief
+  /// @brief
   InterGroupNeighborsCalculator(
 													 group_set const & groups,
 													 core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
@@ -71,10 +71,10 @@ public:
 	virtual core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
 	//accessors for non-recomputed input data
-	///@brief return groups
+	/// @brief return groups
 	group_set const & groups() const { return groups_; }
 
-	///@brief return distance cutoff
+	/// @brief return distance cutoff
 	core::Real dist_cutoff() const { return dist_cutoff_; }
 
 protected:
@@ -85,13 +85,13 @@ protected:
 
 private:
 
-  ///@brief stores the input - whose neighbors are we finding?
+  /// @brief stores the input - whose neighbors are we finding?
   group_set const groups_;
-	///@brief stores the input - how far away is a neighbor?
+	/// @brief stores the input - how far away is a neighbor?
 	core::Real const dist_cutoff_;
-	///@brief the number of neighbors in the set neighbors_
+	/// @brief the number of neighbors in the set neighbors_
   core::Size num_neighbors_;
-  ///@brief the set of neighbors to return - union of interfaces between groups
+  /// @brief the set of neighbors to return - union of interfaces between groups
   std::set< core::Size > neighbors_;
 
 };

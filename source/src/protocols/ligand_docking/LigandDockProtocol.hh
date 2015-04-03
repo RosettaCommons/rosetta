@@ -18,16 +18,13 @@
 
 #include <protocols/ligand_docking/LigandDockProtocol.fwd.hh>
 
-// AUTO-REMOVED #include <core/grid/CartGrid.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/enzdes/EnzConstraintIO.hh> //for adding constraints if demanded by user
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <map>
 
@@ -44,9 +41,9 @@ namespace protocols {
 namespace ligand_docking {
 
 
-///@brief
+/// @brief
 ///
-///@details
+/// @details
 ///
 class LigandDockProtocol : public protocols::ligand_docking::LigandBaseProtocol
 {

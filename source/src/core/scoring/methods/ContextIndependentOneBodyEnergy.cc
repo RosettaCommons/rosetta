@@ -20,14 +20,13 @@
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
 namespace methods {
 
 ContextIndependentOneBodyEnergy::ContextIndependentOneBodyEnergy( EnergyMethodCreatorOP creator ) : parent( creator ) {}
 
-///
+
 EnergyMethodType
 ContextIndependentOneBodyEnergy::method_type() const
 {

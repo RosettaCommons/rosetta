@@ -18,17 +18,13 @@
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 // Unit headers
 #include <protocols/simple_moves/BackboneMover.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/Tracer.hh>
@@ -47,7 +43,7 @@ using namespace protocols::moves;
 ///////////////////////////////////////////////////////////////////////////
 /// @name SmallMoverTest
 /// @brief: test a single small move using all default values
-/// @detailed Default values used are 0, 5, 6 (H,E,L)
+/// @details Default values used are 0, 5, 6 (H,E,L)
 ///						nmoves=1, all residues movable
 ///  					The values for the new phi and psi torsion angles
 ///						were checked against values calculated by hand using

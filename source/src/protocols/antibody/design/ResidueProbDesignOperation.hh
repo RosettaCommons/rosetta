@@ -33,9 +33,9 @@ namespace design {
 	using core::Size;
 	using utility::vector1;
 	
-///@brief A TaskOperation that allows amino acids at designable positions through a set of aa probabilities.
+/// @brief A TaskOperation that allows amino acids at designable positions through a set of aa probabilities.
 ///
-///@details Default is for the TaskOp to control the allowed amino acids only if the class has probabilities to use for that resnum. 
+/// @details Default is for the TaskOp to control the allowed amino acids only if the class has probabilities to use for that resnum. 
 /// If no probabilities were set, it will not do anything.
 /// Probabilities should add to one, but if not, they will act as weights.
 ///
@@ -65,18 +65,18 @@ public:
 	//
 	//
 	
-	///@brief Sets the whole aa probability set.
+	/// @brief Sets the whole aa probability set.
 	void
 	set_aa_probability_set( PerResidueAAProbSet per_res_aa_probs);
 	
-	///@brief Sets aa probabilities for a particular resnum
+	/// @brief Sets aa probabilities for a particular resnum
 	void
 	set_aa_probabilities( Size const resnum, AAProbabilities aa_probs );
 
-	///@brief Set the probability for a particular aa @ a particular resnum.  
+	/// @brief Set the probability for a particular aa @ a particular resnum.  
 	//set_aa_probability( Size resnum, core::chemical::AA const amino_acid, Real probability );
 
-	///@brief Sets aa probabilities for all positions not given specifically. All designable residues will use this if not specified through other functions.
+	/// @brief Sets aa probabilities for all positions not given specifically. All designable residues will use this if not specified through other functions.
 	void
 	set_overall_aa_probabilities( AAProbabilities aa_probs );
 	
@@ -88,11 +88,11 @@ public:
 	//
 	//
 	
-	///@brief Clears the probability matrix
+	/// @brief Clears the probability matrix
 	void
 	clear_prob_set();
 	
-	///@brief Clears the overall probabilities if any are set.
+	/// @brief Clears the overall probabilities if any are set.
 	void
 	clear_overall_prob_set();
 	
@@ -104,7 +104,7 @@ public:
 	//
 	//
 	
-	///@brief Include current residuetype in packer in addition to selected mutation. Default is true.
+	/// @brief Include current residuetype in packer in addition to selected mutation. Default is true.
 	void
 	set_include_native_restype(bool include);
 	
@@ -112,7 +112,7 @@ public:
 	include_native_restype() const;
 	
 	
-	///@brief Sample any zero probabilities at this probability instead of not using them.
+	/// @brief Sample any zero probabilities at this probability instead of not using them.
 	void
 	set_sample_zero_probs_at(core::Real const probability);
 	
@@ -120,8 +120,8 @@ public:
 	sample_zero_probs_at() const;
 	
 	
-	///@brief Max number of times to sample from the probability distribution.  Default is once. 
-	///@details This is to increase variability.
+	/// @brief Max number of times to sample from the probability distribution.  Default is once. 
+	/// @details This is to increase variability.
 	/// Too many rounds will even out the distribution.
 	/// Can also run the PackRotamers mover or equivalent multiple times for sampling.  
 	void
@@ -131,8 +131,8 @@ public:
 	picking_rounds() const;
 	
 	
-	///@brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
-	///@details  Will result in very different results.  Used one wants to use this Op to sample other residues in addition within a specific probability.  
+	/// @brief Add the aa types chosen from the probabilities to the  allowed aa at the position instead of overwriting it.
+	/// @details  Will result in very different results.  Used one wants to use this Op to sample other residues in addition within a specific probability.  
 	void
 	set_keep_task_allowed_aas(bool setting);
 	
@@ -163,7 +163,7 @@ private:
 	void init_for_equal_operator_and_copy_constructor( ResidueProbDesignOperation & lhs, ResidueProbDesignOperation const & rhs);
 	
 	
-	///@brief  Create full weight set for all amino acids from a probability set.
+	/// @brief  Create full weight set for all amino acids from a probability set.
 	vector1<Real>
 	get_weights(AAProbabilities & aa_prob_set) const;
 	

@@ -87,7 +87,6 @@ using namespace core::sequence;
 using namespace core::id;
 
 
-
 SequenceAlignment filterNonCore(SequenceAlignment inptAln, SequenceAlignment partialThreadAln, Size startRes, Size endRes, Pose partialThreadPose, vector1<core::pose::PoseOP> poses){
 	Real PERCENT_RES_OVERLAP = .70;
  	Real MIN_RMSD_MATCH = 2;

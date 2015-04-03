@@ -69,7 +69,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
 using namespace core::scoring;
 
 static thread_local basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceUtils" );

@@ -25,17 +25,14 @@
 #include <core/chemical/AA.hh> //needed to convert one letter AA codes
 #include <core/chemical/ResidueTypeSet.hh> //have to include complete file
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/id/AtomID.hh>
 #include <basic/options/option.hh>
 #include <core/id/SequenceMapping.hh>
 
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
 
@@ -48,7 +45,6 @@
 
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
-
 
 
 static thread_local basic::Tracer tr( "protocols.toolbox.match_enzdes_util.EnzCstTemplateRes" );
@@ -87,7 +83,6 @@ EnzCstTemplateResAtoms::remap_atomid_vector(
 		*vec_it = core::id::AtomID( vec_it->atomno(), newpos );
 	}
 }
-
 
 
 EnzCstTemplateRes::EnzCstTemplateRes(
@@ -236,7 +231,6 @@ EnzCstTemplateRes::read_params(std::istringstream & line_stream)
 } //EnzCstTemplateRes::read_params
 
 
-
 /// @brief show the contents of a particular instance
 void EnzCstTemplateRes::show_params() const
 {
@@ -250,7 +244,6 @@ void EnzCstTemplateRes::show_params() const
   }
   tr.Info <<  std::endl ;
 }
-
 
 
 /// @brief check whether the data gathered from the cst file and the pdbfile/pose is consistent in itself and with one another
@@ -320,7 +313,6 @@ void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 
 	template_cache->pose_data_uptodate_ = true;
 } //get pose data function
-
 
 
 EnzCstTemplateResAtomsCOP
@@ -410,7 +402,6 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 	return false;
 
 } //find_in_pose_if_missing_from_header
-
 
 
 void
@@ -569,7 +560,6 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 
 
 } //determine_atom_ids_for_restype
-
 
 
 utility::vector1< core::Size > const &

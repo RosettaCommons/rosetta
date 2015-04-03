@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_toolbox_Cluster_hh
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <deque>
@@ -102,7 +101,6 @@ private:
   core::Real cluster_radius_;
 	core::Size n_max_cluster_;
 };
-
 
 
 extern std::ostream& operator<< ( std::ostream& out, ClusterBase const& cl);

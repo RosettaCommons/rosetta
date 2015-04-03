@@ -9,7 +9,7 @@
 
 /// @file    protocols/normalmode/NormalModeRelaxMover.fwd.hh
 /// @brief   initialization for NormalMode
-/// @detailed
+/// @details
 /// @author  Hahnbeom Park
 
 #ifndef INCLUDED_protocols_normalmode_NormalModeRelaxMover_fwd_hh

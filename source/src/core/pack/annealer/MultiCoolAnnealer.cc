@@ -15,13 +15,10 @@
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
 
 /// Package headers
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/task/PackerTask.hh>
 
 /// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 #include <ObjexxFCL/FArray1A.hh>
 
 /// Utility headers

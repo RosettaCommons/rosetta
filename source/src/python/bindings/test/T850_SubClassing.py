@@ -106,8 +106,6 @@ print 'Old phi=%s, new phi=%s' % (old_phi, pose.phi(1))
 if pose.phi(1) == old_phi : sys.exit(1)
 
 
-
-
 # rosetta.core.scoring.methods.ContextIndependentOneBodyEnergy sub-classing -----------------------------------
 
 # Making energy creator class by hand, this is for demo purpose only, in real programm use class decorator instead (see below)

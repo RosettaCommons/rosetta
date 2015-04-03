@@ -492,7 +492,6 @@ create_base_pair_step_database_test( ){
 	}
 
 
-
 }
 
 

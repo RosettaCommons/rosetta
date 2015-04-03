@@ -9,7 +9,7 @@
 
 /// @file core/pose/full_model_info/FullModelParameterType.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -48,7 +48,7 @@ namespace full_model_info {
 	//
 	// -- rhiju, 2014.
 
-	//
+
 	// IF YOU ADD A TYPE, please also update initialize_parameters() in FullModelParameterType.cc,
 	//  as well as 	initialize_full_model_parameter_type_name().
 

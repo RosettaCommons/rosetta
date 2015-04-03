@@ -258,7 +258,6 @@ ChargeChargeFeatures::report_features(
 		}
 
 
-
 		charge_charge_statement.bind(1,struct_id);
 		charge_charge_statement.bind(2,q1_site_id);
 		charge_charge_statement.bind(3,q2_site_id);
