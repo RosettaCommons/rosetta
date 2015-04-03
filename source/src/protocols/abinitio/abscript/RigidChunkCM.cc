@@ -192,7 +192,14 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     utility::vector1< std::string > movernames = utility::string_split( apply_to_templates, ',' );
     for( utility::vector1< std::string >::const_iterator movername = movernames.begin();
         movername != movernames.end(); ++movername ){
-      apply_movers.push_back( movermap.find( *movername )->second );
+      if( movermap.find( *movername ) != movermap.end() ){
+        apply_movers.push_back( movermap.find( *movername )->second );
+      } else {
+        std::ostringstream ss;
+        ss << "In mover '" << xml_name_ << "', the 'apply_to_template' tag contained the mover '"
+           << *movername << "', which could not be found." << std::endl;
+        throw utility::excn::EXCN_RosettaScriptsOption( ss.str() );
+      }
     }
   }
 

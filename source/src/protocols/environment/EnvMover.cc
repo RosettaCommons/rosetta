@@ -17,9 +17,11 @@
 // Package headers
 #include <protocols/environment/Environment.hh>
 #include <protocols/environment/ClientMover.hh>
+#include <protocols/environment/EnvExcn.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 #include <utility/tag/Tag.hh>
 
@@ -83,11 +85,30 @@ void EnvMover::apply( Pose& pose ) {
   try {
     ppose = env->start( pose );
   } catch( ... ) {
-    tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'." << std::endl;
+    tr.Error << "[ERROR] Error during broking in environment '" << get_name() << "'. " << std::endl;
     throw;
   }
 
-  movers_->apply( ppose );
+  try {
+    movers_->apply( ppose );
+  } catch( EXCN_Env_Security_Exception& e ) {
+    std::ostringstream ss;
+    ss << "Error ocurred within " << this->get_name() << ". ";
+
+    core::pose::PDBInfoCOP info( ppose.pdb_info() );
+
+    if( info &&
+        e.id() != core::id::BOGUS_DOF_ID &&
+        e.id().atom_id().rsd() <= ppose.total_residue() ) {
+      ss << "According to the PDBInfo object, the violating residue was "
+         << info->number( e.id().atom_id().rsd() )
+         << info->chain( e.id().atom_id().rsd() ) << ". ";
+    }
+
+    e.add_msg( ss.str() );
+
+    throw e;
+  }
 
   set_last_move_status( movers_->get_last_move_status() );
   tr.Debug << this->get_name() << " exited with status " << get_last_move_status() << std::endl;

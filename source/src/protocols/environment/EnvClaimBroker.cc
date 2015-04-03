@@ -550,7 +550,14 @@ void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
     pair.first->passport_updated();
   }
 
-  pose.conformation().detect_disulfides();
+  if( pose.conformation().is_centroid() ){
+    // Update disulfide status. Movers frequently move things either a) into position to become disulfides
+    // or b) away from being disulfides. Unfortunately, this only works in centroid, because CYD and CYS have
+    // differing numbers of atoms. Ideally, this would be ok, adding and removing atoms has the potential
+    // to desync AtomIDs in the Conformation and Passport. Solving this problem is equivalent to adding
+    // design compatiblity to the broker, which I don't have time for right now.
+    pose.conformation().detect_disulfides();
+  }
 }
 
 /// @brief A brief comparator object initialized with the correct strength accessor for reuse of setup_passports

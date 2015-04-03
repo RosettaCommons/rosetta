@@ -164,6 +164,9 @@ public:
   // TODO: decide what to do with disulfides
   virtual void fix_disulfides( utility::vector1< std::pair<Size, Size> > );
 
+  // TODO: this method can fail in fullatom
+  virtual void detect_disulfides();
+
   // TODO: decide what to do with direct xyz settings.
   virtual void set_xyz( AtomID const & id, core::PointPosition const & position );
   virtual void batch_set_xyz( utility::vector1<AtomID> const & id,
@@ -187,7 +190,6 @@ public:
   // virtual void update_polymeric_connection( Size );
   // virtual void detect_bonds();
   // virtual void detect_pseudobonds();
-  // virtual void detect_disulfides();
 
 //Misc overloads:
   virtual bool same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const;
@@ -202,10 +204,14 @@ private:
 
   inline bool verify_backbone( Size const& seqpos );
 
-  inline void fail_verification( std::string const& str );
+  //used to build a bogus DOF_ID, but can include sequence position
+  inline void fail_verification( std::string const& mod_type,
+                                 core::Size const& seqpos = 0 ) const;
 
-  template< typename Param >
-  void replace_residue_sandbox( Size seqpos, core::conformation::Residue const& new_rsd, Param );
+  inline void fail_verification( core::id::DOF_ID const& id,
+                                 std::string const& mod_type ) const;
+
+  void replace_residue_sandbox( Size seqpos, core::conformation::Residue const& new_rsd, bool );
 
 // Passport Management:
 private:
