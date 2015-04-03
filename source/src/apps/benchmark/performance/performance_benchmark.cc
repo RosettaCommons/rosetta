@@ -221,7 +221,7 @@ void PerformanceBenchmark::perform_until_set_found (
 	
 	// done, so set result to average of the tight results
 	// amw: no, set it to the minimum because we are trying this out.
-	B->result_ = residues[ 0 ];
+	B->result_ = results[ 0 ];
 }
 
 void PerformanceBenchmark::executeOneBenchmark(
