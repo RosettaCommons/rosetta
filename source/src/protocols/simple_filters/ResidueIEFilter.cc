@@ -20,6 +20,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
@@ -63,7 +64,8 @@ ResidueIEFilter::ResidueIEFilter(
 	rb_jump_ ( rb_jump ),
 	interface_distance_cutoff_ ( interface_distance_cutoff ),
 	max_penalty_ (max_penalty),
-	penalty_factor_ (penalty_factor)
+	penalty_factor_ (penalty_factor),
+	selector_ ()
 	{
 		using namespace core::scoring;
 
@@ -88,7 +90,8 @@ ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	interface_distance_cutoff_ ( init.interface_distance_cutoff_),
 	max_penalty_ ( init.max_penalty_),
 	penalty_factor_ ( init.penalty_factor_),
-	use_resE_ ( init.use_resE_ )
+	use_resE_ ( init.use_resE_ ),
+	selector_ ( init.selector_ )
 {
 	using namespace core::scoring;
 	if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
@@ -167,7 +170,21 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
     }
 	}
 
-	runtime_assert(tag->hasOption("residues") || whole_pose_ || whole_interface_);
+	if(tag->hasOption("selector")) {
+		std::string const selector_name = tag->getOption< std::string >( "selector" );
+		try {
+			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::stringstream error_msg;
+			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from DisulfidizeMover.\n";
+			error_msg << e.msg();
+			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+		}
+		assert( selector_ );
+		tr << "Using residue selector " << selector_name << std::endl;
+	}
+
+	runtime_assert(tag->hasOption("residues") || whole_pose_ || whole_interface_ || selector_);
 
 	use_resE_ = tag->getOption<bool>( "use_resE" , 0 );
 }
@@ -244,6 +261,19 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
       if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
     }
   }//whole_pose_
+
+	else if ( selector_ )
+	{
+		tr << "Applying residue selector to determine resnums" << std::endl;
+		resnums_.clear();
+		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply(pose);
+		//sanity check
+		debug_assert( subset.size() == pose.total_residue() );
+		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+			if ( subset[i] )
+				resnums_.push_back( i );
+		}
+	}
 
   std::unique( resnums_.begin(), resnums_.end() );
   tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
