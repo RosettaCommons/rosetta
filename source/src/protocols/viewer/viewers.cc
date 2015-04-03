@@ -74,7 +74,7 @@
 #endif
 
 #if defined( MAC ) || defined( __APPLE__ ) || defined( __OSX__ )
-#define REQUIRED_STACK_SIZE 16 * 1024 * 1024 // 16 MB
+#define THREAD_STACK_SIZE 16 * 1024 * 1024 // 16 MB
 #endif
 
 
@@ -543,12 +543,12 @@ viewer_main( VoidFunc worker_main )
 	pthread_attr_t stack_size_attr;
 	pthread_attr_init( &stack_size_attr );
 
-#ifdef REQUIRED_STACK_SIZE	
+#ifdef THREAD_STACK_SIZE	
 	// set stack size allocated to thread
 	size_t thread_stack_size;
 	int error = pthread_attr_getstacksize( &stack_size_attr, &thread_stack_size );
-	if ( !error && thread_stack_size < REQUIRED_STACK_SIZE ) {
-		pthread_attr_setstacksize( &stack_size_attr, REQUIRED_STACK_SIZE );
+	if ( !error && thread_stack_size < THREAD_STACK_SIZE ) {
+		pthread_attr_setstacksize( &stack_size_attr, THREAD_STACK_SIZE );
 	}
 #endif
 

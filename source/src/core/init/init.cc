@@ -248,7 +248,7 @@
 
 #if defined( MAC ) || defined( __APPLE__ ) || defined( __OSX__ )
 #include <sys/resource.h> // for getrlimit/setrlimit
-#define REQUIRED_STACK_SIZE 16 * 1024 * 1024 // 16 MB
+#define PROCESS_STACK_SIZE 16 * 1024 * 1024 // 16 MB
 #endif
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -1054,12 +1054,12 @@ init_profiling(){
 
 void
 init_resources() {
-#ifdef REQUIRED_STACK_SIZE 
+#ifdef PROCESS_STACK_SIZE 
 	// set stack size of process at runtime
 	struct rlimit rl;
 	int error = getrlimit( RLIMIT_STACK, &rl );
-	if ( !error && rl.rlim_cur < REQUIRED_STACK_SIZE ) {
-		rl.rlim_cur = REQUIRED_STACK_SIZE;
+	if ( !error && rl.rlim_cur < PROCESS_STACK_SIZE ) {
+		rl.rlim_cur = PROCESS_STACK_SIZE;
 		setrlimit( RLIMIT_STACK, &rl );
 	}
 #endif
