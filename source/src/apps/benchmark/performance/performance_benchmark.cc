@@ -220,7 +220,8 @@ void PerformanceBenchmark::perform_until_set_found (
 	}
 	
 	// done, so set result to average of the tight results
-	B->result_ = average;
+	// amw: no, set it to the minimum because we are trying this out.
+	B->result_ = residues[ 0 ];
 }
 
 void PerformanceBenchmark::executeOneBenchmark(
@@ -239,27 +240,27 @@ void PerformanceBenchmark::executeOneBenchmark(
 		if ( B->name() == name ) {
 			
 			// right now, take the minimum of 3 trials...
-			for ( Size j = 0; j < 3; ++j ) {
-				double prev_result = B->result_;
+			//for ( Size j = 0; j < 3; ++j ) {
+			//	double prev_result = B->result_;
 				perform_until_set_found( B, scaleFactor );
-				if ( prev_result == 0 ) {
-					// definitely overwrite
-					prev_result = B->result_;
-				} else {
+			//	if ( prev_result == 0 ) {
+			//		// definitely overwrite
+			//		prev_result = B->result_;
+			//	} else {
 					// it ran once before
-					if ( B->result_ > prev_result ) {
-						B->result_ = prev_result;
-					} else {
-						// necessary for more than two trials>
-						prev_result = B->result_;
-					}
-				}
-			}
+			//		if ( B->result_ > prev_result ) {
+			//			B->result_ = prev_result;
+			//		} else {
+			//			// necessary for more than two trials>
+			//			prev_result = B->result_;
+			//		}
+			//	}
+			//}
 			found_benchmark = true;
 			break;
 		}
 	}
-	if(found_benchmark){
+	if ( found_benchmark ) {
 		TR << std::endl << "Executing benchmark '" << name << "'... Done." << std::endl;
 	} else {
 		TR << std::endl << "Unable to locate benchmark '" << name << "'" << std::endl;
@@ -282,24 +283,24 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 	// right now, take the minimum of 3 trials...
 	
 	std::vector< double > prev_results( all.size(), 0 );
-	for ( Size j = 0; j < 3; ++j ) {
+	//for ( Size j = 0; j < 3; ++j ) {
 		for ( Size i = 0; i < all.size(); ++i ) {
 			PerformanceBenchmark * B = all[ i ];
 			perform_until_set_found( B, scaleFactor );
-			if ( prev_results[ i ] == 0 ) {
-				// definitely overwrite
-				prev_results[ i ] = B->result_;
-			} else {
-				// it ran once before
-				if ( B->result_ > prev_results[ i ] ) {
-					B->result_ = prev_results[ i ];
-				} else {
-					// necessary for more than two trials>
-					prev_results[ i ] = B->result_;
-				}
-			}
+			//if ( prev_results[ i ] == 0 ) {
+			//	// definitely overwrite
+			//	prev_results[ i ] = B->result_;
+			//} else {
+			//	// it ran once before
+			//	if ( B->result_ > prev_results[ i ] ) {
+			//		B->result_ = prev_results[ i ];
+			//	} else {
+			//		// necessary for more than two trials>
+			//		prev_results[ i ] = B->result_;
+			//	}
+			//}
 		}
-	}
+	//}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
 }
 
