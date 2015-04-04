@@ -24,7 +24,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/Loop.hh>
 
-#include <protocols/environment/claims/TorsionClaim.hh>
+#include <protocols/environment/claims/XYZClaim.hh>
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>
@@ -132,7 +132,9 @@ void LoopCM::build_mover( LoopsOP loops ) {
     if( style_ == PERTURB ){
       mover_ = LoopMoverOP( new perturb::LoopMover_Perturb_CCD( loops ) );
     } else if( style_ == REFINE ){
-      mover_ = LoopMoverOP( new refine::LoopMover_Refine_CCD( loops ) );
+      refine::LoopMover_Refine_CCDOP mover( new refine::LoopMover_Refine_CCD( loops ) );
+      mover->repack_neighbors( false );
+      mover_ = mover;
     }
   }
 
@@ -183,12 +185,10 @@ environment::claims::EnvClaims LoopCM::yield_claims( core::pose::Pose const& pos
   }
 
   environment::ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover >( get_self_ptr() );
-  TorsionClaimOP torsion( new TorsionClaim( this_ptr, pos_list ) );
-  torsion->claim_backbone( true );
-  torsion->claim_sidechain( true );
-  torsion->strength( MUST_CONTROL, DOES_NOT_CONTROL );
+  XYZClaimOP xyz_claim( new XYZClaim( this_ptr, selector_ ) );
+  xyz_claim->strength( MUST_CONTROL, DOES_NOT_CONTROL );
 
-  claims.push_back( torsion );
+  claims.push_back( xyz_claim );
 
   for( Size i = 1; i <= loops->num_loop(); ++i ){
     Loop const& loop = loops->loops()[i];

@@ -421,6 +421,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
         loop_it != simulation_regions.end(); ++loop_it ) {
     std::pair< core::Size, core::Size > const excl_region = *loop_it;
 
+    // TODO: remove use of this XYZClaim constructor.
     XYZClaimOP xyz_claim( new XYZClaim( this_ptr, "BASE", excl_region ) );
 
     xyz_claim->strength( EXCLUSIVE, EXCLUSIVE );
@@ -601,18 +602,27 @@ void fix_mainchain_connect( core::pose::Pose& pose,
   tr.Trace << "mainchain torsion (after): conf: " << new_resi.mainchain_torsion( 1 ) << " atom-tree: "
            << pose.conformation().torsion_angle( global.bb1, global.bb2, global.bb3, global.bb4 ) << std::endl;
 
+  pose.dump_pdb("tmp.pdb");
+
   core::conformation::Residue const & prev_rsd( ref_pose.residue( local_upper-1 ) );
   core::conformation::Residue const &      rsd( ref_pose.residue( local_upper ) );
 
   if ( prev_rsd.has( "O" ) ) {
     core::id::AtomID ref_atomO( prev_rsd.atom_index( "O" ), local_upper-1 );
     core::id::AtomID atomO( pose.residue_type( global_upper-1 ).atom_index( "O" ), global_upper-1 );
+
+    std::cout << pose.residue( atomO.rsd() ) << std::endl;
+    std::cout << atomO << std::endl;
     fix_internal_coords_of_siblings( pose, ref_pose, atomO, ref_atomO );
   }
   if ( rsd.has( "H" ) ) {
     core::id::AtomID ref_atomH( rsd.atom_index( "H" ), local_upper );
     core::id::AtomID atomH( new_resi.atom_index( "H" ), global_upper );
     runtime_assert( new_resi.has( "H" ) );
+
+    std::cout << pose.residue( atomH.rsd() ) << std::endl;
+    std::cout << atomH << std::endl;
+
     fix_internal_coords_of_siblings( pose, ref_pose, atomH, ref_atomH );
   }
 
@@ -704,11 +714,16 @@ void RigidChunkCM::initialize( Pose& pose ){
         sim_origin().find( sim_pos ) != sim_origin().end() ){
       core::Size const templ_pos = sim_origin().at( sim_pos );
 
-      bool lower_connect = ( sim_pos > 1
-                            && !pose.residue( sim_pos ).is_lower_terminus()
-                            && !pose.fold_tree().is_cutpoint( sim_pos - 1 ) );
+      bool lower_connect = ( sim_pos > 1  &&
+                             !pose.residue( sim_pos ).is_lower_terminus() &&
+                             !pose.fold_tree().is_cutpoint( sim_pos - 1 ) );
       try {
-        if ( lower_connect && templ_pos - 1 < 1 ){
+        if ( lower_connect &&
+             ( templ_pos - 1 < 1 ||
+               templ().residue( templ_pos ).is_lower_terminus() ||
+               templ().fold_tree().is_cutpoint( templ_pos -1 ) ) ){
+          // Here, the template doesn't have valid coordinates to connect to, so we have to do it
+          // using reference values.
           tr.Debug << "fixing lower connection for " << sim_pos << " using non-template values." << std::endl;
           fix_mainchain_connect( pose, sim_pos, reference, sim_pos );
         } else if ( lower_connect ) {
@@ -734,12 +749,17 @@ void RigidChunkCM::initialize( Pose& pose ){
         sim_origin().find( sim_pos ) != sim_origin().end() ){
       core::Size const templ_pos = sim_origin().at( sim_pos );
 
-      bool upper_connect = ( sim_pos < pose.total_residue()
-                            && !pose.residue( sim_pos ).is_upper_terminus()
-                            && !pose.fold_tree().is_cutpoint( sim_pos ) );
+      bool upper_connect = ( sim_pos < pose.total_residue() &&
+                             !pose.residue( sim_pos ).is_upper_terminus() &&
+                             !pose.fold_tree().is_cutpoint( sim_pos ) );
 
       try {
-        if ( upper_connect && templ_pos + 1 > templ().total_residue() ){
+        if ( upper_connect &&
+             ( templ_pos + 1 > templ().total_residue() ||
+               templ().residue( templ_pos+1 ).is_upper_terminus() ||
+               templ().fold_tree().is_cutpoint( templ_pos ) ) ){
+           // Here, the template doesn't have valid coordinates to connect to, so we have to do it
+           // using reference values.
           tr.Debug << "fixing upper connection for " << sim_pos << " using non-template values." << std::endl;
           fix_mainchain_connect( pose, sim_pos+1, reference, sim_pos+1 );
         } else if ( upper_connect ) {

@@ -71,8 +71,11 @@ XYZClaim::XYZClaim( ClientMoverOP owner,
   }
 }
 
-XYZClaim::XYZClaim( ClientMoverOP owner,
-                    LocalPosition const& local_pos):
+//TODO: Remove me
+XYZClaim::XYZClaim(
+  ClientMoverOP owner,
+  LocalPosition const& local_pos
+):
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( local_pos ) ) ) ),
   c_str_( DOES_NOT_CONTROL ),
@@ -80,15 +83,30 @@ XYZClaim::XYZClaim( ClientMoverOP owner,
   bRelative_( false )
 {}
 
-XYZClaim::XYZClaim( ClientMoverOP owner,
-                            std::string const& label,
-                            std::pair< core::Size, core::Size > const& range ):
+//TODO: remove me
+XYZClaim::XYZClaim(
+  ClientMoverOP owner,
+  std::string const& label,
+  std::pair< core::Size, core::Size > const& range
+):
   EnvClaim( owner ),
   selector_( ResidueSelectorCOP( ResidueSelectorOP( new EnvLabelSelector( label, range ) ) ) ),
   c_str_( DOES_NOT_CONTROL ),
   i_str_( DOES_NOT_CONTROL ),
   bRelative_( false )
 {}
+
+XYZClaim::XYZClaim(
+  ClientMoverOP owner,
+  core::pack::task::residue_selector::ResidueSelectorCOP selector
+):
+  EnvClaim( owner ),
+  selector_( ResidueSelectorCOP( selector ) ),
+  c_str_( DOES_NOT_CONTROL ),
+  i_str_( DOES_NOT_CONTROL ),
+  bRelative_( false )
+{}
+
 
 DOFElement XYZClaim::wrap_dof_id( core::id::DOF_ID const& id ) const {
   DOFElement e = Parent::wrap_dof_id( id );

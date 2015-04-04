@@ -89,6 +89,7 @@ public:
 	void repack_period( core::Size value ) { repack_period_ = value; }
 	void temp_initial( core::Real value ) { temp_initial_ = value; }
 	void temp_final( core::Real value ) { temp_final_ = value; }
+  void repack_neighbors( bool s ) { repack_neighbors_ = s; }
 	void set_fold_tree_from_loops( bool const s ){ set_fold_tree_from_loops_ = s; }
 	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
 	core::kinematics::MoveMapOP move_map() const;
@@ -100,6 +101,7 @@ public:
 	core::Size inner_cycles() const { return inner_cycles_; }
 	core::Size current_cycle_number() const { return current_cycle_number_; }
 	core::Size repack_period() const { return repack_period_; }
+  bool repack_neighbors() const { return repack_neighbors_; }
 
 	/// @brief setup an appropriate movemap for the given loops
 	/// @param[in] loops The loops to model.

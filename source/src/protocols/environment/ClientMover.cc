@@ -96,12 +96,16 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
   for ( Size i = 1; i <= true_pose.num_jump(); ++i ){
     core::Real const delta_trans = sandbox_pose.jump( (int) i ).get_translation().distance( true_pose.jump( (int) i).get_translation() );
     numeric::xyzMatrix< double > const delta_rot = sandbox_pose.jump( (int) i ).get_rotation()*true_pose.jump( (int) i ).get_rotation().inverse();
-    if( delta_trans < TOLERANCE && ( delta_rot.trace() - 3 ) < TOLERANCE ){
+    if( delta_trans > TOLERANCE ||
+        ( delta_rot.trace() - 3 ) > TOLERANCE ){
       try {
         true_pose.set_jump( (int) i, sandbox_pose.jump( (int) i ) );
-      } catch ( environment::EXCN_Env_Security_Exception const& e ){
-        tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover '" << this->get_name()
-        << "': (attempt to write to jump id " << i << ")." << std::endl;
+      } catch ( environment::EXCN_Env_Security_Exception& e ){
+        std::ostringstream ss;
+        ss << "A differing value was detected in jump id " << i << " by " << __FUNCTION__ << ". "
+           << "Jump Translation difference: " << delta_trans << "; Rotation Difference: " << ( delta_rot.trace() - 3 )
+           << ".";
+        e.add_msg( ss.str() );
         throw e;
       }
     }

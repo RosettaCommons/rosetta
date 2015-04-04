@@ -68,9 +68,13 @@ public:
             LocalPosition const& local_pos );
 
   // Initializer for a contiguous range of residues.
+  // TODO: replace this function in RigidChunkCM with the constructor using ResidueSelectorsand remove
   XYZClaim( ClientMoverOP owner,
             std::string const& label,
             std::pair< core::Size, core::Size > const& range );
+
+  XYZClaim( ClientMoverOP owner,
+            ResidueSelectorCOP selector );
 
   virtual void yield_elements( core::pose::Pose const&,
                                DOFElements& elements ) const;

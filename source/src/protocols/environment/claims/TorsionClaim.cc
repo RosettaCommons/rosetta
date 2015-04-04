@@ -143,6 +143,8 @@ void TorsionClaim::insert_dof_element( core::conformation::Conformation const & 
   DOF_ID d_id = conf.dof_id_from_torsion_id( t_id );
   if( d_id.valid() ){
     elements.push_back( wrap_dof_id( d_id ) );
+  } else {
+    tr.Debug << "Failed to claim " << t_id << " becaue it refers to an invalid torsion angle." << std::endl;
   }
 }
 

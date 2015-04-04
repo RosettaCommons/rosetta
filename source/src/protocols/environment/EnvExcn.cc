@@ -68,7 +68,15 @@ EXCN_Env_Security_Exception::EXCN_Env_Security_Exception(
       << "' by mover '" << mover_name << "' via '" << mod_type << "'. ";
 
   if( passport() ){
-    msg << "The passport did not contain the DoF.";
+    core::Size const seqpos = id().atom_id().rsd();
+    msg << "The passport did not contain the DoF. Dofs of this type available for this residue were: [ ";
+    for( core::Size i = 1; i <= conf.residue( seqpos ).natoms(); ++i ){
+      core::id::DOF_ID const other_id( core::id::AtomID( i, seqpos ), id().type() );
+      if( passport()->dof_access( other_id ) ){
+        msg << i << "(" << conf.residue( seqpos ).atom_name( i ) << "), ";
+      }
+    }
+    msg << ']';
   } else {
     msg << "No passport was found.";
   }
