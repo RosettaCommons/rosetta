@@ -184,6 +184,7 @@ public:  // Standard Rosetta methods
 		//sf_ = get_score_function();
 		vector1< string > const patches( 1, "docking" );
 		sf_ = scoring::ScoreFunctionFactory::create_score_function( "talaris2013", patches );
+		//sf_ = scoring::get_score_function();
 		prepare_scoring_function();
 
 		cout << " Starting Score:" << endl;
@@ -377,6 +378,7 @@ private:  // Private methods
 	{
 		using namespace scoring;
 
+		sf_->set_weight( sugar_bb, 1.0 );
 		sf_->set_weight( atom_pair_constraint, 1.0 );
 
 		sf_->set_weight( hbond_sr_bb, sf_->get_weight( hbond_sr_bb ) * Hbond_mult_ );

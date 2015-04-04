@@ -11,23 +11,20 @@
 /// @brief   Database input/output function definitions for carbohydrate-specific data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+
 // Unit header
 #include <core/chemical/carbohydrates/database_io.hh>
 
-// Project headers
+// Project header
 #include <core/types.hh>
 
-// Utility headers
-#include <utility/exit.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
+// Utility header
 #include <utility/io/util.hh>
 
-// Basic headers
+// Basic header
 #include <basic/Tracer.hh>
 
-// C++ headers
+// C++ header
 #include <sstream>
 
 
@@ -38,21 +35,6 @@ static thread_local basic::Tracer TR( "core.chemical.carbohydrates.database_io" 
 namespace core {
 namespace chemical {
 namespace carbohydrates {
-
-// Return a list of strings, which are saccharide-specific properties and modifications, read from a database file.
-// Note: This method is deleted in master as of 26.02.15. ~Labonte
-utility::vector1< std::string >
-read_properties_from_database_file( std::string const & filename )
-{
-	using namespace std;
-	using namespace utility;
-
-	vector1< string > const properties( io::get_lines_from_file_data( filename ) );
-
-	TR.Debug << "Read " << properties.size() << " properties from the carbohydrate database." << endl;
-
-	return properties;
-}
 
 // Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read from a
 // database file.
@@ -76,7 +58,9 @@ read_codes_and_roots_from_database_file( std::string const & filename )
 		codes_to_roots[ key ] = value;
 	}
 
-	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
+	}
 
 	return codes_to_roots;
 }

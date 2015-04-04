@@ -3,5 +3,4 @@
 -read_pdb_link_records
 -mute all
 -unmute core.chemical.carbohydrates
--unmute core.pose.carbohydrates
 -override_rsd_type_limit

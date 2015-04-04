@@ -19,11 +19,10 @@
 #include <core/scoring/ScoreType.hh>
 
 // Utility Headers
+#include <utility/vector1.hh>
 
 // STL Headers
 #include <map>
-
-#include <utility/vector1.hh>
 
 
 namespace core {
@@ -49,7 +48,7 @@ private:
 private:
 	static bool initialized_;
 
-	/// lookup map from string name to enum type
+	// lookup map from string name to enum type
 	static std::map< std::string, ScoreType > name2score_type_;
 	static utility::vector1< std::string >    score_type2name_;
 

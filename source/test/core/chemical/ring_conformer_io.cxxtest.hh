@@ -11,6 +11,7 @@
 /// @brief   Test suite for ring conformer database loading
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>

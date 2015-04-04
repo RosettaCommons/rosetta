@@ -29,14 +29,14 @@ sources = {
 		"ring_conformer_io",
 		"RingConformerSet",
 	],
+	"chemical/carbohydrates" : [
+		"CarbohydrateInfo",
+		"database_io",
+	],
 	"chemical/gasteiger" :[
 		"BondLengths",
 		"GasteigerAtomTypeSet",
 		"GasteigerAtomTyper",
-	],
-	"chemical/carbohydrates" : [
-		"CarbohydrateInfo",
-		"database_io",
 	],
 	"chemical/sdf" : [
 		"MolFileIOData",
@@ -167,10 +167,13 @@ sources = {
 		"PDBPoseMap",
 		"Pose",
 		"util",
-	 ],
+	],
+	"pose/carbohydrates" : [
+		"util",
+	],
 	"pose/symmetry" : [
 		"util",
-	 ],
+	],
 	"scoring" : [
 		"EnergyMap",
 		"EnvPairPotential",
@@ -187,22 +190,19 @@ sources = {
 		"use_bicubic_interpolation",
 		"VirtualResidues",
 	],
-        "scoring/bin_transitions" : [
-                "BinTransitionCalculator",
-        ],
+	"scoring/bin_transitions" : [
+		"BinTransitionCalculator",
+	],
+	"scoring/carbohydrates" : [
+		"CHIEnergyFunction",
+		"database_io",
+	],
 	"scoring/carbon_hbonds" : [
 		"CarbonHBondEnergy",
 	],
 	"scoring/cenrot" : [
 		"CenRotEnergy",
 	],
-	"scoring/func" : [
-		"HarmonicFunc",
-		"GaussianFunc",
-		"ScalarWeightedFunc",
-		"SOGFunc",
-		"SplineFunc",
-        ],
 	"scoring/constraints" : [
 		"AngleConstraint",
 		"AtomPairConstraint",
@@ -223,6 +223,10 @@ sources = {
 	"scoring/dunbrack" : [
 		"Dunbrack2002",
 	],
+	"scoring/elec" : [
+		"FA_ElecEnergy",
+		"RNA_FA_ElecEnergy",
+	],
 	"scoring/electron_density" : [
 		"ElectronDensityLoader",
 	],
@@ -233,15 +237,18 @@ sources = {
 		#"VectorizedEtable",
 	],
 	"scoring/fiber_diffraction" : [
-                "FiberDiffractionEnergy",
-        ],
+		"FiberDiffractionEnergy",
+	],
+	"scoring/func" : [
+		"HarmonicFunc",
+		"GaussianFunc",
+		"ScalarWeightedFunc",
+		"SOGFunc",
+		"SplineFunc",
+	],
 	"scoring/geometric_solvation" : [
 		"GeometricSolEnergy",
 		"OccludedHbondSolEnergy",
-	],
-	"scoring/elec" : [
-		"FA_ElecEnergy",
-		"RNA_FA_ElecEnergy",
 	],
 	"scoring/hbonds" : [
 		"HBondDatabaseTest",
@@ -353,7 +360,6 @@ testinputfiles = [
 	"chemical/carbohydrates/Neu.pdb",
 	"chemical/carbohydrates/beta-psicose.pdb",
 	"chemical/carbohydrates/Lex.pdb",
-	"chemical/carbohydrates/sugar_properties.list",
 	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/params/1aq1.mol2.params",
 	"chemical/params/1dwc.mol2.params",
@@ -506,14 +512,14 @@ testinputfiles = [
 	"fragment/aat049603_05.200_v1_3.gz",
 	"fragment/picking/vall/vall_test.dat",
 	"grid/1dwc_3.gridbb.gz",
-  "indexed_structure_store/test_structure.pdb",
-  "indexed_structure_store/test_store.h5",
-  "indexed_structure_store/test_store/fragments/partial_test_fragments/metadata.json",
-  "indexed_structure_store/test_store/fragments/partial_test_fragments/coordinates.dat",
-  "indexed_structure_store/test_store/fragments/partial_test_fragments/threshold_distance.dat",
-  "indexed_structure_store/test_store/fragments/full_test_fragments/metadata.json",
-  "indexed_structure_store/test_store/fragments/full_test_fragments/coordinates.dat",
-  "indexed_structure_store/test_store/fragments/full_test_fragments/threshold_distance.dat",
+	"indexed_structure_store/test_structure.pdb",
+	"indexed_structure_store/test_store.h5",
+	"indexed_structure_store/test_store/fragments/partial_test_fragments/metadata.json",
+	"indexed_structure_store/test_store/fragments/partial_test_fragments/coordinates.dat",
+	"indexed_structure_store/test_store/fragments/partial_test_fragments/threshold_distance.dat",
+	"indexed_structure_store/test_store/fragments/full_test_fragments/metadata.json",
+	"indexed_structure_store/test_store/fragments/full_test_fragments/coordinates.dat",
+	"indexed_structure_store/test_store/fragments/full_test_fragments/threshold_distance.dat",
 	"io/1ten.pdb",
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
@@ -547,6 +553,7 @@ testinputfiles = [
 	"pack/task/resfile_test.pdb",
 	"pack/task/resfile_test_mut.pdb",
 	"pack/task/resfile_test.resfile",
+	"pack/task/short_his.pdb",
 	"pack/test_in.pdb",
 	"pack/task/test_in.pdb",
 	"pack/task/test_in.silent",
@@ -561,7 +568,7 @@ testinputfiles = [
 	"scoring/1pqc_0003.pdb",
 	"scoring/atom_pair_constraint.data",
 	"scoring/betapose.pdb",
-	"scoring/func/GaussianFunc.u",
+	"scoring/carbohydrates/dummy_params.data",
 	"scoring/constraints/test_in.pdb",
 	"scoring/coordinate_constraint.data",
 	"scoring/dslf_ca_dih.u",
@@ -580,6 +587,10 @@ testinputfiles = [
 	"scoring/fa_rep.data",
 	"scoring/fa_sol.data",
 	"scoring/fa_elec.data",
+	"scoring/fiber_diffraction/data/1IFP.mini.pdb",
+	"scoring/fiber_diffraction/data/1ifp.mini.dat",
+	"scoring/fiber_diffraction/data/helix_denovo.sdef",
+	"scoring/func/GaussianFunc.u",
 	"scoring/hbond_sr_bb.data",
 	"scoring/hbonds/1ubq_23_to_34.pdb",
 	"scoring/hbonds/hbond_compute_energy.u",
@@ -625,15 +636,11 @@ testinputfiles = [
 	"scoring/test.wts",
 	"scoring/test.wts_patch",
 	"scoring/test_in.pdb",
-	"sequence/abego_test.pdb",    
+	"sequence/abego_test.pdb",
 	"sequence/1aho_.fasta.pssm",
 	"sequence/1aho_hom.fasta.pssm",
 	"sequence/test.aln",
 	"sequence/test.general_aln",
 	"sequence/test.grishin_aln",
-	"util/2c9v_stripped.pdb",
-	"pack/task/short_his.pdb",
-	"scoring/fiber_diffraction/data/1IFP.mini.pdb",
-        "scoring/fiber_diffraction/data/1ifp.mini.dat",
-        "scoring/fiber_diffraction/data/helix_denovo.sdef"
+	"util/2c9v_stripped.pdb"
 ]

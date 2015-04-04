@@ -11,6 +11,7 @@
 /// @brief   Method declarations for RingConformationMoverCreator.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
+
 #ifndef INCLUDED_protocols_simple_moves_RingConformationMoverCreator_HH
 #define INCLUDED_protocols_simple_moves_RingConformationMoverCreator_HH
 

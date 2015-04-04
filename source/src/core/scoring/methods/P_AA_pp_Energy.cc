@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/P_AA_pp_Energy.hh
+/// @file   core/scoring/methods/P_AA_pp_Energy.cc
 /// @brief  Probability of observing an amino acid, given its phi/psi energy method declaration
 /// @author Andrew Leaver-Fay
 

@@ -265,9 +265,9 @@ MinMover::apply(pose::Pose & pose) {
 		if( !omega_ ){
 			TR<<"shutting off omega dihedral angle minimization"<<std::endl;
 			for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-			  if( !pose.residue( i ).is_protein() ) continue;
+				if( !pose.residue( i ).is_protein() ) continue;
 				active_movemap->set( core::id::TorsionID( core::id::omega_torsion, BB, i), false );
-		  }
+		}
     }
 		(*scorefxn_)(pose);
 		minimizer.run( pose, *active_movemap, *scorefxn_, *min_options_ );

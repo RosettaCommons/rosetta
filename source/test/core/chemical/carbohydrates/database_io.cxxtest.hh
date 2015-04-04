@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 database_io.cxxtest.hh
+/// @file	 test/core/chemical/database_io.cxxtest.hh
 /// @brief   Test suite for carbohydrate database loading
-/// @author  Labonte
+/// @author  Labonte <JWLabonte@jhu.edu>
+
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -18,16 +19,12 @@
 // Unit header
 #include <core/chemical/carbohydrates/database_io.hh>
 
-// Utility header
-#include <utility/vector1.hh>
-
 // C++ header
 #include <map>
 
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
-public:
-	// Standard methods ///////////////////////////////////////////////////////////////////////////////////////////////
+public: // Standard methods ///////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
@@ -39,19 +36,18 @@ public:
 	{}
 
 
-	// Tests //////////////////////////////////////////////////////////////////////////////////////////////////////////
+public: // Tests //////////////////////////////////////////////////////////////
 	// Confirm that carbohydrate 3-letter codes and roots are loaded correctly from the database.
 	void test_read_codes_and_roots_from_database_file()
 	{
 		using namespace std;
-		using namespace utility;
 		using namespace core::chemical::carbohydrates;
 
-		TS_TRACE("Testing read_codes_and_roots_from_database_file() method.");
+		TS_TRACE( "Testing read_codes_and_roots_from_database_file() method." );
 
-		map<string, string> map =
-				read_codes_and_roots_from_database_file("core/chemical/carbohydrates/codes_to_roots.map");
+		map< string, string > map(
+				read_codes_and_roots_from_database_file( "core/chemical/carbohydrates/codes_to_roots.map" ) );
 
-		TS_ASSERT_EQUALS(map.size(), 3);
+		TS_ASSERT_EQUALS( map.size(), 3 );
 	}
 };  // class CarbohydrateDatabaseIOTests

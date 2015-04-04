@@ -97,7 +97,7 @@ public:
 	///     MinMover
 	///     MinMover.movemap
 	///     MinMover.score_function
-	virtual void apply( core::pose::Pose & pose_ );
+	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	virtual void show(std::ostream & output=std::cout) const;
 

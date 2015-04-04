@@ -30,22 +30,21 @@ namespace scoring {
 	/////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Type for looking up cached energies
-/// I guess we could get rid of the fa_ prefix, except maybe for
+/// @remark I guess we could get rid of the fa_ prefix, except maybe for
 /// fa_pair, to distinguish from std::pair and the centroid pair score...
 enum ScoreType {
-
-	/// begin short ranged ci2b scores -- these guys are cached
-	/// in the energy graph -- when appropriate --
-	/// they are reused between rounds of scoring.
+	// Short-ranged, Context-Independent Two-Body Energy Method Types /////////
+	// These guys are cached in the energy graph -- when appropriate.
+	// They are reused between rounds of scoring.
 	fa_atr = 1, //enumeration starts at 1 for indexing utility::vector1
 	fa_rep,
 	fa_sol,
 	fa_intra_atr, // crossover 3: intra between torsion-connected atoms is computed. 'classic'
 	fa_intra_rep,
 	fa_intra_sol,
-  fa_intra_atr_xover4, // crossover 4: intra between torsion-connected atoms not computed
-  fa_intra_rep_xover4,
-  fa_intra_sol_xover4,
+	fa_intra_atr_xover4, // crossover 4: intra between torsion-connected atoms not computed
+	fa_intra_rep_xover4,
+	fa_intra_sol_xover4,
 	fa_intra_RNA_base_phos_atr, //RNA specific score term -- to be deprecated in late 2015
 	fa_intra_RNA_base_phos_rep, //RNA specific score term -- to be deprecated in late 2015
 	fa_intra_RNA_base_phos_sol, //RNA specific score term -- to be deprecated in late 2015
@@ -96,8 +95,8 @@ enum ScoreType {
 	pddf_score, // score based on pairwise distance distribution function
 
 	fiberdiffraction, // fiber diffraction score
-  fiberdiffractiondens, // fiber diffraction density score
-  #ifdef USECUDA
+	fiberdiffractiondens, // fiber diffraction density score
+	#ifdef USECUDA
 	fiberdiffractiongpu, // fiber diffraction gpu score
 	#endif
 
@@ -113,8 +112,8 @@ enum ScoreType {
 	fa_elec_rna_sugr_base,
 	fa_elec_rna_base_base,
 
-  fa_elec_rna_phos_phos_fast,
-  fa_elec_rna_phos_sugr_fast,
+	fa_elec_rna_phos_phos_fast,
+	fa_elec_rna_phos_sugr_fast,
 	fa_elec_rna_phos_base_fast,
 	fa_elec_rna_sugr_sugr_fast,
 	fa_elec_rna_sugr_base_fast,
@@ -134,7 +133,7 @@ enum ScoreType {
 	ch_bond_sc_sc,
 	ch_bond_bb_sc,
 
-	/// proline closure energy
+	// proline closure energy
 	pro_close,
 	rama2b,
 
@@ -148,7 +147,6 @@ enum ScoreType {
 
 	// gaussian overlap
 	gauss,
-
 
 	rna_vdw,          // low res clash check for RNA
 	rna_base_backbone,          // Bases to 2'-OH, phosphates, etc.
@@ -173,9 +171,9 @@ enum ScoreType {
 	rna_base_stack,   // Stacking interactions
 	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
 
-  rna_mg, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
-  rna_mg_rep, // ad-hoc, empirically validated term to prevent uncommon mg(2+)/atom interactions.
-  rna_mg_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+	rna_mg, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+	rna_mg_rep, // ad-hoc, empirically validated term to prevent uncommon mg(2+)/atom interactions.
+	rna_mg_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
@@ -202,10 +200,8 @@ enum ScoreType {
 	geom_sol_fast,           //Context independent version. Currently tested only for RNA case.
 	geom_sol_fast_intra_RNA, //RNA specific score term -- to be deprecated in late 2015.
 
-
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,
-
 
 	// All the orbitals scoretypes
 	orbitals_hpol_bb,
@@ -213,7 +209,6 @@ enum ScoreType {
 	pci_pi_pi,
 	pci_salt_bridge,
 	pci_hbond,
-
 
 	#ifdef PYROSETTA
 		PyRosettaTwoBodyContextIndepenedentEnergy_first,
@@ -225,12 +220,13 @@ enum ScoreType {
 	// However, the user may define only a single runtime defined method
 	python,  // <-- Deprecated use PyRosettaEnergie* instead
 
-	n_ci_2b_score_types = python, /// keep this guy at the end of the ci2b scores
-	//end ci2b scores
+	n_ci_2b_score_types = python, // keep this guy at the end of the ci2b scores
+	// End Short-ranged, Context-Independent Two-Body Energy Method Types /////
 
-	// Begin short-ranged, context dependent two-body energy method types.
+
+	// Short-ranged, Context-Dependent Two-Body Energy Method Types ///////////
 	// These are also cached in the edges of the EnergyGraph.
-	fa_pair, /// == fa_pair_pol_pol
+	fa_pair, // == fa_pair_pol_pol
 	fa_pair_aro_aro,
 	fa_pair_aro_pol,
 	fa_pair_pol_pol,
@@ -274,7 +270,7 @@ enum ScoreType {
 
 	//RNA stuff
 	//Low resolution
-	rna_rg,           // Radius of gyration for RNA
+	rna_rg,  // Radius of gyration for RNA
 
 	//  FACTS solvation model
 	facts_elec,
@@ -291,11 +287,12 @@ enum ScoreType {
 	interchain_pair,
 	interchain_vdw,
 
-
-	// end short ranged two body scores
 	n_shortranged_2b_score_types = interchain_vdw, // keep this guy at the end of the sr ci/cd 2b scores
 	// 30 as of 1/7/2007 -- don't ever code using the literal "30", this is just a helpful count
+	// End Short-ranged, Context-Dependent Two-Body Energy Method Types ///////
 
+
+	// Other One-Body and Two-Body Energy Method Types ////////////////////////
 	gb_elec,
 
 	//Full atom disulfide terms
@@ -345,19 +342,22 @@ enum ScoreType {
 	ref,
 	ref_nc,
 	seqdep_ref,
-  nmer_ref,
-  nmer_pssm,
-  nmer_svm,
+	nmer_ref,
+	nmer_pssm,
+	nmer_svm,
 	envsmooth,
 	e_pH,
 	rna_bulge,
-  mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
+	mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
+
+	// Context-Independent, One-Body Carbohydrate Scoring Terms
+	sugar_bb,
 
 	// various entropy terms that look at entire pose (and other poses too )
 	free_suite,      // bonus for virtualizing RNA suite
 	free_2HOprime,   // bonus for virtualizing RNA 2'-OH
 	free_side_chain, // bonus for virtualizing protein side-chain
-  free_base, // bonus for not stacking or h-bonding to nucleobase
+	free_base, // bonus for not stacking or h-bonding to nucleobase
 	free_res,  // knowledge-based bonus for noninstantiated residues -- favors, e.g., U bulges.
 	free_dof,  // combines all free_* bonuses into one term.
 	intermol,  // cost of instantiating a chain from 1 M std state.
@@ -367,9 +367,11 @@ enum ScoreType {
 
 	// PB potential
 	PB_elec,
+	// End Other One-Body and Two-Body Energy Method Types ////////////////////
 
-	/// Whole structure energies
-	/// centroid whole structure energies
+
+	// Whole Structure Energy Method Types ////////////////////////////////////
+	// centroid whole structure energies
 	cen_env_smooth,   //fpd smooth centroid env
 	cbeta_smooth,     //fpd smooth cbeta
 	cen_rot_env,
@@ -398,8 +400,8 @@ enum ScoreType {
 	loop_close,  // Loop closure terms -- attempting model full folding free energy for multiple loop-connected poses
 	missing_res, // penalize missing loops
 
-	/// Membrane Framework Whole Structure Energies
-	/// centroid - added by @ralford 3/30/14
+	// Membrane Framework Whole Structure Energies
+	// centroid - added by @ralford 3/30/14
 	MPEnv,
 	MPCbeta,
 	MPLipo,
@@ -409,14 +411,14 @@ enum ScoreType {
 	FaMPEnv,
 	FaMPEnvSmooth,
 
-	/// Whole structure energies, centroid score
+	// Whole structure energies, centroid score
 	// secondary structure scores
 	natbias_ss,
 	natbias_hs,
 	natbias_hh,
 	natbias_stwist,
 
-	/// amino acid composition score
+	// amino acid composition score
 	aa_cmp,
 
 	dock_ens_conf, //conformer reference energies for docking
@@ -426,7 +428,7 @@ enum ScoreType {
 	rdc,//NMR residual dipolar coupling energy
 	rdc_segments, //fit alignment on multiple segments independently
 	rdc_rohl,
-  // end centroid whole structure energies
+	// end centroid whole structure energies
 	holes,
 	holes_decoy,
 	holes_resl,
@@ -486,7 +488,7 @@ enum ScoreType {
 	// for ResidueConstraint
 	res_type_constraint,
 
-  // Residue Type linking constraint
+	// Residue Type linking constraint
 	res_type_linking_constraint,
 
 	// for PocketConstraint
@@ -494,7 +496,7 @@ enum ScoreType {
 
 	// for BackboneStubConstraint
 	backbone_stub_constraint,
-  backbone_stub_linear_constraint,
+	backbone_stub_linear_constraint,
 
 	surface,
 	p_aa,
@@ -516,10 +518,10 @@ enum ScoreType {
 	xtal_rfree,
 
 	hpatch,
-  //membrane environment smooth
+	//membrane environment smooth
 	Menv_smooth,
 
-  #ifdef PYROSETTA
+	#ifdef PYROSETTA
 		PyRosettaEnergy_first,
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
 	#endif
@@ -543,7 +545,7 @@ enum ScoreType {
 	/// This element marks the very end of the score type enumeration.  Elements between
 	/// the n_score_types element and this element are considered inactive.  They may not
 	/// be used by any EnergyMethod or they will result in an out-of-bounds write and
-	/// unexpected behavior.  To use an inactived score type, the score type must be moved
+	/// unexpected behavior.  To use an inactive score type, the score type must be moved
 	/// to an earlier position in this enumeration, and the program must be recompiled.
 	/// Keep this guy last.
 	end_of_score_type_enumeration = dummy_score_type

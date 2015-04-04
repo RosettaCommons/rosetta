@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file   core/scoring/ScoreTypeManager.cc
+/// @brief  Method definitions for ScoreTypeManager
 /// @author Andrew Leaver-Fay
 
 // Unit Heaaders
@@ -105,14 +105,14 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_elec_rna_sugr_base" ] = fa_elec_rna_sugr_base;
 	name2score_type_[ "fa_elec_rna_base_base" ] = fa_elec_rna_base_base;
 
-  name2score_type_[ "fa_elec_rna_phos_phos_fast" ] = fa_elec_rna_phos_phos_fast;
-  name2score_type_[ "fa_elec_rna_phos_sugr_fast" ] = fa_elec_rna_phos_sugr_fast;
+	name2score_type_[ "fa_elec_rna_phos_phos_fast" ] = fa_elec_rna_phos_phos_fast;
+	name2score_type_[ "fa_elec_rna_phos_sugr_fast" ] = fa_elec_rna_phos_sugr_fast;
 	name2score_type_[ "fa_elec_rna_phos_base_fast" ] = fa_elec_rna_phos_base_fast;
 	name2score_type_[ "fa_elec_rna_sugr_sugr_fast" ] = fa_elec_rna_sugr_sugr_fast;
 	name2score_type_[ "fa_elec_rna_sugr_base_fast" ] = fa_elec_rna_sugr_base_fast;
 	name2score_type_[ "fa_elec_rna_base_base_fast" ] = fa_elec_rna_base_base_fast;
 
-  name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
+	name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
 	name2score_type_[ "fa_elec_aro_all" ] = fa_elec_aro_all;
 	name2score_type_[ "hack_aro" ] = hack_aro;
 	name2score_type_[ "h2o_hbond" ] = h2o_hbond;
@@ -147,8 +147,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "pddf_score" ] = pddf_score;
 
 	name2score_type_[ "fiberdiffraction" ] = fiberdiffraction;
-  name2score_type_[ "fiberdiffractiondens" ] = fiberdiffractiondens;
-  #ifdef USECUDA
+	name2score_type_[ "fiberdiffractiondens" ] = fiberdiffractiondens;
+	#ifdef USECUDA
 	name2score_type_[ "fiberdiffractiongpu" ] = fiberdiffractiongpu;
 	#endif
 
@@ -242,12 +242,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "ref" ] = ref;
 	name2score_type_[ "ref_nc" ] = ref_nc;
 	name2score_type_[ "seqdep_ref" ] = seqdep_ref;
-  name2score_type_[ "nmer_ref" ] = nmer_ref;
-  name2score_type_[ "nmer_pssm" ] = nmer_pssm;
-  name2score_type_[ "nmer_svm" ] = nmer_svm;
+	name2score_type_[ "nmer_ref" ] = nmer_ref;
+	name2score_type_[ "nmer_pssm" ] = nmer_pssm;
+	name2score_type_[ "nmer_svm" ] = nmer_svm;
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;
+
+	// Context-Independent, One-Body Carbohydrate Scoring Terms
+	name2score_type_[ "sugar_bb"] = sugar_bb;
 
 	name2score_type_[ "loop_close"] = loop_close;
 	name2score_type_[ "missing_res"] = missing_res;

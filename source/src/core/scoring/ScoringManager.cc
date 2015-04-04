@@ -42,6 +42,7 @@
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>
+#include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
 #include <core/scoring/dna/DNABFormPotential.hh>
 #include <core/scoring/dna/DNATorsionPotential.hh>
 #include <core/scoring/dna/DNA_BasePotential.hh>
@@ -160,14 +161,15 @@ ScoringManager::ScoringManager() :
 	cen_disulfide_potential_( /* 0 */ ),
 	disulfide_matching_potential_( /* 0 */ ),
 	membrane_potential_( /* 0 */ ),
-  membrane_fapotential_( /* 0 */ ), //pba
+	membrane_fapotential_( /* 0 */ ), //pba
 	ProQ_potential_(/* 0 */),
 	PB_potential_(/* 0 */),
 	unf_state_( /* 0 */ ),
+	CHI_energy_function_( /* 0 */ ),
 	NV_lookup_table_(/* 0 */),
 	orbitals_lookup_table_( /* 0 */ ),
 	vallLookbackPotential_(0),
-  DDP_lookup_table_(/* 0 */),
+	DDP_lookup_table_(/* 0 */),
 	method_creator_map_( n_score_types, 0 )
 {}
 
@@ -763,6 +765,18 @@ using namespace basic::options::OptionKeys;
 		}
 	}
 	return *unf_state_;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+carbohydrates::CHIEnergyFunction const &
+ScoringManager::get_CHIEnergyFunction() const
+{
+	if ( CHI_energy_function_ == 0 ) {
+		CHI_energy_function_ =  carbohydrates::CHIEnergyFunctionOP( new carbohydrates::CHIEnergyFunction );
+	}
+
+	return *CHI_energy_function_;
 }
 
 

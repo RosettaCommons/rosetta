@@ -54,7 +54,6 @@ score_type_from_name( std::string const & name )
 /// if the lookup map has been set up already. If the string name cannot be
 /// converted properly, it will flag the input stream as failure
 /// (e.g., istream.fail() is true) and set ScoreType enum type to total_score.
-
 std::istream &
 operator >>(
 	std::istream & is,

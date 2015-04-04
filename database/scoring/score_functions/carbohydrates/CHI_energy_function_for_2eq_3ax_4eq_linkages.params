@@ -1,0 +1,9 @@
+# This file contains lists of values of the Gaussian parameters for each of
+# the terms of the CHI energy function for the psi angle in ->2-equatorial,
+# ->3-axial, and ->4-equatorial linkages, as defined in:
+# A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
+
+a   4.4681     4.382      2.8495e2   4.7613    -1.692e2   -1.1844e2  # magnitudes of the distributions
+b   1.0e-30    3.5777e2   1.4664e2   2.2068e2   1.4737e2   1.4606e2  # midpoints of the distributions
+c   1.2796e3   6.0501e3   1.5518e3   5.8929e3   1.7425e3   1.3598e3  # twice the squares of the widths of the distributions
+d   1.0220  # intercept (coefficient of zeroth order term)

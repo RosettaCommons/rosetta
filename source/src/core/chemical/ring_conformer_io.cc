@@ -16,20 +16,17 @@
 #include <core/chemical/ring_conformer_io.hh>
 #include <core/chemical/RingConformer.hh>
 
-// Project headers
+// Project header
 #include <core/types.hh>
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
 #include <utility/io/util.hh>
 
-// Basic headers
+// Basic header
 #include <basic/Tracer.hh>
 
-// C++ headers
+// C++ header
 #include <sstream>
 
 
@@ -89,8 +86,10 @@ read_conformers_from_database_file_for_ring_size( std::string const & filename, 
 		conformers.push_back( conformer );
 	}
 
-	TR.Debug << "Read " << conformers.size() << " " <<
-			ring_size << "-membered ring conformers from the carbohydrate database." << endl;
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Read " << conformers.size() << " " <<
+				ring_size << "-membered ring conformers from the carbohydrate database." << endl;
+	}
 
 	return conformers;
 }

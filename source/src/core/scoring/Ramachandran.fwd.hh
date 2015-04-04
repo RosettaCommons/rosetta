@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/Ramachandran.fwd.hh
-/// @brief  Ramachandran potential class forward delcaration
+/// @brief  Ramachandran potential class forward declaration
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 #ifndef INCLUDED_core_scoring_Ramachandran_fwd_hh

@@ -30,7 +30,7 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
-// Classes in core that must register with factorys
+// Classes in core that must register with factories
 #include <core/init/score_function_corrections.hh>
 #include <core/scoring/constraints/ConstraintsEnergyCreator.hh>
 #include <core/scoring/disulfides/CentroidDisulfideEnergyCreator.hh>
@@ -71,6 +71,7 @@
 #include <core/scoring/methods/ReferenceEnergyCreator.hh>
 #include <core/scoring/methods/ReferenceEnergyNoncanonicalCreator.hh>
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
+#include <core/scoring/methods/carbohydrates/SugarBackboneEnergyCreator.hh>
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
 #include <core/scoring/methods/vall_lookback/VallLookbackEnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
@@ -366,6 +367,7 @@ static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > D
 static EnergyMethodRegistrator< scoring::methods::VallLookbackEnergyCreator > VallLookbackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
+static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;

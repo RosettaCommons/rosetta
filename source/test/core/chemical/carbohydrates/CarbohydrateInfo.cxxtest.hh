@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file	 CarbohydrateInfo.cxxtest.hh
+/// @file	 test/core/chemical/carbohydrates/CarbohydrateInfo.cxxtest.hh
 /// @brief   Test suite for CarbohydrateInfo
 /// @author  Labonte <JWLabonte@jhu.edu>
+
 
 // Test headers
 #include <cxxtest/TestSuite.h>
@@ -36,30 +37,29 @@ public:  // Standard methods //////////////////////////////////////////////////
 		using namespace core::import_pose;
 		using namespace basic::options;
 
-		core_init_with_additional_options("-override_rsd_type_limit");
+		core_init_with_additional_options( "-override_rsd_type_limit" );
 
-		option[OptionKeys::in::include_sugars](true);
-		option[OptionKeys::in::file::read_pdb_link_records](true);
-		//option[OptionKeys::in::enable_branching](true);
+		option[ OptionKeys::in::include_sugars ]( true );
+		option[ OptionKeys::in::file::read_pdb_link_records ]( true );
 
 		// Test that oligosaccharides are loaded correctly.
-		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
-		pose_from_pdb(isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb");
+		pose_from_pdb( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb" );
+		pose_from_pdb( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" );
 
 		// Test branched oligosaccharide.
-		pose_from_pdb(branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb");
+		pose_from_pdb( branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb" );
 
 		// Test N-linked glycosylation.
-		pose_from_pdb(N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb");
+		pose_from_pdb( N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb" );
 
 		// Test modified sugar patch system.
-		pose_from_pdb(glucosamine_, "core/chemical/carbohydrates/GlcN.pdb");
+		pose_from_pdb( glucosamine_, "core/chemical/carbohydrates/GlcN.pdb" );
 
 		// Test a combination of the above.
-		pose_from_pdb(Lex_, "core/chemical/carbohydrates/Lex.pdb");
+		pose_from_pdb( Lex_, "core/chemical/carbohydrates/Lex.pdb" );
 
 		// Test that oligosaccharides can be created from a given sequence.
-		//make_pose_from_saccharide_sequence(lactose_, "beta-D-Galp-(1->4)-Glcp");
+		//make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );
 	}
 
 	// Destruction
@@ -71,68 +71,68 @@ public:  // Tests /////////////////////////////////////////////////////////////
 	// Confirm that CarbohydrateInfo.short_name_ is assigned correctly.
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{
-		TS_TRACE("Testing chain_sequence() method of Pose with polysaccharide chains.");
-		TS_ASSERT_EQUALS(maltotriose_.chain_sequence(1), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp");
-		TS_ASSERT_EQUALS(isomaltose_.chain_sequence(1), "alpha-D-Glcp-(1->6)-D-Glcp");
-		//TS_ASSERT_EQUALS(lactose_.chain_sequence(1), "beta-D-Galp-(1->4)-D-Glcp");
-		TS_ASSERT_EQUALS(glucosamine_.chain_sequence(1), "D-GlcpN");
+		TS_TRACE( "Testing chain_sequence() method of Pose with polysaccharide chains." );
+		TS_ASSERT_EQUALS( maltotriose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp" );
+		TS_ASSERT_EQUALS( isomaltose_.chain_sequence( 1 ), "alpha-D-Glcp-(1->6)-D-Glcp" );
+		//TS_ASSERT_EQUALS( lactose_.chain_sequence( 1 ), "beta-D-Galp-(1->4)-D-Glcp" );
+		TS_ASSERT_EQUALS( glucosamine_.chain_sequence( 1 ), "D-GlcpN" );
 	}
 
 	// Confirm that backbone torsion angles are assigned correctly.
 	void test_Pose_phi_psi_omega_w_polysaccharide()
 	{
-		TS_TRACE("Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
-		TS_ASSERT_DELTA(maltotriose_.phi(1), 0.000, 0.02);
+		TS_TRACE( "Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
+		TS_ASSERT_DELTA( maltotriose_.phi( 1 ), 0.000, 0.02 );
 
-		TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.02);
-		TS_ASSERT_DELTA(isomaltose_.psi(2), -170.869, 0.02);
-		TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.02);
+		TS_ASSERT_DELTA( isomaltose_.phi( 2 ), 44.3268, 0.02 );
+		TS_ASSERT_DELTA( isomaltose_.psi( 2 ), -170.869, 0.02 );
+		TS_ASSERT_DELTA( isomaltose_.omega( 2 ), 49.383, 0.02 );
 
-		TS_ASSERT_DELTA(branched_fragment_.phi(5), 111.187, 0.02);
+		TS_ASSERT_DELTA( branched_fragment_.phi( 5 ), 111.187, 0.02 );
 
-		TS_ASSERT_DELTA(N_linked_.phi(6), -103.691, 0.02);
+		TS_ASSERT_DELTA( N_linked_.phi( 6 ), -103.691, 0.02 );
 
-		TS_ASSERT_DELTA(Lex_.phi(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.psi(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.omega(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.phi(2), -85.8, 0.1);
-		TS_ASSERT_DELTA(Lex_.psi(2), 135.6, 0.1);
-		TS_ASSERT_DELTA(Lex_.omega(2), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.phi(3), -76.9, 0.1);
-		TS_ASSERT_DELTA(Lex_.psi(3), -97.0, 0.1);
-		TS_ASSERT_DELTA(Lex_.omega(3), 0.0, 0.1);  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.psi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.omega( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 2 ), -85.8, 0.1 );
+		TS_ASSERT_DELTA( Lex_.psi( 2 ), 135.6, 0.1 );
+		TS_ASSERT_DELTA( Lex_.omega( 2 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 3 ), -76.9, 0.1 );
+		TS_ASSERT_DELTA( Lex_.psi( 3 ), -97.0, 0.1 );
+		TS_ASSERT_DELTA( Lex_.omega( 3 ), 0.0, 0.1 );  // undefined torsion
 
-		Lex_.set_phi(1, 10.0);  // undefined torsion; should be ignored
-		Lex_.set_psi(1, 20.0);  // undefined torsion; should be ignored
-		Lex_.set_omega(1, 30.0);  // undefined torsion; should be ignored
-		Lex_.set_phi(2, 40.0);
-		Lex_.set_psi(2, 50.0);
-		Lex_.set_omega(2, 60.0);  // undefined torsion; should be ignored
-		Lex_.set_phi(3, 70.0);
-		Lex_.set_psi(3, 80.0);
-		Lex_.set_omega(3, 90.0);  // undefined torsion; should be ignored
+		Lex_.set_phi( 1, 10.0 );  // undefined torsion; should be ignored
+		Lex_.set_psi( 1, 20.0 );  // undefined torsion; should be ignored
+		Lex_.set_omega( 1, 30.0 );  // undefined torsion; should be ignored
+		Lex_.set_phi( 2, 40.0 );
+		Lex_.set_psi( 2, 50.0 );
+		Lex_.set_omega( 2, 60.0 );  // undefined torsion; should be ignored
+		Lex_.set_phi( 3, 70.0 );
+		Lex_.set_psi( 3, 80.0 );
+		Lex_.set_omega( 3, 90.0 );  // undefined torsion; should be ignored
 
-		TS_ASSERT_DELTA(Lex_.phi(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.psi(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.omega(1), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.phi(2), 40.0, 0.1);
-		TS_ASSERT_DELTA(Lex_.psi(2), 50.0, 0.1);
-		TS_ASSERT_DELTA(Lex_.omega(2), 0.0, 0.1);  // undefined torsion
-		TS_ASSERT_DELTA(Lex_.phi(3), 70.0, 0.1);
-		TS_ASSERT_DELTA(Lex_.psi(3), 80.0, 0.1);
-		TS_ASSERT_DELTA(Lex_.omega(3), 0.0, 0.1);  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.psi( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.omega( 1 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 2 ), 40.0, 0.1 );
+		TS_ASSERT_DELTA( Lex_.psi( 2 ), 50.0, 0.1 );
+		TS_ASSERT_DELTA( Lex_.omega( 2 ), 0.0, 0.1 );  // undefined torsion
+		TS_ASSERT_DELTA( Lex_.phi( 3 ), 70.0, 0.1 );
+		TS_ASSERT_DELTA( Lex_.psi( 3 ), 80.0, 0.1 );
+		TS_ASSERT_DELTA( Lex_.omega( 3 ), 0.0, 0.1 );  // undefined torsion
 	}
 
 	// Confirm that side-chain torsion angles are assigned correctly.
 	void test_Pose_chi_w_polysaccharide()
 	{
-		TS_TRACE("Testing chi() method of Pose with polysaccharide chains.");
-		//TS_ASSERT_DELTA(maltotriose_.chi(1, 2), 0.000, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(2, 2), -179.959, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(3, 2), 175.924, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(4, 2), maltotriose_.psi(3), 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(5, 2), -161.7, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(6, 2), -178.781, 0.02);
+		TS_TRACE( "Testing chi() method of Pose with polysaccharide chains." );
+		//TS_ASSERT_DELTA( maltotriose_.chi( 1, 2 ), 0.000, 0.02 );
+		TS_ASSERT_DELTA( maltotriose_.chi( 2, 2 ), -179.959, 0.02 );
+		TS_ASSERT_DELTA( maltotriose_.chi( 3, 2 ), 175.924, 0.02 );
+		TS_ASSERT_DELTA( maltotriose_.chi( 4, 2 ), maltotriose_.psi( 3 ), 0.02 );
+		TS_ASSERT_DELTA( maltotriose_.chi( 5, 2 ), -161.7, 0.02 );
+		TS_ASSERT_DELTA( maltotriose_.chi( 6, 2 ), -178.781, 0.02 );
 	}
 
 	// Confirm that branches are handled properly.
@@ -141,9 +141,9 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace core;
 		using namespace conformation;
 
-		TS_TRACE("Testing branch_point() method of CarbohydrateInfo.");
-		Residue res2 = branched_fragment_.residue(2);
-		TS_ASSERT_EQUALS(res2.carbohydrate_info()->branch_point(1), 6);
+		TS_TRACE( "Testing branch_point() method of CarbohydrateInfo." );
+		Residue const & res2( branched_fragment_.residue( 2 ) );
+		TS_ASSERT_EQUALS( res2.carbohydrate_info()->branch_point( 1 ), 6 );
 	}
 
 

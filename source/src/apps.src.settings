@@ -93,10 +93,10 @@ sources = {
 	"public/coupled_moves": [
 		"coupled_moves",
 	],
-        "public/darc": [
-                "DARC",
-                "make_ray_files",
-        ],
+	"public/darc": [
+		"DARC",
+		"make_ray_files",
+	],
 	"public/ddg": [
 		"ddg_monomer",
 		"ensemble_generator_score12_sidechain_ver2",
@@ -108,13 +108,13 @@ sources = {
 		"pmut_scan_parallel",
 		"sequence_recovery",
 		"beta_peptide_modeling",
-	        "rna_design",
+		"rna_design",
 		"supercharge",
-                "zinc_heterodimer_design",
-                #"zinc1_homodimer_setup", #protein interface with one zinc
-                #"zinc1_homodimer_design",
-                "zinc2_homodimer_setup",  #protein interface with two zincs
-                "zinc2_homodimer_design",
+		"zinc_heterodimer_design",
+		#"zinc1_homodimer_setup", #protein interface with one zinc
+		#"zinc1_homodimer_design",
+		"zinc2_homodimer_setup",  #protein interface with two zincs
+		"zinc2_homodimer_design",
 	],
 	"public/docking": [
 		"docking_prepack_protocol",
@@ -128,18 +128,18 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
-    "public/farna": [
-	    "rna_cluster",
-	    "rna_database",
-	    "rna_denovo",
-	    "rna_extract",
-	    "rna_minimize",
-	    "rna_score",
-	    "cs_rosetta_rna"
+	"public/farna": [
+		"rna_cluster",
+		"rna_database",
+		"rna_denovo",
+		"rna_extract",
+		"rna_minimize",
+		"rna_score",
+		"cs_rosetta_rna"
 	],
-	 "public/fiber_diffraction": [
-                "FiberDiffractionFreeSet",
-        ],
+	"public/fiber_diffraction": [
+		"FiberDiffractionFreeSet",
+	],
 	"public/flexpep_docking": [
 		"BuildPeptide",
 		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
@@ -156,7 +156,7 @@ sources = {
 		"extract_atomtree_diffs",
 		"ligand_dock",
 		"ligand_rpkmin",
-                "select_best_unique_ligand_poses", # /* Ian Davis/Rocco Moretti, doc/apps/public/ligand_dock.dox, test/integration/tests/select_best_unique_ligand_poses/ */
+		"select_best_unique_ligand_poses", # /* Ian Davis/Rocco Moretti, doc/apps/public/ligand_dock.dox, test/integration/tests/select_best_unique_ligand_poses/ */
 	],
 	"public/loop_modeling": [
 		"loopmodel",
@@ -174,7 +174,7 @@ sources = {
 		"incorporate_motifs",
 	],
 	"public/ncaa_utilities": [
-                "MakeRotLib",
+		"MakeRotLib",
 		"UnfoldedStateEnergyCalculator",
 	],
 	"public/nmr": [
@@ -183,7 +183,7 @@ sources = {
 	"public/noncanonical_backbones": [
 		"hbs_design",
 		"oop_design",
-                "peptoid_design",
+		"peptoid_design",
 	],
 	"public/pepspec": [
 		"pepspec",
@@ -192,31 +192,31 @@ sources = {
 	"public/pocket": [
 		"pocket_suggest_target_residues_by_ddg",
 		"pocket_measure",
-    "pocket_suggest_target_residues_by_ddg",
+		"pocket_suggest_target_residues_by_ddg",
 		"make_exemplar",
 		"pocket_suggest_target_residues_by_ddg",
 	],
-    "public/rna_util": [
- 	    "nucleobase_sample_around",
-	    "recces_turner",
-	    "rna_features",
-	    "rna_graft",
-	    "rna_helix",
-	    "rna_predict_chem_map",
-	    "rna_suitename",
-	    "rna_thread",
-	    "erraser_minimizer",
+	"public/rna_util": [
+		"nucleobase_sample_around",
+		"recces_turner",
+		"rna_features",
+		"rna_graft",
+		"rna_helix",
+		"rna_predict_chem_map",
+		"rna_suitename",
+		"rna_thread",
+		"erraser_minimizer",
 	],
 	"public/surface_docking": [
-	    "surface_docking",
+		"surface_docking",
 	],
 	"public/stepwise/legacy": [
-	    "swa_protein_main",
-	    "swa_rna_main",
-	    "swa_rna_util",
+		"swa_protein_main",
+		"swa_rna_main",
+		"swa_rna_util",
 	],
 	"public/stepwise/": [
-	    "stepwise",
+		"stepwise",
 	],
 	"public/rosetta_scripts": [
 		"revert_design_to_native",
@@ -233,9 +233,9 @@ sources = {
 		"doug_dock_design_min_mod2_cal_cal",
 		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
 		"chemically_conjugated_docking/UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_E2_thioester/ */
-                "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
-                "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
-                ],
+		"chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
+		"chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
+	],
 	"public/weight_optimization": [
 		"optE_parallel",
 	],
@@ -248,26 +248,26 @@ libraries = [
 ]
 subprojects = [
 	"devel",
-        "protocols.7",
-        "protocols.6",
-        "protocols_f.5",
-        "protocols_e.5",
-        "protocols_d.5",
-        "protocols_c.5",
-        "protocols_b.5",
-        "protocols_a.5",
-        "protocols_h.4",
-        "protocols_g.4",
-        "protocols_f.4",
-        "protocols_e.4",
-        "protocols_d.4",
-        "protocols_c.4",
-        "protocols_b.4",
-        "protocols_a.4",
-        "protocols.3",
-        "protocols_b.2",
-        "protocols_a.2",
-        "protocols.1",
+	"protocols.7",
+	"protocols.6",
+	"protocols_f.5",
+	"protocols_e.5",
+	"protocols_d.5",
+	"protocols_c.5",
+	"protocols_b.5",
+	"protocols_a.5",
+	"protocols_h.4",
+	"protocols_g.4",
+	"protocols_f.4",
+	"protocols_e.4",
+	"protocols_d.4",
+	"protocols_c.4",
+	"protocols_b.4",
+	"protocols_a.4",
+	"protocols.3",
+	"protocols_b.2",
+	"protocols_a.2",
+	"protocols.1",
 	"core.5",
 	"core.4",
 	"core.3",

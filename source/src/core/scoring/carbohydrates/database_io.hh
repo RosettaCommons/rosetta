@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/carbohydrates/database_io.hh
-/// @brief   Database input/output function declarations for carbohydrate-specific data.
+/// @file    core/scoring/carbohydrates/database_io.hh
+/// @brief   Database input/output function declarations for carbohydrate-specific scoring data.
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
-#define INCLUDED_core_chemical_carbohydrates_database_io_HH
+#ifndef INCLUDED_core_scoring_carbohydrates_database_io_HH
+#define INCLUDED_core_scoring_carbohydrates_database_io_HH
 
 // Project headers
 #include <core/types.hh>
@@ -27,15 +27,14 @@
 
 
 namespace core {
-namespace chemical {
+namespace scoring {
 namespace carbohydrates {
 
-/// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
-/// from a database file.
-std::map< std::string, std::string > read_codes_and_roots_from_database_file( std::string const & filename );
+/// @brief  Return a table of Gaussian parameters read from a database file.
+std::map< char, utility::vector1< Real > > read_Gaussian_parameters_from_database_file( std::string const & filename );
 
 }  // namespace carbohydrates
-}  // namespace chemical
+}  // namespace scoring
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_carbohydrates_database_io_HH
+#endif  // INCLUDED_core_scoring_carbohydrates_database_io_HH

@@ -66,16 +66,16 @@ public:
 	EnergyMethodOP
 	clone() const = 0;
 
-	// @brief if an energy method needs to cache data in the Energies object,
-	// before packing begins, then it does so during this function. The packer
-	// must ensure this function is called. The default behavior is to do nothing.
+	/// @brief if an energy method needs to cache data in the Energies object,
+	/// before packing begins, then it does so during this function. The packer
+	/// must ensure this function is called. The default behavior is to do nothing.
 	virtual
 	void
 	setup_for_packing( pose::Pose &, utility::vector1< bool > const &, utility::vector1< bool > const & ) const;
 
-	// @brief If an energy method needs to cache data in a packing::RotamerSet object before
-	// rotamer energies are calculated, it does so during this function. The packer
-	// must ensure this function is called. The default behavior is to do nothing.
+	/// @brief If an energy method needs to cache data in a packing::RotamerSet object before
+	/// rotamer energies are calculated, it does so during this function. The packer
+	/// must ensure this function is called. The default behavior is to do nothing.
 	virtual
 	void
 	prepare_rotamers_for_packing(
@@ -84,9 +84,9 @@ public:
 	) const;
 
 
-	// @brief If the pose changes in the middle of a packing (as happens in rotamer trials) and if
-	// an energy method needs to cache data in the pose that corresponds to its current state,
-	// then the method must update that data when this function is called.  The packer must
+	/// @brief If the pose changes in the middle of a packing (as happens in rotamer trials) and if
+	/// an energy method needs to cache data in the pose that corresponds to its current state,
+	/// then the method must update that data when this function is called.  The packer must
 	/// ensure this function gets called.  The default behavior is to do nothing.
 	virtual
 	void
@@ -95,10 +95,10 @@ public:
 		Size resid
 	) const;
 
-	// @brief if an energy method needs to cache something in the pose (e.g. in pose.energies()),
-	// before scoring begins, it must do so in this method.  All long range energy
-	// functions must initialize their LREnergyContainers before scoring begins.
-	// The default is to do nothing.
+	/// @brief if an energy method needs to cache something in the pose (e.g. in pose.energies()),
+	/// before scoring begins, it must do so in this method.  All long range energy
+	/// functions must initialize their LREnergyContainers before scoring begins.
+	/// The default is to do nothing.
 	virtual
 	void
 	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;

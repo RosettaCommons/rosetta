@@ -69,10 +69,10 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 		scorefxn = ScoreFunctionOP( new ScoreFunction );
 	}
 
-	/// Avoid loading the score12 patch if we're using
-	/// 1) standard weights,
-	/// 2) the score12 patch, and
-	/// 3) the flag "score12prime"
+	// Avoid loading the score12 patch if we're using
+	// 1) standard weights,
+	// 2) the score12 patch, and
+	// 3) the flag "score12prime"
 	if ( weights_tag == PRE_TALARIS_2013_STANDARD_WTS &&
 			basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
 		bool sc12patch = false;
@@ -239,9 +239,9 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 
 	} else {
 
-		/// Default score is score12 if the user has not specified a score weights file or a patch file
-		/// on the command line.  If the user has specified that they would like the standard weight set,
-		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
+		// Default score is score12 if the user has not specified a score weights file or a patch file
+		// on the command line.  If the user has specified that they would like the standard weight set,
+		// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
 
 		//tr << "get_score_function1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
 		//tr << "option[ score::weights ].user() ? " << option[ score::weights ].user() << std::endl;
@@ -298,15 +298,24 @@ core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom /* def
 		if( (option[in::metals_distance_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(atom_pair_constraint) < 1.0e-10) ) {
 			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no atom_pair_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(atom_pair_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
-			// If it is already turned on, then the automatic constraint adder will adjust constraint strenghts appropriately, which means that we
+			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
 			// don't need to set this to 1.0 -- any nonzero value is fine.
 		}
 		if( (option[in::metals_angle_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(angle_constraint) < 1.0e-10) ) {
 			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no angle_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
 			scorefxn->set_weight(angle_constraint, 1.0); // Turn on the angle_constraint weight if and only if it isn't already turned on.
-			// If it is already turned on, then the automatic constraint adder will adjust constraint strenghts appropriately, which means that we
+			// If it is already turned on, then the automatic constraint adder will adjust constraint strengths appropriately, which means that we
 			// don't need to set this to 1.0 -- any nonzero value is fine.
 		}
+	}
+
+	// Turn on carbohydrate energy method weights if the user has supplied the -include_sugars flag.
+	if ( option[ in::include_sugars ].user() ) {
+		if ( tr.Info.visible() ) {
+			tr.Info << "The -include_sugars flag was used with no sugar_bb weight set in the weights file.  " <<
+					"Setting sugar_bb weight to 1.0 by default." << std::endl;
+		}
+		scorefxn->set_weight( sugar_bb, 1.0);
 	}
 
 	return scorefxn;

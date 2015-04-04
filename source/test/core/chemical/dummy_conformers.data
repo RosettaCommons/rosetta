@@ -1,10 +1,11 @@
 # A list of ring conformation definitions for eight-membered rings.
 
-# THIS IS JUST FAKE DATA FOR UNIT TESTING! The actual, current data is found in
-# the database:
-# rosetta_databse/chemical/carbohydrates/N-membered_ring_conformers.data, where
-# N is the ring size. If you edit this file, you must also edit
-# database_io.cxxtest.hh.
+# THIS IS JUST FAKE DATA FOR UNIT TESTING!
+# The actual, current data is found in the database:
+# database/chemical/ring_conformer_sets/N-membered_ring_conformers.data,
+# where N is the ring size.
+# If you edit this file, you must also edit
+# test/core/chemical/ring_conformer_io.cxxtest.hh.
 
 # Specific   General
 # Conformer  Conformer  Degeneracy   Ideal Cremer-Pople Parameters                                          Ideal Angles (degrees)

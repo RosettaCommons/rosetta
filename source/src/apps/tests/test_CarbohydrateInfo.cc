@@ -7,9 +7,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    test_CarbohydrateInfo.cc
+/// @file    apps/tests/test_CarbohydrateInfo.cc
 /// @brief   Application source code for testing CarbohydrateInfo.
-/// @author  labonte
+/// @author  Labonte  <JWLabonte@jhu.edu>
+
 
 // Project headers
 #include <devel/init.hh>
@@ -35,6 +36,7 @@
 
 // C++ headers
 #include <iostream>
+
 
 using namespace std;
 using namespace utility;
@@ -105,7 +107,6 @@ main( int argc, char *argv[] )
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
-		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
 
 		pose_from_pdb( maltotriose, PATH + "maltotriose.pdb" );
@@ -263,7 +264,7 @@ main( int argc, char *argv[] )
 		test_sugar( Me_glycoside );
 		*/
 
-	} catch (utility::excn::EXCN_Base const & e) {
+	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;
 	}

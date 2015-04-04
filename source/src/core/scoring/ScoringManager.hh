@@ -18,44 +18,46 @@
 #include <core/scoring/ScoringManager.fwd.hh>
 
 // Package headers
+#include <core/scoring/AtomVDW.fwd.hh>
+#include <core/scoring/CenRotEnvPairPotential.fwd.hh>
+#include <core/scoring/CenHBPotential.fwd.hh>
+#include <core/scoring/EnvPairPotential.fwd.hh>
+#include <core/scoring/GenBornPotential.fwd.hh>
+#include <core/scoring/MembranePotential.fwd.hh>
+#include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
+#include <core/scoring/OmegaTether.fwd.hh>
+#include <core/scoring/P_AA.fwd.hh>
 #include <core/scoring/PairEPotential.fwd.hh>
+#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
+#include <core/scoring/ProQPotential.fwd.hh>
+#include <core/scoring/Rama2BOffset.fwd.hh>
+#include <core/scoring/Ramachandran.fwd.hh>
+#include <core/scoring/Ramachandran2B.fwd.hh>
+#include <core/scoring/SecondaryStructurePotential.fwd.hh>
+#include <core/scoring/SmoothEnvPairPotential.fwd.hh>
+#include <core/scoring/UnfoldedStatePotential.fwd.hh>
+#include <core/scoring/WaterAdductHBondPotential.fwd.hh>
+
+#include <core/scoring/carbohydrates/CHIEnergyFunction.fwd.hh>
+
+#include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
+
+#include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
+#include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
+#include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
+
 #include <core/scoring/dna/DNA_BasePotential.fwd.hh>
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
 #include <core/scoring/dna/DNATorsionPotential.fwd.hh>
 #include <core/scoring/dna/DirectReadoutPotential.fwd.hh>
-#include <core/scoring/Rama2BOffset.fwd.hh>
-#include <core/scoring/Ramachandran.fwd.hh>
-#include <core/scoring/Ramachandran2B.fwd.hh>
-#include <core/scoring/OmegaTether.fwd.hh>
-#include <core/scoring/EnvPairPotential.fwd.hh>
-#include <core/scoring/SmoothEnvPairPotential.fwd.hh>
-#include <core/scoring/CenRotEnvPairPotential.fwd.hh>
-#include <core/scoring/CenHBPotential.fwd.hh>
-#include <core/scoring/MembranePotential.fwd.hh>
-#include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-#include <core/scoring/membrane/MembraneData.hh>
-//#include <core/scoring/InterchainPotential.fwd.hh>
-#include <core/scoring/ProQPotential.fwd.hh>
-#include <core/scoring/SecondaryStructurePotential.fwd.hh>
-#include <core/scoring/GenBornPotential.fwd.hh>
+
 #include <core/scoring/facts/FACTSPotential.fwd.hh>
-#include <core/scoring/AtomVDW.fwd.hh>
-#include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
+
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.fwd.hh>
-#include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
-#include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
-#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
-#include <core/scoring/P_AA.fwd.hh>
-#include <core/scoring/WaterAdductHBondPotential.fwd.hh>
-#include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
-#include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
-#include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
-#include <core/scoring/UnfoldedStatePotential.fwd.hh>
-#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
+
+#include <core/scoring/interface_/DDPlookup.fwd.hh>
+
+#include <core/scoring/membrane/MembraneData.hh>
 
 #include <core/scoring/mm/MMLJLibrary.fwd.hh>
 #include <core/scoring/mm/MMLJEnergyTable.fwd.hh>
@@ -64,13 +66,16 @@
 #include <core/scoring/mm/MMBondLengthLibrary.fwd.hh>
 
 #include <core/scoring/nv/NVlookup.fwd.hh>
-#include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
-#include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
-#include <core/scoring/interface_/DDPlookup.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
 
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
+#include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
+
+#include <core/scoring/rna/RNA_AtomVDW.fwd.hh>
+#include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
+#include <core/scoring/rna/RNA_SuitePotential.fwd.hh>
+#include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
+#include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.fwd.hh>
+#include <core/scoring/rna/data/RNA_DMS_Potential.fwd.hh>
+#include <core/scoring/rna/data/RNA_DMS_LowResolutionPotential.fwd.hh>
 
 #if defined(WIN32) || defined(WIN_PYROSETTA)
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -78,14 +83,14 @@
 #include <core/scoring/etable/Etable.hh>
 #endif
 
-
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/memb_etable/MembEtable.fwd.hh> //pba
-//XRW_B_T1
-//#include <core/coarse/CoarseEtable.fwd.hh>
-//XRW_E_T1
+#include <core/scoring/methods/EnergyMethod.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
+#include <core/scoring/methods/vall_lookback/VallLookbackPotential.fwd.hh>
 
 // C++ headers
 #include <map>
@@ -198,7 +203,7 @@ public:
 
 	Membrane_FAPotential const & get_Membrane_FAPotential() const; //pba
 
-  ProQPotential const & get_ProQPotential() const;
+	ProQPotential const & get_ProQPotential() const;
 
 	PoissonBoltzmannPotential const & get_PoissonBoltzmannPotential() const;
 
@@ -210,6 +215,8 @@ public:
 
 	disulfides::DisulfideMatchingPotential &
 	get_DisulfideMatchingPotential() const;
+
+	carbohydrates::CHIEnergyFunction const & get_CHIEnergyFunction() const;
 
 
 	bool
@@ -306,6 +313,8 @@ private:
 	mutable PoissonBoltzmannPotentialOP PB_potential_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;
 	mutable UnfoldedStatePotentialOP unf_state_;
+	mutable carbohydrates::CHIEnergyFunctionOP CHI_energy_function_;
+
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;
 	mutable methods::VallLookbackPotentialOP vallLookbackPotential_;
