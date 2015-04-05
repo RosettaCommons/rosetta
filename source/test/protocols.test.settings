@@ -224,6 +224,7 @@ sources = {
 
 	"membrane" : [
 		"AddMembraneMover",
+		"AddMPLigandMover",
 		"FlipMover",
 		"MembranePositionFromTopologyMover",
 		"SetMembranePositionMover",
@@ -538,6 +539,9 @@ testinputfiles = [
 	"membrane/1AFO_AB.pdb",
 	"membrane/1AFO_AB.span",
 	"membrane/1AFO_AB_before_out.pdb",
+	"membrane/3PXO_A_tr.pdb", 
+	"membrane/3PXO_A_tr.span",
+	"membrane/RET.params", 
 	"membrane/geometry/1AFO_AB.pdb",
 	"membrane/geometry/1AFO_AB.span",
 	"membrane/geometry/1AFO_.pdb",

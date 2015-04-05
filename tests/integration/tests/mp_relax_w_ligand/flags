@@ -1,0 +1,10 @@
+-in:file:s 3PXO_A_tr.pdb 
+-mp:setup:spanfiles 3PXO_A_tr.span 
+-in:file:extra_res_fa RET.params 
+-parser:protocol membrane_relax.xml
+-run:multiple_processes_writing_to_one_directory 
+-nstruct 1
+-relax:jump_move true
+-relax:fast
+-packing:pack_missing_sidechains false 
+-score:weights mpframework_smooth_fa_2012

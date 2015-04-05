@@ -410,6 +410,7 @@ static MoverRegistrator< docking::membrane::MPDockingSetupMoverCreator > reg_MPD
 
 static MoverRegistrator< symmetric_docking::membrane::MPSymDockMoverCreator > reg_MPSymDockMoverCreator;
 
-static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreatorr;
+static MoverRegistrator< membrane::AddMPLigandMoverCreator > reg_AddMPLigandMoverCreator;
+static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreator;
 
 } //namespace protocols

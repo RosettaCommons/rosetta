@@ -297,6 +297,7 @@ sources = {
 	],
 	"protocols/membrane": [
 		"AddMembraneMover",
+		"AddMPLigandMover",
 		"FlipMover",
 		"SetMembranePositionMover",
 		"MembranePositionFromTopologyMover",
@@ -321,8 +322,8 @@ sources = {
 		"util",
     ],
     "protocols/membrane/visualize": [
-    		"VisualizeMembraneMover",
-    		"VisualizeEmbeddingMover",
+    	"VisualizeMembraneMover",
+    	"VisualizeEmbeddingMover",
     ],
 	"protocols/normalmode": [
 		"NormalMode",
