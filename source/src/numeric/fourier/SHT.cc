@@ -19,8 +19,25 @@
 #include <string>
 #include <cstdlib>
 
+#ifdef WIN32
+	#undef min
+	#undef max
+	#undef PostMessage
+#endif
+
+#include <algorithm>
+
 namespace numeric {
 namespace fourier {
+
+
+// Workaround for MSVC bug
+#ifdef WIN32
+	template <class T> __declspec(noinline) const T& local_max (const T& a, const T& b) { return (a<b)?b:a; }
+#else
+	template <class T> const T& local_max (const T& a, const T& b) { return (a<b)?b:a; }
+#endif
+
 
 void
 transpose_so3(
@@ -139,22 +156,18 @@ SO3coeffs::coefLoc( int m1, int m2 ) {
 	if ( m1 >= 0 ) {
 		if ( m2 >= 0 ) {
 			retval = (bw*bw)*m1 - ( (m1-1)*m1*(2*m1-1)/6 ) ;
-			for(int k = 0 ; k < m2 ; k ++ )
-				retval += bw-std::max(m1,k);
+			for(int k = 0 ; k < m2 ; k ++ ) { retval += bw - std::max(m1,k); }
 		} else {
-			retval = (bw*bw)*(m1+1) - ( (m1+1)*m1*(2*m1+1)/6 ) ;
-			for(int k = m2 ; k < 0 ; k ++ )
-				retval -= bw-std::max(m1,-k);
+			retval = (bw*bw)*(m1+1) - ( (m1+1)*m1*(2*m1+1)/6 );
+			for(int k = m2 ; k < 0 ; k ++ ) { retval -= bw - local_max(m1,-k); }
 		}
 	} else {
 		if ( m2 >= 0 ) {
 			retval = (4*bw*bw*bw-bw)/3 - (bw*bw)*(-m1) + ( (-m1+1)*(-m1)*(2*(-m1)+1)/6 ) ;
-			for (int k = 0 ; k < m2 ; k ++ )
-				retval += bw-std::max(-m1,k) ;
+			for (int k = 0 ; k < m2 ; k ++ ) { retval += bw - std::max(-m1,k); }
 		} else {
 			retval = (4*bw*bw*bw-bw)/3 - (bw*bw)*(-m1-1) + ( (-m1-1)*(-m1)*(2*(-m1)-1)/6 );
-			for (int k = m2 ; k < 0 ; k ++ )
-				retval -= bw-std::max(-m1,-k);
+			for (int k = m2 ; k < 0 ; k ++ ) { retval -= bw - std::max(-m1,-k); }
 		}
 	}
 
