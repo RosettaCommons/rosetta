@@ -1,0 +1,18 @@
+symmetry_name 1afo_tr_pseudo2fold
+E = 2*VRT_0_base + 1*(VRT_0_base:VRT_1_base)
+anchor_residue 41
+virtual_coordinates_start
+xyz VRT_0 1.000000,0.000000,0.000000 0.000000,1.000000,0.000000 -4.751450,-4.098550,-0.874750
+xyz VRT_0_base 1.000000,0.000000,0.000000 0.000000,1.000000,0.000000 -4.751450,-4.098550,-0.874750
+xyz VRT_1 -0.439407,-0.775268,0.453741 0.887860,-0.451571,0.088251 4.846425,3.962150,-2.727975
+xyz VRT_1_base -0.439407,-0.775268,0.453741 0.887860,-0.451571,0.088251 4.846425,3.962150,-2.727975
+virtual_coordinates_stop
+connect_virtual JUMP_0_to_subunit VRT_0_base SUBUNIT
+connect_virtual JUMP_1_to_subunit VRT_1_base SUBUNIT
+connect_virtual JUMP_0_to_com VRT_0 VRT_0_base
+connect_virtual JUMP_1_to_com VRT_1 VRT_1_base
+connect_virtual JUMP_1 VRT_0 VRT_1
+set_dof JUMP_0_to_com x y z
+set_dof JUMP_0_to_subunit angle_x angle_y angle_z
+set_jump_group JUMPGROUP1  JUMP_0_to_subunit JUMP_1_to_subunit
+set_jump_group JUMPGROUP2  JUMP_0_to_com JUMP_1_to_com

@@ -400,7 +400,7 @@ static MoverRegistrator< membrane::MembranePositionFromTopologyMoverCreator > re
 static MoverRegistrator< membrane::SetMembranePositionMoverCreator > reg_SetMembranePositionMoverCreator;
 static MoverRegistrator< membrane::TransformIntoMembraneMoverCreator > reg_TransformIntoMembraneMoverCreator;
 
-//static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
+static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > reg_SymmetricAddMembraneMembraneMoverCreator;
 
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;

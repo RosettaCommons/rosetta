@@ -1,13 +1,13 @@
-# Fingerprint Test: Membrane full atom energy function
-# Desc: Developed by Barth, 2007 - weights file mpframework_fa_2007
-# Test Author: Rebecca F. Alford (rfalford12@gmail.com)
+# Fingerprint Test; Membrane pH-aware Energy Function
+# Desc: Full atom membrane energy function, including fa_elec and e_pH terms
+# Author: Rebecca F. Alford (rfalford12@gmail.com)
 
 cd %(workdir)s
 
 #
 #
 
-%(bin)s/version_mpscorefxn.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay -sfxnfprnt::output_fingerprint_file membrane_fa_scorefxn.fprnt >& log
+%(bin)s/version_mpscorefxn.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay -sfxnfprnt::output_fingerprint_file membrane_fa_pH.fprnt >& log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
@@ -27,3 +27,5 @@ rm log
 ## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##     > /dev/null
 #
+
+

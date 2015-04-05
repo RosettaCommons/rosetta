@@ -70,15 +70,26 @@ public: // test functions
         positioned_pose_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *positioned_pose_, "protocols/membrane/1C3W_TR_A.pdb" );
         
+        // Load in pose from PDB containing a membrane residue with non-default position (for case 4)
+        specially_positioned_pose1_ = core::pose::PoseOP( new Pose() );
+        pose_from_pdb( *specially_positioned_pose1_, "protocols/membrane/2zup_model.pdb" );
+        
+        // Load in pose from PDB containing a membrane residue with non-default position (for case 5)
+        specially_positioned_pose2_ = core::pose::PoseOP( new Pose() );
+        pose_from_pdb( *specially_positioned_pose2_, "protocols/membrane/2zup_model.pdb" );
+        
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
+        std::string spanfile_2zup = "protocols/membrane/2zup_model.span";
 
-        // Testing (3) Different setups for AddMembraneMover
+        // Testing (4) Different setups for AddMembraneMover
         //   (1) Default setup - read topology from spanfile
         //   (2) First custom setup - anchor membrane residue at an
         //       arbitrary residue in the pose and setup from a pre-defined
         //       topology object
         //   (3) Second custom setup - set a custom initial membrane position
+        //   (4) Third custom setup - from existing membrane residue (points directly)
+        //   (5) Fourth custom setup - find the membrane residue in Pose
 		
         // (1) Setup pose with default setup
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
@@ -94,7 +105,15 @@ public: // test functions
         Vector test_center( 10, 10, 10 ); 
         Vector test_normal( 0, 1, 0 ); // Normal along y axis
         AddMembraneMoverOP add_memb3( new AddMembraneMover( test_center, test_normal, spanfile, 0 ) ); 
-		add_memb3->apply( *positioned_pose_ ); 
+		add_memb3->apply( *positioned_pose_ );
+        
+        // (4) Setup the pose, directly pointing to the new membrane residue
+        AddMembraneMoverOP add_memb4( new AddMembraneMover( spanfile_2zup, 334 ) );
+        add_memb4->apply( *specially_positioned_pose1_ );
+        
+        // (5) Ask add membrane mover to go on a scavenger hunt for the membrane residue
+        AddMembraneMoverOP add_memb5( new AddMembraneMover( spanfile_2zup, 334 ) );
+        add_memb5->apply( *specially_positioned_pose2_ );
 	}
 	
 	/// @brief Tear Down Test
@@ -251,6 +270,24 @@ public: // test functions
 
 
     }
+    
+    /// @brief Checking setup from existing membrane residue (case 4 and 5)
+    void test_existing_membrane_rsd() {
+     
+        // Existing center/normal
+        Vector expected_center( -7.279,  -4.677,  -0.389 );
+        Vector expected_rsd_seqpos( 334 );
+        
+        // Check membrane residue is at the expected position
+        TS_ASSERT_EQUALS( specially_positioned_pose1_->conformation().membrane_info()->membrane_rsd_num(), expected_rsd_seqpos );
+        TS_ASSERT_EQUALS( specially_positioned_pose2_->conformation().membrane_info()->membrane_rsd_num(), expected_rsd_seqpos );
+        
+        // Check the membrane residue has the appropriate membrane position
+        position_equal_within_delta( specially_positioned_pose1_->conformation().membrane_info()->membrane_center(), expected_center, 0.001 );
+        position_equal_within_delta( specially_positioned_pose2_->conformation().membrane_info()->membrane_center(), expected_center, 0.001 );
+        // Not testing normal for now - test case related to a bug in relax
+        
+    }
 
     /// @brief Position equal within delta (helper method)
     bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
@@ -266,6 +303,8 @@ private:
 	
 	core::pose::PoseOP pose_;
     core::pose::PoseOP anchored_pose_;
-    core::pose::PoseOP positioned_pose_; 
+    core::pose::PoseOP positioned_pose_;
+    core::pose::PoseOP specially_positioned_pose1_;
+    core::pose::PoseOP specially_positioned_pose2_;
 	
 }; // AddMembraneMover unit test

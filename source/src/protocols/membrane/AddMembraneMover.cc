@@ -18,7 +18,7 @@
 ///				return true.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (2/9/14)
+/// @note       Last Modified (3/29/14)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_cc
 #define INCLUDED_protocols_membrane_AddMembraneMover_cc
@@ -420,37 +420,44 @@ AddMembraneMover::apply( Pose & pose ) {
 	// If there is a membrane residue in the PDB, take total resnum as the membrane_pos
 	// Otherwise, setup a new membrane virtual
 	core::SSize membrane_pos(0);
+    bool user_defined( false );
 	
 	// search for MEM in PDB
 	utility::vector1< core::SSize > mem_rsd_in_pdb = check_pdb_for_mem( pose );
-	
-	// go through found MEM residues, if there are multiple
-	for ( core::Size i = 1; i <= mem_rsd_in_pdb.size(); ++i ) {
+    
+    // If multiple membrane residues are found - exit. Not allowed in the framework
+    if ( mem_rsd_in_pdb.size() > 1 ) {
+        utility_exit_with_message( "Multiple membrane residues found in the pose, but only one allowed. Exiting..." );
+    }
+    
+    // If exactly 1 residue was found and no flag provided, designate that residue
+    if ( membrane_rsd_ == 0 && mem_rsd_in_pdb[1] != -1 ) {
+        TR << "No flag given: Adding membrane residue from PDB at residue number " << mem_rsd_in_pdb[1] << std::endl;
+        membrane_pos = mem_rsd_in_pdb[1];
+        user_defined = true;
+    }
+    
+    // if found and agrees with user-specified one, use that
+    if ( static_cast< SSize >( membrane_rsd_ ) == mem_rsd_in_pdb[1] ) {
+        TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
+        membrane_pos = membrane_rsd_;
+        user_defined = true;
+    }
+    
+    // If no membrane residue was found, add one to the pose
+    if ( mem_rsd_in_pdb[1] == -1 ) {
+        TR << "Adding a new membrane residue to the pose" << std::endl;
+        membrane_pos = setup_membrane_virtual( pose );
+    }
+    
+    /**
+    this isn't accomplishing what it should be... if we want that strict of checking, check the types directly
+     // If the found residue doesn't agree with user specified one, exit
+    if ( membrane_pos == 0 && mem_rsd_in_pdb[1] != -1 ) {
+        utility_exit_with_message("User provided membrane residue doesn't agree with found one!");
+    }
+     **/
 
-		// if no flag was given and found exactly one, use that
-		if ( membrane_rsd_ == 0 && mem_rsd_in_pdb.size() == 1  && mem_rsd_in_pdb[1] != -1 ) {
-			TR << "No flag given: Adding membrane residue from PDB at residue number " << mem_rsd_in_pdb[1] << std::endl;
-			membrane_pos = mem_rsd_in_pdb[1];
-		}
-		
-		// if found and agrees with user-specified one, use that
-		if ( static_cast< SSize >( membrane_rsd_ ) == mem_rsd_in_pdb[i] ) {
-			TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
-			membrane_pos = membrane_rsd_;
-		}
-	
-		// if not found, add
-		if ( mem_rsd_in_pdb[1] == -1 ) {
-			TR << "Adding a new membrane residue to the pose" << std::endl;
-			membrane_pos = setup_membrane_virtual( pose );
-		}
-
-		// if found and doesn't agree with user-specified one, crash
-		if ( i == mem_rsd_in_pdb.size() && membrane_pos == 0 && mem_rsd_in_pdb[1] != -1 ) {
-			utility_exit_with_message("User provided membrane residue doesn't agree with found one!");
-		}
-	}
-	
  	// Load spanning topology objects
 	if ( topology_->nres_topo() == 0 ){
 		if ( spanfile_ != "from_structure" ) {
@@ -485,6 +492,13 @@ AddMembraneMover::apply( Pose & pose ) {
 	pose.conformation().set_membrane_info( mem_info );
     
     // Set initial membrane position
+    if ( user_defined ) {
+        TR << "Setting initial membrane center and normal to position used by the user-provided membrane residue" << std::endl;
+        center_ = pose.conformation().membrane_info()->membrane_center();
+        normal_ = pose.conformation().membrane_info()->membrane_normal();
+    }
+    
+    // Use set membrane positon mover to set the center/normal pair
     SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
     set_position->apply( pose );
     

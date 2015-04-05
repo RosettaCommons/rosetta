@@ -72,14 +72,13 @@ public:
 				
 		// Send a set of viewable planes to pymol
 		PyMolMoverOP pymol_mover( new PyMolMover() ); 
-		pymol_mover->apply( pose ); 
+		pymol_mover->apply( pose );
+        
 
 		// Initialize Membrane
-		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
-		init_memb->apply( pose );
+//		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
+//		init_memb->apply( pose );
 
-
-		
 	}
 };
 

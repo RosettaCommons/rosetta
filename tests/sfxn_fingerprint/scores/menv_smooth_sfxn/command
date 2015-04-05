@@ -1,7 +1,7 @@
-#
-# Command file for Membrane Low resolution scoring function
-#
-# First change into the working directory
+# Fingerprint Test: Membrane full atom energy function
+# Desc: Developed by Barth, 2007, adapted by Yarov-Yaravoy et al. 2012
+# weights file mpframework_smooth_fa_2014
+# Test Author: Rebecca F. Alford (rfalford12@gmail.com)
 
 cd %(workdir)s
 

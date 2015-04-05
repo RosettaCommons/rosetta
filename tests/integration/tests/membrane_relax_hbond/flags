@@ -1,0 +1,17 @@
+-relax:quick
+-relax:default_repeats 2
+-s input/BRD4.pdb
+-in:file:native input/BRD4.pdb
+-in:file:spanfile input/BRD4.span
+-membrane:Membed_init
+-membrane:Mhbond_depth true
+-score:weights input/membrane_highres.wts
+-out:nstruct 1
+-in:file:fullatom
+-out:file:silent_struct_type binary
+-out:file:silent BRD4_frlx.out
+-constant_seed
+-mute core.util.prof
+-mute core.io.database
+-run:no_prof_info_in_silentout
+-out:file:scorefile score.sc

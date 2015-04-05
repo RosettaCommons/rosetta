@@ -1,6 +1,4 @@
 -in:file:s 1AFO_A.pdb
 -mp:setup:spanfiles 1AFO_A.span
--mp:setup:center 0 0 0
--mp:setup:normal 0 0 1
 -ignore_unrecognized_res
 -score:weights mpframework_smooth_fa_2012

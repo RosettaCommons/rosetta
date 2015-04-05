@@ -1,0 +1,10 @@
+-in:file:s inputs/2zup_refined_model.pdb
+-in:file:native inputs/2zup_native.pdb
+-mp:setup:spanfiles inputs/2ZUP_AB_tr.span
+-mp:scoring:hbond
+-score:weights mpframework_smooth_fa_2012
+-in:membrane
+-mp:setup:membrane_rsd 334
+-out:file:scorefile 2zup_rescored.rsc
+-packing:pack_missing_sidechains false 
+-run:timer false

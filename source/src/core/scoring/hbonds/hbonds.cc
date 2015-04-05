@@ -787,231 +787,7 @@ identify_intra_res_hbonds(
 }
 
 
-void
-identify_hbonds_1way_membrane(
-	HBondDatabase const & database,
-	conformation::Residue const & don_rsd,
-	conformation::Residue const & acc_rsd,
-	Size const don_nb,
-	Size const acc_nb,
-	bool const evaluate_derivative,
-	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
-	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-	bool const exclude_scb, /* exclude if acc=sc and don=bb */
-	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
-	// output
-	HBondSet & hbond_set,
-	pose::Pose const & pose
-){
-    debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
 
-    HBondDerivs derivs;
-
-	for ( chemical::AtomIndices::const_iterator
-			hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-			hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
-		Size const datm(don_rsd.atom_base(hatm));
-		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
-		} else {
-			if (exclude_sc && exclude_bsc) continue;
-		}
-		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
-		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
-
-		for ( chemical::AtomIndices::const_iterator
-			anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-			anum != anume; ++anum ) {
-			Size const aatm( *anum );
-			if (acc_rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
-				} else {
-					if (exclude_bsc) continue;
-				}
-			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
-				} else {
-					if (exclude_sc) continue;
-				}
-			}
-
-			// rough filter for existence of hydrogen bond
-			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
-
-			Real unweighted_energy( 0.0 );
-
-			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
-
-			int const base ( acc_rsd.atom_base( aatm ) );
-			int const base2( acc_rsd.abase2( aatm ) );
-            debug_assert( base2 > 0 && base != base2 );
-
-
-			hb_energy_deriv( database, hbond_set.hbond_options(),
-				hbe_type, datm_xyz, hatm_xyz,
-				acc_rsd.atom(aatm ).xyz(),
-				acc_rsd.atom(base ).xyz(),
-				acc_rsd.atom(base2).xyz(),
-				unweighted_energy, evaluate_derivative, derivs);
-
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
-
-            Real environmental_weight(0);
-
-            // if membrane framework - use data from the framework to correct hydrogen bonds
-            if ( !pose.conformation().is_membrane() ) {
-                Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
-                Vector const center( pose.conformation().membrane_info()->membrane_center() );
-                Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
-                Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
-
-                environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
-            // Make the hydrogen bonding correction using the old data
-            } else {
-                environmental_weight = get_membrane_depth_dependent_weight( pose, don_nb, acc_nb, hatm_xyz,
-                                                                           acc_rsd.atom(aatm ).xyz() );
-            }
-
-			//////
-			// now we have identified a hbond -> put it into the hbond_set
-			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type, unweighted_energy, environmental_weight, derivs );
-
-			//////
-
-		} // loop over acceptors
-	} // loop over donors
-}
-
-void
-identify_hbonds_1way_membrane(
-	HBondDatabase const & database,
-	conformation::Residue const & don_rsd,
-	conformation::Residue const & acc_rsd,
-	Size const don_nb,
-	Size const acc_nb,
-	bool const evaluate_derivative,
-	bool const exclude_bb,  /* exclude if acc=bb and don=bb */
-	bool const exclude_bsc, /* exclude if acc=bb and don=sc */
-	bool const exclude_scb, /* exclude if acc=sc and don=bb */
-	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
-	HBondOptions const & options,
-	// output
-	EnergyMap & emap,
-	pose::Pose const & pose
-)
-{
-    debug_assert( don_rsd.seqpos() != acc_rsd.seqpos() );
-
-	// <f1,f2> -- derivative vectors
-	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
-        HBondDerivs derivs;
-
-	for ( chemical::AtomIndices::const_iterator
-		hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
-		hnum != hnume; ++hnum ) {
-		Size const hatm( *hnum );
-		Size const datm(don_rsd.atom_base(hatm));
-		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-
-		if (datm_is_bb){
-			if (exclude_bb && exclude_scb) continue;
-		} else {
-			if (exclude_sc && exclude_bsc) continue;
-		}
-		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
-		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
-
-		for ( chemical::AtomIndices::const_iterator
-			anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
-			anum != anume; ++anum ) {
-			Size const aatm( *anum );
-			if (acc_rsd.atom_is_backbone(aatm)){
-				if (datm_is_bb){
-					if (exclude_bb) continue;
-				} else {
-					if (exclude_bsc) continue;
-				}
-			} else {
-				if (datm_is_bb){
-					if (exclude_scb) continue;
-				} else {
-					if (exclude_sc) continue;
-				}
-			}
-
-			// rough filter for existence of hydrogen bond
-			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
-
-			Real unweighted_energy( 0.0 );
-
-			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
-
-			int const base ( acc_rsd.atom_base( aatm ) );
-			int const base2( acc_rsd.abase2( aatm ) );
-		debug_assert( base2 > 0 && base != base2 );
-
-			hb_energy_deriv( database, options,
-				hbe_type, datm_xyz, hatm_xyz,
-				acc_rsd.atom(aatm ).xyz(),
-				acc_rsd.atom(base ).xyz(),
-				acc_rsd.atom(base2).xyz(),
-				unweighted_energy, evaluate_derivative, derivs);
-
-			if (unweighted_energy >= MAX_HB_ENERGY) continue;
-
-            Real environmental_weight(0);
-            // if membrane framework - use data from the framework to correct hydrogen bonds
-            if ( pose.conformation().is_membrane() ) {
-                Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
-                Vector const center( pose.conformation().membrane_info()->membrane_center() );
-                Real const thickness( pose.conformation().membrane_info()->membrane_thickness() );
-                Real const steepness( pose.conformation().membrane_info()->membrane_steepness() );
-
-                environmental_weight = get_membrane_depth_dependent_weight( normal, center, thickness, steepness, don_nb, acc_nb, hatm_xyz, acc_rsd.atom( aatm ).xyz() );
-                // Make the hydrogen bonding correction using the old data
-            } else {
-                environmental_weight = get_membrane_depth_dependent_weight( pose, don_nb, acc_nb, hatm_xyz,
-                                                                           acc_rsd.atom(aatm ).xyz() );
-            }
-
-			////////
-			// now we have identified an hbond -> accumulate its energy
-
-			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
-			emap[hbond] += hbE;
-			switch(get_hbond_weight_type(hbe_type.eval_type())){
-			case hbw_NONE:
-			case hbw_SR_BB:
-				emap[hbond_sr_bb] += hbE; break;
-			case hbw_LR_BB:
-				emap[hbond_lr_bb] += hbE; break;
-			case hbw_SR_BB_SC:
-				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-				emap[hbond_bb_sc] += hbE;
-				emap[hbond_sr_bb_sc] += hbE; break;
-			case hbw_LR_BB_SC:
-				//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
-				emap[hbond_bb_sc] += hbE;
-				emap[hbond_lr_bb_sc] += hbE; break;
-			case hbw_SC:
-				emap[hbond_sc] += hbE; break;
-			default:
-				tr << "Warning: energy from unexpected HB type ignored "
-					<< hbe_type.eval_type() << std::endl;
-				runtime_assert(false);
-				break;
-			}
-			/////////
-
-		} // loop over acceptors
-	} // loop over donors
-}
 
 
 //mjo this should be the only way to assign hbond energies.  If you
@@ -1201,88 +977,6 @@ get_environment_dependent_weight(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-Real
-get_membrane_depth_dependent_weight(
-	pose::Pose const & pose,
-	int const don_nb,
-	int const acc_nb,
-	Vector const & Hxyz, // proton
-	Vector const & Axyz  // acceptor
-)
-{
-	Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
-
-	// water phase smooth_hb_env_dep
-	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-
-    Vector const normal(MembraneEmbed_from_pose( pose ).normal());
-    Vector const center(MembraneEmbed_from_pose( pose ).center());
-    Real const thickness(Membrane_FAEmbed_from_pose( pose ).thickness());
-    Real const steepness(Membrane_FAEmbed_from_pose( pose ).steepness());
-
-	// Hdonor depth
-	Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
-	Real internal_product = std::abs(fa_depth_H);
-	Real z = internal_product;
-	z /= thickness;
-	Real zn = std::pow( z, steepness );
-	Real fa_proj_H = zn/(1 + zn);
-
-	// Acc depth
-	Real fa_depth_A = dot(Axyz-center, normal);
-	internal_product = std::abs(fa_depth_A);
-	z = internal_product;
-	z /= thickness;
-	zn = std::pow( z, steepness );
-	Real fa_proj_A = zn/(1 + zn);
-
-	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
-	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
-
-	return total_weight;
-}
-///////////////////////////////////////////////////////////////////////////////
-Real
-get_membrane_depth_dependent_weight(
-	Vector const & normal,
-	Vector const & center,
-	Real const & thickness,
-	Real const & steepness,
-	int const don_nb,
-	int const acc_nb,
-	Vector const & Hxyz, // proton
-	Vector const & Axyz  // acceptor
-)
-{
-	Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
-
-	// water phase smooth_hb_env_dep
-	wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
-
-	// membrane phase dependent weight
-	// Hdonor depth
-	Real fa_depth_H = dot(Hxyz-center, normal);
-	Real internal_product = std::abs(fa_depth_H);
-	Real z = internal_product;
-	z /= thickness;
-	Real zn = std::pow( z, steepness );
-	Real fa_proj_H = zn/(1 + zn);
-
-	// Acc depth
-	Real fa_depth_A = dot(Axyz-center, normal);
-	internal_product = std::abs(fa_depth_A);
-	z = internal_product;
-	z /= thickness;
-	zn = std::pow( z, steepness );
-	Real fa_proj_A = zn/(1 + zn);
-
-	Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
-	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
-
-	return total_weight;
-}
-
-///////////////////////////////////////////////////////////////////////////////
 
 bool
 nonzero_hbond_weight( ScoreFunction const & scorefxn )
@@ -1295,6 +989,306 @@ nonzero_hbond_weight( ScoreFunction const & scorefxn )
 					 scorefxn.has_nonzero_weight( hbond_sc ) ||
 					 scorefxn.has_nonzero_weight( hbond_intra ) ||
 					 scorefxn.has_nonzero_weight( hbond ) );
+}
+    
+    
+///////////////////////////////////////////////////////////////////////////////
+void
+identify_hbonds_1way_membrane(
+    HBondDatabase const & database,
+    conformation::Residue const & don_rsd,
+    conformation::Residue const & acc_rsd,
+    Size const don_nb,
+    Size const acc_nb,
+    bool const evaluate_derivative,
+    bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+    bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+    bool const exclude_scb, /* exclude if acc=sc and don=bb */
+    bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+    // output
+    HBondSet & hbond_set,
+    pose::Pose const & pose
+){
+    assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+    
+    HBondDerivs derivs;
+    
+    for ( chemical::AtomIndices::const_iterator
+         hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+         hnum != hnume; ++hnum ) {
+        Size const hatm( *hnum );
+        Size const datm(don_rsd.atom_base(hatm));
+        bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+        
+        if (datm_is_bb){
+            if (exclude_bb && exclude_scb) continue;
+        } else {
+            if (exclude_sc && exclude_bsc) continue;
+        }
+        Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+        Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+        
+        for ( chemical::AtomIndices::const_iterator
+             anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+             anum != anume; ++anum ) {
+            Size const aatm( *anum );
+            if (acc_rsd.atom_is_backbone(aatm)){
+                if (datm_is_bb){
+                    if (exclude_bb) continue;
+                } else {
+                    if (exclude_bsc) continue;
+                }
+            } else {
+                if (datm_is_bb){
+                    if (exclude_scb) continue;
+                } else {
+                    if (exclude_sc) continue;
+                }
+            }
+            
+            // rough filter for existance of hydrogen bond
+            if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+            
+            Real unweighted_energy( 0.0 );
+            
+            HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+            
+            int const base ( acc_rsd.atom_base( aatm ) );
+            int const base2( acc_rsd.abase2( aatm ) );
+            assert( base2 > 0 && base != base2 );
+            
+            hb_energy_deriv( database, hbond_set.hbond_options(),
+                            hbe_type, datm_xyz, hatm_xyz,
+                            acc_rsd.atom(aatm ).xyz(),
+                            acc_rsd.atom(base ).xyz(),
+                            acc_rsd.atom(base2).xyz(),
+                            unweighted_energy, evaluate_derivative, derivs);
+            
+            if ( unweighted_energy >= MAX_HB_ENERGY ) continue;
+            
+            //pba membrane depth dependent correction to the environmental_weight
+            Real environmental_weight(
+                                      get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+                                                                          acc_rsd.atom(aatm ).xyz()));
+            
+            /// Add Membrane hbonds to the hydrogen bonds set
+            hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
+                                   hbe_type, unweighted_energy, environmental_weight, derivs );
+            
+        } // loop over acceptors
+    } // loop over donors
+}
+    
+void
+identify_hbonds_1way_membrane(
+    HBondDatabase const & database,
+    conformation::Residue const & don_rsd,
+    conformation::Residue const & acc_rsd,
+    Size const don_nb,
+    Size const acc_nb,
+    bool const evaluate_derivative,
+    bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+    bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+    bool const exclude_scb, /* exclude if acc=sc and don=bb */
+    bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+    HBondOptions const & options,
+    EnergyMap & emap,
+    pose::Pose const & pose
+    )
+{
+    assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+    
+    HBondDerivs derivs;
+    
+    for ( chemical::AtomIndices::const_iterator
+         hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+         hnum != hnume; ++hnum ) {
+        Size const hatm( *hnum );
+        Size const datm(don_rsd.atom_base(hatm));
+        bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+        
+        if (datm_is_bb){
+            if (exclude_bb && exclude_scb) continue;
+        } else {
+            if (exclude_sc && exclude_bsc) continue;
+        }
+        Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+        Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+        
+        for ( chemical::AtomIndices::const_iterator
+             anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+             anum != anume; ++anum ) {
+            Size const aatm( *anum );
+            if (acc_rsd.atom_is_backbone(aatm)){
+                if (datm_is_bb){
+                    if (exclude_bb) continue;
+                } else {
+                    if (exclude_bsc) continue;
+                }
+            } else {
+                if (datm_is_bb){
+                    if (exclude_scb) continue;
+                } else {
+                    if (exclude_sc) continue;
+                }
+            }
+            
+            // rough filter for existance of hydrogen bond
+            if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+            
+            Real unweighted_energy( 0.0 );
+            
+            HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+            
+            int const base ( acc_rsd.atom_base( aatm ) );
+            int const base2( acc_rsd.abase2( aatm ) );
+            assert( base2 > 0 && base != base2 );
+            
+            hb_energy_deriv( database, options,
+                            hbe_type, datm_xyz, hatm_xyz,
+                            acc_rsd.atom(aatm ).xyz(),
+                            acc_rsd.atom(base ).xyz(),
+                            acc_rsd.atom(base2).xyz(),
+                            unweighted_energy, evaluate_derivative, derivs);
+            
+            if (unweighted_energy >= MAX_HB_ENERGY) continue;
+            
+            //pba membrane depth dependent weight
+            
+            Real environmental_weight(
+                                      get_membrane_depth_dependent_weight(pose, don_nb, acc_nb, hatm_xyz,
+                                                                          acc_rsd.atom(aatm ).xyz()));
+            
+            ////////
+            // now we have identified an hbond -> accumulate its energy
+            
+            Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+            emap[hbond] += hbE;
+            switch(get_hbond_weight_type(hbe_type.eval_type())){
+                case hbw_NONE:
+                case hbw_SR_BB:
+                    emap[hbond_sr_bb] += hbE; break;
+                case hbw_LR_BB:
+                    emap[hbond_lr_bb] += hbE; break;
+                case hbw_SR_BB_SC:
+                    //Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+                    emap[hbond_bb_sc] += hbE;
+                    emap[hbond_sr_bb_sc] += hbE; break;
+                case hbw_LR_BB_SC:
+                    //Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+                    emap[hbond_bb_sc] += hbE;
+                    emap[hbond_lr_bb_sc] += hbE; break;
+                case hbw_SC:
+                    emap[hbond_sc] += hbE; break;
+                default:
+                    tr << "Warning: energy from unexpected HB type ignored "
+                    << hbe_type.eval_type() << std::endl;
+                    runtime_assert(false);
+                    break;
+            }
+            /////////
+            
+        } // loop over acceptors
+    } // loop over donors
+}
+    
+Real
+get_membrane_depth_dependent_weight(
+    pose::Pose const & pose,
+    int const don_nb,
+    int const acc_nb,
+    Vector const & Hxyz, // proton
+    Vector const & Axyz  // acceptor
+)
+{
+    Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
+    
+    // water phase smooth_hb_env_dep
+    wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
+    
+    
+    // Initialize to defaults (taken from Barth, 2007)
+    Vector normal( 0, 0, 1 );
+    Vector center( 0, 0, 0 );
+    Real thickness( 15.0 );
+    Real steepness( 10.0 );
+    
+    
+    if ( pose.conformation().is_membrane() ) {
+    
+        center = pose.conformation().membrane_info()->membrane_center();
+        normal = pose.conformation().membrane_info()->membrane_normal();
+        thickness = pose.conformation().membrane_info()->membrane_thickness();
+        steepness = pose.conformation().membrane_info()->membrane_steepness();
+    
+    } else {
+        
+        normal = MembraneEmbed_from_pose( pose ).normal();
+        center = MembraneEmbed_from_pose( pose ).center();
+        thickness = Membrane_FAEmbed_from_pose( pose ).thickness();
+        steepness = Membrane_FAEmbed_from_pose( pose ).steepness();
+    }
+    
+    // Hdonor depth
+    Real fa_depth_H = dot(Hxyz-center, normal); // non consistent z_position
+    Real internal_product = std::abs(fa_depth_H);
+    Real z = internal_product;
+    z /= thickness;
+    Real zn = std::pow( z, steepness );
+    Real fa_proj_H = zn/(1 + zn);
+    
+    // Acc depth
+    Real fa_depth_A = dot(Axyz-center, normal);
+    internal_product = std::abs(fa_depth_A);
+    z = internal_product;
+    z /= thickness;
+    zn = std::pow( z, steepness );
+    Real fa_proj_A = zn/(1 + zn);
+    
+    Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
+    total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
+    
+    return total_weight;
+}
+    
+Real
+get_membrane_depth_dependent_weight(
+    Vector const & normal,
+    Vector const & center,
+    Real const & thickness,
+    Real const & steepness,
+    int const don_nb,
+    int const acc_nb,
+    Vector const & Hxyz, // proton
+    Vector const & Axyz  // acceptor
+)
+{
+    Real wat_weight(1.0), memb_weight(1.0), total_weight(1.0);
+    
+    // water phase smooth_hb_env_dep
+    wat_weight = hb_env_dep_burial_lin( acc_nb, don_nb );
+    
+    // membrane phase dependent weight
+    // Hdonor depth
+    Real fa_depth_H = dot(Hxyz-center, normal);
+    Real internal_product = std::abs(fa_depth_H);
+    Real z = internal_product;
+    z /= thickness;
+    Real zn = std::pow( z, steepness );
+    Real fa_proj_H = zn/(1 + zn);
+    
+    // Acc depth
+    Real fa_depth_A = dot(Axyz-center, normal);
+    internal_product = std::abs(fa_depth_A);
+    z = internal_product;
+    z /= thickness;
+    zn = std::pow( z, steepness );
+    Real fa_proj_A = zn/(1 + zn);
+    
+    Real fa_proj_AH = 0.5*(fa_proj_H+fa_proj_A);
+    total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
+    
+    return total_weight;
 }
 
 } // hbonds

@@ -1,0 +1,7 @@
+-in:file:s 1qd6_tr_C.pdb
+-mp:setup:spanfiles 1qd6_tr_C.span
+-ignore_unrecognized_res
+-score:weights mpframework_pHmode_fa_2015
+-pH_mode
+-value_pH 7.0
+-packing:pack_missing_sidechains false 

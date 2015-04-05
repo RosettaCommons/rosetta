@@ -7,27 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
+/// @file core/scoring/hbonds/hbonds.hh
+///
+/// @brief Set of utilities for detection of hydrogen bonds
+/// @author Lots of people...
 
 #ifndef INCLUDED_core_scoring_hbonds_hbonds_hh
 #define INCLUDED_core_scoring_hbonds_hbonds_hh
 
+// Package Headers
 #include <core/scoring/hbonds/types.hh>
+#include <core/scoring/hbonds/HBEvalTuple.hh>
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+
+// Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/scoring/hbonds/HBEvalTuple.hh>
-#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
+// Unit Headers
 #include <utility/vector1.hh>
 #include <boost/unordered_map.hpp>
-
 
 namespace core {
 namespace scoring {
@@ -202,80 +206,6 @@ get_environment_dependent_weight(
 	int const acc_nb,
 	HBondOptions const & options);
 
-// TODO: clean up this code duplication:
-
-//The membrane version of identify_hbonds_1way use the MembraneEmbed
-//object cached with the pose to compute a membrane-aware
-//environmental dependence hydrogen bonding potential.
-// See for example http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2694939/
-
-//One way to clean this up is to do the following
-//  create a base class HBondEnvironment
-//  Derive -> HBondNeighborCountEnvironment which has the number of neighbors for the donor and acceptor residues
-//  Derive -> HBondMembraneEnvironment which stores the MembraneEmbed or some subset of it
-//  extend the interface to hbond_set to get a HBondEnvironment.  This will require adding additional member data to the hbond_set
-//  modify the identify_hbonds_1way interface to take a reference to an HBondEnvironment
-//  use the passed in HBondEnvironment to compute the environmental weight in identify_hbonds_1way
-//  Note: care will have to be taken to not create and destroy lots of copies of HBondEnvironment objects
-
-// Once this has been done, please remove all traces of the identify_hbonds_1way_membrane functions.
-void
-identify_hbonds_1way_membrane(
-	HBondDatabase const & database,
-	conformation::Residue const & don_rsd,
-	conformation::Residue const & acc_rsd,
-	Size const don_nb,
-	Size const acc_nb,
-	bool const evaluate_derivative,
-	bool const exclude_don_bb,
-	bool const exclude_don_bsc,
-	bool const exclude_acc_scb,
-	bool const exclude_acc_sc,
-	// output
-	HBondSet & hbond_set,
-	pose::Pose const & pose
-);
-
-void
-identify_hbonds_1way_membrane(
-	HBondDatabase const & database,
-	conformation::Residue const & don_rsd,
-	conformation::Residue const & acc_rsd,
-	Size const don_nb,
-	Size const acc_nb,
-	bool const evaluate_derivative,
-	bool const exclude_don_bb,
-	bool const exclude_don_bsc,
-	bool const exclude_acc_scb,
-	bool const exclude_acc_sc,
-	HBondOptions const & options,
-	// output
-	EnergyMap & emap,
-	pose::Pose const & pose
-);
-
-Real
-get_membrane_depth_dependent_weight(
-	pose::Pose const & pose,
-	int const don_nb,
-	int const acc_nb,
-	Vector const & Hxyz,
-	Vector const & Axyz
-);
-
-Real
-get_membrane_depth_dependent_weight(
-	Vector const & normal,
-	Vector const & center,
-	Real const & thickness,
-	Real const & steepness,
-	int const don_nb,
-	int const acc_nb,
-	Vector const & Hxyz,
-	Vector const & Axyz
-);
-
-
 Real
 hb_eval_type_weight(
 	HBEvalType const & hbe_type,
@@ -288,17 +218,82 @@ hb_eval_type_weight(
 bool
 nonzero_hbond_weight( ScoreFunction const & scorefxn );
 
-/*void
-get_atom_hbond_derivative(
-	id::AtomID const & atom,
-	HBondSet const & hbond_set,
-	EnergyMap const & weights,
-	Vector & f1,
-	Vector & f2
-);*/
+//Membranes
+// TODO: clean up this code duplication (will not make sense with the new framework):
+// Possible Clean up approach:
+// (1) Create base class HBondEnvironment
+// (2) Derive -> HBondNeighborCountEnvironment which has the number of neighbors for the donor and acceptor residues
+// (3) Derive -> HBondMembraneEnvironment which stores the MembraneEmbed or some subset of it
+// (4) extend the interface to hbond_set to get a HBondEnvironment.  This will require adding additional member data to the hbond_set
+// (5) modify the identify_hbonds_1way interface to take a reference to an HBondEnvironment
+// (6) use the passed in HBondEnvironment to compute the environmental weight in identify_hbonds_1way
+//  Note: care will have to be taken to not create and destroy lots of copies of HBondEnvironment objects
 
-}
-}
-}
+// Once this has been done, please remove all traces of the identify_hbonds_1way_membrane functions.
 
-#endif
+/// @brief Identify Membrane Hydrogen Bonds (Env)
+/// @details Corrects for strength of hydrogen bonding in the membrane
+/// (depth-dependent). This version of the method switches between
+/// the previous membrane code (MembraneEmbed cached to the pose) and updated
+/// RosettaMP Framework (2015).
+/// @note This code still preserves duplicated hbond interface for membranes
+/// TODO: REMOVE THE CODE DUPLICATION!!!!
+void
+identify_hbonds_1way_membrane(
+    HBondDatabase const & database,
+    conformation::Residue const & don_rsd,
+    conformation::Residue const & acc_rsd,
+    Size const don_nb,
+    Size const acc_nb,
+    bool const evaluate_derivative,
+    bool const exclude_don_bb,
+    bool const exclude_don_bsc,
+    bool const exclude_acc_scb,
+    bool const exclude_acc_sc,
+    HBondSet & hbond_set,
+    pose::Pose const & pose
+);
+
+void
+identify_hbonds_1way_membrane(
+    HBondDatabase const & database,
+    conformation::Residue const & don_rsd,
+    conformation::Residue const & acc_rsd,
+    Size const don_nb,
+    Size const acc_nb,
+    bool const evaluate_derivative,
+    bool const exclude_don_bb,
+    bool const exclude_don_bsc,
+    bool const exclude_acc_scb,
+    bool const exclude_acc_sc,
+    HBondOptions const & options,
+    EnergyMap & emap,
+    pose::Pose const & pose
+);
+
+Real
+get_membrane_depth_dependent_weight(
+    pose::Pose const & pose,
+    int const don_nb,
+    int const acc_nb,
+    Vector const & Hxyz,
+    Vector const & Axyz
+    );
+
+Real
+get_membrane_depth_dependent_weight(
+    Vector const & normal,
+    Vector const & center,
+    Real const & thickness,
+    Real const & steepness,
+    int const don_nb,
+    int const acc_nb,
+    Vector const & Hxyz, // proton
+    Vector const & Axyz  // acceptor
+);
+    
+} // hbonds
+} // scoring
+} // core
+
+#endif // INCLUDED_core_scoring_hbonds_hbonds_hh

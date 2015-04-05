@@ -559,6 +559,8 @@ testinputfiles = [
     "membrane/1afo_in.pdb",
     "membrane/1afo_decoy.pdb",
     "membrane/1afo_tr.span",
+    "membrane/2zup_model.pdb", 
+    "membrane/2zup_model.span",
     "membrane/symmetry/1afo_tr.span",
     "membrane/symmetry/1afo_tr_input.pdb",
     "membrane/symmetry/1afo_tr.c2.symm",

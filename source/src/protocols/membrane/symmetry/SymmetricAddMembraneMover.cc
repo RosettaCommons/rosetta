@@ -43,6 +43,7 @@
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/symmetry/util.hh>
 
@@ -95,6 +96,8 @@ using namespace protocols::moves;
 /////////////////////
 /// Constructors  ///
 /////////////////////
+    
+    //increment
 
 /// @brief Default constructor of SymmetricAddMembraneMover
 /// @details Create a membrane pose, setting the membrane center
@@ -281,12 +284,17 @@ SymmetricAddMembraneMover::init_from_cmd() {
 core::Size
 SymmetricAddMembraneMover::setup_membrane_virtual( Pose & pose ) {
     
-    TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
-    
     using namespace core::conformation;
     using namespace core::conformation::symmetry;
     using namespace core::chemical;
     using namespace core::kinematics;
+    
+    // Send a giant warning if the pose is Asymmetric!
+    if ( !core::pose::symmetry::is_symmetric( pose ) ) {
+        utility_exit_with_message( "Cannot create a symmetric membrane pose from an asymmetric pose. Please run SetupForSymetryMover (in protocols/simple_moves) first!" );
+    }
+    
+    TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
     
     // Get the current residue typeset of the pose and use it to determine the
     // typeset of the new membrane residue

@@ -12,4 +12,5 @@
 		<Add mover=init_pos/>
 		<Add mover=fast_relax/>
 	</PROTOCOLS>
+	<OUTPUT scorefxn=memb_hires />
 </ROSETTASCRIPTS>
