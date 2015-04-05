@@ -71,6 +71,9 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
             json_results = json.load( file(json_results_file) )
             results[_ResultsKey_] = { _TestsKey_:{} }
             for t in json_results: results[_ResultsKey_][_TestsKey_][t] = {_StateKey_: _S_queued_for_comparison_, _LogKey_: '', 'run_time': json_results[t] }
+
+            results[_ResultsKey_][_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='run_time', legend='runtime, s', color='#66f') ] ) ]
+
             results[_StateKey_] = _S_queued_for_comparison_
 
         except IOError:
@@ -117,7 +120,8 @@ def compare(test, results, files_path, previous_results, previous_files_path):
             cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':results[_TestsKey_][test]['run_time'], 'previous_run_time':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
             cr[_SummaryKey_][_TotalKey_] += 1
 
-
     state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
+
+    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='run_time', legend='runtime, s', color='#66f') ] ) ]
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: cr}
