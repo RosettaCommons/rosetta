@@ -1685,9 +1685,9 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 
 			//GLfloat mat_shininess[] = { sphere_shininess };
 			GLfloat atom_material[4] = {
-				atom_color[0],
-				atom_color[1],
-				atom_color[2],
+				static_cast<GLfloat>(atom_color[0]),
+				static_cast<GLfloat>(atom_color[1]),
+				static_cast<GLfloat>(atom_color[2]),
 				1.0,
 			};
 			GLfloat specular_material[4] = {
@@ -1860,8 +1860,8 @@ draw_conformation_and_density(
 	Vector light = z + y ;
 	Vector light2 = z - y - x;
 
-	GLfloat light_position[] = { light[0], light[1], light[2], 0.0 };
-	GLfloat light2_position[] = { light2[0], light2[1], light2[2], 0.0 };
+	GLfloat light_position[] = { static_cast<GLfloat>(light[0]), static_cast<GLfloat>(light[1]), static_cast<GLfloat>(light[2]), 0.0 };
+	GLfloat light2_position[] = { static_cast<GLfloat>(light2[0]), static_cast<GLfloat>(light2[1]), static_cast<GLfloat>(light2[2]), 0.0 };
 	//GLfloat light_ambient[]  = { 0.0, 0.0, 0.0, 1.0 };
 	//GLfloat light_diffuse[]  = { 1.0, 1.0, 1.0, 1.0 };
 	//GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
