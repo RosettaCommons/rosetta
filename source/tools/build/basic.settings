@@ -794,7 +794,7 @@ settings = {
             "defines" : [ "BOINC" ],
             "flags" : {
                 "compile" : [ "pthread" ],
-                "warn" : [ "Wno-write-strings" ],
+                "warn" : [ "Wno-write-strings", "Wno-uninitialized", ],
             },
         },
         "removes" : {
@@ -846,7 +846,7 @@ settings = {
         "appends" : {
             "libraries" : [ "boinc_graphics2" ],
             "library_path" : [
-                "#external/boinc/mac_build/build/Deployment-no64",
+                "#external/boinc/mac_build/build/Deployment",
                 "#external/boinc/zip",
                 "/usr/X11R6/lib"
             ],

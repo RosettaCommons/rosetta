@@ -796,7 +796,7 @@ void plot_timeseries(
 	total_steps = 10*(1+int(data.size()/10));
 	total_steps = std::max( (unsigned int) (50), (unsigned int)( pow(4, 1+floor(log( float(data.size()) )/log(4.0f)) ) ) );
 	int start_step = 0;
-	int LOOK_BACK =500;
+	unsigned int LOOK_BACK =500;
 	if( total_steps > LOOK_BACK ){
 		total_steps = LOOK_BACK;
 		start_step = data.size() - total_steps;
