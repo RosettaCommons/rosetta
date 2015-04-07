@@ -605,6 +605,28 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 					TR << "Beginning centroid-mode loop rebuilding..." << endl;
 					if ( ! option[OptionKeys::loops::skip_initial_loop_build].user() ) {
+						//start RAP: work-around for making sure the initial loop build doesn't fail by calling the legacy KIC loop builder
+						loops::loop_mover::IndependentLoopMoverOP remodel_mover( utility::pointer::static_pointer_cast< loops::loop_mover::IndependentLoopMover > ( loops::LoopMoverFactory::get_instance()->create_loop_mover( "perturb_kic", loops ) ) );
+						core::kinematics::FoldTree f_orig=pose.fold_tree();
+						
+						remodel_mover->set_scorefxn( cen_scorefxn_ );
+						core::kinematics::FoldTree f_new;
+						protocols::loops::fold_tree_from_loops( pose, *loops,  f_new, true );
+						pose.fold_tree( f_new );
+						
+						remodel_mover->get_checkpoints()->set_type("Remodel");
+						remodel_mover->set_current_tag( curr_job_tag );
+						remodel_mover->set_native_pose( PoseCOP( PoseOP( new Pose( native_pose ) ) ) );
+						remodel_mover->apply( pose );
+						
+						if ( remodel_mover->get_last_move_status() != protocols::moves::MS_SUCCESS) {
+							set_last_move_status(protocols::moves::FAIL_RETRY);
+							TR << "Structure " << " failed initial kinematic closure. Skipping..." << std::endl;
+							pose.fold_tree( f_orig );
+							return;
+						}
+						pose.fold_tree( f_orig );
+						//end RAP: remove the code block above once the new loop builder works properly
 						builder->set_loops(*loops);
 						builder->set_score_function(cen_scorefxn_);
 						builder->apply(pose);
