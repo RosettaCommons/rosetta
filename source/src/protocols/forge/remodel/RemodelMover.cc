@@ -1905,7 +1905,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 
 		if (!option[OptionKeys::remodel::swap_refine_confirm_protocols].user() ) {
 			// refine the new section
-			loops::loop_mover::refine::LoopMover_Refine_CCD refine( loops, sfx );
+			loops::loop_mover::refine::LoopMover_Refine_CCDOP refine( new loops::loop_mover::refine::LoopMover_Refine_CCD(loops, sfx) );
 			kinematics::MoveMapOP combined_mm( new kinematics::MoveMap() );
 
 			////// fix dna
@@ -1937,13 +1937,13 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 			natroRes->op( ResLvlTaskOperationCOP( new pack::task::operation::PreventRepackingRLT ) );
 			refine_tf->push_back( natroRes );
 
-			refine.false_movemap( combined_mm );
-			refine.set_task_factory( refine_tf );
-			refine.apply( pose );
+			refine->false_movemap( combined_mm );
+			refine->set_task_factory( refine_tf );
+			refine->apply( pose );
 
 		} else {
-			loops::loop_mover::refine::LoopMover_Refine_KIC KIC( loops );
-			KIC.apply(pose);
+			loops::loop_mover::refine::LoopMover_Refine_KICOP KIC( new loops::loop_mover::refine::LoopMover_Refine_KIC(loops) );
+			KIC->apply(pose);
 		}
 
 		// remove cutpoint variants -- shouldn't this happen at the end
