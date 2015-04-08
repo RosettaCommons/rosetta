@@ -1,0 +1,26 @@
+-s dummy1.pdb
+-no_optH false
+-flip_HNQ
+
+#### remodel flags ####
+-remodel:blueprint design.blueprint
+-use_clusters false
+-generic_aa Y
+-repeat_structure 4
+-remodel:quick_and_dirty
+-preserve_header
+-picking_old_max_score 1
+-overwrite
+-remodel:design:no_design
+-remodel:staged_sampling true
+-remodel:use_same_length_fragments false
+-start_w_ideal_helices
+-sample_over_loops
+-rg_local_span 1 80
+
+###specific run flags
+-nstruct 2 
+-parser:protocol layeredDesign.xml 
+-num_trajectory 1 
+-save_top 1
+-vall small.vall

@@ -76,6 +76,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/indexed_structure_store.OptionKeys.gen.hh>
@@ -1133,10 +1134,21 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				abinitio_stage( pose,999, movemap,sfxStage1_OP,1,100,sampleAllResidues,true,"full_length_frags",false,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
 		//This should be read in from staging file.
-		abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,100,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
-		abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,100,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
-		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,500,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
-		abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,500,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
+		Size stage1_cycles = 100;
+		Size stage2_cycles = 100;
+		Size stage3_cycles = 500;
+		Size stage4_cycles = 500;
+		if ( basic::options::option[ basic::options::OptionKeys::run::test_cycles ] ){
+				stage1_cycles = 10;
+				stage2_cycles = 10;
+				stage3_cycles = 10;
+				stage4_cycles = 10;
+		}
+		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked. 
+		abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
+		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemapAll,sfxStage1_OP,3,stage4_cycles,sampleAllResidues,true,"3mers_allPos",false,fragScoreThreshold);
 		if(option[OptionKeys::remodel::staged_sampling::fa_relax_moves].user()){
 				fa_relax_stage(pose);
 		}

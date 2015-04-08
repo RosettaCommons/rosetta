@@ -1,0 +1,1 @@
+# This integration test uses -nstruct 2 because remodel does some pdb-swapping between runs that have triggered errors in the past.
