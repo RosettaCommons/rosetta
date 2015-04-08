@@ -41,6 +41,9 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
+#include <basic/options/keys/mp.OptionKeys.gen.hh> 
+#include <basic/options/option.hh>
+
 // C++ headers
 #include <iostream>
 #include <cstdlib>
@@ -63,6 +66,7 @@ public:
 	/// of visualization
 	void apply( Pose & pose ) {
 	
+        using namespace basic::options;
 		using namespace protocols::membrane;
 		using namespace protocols::moves;
 		
@@ -74,11 +78,12 @@ public:
 		PyMolMoverOP pymol_mover( new PyMolMover() ); 
 		pymol_mover->apply( pose );
         
-
-		// Initialize Membrane
-//		MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
-//		init_memb->apply( pose );
-
+        if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
+          
+            // Initialize Membrane
+            MembranePositionFromTopologyMoverOP init_memb( new MembranePositionFromTopologyMover() );
+            init_memb->apply( pose );
+        }
 	}
 };
 

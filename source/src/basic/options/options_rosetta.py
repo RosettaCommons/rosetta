@@ -2581,6 +2581,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
 			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
 			Option( 'membrane_rsd', 'Real', desc="membrane residue number" ),
+			Option( 'position_from_topo', 'Boolean', desc="determine a membrane position from the transmembrane spans of the protein" ),
 		),
 
 	),

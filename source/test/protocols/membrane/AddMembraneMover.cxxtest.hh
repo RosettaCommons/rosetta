@@ -78,6 +78,10 @@ public: // test functions
         specially_positioned_pose2_ = core::pose::PoseOP( new Pose() );
         pose_from_pdb( *specially_positioned_pose2_, "protocols/membrane/2zup_model.pdb" );
         
+        // Load in a pose from PDB containing multiple membrane residues - not allowed!
+        multi_mem_pose_ = core::pose::PoseOP( new Pose() );
+        pose_from_pdb( *multi_mem_pose_, "protocols/membrane/1AFO_AB_multi.pdb" );
+        
 		// Initialize Spans from spanfile
 		std::string spanfile = "protocols/membrane/1C3W_A.span";
         std::string spanfile_2zup = "protocols/membrane/2zup_model.span";
@@ -288,6 +292,17 @@ public: // test functions
         // Not testing normal for now - test case related to a bug in relax
         
     }
+    
+    /// @brief Try loading in a pose with multiple membrane residues
+    void test_multi_mem_pose_throws() {
+        
+        TS_TRACE( "Testing that an exception is thrown when trying to load in a pose with multiple membrane residues" );
+        
+        using namespace protocols::membrane;
+        std::string spanfile = "protocols/membrane/1AFO_AB.span";
+        AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
+        TS_ASSERT_THROWS_ANYTHING( add_memb->apply( *multi_mem_pose_ ) );
+    }
 
     /// @brief Position equal within delta (helper method)
     bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
@@ -306,5 +321,6 @@ private:
     core::pose::PoseOP positioned_pose_;
     core::pose::PoseOP specially_positioned_pose1_;
     core::pose::PoseOP specially_positioned_pose2_;
+    core::pose::PoseOP multi_mem_pose_;
 	
 }; // AddMembraneMover unit test
