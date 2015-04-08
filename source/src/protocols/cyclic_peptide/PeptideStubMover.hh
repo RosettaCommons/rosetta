@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file protocols/cyclic_peptide/PeptideStubMover.hh
 /// @brief Add constraints to the current pose conformation.
 /// @author Yifan Song
 
@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
 
 #include <protocols/moves/Mover.hh>
+#include <protocols/cyclic_peptide/PeptideStubMover.fwd.hh>
 
 namespace protocols {
 namespace cyclic_peptide {
@@ -30,6 +31,7 @@ class PeptideStubMover : public moves::Mover {
 public:
 	PeptideStubMover();
 	virtual ~PeptideStubMover();
+	PeptideStubMover( PeptideStubMover const &src );
 
     void init();
 

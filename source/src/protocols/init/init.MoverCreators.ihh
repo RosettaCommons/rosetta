@@ -114,6 +114,7 @@
 
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
+#include <protocols/helical_bundle/BackboneGridSamplerCreator.hh>
 #include <protocols/helical_bundle/BundleGridSamplerCreator.hh>
 #include <protocols/helical_bundle/FitSimpleHelixCreator.hh>
 #include <protocols/helical_bundle/MakeBundleCreator.hh>

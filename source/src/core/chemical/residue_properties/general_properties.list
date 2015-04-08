@@ -38,6 +38,7 @@ RNA
 PEPTOID
 CARBOHYDRATE
 LIPID
+SRI # New class of artificial heteropolymers. ~VMulligan
 METAL  # This residue type is a metal ion.
 SURFACE
 WATER

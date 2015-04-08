@@ -32,6 +32,8 @@ sources = {
 		"util",
 	],
         "protocols/helical_bundle": [
+		"BackboneGridSampler",
+		"BackboneGridSamplerHelper",
 		"BundleGridSampler",
 		"BundleGridSamplerHelper",
 		"FitSimpleHelix",

@@ -46,7 +46,36 @@ ADD_PROPERTY UPPER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ### SRI's special backbones ###################################
 
+BEGIN_SELECTOR
+PROPERTY SRI
+END_SELECTOR
+
+## these are the operations involved
+
+ADD_ATOM  OXT OOC OC -0.67
+ADD_BOND C6 OXT
+SET_BACKBONE_HEAVYATOM OXT
+SET_POLYMER_CONNECT UPPER NONE
+
+## making these up:
+
+SET_ICOOR O1  80.0 60 1.2 C6 C5 C4
+SET_ICOOR OXT 180.0 60 1.2 C6 C5 O1 ## phi == 180 --> planar
+
+## modify properties of existing atoms
+
+SET_ATOM_TYPE O1 OOC
+SET_ATOM_TYPE C6 COO
+SET_MM_ATOM_TYPE O1 OC
+SET_MM_ATOM_TYPE C6 CC
+SET_ATOMIC_CHARGE C6 0.34
+SET_ATOMIC_CHARGE O1 -0.67
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+END_CASE
 
 BEGIN_CASE ### D-amino acids #############################################
 

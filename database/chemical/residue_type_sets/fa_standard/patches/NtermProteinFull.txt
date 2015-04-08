@@ -566,6 +566,40 @@ END_SELECTOR
 
 END_CASE
 
+BEGIN_CASE ## SRI's Special Backbones ########################################
+
+BEGIN_SELECTOR
+PROPERTY SRI
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H3 ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N1 1H
+ADD_BOND N1 2H
+ADD_BOND N1 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N1 C1 C2
+SET_ICOOR 2H 120 70.5 1 N1 C1 1H
+SET_ICOOR 3H 120 70.5 1 N1 C1 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N1 Nlys
+SET_MM_ATOM_TYPE N1 NH3
+SET_ATOMIC_CHARGE N1 -0.3
+SET_ATOMIC_CHARGE C1 0.21
+SET_ATOMIC_CHARGE H4 0.10
+SET_ATOMIC_CHARGE H5 0.10
+
+SET_FORMAL_CHARGE  N1  +1
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+END_CASE
+
 BEGIN_CASE ## BETA-3-PROLINE #################################################
 
 ## these define which residues match this case

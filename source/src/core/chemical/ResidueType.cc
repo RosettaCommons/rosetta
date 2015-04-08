@@ -1801,6 +1801,13 @@ ResidueType::is_beta_aa() const
 }
 
 bool
+ResidueType::is_sri() const
+{
+	return properties_->has_property( SRI );
+}
+
+
+bool
 ResidueType::is_d_aa() const
 {
 	return properties_->has_property( D_AA );

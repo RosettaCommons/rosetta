@@ -77,6 +77,7 @@ static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_Dockin
 
 static MoverRegistrator< generalized_kinematic_closure::GeneralizedKICCreator > reg_GeneralizedKICCreator;
 
+static MoverRegistrator< helical_bundle::BackboneGridSamplerCreator > reg_BackboneGridSamplerCreator;
 static MoverRegistrator< helical_bundle::BundleGridSamplerCreator > reg_BundleGridSamplerCreator;
 static MoverRegistrator< helical_bundle::FitSimpleHelixCreator > reg_FitSimpleHelixCreator;
 static MoverRegistrator< helical_bundle::MakeBundleCreator > reg_MakeBundleCreator;

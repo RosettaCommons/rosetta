@@ -42,6 +42,22 @@ namespace cyclic_peptide {
 PeptideStubMover::PeptideStubMover(){
     init();
 }
+
+PeptideStubMover::PeptideStubMover( PeptideStubMover const &src ) :
+	Mover("PeptideStubMover"),
+	reset_(src.reset_),
+	update_pdb_numbering_(src.update_pdb_numbering_),
+	stub_mode_(src.stub_mode_),
+	stub_rsd_names_(src.stub_rsd_names_),
+	stub_rsd_jumping_(src.stub_rsd_jumping_),
+	stub_rsd_connecting_atom_(src.stub_rsd_connecting_atom_),
+	stub_rsd_repeat_(src.stub_rsd_repeat_),
+	stub_insert_pos_(src.stub_insert_pos_),
+	stub_anchor_rsd_(src.stub_anchor_rsd_),
+	stub_anchor_rsd_connecting_atom_(src.stub_anchor_rsd_connecting_atom_)
+{
+}
+
 PeptideStubMover::~PeptideStubMover(){}
 
 void PeptideStubMover::init() {

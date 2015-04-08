@@ -105,7 +105,7 @@ namespace protocols {
 
 				utility::vector1 < core::Real > curvect;
 
-				if(TR.visible()) {TR << "lower=" << dof_lower_vals_[i] << " upper=" << dof_upper_vals_[i] << std::endl; TR.flush();} //DELETE ME!
+				if(TR.Debug.visible()) {TR.Debug << "lower=" << dof_lower_vals_[i] << " upper=" << dof_upper_vals_[i] << std::endl; TR.Debug.flush();}
 
 				runtime_assert_string_msg( dof_lower_vals_[i] < dof_upper_vals_[i],
 					"Internal error in BundleGridSamplerHelper::initialize_samples().  Lower values in parameter ranges must be less than upper values." );

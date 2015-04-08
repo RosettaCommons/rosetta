@@ -342,7 +342,7 @@ namespace protocols {
 					for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 						MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 						runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", (unsigned long) j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
 						TR << outchar << std::endl;
 					}
 					TR << std::endl;
@@ -370,6 +370,13 @@ namespace protocols {
 						TR.flush();
 					}
 					pre_selection_mover_->apply(temppose);
+					if(pre_selection_mover_->get_last_move_status() != protocols::moves::MS_SUCCESS) {
+						if(TR.visible()) {
+							TR << "Pre-selection mover failed.  Discarding current grid sample and moving on to next." << std::endl;
+							TR.flush();
+						}
+						continue;
+					}
 				}
 
 				//Apply the preselection filter, if it exists:
@@ -410,7 +417,7 @@ namespace protocols {
 						for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 							MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 							runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", (unsigned long) j, curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
 							final_report << outstring << std::endl;
 						}
 						final_report << std::endl;
@@ -426,8 +433,8 @@ namespace protocols {
 				//Dump a PDB file, if the user has specified that this mover should do so:
 				if(pdb_output()) {
 					char outfile[1024];
-					sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), (unsigned long) i );
-					TR << "Writing " << outfile << std::endl;
+					sprintf( outfile, "%s_%05lu.pdb", pdb_prefix().c_str(), static_cast<unsigned long>(i) );
+					if(TR.visible()) TR << "Writing " << outfile << std::endl;
 					temppose.dump_scored_pdb( outfile, *sfxn_ );
 				}
 			} //Looping through all grid samples

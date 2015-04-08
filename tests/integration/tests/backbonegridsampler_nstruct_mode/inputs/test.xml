@@ -1,0 +1,27 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MinMover name=minmover bb=1 chi=0 jump=0 tolerance=0.000001>
+			<MoveMap name=minmover_mm>
+				<Span begin=1 end=24 bb=1 chi=0 />
+			</MoveMap>
+		</MinMover>
+		<BackboneGridSampler name=bbgrid nstruct_mode=1 scorefxn=tala residue_count=24 residue_name="ALA" cap_ends=false pre_scoring_mover=minmover>
+			<MainchainTorsion index=1 start=-180 end=180 samples=6 />
+			<MainchainTorsion index=2 start=-60 end=-30 samples=4 />
+			<MainchainTorsion index=3 value=180 />
+		</BackboneGridSampler>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bbgrid />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

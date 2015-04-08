@@ -3348,29 +3348,29 @@ Conformation::backbone_torsion_angle_atoms(
 		// set all id rsds to seqpos since they are all in the same residue
 		id1.rsd() = id2.rsd() = id3.rsd() = id4.rsd() = seqpos;
         if (rsd.type().is_peptoid() ) {
-            // just explicit for now
-            if ( torsion == 1 ){
-                id1.atomno() = rsd.atom_index( "CP2" );
-                id2.atomno() = rsd.atom_index( "CO" );
-                id3.atomno() = rsd.atom_index( "N" );
-                id4.atomno() = rsd.atom_index( "CA" );
-            } else if ( torsion == 2 ) {
-                id1.atomno() = rsd.atom_index( "CO" );
-                id2.atomno() = rsd.atom_index( "N" );
-                id3.atomno() = rsd.atom_index( "CA" );
-                id4.atomno() = rsd.atom_index( "C" );
-            } else if ( torsion == 3 ) {
-                id1.atomno() = rsd.atom_index( "N" );
-                id2.atomno() = rsd.atom_index( "CA" );
-                id3.atomno() = rsd.atom_index( "C" );
-                id4.atomno() = rsd.atom_index( "NM" );
-            } else {
-                id1.atomno() = rsd.atom_index( "CA" );
-                id2.atomno() = rsd.atom_index( "C" );
-                id3.atomno() = rsd.atom_index( "NM" );
-                id4.atomno() = rsd.atom_index( "CN" );
-            }
-        } else {
+          // just explicit for now -- shouldn't be necessary, though, since the general case covers this.
+          if ( torsion == 1 ){
+              id1.atomno() = rsd.atom_index( "CP2" );
+              id2.atomno() = rsd.atom_index( "CO" );
+              id3.atomno() = rsd.atom_index( "N" );
+              id4.atomno() = rsd.atom_index( "CA" );
+          } else if ( torsion == 2 ) {
+              id1.atomno() = rsd.atom_index( "CO" );
+              id2.atomno() = rsd.atom_index( "N" );
+              id3.atomno() = rsd.atom_index( "CA" );
+              id4.atomno() = rsd.atom_index( "C" );
+          } else if ( torsion == 3 ) {
+              id1.atomno() = rsd.atom_index( "N" );
+              id2.atomno() = rsd.atom_index( "CA" );
+              id3.atomno() = rsd.atom_index( "C" );
+              id4.atomno() = rsd.atom_index( "NM" );
+          } else {
+              id1.atomno() = rsd.atom_index( "CA" );
+              id2.atomno() = rsd.atom_index( "C" );
+              id3.atomno() = rsd.atom_index( "NM" );
+              id4.atomno() = rsd.atom_index( "CN" );
+          }
+        } else { //General case -- should be correct for an arbitrary heteropolymer.
         if ( torsion == 1 ){
             id1.atomno() = rsd.atom_index( "CP2" ); //CP2 0
             id2.atomno() = mainchain[0+torsion];//CO 1
@@ -3398,42 +3398,42 @@ Conformation::backbone_torsion_angle_atoms(
         }
         }
     // the ACETYLATED_NTERMINUS prepends an additional backbone atom which is why the numbers are increased by one
-	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
-		// torsion 1; phi
-		if( torsion == 1 ) {
-			//TR << "HI MOM, ACET_NTERM 1" << std::endl;
-			id1.rsd() = seqpos; id1.atomno() = mainchain[1];
-			id2.rsd() = seqpos; id2.atomno() = mainchain[2];
-			id3.rsd() = seqpos; id3.atomno() = mainchain[3];
-			id4.rsd() = seqpos; id4.atomno() = mainchain[4];
-		}
-		// torsion 2; psi
-		else if( torsion == 2 ) {
-			if ( seqpos+1 <= residues_.size() ) { // should this be the chain end?
-				AtomIndices const & next_mainchain( residue_( seqpos+1 ).mainchain_atoms() );
-				id1.rsd() = seqpos;   id1.atomno() = mainchain[2];
-				id2.rsd() = seqpos;   id2.atomno() = mainchain[3];
-				id3.rsd() = seqpos;   id3.atomno() = mainchain[4];
-				id4.rsd() = seqpos+1; id4.atomno() = next_mainchain[1];
-			} else {
-				return true; // torsion not well defined
+	} else if ( rsd.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) { //Acetylated N-terminus variant but no C-terminal methylation.
+		if(torsion+1 > mainchain.size()) return true; // Torsion not well defined if the first two atoms aren't in the current residue.
+		 
+		id1.rsd() = seqpos;   id1.atomno() = mainchain[torsion]; //First atom is always in the current residue.
+		id2.rsd() = seqpos;   id2.atomno() = mainchain[torsion+1]; //Second atom is always in the current residue.
+		if(torsion + 2 <= mainchain.size()) {
+			id3.rsd() = seqpos;   id3.atomno() = mainchain[torsion+2]; //If the third atom is in the current residue.
+			if(torsion + 3 <= mainchain.size()) { //If the fourth atom is in the current residue
+				id4.rsd() = seqpos;   id4.atomno() = mainchain[torsion+3];
+			} else { //If the third atom is in the current residue, but the fourth is NOT:
+				if(!rsd.has_upper_connect() || rsd.connection_incomplete( rsd.type().upper_connect_id() )) {
+					return true; //FAIL if this residue is not connected to anything.
+				}
+				id4.rsd() = rsd.residue_connection_partner(rsd.type().upper_connect_id()); //Get the residue index of the residue connected to this residue at this residue's connection #2.
+				id4.atomno() =  residue_(id4.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id(rsd.type().upper_connect_id()) ); //Get the atom index in the connected residue of the atom that's making a connection to THIS residue's connection #2.				
 			}
-		}
-		// torsion 3; omg
-		else if( torsion == 3 ) {
-			if ( seqpos+1 <= residues_.size() ) { // should this be the chain end?
-				AtomIndices const & next_mainchain( residue_( seqpos+1 ).mainchain_atoms() );
-				id1.rsd() = seqpos;   id1.atomno() = mainchain[3];
-				id2.rsd() = seqpos;   id2.atomno() = mainchain[4];
-				id3.rsd() = seqpos+1; id3.atomno() = next_mainchain[1];
-				id4.rsd() = seqpos+1; id4.atomno() = next_mainchain[2];
-			} else {
-				return true; // torsion not well defined
+		} else { // If the third atom is NOT in the current residue:
+			if(!rsd.has_upper_connect() || rsd.connection_incomplete( rsd.type().upper_connect_id() )) {
+				return true; //FAIL if this residue is not connected to anything.
 			}
-		}
-		// catch other stuff
-		else {
-			return true; // torsion not well defined
+			AtomIndices const & next_mainchain ( residue_( rsd.residue_connection_partner( rsd.type().upper_connect_id() ) ).mainchain_atoms() );
+			id3.rsd() = rsd.residue_connection_partner(rsd.type().upper_connect_id()); //Get the residue index of the residue connected to this residue at this residue's connection #2.
+			if(residue_(id3.rsd()).connect_map_size() < rsd.residue_connection_conn_id( rsd.type().upper_connect_id() )) {
+				return true; //FAIL if the residue connected at upper is connected improperly.
+			}
+			id3.atomno() =  residue_(id3.rsd()).residue_connect_atom_index( rsd.residue_connection_conn_id(rsd.type().upper_connect_id()) ); //Get the atom index in the connected residue of the atom that's making a connection to THIS residue's connection #2.
+			if ( next_mainchain.size() >= 2 ) {
+				id4.rsd()	= id3.rsd();
+				if(id3.atomno() == next_mainchain[1]) { //If the third atom is the first mainchain atom of the next residue, then let the fourth be the second mainchain atom of the next residue.
+					id4.atomno() = next_mainchain[ 2 ];
+				} else {
+					id4.atomno() = residue_(id3.rsd()).type().icoor(id3.atomno()).stub_atom1().atomno(); //Let the fourth atom index be the parent atom of the third if it is not the first mainchain atom.
+				}
+			} else {
+				return true; //FAIL if the connected residue is a single-atom residue.
+			}
 		}
 	}
 	else {
