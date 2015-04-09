@@ -171,6 +171,7 @@ sources = {
 		"NotResidueSelector",
 		"NumNeighborsSelector",
 		"OrResidueSelector",
+		"ResidueNameSelector",
 		"ResidueSelector",
 		"ResidueSelectorFactory",
 		"TrueResidueSelector",

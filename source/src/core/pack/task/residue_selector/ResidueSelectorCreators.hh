@@ -59,6 +59,12 @@ public:
   virtual std::string keyname() const;
 };
 
+class ResidueNameSelectorCreator : public ResidueSelectorCreator {
+public:
+  virtual ResidueSelectorOP create_residue_selector() const;
+  virtual std::string keyname() const;
+};
+
 class NeighborhoodResidueSelectorCreator : public ResidueSelectorCreator {
 public:
   virtual ResidueSelectorOP create_residue_selector() const;
