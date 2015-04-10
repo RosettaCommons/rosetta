@@ -176,7 +176,19 @@ HelixKinkFilter::apply( Pose const & pose ) const
 		// check broken hydrogen within helix
 		/// @brief check kink of helix, return number of loosen hydrogen
 		if ( pose.energies().data().has( HBOND_SET ) ) {
-			Size broken_hbonds( check_kink_helix( pose, helices[ ii ]->begin()-1, helices[ ii ]->end()-5 ) );
+			core::Size hbond_start = helices[ ii ]->begin();
+			if ( (hbond_start > 1) &&
+					(!pose.residue(hbond_start).is_lower_terminus()) &&
+					(pose.chain(hbond_start) == pose.chain(hbond_start-1)) ) {
+				--hbond_start;
+			}
+			core::Size hbond_end = helices[ ii ]->end();
+			if ( hbond_end >= hbond_start + 5 ) {
+				hbond_end = hbond_end - 5;
+			} else {
+				hbond_end = hbond_start;
+			}
+			Size broken_hbonds( check_kink_helix( pose, hbond_start, hbond_end ) );
 			if( broken_hbonds > 0 ) {
 				TR << "is kinked, hbonds are broken. " << std::endl;
 				return false;
