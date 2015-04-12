@@ -15,6 +15,7 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMoverCreator.hh>
+#include <utility/string_util.hh>
 
 // // Rosetta Headers
 #include <core/types.hh>
@@ -301,6 +302,8 @@ IdealizeMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 		ignore_residues_in_csts( core::pose::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
 	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
 	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
+	if( tag->hasOption( "pos_list" ) )
+	 pos_list_ = utility::string_split( tag->getOption< std::string >( "pos_list", "" ), ',', core::Size() );
 
 	TR<<"IdealizeMover with atom_pair_constraint_weight="<<atom_pair_constraint_weight_<<" coordinate_constraint_weight="<<coordinate_constraint_weight_<<" fast="<<fast_<<" chainbreaks="<<chainbreaks_<<" and report CA_rmsd_="<<report_CA_rmsd_<<" impose constraints "<<impose_constraints()<<std::endl;
 }

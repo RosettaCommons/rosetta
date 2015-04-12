@@ -123,7 +123,7 @@ void FragmentPicker::quota_protocol() {
 	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
 	for (Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize) { // Loop over various sizes of fragments
 		Size fragment_size = frag_sizes_[iFragSize];
-		quota::QuotaCollectorOP c = (skip_merge) ? 
+		quota::QuotaCollectorOP c = (skip_merge) ?
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sinks_[1][fragment_size]) :
 			utility::pointer::dynamic_pointer_cast<quota::QuotaCollector> (candidates_sink_[fragment_size]); // merged storage
 		if (c == 0)
@@ -1154,8 +1154,8 @@ void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) 
 	tr.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
 	for (Size i = 1; i <= sec_str_input.size(); i += 2) {
 		tr.Debug << i / 2 << " " << sec_str_input[i]
-			<< " file will be loaded under \"" << sec_str_input[i + 1] << "\" name\n";
-		read_ss_file(sec_str_input[i], sec_str_input[i + 1]);
+			<< " file will be loaded under \"" << sec_str_input[i ] << "\" name\n";
+		read_ss_file(sec_str_input[i], sec_str_input[i ]);
 	}
 	tr.Debug << std::endl;
 }

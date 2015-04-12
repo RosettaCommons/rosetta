@@ -22,6 +22,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/OrderedFragSet.hh>
@@ -40,6 +41,7 @@
 #include <devel/init.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
+#include <cmath>
 
 static thread_local basic::Tracer TR( "frag2profile" );
 
@@ -69,7 +71,7 @@ void ThisApplication::register_options() {
 	NEW_OPT( f, "fragment file", "" );
 	NEW_OPT( s, "pdb file name", "" );
 	NEW_OPT( o, "output filename", "output" );
-	NEW_OPT( rmsd, "output filename", 1.0 );
+	NEW_OPT( rmsd, "rmsd cutoff", 1.0 );
 }
 
 
@@ -131,6 +133,7 @@ main( int argc, char * argv [] )
 	using core::fragment::FrameList;
 	using core::fragment::FragmentIO;
 	using core::fragment::FrameIterator;
+	using core::fragment::ConstFrameIterator;
 	using core::scoring::CA_rmsd;
 
 
@@ -151,7 +154,16 @@ main( int argc, char * argv [] )
 		}
 	}
 
-	for ( FrameIterator frame = fragset->begin(); frame != fragset->end(); ++frame ) {
+
+/// SJF 8Apr15
+// The computation in the original paper (Nobu Nature) uses a voting scheme whereby for every segment we count the number of fragments within 1A.
+// This voting scheme would allow highly popular segments (with many fragment neighbours) to compensate for poor fragments. Instead, use a
+// classical discrete partition function: Z=exp(-rmsd^3/const), as in Honig's PNAS 99:7432
+	core::Real Z = 0.0;
+	core::Size count=0;
+	core::Real const scaling_factor = 0.2; // in Honig, scaling factor is set 'empirically' to 6*L, where L is the loop length, meaning 54, but that seems too large
+
+	for ( ConstFrameIterator frame = fragset->begin(); frame != fragset->end(); ++frame ) {
 
 		Size const start ( frame->start() );
 		if( ( start + ( frame->length() - 1 ) ) > pose.total_residue() ) continue;
@@ -164,8 +176,9 @@ main( int argc, char * argv [] )
 			// calc rmsd
 			core::Real rmsd = CA_rmsd( pose, test_pose, start, start + frame->length() - 1 );
 
-
+			Z += exp( -pow( rmsd, 3.0 ) / scaling_factor );
 			if( rmsd <= rmsd_cutoff_ ) {
+				++count;
 				FragData fragdat = frame->fragment( i );
 				for( Size j=1; j<=fragdat.size(); j++ ) {
 
@@ -178,6 +191,8 @@ main( int argc, char * argv [] )
 			}
 		}
 	} // FrameIterator
+
+	TR<<"Z: "<<Z<<" -ln(Z) = "<<-log( Z )<<" count: "<<count<<std::endl;
 
 	/// output //////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > total;
