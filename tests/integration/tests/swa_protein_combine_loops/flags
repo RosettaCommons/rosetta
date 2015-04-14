@@ -19,12 +19,12 @@
 -bridge_res 207 208 
 -cutpoint_closed 206 
 -ccd_close 
--global_optimize 
 -out:file:silent region_207_206_sample.out
-
+ 
 # for speed in integration test
 -tags2 S_10 S_11 S_12 S_13 S_14 S_15 S_16 S_17 S_18 S_19  S_20 S_21 S_22 S_23 S_24 S_25 S_26 S_27 S_28 S_29    S_30 S_31 S_32 S_33 S_34 S_35 S_36 S_37 S_38 S_39 
 -num_pose_minimize 1
+# the -global_optimize option is supposed to be on for loop combination, but turned off here for integration test speed: #-global_optimize 
 
 # following flags turn off new defaults, set in stepwise monte carlo
 -allow_virtual_side_chains false
