@@ -37,8 +37,8 @@ using std::map;
 class RmsUtilTest : public CxxTest::TestSuite {
  public:
   void setUp() {
-    core_init_with_additional_options(
-      "-no_optH"// -extra_res_fa core/scoring/1pqc.params"
+    core_init_with_additional_options( //Load the D-amino acids for this test.
+      "-no_optH -extra_res_fa d-caa/DALA.params d-caa/DASP.params d-caa/DGLU.params d-caa/DPHE.params d-caa/DHIS.params d-caa/DHIS_D.params d-caa/DILE.params d-caa/DLYS.params d-caa/DLEU.params d-caa/DMET.params d-caa/DASN.params d-caa/DPRO.params d-caa/DGLN.params d-caa/DARG.params d-caa/DSER.params d-caa/DTHR.params d-caa/DVAL.params d-caa/DTRP.params d-caa/DTYR.params"
     );
     // Residue definitions can't be supplied on the command line b/c
     // the ResidueTypeSet is already initialized.
@@ -113,4 +113,25 @@ class RmsUtilTest : public CxxTest::TestSuite {
 
     TS_ASSERT_DELTA(0, core::scoring::CA_rmsd(pose1, pose2, residues), 0.0001);
   }
+  
+	/// @brief Test rmsd calculation as applied to a mixed D/L helical bundle.
+	/// @details This uses a parametrically-generated helical bundle as the native pose,
+	/// with aligned and unaligned helical bundles (CA RMSD=9.921 A) that are supposed to
+	/// be aligned to the native.  This test asks whether the aligned and unaligned
+	/// poses yield the same RMSD.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu), Baker Laboratory
+	void test_DLbundle_rmsd_aligned_unaligned()
+	{
+		PoseOP pose_native = core::import_pose::pose_from_pdb( "core/scoring/native_for_rmstest.pdb", false );
+		PoseOP pose_unaligned = core::import_pose::pose_from_pdb( "core/scoring/unaligned_for_rmstest.pdb", false );
+		PoseOP pose_aligned = core::import_pose::pose_from_pdb( "core/scoring/aligned_for_rmstest.pdb", false );
+		
+		Real rmsd_unaligned = core::scoring::CA_rmsd( *pose_unaligned, *pose_native );
+		Real rmsd_aligned = core::scoring::CA_rmsd( *pose_aligned, *pose_native );
+		
+		TS_ASSERT_DELTA( rmsd_unaligned, rmsd_aligned, 0.0001 );
+
+		return;
+	} //test_DLbundle_rmsd_aligned_unaligned()  
+
 };

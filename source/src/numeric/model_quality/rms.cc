@@ -85,22 +85,6 @@ rms_wrapper_slow_and_correct(
 	return std::sqrt(tot/natoms);
 }
 
-bool close_enough( numeric::Real val1, numeric::Real val2, numeric::Real TOL = 1e-5 ) {
-	return std::abs(val1-val2) <= TOL;
-}
-
-bool is_identity_matrix(ObjexxFCL::FArray2D< numeric::Real > uu ) {
-	for ( int ii = 1; ii <= 3; ++ii ) {
-		for ( int jj = 1; jj <= 3; ++jj ) {
-			//if ( ii == jj && !close_enough(uu(ii,jj),1) ) return false;
-			//else if ( !close_enough(uu(ii,jj),0) ) return false;
-			numeric::Real const identity_val = (ii == jj) ? 1 : 0;
-			if ( !close_enough(uu(ii,jj),identity_val) ) return false;
-		}
-	}
-	return true;
-}
-
 // Calculate an RMS based on aligned set of points in p1a and p2a composed
 // each representing a list of natoms.
 numeric::Real
@@ -114,10 +98,6 @@ rms_wrapper(
 	numeric::Real ctx;
 
 	findUU( p1a, p2a, ww, natoms, uu, ctx );
-
-	// correct for rounding error in UU calculation,
-	// usually in small coordinate systems.
-	if ( is_identity_matrix(uu) ) return 0.0;
 
 	float fast_rms;
 	calc_rms_fast( fast_rms, p1a, p2a, ww, natoms, ctx );
