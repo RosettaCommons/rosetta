@@ -114,6 +114,35 @@ public:
 	/// @brief Align a pose about a 2D rotation axis
 	numeric::xyzMatrix< core::Real > rotAlign2DPose( core::pose::Pose const &pose, std::string axis );
 
+	// 
+	numeric::xyzVector< core::Real > 
+	poseSHT(  
+		pose::Pose const &pose,
+		core::Size &nRsteps,
+		ObjexxFCL::FArray3D< double > &sigR, 
+		ObjexxFCL::FArray3D< double > &poseCoefR, 
+		ObjexxFCL::FArray3D< double > &poseCoefI,
+		core::Size bandwidth=32
+	);
+
+	//
+	core::Real 
+	mapSHT(
+		core::Real const & no_density_score,
+		core::Size &nRsteps,
+		double &map_s,
+		double &map_s2,
+		double &pose_s,
+		double &pose_s2,
+		ObjexxFCL::FArray3D< double > &poseCoefR, 
+		ObjexxFCL::FArray3D< double > &poseCoefI,
+		numeric::xyzMatrix<core::Real> &rotation,
+		numeric::xyzVector<core::Real> &pre_trans,
+		numeric::xyzVector<core::Real> &post_trans,
+		numeric::xyzVector<core::Real> MyCenterOfMass,
+		core::Size bandwidth=32
+	);
+
 	/// @brief Quickly matches a centroid pose into a low-resolution density map
 	///   by placing a single Gaussian at each CA
 	core::Real
@@ -569,6 +598,7 @@ private:
 
 	// the density data array
 	ObjexxFCL::FArray3D< float > density;
+	ObjexxFCL::FArray3D< double > coeffs_density_;
 
 	// fft of density -- only used in FSC calc
 	ObjexxFCL::FArray3D< std::complex<double> > Fdensity;
