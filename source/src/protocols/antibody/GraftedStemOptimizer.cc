@@ -84,7 +84,8 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	if(!scorefxn_) {
 		scorefxn_=scoring::get_score_function();
 		scorefxn_->set_weight( scoring::chainbreak, 30./3. );
-		scorefxn_->set_weight( scoring::overlap_chainbreak, 30./3. );
+		//Turning off overlap_chainbreak - causes Inaccurate G! errors
+		//scorefxn_->set_weight( scoring::overlap_chainbreak, 30./3. );
 		scorefxn_->set_weight( scoring::dslf_ss_dst, 3.0);
 		scorefxn_->set_weight( scoring::dslf_cs_ang, 3.0);
 		scorefxn_->set_weight( scoring::dslf_ss_dih, 3.0);
@@ -111,8 +112,8 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 	shear_mover->angle_max( 'L', 6.0 );
 
 	/// Ccd_Loop_Closure_Mover
-	loops::Loop Nter_stem(cdr_loop_->start()-stem_size_, cdr_loop_->start()+stem_size_-1, cdr_loop_->start()-1);
-	loops::Loop Cter_stem(cdr_loop_->stop()-stem_size_+1, cdr_loop_->stop()+stem_size_, cdr_loop_->stop() );
+        loops::Loop Nter_stem(cdr_loop_->start()-stem_size_-1, cdr_loop_->start(), cdr_loop_->start()-stem_size_/2-1);
+        loops::Loop Cter_stem(cdr_loop_->stop(), cdr_loop_->stop()+stem_size_+1, cdr_loop_->stop()+stem_size_/2 );
 	using namespace loops::loop_closure::ccd;
 	CCDLoopClosureMoverOP close_Nter_stem( new CCDLoopClosureMover(Nter_stem, get_stem_movemap(pose, "N")) );
 	close_Nter_stem->tolerance( 0.001 );
