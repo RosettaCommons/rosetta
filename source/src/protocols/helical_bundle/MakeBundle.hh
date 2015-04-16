@@ -267,17 +267,41 @@ public:
 	///
 	std::string default_residue_name() const;
 
-	/// @brief Set the default delta_t value (residue offset)
+	/// @brief Set the default delta_t value (residue offset).
 	///
 	void set_default_delta_t(core::Real const &val) { default_delta_t_=val; default_delta_t_set_=true; }
 
-	/// @brief Returns true if and only if the default delta_t value (residue offset) has been set
+	/// @brief Returns true if and only if the default delta_t value (residue offset) has been set.
 	///
 	bool default_delta_t_set() const { return default_delta_t_set_; }
 
 	/// @brief Returns the default delta_t value (residue offset).
 	///
 	core::Real default_delta_t() const;
+	
+	/// @brief Set the default z1_offset value (helix offset along the minor helix axis).
+	///
+	void set_default_z1_offset(core::Real const &val) { default_z1_offset_=val; default_z1_offset_set_=true; }
+
+	/// @brief Returns true if and only if the default z1_offset value (helix offset along the minor helix axis) has been set.
+	///
+	bool default_z1_offset_set() const { return default_z1_offset_set_; }
+
+	/// @brief Returns the default z1_offset value (helix offset along the minor helix axis).
+	///
+	core::Real default_z1_offset() const;
+
+	/// @brief Set the default z0_offset value (helix offset along the major helix axis).
+	///
+	void set_default_z0_offset(core::Real const &val) { default_z0_offset_=val; default_z0_offset_set_=true; }
+
+	/// @brief Returns true if and only if the default z0_offset value (helix offset along the major helix axis) has been set.
+	///
+	bool default_z0_offset_set() const { return default_z0_offset_set_; }
+
+	/// @brief Returns the default z0_offset value (helix offset along the major helix axis).
+	///
+	core::Real default_z0_offset() const;
 
 	/// @brief Set the default invert value (should the helix be flipped?)
 	///
@@ -445,6 +469,22 @@ private:
 	/// @brief Has the default delta_t value (residue offset) been specified?
 	///
 	bool default_delta_t_set_;
+	
+	/// @brief Default z1_offset value (helix offset along the minor helix axis)
+	///
+	 core::Real default_z1_offset_;
+
+	/// @brief Has the default z1_offset value (helix offset along the minor helix axis) been specified?	 
+ 	///
+ 	core::Real default_z1_offset_set_;
+
+	/// @brief Default z0_offset value (helix offset along the major helix axis)
+	///
+	 core::Real default_z0_offset_;
+
+	/// @brief Has the default z0_offset value (helix offset along the major helix axis) been specified?	 
+ 	///
+ 	core::Real default_z0_offset_set_;
 
 	/// @brief Default invert value (should the helix be flipped?)
 	///

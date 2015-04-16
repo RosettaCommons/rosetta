@@ -106,6 +106,10 @@ namespace protocols {
 				///
 				core::Size other_helix() const { return use_value_from_other_helix_; }
 
+				/// @brief Special case: returns whether omega0 copying should use the pitch angle instead of the omega0 value.
+				/// @details Default false.
+				bool omega0_copies_pitch_instead() const { return omega0_copies_pitch_instead_; }
+
 				/// @brief Returns the number of values to sample for this parameter.
 				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.  If the sample value is 0, no sampling occurs.
 				core::Size samples() const { return samples_; }
@@ -152,6 +156,10 @@ namespace protocols {
 				/// @brief Sets the helix from which we should copy a parameter value.  If set to zero, no copying occurs.
 				///
 				void set_helix_to_copy(core::Size const helix_index) { use_value_from_other_helix_=helix_index; use_defaults_=false; return; }
+				
+				/// @brief Special case: sets whether omega0 copying should copy the pitch angle instead of the omega0 value.
+				///
+				void set_omega0_copies_pitch_instead( bool const copy_pitch ) { omega0_copies_pitch_instead_=copy_pitch; return; }
 
 				/// @brief Sets the number of values to sample for this parameter.
 				/// @details This is used by the BundleGridSampler mover, but not the PerturbBundle mover.  If set to 0, no sampling occurs.
@@ -200,6 +208,10 @@ namespace protocols {
 			/// @brief Should we just use the parameter value from another helix?
 			/// @details Default value (0) means no; otherwise the helix index must be specified.
 			core::Size use_value_from_other_helix_;
+			
+			/// @brief This is a special option only for omega0 copying.  If true, we copy the pitch angle from the other helix
+			/// instead of the omega0 value.  Default false.
+			bool omega0_copies_pitch_instead_;
 
 			/// @brief For the grid sampler only -- how many values should we sample for this parameter?
 			/// @brief Default value (0) means no sampling.

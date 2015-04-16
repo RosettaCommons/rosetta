@@ -53,11 +53,13 @@ namespace protocols {
 				z1_(0.0),
 				delta_omega1_(),
 				delta_z1_(),
+				z1_offset_(0.0),
+				z0_offset_(0.0),
 				invert_helix_(false),
 				delta_t_(0.0),
 				allow_dihedrals_(true),
-				allow_bondangles_(false),
-				allow_bondlengths_(false)
+				allow_bondangles_(true),
+				allow_bondlengths_(true)
 			{
 			}
 
@@ -72,6 +74,8 @@ namespace protocols {
 				z1_(src.z1()),
 				delta_omega1_(src.delta_omega1_),
 				delta_z1_(src.delta_z1_),
+				z1_offset_(src.z1_offset_),
+				z0_offset_(src.z0_offset_),
 				invert_helix_(src.invert_helix()),
 				delta_t_(src.delta_t()),
 				allow_dihedrals_(src.allow_dihedrals()),

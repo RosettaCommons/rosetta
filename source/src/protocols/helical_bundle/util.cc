@@ -203,6 +203,8 @@ namespace helical_bundle {
 		core::Real const &omega0,
 		core::Real const &delta_omega0,
 		core::Real const &delta_t,
+		core::Real const &z1_offset,
+		core::Real const &z0_offset,
 		bool const invert_helix,
 		utility::vector1 < core::Real > const &r1,
 		core::Real const &omega1,
@@ -217,8 +219,12 @@ namespace helical_bundle {
 		failed=false;
 
 		core::Size helix_length=helix_end-helix_start+1;
+		
+		// The offset along the minor helix axis is converted into delta_t and delta_omega1_all values:
+		core::Real const delta_t_prime (delta_t + (invert_helix ? -1.0 : 1.0) * z1_offset / z1);
+		core::Real const delta_omega1_all_prime ( delta_omega1_all - (invert_helix ? -1.0 : 1.0) * (z1_offset / z1) * omega1 );
 
-		core::Real t = -1.0 * static_cast<core::Real>(helix_length + 2) / 2.0 + delta_t;
+		core::Real t = -1.0 * static_cast<core::Real>(helix_length + 2) / 2.0 + delta_t_prime;
 
 		for(core::Size ir2=helix_start-1; ir2<=helix_end+1; ++ir2) { //Loop through all residues in the helix, padded by one on either side
 			core::Size ir = ir2;
@@ -230,13 +236,15 @@ namespace helical_bundle {
 				innervector.push_back( numeric::crick_equations::XYZ_BUNDLE(
 					t, r0, omega0,
 					( invert_helix ? numeric::constants::d::pi - delta_omega0 : delta_omega0 ),
-					r1[ia], omega1-omega0, z1, delta_omega1[ia]+delta_omega1_all, delta_z1[ia], failed )
+					r1[ia], omega1-omega0, z1, delta_omega1[ia]+delta_omega1_all_prime, delta_z1[ia],
+					failed )
 				);
 				if(invert_helix) {
 					innervector[ia].x( -1.0*innervector[ia].x() );
 					//innervector[ia].y( -1.0*innervector[ia].y() );
 					innervector[ia].z( -1.0*innervector[ia].z() );
 				}
+				innervector[ia].z( innervector[ia].z() + z0_offset ); //Offset by z0_offset
 				if(failed) break;
 			}
 			if(failed) break;

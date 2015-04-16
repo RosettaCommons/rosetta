@@ -95,6 +95,10 @@ MakeBundle::MakeBundle():
 		default_residue_name_set_(false),
 		default_delta_t_(0),
 		default_delta_t_set_(false),
+		default_z1_offset_(0),
+		default_z1_offset_set_(false),
+		default_z0_offset_(0),
+		default_z0_offset_set_(false),
 		default_invert_(false),
 		default_invert_set_(false),
 		default_helix_length_(0),
@@ -136,6 +140,10 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 		default_residue_name_set_(src.default_residue_name_set_),
 		default_delta_t_(src.default_delta_t_),
 		default_delta_t_set_(src.default_delta_t_set_),
+		default_z1_offset_(src.default_z1_offset_),
+		default_z1_offset_set_(src.default_z1_offset_set_),
+		default_z0_offset_(src.default_z0_offset_),
+		default_z0_offset_set_(src.default_z0_offset_set_),
 		default_invert_(src.default_invert_),
 		default_invert_set_(src.default_invert_set_),
 		default_helix_length_(src.default_helix_length_),
@@ -313,6 +321,14 @@ MakeBundle::parse_my_tag(
 		set_default_delta_t( tag->getOption<core::Real>("delta_t", 0) );
 		if(TR.visible()) TR << "Default delta_t (residue offset) set to " << default_delta_t() << "." << std::endl;
 	}
+	if (tag->hasOption("z1_offset")) {
+		set_default_z1_offset( tag->getOption<core::Real>("z1_offset", 0) );
+		if(TR.visible()) TR << "Default z1 offset (helix offset along the minor helix axis) set to " << default_z1_offset() << "." << std::endl;
+	}
+	if (tag->hasOption("z0_offset")) {
+		set_default_z0_offset( tag->getOption<core::Real>("z0_offset", 0) );
+		if(TR.visible()) TR << "Default z0 offset (helix offset along the major helix axis) set to " << default_z0_offset() << "." << std::endl;
+	}
 	set_other_defaults_from_tag( tag );
 
 	//Check that at least one helix is defined:
@@ -358,6 +374,16 @@ MakeBundle::parse_my_tag(
 				helix(helix_index)->set_delta_t(delta_tval);
 				if(TR.visible()) TR << "\tSet delta_t value (residue offset) to " << delta_tval << "." << std::endl;
 			}
+			if( (*tag_it)->hasOption( "z1_offset" ) ) {
+				core::Real const z1_offsetval( (*tag_it)->getOption<core::Real>("z1_offset", 0) );
+				helix(helix_index)->set_z1_offset(z1_offsetval);
+				if(TR.visible()) TR << "\tSet z1 offset value (helix offset along the minor helix axis) to " << z1_offsetval << "." << std::endl;
+			}
+			if( (*tag_it)->hasOption( "z0_offset" ) ) {
+				core::Real const z0_offsetval( (*tag_it)->getOption<core::Real>("z0_offset", 0) );
+				helix(helix_index)->set_z0_offset(z0_offsetval);
+				if(TR.visible()) TR << "\tSet z0 offset value (helix offset along the major helix axis) to " << z0_offsetval << "." << std::endl;
+			}
 
 		}
 	}
@@ -380,13 +406,13 @@ void MakeBundle::set_helix_params_from_tag ( core::Size const helix_index, utili
 		//SECOND, check for params that have been set manually, and set accordingly.
 		//Params for what DOFs can be set:
 		if (tag->hasOption("set_bondlengths")) {
-			helix(helix_index)->set_allow_bondlengths( tag->getOption<bool>("set_bondlengths", false) );
+			helix(helix_index)->set_allow_bondlengths( tag->getOption<bool>("set_bondlengths", true) );
 			if(TR.visible()) {
 				TR << "\tSet the permission for the mover to set bondlengths for this helix to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
 			}
 		}
 		if (tag->hasOption("set_bondangles")) {
-			helix(helix_index)->set_allow_bondangles( tag->getOption<bool>("set_bondangles", false) );
+			helix(helix_index)->set_allow_bondangles( tag->getOption<bool>("set_bondangles", true) );
 			if(TR.visible()) {
 				TR << "\tSet the permission for the mover to set bondangles for this helix to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
 			}
@@ -478,13 +504,13 @@ void MakeBundle::set_symmetry_options_from_tag( utility::tag::TagCOP tag )
 void MakeBundle::set_dofs_from_tag( utility::tag::TagCOP tag )
 {
 	if (tag->hasOption("set_bondlengths")) {
-		set_default_allow_bondlengths( tag->getOption<bool>("set_bondlengths", false) );
+		set_default_allow_bondlengths( tag->getOption<bool>("set_bondlengths", true) );
 		if(TR.visible()) {
 			TR << "Set the default permission for the mover to set bondlengths to " << (default_allow_bondlengths() ? "true." : "false.") << std::endl;
 		}
 	}
 	if (tag->hasOption("set_bondangles")) {
-		set_default_allow_bondangles( tag->getOption<bool>("set_bondangles", false) );
+		set_default_allow_bondangles( tag->getOption<bool>("set_bondangles", true) );
 		if(TR.visible()) {
 			TR << "Set the default permission for the mover to set bondangles to " << (default_allow_bondangles() ? "true." : "false.") << std::endl;
 		}
@@ -557,6 +583,8 @@ void MakeBundle::add_helix() {
 	if(default_delta_omega1_all_set()) helix(newindex)->set_delta_omega1_all( default_delta_omega1_all() );
 	if(default_residue_name_set()) helix(newindex)->set_residue_name( default_residue_name() );
 	if(default_delta_t_set()) helix(newindex)->set_delta_t( default_delta_t() );
+	if(default_z1_offset_set()) helix(newindex)->set_z1_offset( default_z1_offset() );
+	if(default_z0_offset_set()) helix(newindex)->set_z0_offset( default_z0_offset() );
 	if(default_invert_set()) helix(newindex)->set_invert_helix( default_invert() );
 	if(default_helix_length_set()) helix(newindex)->set_helix_length( default_helix_length() );
 	return;
@@ -623,6 +651,20 @@ std::string MakeBundle::default_residue_name() const {
 core::Real MakeBundle::default_delta_t() const {
 	runtime_assert_string_msg( default_delta_t_set(), "In protocols::helical_bundle::MakeBundle::default_delta_t(): The default delta_t value has not been set!" );
 	return default_delta_t_;
+}
+
+/// @brief Returns the default z1_offset value (helix offset along the minor helix axis).
+///
+core::Real MakeBundle::default_z1_offset() const {
+	runtime_assert_string_msg( default_z1_offset_set(), "In protocols::helical_bundle::MakeBundle::default_z1_offset(): The default z1_offset value has not been set!" );
+	return default_z1_offset_;
+}
+
+/// @brief Returns the default z0_offset value (helix offset along the major helix axis).
+///
+core::Real MakeBundle::default_z0_offset() const {
+	runtime_assert_string_msg( default_z0_offset_set(), "In protocols::helical_bundle::MakeBundle::default_z0_offset(): The default z0_offset value has not been set!" );
+	return default_z0_offset_;
 }
 
 /// @brief Returns the default invert value (should the helix be flipped?)

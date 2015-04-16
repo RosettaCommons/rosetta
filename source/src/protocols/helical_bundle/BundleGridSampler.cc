@@ -51,6 +51,9 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
+// C math
+#include <math.h>
+
 // C output headers:
 #include <stdio.h>
 #include <sstream>
@@ -101,6 +104,10 @@ namespace protocols {
 			delta_omega1_(),
 			default_delta_t_( new PerturbBundleOptions ),
 			delta_t_(),
+			default_z1_offset_( new PerturbBundleOptions ),
+			z1_offset_(),
+			default_z0_offset_( new PerturbBundleOptions ),
+			z0_offset_(),
 			make_bundle_( new MakeBundle ),
 			pre_selection_mover_(),
 			pre_selection_mover_exists_(false),
@@ -132,6 +139,10 @@ namespace protocols {
 			delta_omega1_(),
 			default_delta_t_(src.default_delta_t_->clone()),
 			delta_t_(),
+			default_z1_offset_(src.default_z1_offset_->clone()),
+			z1_offset_(),
+			default_z0_offset_(src.default_z0_offset_->clone()),
+			z0_offset_(),
 			make_bundle_(  utility::pointer::dynamic_pointer_cast< MakeBundle >(src.make_bundle_->clone()) ),
 			pre_selection_mover_( src.pre_selection_mover_ ), //NOTE that we're not cloning this mover, but using it straight
 			pre_selection_mover_exists_(src.pre_selection_mover_exists_),
@@ -147,11 +158,15 @@ namespace protocols {
 			delta_omega0_.clear();
 			delta_omega1_.clear();
 			delta_t_.clear();
+			z1_offset_.clear();
+			z0_offset_.clear();
 			for(core::Size i=1,imax=src.r0_.size(); i<=imax; ++i) r0_.push_back( src.r0_[i]->clone() );
 			for(core::Size i=1,imax=src.omega0_.size(); i<=imax; ++i) omega0_.push_back( src.omega0_[i]->clone() );
 			for(core::Size i=1,imax=src.delta_omega0_.size(); i<=imax; ++i) delta_omega0_.push_back( src.delta_omega0_[i]->clone() );
 			for(core::Size i=1,imax=src.delta_omega1_.size(); i<=imax; ++i) delta_omega1_.push_back( src.delta_omega1_[i]->clone() );
 			for(core::Size i=1,imax=src.delta_t_.size(); i<=imax; ++i) delta_t_.push_back( src.delta_t_[i]->clone() );
+			for(core::Size i=1,imax=src.z1_offset_.size(); i<=imax; ++i) z1_offset_.push_back( src.z1_offset_[i]->clone() );
+			for(core::Size i=1,imax=src.z0_offset_.size(); i<=imax; ++i) z0_offset_.push_back( src.z0_offset_[i]->clone() );
 		}
 
 
@@ -243,6 +258,24 @@ namespace protocols {
 						sampler_helper->add_DoF( bgsh_delta_t, ihelix, delta_t(ihelix)->samples(), delta_t(ihelix)->lower_value(), delta_t(ihelix)->upper_value() );
 				}
 			}
+			for(core::Size ihelix=1; ihelix<=nhelices; ++ihelix) { //Loop through all defined helices.
+				if( z1_offset(ihelix)->use_defaults() ) {
+					if( default_z1_offset()->is_perturbable() ) {
+						sampler_helper->add_DoF( bgsh_z1_offset, ihelix, default_z1_offset()->samples(), default_z1_offset()->lower_value(), default_z1_offset()->upper_value() );
+					}
+				} else if ( z1_offset(ihelix)->is_perturbable() ) {
+						sampler_helper->add_DoF( bgsh_z1_offset, ihelix, z1_offset(ihelix)->samples(), z1_offset(ihelix)->lower_value(), z1_offset(ihelix)->upper_value() );
+				}
+			}
+			for(core::Size ihelix=1; ihelix<=nhelices; ++ihelix) { //Loop through all defined helices.
+				if( z0_offset(ihelix)->use_defaults() ) {
+					if( default_z0_offset()->is_perturbable() ) {
+						sampler_helper->add_DoF( bgsh_z0_offset, ihelix, default_z0_offset()->samples(), default_z0_offset()->lower_value(), default_z0_offset()->upper_value() );
+					}
+				} else if ( z0_offset(ihelix)->is_perturbable() ) {
+						sampler_helper->add_DoF( bgsh_z0_offset, ihelix, z0_offset(ihelix)->samples(), z0_offset(ihelix)->lower_value(), z0_offset(ihelix)->upper_value() );
+				}
+			}
 
 			//Initialize the BundleGridSamplerHelper object (i.e. perform the internal calculation that pre-generates all of the values to be sampled).
 			sampler_helper->initialize_samples();
@@ -298,9 +331,12 @@ namespace protocols {
 					else if(sampler_helper->DoF_type(j) == bgsh_delta_omega0) curhelix->set_delta_omega0( sampler_helper->DoF_sample_value(j) );
 					else if(sampler_helper->DoF_type(j) == bgsh_delta_omega1) curhelix->set_delta_omega1_all( sampler_helper->DoF_sample_value(j) );
 					else if(sampler_helper->DoF_type(j) == bgsh_delta_t) curhelix->set_delta_t( sampler_helper->DoF_sample_value(j) );
+					else if(sampler_helper->DoF_type(j) == bgsh_z1_offset) curhelix->set_z1_offset( sampler_helper->DoF_sample_value(j) );
+					else if(sampler_helper->DoF_type(j) == bgsh_z0_offset) curhelix->set_z0_offset( sampler_helper->DoF_sample_value(j) );
 				}
 
 				//Set the parameters that are copying other parameters:
+				bool loopthrough_failed(false); //If we fail to copy another parameter (e.g. pitch angle), we need to know it.
 				for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 					MakeBundleHelixOP curhelix( makebundle_copy->helix( j ) );
 					runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
@@ -313,7 +349,36 @@ namespace protocols {
 					if(omega0(j)->is_copy()) {
 						core::Size const otherhelix( omega0(j)->other_helix() );
 						runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
-						curhelix->set_omega0( makebundle_copy->helix_cop(otherhelix)->omega0() );
+						//Special case: if we're copying the pitch angle instead of the omega0 value, we need to do some math.
+						if(omega0(j)->omega0_copies_pitch_instead()) {
+							core::Real const other_r0( makebundle_copy->helix_cop(otherhelix)->r0() );
+							core::Real const other_omega0( makebundle_copy->helix_cop(otherhelix)->omega0() );
+							core::Real const other_z1( makebundle_copy->helix_cop(otherhelix)->z1() );
+							core::Real const other_sinalpha( other_r0*other_omega0/other_z1 );
+							if(other_sinalpha > 1 || other_sinalpha < -1) {
+								if(TR.visible()) TR << "Failed to copy pitch angle.  Current parameters do not generate a sensible pitch angle for helix " << otherhelix << "." << std::endl;
+								loopthrough_failed=true;
+								break; //Stop looping through the helices.
+							}
+							//If we've got a good pitch angle, then continue:
+							core::Real const other_alpha( asin(other_sinalpha) );
+							
+							core::Real const this_r0( curhelix->r0() ); //Already set above, if sampled or if copied.
+							core::Real const this_z1( curhelix->z1() ); //Cannot be sampled or copied.
+							/********************
+								We know: tan(alpha)=2*PI*R0/P, where alpha is the pitch angle, P is the pitch (rise per turn about major helix), and R0 is the major radius.
+								         sin(alpha)=R0*omega0/z1
+								We want: P' = P
+								         2*PI*RO'/tan(alpha') = 2*PI*R0/tan(alpha)
+								         tan(alpha) = R0/R0'*tan(alpha')
+								         alpha = atan(R0/R0'*tan(alpha')
+								         R0*omega0/z1 = sin(atan(R0/R0'*tan(asin(R0'*omega0'/z1'))))
+								         omega0 = z1/R0*sin(atan(R0/R0'*tan(asin(R0'*omega0'/z1'))))
+							********************/
+							curhelix->set_omega0( this_z1/this_r0 * sin(atan(this_r0/other_r0*tan(other_alpha))) );
+						} else {
+							curhelix->set_omega0( makebundle_copy->helix_cop(otherhelix)->omega0() );
+						}
 					}
 					if(delta_omega0(j)->is_copy()) {
 						core::Size const otherhelix( delta_omega0(j)->other_helix() );
@@ -330,19 +395,36 @@ namespace protocols {
 						runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
 						curhelix->set_delta_t( makebundle_copy->helix_cop(otherhelix)->delta_t() );
 					}
+					if(z1_offset(j)->is_copy()) {
+						core::Size const otherhelix( z1_offset(j)->other_helix() );
+						runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
+						curhelix->set_z1_offset( makebundle_copy->helix_cop(otherhelix)->z1_offset() );
+					}
+					if(z0_offset(j)->is_copy()) {
+						core::Size const otherhelix( z0_offset(j)->other_helix() );
+						runtime_assert_string_msg(otherhelix > 0 && otherhelix < j, "Error in getting index of helix to copy in BundleGridSampler::apply() function.");
+						curhelix->set_z0_offset( makebundle_copy->helix_cop(otherhelix)->z0_offset() );
+					}
 
+				}
+				if(loopthrough_failed) {
+					if(TR.visible()) {
+						TR << "Failed to copy at least one parameter.  Continuing to next grid point to sample." << std::endl;
+						TR.flush();
+					}
+					continue; //If we failed to copy another parameter (e.g. pitch angle), continue to the next grid point.
 				}
 
 				//Output the parameters being attempted:
 				if (TR.visible()) {
 					char outchar [1024];
 					TR << "Grid point " << i << ": attempting to build a helical bundle with the following parameters:" << std::endl;
-					sprintf(outchar, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t");
+					sprintf(outchar, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset");
 					TR << outchar << std::endl;
 					for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 						MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 						runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+						sprintf(outchar, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset());
 						TR << outchar << std::endl;
 					}
 					TR << std::endl;
@@ -354,7 +436,10 @@ namespace protocols {
 
 				//Check for success or failure:
 				if(makebundle_copy->last_apply_failed()) {
-					if(TR.visible()) TR << "The current set of parameter values failed to produce a sensible helical bundle.  Continuing to next grid point to sample." << std::endl;
+					if(TR.visible()) {
+						TR << "The current set of parameter values failed to produce a sensible helical bundle.  Continuing to next grid point to sample." << std::endl;
+						TR.flush();
+					}
 					continue; //Go on to the next grid sample.
 				} else {
 					if(TR.visible()) {
@@ -412,12 +497,12 @@ namespace protocols {
 						final_report << "Parameters yielding the ";
 						if(selection_low()) final_report << "lowest"; else final_report << "highest";
 						final_report << "-energy bundle:" << std::endl;
-						sprintf(outstring, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t");
+						sprintf(outstring, "Helix\tr0\tomega0\tdelta_omega0\tdelta_omega1\tdelta_t\tz1_offset\tz0_offset");
 						final_report << outstring << std::endl;
 						for(core::Size j=1, jmax=n_helices(); j<=jmax; ++j) {
 							MakeBundleHelixCOP curhelix( makebundle_copy->helix_cop( j ) );
 							runtime_assert_string_msg(curhelix, "Error in getting owning pointer to current helix in BundleGridSampler::apply() function.");
-							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t());
+							sprintf(outstring, "%lu\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f", static_cast<unsigned long>(j), curhelix->r0(), curhelix->omega0(), curhelix->delta_omega0(), curhelix->delta_omega1_all(), curhelix->delta_t(), curhelix->z1_offset(), curhelix->z0_offset() );
 							final_report << outstring << std::endl;
 						}
 						final_report << std::endl;
@@ -722,6 +807,72 @@ namespace protocols {
 					"When parsing options for the BundleGridSampler mover, found delta_t_max but no delta_t_min.  This does not make sense.");
 			}
 
+			if( tag->hasOption("z1_offset") ) {
+				runtime_assert_string_msg(!tag->hasOption("z1_offset_min") && !tag->hasOption("z1_offset_max"),
+					"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				core::Real const val( tag->getOption<core::Real>("z1_offset", 0.0) );
+				if(TR.visible()) TR << "Setting default z1_offset value to " << val << "." << std::endl;
+				default_z1_offset()->set_default_value(val);
+				default_z1_offset()->set_perturbable(false);
+				make_bundle_->set_default_z1_offset(val);
+			} else if ( tag->hasOption("z1_offset_min") ) {
+				runtime_assert_string_msg(!tag->hasOption("z1_offset"),
+					"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				runtime_assert_string_msg(tag->hasOption("z1_offset_max"),
+					"When parsing options for the BundleGridSampler mover, found z1_offset_min but no z1_offset_max.  This does not make sense.");
+				core::Real const val1( tag->getOption<core::Real>("z1_offset_min", 0.0) );
+				core::Real const val2( tag->getOption<core::Real>("z1_offset_max", 0.0) );
+				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z1_offset_max value less than or equal to the z1_offset_min value.");
+				if(TR.visible()) TR << "Setting default z1_offset_min and z1_offset_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
+				default_z1_offset()->set_lower_value(val1);
+				default_z1_offset()->set_upper_value(val2);
+				default_z1_offset()->set_perturbable(true);
+				make_bundle_->set_default_z1_offset(val1);
+				runtime_assert_string_msg( tag->hasOption("z1_offset_samples"),
+					"When parsing options for the BundleGridSampler mover, found z1_offset_min and z1_offset_max options, but no z1_offset_samples option.  The number of z1_offset samples must be specified." );
+				core::Size const val3( tag->getOption<core::Size>( "z1_offset_samples", 0 ) );
+				runtime_assert_string_msg( val3 > 1,
+					"The number of z1_offset samples must be greater than 1." );
+				if(TR.visible()) TR << "Setting default z1_offset samples to " << val3 << "." << std::endl;
+				default_z1_offset()->set_samples(val3);
+			} else if ( tag->hasOption("z1_offset_max") ) {
+				runtime_assert_string_msg(tag->hasOption("z1_offset_min"),
+					"When parsing options for the BundleGridSampler mover, found z1_offset_max but no z1_offset_min.  This does not make sense.");
+			}
+			
+			if( tag->hasOption("z0_offset") ) {
+				runtime_assert_string_msg(!tag->hasOption("z0_offset_min") && !tag->hasOption("z0_offset_max"),
+					"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				core::Real const val( tag->getOption<core::Real>("z0_offset", 0.0) );
+				if(TR.visible()) TR << "Setting default z0_offset value to " << val << "." << std::endl;
+				default_z0_offset()->set_default_value(val);
+				default_z0_offset()->set_perturbable(false);
+				make_bundle_->set_default_z0_offset(val);
+			} else if ( tag->hasOption("z0_offset_min") ) {
+				runtime_assert_string_msg(!tag->hasOption("z0_offset"),
+					"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+				runtime_assert_string_msg(tag->hasOption("z0_offset_max"),
+					"When parsing options for the BundleGridSampler mover, found z0_offset_min but no z0_offset_max.  This does not make sense.");
+				core::Real const val1( tag->getOption<core::Real>("z0_offset_min", 0.0) );
+				core::Real const val2( tag->getOption<core::Real>("z0_offset_max", 0.0) );
+				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z0_offset_max value less than or equal to the z0_offset_min value.");
+				if(TR.visible()) TR << "Setting default z0_offset_min and z0_offset_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
+				default_z0_offset()->set_lower_value(val1);
+				default_z0_offset()->set_upper_value(val2);
+				default_z0_offset()->set_perturbable(true);
+				make_bundle_->set_default_z0_offset(val1);
+				runtime_assert_string_msg( tag->hasOption("z0_offset_samples"),
+					"When parsing options for the BundleGridSampler mover, found z0_offset_min and z0_offset_max options, but no z0_offset_samples option.  The number of z0_offset samples must be specified." );
+				core::Size const val3( tag->getOption<core::Size>( "z0_offset_samples", 0 ) );
+				runtime_assert_string_msg( val3 > 1,
+					"The number of z0_offset samples must be greater than 1." );
+				if(TR.visible()) TR << "Setting default z0_offset samples to " << val3 << "." << std::endl;
+				default_z0_offset()->set_samples(val3);
+			} else if ( tag->hasOption("z0_offset_max") ) {
+				runtime_assert_string_msg(tag->hasOption("z0_offset_min"),
+					"When parsing options for the BundleGridSampler mover, found z0_offset_max but no z0_offset_min.  This does not make sense.");
+			}
+
 			//Check that at least one helix is defined:
 			bool at_least_one_helix = false;
 
@@ -794,51 +945,71 @@ namespace protocols {
 						r0(helix_index)->set_helix_to_copy(val);
 					}
 
-					if( (*tag_it)->hasOption("omega0") ) {
-						runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
-							"When parsing options for the BundleGridSampler mover, found omega0 defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is fixed, or its value copies the omega0 value of another helix (not both).");
-						runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_min") && !(*tag_it)->hasOption("omega0_max"),
-							"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-						core::Real const val( (*tag_it)->getOption<core::Real>("omega0", 0.0) );
-						if(TR.visible()) TR << "Setting the omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
-						omega0(helix_index)->set_default_value(val);
-						omega0(helix_index)->set_perturbable(false);
-						omega0(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_omega0(val);
-					} else if ( (*tag_it)->hasOption("omega0_min") ) {
-						runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
-							"When parsing options for the BundleGridSampler mover, found omega0_min defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is sampled, or its value copies the omega0 value of another helix (not both).");
-						runtime_assert_string_msg(!(*tag_it)->hasOption("omega0"),
-							"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
-						runtime_assert_string_msg((*tag_it)->hasOption("omega0_max"),
-							"When parsing options for the BundleGridSampler mover, found omega0_min but no omega0_max.  This does not make sense.");
-						core::Real const val1( (*tag_it)->getOption<core::Real>("omega0_min", 0.0) );
-						core::Real const val2( (*tag_it)->getOption<core::Real>("omega0_max", 0.0) );
-						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
-						if(TR.visible()) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
-						omega0(helix_index)->set_lower_value(val1);
-						omega0(helix_index)->set_upper_value(val2);
-						omega0(helix_index)->set_perturbable(true);
-						omega0(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_omega0(val1);
-						runtime_assert_string_msg( (*tag_it)->hasOption("omega0_samples"),
-							"When parsing options for the BundleGridSampler mover, found omega0_min and omega0_max options, but no omega0_samples option.  The number of omega0 samples must be specified." );
-						core::Size const val3( (*tag_it)->getOption<core::Size>( "omega0_samples", 0 ) );
-						runtime_assert_string_msg( val3 > 1,
-							"The number of omega0 samples must be greater than 1." );
-						if(TR.visible()) TR << "Setting omega0 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
-						omega0(helix_index)->set_samples(val3);
-					} else if ( (*tag_it)->hasOption("omega0_max") ) {
-						runtime_assert_string_msg((*tag_it)->hasOption("omega0_min"),
-							"When parsing options for the BundleGridSampler mover, found omega0_max but no omega0_min.  This does not make sense.");
-					} else if ( (*tag_it)->hasOption("omega0_copies_helix") ) {
-						core::Size const val( (*tag_it)->getOption<core::Size>("omega0_copies_helix", 0) );
-						runtime_assert_string_msg(val > 0 && val < helix_index,
-							"When parsing options for the BundleGridSampler mover, found an omega0_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
-						if(TR.visible()) TR << "Setting omega0 for helix " << helix_index << " to copy the omega0 value for helix " << val << "." << std::endl;
-						omega0(helix_index)->set_perturbable(false);
-						omega0(helix_index)->set_use_defaults(false);
-						omega0(helix_index)->set_helix_to_copy(val);
+					// Note that omega0 has additional code in it for the special case of copying the pitch angle instead of the omega0 value.
+					if( (*tag_it)->hasOption("pitch_from_helix") ) {
+						runtime_assert_string_msg(
+							!(*tag_it)->hasOption("omega0") &&
+							!(*tag_it)->hasOption("omega0_copies_helix") &&
+							!(*tag_it)->hasOption("omega0_min") &&
+							!(*tag_it)->hasOption("omega0_max") &&
+							!(*tag_it)->hasOption("omega0_samples"),
+							"When parsing options for the BundleGridSampler mover, found \"pitch_from_helix\" alongside omega0 options.  This does not make sense.  EITHER a helix copies its pitch angle from another, OR the omega0 value can be set/sampled/copied."
+						);
+							core::Size const val( (*tag_it)->getOption<core::Size>("pitch_from_helix", 0) );
+							runtime_assert_string_msg(val > 0 && val < helix_index,
+								"When parsing options for the BundleGridSampler mover, found a \"pitch_from_helix\" option with a nonsensical value.  Please specify an already-defined helix index.");
+							if(TR.visible()) TR << "Setting omega0 for helix " << helix_index << " to be set to match the pitch angle for helix " << val << "." << std::endl;
+							omega0(helix_index)->set_perturbable(false);
+							omega0(helix_index)->set_use_defaults(false);
+							omega0(helix_index)->set_helix_to_copy(val);
+							omega0(helix_index)->set_omega0_copies_pitch_instead(true); //We're going to copy the pitch angle instead of the omega0 value.
+					} else { //All that follows resembles the code for the other parameters.
+						if( (*tag_it)->hasOption("omega0") ) {
+							runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
+								"When parsing options for the BundleGridSampler mover, found omega0 defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is fixed, or its value copies the omega0 value of another helix (not both).");
+							runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_min") && !(*tag_it)->hasOption("omega0_max"),
+								"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+							core::Real const val( (*tag_it)->getOption<core::Real>("omega0", 0.0) );
+							if(TR.visible()) TR << "Setting the omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
+							omega0(helix_index)->set_default_value(val);
+							omega0(helix_index)->set_perturbable(false);
+							omega0(helix_index)->set_use_defaults(false);
+							make_bundle_->helix(helix_index)->set_omega0(val);
+						} else if ( (*tag_it)->hasOption("omega0_min") ) {
+							runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
+								"When parsing options for the BundleGridSampler mover, found omega0_min defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is sampled, or its value copies the omega0 value of another helix (not both).");
+							runtime_assert_string_msg(!(*tag_it)->hasOption("omega0"),
+								"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+							runtime_assert_string_msg((*tag_it)->hasOption("omega0_max"),
+								"When parsing options for the BundleGridSampler mover, found omega0_min but no omega0_max.  This does not make sense.");
+							core::Real const val1( (*tag_it)->getOption<core::Real>("omega0_min", 0.0) );
+							core::Real const val2( (*tag_it)->getOption<core::Real>("omega0_max", 0.0) );
+							runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
+							if(TR.visible()) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
+							omega0(helix_index)->set_lower_value(val1);
+							omega0(helix_index)->set_upper_value(val2);
+							omega0(helix_index)->set_perturbable(true);
+							omega0(helix_index)->set_use_defaults(false);
+							make_bundle_->helix(helix_index)->set_omega0(val1);
+							runtime_assert_string_msg( (*tag_it)->hasOption("omega0_samples"),
+								"When parsing options for the BundleGridSampler mover, found omega0_min and omega0_max options, but no omega0_samples option.  The number of omega0 samples must be specified." );
+							core::Size const val3( (*tag_it)->getOption<core::Size>( "omega0_samples", 0 ) );
+							runtime_assert_string_msg( val3 > 1,
+								"The number of omega0 samples must be greater than 1." );
+							if(TR.visible()) TR << "Setting omega0 samples for helix " << helix_index << " to " << val3 << "." << std::endl;
+							omega0(helix_index)->set_samples(val3);
+						} else if ( (*tag_it)->hasOption("omega0_max") ) {
+							runtime_assert_string_msg((*tag_it)->hasOption("omega0_min"),
+								"When parsing options for the BundleGridSampler mover, found omega0_max but no omega0_min.  This does not make sense.");
+						} else if ( (*tag_it)->hasOption("omega0_copies_helix") ) {
+							core::Size const val( (*tag_it)->getOption<core::Size>("omega0_copies_helix", 0) );
+							runtime_assert_string_msg(val > 0 && val < helix_index,
+								"When parsing options for the BundleGridSampler mover, found an omega0_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
+							if(TR.visible()) TR << "Setting omega0 for helix " << helix_index << " to copy the omega0 value for helix " << val << "." << std::endl;
+							omega0(helix_index)->set_perturbable(false);
+							omega0(helix_index)->set_use_defaults(false);
+							omega0(helix_index)->set_helix_to_copy(val);
+						}
 					}
 
 					if( (*tag_it)->hasOption("delta_omega0") ) {
@@ -982,6 +1153,99 @@ namespace protocols {
 						delta_t(helix_index)->set_helix_to_copy(val);
 					}
 
+					if( (*tag_it)->hasOption("z1_offset") ) {
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_copies_helix"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside an z1_offset_copies_helix statement.  This does not makes sense: either z1_offset is fixed, or its value copies the z1_offset value of another helix (not both).");
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_min") && !(*tag_it)->hasOption("z1_offset_max"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+						core::Real const val( (*tag_it)->getOption<core::Real>("z1_offset", 0.0) );
+						if(TR.visible()) TR << "Setting the z1_offset value for helix " << helix_index << " to " << val << "." << std::endl;
+						z1_offset(helix_index)->set_default_value(val);
+						z1_offset(helix_index)->set_perturbable(false);
+						z1_offset(helix_index)->set_use_defaults(false);
+						make_bundle_->helix(helix_index)->set_z1_offset(val);
+					} else if ( (*tag_it)->hasOption("z1_offset_min") ) {
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset_copies_helix"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset_min defined alongside an z1_offset_copies_helix statement.  This does not makes sense: either z1_offset is sampled, or its value copies the z1_offset value of another helix (not both).");
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z1_offset"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset defined alongside z1_offset_min or z1_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+						runtime_assert_string_msg((*tag_it)->hasOption("z1_offset_max"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset_min but no z1_offset_max.  This does not make sense.");
+						core::Real const val1( (*tag_it)->getOption<core::Real>("z1_offset_min", 0.0) );
+						core::Real const val2( (*tag_it)->getOption<core::Real>("z1_offset_max", 0.0) );
+						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z1_offset_max value less than or equal to the z1_offset_min value.");
+						if(TR.visible()) TR << "Setting z1_offset_min and z1_offset_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
+						z1_offset(helix_index)->set_lower_value(val1);
+						z1_offset(helix_index)->set_upper_value(val2);
+						z1_offset(helix_index)->set_perturbable(true);
+						z1_offset(helix_index)->set_use_defaults(false);
+						make_bundle_->helix(helix_index)->set_z1_offset(val1);
+						runtime_assert_string_msg( (*tag_it)->hasOption("z1_offset_samples"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset_min and z1_offset_max options, but no z1_offset_samples option.  The number of z1_offset samples must be specified." );
+						core::Size const val3( (*tag_it)->getOption<core::Size>( "z1_offset_samples", 0 ) );
+						runtime_assert_string_msg( val3 > 1,
+							"The number of z1_offset samples must be greater than 1." );
+						if(TR.visible()) TR << "Setting z1_offset samples for helix " << helix_index << " to " << val3 << "." << std::endl;
+						z1_offset(helix_index)->set_samples(val3);
+					} else if ( (*tag_it)->hasOption("z1_offset_max") ) {
+						runtime_assert_string_msg((*tag_it)->hasOption("z1_offset_min"),
+							"When parsing options for the BundleGridSampler mover, found z1_offset_max but no z1_offset_min.  This does not make sense.");
+					} else if ( (*tag_it)->hasOption("z1_offset_copies_helix") ) {
+						core::Size const val( (*tag_it)->getOption<core::Size>("z1_offset_copies_helix", 0) );
+						runtime_assert_string_msg(val > 0 && val < helix_index,
+							"When parsing options for the BundleGridSampler mover, found an z1_offset_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
+						if(TR.visible()) TR << "Setting z1_offset for helix " << helix_index << " to copy the z1_offset value for helix " << val << "." << std::endl;
+						z1_offset(helix_index)->set_perturbable(false);
+						z1_offset(helix_index)->set_use_defaults(false);
+						z1_offset(helix_index)->set_helix_to_copy(val);
+					}
+
+					if( (*tag_it)->hasOption("z0_offset") ) {
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_copies_helix"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside an z0_offset_copies_helix statement.  This does not makes sense: either z0_offset is fixed, or its value copies the z0_offset value of another helix (not both).");
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_min") && !(*tag_it)->hasOption("z0_offset_max"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+						core::Real const val( (*tag_it)->getOption<core::Real>("z0_offset", 0.0) );
+						if(TR.visible()) TR << "Setting the z0_offset value for helix " << helix_index << " to " << val << "." << std::endl;
+						z0_offset(helix_index)->set_default_value(val);
+						z0_offset(helix_index)->set_perturbable(false);
+						z0_offset(helix_index)->set_use_defaults(false);
+						make_bundle_->helix(helix_index)->set_z0_offset(val);
+					} else if ( (*tag_it)->hasOption("z0_offset_min") ) {
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset_copies_helix"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset_min defined alongside an z0_offset_copies_helix statement.  This does not makes sense: either z0_offset is sampled, or its value copies the z0_offset value of another helix (not both).");
+						runtime_assert_string_msg(!(*tag_it)->hasOption("z0_offset"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset defined alongside z0_offset_min or z0_offset_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
+						runtime_assert_string_msg((*tag_it)->hasOption("z0_offset_max"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset_min but no z0_offset_max.  This does not make sense.");
+						core::Real const val1( (*tag_it)->getOption<core::Real>("z0_offset_min", 0.0) );
+						core::Real const val2( (*tag_it)->getOption<core::Real>("z0_offset_max", 0.0) );
+						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an z0_offset_max value less than or equal to the z0_offset_min value.");
+						if(TR.visible()) TR << "Setting z0_offset_min and z0_offset_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
+						z0_offset(helix_index)->set_lower_value(val1);
+						z0_offset(helix_index)->set_upper_value(val2);
+						z0_offset(helix_index)->set_perturbable(true);
+						z0_offset(helix_index)->set_use_defaults(false);
+						make_bundle_->helix(helix_index)->set_z0_offset(val1);
+						runtime_assert_string_msg( (*tag_it)->hasOption("z0_offset_samples"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset_min and z0_offset_max options, but no z0_offset_samples option.  The number of z0_offset samples must be specified." );
+						core::Size const val3( (*tag_it)->getOption<core::Size>( "z0_offset_samples", 0 ) );
+						runtime_assert_string_msg( val3 > 1,
+							"The number of z0_offset samples must be greater than 1." );
+						if(TR.visible()) TR << "Setting z0_offset samples for helix " << helix_index << " to " << val3 << "." << std::endl;
+						z0_offset(helix_index)->set_samples(val3);
+					} else if ( (*tag_it)->hasOption("z0_offset_max") ) {
+						runtime_assert_string_msg((*tag_it)->hasOption("z0_offset_min"),
+							"When parsing options for the BundleGridSampler mover, found z0_offset_max but no z0_offset_min.  This does not make sense.");
+					} else if ( (*tag_it)->hasOption("z0_offset_copies_helix") ) {
+						core::Size const val( (*tag_it)->getOption<core::Size>("z0_offset_copies_helix", 0) );
+						runtime_assert_string_msg(val > 0 && val < helix_index,
+							"When parsing options for the BundleGridSampler mover, found an z0_offset_copies_helix option with a nonsensical value.  Please specify an already-defined helix index.");
+						if(TR.visible()) TR << "Setting z0_offset for helix " << helix_index << " to copy the z0_offset value for helix " << val << "." << std::endl;
+						z0_offset(helix_index)->set_perturbable(false);
+						z0_offset(helix_index)->set_use_defaults(false);
+						z0_offset(helix_index)->set_helix_to_copy(val);
+					}
 
 				} //if ( (*tag_it)->getName() == "Helix" )
 			}
@@ -1013,8 +1277,12 @@ namespace protocols {
 			delta_omega1(nhelices)->set_helix_index(nhelices);
 			delta_t_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
 			delta_t(nhelices)->set_helix_index(nhelices);
+			z1_offset_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
+			z1_offset(nhelices)->set_helix_index(nhelices);
+			z0_offset_.push_back( PerturbBundleOptionsOP( new PerturbBundleOptions ) );
+			z0_offset(nhelices)->set_helix_index(nhelices);
 
-			runtime_assert_string_msg( r0_.size()==nhelices && omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices,
+			runtime_assert_string_msg( r0_.size()==nhelices && omega0_.size()==nhelices && delta_omega0_.size()==nhelices && delta_omega1_.size()==nhelices && delta_t_.size()==nhelices && z1_offset_.size()==nhelices && z0_offset_.size()==nhelices,
 				"In protocols::helical_bundle::BundleGridSampler::add_helix() function: somehow, vector indices are out of sync.  I can't determine how many helices have been defined." );
 
 			//Update the MakeBundle mover, too:
@@ -1073,6 +1341,8 @@ namespace protocols {
 			assert( delta_omega0_.size()==helixcount );
 			assert( delta_omega1_.size()==helixcount );
 			assert( delta_t_.size()==helixcount );
+			assert( z1_offset_.size()==helixcount );
+			assert( z0_offset_.size()==helixcount );
 			for(core::Size i=1, imax=helixcount; i<=imax; ++i) {
 				if(r0(i)->is_perturbable() && !r0(i)->use_defaults() && r0(i)->other_helix()==0 && r0(i)->samples()!=0  ) total_samples *= r0(i)->samples();
 				else if( r0(i)->use_defaults() && default_r0()->is_perturbable() && default_r0()->samples()!=0 ) total_samples *= default_r0()->samples();
@@ -1088,6 +1358,12 @@ namespace protocols {
 
 				if(delta_t(i)->is_perturbable() && !delta_t(i)->use_defaults() && delta_t(i)->other_helix()==0 && delta_t(i)->samples()!=0  ) total_samples *= delta_t(i)->samples();
 				else if( delta_t(i)->use_defaults() && default_delta_t()->is_perturbable() && default_delta_t()->samples()!=0 ) total_samples *= default_delta_t()->samples();
+
+				if(z1_offset(i)->is_perturbable() && !z1_offset(i)->use_defaults() && z1_offset(i)->other_helix()==0 && z1_offset(i)->samples()!=0  ) total_samples *= z1_offset(i)->samples();
+				else if( z1_offset(i)->use_defaults() && default_z1_offset()->is_perturbable() && default_z1_offset()->samples()!=0 ) total_samples *= default_z1_offset()->samples();
+				
+				if(z0_offset(i)->is_perturbable() && !z0_offset(i)->use_defaults() && z0_offset(i)->other_helix()==0 && z0_offset(i)->samples()!=0  ) total_samples *= z0_offset(i)->samples();
+				else if( z0_offset(i)->use_defaults() && default_z0_offset()->is_perturbable() && default_z0_offset()->samples()!=0 ) total_samples *= default_z0_offset()->samples();
 			}
 
 			return total_samples;

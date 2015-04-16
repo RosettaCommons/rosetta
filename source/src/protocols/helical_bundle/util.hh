@@ -69,6 +69,8 @@ namespace helical_bundle {
 		core::Real const &omega0,
 		core::Real const &delta_omega0,
 		core::Real const &delta_t,
+		core::Real const &z1_offset,
+		core::Real const &z0_offset,
 		bool const invert_helix,
 		utility::vector1 < core::Real > const &r1,
 		core::Real const &omega1,

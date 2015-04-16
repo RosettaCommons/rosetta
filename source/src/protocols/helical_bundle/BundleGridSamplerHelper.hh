@@ -47,6 +47,8 @@ namespace protocols {
 			bgsh_delta_omega0,
 			bgsh_delta_omega1,
 			bgsh_delta_t,
+			bgsh_z1_offset,
+			bgsh_z0_offset,
 			bgsh_undefined_dof //keep this last
 		};
 

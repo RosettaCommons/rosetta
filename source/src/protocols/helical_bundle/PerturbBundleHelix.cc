@@ -129,6 +129,8 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 		params->omega0(),
 		params->delta_omega0(),
 		params->delta_t(),
+		params->z1_offset(),
+		params->z0_offset(),
 		params->invert_helix(),
 		params->r1_vect(),
 		params->omega1(),

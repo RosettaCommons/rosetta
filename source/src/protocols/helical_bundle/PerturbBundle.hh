@@ -175,6 +175,34 @@ public:
 		runtime_assert_string_msg(index>0 && index<=delta_t_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::delta_t() out of range.");
 		return delta_t_[index];
 	}
+	
+	/// @brief Access the z1_offset_ BundleOptions object, by index.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsOP z1_offset( core::Size const index ) {
+		runtime_assert_string_msg(index>0 && index<=z1_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z1_offset() out of range.");
+		return z1_offset_[index];
+	}
+
+	/// @brief Access the z1_offset_ BundleOptions object, by index.  This provides const access.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsCOP z1_offset( core::Size const index ) const {
+		runtime_assert_string_msg(index>0 && index<=z1_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z1_offset() out of range.");
+		return z1_offset_[index];
+	}
+	
+	/// @brief Access the z0_offset_ BundleOptions object, by index.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsOP z0_offset( core::Size const index ) {
+		runtime_assert_string_msg(index>0 && index<=z0_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z0_offset() out of range.");
+		return z0_offset_[index];
+	}
+
+	/// @brief Access the z0_offset_ BundleOptions object, by index.  This provides const access.
+	/// @details This is the index in order of helices added, NOT necessarily the index of the helix.
+	PerturbBundleOptionsCOP z0_offset( core::Size const index ) const {
+		runtime_assert_string_msg(index>0 && index<=z0_offset_.size(), "Index passed to protocols::helical_bundle::PerturbBundle::z0_offset() out of range.");
+		return z0_offset_[index];
+	}
 
 	/// @brief Access the default_r0_ BundleOptions object.
 	///
@@ -215,6 +243,22 @@ public:
 	/// @brief Access the default_delta_t_ BundleOptions object (const-access).
 	///
 	PerturbBundleOptionsCOP default_delta_t() const { return default_delta_t_; }
+
+	/// @brief Access the default_z1_offset_ BundleOptions object.
+	///
+	PerturbBundleOptionsOP default_z1_offset() { return default_z1_offset_; }
+
+	/// @brief Access the default_z1_offset_ BundleOptions object (const-access).
+	///
+	PerturbBundleOptionsCOP default_z1_offset() const { return default_z1_offset_; }
+
+	/// @brief Access the default_z0_offset_ BundleOptions object.
+	///
+	PerturbBundleOptionsOP default_z0_offset() { return default_z0_offset_; }
+
+	/// @brief Access the default_z0_offset_ BundleOptions object (const-access).
+	///
+	PerturbBundleOptionsCOP default_z0_offset() const { return default_z0_offset_; }
 
 	/// @brief Add options for a new helix
 	/// @details Return value is the current total number of helices after the addition.
@@ -265,6 +309,22 @@ private:
 	/// @brief Helix-by-helix options for perturbing delta_t.
 	///
 	PerturbBundleOptionsOPs delta_t_;
+	
+	/// @brief Default options for perturbing z1_offset.
+	/// @details May be overridden on a helix-by-helix basis.
+	PerturbBundleOptionsOP default_z1_offset_;
+	
+	/// @brief Helix-by-helix options for perturbing z1_offset.
+	///
+	PerturbBundleOptionsOPs z1_offset_;
+
+	/// @brief Default options for perturbing z0_offset.
+	/// @details May be overridden on a helix-by-helix basis.
+	PerturbBundleOptionsOP default_z0_offset_;
+
+	/// @brief Helix-by-helix options for perturbing z0_offset.
+	///
+	PerturbBundleOptionsOPs z0_offset_;
 
 	/// @brief Which set of bundle parameters (if there exists more than one) should the mover alter?
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.
@@ -284,8 +344,8 @@ private:
 	bool helix_not_defined( core::Size const helix_index) const;
 
 	/// @brief Perturb the helical bundle parameter values in the pose, subject to the options already set.
-	/// @details Called by the apply() function.
-	void perturb_values( BundleParametersSetOP params_set) const;
+	/// @details Called by the apply() function.  Returns true for success, false for failure.
+	bool perturb_values( BundleParametersSetOP params_set) const;
 
 	/// @brief Rebuild the helical bundle conformation using the bundle parameter values in the pose.
 	///

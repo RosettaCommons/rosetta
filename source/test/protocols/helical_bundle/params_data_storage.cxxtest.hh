@@ -222,15 +222,17 @@ public:
 
 		//Set parameters for the two helices:
 		TS_TRACE( "Defining two helices.  (There will be four total, with two-fold symmetry)." );
-		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 invert=false(default)" );
+		TS_TRACE( "Helix1 r0=5.0 omega0=0.05 delta_omega0=0.1 z1_offset=0.2 invert=false(default)" );
 		makebundle->helix(1)->set_r0(5.0);
 		makebundle->helix(1)->set_omega0(0.05);
 		makebundle->helix(1)->set_delta_omega0(0.1);
-		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 invert=true" );
+		makebundle->helix(1)->set_z1_offset(0.2);
+		TS_TRACE( "Helix2 r0=6.5 omega0=0.03 delta_omega0=1.5 z0_offset=-0.2 invert=true" );
 		makebundle->helix(2)->set_r0(6.5);
 		makebundle->helix(2)->set_omega0(0.03);
 		makebundle->helix(2)->set_delta_omega0(1.5);
 		makebundle->helix(2)->set_invert_helix(true);
+		makebundle->helix(2)->set_z0_offset(-0.2);
 
 		//Apply the mover:
 		makebundle->apply(*testpose_);
@@ -249,8 +251,10 @@ public:
 			core::Real r0_1(h1params->r0());
 			core::Real omega0_1(h1params->omega0());
 			core::Real delta_omega0_1(h1params->delta_omega0());
+			core::Real z1_off( h1params->z1_offset() );
+			core::Real z0_off( h1params->z0_offset() );
 			bool invert_1(h1params->invert_helix());
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
 			if(i==1 || i==3) {
@@ -258,11 +262,15 @@ public:
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == false );
+				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == true );
+				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );
 			}
 
 		}
@@ -280,8 +288,10 @@ public:
 			core::Real r0_1(h1params->r0());
 			core::Real omega0_1(h1params->omega0());
 			core::Real delta_omega0_1(h1params->delta_omega0());
+			core::Real z1_off( h1params->z1_offset() );
+			core::Real z0_off( h1params->z0_offset() );
 			bool invert_1(h1params->invert_helix());
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
 			if(i==1 || i==3) {
@@ -289,11 +299,15 @@ public:
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == false );
+				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == true );
+				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );
 			}
 
 		}
@@ -313,7 +327,9 @@ public:
 			core::Real omega0_1(h1params->omega0());
 			core::Real delta_omega0_1(h1params->delta_omega0());
 			bool invert_1(h1params->invert_helix());
-			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str() );
+			core::Real z1_off( h1params->z1_offset() );
+			core::Real z0_off( h1params->z0_offset() );
+			sprintf(outbuffer, "helix %lu: r0=%.4f omega0=%.4f delta_omega0=%.4f invert=%s z1_offset=%.4f z0_offset=%.4f", i, r0_1, omega0_1, delta_omega0_1, (std::string( invert_1 ? "true" : "false" )).c_str(), z1_off, z0_off );
 			TS_TRACE( outbuffer );
 
 			if(i==1 || i==3) {
@@ -321,11 +337,15 @@ public:
 				TS_ASSERT_DELTA( omega0_1, 0.05, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 0.1 + (i==3 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == false );
+				TS_ASSERT_DELTA( z1_off, 0.2, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, 0, 1e-5 );
 			} else {
 				TS_ASSERT_DELTA( r0_1, 6.5, 1e-5  );
 				TS_ASSERT_DELTA( omega0_1, 0.03, 1e-5  );
 				TS_ASSERT_DELTA( delta_omega0_1, 1.5 + (i==4 ? 3.141592654 : 0), 1e-5  );
 				TS_ASSERT( invert_1 == true );
+				TS_ASSERT_DELTA( z1_off, 0, 1e-5 );
+				TS_ASSERT_DELTA( z0_off, -0.2, 1e-5 );
 			}
 
 		}

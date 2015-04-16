@@ -200,9 +200,17 @@ public:
 	/// @brief Const-access to the whole delta_z1 vector.
 	utility::vector1 < core::Real > const & delta_z1_vect() const { return bundle_parameters_->delta_z1_vect(); }
 
+	/// @brief Get the z1_offset value (the offset of the helix along the minor helix axis).
+	///
+	core::Real z1_offset() const { return bundle_parameters_->z1_offset(); }
+
+	/// @brief Get the z0_offset value (the offset of the helix along the major helix axis).
+	///
+	core::Real z0_offset() const { return bundle_parameters_->z0_offset(); }
+
 	/// @brief Get the delta_t value.
 	core::Real delta_t() const { return bundle_parameters_->delta_t(); }
-
+	
 	/// @brief Set the major helix parameters
 	void set_major_helix_params (
 		core::Real const &r0_in,
@@ -232,6 +240,14 @@ public:
 		bundle_parameters_->set_delta_z1(delta_z1_in);
 		return;
 	}
+	
+	/// @brief Set z1_offset, the offset along the minor helix axis for the whole helix.
+	///
+	void set_z1_offset ( core::Real const &val ) { bundle_parameters_->set_z1_offset(val); return; }
+
+	/// @brief Set z0_offset, the offset along the major helix axis for the whole helix.
+	///
+	void set_z0_offset ( core::Real const &val ) { bundle_parameters_->set_z0_offset(val); return; }
 
 	/// @brief Set delta_t
 	///

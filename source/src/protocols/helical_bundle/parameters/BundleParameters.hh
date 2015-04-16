@@ -182,6 +182,14 @@ namespace protocols {
 						delta_z1_.push_back(val);
 						return;			
 					}
+					
+					/// @brief Sets the minor helix offset along the minor helix axis, defined on a per-helix basis, in Angstroms.
+					///
+					void set_z1_offset( core::Real const &val ) { z1_offset_=val; return; }
+
+					/// @brief Sets the minor helix offset along the major helix axis, defined on a per-helix basis, in Angstroms.
+					///
+					void set_z0_offset( core::Real const &val ) { z0_offset_=val; return; }
 
 					/// @brief Set whether the helix direction be reversed.
 					/// 
@@ -257,6 +265,14 @@ namespace protocols {
 						assert( index<=delta_z1_.size() && index>0 );
 						return delta_z1_[index];
 					}
+					
+					/// @brief Returns the minor helix offset along the minor helix axis, defined on a per-helix basis, in Angstroms.
+					///
+					core::Real z1_offset() const { return z1_offset_; }
+
+					/// @brief Returns the minor helix offset along the major helix axis, defined on a per-helix basis, in Angstroms.
+					///
+					core::Real z0_offset() const { return z0_offset_; }
 
 					/// @brief Const-access to the whole delta_z1 vector.
 					utility::vector1 < core::Real > const & delta_z1_vect() const { return delta_z1_; }
@@ -330,6 +346,14 @@ namespace protocols {
 					/// @brief Minor helix offset along the minor helix axis, defined on a per-atom basis.
 					/// @details In Angstroms.
 					utility::vector1 < core::Real > delta_z1_;
+					
+					/// @brief Minor helix offset along the minor helix axis, defined on a per-helix basis.
+					/// @details In Angstroms.
+					core::Real z1_offset_;
+
+					/// @brief Major helix offset along the major helix axis, defined on a per-helix basis.
+					/// @details In Angstroms.
+					core::Real z0_offset_;
 
 					///////////////////
 					//Other data:
