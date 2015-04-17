@@ -570,6 +570,15 @@ settings = {
         },
     },
 
+    "gcc, 4.9, release_debug" : {
+        "appends" : {
+            "flags" : {
+                 # disable the strict-overflow warning produced by DynamicIndexRange.hh
+                "warn" : [ "Wstrict-overflow=0" ],
+            },
+        },
+    },
+
     "gcc, release_debug_no_symbols" : {
         "appends" : {
             "flags" : {
