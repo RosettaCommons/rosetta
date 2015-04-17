@@ -15,10 +15,10 @@ sources = {
 		"MMTDriver",
 		"MMTReceiver",
 	],
-        "denovo_design" : [
-                "BuildSheet",
-               # "GenericSimulatedAnnealer",
-        ],
+	"denovo_design" : [
+		"BuildSheet",
+		"FoldabilityFilter",
+	],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",
 	],
@@ -65,8 +65,10 @@ libraries    = ["devel",
 "sqlite3" ]
 subprojects  = []
 testinputfiles = [
-    "denovo_design/test_input.pdb",
-    "denovo_design/D2I.params",
+		"denovo_design/test_input.pdb",
+		"denovo_design/D2I.params",
+		"denovo_design/test_foldability.pdb",
+		"denovo_design/C5_Z.sym",
     "znhash/1EER_A.pdb",
     "znhash/1EER_cn4_0043.pdb",
     "znhash/match_cst_pairs.txt",

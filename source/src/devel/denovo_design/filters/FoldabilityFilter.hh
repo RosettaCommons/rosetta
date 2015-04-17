@@ -28,16 +28,16 @@
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 
+// Core headers
 #include <core/kinematics/MoveMap.fwd.hh>
-
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 
-//// C++ headers
+// C++ headers
 #include <string>
 
 #include <core/io/silent/silent.fwd.hh>
@@ -79,7 +79,50 @@ public:
 
 	core::Real compute( core::pose::Pose const & pose ) const;
 
-private:   // private functions
+	// mutators
+public:
+	void set_start_res( core::Size const startval );
+	void set_end_res( core::Size const endval );
+
+	// protected functions
+protected:
+	/// @brief determine start and end window, from selector if necessary
+	void choose_start_and_end(
+			core::Size & start,
+			core::Size & end,
+			core::pose::Pose const & pose ) const;
+
+	/// @brief gets aa string, ss string, and abego vector for the area to rebuild
+	void get_aa_ss_abego(
+			std::string & aa,
+			std::string & ss,
+			utility::vector1< std::string > & abego,
+			core::Size const start,
+			core::Size & end,
+			core::pose::Pose const & pose ) const;
+
+	/// @brief gets non-const version the pose for the filter to work on
+	core::pose::PoseOP generate_pose( core::pose::Pose const & pose ) const;
+
+	/// @brief deletes the segment from start to end (inclusive) from the pose
+	void delete_segment(
+			core::pose::Pose & pose,
+			core::Size const start,
+			core::Size const end ) const;
+
+	/// @brief performs setup on the fragment insertion machinery
+	void setup_vlb(
+			std::string const & aa,
+			std::string const & ss,
+			utility::vector1< std::string > const & abego,
+			core::Size const start,
+			core::Size const end ) const;
+
+	/// @brief performs fragment insertion and returns number of successful builds. Assumes setup_vlb() has already been called
+	core::Size fragment_insertion(
+			core::pose::Pose const & pose,
+			core::Size const end,
+			core::conformation::Residue const & end_res ) const;
 
 private:   // options
 	/// @brief the motif to try to build
@@ -96,6 +139,8 @@ private:   // options
 	bool output_poses_;
 
 private:   // other data
+	/// @brief residue selector to identify positions to rebuild
+	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
 	/// @brief the vlb object for testing foldability
 	protocols::forge::components::VarLengthBuildOP vlb_;
 	mutable std::string cached_aa_;
