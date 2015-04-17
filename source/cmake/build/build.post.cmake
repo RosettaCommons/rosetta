@@ -22,7 +22,12 @@ FOREACH(LIBRARY ${LIBRARIES})
 	SET( LINK_LAST_LIB ${LIBRARY} )
 ENDFOREACH(LIBRARY)
 
-# The following links the external libs twice, which is weird even if it doesn't cause 
+# The following links the external libs twice, which is weird even if it doesn't cause
 # problems.
 #SET(LINK_ALL_LIBS "${LINK_ROSETTA_LIBS};${LINK_EXTERNAL_LIBS}")
 SET(LINK_ALL_LIBS ${LINK_ROSETTA_LIBS})
+
+# Add custom targets for just the applications (Dependancies added elsewhere)
+ADD_CUSTOM_TARGET(apps DEPENDS BUILD_ROSETTA_LIBS) # Just released applications
+ADD_CUSTOM_TARGET(pilot_apps DEPENDS BUILD_ROSETTA_LIBS) # Just pilot applications
+ADD_CUSTOM_TARGET(bin DEPENDS apps pilot_apps) #All executables

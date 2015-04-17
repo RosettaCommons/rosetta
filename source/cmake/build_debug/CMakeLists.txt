@@ -22,3 +22,6 @@ INCLUDE(../build/build.post.cmake)
 ############ Top level binaries
 INCLUDE( ../build/apps.all.cmake )
 INCLUDE( ../build/pilot_apps.all.cmake )
+
+############ Unit Tests
+INCLUDE(../build/build.test.cmake)

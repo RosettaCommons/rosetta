@@ -47,7 +47,8 @@ help_message2 = (
     "ninja.build.py r -my          Release build with *.src.settings.my\n" +
     "ninja.build.py debug -remake  Debug build, rerun cmake + make_project.py\n" )
 #Useful abbreviations
-abbrev = {'r':'release', 'd':'debug', 'u':'unit'}
+#Unit and debug are now combined
+abbrev = {'r':'release', 'd':'debug', 'u':'debug'}
 
 help_message2 += "\nbuild name abbreviations:\n"
 for key, item in abbrev.items():
@@ -57,6 +58,8 @@ for key, item in abbrev.items():
 parser = MyParser(description=help_message1, epilog=help_message2, formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('build', default='release',
         help="Build name to be compiled in the cmake folder.")
+parser.add_argument('-t', '-target', type=str, default=None,
+        help="The build target to tell ninja to compile. (e.g. 'bin', 'unit', 'apps', 'pilot_apps', 'relax') Default is to compile everything.")
 parser.add_argument('-remake', action='store_true', help="Rerun make_project.py and cmake. " +
         "Be sure to call it when building first time, after editing src.settings, or first time switching to -my.")
 parser.add_argument('-my', action='store_true', help="Use instead *.src.settings.my in make_project.py.")
@@ -112,6 +115,9 @@ ninja_command = ["ninja"]
 
 if args.j is not None:
     ninja_command.extend( ["-j",str(args.j)] )
+
+if args.t is not None:
+    ninja_command.append( str(args.t) )
 
 if args.v:
     ninja_command.append( "-v" )

@@ -559,9 +559,9 @@ def main(args):
     )
 
     parser.add_option("-T", '--testpath',
-      default="cmake/build_unit/",
+      default="cmake/build_debug/",
       action="store",
-      help="The relative directory where the unit tests were built into. (default: 'cmake/build_unit/')",
+      help="The relative directory where the unit tests were built into. (default: 'cmake/build_debug/')",
     )
 
     parser.add_option("--debug",

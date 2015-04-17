@@ -29,12 +29,11 @@ def project_callback(project, project_path, project_files):
 		app_files = {}
 		#print 'making project files for ' + project + ' from ' + project_path
 		apps_output = open( 'build/' + project + '.all.cmake', 'w' )
+
 		if not os.path.exists( 'build/apps' ):
 			os.mkdir( 'build/apps' )
 		for entry in project_files:
-			if ( project == 'pilot_apps' ):
-				project = 'apps'
-			file_path = '/'.join( [ '../../src', project, entry[0] ] )
+			file_path = '/'.join( [ '../../src/apps', entry[0] ] )
 			for file in entry[ 1 ]:
 				full_path = file_path + '/' + file
 				split_file = file.split( '.' )
@@ -55,6 +54,7 @@ def project_callback(project, project_path, project_files):
 			output += 'ADD_CUSTOM_COMMAND( TARGET %s POST_BUILD COMMAND python ../smart_symlink.py ${COMPILER} ${MODE} %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( symlink_var, key )
 			output += 'ADD_DEPENDENCIES( %s BUILD_ROSETTA_LIBS )\n' % ( key )
+			output += 'ADD_DEPENDENCIES( %s %s )\n' % ( project, symlink_var )
 			apps_file = key + '.cmake'
 			open( 'build/apps/' + apps_file, 'w').write( output )
 			apps_output.write( 'INCLUDE( ../build/apps/%s )\n' % apps_file )

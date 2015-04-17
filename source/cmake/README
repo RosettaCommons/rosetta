@@ -13,8 +13,7 @@ Quick examples:
 
 ./ninja_build.py r -remake (Release build, use -remake for the first run)
 ./ninja_build.py r (build afterwards if you did not edit *.src.settings
-./ninja_build.py d (Debug build)
-./ninja_build.py u (Unit test build, see below)
+./ninja_build.py d (Debug & unit test build)
 
 ----- Compiling with cmake + ninja -----
 
@@ -24,41 +23,54 @@ get a full release build of rosetta:
 ./make_project.py all
 cd build_release
 cmake -G Ninja
-ninja  
+ninja
 
 of if you want to see the actual g++ commands (good for debugging):
 
 ninja -v
 
-Some more information on installing ninja below (its easy with git, which you presumably already have). 
+Some more information on installing ninja below (its easy with git, which you presumably already have).
 Ninja is a very efficient replacement for 'make'. If you want to use cmake with 'make' instead, see below.
 
 ----- Building and running Unit Tests -----
 
-Usage is straightforward, and similar to regular CMake builds:
+Usage is straightforward - the unit tests are built with the standard debug build.
 
 #Build using ninja_build.py:
 
 cd rosetta/main/source/
-./ninja_build.py -remake unit 
-(Omit "remake" if you haven't edited any *.src.settings since the last run)
+./ninja_build.py -remake debug
+(Omit "remake" if you haven't edited any *.src.settings or *.test.settings since the last run)
 
 or just use the command lines:
 
 ./make_project.py all
-cd ./build_unit
-cmake -G Ninja 
-ninja 
+cd ./build_debug
+cmake -G Ninja
+ninja
 
 #Test
 
 cd rosetta/main/source/
 test/run.py -C -j8 --mute all (Don't forget the "-C")
 
+By default the debug mode will compile both the debug mode executables and the unit tests.
+You can compile just one or the other by specifying a target to ninja.
+
+ninja unit # Only (re)compile the unit tests, not the debug mode executables
+ninja bin # Only (re)compile the executables, not the unit test
+ninja apps # Only (re)compile the public executables, not pilot apps or unit tests
+ninja pilot_apps # Only (re)compile the pilot apps, not public apps or unit tests
+ninja relax # Only compile the relax application
+
+To specify a target with ninja_build.py, use the -t flag:
+
+cd rosetta/main/source/
+./ninja_build.py -remake debug -t unit
 
 ----- Installing CMake + Ninja ---
 
-1. Download the latest version of cmake (> v2.8.8). 
+1. Download the latest version of cmake (> v2.8.8).
 
 ######The following is for cmake 2.8.8 only#################
 Ninja is turned on by default for linux but not for Apple in cmake 2.8.8.
@@ -77,7 +89,7 @@ if(WIN32)
 endif()
 ############################################################
 
-Now compile and install cmake. Run  
+Now compile and install cmake. Run
 
 ./bootstrap
 make
@@ -87,7 +99,7 @@ sudo make install
 
  git clone https://github.com/martine/ninja.git
 
- and run 
+ and run
 
    python bootstrap.py
 
