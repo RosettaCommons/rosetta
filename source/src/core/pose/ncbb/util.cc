@@ -129,7 +129,9 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
   CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
   CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+  CircularHarmonicFuncOP ang_func3( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi()/180*109.5, 0.02 ) );
   CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+  CircularHarmonicFuncOP dih_func2( new CircularHarmonicFunc( 0, 0.02 ) );
 
   AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
   AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
@@ -143,8 +145,9 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
   ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
   ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 ) ) );
-  ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 ) ) );
+  ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidN, aidCZH, aidCYH, ang_func3 ) ) );
   ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
+  ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func2 ) ) );
 
   pose.add_constraint( atompair );
   pose.add_constraint( atompair2 );
@@ -152,6 +155,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
   pose.add_constraint( angle );
   pose.add_constraint( angle2 );
   pose.add_constraint( dihedral );
+  pose.add_constraint( dihedral2 );
 
   TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
   TR << "and atom pair constraints with the virtual atoms" << std::endl;
