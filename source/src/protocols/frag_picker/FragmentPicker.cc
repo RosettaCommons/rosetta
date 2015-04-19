@@ -1154,8 +1154,8 @@ void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) 
 	tr.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
 	for (Size i = 1; i <= sec_str_input.size(); i += 2) {
 		tr.Debug << i / 2 << " " << sec_str_input[i]
-			<< " file will be loaded under \"" << sec_str_input[i ] << "\" name\n";
-		read_ss_file(sec_str_input[i], sec_str_input[i ]);
+			<< " file will be loaded under \"" << sec_str_input[i+1 ] << "\" name\n";
+		read_ss_file(sec_str_input[i], sec_str_input[i+1 ]);
 	}
 	tr.Debug << std::endl;
 }
