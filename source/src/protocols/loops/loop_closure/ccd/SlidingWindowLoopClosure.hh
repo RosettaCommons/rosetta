@@ -39,7 +39,6 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
-//#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
@@ -130,11 +129,7 @@ public:
 
 	//@brief set fragments for loop-sampling
 	void
-	fragments( core::fragment::FragSetCOP frags ) {
-		ss_info_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *frags ) );
-		fragset_ = frags;
-	}
-
+  fragments( core::fragment::FragSetCOP frags );
 
 	void scored_frag_cycle_ratio( core::Real setting ) {
 		scored_frag_cycle_ratio_ = setting;
@@ -161,10 +156,8 @@ public:
 	set_evaluation( evaluation::MetaPoseEvaluatorOP ev ) { 	evaluator_ = ev; };
 
 	void
-	set_loop( Loop const& loop_in ) {
-		loop_ = loop_in;
-	}
-
+  set_loop( Loop const& loop_in );
+  
 	Loop determine_loop( core::pose::Pose const& more_cut, core::pose::Pose & less_cut );
 
 protected:
@@ -187,29 +180,6 @@ protected:
 		core::pose::Pose const& loop_pose
 	);
 
-//   /// @brief replace scorefxn
-//   void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
-//     scorefxn_ = scorefxn;
-//   }
-
-//   void set_loop( Loop const& loop_in ) {
-//     loop_ = loop_in;
-//   }
-
-//   Loop const& loop() const {
-//     return loop_;
-//   }
-
-//   void init_mc();
-
-//   void set_movemap( core::kinematics::MoveMapCOP mm ) {
-//     movemap_ = mm;
-//   }
-
-//   void set_fragset( core::fragment::FragSetCOP frags ) {
-//     fragset_ = frags;
-//   }
-
 	bool bQuickTest() const {
 		return bQuickTest_;
 	}
@@ -226,9 +196,6 @@ protected:
 
 	//@brief movemap --> which dofs can be moved during loops
 	core::kinematics::MoveMapCOP movemap_;
-
-	//@brief a MonteCarlo object -- set_default_mc() , access: mc()
-	//moves::MonteCarloOP mc_; not used
 
 	core::fragment::FragSetCOP fragset_;
 

@@ -409,7 +409,14 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
   EnvClaims claims;
 
   utility::vector1< bool > selection( in_p.total_residue(), false );
-  selection = sim_selector()->apply( in_p );
+  try {
+    selection = sim_selector()->apply( in_p );
+  } catch( utility::excn::EXCN_Msg_Exception& e ){
+    std::ostringstream ss;
+    ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
+    e.add_msg(ss.str());
+    throw e;
+  }
   configure( in_p, selection );
 
   ClientMoverOP this_ptr = utility::pointer::static_pointer_cast< ClientMover > ( get_self_ptr() );
@@ -611,17 +618,12 @@ void fix_mainchain_connect( core::pose::Pose& pose,
     core::id::AtomID ref_atomO( prev_rsd.atom_index( "O" ), local_upper-1 );
     core::id::AtomID atomO( pose.residue_type( global_upper-1 ).atom_index( "O" ), global_upper-1 );
 
-    std::cout << pose.residue( atomO.rsd() ) << std::endl;
-    std::cout << atomO << std::endl;
     fix_internal_coords_of_siblings( pose, ref_pose, atomO, ref_atomO );
   }
   if ( rsd.has( "H" ) ) {
     core::id::AtomID ref_atomH( rsd.atom_index( "H" ), local_upper );
     core::id::AtomID atomH( new_resi.atom_index( "H" ), global_upper );
     runtime_assert( new_resi.has( "H" ) );
-
-    std::cout << pose.residue( atomH.rsd() ) << std::endl;
-    std::cout << atomH << std::endl;
 
     fix_internal_coords_of_siblings( pose, ref_pose, atomH, ref_atomH );
   }

@@ -72,7 +72,7 @@
 
 #include <basic/Tracer.hh>
 
-static thread_local basic::Tracer TR( "core.graph.Graph" );
+//static thread_local basic::Tracer TR( "core.graph.Graph" );
 using namespace ObjexxFCL;
 
 namespace core {
@@ -353,13 +353,13 @@ Edge * Node::find_edge(platform::Size other_node)
 /// @brief virtual function to print node to standard out
 void Node::print() const
 {
-	TR.Debug << "Node " << get_node_index() << " attached to edges: " << std::endl;
+//	TR.Debug << "Node " << get_node_index() << " attached to edges: " << std::endl;
 	for ( EdgeListConstIter
 			iter = incident_edge_list_.const_begin(),
 			iter_end = incident_edge_list_.const_end();
 			iter != iter_end; ++iter ) {
-		TR.Debug << "   Edge( " << (*iter)->get_first_node_ind() << ", ";
-		TR.Debug << (*iter)->get_second_node_ind() << ")" << std::endl;
+//		TR.Debug << "   Edge( " << (*iter)->get_first_node_ind() << ", ";
+//		TR.Debug << (*iter)->get_second_node_ind() << ")" << std::endl;
 	}
 }
 

@@ -190,7 +190,15 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 
   int shift = 0;
   if( selector() ){
-    utility::vector1< bool > torsion_mask = selector()->apply( pose );
+    utility::vector1< bool > torsion_mask;
+    try {
+       torsion_mask = selector()->apply( pose );
+    } catch( utility::excn::EXCN_Msg_Exception& e ){
+      std::ostringstream ss;
+      ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
+      e.add_msg(ss.str());
+      throw e;
+    }
     shift = torsion_mask.index( true )-1;
 
     if( shift == -1 ) { // verify that torsion_mask isn't all-false.

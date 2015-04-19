@@ -16,22 +16,26 @@
 #include <protocols/environment/DofUnlock.hh>
 
 #include <protocols/abinitio/abscript/RigidChunkCM.hh>
+#include <protocols/abinitio/abscript/FragmentCM.hh>
+
+#include <protocols/environment/claims/TorsionClaim.hh>
+#include <protocols/environment/EnvMover.hh>
+#include <protocols/environment/Environment.hh>
+
+#include <test/protocols/environment/TorsionMover.hh>
+
+#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/pack/task/residue_selector/ResidueIndexSelector.hh>
-
 #include <devel/init.hh>
 
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/datacache/DataMap.hh>
-
-#include <numeric/xyzVector.hh>
 
 #include <core/id/types.hh>
 
@@ -47,87 +51,97 @@
 #define TS_TRACE( x ) std::cout << x << std::endl;
 #define ANGLE_DELTA( x , y , d ) TS_ASSERT_DELTA( std::cos( x ) , std::cos( y ), d );
 
-std::string const TEST_CHUNK_PDB = "/Users/jrporter/Rosetta/main/source/test/protocols/abinitio/abscript/ubq_frag.pdb";
-core::Real const TOLERANCE = 1e-6;
+std::string const FRAGFILE_LOCATION = "/Users/jrporter/Rosetta/main/source/test/protocols/abinitio/abscript/one_frag3_per_pos";
 
 void test_chunk( core::pose::Pose const pose );
 
-core::pose::Pose make_seq( std::string const& str );
-
-core::pose::Pose make_seq( std::string const& str ) {
-  core::pose::Pose pose;
-
-  core::pose::make_pose_from_sequence(pose, str, "fa_standard");
-
+void test_chunk( core::pose::Pose const pose ) {
+  
+  utility::vector1< core::Real > init_phis;
   for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-    pose.set_phi( i, -65 );
-    pose.set_psi( i, -41 );
-    pose.set_omega( i, 180 );
+    init_phis.push_back( pose.phi( i ) );
   }
 
-  return pose;
-}
 
-void test_chunk( core::pose::Pose const ) {
+  TS_TRACE( "Beginning: test_single_phi_moves" );
+  using namespace protocols::environment;
+  using namespace core::environment;
 
-		TS_TRACE( "Starting test_chunk" );
+  //Tests that
+  TorsionMoverOP allowed_mover( new TorsionMover( true, true ) );
+  TorsionMoverOP duplicate_claim_mover( new TorsionMover( true, true ) );
+  TorsionMoverOP no_claim_mover( new TorsionMover( false, true ) );
+  TorsionMoverOP unreg_mover( new TorsionMover( true, true ) );
 
-		using namespace protocols::environment;
-		using namespace core::pack::task::residue_selector;
-		using namespace protocols::abinitio::abscript;
+  EnvironmentOP env_op( new Environment( "torsion" ) );
+  Environment & env = *env_op;
 
-		basic::datacache::DataMap datamap;
+  env.register_mover( allowed_mover );
+  env.register_mover( duplicate_claim_mover );
+  env.register_mover( no_claim_mover );
+  //don't register unreg_mover
 
-    core::pose::Pose pose = make_seq( "MQIFV" );
+  core::pose::Pose final_pose;
 
-		std::string const SELECTOR_NAME = "sele";
-		core::Size const BEGIN_CHUNK = 1;
-		core::Size const END_CHUNK = 5;
+  {
+    core::pose::Pose protected_pose = env.start( pose );
+    // Verify conformation got copied into protected_pose pose.
+    TS_ASSERT_EQUALS( protected_pose.total_residue(), pose.total_residue() );
 
-		std::ostringstream os;
-		os << BEGIN_CHUNK << "-" << END_CHUNK;
-		datamap.add( "ResidueSelector", SELECTOR_NAME, ResidueSelectorOP( new ResidueIndexSelector( os.str() ) ) );
+    // Verify no_claim_mover can't change anything -- it shouldn't have a passport for this environment (NullPointer excn)
+    TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose ), EXCN_Env_Security_Exception );
+    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-		std::stringstream ss;
-		ss << "<RigidChunkCM name=chunk template=\"" << TEST_CHUNK_PDB << "\" selector=\"" << SELECTOR_NAME << "\" />";
-		utility::tag::TagPtr tag( new utility::tag::Tag );
-		tag->read( ss );
+    // Verify no_lock_mover can't change anything -- protected_pose shouldn't have a passport on its unlock stack
+    TS_ASSERT_THROWS( allowed_mover->missing_unlock_apply( protected_pose ), EXCN_Env_Security_Exception );
+    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, protocols::filters::Filters_map(), protocols::moves::Movers_map(), core::pose::Pose() ) );
-		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
+    // Verify that unregistered mover lacks a passport for protected_pose conformation
+    TS_ASSERT_THROWS( unreg_mover->apply( protected_pose ), utility::excn::EXCN_NullPointer );
+    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
 
-		EnvironmentOP env( new Environment( "env" ) );
-		env->register_mover( rigid_chunk );
+    // Verify that allowed_mover can change it's claimed angle
+    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
+    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-12 );
 
-		core::pose::Pose ppose;
-		TS_ASSERT_THROWS_NOTHING( ppose = env->start( pose ) );
+    // Verify that allowed_mover can do it again.
+    TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose ) );
+    TS_ASSERT_DELTA( protected_pose.phi( CLAIMED_RESID ), NEW_PHI, 1e-10 );
 
-		for( core::Size i = 1; i <= ppose.total_residue(); ++i ){
-      if( i >= BEGIN_CHUNK && i <= END_CHUNK ){
-        core::Size const seqpos = i - BEGIN_CHUNK + 1;
-        if( seqpos != 1 )
-          ANGLE_DELTA( ppose.phi( i ), rigid_chunk->templ().phi( seqpos ), TOLERANCE );
-        if( seqpos != rigid_chunk->templ().total_residue() &&
-           seqpos != ppose.total_residue() ){
-          ANGLE_DELTA( ppose.psi( i ), rigid_chunk->templ().psi( seqpos ), TOLERANCE );
-          ANGLE_DELTA( ppose.omega( i ) , rigid_chunk->templ().omega( seqpos ), TOLERANCE );
-        }
-      } else if( ( i == BEGIN_CHUNK - 1 ) ||
-                ( i == END_CHUNK + 1 ) ) {
-        // inconsistent contributions.
-      } else {
-        if( i != 1 ) ANGLE_DELTA( ppose.phi( i ), pose.phi( i ), TOLERANCE );
-        if( i != pose.total_residue() ) {
-          ANGLE_DELTA( ppose.psi( i ), pose.psi( i ), TOLERANCE );
-          ANGLE_DELTA( ppose.omega( i ), pose.omega( i ), TOLERANCE );
-        }
-      }
+    //Verify that duplicate mover *also* can make the change without throwing an error
+    TS_ASSERT_THROWS_NOTHING( duplicate_claim_mover->apply( protected_pose ) );
+    //Verify that allowed can't change 9 while claiming CLAIMED_RESID
+    TS_ASSERT_THROWS( allowed_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
+    TS_ASSERT_THROWS( duplicate_claim_mover->apply( protected_pose, UNCLAIMED_RESID ), EXCN_Env_Security_Exception );
+    TS_ASSERT_DELTA( protected_pose.phi( UNCLAIMED_RESID ), init_phis[ UNCLAIMED_RESID ], 1e-12 );
+
+    //Verify angles 1-9 are untouched in protected_pose
+    for( core::Size i = 1; i <= pose.total_residue()-1; ++i ){
+      TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
     }
-  
-		core::pose::Pose end_pose;
-		TS_ASSERT_THROWS_NOTHING( end_pose = env->end( ppose ) );
 
+    TS_ASSERT_THROWS_NOTHING( final_pose = env.end( protected_pose ) );
+  }
+
+  // Verify angles 1-9 are untouched in pose and final_pose;
+  // Phi 1 is not well-defined, so skip that one.
+  for( core::Size i = 2; i <= pose.total_residue(); ++i ){
+    if( i != CLAIMED_RESID ){
+      TS_ASSERT_DELTA( pose.phi( i ), final_pose.phi( i ), 1e-12 );
+      TS_ASSERT_DELTA( pose.phi( i ), init_phis[i], 1e-12 );
+    }
+  }
+
+  //Finish verification inital pose is unaffected
+  TS_ASSERT_DELTA( pose.phi( CLAIMED_RESID ), init_phis[ CLAIMED_RESID ], 1e-12 );
+
+  //Verify angle changes propagate out of environment
+  TS_ASSERT_DELTA( final_pose.phi( CLAIMED_RESID ), NEW_PHI, 0.001 );
+
+  //Verify other angle changes don't back-propagate to original pose
+  TS_ASSERT_DIFFERS( pose.phi( CLAIMED_RESID ), final_pose.phi( CLAIMED_RESID ) );
+
+  TS_TRACE( "End: test_single_phi_moves" );
 }
 
 int main( int argc, char** argv ){
@@ -141,11 +155,6 @@ int main( int argc, char** argv ){
     pose.set_psi( i, -41 );
     pose.set_omega( i, 180 );
   }
-
-//  pose.append_pose_by_jump( *pose.clone(), 5 );
-//  core::kinematics::Jump j = pose.jump( 1 );
-//  j.gaussian_move(1, 50, 0);
-//  pose.set_jump(1, j);
 
   try {
     test_chunk( pose );

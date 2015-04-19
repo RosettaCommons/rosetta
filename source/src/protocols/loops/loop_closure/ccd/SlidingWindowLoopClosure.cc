@@ -617,6 +617,30 @@ SlidingWindowLoopClosure::generate_window_list( Size loop_size, WindowList& wind
  }
 }
 
+void
+SlidingWindowLoopClosure::fragments( core::fragment::FragSetCOP frags ) {
+  ss_info_ = core::fragment::SecondaryStructureOP( new core::fragment::SecondaryStructure( *frags ) );
+  fragset_ = frags;
+  if( loop_.start() != 0 &&
+      fragset_->max_pos() <= loop_.start() + std::min( loop_.size(), max_loop_size_ ) ){
+    assert(false);
+  }
+}
+
+void
+SlidingWindowLoopClosure::set_loop( Loop const& loop_in ) {
+  loop_ = loop_in;
+  if( fragset_ &&
+      fragset_->max_pos() <= loop_.start() + std::min( loop_.size(), max_loop_size_ ) ){
+    std::ostringstream ss;
+    ss << this->get_name() << " was given a loop to close (" << loop_
+       << ") for which it does not have any fragments (residues: " << fragset_->min_pos() << "-"
+       << fragset_->max_pos() << ").";
+    throw utility::excn::EXCN_Msg_Exception( ss.str() );
+  }
+}
+
+
 } // namespace ccd
 } // namespace loop_closure
 } // namespace loops
