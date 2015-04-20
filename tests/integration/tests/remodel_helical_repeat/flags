@@ -23,4 +23,6 @@
 -parser:protocol layeredDesign.xml 
 -num_trajectory 1 
 -save_top 1
--vall small.vall
+##for speed flags
+-vall sampling/small.vall.gz
+-run:test_cycles true
