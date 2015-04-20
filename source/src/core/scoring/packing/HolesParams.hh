@@ -17,6 +17,8 @@
 #include <core/types.hh>
 
 
+#include <core/chemical/ChemicalManager.hh>
+
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
@@ -40,11 +42,48 @@ public:
 
 	HolesParams()
 	 : max_atom_types_(21), sep_ss_(21,true) {
+	 	init_atype_maps();
 	}
 
 	HolesParams( std::string fname )
 	 : max_atom_types_(21), sep_ss_(21,true) {
 		read_data_file( fname );
+		init_atype_maps();
+	}
+
+	void init_atype_maps(){
+		core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+		atype2holes_.resize( ats->n_atomtypes(), 0 );
+		holes2atype_.resize( 21, 0 );
+
+		atype2holes_[ ats->atom_type_index("CNH2") ] =  1;
+		atype2holes_[ ats->atom_type_index("COO" ) ] =  2;
+		atype2holes_[ ats->atom_type_index("CH1" ) ] =  3;
+		atype2holes_[ ats->atom_type_index("CH2" ) ] =  4;
+		atype2holes_[ ats->atom_type_index("CH3" ) ] =  5;
+		atype2holes_[ ats->atom_type_index("aroC") ] =  6;
+		atype2holes_[ ats->atom_type_index("Ntrp") ] =  7;
+		atype2holes_[ ats->atom_type_index("Nhis") ] =  8;
+		atype2holes_[ ats->atom_type_index("NH2O") ] =  9;
+		atype2holes_[ ats->atom_type_index("Nlys") ] = 10;
+		atype2holes_[ ats->atom_type_index("Narg") ] = 11;
+		atype2holes_[ ats->atom_type_index("Npro") ] = 12;
+		atype2holes_[ ats->atom_type_index("OH"  ) ] = 13;
+		atype2holes_[ ats->atom_type_index("ONH2") ] = 14;
+		atype2holes_[ ats->atom_type_index("OOC" ) ] = 15;
+		atype2holes_[ ats->atom_type_index("Oaro") ] = 16;
+		atype2holes_[ ats->atom_type_index("S"   ) ] = 17;
+		atype2holes_[ ats->atom_type_index("Nbb" ) ] = 18;
+		atype2holes_[ ats->atom_type_index("CAbb") ] = 19;
+		atype2holes_[ ats->atom_type_index("CObb") ] = 20;
+		atype2holes_[ ats->atom_type_index("OCbb") ] = 21;
+
+		for( size_t i = 1; i <= atype2holes_.size(); ++i ){
+			if( atype2holes_[i] > 0 ){
+				holes2atype_[ atype2holes_[i] ] = i;
+			}
+		}
+		
 	}
 
 	void read_data_file( std::string fname ) {
@@ -97,16 +136,29 @@ public:
 		in >> intercept_;
 	}
 
-	core::Real nb_weight( core::Size const at, char const ss                ) const { return nb_weights_.find(Key(at,ss))->second; }
-	core::Real sa_weight( core::Size const at, char const ss, core::Size sa ) const { return sa_weights_.find(Key(at,ss))->second[sa]; }
-	core::Real intercept( core::Size const at, char const ss                ) const { return intercepts_.find(Key(at,ss))->second; }
-	core::Real intercept(                                                   ) const { return intercept_; }
+	core::Real nb_weight( core::Size const at, char const ss ) const {
+		std::map<Key,core::Real>::const_iterator i = nb_weights_.find(Key(atype2holes_[at],ss));
+		if( i == nb_weights_.end() ) return 0.0;
+		else                         return i->second;
+	}
+	core::Real sa_weight( core::Size const at, char const ss, core::Size sa ) const {
+		std::map<Key,utility::vector1<core::Real> >::const_iterator i = sa_weights_.find(Key(atype2holes_[at],ss));
+		if( i == sa_weights_.end() )      return 0.0;
+		else if( sa > i->second.size()  ) return 0.0;
+		else                              return i->second[sa];
+	}
+	core::Real intercept( core::Size const at, char const ss ) const {
+		std::map<Key,core::Real>::const_iterator i = intercepts_.find(Key(atype2holes_[at],ss));
+		if( i == intercepts_.end() ) return 0.0;
+		else                         return i->second;
+	}
+	core::Real intercept() const { return intercept_; }
 
 	core::Size max_atom_types() const { return max_atom_types_; }
-	bool sep_ss( core::Size at ) const { return sep_ss_[at]; }
+	bool sep_ss( core::Size at ) const { return sep_ss_[ atype2holes_[at] ]; }
 
 	bool have_params( core::Size const at, char const ss ) const {
-		return sa_weights_.find(Key(at,ss)) != sa_weights_.end();
+		return sa_weights_.find(Key( atype2holes_[at] ,ss)) != sa_weights_.end();
 	}
 
 	friend
@@ -135,6 +187,7 @@ private:
 	std::map<Key,core::Real> intercepts_;
 	utility::vector1<bool> sep_ss_;
 	core::Real intercept_;
+	utility::vector1<core::Size> holes2atype_, atype2holes_;
 
 
 };

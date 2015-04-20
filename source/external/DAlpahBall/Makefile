@@ -46,7 +46,7 @@ DIR=.
 # INCS=
 # LIBS=
 
-CPU=macgcc
+CPU=gcc
 NAMEFUL1=$(DIR)/$(NAME1).$(CPU)
 FC = gfortran
 FFLAGS = -c -O3 -x f77-cpp-input -fsecond-underscore
@@ -55,8 +55,8 @@ LD = gcc
 CFLAGS = -c -O3
 LDFLAGS = -O3
 LIBRARIES= -lgmp  -lm -lgfortran
-INCS=
-LIBS=
+INCS=-I/usr/local/include
+LIBS=-L/usr/local/lib
 
 
 .c.o :
