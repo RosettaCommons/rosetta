@@ -88,6 +88,11 @@ public:
 	void single_substitution( core::pose::Pose & pose, core::Size const resi, core::chemical::AA const target_aa ) const;
 	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters() const;
 	void delta_filters( utility::vector1< protocols::simple_filters::DeltaFilterOP > const d );
+
+	std::string dump_pdb_name() const{ return dump_pdb_name_; }
+	void dump_pdb_name( std::string const s ){ dump_pdb_name_ = s; }
+	bool keep_native() const{ return keep_native_; }
+	void keep_native( bool const k ){ keep_native_ = k; }
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -105,6 +110,8 @@ private:
 	bool dump_pdb_; // dflt false; dump a pdb for each substitution (with extensions signifying the substitution).
 	bool rtmin_; //dflt false; shall we do rtmin after each mutation (and at baseline)?
 	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters_;
+	std::string dump_pdb_name_; //dflt "" ; give a user-defined name to the dumped-pdbs
+	bool keep_native_; // dflt false ; always write the native residue into the resfile
 };
 
 } // filters

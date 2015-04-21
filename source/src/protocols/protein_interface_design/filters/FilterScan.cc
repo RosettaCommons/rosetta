@@ -46,6 +46,7 @@
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <set>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -72,7 +73,9 @@ FilterScanFilter::FilterScanFilter() :
 	report_all_( false ),
 	jump_( 0 ),
 	dump_pdb_( false ),
-	rtmin_( false )
+	rtmin_( false ),
+	dump_pdb_name_( "" ),
+	keep_native_( false )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -275,12 +278,15 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		TR.Warning << "WARNING: No residues are listed as designable." << std::endl;
 		return true;
 	}
-	std::map< core::Size, utility::vector1< AA > > residue_id_map;
+	std::map< core::Size, std::set< AA > > residue_id_map;
 	std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > > residue_id_val_map; // position, aa identity : report filter value, triage filter accepted?
 	residue_id_map.clear(); residue_id_val_map.clear();
 	unbind( pose );
 	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
 	BOOST_FOREACH( core::Size const resi, being_designed ){
+		if( keep_native() )
+			residue_id_map[ resi ].insert( pose.residue( resi ).aa() );
+
 		pose = pose_orig;
 		///compute baseline
 // SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
@@ -319,7 +325,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 						 break;
 				 }
 				 if( triage_filter_pass )
-    	 		 residue_id_map[ resi ].push_back( target_aa );
+    	 		 residue_id_map[ resi ].insert( target_aa );
 			 }
 			 else
 			 	triage_filter_pass = triage_filter()->apply( pose );
@@ -333,13 +339,17 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 TR<<"Triage filter succeeds"<<std::endl;
 			 if( !delta() ){
 			 		residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
-    	 		residue_id_map[ resi ].push_back( target_aa );
+    	 		residue_id_map[ resi ].insert( target_aa );
 			 }
 			 if( dump_pdb() ){
 			 	using namespace protocols::jd2;
 			 	JobOP job( JobDistributor::get_instance()->current_job() );
 			 	std::stringstream fname;
-				fname << job->input_tag() << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
+				if( dump_pdb_name_ != "" )
+					fname << dump_pdb_name();
+				else
+					fname << job->input_tag();
+				fname << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3()<<".pdb";
 			 	TR<<"Saving pose "<<fname.str();
 				pose.dump_scored_pdb( fname.str(), *scorefxn() );
 			 }
@@ -347,10 +357,14 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		}//foreach target_aa
 	}//foreach resi
 	if( resfile_name() != "" ){
+		std::ifstream ifile( resfile_name().c_str() );
+		bool const resfile_exists( ifile );
+		ifile.close();
 		std::ofstream resfile;
-		resfile.open( resfile_name().c_str(), std::ios::out );
-		resfile << resfile_general_property()<<"\nstart\n";
-		for( std::map< core::Size, utility::vector1< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ){
+		resfile.open( resfile_name().c_str(), std::ios::app );
+		if( !resfile_exists)
+			resfile << resfile_general_property()<<"\nstart\n";
+		for( std::map< core::Size, std::set< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ){
 			resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
 			BOOST_FOREACH( AA const aa, pair->second )
 				resfile<<oneletter_code_from_aa( aa );
@@ -410,6 +424,8 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	std::string const triage_filter_name( tag->getOption< std::string >( "triage_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator triage_filter_it( filters.find( triage_filter_name ) );
+	keep_native( tag->getOption< bool >( "keep_native", false ) );
+	dump_pdb_name( tag->getOption< std::string > ( "dump_pdb_name", "" ) );
 
 	//These #ifdefs are a terrible hack to work around a compiler bug in mpicxx. sorry
 #ifdef USEMPI
@@ -458,7 +474,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	rtmin( tag->getOption< bool >( "rtmin", false ) );
 	score_log_file( tag->getOption< std::string >( "score_log_file",score_log_file() ) );
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
-
+	runtime_assert( !(dump_pdb_name_ != "" && !dump_pdb() ) );
 
 	utility::vector1< std::string > delta_filter_names;
 	delta_filter_names.clear();
