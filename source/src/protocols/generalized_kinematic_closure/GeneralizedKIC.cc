@@ -195,7 +195,7 @@ void GeneralizedKIC::apply (core::pose::Pose & pose)
 	if(rosettascripts_filter_exists_) rosettascripts_filter_->set_value(last_run_successful_);
 
 	if(last_run_successful_) {
-		if(TR.visible()) {TR << "Closure successful." << std::endl; TR.flush();}
+		if(TR.visible()) {TR << "Clossure successful." << std::endl; TR.flush();}
 		//perturbedloop_pose.dump_pdb("temp.pdb"); //DELETE ME -- for debugging only
 		copy_loop_pose_to_original( pose, perturbedloop_pose, residue_map, tail_residue_map);
 		if(preselection_mover_exists()) {
