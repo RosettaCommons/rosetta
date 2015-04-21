@@ -214,15 +214,22 @@ namespace helical_bundle {
 		utility::vector1 < core::Real > const &delta_z1,
 		bool &failed
 	) {
-
+	
 		outvector.clear();
 		failed=false;
 
 		core::Size helix_length=helix_end-helix_start+1;
 		
 		// The offset along the minor helix axis is converted into delta_t and delta_omega1_all values:
-		core::Real const delta_t_prime (delta_t + (invert_helix ? -1.0 : 1.0) * z1_offset / z1);
-		core::Real const delta_omega1_all_prime ( delta_omega1_all - (invert_helix ? -1.0 : 1.0) * (z1_offset / z1) * omega1 );
+		core::Real const r0_omega0_over_z1( r0*omega0/z1 );
+		if(r0_omega0_over_z1 > 1) {
+			failed=true;
+			outvector.clear();
+			return;
+		}
+		core::Real const z1_offset_prime( z1_offset/sqrt( 1 - r0_omega0_over_z1*r0_omega0_over_z1 ) ); //Correction factor to match the z-offset in Grigoryan and DeGrado (2011) JMB 405(4):1079-1100.
+		core::Real const delta_t_prime (delta_t + z1_offset_prime / z1);
+		core::Real const delta_omega1_all_prime ( delta_omega1_all - (z1_offset_prime / z1) * omega1 );
 
 		core::Real t = -1.0 * static_cast<core::Real>(helix_length + 2) / 2.0 + delta_t_prime;
 
@@ -244,7 +251,7 @@ namespace helical_bundle {
 					//innervector[ia].y( -1.0*innervector[ia].y() );
 					innervector[ia].z( -1.0*innervector[ia].z() );
 				}
-				innervector[ia].z( innervector[ia].z() + z0_offset ); //Offset by z0_offset
+				innervector[ia].z( innervector[ia].z() + (invert_helix ? -1.0 : 1.0 ) * z0_offset ); //Offset by z0_offset in direction of helix (inverted for inverted helix)
 				if(failed) break;
 			}
 			if(failed) break;
