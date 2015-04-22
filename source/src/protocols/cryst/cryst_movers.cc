@@ -619,6 +619,10 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 		}
 		core::scoring::cryst::getPhenixInterface().set_cif_files ( cif_files_ );
 	}
+
+	if (sharpen_b_ != 0.0) {
+		core::scoring::cryst::getPhenixInterface().set_sharpen_b ( sharpen_b_ );
+	}
 }
 
 
@@ -636,6 +640,7 @@ void SetRefinementOptionsMover::parse_my_tag(
 	target_ = tag->getOption<std::string>("target", "");
 	setmap_type_ = tag->hasOption("map_type");
 	map_type_ = tag->getOption<std::string>("map_type", "");
+	sharpen_b_ = tag->getOption<core::Real>("sharpen_b", 0.0);
 
 	std::string allcifs = tag->getOption<std::string>("cifs", "");
 	if (allcifs != "")

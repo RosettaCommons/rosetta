@@ -165,7 +165,7 @@ private:
 class SetRefinementOptionsMover : public moves::Mover {
 public:
 	SetRefinementOptionsMover() :
-		Mover(), res_high_(0.0), res_low_(0.0), twin_law_(""), algo_(""), target_(""), map_type_(""), setmap_type_(false)
+		Mover(), res_high_(0.0), res_low_(0.0), sharpen_b_(0.0), twin_law_(""), algo_(""), target_(""), map_type_(""), setmap_type_(false)
 	{}
 
 	virtual std::string get_name() const { return SetRefinementOptionsMoverCreator::mover_name(); }
@@ -181,6 +181,7 @@ public:
 
 private:
 	core::Real res_high_, res_low_;
+	core::Real sharpen_b_;
 	std::string twin_law_, algo_, target_, map_type_;
 	utility::vector1<std::string> cif_files_;
 	bool setmap_type_;

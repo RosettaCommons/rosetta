@@ -95,7 +95,7 @@ PhenixInterface::PhenixInterface() {
 	target_function_ = "ml";
 	twin_law_ = "";
 	map_type_ = "";
-	res_low_ = res_high_ = 0;  // data from mtz file
+	res_low_ = res_high_ = sharpen_b_ = 0;  // data from mtz file
 
 	// set up python environment
 	// use the phenix version of python...
@@ -979,7 +979,7 @@ void PhenixInterface::initialize_target_evaluator(
 	oss.clear(); oss.str("");
 	oss << "bss.target = ";
 	if (( target_function_ == "lsq" ) ||
-			(( twin_law_.length() == 0 ) && (twin_law_ != "None"))) {
+			(( twin_law_.length() != 0 ) && (twin_law_ != "None"))) {
 		oss << "ls_wunit_k1";
 	} else {
 		oss << "ml";
@@ -1000,7 +1000,7 @@ void PhenixInterface::initialize_target_evaluator(
 	// (8) twin law
 	oss.clear(); oss.str("");
 	oss << "options.twin_law = ";
-	if (( twin_law_.length() == 0 ) && (twin_law_ != "None"))
+	if ( twin_law_.length() == 0 )
 		oss << "None";
 	else
 		oss << twin_law_;
@@ -1009,12 +1009,28 @@ void PhenixInterface::initialize_target_evaluator(
 
 	// (9) map type
 	oss.clear(); oss.str("");
-  if (( map_type_.length() == 0 ) && (map_type_ != "Auto"))
-		oss << "map_type=" << map_type_;
-	else
-		oss << "prime_and_switch";
+  if (( map_type_.length() != 0 ) && (map_type_ != "Auto")) {
+		if (map_type_ == "dm" || map_type_ == "density_modify") {
+			oss << "density_modify=True";
+		} else if (map_type_ == "prime_and_switch") {
+			oss << "prime_and_switch=True";
+		} else {
+			oss << "map_type=" << map_type_;
+		}
+	} else {
+		// default: prime and switch
+		oss << "prime_and_switch=True";
+	}
 	std::string arg9 = oss.str();
 	std::vector< char > arg9_char(arg9.c_str(), arg9.c_str()+arg9.length()+1);
+
+	// (10) b sharpen
+	oss.clear(); oss.str("");
+  if (sharpen_b_ != 0.0) {
+			oss << "sharpen_b=" << sharpen_b_;
+	}
+	std::string arg10 = oss.str();
+	std::vector< char > arg10_char(arg10.c_str(), arg10.c_str()+arg10.length()+1);
 
 	// (optional) .eff file
 	std::vector< char > arg_opt;
@@ -1029,13 +1045,13 @@ void PhenixInterface::initialize_target_evaluator(
 		//int out_pipe[2], saved_stdout;
 
 		char run_str[] = "run";
-		char s9_str[] = "([sssssssss])";
 		char s10_str[] = "([ssssssssss])";
+		char s11_str[] = "([sssssssssss])";
 
  		if (eff_file.length() == 0)
  			target_evaluator_ = PyObject_CallMethod(pModule,
 				run_str,
-				s9_str,
+				s10_str,
 				&arg1_char[0],  // pdb file
 				&arg2_char[0],  // mtz  file
 				&arg3_char[0],  // high resolution
@@ -1044,11 +1060,12 @@ void PhenixInterface::initialize_target_evaluator(
 				&arg6_char[0],  // bss target
 				&arg7_char[0],  // sf calc method
 				&arg8_char[0],  // twin law
-				&arg9_char[0]); // map type
+				&arg9_char[0],  // map type
+				&arg10_char[0]); // b sharpen
  		else
  			target_evaluator_ = PyObject_CallMethod(pModule,
 				run_str,
-				s10_str,
+				s11_str,
  			  &arg1_char[0],  // pdb file
 				&arg2_char[0],  // mtz file
 				&arg_opt[0],    // eff file
@@ -1058,7 +1075,8 @@ void PhenixInterface::initialize_target_evaluator(
         &arg6_char[0],  // bss target
         &arg7_char[0],  // sf calc method
         &arg8_char[0],  // twin law
-        &arg9_char[0]); // map_type
+        &arg9_char[0],  // map type
+				&arg10_char[0]); // b sharpen
 
 		HANDLE_PYTHON_ERROR("initialization of target evaluator failed");
 		//

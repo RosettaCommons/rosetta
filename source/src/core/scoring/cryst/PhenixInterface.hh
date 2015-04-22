@@ -94,8 +94,11 @@ public:
 	/// @brief set target function
 	void set_target_function ( std::string tgt_val ) { target_function_ = tgt_val; }
 
-	/// @brief set target function
+	/// @brief set cif files (ligand refinement)
 	void set_cif_files ( utility::vector1<std::string> cif_in ) { cif_files_ = cif_in; }
+
+	/// @brief set b sharpen value
+	void set_sharpen_b ( core::Real sharpen_b ) { sharpen_b_ = sharpen_b; }
 
 	/// @brief use pose to rephase data; calculate a new density map; return map file name
 	std::string calculateDensityMap (core::pose::Pose & pose, bool no_sidechain=false);
@@ -122,7 +125,7 @@ private:
 	// These two variables are only used if this code is compiled with the WITH_PYTHON flag set.
 	// The ifdef guard around their inclusion here is to avoid unused-private-variable warnings
 	// from clang when that flag is not set.
-	core::Real res_low_, res_high_;
+	core::Real res_low_, res_high_, sharpen_b_;
 #endif
 	std::string tempdir_;
 	std::string mtzfile_;
