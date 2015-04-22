@@ -112,7 +112,7 @@ print_backtrace() {
 	for (i = 0; i < frames; ++i) {
 		std::cerr << demangle( strs[i] ).c_str() << std::endl;
 	}
-	std::cerr << utility::CSI_Sequence(utility::CSI_Reset); // reset color of cerr
+	std::cerr << utility::CSI_Reset; // reset color of cerr
 	free(strs);
 	return false; // allows use in debug_assert
 }
