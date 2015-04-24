@@ -129,8 +129,12 @@ ResidueCountFilter::parse_my_tag(
 		// loop through residue types, check to see if they are valid, and add them if they are valid
 		for ( core::Size i=1; i<=res_type_vec.size(); ++i ) {
 			if ( ! add_residue_type_by_name( *restype_set, res_type_vec[i] ) ) {
-				// try to add the residue type -- if it doesn't exist in the residue type set, inform the user and exit
-				utility_exit_with_message( "An invalid residue type (" + res_type_vec[i] + ") was specified to the ResidueCount filter." );
+				// try adding from the default residue type set, instead:
+				core::chemical::ResidueTypeSetCOP restype_set2 = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+				if( ! add_residue_type_by_name( *restype_set2, res_type_vec[i] ) ) {
+					// tried twice to add the residue type -- if it doesn't exist in the residue type set, inform the user and exit
+					utility_exit_with_message( "An invalid residue type (" + res_type_vec[i] + ") was specified to the ResidueCount filter.  This residue type is neither in the input pose, nor in the fa_standard residue type set." );
+				}
 			}
 		} // for all res type specified
 	}
