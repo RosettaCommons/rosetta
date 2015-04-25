@@ -376,6 +376,10 @@ void extract_scores(
 	std::ostream & out
 )
 {
+	if( basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
+		return;
+	}
+
 // 	if(!pose.energies().energies_updated()){
 // 		out << "Pose's energies were not current, PDBJobOutputter will not force update" << std::endl;
 // 		return;

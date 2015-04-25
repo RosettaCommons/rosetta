@@ -25,9 +25,8 @@ Studio to follow soon.
 
 << Documentation >>
 
-Mini Rosetta wiki home page: https://wiki.rosettacommons.org/index.php/Projects:miniRosetta
-Nightly build of Mini documentation: https://www.rosettacommons.org/internal/doc/mini/index.html
-libRosetta Docs: https://wiki.rosettacommons.org/index.php/Projects:Program_Options
+Main documentation site: https://www.rosettacommons.org/docs/latest/
+Internal developer documentation: https://wiki.rosettacommons.org/
 
 << HowTos >>
 

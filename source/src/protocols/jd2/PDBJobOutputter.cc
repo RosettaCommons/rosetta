@@ -130,9 +130,11 @@ void protocols::jd2::PDBJobOutputter::dump_pose(
 )
 {
 	core::io::pdb::FileData::dump_pdb( pose, out );
-	extract_scores(pose, out);
-	extract_extra_scores( pose, out );
-	extract_data_from_Job( job, out );
+	if( !  basic::options::option[ basic::options::OptionKeys::out::file::no_scores_in_pdb ] ) {
+		extract_scores(pose, out);
+		extract_extra_scores( pose, out );
+		extract_data_from_Job( job, out );
+	}
 }
 
 /////////////////////////////////state of output functions/////////////////////////////////
