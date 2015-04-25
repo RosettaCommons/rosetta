@@ -18,42 +18,41 @@ namespace protocols {
 namespace elscripts {
 namespace modules {
 
-// we're going with the easiest form of lua modueles because I don't know what I'm doing
-std::string MonteCarlo = R"DELIM(
-	----- MonteCarlo Module ------
-	if modules == nil then
-		modules = {}
-		setmetatable( modules, {__index = _G} )
-	end
-	modules.MonteCarlo = function ( pose, mover, filter, trials, temp)
-		if pose == nil then error("Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )") end
-		if mover == nil then error("Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )") end
-		if filter == nil then error("Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )") end
-		if trials == nil then trials = 10 end
-		if temp == nil then temp = 1 end
-
-		math.randomseed( os.time() )
-		local oldscore = filter( pose )
-		local accepted = pose:clone()
-		local working_pose = pose:clone()
-		local accept_counter = 0
-		for i=1,trials do
-			mover( working_pose )
-			local currentscore = filter( working_pose )
-			if currentscore == nil then error('Filter function returning nil, fix that') end
-			if currentscore < oldscore then 
-				accept_counter = accept_counter + 1
-				accepted = working_pose
-				oldscore = currentscore
-			elseif math.random() >= math.exp( math.min(40, math.max( -40, (oldscore - currentscore)/temp ) ) ) then
-				accept_counter = accept_counter + 1
-				accepted = working_pose
-				oldscore = currentscore
-			end
-		end
-		print('Finished Monte Carlo. Out of '..trials..' trials '..accept_counter..' accepted')
-	end
-	)DELIM";
+// we're going with the easiest form of lua modules because I don't know what I'm doing
+std::string MonteCarlo = 
+"	----- MonteCarlo Module ------\n"
+"	if modules == nil then\n"
+"		modules = {}\n"
+"		setmetatable( modules, {__index = _G} )\n"
+"	end\n"
+"	modules.MonteCarlo = function ( pose, mover, filter, trials, temp)\n"
+"		if pose == nil then error(\"Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )\") end\n"
+"		if mover == nil then error(\"Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )\") end\n"
+"		if filter == nil then error(\"Syntax: modules.MonteCarlo( pose, mover, filter, optional: trials, temp )\") end\n"
+"		if trials == nil then trials = 10 end\n"
+"		if temp == nil then temp = 1 end\n"
+"\n"
+"		math.randomseed( os.time() )\n"
+"		local oldscore = filter( pose )\n"
+"		local accepted = pose:clone()\n"
+"		local working_pose = pose:clone()\n"
+"		local accept_counter = 0\n"
+"		for i=1,trials do\n"
+"			mover( working_pose )\n"
+"			local currentscore = filter( working_pose )\n"
+"			if currentscore == nil then error('Filter function returning nil, fix that') end\n"
+"			if currentscore < oldscore then \n"
+"				accept_counter = accept_counter + 1\n"
+"				accepted = working_pose\n"
+"				oldscore = currentscore\n"
+"			elseif math.random() >= math.exp( math.min(40, math.max( -40, (oldscore - currentscore)/temp ) ) ) then\n"
+"				accept_counter = accept_counter + 1\n"
+"				accepted = working_pose\n"
+"				oldscore = currentscore\n"
+"			end\n"
+"		end\n"
+"		print('Finished Monte Carlo. Out of '..trials..' trials '..accept_counter..' accepted')\n"
+"	end\n";
 
 } //modules
 } //elscripts
