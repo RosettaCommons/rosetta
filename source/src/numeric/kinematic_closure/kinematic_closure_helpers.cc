@@ -35,9 +35,9 @@ void printVector(const utility::vector1<Real>& V) {
 }
 
 /// @brief prints the matrix
-/// @details This function used to intentionally print the transpose of the 
-/// matrix.  The rational was that "we use row-major indexing".  That didn't 
-/// make any sense to me, and I'd been fucked up by the implicit transpose a 
+/// @details This function used to intentionally print the transpose of the
+/// matrix.  The rational was that "we use row-major indexing".  That didn't
+/// make any sense to me, and I'd been mislead by the implicit transpose a
 /// couple of times, so I got rid of it.
 void printMatrix(const utility::vector1<utility::vector1<Real> >& M) {
   for (unsigned i=1; i<=M.size(); i++) {

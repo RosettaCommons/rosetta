@@ -129,7 +129,7 @@ private:
 /// @brief This class takes an EnzConstraintIO object
 /// and generates a 3D model of the theozyme in it,
 /// where inverse rotamers are generated for every block
-/// in the cstfile. Shit gets complicated when ambiguous
+/// in the cstfile. It gets complicated when ambiguous
 /// interactions are specified and other residues are
 /// interacting (possibly in ambiguous fashion) with
 /// these ambiguous residues...

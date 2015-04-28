@@ -30,7 +30,7 @@ namespace kinematic_closure {
 /// and torsions.
 /// @details This class should definitely not exist.  It is basically just a
 /// bunch of magic numbers that must exist somewhere in the database already.
-/// Unfortunately, I can't find them and so we're stuck with this shit.
+/// Unfortunately, I can't find them and so we're stuck with this nonsense.
 
 struct IdealParameters {
 

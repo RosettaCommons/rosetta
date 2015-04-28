@@ -90,8 +90,8 @@ main (int argc, char * argv[])
 {
 
 	//devel::init(argc, argv);
-	//TR << "This is fucking tracer output!!!" << std::endl;
-	
+	//TR << "This is tracer output!!!" << std::endl;
+
 	std::cout << "Hello, World!\n" << std::endl;
     return 0;
 }
@@ -128,30 +128,30 @@ main (int argc, char * argv[])
 //	// initialize the options system
 //	core::init::init(argc, argv);
 //
-//	TR << "This is fucking tracer output!!!" << std::endl;
-//	
+//	TR << "This is tracer output!!!" << std::endl;
+//
 //	// Make a vector of ints and add some numbers
 //	utility::vector1< int > my_vector;
 //	my_vector.push_back(3);
 //	my_vector.push_back(2);
 //	my_vector.push_back(1);
-//	
+//
 //	// Now let's print those numbers
 //	std::cout << my_vector.front() << std::endl;
 //	std::cout << my_vector.at(2) << std::endl;
 //	std::cout << my_vector.back() << std::endl;
-//	
+//
 //	// Can use overloaded operator instead of 'at' accessor
 //	std::cout << my_vector[2] << std::endl;
 //	std::cout << my_vector[4] << std::endl;
-//	
+//
 //	// Get the capacity
 //	std::cout << "Capacity: " << my_vector.size() << std::endl;
-//	
-//	
-//	
-//	// Get an instance of the job distributor and pass it 
-//	
-//	std::cout << "Hello, World!\n" << std::endl;	
+//
+//
+//
+//	// Get an instance of the job distributor and pass it
+//
+//	std::cout << "Hello, World!\n" << std::endl;
 //    return 0;
 //}

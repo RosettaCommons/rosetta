@@ -659,7 +659,7 @@ private: // data
 
 
 	/// @brief flo jan 11 reading an enzdes cstfile in the middle of
-	/// remodel fucks up up a remodel run that was started from enzdes
+	/// remodel messes up a remodel run that was started from enzdes
 	bool ignore_cmdline_enzdes_cstfile_;
 
 	Size repeat_tail_length_;

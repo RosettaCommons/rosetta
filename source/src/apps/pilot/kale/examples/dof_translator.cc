@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 	//import_pose::pose_from_pdb(pose, "structures/contrived/minimal.gly.pdb");
 	import_pose::pose_from_pdb(pose, "structures/contrived/one-residue.pdb");
 	//import_pose::pose_from_pdb(pose, "structures/contrived/linear.pdb");
-	pose.dump_pdb("not_fucked_up.pdb");
+	pose.dump_pdb("not_messed_up.pdb");
 
 	id::NamedAtomID n_name ("N", 1);
 	id::NamedAtomID ca_name ("CA", 1);
@@ -56,14 +56,14 @@ int main(int argc, char** argv) {
 	pose.conformation().set_bond_length(ca_id, c_id, 2);
 	pose.conformation().set_bond_angle(n_id, ca_id, c_id, 3.141592);
 
-	pose.dump_pdb("fucked_up.pdb");
+	pose.dump_pdb("messed_up.pdb");
 
 	/*
 	for (Size residue = 1; residue <= pose.total_residue(); residue++) {
 		string atoms[] = {"N", "CA", "C"};
 
 		for (Size atom = 0; atom < 3; atom++) {
-			
+
 			id::DOF_ID torsion_angle (atom_id, id::PHI);
 			id::DOF_ID bond_angle (atom_id, id::THETA);
 			id::DOF_ID bond_length (atom_id, id::D);

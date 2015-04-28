@@ -280,7 +280,7 @@ InvrotTreeNode::get_fixed_pt( core::pose::Pose const & pose ) const
 		}
 	}
   //if we get here, that means no atom was found and shit's fucked up somewhere
-  utility_exit_with_message("No success when trying to find a fixed pt in the InvrotTree that's also in the pose. Shit's fucked up somewhere.");
+  utility_exit_with_message("No success when trying to find a fixed pt in the InvrotTree that's also in the pose. Something is profoundly broken.");
   return core::id::AtomID( 0, 0 ); // to pacify compiler
 }
 

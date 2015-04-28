@@ -83,7 +83,7 @@ public:
 	/// 2. if there is more than one invrots/node pointer pair,
 	///    throw all the generated multicsts into one ambig cst
 	/// 3. return either the multicst (one pair) or the ambigcst
-	/// 4. hope this shit works
+	/// 4. hope this works
 	core::scoring::constraints::ConstraintCOP
 	generate_constraints(
 		core::pose::Pose const & pose,

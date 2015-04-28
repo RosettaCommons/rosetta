@@ -360,7 +360,7 @@ newer_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc
     sc = scc.GetResults().sc;
     int_area = scc.GetResults().surface[2].trimmedArea;
   } else {
-		TR << "FUCK! sc failed!" << std::endl;
+		TR << "ERROR: sc failed!" << std::endl;
 	}
 }
 

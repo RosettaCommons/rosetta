@@ -1488,7 +1488,7 @@ EnzdesFlexibleRegion::assemble_enzdes_fragdata(
 	}
 
 #endif
-	if( ! new_fragdata->steal( pose, this->start(), this->end() ) ) utility_exit_with_message("Some error occured when trying to steal enzdes_fragdata from the pose. fuckin' A ... ");
+	if( ! new_fragdata->steal( pose, this->start(), this->end() ) ) utility_exit_with_message("Some error occured when trying to steal enzdes_fragdata from the pose.");
 
 	return new_fragdata;
 

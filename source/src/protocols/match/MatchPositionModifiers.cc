@@ -409,7 +409,7 @@ RemoveNorCTermMPM::modified_match_positions(
 
 /// @details
 /// this is a little tricky, we have to reassemble a tag out of the tokens
-/// and then call the TaskOperationFactory::init and some other shit like that...
+/// and then call the TaskOperationFactory::init and some other stuff like that...
 TaskOperationMPM::TaskOperationMPM(
 	core::Size which_geom_cst,
 	utility::vector1< std::string > const & input_tokens
@@ -445,7 +445,7 @@ TaskOperationMPM::~TaskOperationMPM(){}
 /// generates a task based on the parsed task operation,
 /// and then allows matching at all positions where the
 /// upstream residues specified in the cstfile are allowed
-/// in the position's residue_task. fancy shit yo.
+/// in the position's residue_task.
 utility::vector1< core::Size >
 TaskOperationMPM::modified_match_positions(
 	utility::vector1< core::Size > const & original_positions,

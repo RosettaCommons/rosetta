@@ -104,7 +104,7 @@ LimitAromaChi2_RotamerSetOperation::alter_rotamer_set(
 	//and there is no input rotamer at that position, this will cause a program exit
 	//if this is the case (rare), it's probably best to not delete any rotamers
 	if( (num_to_delete == rotamer_set.num_rotamers() ) && (rotamer_set.id_for_current_rotamer() == 0 ) ){
-		//std::cerr << "shit condition at position " << rotamer_set.resid() << ", not deleting any of the " << rotamer_set.num_rotamers() << " rotamers." << std::endl;
+		//std::cerr << "bad condition at position " << rotamer_set.resid() << ", not deleting any of the " << rotamer_set.num_rotamers() << " rotamers." << std::endl;
 		return;
 	}
 	rotamer_set.drop_rotamers( rotamers_to_delete );

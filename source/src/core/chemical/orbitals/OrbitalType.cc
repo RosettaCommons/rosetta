@@ -19,7 +19,7 @@
 /// These properties contain the the parameters of distance, but can be modified. Currently this is a very small
 /// class that will be added on as more and more properties are identified and added.
 /// Note that information about the atomtype is stored along with the orbital type. This may or may not be useful
-/// later. Just adding the functionality for shits and giggles.
+/// later. Just adding the functionality for the heck of it.
 ///
 /// Orbital type name: the orbital type name contains the hybridization, orbital name, and element associated with the orbital
 ///

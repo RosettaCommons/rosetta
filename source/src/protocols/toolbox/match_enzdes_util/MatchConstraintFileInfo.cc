@@ -338,7 +338,7 @@ MatchConstraintFileInfo::read_data( utility::io::izstream & data )
 		line_stream.str( comment_split[1] );
 		line_stream >> key;
 
-		//std::cerr << "reading shit, line is " << line << ", key is " << key;
+		//std::cerr << "reading things, line is " << line << ", key is " << key;
 		//Kui Native 110809
 		if ( key == "NATIVE") {
 			native_ = true;

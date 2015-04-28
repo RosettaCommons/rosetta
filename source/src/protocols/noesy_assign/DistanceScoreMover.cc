@@ -249,7 +249,7 @@ void DistanceScoreMover::apply( pose::Pose& pose ) {
 					(*ait)->set_decoy_compatibility( (*ait)->decoy_compatibility() + pow( dist_buf[ ct_assignments ]/sum_dist, -final_dist_power_) );
 				}
 				if ( (*ait)->decoy_compatibility() == 0 ) {
-					//					tr.Trace <<" oh shit no compatiblity... " << (*it)->peak_id() << std::endl;
+					//					tr.Trace <<" oh drat, no compatiblity... " << (*it)->peak_id() << std::endl;
 					//					tr.Trace << ct_assignments << " " << dist_buf[ct_assignments] << " " << sum_dist << " " << dist_buf[ ct_assignments ]/sum_dist << " " << pow( dist_buf[ ct_assignments ]/sum_dist, -final_dist_power_) << std::endl;
 				}
 			} ///... divide by M (aka count_decoys_ ) in finalize_scoring
