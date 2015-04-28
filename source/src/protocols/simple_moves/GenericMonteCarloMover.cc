@@ -148,9 +148,15 @@ GenericMonteCarloMover::GenericMonteCarloMover(
 	lowest_score_( 0.0 ),
 	last_accepted_pose_( /* NULL */ ),
 	lowest_score_pose_( /* NULL */ ),
+	stopping_condition_( /* NULL */ ),
+	mover_stopping_condition_( /* NULL */ ),
+	adaptive_movers_( false ),
+	adaptation_period_( 0 ),
 	saved_accept_file_name_( "" ),
+	saved_trial_number_file_( "" ),
 	mover_tag_( /* NULL */ ),
-	reset_baselines_( true )
+	reset_baselines_( true ),
+	progress_file_( "" )
 {
   initialize();
 }
@@ -808,7 +814,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
 	TR << "The number of trials for this run is: " << maxtrials_ << std::endl;
 
-	bool const stop_at_start( ( mover_stopping_condition_ != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
+	bool const stop_at_start( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
+			( stopping_condition() && stopping_condition()->apply( pose ) ) );
 	if( stop_at_start ){
 		TR<<"MC stopping condition met at the start, so failing without retrying "<<std::endl;
 		set_last_move_status( FAIL_DO_NOT_RETRY );
@@ -845,10 +852,16 @@ GenericMonteCarloMover::apply( Pose & pose )
   protocols::moves::MoverStatus ms( FAIL_RETRY );
 	core::Size accept( 0 ), reject( 0 );
 	using namespace protocols::rosetta_scripts;
+
 	ParsedProtocolOP mover_pp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mover_ ) );
+	// if the mover isn't a parsed protocol, mover_pp will be NULL and adaptive_movers basically does nothing -- we throw an error
+	if ( adaptive_movers() && !mover_pp ){
+		throw utility::excn::EXCN_BadInput( "In GenericMonteCarlo, adaptive_movers is true, but the user-specified mover is not a ParsedProtocol.  The user-specified mover must be a ParsedProtocol in order to use adaptive_movers." );
+	}
+
 	if( adaptive_movers() ){
-		bool is_single_random( mover_pp->mode() == "single_random" );
-		if( mover_pp && !is_single_random ){ // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
+		bool is_single_random = ( mover_pp->mode() == "single_random" );
+		if( !is_single_random ){ // dig in one level (at most) to find the correct ParsedProtocol; if this becomes more generally useful then it would make sense to generatlize this to look for all parsedprotocols of type single_random that are being called by the MC mover. A simple recursion could do it, but I'm not sure how useful this would be
 			BOOST_FOREACH( ParsedProtocol::MoverFilterPair const mfp, *mover_pp ){
 				ParsedProtocolOP tmp( utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::ParsedProtocol > ( mfp.first.first ) );
 				if( tmp && tmp->mode() == "single_random" ){/// the parsedprotocol mover must be run in mode single_random for the apply_probabilities to be modified
@@ -885,7 +898,8 @@ GenericMonteCarloMover::apply( Pose & pose )
 			mover_pp->apply_probability( new_probabilities );
 			mover_accepts = utility::vector1< core::Size >( mover_accepts.size(), 1 );
 		}
-		bool const stop( ( mover_stopping_condition_ != NULL && mover_stopping_condition_->obj ) || stopping_condition()->apply( pose ) );
+		bool const stop( ( mover_stopping_condition_ && mover_stopping_condition_->obj ) ||
+				( stopping_condition() && stopping_condition()->apply( pose ) ) );
 		if( stop ){
 			TR<<"MC stopping condition met at trial "<<i<<std::endl;
 			break;
