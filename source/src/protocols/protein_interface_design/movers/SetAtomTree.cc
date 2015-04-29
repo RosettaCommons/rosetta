@@ -115,7 +115,6 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protoc
 			utility_exit_with_message( "failed to open file " + ft_name );
 		fold_tree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree );
 		data >> *fold_tree_;
-		fold_tree_->reorder( 1 );
 		TR<<"Read fold tree from file: "<<*fold_tree_<<std::endl;
 		runtime_assert( fold_tree_->check_fold_tree() );
 		return;
