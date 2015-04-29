@@ -7,7 +7,7 @@
 	<FILTERS>
 	</FILTERS>
 	<MOVERS>
-		<MinMover name=minmover bb=1 chi=0 jump=0 tolerance=0.000001>
+		<MinMover name=minmover bb=1 chi=0 jump=0 scorefxn=tala tolerance=0.000001>
 			<MoveMap name=minmover_mm>
 				<Span begin=1 end=24 bb=1 chi=0 />
 			</MoveMap>
