@@ -85,6 +85,7 @@ DisulfidizeMover::DisulfidizeMover() :
 	max_disulfides_( 3 ),
 	include_current_ds_( false ),
 	keep_current_ds_( false ),
+	score_or_matchrt_( true ),
 	set1_selector_(),
 	set2_selector_()
 {
@@ -166,6 +167,11 @@ DisulfidizeMover::parse_my_tag(
 		set_min_loop( tag->getOption< core::Size >( "min_loop" ) );
 	if ( tag->hasOption( "max_disulf_score" ) )
 		set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score" ) );
+	// by default, a disulfide is valid if it passes score OR matchrt
+	// if this option is false, disulfides must pass score AND matchrt
+	if ( tag->hasOption( "score_or_matchrt" ) )
+		score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt" );
+
 	if ( tag->hasOption( "set1" ) ) {
 		set_set1_selector( get_residue_selector( tag->getOption< std::string >( "set1" ), data ) );
 	}
@@ -199,7 +205,7 @@ DisulfidizeMover::process_pose(
 	}
 
 	// create initial list of possible disulfides between residue subset 1 and subset 2
-	DisulfideList disulf_partners = find_disulfides_in_the_neighborhood( pose, subset1, subset2 );
+	DisulfideList disulf_partners = find_possible_disulfides( pose, subset1, subset2 );
 	if ( include_current_ds_ ) {
 		for ( DisulfideList::const_iterator ds=current_ds.begin(), endds=current_ds.end(); ds!=endds; ++ds ) {
 			disulf_partners.push_back( *ds );
@@ -364,7 +370,7 @@ add_to_list( DisulfidizeMover::DisulfideList & disulf_partners, core::Size const
 
 /// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
 DisulfidizeMover::DisulfideList
-DisulfidizeMover::find_disulfides_in_the_neighborhood(
+DisulfidizeMover::find_possible_disulfides(
 		core::pose::Pose const & pose,
 		core::pack::task::residue_selector::ResidueSubset const & residueset1,
 		core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const
@@ -393,20 +399,22 @@ DisulfidizeMover::find_disulfides_in_the_neighborhood(
 		}
 	}
 	TR << "]" << std::endl;
-	return find_disulfides_in_the_neighborhood( pose, resid_set1, resid_set2 );
+	return find_possible_disulfides( pose, resid_set1, resid_set2 );
 }
 
 /// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
 DisulfidizeMover::DisulfideList
-DisulfidizeMover::find_disulfides_in_the_neighborhood(
+DisulfidizeMover::find_possible_disulfides(
 		core::pose::Pose const & pose,
 		std::set< core::Size > const & set1,
 		std::set< core::Size > const & set2 ) const
 {
 	DisulfideList disulf_partners;
 
+	// for "match-rt" scoring
 	core::scoring::disulfides::DisulfideMatchingPotential disulfPot;
 
+	// work on a poly-ala copy of the input pose
 	core::pose::Pose pose_copy = pose;
 	construct_poly_ala_pose( pose_copy, false, set1, set2 );
 
@@ -446,14 +454,24 @@ DisulfidizeMover::find_disulfides_in_the_neighborhood(
 				continue;
 			}
 
-			// disulfide score check
-			if ( !check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only ) ) {
+			// disulfide rosetta score
+			bool good_score = check_disulfide_score( pose_copy, *itr, *itr2, sfxn_disulfide_only );
+
+			// stop if we need good score AND matchrt
+			if ( !score_or_matchrt_ && !good_score ) {
 				continue;
 			}
 
 			// disulfide potential scoring
-			if ( !check_disulfide_match_rt( pose, *itr, *itr2, disulfPot ) ) {
-				continue;
+			bool good_match = check_disulfide_match_rt( pose, *itr, *itr2, disulfPot );
+			if ( score_or_matchrt_ ) {
+				if ( !good_score && !good_match ) {
+					continue;
+				}
+			} else {
+				if ( !good_score || !good_match ) {
+					continue;
+				}
 			}
 
 			TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;

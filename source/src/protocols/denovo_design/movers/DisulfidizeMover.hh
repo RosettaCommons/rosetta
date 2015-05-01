@@ -99,13 +99,13 @@ public:
 			core::Size const res2 ) const;
 
 	/// @brief find disulfides in the given neighborhood
-	DisulfideList find_disulfides_in_the_neighborhood(
+	DisulfideList find_possible_disulfides(
 			core::pose::Pose const & pose,
 			core::pack::task::residue_selector::ResidueSubset const & residueset1,
 			core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const;
 
 	/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
-	DisulfideList find_disulfides_in_the_neighborhood(
+	DisulfideList find_possible_disulfides(
 			core::pose::Pose const & pose,
 			std::set< core::Size > const & set1,
 			std::set< core::Size > const & set2 ) const;
@@ -170,6 +170,7 @@ private:   // options
 	core::Size max_disulfides_ ;
   bool include_current_ds_;
 	bool keep_current_ds_;
+	bool score_or_matchrt_;
 
 private:   // other data
 	/// @brief disulfides connect residues from set1 to residues from set2

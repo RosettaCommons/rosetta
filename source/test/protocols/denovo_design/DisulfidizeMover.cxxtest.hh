@@ -195,7 +195,7 @@ public:
 		TS_ASSERT( residueset1[1] );
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =
-			disulf.find_disulfides_in_the_neighborhood( input_pose, residueset1, residueset2 ); 
+			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 ); 
 
 		TS_ASSERT_EQUALS( disulfs.size(), 2 );
 		TS_ASSERT_EQUALS( disulfs[1].first, 5 );
