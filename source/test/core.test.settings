@@ -150,6 +150,7 @@ sources = {
 		"task/residue_selector/JumpDownstreamSelector",
 		"task/residue_selector/JumpUpstreamSelector",
 		"task/residue_selector/ResidueIndexSelector",
+		"task/residue_selector/ResidueNameSelector",
 		"task/residue_selector/ChainSelector",
 		"task/residue_selector/InterGroupInterfaceByVectorSelector",
 		"task/residue_selector/NotResidueSelector",

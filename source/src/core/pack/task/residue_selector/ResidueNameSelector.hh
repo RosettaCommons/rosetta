@@ -59,13 +59,15 @@ public:
 
 
 	//unit-specific
-	/**
-	* @brief sets the comma-separated string of residue names to be selected
-	*/
+	/// @brief sets the comma-separated string of residue names to be selected
 	void set_residue_names( std::string const & res_name_str );
+
+	/// @brief sets the comma-separated string of 3-character residue names to be selected
+	void set_residue_name3( std::string const & res_name3_str );
 
 private: // data members
 	std::string res_name_str_;
+	std::string res_name3_str_;
 };
 
 } //namespace residue_selector

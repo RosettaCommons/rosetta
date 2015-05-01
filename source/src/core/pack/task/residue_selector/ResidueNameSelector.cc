@@ -35,9 +35,13 @@ namespace task {
 namespace residue_selector {
 
 ResidueNameSelector::ResidueNameSelector():
-res_name_str_() {}
+	res_name_str_(),
+	res_name3_str_()
+{
+}
 
-ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str )
+ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
+	res_name3_str_()
 {
 	res_name_str_ = res_name_str;
 }
@@ -48,17 +52,58 @@ ResidueNameSelector::~ResidueNameSelector() {}
 ResidueSubset
 ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 {
-	debug_assert( !res_name_str_.empty() );
+	debug_assert( !res_name3_str_.empty() || !res_name_str_.empty() );
 
 	ResidueSubset subset( pose.total_residue(), false );
+	// quit here if there are no residues in the pose
+	if ( pose.total_residue() == 0 ) {
+		return subset;
+	}
+
 	utility::vector1< std::string > const res_name_vec = utility::string_split( res_name_str_, ',' );
 	std::set< std::string > res_set;
 	for (	utility::vector1< std::string >::const_iterator n=res_name_vec.begin(), endn=res_name_vec.end(); n!=endn; ++n ) {
+		if ( n->empty() ) {
+			continue;
+		}
+		// check if the given name is valid
+		if ( !pose.residue(1).residue_type_set().has_name( *n ) ) {
+			std::stringstream err;
+			err << "ResidueNameSelector: " << *n << " is not a valid residue type name. Valid types:";
+			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin(),
+					endt=pose.residue(1).residue_type_set().all_residues_end(); t!=endt; ++t ) {
+				err << " " << t->second->name();
+			}
+			throw utility::excn::EXCN_BadInput( err.str() );
+		}
 		res_set.insert( *n );
+	}
+
+	utility::vector1< std::string > const res_name3_vec = utility::string_split( res_name3_str_, ',' );
+	std::set< std::string > res_name3_set;
+	for (	utility::vector1< std::string >::const_iterator n=res_name3_vec.begin(), endn=res_name3_vec.end(); n!=endn; ++n ) {
+		if ( n->empty() ) {
+			continue;
+		}
+		// check if the given name is valid
+		if ( !pose.residue(1).residue_type_set().has_name3( *n ) ) {
+			std::stringstream err;
+			err << "ResidueNameSelector: " << *n << " is not a valid residue type name. Valid types:";
+			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin(),
+					endt=pose.residue(1).residue_type_set().all_residues_end(); t!=endt; ++t ) {
+				err << " " << t->second->name3();
+			}
+			throw utility::excn::EXCN_BadInput( err.str() );
+		}
+		res_name3_set.insert( *n );
 	}
 
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
 		if ( res_set.find( pose.residue(i).name() ) != res_set.end() ) {
+			subset[i] = true;
+			continue;
+		}
+		if ( res_name3_set.find( pose.residue(i).name3() ) != res_name3_set.end() ) {
 			subset[i] = true;
 		}
 	}
@@ -71,13 +116,16 @@ ResidueNameSelector::parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &)
 {
-	try {
-		set_residue_names( tag->getOption< std::string >( "residue_names" ) );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	if ( tag->hasOption( "residue_name3" ) ) {
+	 set_residue_name3( tag->getOption< std::string >( "residue_name3" ) );
+	}
+	if ( tag->hasOption( "residue_names" ) ) {
+		set_residue_names( tag->getOption< std::string >( "residue_names" ) );	
+	}
+	if ( res_name_str_.empty() && res_name3_str_.empty() ) {
 		std::stringstream err_msg;
-		err_msg << "Failed to access required option 'residue_names' from ResidueNameSelector::parse_my_tag.\n";
-		err_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( err_msg.str() );
+		err_msg << "ResidueName selector requires either 'residue_names' or 'residue_name3' to be specified. From ResidueNameSelector::parse_my_tag." << std::endl;
+		throw utility::excn::EXCN_BadInput( err_msg.str() );
 	}
 }
 
@@ -85,6 +133,12 @@ void
 ResidueNameSelector::set_residue_names( std::string const &res_name_str )
 {
 	res_name_str_ = res_name_str;
+}
+
+void
+ResidueNameSelector::set_residue_name3( std::string const &res_name3_str )
+{
+	res_name3_str_ = res_name3_str;
 }
 
 std::string ResidueNameSelector::get_name() const {
