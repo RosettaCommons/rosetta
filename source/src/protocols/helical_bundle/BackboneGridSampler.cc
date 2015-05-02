@@ -186,12 +186,16 @@ namespace protocols {
 			
 			//Add termini:
 			if(cap_ends()) {
+				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, 1 );
 				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, 1 );
+				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->n_residue() );
 				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->n_residue() );
 				core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::ACETYLATED_NTERMINUS_VARIANT, 1);
 				core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::METHYLATED_CTERMINUS_VARIANT, newpose->n_residue());
 			} else {
+				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, 1 );
 				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, 1 );
+				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_LOWER, newpose->n_residue() );
 				core::pose::remove_variant_type_from_pose_residue(*newpose, core::chemical::CUTPOINT_UPPER, newpose->n_residue() );
 				core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::LOWER_TERMINUS_VARIANT, 1);
 				core::pose::add_variant_type_to_pose_residue(*newpose, core::chemical::UPPER_TERMINUS_VARIANT, newpose->n_residue());

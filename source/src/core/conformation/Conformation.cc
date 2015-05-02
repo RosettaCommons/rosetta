@@ -3514,8 +3514,11 @@ Conformation::backbone_torsion_angle_atoms(
 				id4.rsd() = chain_begin( rsd.chain() ); id4.atomno() = cyclic_partner_mainchain[2];
 			}
 
-	} else if ( fold_tree_->is_cutpoint( seqpos ) &&
+	} else if ( /*As far as I can tell, this else if statement covers a whole bunch of very special cases.  It's exceptionally ugly, and I'm trying to isolate it as much as possible
+							to keep it from being invoked accidentally (as it seems to be).*/
+				fold_tree_->is_cutpoint( seqpos ) &&
 				!( seqpos==residues_.size() && rsd.has_upper_connect() && !rsd.connection_incomplete( rsd.type().upper_connect_id() ) /*special case -- last residue is connected to something at its upper connection*/)
+				&& !(rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) )
 		) {
 			if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				if ( torsion+1 == ntorsions ) {
@@ -3556,6 +3559,7 @@ Conformation::backbone_torsion_angle_atoms(
 				}
 			} else {
 				// last two bb-torsions not well-defined
+				//utility_exit_with_message( "Error!  This should not be possible!\n" );
 				return true; // FAILURE
 			}
 		} else if ( rsd.has_variant_type( chemical::METHYLATED_CTERMINUS_VARIANT ) ) {

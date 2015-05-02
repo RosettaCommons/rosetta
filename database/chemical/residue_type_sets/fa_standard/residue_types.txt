@@ -518,6 +518,8 @@ residue_types/peptoids/601.params
 #residue_types/peptoids/320.params
 #residue_types/peptoids/413.params
 
+## Gamma-peptide Types
+#residue_types/gamma-peptide/GABA.params
 
 ## Beta-peptide Types
 #residue_types/beta-peptide/B3A.params
