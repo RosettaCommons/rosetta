@@ -47,6 +47,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/parametric/Parameters.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -506,6 +508,11 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 			header = HeaderInformationOP( new HeaderInformation() );
 		}
 	}
+	
+	// Get parametric information
+	if( options.write_pdb_parametric_info() ) {
+		get_parametric_info(remarks, pose);
+	}
 
 	// Get Connectivity Annotation Section information.
 	if (options.write_pdb_link_records()) {
@@ -580,6 +587,36 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 		conformation::Residue const & rsd( pose.residue(i) );
 		append_residue( rsd, atom_index, pose, options.preserve_crystinfo() );
 	}
+}
+
+/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
+///
+void FileData::get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose) {
+
+	using namespace core::conformation::parametric;
+
+	core::Size const nsets(pose.conformation().n_parameters_sets()); //How many ParametersSet objects are there in the pose?
+	if(nsets==0) return; //No need to proceed if this isn't a parametric conformation.
+
+	for(core::Size iset=1; iset<=nsets; ++iset) { //Loop through all of the ParametersSet objects.
+		ParametersSetCOP curset( pose.conformation().parameters_set(iset) );
+		std::stringstream curset_summary;
+		curset->get_pdb_remark( curset_summary );
+		
+		int cur_remark_number(1); //int instead of core::Size, to match the Remarks class.
+		if(remarks->size() > 0) cur_remark_number = (*remarks)[remarks->size()-1].num + 1;
+		
+		std::string cur_remark_str;
+		while(std::getline(curset_summary,cur_remark_str)) {
+			pose::RemarkInfo cur_remark;
+			cur_remark.value = cur_remark_str; // Ugh.  The RemarkInfo class provides no getters or setters -- only public access to its members.
+			cur_remark.num=cur_remark_number;
+			remarks->push_back( cur_remark );
+			cur_remark_str.clear();
+		}
+	}
+	
+	return;
 }
 
 /// @details A lightweight, direct way of limiting pose pdb output to a subset of residues.

@@ -660,6 +660,8 @@ Options = Option_Group( '',
 					short='Write LINK records?',
 					legal=['true', 'false'],
 					default='false'),
+			Option( 'write_pdb_parametric_info', 'Boolean', desc='If true, parametric poses have their parameter info included in the REMARK lines of the output PDB file.  True by default.',
+					short= 'Write parametric info?', legal=['true', 'false'], default='true'),
 
 			# Dunbrack library options
 			Option( 'dont_rewrite_dunbrack_database', 'Boolean',

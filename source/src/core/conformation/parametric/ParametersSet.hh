@@ -101,7 +101,12 @@ namespace core {
 							"In core::conformation::parametric::ParametersSet::parameters() : Index out of range.  Expect 0 < index <= number of Parameters objects." );
 						return parameters_[index];
 					}
-
+					
+					/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+					/// @details Default function can be overridden by derived classes.  The default message just says that the
+					/// parameterization does not support output to PDB remark lines.  Note that messages must have lines less than
+			/// about fifty characters, or they get truncated in REMARK output.
+					virtual void get_pdb_remark(std::stringstream &remark) const;
 
 				private:
 

@@ -60,6 +60,7 @@ public:
 	bool remember_unrecognized_res() const;
 	bool remember_unrecognized_water() const;
 	bool write_pdb_link_records() const;
+	bool write_pdb_parametric_info() const;
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
 	utility::vector1<std::string> const & residues_for_atom_name_remapping() const;
 
@@ -79,6 +80,7 @@ public:
 	void set_remember_unrecognized_res( bool remember_unrecognized_res );
 	void set_remember_unrecognized_water( bool remember_unrecognized_water );
 	void set_write_pdb_link_records(bool setting);
+	void set_write_pdb_parametric_info(bool setting);
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
 	void set_residues_for_atom_name_remapping(utility::vector1<std::string> const & setting);
 
@@ -101,6 +103,7 @@ private:
 	bool remember_unrecognized_res_;
 	bool remember_unrecognized_water_;
 	bool write_pdb_link_records_;
+	bool write_pdb_parametric_info_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
 	/// @brief Three letter codes of residues for which to allow atom renaming.

@@ -87,7 +87,7 @@ namespace protocols {
 
 					/// @brief Get the number of helices defined in each symmetry copy of this bundle.
 					///
-					core::Size n_helices() { return n_helices_; }
+					core::Size n_helices() const { return n_helices_; }
 
 
 				public: //Setters
@@ -107,6 +107,11 @@ namespace protocols {
 					/// @brief Set the number of helices defined in each symmetry copy of this bundle.
 					///
 					void set_n_helices( core::Size const val ) { n_helices_=val; return; }
+					
+					/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+					/// @details Default function can be overridden by derived classes.  This version actually outputs
+					/// Crick parameter information.
+					virtual void get_pdb_remark(std::stringstream &remark) const;
 
 				private:
 

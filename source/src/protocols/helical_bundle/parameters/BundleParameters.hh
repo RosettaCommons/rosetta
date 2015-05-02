@@ -296,6 +296,14 @@ namespace protocols {
 					/// @brief Should the generator set mainchain bond length values?
 					///
 					bool allow_bondlengths() const { return allow_bondlengths_; }
+					
+					///////////////////
+					//Output:
+					///////////////////
+
+					/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+					/// 
+					virtual void get_pdb_remark(std::stringstream &remark) const;
 
 				private:
 

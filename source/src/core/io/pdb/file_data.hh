@@ -286,13 +286,17 @@ public:
 
 	/// @brief Fill FileData object using information from given Pose object.
 	void init_from_pose(core::pose::Pose const & pose);
-
+	
 	/// @brief Fill FileData object  using information from given Pose object and a set of options.
 	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 
 	/// @brief Fill FileData object using information from given Pose object,
 	/// for a specified subset of residues
 	void init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
+	
+	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
+	///
+	void get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose);
 
 	/// @brief Writes  <pose>  to a given stream in PDB file format
 	static void dump_pdb(

@@ -94,6 +94,35 @@ namespace protocols {
 			{
 				return ParametersOP( new BundleParameters( *this ) );
 			}
+			
+			/// @brief Get a summary of this ParametersSet object, for output to remark lines of a PDB file.
+			/// 
+			void BundleParameters::get_pdb_remark(std::stringstream &remark) const {
+				remark.setf( std::ios::fixed, std::ios::floatfield );
+				remark.precision(8);
+				remark << " MAJOR HELIX PARAMETERS:" << std::endl;
+				remark << "   Radius (r0,Angstroms): " << r0() << std::endl;
+				remark << "   Twist (omega0,radians/residue): " << omega0() << std::endl;
+				remark << "   Rotational offset (delta_omega0,radians): " << delta_omega0() << std::endl;
+				remark << "   Axial offset (z0_offset,Angstroms): " << z0_offset() << std::endl;
+				remark << "   Invert helix: " << (invert_helix() ? "true" : "false") << std::endl;
+				remark << "   Dihedrals set by generator: " << (allow_dihedrals() ? "true" : "false") << std::endl;
+				remark << "   Bond angles set by generator: " << (allow_bondangles() ? "true" : "false") << std::endl;
+				remark << "   Bond lengths set by generator: " << (allow_bondlengths() ? "true" : "false") << std::endl;
+				remark << " MINOR HELIX PARAMETERS (that are typically sampled):" << std::endl;
+				remark << "   Roll about axis (delta_omega1,radians): " << delta_omega1_all() << std::endl;
+				remark << "   Axial offset (z1_offset,vert. Angstroms): " << z1_offset() << std::endl;
+				remark << "   Registry shift (delta_t,residues): " << delta_t() << std::endl;
+				
+				remark << " OTHER MINOR HELIX PARAMETERS (fixed):" << std::endl;
+				remark << "   Twist (omega1,radians/residue): " << omega1() << std::endl;
+				remark << "   Rise (z1,Angstroms/residue): " << z1() << std::endl;
+				for(core::Size i=1, imax=r1_.size(); i<=imax; ++i) {
+					remark << "   MAINCHAIN ATOM #" << i << ":" << std::endl;
+					remark << "   Radius (r1,Angstroms): " << r1(i) << std::endl;
+					remark << "   Axial offset (delta_z1,Angstroms): " << delta_z1(i) << std::endl;
+				}
+			}
 
 		} // namespace parameters
 	} // namespace helical_bundle
