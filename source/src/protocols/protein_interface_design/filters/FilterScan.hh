@@ -93,6 +93,9 @@ public:
 	void dump_pdb_name( std::string const s ){ dump_pdb_name_ = s; }
 	bool keep_native() const{ return keep_native_; }
 	void keep_native( bool const k ){ keep_native_ = k; }
+
+	utility::vector1< core::Real > delta_filter_thresholds() const;
+	void delta_filter_thresholds( utility::vector1< core::Real > const );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -112,6 +115,7 @@ private:
 	utility::vector1< protocols::simple_filters::DeltaFilterOP > delta_filters_;
 	std::string dump_pdb_name_; //dflt "" ; give a user-defined name to the dumped-pdbs
 	bool keep_native_; // dflt false ; always write the native residue into the resfile
+	utility::vector1< core::Real > delta_filter_thresholds_; //dflt empty; in case you want to write resfiles for a variety of energy cutoffs
 };
 
 } // filters

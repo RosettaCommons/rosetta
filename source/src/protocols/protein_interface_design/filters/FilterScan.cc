@@ -83,7 +83,14 @@ FilterScanFilter::FilterScanFilter() :
 	temp_resfile_name = temp_resfile_name + ".resfile";
 	resfile_name( temp_resfile_name );
 	delta_filters_.clear();
+	delta_filter_thresholds_.clear();
 }
+
+utility::vector1< core::Real >
+FilterScanFilter::delta_filter_thresholds() const{ return delta_filter_thresholds_; }
+
+void
+FilterScanFilter::delta_filter_thresholds( utility::vector1< core::Real > const v ){ delta_filter_thresholds_ = v;}
 
 bool
 FilterScanFilter::delta() const{
@@ -356,7 +363,40 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 TR.flush();
 		}//foreach target_aa
 	}//foreach resi
-	if( resfile_name() != "" ){
+
+	if( delta_filter_thresholds_.size() > 0 && resfile_name() != "" ){
+		BOOST_FOREACH( core::Real const delta_threshold, delta_filter_thresholds_ ){
+			std::map< core::Size, std::set< char > > map_position_allowed_aa;
+			map_position_allowed_aa.clear();
+			for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
+				core::Size const position( pair->first.first );
+				AA const aa( pair->first.second );
+				core::Real const energy( pair->second.first );
+				if( energy <= delta_threshold ){
+					map_position_allowed_aa[ position ].insert( oneletter_code_from_aa( aa ) );
+				}
+			}
+			std::stringstream ss;
+			ss << resfile_name() << '.'<<delta_threshold;
+			std::ifstream ifile( ss.str().c_str() );
+			bool const resfile_exists( ifile );
+			ifile.close();
+			std::ofstream resfile;
+			resfile.open( ss.str().c_str(), std::ios::app );
+			if( !resfile_exists )
+				resfile << resfile_general_property()<<"\nstart\n";
+
+			for( std::map< core::Size, std::set< char > >::const_iterator pair = map_position_allowed_aa.begin(); pair != map_position_allowed_aa.end(); ++pair ){
+				resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
+				for( std::set< char >::const_iterator aa = pair->second.begin(); aa != pair->second.end(); ++aa ){
+					resfile<< *aa;
+				}
+				resfile<<'\n';
+			}
+			resfile.close();
+		}
+	} //fi delta_filter_thresholds && resfile_name()
+	else if( resfile_name() != "" ){
 		std::ifstream ifile( resfile_name().c_str() );
 		bool const resfile_exists( ifile );
 		ifile.close();
@@ -371,7 +411,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			resfile<<'\n';
 		}
 		resfile.close();
-	} //fi resfile_name()
+	} //else fi resfile_name()
 
 	if ( score_log_file() != "" ) {
 		std::ofstream scorefile;
@@ -380,8 +420,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		using namespace ObjexxFCL::format;
 		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
-			scorefile
-			<< pair->first.first << '\t'
+			scorefile << pair->first.first << '\t'
 			<< p.residue( pair->first.first ).name1() <<'\t'
 			<< oneletter_code_from_aa( pair->first.second )<<'\t'
 			<< F(9,6, pair->second.first) <<std::endl;
@@ -481,6 +520,10 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	if( tag->hasOption( "delta_filters" ) ){
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
 		TR<<"Using delta filters: ";
+		if( tag->hasOption( "delta_filter_thresholds" ) ){
+			delta_filter_thresholds_ = utility::string_split( tag->getOption< std::string >( "delta_filter_thresholds" ), ',', core::Real() );
+			TR<<"using delta filter thresholds: "<<tag->getOption< std::string >( "delta_filter_thresholds" )<<std::endl;
+		}
 		BOOST_FOREACH( std::string const fname, delta_filter_names ){
 			delta_filters_.push_back( utility::pointer::dynamic_pointer_cast< protocols::simple_filters::DeltaFilter > ( protocols::rosetta_scripts::parse_filter( fname, filters ) ) );
 			TR<<fname<<",";
