@@ -69,6 +69,7 @@ void
 SubroutineMover::apply( core::pose::Pose & pose )
 {
 	mover_->apply( pose );
+	set_last_move_status( mover_->get_last_move_status() );
 }
 
 void
