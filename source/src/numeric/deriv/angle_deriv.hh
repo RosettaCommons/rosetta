@@ -314,7 +314,7 @@ angle_p1_deriv(
 	p1_theta_deriv( p1, p2, p3, f1, f2 );
 
 	Real d( dot(u1,u2) / n1_n2 );
-	Real const tol(0.001);
+	Real const tol(1.0e-8);
 	if ( d <= Real(-1.0) + tol ) {
 		//std::cout << "out-of-tol: " << d << ' ' << std::endl;
 		d = Real(-1.0) + tol;
