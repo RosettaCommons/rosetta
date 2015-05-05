@@ -30,8 +30,4 @@ typedef utility::pointer::shared_ptr< Energies const > EnergiesCOP;
 } // namespace pose
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif // INCLUDED_core_pose_Energies_FWD_HH

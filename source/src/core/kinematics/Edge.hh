@@ -317,20 +317,6 @@ public:
 
 private:
 	
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & start_;
-			ar & stop_;
-			ar & label_;
-			ar & start_atom_;
-			ar & stop_atom_;
-			// yeaaaaa hungarian notation
-			ar & bKeepStubInResidue_;
-	}
-#endif
 	///////
 	// data
 

@@ -66,9 +66,4 @@ typedef  vector1< signed char >         vector1_schar;
 
 } // namespace utility
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/vector.hpp>
-#endif
-
 #endif // INCLUDED_utility_vector1_FWD_HH

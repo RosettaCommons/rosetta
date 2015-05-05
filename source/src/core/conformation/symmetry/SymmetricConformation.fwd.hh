@@ -28,8 +28,4 @@ typedef utility::pointer::shared_ptr< SymmetricConformation const > SymmetricCon
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/base_object.hpp>
-#endif
-
 #endif

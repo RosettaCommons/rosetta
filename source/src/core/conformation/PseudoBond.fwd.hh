@@ -31,8 +31,4 @@ typedef utility::pointer::shared_ptr< PseudoBondCollection const > PseudoBondCol
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif

@@ -44,28 +44,10 @@ friend std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri) {
 		return os;
 }
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & num;
-			ar & value;
-	}
-#endif
-
 };
 
 class Remarks : public	std::vector< RemarkInfo >, public utility::pointer::ReferenceCount
 {
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & boost::serialization::base_object<std::vector<RemarkInfo> >(*this);
-	}
-#endif
 };
 
 } // namespace pose

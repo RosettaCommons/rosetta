@@ -43,9 +43,4 @@ typedef std::list< RotamerSetOperationOP >::const_iterator RotSetOperationListIt
 }
 }
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
-
 #endif

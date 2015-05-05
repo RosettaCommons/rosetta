@@ -39,10 +39,4 @@ namespace protocols {
 	} // namespace helical_bundle
 } // namespace protocols
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/map.hpp>
-#endif
-
 #endif // INCLUDED_protocols_helical_bundle_BundleGridSamplerHelper_fwd_hh

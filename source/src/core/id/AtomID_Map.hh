@@ -481,16 +481,6 @@ public: // Comparison
 
 private: // Fields
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & default_value_;
-			ar & res_map_;
-	}
-#endif
-
 	/// @brief Default value
 	Value default_value_;
 

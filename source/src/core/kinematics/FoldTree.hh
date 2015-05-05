@@ -907,32 +907,6 @@ private:
 			int const nres_in
 	);
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & edge_list_;
-			ar & new_topology;
-			ar & new_order;
-			ar & nres_;
-			ar & num_jump_;
-			ar & num_cutpoint_;
-			ar & min_edge_count;
-			ar & jump_point_;
-			ar & is_jump_point_;
-			ar & cutpoint_;
-			ar & cutpoint_map_;
-			//ar & is_cutpoint_;
-			update_cutpoints(); // this is because I feel like serializing is_cutpoint_
-			// this also overwrites cutpoint_ and cutpoint_map_ but whatever
-			ar & jump_edge_;
-			ar & edge_count;
-			ar & jump_edge_count;
-	}
-
-#endif
-
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// data

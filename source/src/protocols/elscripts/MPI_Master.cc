@@ -18,10 +18,6 @@
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/archive/binary_oarchive.hpp>
-#endif
-
 #include <protocols/wum2/WorkUnit.hh>
 
 #include <basic/options/option.hh>

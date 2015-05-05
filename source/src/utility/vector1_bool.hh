@@ -234,15 +234,6 @@ public: // Assignment
 		return *this;
 	}
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & super::vector();
-	}
-#endif
-
 
 	/// @brief Find the index of an element. If not found then return 0;
  	inline

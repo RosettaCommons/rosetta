@@ -22,8 +22,4 @@ class ResConnID;
 }
 }
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif

@@ -42,10 +42,5 @@ typedef utility::pointer::weak_ptr< CacheableStringFloatMap const > CacheableStr
 } // namespace datacache
 } // namespace basic
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/string.hpp>
-#endif
-
 
 #endif /* INCLUDED_basic_datacache_CacheableStringFloatMap_FWD_HH */

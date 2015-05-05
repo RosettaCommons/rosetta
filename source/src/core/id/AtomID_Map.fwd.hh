@@ -27,8 +27,4 @@ template< typename T > class AtomID_Map;
 } // namespace id
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif // INCLUDED_core_id_AtomID_Map_FWD_HH

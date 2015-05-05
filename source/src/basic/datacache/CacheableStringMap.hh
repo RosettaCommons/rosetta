@@ -66,15 +66,6 @@ public:
 
 private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & map_;
-	}
-#endif
-
 	std::map< std::string, std::string > map_;
 };
 

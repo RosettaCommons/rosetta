@@ -59,27 +59,12 @@
 
 #include <core/conformation/Conformation.hh>
 
-#ifdef USEBOOSTSERIALIZE
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/PDBInfo.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableStringMap.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <core/scoring/Energies.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
-#include <devel/matdes/STMStoredTask.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#else
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#endif
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
@@ -1533,122 +1518,6 @@ private: // Pose as-an-observer methods
 	void
 	on_conf_xyz_change( core::conformation::signals::XYZEvent const & event );
 
-private:
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	// convert vector of poses to vector of silent structures
-	template<class Archive>
-	void save(Archive & ar, const unsigned int version) const {
-		using namespace basic::datacache;
-		using namespace core::pose::datacache;
-		using namespace core::scoring::constraints;
-			conformation::symmetry::SymmetricConformation * m = dynamic_cast< conformation::symmetry::SymmetricConformation * >( conformation_.get() );
-			bool is_symmetric = m;
-			ar & is_symmetric;
-			if( is_symmetric ) {
-				ar & * m;
-				core::scoring::symmetry::SymmetricEnergies * mm = dynamic_cast< core::scoring::symmetry::SymmetricEnergies * >( energies_.get() );
-				ar & *mm;
-			} else {
-				ar & conformation_;
-				ar & energies_;
-			}
-			ar & pdb_info_;
-
-			// constraintset, using write io because it's easier
-			std::stringstream tmpss;
-			tmpss.str("");
-			if( constraint_set_ )
-				ConstraintIO::get_instance()->write_constraints( tmpss, *constraint_set_,*this );
-			std::string tmpstring = tmpss.str();
-			ar & tmpstring;
-
-			// datacache
-			// only stringmap,floatmap for now
-			bool has_string_map = data_cache_->has( CacheableDataType::STRING_MAP );
-			ar & has_string_map;
-			if( has_string_map ) {
-				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
-						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
-				ar & *string_map;
-			}
-			bool has_float_map = data_cache_->has( CacheableDataType::ARBITRARY_FLOAT_DATA );
-			ar & has_float_map;
-			if( has_float_map ) {
-				CacheableStringFloatMap *float_map = dynamic_cast< CacheableStringFloatMap* >
-						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
-				ar & *float_map;
-			}
-			bool has_tasks_map = data_cache_->has( CacheableDataType::STM_STORED_TASKS );
-			ar & has_tasks_map;
-			if( has_tasks_map ) {
-				devel::matdes::STMStoredTask *tasks_map = dynamic_cast< devel::matdes::STMStoredTask * >
-						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
-				ar & *tasks_map;
-			}
-
-	}
-
-	template<class Archive>
-	void load(Archive & ar, const unsigned int version) {
-		using namespace basic::datacache;
-		using namespace core::pose::datacache;
-		using namespace core::scoring::constraints;
-			bool is_symmetric;
-			ar & is_symmetric;
-			if( is_symmetric ) {
-				conformation::symmetry::SymmetricConformation * symm_conf = new core::conformation::symmetry::SymmetricConformation();
-				ar & *symm_conf;
-				conformation_ = ConformationOP( symm_conf );
-				scoring::symmetry::SymmetricEnergies * symm_energy = new scoring::symmetry::SymmetricEnergies();
-				ar & * symm_energy;
-				energies_ = scoring::EnergiesOP( symm_energy);
-			} else {
-				ar & conformation_;
-				ar & energies_;
-			}
-			energies_->set_owner( this );
-			ar & pdb_info_;
-
-			std::string tmpstring;
-			ar & tmpstring;
-			if( tmpstring != "" ) {
-				std::stringstream tmpss(tmpstring);
-				ConstraintSetOP tmpcstset = ConstraintSetOP( new ConstraintSet() );
-				ConstraintSetOP tmp2 = ConstraintIO::get_instance()->read_constraints( tmpss, tmpcstset, *this );
-				constraint_set( tmp2 );
-			}
-
-			bool has_string_map;
-			ar & has_string_map;
-			if( has_string_map) {
-				data_cache_->set( CacheableDataType::STRING_MAP, new CacheableStringMap() );
-				CacheableStringMap *string_map = dynamic_cast< CacheableStringMap* >
-						( data_cache_->get_raw_ptr(CacheableDataType::STRING_MAP) );
-				ar & *string_map;
-			}
-
-			bool has_float_map;
-			ar & has_float_map;
-			if( has_float_map) {
-				data_cache_->set( CacheableDataType::ARBITRARY_FLOAT_DATA, new CacheableStringFloatMap() );
-				CacheableStringFloatMap *float_map = dynamic_cast< CacheableStringFloatMap* >
-						( data_cache_->get_raw_ptr(CacheableDataType::ARBITRARY_FLOAT_DATA) );
-				ar & *float_map;
-			}
-			bool has_tasks_map;
-			ar & has_tasks_map;
-			if( has_tasks_map ) {
-				devel::matdes::STMStoredTaskOP blank_tasks = new devel::matdes::STMStoredTask();
-				data_cache_->set( CacheableDataType::STM_STORED_TASKS, blank_tasks);
-				devel::matdes::STMStoredTask *tasks_map = dynamic_cast< devel::matdes::STMStoredTask * >
-						( data_cache_->get_raw_ptr(CacheableDataType::STM_STORED_TASKS) );
-				ar & *tasks_map;
-			}
-	}
-	BOOST_SERIALIZATION_SPLIT_MEMBER()
-#endif
 private:
 
 	///////////////////////////////////////////////////////////////////////////

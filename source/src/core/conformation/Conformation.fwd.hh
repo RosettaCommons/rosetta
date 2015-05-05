@@ -38,9 +38,5 @@ typedef utility::pointer::weak_ptr< Conformation const > ConformationCAP;
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 
 #endif

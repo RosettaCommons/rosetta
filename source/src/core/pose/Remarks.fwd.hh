@@ -29,12 +29,6 @@ typedef utility::pointer::shared_ptr< Remarks > RemarksOP;
 
 } // namespace pose
 } // namespace core
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/base_object.hpp>
-#endif
-
 
 #endif // INCLUDED_core_pdb_remarks_FWD_HH
 

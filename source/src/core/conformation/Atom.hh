@@ -123,16 +123,6 @@ public:
 	// }
 
 private:
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & xyz_;
-			ar & type_;
-			ar & mm_type_;
-	}
-#endif
 	// data
 
 	// position

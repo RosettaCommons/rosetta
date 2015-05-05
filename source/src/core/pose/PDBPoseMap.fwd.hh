@@ -37,9 +37,5 @@ typedef utility::pointer::shared_ptr< PDBPoseMap const > PDBPoseMapCOP;
 } // namespace pose
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/map.hpp>
-#endif
-
 
 #endif

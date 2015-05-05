@@ -28,10 +28,5 @@ typedef utility::pointer::shared_ptr< SymSlideInfo const > SymSlideInfoCOP;
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/vector.hpp>
-#endif
-
 #endif
 

@@ -28,10 +28,5 @@ typedef utility::pointer::shared_ptr< SymmetryInfo const > SymmetryInfoCOP;
 } // conformation
 } // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/map.hpp>
-#endif
-
 #endif
 

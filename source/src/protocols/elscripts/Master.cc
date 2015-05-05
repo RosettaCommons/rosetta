@@ -18,10 +18,6 @@
 #include <boost/function.hpp>
 #include <boost/lexical_cast.hpp>
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/archive/binary_oarchive.hpp>
-#endif
-
 #include <protocols/wum2/WorkUnit.hh>
 
 #include <basic/options/option.hh>
@@ -148,7 +144,7 @@ void Master::interpreter() {
 void Master::go(){
 	using namespace utility::lua;
 
-	// no while loop since Single Node will be switching between Master::go() and Slave::go() 
+	// no while loop since Single Node will be switching between Master::go() and Slave::go()
 
 	mpicounter_++;
 
@@ -174,7 +170,7 @@ void Master::go(){
 
 	// process slave results
 	if( ! slave_comm_->inq().empty() ) {
-		protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front(); 
+		protocols::wum2::WorkUnitSP wu = slave_comm_->inq().pop_front();
 		protocols::wum2::WorkUnit_ElScriptsSP castattempt = boost::dynamic_pointer_cast<protocols::wum2::WorkUnit_ElScripts> (wu);
 		if( castattempt != 0 ) {
 			traj_idx_ = castattempt->trajectory_idx();
@@ -216,7 +212,7 @@ void Master::go(){
 // this gets rid of traj_idx in lua script
 void Master::make_wu( std::string const & wuname, core::pose::PoseSP p, protocols::moves::SerializableStateSP state ) {
 	using namespace core::io::serialization;
-	PipeSP pipe ( new Pipe() ); 
+	PipeSP pipe ( new Pipe() );
 	// have to copy the pose here
 	// originally, did not deep copy pose for speed reasons
 	// but then the problem becomes when boost serialize sends the pose to the slave
@@ -268,14 +264,14 @@ void Master::make_wu_copied( std::string const & wuname, core::io::serialization
 void Master::make_wu_until_limit( std::string const & wuname, int num ) {
 	using namespace core::io::serialization;
   for( int i = 0; i < num_trajectories_; i++ ){
-		if( ! (*trajectories_)[i] ) continue; 
+		if( ! (*trajectories_)[i] ) continue;
 		if( !luabind::globals(lstate_)["traj_env"][i]["wu_made"][wuname] ) {
 			luabind::globals(lstate_)["traj_env"][i]["wu_made"][wuname] = 0;
 		}
 		if( luabind::object_cast<int>(luabind::globals(lstate_)["traj_env"][i]["wu_made"][wuname]) < num ) {
 			if( mem_limit_ - current_mem() > 2 * reserved_mem_ ) {
 				PipeMapSP pmap( new PipeMap() );
-				PipeSP pipe ( new Pipe() ); 
+				PipeSP pipe ( new Pipe() );
 				pipe->push_back( (*trajectories_)[i] );
 				(*pmap)["input"] = pipe;
 				protocols::moves::SerializableStateSP state( new protocols::moves::SerializableState() );
@@ -336,17 +332,16 @@ void Master::fill_trajectories() {
 }
 
 void Master::update_trajectories_mem(){
-#ifdef USEBOOSTSERIALIZE
+#ifdef SERIALIZATION
   std::stringstream s;
-  boost::archive::binary_oarchive oa(s);
-  oa << trajectories_;
+//  core::io::serialization::toBinary(s, trajectories_);
   trajectories_mem_ =  s.str().length();
 #else
   TR << "Memory usage tracked only if compiled against boost::serialize" << std::endl;
 #endif
 }
 
-void master_make_wu_nostate( Master * master, std::string const & wuname, core::pose::PoseSP p ) { master->make_wu( wuname, p ); } 
+void master_make_wu_nostate( Master * master, std::string const & wuname, core::pose::PoseSP p ) { master->make_wu( wuname, p ); }
 void master_make_wu_nostate( Master * master, std::string const & wuname, core::io::serialization::PipeSP p ) { master->make_wu( wuname, p ); }
 void master_make_wu_nostate( Master * master, std::string const & wuname, core::io::serialization::PipeMapSP p ){ master->make_wu( wuname, p ); }
 

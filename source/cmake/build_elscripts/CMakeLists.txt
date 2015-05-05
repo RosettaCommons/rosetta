@@ -5,7 +5,7 @@ INCLUDE(../build/external.static.cmake)
 
 # ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-g)
-ADD_DEFINITIONS(-DUSEBOOSTSERIALIZE)
+#ADD_DEFINITIONS(-DUSEBOOSTSERIALIZE) # This is no longer used in Rosetta code
 ADD_DEFINITIONS(-DUSEMPI) # only reason i enable this is for mpi rank on the tracer :)
 ADD_DEFINITIONS(-DUSEBOOSTMPI)
 ADD_DEFINITIONS(-DUSELUA)

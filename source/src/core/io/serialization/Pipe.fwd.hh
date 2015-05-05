@@ -23,11 +23,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <vector>
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#endif
-
 namespace core {
 namespace io {
 namespace serialization {

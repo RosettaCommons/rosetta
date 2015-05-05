@@ -15,19 +15,18 @@
 #include <protocols/wum2/WorkUnit.hh>
 #include <sstream>
 #include <iostream>
-#ifdef USEBOOSTSERIALIZE
-#include <boost/archive/binary_oarchive.hpp>
-#endif
 
 namespace protocols{
 namespace wum2{
 
 boost::uint64_t WUQueue::serialized_size( WorkUnitSP /*wu*/ ) {
-#ifdef USEBOOSTSERIALIZE
+#ifdef SERIALIZE
+/*
   std::stringstream s;
-  boost::archive::binary_oarchive oa(s);
-  oa << wu;
+  core::io::serialization::toBinary(s, wu);
   return s.str().length();
+*/
+  return 0;
 #else
 	std::cerr << "Memory usage tracked only if compiled against boost::serialize" << std::endl;
   return 0;
@@ -39,7 +38,7 @@ WorkUnitSP WUQueue::pop_front() {
   if( empty() )
     return tmp;
   current_mem_ -= deque_.front().first;
-  tmp = deque_.front().second; 
+  tmp = deque_.front().second;
   deque_.pop_front();
   return tmp;
 }

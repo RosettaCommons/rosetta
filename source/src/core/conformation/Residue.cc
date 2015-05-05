@@ -28,9 +28,6 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#ifdef USEBOOSTSERIALIZE
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
-#endif
 
 // Basic headers
 #include <basic/basic.hh>
@@ -1354,41 +1351,6 @@ std::ostream & operator << ( std::ostream & os, Residue const & res )
 	res.show(os);
 	return os;
 }
-
-
-#ifdef USEBOOSTSERIALIZE
-// this function takes the old res, clones it rotamer library by applying it to the new res
-// and adds it to the rotamerlibrary singleton
-void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, core::chemical::ResidueType const & base_res ) {
-	using namespace core::pack::dunbrack;
-
-	SingleLigandRotamerLibraryOP new_lrots = new SingleLigandRotamerLibrary;
-	SingleLigandRotamerLibraryCAP old_lrots(
-		utility::pointer::static_pointer_cast< SingleLigandRotamerLibraryCAP >
-		( RotamerLibrary::get_instance()->get_rsd_library( base_res ) ));
-	if( old_lrots != 0 ) {
-		utility::vector1< ResidueOP > new_rotamers;
-		utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();
-		for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
-			ResidueOP new_rot_res = new Residue( new_res, true);
-			for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
-				if( !(*oldrot_it)->has( new_rot_res->atom_name( at_ct ) ) ){
-					std::cerr << "Unexpected ERROR: when regenerating ligand rotamer library (for covalent constraints), one atom wasn't found in a template rotamer." << std::endl;
-					utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-				}
-				else{
-					new_rot_res->set_xyz( at_ct, (*oldrot_it)->xyz( new_rot_res->atom_name( at_ct ) ) );
-				}
-			}
-			new_rot_res->chi( (*oldrot_it)->chi() );
-			new_rotamers.push_back( new_rot_res );
-		}
-		new_lrots->set_reference_energy( old_lrots->get_reference_energy() );
-		new_lrots->set_rotamers( new_rotamers );
-	} // no fallback if there isnt a reference rotamer library
-	RotamerLibrary::get_instance()->add_residue_library( new_res, new_lrots );
-}
-#endif
 
 } // conformation
 } // core

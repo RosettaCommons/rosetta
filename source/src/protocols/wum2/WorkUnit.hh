@@ -23,10 +23,6 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/base_object.hpp>
-#endif
-
 #ifdef USELUA
 #include <lua.hpp>
 #include <luabind/luabind.hpp>
@@ -86,22 +82,6 @@ public:
 	// cache is not seralized nor transferred with WU
 	void link_cache( protocols::moves::MoverCacheSP cache) { cache_ = cache; }
 
-private:
-#ifdef USEBOOSTSERIALIZE
-		friend class boost::serialization::access;
-
-		template<class Archive>
-		void serialize(Archive & ar, const unsigned int version) {
-				ar & prioritize_;
-				ar & id_;
-				ar & master_;
-				ar & trajectory_idx_;
-				ar & unixtime_creation_;
-				ar & unixtime_start_;
-				ar & unixtime_stop_;
-		}
-#endif
-
 protected:
 
 		// whether the WU gets pushed onto the front vs back of the queue
@@ -146,15 +126,6 @@ public:
 	long wait_time() { return wait_time_; }
 
 private:
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-		ar & boost::serialization::base_object<WorkUnit>(*this);
-		ar & wait_time_;
-	}
-#endif
 
 	// in seconds
 	long wait_time_;
@@ -194,18 +165,6 @@ public:
 
 	std::string name() { return name_; }
 	void name( std::string name ) { name_ = name; }
-
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-		ar & boost::serialization::base_object<WorkUnit>(*this);
-		ar & pipemap_;
-		ar & state_;
-		ar & name_;
-	}
-#endif
 
 protected:
 

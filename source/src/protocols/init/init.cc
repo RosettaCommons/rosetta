@@ -87,7 +87,6 @@
 #include <protocols/init/init.MoverFactory.ihh>
 #include <protocols/init/init.InputterFactory.ihh>
 #include <protocols/init/init.OutputterFactory.ihh>
-#include <protocols/init/init.BoostExport.ihh>
 
 
 namespace protocols {

@@ -129,24 +129,6 @@ class SymDof {
 
 	private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & allowed_dof_jumps_;
-		ar & lower_range_dof_jumps1_;
-		ar & upper_range_dof_jumps1_;
-		ar & lower_range_dof_jumps2_;
-		ar & upper_range_dof_jumps2_;
-		ar & has_range1_lower_;
-		ar & has_range1_upper_;
-		ar & has_range2_lower_;
-		ar & has_range2_upper_;
-		ar & jump_dir_;
-	}
-#endif
-
 	utility::vector1< bool > range2_is_bound_; // is a particular dof allowed to move?
 	utility::vector1< bool > allowed_dof_jumps_; // is a particular dof allowed to move?
 	utility::vector1< Real > lower_range_dof_jumps1_; // store the lower boundary of range1

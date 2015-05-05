@@ -180,17 +180,6 @@ public:
 
 private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & type_;
-			ar & atomno_;
-	}
-
-#endif
-
 	/// atom's "connection" type
 	Type type_;
 	/// atom's index number
@@ -383,22 +372,6 @@ public:
 	build( conformation::Residue const & rsd ) const;
 
 private:
-
-
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & index_;
-			ar & phi_;
-			ar & theta_;
-			ar & d_;
-			ar & stub_atom1_;
-			ar & stub_atom2_;
-			ar & stub_atom3_;
-	}
-#endif
 
 	VD built_vd_;
 	Real phi_;

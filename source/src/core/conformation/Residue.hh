@@ -59,10 +59,6 @@
 namespace core {
 namespace conformation {
 
-#ifdef USEBOOSTSERIALIZE
-void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, core::chemical::ResidueType const & base_res );
-#endif
-
 /// @brief  Instance Residue class, used for placed residues and rotamers
 /**
 	@details This class is designed to be lightweight.  It holds a const-reference ("rsd_type_")
@@ -96,8 +92,8 @@ public:
 	Residue( ResidueType const & rsd_type_in, bool const dummy_arg );
 
 	// this is for boost serialize
-	Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/, bool const /*dummy_arg2*/ ) :
-		utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
+	//Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/, bool const /*dummy_arg2*/ ) :
+	//	utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
 
 	/// @brief  Rotamer-style constructor; orients ideal coords onto backbone of current_rsd
 	Residue(
@@ -1997,26 +1993,6 @@ public:
 	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
 
 
-#ifdef USEBOOSTSERIALIZE
-	/// unfortunate, but we must use const_cast here to turn off the serialize flag in restype
-	void serialized(bool) {
-		using namespace core::chemical;
-		utility::pointer::access_ptr< ResidueTypeSet > restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( rsd_type_.residue_type_set().name() );
-
-		// recurse
-		std::vector< ResidueType const * > serialized_restypes;
-		ResidueType const * current_res = &(rsd_type_);
-		while( current_res->serialized_ ) {
-			current_res->serialized_ = false;
-			// check the base_restype of current restype
-			if( current_res->base_restype_name() == "" )
-				break;
-			current_res = &(restype_set->name_map( current_res->base_restype_name()));
-		}
-	}
-#endif
-
-
 	/// @brief BasicDataCache indexed by enum in residue_datacache.hh
 	basic::datacache::BasicDataCacheCOP
 	data_ptr() const;
@@ -2119,153 +2095,10 @@ private:
 	/// may include this residue (intra-residue pseudo-bonds)
 	std::map< Size, PseudoBondCollectionCOP > pseudobonds_;
 
-
-#ifdef USEBOOSTSERIALIZE
-private:
-	friend class boost::serialization::access;
-	template<class Archive>
-	void serialize(Archive &ar, const unsigned int file_version) {}
-	template<class Archive> friend void save_construct_data(
-			Archive & ar, const Residue * t, const unsigned int file_version);
-	template<class Archive> friend void load_construct_data(
-			Archive & ar, Residue * t, const unsigned int file_version);
-#endif
 };
 
 std::ostream & operator << ( std::ostream & os, Residue const & res );
 
-#ifdef USEBOOSTSERIALIZE
-template<class Archive>
-inline void save_construct_data(
-	Archive & ar, const Residue * t, const unsigned int file_version
-){
-	using namespace core::chemical;
-
-	ar & t->rsd_type_.residue_type_set().name();
-	utility::pointer::access_ptr< ResidueTypeSet > restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( t->rsd_type_.residue_type_set().name() );
-
-	ar & t->rsd_type_.name();
-
-	// Ok storing the restype is quite complicated if it isn't part of fa_standard set
-	// every restype is based off either the root restype, or some derived restype
-	// eg ASP_connectOD1_connectOD2 is based off ASP_connectOD1 which is based off ASP
-	// the depth of the inheritance is arbitrary( enzdes stuff uses up to 8 deep?)
-	// also, each restype can be already serialized, so we should check for that
-	// recursion would be nice, but we have a lot of permissions issues and templating issues
-
-  // check if top level restype is 1) not part of a set and 2) is not already serialized
-	std::vector< ResidueType const * > serialized_restypes;
-	ResidueType const * current_res = &(t->rsd_type_);
-	while( current_res->nondefault_ && !current_res->serialized_ ) {
-		serialized_restypes.push_back( current_res );
-		// check the base_restype of current restype
-		if( current_res->base_restype_name_ == "" )
-			break;
-		current_res = &(restype_set->name_map( current_res->base_restype_name_));
-	}
-
-	// store how many restypes this residue will actually hold
-	int serialized_restypes_size = serialized_restypes.size();
-	ar & serialized_restypes_size;
-
-
-	// and then for every restype, store everything we need to recreate it
-	// we won't actually serialize the restype since its usually a clone with some small modifications
-	for( std::vector< ResidueType const * >::reverse_iterator itr = serialized_restypes.rbegin(); itr < serialized_restypes.rend(); itr++ ) {
-		ar & (**itr).name();
-		ar & (**itr).base_restype_name_;
-		ar & (**itr).n_non_polymeric_residue_connections_;
-		ar & (**itr).residue_connections_;
-		ar & (**itr).atom_2_residue_connection_map_;
-		ar & (**itr).variant_types_;
-		ar & (**itr).icoor_;
-		ar & (**itr).atom_base_;
-		ar & (**itr).xyz_;
-		// mark this restype as serialized so if its used later in this pose, its not serialized again
-		// this will fail horribly if residue is serialized directly, because serialized(false) is called one level up
-		// but w.e, can figure that out later
-		(**itr).serialized_ = true;
-	}
-	// store the rest of Residue
-	ar & t->atoms_;
-	ar & t->seqpos_;
-	ar & t->seqpos_;
-	ar & t->chain_;
-	ar & t->chi_;
-	ar & t->nus_;
-	ar & t->mainchain_torsions_;
-	ar & t->actcoord_;
-	ar & t->nonstandard_polymer_;
-	ar & t->connect_map_;
-	ar & t->connections_to_residues_;
-	ar & t->pseudobonds_;
-}
-
-template<class Archive>
-inline void load_construct_data(
-		Archive & ar, Residue * t, const unsigned int file_version
-){
-	using namespace core::chemical;
-
-	std::string restypeset_name;
-	ar >> restypeset_name;
-	utility::pointer::access_ptr< ResidueTypeSet > restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( restypeset_name );
-
-	std::string this_restype_name;
-	ar & this_restype_name;
-
-	int serialized_restypes_size;
-	ar & serialized_restypes_size;
-
-	for( int i = 0 ; i < serialized_restypes_size; i++ ) {
-		// even if we already have the restype, we have to deserialize it :(
-		std::string restype_name;
-		ar & restype_name;
-
-		std::string base_restype_name;
-		ar & base_restype_name;
-		ResidueType const & base_res = restype_set->name_map( base_restype_name);
-		ResidueTypeOP new_restype;
-		new_restype = base_res.clone();
-		new_restype->name( restype_name );
-		new_restype->nondefault_ = true;
-		new_restype->base_restype_name_ = base_restype_name;
-
-		ar & new_restype->n_non_polymeric_residue_connections_;
-		ar & new_restype->residue_connections_;
-		ar & new_restype->atom_2_residue_connection_map_;
-		ar & new_restype->variant_types_;
-		ar & new_restype->icoor_;
-		ar & new_restype->atom_base_;
-		ar & new_restype->xyz_;
-		if( !restype_set->has_name(restype_name) ) {
-			new_restype->finalize();
-			restype_set->add_residue_type( new_restype);
-			// gotta add rotamer library for it if its a ligand
-			if( new_restype->is_ligand() ) {
-				core::conformation::add_cloned_ligand_rotamer_library( *new_restype, base_res );
-			}
-		}
-	}
-
-	// inplace constructor
-	::new(t) core::conformation::Residue( restype_set->name_map(this_restype_name), true, true);
-	// and then set all the other member vars
-	ar & t->atoms_;
-	ar & t->seqpos_;
-	ar & t->seqpos_;
-	ar & t->chain_;
-	ar & t->chi_;
-	ar & t->nus_;
-	ar & t->mainchain_torsions_;
-	ar & t->actcoord_;
-	ar & t->nonstandard_polymer_;
-	ar & t->connect_map_;
-	ar & t->connections_to_residues_;
-	ar & t->pseudobonds_;
-}
-
-#endif
 } // conformation
 } // core
 

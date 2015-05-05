@@ -31,8 +31,4 @@ typedef utility::vector1< Atom > Atoms;
 }  // conformation
 }  // core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/vector.hpp>
-#endif
-
 #endif  // INCLUDED_core_conformation_Atom_FWD_HH

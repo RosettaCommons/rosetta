@@ -48,10 +48,4 @@ void lregister_Pose( lua_State * lstate );
 } // namespace pose
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/split_member.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#endif
-
 #endif // INCLUDED_core_pose_Pose_FWD_HH

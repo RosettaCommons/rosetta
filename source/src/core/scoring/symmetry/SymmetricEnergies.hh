@@ -79,15 +79,6 @@ private:
 	void fill_point_graph( pose::Pose const & pose, conformation::PointGraphOP pg ) const;
 	void require_context_graph_( scoring::ContextGraphType type, bool external ) const;
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & boost::serialization::base_object<Energies>(*this);
-	}
-
-#endif
 private:
 	MinimizationGraphOP derivative_graph_;
 

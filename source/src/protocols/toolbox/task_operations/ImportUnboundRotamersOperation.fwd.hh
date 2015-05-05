@@ -32,10 +32,5 @@ typedef utility::pointer::shared_ptr< ImportUnboundRotamersOperation const > Imp
 }
 }
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/base_object.hpp>
-#endif
-
 
 #endif

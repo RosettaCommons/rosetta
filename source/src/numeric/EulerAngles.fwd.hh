@@ -23,8 +23,4 @@ template< typename > class EulerAngles;
 
 } // namespace numeric
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#endif
-
 #endif // INCLUDED_numeric_EulerAngles_FWD_HH

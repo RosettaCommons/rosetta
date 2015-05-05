@@ -34,9 +34,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
-#ifdef USEBOOSTSERIALIZE
-#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-#endif
 // Utility Headers
 
 // STL Headers
@@ -335,145 +332,6 @@ private: // private methods
 
 	void
 	do_restrict_absent_canonical_aas( utility::vector1<bool> const & allowed_aas );
-
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void save(Archive & ar, const unsigned int version) const {
-		using namespace core::chemical;
-		ar & include_current_;
-		ar & behaviors_;
-		ar & adducts_;
-
-		ar & original_residue_type_->residue_type_set().name();
-		ar & original_residue_type_->name();
-
-		int tmp = allowed_residue_types_.size();
-		ar & tmp;
-		for ( ResidueLevelTask::ResidueTypeCOPListConstIter
-				allowed_iter( allowed_residue_types_begin() );
-				allowed_iter != allowed_residue_types_end();
-				++allowed_iter ) {
-			ar & (*allowed_iter)->name();
-		}
-
-		ar & designing_;
-		ar & repacking_;
-		ar & optimize_H_mode_;
-		ar & preserve_c_beta_;
-		ar & flip_HNQ_;
-		ar & fix_his_tautomer_;
-		ar & include_virtual_side_chain_;
-		ar & disabled_;
-		ar & design_disabled_;
-		ar & sample_proton_chi_;
-		ar & ex1_;
-		ar & ex2_;
-		ar & ex3_;
-		ar & ex4_;
-		ar & ex1aro_;
-		ar & ex2aro_;
-		ar & ex1aro_exposed_;
-		ar & ex2aro_exposed_;
-		ar & ex1_sample_level_;
-		ar & ex2_sample_level_;
-		ar & ex3_sample_level_;
-		ar & ex4_sample_level_;
-		ar & ex1aro_sample_level_;
-		ar & ex2aro_sample_level_;
-		ar & ex1aro_exposed_sample_level_;
-		ar & ex2aro_exposed_sample_level_;
-		ar & exdna_sample_level_;
-		ar & extrachi_cutoff_;
-		ar & operate_on_ex1_;
-		ar & operate_on_ex2_;
-		ar & operate_on_ex3_;
-		ar & operate_on_ex4_;
-		//ar & use_input_sc_;
-		// can't serialize these
-		//ar & rotamer_operations_;
-		//ar & rotsetops_;
-		// special case, only support LimitAro because its the only one used?
-		std::vector < protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation *> tt;
-		for( rotamer_set::RotSetOperationListIterator i = rotsetops_.begin(); i != rotsetops_.end(); i++ ) {
-			protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation * cast_attempt = dynamic_cast<protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation *> (i->get());
-			if( cast_attempt != NULL )
-				tt.push_back( cast_attempt );
-		}
-		ar & tt;
-		ar & mode_tokens_;
-
-	}
-
-	template<class Archive>
-	void load(Archive & ar, const unsigned int version) {
-		using namespace core::chemical;
-		ar & include_current_;
-		ar & behaviors_;
-		ar & adducts_;
-
-		// i fucking hate this residue type shit so much
-		// if the residue type doesnt exist, lets segfault, the preferred rosetta error handling method
-		std::string tmp;
-		ar & tmp;  //t->original_residue_type_->residue_type_set().name();
-		ResidueTypeSetCAP restype_set = ChemicalManager::get_instance()->residue_type_set( tmp );
-		ar & tmp; //original_residue_type_->name();
-		original_residue_type_ = utility::pointer::owning_ptr< ResidueType const > ( restype_set->name_map(tmp) );
-
-		int numaa;
-		ar & numaa; //allowed_residue_types_.size();
-		for ( int i=0; i< numaa; i++ ) {
-			ar & tmp; //(*allowed_iter)->name();
-			allowed_residue_types_.push_back(utility::pointer::owning_ptr< ResidueType const > ( restype_set->name_map(tmp) ));
-		}
-
-		ar & designing_;
-		ar & repacking_;
-		ar & optimize_H_mode_;
-		ar & preserve_c_beta_;
-		ar & flip_HNQ_;
-		ar & fix_his_tautomer_;
-		ar & include_virtual_side_chain_;
-		ar & disabled_;
-		ar & design_disabled_;
-		ar & sample_proton_chi_;
-		ar & ex1_;
-		ar & ex2_;
-		ar & ex3_;
-		ar & ex4_;
-		ar & ex1aro_;
-		ar & ex2aro_;
-		ar & ex1aro_exposed_;
-		ar & ex2aro_exposed_;
-		ar & ex1_sample_level_;
-		ar & ex2_sample_level_;
-		ar & ex3_sample_level_;
-		ar & ex4_sample_level_;
-		ar & ex1aro_sample_level_;
-		ar & ex2aro_sample_level_;
-		ar & ex1aro_exposed_sample_level_;
-		ar & ex2aro_exposed_sample_level_;
-		ar & exdna_sample_level_;
-		ar & extrachi_cutoff_;
-		ar & operate_on_ex1_;
-		ar & operate_on_ex2_;
-		ar & operate_on_ex3_;
-		ar & operate_on_ex4_;
-		//ar & use_input_sc_;
-		// can't serialize these
-		//ar & rotamer_operations_;
-		// special case, only support LimitAro because its the only one used?
-		std::vector < protocols::toolbox::task_operations::LimitAromaChi2_RotamerSetOperation * > tt;
-		ar & tt;
-		for( int i = 0; i < tt.size(); i++ ) {
-			rotamer_set::RotamerSetOperationOP tmp( reinterpret_cast<rotamer_set::RotamerSetOperation * > (tt[i]) );
-			rotsetops_.push_back( tmp );
-		}
-		ar & mode_tokens_;
-	}
-	BOOST_SERIALIZATION_SPLIT_MEMBER()
-#endif
 
 private:
 	/// @details is the pre-existing rotamer included for the packer to choose?
@@ -894,34 +752,6 @@ private: // private methods
 	PackerTask &
 	operator=(PackerTask const &);
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & boost::serialization::base_object<PackerTask>(*this);
-			ar & nres_;
-			ar & pack_residue_;
-			ar & residue_tasks_;
-			ar & n_to_be_packed_;
-			ar & n_to_be_packed_up_to_date_;
-			ar & linmem_ig_;
-			ar & lazy_ig_;
-			ar & double_lazy_ig_;
-			ar & dlig_mem_limit_;
-			ar & multi_cool_annealer_;
-			ar & mca_history_size_;
-			ar & optimize_H_;
-			ar & bump_check_;
-			ar & max_rotbump_energy_;
-			ar & low_temp_;
-			ar & high_temp_;
-			ar & disallow_quench_;
-			// not serializing this because it doens't seem important
-			//IGEdgeReweightContainerOP IG_edge_reweights_;
-			ar & symmetry_status_;
-	}
-#endif
 
 private:
 

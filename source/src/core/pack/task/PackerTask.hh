@@ -486,13 +486,6 @@ public:
 
 private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) { }
-#endif
-
 	virtual
 	PackerTask &
 	operator=(PackerTask const &) = 0;

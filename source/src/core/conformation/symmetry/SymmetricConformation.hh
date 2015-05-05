@@ -244,17 +244,6 @@ private:
 	core::Size
 	get_upstream_vrt( core::Size seqpos ) const;
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, unsigned int version){
-		ar & boost::serialization::base_object<Conformation>(*this);
-		ar & symm_info_;
-	}
-
-#endif
-
 
 private:
 

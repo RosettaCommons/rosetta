@@ -2577,11 +2577,6 @@ private:
 	utility::vector1< Adduct > defined_adducts_;
 
 
-	// boost serialize stuff
-#ifdef USEBOOSTSERIALIZE
-	template<class Archive> friend void core::conformation::save_construct_data( Archive & ar, const core::conformation::Residue * t, const unsigned int file_version);
-	template<class Archive> friend void core::conformation::load_construct_data( Archive & ar, core::conformation::Residue * t, const unsigned int file_version);
-#endif
 
 	bool nondefault_;
 	std::string base_restype_name_;

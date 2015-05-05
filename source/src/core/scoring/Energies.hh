@@ -696,15 +696,6 @@ private:
 	void
 	require_context_graph_( scoring::ContextGraphType type, bool external ) const;
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & scorefxn_weights_;
-			ar & total_energies_;
-	}
-#endif
 
 private:
 

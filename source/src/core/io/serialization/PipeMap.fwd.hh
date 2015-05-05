@@ -25,11 +25,6 @@
 #include <boost/weak_ptr.hpp>
 #include <map>
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#endif
-
 namespace core {
 namespace io {
 namespace serialization {

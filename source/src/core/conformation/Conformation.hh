@@ -1150,57 +1150,6 @@ public: // signal management
 
 private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void save(Archive & ar, const unsigned int version) const {
-			int m = residues_.size();
-			ar << m;
-			Residue * tmp;
-			for( int i = 1; i <= residues_.size(); i++ ) {
-				tmp = residues_[i].get();
-				ar << tmp;
-			}
-			// second passthrough is to turn off serialized flag inside ResidueType
-			// This is how we store each new ResType only once, even though there may
-			// be many residues using it
-			for( int i = 1; i <= residues_.size(); i++ ) {
-				residues_[i]->serialized(false);
-			}
-			ar << secstruct_;
-			ar << fold_tree_;
-			ar << chain_endings_;
-			ar << residue_coordinates_need_updating_;
-			ar << residue_torsions_need_updating_;
-			ar << dof_moved_;
-			ar << xyz_moved_;
-			ar << structure_moved_;
-	}
-
-	template<class Archive>
-	void load(Archive & ar, const unsigned int version) {
-			int idx;
-			ar >> idx;
-			Residue * tmpp = NULL;
-			for( int i = 1; i <= idx; i++ ) {
-				ar >> tmpp;
-				ResidueOP tmp( tmpp );
-				residues_.push_back( tmp );
-			}
-			ar >> secstruct_;
-			ar >> fold_tree_;
-			ar >> chain_endings_;
-			setup_atom_tree();
-			ar >> residue_coordinates_need_updating_;
-			ar >> residue_torsions_need_updating_;
-			ar >> dof_moved_;
-			ar >> xyz_moved_;
-			ar >> structure_moved_;
-	}
-	BOOST_SERIALIZATION_SPLIT_MEMBER()
-#endif
-
 	/// @brief Returns a residue without triggering coordinate/torsion update
 	/// @details Use with care. Useful inside torsion/coordinate setters where we want chemical info
 	/// about a given residue but don't want to trigger the coordinate/torsion updates that go along

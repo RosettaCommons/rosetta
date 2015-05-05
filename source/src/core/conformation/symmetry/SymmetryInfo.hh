@@ -261,33 +261,6 @@ private:
 	void
 	update_contiguous_monomers();
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version){
-		ar & bb_clones_;
-		ar & chi_clones_;
-		ar & jump_clones_;
-		ar & jump_clone_wts_;
-		ar & bb_follows_;
-		ar & chi_follows_;
-		ar & jump_follows_;
-		ar & empty_list;
-		ar & nres_monomer_;
-		ar & scoring_subunit_;
-		ar & npseudo_;
-		ar & njump_monomer_;
-		ar & type_;
-		ar &  interfaces_;
-		ar & score_multiply_;
-		ar & score_multiply_factor_;
-		ar & dofs_;
-		ar & use_symmetry_;
-		ar & slide_info_;
-	}
-#endif
-
 	// mapping from each primary jump to it's clones
 	std::map< Size, Clones >   bb_clones_;
 	std::map< Size, Clones >  chi_clones_;

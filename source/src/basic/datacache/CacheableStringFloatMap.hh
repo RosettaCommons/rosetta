@@ -55,14 +55,6 @@ public:
 	virtual std::map< std::string, float > & map(){ return map_; }
 	virtual const std::map< std::string, float > & map() const { return map_; }
 private:
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & map_;
-	}
-#endif
 	std::map< std::string, float > map_;
 };
 

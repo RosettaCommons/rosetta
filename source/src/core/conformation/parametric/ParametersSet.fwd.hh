@@ -41,10 +41,4 @@ namespace core {
 	} // namespace conformation
 } // namespace core
 
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/map.hpp>
-#endif
-
 #endif // INCLUDED_core_conformation_parametric_ParametersSet_fwd_hh

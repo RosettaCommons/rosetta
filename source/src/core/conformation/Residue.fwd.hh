@@ -35,19 +35,7 @@ typedef  utility::vector1< ResidueOP >  ResidueOPs;
 typedef  utility::vector1< ResidueCOP >  ResidueCOPs;
 typedef  utility::vector1< ResidueCAP >  ResidueCAPs;
 
-#ifdef USEBOOSTSERIALIZE
-// why is this here? you don't want to know
-template<class Archive> void save_construct_data( Archive & ar, const Residue * t, const unsigned int file_version);
-template<class Archive> void load_construct_data( Archive & ar, Residue * t, const unsigned int file_version);
-#endif
-
 } // namespace conformation
 } // namespace core
-
-#ifdef USEBOOSTSERIALIZE
-#include <boost/serialization/access.hpp>
-#include <boost/serialization/string.hpp>
-#include <boost/serialization/map.hpp>
-#endif
 
 #endif // INCLUDED_core_conformation_Residue_FWD_HH

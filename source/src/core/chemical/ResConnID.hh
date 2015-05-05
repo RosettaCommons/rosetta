@@ -55,15 +55,6 @@ private:
 	Size res_id_;
 	Size conn_id_;
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & res_id_;
-			ar & conn_id_;
-	}
-#endif
 };
 
 bool operator < ( ResConnID const & lhs, ResConnID const & rhs );

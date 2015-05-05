@@ -20,11 +20,6 @@
 #include <protocols/elscripts/BaseRole.hh>
 #include <protocols/elscripts/modules/MonteCarlo.hh>
 
-#ifdef USEBOOSTSERIALIZE
-// really, why would you run this without boost serialize...
-#include <boost/archive/binary_oarchive.hpp>
-#endif
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/els.OptionKeys.gen.hh>
 
@@ -418,14 +413,17 @@ void BaseRole::update_mover_cache_mem() {
   if( mover_cache_length_ != mover_cache_->size() ) {
     // cache_mem_ is out of date
     // actually could be out of data even if size is same, but w.e, someone else can write a wrapper map class that keeps track of real memory usage while maintaining performance
-#ifdef USEBOOSTSERIALIZE
+#ifdef SERIALIZATION
+/*
       std::stringstream s;
-      boost::archive::binary_oarchive oa(s);
-      oa << mover_cache_;
+      core::io::serialization::toBinary(s, mover_cache_);
       mover_cache_mem_ =  s.str().length();
       mover_cache_length_ = mover_cache_->size();
+*/
+      mover_cache_mem_ =  0;
+      mover_cache_length_ = mover_cache_->size();
 #else
-      TR << "Memory usage tracked only if compiled against serialize" << std::endl;
+      TR << "Memory usage tracked only if compiled with serialization support" << std::endl;
 #endif
   }
 }

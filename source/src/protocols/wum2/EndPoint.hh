@@ -75,26 +75,11 @@ struct StatusResponse {
 	int rank; // rank of node responding to statusrequest
 	boost::uint64_t incoming_allocated; // how much memory is allocated for incoming wu
 	boost::uint64_t outq_current_mem; // how much memory outgoing queue is using
-#ifdef USEBOOSTSERIALIZE
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-		ar & rank;
-		ar & incoming_allocated;
-		ar & outq_current_mem;
-	}
-#endif
 };
 
 struct StatusRequest {
 	int rank; // rank of node sending statusrequest
 	boost::uint64_t max_outgoing_wu_mem; // the maximum amount of memory the outgoing wus will have
-#ifdef USEBOOSTSERIALIZE
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-		ar & rank;
-		ar & max_outgoing_wu_mem;
-	}
-#endif
 };
 
 #endif

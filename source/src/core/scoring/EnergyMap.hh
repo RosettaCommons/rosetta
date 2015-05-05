@@ -381,15 +381,6 @@ public:
 
 private:
 
-#ifdef USEBOOSTSERIALIZE
-	friend class boost::serialization::access;
-
-	template<class Archive>
-	void serialize(Archive & ar, const unsigned int version) {
-			ar & map_;
-	}
-#endif
-
 	/// EMapVector is an array. EMapVector[score_type] = value. Can be used for storing either energy or weight for each score_type.
 	Real map_[ n_score_types ];
 };
