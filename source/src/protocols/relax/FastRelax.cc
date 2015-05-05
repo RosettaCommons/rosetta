@@ -373,8 +373,8 @@ FastRelax::parse_my_tag(
 
 	bool batch = tag->getOption< bool >( "batch", false );
 
-	cartesian (tag->getOption< bool >( "cartesian", false ) );
-	dualspace (tag->getOption< bool >( "dualspace", false) );
+	cartesian (tag->getOption< bool >( "cartesian", cartesian() ) );
+	dualspace (tag->getOption< bool >( "dualspace", dualspace() ) );
 
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
@@ -490,10 +490,11 @@ void FastRelax::set_to_default( )
 }	//set_to_default
 
 ///Make sure correct mintype for cartesian or dualspace during apply
-void FastRelax::check_nonideal_mintype(){
-	if (dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles())
-		if (!basic::options::option[ basic::options::OptionKeys::relax::min_type ].user()){
+void FastRelax::check_nonideal_mintype() {
+	if (dualspace() || cartesian() || minimize_bond_lengths() || minimize_bond_angles()) {
+		if (!basic::options::option[ basic::options::OptionKeys::relax::min_type ].user()) {
 			min_type("lbfgs_armijo_nonmonotone");
+		}
 	}
 }
 
@@ -1118,8 +1119,8 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
 		filelines.push_back( "accept_to_best"                  );
 		filelines.push_back( "endrepeat "                      );
-	}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
-    TR << "================== Using dualspace script ==================" << std::endl;
+	}else if (script_file == "NO CST RAMPING" && dualspace_ ){
+    TR << "================== Using dualspace script - no constraint ramping ==================" << std::endl;
     filelines.push_back( "switch:torsion"                  );
     filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
     filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
@@ -1159,7 +1160,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
     filelines.push_back( "endrepeat "                      );
 		*/
 	}else if (script_file == "NO CST RAMPING"){
-		TR << "================== Using default script ==================" << std::endl;
+		TR << "================== Using default script - no constraint ramping ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
 		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
 		filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
