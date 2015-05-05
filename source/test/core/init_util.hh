@@ -108,10 +108,7 @@ inline void core_init_from_string( std::string const & commandline )
 	initialize_rng();
 }
 
-/// @brief For unit tests only. Re-init option system.
-/// Command line will be = old command line + function argument.
-inline void core_init_with_additional_options( std::string const & commandline_in )
-{
+inline std::string get_commandline_with_additional_options( std::string const & commandline_in ) {
 	extern int command_line_argc; extern char ** command_line_argv;
 
 	std::string commandline(" ");
@@ -119,11 +116,15 @@ inline void core_init_with_additional_options( std::string const & commandline_i
 		commandline = commandline + command_line_argv[i] + " ";
 	}
 	commandline = commandline + commandline_in;
-	//std::cout << "core_init_with_additional_options: " << commandline.c_str() << "\n";
 
-	core_init_from_string( commandline );
+	return commandline;
+}
 
-	initialize_rng();
+/// @brief For unit tests only. Re-init option system.
+/// Command line will be = old command line + function argument.
+inline void core_init_with_additional_options( std::string const & commandline_in )
+{
+	core_init_from_string( get_commandline_with_additional_options(commandline_in) );
 }
 
 inline
@@ -152,14 +153,17 @@ initialize_from_commandline_w_db( std::string const & commandline )
 //
 inline void core_init()
 {
-	extern int command_line_argc; extern char ** command_line_argv;
+	extern int command_line_argc;
+	extern char ** command_line_argv;
 
-	if( command_line_argc > 1 ) core::init::init(command_line_argc, command_line_argv);
+	if( command_line_argc > 1 ) {
+		core::init::init(command_line_argc, command_line_argv);
+		initialize_rng();
+	}
 	else {
 		std::string commandline = "core.test -mute all";
 		initialize_from_commandline_w_db( commandline );
 	}
-	initialize_rng();
 }
 
 inline void initialize_rng() {

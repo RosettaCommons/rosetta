@@ -37,38 +37,33 @@ inline void protocols_init_from_string( std::string const & commandline )
 		+ commandline, pseudo_argc );
 	protocols::init::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
+	initialize_rng();
 }
 
-/*/// @brief For unit tests only. Re-init option system.
+/// @brief For unit tests only. Re-init option system.
 /// Command line will be = old command line + function argument.
 inline void protocols_init_with_additional_options( std::string const & commandline_in )
 {
-	extern int command_line_argc; extern char ** command_line_argv;
-
-	std::string commandline(" ");
-	for(int i=1; i<command_line_argc; i++) {
-		commandline = commandline + command_line_argv[i] + " ";
-	}
-	commandline = commandline + commandline_in;
-	//std::cout << "core_init_with_additional_options: " << commandline.c_str() << "\n";
-
-	protocols_init_from_string( commandline );
-}*/
+	protocols_init_from_string( get_commandline_with_additional_options(commandline_in) );
+}
 
 
 // @brief Analog of protocols::init::init() for unit test suite.
 //
 inline void protocols_init()
 {
-	extern int command_line_argc; extern char ** command_line_argv;
+	extern int command_line_argc;
+	extern char ** command_line_argv;
 
-	if( command_line_argc > 1 ) protocols::init::init(command_line_argc, command_line_argv);
+	if( command_line_argc > 1 ) {
+		protocols::init::init(command_line_argc, command_line_argv);
+		initialize_rng();
+	}
 	else {
 		std::string commandline = "core.test -mute all";
 		std::string db_cmdline = append_db_to_commandline( commandline );
 		protocols_init_from_string( db_cmdline );
 	}
-	core::init::init_random_generators(1000, "mt19937");
 }
 
 #endif

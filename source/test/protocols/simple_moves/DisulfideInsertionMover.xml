@@ -1,0 +1,24 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<some_scorefxn weights="soft_rep"/>
+	</SCOREFXNS>
+	<MOVERS>
+		<DisulfideInsertion name="disulfide_insertion"
+			chain="2"
+			scorefxn="some_scorefxn"
+			n_cyd="2" c_cyd="6"
+			constraint_weight="0.1">
+			<!-- TODO : this would be nice to check, but this needs a pose, which we still don't have in the unit test -->
+			<!--MoveMap>
+				<Chain number="1" chi="true" bb="false" />
+				<Chain number="2" chi="true" bb="true" />
+				<Jump number="1" setting="false" />
+			</MoveMap-->
+		</DisulfideInsertion>
+	</MOVERS>
+	<PROTOCOLS>
+	    <Add mover="disulfide_insertion" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

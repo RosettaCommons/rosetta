@@ -450,7 +450,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 		r_start = 1;
 	}
 
-	core::Real d_min = 99999, this_d;
+	core::Length d_min = std::numeric_limits<core::Length>::infinity(), this_d;
 	for ( int i=r_start; i<=r_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
 
@@ -2359,7 +2359,7 @@ return_nearest_residue(
 	Vector center
 )
 {
-	Real min_dist = 9999.9;
+	Real min_dist = std::numeric_limits<Real>::infinity();
 	int res = 0;
 	for ( int i=begin; i<=end; ++i )
 	{
@@ -2371,11 +2371,10 @@ return_nearest_residue(
 			ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
 			}
 
-		ca_pos -= center;
-		Real tmp_dist( ca_pos.length_squared() );
-		if ( tmp_dist < min_dist ) {
+		Real dist( ca_pos.distance_squared(center) );
+		if ( dist < min_dist ) {
 			res = i;
-			min_dist = tmp_dist;
+			min_dist = dist;
 		}
 	}
 	return res;

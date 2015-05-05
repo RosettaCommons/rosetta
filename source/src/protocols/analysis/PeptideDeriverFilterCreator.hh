@@ -25,16 +25,14 @@
 namespace protocols {
 namespace analysis {
 
-class PeptideDeriverFilterCreator : public protocols::filters::FilterCreator
-{
+class PeptideDeriverFilterCreator : public protocols::filters::FilterCreator {
 public:
     virtual protocols::filters::FilterOP create_filter() const;
     virtual std::string keyname() const;
 };
 
-
-} //namespace filters
-} //namespace protein_interface_design
+} //namespace analysis
+} //namespace protocols
 
 
 #endif

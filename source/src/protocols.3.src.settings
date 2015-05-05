@@ -594,6 +594,7 @@ sources = {
 		"DME_FilterMover",
 		"DOFHistogramRecorder",
 		"DisulfideInsertionMover",
+		"DisulfideInsertionMoverCreator",
 		"DumpPdb",
 		"ExtendedPoseMover",
 		"ExtendedPoseMoverCreator",

@@ -42,7 +42,7 @@ using basic::Warning;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-static thread_local basic::Tracer TR("PeptideDeriver");
+static thread_local basic::Tracer TR("apps.public.analysis.PeptideDeriver");
 
 
 // PeptideDeriver app
@@ -82,11 +82,6 @@ main( int argc, char * argv[] ) {
 
 		//setup random numbers and options
 		core::init::init(argc, argv);
-
-		// do not output pdb by default, unless with -out:output flag
-		if( !option[ out::output ].user() ) {
-			option[ out::nooutput ].value( true );
-		}
 
 		// by default, enable jump generation when missing density
 		// this prevents Peptiderive from deriving discontinuous peptides

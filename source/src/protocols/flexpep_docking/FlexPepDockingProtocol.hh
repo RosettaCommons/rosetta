@@ -15,7 +15,6 @@
 #ifndef INCLUDED_protocols_flexpep_docking_FlexPepDockingProtocol_hh
 #define INCLUDED_protocols_flexpep_docking_FlexPepDockingProtocol_hh
 
-
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -33,7 +32,6 @@
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace flexpep_docking {
@@ -250,7 +248,7 @@ private:
 	//core::pack::task::PackerTaskOP design_task_;
 	//protocols::simple_moves::PackRotamersMoverOP design_mover_;
 
-  // the flexpepdock protocol movemap // may change throughout the run
+	// the flexpepdock protocol movemap // may change throughout the run
 	core::kinematics::MoveMapOP movemap_;
 
 	// movemap for the minimizer

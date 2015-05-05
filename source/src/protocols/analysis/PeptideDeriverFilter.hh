@@ -27,13 +27,11 @@
 
 // RosettaScripts header
 #include <basic/datacache/DataMap.hh>
-#include <utility/tag/Tag.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 // C++ headers
 #include <iosfwd>
 #include <string>
-
-using namespace basic::options;
 
 namespace protocols {
 namespace analysis {
@@ -64,17 +62,14 @@ enum PeptideDeriverReportFormat {
 /// Representation of results is delegated to implementors of this class.
 class PeptideDeriverOutputter {
 public:
-	/// @brief called by PeptideDeriverFilter to output log messages
-	virtual void trace(std::string const & message) = 0;
-
 	/// @brief called by PeptideDeriverFilter when processing of a strucuture (possibly multi-chain) starts
-	virtual void begin_structure(core::pose::Pose const &) = 0;
+	virtual void begin_structure(core::pose::Pose const &, std::string const &) = 0;
 
 	/// @brief called by PeptideDeriverFilter when a chain-pair pose is prepared (minimized and disulfide-bridge resolved)
 	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation commences on a receptor-partner pair
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string) = 0;
 
@@ -82,7 +77,7 @@ public:
 	///        the specified peptide length
 	/// this is called for every peptide length specified to
 	/// PeptideDeriverFilter, per each call to
-	/// PeptideDeriverOutputter::begin_chain_pair()
+	/// PeptideDeriverOutputter::begin_receptor_partner_pair()
 	virtual void peptide_length(core::Size const pep_length) = 0;
 
 	/// @brief called by PeptideDeriverFilter for each 'peptide' entry that should be output.
@@ -92,7 +87,7 @@ public:
 		core::pose::Pose const & cyclic_pose, core::Real const cyclic_isc) = 0;
 
 	/// @brief called by PeptideDeriverFilter when calculation concludes for a receptor-partner pair (for all the different peptide lengths)
-	virtual void end_chain_pair() = 0;
+	virtual void end_receptor_partner_pair() = 0;
 
 	/// @brief called by PeptideDeriverFilter when processing of a strucuture (all chain-pairs considered) ends
 	virtual void end_structure() = 0;
@@ -107,13 +102,11 @@ public:
 	/// @brief clear all outputters in the list.
 	void clear();
 
-	virtual void trace(std::string const & message);
-
-	virtual void begin_structure(core::pose::Pose const & pose);
+	virtual void begin_structure(core::pose::Pose const & pose, std::string const &);
 
 	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose);
 
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string);
 
@@ -125,7 +118,7 @@ public:
 		bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose,
 		core::Real const cyclic_isc);
 
-	virtual void end_chain_pair();
+	virtual void end_receptor_partner_pair();
 
 	virtual void end_structure();
 
@@ -144,16 +137,12 @@ public:
 	/// @param prefix a string prefix to prepend to each output line
 	PeptideDeriverBasicStreamOutputter(utility::io::orstream & out, std::string prefix);
 
-	virtual void trace(std::string const & ) {
-		// ignore trace messages
-	}
-
-	virtual void begin_structure(core::pose::Pose const &);
+	virtual void begin_structure(core::pose::Pose const &, std::string const &);
 
 	virtual void chain_pair_pose_prepared(core::pose::Pose const & ) {
 		// do nothing
 	}
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string);
 
@@ -165,7 +154,7 @@ public:
 		core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled,
 		core::pose::Pose const &, core::Real const cyclic_isc);
 
-	virtual void end_chain_pair();
+	virtual void end_receptor_partner_pair();
 
 	virtual void end_structure();
 
@@ -188,18 +177,16 @@ public:
 	/// @param prefix a string prefix to prepend to each output line
 	PeptideDeriverMarkdownStreamOutputter(utility::io::orstream & out, std::string prefix);
 
-	virtual void begin_structure(core::pose::Pose const & pose);
+	virtual void begin_structure(core::pose::Pose const & pose, std::string const &);
 
 	// TODO : do we want to output anything here? Probably not.
 	virtual void chain_pair_pose_prepared(core::pose::Pose const &) {
 		// do nothing
 	}
 
-	virtual void trace(std::string const & message);
-
 	virtual void end_structure();
 
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const total_isc,
 		std::string const & options_string);
 
@@ -211,7 +198,7 @@ public:
 		bool const was_cyclic_pep_modeled, core::pose::Pose const &,
 		core::Real const cyclic_isc );
 
-	virtual void end_chain_pair();
+	virtual void end_receptor_partner_pair();
 
 private:
 	/// clear accumulating member variables
@@ -245,23 +232,19 @@ public:
 			bool const is_dump_prepared_pose, bool const is_dump_cyclic_poses,
 			core::scoring::ScoreFunctionCOP scorefxn);
 
-	virtual void trace(std::string const &) {
-		// do nothing
-	}
-
-	virtual void begin_structure(core::pose::Pose const &) {
+	virtual void begin_structure(core::pose::Pose const &, std::string const &) {
 		// do nothing
 	}
 
 	virtual void chain_pair_pose_prepared(core::pose::Pose const & pose);
 
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 		char const partner_chain_letter, core::Real const,
 		std::string const &);
 
 	virtual void peptide_length(core::Size const pep_length);
 
-	virtual void end_chain_pair() {
+	virtual void end_receptor_partner_pair() {
 		// do nothing
 	}
 
@@ -307,6 +290,7 @@ private:
 /// - is_dump_cyclic_poses
 /// - is_dump_prepared_pose
 /// - is_dump_report_file
+/// - is_report_gzip
 /// See each flag's documentation for their effect. These flags are settable
 /// via command-line or RosettaScripts options, and may also be set
 /// programmatically. These only affect the output coming from report(), since
@@ -380,6 +364,9 @@ public:
 	bool get_is_dump_report_file() const { return is_dump_report_file_; }
 	void set_is_dump_report_file(bool const value) { is_dump_report_file_ = value; }
 
+	bool get_is_report_gzip() const { return is_report_gzip_; }
+	void set_is_report_gzip(bool const value) { is_report_gzip_ = value; }
+
 	bool get_is_do_minimize() const { return is_do_minimize_; }
 	void set_is_do_minimize(bool const value) { is_do_minimize_ = value; }
 
@@ -408,13 +395,13 @@ public:
 
 	/// @brief Calculate the interface score, i.e. addition to energy
 	///        resulting from the complex coming together.
-	core::Real calculate_interface_score(core::pose::Pose const & pose) const;
+	core::Real calculate_interface_score(core::pose::Pose const & pose, core::Size const jump_id) const;
 
 	// @brief Given a two-monomer pose, calculates each the interface score (delta between energy of complex and of the seperated monomers) is calculated for each residue.
-	void calculate_per_residue_interface_score(core::pose::Pose & chain_pair_pose, std::set<core::Size> interface_residues, std::ostream & report_out) const;
+	void calculate_per_residue_interface_score(core::pose::Pose & chain_pair_pose, std::set<core::Size> interface_residues, std::ostream & report_out, core::Size const jump_id) const;
 
 	// @brief given two protein chains, build one pose containing the first pose and a peptide cut from the second pose
-	core::pose::PoseOP build_receptor_peptide_pose (core::pose::Pose const & receptor_pose, core::pose::Pose const & partner_pose, core::Size peptide_start, core::Size peptide_end) const;
+	core::pose::PoseOP build_receptor_peptide_pose (core::pose::Pose const & receptor_pose, core::pose::Pose const & partner_pose, core::Size peptide_start, core::Size peptide_end, core::Size & jump_id) const;
 
 
 	/// @brief overload of PeptideDeriverFilter::derive_peptide() which accepts
@@ -481,6 +468,9 @@ private:
 
 	/// @brief whether to output the peptide information report to a separate file (rather than the log). Only affects the way report() does output.
 	bool is_dump_report_file_;
+
+	/// @brief whether to gzip report file; only relevant when is_dump_report_file is true. Only affects the way report() does output.
+	bool is_report_gzip_;
 
 	/// @brief whether to minimize the structure before starting the algorithm
 	bool is_do_minimize_;

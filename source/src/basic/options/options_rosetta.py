@@ -1088,6 +1088,8 @@ Options = Option_Group( '',
 		Option( 'update_pymol_on_conformation_changes_only', 'Boolean', default = 'false', desc = 'Only update the simulation in pymol on conformation change.'),
 		Option( 'keep_pymol_simulation_history', 'Boolean', desc='Keep history when using show_simulation_in_pymol flag?', default='false' ),
 
+		Option( 'insert_disulfide_constraint_weight', 'Real', default='0.0', desc='Weight of the constraints on disulfide bonds formed by the DisulfideInsertionMover; EXPERIMENTAL'),
+
 	), # -run
 
 	# jd2 Options ---------------------------------------------------------
@@ -6460,6 +6462,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'do_minimize', 'Boolean', desc = 'Perform minimization before everything.', default = 'true' ),
 		Option( 'optimize_cyclic_threshold', 'Real', desc = 'Choose value of peptide interface score percent of total isc from which to optimize cyclic peptide', default = '0.35' ),
 		Option( 'report_format', 'String', desc = 'The format of the report. Either \'basic\' (easily parsable format) or \'markdown\' (pretty, readable, but verbose format).', default = 'markdown' ),
+		Option( 'report_gzip', 'Boolean', desc = 'Gzip report file (only if -dump_report_file is enabled)', default = 'false' ),
 	), # peptide_deriver
 
 	## these are just temporary for hacking/debugging -- if they conflict with something else let me know and

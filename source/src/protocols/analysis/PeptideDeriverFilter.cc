@@ -14,6 +14,7 @@
 /// @author Orly Marcu (orly.marcu@mail.huji.ac.il)
 /// @date   Jul. 30, 2014
 
+// TODO : consider whether JD2 has infrastructure to replace PeptideDeriverJobOutputter
 
 // PeptideDeriverFilter
 
@@ -22,7 +23,6 @@
 #include <protocols/analysis/PeptideDeriverFilter.hh>
 
 // Project headers
-#include <basic/MetricValue.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
@@ -62,12 +62,15 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 //Utility headers
+#include <basic/MetricValue.hh>
 #include <basic/options/keys/peptide_deriver.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/ocstream.hh>
+#include <utility/tag/Tag.hh>
 
 // RosettaScripts headers
 #include <protocols/rosetta_scripts/util.hh>
@@ -82,7 +85,6 @@
 namespace protocols {
 namespace analysis {
 
-// TODO : add a PeptideDeriverJobOutputter which uses JD2 to output data to the PDB/scorefile.
 static thread_local basic::Tracer tracer( "protocols.analysis.PeptideDeriverFilter" );
 
 // BEGIN PeptideDeriverOutputterContainer implementation
@@ -95,15 +97,9 @@ void PeptideDeriverOutputterContainer::clear() {
 	list_.clear();
 }
 
-void PeptideDeriverOutputterContainer::trace(std::string const & message) {
+void PeptideDeriverOutputterContainer::begin_structure(core::pose::Pose const & pose, std::string const &name) {
 	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
-		outputter->trace(message);
-	}
-}
-
-void PeptideDeriverOutputterContainer::begin_structure(core::pose::Pose const & pose) {
-	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
-		outputter->begin_structure(pose);
+		outputter->begin_structure(pose, name);
 	}
 }
 
@@ -113,11 +109,11 @@ void PeptideDeriverOutputterContainer::chain_pair_pose_prepared(core::pose::Pose
 	}
 }
 
-void PeptideDeriverOutputterContainer::begin_chain_pair(char const receptor_chain_letter,
+void PeptideDeriverOutputterContainer::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
 	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
-		outputter->begin_chain_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);
+		outputter->begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string);
 	}
 }
 
@@ -134,9 +130,9 @@ void PeptideDeriverOutputterContainer::peptide_entry(core::pose::Pose const & po
 	}
 }
 
-void PeptideDeriverOutputterContainer::end_chain_pair() {
+void PeptideDeriverOutputterContainer::end_receptor_partner_pair() {
 	BOOST_FOREACH( PeptideDeriverOutputterOP const outputter, list_ ) {
-		outputter->end_chain_pair();
+		outputter->end_receptor_partner_pair();
 	}
 }
 
@@ -156,11 +152,11 @@ PeptideDeriverBasicStreamOutputter::PeptideDeriverBasicStreamOutputter(utility::
 	prefix_ = prefix;
 }
 
-void PeptideDeriverBasicStreamOutputter::begin_structure(core::pose::Pose const &) {
-	(*out_p_) << prefix_ << "# structure start" << std::endl;
+void PeptideDeriverBasicStreamOutputter::begin_structure(core::pose::Pose const &, std::string const &name) {
+	(*out_p_) << prefix_ << "# structure: " << name << std::endl;
 }
 
-void PeptideDeriverBasicStreamOutputter::begin_chain_pair(char const receptor_chain_letter,
+void PeptideDeriverBasicStreamOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
 	(*out_p_) << prefix_ << "# options: " << options_string << std::endl;
@@ -174,16 +170,16 @@ void PeptideDeriverBasicStreamOutputter::peptide_length(core::Size const pep_len
 void PeptideDeriverBasicStreamOutputter::peptide_entry(core::pose::Pose const & , PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 	core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const &, core::Real const cyclic_isc) {
 
-	// TODO : perhaps change back to "| " is beginning of line? perhaps don't output enum value but value name? --yuvals
 	(*out_p_) << prefix_
+		<< "| "
 		<< entry_type << " "
 		<< pep_start << " "
-		<< linear_isc << " "
-		<< disulfide_info << " "
-		<< (was_cyclic_pep_modeled? (boost::format("%1$.3f") % cyclic_isc).str() : "#")
+		<< linear_isc
+		<< (disulfide_info.length()>0? " " : "") << disulfide_info
+		<< (was_cyclic_pep_modeled? (boost::format(" %1$.3f") % cyclic_isc).str() : "")
 		<< std::endl;
 }
-void PeptideDeriverBasicStreamOutputter::end_chain_pair() {
+void PeptideDeriverBasicStreamOutputter::end_receptor_partner_pair() {
 	(*out_p_) << prefix_ << "# end chain pair" << std::endl;
 }
 void PeptideDeriverBasicStreamOutputter::end_structure() {
@@ -207,10 +203,10 @@ PeptideDeriverMarkdownStreamOutputter::PeptideDeriverMarkdownStreamOutputter(uti
 	prefix_ = prefix;
 }
 
-void PeptideDeriverMarkdownStreamOutputter::begin_structure(core::pose::Pose const & pose) {
+void PeptideDeriverMarkdownStreamOutputter::begin_structure(core::pose::Pose const & pose, std::string const &name) {
 	clear_buffers();
 
-	header_ << prefix_ << "# Peptiderive report file" << std::endl
+	header_ << prefix_ << "# Peptiderive report file " << name << std::endl
 		<< prefix_ << std::endl
 		<< prefix_ << "- Chains: " << pose.conformation().num_chains() << std::endl
 		<< prefix_ << "- Fold tree: " << pose.fold_tree() << std::endl
@@ -231,10 +227,6 @@ void PeptideDeriverMarkdownStreamOutputter::begin_structure(core::pose::Pose con
 
 }
 
-void PeptideDeriverMarkdownStreamOutputter::trace(std::string const & message) {
-	tracer << prefix_ << "# " << message << std::endl;
-}
-
 void PeptideDeriverMarkdownStreamOutputter::end_structure() {
 	footer_ << prefix_ << "*end of report*";
 
@@ -247,7 +239,7 @@ void PeptideDeriverMarkdownStreamOutputter::end_structure() {
 	clear_buffers();
 }
 
-void PeptideDeriverMarkdownStreamOutputter::begin_chain_pair(char const receptor_chain_letter,
+void PeptideDeriverMarkdownStreamOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const total_isc,
 	std::string const & options_string) {
 
@@ -274,10 +266,9 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_length(core::Size const pep_
 void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const & pose, PeptideDeriverEntryType const entry_type, core::Size const pep_start,
 	core::Real const linear_isc, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const &, core::Real const cyclic_isc ) {
 
-	const std::string cyclic_isc_string = (was_cyclic_pep_modeled? (boost::format("%1$.3f") % cyclic_isc).str() : "N/A");
+	std::string const cyclic_isc_string = (was_cyclic_pep_modeled? (boost::format("%1$.3f") % cyclic_isc).str() : "N/A");
 
-	// TODO : this assumes the peptide is always the second chain; perhaps accept as parameter in constructor? --yuvals
-	const core::Size PEPTIDE_CHAIN = 2;
+	core::Size const PEPTIDE_CHAIN = 2;
 
 	switch (entry_type) {
 		case ET_BEST_LINEAR:
@@ -318,12 +309,13 @@ void PeptideDeriverMarkdownStreamOutputter::peptide_entry(core::pose::Pose const
 					% cyclic_isc_string ) << std::endl;
 			break;
 
-		// TODO : perhaps add a default: case which will throw an exception?
+		default: // should never happen; means code wasn't written well
+			utility_exit_with_message("Invalid enum value provided for entry_type");
 	}
 }
 
 
-void PeptideDeriverMarkdownStreamOutputter::end_chain_pair() {
+void PeptideDeriverMarkdownStreamOutputter::end_receptor_partner_pair() {
 	(*out_p_).flush();
 }
 
@@ -339,7 +331,6 @@ void PeptideDeriverPoseOutputter::output_pose( core::pose::Pose & pose, std::str
 		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose( current_job, pose, pose_name );
 	}
 	else {
-		//	// TODO : protocols::jd2::JobDistributor::get_instance()->current_output_name() +
 		std::string const file_name(pose_name + ".pdb");
 	    utility::io::ozstream out_stream( file_name );
 		core::io::pdb::FileData::dump_pdb( pose, out_stream );
@@ -360,13 +351,13 @@ void PeptideDeriverPoseOutputter::chain_pair_pose_prepared(core::pose::Pose cons
 	//       in the meantime, it makes sense to talk about the complex just before
 	//       peptiderive goes over it
 
-	// save a copy of the prepared pose aside, but we output only on begin_chain_pair()
+	// save a copy of the prepared pose aside, but we output only on begin_receptor_partner_pair()
 	// since we want to include chain letter in output, and we don't get them from here
 	current_chain_pair_pose_ = core::pose::PoseOP( new core::pose::Pose( pose ) );
 	is_chain_pair_new_ = true;
 }
 
-void PeptideDeriverPoseOutputter::begin_chain_pair(char const receptor_chain_letter,
+void PeptideDeriverPoseOutputter::begin_receptor_partner_pair(char const receptor_chain_letter,
 	char const partner_chain_letter, core::Real const,
 	std::string const &) {
 	current_receptor_chain_letter_ = receptor_chain_letter;
@@ -394,7 +385,7 @@ void PeptideDeriverPoseOutputter::peptide_entry(core::pose::Pose const & pose, P
 	core::Real const, std::string const & disulfide_info, bool const was_cyclic_pep_modeled, core::pose::Pose const & cyclic_pose, core::Real const) {
 
 	if (is_dump_best_peptide_pose_ && (entry_type == ET_BEST_LINEAR || (entry_type == ET_BEST_CYCLIC && was_cyclic_pep_modeled))) {
-		const std::string lin_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_linear_peptide")
+		std::string const lin_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_linear_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_
@@ -403,7 +394,7 @@ void PeptideDeriverPoseOutputter::peptide_entry(core::pose::Pose const & pose, P
 		output_pose(temp_pose, lin_pose_name);
 
 		if ( was_cyclic_pep_modeled ) {
-			const std::string cyc_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_cyclic_peptide")
+			std::string const cyc_pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_best_%4%_cyclic_peptide")
 						% current_receptor_chain_letter_
 						% current_partner_chain_letter_
 						% current_peptide_length_
@@ -414,7 +405,7 @@ void PeptideDeriverPoseOutputter::peptide_entry(core::pose::Pose const & pose, P
 
 	}
 	else if (is_dump_cyclic_poses_ && entry_type == ET_GENERAL && was_cyclic_pep_modeled) {
-		const std::string pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_%4%_cyclic_peptide")
+		std::string const pose_name = ( boost::format("receptor%1%_partner%2%_%3%aa_%4%_cyclic_peptide")
 					% current_receptor_chain_letter_
 					% current_partner_chain_letter_
 					% current_peptide_length_
@@ -449,26 +440,27 @@ void PeptideDeriverFilter::parse_options() {
 
 	// the default value for pep_lengths is in options_rosetta.py
 	// NOTE : the leading :: is to disambiguate peptide_deriver from the protocols:: namespace with the top-level one
-	pep_lengths_ = option[basic::options::OptionKeys::peptide_deriver::pep_lengths]();
+	set_pep_lengths(basic::options::option[basic::options::OptionKeys::peptide_deriver::pep_lengths]());
 
-	set_is_skip_zero_isc(option[basic::options::OptionKeys::peptide_deriver::skip_zero_isc]());
-	set_is_dump_peptide_pose(option[basic::options::OptionKeys::peptide_deriver::dump_peptide_pose]());
-	set_is_dump_report_file(option[basic::options::OptionKeys::peptide_deriver::dump_report_file]());
-	set_is_dump_prepared_pose(option[basic::options::OptionKeys::peptide_deriver::dump_prepared_pose]());
-	set_is_dump_cyclic_poses(option[basic::options::OptionKeys::peptide_deriver::dump_cyclic_poses]());
-	set_is_do_minimize(option[basic::options::OptionKeys::peptide_deriver::do_minimize]());
-	set_optimize_cyclic_threshold(option[basic::options::OptionKeys::peptide_deriver::optimize_cyclic_threshold]());
-	set_report_format( PeptideDeriverFilter::parse_report_format_string(option[basic::options::OptionKeys::peptide_deriver::report_format]()) );
+	set_is_skip_zero_isc(basic::options::option[basic::options::OptionKeys::peptide_deriver::skip_zero_isc]());
+	set_is_dump_peptide_pose(basic::options::option[basic::options::OptionKeys::peptide_deriver::dump_peptide_pose]());
+	set_is_dump_report_file(basic::options::option[basic::options::OptionKeys::peptide_deriver::dump_report_file]());
+	set_is_report_gzip(basic::options::option[basic::options::OptionKeys::peptide_deriver::report_gzip]());
+	set_is_dump_prepared_pose(basic::options::option[basic::options::OptionKeys::peptide_deriver::dump_prepared_pose]());
+	set_is_dump_cyclic_poses(basic::options::option[basic::options::OptionKeys::peptide_deriver::dump_cyclic_poses]());
+	set_is_do_minimize(basic::options::option[basic::options::OptionKeys::peptide_deriver::do_minimize]());
+	set_optimize_cyclic_threshold(basic::options::option[basic::options::OptionKeys::peptide_deriver::optimize_cyclic_threshold]());
+	set_report_format( PeptideDeriverFilter::parse_report_format_string(basic::options::option[basic::options::OptionKeys::peptide_deriver::report_format]()) );
 
 	utility::vector1<char> restrict_receptors_to_chains;
 
-	BOOST_FOREACH(std::string const chain_string, option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]()){
+	BOOST_FOREACH(std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_receptors_to_chains]()){
 		assert(chain_string.size() == 1);
 		restrict_receptors_to_chains.push_back(chain_string[0]);
 	}
 
 	utility::vector1<char> restrict_partners_to_chains;
-	BOOST_FOREACH(std::string const chain_string, option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]()){
+	BOOST_FOREACH(std::string const chain_string, basic::options::option[basic::options::OptionKeys::peptide_deriver::restrict_partners_to_chains]()){
 		assert(chain_string.size() == 1);
 		restrict_partners_to_chains.push_back(chain_string[0]);
 	}
@@ -504,6 +496,7 @@ PeptideDeriverFilter::assign(PeptideDeriverFilter & lhs, PeptideDeriverFilter co
 	lhs.is_skip_zero_isc_          = rhs.is_skip_zero_isc_         ;
 	lhs.is_dump_peptide_pose_      = rhs.is_dump_peptide_pose_     ;
 	lhs.is_dump_report_file_       = rhs.is_dump_report_file_      ;
+	lhs.is_report_gzip_            = rhs.is_report_gzip_           ;
 	lhs.is_dump_prepared_pose_     = rhs.is_dump_prepared_pose_    ;
 	lhs.is_dump_cyclic_poses_      = rhs.is_dump_cyclic_poses_     ;
 	lhs.is_do_minimize_            = rhs.is_do_minimize_           ;
@@ -531,7 +524,10 @@ PeptideDeriverFilter::minimize(core::pose::Pose & pose) const {
 			));
 	core::conformation::Conformation const & conformation(pose.conformation());
 	for (core::Size i = 1; i <= pose.total_residue(); ++i) {
-		core::id::AtomID CAi( pose.residue( i ).atom_index(" CA "), i );
+		if ( ! pose.residue(i).is_protein() ) {
+			continue;
+		}
+		core::id::AtomID CAi( pose.residue(i).atom_index("CA"), i );
 		cst_set->add_constraint( core::scoring::constraints::ConstraintCOP(
 				new core::scoring::constraints::CoordinateConstraint( CAi, CAi,
 					conformation.xyz( CAi ), spring ) ) );
@@ -583,7 +579,7 @@ PeptideDeriverFilter::parse_report_format_string(
 /// @param pose the pose to prepare.
 void
 PeptideDeriverFilter::prepare_pose(
-		PeptideDeriverOutputter & output,
+		PeptideDeriverOutputter & ,
 		core::pose::Pose & pose) const {
 	// check number of chains
 	if (pose.conformation().num_chains() < 2) {
@@ -593,15 +589,15 @@ PeptideDeriverFilter::prepare_pose(
 
 	if ( is_do_minimize_ ) {
 		// minimize pose
-		output.trace("Start: minimization");
+		tracer << "Start: minimization" << std::endl;
 		minimize(pose);
-		output.trace("End: minimization");
+		tracer << "End: minimization" << std::endl;
 	}
 
 	// detect SS
-	output.trace("Start: detect disulfides");
+	tracer << "Start: detect disulfides" << std::endl;
 	pose.conformation().detect_disulfides();
-	output.trace("End: detect disulfides");
+	tracer << "End: detect disulfides" << std::endl;
 }
 
 // the report() method is where PeptideDeriver analyzes the pose
@@ -609,22 +605,23 @@ PeptideDeriverFilter::prepare_pose(
 void
 PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_pose) const {
 
+	tracer << "Start PeptideDeriver report" << std::endl;
+
 	// determine what to output, where and how
 	utility::io::ozstream file_out;
 	utility::io::ocstream log_out( out );
 
+	std::string const pose_name = ( protocols::jd2::jd2_used()? protocols::jd2::JobDistributor::get_instance()->current_output_name() : "" );
+
 	std::string prefix;
 	if ( is_dump_report_file_ ) {
-		std::string file_name = ( protocols::jd2::jd2_used()?
-			protocols::jd2::JobDistributor::get_instance()->current_output_name() + "." : "" ) +
-			"peptiderive.txt";
+		std::string path = ( basic::options::option[ basic::options::OptionKeys::out::path::all ].user()? basic::options::option[ basic::options::OptionKeys::out::path::all ]().path() : "" );
+		std::string file_name = path + ( pose_name.length()? pose_name + "." : "" ) + "peptiderive.txt";
+		if ( is_report_gzip_ ) {
+			file_name += ".gz";
+		}
+		tracer << "Setting up report file output to " << file_name << std::endl;
 		file_out.open( file_name );
-	}
-	else {
-		// we might be outputting to a common log, so set a prefix
-		prefix = "[PeptideDeriver] " +
-			( protocols::jd2::jd2_used()? protocols::jd2::JobDistributor::get_instance()->current_output_name() : "" ) +
-			" ";
 	}
 
 	PeptideDeriverOutputterContainer output;
@@ -636,29 +633,28 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
  	// this is simpler than creating a full-fledged factory. Sorry, design pattern people. --yuvals
 	switch ( report_format_ ) {
 		case PRF_MARKDOWN:
-			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , prefix ) ) );
+			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverMarkdownStreamOutputter( output_stream , /*prefix=*/"" ) ) );
 			break;
 		case PRF_BASIC:
-			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , prefix ) ) );
+			output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverBasicStreamOutputter( output_stream , /*prefix=*/"" ) ) );
 			break;
 	}
 
 
-	if ( is_dump_peptide_pose_ || is_dump_prepared_pose_ ) {
-		// TODO : add is_dump_cyclic_poses_ --yuvals
+	if ( is_dump_peptide_pose_ || is_dump_prepared_pose_ || is_dump_cyclic_poses_ ) {
+		tracer << "Setting up pose output ("
+			<< "peptides=" << is_dump_peptide_pose_ << ","
+			<< "prepared=" << is_dump_prepared_pose_ << ","
+			<< "cyclic=" << is_dump_cyclic_poses_ << ")"
+			<< std::endl;
 		output.push_back( PeptideDeriverOutputterOP( new PeptideDeriverPoseOutputter( is_dump_peptide_pose_,
 				is_dump_prepared_pose_, is_dump_cyclic_poses_, scorefxn_deriver_ ) ) );
 	}
 
 	// prepare the PDB
 
-	output.begin_structure(orig_pose);
-
-	// TODO : consider moving minimization to each chain pair
-	//core::pose::Pose pose(orig_pose);
-	//prepare_pose( prefix, pose );
-
-	//output.structure_prepared(pose);
+	tracer << "Begin structure " << pose_name << std::endl;
+	output.begin_structure(orig_pose, pose_name);
 
 	// derive
 
@@ -704,6 +700,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 	}
 
 
+	tracer << "End structure " << pose_name << std::endl;
 	output.end_structure();
 
 
@@ -752,8 +749,6 @@ PeptideDeriverFilter::push_chain_residue_indices(core::pose::Pose const & many_c
 /// @param both_ways whether the two specified chains may play the role of both the partner and
 ///        the receptor. When false, the first chain is considered to be the receptor, and the
 ///        second one is considered to be the partner
-// TODO : optionally use JobOutputter rather than ostream & out (and change format to CSV?). See how this coincides with RosettaScripts.
-// TODO : add option to derive only with only certain chains as recceptors and/or partners
 
 void
 PeptideDeriverFilter::derive_peptide(
@@ -777,8 +772,10 @@ PeptideDeriverFilter::derive_peptide(
 	prepare_pose(output, chain_pair_pose);
 
 	// calculate the total energy of the chain pair pose
-	core::Real total_isc = calculate_interface_score(chain_pair_pose);
+	core::Size const jump_id = chain_pair_pose.fold_tree().get_jump_that_builds_residue( chain_pair_pose.conformation().chain_begin(2) );
+	core::Real const total_isc( calculate_interface_score(chain_pair_pose, jump_id) );
 
+	tracer << "Chain pair prepared " << chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(1)) << chain_pair_pose.pdb_info()->chain(chain_pair_pose.conformation().chain_begin(2)) << std::endl;
 	output.chain_pair_pose_prepared(chain_pair_pose);
 
 	// derive the peptide
@@ -822,8 +819,6 @@ PeptideDeriverFilter::derive_peptide(
 	char receptor_chain_letter = receptor_pose.pdb_info()->chain(receptor_start);
 	char partner_chain_letter = partner_pose.pdb_info()->chain(partner_start);
 
-	// TODO : include job name here too
-
 	std::ostringstream options_string;
 
 	// show options which have an effect on the way we're running
@@ -831,26 +826,34 @@ PeptideDeriverFilter::derive_peptide(
 				<< "is_skip_zero_isc= "      << is_skip_zero_isc_                << " "
 				<< "is_do_minimize= "        << is_do_minimize_                  ;
 
-	output.begin_chain_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string.str());
+	tracer << "Begin receptor-partner pair " << receptor_chain_letter << partner_chain_letter << std::endl;
+	output.begin_receptor_partner_pair(receptor_chain_letter, partner_chain_letter, total_isc, options_string.str());
 
 	// this is used to skip discontinuities in the chain (and not derive discontinuous peptides)
 	utility::vector1<core::Size> partner_cutpoints = partner_pose.fold_tree().cutpoints();
+	if ( ! partner_cutpoints.empty() ) {
+		tracer << "Partner cutpoints: " << utility::join(partner_cutpoints, ",") << std::endl;
+	}
 
 	// will be applied for each peptide with significant contribution to binding
 	// where residues immediately before and after can be mutated to cysteins and form a disulfide bridge
 	const core::Size peptide_chain = 2;
+
+	// TODO : perhaps we want the jump in the movemap that DisulfideInsertionMover uses to be user-defined (command-line option), to prevent the peptide from escaping the binding pocket
 	protocols::simple_moves::DisulfideInsertionMoverOP disulfide_inserter( new protocols::simple_moves::DisulfideInsertionMover(peptide_chain) );
 
 	BOOST_FOREACH( core::Size const pep_length, pep_lengths_ ){
 
 		if (pep_length > (partner_end - partner_start + 1)) {
-			// TODO : output.trace(boost::format("Skip length %1% because it is larger than chain length %2%") % pep_length % (partner_end - partner_start + 1));
+			tracer << "Skip peptide length " << pep_length << " as it is larger than the chain" << std::endl;
 			continue;
 		}
+		tracer << "Peptide length " << pep_length << std::endl;
 		output.peptide_length(pep_length);
 
 		const core::Real UNLIKELY_ISC_VALUE = 2e6;
 		const core::Real CHECK_CYCLIZABLE_THRESHOLD_ISC = -0.01;
+		const core::Real PRACTICALLY_ZERO_ISC = 1e-7;
 
 		// the following list of variables, which hold information about the best peptides (in terms of
 		// cyclic isc or linear isc), is a bit verbose, and could perhaps be shortened by creating a
@@ -877,41 +880,57 @@ PeptideDeriverFilter::derive_peptide(
 		bool current_peptide_cyclic_model_created = false;
 
 		// keep track of the next chain break
-		core::Size next_cutpoint_index = 1;
-		core::Size next_cutpoint = 0;
-		if ( next_cutpoint_index < partner_cutpoints.size() ) {
-			next_cutpoint = partner_cutpoints[next_cutpoint_index];
-		}
+		utility::vector1<core::Size>::const_iterator next_cutpoint_it = partner_cutpoints.begin();
+		/*
+			pseudo-code for better handling of non-protein residues :
+			bool[partner_length] valid_start_points;
+			foreach ( residue in partner_pose ) {
+				if ( (! residue.is_protein()) || residue.is_cutpoint() ) {
+					valid_start_points.set_range(residue.index-pep_length, pep_length, false); // make sure indexes work out
+				}
+			}
+		*/
 
 		for (core::Size pep_start = partner_start; pep_start <= partner_end - pep_length + 1; ++pep_start) {
 			core::Size pep_end = pep_start + pep_length - 1;
+
+			// TODO : skip windows with non-protein residues
+			/*
+				pseudo-code for better handling of non-protein residues :
+				if ( ! valid_start_point[pep_start] ) continue;
+			*/
 
 			// skip sequences which have cutpoints
 			// NOTE : for this to work, Rosetta must generate cutpoints where there is a chain discontinuity
 			//        This is enforced by using the -in:missing_density_to_jump command line option, which is
 			//        turned on by default in the Peptiderive app
-			if ( next_cutpoint >= pep_start && next_cutpoint <= pep_end ) {
-				pep_start = next_cutpoint; // it will be incremented further after 'continue'
-				++next_cutpoint_index;
-				if ( next_cutpoint_index >= partner_cutpoints.size() ) {
-					next_cutpoint = -1;
-				}
-				else {
-					next_cutpoint = partner_cutpoints[next_cutpoint_index];
-				}
+			if ( (next_cutpoint_it != partner_cutpoints.end()) && (*next_cutpoint_it >= pep_start) && (*next_cutpoint_it < pep_end) ) {
+				tracer << "Skip " << pep_start << "-" << *next_cutpoint_it << ", contains cutpoint" << std::endl;
+				pep_start = *next_cutpoint_it; // it will be incremented further after 'continue'
+				++next_cutpoint_it;
 				continue;
 			}
 
 			// assemble a pose with the receptor and a cut-out peptide, starting at pep_start and ending at pep_end
 			// here, the complex is the receptor and the derived peptide
-			core::pose::PoseOP receptor_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, pep_start, pep_end);
+			// NOTE : calculate_interface_score() needs to know the jump number, and for that we need to know the residue of the jump
+			//        options were to use receptor_peptide_pose->fold_tree().get_residue_edge(receptor_pose.total_residue() + 1), but we would have to
+			//        know whether to look at the Edge's start() or stop() for the jump, and the depends on how build_receptor_peptide_pose() builds
+			//        the pose. So it seemed preferable to just output it from build_receptor_peptide_pose().
+			core::Size linear_jump_id;
+			core::pose::PoseOP receptor_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, pep_start, pep_end, linear_jump_id);
 
 			// evaluate the newly created pose
-			const core::Real linear_isc = calculate_interface_score(*receptor_peptide_pose);
+			const core::Real linear_isc = calculate_interface_score(*receptor_peptide_pose, linear_jump_id);
 
 			// skip zero linear_isc if requested
-			if ((is_skip_zero_isc_) && (linear_isc == 0)) {
-				pep_start += ( pep_length - 1 );
+			if ((is_skip_zero_isc_) && (fabs(linear_isc) < PRACTICALLY_ZERO_ISC)) {
+				tracer << "Skip " << pep_start << "-" << pep_end << ", zero (linear) isc" << std::endl;
+				// we skipped a couple of residues, so make sure that the next_cutpoint_it is updated
+				while ( (next_cutpoint_it != partner_cutpoints.end()) && (*next_cutpoint_it < pep_end) ) {
+					++next_cutpoint_it;
+				}
+				pep_start = pep_end;
 				continue;
 			}
 
@@ -925,25 +944,31 @@ PeptideDeriverFilter::derive_peptide(
 
 			core::Real cyclic_isc = UNLIKELY_ISC_VALUE;
 			core::pose::PoseOP receptor_cyclic_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
-			if (linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC && n_putative_cyd>=partner_start && c_putative_cyd<=partner_end) {
+			core::pose::PoseOP receptor_pre_cyclization_peptide_pose = receptor_peptide_pose; // NOTE : this is a dummy value so that we don't dereference NULL; see below
+			if ((linear_isc<CHECK_CYCLIZABLE_THRESHOLD_ISC) && (n_putative_cyd>=partner_start) && (c_putative_cyd<=partner_end)) {
 				protocols::simple_moves::DisulfideCyclizationViability cyclization_viable(disulfide_inserter->determine_cyclization_viability(partner_pose, n_putative_cyd, c_putative_cyd));
 				current_peptide_cyclizable = ( (cyclization_viable == protocols::simple_moves::DCV_CYCLIZABLE) || (cyclization_viable == protocols::simple_moves::DCV_ALREADY_CYCLIZED) );
 
 				if (current_peptide_cyclizable) {
 					any_peptide_cyclizable = true;
 
-					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-"<< c_putative_cyd;
+					disulfide_info << partner_chain_letter << "_" << n_putative_cyd << "-" << c_putative_cyd;
 
 					// For peptides that can be closed and contribute more then third of the binding energy, mutate to cysteins and re-evaluate energy
-					if (linear_isc / total_isc >= optimize_cyclic_threshold_) {
-						receptor_cyclic_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd);
+					if ((linear_isc / total_isc) >= optimize_cyclic_threshold_) {
+						// NOTE : see note on linear_jump_id
+						core::Size cyclic_jump_id;
+						receptor_pre_cyclization_peptide_pose = build_receptor_peptide_pose(receptor_pose, partner_pose, n_putative_cyd, c_putative_cyd, cyclic_jump_id);
+						// create a copy of the linear pose which we are going to mutate and model
+						// that is, for peptides for which we model the cyclic peptide, we also want to keep the expanded (+-1 residue) linear version
+						receptor_cyclic_peptide_pose = core::pose::PoseOP( new core::pose::Pose( *receptor_pre_cyclization_peptide_pose ) );
 						//define and create disulfide bond between the edges of the derived peptide using the DisulfideInsertionMover
 						disulfide_inserter->apply(*receptor_cyclic_peptide_pose);
 						// any_peptide_cyclic_model_created checks if any peptide in the pose has been cyclized
 						// current_peptide_cyclic_model_created checks if the current peptide has been cyclized
 						any_peptide_cyclic_model_created = true;
 						current_peptide_cyclic_model_created = true;
-						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose);
+						cyclic_isc = calculate_interface_score(*receptor_cyclic_peptide_pose, cyclic_jump_id);
 				   }
 				}
 			}
@@ -957,7 +982,7 @@ PeptideDeriverFilter::derive_peptide(
 				lin_isc_of_best_lin = linear_isc;
 				cyc_isc_of_best_lin = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
 				disulfide_info_of_best_lin = disulfide_info.str();
-				lin_pose_of_best_lin = receptor_peptide_pose;
+				lin_pose_of_best_lin = (current_peptide_cyclic_model_created? receptor_pre_cyclization_peptide_pose : receptor_peptide_pose);
 				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
 				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
 				cyc_pose_of_best_lin = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
@@ -1005,7 +1030,7 @@ PeptideDeriverFilter::derive_peptide(
 				lin_isc_of_best_cyc = linear_isc;
 				cyc_isc_of_best_cyc = (current_peptide_cyclic_model_created? cyclic_isc : UNLIKELY_ISC_VALUE);
 				disulfide_info_of_best_cyc = disulfide_info.str();
-				lin_pose_of_best_cyc = receptor_peptide_pose;
+				lin_pose_of_best_cyc = (current_peptide_cyclic_model_created? receptor_pre_cyclization_peptide_pose : receptor_peptide_pose);
 				// TODO : solve the need for a dummy value for receptor_cyclic_peptide_pose
 				// NOTE : receptor_peptide_pose is used here as dummy, since we can't pass NULL as reference
 				cyc_pose_of_best_cyc = (current_peptide_cyclic_model_created? receptor_cyclic_peptide_pose : receptor_peptide_pose);
@@ -1015,43 +1040,38 @@ PeptideDeriverFilter::derive_peptide(
 
 		//since the best disulfide position is not always the position of the best linear position and to make things less confusing
 		//best cyclic information will be printed in a line of its own
+		tracer << "Outputting best peptides" << std::endl;
 		output.peptide_entry(*lin_pose_of_best_lin, ET_BEST_LINEAR, pep_start_of_best_lin, normalize_isc(lin_isc_of_best_lin), disulfide_info_of_best_lin, was_best_lin_cyclic_model_created, *cyc_pose_of_best_lin, normalize_isc(cyc_isc_of_best_lin));
 		if ( any_peptide_cyclizable ) {
 			// otherwise, cyc_pose_of_best_cyc is unset
-			output.peptide_entry(*cyc_pose_of_best_cyc, ET_BEST_CYCLIC, pep_start_of_best_cyc, normalize_isc(lin_isc_of_best_cyc), disulfide_info_of_best_cyc, was_best_cyc_cyclic_model_created, *cyc_pose_of_best_cyc, normalize_isc(cyc_isc_of_best_cyc));
+			output.peptide_entry(*lin_pose_of_best_cyc, ET_BEST_CYCLIC, pep_start_of_best_cyc, normalize_isc(lin_isc_of_best_cyc), disulfide_info_of_best_cyc, was_best_cyc_cyclic_model_created, *cyc_pose_of_best_cyc, normalize_isc(cyc_isc_of_best_cyc));
 		}
 
 	} // for each peptide_length
 
-	// TODO : make sure that pose is output here if dump_peptide_pose is true --yuvals
-	output.end_chain_pair();
+	tracer << "End receptor-partner pair" << std::endl;
+	output.end_receptor_partner_pair();
 }
-
 
 /// Given a two-monomer pose and a score function - the interface score is the
 /// score difference between the given complex and the unbound monomers,
 /// 'unbound' meaning that they are spatially seperated.
 ///
 /// @param pose A two-monomer pose.
+/// TODO : this might have code in common with DdgScan. Consider using that.
 core::Real
-PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose) const {
+PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose, core::Size const jump_id) const {
 	//make a new pose in which the monomers are far apart from one another
-	// TODO : check if this is the best way to clone a pose
 	core::pose::Pose unbound_pose(pose);
 
-	// TODO : should this be const? should this be larger?
-	//translation size = 1000A.
-	const core::Real trans_magnitude = 1000;
-
-	//rb jump number is assumed to be 1 - this will work for two monomers.
-	const core::Size rb_jump = 1;
+	core::Real const VERY_LARGE_TRANSLATION = 2e6;
 
 	//create a Rigid body mover - the mover works on a rigid body jump
 	protocols::rigid::RigidBodyTransMoverOP translate_away(
-			new protocols::rigid::RigidBodyTransMover(unbound_pose, rb_jump));
+			new protocols::rigid::RigidBodyTransMover(unbound_pose, jump_id));
 
 	//set the size of the move
-	translate_away->step_size(trans_magnitude);
+	translate_away->step_size(VERY_LARGE_TRANSLATION);
 
 	//calculate scores
 	core::Real bound_energy = (*scorefxn_deriver_)(unbound_pose);  // before the move - as a complex.
@@ -1067,14 +1087,17 @@ PeptideDeriverFilter::calculate_interface_score(core::pose::Pose const & pose) c
 /// This signifies the energetic contribution of each residue to the complex binding.
 /// @param pose a two-monomer pose.
 void
-PeptideDeriverFilter::calculate_per_residue_interface_score(core::pose::Pose & chain_pair_pose, std::set<core::Size> interface_residues, std::ostream & report_out) const {
+PeptideDeriverFilter::calculate_per_residue_interface_score(
+		core::pose::Pose & chain_pair_pose,
+		std::set<core::Size> interface_residues,
+		std::ostream & report_out,
+		core::Size const jump_id) const {
 
 	//seperate the given structure in space using a translate_away mover and score each of the states
+	core::Real const VERY_LARGE_TRANSLATION = 2e6;
 	core::pose::Pose unbound_pair(chain_pair_pose);
-	core::Size rb_jump = 1;
-	core::Real trans_magnitude = 1000;
-	protocols::rigid::RigidBodyTransMoverOP translate_away(new protocols::rigid::RigidBodyTransMover(unbound_pair, rb_jump));
-	translate_away->step_size(trans_magnitude);
+	protocols::rigid::RigidBodyTransMoverOP translate_away(new protocols::rigid::RigidBodyTransMover(unbound_pair, jump_id));
+	translate_away->step_size(VERY_LARGE_TRANSLATION);
 	translate_away->apply(unbound_pair);
 	// make sure hbonds are included in the scoring function's per residue energies
 	core::scoring::methods::EnergyMethodOptionsOP emopts( new core::scoring::methods::EnergyMethodOptions( scorefxn_deriver_->energy_method_options() ) );
@@ -1109,8 +1132,8 @@ PeptideDeriverFilter::find_interface_residues(core::pose::Pose const & chain_pai
 
 core::Real
 PeptideDeriverFilter::normalize_isc(core::Real const isc) {
-	const core::Real PRACTICALLY_ZERO_ISC = 2e-2;
-	return (fabs(isc) < PRACTICALLY_ZERO_ISC? 0 : isc);
+	const core::Real NEAR_ZERO_ISC = 2e-2;
+	return (fabs(isc) < NEAR_ZERO_ISC? 0 : isc);
 }
 
 /// For two given full proteins poses, builds a new pose with the full receptor pose connected to the peptide found between start and end positions in the partner pose
@@ -1118,7 +1141,11 @@ PeptideDeriverFilter::normalize_isc(core::Real const isc) {
 /// @param partner_pose  the chain from which a peptide should be cut and connected to the receptor in a new pose
 /// @param peptide_start starting position in the partner pose to cut from
 /// @param peptide_end   last position in the partner pose to be cut out
-core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose (core::pose::Pose const & receptor_pose, core::pose::Pose const & partner_pose, core::Size peptide_start, core::Size peptide_end) const {
+core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose::Pose const & receptor_pose,
+		core::pose::Pose const & partner_pose,
+		core::Size peptide_start,
+		core::Size peptide_end,
+		core::Size & jump_id) const {
 	// once created these will be the positions of the peptide start and end in the receptor_peptide_pose
 	core::Size two_chain_peptide_start = receptor_pose.total_residue() + 1;
 	core::Size two_chain_peptide_end = two_chain_peptide_start + peptide_end - peptide_start;
@@ -1126,12 +1153,38 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose (core::pose
 	//copy receptor and start appending the peptide from its center of mass backward and forward
 	core::pose::PoseOP receptor_peptide_pose( new core::pose::Pose(receptor_pose) );
 	core::Size pep_cen_mass = core::pose::residue_center_of_mass(partner_pose, peptide_start, peptide_end);
-	receptor_peptide_pose->append_residue_by_jump(partner_pose.residue(pep_cen_mass), 1, "", "", true);
+
+	// tracer messages might be useful for debugging, but I'd rather comment than tracer.Debug
+	// from Flexpepdock's flags file; choose the residue in the receptor that is closest to the peptide center-of-mass
+	// TODO : handle a case where the closest residue is not a protein -- we needn't ask for "CA"
+	core::Size receptor_anchor_pos = core::pose::return_nearest_residue(receptor_pose, 1, receptor_pose.total_residue(), partner_pose.residue(pep_cen_mass).atom("CA").xyz());
+	// tracer << "Appending jump from " << receptor_peptide_pose->residue(receptor_anchor_pos) << " to " << partner_pose.residue(pep_cen_mass) << std::endl;
+
+	receptor_peptide_pose->append_residue_by_jump(partner_pose.residue(pep_cen_mass), receptor_anchor_pos, "", "", true);
+
 	for (core::Size i = pep_cen_mass ; i > peptide_start; --i) {
+		// tracer << "Prepending at " << two_chain_peptide_start << " " << partner_pose.residue(i-1) << std::endl;
 		receptor_peptide_pose->conformation().safely_prepend_polymer_residue_before_seqpos(partner_pose.residue(i-1), two_chain_peptide_start, false);
 	}
+
 	for (core::Size i = pep_cen_mass ; i < peptide_end; ++i) {
+		// tracer << "Appending at " << receptor_peptide_pose->total_residue() << " " << partner_pose.residue(i+1) << std::endl;
 		receptor_peptide_pose->conformation().safely_append_polymer_residue_after_seqpos(partner_pose.residue(i+1), receptor_peptide_pose->total_residue(), false);
+	}
+
+	// see note for linear_jump_id
+	jump_id = receptor_peptide_pose->fold_tree().get_jump_that_builds_residue(receptor_pose.total_residue() + pep_cen_mass - peptide_start + 1);
+
+	// NOTE : when enabling -in:missing_density_to_jump (which is enabled by default for the
+	//        PeptideDeriver app), chain termini which are missing hydrogens will receive a
+	//        UPPER/LOWERTERM_TRUNC_VARIANT. Without removing those before trying to add the
+	//        UPPER/LOWER_TERMINUS_VARIANT the following error occurs:
+	//        ERROR: unable to find desired variant residue: MET:NtermTruncation MET LOWER_TERMINUS_VARIANT
+	if ( receptor_peptide_pose->residue(two_chain_peptide_start).has_variant_type(core::chemical::LOWERTERM_TRUNC_VARIANT) ) {
+		core::pose::remove_variant_type_from_pose_residue( *receptor_peptide_pose, core::chemical::LOWERTERM_TRUNC_VARIANT, two_chain_peptide_start );
+	}
+	if ( receptor_peptide_pose->residue(two_chain_peptide_end).has_variant_type(core::chemical::UPPERTERM_TRUNC_VARIANT) ) {
+		core::pose::remove_variant_type_from_pose_residue( *receptor_peptide_pose, core::chemical::UPPERTERM_TRUNC_VARIANT, two_chain_peptide_end );
 	}
 
 	core::pose::add_variant_type_to_pose_residue(*receptor_peptide_pose, core::chemical::LOWER_TERMINUS_VARIANT, two_chain_peptide_start);
@@ -1177,6 +1230,10 @@ PeptideDeriverFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 	if ( tag->hasOption("dump_report_file") ) {
 		set_is_dump_report_file(tag->getOption<bool>("dump_report_file"));
+	}
+
+	if ( tag->hasOption("report_gzip") ) {
+		set_is_report_gzip(tag->getOption<bool>("report_gzip"));
 	}
 
 	if ( tag->hasOption("dump_prepared_pose") ) {

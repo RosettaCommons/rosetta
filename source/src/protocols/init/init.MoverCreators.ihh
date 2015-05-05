@@ -305,6 +305,7 @@
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
+#include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
 #include <protocols/simple_moves/FavorSymmetricSequenceCreator.hh>

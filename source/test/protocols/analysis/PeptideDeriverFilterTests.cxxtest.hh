@@ -25,6 +25,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ headers
 #include <fstream>
@@ -38,11 +39,7 @@ public:
 		ut_ = utility::pointer::shared_ptr<test::UTracer>( new test::UTracer("protocols/analysis/PeptideDeriverFilter.u") );
 	}
 
-	virtual void trace(std::string const & /*message*/) {
-		// do nothing. Don't care about trace messages for unit tests
-	}
-
-	virtual void begin_structure(core::pose::Pose const & pose) {
+	virtual void begin_structure(core::pose::Pose const & pose, std::string const &) {
 		// note: current unit tests don't cover this code (called from report())
 		(*ut_) << "begin_structure" << std::endl;
 		(*ut_) << pose;
@@ -52,10 +49,10 @@ public:
 		(*ut_) << "chain_pair_pose_prepared" << std::endl;
 	}
 
-	virtual void begin_chain_pair(char const receptor_chain_letter,
+	virtual void begin_receptor_partner_pair(char const receptor_chain_letter,
 			char const partner_chain_letter, core::Real const /*total_isc*/,
 			std::string const & options_string) {
-		(*ut_) << "begin_chain_pair" <<
+		(*ut_) << "begin_receptor_partner_pair" <<
 			" receptor=" << receptor_chain_letter <<
 			" partner=" << partner_chain_letter <<
 			" options=" << options_string <<
@@ -79,8 +76,8 @@ public:
 		// we don't compare energies (was_cyclic_pep_modeled depends on energies, so we don't do that either)
 	}
 
-	virtual void end_chain_pair() {
-		(*ut_) << "end_chain_pair" << std::endl;
+	virtual void end_receptor_partner_pair() {
+		(*ut_) << "end_receptor_partner_pair" << std::endl;
 	}
 
 	virtual void end_structure() {
@@ -98,9 +95,31 @@ public:
 	PeptideDeriverFilterTests() {}
 
 	void setUp() {
-		protocols_init();
+		protocols_init_with_additional_options("-in:missing_density_to_jump 1");
 		test_pose_ = core::pose::PoseOP( new core::pose::Pose() );
-		core::import_pose::pose_from_pdb( *test_pose_, "protocols/analysis/2hle_AB_cut_min.pdb" );
+
+		// NOTE : this pose is PDB entry 2HLE modified such that
+		// 1. only residues 144-157 from chain A and 114-134 from chain B are included
+		// 2. minimized using the minimize app
+		// 3. hydrogens and score terms removed from minimized file
+		// 4. residue 117 from chain B removed
+		// 5. residues 114-121 from chain B duplicated as 135-142 and shifted 100A in each axis
+		//
+		// Steps 1-2 are made so that processing time is minimal for the unit tests.
+		//
+		// Step 3 is made so that we handle missing hydrogens in input files properly (the
+		// 'missing_density_to_jump' will tag termini as truncated, and there was a bug fix
+		// for this, so this verifies we continue to handle this case correctly).
+		//
+		// Step 4 is made so that missing density is present, which should turn to jumps
+		// and residues 114-116 should be skipped because no continuous peptides could be
+		// derived from those positions.
+		//
+		// Step 5 is made so that a zero-isc peptide exists, and should be skipped when a 7-mer
+		// should be extracted. This also has the advantage for different control flow for the
+		// 10-mer, which should be skipped because the peptide is not long enough (and is an
+		// edge case).
+		core::import_pose::pose_from_pdb( *test_pose_, "protocols/analysis/2hle_AB_mod.pdb" );
 
 		peptiderive_ = protocols::analysis::PeptideDeriverFilterOP( new protocols::analysis::PeptideDeriverFilter() );
 
@@ -113,19 +132,15 @@ public:
 		// the following only have an effect when report() is invoked.
 		peptiderive_->set_is_dump_cyclic_poses(false);
 		peptiderive_->set_is_dump_report_file(false);
+		peptiderive_->set_is_report_gzip(false);
 		peptiderive_->set_is_dump_peptide_pose(false);
 		peptiderive_->set_is_dump_prepared_pose(false);
 		peptiderive_->set_report_format(protocols::analysis::PRF_MARKDOWN);
-
-		// TODO : read pose from test PDB
 	}
 
 	void tearDown() {
 		test_pose_ = NULL; // delete
 	}
-
-	// TODO :
-	// void test_commandline_options() { }
 
 	void test_rosettascripts_options() {
 
@@ -150,6 +165,7 @@ public:
 			TS_ASSERT_EQUALS(filter.get_is_do_minimize(), false);
 			TS_ASSERT_EQUALS(filter.get_is_dump_prepared_pose(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_report_file(), true);
+			TS_ASSERT_EQUALS(filter.get_is_report_gzip(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_cyclic_poses(), true);
 			TS_ASSERT_EQUALS(filter.get_is_dump_peptide_pose(), true);
 			TS_ASSERT_EQUALS(filter.get_restrict_receptors_to_chains().size(), 1);
@@ -167,6 +183,10 @@ public:
 
 	void test_protocol() {
 		PeptideDeriverUTracerOutputter ut_out;
+		utility::vector1<core::Size> pep_lengths;
+		pep_lengths.push_back(10);
+		pep_lengths.push_back(7);
+		peptiderive_->set_pep_lengths(pep_lengths);
 		peptiderive_->derive_peptide( ut_out, *test_pose_, /* first_chain= */1, /* second_chain= */2, /*both_ways=*/ true );
 	}
 
@@ -188,6 +208,7 @@ public:
 		TS_ASSERT_EQUALS(lhs.get_is_do_minimize(), rhs.get_is_do_minimize());
 		TS_ASSERT_EQUALS(lhs.get_is_dump_prepared_pose(), rhs.get_is_dump_prepared_pose());
 		TS_ASSERT_EQUALS(lhs.get_is_dump_report_file(), rhs.get_is_dump_report_file());
+		TS_ASSERT_EQUALS(lhs.get_is_report_gzip(), rhs.get_is_report_gzip());
 		TS_ASSERT_EQUALS(lhs.get_is_dump_cyclic_poses(), rhs.get_is_dump_cyclic_poses());
 		TS_ASSERT_EQUALS(lhs.get_is_dump_peptide_pose(), rhs.get_is_dump_peptide_pose());
 		TS_ASSERT_EQUALS(lhs.get_restrict_receptors_to_chains().size(), rhs.get_restrict_receptors_to_chains().size());
@@ -212,7 +233,8 @@ public:
 		assert_peptiderive_filter_equal( another_peptiderive, *peptiderive_ );
 	}
 
-	// TODO :
+	// TODO : or not TODO ?
+	// void test_commandline_options() { }
 	// void test_report_null_input() {}
 	// void test_report_single_chain_input() {}
 	// void test_report_multiple_input() {}

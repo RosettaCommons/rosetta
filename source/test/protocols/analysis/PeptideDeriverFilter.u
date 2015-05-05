@@ -1,9 +1,16 @@
 chain_pair_pose_prepared
-begin_chain_pair receptor=A partner=B options=pep_lengths= 10 is_skip_zero_isc= 0 is_do_minimize= 1
+begin_receptor_partner_pair receptor=A partner=B options=pep_lengths= 10,7 is_skip_zero_isc= 0 is_do_minimize= 1
 peptide_length 10
-peptide_entry entry_type=0 pep_start=1
-peptide_entry entry_type=0 pep_start=2
-peptide_entry entry_type=0 pep_start=3
+peptide_entry entry_type=0 pep_start=4
+peptide_entry entry_type=0 pep_start=5
+peptide_entry entry_type=0 pep_start=6
+peptide_entry entry_type=0 pep_start=7
+peptide_entry entry_type=0 pep_start=8
+peptide_entry entry_type=0 pep_start=9
+peptide_entry entry_type=0 pep_start=10
+peptide_entry entry_type=0 pep_start=11
+peptide_entry entry_type=1 pep_start=5
+peptide_length 7
 peptide_entry entry_type=0 pep_start=4
 peptide_entry entry_type=0 pep_start=5
 peptide_entry entry_type=0 pep_start=6
@@ -13,9 +20,12 @@ peptide_entry entry_type=0 pep_start=9
 peptide_entry entry_type=0 pep_start=10
 peptide_entry entry_type=0 pep_start=11
 peptide_entry entry_type=0 pep_start=12
-peptide_entry entry_type=1 pep_start=6
-end_chain_pair
-begin_chain_pair receptor=B partner=A options=pep_lengths= 10 is_skip_zero_isc= 0 is_do_minimize= 1
+peptide_entry entry_type=0 pep_start=13
+peptide_entry entry_type=0 pep_start=14
+peptide_entry entry_type=0 pep_start=24
+peptide_entry entry_type=1 pep_start=5
+end_receptor_partner_pair
+begin_receptor_partner_pair receptor=B partner=A options=pep_lengths= 10,7 is_skip_zero_isc= 0 is_do_minimize= 1
 peptide_length 10
 peptide_entry entry_type=0 pep_start=1
 peptide_entry entry_type=0 pep_start=2
@@ -24,5 +34,16 @@ peptide_entry entry_type=0 pep_start=4
 peptide_entry entry_type=0 pep_start=5
 peptide_entry entry_type=1 pep_start=5
 peptide_entry entry_type=2 pep_start=4
-end_chain_pair
+peptide_length 7
+peptide_entry entry_type=0 pep_start=1
+peptide_entry entry_type=0 pep_start=2
+peptide_entry entry_type=0 pep_start=3
+peptide_entry entry_type=0 pep_start=4
+peptide_entry entry_type=0 pep_start=5
+peptide_entry entry_type=0 pep_start=6
+peptide_entry entry_type=0 pep_start=7
+peptide_entry entry_type=0 pep_start=8
+peptide_entry entry_type=1 pep_start=4
+peptide_entry entry_type=2 pep_start=6
+end_receptor_partner_pair
 
