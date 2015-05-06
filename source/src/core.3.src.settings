@@ -225,6 +225,7 @@ sources = {
 		"KofNConstraint",
 		"LocalCoordinateConstraint",
 		"MultiConstraint",
+		"NamedAngleConstraint",
 		"NamedAtomPairConstraint",
 		"NonResidueTypeConstraint",
 		"ResidueTypeConstraint",

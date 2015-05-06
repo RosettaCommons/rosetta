@@ -28,6 +28,7 @@
 #include <core/scoring/constraints/KofNConstraint.hh>
 #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
+#include <core/scoring/constraints/NamedAngleConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/SiteConstraintResidues.hh>
 #include <core/scoring/constraints/FabConstraint.hh>
@@ -222,6 +223,19 @@ std::string FabConstraintCreator::keyname() const
 {
     return "FabConstraint";
 }
+
+NamedAngleConstraintCreator::NamedAngleConstraintCreator() {}
+NamedAngleConstraintCreator::~NamedAngleConstraintCreator() {}
+
+ConstraintOP NamedAngleConstraintCreator::create_constraint() const {
+	return ConstraintOP( new NamedAngleConstraint( id::NamedAtomID(), id::NamedAtomID(), id::NamedAtomID(), NULL ) ) ;
+}
+
+std::string NamedAngleConstraintCreator::keyname() const
+{
+	return "NamedAngle";
+}
+
 
 } //namespace constraints
 } //namespace scoring

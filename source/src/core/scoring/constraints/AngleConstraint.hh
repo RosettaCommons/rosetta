@@ -199,6 +199,13 @@ public:
 		Vector & F2
 	) const;
 
+protected:
+	/// @brief const access to func
+	func::FuncCOP func() const { return func_; }
+
+	/// @brief set func
+	void set_func( func::FuncOP f ) { func_ = f; }
+
 private:
 	// data
 	AtomID atom1_, atom2_, atom3_;

@@ -212,6 +212,7 @@ sources = {
 		"ConstraintSetRemapping",
 		"ConstraintsEnergy",
 		"DihedralConstraint",
+		"NamedAngleConstraint",
 		"SiteConstraint",
 		"util",
 	],

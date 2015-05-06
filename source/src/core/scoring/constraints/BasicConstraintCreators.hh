@@ -187,6 +187,17 @@ public:
     virtual std::string keyname() const;
 };
 
+/// @brief Constraint creator for the NamedAngleConstraint
+class NamedAngleConstraintCreator : public ConstraintCreator
+{
+public:
+	NamedAngleConstraintCreator();
+	virtual ~NamedAngleConstraintCreator();
+
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
 } //namespace constraints
 } //namespace scoring
 } //namespace core
