@@ -235,8 +235,13 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     throw utility::excn::EXCN_BadInput( "RigidChunkCM requires a template pdb with coordinates for rigid regions.");
   }
 
+  // Determine which region of the template file we want to take.
   if( tag->hasOption("region_file") ){
     loops::Loops region_in = read_rigid_core( tag->getOption< std::string >( "region_file" ) );
+
+    // Parse the loops object out into a ResidueIndexSelector. A better way to do this would be
+    // to build a constructor for ResidueIndexSelector that takes a loops object, but the Loops
+    // object is in protocols.3 and ResidueIndexSelector is in core.4. Lamesauce.
     std::stringstream ss;
     for( loops::Loops::const_iterator loop = region_in.begin(); loop != region_in.end(); ++loop ){
       ss << loop->start() << "-" << loop->stop() << ",";
@@ -250,12 +255,12 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
     ResidueSelectorCOP sele( new ResidueIndexSelector( tag->getOption< std::string >( "region" ) ) );
     templ_selector( sele );
   } else {
+    // I don't like this automatic defaulting to anything, but unfortunately some legacy applications
+    // require this behavior. Lamesauce.
+
     tr.Warning << "[WARNING] RigidChunkCM named " << tag->getOption< std::string >( "name", "UNK" )
                << " defaulted to ALL residues." << std::endl;
   }
-
-//  rigid_core( select_parts( regions_in, tag->getOption( "random_grow_by",
-//                                                        (core::Size)( option[ OptionKeys::loops::random_grow_loops_by ]() ) ) ) );
 }
 
 core::Size find_disulfide_partner( core::pose::Pose const& pose,
@@ -413,7 +418,8 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
     selection = sim_selector()->apply( in_p );
   } catch( utility::excn::EXCN_Msg_Exception& e ){
     std::ostringstream ss;
-    ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
+    ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".  ";
+    ss << "Pose was length " << in_p.total_residue() << ": " << in_p.sequence();
     e.add_msg(ss.str());
     throw e;
   }
@@ -608,8 +614,6 @@ void fix_mainchain_connect( core::pose::Pose& pose,
   core::conformation::Residue const & new_resi = pose.residue( global_upper ); //this should trigger update of coords and torsions
   tr.Trace << "mainchain torsion (after): conf: " << new_resi.mainchain_torsion( 1 ) << " atom-tree: "
            << pose.conformation().torsion_angle( global.bb1, global.bb2, global.bb3, global.bb4 ) << std::endl;
-
-  pose.dump_pdb("tmp.pdb");
 
   core::conformation::Residue const & prev_rsd( ref_pose.residue( local_upper-1 ) );
   core::conformation::Residue const &      rsd( ref_pose.residue( local_upper ) );

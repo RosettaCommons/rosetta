@@ -236,7 +236,8 @@ bool AbscriptLoopCloserCM::attempt_ccd( core::pose::Pose& pose ){
                                get_current_tag(),
                                *final_ft_ );
   } catch ( loops::EXCN_Loop_not_closed& excn ) {
-    set_last_move_status( moves::FAIL_RETRY );
+    tr.Warning << this->get_name() << " failed to close a loop. Report: " << excn << std::endl;
+    set_last_move_status( moves::FAIL_DO_NOT_RETRY );
     set_current_tag( "C_"+get_current_tag().substr(std::min(2,(int)get_current_tag().size())) );
     return false;
   }
