@@ -1392,4 +1392,3 @@ EnzdesRemodelMover::get_seq_mapping() const {
 
 } //namespace enzdes
 } //namespace protocols
-
