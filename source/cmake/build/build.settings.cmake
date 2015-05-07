@@ -206,7 +206,6 @@ if( EXTRAS )
 				-pipe
 				-ffast-math
 				-funroll-loops
-				-finline-functions
 				-ftemplate-depth=250
 				-stdlib=libstdc++
 				-mmacosx-version-min=10.6
