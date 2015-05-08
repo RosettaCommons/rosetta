@@ -326,18 +326,15 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 	////////////////////////////////////////////
 	
-	core::Size chi_free_iterations_(0);
-  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_free_iterations ].user()) {
-  	chi_free_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_free_iterations ]();
+	core::Size chi_iterations_(0);
+  if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ].user()) {
+  	chi_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ]();
   }
 	
-	if (chi_free_iterations_ > 0) {
+	if (chi_iterations_ > 0) {
 		
-		TR<<"Calculating sampling points"<<std::endl;
     core::Real max_r_value;
     find_max_r( pose, max_r_value );
-    core::Real structure_cutoff(4*M_PI*max_r_value);
-    TR<<"Maximum radius and cutoff: "<< max_r_value <<" "<<structure_cutoff<< std::endl;
 	
     utility::vector0< utility::vector1< core::Real > >::iterator  sampling_points_lE;
     utility::vector0< core::Size > ::iterator  sampling_points_number_l;
@@ -348,11 +345,11 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 		core::Real chi_free(0);
 	
-		chi_free = calculate_chi2_free(pose, chi_free_iterations_,lmax,\
+		chi_free = calculate_chi2_free(pose, chi_iterations_,lmax,\
 			layer_lines_I,layer_lines_R,natoms,c_,nvals,\
 			atom_type_number,phi,z,r,b_factor_, b_factor_solv_, b_factor_solv_K_);
 
-	TR<<"Chi free: "<<chi_free<<" after "<<chi_free_iterations_<<" iterations."<<std::endl;
+	TR<<"Chi free: "<<chi_free<<" after "<<chi_iterations_<<" iterations."<<std::endl;
 	///////////////////////////////////////////
 	
 	}

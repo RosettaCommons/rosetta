@@ -138,9 +138,9 @@ main( int argc, char * argv [] ) {
 			work_Rinv_l[l][i]=-100.0;
 	}
 	
-	core::Size chi_free_iterations_(0);
-	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_free_iterations ].user()) {
-		chi_free_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_free_iterations ]();
+	core::Size chi_iterations_(20);
+	if (basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ].user()) {
+		chi_iterations_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::chi_iterations ]();
 	}
 	
 	core::Real free_prcnt_thr(0.2);	
@@ -150,7 +150,7 @@ main( int argc, char * argv [] ) {
 	core::Size independent_Rs(0);
 	core::Real free_set_percent(1), free_set_percent_l(1), max_percent(0);
 	utility::vector0<int>::iterator position; 
-	while (free_set_percent > free_prcnt_thr && selection_iters< chi_free_iterations_) {
+	while (free_set_percent > free_prcnt_thr && selection_iters< chi_iterations_) {
 		core::scoring::fiber_diffraction::bessel_roots(lmax, c_, res_cutoff_high_, res_cutoff_low_, structure_cutoff, sampling_points_lE,\
                 	sampling_points_number_l, lowest_bessel_orders_l, highest_resolution_l, lowest_resolution_l,\
                 	layer_lines_R, nvals);
@@ -181,7 +181,7 @@ main( int argc, char * argv [] ) {
 						}
 				}
 				///////////////////////////////////////////Up and down///////////////////////////////////
-				/*if ((selection_iters == chi_free_iterations_-1) && (free_set_percent_l>free_prcnt_thr)) {
+				/*if ((selection_iters == chi_iterations_-1) && (free_set_percent_l>free_prcnt_thr)) {
 					if (selected_R_l[l][i]+1<highest_resolution_l[l]) {
 						if (work_Rinv_l[l][selected_R_l[l][i]+1]==-100.0) { independent_Rs++; TR<<"Condition sattisfied"<<std::endl;}
 							work_Rinv_l[l][selected_R_l[l][i]+1] = layer_lines_R[l][selected_R_l[l][i]+1];
