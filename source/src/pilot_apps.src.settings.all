@@ -685,6 +685,10 @@ sources = {
 		#"fastrelax_replonly",
 		#"minimization_replonly",
 		#"score_jd2_replonly",
+        "place_fragments_into_density",
+        "assemble_placed_fragments",
+        "cal_overlap_scores",
+        "cal_nonoverlap_scores",
 	],
 	"pilot/rhiju" : [
 		"rna_test",

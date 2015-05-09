@@ -540,6 +540,12 @@ public:
 		density_change_trigger();
 	}
 
+	numeric::xyzVector<core::Real> call_getCoM() const { return centerOfMass; }
+	numeric::xyzVector<core::Real> call_getOrigin() const { return origin; }
+	numeric::xyzVector<int> get_grid() const { return grid; }
+	numeric::xyzVector<core::Real> get_cellDimensions() const { return cellDimensions; }
+	//ObjexxFCL::FArray3D< float > get_density_data_array() const { return density; }
+
 
 ///////////
 // PRIVATE MEMBER FUNCTIONS
