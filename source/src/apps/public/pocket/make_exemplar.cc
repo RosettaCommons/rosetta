@@ -52,6 +52,17 @@
 #include <core/conformation/Conformation.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/NoOutputJobOutputter.hh>
+
+#include <protocols/jd2/util.hh>
+
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.fwd.hh>
+
+
+
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -81,72 +92,106 @@ using namespace core::pose::datacache;
 using namespace core::id;
 using namespace protocols::rigid;
 using namespace protocols::simple_moves;
+using namespace protocols;
+using namespace protocols::moves;
 
 
 OPT_KEY( String, central_relax_pdb_num )
 
 static thread_local basic::Tracer TR( "apps.public.make_exemplar.main", basic::t_debug );
 
+//This Mover creates an exemplar
+class ExemplarMover : public moves::Mover {
+
+public:
+  ExemplarMover();
+
+  ~ExemplarMover();
+
+  virtual MoverOP clone() const;
+  virtual MoverOP fresh_instance() const;
+
+  virtual void apply( Pose & pose );
+  virtual std::string get_name() const;
+  virtual void test_move( Pose & pose )
+  {
+    apply(pose);
+  }
+};
+
+ExemplarMover::ExemplarMover() :
+  Mover( "benchmark" )
+{
+
+}
+
+ExemplarMover::~ExemplarMover() {}
+
+MoverOP ExemplarMover::clone() const {
+  return MoverOP( new ExemplarMover( *this ) );
+}
+
+MoverOP ExemplarMover::fresh_instance() const {
+  return MoverOP( new ExemplarMover );
+}
+
+void ExemplarMover::apply( Pose & pose ) {
+  using namespace pose;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using namespace core;
+
+  std::string const resid_c = option[central_relax_pdb_num];
+
+  //validate that the exemplar_target_pdb_num is properly formatted
+  if (resid_c.length()){
+    std::string resid_tag = resid_c;
+    while ( true) {
+      std::size_t fpos( resid_tag.find(','));
+      if ( fpos == std::string::npos ) break;
+        resid_tag[fpos]='-';
+    }
+    std::string out_exfname = get_current_tag().substr(0,get_current_tag().find_last_of("_")) +".pdb."+ resid_tag + ".exemplar.pdb";
+
+    std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid_c);
+
+    protocols::pockets::PocketGrid comparison_pg( residues );
+    comparison_pg.zeroAngle();
+    comparison_pg.autoexpanding_pocket_eval( residues, pose ) ;
+    comparison_pg.dumpExemplarToFile( out_exfname.c_str() );
+  }
+
+}
+
+std::string ExemplarMover::get_name() const {
+  return "ExemplarMover";
+}
+
+
 /// General testing code
 int main( int argc, char * argv [] ) {
 
 	try{
+  using namespace core;
+  using namespace protocols::moves;
+  using namespace scoring;
+  using namespace basic::options;
+  using namespace protocols::jobdist;
+  using namespace basic::options::OptionKeys;
+  using protocols::moves::MoverOP;
 
 	NEW_OPT( central_relax_pdb_num, "target residue(s)", "-1");
 
 	// APL NOTE: Tracers cannot be written to before devel::init gets called. TR << "Calling init" << std::endl;
 	//initializes Rosetta functions
+  jd2::register_options();
+  option.add_relevant( OptionKeys::in::file::fullatom );
+  option.add_relevant( OptionKeys::in::file::movemap );
 	devel::init(argc, argv);
 
-	TR << "done" << std::endl;
-	//allows output when running the program
-	//sets input residue numbers to resid and resid_c
-	std::string const resid_c = option[central_relax_pdb_num];
-	TR << "Starting pocket compare" << std::endl;
+  MoverOP protocol( new ExemplarMover() );
+  protocols::jd2::JobDistributor::get_instance()->go( protocol,  jd2::JobOutputterOP( new jd2::NoOutputJobOutputter ) );
 
-	// create pose for comparison pose from pdb
-	std::string const comparison_pdb_name ( basic::options::start_file() );
-	pose::Pose comparison_pose;
-	core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
-	TR << "set pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
-
-	std::string tag = "";
-        if (!option[ OptionKeys::out::output_tag ]().empty()){
-          tag = "." + option[ OptionKeys::out::output_tag ]();
-        }
-
-	std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
-	// call function to make a grid around a target residue (seqpos)
-	protocols::pockets::PocketGrid comparison_pg( residues );
-	//call function to define the pocket
-	comparison_pg.zeroAngle();
- 	comparison_pg.autoexpanding_pocket_eval( residues, comparison_pose ) ;
-	//output the pocket in a pdb
-	//comparison_pg.dumpGridToFile();
-	TR << "Pocket defined" << std::endl;
-std::cout << "Pocket score (unweighted) is: " << comparison_pg.netTargetPocketVolume() << std::endl;
-	// dump to file, with name based on input pdb
-	//std::stringstream out_fname;
-	//out_fname << comparison_pdb_name << tag << ".pocket.pdb";
-	//std::cout<<out_fname.str() <<std::endl;
-	//comparison_pg.dumpTargetPocketsToPDB( out_fname.str() );
-  std::stringstream out_exfname;
-  out_exfname << comparison_pdb_name << tag << ".exemplar.pdb";
-  //std::cout<<out_exfname.str() <<std::endl;
-	comparison_pg.dumpExemplarToFile( out_exfname.str() );
-
-	//std::stringstream out_pfname;
-	//out_pfname << comparison_pdb_name << tag << ".pocket";
-  //std::cout<<out_pfname.str() <<std::endl;
-	//comparison_pg.dumpTargetPocketsToFile( out_pfname.str() );
-
-	//utility::io::ozstream fout;
-	//fout.open("distance.txt", std::ios::out);
-	//fout << d1 << std::endl;
-	//fout.close();
-	//		fout.clear();
-
-	TR << "Done!" << std::endl;
   }
 	catch ( utility::excn::EXCN_Base const & e ) {
 		std::cerr << "caught exception " << e.msg() << std::endl;

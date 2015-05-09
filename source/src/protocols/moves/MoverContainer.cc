@@ -90,6 +90,15 @@ void MoverContainer::set_native_pose( PoseCOP pose ){
 	}
 }
 
+// Sets the current_tag_ for both the container and the contained movers
+void MoverContainer::set_current_tag( std::string const & new_tag ){
+  Mover::set_current_tag( new_tag );
+  for ( Size i=0; i<movers_.size(); ++i ) {
+    movers_[i]->set_current_tag( new_tag );
+  }
+
+}
+
 SequenceMover::SequenceMover( SequenceMover const & source ) :
 	MoverContainer( source ),
 	use_mover_status_( source.use_mover_status_ )

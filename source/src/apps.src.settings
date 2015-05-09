@@ -190,11 +190,10 @@ sources = {
 		"pepspec_anchor_dock",
 	],
 	"public/pocket": [
+    "pocket_relax",
 		"pocket_suggest_target_residues_by_ddg",
 		"pocket_measure",
-		"pocket_suggest_target_residues_by_ddg",
 		"make_exemplar",
-		"pocket_suggest_target_residues_by_ddg",
 	],
 	"public/rna_util": [
 		"nucleobase_sample_around",

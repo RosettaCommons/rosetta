@@ -150,7 +150,7 @@ public:
 		return current_tag_;
 	}
 
-	void set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
+	virtual void set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
 
 	/// @brief setter for poses contained for rms
 	virtual void set_input_pose( PoseCOP pose );
