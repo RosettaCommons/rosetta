@@ -371,6 +371,8 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 				core::Size const position( pair->first.first );
 				AA const aa( pair->first.second );
+				if( keep_native() )
+					map_position_allowed_aa[ position ].insert( oneletter_code_from_aa( p.residue( position ).aa() ) );
 				core::Real const energy( pair->second.first );
 				if( energy <= delta_threshold ){
 					map_position_allowed_aa[ position ].insert( oneletter_code_from_aa( aa ) );
