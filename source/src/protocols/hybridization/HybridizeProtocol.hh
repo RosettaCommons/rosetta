@@ -171,6 +171,7 @@ private:
 	core::sequence::SequenceAlignmentOP aln_;
 
 	// template information
+	utility::vector1 < core::Size > non_null_template_indices_;
 	utility::vector1 < core::pose::PoseOP > templates_;  // template poses
 	utility::vector1 < core::pose::PoseOP > templates_aln_;  // aligned template PDBs (deep copy for multidom, shallow for single dom)
 	utility::vector1 < std::string > template_fn_;       // template file tags

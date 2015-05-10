@@ -728,6 +728,8 @@ void HybridizeProtocol::add_template(
 	template_chunks_.push_back(chunks);
 	template_contigs_.push_back(contigs);
 	template_cst_reses_.push_back(cst_reses);
+
+	non_null_template_indices_.push_back( templates_.size() );
 }
 
 // validate input templates match input sequence
@@ -923,7 +925,19 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// (2) realign structures per-domain
 		if (realign_domains_) {
-			align_templates_by_domain(templates_[initial_template_index], domains_all_templ_[initial_template_index]);
+			//
+			if ( std::find( non_null_template_indices_.begin(), non_null_template_indices_.end(), initial_template_index )
+						!= non_null_template_indices_.end() ) {
+				align_templates_by_domain(templates_[initial_template_index], domains_all_templ_[initial_template_index]);
+			} else {
+				if (non_null_template_indices_.size() == 0) {
+					TR << "No non-extended templates.  Skipping alignment." << std::endl;
+				} else {
+					TR << "Cannot align to extended template! Choosing a random template instead." << std::endl;
+					core::Size aln_target = numeric::random::random_range(1, non_null_template_indices_.size() );
+					align_templates_by_domain(templates_[aln_target], domains_all_templ_[aln_target]);
+				}
+			}
 		}
 
 		// (3) apply symmetry
