@@ -292,9 +292,12 @@ correct_dunbrack() {
 		}
 
 		if (currtag != fragline.id_ || currsemitag != semitag) { // new fragment (or switch Rot->Semi), aggregate results of previous
+
+			// enforce cap
+			core::Real workingcap = bestscore+cap;
 			for (int i=1; i<=(int)currentfrag.size(); ++i) {
-				currentfrag[i].fragscore_ -= bestscore;
-				currentfrag[i].fragscore_ = std::min( currentfrag[i].fragscore_, cap );
+				//currentfrag[i].fragscore_ -= bestscore;
+				currentfrag[i].fragscore_ = std::min( currentfrag[i].fragscore_, workingcap );
 			}
 
 			// update tables
@@ -378,28 +381,43 @@ correct_dunbrack() {
 
 	/////
 	// rotameric smoothing
+	utility::vector1< ObjexxFCL::FArray2D<core::Real> > probSums(20, ObjexxFCL::FArray2D<core::Real>(36,36) );
+	for (int i=1; i<=20; ++i) { probSums[i] = 0.0; };
 	for (std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it) {
 		std::pair< int, int > rottag = it->first;
 		ObjexxFCL::FArray2D<core::Real> &data = it->second;
-		//ObjexxFCL::FArray2D<core::Real> data_to_dump = it->second; //copy
 
 		for (int i=1; i<=36; ++i)
 		for (int j=1; j<=36; ++j) {
+			// strategy 1: m estimates
 			//core::Size count = rotcount[rottag.first](i,j) + MEST;
 			//data(i,j) /= count;
 
+			// strategy 2: don't correct sparse bins
 			core::Size count = rotcount[rottag.first](i,j);
-			if (count > 20) {
+			if (count > 10) {
 				data(i,j) /= count;
-				//data_to_dump(i,j) /= count;
 			} else {
 				data(i,j) = 0.0;
-				//data_to_dump(i,j) = 0.0;
 			}
 
 			// smooth in probability space
 			data(i,j) = std::exp( -scale*data(i,j) );
+
+			// normalize per-AA
+			probSums[rottag.first](i,j) += data(i,j);
 		}
+	}
+	for (std::map< std::pair< int, int >,ObjexxFCL::FArray2D<core::Real> >::iterator it=rotEsum.begin(); it!=rotEsum.end(); ++it) {
+		std::pair< int, int > rottag = it->first;
+		ObjexxFCL::FArray2D<core::Real> &data = it->second;
+
+		for (int i=1; i<=36; ++i)
+		for (int j=1; j<=36; ++j) {
+			// normalize per-AA
+			data(i,j) /= probSums[rottag.first](i,j);
+		}
+
 		numeric::fourier::fft2(data, Frot);
 
 		for (int i=1; i<=36; ++i)
@@ -408,15 +426,13 @@ correct_dunbrack() {
 		}
 		numeric::fourier::ifft2(Frot, data);
 
-		//dump_table ( data_to_dump, "data.m",
-		//	"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
 		dump_table ( data, "data_smooth.m",
 			"data_" + utility::to_string( (core::chemical::AA)rottag.first ) + "_" + utility::to_string( rottag.second ) );
-
 	}
 
 	/////
 	// semirotameric smoothing
+	for (int i=1; i<=20; ++i) { probSums[i] = 0.0; };
 	for (std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it) {
 		std::pair< int, int > rottag = it->first;
 		for (int k=1; k<=36; ++k) {
@@ -427,12 +443,31 @@ correct_dunbrack() {
 				//data(i,j) /= count;
 
 				core::Size count = rotcount[rottag.first](i,j);
-				if (count > 20) {
+				if (count > 10) {
 					data(i,j) /= count;
 				} else {
 					data(i,j) = 0.0;
 				}
+
+				// smooth in probability space
+				data(i,j) = std::exp( -scale*data(i,j) );
+
+				// normalize per-AA
+				probSums[rottag.first](i,j) += data(i,j);
 			}
+		}
+	}
+	for (std::map< std::pair< int, int >, utility::vector1< ObjexxFCL::FArray2D<core::Real> > >::iterator it=semirotEsum.begin(); it!=semirotEsum.end(); ++it) {
+		for (int k=1; k<=36; ++k) {
+			ObjexxFCL::FArray2D<core::Real> &data = it->second[k];
+			std::pair< int, int > rottag = it->first;
+
+			for (int i=1; i<=36; ++i)
+			for (int j=1; j<=36; ++j) {
+				// normalize per-AA
+				data(i,j) /= probSums[rottag.first](i,j);
+			}
+
 			numeric::fourier::fft2(data, Frot);
 
 			for (int i=1; i<=36; ++i)
@@ -480,8 +515,17 @@ correct_dunbrack() {
 
 				std::pair< int, int > rottag(aa,myrotidx);
 				ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
-				//core::Real newP = allrots[ii].probability() / std::exp( -scale*data(x,y) );
+
+				// smooth Energy space
+				//core::Real newP = allrots[ii].probability() * std::exp( -scale*data(x,y) );
+
+if (aa == aa_ser && x==13 && y==14) {
+	TR << "SER " << (x-1)*10.0-180.0 << " " << (y-1)*10.0-180.0 << " " << allrots[ii].probability() << " " << data(x,y) << " " << log( data(x,y)) / -scale << std::endl;
+}
+				// smooth Prob space
 				core::Real newP = allrots[ii].probability() / data(x,y);
+
+
 				data(x,y) = newP;
 				probsum += newP;
 			}
@@ -499,6 +543,9 @@ correct_dunbrack() {
 				std::pair< int, int > rottag(aa,myrotidx);
 				ObjexxFCL::FArray2D<core::Real> &data = rotEsum[rottag];
 				data(x,y) /= probsum;
+if (aa == aa_ser && x==13 && y==14) {
+	TR << "SER " << (x-1)*10.0-180.0 << " " << (y-1)*10.0-180.0 << allrots[ii].probability() << " " << data(x,y) << std::endl;
+}
 			}
 		}
 
@@ -548,8 +595,11 @@ correct_dunbrack() {
 					working_res->set_chi( (int)allrots[ii].nchi(), start + (jj-1.0)*step );
 					core::Real dunE = rotlib->rotamer_energy( *working_res, scratch );
 
-					//core::Real newP = std::exp( -dunE ) / std::exp( -scale*data(x,y) );
-					core::Real newP = std::exp( -dunE ) / data(x,y);
+					// smooth Energy space
+					//core::Real newP = std::exp( -dunE ) * std::exp( -scale*data(x,y) );
+
+					// smooth Prob space
+					core::Real newP = std::exp( -dunE ) * data(x,y);
 
 					data(x,y) = newP;
 					probSum += newP;
@@ -758,8 +808,15 @@ calc_scores() {
 		scorefxn->set_weight( core::scoring::fa_dun , 0.0 );
 	}
 
+	core::Real fadundev_wt = scorefxn->get_weight( core::scoring::fa_dun_dev );
+	scorefxn->set_weight( core::scoring::fa_dun_dev , 0.0 );
+
+	if (fadundev_wt == 0 && option[ tors::rotmin ]() ) {
+		TR << "WARNING!!! fa_dun_dev is zero in the scorefunction but minimization is enabled... are you sure this is what you want?" << std::endl;
+	}
+
 	// read silent file
-  core::io::silent::SilentFileData sfd;
+	core::io::silent::SilentFileData sfd;
 	sfd.read_file( option[ tors::fragfile ]() );
 
 	// packing stuff
@@ -815,7 +872,10 @@ calc_scores() {
 				mm.set_chi ( center, true );
 				core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
 				core::optimization::AtomTreeMinimizer minimizer;
+
+				scorefxn->set_weight( core::scoring::fa_dun_dev , fadundev_wt );
 				minimizer.run( frag, mm, *scorefxn, options );
+				scorefxn->set_weight( core::scoring::fa_dun_dev , 0.0 );
 				score_ii = (*scorefxn)(frag);
 			}
 
@@ -847,9 +907,6 @@ calc_scores() {
 		for ( Size ii = 1; ii <= nrot; ++ii ) {
 			if (allrots[ii].rot_well()[allrots[ii].nchi()] != 1) continue;  // ugly hack
 
-			for (Size jj=1; jj<=allrots[ii].nchi()-1; ++jj)
-				frag.set_chi( (int)jj, center, allrots[ii].chi_mean()[jj] );
-
 			// use our own rotamer index since get_all_rotamer_samples changes indices based on phi/psi
 			core::Size r1=0, r2=0;
 			if (allrots[ii].nchi() > 1) r1 = allrots[ii].rot_well()[1];
@@ -858,8 +915,13 @@ calc_scores() {
 			core::Size myrotidx = getRotID( r1,r2 );
 
 			for (Size jj=1; jj<=36; ++jj) {
-				frag.set_chi( (int)allrots[ii].nchi(), center, start + jj*step );
-				frag.set_chi( (int)allrots[ii].nchi(), center, start + (jj-1.0)*step );
+				// reset rotameric chis
+				for (Size kk=1; kk<=allrots[ii].nchi()-1; ++kk) {
+					frag.set_chi( (int)kk, center, allrots[ii].chi_mean()[kk] );
+				}
+				// set semirotameric chi
+				core::Real chi_i = start + (jj-1.0)*step;
+				frag.set_chi( (int)allrots[ii].nchi(), center, chi_i );
 
 				core::pack::optimizeH( frag, *scorefxn );
 
@@ -870,7 +932,17 @@ calc_scores() {
 					mm.set_chi ( center, true );
 					core::optimization::MinimizerOptions options( "dfpmin", 0.1, true, false, false );
 					core::optimization::AtomTreeMinimizer minimizer;
+
+					scorefxn->set_weight( core::scoring::fa_dun_dev , fadundev_wt );
 					minimizer.run( frag, mm, *scorefxn, options );
+					scorefxn->set_weight( core::scoring::fa_dun_dev , 0.0 );
+
+					// check to ensure we did not leave our semirotameric bin ... if we did, reset
+					core::Real chi_new = frag.chi( (int)allrots[ii].nchi(), center );
+					if (std::fabs( chi_i - chi_new ) > step/2.0 ) {
+						frag.set_chi( (int)allrots[ii].nchi(), center, chi_i );
+					}
+
 					score_ii = (*scorefxn)(frag);
 				}
 
@@ -1081,6 +1153,7 @@ try {
 	devel::init( argc, argv );
 
 	option[ in::missing_density_to_jump ].value(true); // force this
+	option[ in::file::silent_struct_type ].value("binary"); // force this
 	option[ packing::no_optH ].value(false); // force this
 	option[ packing::flip_HNQ ].value(true); // force this
 

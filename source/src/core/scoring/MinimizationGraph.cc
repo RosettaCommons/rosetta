@@ -15,11 +15,13 @@
 #include <core/scoring/MinimizationGraph.hh>
 
 // Package Headers
+// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 
 // Numeric headers
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
@@ -332,6 +334,7 @@ MinimizationNode::OneBodyEnergiesIterator
 MinimizationNode::sfs_req_1benmeths_end() const {
 	return sfs_req_1benmeths_.end();
 }
+
 
 
 MinimizationNode::OneBodyEnergiesIterator
@@ -781,6 +784,125 @@ MinimizationGraph::create_new_edge( Edge const * example_edge )
 
 ///// NON MEMBER FUNCTIONS////
 
+/*void
+reinitialize_minedge_for_respair(
+	MinimizationEdge & min_edge,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	ResSingleMinimizationData const & res1_ressingle_min_data,
+	ResSingleMinimizationData const & res2_ressingle_min_data,
+	pose::Pose & pose,
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & minmap
+)
+{
+
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.active_2benmeths_begin(),
+			iter_end = min_edge.active_2benmeths_end();
+			iter != iter_end; ++iter ) {
+
+		(*iter)->setup_for_minimizing_for_residue_pair(
+			rsd1, rsd2, pose, sfxn, minmap,
+			res1_ressingle_min_data,
+			res2_ressingle_min_data,
+			min_edge.res_pair_min_data() );
+
+	}
+
+
+}*/
+
+
+/*void
+setup_for_scoring_for_minnode(
+	MinimizationNode & min_node,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose
+)
+{
+	/// 1a 1body energy methods
+	for ( MinimizationNode::OneBodyEnergiesIterator
+			iter = min_node.sfd_req_1benmeths_begin(),
+			iter_end = min_node.sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->setup_for_scoring_for_residue( rsd, pose, min_node.res_min_data() );
+	}
+	/// 1b 2body intraresidue contributions
+	for ( MinimizationNode::TwoBodyEnergiesIterator
+			iter = min_node.sfd_req_2benmeths_begin(),
+			iter_end = min_node.sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->setup_for_scoring_for_residue( rsd, pose, min_node.res_min_data() );
+	}
+
+}*/
+
+/*void
+setup_for_scoring_for_minedge(
+	MinimizationEdge & min_edge,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ResSingleMinimizationData const & res1_ressingle_min_data,
+	ResSingleMinimizationData const & res2_ressingle_min_data
+)
+{
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.sfd_req_2benmeths_begin(),
+			iter_end = min_edge.sfd_req_2benmeths_end();
+			iter != iter_end; ++iter ) {
+		(*iter)->setup_for_scoring_for_residue_pair(
+			rsd1, rsd2, res1_ressingle_min_data, res2_ressingle_min_data, pose, min_edge.res_pair_min_data() );
+	}
+
+}*/
+
+/*void
+setup_for_derivatives_for_minnode(
+	MinimizationNode & min_node,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose
+)
+{
+	ResSingleMinimizationData & ressingle_min_data( min_node.res_min_data() );
+
+	/// 1a 1body energy methods
+	for ( MinimizationNode::OneBodyEnergiesIterator
+			iter = min_node.sfd_req_1benmeths_begin(),
+			iter_end = min_node.sfd_req_1benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->setup_for_derivatives_for_residue( rsd, pose, ressingle_min_data );
+	}
+	/// 1b 2body intraresidue contributions
+	for ( MinimizationNode::TwoBodyEnergiesIterator
+			iter = min_node.sfd_req_2benmeths_begin(),
+			iter_end = min_node.sfd_req_2benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->setup_for_derivatives_for_residue( rsd, pose, ressingle_min_data );
+	}
+
+}*/
+
+/*void
+setup_for_derivatives_for_minedge(
+	MinimizationEdge & min_edge,
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ResSingleMinimizationData const & res1_min_data,
+	ResSingleMinimizationData const & res2_min_data
+)
+{
+//debug_assert( rsd1.seqpos() < rsd2.seqpos() );
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.sfd_req_2benmeths_begin(),
+			iter_end = min_edge.sfd_req_2benmeths_end();
+			iter != iter_end; ++iter ) {
+		(*iter)->setup_for_derivatives_for_residue_pair(
+			rsd1, rsd2, res1_min_data, res2_min_data,	pose, min_edge.res_pair_min_data() );
+	}
+
+}*/
+
 void
 eval_atom_derivatives_for_minnode(
 	MinimizationNode const & min_node,
@@ -805,6 +927,39 @@ eval_atom_derivatives_for_minnode(
 	}
 
 }
+
+/*void
+eval_atom_derivative_for_minnode(
+	MinimizationNode const & min_node,
+	Size atom_index,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & res_weights,
+	Vector & F1, // accumulated into
+	Vector & F2  // accumulated into
+)
+{
+	utility_exit_with_message( "Deprecated" );
+
+	/// 1. eval 1 body derivatives
+	/// 1a 1body energy methods
+	for ( MinimizationNode::OneBodyEnergiesIterator
+			iter = min_node.active_1benmeths_begin(),
+			iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->eval_atom_derivative_for_residue(
+			atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, F1, F2 );
+	}
+	/// 1b 2body intraresidue contributions
+	for ( MinimizationNode::TwoBodyEnergiesIterator
+			iter = min_node.active_intrares2benmeths_begin(),
+			iter_end = min_node.active_intrares2benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->eval_intrares_atom_derivative(
+			atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, F1, F2 );
+	}
+
+}*/
 
 void
 eval_res_onebody_energies_for_minnode(
@@ -894,6 +1049,36 @@ eval_weighted_atom_derivatives_for_minedge(
 	}
 }
 
+/*void
+eval_atom_deriv_for_minedge(
+	MinimizationEdge const & min_edge,
+	Size atom_index,
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	ResSingleMinimizationData const & res1_min_data,
+	ResSingleMinimizationData const & res2_min_data,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & respair_weights,
+	Vector & F1, // accumulated into
+	Vector & F2  // accumulated into
+)
+{
+	utility_exit_with_message( "Deprecated" );
+	/// iterate across the two-body energies for this edge
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.active_2benmeths_begin(),
+			iter_end = min_edge.active_2benmeths_end();
+			iter != iter_end; ++iter ) {
+		(*iter)->eval_atom_derivative_for_residue_pair(
+			atom_index, res1, res2,
+			res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
+			pose, domain_map, sfxn, respair_weights, F1, F2 );
+	}
+}
+*/
+
 void
 eval_res_pair_energy_for_minedge(
 	MinimizationEdge const & min_edge,
@@ -932,8 +1117,8 @@ eval_dof_deriv_for_minnode(
 )
 {
 	Real deriv( 0 );
-	// 1. eval 1 body derivatives
-	// 1a 1body energy methods
+	/// 1. eval 1 body derivatives
+	/// 1a 1body energy methods
 	for ( MinimizationNode::OneBodyEnergiesIterator
 			iter = min_node.dof_deriv_1benmeths_begin(),
 			iter_end = min_node.dof_deriv_1benmeths_end(); iter != iter_end; ++iter ) {
@@ -949,6 +1134,42 @@ eval_dof_deriv_for_minnode(
 	}
 	return deriv;
 }
+
+
+/*void
+eval_weighted_atom_derivative_for_minnode(
+	MinimizationNode const & min_node,
+	Size atom_index,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & res_weights,
+	Vector & F1, // accumulated into
+	Vector & F2  // accumulated into
+)
+{
+	utility_exit_with_message( "DEPRECATED" );
+
+	Vector f1(0.0), f2(0.0);
+	/// 1. eval 1 body derivatives
+	/// 1a 1body energy methods
+	for ( MinimizationNode::OneBodyEnergiesIterator
+			iter = min_node.active_1benmeths_begin(),
+			iter_end = min_node.active_1benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->eval_atom_derivative_for_residue(
+			atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, f1, f2 );
+	}
+	/// 1b 2body intraresidue contributions
+	for ( MinimizationNode::TwoBodyEnergiesIterator
+			iter = min_node.active_intrares2benmeths_begin(),
+			iter_end = min_node.active_intrares2benmeths_end(); iter != iter_end; ++iter ) {
+		(*iter)->eval_intrares_atom_derivative(
+			atom_index, rsd, min_node.res_min_data(), pose, domain_map, sfxn, res_weights, f1, f2 );
+	}
+	F1 += min_node.weight() * f1;
+	F2 += min_node.weight() * f2;
+}*/
 
 void
 eval_weighted_res_onebody_energies_for_minnode(
@@ -995,6 +1216,41 @@ eval_weighted_res_onebody_energies_for_minnode(
 	}
 
 }
+
+/// @details evaluates the atom derivative for this edge, and applies the
+/// edge weight into the f1 and f2 vectors before accumulating into the F1 and F2
+/// vectors
+/*void
+eval_weighted_atom_deriv_for_minedge(
+	MinimizationEdge const & min_edge,
+	Size atom_index,
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	ResSingleMinimizationData const & res1_min_data,
+	ResSingleMinimizationData const & res2_min_data,
+	pose::Pose const & pose,
+	kinematics::DomainMap const & domain_map,
+	ScoreFunction const & sfxn,
+	EnergyMap const & respair_weights,
+	Vector & F1, // accumulated into
+	Vector & F2  // accumulated into
+)
+{
+	utility_exit_with_message( "DEPRECATED" );
+	/// iterate across the two-body energies for this edge
+	Vector f1( 0.0 ), f2( 0.0 );
+	for ( MinimizationEdge::TwoBodyEnergiesIterator
+			iter = min_edge.active_2benmeths_begin(),
+			iter_end = min_edge.active_2benmeths_end();
+			iter != iter_end; ++iter ) {
+		(*iter)->eval_atom_derivative_for_residue_pair(
+			atom_index, res1, res2,
+			res1_min_data, res2_min_data, min_edge.res_pair_min_data(),
+			pose, domain_map, sfxn, respair_weights, f1, f2 );
+	}
+	F1 += min_edge.weight() * f1;
+	F2 += min_edge.weight() * f2;
+}*/
 
 void
 eval_weighted_res_pair_energy_for_minedge(
@@ -1056,6 +1312,7 @@ eval_weighted_dof_deriv_for_minnode(
 	}
 	return deriv * min_node.weight();
 }
+
 
 } //namespace scoring
 } //namespace core
