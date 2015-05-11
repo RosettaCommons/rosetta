@@ -1,0 +1,146 @@
+=========
+EXAMPLES:
+=========
+
+(A)
+#By default -shapovalov_lib_fixes_enable is off; it disables all my modifications and Rosetta runs the way it did before.
+-relax:fast
+-shapovalov_lib_fixes_enable
+
+(B)
+#The least smooth libraries:
+-relax:fast
+-shapovalov_lib_fixes_enable true
+-shap_rama_smooth_level 1
+-shap_dun10_smooth_level 1
+-shap_p_aa_pp_smooth_level 1
+
+(C)
+#The least smooth libraries:
+-relax:fast
+-shapovalov_lib_fixes_enable 
+-shap_rama_smooth_level lowest_smooth
+-shap_dun10_smooth_level lowest_smooth
+-shap_p_aa_pp_smooth_level low_smooth
+
+(D)
+#The most smooth libraries:
+-relax:fast
+-shapovalov_lib_fixes_enable 
+-shap_rama_smooth_level 4
+-shap_dun10_smooth_level 6
+-shap_p_aa_pp_smooth_level 2
+
+(E)
+#The most smooth libraries:
+-relax:fast
+-shapovalov_lib_fixes_enable 
+-shap_rama_smooth_level highest_smooth 
+-shap_dun10_smooth_level highest_smooth
+-shap_p_aa_pp_smooth_level high_smooth
+
+=====
+MISC:
+=====
+This work is in progress.
+No optimization was done for the weight parameters in front of each score term. I tested few fast relaxes, they proved to lower RMSD to natives.
+More significant testing, benchmarking and optimization is required.
+More possible bugs should be found.
+Rosetta community should benefit from making these new statistical potentials available and having several smoothness options.
+
+========
+DETAILS:
+========
+
+There is a global flag to introduce the new statistical potentials and bug fixes in the 'corrections' namespace:
+-shapovalov_lib_fixes_enable true. By default it is off: shapovalov_lib_fixes_enable is false.
+
+The shapovalov_lib_fixes_enable flag triggers activation of the following arguments in
+the 'corrections::shapovalov_lib' namespace and sets their default values:
+-shap_rama_enable
+-shap_rama_smooth_level
+-shap_rama_map
+-shap_rama_nogridshift
+
+-shap_dun10_enable
+-shap_dun10_smooth_level
+-shap_dun10_dir
+-shap_dun10_use_minus_log_P_ignore_P
+
+-shap_p_aa_pp_enable
+-shap_p_aa_pp_smooth_level
+-shap_p_aa_pp
+
+
+Once -shapovalov_lib_fixes_enable is true, there are 3 additional flags which are on by default and enforced.
+These flags enable/disable the new statistical potentials and their fixes in three categories:
+
+(1) New backbone-dependent Ramachandran map: -shap_rama_enable true
+(2) New backbone-dependent Rotamer Library, dun10: -shap_dun10_enable true
+(3) New backbone-dependent propensity map or P_aa_pp, -shap_p_aa_pp_enable true
+
+Some of these new libraries are based on newer, larger protein datasets. Some libraries
+might include enhauncements like what parameters they are based on and how they are reported such as
+scientific notation for decimal-point numbers and log values.
+
+For each of the three categories, a subset of libraries is available. There are default values.
+There are user-friendly argument values in interger format and user-friendly values in string, keyword format.
+
+(1)
+	-shap_rama_smooth_level 4 (default) [1, 2, 3, 4]
+	or
+	-shap_rama_smooth_level highest_smooth (default) [lowest_smooth, lower_smooth, higher_smooth, highest_smooth]
+		1 <=> lowest_smooth
+		2 <=> lower_smooth
+		3 <=> higher_smooth
+		4 <=> highest_smooth (default)
+
+	-shap_rama_smooth_level sets -shap_rama_map flag, as follows:
+		1 <=> lowest_smooth  <=> -shap_rama_map scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb
+		2 <=> lower_smooth   <=> -shap_rama_map scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb
+		3 <=> higher_smooth  <=> -shap_rama_map scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb
+		4 <=> highest_smooth <=> -shap_rama_map scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb (default)
+
+(2)
+	-shap_dun10_smooth_level 3 (default) [1, 2, 3, 4, 5, 6]
+	or
+	-shap_dun10_smooth_level low_smooth (default) [lowest_smooth, lower_smooth, low_smooth, average_smooth, higher_smooth, highest_smooth]
+		1 <=> lowest_smooth
+		2 <=> lower_smooth
+		3 <=> low_smooth (default)
+		4 <=> average_smooth
+		5 <=> higher_smooth
+		6 <=> highest_smooth
+
+	-shap_dun10_smooth_level sets -shap_dun10_dir flag, as follows:
+		1 <=> lowest_smooth  <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_0-0-0
+		2 <=> lower_smooth   <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_2-2-2
+		3 <=> low_smooth  <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_5-5-5 (default)
+		4 <=> average_smooth <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_10-10-10
+		5 <=> higher_smooth <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_20-20-20
+		6 <=> highest_smooth <=> -shap_dun10_dir rotamer/shapovalov/StpDwn_25-25-25
+
+(3)
+	-shap_p_aa_pp_smooth_level 2 (default) [1, 2]
+	or
+	-shap_p_aa_pp_smooth_level high_smooth (default) [low_smooth, high_smooth]
+		1 <=> low_smooth
+		2 <=> high_smooth (default)
+
+	-shap_rama_smooth_level sets -shap_rama_map flag, as follows:
+		1 <=> low_smooth  <=> -shap_p_aa_pp scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+		2 <=> high_smooth   <=> -shap_p_aa_pp scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop (default)
+
+In addition the user can specify a custom path to one of three library categories with:
+-shap_rama_map or -shap_dun10_dir or -shap_p_aa_pp, for example:
+
+	-shap_rama_map scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb
+	-shap_dun10_dir rotamer/shapovalov/StpDwn_10-10-10
+	-shap_p_aa_pp scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+
+These settings will override -shap_rama_smooth_level or -shap_dun10_smooth_level or -shap_p_aa_pp_smooth_level argument values.
+
+March 11, 2015
+April 27, 2015
+Maxim Shapovalov
+

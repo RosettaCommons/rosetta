@@ -59,8 +59,14 @@
 #include <utility/vector1.hh>
 #include <sstream>
 
+//MaximCode
+#include <basic/Tracer.hh>
+#include <boost/algorithm/string.hpp>
 
 using namespace ObjexxFCL;
+
+//MaximCode
+static basic::Tracer TR("core.scoring.ramachandran");
 
 namespace core {
 namespace scoring {
@@ -86,10 +92,48 @@ Ramachandran::Ramachandran() :
 	n_valid_pp_bins_by_ppo_torbin_( n_aa_, conformation::n_ppo_torsion_bins ),
 	phi_psi_bins_above_thold_( n_aa_ )
 {
-	using namespace basic::options;
-	read_rama(
-		option[ OptionKeys::corrections::score::rama_map ]().name(),
-		option[ OptionKeys::corrections::score::use_bicubic_interpolation ]);
+	//MaximCode
+	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable])
+	{
+		read_rama(
+				basic::options::option[basic::options::OptionKeys::corrections::score::rama_map]().name(),
+				basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
+	}
+	else
+	{
+		//MaximCode
+		{
+			std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_smooth_level ];
+			std::string _smoothingAsKeyword = "undefined";
+
+			if (_smoothingRequsted.compare("1")==0)
+			{
+				_smoothingAsKeyword = "lowest_smooth";
+			}
+			else if (_smoothingRequsted.compare("2")==0)
+			{
+				_smoothingAsKeyword = "lower_smooth";
+			}
+			else if (_smoothingRequsted.compare("3")==0)
+			{
+				_smoothingAsKeyword = "higher_smooth";
+			}
+			else if (_smoothingRequsted.compare("4")==0)
+			{
+				_smoothingAsKeyword = "highest_smooth";
+			}
+			else
+			{
+				_smoothingAsKeyword = "unknown";
+			}
+			TR << "shapovalov_lib::shap_rama_smooth_level of " << _smoothingRequsted << "( aka " << _smoothingAsKeyword << " )" << " got activated." << std::endl;
+		}
+
+		read_rama(
+				basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_map]().name(),
+				basic::options::option[basic::options::OptionKeys::corrections::score::use_bicubic_interpolation]);
+	}
 }
 
 Ramachandran::Ramachandran(
@@ -515,6 +559,23 @@ Ramachandran::eval_rama_score_residue(
 	if ( use_bicubic_interpolation ) {
 
 		rama = rama_energy_splines_[ res_aa2 ].F(phi2,psi2);
+		//MaximCode:
+		//core::chemical::AA resTest = chemical::aa_phe;
+		//Real ramaTest1 = rama_energy_splines_[ resTest ].F(300,320);
+		//Real ramaTest2 = rama_energy_splines_[ resTest ].F(305,325);
+		//Real ramaTest3 = rama_energy_splines_[ resTest ].F(295,315);
+        //
+		//ramaTest1 = 0;
+		//ramaTest2 = 0;
+		//ramaTest3 = 0;
+        //
+		//core::chemical::AA resTest2 = chemical::aa_pro;
+		//Real ramaTest4 = rama_energy_splines_[ resTest2 ].F(295,145);
+		//Real ramaTest5 = rama_energy_splines_[ resTest2 ].F(295,155);
+        //
+		//ramaTest4 = 0;
+		//ramaTest5 = 0;
+
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
 		//printf("drama_dphi=%.8f\tdrama_dpsi=%.8f\n", drama_dphi, drama_dpsi); //DELETE ME!
@@ -718,7 +779,14 @@ Ramachandran::read_rama(
 
 //cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
 //KMa add_phospho_ser 2006-01
-	read_rama_map_file (&iunit);
+
+	//MaximCode
+	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_enable]) {
+		read_rama_map_file(&iunit);
+	} else {
+		read_rama_map_file_shapovalov(&iunit);
+	}
 
 	iunit.close();
 	iunit.clear();
@@ -732,11 +800,35 @@ Ramachandran::read_rama(
 			MathMatrix< Real > energy_vals( 36, 36 );
 			for ( Size jj = 0; jj < 36; ++jj ) {
 				for ( Size kk = 0; kk < 36; ++kk ) {
-					energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
+					//MaximCode:
+					if (true)
+					{
+						energy_vals( jj, kk ) = -std::log( ram_probabil_(jj+1,kk+1,3,ii )) + ram_entropy_(3,ii) ;
+					}
+					else
+					{
+						energy_vals( jj, kk ) = ram_probabil_(jj+1,kk+1,3,ii );
+					}
 				}
 			}
 			BorderFlag periodic_boundary[2] = { e_Periodic, e_Periodic };
-			Real start_vals[2] = {5.0, 5.0}; // grid is shifted by five degrees.
+			Real start_vals[2];
+			if (
+					(
+						basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
+						basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_rama_nogridshift ]
+					)
+					||
+					(
+						basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] &&
+						basic::options::option[basic::options::OptionKeys::corrections::correct]
+					)
+			   )
+			{
+				start_vals[0] = start_vals[1] = 0.0; // if this flag is on, then the Rama table is not shifted and aligns with the ten-degree boundaries.
+			} else {
+				start_vals[0] = start_vals[1] = 5.0; // otherwise, the grid is shifted by five degrees.
+			}
 			Real deltas[2] = {10.0, 10.0}; // grid is 10 degrees wide
 			bool lincont[2] = {false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
 			std::pair< Real, Real > unused[2];
@@ -871,6 +963,95 @@ Ramachandran::draw_random_phi_psi_from_cdf(
 	// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
 	phi = binw_ * ( phi_ind + numeric::random::uniform() );
 	psi = binw_ * ( psi_ind + numeric::random::uniform() );
+}
+
+//MaximCode
+void
+Ramachandran::read_rama_map_file_shapovalov (
+		utility::io::izstream * iunit
+) {
+	//...
+	//# Analysis      dataPoints-adaptive KDE
+	//#
+	//# res   phi     psi     Probabil        -log(Probabil)
+	//#
+	//ala     -180.0  -180.0  5.436719e-004   7.517165e+000
+	//ala     -170.0  -180.0  9.476649e-004   6.961510e+000
+	//ala     -160.0  -180.0  1.274955e-003   6.664844e+000
+	//ala     -150.0  -180.0  1.334395e-003   6.619277e+000
+
+	char line[256];
+	Real check, min_prob, max_prob;
+
+	int i; // aa index
+	int ii = 3; // secondary structure index
+	int j, k; //phi and psi indices
+	char aa[4];
+	std::string aaStr;
+	double phi, psi, prob, minusLogProb;
+
+	do
+	{
+		iunit->getline( line, 255 );
+
+		if (iunit->eof())
+		{
+			break;
+		}
+
+		if (line[0]=='#' || line[0]=='\n' || line[0]=='\r')
+		{
+			continue;
+		}
+
+		std::sscanf( line, "%3s%lf%lf%lf%lf", aa, &phi, &psi, &prob, &minusLogProb );
+		std::string prevAAStr = aaStr;
+		aaStr = std::string(aa);
+		boost::to_upper(aaStr);
+		i = core::chemical::aa_from_name(aaStr);
+		if (aaStr != prevAAStr)
+		{
+			if (false)
+			{
+				TR << "MaximCode test: " << "aa " << prevAAStr << "\tsumP " << check << "\tminP " << min_prob << "\tmaxP " << max_prob << std::endl;
+			}
+
+			check = 0.0;
+			min_prob = 1e36;
+			max_prob = -min_prob;
+			ram_entropy_(ii,i) = 0;
+		}
+
+		//j, k (aka phi and psi indices) start with 1 and correspond to 0 and go all way to 36 corresponding to 350
+		//since the storage type is FArray4D, Fortran-Compatible 4D Array where indices start from 1 by default
+		if (phi < 0) {
+			phi += 360;
+		}
+		if (psi < 0) {
+			psi += 360;
+		}
+		//MaximCode
+		//round produces unidentified symbol on Windows compilation, so replaced with ceil
+		j = (int) ceil(phi / 10.0 - 0.5) + 1;
+		k = (int) ceil(psi / 10.0 - 0.5) + 1;
+
+		ram_probabil_(j,k,ii,i) = prob;
+		ram_energ_(j,k,ii,i) = minusLogProb;
+		//Maxim Shapovalov:
+		//It is not entropy in accordance with textbooks.
+		//It should be reversed with additional minus.
+		//There is additional minus G = H - T*S in free energy
+		//but it is skipped in the code by previous developers
+		//So it means good.
+		ram_entropy_(ii,i) += ram_probabil_(j,k,ii,i) * -ram_energ_(j,k,ii,i);
+
+		check += ram_probabil_(j,k,ii,i);
+		min_prob = std::min(ram_probabil_(j,k,ii,i),min_prob);
+		max_prob = std::max(ram_probabil_(j,k,ii,i),max_prob);
+
+	} while (true);
+
+
 }
 
 

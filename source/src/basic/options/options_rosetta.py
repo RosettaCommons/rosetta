@@ -1960,6 +1960,26 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
 			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues", default="false"),
 		), #-corrections:chemical
+		
+		Option( 'shapovalov_lib_fixes_enable', 'Boolean', desc='Apply new code by Maxim Shapovalov from Dunbrack Lab such as for reading/using dun, rama, prop libraries in new format and options for applying different bug fixes. False value will employ old libraries and old code.', default='false'),
+			
+		#Different options for new dunbrack, rama, prop libraries, they have effect only when shapovalov_lib_fixes_enable is true.
+		Option_Group( 'shapovalov_lib',	
+			Option( 'shap_dun10_enable',   'Boolean', desc="Enable new Shapovalov's dun10 fix if the umbrella option is on, shapovalov_lib_fixes", default="true"  ),
+			Option( 'shap_dun10_smooth_level', 'String', desc='Smoothing level either numeric or word keyword, possible values are 1 or lowest_smooth, 2 or lower_smooth, 3 or low_smooth, 4 or average_smooth, 5 or higher_smooth, 6 or highest_smooth.', default="3"),
+			Option( 'shap_dun10_dir',   'String', desc="Name of the new format dun10 dir", default="rotamer/shapovalov/StpDwn_5-5-5" ),
+			Option( 'shap_dun10_use_minus_log_P_ignore_P',   'Boolean', desc="Use minus log P from text libraries only and ignore any P.", default="false"),
+
+			Option( 'shap_rama_enable',   'Boolean', desc="Enable new Shapovalov's Rama fix if the umbrella option is on, shapovalov_lib_fixes", default="true"  ),
+			Option( 'shap_rama_smooth_level', 'String', desc='Smoothing level either numeric or word keyword, possible values are 1 or lowest_smooth, 2 or lower_smooth, 3 or higher_smooth, 4 or highest_smooth.', default="4"),
+			Option( 'shap_rama_map', 'File', default = 'scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb', desc="New Ramachandran file in the new format used by rama" ),
+			Option( 'shap_rama_nogridshift',   'Boolean', desc="With correct flag there is a bug. Rama09_noEH_kernel25_it08.dat is used where prob values are reported exactly at the 10-deg grid while Rama_smooth_dyn.dat_ss_6.4 has values reported in the middle of bins. There is no need for 5-deg shift for newer Rama maps with values reported at the grid.", default="true"  ),
+
+			Option( 'shap_p_aa_pp_enable',   'Boolean', desc="Enable new Shapovalov's propensity map fix if the umbrella option is on, shapovalov_lib_fixes", default="true"  ),
+			Option( 'shap_p_aa_pp_smooth_level', 'String', desc='Smoothing level either numeric or word keyword, possible values are 1 or low_smooth, 2 or high_smooth.', default="2"),
+			Option( 'shap_p_aa_pp',   'String', desc="Name of the new Shapovalov's P_AA_PP potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop" ),
+					
+		), #-corrections:shapovalov_lib
 	), # -corrections
 
 	# Evaluator Options ---------------------------------------------------------

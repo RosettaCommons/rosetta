@@ -16,6 +16,7 @@
 #include <core/scoring/P_AA.hh>
 
 // Project headers
+#include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -44,6 +45,9 @@
 #include <utility/assert.hh>
 
 #include <utility/vector1.hh>
+
+//MaximCode:
+static thread_local basic::Tracer TR( "core.scoring.P_AA" );
 
 
 namespace core {
@@ -184,21 +188,61 @@ P_AA::read_P_AA_pp()
 	using namespace core::chemical;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::score;
+	using namespace basic::options::OptionKeys::corrections;
 	using namespace basic::options::OptionKeys::corrections::score;
+	using namespace basic::options::OptionKeys::corrections::shapovalov_lib;
 	typedef  FArray2D_Probability::IR  IR; // Index range type
 
 	// Read the probability file and load the array
 	Angle phi, psi;
 	std::string id;
 	Probability probability;
+	//MaximCode:
+	Probability minusLogProbability;
 	utility::io::izstream stream;
 
+	//MaximCode
+	if (option[shapovalov_lib_fixes_enable] &&
+		option[shapovalov_lib::shap_p_aa_pp_enable])
+	{
+		std::string _smoothingRequsted = basic::options::option[ basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
+		std::string _smoothingAsKeyword = "undefined";
+
+		if (_smoothingRequsted.compare("1")==0)
+		{
+			_smoothingAsKeyword = "low_smooth";
+		}
+		else if (_smoothingRequsted.compare("2")==0)
+		{
+			_smoothingAsKeyword = "high_smooth";
+		}
+		else
+		{
+			_smoothingAsKeyword = "unknown";
+		}
+		TR << "shapovalov_lib::shap_p_aa_pp_smooth_level of " << _smoothingRequsted << "( aka " << _smoothingAsKeyword << " )" << " got activated." << std::endl;
+	}
+
 	// search in the local directory first
-	stream.open( option[ p_aa_pp ] );
+	//MaximCode:
+	if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+			|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+		stream.open( option[ p_aa_pp ] );
+	}
+	else {
+		stream.open( option[ shap_p_aa_pp ] );
+	}
+
 	// then database
-	if ( !stream.good() ) {
+	if (!stream.good()) {
 		stream.close();
-		basic::database::open( stream, option[ p_aa_pp ] );
+		//MaximCode:
+		if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+			basic::database::open(stream, option[p_aa_pp]);
+		} else {
+			basic::database::open(stream, option[shap_p_aa_pp]);
+		}
 	}
 
 	if ( !stream.good() ) utility_exit_with_message( "Unable to open p_aa_pp map!" );
@@ -210,8 +254,22 @@ P_AA::read_P_AA_pp()
 	while ( stream ) {
 		using namespace ObjexxFCL::format;
 
-		stream >> bite( 4, phi ) >> skip( 1 ) >> bite( 4, psi ) >> skip( 1 )
-		>> bite( 3, id ) >> skip( 17 ) >> bite( 7, probability ) >> skip;
+		//MaximCode:
+		if (stream.peek() == '#') {
+			std::string line;
+			stream.getline(line);
+			continue;
+		}
+
+		//MaximCode:
+		if (!basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				|| !basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) {
+			stream >> bite(4, phi) >> skip(1) >> bite(4, psi) >> skip(1)
+					>> bite(3, id) >> skip(17) >> bite(7, probability) >> skip;
+		} else {
+			stream >> phi >> psi >> skip(1) >> bite(3, id) >> skip(1)
+					>> probability >> minusLogProbability >> skip;
+		}
 
 		if ( ( stream ) ) {
 		debug_assert( ( phi >= Angle( -180.0 ) ) && ( phi <= Angle( 180.0 ) ) );
@@ -221,20 +279,22 @@ P_AA::read_P_AA_pp()
 			AA aa = aa_from_name( id );
 		debug_assert( ( aa >= 1 ) && ( aa <= num_canonical_aas ) );
 
-			if ( option[ p_aa_pp_nogridshift ] ) {
-				int const i_phi( numeric::mod( 36 + numeric::nint(  phi / Angle( 10.0 ) ), 36 ) );
-				int const i_psi( numeric::mod( 36 + numeric::nint(  psi / Angle( 10.0 ) ), 36 ) );
+			//MaximCode:
+			if ( option[ p_aa_pp_nogridshift ] ||
+					(basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable] && basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_p_aa_pp_enable]) ) {
+						int const i_phi( numeric::mod( 36 + numeric::nint( phi / Angle( 10.0 ) ), 36 ) );
+						int const i_psi( numeric::mod( 36 + numeric::nint( psi / Angle( 10.0 ) ), 36 ) );
 
-				if ( probability == Probability( 0.0 ) ) probability = 1e-6;
-				P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
-			}
-			else {
-				int const i_phi( numeric::mod( 36 + numeric::nint( ( phi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
-				int const i_psi( numeric::mod( 36 + numeric::nint( ( psi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
+						if ( probability == Probability( 0.0 ) ) probability = 1e-6;
+						P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
+					}
+					else {
+						int const i_phi( numeric::mod( 36 + numeric::nint( ( phi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
+						int const i_psi( numeric::mod( 36 + numeric::nint( ( psi / Angle( 10.0 ) ) - Angle( 0.5 ) ), 36 ) );
 
-				if ( probability == Probability( 0.0 ) ) probability = .001; //! Hack from rosetta++ except leave .001 entries alone
-				P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
-			}
+						if ( probability == Probability( 0.0 ) ) probability = .001; //! Hack from rosetta++ except leave .001 entries alone
+						P_AA_pp_[ aa ]( i_phi, i_psi ) = probability;
+					}
 
 		} //! ADD INPUT ERROR HANDLING
 	}

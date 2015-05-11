@@ -219,6 +219,8 @@ private:
 		bool use_bicubic_interpolation);
 
 	void read_rama_map_file ( utility::io::izstream * iunit );
+	//MaximCode
+	void read_rama_map_file_shapovalov ( utility::io::izstream * iunit );
 	void initialize_rama_sampling_tables();
 
 	void init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bin );

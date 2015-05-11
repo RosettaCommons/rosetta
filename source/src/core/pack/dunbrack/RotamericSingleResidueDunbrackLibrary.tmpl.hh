@@ -2034,6 +2034,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 
 	utility::fixedsizearray1< Real, N > bb;
 	DunbrackReal probability(0.0);
+	//MaximCode
+	//The natural logarithm is the base-e logarithm: the inverse of the natural exponential function (exp).
+	DunbrackReal minusLogProbability(-1e-10);
 
 	utility::fixedsizearray1< Size, N > bb_bin;
 	utility::fixedsizearray1< Size, N > last_bb_bin;
@@ -2090,6 +2093,11 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 		infile >> count;
 		infile >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
 		infile >> probability;
+		//MaximCode
+		if (basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable]) {
+			infile >> minusLogProbability;
+		}
 		infile >> chimean[ 1 ] >> chimean[ 2 ] >> chimean[ 3 ] >> chimean[ 4 ];
 		infile >> chisd[ 1 ] >> chisd[ 2 ] >> chisd[ 3 ] >> chisd[ 4 ];
 

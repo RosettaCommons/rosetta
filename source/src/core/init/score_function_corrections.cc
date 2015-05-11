@@ -44,6 +44,9 @@
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
+//MaximCode:
+static thread_local basic::Tracer TR( "core.init.score_function_corrections" );
+
 namespace core {
 namespace init {
 
@@ -322,6 +325,7 @@ init_facts_correction() {
  	} // end facts_default
 }
 
+//MaximCode:
 void
 init_correct_correction() {
 
@@ -353,6 +357,7 @@ init_correct_correction() {
 		if ( ! option[ corrections::score::rama_map ].user() ) {
 			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
+
 		//rotamer library
 		if ( ! option[ corrections::score::dun02_file ].user() ) {
 			option[corrections::score::dun02_file].value( "rotamer/bbdep02.May.sortlib-correct.12.2010" );
@@ -375,6 +380,131 @@ init_correct_correction() {
 		}
 	}
 }
+
+//MaximCode:
+void
+init_shapovalov_lib_fixes_enable_correction()
+{
+	// set default corrections
+	if( option[corrections::shapovalov_lib_fixes_enable])
+	{
+		if (option[corrections::shapovalov_lib::shap_dun10_enable])
+		{
+			if ( ! option[ corrections::shapovalov_lib::shap_dun10_dir ].user() )
+			{
+				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_dun10_smooth_level ];
+				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_0-0-0");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("1");
+				}
+				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_2-2-2");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("2");
+				}
+				else if (_smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("low_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
+				}
+				else if (_smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("average_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_10-10-10");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("4");
+				}
+				else if (_smoothingRequsted.compare("5")==0 || _smoothingRequsted.compare("higher_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_20-20-20");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("5");
+				}
+				else if (_smoothingRequsted.compare("6")==0 || _smoothingRequsted.compare("highest_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_25-25-25");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("6");
+				}
+				else
+				{
+					option[ corrections::shapovalov_lib::shap_dun10_dir ].value("rotamer/shapovalov/StpDwn_5-5-5");
+					option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("3");
+				}
+			}
+			else
+			{
+				option[ corrections::shapovalov_lib::shap_dun10_smooth_level ].value("overriden");
+			}
+		}
+
+
+		if (option[corrections::shapovalov_lib::shap_rama_enable])
+		{
+			if ( ! option[ corrections::shapovalov_lib::shap_rama_map ].user() )
+			{
+				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_rama_smooth_level ];
+				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("lowest_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa75/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("1");
+				}
+				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("lower_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa50/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("2");
+				}
+				else if (_smoothingRequsted.compare("3")==0 || _smoothingRequsted.compare("higher_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa37.5/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("3");
+				}
+				else if (_smoothingRequsted.compare("4")==0 || _smoothingRequsted.compare("highest_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
+				}
+				else
+				{
+					option[ corrections::shapovalov_lib::shap_rama_map ].value("scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb");
+					option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("4");
+				}
+			}
+			else
+			{
+				option[ corrections::shapovalov_lib::shap_rama_smooth_level ].value("overriden");
+			}
+		}
+
+
+		if (option[corrections::shapovalov_lib::shap_p_aa_pp_enable])
+		{
+			if ( ! option[ corrections::shapovalov_lib::shap_p_aa_pp ].user() )
+			{
+				std::string _smoothingRequsted = option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ];
+				if (_smoothingRequsted.compare("1")==0 || _smoothingRequsted.compare("low_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop");
+					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("1");
+				}
+				else if (_smoothingRequsted.compare("2")==0 || _smoothingRequsted.compare("high_smooth")==0)
+				{
+					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
+					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
+				}
+				else
+				{
+					option[ corrections::shapovalov_lib::shap_p_aa_pp ].value("scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa50/a20.prop");
+					option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("2");
+				}
+			}
+			else
+			{
+				option[ corrections::shapovalov_lib::shap_p_aa_pp_smooth_level ].value("overriden");
+			}
+		}
+
+
+	}
+}
+
 
 void
 init_crystal_refinement_correction() {
@@ -553,6 +683,7 @@ init_restore_score12prime() {
 	}
 }
 
+//MaximCode:
 void
 init_score_function_corrections(){
 	init_revert_to_pre_talaris_2013_mistake();
@@ -563,6 +694,8 @@ init_score_function_corrections(){
 	init_beta_correction();
 	init_nonideal_correction();
 	init_dna_correction();
+
+	init_shapovalov_lib_fixes_enable_correction();
 }
 
 void

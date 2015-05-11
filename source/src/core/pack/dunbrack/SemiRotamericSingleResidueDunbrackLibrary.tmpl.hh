@@ -2560,6 +2560,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 	Size count;
 	utility::vector1< Size > rotwell( DUNBRACK_MAX_SCTOR, 0 );
 	DunbrackReal prob;
+	//MaximCode
+	//The natural logarithm is the base-e logarithm: the inverse of the natural exponential function (exp).
+	DunbrackReal minusLogProbability(-1e-10);
 	utility::vector1< DunbrackReal > mean( DUNBRACK_MAX_SCTOR, 0.0 );
 	utility::vector1< DunbrackReal > stdev( DUNBRACK_MAX_SCTOR, 0.0 );
 
@@ -2590,6 +2593,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotameric_data(
 		in_rotameric >> count;
 		in_rotameric >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];
 		in_rotameric >> prob;
+		//MaximCode
+		if (basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable]) {
+			in_rotameric >> minusLogProbability;
+		}
 		in_rotameric >> mean[ 1 ] >> mean[ 2 ] >> mean[ 3 ] >> mean[ 4 ];
 		in_rotameric >> stdev[ 1 ] >> stdev[ 2 ] >> stdev[ 3 ] >> stdev[ 4 ];
 
@@ -2694,6 +2702,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	std::string three_letter_code;
 	utility::fixedsizearray1< Real, N > bbs;
 	Real base_prob;
+	//MaximCode
+	//The natural logarithm is the base-e logarithm: the inverse of the natural exponential function (exp).
+	Real minusLogProbability(-1e-10);
 	Size count;
 	utility::vector1< Size > rotwell( T );
 	utility::vector1< Real > chimean( T );
@@ -2728,6 +2739,11 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		in_continmin >> count;
 		for ( Size ii = 1; ii <= T; ++ii )                  in_continmin >> rotwell[ ii ];
 		in_continmin >> base_prob;
+		//MaximCode
+		if (basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib_fixes_enable]
+				&& basic::options::option[basic::options::OptionKeys::corrections::shapovalov_lib::shap_dun10_enable]) {
+			in_continmin >> minusLogProbability;
+		}
 		for ( Size ii = 1; ii <= T; ++ii )                  in_continmin >> chimean[ ii ];
 		for ( Size ii = 1; ii <= T; ++ii )                  in_continmin >> chisd[ ii ];
 		for ( Size ii = 1; ii <= bbdep_nrchi_nbins_; ++ii ) in_continmin >> nrchi_probs[ ii ];

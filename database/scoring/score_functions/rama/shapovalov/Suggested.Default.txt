@@ -1,0 +1,1 @@
+scoring/score_functions/rama/shapovalov/kappa25

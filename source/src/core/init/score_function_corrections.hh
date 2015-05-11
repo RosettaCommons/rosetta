@@ -36,6 +36,9 @@ void init_facts_correction();
 /// @brief Initialize the -correct correction
 void init_correct_correction();
 
+/// @brief Initialize the -shapovalov_lib_fixes_enable correction
+void init_shapovalov_lib_fixes_enable_correction();
+
 /// @brief Initialize the -beta score function
 void init_beta_correction();
 
