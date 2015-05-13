@@ -227,7 +227,8 @@ public:
 			core::Real radius,
 			ObjexxFCL::FArray3D< double > &rhoC,
 			ObjexxFCL::FArray3D< double > &mask,
-			core::Real forceB = -1.0 );
+			core::Real forceB = -1.0,
+			core::Real B_upper_limit = 600 );
 
 	core::Real
 	maxNominalRes();

@@ -225,6 +225,8 @@ ElectronDensity::ElectronDensity() {
 
 // "rho_calc" constructor
 ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, core::Real reso, core::Real apix ) {
+	init();
+
 	core::Size nposes = poses.size();
 	this->reso = reso;
 
@@ -262,6 +264,8 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	real_apix[0] = ( (d_max[0] - d_min[0]) + 2*FLUFF) / ((core::Real)grid[0]);
 	real_apix[1] = ( (d_max[1] - d_min[1]) + 2*FLUFF) / ((core::Real)grid[1]);
 	real_apix[2] = ( (d_max[2] - d_min[2]) + 2*FLUFF) / ((core::Real)grid[2]);
+	TR << "    grid: " << grid[0] << " x " << grid[1] << " x " << grid[2] << std::endl;
+	TR << "    real_apix: " << real_apix[0] << " x " << real_apix[1] << " x " << real_apix[2] << std::endl;
 
 	// make fake crystal data
 	cellAngles[0] = cellAngles[1] = cellAngles[2] = 90;
@@ -271,7 +275,6 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	computeCrystParams();
 	TR << "    celldim: " << cellDimensions[0] << " x " << cellDimensions[1] << " x " << cellDimensions[2] << std::endl;
 	TR << " cellangles: " << cellAngles[0] << " x " << cellAngles[1] << " x " << cellAngles[2] << std::endl;
-
 
 	// figure out effective B
 	core::Real max_del_grid = std::max( real_apix[0] , real_apix[1] );
@@ -289,87 +292,43 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	origin[1] = std::floor(frac_dmin[1]*grid[1]);
 	origin[2] = std::floor(frac_dmin[2]*grid[2]);
 	efforigin = origin;
+	TR << "    origin: " << origin[0] << " x " << origin[1] << " x " << origin[2] << std::endl;
 
 	// atom_mask
 	OneGaussianScattering cscat = get_A( "C" );
-	core::Real mask_min = 3.0 * sqrt( 2.0 / cscat.k(effectiveB) );
+	core::Real mask_min = 3.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
 	ATOM_MASK = mask_min;
 	ATOM_MASK_PADDING = 2;
 
 	// 2 rho_calc
 	density.dimension(grid[0],grid[1],grid[2]);
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) density[i]=0.0;
-	numeric::xyzVector< core::Real > cartX, fracX;
-	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij;
 	for (Size n=1; n<=nposes; ++n) {
-		core::pose::Pose &pose = *(poses[n]);
-		int nres = pose.total_residue();
-		for (int i=1 ; i<=nres; ++i) {
-			conformation::Residue const &rsd_i (pose.residue(i));
+		// pose->poseCoords
+		poseCoords litePose;
+		for (core::Size i = 1; i <= poses[n]->total_residue(); ++i) {
+				core::conformation::Residue const & rsd_i ( poses[n]->residue(i) );
+				if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
-			// skip vrts & masked reses
-			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
-			if ( scoring_mask_.find(i) != scoring_mask_.end() ) continue;
-			int nheavyatoms = rsd_i.nheavyatoms();
-			for (int j=1 ; j<=nheavyatoms; ++j) {
-				conformation::Atom const &atom_i( rsd_i.atom(j) );
-				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
-				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
-				OneGaussianScattering sig_j = get_A( elt_i );
-				core::Real k = sig_j.k( effectiveB );
-				core::Real C = sig_j.C( k );
+				core::Size natoms = rsd_i.nheavyatoms();
+				for (core::Size j = 1; j <= natoms; ++j) {
+						core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
-				if ( is_missing_density( atom_i.xyz() ) ) continue;
-				if ( C < 1e-6 ) continue;
+						poseCoord coord_j;
+						coord_j.x_ = rsd_i.xyz( j );
 
-				cartX = atom_i.xyz(); // - getTransform();
-				fracX = c2f*cartX;
-				atm_i[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
-				atm_i[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
-				atm_i[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+						// force B to be at least at resolution limit
+						coord_j.B_ = effectiveB;
+						if ( poses[n]->pdb_info() ) coord_j.B_ = std::max( poses[n]->pdb_info()->temperature( i, j ), effectiveB);
+						coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 
-				for (int z=1; z<=density.u3(); ++z) {
-					atm_j[2] = z;
-					del_ij[2] = (atm_i[2] - atm_j[2]) / grid[2];
-					// wrap-around??
-					if (del_ij[2] > 0.5) del_ij[2]-=1.0;
-					if (del_ij[2] < -0.5) del_ij[2]+=1.0;
-
-					del_ij[0] = del_ij[1] = 0.0;
-					if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
-
-					for (int y=1; y<=density.u2(); ++y) {
-						atm_j[1] = y;
-
-						// early exit?
-						del_ij[1] = (atm_i[1] - atm_j[1]) / grid[1] ;
-						// wrap-around??
-						if (del_ij[1] > 0.5) del_ij[1]-=1.0;
-						if (del_ij[1] < -0.5) del_ij[1]+=1.0;
-						del_ij[0] = 0.0;
-						if ((f2c*del_ij).length_squared() > (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) continue;
-
-						for (int x=1; x<=density.u1(); ++x) {
-							atm_j[0] = x;
-
-							// early exit?
-							del_ij[0] = (atm_i[0] - atm_j[0]) / grid[0];
-							// wrap-around??
-							if (del_ij[0] > 0.5) del_ij[0]-=1.0;
-							if (del_ij[0] < -0.5) del_ij[0]+=1.0;
-
-							numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
-							core::Real d2 = (cart_del_ij).length_squared();
-
-							if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
-								core::Real atm = C*exp(-k*d2);
-								density(x,y,z) += atm;
-							}
-						}
-					}
+						litePose.push_back( coord_j );
 				}
-			}
 		}
+
+		ObjexxFCL::FArray3D< double > rhoC, rhoMask;
+		calcRhoC( litePose, 0, rhoC, rhoMask, -1, 1e6 );
+		for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) density[i] += rhoC[i];
 	}
 }
 
@@ -1871,7 +1830,8 @@ ElectronDensity::calcRhoC(
 			core::Real radius,
 			ObjexxFCL::FArray3D< double > &rhoC,
 			ObjexxFCL::FArray3D< double > &mask,
-			core::Real fixed_mask_B /* = -1 */ ) {
+			core::Real fixed_mask_B /* = -1 */,
+			core::Real B_upper_limit /* = 600 */ ) {
 
 	// get rho_c
 	rhoC.dimension(density.u1() , density.u2() , density.u3());
@@ -1890,7 +1850,7 @@ ElectronDensity::calcRhoC(
 	for (int i=1 ; i<=(int)pose.size(); ++i) {
 		std::string elt_i = pose[i].elt_;
 		OneGaussianScattering sig_j = get_A( elt_i );
-		per_atom_ks[i] = sig_j.k( pose[i].B_ );
+		per_atom_ks[i] = sig_j.k( pose[i].B_, B_upper_limit );
 		if (use_Bs) {
 			per_atom_ks[i] = std::min ( per_atom_ks[i], 4*M_PI*M_PI/minimumB );
 		} else {
@@ -1904,8 +1864,8 @@ ElectronDensity::calcRhoC(
 
 		// for b factor minimization, we don't want the mask to change.
 		// so we fix the mask at a high B value
-		if (fixed_mask_B) {
-			core::Real mK = sig_j.k( fixed_mask_B );
+		if (fixed_mask_B>0) {
+			core::Real mK = sig_j.k( fixed_mask_B, B_upper_limit );
 			core::Real mC = sig_j.C( mK );
 			ATOM_MASK_SQS[i] = (1.0/mK) * (std::log( mC ) - std::log(1e-4));
 		}
