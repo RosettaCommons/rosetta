@@ -295,7 +295,6 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	TR << "    origin: " << origin[0] << " x " << origin[1] << " x " << origin[2] << std::endl;
 
 	// atom_mask
-	OneGaussianScattering cscat = get_A( "C" );
 	core::Real mask_min = 3.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
 	ATOM_MASK = mask_min;
 	ATOM_MASK_PADDING = 2;
@@ -395,15 +394,15 @@ numeric::xyzVector<core::Real> ElectronDensity::dens_grad (
 
 //////////////////////
 // poseSHT
-// read into pose 
+// read into pose
 // return poseCoefR, poseCoefI, pose_CenterOfMass (pre_trans)
-numeric::xyzVector< core::Real > ElectronDensity::poseSHT (  
+numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 			pose::Pose const &pose,
 			core::Size &nRsteps,
-			ObjexxFCL::FArray3D< double > &sigR, 
-			ObjexxFCL::FArray3D< double > &poseCoefR, 
+			ObjexxFCL::FArray3D< double > &sigR,
+			ObjexxFCL::FArray3D< double > &poseCoefR,
 			ObjexxFCL::FArray3D< double > &poseCoefI,
-			core::Size bandwidth ) 
+			core::Size bandwidth )
 {
 
 	core::Size B=bandwidth; // should be controllable
@@ -430,7 +429,7 @@ numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 	}
 	maxSize = std::sqrt( maxSize )+std::min(ATOM_MASK, 5.0);
 	//nRsteps = (int)std::floor(maxSize/delRsteps + 0.5);
-	
+
 
 	// initialize the SHT (Spherical Harmonic Transform)
 	//numeric::fourier::SHT SOFT(B, nRsteps, delRsteps);
@@ -454,7 +453,7 @@ numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 	//////////////////
 	// pose -> spherical harmonics
 	//	1. one models each atom with a Gaussian sphere of density
-	//	2. interpolate this calculated density in cencentric spherical shells 
+	//	2. interpolate this calculated density in cencentric spherical shells
 	//	(extending out to D Ang in 1 Ang steps)
 	//////////////////
 	core::Real k=square(M_PI/reso); // the higher resolution (the smaller the number, the broader the density map would be)
@@ -466,7 +465,7 @@ numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 	// for each atom
 	for (int i=1; i<=nAtms; ++i) {
 		atmList[i] -= massSum;
-       
+
 		// wangyr: this is for rare cases where in crystallographic density sometimes they have some clashes ( atomR < 1e-5 )
 		core::Real atomR = atmList[i].length();
 		if (atomR < 1e-5) {
@@ -492,7 +491,7 @@ numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 		core::Real sg1 = sin(gamma);
 		core::Real ct1 = cos(beta);
 		core::Real cg1 = cos(gamma);
-                       
+
 		for ( Size ridx=1; ridx<=nRsteps; ++ridx) {
 			core::Real shellR = ridx * delRsteps;
 			for ( Size t=1; t<=2*B; ++t) {
@@ -501,14 +500,14 @@ numeric::xyzVector< core::Real > ElectronDensity::poseSHT (
 				for ( Size p=1; p<=2*B; ++p) {
 					core::Real atomD = atomR*atomR + shellR*shellR - 2*atomR*shellR*(st1*sT[t]*(sg1*sG[p]+cg1*cG[p])+ct1*cT[t]);
 					if ( atomD < ATOM_MASK*ATOM_MASK) {
-						core::Real atomH = C * exp(-k*atomD);   
+						core::Real atomH = C * exp(-k*atomD);
 						sigR(p,t,ridx) += atomH;
 					}
 				}
 			}
 		}
 	} // loop through each atom
-	SOFT.sharm_transform( sigR , poseCoefR, poseCoefI ); 
+	SOFT.sharm_transform( sigR , poseCoefR, poseCoefI );
 	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
 		ElectronDensity(sigR, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigR.mrc" );
 	}
@@ -528,7 +527,7 @@ core::Real ElectronDensity::mapSHT (
 			double &map_s2,
 			double &pose_s,
 			double &pose_s2,
-			ObjexxFCL::FArray3D< double > & poseCoefR, 
+			ObjexxFCL::FArray3D< double > & poseCoefR,
 			ObjexxFCL::FArray3D< double > & poseCoefI,
 			numeric::xyzMatrix<core::Real> & rotation,
 			numeric::xyzVector<core::Real> & pre_trans,
@@ -545,7 +544,7 @@ core::Real ElectronDensity::mapSHT (
 	// initialize the SHT (Spherical Harmonic Transform)
 	core::Size B=bandwidth;
 	core::Real delRsteps=2.0;
-	
+
 	//numeric::fourier::SHT SOFT(B, nRsteps, delRsteps);
 	numeric::fourier::SHT SOFT(B, nRsteps);
 	ObjexxFCL::FArray3D< double > mapCoefR, mapCoefI;
@@ -564,10 +563,10 @@ core::Real ElectronDensity::mapSHT (
 	// override the given centerOfMass from density data
 	// the original centerOfMass ( from density.u1(), density.u2(), density.u3() ) is index coordinate system
 	centerOfMass = MyCenterOfMass;
-	
+
 	// idx_com1: index coord
-	numeric::xyzVector<core::Real> idx_com1 ( centerOfMass[0] , 
-																						centerOfMass[1] , 
+	numeric::xyzVector<core::Real> idx_com1 ( centerOfMass[0] ,
+																						centerOfMass[1] ,
 																						centerOfMass[2] );
 	//std::cout << "idx_com1" << idx_com1 << std::endl;
 	numeric::xyzVector<core::Real> idx_com2 ( centerOfMass[0] + origin[0] - 1 ,
@@ -579,17 +578,17 @@ core::Real ElectronDensity::mapSHT (
 	for ( Size r_idx=1; r_idx<=nRsteps; ++r_idx) {
 		r = (core::Real) delRsteps*(r_idx);
 		//TR << "shell radius: " << r << std::endl;
-	
+
 		for ( Size th_idx=1; th_idx<=2*B; ++th_idx) {
 			theta = (2.0*th_idx - 1.0) * M_PI / (4.0*B);
-	
+
 			for ( Size phi_idx=1; phi_idx<=2*B; ++phi_idx) {
 				phi = (2.0*phi_idx - 2.0) * M_PI / (2.0*B);
 				// reverse X/Y for SOFT
 				cartOffset[1] = r*cos(phi)*sin(theta);
 				cartOffset[0] = r*sin(phi)*sin(theta);
 				cartOffset[2] = r*cos(theta);
-	
+
 				numeric::xyzVector<core::Real> fracX = c2f*cartOffset;
 				idxX = numeric::xyzVector<core::Real>( fracX[0]*grid[0],
 				                                       fracX[1]*grid[1],
@@ -598,8 +597,8 @@ core::Real ElectronDensity::mapSHT (
 				idxX = idxX + idx_com1;
 				// the density map is interpolated on concentric spherical shell about the center of mass of the map
 				sigSphSpline(phi_idx, th_idx, r_idx) = interp_spline( coeffs_density_ , idxX );
-				
-				//wangyr 
+
+				//wangyr
 				//TR << "cartOffset   : " << cartOffset << std::endl;
 				//TR << "fracX        : " << fracX << std::endl;
 				//TR << "grid         : " << grid << std::endl;
@@ -619,7 +618,7 @@ core::Real ElectronDensity::mapSHT (
 	// find optimal rotation
 	//////////////////////////
 	ObjexxFCL::FArray3D< double > so3_correlation;
-	
+
 	// in order to report s and s2 after matching
 	TR << "SOFT.sph_standardize(mapCoefR, mapCoefI):  ";
 	SOFT.sph_standardize(mapCoefR, mapCoefI, map_s, map_s2);
@@ -638,7 +637,7 @@ core::Real ElectronDensity::mapSHT (
 	TR << "SOFT.sph_standardize(poseCoefR, poseCoefI): ";
 	SOFT.sph_standardize(poseCoefR, poseCoefI, pose_s, pose_s2);
 
-	SOFT.so3_correlate(so3_correlation, mapCoefR,mapCoefI,  poseCoefR,poseCoefI); 
+	SOFT.so3_correlate(so3_correlation, mapCoefR,mapCoefI,  poseCoefR,poseCoefI);
 
 	core::Real maxval = -MAX_FLT, thisVal;
 	int maxloc = -1;
