@@ -170,7 +170,7 @@ protocols::moves::MoverOP setup_start_coords()
 	core::Vector start_coords(coord_vect[1],coord_vect[2],coord_vect[3]);
 
 	protocols::ligand_docking::StartFromOP start_from( new protocols::ligand_docking::StartFrom() );
-	start_from->coords(start_coords,"default");
+	start_from->add_coords(start_coords,"default");
 	start_from->chain("X");
 
 	return start_from;

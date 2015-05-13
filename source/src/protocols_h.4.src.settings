@@ -84,7 +84,8 @@ sources = {
 		"Transform",
 		"Translate",
 		"UnconstrainedTorsionsMover",
-    "WriteLigandMolFile",
+		"util",
+		"WriteLigandMolFile",
 	],
 	"protocols/ligand_docking/ligand_options": [
 		"Interface",

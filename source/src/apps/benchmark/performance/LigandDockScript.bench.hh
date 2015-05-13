@@ -83,7 +83,7 @@ public:
 
 	void setup(){
 		start_from_.chain("X");
-		start_from_.coords(core::Vector(-1.731,32.589,-5.039), "default");
+		start_from_.add_coords(core::Vector(-1.731,32.589,-5.039), "default");
 		translate_info_.distribution= get_distribution("uniform");
 		translate_info_.angstroms = 5.0;
 		translate_info_.cycles = 50;
