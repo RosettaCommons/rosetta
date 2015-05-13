@@ -169,6 +169,7 @@ public:
 	bool bad() const;
 
 	core::Size start_time() const;
+	core::Size end_time() const;
 
 	core::Size elapsed_time() const;
 
@@ -181,6 +182,8 @@ public:
 	void set_bad(bool value = true);
 
 	void start_timing();
+	void end_timing();
+
 	void add_output_observer( JobOutputterObserverAP an_observer );
 	void remove_output_observer( JobOutputterObserverAP old_observer );
 	void call_output_observers( core::pose::Pose const & pose );
@@ -212,6 +215,7 @@ private:
 	bool completed_;
 
 	core::Size start_time_;  // seconds
+	core::Size end_time_;  // seconds
 	std::string timestamp_;
 
 	typedef std::set< JobOutputterObserverAP, utility::pointer::owner_less< JobOutputterObserverAP > > JobOutputterObservers;

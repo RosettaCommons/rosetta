@@ -468,22 +468,31 @@ JobDistributor::run_one_job(
 #endif
 
 
-	//timing information
-	time_t const jobstarttime = time(NULL);
-	core::Size const elapsedtime(jobstarttime - allstarttime);
-	current_job_->start_timing();
-
 	if ((option[OptionKeys::run::maxruntime].user())
-			&& (option[OptionKeys::run::maxruntime]() > 0)
-			&& (option[OptionKeys::run::maxruntime]() < int(elapsedtime)))
+			&& (option[OptionKeys::run::maxruntime]() > 0))
 	{
-
-		basic::Error() << "Run terminating because runtime of "
-				<< elapsedtime << " s exceeded maxruntime of "
-				<< option[OptionKeys::run::maxruntime]() << " s "
-				<< std::endl;
-		return false; //let it clean up in case there's useful prof information or something
+		core::Size const elapsedtime(time(NULL) - allstarttime);
+		core::Size targettime( option[OptionKeys::run::maxruntime]() );
+		core::Size time_estimate(0);
+		if( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
+			time_estimate = get_job_time_estimate();
+			targettime -= option[OptionKeys::run::maxruntime_bufferfactor] * time_estimate;
+		}
+		if( targettime < elapsedtime ) {
+			basic::Error() << "Run terminating because runtime of "
+					<< elapsedtime << " s exceeded maxruntime of "
+					<< targettime << " s ";
+			if( option[OptionKeys::run::maxruntime_bufferfactor].user() ) {
+				basic::Error() << "(" << option[OptionKeys::run::maxruntime] << " - "
+						<< option[OptionKeys::run::maxruntime_bufferfactor] << "*"
+						<< time_estimate << " s)";
+			}
+			basic::Error() << std::endl;
+			return false; //let it clean up in case there's useful prof information or something
+		}
 	}
+
+	current_job_->start_timing();
 
 	// setup profiling
 	evaluation::TimeEvaluatorOP run_time(NULL);
@@ -523,6 +532,7 @@ JobDistributor::run_one_job(
 				<< std::endl;
 		remove_bad_inputs_from_job_list();
 		job_failed(pose, false);
+		current_job_->end_timing();
 		return true;
 	}
 
@@ -616,6 +626,7 @@ JobDistributor::run_one_job(
 				<< std::endl;
 			remove_bad_inputs_from_job_list();
 			job_failed(pose, false);
+			current_job_->end_timing();
 			return true;
 		}
 
@@ -692,9 +703,8 @@ JobDistributor::run_one_job(
 	std::cout.exceptions(std::ios_base::goodbit); // Disabling std::IO exceptions
 
 	PROF_START( basic::JD2);
-	core::Size jobtime(time(NULL) - jobstarttime);
-
-	write_output_from_job( pose, mover_copy, status, jobtime, retries_this_job );
+	current_job_->end_timing();
+	write_output_from_job( pose, mover_copy, status, current_job_->elapsed_time(), retries_this_job );
 
 	current_job_finished();
 
@@ -702,6 +712,25 @@ JobDistributor::run_one_job(
 	basic::prof_show();
 
 	return true;
+}
+
+/// @brief Get an estimate of the time to run an additional job.
+/// If it can't be estimated, return a time of zero.
+/// @details Right now this is just the average runtime for the completed jobs.
+core::Size
+JobDistributor::get_job_time_estimate() const {
+	core::Size time_sum( 0 );
+	core::Size number_completed( 0 );
+	for( core::Size ii(1); ii <= jobs_.size(); ++ii ) {
+		if( jobs_[ii]->end_time() != 0 ) {
+			time_sum += jobs_[ii]->elapsed_time();
+			++number_completed;
+		}
+	}
+	if( number_completed != 0 ) {
+		time_sum = time_sum / number_completed;
+	}
+	return time_sum;
 }
 
 void JobDistributor::setup_pymol_observer( core::pose::Pose & pose )

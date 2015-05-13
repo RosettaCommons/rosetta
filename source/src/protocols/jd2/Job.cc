@@ -47,6 +47,7 @@ Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
 		status_prefix_( "" ),
 		completed_(false),
 		start_time_(0),
+		end_time_(0),
 		timestamp_("")
 {
 	//TR.Trace << "Using Job (base class) for JobDistributor" << std::endl;
@@ -168,10 +169,21 @@ core::Size Job::start_time() const {
 	return start_time_;
 }
 
+core::Size Job::end_time() const {
+	return end_time_;
+}
+
 core::Size Job::elapsed_time() const {
-	// If start_time == 0, start_timing() was never called.
-	runtime_assert (start_time_ != 0)
-	return time(NULL) - start_time_;
+	if( start_time_ == 0 ) {
+		// Haven't started job yet.
+		return 0;
+	} else if( end_time_ == 0 ) {
+		// In the middle of job
+		return time(NULL) - start_time_;
+	}
+	// job completed
+	runtime_assert( end_time_ >= start_time_ );
+	return end_time_ - start_time_;
 }
 
 std::string Job::timestamp() const {
@@ -180,7 +192,13 @@ std::string Job::timestamp() const {
 
 void Job::start_timing() {
 	start_time_ = time(NULL);
+	end_time_ = 0;
 	timestamp_ = utility::timestamp_short();
+}
+
+void Job::end_timing() {
+	debug_assert( start_time_ != 0 );
+	end_time_ = time(NULL);
 }
 
 void Job::add_output_observer( JobOutputterObserverAP an_observer ) {

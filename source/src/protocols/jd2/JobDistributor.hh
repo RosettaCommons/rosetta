@@ -273,6 +273,11 @@ protected:
 		core::Size & retries_this_job
 	);
 
+	/// @brief Get an estimate of the time to run an additional job.
+	/// If it can't be estimated, return a time of zero.
+	core::Size
+	get_job_time_estimate() const;
+
 private:
 
 	/// @brief private singleton creation function to be used with
