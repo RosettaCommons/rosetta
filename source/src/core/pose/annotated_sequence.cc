@@ -81,7 +81,13 @@ void parse_sequence(
 			continue;
 		} else if ( sequence_in[ seqpos ] == ']' ) { // bracket ends, save fullname and map its index
 			in_bracket = false;
-			fullname_list.push_back( fullname );
+			// handle old style nomenclature
+			if ( fullname.substr(0,3) == "CYD" ) {
+				std::string new_name = "CYS:disulfide" + fullname.substr( 3, std::string::npos );
+				fullname_list.push_back( new_name );
+			} else {
+				fullname_list.push_back( fullname );
+			}
 			last_index = fullname_list.size();
 			continue;
 		}
@@ -156,7 +162,51 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 		if ( index ) { // fullname defined and get it directly from name_map
 			// The next call requires reference -> COP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs COP.
-			requested_types.push_back( residue_set.name_map( fullname_list[ index ] ).get_self_ptr() );
+			
+			// CYD hack: CYS:disulfide won't necessarily place the :disulfide in the right place
+			// we can only reconcile this for SURE in the type level (no ordering)
+			// so we turn it back into cys, then we add a variant type!
+			// THIS work around sucks, but it is better than killing backwards compatibility, I guess.
+			// BTW: I am assuming that if you are ambitious enough to make noncanonical
+			// disulfide silent files with the C26 nomenclature in the last 6 months
+			// you are brilliant enough to add the :disulfide yourself?
+			
+			if ( fullname_list[ index ].substr( 0, 13 ) == "CYS:disulfide" ) {
+				//tr <<fullname_list[ index ] << std::endl;
+				std::string nm = "CYS"+fullname_list[ index ].substr( 13, std::string::npos );
+				//tr <<nm << std::endl;
+				
+				chemical::ResidueType temp_type = residue_set.name_map( nm );
+				
+				utility::vector1< std::string > variant_types = temp_type.properties().get_list_of_variants();
+				variant_types.push_back( "DISULFIDE" );
+				
+				chemical::ResidueTypeCOPs possible_types = residue_set.name3_map( "CYS" );
+				// Run through all possible new residue types.
+				for ( chemical::ResidueTypeCOPs::const_iterator
+					 type_iter = possible_types.begin(), type_end = possible_types.end();
+					 type_iter != type_end; ++type_iter )
+				{
+					bool perfect_match( true );
+
+					for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
+						//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
+						if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
+							perfect_match = false;
+							break;
+						}
+					}
+					
+					if ( perfect_match ) { // Do replacement.
+						requested_types.push_back( (**type_iter).get_self_ptr() );
+						break;
+					}
+				}
+
+			} else {
+				requested_types.push_back( residue_set.name_map( fullname_list[ index ] ).get_self_ptr() );
+			}
+
 			is_lower_terminus = ( *requested_types.back() ).is_lower_terminus();
 			is_upper_terminus = ( *requested_types.back() ).is_upper_terminus();
 		} else {

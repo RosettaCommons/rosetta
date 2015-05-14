@@ -212,7 +212,7 @@ ResidueCountFilter::compute(
   		for ( core::Size j=1; j<=res_types_.size(); ++j ) {
   			if ( pose.residue( target_res[i] ).name3() == res_types_[j] || pose.residue( target_res[i] ).name() == res_types_[j] ) {
   				++count;
-					break; // TL: don't want to count a residue more than once in case name() != name3() but name() and name3() are both specified as res_types -- this was a problem with CYS/CYD
+				break; // TL: don't want to count a residue more than once in case name() != name3() but name() and name3() are both specified as res_types -- this was a problem with CYS/CYD
   			} // if
   		} // for all res types specified
   	} else {

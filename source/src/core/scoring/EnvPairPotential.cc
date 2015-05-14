@@ -433,12 +433,8 @@ EnvPairPotential::evaluate_pair_and_cenpack_score(
 	chemical::AA const aa2( rsd2.aa() );
 
 	//CAR  no pair score if a disulfide
-    std::string r1n = rsd1.type().name().substr(0, rsd1.type().name().find(":") );
-    std::string r2n = rsd2.type().name().substr(0, rsd2.type().name().find(":") );
-	if ( //rsd1.type().is_disulfide_bonded() && rsd2.type().is_disulfide_bonded()
-         ( r1n == "CYD" || r1n == "DCYD" || r1n == "HCYD" || r1n == "DHCYD" )
-      && ( r2n == "CYD" || r2n == "DCYD" || r2n == "HCYD" || r2n == "DHCYD" )
-    //&& aa1 == chemical::aa_cys && aa2 == chemical::aa_cys &&
+	if ( rsd1.type().is_disulfide_bonded()
+	  && rsd2.type().is_disulfide_bonded()
       && rsd1.is_bonded( rsd2 )
       && rsd1.polymeric_sequence_distance( rsd2 ) > 1
       && rsd1.has_variant_type( chemical::DISULFIDE )

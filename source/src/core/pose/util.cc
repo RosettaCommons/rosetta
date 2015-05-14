@@ -2144,7 +2144,6 @@ void
 initialize_disulfide_bonds(
 	Pose & pose
 ) {
-
 	// disulfides
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;

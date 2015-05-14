@@ -103,8 +103,8 @@ void add_atom(
 	if(at.is_haro()) ++Haro_size;
 	if(at.is_polar_hydrogen()){
 		++Hpol_size;
-		if(std::abs(charge > 1.0e-3)) ++Hpos_polar;
-	}else if(std::abs(charge > 1.0e-3)) ++Hpos_apolar;
+		if(std::abs(charge) > 1.0e-3) ++Hpos_polar;
+	}else if(std::abs(charge) > 1.0e-3) ++Hpos_apolar;
 
 	rsd.add_atom( name, type, mm_type, charge);
 

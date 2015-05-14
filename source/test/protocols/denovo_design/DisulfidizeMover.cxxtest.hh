@@ -89,7 +89,7 @@ public:
 			core::Size cyd_count = 0;
 			for ( core::Size i=1, endi=p->total_residue(); i<=endi; ++i ) {
 				TS_ASSERT( p );
-				if ( p->residue(i).name() == "CYD" )
+				if ( p->residue(i).type().is_disulfide_bonded() )
 					++cyd_count;
 			}
 			TS_ASSERT( cyd_count );
@@ -120,7 +120,7 @@ public:
 		for ( core::Size i=1, endi=posecopy->total_residue(); i<=endi; ++i ) {
 			TR << "Res " << i << " name " << posecopy->residue(i).name() << std::endl;
 			if ( posecopy->residue(i).name3() != "GLY" ) {
-				if ( posecopy->residue(i).name() != "CYD" ) {
+				if ( ! posecopy->residue(i).type().is_disulfide_bonded() ) {
 					TS_ASSERT_EQUALS( posecopy->residue(i).name3(), "ALA" );
 					TS_ASSERT( disulf.check_residue_type( input_pose, i ) );
 				}
@@ -168,8 +168,8 @@ public:
 		TS_ASSERT_EQUALS( posecopy->residue(30).name3(), "ALA" );
 		TS_ASSERT_EQUALS( posecopy->residue(47).name3(), "ALA" );
 		disulf.make_disulfide( *posecopy, 30, 47, false );
-		TS_ASSERT_EQUALS( posecopy->residue(30).name(), "CYD" );
-		TS_ASSERT_EQUALS( posecopy->residue(47).name(), "CYD" );
+		TS_ASSERT_EQUALS( posecopy->residue(30).name(), "CYS:disulfide" );
+		TS_ASSERT_EQUALS( posecopy->residue(47).name(), "CYS:disulfide" );
 
 		/// checks disulfide rosetta score
 		core::scoring::ScoreFunctionOP sfxn( new core::scoring::ScoreFunction() );

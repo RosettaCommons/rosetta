@@ -254,6 +254,9 @@ fixup_patches( std::string string_in )
 	string_out = utility::replace_in( string_out, "_p:", PATCH_LINKER );
 	string_out = utility::replace_in( string_out, "Virtual_RNA_Residue_Upper", "Virtual_Phosphate" );
 	string_out = utility::replace_in( string_out, "Virtual_Phosphate"+PATCH_LINKER+"Virtual_Phosphate", "Virtual_Phosphate" );
+	// make sure any ARCHAIC CYD is read as CYS:disulfide
+	// for the moment, we will maybe try to output CYS:disulfide as CYD
+	string_out = utility::replace_in( string_out, "CYD", "CYS"+PATCH_LINKER+"disulfide" );
 	return string_out;
 }
 

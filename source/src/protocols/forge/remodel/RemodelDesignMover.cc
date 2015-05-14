@@ -27,6 +27,7 @@
 
 #include <core/types.hh>
 #include <core/conformation/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -722,7 +723,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 				// distance check
 				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
 					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-					if (!rosetta_scripts_keep_current_ds || ( pose.residue(*itr).name() != "CYD" && pose.residue(*itr2).name() != "CYD")) {
+					if (!rosetta_scripts_keep_current_ds || ( ! pose.residue(*itr).has_variant_type( core::chemical::DISULFIDE ) && ! pose.residue(*itr2).has_variant_type( core::chemical::DISULFIDE ) )) {
 						Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
 						if ( dist_squared > 25 ) {
 							TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
@@ -833,19 +834,19 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners, core::kinematics::MoveMapOP mm){
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
 	for (utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++){
-		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second);
-		core::util:: rebuild_disulfide(pose, (*itr).first,(*itr).second, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
+		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second );
+		core::util:: rebuild_disulfide(pose, (*itr).first, (*itr).second, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
 		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
 	//	pose.dump_pdb("disulf.pdb");
-		}
+	}
 }
 
 void RemodelDesignMover::make_disulfide_fast(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners){
 	//utility::vector1<std::pair<Size,Size>> dummy_vector;
 	for (utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++){
-		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second);
+		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second );
 		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
-		}
+	}
 }
 
 /// these are split up for convenience reasons, so one can bypass blueprint setting if needed be

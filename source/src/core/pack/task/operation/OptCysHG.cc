@@ -70,7 +70,7 @@ void OptCysHG::apply( Pose const & pose, PackerTask & task ) const {
 
 	// restrict to only non-disulfide bonded CYS
 	for ( Size i = 1, ie = pose.n_residue(); i <= ie; ++i ) {
-		if ( !strncmp(pose.residue_type(i).name3().c_str(), "CYS", 3) || pose.residue( i ).aa() != aa_cys || pose.residue( i ).has_variant_type( DISULFIDE ) ) { //check both names to be double sure; used in fake Cys catalytic residues
+		if ( ! pose.residue( i ).type().forms_disulfide_bond() || pose.residue( i ).has_variant_type( DISULFIDE ) ) { //check both names to be double sure; used in fake Cys catalytic residues
 			optH.disallow_resid( i );
 		}
 	}

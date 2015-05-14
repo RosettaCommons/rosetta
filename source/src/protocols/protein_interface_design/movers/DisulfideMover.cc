@@ -133,7 +133,7 @@ void DisulfideMover::form_disulfide(Pose & pose, Size lower_res, Size upper_res)
 {
 	ResidueTypeSetCOP restype_set =
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	Residue const cyd( restype_set->name_map("CYD"), true/*dummy*/ );
+	Residue const cyd( restype_set->name_map("CYS:disulfide"), true/*dummy*/ );
 
 	//mutate the two residues
 	pose.replace_residue(lower_res, cyd, true /*orient backbone*/);
@@ -220,7 +220,7 @@ void DisulfideMover::apply( Pose & pose ) {
 			task_, scorefxn_repack_, mm, scorefxn_minimize_);
 
 		std::string name = trial_pose->residue(disulf->first).name();
-		assert(name == "CYD");
+		assert(name == "CYS:disulfide");
 
 		// Is this pose better than the previous best pose?
 		if( !best_pose ||

@@ -3,6 +3,7 @@ patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
 patches/protein_cutpoint_upper.txt
 patches/protein_cutpoint_lower.txt
+patches/disulfide.txt
 
 ## DNA standard
 patches/nucleic/dna/LowerDNA.txt

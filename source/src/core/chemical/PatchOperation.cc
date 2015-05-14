@@ -259,6 +259,33 @@ RedefineChi::apply( ResidueType & rsd ) const
 	return false;
 }
 
+bool
+DeleteTerminalChi::apply( ResidueType & rsd ) const
+{
+	if ( rsd.nchi() < 1 ) {
+		TR_PatchOperations.Debug << "DeleteTerminalChi::apply failed: " <<
+		rsd.name() << " has only " << rsd.nchi() << " chis!" << std::endl;
+		return true; // failure
+	} else {
+		rsd.delete_terminal_chi();
+		return false;
+	}
+	return false;
+}
+
+DeleteMetalbindingAtom::DeleteMetalbindingAtom(
+	std::string const & atom_name
+):
+	atom_name_( atom_name )
+{}
+	
+bool
+DeleteMetalbindingAtom::apply( ResidueType & rsd ) const
+{
+	rsd.delete_metalbinding_atom( atom_name_ );
+	return false;
+}
+
 
 // AddChiRotamer /////////////////////////////////////////////////////////////
 // Constructor for when the chi index is specified
@@ -794,11 +821,22 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		if ( l.fail() ) return 0;
 		return PatchOperationOP( new AddProtonChi( chino, samples, extra_samples ) );
 
+	//Added by Andy M. Chen in June 2009
+	//    This is needed for PTM's
 	} else if ( tag == "REDEFINE_CHI" ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 		if ( l.fail() ) return 0;
 		return PatchOperationOP( new RedefineChi( chino, atom1, atom2, atom3, atom4 ) );
 
+	} else if ( tag == "DELETE_TERMINAL_CHI" ) {
+		return PatchOperationOP( new DeleteTerminalChi() );
+	} else if ( tag == "DELETE_METALBINDING_ATOM" ) {
+		std::string atom_name;
+		l >> atom_name;
+		if ( l.fail() ) return 0;
+
+		return PatchOperationOP( new DeleteMetalbindingAtom( atom_name ) );
+		
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {

@@ -1008,7 +1008,13 @@ public:
 	/// Note that the atom must exist in the residue type (the function checks for this at runtime).
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void
-	add_metalbinding_atom ( std::string const atom_name );
+	add_metalbinding_atom( std::string const atom_name );
+	
+	/// @brief Remove an atom from the list of atoms that can potentially form a bond to a metal ion
+	/// (used in patching when it kills the valence that is thus used)
+	/// @author Andrew Watkins (amw579@nyu.edu)
+	void
+	delete_metalbinding_atom( std::string const atom_name );
 
 	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel = SingleBond);
@@ -1314,6 +1320,10 @@ public:
 			std::string const & atom_name4
 	);
 
+	/// @brief delete terminal chi angle
+	void
+	delete_terminal_chi();
+	
 	/// @brief Annotate a given chi as a proton chi, and set the sampling behavior
 	/// If the chi is already listed as a proton chi, change the sampling behavior
 	void
@@ -2372,7 +2382,7 @@ private:
 	///    pair<Real,Real>  ==>  mean,sdev
 	///    for each chi angle i and rotamer j: chi_rotamers_[i][j]
 	///
-	utility::vector1< utility::vector1< std::pair< Real, Real > > >chi_rotamers_;
+	utility::vector1< utility::vector1< std::pair< Real, Real > > > chi_rotamers_;
 
 	/// @brief The filename of the PDBRotamersLibrary -- Primary.
 	std::string rotamer_library_name_;

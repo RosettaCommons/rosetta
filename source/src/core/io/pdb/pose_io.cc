@@ -419,7 +419,21 @@ void extract_scores(
 		out << " " << restrict_prec(pose_total) << "\n";
 		for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
 			core::Real rsd_total = 0.0;
-			out << pose.residue(j).name() << "_" << j;
+			// amw Hack to output score lines as though they were CYD:[all other patches]
+			// This can me removed once we have proven that integration test changes
+			// predominantly relate to this
+			// amw Never mind, shouldn't be that--it's just plain CYD, which sucks!
+			if ( pose.residue( j ).has_variant_type( chemical::DISULFIDE )
+			  && pose.residue( j ).name3() == "CYS" ) {
+				std::string nm = pose.residue(j).name();
+				core::Size disulfide_loc = nm.find( ":disulfide", 0 );
+				nm[2] = 'D';
+				core::Size disulfide_len = 10;
+				nm.erase( disulfide_loc, disulfide_len );
+				out << nm/*"CYD"*/ << "_" << j;
+			} else {
+				out << pose.residue(j).name() << "_" << j;
+			}
 			BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
 				core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 				out << " " << restrict_prec(score);

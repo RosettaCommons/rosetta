@@ -108,7 +108,7 @@ my_main( void* )
 	mm_all_sc.set_bb( false );
 	mm_all_sc.set_chi( false );
 	for (Size i=1; i<= pose.total_residue(); i++) {
-		if ( ( pose.residue(i).type().name() == "CYD" ) || ( pose.residue(i).type().name() == "CYX" ) ) {
+		if ( pose.residue(i).type().is_disulfide_bonded() || pose.residue(i).has_variant_type( chemical::SIDECHAIN_CONJUGATION ) ) {
 			allow_repacked[i] = false;
 			TR << "Disabling side-chain optimization of disulfide bonded residue " << i << std::endl;
 		}

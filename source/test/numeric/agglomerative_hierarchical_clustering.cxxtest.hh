@@ -37,7 +37,7 @@ public:
 
 	void test_int_clustering() {
 
-	    core::Size data[] = {0,1,2,4,5,3,8,11,6,0};
+	    int data[] = {0,1,2,4,5,3,8,11,6,0};
 	    core::Size nData = 9;
 	    utility::vector1<core::Size> data_in;
 	    for(core::Size i=1;i<=nData;i++)

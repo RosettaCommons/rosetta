@@ -170,7 +170,7 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 		toAla.prevent_repacking( no_repack );
 	}
 	toAla.task_factory( task_factory() );
-	TR<<"switching interface to alanine\n";
+	TR << "switching interface to alanine" << std::endl;
 	toAla.apply( pose );
 
 	setup_packer_and_movemap( pose ); // for min_sc below

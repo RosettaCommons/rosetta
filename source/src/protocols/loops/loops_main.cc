@@ -780,7 +780,7 @@ void get_tenA_neighbor_residues(
 		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 					it != current_node->const_edge_list_end(); ++it ) {
 			Size pos = (*it)->get_other_ind(i);
-			if (pose.residue(pos).type().name() == "CYD") {
+			if (pose.residue(pos).type().is_disulfide_bonded() ) {
 				residue_positions[ pos ] = false;
 			}
 			else {
@@ -805,7 +805,7 @@ void select_loop_residues(
 	for( Loops::const_iterator it=loops.begin(), it_end=loops.end();
 			 it != it_end; ++it ) {
 		for( Size i=it->start(); i<=it->stop(); ++i ) {
-			if (pose.residue(i).type().name() == "CYD") {
+			if (pose.residue(i).type().is_disulfide_bonded() ) {
 				map[i] = false;
 			}
 			else {

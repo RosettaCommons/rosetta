@@ -290,6 +290,7 @@ switch_to_residue_type_set(
 			}
 		} else  {
 			// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
+			//TR << "amw investigating the name3 map of " << rsd.name().substr(0,3) << std::endl;
 			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name().substr(0,3) ) );
 			for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
 				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );

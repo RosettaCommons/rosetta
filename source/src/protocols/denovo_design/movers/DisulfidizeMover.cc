@@ -27,6 +27,7 @@
 
 //Core Headers
 #include <core/conformation/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -274,7 +275,7 @@ DisulfidizeMover::find_current_disulfides( core::pose::Pose const & pose ) const
 	DisulfideList retval;
 	std::set< core::Size > cyds;
 	for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
-		if ( pose.residue(i).name() == "CYD" )
+		if ( pose.residue(i).type().is_disulfide_bonded() )
 			cyds.insert( i );
 	}
 	for ( std::set< core::Size >::const_iterator cyd1=cyds.begin(), endcyds=cyds.end(); cyd1!=endcyds; ++cyd1 ) {
@@ -439,7 +440,7 @@ DisulfidizeMover::find_possible_disulfides(
 			}
 
 			// existing disulfides check
-			if ( keep_current_ds_ && ( pose.residue(*itr).name() == "CYD" || pose.residue(*itr2).name() == "CYD" ) ) {
+			if ( keep_current_ds_ && ( pose.residue(*itr).type().is_disulfide_bonded() || pose.residue(*itr2).type().is_disulfide_bonded() ) ) {
 				TR <<"DISULF \tkeep_current_ds set to True, keeping residues that are already in disulfides." << std::endl;
 				continue;
 			}
@@ -496,7 +497,7 @@ DisulfidizeMover::make_disulfide(
 	mm->set_bb( res2, relax_bb );
 	mm->set_chi( res1, true );
 	mm->set_chi( res2, true );
-
+	
 	core::conformation::form_disulfide( pose.conformation(), res1, res2 );
 	core::util::rebuild_disulfide( pose, res1, res2,
 			NULL, //task

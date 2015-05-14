@@ -402,7 +402,7 @@ compute_avge_scores(
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;
-		if ( rsd.aa() == aa_cys && rsd.has_variant_type( chemical::DISULFIDE ) ) continue; // avge ==> 0.0 for disulfs
+		if ( rsd.has_variant_type( chemical::DISULFIDE ) ) continue; // avge ==> 0.0 for disulfs
 		EnergyMap const & rsd_energies( pose.energies().residue_total_energies(i) );
 		Real const total_energy( rsd_energies.dot( fa_scorefxn->weights() ) );
 
@@ -462,7 +462,7 @@ compute_sasapack_scores(
 		Residue const & rsd( pose.residue(i) );
 		if ( !rsd.is_protein() ) continue;
 		if ( rsd.is_lower_terminus() || rsd.is_upper_terminus() ) continue;
-		if ( rsd.aa() == aa_cys && rsd.has_variant_type( chemical::DISULFIDE ) ) continue; // sasapack ==> 0.0 for disulfs
+		if ( rsd.has_variant_type( chemical::DISULFIDE ) ) continue; // sasapack ==> 0.0 for disulfs
 
 		Real const actual_sasa14( rsd_sasa_big_probe[i] ), actual_sasa5( rsd_sasa_small_probe[i] );
 		Real const expected_sasa5( polys[ rsd.aa() ]( actual_sasa14 ) );

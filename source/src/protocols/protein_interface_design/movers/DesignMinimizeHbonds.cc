@@ -213,7 +213,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 		core::Size const restype( pose.residue(i).aa() );
 		if( (interface_obj.is_interface( i ) && // in interface
 				(partner1( i ) && repack_partner1_ )) || ((!partner1(i) && repack_partner2_) && //designable
-				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).type().name() == "CYD" ))) { // design-allowed residues
+				( !( !repack_non_ala_ && (restype != chemical::aa_ala) ) || (restype == chemical::aa_pro) || (restype == chemical::aa_gly) || pose.residue(i).has_variant_type( chemical::DISULFIDE ) ))) { // design-allowed residues
 	        core::conformation::Residue const resi( pose.residue( i ) );
 	        for( utility::vector1< Size >::const_iterator target_it = target_residues_.begin();
 	           target_it!=target_residues_.end(); ++target_it ) {

@@ -362,7 +362,7 @@ void my_main()
 			// but scince our cutoff is 12, it's fine, i guess
 
 			conformation::Residue const & rsd1 ( p.residue(i) );
-		  if (rsd1.name3()=="CYD") continue;
+		  if (rsd1.name3()=="CYS" &&  rsd1.type().is_disulfide_bonded() ) continue;
 
 			for ( graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
@@ -376,7 +376,7 @@ void my_main()
 				if ((int)(j-i)<option[sequence_seperation]) continue;
 
 				conformation::Residue const & rsd2 ( p.residue(j) );
-		    if (rsd2.name3()=="CYD") continue;
+		    if (rsd2.name3()=="CYS" &&  rsd2.type().is_disulfide_bonded()) continue;
 
 				//save r
 				Real d = rsd1.atom("CEN").xyz().distance(rsd2.atom("CEN").xyz());

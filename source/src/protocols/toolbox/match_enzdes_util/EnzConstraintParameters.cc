@@ -577,6 +577,10 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 	std::string current_residue_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
 	std::string current_residue_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
 
+	// hacky: I am making an explicit exception for disulfide types
+	if ( pose.residue( res_pos ).type().is_disulfide_bonded() && ( res_atom == "SG" || res_atom == "SD" || res_atom == "SG1" ) )
+		return;
+	
 	res_varname = "_connect" + res_atom;  // FIXME: variant names and patch names are not the same thing! ~Labonte
 	{// scope
 		// Find a name for the new residue type / variant name that will be added to the existing

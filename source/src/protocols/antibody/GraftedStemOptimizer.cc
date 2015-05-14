@@ -358,7 +358,7 @@ GraftedStemOptimizer::get_stem_movemap( pose::Pose const & pose, std::string con
 	mm->set_chi( sc_is_flexible );
 
 	mm->set_jump( 1, false );
-	if(type == "NC") {
+	if ( type == "NC" ) {
 		mm->set_jump( 2, false );
 	}
 

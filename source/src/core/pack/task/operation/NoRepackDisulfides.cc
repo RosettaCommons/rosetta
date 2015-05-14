@@ -84,20 +84,28 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 		Residue const & res = pose.residue( i );
 
 		// residue appears to be a disulfide...?
-		if ( res.aa() == aa_cys && res.has_variant_type( DISULFIDE ) ) {
+		// amw removing the check for aa_cys
+		// because we want this to be able to apply to NCAA disulfides
+		if ( res.has_variant_type( DISULFIDE ) ) {
 
 			bool no_repack = true;
 
 			// try and double-check if possible
+			Size sg_index = 0;
 			if ( res.type().has( "SG" ) ) {
 				// check its partner to see if it's really the case
-				Size const sg_index = res.atom_index( "SG" );
-				Size const sg_conn_index = res.type().residue_connection_id_for_atom( sg_index );
-				Residue const & partner_res = pose.residue( res.residue_connection_partner( sg_conn_index ) );
+				sg_index = res.atom_index( "SG" );
+			} else if ( res.type().has( "SD" ) ) {
+				sg_index = res.atom_index( "SD" );
+			} else { // must have SG1 or be centroid somehow?
+				sg_index = res.atom_index( "SG1" );
+			}
+			
+			Size const sg_conn_index = res.type().residue_connection_id_for_atom( sg_index );
+			Residue const & partner_res = pose.residue( res.residue_connection_partner( sg_conn_index ) );
 
-				if ( partner_res.aa() != aa_cys || !partner_res.has_variant_type( DISULFIDE ) ) {
-					no_repack = false;
-				}
+			if ( !partner_res.has_variant_type( DISULFIDE ) ) {
+				no_repack = false;
 			}
 
 			// set repack status

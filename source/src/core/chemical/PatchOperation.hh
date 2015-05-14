@@ -244,7 +244,36 @@ private:
 	std::string atom4_;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Delete terminal chi angle
+///    Added by Andrew M. Watkins in April 2015
+class DeleteTerminalChi : public PatchOperation {
+public:
+	/// constructor
+	DeleteTerminalChi() {};
 
+	/// redefine a chi angle
+	bool
+	apply( ResidueType & rsd ) const;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Delete a metal binding atom
+///    Added by Andrew M. Watkins in April 2015
+class DeleteMetalbindingAtom : public PatchOperation {
+public:
+	/// constructor
+	DeleteMetalbindingAtom( std::string const & atom_name );
+		
+	/// redefine a chi angle
+	bool
+	apply( ResidueType & rsd ) const;
+private:
+	std::string atom_name_;
+	
+};
+	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief   Add a rotamer sample to a chi angle of the ResidueType.
 /// @author  Added by Andy M. Chen in June 2009

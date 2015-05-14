@@ -580,11 +580,9 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		conformation::Residue res = pose.residue( ii );
 		if (// res.aa() == chemical::aa_cys &&
-			res.type().is_disulfide_bonded() &&
+			res.type().is_disulfide_bonded() && // redundant with atom name check that used to be here
 				res.has_variant_type( chemical::DISULFIDE ) &&
-				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				( pose.residue_type( ii ).has( "CEN" ) || pose.residue_type( ii ).has( "SD" ) || pose.residue_type( ii ).has( "SG" ) )
-			 ) {
+				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE ) {
 			++count_disulfides;
 
 			//Centroid models are bonded CEN to CEN, fullatom are bonded SG to SG.
@@ -595,6 +593,8 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 				ii_connect_atom = res.atom_index( "CEN" );
 			} else if (pose.residue_type( ii ).has( "SG" ) ) {
 				ii_connect_atom = res.atom_index( "SG" );
+			} else if (pose.residue_type( ii ).has( "SG1" ) ) {
+				ii_connect_atom = res.atom_index( "SG1" );
 			} else {
 				ii_connect_atom = res.atom_index( "SD" );
 			}	
@@ -644,7 +644,8 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			conformation::Residue res = pose.residue( ii );
-			if ( res.aa() != chemical::aa_cys ||
+			if ( // res.aa() != chemical::aa_cys ||
+				!res.type().is_disulfide_bonded() ||
 					disulfide_residue_types_[ ii ].get() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
 					! pose.residue_type( ii ).has( "CEN" ) || // not centroid
@@ -654,12 +655,7 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
 				return true;
 			}
-		} else if ( //pose.residue( ii ).aa() == chemical::aa_cys &&
-				//( pose.residue( ii ).type().forms_disulfide_bond() || pose.residue( ii ).type().is_disulfide_bonded() ) &&
-                   ((pose.residue(ii).type().name3() == "CYS") || (pose.residue(ii).type().name3() == "CYD") ||
-                    (pose.residue(ii).type().name3() == "DCS") ||
-                    (pose.residue(ii).type().name3() == "C26") ||
-                    (pose.residue(ii).type().name3() == "F26")) &&
+		} else if ( ( pose.residue( ii ).type().forms_disulfide_bond() || pose.residue( ii ).type().is_disulfide_bonded() ) &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
 			return true;
 		}

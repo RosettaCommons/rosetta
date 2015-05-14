@@ -25,8 +25,9 @@ enum DisulfideDerivativeAtom {
 	CYS_C_ALPHA,
 	CYS_C_BETA,
 	CYS_S_GAMMA,
-	CYS_C_GAMMA,
-	CYS_S_DELTA,
+	//CYS_S_GAMMA1,
+	//CYS_C_GAMMA,
+	//CYS_S_DELTA,
 	CYS_CEN
 };
 

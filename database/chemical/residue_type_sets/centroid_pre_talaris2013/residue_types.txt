@@ -9,7 +9,7 @@ residue_types/ARG.params
 residue_types/ASN.params
 residue_types/ASP.params
 residue_types/CYS.params
-residue_types/CYD.params
+#residue_types/CYD.params
 residue_types/CYZ.params
 residue_types/GLN.params
 residue_types/GLU.params

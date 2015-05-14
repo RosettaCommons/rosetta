@@ -15,6 +15,7 @@ patches/VirtualDNAPhosphate.txt
 patches/VirtualNterm.txt
 patches/RepulsiveOnly_fa.txt
 patches/VirtualProteinResidue.txt
+patches/disulfide.txt
 
 ## uncomment this Brian
 patches/CtermConnect.txt

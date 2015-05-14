@@ -1185,6 +1185,26 @@ ResidueType::add_metalbinding_atom (
 
 ///////////////////////////////////////////////////////////////////////////////
 
+/// @brief Remove an atom from the list of atoms that can potentially form a bond to a metal ion
+/// (used in patching when it kills the valence that is thus used)
+/// @author Andrew Watkins (amw579@nyu.edu)
+void
+ResidueType::delete_metalbinding_atom (
+	std::string const atom_name
+) {
+	if ( !has( atom_name ) ) {
+		std::string message = "Error in removing metal-binding atom from residue type " + name3() + ". Atom " + atom_name + " was not found.";
+		utility_exit_with_message(message);
+	}
+	metal_binding_atoms_.erase( std::remove( metal_binding_atoms_.begin(), metal_binding_atoms_.end(), atom_name ),
+							    metal_binding_atoms_.end() );
+	
+	return;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond using the specified bondName
 void
 ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel /*=SingleBond*/)
@@ -2052,6 +2072,33 @@ ResidueType::enable_custom_variant_types()
 {
 	properties_->enable_custom_variant_types();
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+// delete the terminal chi angle
+/// @author Andrew M. Watkins (April 2015)
+void
+ResidueType::delete_terminal_chi(
+)
+{
+	// signal that we need to update the derived data
+	finalized_ = false;
+	
+	// if the terminal chi was a proton chi, get rid of it!
+	if ( is_proton_chi_[ is_proton_chi_.size() ] ) {
+		proton_chis_.resize( proton_chis_.size() - 1 );
+	}
+	
+	Size new_size = chi_atoms_.size() - 1;
+	// resize vectors that include every chi
+	chi_atoms_.resize(        new_size );
+	chi_rotamers_.resize(     new_size );
+	is_proton_chi_.resize(    new_size );
+	chi_2_proton_chi_.resize( new_size );
+	
+	
+} // delete_terminal_chi
+
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -378,7 +378,7 @@ EnzdesFlexBBProtocol::get_tenA_neighbor_residues(
 		for ( core::graph::Node::EdgeListConstIter it = current_node->const_edge_list_begin();
 			it != current_node->const_edge_list_end(); ++it ) {
 			Size pos = (*it)->get_other_ind(i);
-			if (pose.residue(pos).type().name() == "CYD") continue;
+			if (pose.residue(pos).type().is_disulfide_bonded() ) continue;
 			residue_positions[ pos ] = true;
 		//		tr << "residue pos TenAGraph " << pos << std::endl;
 		}

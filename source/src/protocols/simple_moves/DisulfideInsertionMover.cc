@@ -20,7 +20,9 @@
 
 // Project headers
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -161,6 +163,7 @@ DisulfideInsertionMover::apply( core::pose::Pose & peptide_receptor_pose )
 	// eliminate cases where a disulfide should not be formed since the residues already form a disulfide (closability==2)
 	// in that case we will only want to optimize it using the rebuild_disulfide function
 	if (determine_cyclization_viability(peptide_receptor_pose, n_cyd_seqpos_, c_cyd_seqpos_) == DCV_CYCLIZABLE) {
+
 		core::conformation::form_disulfide(peptide_receptor_pose.conformation(), n_cyd_seqpos_, c_cyd_seqpos_);
 	}
 

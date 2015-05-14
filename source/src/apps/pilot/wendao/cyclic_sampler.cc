@@ -302,7 +302,7 @@ public:
 			//go through all residues, lock the first and the last CYD
 			for (Size i=1; i<=pose.total_residue(); i++) {
 				//TR << pose.residue(i).name().substr(0,3) << std::endl;
-				if (pose.residue(i).name().substr(0,3)=="CYD") {
+				if (pose.residue(i).name3() == "CYS" && pose.residue(i).is_disulfide_bonded() ) {
 					locker_.push_back(i);
 					TR << "Add CYD: " << i << std::endl;
 				}

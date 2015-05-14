@@ -172,9 +172,9 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 			if( (partner1( i ) && repack_partner1_ ) || (!partner1( i ) && repack_partner2_) ) { //redesign/repack interface
 				core::Size const restype( pose.residue(i).aa() );
 				// Check for pro, gly, and disulfide bonded cysteines
-				if( ( !repack_non_ala_ && restype != chemical::aa_ala ) || restype == chemical::aa_pro || restype == chemical::aa_gly || pose.residue(i).type().name() == "CYD" ) {
+				if( ( !repack_non_ala_ && restype != chemical::aa_ala ) || restype == chemical::aa_pro || restype == chemical::aa_gly || pose.residue(i).type().is_disulfide_bonded() ) {
 //					if( automatic_repacking_definition_ ) task_->nonconst_residue_task(i).prevent_repacking();
-					if( !(pose.residue(i).type().name() == "CYD") ) {
+					if ( ! ( pose.residue( i ).type().is_disulfide_bonded() ) ) {
 						if( !min_sc_set() ) curr_min_sc_[ i ] = true;
 					}
 					if( !min_bb_set() ) curr_min_bb_[ i ] = true;
@@ -223,7 +223,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 				} // repackable residues
 			} //redesign/repack interface
 			else { // inside the interface but outside repackable/redesignable parts
-				if( pose.residue(i).type().name() == "CYD" ){
+				if( pose.residue(i).type().is_disulfide_bonded() ){
 //					task_->nonconst_residue_task(i).prevent_repacking();
 					curr_min_sc_[ i ] = false;
 					curr_min_bb_[ i ] = false;
@@ -248,9 +248,9 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		if( !min_sc_set() ){
 			curr_min_sc_[ *target_it ] = true;
 			if( *target_it < pose.total_residue() )
-				if( !(pose.residue(*target_it + 1).type().name() == "CYD") ) curr_min_sc_[ *target_it + 1 ] = true;
+				if( !(pose.residue(*target_it + 1).type().is_disulfide_bonded() ) ) curr_min_sc_[ *target_it + 1 ] = true;
 			if( *target_it > 1 )
-				if( !(pose.residue(*target_it - 1).type().name() == "CYD") ) curr_min_sc_[ *target_it - 1 ] = true;
+				if( !(pose.residue(*target_it - 1).type().is_disulfide_bonded() ) ) curr_min_sc_[ *target_it - 1 ] = true;
 		}
 		if( !min_bb_set() ) {
 			curr_min_bb_[ *target_it ] = true;

@@ -653,7 +653,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 			if( res_host.aa() != chemical::aa_ala ) continue; // position already designed
 			if( res_host.aa() == chemical::aa_gly
 					|| ( res_host.aa() == chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] )
-					|| res_host.type().name() == "CYD" )
+					|| res_host.type().is_disulfide_bonded() )
 				continue; // disallowed host amino acids
 			if( !prevent_repacking().empty()
 					&& std::find( prevent_repacking().begin(), prevent_repacking().end(), res ) != prevent_repacking().end() )

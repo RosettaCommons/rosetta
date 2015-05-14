@@ -8,78 +8,78 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 #include <core/scoring/motif/motif_hash_stuff.hh>
-	#include <core/scoring/motif/util.hh>
-	#include <ObjexxFCL/FArray2D.hh>
-	#include <ObjexxFCL/format.hh>
-	#include <ObjexxFCL/string.functions.hh>
-	#include <basic/Tracer.hh>
-	#include <basic/database/open.hh>
-	#include <basic/options/keys/in.OptionKeys.gen.hh>
-	#include <basic/options/keys/out.OptionKeys.gen.hh>
-	#include <basic/options/keys/mh.OptionKeys.gen.hh>
-	#include <basic/options/option_macros.hh>
-	#include <basic/pymol_chains.hh>
-	#include <core/chemical/AtomType.hh>
-	#include <core/chemical/ChemicalManager.hh>
-	#include <core/conformation/symmetry/util.hh>
-	#include <core/conformation/Residue.hh>
-	#include <core/conformation/ResidueFactory.hh>
-	#include <core/import_pose/import_pose.hh>
-	#include <core/io/silent/SilentFileData.hh>
-	#include <core/pose/PDBInfo.hh>
-	#include <core/pose/Pose.hh>
-	#include <core/pose/annotated_sequence.hh>
-	#include <core/pose/motif/reference_frames.hh>
-	#include <core/pose/util.hh>
-	#include <core/pose/symmetry/util.hh>
-	#include <core/conformation/symmetry/SymmetryInfo.hh>
-	#include <core/pose/xyzStripeHashPose.hh>
-	#include <core/io/pdb/pose_io.hh>
-	#include <core/scoring/Energies.hh>
-	#include <core/scoring/EnergyGraph.hh>
-	#include <core/scoring/ScoreFunctionFactory.hh>
-	#include <core/scoring/ScoreTypeManager.hh>
-	#include <core/scoring/dssp/Dssp.hh>
-	#include <core/scoring/dssp/StrandPairing.hh>
-	#include <core/scoring/hbonds/HBondOptions.hh>
-	#include <core/scoring/methods/EnergyMethodOptions.hh>
-	#include <core/scoring/packing/compute_holes_score.hh>
-	#include <core/scoring/rms_util.hh>
-	#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-	#include <numeric/conversions.hh>
-	#include <numeric/model_quality/rms.hh>
-	#include <numeric/random/random.hh>
-	#include <numeric/xyz.functions.hh>
-	#include <numeric/xyz.io.hh>
-	#include <numeric/xyzVector.hh>
-	#include <utility/io/izstream.hh>
-	#include <utility/io/ozstream.hh>
-	#include <utility/file/file_sys_util.hh>
-	#include <utility/fixedsizearray1.hh>
-	#include <numeric/xyzTransform.hh>
+#include <core/scoring/motif/util.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <basic/Tracer.hh>
+#include <basic/database/open.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/mh.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/pymol_chains.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+//#include <core/import_pose/import_pose.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/motif/reference_frames.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/xyzStripeHashPose.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreTypeManager.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/packing/compute_holes_score.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <numeric/conversions.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+#include <numeric/xyzVector.hh>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/file/file_sys_util.hh>
+#include <utility/fixedsizearray1.hh>
+#include <numeric/xyzTransform.hh>
 
-	#include <numeric/geometry/hashing/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.hh>
 
-	#include <boost/unordered_set.hpp>
+#include <boost/unordered_set.hpp>
 
-	#include <boost/foreach.hpp>
-	#include <bitset>
+#include <boost/foreach.hpp>
+#include <bitset>
 
-	#ifdef USE_OPENMP
+#ifdef USE_OPENMP
 	#include <omp.h>
-    #ifndef _WIN32
-	#include <pthread.h>
-    #endif
+	#ifndef _WIN32
+		#include <pthread.h>
 	#endif
+#endif
 
-	// #include <core/pack/task/PackerTask.hh>
-	// #include <core/pack/packer_neighbors.hh>
-	// #include <core/pack/rotamer_set/RotamerSet.hh>
-	// #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-	// #include <core/pack/task/TaskFactory.hh>
+// #include <core/pack/task/PackerTask.hh>
+// #include <core/pack/packer_neighbors.hh>
+// #include <core/pack/rotamer_set/RotamerSet.hh>
+// #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+// #include <core/pack/task/TaskFactory.hh>
 
-	#define MAX_UINT16 65535
-	#define MAX_UINT8    255
+#define MAX_UINT16 65535
+#define MAX_UINT8    255
 
 
 namespace core {
@@ -128,7 +128,7 @@ namespace motif {
 	using utility::file_basename;
 	using utility::vector1;
 	using std::endl;
-	using core::import_pose::pose_from_pdb;
+	//using core::import_pose::pose_from_pdb;
 	using numeric::geometry::hashing::Real3;
 	using numeric::geometry::hashing::Real6;
 	using core::pose::xyzStripeHashPoseCOP;

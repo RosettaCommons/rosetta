@@ -217,8 +217,8 @@ mutate_to_ala(core::pose::Pose &pose, int center) {
 
 	// remove disulfides
 	for (int i=1; i<=(int)pose.total_residue(); ++i ) {
-		if ( pose.residue(i).aa() == chemical::aa_cys && pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
-  		TR << "Reverting disulfide CYD to CYS at resid " << i << std::endl;
+		if ( pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
+  		TR << "Reverting disulfide to thiol type at resid " << i << std::endl;
 			conformation::change_cys_state( i, "CYS", pose.conformation() );
 		}
 	}

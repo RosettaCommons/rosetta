@@ -123,7 +123,7 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	//Now that we have the zinc, iterate through Cys/His/Asp/Glu residues, if coordinating atom is within 3.0 Angstroms, store the residue number, residue name, atom ids
 	for ( Size i(1); i <= pose_length; ++i ) {
 
-		if ( pose.residue(i).name3() == "CYS" ) {
+		if ( pose.residue(i).name3() == "CYS" && !pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
 			point p = pose.residue(i).atom(" SG ").xyz();
 			Real dist = zinc.distance( p );
 			if ( dist * dist < 9.0 ) {

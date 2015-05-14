@@ -1177,6 +1177,13 @@ build_pose_as_is1(
 				//TR.Debug << "because of the branch lower terminus state" << std::endl;
 				continue;
 			}
+			// Okay, this logic is NOT OBVIOUS, so I am going to add my explanation.
+			// We DEFINITELY want to assign a disulfide type from the start if the PDB just up and says CYD. That's great!
+			// But if we DO NOT see CYD, we do not want to assign a disulfide type. We want disulfide connections
+			// to be inferred later on, in conformation's detect_disulfides as called in the pose-building process.
+			// Commenting out this logic causes anything that lacks a HG (i.e. crystal structures) to be assigned as the
+			// disulfide type instead of the CYS type--which MIGHT be right, but might be wrong and leads to wasteful
+			// disulfide reversion.
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the disulfide state" << std::endl;

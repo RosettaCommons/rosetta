@@ -184,19 +184,10 @@ FullatomDisulfideEnergy::defines_score_for_residue_pair(
     std::string atom2 = res2.type().has( "SG" ) ? "SG" : "SD";
     
 	return res_moving_wrt_eachother
-        /*&& ( res1.type().name3() == "CYS" || res1.type().name3() == "CYD" ||
-             res1.type().name3() == "DCS" ||
-             res1.type().name3() == "C26" ||
-             res1.type().name3() == "F26" )
-        && ( res2.type().name3() == "CYS" || res2.type().name3() == "CYD" ||
-             res2.type().name3() == "DCS" ||
-             res2.type().name3() == "C26" ||
-             res2.type().name3() == "F26" )*/ // amw just use the variant type criterion, enough?
-        && //(res1.type().forms_disulfide_bond() || res1.type().is_disulfide_bonded()) && (res2.type().forms_disulfide_bond() || res2.type().is_disulfide_bonded() ) && //res1.aa() == aa_cys && res2.aa() == aa_cys &&
-            res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE )
-        && ( res1.type().has( "SG" ) || res1.type().has( "SD" ) )
+        && res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE )
+        && ( res1.type().has( "SG" ) || res1.type().has( "SD" ) || res1.type().has( "SG1" ) )
         && res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( atom1 ) ) ).resid() == res2.seqpos()
-        && ( res2.type().has( "SG" ) || res2.type().has( "SD" ) )
+        && ( res2.type().has( "SG" ) || res2.type().has( "SD" ) || res2.type().has( "SG1" ) )
         && res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( atom2 ) ) ).resid() == res1.seqpos();
 }
 
@@ -444,20 +435,8 @@ FullatomDisulfideEnergy::residue_pair_energy(
 		return;
 	}
 
-    // amw temp change
-	//if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
-	if ( (rsd1.type().name3() != "CYS" &&
-          rsd1.type().name3() != "CYD" &&
-          rsd1.type().name3() != "DCS" &&
-          rsd1.type().name3() != "C26" &&
-          rsd1.type().name3() != "F26" ) ||
-        (rsd2.type().name3() != "CYS" &&
-         rsd2.type().name3() != "CYD" &&
-         rsd2.type().name3() != "DCS" &&
-         rsd2.type().name3() != "C26" &&
-         rsd2.type().name3() != "F26" ) ) return;
-    //if ( ( !rsd1.type().is_disulfide_bonded() && !rsd1.type().forms_disulfide_bond() )
-    //  || ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().forms_disulfide_bond() ) ) return;
+	if ( ( !rsd1.type().is_disulfide_bonded() && !rsd1.type().forms_disulfide_bond() )
+      || ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().forms_disulfide_bond() ) ) return;
 	
     FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));

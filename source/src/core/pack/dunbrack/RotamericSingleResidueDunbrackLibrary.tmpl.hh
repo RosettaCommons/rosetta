@@ -2123,6 +2123,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 
 		if ( finished_first_phipsi_bin ) {
 			Size const packed_rotno = rotwell_2_packed_rotno( rotwell );
+			
 			if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
 				std::cerr << "ERROR in converting rotwell to packed rotno: ";
 				for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwell[ ii ];
@@ -2167,9 +2168,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 				utility::vector1< Size > first_bin_rotwell( DUNBRACK_MAX_SCTOR, 0 );
 				for ( Size ii = 1; ii <= first_phipsibin_data.size(); ++ii ) {
 					for ( Size jj = 1; jj <= T; ++jj ) first_bin_rotwell[ jj ] = first_phipsibin_data[ ii ].rotwell( jj );
-
 					Size const packed_rotno = rotwell_2_packed_rotno( first_bin_rotwell );
-
 					if ( packed_rotno < 1 || packed_rotno > parent::n_packed_rots() ) {
 						std::cerr << "ERROR in converting rotwell to packed rotno: ";
 						for ( Size ii = 1; ii <= T; ++ii ) std::cerr << " " << rotwell[ ii ];
@@ -2234,10 +2233,6 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 					Size jp1kp1 = jj * N_PHIPSI_BINS + kk+1;
 					Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1, ii );
 					PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1, sortedrotno );
-					//if ( jj == 1 && kk == 1 ) {
-					//	std::cout << "This is fucked up! My prob is " << rot.rotamer_probability() << std::endl;
-					//}
-					//if ( rot.rotamer_probability() <= 1e-6 ) rot.rotamer_probability() = 1e-6;
 					DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
 					rot.n_derivs()[ 1 ] = rotamer_energy;
 					energy_vals( jj, kk ) = rotamer_energy;

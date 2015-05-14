@@ -526,6 +526,7 @@ testinputfiles = [
 	"io/GTP.params",
 	"io/bin_silentfile_test.out",
 	"io/bin_silentfile_test.pdb",
+	"io/test_CYD.out",
 	"io/test_in.pdb",
 	"io/test_in_idealized.pdb",
 	"kinematics/test.pdb",

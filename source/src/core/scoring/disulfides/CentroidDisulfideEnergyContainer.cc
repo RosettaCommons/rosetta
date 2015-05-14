@@ -585,7 +585,8 @@ CentroidDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	Size count_disulfides( 0 );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		conformation::Residue res = pose.residue( ii );
-		if ( res.aa() == chemical::aa_cys &&
+		if ( res.type().is_disulfide_bonded() &&
+			//res.aa() == chemical::aa_cys &&
 				res.has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
 				pose.residue_type( ii ).has( "CEN" )
@@ -637,7 +638,8 @@ CentroidDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		if ( resid_2_disulfide_index_[ ii ] != NO_DISULFIDE ) {
 			conformation::Residue res = pose.residue( ii );
-			if ( res.aa() != chemical::aa_cys ||
+			if ( //res.aa() != chemical::aa_cys ||
+				!res.type().is_disulfide_bonded() ||
 					disulfide_residue_types_[ ii ].get() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
 					! pose.residue_type( ii ).has( "CEN" ) || // not centroid

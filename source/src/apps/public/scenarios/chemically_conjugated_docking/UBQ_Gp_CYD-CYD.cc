@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -169,15 +170,13 @@ public:
 
 		//replace cysteine
 		core::chemical::ResidueTypeSetCOP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
-		core::chemical::ResidueType const & cyd_rsd_type( fa_standard->name_map("CYD") );
+		core::chemical::ResidueType const & cyd_rsd_type( fa_standard->name_map("CYS:disulfide") );
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
 		GTPase.replace_residue( GTPase_cyd_, core::conformation::Residue(cyd_rsd_type, true), true);
 		//GTPase.dump_pdb("postreplace_GTPase.pdb");
 
 		//replace with CYD on ubiquitin too
-		//TR << UBQ.residue_type(UBQ_term).name() << std::endl;
-		//core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD"));
-		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD:CtermProteinFull"));
+		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYS:CtermProteinFull:disulfide"));
 		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
 
 		// check safety of connections (from phil)

@@ -95,7 +95,7 @@ void construct_poly_ala_pose(
 		if ( pose.residue(i).is_protein() && ( res_set.find(i) != res_set.end() ) ) {
 			positions.push_back(i);
 		}
-		if ( !keep_disulf && ( pose.residue(i).name() == "CYD" ) ) {
+		if ( !keep_disulf && ( pose.residue(i).type().is_disulfide_bonded() ) ) {
 			protocols::simple_moves::MutateResidue mut( i, "ALA" );
 			mut.apply( pose );
 		}
