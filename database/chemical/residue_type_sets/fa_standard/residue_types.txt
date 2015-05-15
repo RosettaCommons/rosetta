@@ -520,6 +520,19 @@ residue_types/peptoids/601.params
 
 ## Gamma-peptide Types
 #residue_types/gamma-peptide/GABA.params
+#residue_types/gamma-peptide/G2ALA.params
+#residue_types/gamma-peptide/G3ALA.params
+#residue_types/gamma-peptide/G4ALA.params
+#residue_types/gamma-peptide/4D3L_GALA.params
+#residue_types/gamma-peptide/4L3L_GALA.params
+#residue_types/gamma-peptide/4D2L_GALA.params
+#residue_types/gamma-peptide/4L2L_GALA.params
+#residue_types/gamma-peptide/3D2L_GALA.params
+#residue_types/gamma-peptide/3L2L_GALA.params
+#residue_types/gamma-peptide/4L3L2L_GALA.params
+#residue_types/gamma-peptide/4D3L2L_GALA.params
+#residue_types/gamma-peptide/4L3D2L_GALA.params
+#residue_types/gamma-peptide/4D3D2L_GALA.params
 
 ## Beta-peptide Types
 #residue_types/beta-peptide/B3A.params

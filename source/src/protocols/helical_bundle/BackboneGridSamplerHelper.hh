@@ -76,13 +76,37 @@ namespace protocols {
 			void initialize_samples();
 
 			public: //Getters
+			
+				/// @brief Returns the number of residues per repeat, set by the initialize_data() function.
+				///
+				core::Size residues_per_repeat() const { return residues_per_repeat_; }
+				
+				/// @brief Returns the total number of mainchain torsions over which we will sample.
+				/// @details  This is the sum of the n_torsions_ entries for each residue in the repeating
+				/// unit, and is initialized by the initialize_samples() function.
+				core::Size n_torsions_total() const { return n_torsions_total_; }
 
 				/// @brief Returns the number of different mainchain torsions that the BackboneGridSampler will sample over.
-				///
-				core::Size n_torsions() const { return n_torsions_; }
+				/// @details Returns a value for the residue in the repeating unit with index res_index.
+				core::Size n_torsions( core::Size const res_index ) const {
+					if(res_index < 1 || res_index > n_torsions_.size()) {
+						utility_exit_with_message("In BackboneGridSamplerHelper::n_torsions(): index out of range!" );
+					}
+					return n_torsions_[res_index];
+				}
+				
+				/// @brief Returns the residue index in the repeating unit (1st, 2nd, 3rd etc.) corresponding to a
+				/// given torsion index.
+				core::Size residue_index( core::Size const index ) const {
+					if(index==0 || index > residue_indices_.size()) { utility_exit_with_message(
+							"In BackboneGridSamplerHelper::residue_index(): index out of range!" );
+					}
+					return residue_indices_[index];
+				}
 				
 				/// @brief Returns the torsion ID for the specified torsion index.
-				core::Size torsion_id( core::Size const &index ) const {
+				///
+				core::Size torsion_id( core::Size const index ) const {
 					if(index==0 || index > allowed_torsion_indices_.size()) { utility_exit_with_message(
 							"In BackboneGridSamplerHelper::torsion_id(): index out of range!" );
 					}
@@ -114,7 +138,7 @@ namespace protocols {
 				/// @brief Initialize this object from an object passed from the BackboneGridSampler mover.
 				/// 
 				void initialize_data(
-					utility::vector1 <std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > const &torsions_to_sample
+					utility::vector1 < /*residue index in repeating unit*/ utility::vector1 <std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > > const &torsions_to_sample
 				);
 
 			private:
@@ -129,10 +153,24 @@ namespace protocols {
 			/********************************************************************************
 						PRIVATE DATA
 			*********************************************************************************/
+			
+			/// @brief Number of residues in the repeating unit.
+			///
+			core::Size residues_per_repeat_;
 
 			/// @brief Number of mainchain torsions that will be sampled by the BackboneGridSampler mover.
-			///
-			core::Size n_torsions_;
+			/// @details This is a vector with an entry for each residue in the repeating unit.
+			utility::vector1 < core::Size > n_torsions_;
+			
+			/// @brief Total number of mainchain torsions over which we will sample.  This is the sum of the
+			/// n_torsions_ entries for each residue in the repeating unit, and is initialized by the initialize_samples()
+			/// function.
+			core::Size n_torsions_total_;
+			
+			/// @brief Residue indicies.
+			/// @brief This stores indices of residues (in the repeating unit -- 1, 2, 3, etc.) with corresponding entries to the
+			/// allowed_torsion_indicies vector.
+			utility::vector1 < core::Size > residue_indices_;
 
 			/// @brief Allowed mainchain torsion indices.
 			/// @details This stores a list of mainchain torsion indices that will be sampled over.
@@ -157,7 +195,9 @@ namespace protocols {
 
 			/// @brief The vector of vectors of sample values for each mainchain torsion.
 			/// @details This is pre-computed by the initialize_samples() function.  Order of the outer vector
-			/// is the order of mainchain torsion indices in the allowed_torsion_indices_ vector.
+			/// is the order of mainchain torsion indices in the allowed_torsion_indices_ vector.  Note that the
+			/// residue_indices_ vector tells us which residue in the repeating unit each mainchain torsion
+			/// is in.
 			utility::vector1 < utility::vector1 < core::Real > > torsion_sample_vals_;
 
 			/// @brief The vector indicating the current set of values that we're sampling.

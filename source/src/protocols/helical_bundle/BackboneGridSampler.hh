@@ -186,8 +186,12 @@ namespace protocols {
 			}
 			
 			/// @brief Add a mainchain torsion to sample, the range of values that will be sampled, and the number of samples.
-			///
+			/// @details The residue_index is the index in the repeating unit (1st residue, 2nd residue, etc.).  The torsion_index
+			/// is the mainchain torsion index in this residue.  Sampled values will go from start_of_range to end_of_range, with the
+			/// total number of samples given by the samples parameter.  If the range is -180 to 180, the samples are adjusted so that
+			/// 180 is not sampled twice.
 			void add_torsion_to_sample(
+				core::Size const residue_index,
 				core::Size const torsion_index,
 				core::Real const &start_of_range,
 				core::Real const &end_of_range,
@@ -195,14 +199,17 @@ namespace protocols {
 			);
 			
 			/// @brief Add a mainchain torsion to fix, and that torsion's value.
-			///
+			/// @details The residue_index is the index of the residue in the repeating unit (1st, 2nd, 3rd, etc.).
+			/// The torsion_index is the mainchain torsion index in this residue, and the torsion_value is the
+			/// value at which to fix this residue.
 			void add_torsion_to_fix(
+				core::Size const residue_index,
 				core::Size const torsion_index,
 				core::Real const &torsion_value
 			);
 			
 			/// @brief Set the number of residues in the pose to build.
-			///
+			/// @details This is actually the number of REPEATS.  If there are two residues per repeat, you'd have twice this number of resiudes.
 			void set_nres( core::Size const nres_in ) {
 				if(nres_in < 1) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::set_nres(): The number of residues must be greater than zero." );
@@ -212,16 +219,22 @@ namespace protocols {
 			}
 			
 			/// @brief Get the number of residues in the pose to build.
-			///
+			/// @details This is actually the number of REPEATS.  If there are two residues per repeat, you'd have twice this number of resiudes.
 			core::Size nres() const { return nres_; }
 			
 			/// @brief Set the residue type.
-			///
-			void set_resname( std::string const &resname_in ) { resname_=resname_in; return; }
+			/// @details Sets the residue type for the nth residue in the list of residues defining the repeating unit.
+			void set_resname( core::Size const res_index, std::string const &resname_in ) {
+				if(res_index < 1 || res_index > resname_.size()) utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::set_resname(): The residue index is out of range.  It must be greater than zero and less than or equal to the number of residues in the repeating unit." );
+				resname_[res_index]=resname_in; return;
+			}
 
 			/// @brief Get the residue type.
-			///
-			std::string resname() const { return resname_; }
+			/// @details Returns the residue type (full name string) for the nth residue in the list of residues defining the repeating unit.
+			std::string resname( core::Size const res_index ) const {
+				if(res_index < 1 || res_index > resname_.size()) utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::resname(): The residue index is out of range.  It must be greater than zero and less than or equal to the number of residues in the repeating unit." );
+				return resname_[res_index];
+			}
 			
 			/// @brief Set whether then ends should be capped (N-acetyl, C-methylamide).
 			///
@@ -238,6 +251,20 @@ namespace protocols {
 			/// @brief Has the PeptideStubMover been initialized?
 			///
 			bool peptide_stub_mover_initialized() const { return peptide_stub_mover_initialized_; }
+			
+			/// @brief Reset the torsions_to_sample_, torsions_to_fix_, and resname_ vectors, and
+			/// initialize them based on the value of residues_per_repeat_.
+			void reset_and_initialize_data();
+			
+			/// @brief Set the number of residues per repeat.
+			/// @details This resets the torsions_to_sample_, torsions_to_fix_, and resname_ vectors, and
+			/// must therefore be called BEFORE setting up the torsions to sample, torsions to fix, or
+			/// residue types.
+			void set_residues_per_repeat( core::Size const val );
+			
+			/// @brief Get the number of residues per repeat.
+			///
+			core::Size residues_per_repeat() const { return residues_per_repeat_; }
 
 		private:
 		////////////////////////////////////////////////////////////////////////////////
@@ -299,21 +326,25 @@ namespace protocols {
 			/// @details Must be set prior to calling apply() function.
 			core::scoring::ScoreFunctionOP sfxn_;
 			
+			/// @brief The number of residues in the repeating unit.
+			/// @details  The repeating unit in the helix need not be a single residue, particularly if the helix is composed of residues of an alternating type.
+			core::Size residues_per_repeat_;
+			
 			/// @brief The list of mainchain torsions to sample, and the range of values.
-			///
-			utility::vector1 <std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > torsions_to_sample_;
+			/// @details The outer vector corresponds to the list of residues in the repeating unit.
+			utility::vector1 < /*Index of residue in repeating unit*/ utility::vector1 < std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > > torsions_to_sample_;
 			
 			/// @brief The list of mainchain torsions to fix, and the values at which to fix them.
-			///
-			utility::vector1 < std::pair <core::Size /*The index to fix*/, core::Real /*The value to fix*/>  > torsions_to_fix_;
+			/// @details  The outer vecotr corresponds to the list of residues in the repeating unit.
+			utility::vector1 < /*Index of residue in repeating unit*/ utility::vector1 < std::pair <core::Size /*The index to fix*/, core::Real /*The value to fix*/ > > > torsions_to_fix_;
 			
 			/// @brief The number of residues in the pose to build.
-			///
+			/// @details This is actually the number of REPEATS.  If there are two residues per repeat, you'd have twice this number of resiudes.
 			core::Size nres_;
 			
 			/// @brief The residue type (full name) for the pose to build.
-			///
-			std::string resname_;
+			/// @details This is a vector of strings, with one entry for each residue in the repeating unit.
+			utility::vector1 <std::string> resname_;
 			
 			/// @brief Should we add terminal caps (N-acetyl, C-methylamidation) to the polymer?
 			/// @details If false, the ends are just the regular terminal types (NH3+, COO-).

@@ -1419,7 +1419,12 @@ public:
 	bool is_beta_aa() const;
 	
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
+	///
 	bool is_sri() const;
+	
+	/// @brief Is this a triazolemer?
+	///
+	bool is_triazolemer() const;
 
 	/// @brief is this a d-amino acid?
 	bool is_d_aa() const;

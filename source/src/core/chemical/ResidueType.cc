@@ -1826,6 +1826,14 @@ ResidueType::is_sri() const
 	return properties_->has_property( SRI );
 }
 
+/// @brief Is this a triazolemer?
+///
+bool
+ResidueType::is_triazolemer() const
+{
+	return properties_->has_property( TRIAZOLEMER );
+}
+
 
 bool
 ResidueType::is_d_aa() const

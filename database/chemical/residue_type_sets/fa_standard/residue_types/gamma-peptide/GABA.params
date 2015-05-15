@@ -9,7 +9,7 @@ ATOM  C4  CAbb  CT2 -0.16
 ATOM  C3  CAbb  CT2 -0.16
 ATOM  C2  CAbb  CT2 -0.16
 ATOM  C   CObb  C    0.64
-ATOM  O   OOC   O   -0.74
+ATOM  O   OCbb  O   -0.74
 ATOM HA21 Hapo  HB   0.12
 ATOM HA22 Hapo  HB   0.12
 ATOM HA32 Hapo  HB   0.12

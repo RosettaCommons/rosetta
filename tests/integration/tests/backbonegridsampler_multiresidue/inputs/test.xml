@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<BackboneGridSampler name=bbgrid dump_pdbs=true scorefxn=tala residues_per_repeat=2 repeat_count=24 residue_name_1="ALA" residue_name_2="DALA" cap_ends=true>
+			<MainchainTorsion res_index=1 index=1 start=-70 end=-50 samples=5 />
+			<MainchainTorsion res_index=1 index=2 start=-55 end=-35 samples=3 />
+			<MainchainTorsion res_index=1 index=3 value=180 />
+                        <MainchainTorsion res_index=2 index=1 start=50 end=70 samples=5 />
+                        <MainchainTorsion res_index=2 index=2 start=35 end=55 samples=3 />
+			<MainchainTorsion res_index=2 index=3 value=180 />
+		</BackboneGridSampler>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bbgrid />
+	</PROTOCOLS>
+	<OUTPUT scorefxn=tala />
+</ROSETTASCRIPTS>

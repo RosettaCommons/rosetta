@@ -1653,6 +1653,19 @@ public:
 	{
 		return rsd_type_.is_peptoid();
 	}
+	
+	/// @brief Is this one of SRI's special heteropolymer building blocks?
+	bool is_sri() const
+	{
+		return rsd_type_.is_sri();
+	}
+	
+	/// @brief Returns true if and only if this residue is a triazolemer
+	///
+	bool is_triazolemer() const
+	{
+		return rsd_type_.is_triazolemer();
+	}
 
 	/// @brief Returns true if this residue is a DNA residue
 	bool

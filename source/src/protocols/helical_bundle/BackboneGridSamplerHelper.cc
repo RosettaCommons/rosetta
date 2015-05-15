@@ -44,7 +44,10 @@ namespace protocols {
 		/// @brief Constructor.
 		///
 		BackboneGridSamplerHelper::BackboneGridSamplerHelper() :
-			n_torsions_(0),
+			residues_per_repeat_(1),
+			n_torsions_(),
+			n_torsions_total_(0),
+			residue_indices_(),
 			allowed_torsion_indices_(),
 			torsion_samples_(),
 			torsion_lower_vals_(),
@@ -52,12 +55,16 @@ namespace protocols {
 			torsion_sample_vals_(),
 			cur_indices_()
 		{
+			n_torsions_.resize(1,0);
 		}
 
 		BackboneGridSamplerHelper::BackboneGridSamplerHelper( BackboneGridSamplerHelper const & src ) :
 			utility::pointer::ReferenceCount(),
 			utility::pointer::enable_shared_from_this< BackboneGridSamplerHelper >(),
+			residues_per_repeat_( src.residues_per_repeat_ ),
 			n_torsions_( src.n_torsions_ ),
+			n_torsions_total_( src.n_torsions_total_ ),
+			residue_indices_( src.residue_indices_ ),
 			allowed_torsion_indices_( src.allowed_torsion_indices_ ),
 			torsion_samples_(src.torsion_samples_),
 			torsion_lower_vals_(src.torsion_lower_vals_),
@@ -81,7 +88,11 @@ namespace protocols {
 		/// @brief Reset this BackboneGridSamplerHelper object.
 		/// @details Clears all internal data.
 		void BackboneGridSamplerHelper::reset() {
-			n_torsions_=0;
+			residues_per_repeat_=1;
+			n_torsions_.clear();
+			n_torsions_.push_back(0);
+			n_torsions_total_=0;
+			residue_indices_.clear();
 			allowed_torsion_indices_.clear();
 			torsion_samples_.clear();
 			torsion_lower_vals_.clear();
@@ -97,8 +108,14 @@ namespace protocols {
 			if(TR.visible()) TR << "Initializing samples." << std::endl;
 			torsion_sample_vals_.clear();
 			cur_indices_.clear();
+			
+			core::Size const dimensions( allowed_torsion_indices_.size() );
+			if( residue_indices_.size() != dimensions ) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSamplerHelper::initialize_samples(): The size of the allowed_torsion_indices_ vector does not match the size of the residue_indices_vector.  This is an internal program error.  Consult a developer or an exorcist.\n" );
+			}
+			n_torsions_total_=dimensions; //Initialize this so that it may be called by external code calling the n_torsions_total() getter.
 
-			for(core::Size i=1, imax=n_torsions(); i<=imax; ++i) {
+			for(core::Size i=1; i<=dimensions; ++i) {
 
 				utility::vector1 < core::Real > curvect;
 				
@@ -134,10 +151,12 @@ namespace protocols {
 			if (TR.visible()) {
 				TR << "The following torsion values will be sampled:" << std::endl;
 				char outstring[1024];
-				sprintf(outstring, "BB_Tors_index\tTorsion_values" );
+				sprintf(outstring, "Res_index\tBB_Tors_index\tTorsion_values" );
 				TR << outstring << std::endl;
 
-				for(core::Size i=1, imax=n_torsions(); i<=imax; ++i) {
+				for(core::Size i=1; i<=dimensions; ++i) {
+					sprintf(outstring, "%lu\t", static_cast<unsigned long>(residue_indices_[i]) );
+					TR << outstring;
 					sprintf(outstring, "%lu\t", static_cast<unsigned long>(allowed_torsion_indices_[i]) );
 					TR << outstring;
 					for(core::Size j=1, jmax=torsion_sample_vals_[i].size(); j<=jmax; ++j) {
@@ -162,7 +181,7 @@ namespace protocols {
 		/// can be called recursively.
 		void BackboneGridSamplerHelper::increment_cur_indices()
 		{
-			increment_cur_indices( n_torsions() ); //Call the private, recursive function.
+			increment_cur_indices( torsion_sample_vals_.size() ); //Call the private, recursive function.
 			return;
 		}
 
@@ -187,16 +206,23 @@ namespace protocols {
 		/// @brief Initialize this object from an object passed from the BackboneGridSampler mover.
 		/// 
 		void BackboneGridSamplerHelper::initialize_data(
-			utility::vector1 <std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > const &torsions_to_sample
+			utility::vector1 < /*residue index in repeating unit*/ utility::vector1 <std::pair <core::Size /*mainchain torsion index*/, std::pair < std::pair < core::Real /*start of range to sample*/, core::Real /*end of range to sample*/ >, core::Size /*samples*/ > > > > const &torsions_to_sample
 		) {
 			reset();
-			n_torsions_ = torsions_to_sample.size();
+			residues_per_repeat_ = torsions_to_sample.size();
+			n_torsions_.clear();
+			n_torsions_.resize( residues_per_repeat_, 0 );
 			
-			for(core::Size i=1; i<=n_torsions_; ++i) {
-				allowed_torsion_indices_.push_back( torsions_to_sample[i].first );
-				torsion_samples_.push_back( torsions_to_sample[i].second.second );
-				torsion_lower_vals_.push_back( torsions_to_sample[i].second.first.first );
-				torsion_upper_vals_.push_back( torsions_to_sample[i].second.first.second );
+			for(core::Size ires=1; ires<=residues_per_repeat_; ++ires) {
+				n_torsions_[ires] = torsions_to_sample[ires].size();
+			
+				for(core::Size i=1; i<=n_torsions_[ires]; ++i) {
+					residue_indices_.push_back( ires );
+					allowed_torsion_indices_.push_back( torsions_to_sample[ires][i].first );
+					torsion_samples_.push_back( torsions_to_sample[ires][i].second.second );
+					torsion_lower_vals_.push_back( torsions_to_sample[ires][i].second.first.first );
+					torsion_upper_vals_.push_back( torsions_to_sample[ires][i].second.first.second );
+				}
 			}
 			
 			initialize_samples();

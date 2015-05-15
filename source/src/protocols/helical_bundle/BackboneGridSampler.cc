@@ -95,14 +95,19 @@ namespace protocols {
 			pdb_prefix_("bbs_out"),
 			sfxn_set_(false),
 			sfxn_(),
+			residues_per_repeat_(1),
 			torsions_to_sample_(),
 			torsions_to_fix_(),
 			nres_(20),
-			resname_("ALA"),
+			resname_(),
 			cap_ends_(false),
 			peptide_stub_mover_( new PeptideStubMover ),
 			peptide_stub_mover_initialized_(false)
-		{}
+		{
+			resname_.push_back("ALA");
+			torsions_to_fix_.resize(1);
+			torsions_to_sample_.resize(1);
+		}
 
 		///
 		/// @brief Copy constructor for BackboneGridSampler mover.
@@ -120,6 +125,7 @@ namespace protocols {
 			pdb_prefix_(src.pdb_prefix_),
 			sfxn_set_(src.sfxn_set_),
 			sfxn_(src.sfxn_), //NOTE that this is also copied without cloning
+			residues_per_repeat_( src.residues_per_repeat_ ),
 			torsions_to_sample_( src.torsions_to_sample_ ),
 			torsions_to_fix_(src.torsions_to_fix_),
 			nres_(src.nres_),
@@ -177,7 +183,12 @@ namespace protocols {
 			
 			//Build the pose
 			if(TR.visible()) {
-				TR << "Building " << nres() << "-residue, all-" << resname() << " pose." << std::endl;
+				TR << "Building " << nres() << "-repeat pose where each repeating unit consists of ";
+				for(core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i) {
+					TR << resname(i);
+					if(i < imax) TR << ", ";
+				}
+				TR << "." << std::endl;
 				TR.flush();
 			}
 			core::pose::PoseOP newpose(new core::pose::Pose);
@@ -203,29 +214,37 @@ namespace protocols {
 			
 			//Do initial checks:
 			//Are all of the torsions to fix in the current residue type?
-			for(core::Size i=1, imax=torsions_to_fix_.size(); i<=imax; ++i) {
-				if(torsions_to_fix_[i].first > newpose->residue(1).mainchain_torsions().size()) {
-					utility_exit_with_message(
-						"In protocols::helical_bundle::BackboneGridSampler::apply():  Mainchain torsion angles to fix were specified that are not in the " + resname() + " residue type.\n"
-					);
+			for(core::Size ires=1, iresmax=residues_per_repeat(); ires<=iresmax; ++ires) { //Loop through all residues in the repeating unit.
+				for(core::Size i=1, imax=torsions_to_fix_[ires].size(); i<=imax; ++i) {
+					if(torsions_to_fix_[ires][i].first > newpose->residue(ires).mainchain_torsions().size()) {
+						utility_exit_with_message(
+							"In protocols::helical_bundle::BackboneGridSampler::apply():  Mainchain torsion angles to fix were specified that are not in the " + resname(ires) + " residue type.\n"
+						);
+					}
 				}
-			}
-			//Are all of the torsions to sample in the current residue type?
-			for(core::Size i=1, imax=torsions_to_sample_.size(); i<=imax; ++i) {
-				if(torsions_to_sample_[i].first > newpose->residue(1).mainchain_torsions().size()) {
-					utility_exit_with_message(
-						"In protocols::helical_bundle::BackboneGridSampler::apply():  Mainchain torsion angles to sample were specified that are not in the " + resname() + " residue type.\n"
-					);
+				//Are all of the torsions to sample in the current residue type?
+				for(core::Size i=1, imax=torsions_to_sample_[ires].size(); i<=imax; ++i) {
+					if(torsions_to_sample_[ires][i].first > newpose->residue(ires).mainchain_torsions().size()) {
+						utility_exit_with_message(
+							"In protocols::helical_bundle::BackboneGridSampler::apply():  Mainchain torsion angles to sample were specified that are not in the " + resname(ires) + " residue type.\n"
+						);
+					}
 				}
-			}
+
+				//Set fixed torsions:
+				core::Size rescounter = 0;
+				for(core::Size it=1, itmax=torsions_to_fix_[ires].size(); it<=itmax; ++it) {
+					for(core::Size ir=1, irmax=newpose->n_residue(); ir<=irmax; ++ir) {
+						++rescounter;
+						if(rescounter > iresmax) rescounter=1;
+						if(rescounter!=ires) continue; //Do nothing if the current residue is not the residue in the repeating unit that we're setting.
+						newpose->conformation().set_torsion( TorsionID(ir, BB, torsions_to_fix_[ires][it].first), torsions_to_fix_[ires][it].second );
+					}
+					if(TR.visible()) TR << "Set mainchain torsion " << torsions_to_fix_[ires][it].first << " for residue " << ires << " in the repeating unit to " << torsions_to_fix_[ires][it].second << " degrees." << std::endl;
+				}
+
+			} //Looping through all residues in the repeating unit.
 			
-			//Set fixed torsions:
-			for(core::Size it=1, itmax=torsions_to_fix_.size(); it<=itmax; ++it) {
-				for(core::Size ir=1, irmax=newpose->n_residue(); ir<=irmax; ++ir) {
-					newpose->conformation().set_torsion( TorsionID(ir, BB, torsions_to_fix_[it].first), torsions_to_fix_[it].second );
-				}
-				if(TR.visible()) TR << "Set mainchain torsion " << torsions_to_fix_[it].first << " to " << torsions_to_fix_[it].second << " degrees." << std::endl;
-			}
 			newpose->update_residue_neighbors();
 			
 			//Loop through all grid samples
@@ -267,9 +286,13 @@ namespace protocols {
 				core::pose::PoseOP temppose( new core::pose::Pose( *newpose ) );
 				
 				//Set the variable mainchain torsions of this temporary pose:
-				for(core::Size it=1, itmax=helper->n_torsions(); it<=itmax; ++it)
+				for(core::Size it=1, itmax=helper->n_torsions_total(); it<=itmax; ++it)
 				{
+					core::Size repeat_index(0);
 					for(core::Size ir=1, irmax=temppose->n_residue(); ir<=irmax; ++ir) {
+						++repeat_index;
+						if(repeat_index > residues_per_repeat()) repeat_index=1;
+						if(repeat_index != helper->residue_index(it)) continue; //Only set the torsion if the current residue is the residue in the repeating unit whose torsion we want to set.
 						temppose->conformation().set_torsion( TorsionID(ir, BB, helper->torsion_id(it)), helper->torsion_sample_value(it) );
 					}
 				}
@@ -277,10 +300,13 @@ namespace protocols {
 				
 				if(TR.visible()) {
 					//Tracer output -- summarize current sample.
-					core::Size refres=(temppose->n_residue() > 2 ? 2 : temppose->n_residue());
+					core::Size const refrepeat( nres() > 2 ? 2 : nres() );
+					core::Size const refres( (refrepeat-1)*residues_per_repeat() + 1 );
 					TR << "Current sample:\t";
-					for(core::Size it=1, itmax=temppose->residue(refres).mainchain_torsions().size(); it<=itmax; ++it) {
-						TR << "tors" << it << "=" << temppose->residue(refres).mainchain_torsions()[it] << "\t";
+					for(core::Size ir=refres, irmax=refres+residues_per_repeat()-1; ir<=irmax; ++ir) {
+						for(core::Size it=1, itmax=temppose->residue(ir).mainchain_torsions().size(); it<=itmax; ++it) {
+							TR << "res" << ir-refres+1 << "_tors" << it << "=" << temppose->residue(ir).mainchain_torsions()[it] << "\t";
+						}
 					}
 					TR << std::endl;
 				}
@@ -321,9 +347,13 @@ namespace protocols {
 				
 				if(TR_Results.visible()) { //Write summary report to separate tracer to make it easy to mute everytihng except the output.
 					TR_Results << "Sample " << i << " torsion values:\t";
-					core::Size refres=(temppose->n_residue() > 2 ? 2 : temppose->n_residue());
-					for(core::Size it=1, itmax=temppose->residue(refres).mainchain_torsions().size(); it<=itmax; ++it) {
-						TR_Results << temppose->residue(refres).mainchain_torsions()[it] << "\t";
+					core::Size const refrepeat( nres() > 2 ? 2 : nres() );
+					core::Size const refres( (refrepeat-1)*residues_per_repeat() + 1 );
+					for(core::Size ir=refres, irmax=refres+residues_per_repeat()-1; ir<=irmax; ++ir) {
+						if(residues_per_repeat()>1) TR_Results << "Res" << ir-refres+1 << ":\t";
+						for(core::Size it=1, itmax=temppose->residue(ir).mainchain_torsions().size(); it<=itmax; ++it) {
+							TR_Results << temppose->residue(ir).mainchain_torsions()[it] << "\t";
+						}
 					}
 					TR_Results << "SCORE:\t" << temppose->energies().total_energy();
 					TR_Results << std::endl;
@@ -454,11 +484,34 @@ namespace protocols {
 			if(TR.visible()) TR << "Setting nstruct repeats to " << nstructrepeats << "." << std::endl;
 			set_nstruct_repeats(nstructrepeats);
 			
-			//Set number of residues and residue type:
-			set_nres( tag->getOption<core::Size>("residue_count", 12) );
-			if(TR.visible()) TR << "Set number of residues to " << nres() << "." << std::endl;
-			set_resname( tag->getOption<std::string>("residue_name", "ALA") );
-			if(TR.visible()) TR << "Set number of residue type to " << resname() << "." << std::endl;
+			//Set number of repeats, residues per repeat, and residue type:
+			set_residues_per_repeat( tag->getOption<core::Size>( "residues_per_repeat", 1 ));
+			if(TR.visible()) TR << "Set number of residues per repeating unit to " << residues_per_repeat() << "." << std::endl;
+
+			if(residues_per_repeat() == 1 && tag->hasOption("residue_count") ) { //For backwards compatibility.
+				if( tag->hasOption("repeat_count") ) {
+					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): Either \"residue_count\" or \"repeat_count\" may be specified if there is one residue per repeating unit, but both options may not be used.  Both were found.\n" );
+				}
+				set_nres( tag->getOption<core::Size>("residue_count", 12) );
+			} else {
+				if( tag->hasOption("residue_count") ) {
+					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A \"residue_count\" option was found, but more than one residue per repeat was specified.  Use \"repeat_count\" instead.\n" );
+				}
+				set_nres( tag->getOption<core::Size>("repeat_count", 12) );			
+			}
+			if(TR.visible()) TR << "Set number of repeats to " << nres() << "." << std::endl;
+
+			if(residues_per_repeat() == 1 && tag->hasOption("residue_name") ) { //For backwards compatibility.
+				set_resname(1, tag->getOption<std::string>( "residue_name", "ALA" ) );
+				if(TR.visible()) TR << "Set residue type to " << resname(1) << "." << std::endl;
+			} else {
+				for(core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i) {
+					std::stringstream curtagstream;
+					curtagstream << "residue_name_" << i;
+					set_resname( i, tag->getOption<std::string>(curtagstream.str(), "ALA") );
+					if(TR.visible()) TR << "Set residue type for residue " << i << " in the repeating unit to " << resname(i) << "." << std::endl;
+				}
+			}
 			
 			//Determine whether the ends should be capped
 			set_cap_ends( tag->getOption<bool>( "cap_ends", false ) );
@@ -472,14 +525,15 @@ namespace protocols {
 						utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a mainchain torsion index with an \"index\" option.\n" );
 					}
 					core::Size index( (*tag_it)->getOption<core::Size>( "index", 0 ) );
+					core::Size resindex( (*tag_it)->getOption<core::Size>( "res_index", 1 ) );
 
 					if((*tag_it)->hasOption("value")) {
 						core::Real val( (*tag_it)->getOption<core::Real>( "value", 0 ) );
 						if(TR.visible()) {
-							TR << "Adding mainchain torsion index " << index << " to be fixed to " << val << " degrees." << std::endl;
+							TR << "Adding mainchain torsion index " << index << " for residue " << resindex << " in the repeating unit to be fixed to " << val << " degrees." << std::endl;
 							TR.flush();
 						}
-						add_torsion_to_fix(index, val);
+						add_torsion_to_fix(resindex, index, val);
 					} else {
 						if(!(*tag_it)->hasOption("start")) {
 							utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::parse_my_tag(): A <MainchainTorsion> tag must specify a start of the torsion range to be sampled with a \"start\" option.  (Values are in DEGREES.)\n" );
@@ -497,7 +551,7 @@ namespace protocols {
 							TR << "Adding mainchain torsion index " << index << " to sample angle range " << start << " to end " << end << " with " << samples << " sample(s)." << std::endl;
 							TR.flush();
 						}
-						add_torsion_to_sample( index, start, end, samples ); //Actually add the torsion (checking that it hasn't already been added, and that values are reasonable).
+						add_torsion_to_sample( resindex, index, start, end, samples ); //Actually add the torsion (checking that it hasn't already been added, and that values are reasonable).
 					}
 				} //if tag name == MainchainTorsion
 			} // looping through sub-tags
@@ -530,9 +584,13 @@ namespace protocols {
 			return;
 		}		
 
-		/// @brief Add a mainchain torsion to sample, and the range of values that will be sampled.
-		///
+		/// @brief Add a mainchain torsion to sample, the range of values that will be sampled, and the number of samples.
+		/// @details The residue_index is the index in the repeating unit (1st residue, 2nd residue, etc.).  The torsion_index
+		/// is the mainchain torsion index in this residue.  Sampled values will go from start_of_range to end_of_range, with the
+		/// total number of samples given by the samples parameter.  If the range is -180 to 180, the samples are adjusted so that
+		/// 180 is not sampled twice.
 		void BackboneGridSampler::add_torsion_to_sample(
+			core::Size const residue_index,
 			core::Size const torsion_index,
 			core::Real const &start_of_range,
 			core::Real const &end_of_range,
@@ -540,6 +598,12 @@ namespace protocols {
 		) {
 		
 			//First, let's check some things:
+			if(torsions_to_sample_.size() != residues_per_repeat()) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample(): Somehow, the number of residues per repeat and the size of the torsions_to_sample_ vector do not match.  This is a program error, so consult a developer or a mortician.\n" );
+			}
+			if(residue_index < 1 || residue_index > torsions_to_sample_.size()) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample(): The residue index is out of range.  The value must be greater than zero and less than or equal to the number of residues per repeat.\n" );
+			}
 			if(torsion_index<=0) {
 				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample(): The mainchain torsion index must be greater than 0.\n" );
 			}
@@ -555,53 +619,64 @@ namespace protocols {
 			if(samples < 1) {
 				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample(): The number of samples must be at least 1.\n" );
 			}
-			for(core::Size i=1, imax=torsions_to_sample_.size(); i<=imax; ++i) {
-				if(torsions_to_sample_[i].first == torsion_index) {
+
+			for(core::Size i=1, imax=torsions_to_sample_[residue_index].size(); i<=imax; ++i) {
+				if(torsions_to_sample_[residue_index][i].first == torsion_index) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample():  Could not add the torsion index to the list of torsions to sample.  It has already been added to this list.\n" );
 				}
 			}
-			for(core::Size i=1, imax=torsions_to_fix_.size(); i<=imax; ++i) {
-				if(torsions_to_fix_[i].first == torsion_index) {
+			for(core::Size i=1, imax=torsions_to_fix_[residue_index].size(); i<=imax; ++i) {
+				if(torsions_to_fix_[residue_index][i].first == torsion_index) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_sample():  Could not add the torsion index to the list of torsions to sample.  It has already been added to the list of torsions that are fixed.\n" );					
 				}
 			}
-			
+		
 			//OK, we're ready to add the torsion value and its range:
 			std::pair <core::Real, core::Real> range( start_of_range, end_of_range );
 			std::pair < std::pair<core::Real,core::Real>, core::Size > range_and_samples( range, samples );
 			std::pair <core::Size, std::pair< std::pair<core::Real,core::Real>, core::Size >  > pair_to_add( torsion_index, range_and_samples );
-			torsions_to_sample_.push_back( pair_to_add );
+			torsions_to_sample_[residue_index].push_back( pair_to_add );
 			
 			return;
 		}
 		
 		/// @brief Add a mainchain torsion to fix, and that torsion's value.
-		///
+		/// @details The residue_index is the index of the residue in the repeating unit (1st, 2nd, 3rd, etc.).
+		/// The torsion_index is the mainchain torsion index in this residue, and the torsion_value is the
+		/// value at which to fix this residue.
 		void BackboneGridSampler::add_torsion_to_fix(
+			core::Size const residue_index,
 			core::Size const torsion_index,
 			core::Real const &torsion_value
 		) {
 			//Checks:
+			if(torsions_to_fix_.size()!=residues_per_repeat()) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix(): Program error!  Somehow, the number of residues per residue does not match the size of the torsions_to_fix_ vector.  Consult a developer or a mortician.\n" );
+			}
+			if(residue_index < 1 || residue_index > torsions_to_fix_.size()) {
+				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix(): The index of the residue in the repeating unit must be greater than 0 and less than or equal to the number of residues per repeating unit.\n" );
+			}
 			if(torsion_index<=0) {
 				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix(): The mainchain torsion index must be greater than 0.\n" );
 			}
 			if(torsion_value < -180 || torsion_value > 180) {
 				utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix(): The torsion value must lie within (-180,180).\n" );
 			}
-			for(core::Size i=1, imax=torsions_to_fix_.size(); i<=imax; ++i) {
-				if(torsions_to_fix_[i].first == torsion_index) {
+						
+			for(core::Size i=1, imax=torsions_to_fix_[residue_index].size(); i<=imax; ++i) {
+				if(torsions_to_fix_[residue_index][i].first == torsion_index) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix():  Could not add the torsion index to the list of torsions to fix.  It has already been added to this list.\n" );					
 				}
 			}
-			for(core::Size i=1, imax=torsions_to_sample_.size(); i<=imax; ++i) {
-				if(torsions_to_sample_[i].first == torsion_index) {
+			for(core::Size i=1, imax=torsions_to_sample_[residue_index].size(); i<=imax; ++i) {
+				if(torsions_to_sample_[residue_index][i].first == torsion_index) {
 					utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::add_torsion_to_fix():  Could not add the torsion index to the list of torsions to fix.  It has already been added to the list of torsions to sample.\n" );					
 				}
-			}
+			}			
 			
 			//OK, we're ready to add the torsion.
 			std::pair <core::Size, core::Real> pair_to_add(torsion_index, torsion_value);
-			torsions_to_fix_.push_back(pair_to_add);
+			torsions_to_fix_[residue_index].push_back(pair_to_add);
 			
 			return;
 		}
@@ -614,9 +689,39 @@ namespace protocols {
 			peptide_stub_mover_->set_update_pdb_numbering_mode(true);
 			
 			peptide_stub_mover_->reset_mover_data();
-			peptide_stub_mover_->add_residue( "Append", resname(), 0, false, "", nres(), 0, "" );
+			for(core::Size i=1, imax=nres(); i<=imax; ++i) {
+				for(core::Size j=1, jmax=residues_per_repeat(); j<=jmax; ++j) {
+					peptide_stub_mover_->add_residue( "Append", resname(j), 0, false, "", 1, 0, "" );
+				}
+			}
 						
 			peptide_stub_mover_initialized_=true;
+			return;
+		}
+		
+		/// @brief Reset the torsions_to_sample_, torsions_to_fix_, and resname_ vectors, and
+		/// initialize them based on the value of residues_per_repeat_.
+		void BackboneGridSampler::reset_and_initialize_data() {
+			resname_.clear();
+			torsions_to_fix_.clear();
+			torsions_to_fix_.resize(residues_per_repeat());
+			torsions_to_sample_.clear();
+			torsions_to_sample_.resize(residues_per_repeat());
+			
+			for(core::Size i=1; i<=residues_per_repeat(); ++i) {
+				resname_.push_back("ALA"); //Defaults to a list of alanines.
+			}
+			return;
+		}
+		
+		/// @brief Set the number of residues per repeat.
+		/// @details This resets the torsions_to_sample_, torsions_to_fix_, and resname_ vectors, and
+		/// must therefore be called BEFORE setting up the torsions to sample, torsions to fix, or
+		/// residue types.
+		void BackboneGridSampler::set_residues_per_repeat( core::Size const val ) {
+			if(val < 1) utility_exit_with_message( "In protocols::helical_bundle::BackboneGridSampler::set_residues_per_repeat(): The residues per repeat must be greater than or equal to 1." );
+			residues_per_repeat_ = val;
+			reset_and_initialize_data();
 			return;
 		}
 
@@ -642,8 +747,10 @@ namespace protocols {
 			
 			core::Size total_samples(1);
 			
-			for(core::Size i=1, imax=torsions_to_sample_.size(); i<=imax; ++i) {
-				total_samples *= torsions_to_sample_[i].second.second;
+			for(core::Size ires=1, iresmax=torsions_to_sample_.size(); ires<=iresmax; ++ires) {
+				for(core::Size i=1, imax=torsions_to_sample_[ires].size(); i<=imax; ++i) {
+					total_samples *= torsions_to_sample_[ires][i].second.second;
+				}
 			}
 			
 			return total_samples;
