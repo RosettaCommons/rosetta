@@ -13,6 +13,7 @@
 
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
+#include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -57,25 +58,27 @@ CDRSeqDesignOptions::CDRSeqDesignOptions(CDRNameEnum cdr):
 	utility::pointer::ReferenceCount(),
 	cdr_(cdr)
 {
-
+	set_defaults();
 }
 
 CDRSeqDesignOptions::CDRSeqDesignOptions(CDRSeqDesignOptions const & src):
 	utility::pointer::ReferenceCount(src),
 	cdr_(src.cdr_),
 	design_(src.design_),
-	design_strategy_(src.design_strategy_)
+	design_strategy_(src.design_strategy_),
+	fallback_strategy_(src.fallback_strategy_)
+
 {
 
 }
 
-CDRSeqDesignOptions::~CDRSeqDesignOptions() {
-}
+CDRSeqDesignOptions::~CDRSeqDesignOptions() {}
 
 void
 CDRSeqDesignOptions::set_defaults() {
 	design_ = true;
 	design_strategy_ = seq_design_profiles;
+	fallback_strategy_ = seq_design_conservative;
 }
 
 void
@@ -84,9 +87,25 @@ CDRSeqDesignOptions::design_strategy(SeqDesignStrategyEnum strategy){
 }
 
 void
+CDRSeqDesignOptions::fallback_strategy(SeqDesignStrategyEnum strategy) {
+	fallback_strategy_ = strategy;
+}
+
+bool
+CDRSeqDesignOptions::fallback() const{
+		if (fallback_strategy_ == seq_design_none) {
+			return false;
+		}
+		else{
+			return true;
+		}
+}
+
+void
 CDRSeqDesignOptions::design(bool design) {
 	design_ = design;
 }
+
 
 void
 CDRSeqDesignOptions::set_cdr(CDRNameEnum cdr) {
@@ -166,7 +185,7 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	if(instruction_file.bad()){
 		utility_exit_with_message("Unable to open grafting instruction file.");
 	}
-	TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
+	//TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
 	while (getline(instruction_file, line)){
 
 		//Skip any comments + empty lines
@@ -206,7 +225,7 @@ CDRSeqDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		}
 	}
 	instruction_file.close();
-	TR << "Instructions read successfully" <<std::endl;
+	//TR << "Instructions read successfully" <<std::endl;
 	return cdr_options_->clone();
 }
 
@@ -263,40 +282,57 @@ CDRSeqDesignOptionsParser::parse_cdr_general_option(vector1<string> & lineSP) {
 }
 
 void
-CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const adjective, vector1< string> & lineSP){
+CDRSeqDesignOptionsParser::parse_cdr_design_option(std::string const name, vector1< string> & lineSP){
 
 	using namespace utility;
 
-	if (adjective=="FIX"){
+	if (name=="FIX"){
 		cdr_options_->design(false);
 	}
-	else if (adjective == "ALLOW") {
+	else if (name == "ALLOW") {
 		cdr_options_->design(true);
 	}
-	else if(adjective=="PROFILES" || adjective == "PROFILE"){
+	else if(name=="PROFILES" || name == "PROFILE" || name == "STRATEGY" || name == "PRIMARY_STRATEGY" || name == "PRIMARYSTRATEGY"){
 		check_line_len(lineSP, 4);
 		std::string option = lineSP[4];
 		boost::to_upper(option);
-		set_cdr_design_profile_option(option);
+		set_cdr_design_primary_option(option);
+	}
+	else if(name=="FALLBACK_STRATEGY" || name == "FALLBACKSTRATEGY"){
+		check_line_len(lineSP, 4);
+		std::string option = lineSP[4];
+		boost::to_upper(option);
+		set_cdr_design_fallback_option(option);
 	}
 	else{
-		utility_exit_with_message("Could not parse ab design instruction.  Unknown option: "+adjective);
+		utility_exit_with_message("Could not parse ab design instruction.  Unknown option: "+name);
 	}
 }
 
 void
-CDRSeqDesignOptionsParser::set_cdr_design_profile_option(std::string const option) {
+CDRSeqDesignOptionsParser::set_cdr_design_primary_option(std::string const option) {
 
-	if ( option == "CONSERVATIVE" ||  option=="CONSERVED"){
-		cdr_options_->design_strategy(seq_design_conservative);
-	}
-	else if (option == "PROFILE"){
-		cdr_options_->design_strategy(seq_design_profiles);
-	}
-	else if (option == "NONE" || option == "BASIC_DESIGN" || option == "BASIC"){
-		cdr_options_->design_strategy(seq_design_basic);
-	}
+
+	cdr_options_->design_strategy(seq_design_strategy_to_enum( option ));
+
 }
+
+void
+CDRSeqDesignOptionsParser::set_cdr_design_fallback_option(const std::string option) {
+
+	SeqDesignStrategyEnum strategy= seq_design_strategy_to_enum( option );
+	
+	if (strategy == seq_design_profiles || strategy == seq_design_profile_sets || strategy == seq_design_profile_sets_combined) {
+		utility_exit_with_message("SeqDesign Fallback Strategy cannot be profile-based");
+	}
+	else {
+		cdr_options_->design_strategy(strategy);
+		//TR << "Setting fallback " << seq_design_strategy_to_string(strategy) << std::endl;
+	}
+	
+}
+
+
 
 }
 }

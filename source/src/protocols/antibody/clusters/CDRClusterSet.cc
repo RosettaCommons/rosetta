@@ -17,7 +17,9 @@
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataCache.hh>
+#include <basic/Tracer.hh>
 
+static thread_local basic::Tracer TR("protocols.antibody.clusters.CDRClusterSet");
 
 namespace protocols {
 namespace antibody {
@@ -105,6 +107,7 @@ CDRClusterSet::get_cacheable_cluster_data() const {
 void
 CDRClusterSet::set_cacheable_cluster_data_to_pose(core::pose::Pose& pose) const {
 	using basic::datacache::DataCache_CacheableData;
+	TR<< "Adding cacheable cluster data to pose"<<std::endl;
 	pose.data().set(core::pose::datacache::CacheableDataType::CDR_CLUSTER_INFO, DataCache_CacheableData::DataOP( new BasicCDRClusterSet(clusters_) ));
 }
 
@@ -115,18 +118,19 @@ BasicCDRClusterSet::BasicCDRClusterSet():
 {
 	clusters_.clear();
 	clusters_.resize(6, NULL);
+
 }
 
 BasicCDRClusterSet::BasicCDRClusterSet(utility::vector1<CDRClusterOP> const clusters):
 	CacheableData()
 {
-	clusters_ = clusters;
+	set_clusters(clusters);
 }
 
 BasicCDRClusterSet::BasicCDRClusterSet(const BasicCDRClusterSet& src):
 	CacheableData()
 {
-	clusters_ = src.clusters_;
+	set_clusters(src.clusters_);
 }
 
 BasicCDRClusterSet::~BasicCDRClusterSet(){}
@@ -138,13 +142,23 @@ BasicCDRClusterSet::clone() const{
 
 void
 BasicCDRClusterSet::set_cluster( CDRNameEnum cdr, CDRClusterCOP cluster ){
-	clusters_[ cdr ] = cluster->clone();
+	if (cluster){
+		clusters_[ cdr ] = cluster->clone();
+	}
+	else {
+		clusters_[ cdr ] = NULL;
+	}
 }
 
 void
 BasicCDRClusterSet::set_clusters( utility::vector1<CDRClusterOP> const clusters ){
 	assert( clusters.size() == 6 );
-	clusters_ = clusters;
+	clusters_.clear();
+	clusters_.resize(6, NULL);
+	for (core::Size i = 1; i <= clusters.size(); ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		set_cluster(cdr, clusters[ i ]);
+	}
 }
 
 CDRClusterCOP

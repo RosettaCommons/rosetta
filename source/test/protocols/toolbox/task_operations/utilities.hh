@@ -21,7 +21,10 @@
 #include <string>
 #include <iostream>
 
-void test_task_operation(
+
+inline
+void
+test_task_operation(
 		core::pack::task::operation::TaskOperationCOP task_op,
 		core::pose::Pose pose,
 		std::string packable_mask,
@@ -43,3 +46,5 @@ void test_task_operation(
 		TS_ASSERT_EQUALS(expecting_to_design, task->being_designed(i));
 	}
 }
+
+

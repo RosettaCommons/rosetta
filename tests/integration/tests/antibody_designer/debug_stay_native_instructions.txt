@@ -1,0 +1,32 @@
+
+
+
+
+#Fix all Heavy chain to shorten test
+ALL FIX
+L1 ALLOW
+
+#Test L3 conservative design works
+#L3 GRAFT FIX
+#L3 SeqDESIGN PROFILES CONSERVATIVE
+
+#Test only using Human grafts
+#ALL CDR_SET INCLUDEONLY SPECIES Hu Mo
+
+#Test excluding certain PDBs and setting minimizer and types
+#L1 CDR_SET EXCLUDE PDBIDs 1A0Q 1A2Y 1A3R 1A6T 1A7Q
+#L1 CDR_SET INCLUDEONLY TYPES 1 2 3
+
+#H1 CDR_SET INCLUDEONLY CLUSTERS H1-13-1
+
+#H1 GraftDesign MINTYPE relax
+#H1 GraftDesign MIN_NEIGHBORS L3
+
+#Bugs in both Stay Native Cluster and including only the current cluster.  Why???
+L1 CDRSet STAY_NATIVE_CLUSTER 
+#L1 CDRSet INCLUDEONLY CLUSTERS L1-11-1
+#L1 CDRSet INCLUDEONLY CLUSTERS L1-13-1
+#L1 CDRSet INCLUDEONLY PDBIDS 1pz5
+
+L1 MinProtocol MINTYPE min
+

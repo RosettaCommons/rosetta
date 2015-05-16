@@ -101,7 +101,7 @@ private:
 
 };
 
-/// @brief Basic container class for CDRClusterSet.
+///@brief Basic container class for CDRClusterSet, with some extra information 
 class BasicCDRClusterSet : public basic::datacache::CacheableData {
 public:
 	BasicCDRClusterSet();
@@ -130,7 +130,7 @@ public:
 	/// @brief Get the full set of CDRClusters
 	//utility::vector1< CDRClusterOP >
 	//get_clusters() const;
-
+	
 private:
 
 	/// @details
@@ -139,7 +139,7 @@ private:
 	///  of AntibodyInfo objects and mutable AbChains.
 	///
 	utility::vector1< CDRClusterOP > clusters_;
-
+	
 };
 
 

@@ -60,7 +60,7 @@ static thread_local basic::Tracer TR( "protocols.grafting.util" );
 namespace protocols {
 namespace grafting {
 
-using namespace core; 
+using namespace core;
 
 using namespace core::id;
 using core::pose::Pose;
@@ -233,8 +233,11 @@ insert_pose_into_pose(
 	combined.fold_tree(new_tree);
 
 	if (copy_pdbinfo && insert_pose.pdb_info() && scaffold_pose.pdb_info()){
+		//TR << "Start PDBInfo size: " << combined.pdb_info()->nres() << std::endl;
+		//TR << "Insert PDBInfo Size: " << insert_pose.pdb_info()->nres() << std::endl;
 		combined.pdb_info()->copy(*(insert_pose.pdb_info()), 1, insert_pose.total_residue(), insert_point+1);
 		combined.pdb_info()->obsolete(false);
+		//TR << "Final PDBInfo Size: " << combined.pdb_info()->nres() << std::endl;
 	}
 
 	//Fix Disulfides.
@@ -328,7 +331,6 @@ repack_connection_and_residues_in_movemap_and_piece_and_neighbors(
 	for (Size i = start+2; i <= end-2; ++i){
 	    local->set_chi(i, true);
 	}
-
 
 	RestrictToMoveMapChiOperationOP mm_task_op( new protocols::toolbox::task_operations::RestrictToMoveMapChiOperation(local) );
 	mm_task_op->set_include_neighbors(true);

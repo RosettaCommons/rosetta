@@ -27,12 +27,18 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 
-	using namespace protocols::antibody;
 	
 /// @brief Simple class to hold and access CDRCluster info for a region of the pose.
 class CDRCluster : public utility::pointer::ReferenceCount {
 public:
-	CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length, CDRClusterEnum const cluster, core::Size const start, core::Real const distance);
+	CDRCluster(
+		core::pose::Pose const & pose,
+		CDRNameEnum const cdr,
+		core::Size const cdr_length,
+		CDRClusterEnum const cluster,
+		core::Size const start,
+		core::Real const distance,
+		bool cis_trans_match = true);
 	
 	CDRCluster(CDRCluster const & src);
 	
@@ -78,6 +84,10 @@ public:
 	core::Real
 	normalized_distance_in_degrees() const;
 	
+	///@brief Does the closest cluster match at cis_trans positions?
+	/// Currently, this should always be True.
+	bool
+	cis_trans_match() const { return cis_trans_match_; }
 	
 private:
 	
@@ -102,6 +112,9 @@ private:
 	
 	core::Size length_;
 	char chain_;
+	
+	bool cis_trans_match_;
+	
 };
 	
 }

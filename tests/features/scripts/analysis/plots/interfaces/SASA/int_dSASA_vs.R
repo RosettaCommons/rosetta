@@ -85,13 +85,12 @@ run=function(self, sample_sources, output_dir, output_formats){
   for (f in fields){
     
     #dSASA vs dG
-    field = f
-    p <- ggplot(data=int_data[int_data$dG<=5000 & int_data$dG>-5000,], aes(x = field, y = dG, colour=sample_source)) + parts +
+    p <- ggplot(data=int_data[int_data$dG<=5000 & int_data$dG>-5000,], aes(x = f, y = dG, colour=sample_source)) + parts +
       ggtitle(paste(field,"vs dG")) +
       scale_x_continuous("SASA") +
       scale_y_continuous("REU")
-    plot_field(p, paste(field, "vs_dG_by_all", sep="_"))
-    plot_field(p, paste(field, "vs_dG_by_interface", sep="_"), grid=interface ~ .)
+    plot_field(p, paste(f, "vs_dG_by_all", sep="_"))
+    plot_field(p, paste(f, "vs_dG_by_interface", sep="_"), grid=interface ~ .)
   
 #    #dSASA vs aromatic dSASA fraction.  Shouldn't increase, but worth a plot 
 #    p <- ggplot(data= data, aes(x = dSASA, y = aromatic_dSASA_fraction, colour=sample_source)) + parts +

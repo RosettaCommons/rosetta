@@ -7,11 +7,11 @@
 #The atom_pair constraints are there for SiteConstraints between the epitope and paratope.
 #They have been optimized (by eye) to not dominate the scorefunction as there are many. This is still not optimum, and may have to be done dynamically based on the number of constraints.   
 
-#Reference energies will be reweighted to capitulate native CDR sequence recoveries
+#Reference energies need to be reweighted to capitulate native CDR sequence recoveries
 
+#Feb 2015, changed dihedral_constraint weight from 1 to .3 so that it helps, but does not completely dominate.
 
-chainbreak = 100
-linear_chainbreak = 100
-dihedral_constraint = 1.0
-coordinate_constraint = 1.0
+#chainbreak = 100
+#linear_chainbreak = 100
+dihedral_constraint = .3
 atom_pair_constraint = .01

@@ -42,6 +42,7 @@
 #define BFE BOOST_FOREACH
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
+using namespace protocols::antibody::clusters;
 using utility::vector1;
 
 static thread_local basic::Tracer TR("protocols.antibody.AntibodyDatabase");

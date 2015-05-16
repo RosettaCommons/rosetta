@@ -21,9 +21,8 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
-	using namespace protocols::features;
-	
-class CDRClusterFeaturesCreator: public FeaturesReporterCreator {
+
+class CDRClusterFeaturesCreator: public features::FeaturesReporterCreator {
 	
 
 public:
@@ -31,7 +30,7 @@ public:
 	
 	virtual ~CDRClusterFeaturesCreator();
 	
-	virtual FeaturesReporterOP create_features_reporter() const;
+	virtual features::FeaturesReporterOP create_features_reporter() const;
 	
 	virtual std::string type_name() const;
 }; 

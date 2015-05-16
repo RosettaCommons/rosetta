@@ -1,0 +1,58 @@
+
+# FIX GraftDesign and SeqDesign for Heavy chain to shorten test
+ALL FIX
+L1 ALLOW
+L2 ALLOW
+L3 GraftDesign ALLOW
+L3 SeqDesign ALLOW
+
+
+####### L1 Grafting Tests #############
+L1 CDR_SET STAY_NATIVE_CLUSTER
+#L1 CDR_SET INCLUDEONLY CLUSTERS L1-11-1 L1-11-2 L1-11-3
+L1 CDR_SET LENGTH MIN 11
+L1 CDR_SET LENGTH MAX 11
+#L1 CDR_SET EXCLUDE CLUSTERS L1-11-1
+#L1 CDR_SET STAY_NATIVE_CLUSTER
+#L2 CDR_SET STAY_NATIVE_CLUSTER
+#L2 CDR_SET INCLUDEONLY CLUSTERS L2-8-1
+
+
+####### L2 Grafting Tests #############
+L2 CDR_SET INCLUDEONLY TYPES 1 2 3
+L2 CDR_SET INCLUDEONLY PDBIDS 1AQK 1BJM
+#Test excluding certain PDBs and setting minimizer and types
+#L2 CDR_SET EXCLUDE PDBIDs 1A0Q 1A2Y 1A3R 1A6T 1A7Q
+
+
+####### L3 Grafting Tests #############
+#Test only using Human and mouse grafts
+L3 CDR_SET INCLUDEONLY SPECIES Hu Mo
+#Set to only use grafts from clusters that have at least 10 members
+#L3 CDR_SET CLUSTER_CUTOFFS 10
+L3 CDR_SET CENTERS_ONLY
+
+
+####### Sequence Design Tests #########
+L1 GraftDesign MINTYPE relax
+L1 SeqDesign FALLBACK_STRATEGY BASIC
+
+#Test L3 conservative design works
+#L3 GRAFT FIX
+L3 SeqDESIGN PRIMARY_STRATEGY CONSERVATIVE
+
+#Test L2 combined
+L2 SeqDesign PRIMARY_STRATEGY PROFILES_COMBINED
+
+
+####### Minimization Setting Tests #########
+L3 GraftDesign MINTYPE relax
+L3 GraftDesign MIN_NEIGHBORS L1
+
+H2 GraftDesign MINTYPE min
+H2 GraftDesign MIN_NEIGHBORS H1
+
+#L1 CDR_SET LENGTH MIN 14
+H2 GraftDesign WEIGHT .5
+L3 GraftDesign WEIGHT 1.0
+

@@ -1,0 +1,8 @@
+fa_sol = 0
+occ_sol_exact = 0
+occ_sol_fitted = 0.65
+lk_nonpolar = 0.65
+dihedral_constraint = 1.0
+coordinate_constraint = 1.0
+atom_pair_constraint = .01
+

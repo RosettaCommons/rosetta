@@ -9,7 +9,7 @@
 
 /// @file protocols/backrub/BackrubMover.hh
 /// @brief definition of BackrubMover class and functions
-/// @author Colin A. Smith (colin.smith@ucsf.edu)
+/// @author Colin A. Smith (colin.smith@mpibpc.mpg.de)
 
 
 #ifndef INCLUDED_protocols_backrub_BackrubMover_hh
@@ -22,6 +22,7 @@
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // Protocols Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
@@ -188,6 +189,11 @@ public:
 		utility::vector1<core::Size> const & pivot_residues
 	);
 
+	///@brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues 
+	/// with BB enabled will be used as a segment.
+	void
+	set_movemap( core::kinematics::MoveMapCOP movemap );
+	
 	/// @brief get atom names to pivot if no segments manually defined
 	utility::vector1<std::string> const &
 	pivot_atoms() const;

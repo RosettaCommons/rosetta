@@ -35,6 +35,7 @@
 
 namespace protocols {
 namespace grafting {
+
 	using core::pose::Pose;
 	using core::kinematics::MoveMapCOP;
 	using core::kinematics::MoveMapOP;
@@ -82,19 +83,19 @@ public:
     
 	AnchoredGraftMover();
 	
-	/// @brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
-	AnchoredGraftMover(Size const start, Size const end, bool copy_pdbinfo = false);
+	///@brief Start and end are the residue numbers you want your insert to go between.  start->Insert<-end
+	AnchoredGraftMover(core::Size const start, core::Size const end, bool copy_pdbinfo = false);
 
 	AnchoredGraftMover(
-		Size const start, Size const end, 
-		core::pose::Pose const & piece, Size Nter_overhang_length=0, Size Cter_overhang_length=0, bool copy_pdbinfo = false);
+		core::Size const start, core::Size const end, 
+		core::pose::Pose const & piece, core::Size Nter_overhang_length=0, core::Size Cter_overhang_length=0, bool copy_pdbinfo = false);
     
 	AnchoredGraftMover(AnchoredGraftMover const & src);
 	
 	virtual ~AnchoredGraftMover();
 
 	void 
-	set_cycles(Size cycles);
+	set_cycles(core::Size cycles);
 	
 	virtual void 
 	set_defaults();
@@ -103,7 +104,7 @@ public:
 	///Does not repack any sidechains.
 	///Deletes overhang and region between start and end if residues are present.
 	virtual void 
-	apply(Pose & pose);
+	apply(core::pose::Pose & pose);
 	
 public:
 	
@@ -120,7 +121,7 @@ public:
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		moves::Movers_map const & movers,
-		Pose const & pose
+		core::pose::Pose const & pose
 	);
 	
 	
@@ -147,23 +148,29 @@ public:
 	
 public:
     
-	virtual void set_cen_scorefunction(core::scoring::ScoreFunctionCOP score);
+	virtual void
+	set_cen_scorefunction(core::scoring::ScoreFunctionCOP score);
     
-	virtual void set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
+	virtual void
+	set_fa_scorefunction(core::scoring::ScoreFunctionCOP score);
 	
-	/// @brief Sets the mintype for the MinMover
-	void set_mintype(std::string mintype);
+	///@brief Sets the mintype for the MinMover
+	void
+	set_mintype(std::string mintype);
 
-	/// @brief Sets the mover to skip the small mover sampling step.
-	void set_skip_sampling(bool skip_sampling);
+	///@brief Sets the mover to skip the small mover sampling step.
+	void
+	set_skip_sampling(bool skip_sampling);
 	
 public:
 
-	/// @brief Sets scaffold flexiblity on either end of scaffold
-	virtual void set_scaffold_flexibility(Size const Nter_scaffold_flexibility, Size const Cter_scaffold_flexibility);
+	///@brief Sets scaffold flexiblity on either end of scaffold
+	virtual void
+	set_scaffold_flexibility(core::Size const Nter_scaffold_flexibility, core::Size const Cter_scaffold_flexibility);
 	
-	/// @brief Sets insert flexibility on either end of insert
-	virtual void set_insert_flexibility(Size const Nter_insert_flexibility, Size const Cter_insert_flexibility);
+	///@brief Sets insert flexibility on either end of insert
+	virtual void
+	set_insert_flexibility(core::Size const Nter_insert_flexibility, core::Size const Cter_insert_flexibility);
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief Advanced way to set flexibility and residues used for CCD
@@ -174,24 +181,30 @@ public:
 	/// Note: Will disregard flexibility settings, as the movemaps will be used as primary way to define flexibility.
 	/// May want to consider turning off the sampling step when passing crazy movemaps.
 	
-	virtual void set_movemaps(MoveMapCOP const scaffold_mm, MoveMapCOP const insert_mm);
+	virtual void set_movemaps(core::kinematics::MoveMapCOP const scaffold_mm, core::kinematics::MoveMapCOP const insert_mm);
 
 	/// @brief Neighbor distance for any repacking of side-chains.
 	void neighbor_dis(core::Real dis);
 	core::Real neighbor_dis() const;
 	
 public:
-	Size get_nterm_scaffold_flexibility();
+	core::Size get_nterm_scaffold_flexibility();
 	
-	Size get_cterm_scaffold_flexibility() ;
+	core::Size get_cterm_scaffold_flexibility() ;
 
-	/// @returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
-	Size get_Cter_loop_end();
+	core::Size get_nterm_insert_flexibility();
+	core::Size get_cterm_insert_flexibility();
+	
+	///@returns the Cterminal loop end (Last flexible residue).  Useful to use after insertion.
+	core::Size get_Cter_loop_end();
 
 	protocols::loops::Loops
 	get_loops() {
 		return *loops_;
 	};
+	
+	std::string
+	get_name() const;
 	
 protected:
 	
@@ -217,7 +230,7 @@ protected:
 	
 	/// @brief sets up either the default movemap or a new combined movemap at apply time.  Updates regions as needed.
 	virtual void 
-	setup_movemap_and_regions(Pose & pose);
+	setup_movemap_and_regions(core::pose::Pose & pose);
 	
 	/// @brief Sets up the default movemap
 	virtual void 
@@ -229,7 +242,7 @@ protected:
     
 	/// @brief Sets up region variables from the class movemap for the combined pose.  
 	virtual void 
-	set_regions_from_movemap(Pose & pose);
+	set_regions_from_movemap(core::pose::Pose & pose);
 
 	
 protected:
@@ -240,25 +253,25 @@ protected:
 	set_test_control_mode(bool test_control_mode);
 	
 protected:
-	virtual MinMoverOP
+	virtual protocols::simple_moves::MinMoverOP
 	setup_default_min_mover();
 	
-	virtual SmallMoverOP
+	virtual protocols::simple_moves::SmallMoverOP
 	setup_default_small_mover();
 	
 protected:
 	//Accessors and Mutators of private data for derived classes
-	void movemap(MoveMapOP movemap);
-	MoveMapOP movemap() const;
+	void movemap(core::kinematics::MoveMapOP movemap);
+	core::kinematics::MoveMapOP movemap() const;
 	
-	void scaffold_movemap(MoveMapCOP scaffold_movemap);
-	MoveMapCOP scaffold_movemap() const;
+	void scaffold_movemap(core::kinematics::MoveMapCOP scaffold_movemap);
+	core::kinematics::MoveMapCOP scaffold_movemap() const;
 	
-	void insert_movemap(MoveMapCOP insert_movemap);
-	MoveMapCOP insert_movemap() const;
+	void insert_movemap(core::kinematics::MoveMapCOP insert_movemap);
+	core::kinematics::MoveMapCOP insert_movemap() const;
 	
-	ScoreFunctionOP cen_scorefxn() const;
-	ScoreFunctionOP fa_scorefxn() const;
+	core::scoring::ScoreFunctionOP cen_scorefxn() const;
+	core::scoring::ScoreFunctionOP fa_scorefxn() const;
 	
 	void use_default_movemap(bool use_default_movemap);
 	bool use_default_movemap() const;
@@ -281,29 +294,29 @@ protected:
 	TagCOP tag() const;
 	
 private:
-	Size cycles_;
+	core::Size cycles_;
     
 	std::string mintype_;
 	bool skip_sampling_;//Option to skip the small mover sampling step.
 	bool test_control_mode_;//TESTING ONLY  Set to randomize the flexible residues before trying to graft.
 
-	MoveMapOP movemap_;
-	MoveMapCOP scaffold_movemap_;
-	MoveMapCOP insert_movemap_;
+	core::kinematics::MoveMapOP movemap_;
+	core::kinematics::MoveMapCOP scaffold_movemap_;
+	core::kinematics::MoveMapCOP insert_movemap_;
 	
 	core::scoring::ScoreFunctionOP cen_scorefxn_;
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 	
 	bool use_default_movemap_; //Instructs setup_movemap_and_regions what to do.
-	Size Nter_scaffold_flexibility_;
-	Size Nter_insert_flexibility_;
-	Size Nter_loop_start_;//First flexible residue
-	Size Nter_loop_end_;
+	core::Size Nter_scaffold_flexibility_;
+	core::Size Nter_insert_flexibility_;
+	core::Size Nter_loop_start_;//First flexible residue
+	core::Size Nter_loop_end_;
 	
-	Size Cter_scaffold_flexibility_;
-	Size Cter_insert_flexibility_;
-	Size Cter_loop_start_;
-	Size Cter_loop_end_; //Last flexible residue
+	core::Size Cter_scaffold_flexibility_;
+	core::Size Cter_insert_flexibility_;
+	core::Size Cter_loop_start_;
+	core::Size Cter_loop_end_; //Last flexible residue
 	
 	bool stop_at_closure_;
 	bool final_repack_;

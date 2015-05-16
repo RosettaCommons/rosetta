@@ -49,15 +49,17 @@ class OptionSystemManager:
             
         self.common_options = [
             'Enter Custom:',
-            '-dun10',
-            '-ex2',
             '-restore_pre_talaris_2013_behavior',
-            '-ignore_unrecognized_res',
-            '-out:file:silent',
-            '-relax:constrain_relax_to_start_coords',
+            '-ex2',
             '-use_input_sc',
             '-linmem_ig 20',
             '-double_lazy_ig',
+            '-ignore_unrecognized_res',
+            '-out:file:silent',
+            '-relax:constrain_relax_to_start_coords',
+            '-relax:coord_constrain_sidechain',
+            '-relax:dualspace',
+            '-nonideal'
             #'-fixbb:minimize_sidechains',
             #'-fixbb:min_pack'
         ]

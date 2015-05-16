@@ -41,7 +41,13 @@
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
+#include <core/pack/task/residue_selector/AndResidueSelector.hh>
+#include <core/pack/task/residue_selector/NotResidueSelector.hh>
+#include <core/pack/task/residue_selector/ChainSelector.hh>
+
 // Protocol Headers
+#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/interface/util.hh>
@@ -67,15 +73,332 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/tag/Tag.hh>
+
+#include <math.h>
 
 static thread_local basic::Tracer TR( "antibody.util" );
 
 
-using namespace core;
-using namespace protocols::antibody::clusters;
+
 namespace protocols {
 namespace antibody {
 
+	using namespace core;
+	using namespace protocols::antibody::clusters;
+
+
+utility::vector1<bool>
+get_cdr_bool_from_tag(utility::tag::TagCOP tag, std::string const & name){
+	utility::vector1<bool> cdrs (6, false);
+	vector1<std::string> cdr_strings = utility::string_split_multi_delim(tag->getOption<std::string>(name), ":,'`~+*&|;. ");
+	AntibodyEnumManager manager = AntibodyEnumManager();
+	for (core::Size i = 1; i <= cdr_strings.size(); ++i){
+		CDRNameEnum cdr = manager.cdr_name_string_to_enum(cdr_strings[i]);
+		cdrs[cdr] = true;
+	}
+	return cdrs;
+}
+
+protocols::loops::LoopsOP
+get_cdr_loops(
+	AntibodyInfoCOP ab_info,
+	core::pose::Pose const & pose,
+	utility::vector1<bool> cdrs,
+	core::Size stem_size /* 0 */ ) {
+
+	assert( cdrs.size() == 6 );
+	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
+	for ( core::Size i = 1; i <= CDRNameEnum_total; ++i ){
+		if (cdrs[ i ]){
+			//TR <<"CDR: " << i << std::endl;
+			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
+			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
+		}
+	}
+	return cdr_loops;
+}
+
+
+core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
+	using namespace pack::task;
+	using namespace pack::task::operation;
+
+	TR.Debug << "Setting Up Packer Task" << std::endl;
+
+	core::pack::task::TaskFactoryOP tf( new TaskFactory );
+	tf->clear();
+
+	tf->push_back(TaskOperationCOP( new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ) ));
+	tf->push_back(TaskOperationCOP( new InitializeFromCommandline ) );
+	tf->push_back(TaskOperationCOP( new IncludeCurrent ) );
+	tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
+	tf->push_back(TaskOperationCOP( new NoRepackDisulfides ) );
+
+	// incorporating Ian's UnboundRotamer operation.
+	// note that nothing happens if unboundrot option is inactive!
+	pack::rotamer_set::UnboundRotamersOperationOP
+	unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
+	unboundrot->initialize_from_command_line();
+
+	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
+	tf->push_back( unboundrot_operation );
+
+	// adds scoring bonuses for the "unbound" rotamers, if any
+	core::pack::dunbrack::load_unboundrot( pose_in ); ///FIXME: this is dangerous here..... JQX
+	//TODO:
+	//JQX: need to understand this pose_in!!!!
+
+	TR.Debug << "Done: Setting Up Packer Task" << std::endl;
+
+	return tf;
+
+} // setup_packer_task
+
+/*    void
+ dle_extreme_repack(
+ pose::Pose & pose_in,
+ int repack_cycles,
+ ObjexxFCL::FArray1D_bool & allow_repack,
+ bool rt_min,
+ bool rotamer_trials,
+ bool force_one_repack,
+ bool use_unbounds
+ )
+ {
+ using namespace pose;
+
+ // Exit if not fullatom
+ if( !pose_in.fullatom() ) {
+ std::cout << "Repack called in centroid mode" << std::endl;
+ std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
+ std::cout << "------NOT REPACKING-----------" << std::endl;
+ return;
+ }
+ // Saving parameters
+ bool initial_rot_trial = score_get_try_rotamers();
+ bool initial_min_rot = get_minimize_rot_flag();
+ score_set_minimize_rot( rt_min );
+ score_set_try_rotamers( rotamer_trials );
+ // initial allowed chi movement
+ FArray1D_bool old_chi_move( pose_in.total_residue(), false );
+ for( int i = 1; i <= pose_in.total_residue(); i++ ) {
+ // storing old
+ old_chi_move(i) = pose_in.get_allow_chi_move(i);
+ // setting new
+ pose_in.set_allow_chi_move( i, allow_repack(i) || old_chi_move(i) );
+ }
+ Score_weight_map weight_map( score12 );
+ Monte_carlo mc( pose_in, weight_map, 2.0 );
+ // repack idealized native
+ Pose start_native_pose;
+ start_native_pose = pose_in;
+ for(int i=1; i <= repack_cycles; i++) {
+ pose_in = start_native_pose;
+ if( use_unbounds )
+ dle_pack_with_unbound( pose_in, allow_repack, true  ); // include_current = true
+ else
+ pose_in.repack( allow_repack, true ); //include_current =  true
+ pose_in.score( weight_map );
+ score_set_minimize_rot( false );
+ score_set_try_rotamers( false );
+ if( force_one_repack && (i == 1) ) mc.reset( pose_in );
+ mc.boltzmann( pose_in );
+ score_set_minimize_rot( rt_min );
+ score_set_try_rotamers( rotamer_trials );
+ }
+ pose_in = mc.low_pose();
+ pose_in.score( weight_map );
+
+ // Restoring Globals
+ score_set_minimize_rot( initial_rot_trial );
+ score_set_try_rotamers( initial_min_rot );
+ pose_in.set_allow_chi_move( old_chi_move );
+
+ return;
+ }
+ */
+
+
+bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) {
+
+	bool closed_cutpoints = true;
+
+	for( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
+	        it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
+	        it_next; it != it_end; ++it ) {
+		Size cutpoint   = it->cut();
+		Real separation = 10.00; // an unlikely high number
+		separation = cutpoint_separation( pose, cutpoint );
+
+		if( separation > 1.9 ) {
+			closed_cutpoints = false;
+			break;
+		}
+	}
+	return( closed_cutpoints );
+} // cutpoints_separation
+
+Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
+
+	Size const N ( 1 ); // N atom
+	Size const C ( 3 ); // C atom
+
+	// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
+	numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
+	        peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
+	//			Real cutpoint_separation=distance(peptide_C, peptide_N);
+	Real cutpoint_separation=peptide_C.distance(peptide_N);
+
+	return( cutpoint_separation );
+} // cutpoint_separation
+
+
+Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
+	if (pose_in.total_residue() != native_pose.total_residue() ) {
+		throw utility::excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
+	}
+
+	using namespace scoring;
+
+	Size loop_start = (*current_loop)[1].start();
+	Size loop_end = (*current_loop)[1].stop();
+
+	using ObjexxFCL::FArray1D_bool;
+	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
+
+	for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
+
+	using namespace core::scoring;
+	Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
+	return ( rmsG );
+}
+
+void align_to_native( core::pose::Pose & pose,
+                      core::pose::Pose const & native_pose,
+                      AntibodyInfoOP const ab_info,
+                      AntibodyInfoOP const native_ab_info,
+                      std::string const & reqeust_chain) {
+
+
+	std::string pose_seq        = pose.sequence();
+	std::string native_pose_seq = native_pose.sequence();
+	if(pose_seq != native_pose_seq   ) {
+		throw utility::excn::EXCN_BadInput(" the pose sequence does not match native_pose sequence ");
+	}
+
+
+	core::id::AtomID_Map< core::id::AtomID > atom_map;
+	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
+
+	// loop over the L and H chains
+	for (Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++) {
+		vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
+		vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
+
+		if(  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
+
+			// loop over the segments on the framework of one chain
+			for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
+				Size count=0;
+
+				// loop over the residues on one segment on one framework of one chain
+				for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++) {
+					count++;
+					Size res_counter = k_res;
+					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
+					//TR<<"Matching Residue "<< res_counter<<" with  "<<nat_counter<<std::endl;
+
+					// loop over the backbone atoms including Oxygen
+					for( core::Size latm=1; latm <= 4; latm++ ) {
+						core::id::AtomID const id1( latm, res_counter );
+						core::id::AtomID const id2( latm, nat_counter );
+						atom_map[ id1 ] = id2;
+					}
+				}
+
+			}// end of the for loop
+
+		}//end of the if statement
+	}
+
+	core::scoring::superimpose_pose( pose, native_pose, atom_map );
+
+} // align_to_native()
+
+vector1<bool>
+select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance) {
+	vector1<bool> epitope(pose.total_residue(), false);
+	if (! ab_info->antigen_present()) return epitope;
+
+	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
+
+	//I really should have just used a TF and operation.  Oh well.  Now we have an interface namespace...
+
+	vector1<bool> interface_residues = protocols::interface::select_interface_residues(pose, interface, interface_distance);
+
+	//Turn off L or H residues at the interface
+	for (core::Size i = 1; i <= pose.total_residue(); ++i){
+		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
+		if (chain == 'L' || chain == 'H'){
+			interface_residues[i] = false;
+		}
+	}
+	return interface_residues;
+
+}
+
+void
+check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, CDRNameEnum cdr, core::pose::Pose & pose){
+	if (ab_info->get_current_AntibodyNumberingScheme() != "AHO_Scheme"){
+		return;
+	}
+
+	core::Size max_length = ab_info->get_CDR_end_PDB_num(cdr) - ab_info->get_CDR_start_PDB_num(cdr);
+	core::Size cdr_length = ab_info->get_CDR_length(cdr, pose);
+	if ( cdr_length > max_length){
+		TR << "adding insertion codes for long cdr loops." << std::endl;
+
+		std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+		core::Size start_residues  = ceil(max_length/2.0);
+		core::Size end_residues = floor(max_length/2.0);
+
+		//TR <<cdr_length << " Ceil "<< start_residues << " Floor " << end_residues << std::endl;
+
+		core::Size i_code_start = ab_info->get_CDR_start(cdr, pose) + start_residues +1;
+		core::Size i_code_pdb = pose.pdb_info()->number(i_code_start -1);
+		core::Size i_code_end = ab_info->get_CDR_end(cdr, pose) - end_residues;
+		core::Size i = 0;
+
+		for (core::Size resnum = i_code_start; resnum <= i_code_end; ++resnum){
+			if (i > alphabet.size()){
+				TR <<"Cannot have a CDR with insertion codes more than "<< alphabet.size() <<" skipping rest of fix.." << std::endl;
+				return;
+			}
+			//TR << resnum <<" "<< alphabet[ i ] << std::endl;
+			//TR << pose.pdb_info()->number(resnum) << " "<< i_code_pdb << std::endl;
+			pose.pdb_info()->icode(resnum, alphabet[ i ]);
+			pose.pdb_info()->number(resnum, i_code_pdb);
+			i+=1;
+		}
+
+	}
+	else{
+		return;
+	}
+
+}
+
+void
+check_fix_aho_cdr_numbering(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
+
+	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		check_fix_aho_cdr_numbering(ab_info, cdr, pose);
+	}
+
+}
 
 //JQX:
 // Description (Jason contributed)
@@ -470,253 +793,21 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 	return passed;
 }
 
-protocols::loops::LoopsOP
-get_cdr_loops(
-	AntibodyInfoCOP ab_info,
-	core::pose::Pose const & pose,
-	utility::vector1<bool> cdrs,
-	core::Size stem_size /* 0 */ ) {
-	
-	assert( cdrs.size() == 6 );
-	protocols::loops::LoopsOP cdr_loops( new protocols::loops::Loops() );
-	for ( core::Size i = 1; i <= 6; ++i ){
-		if (cdrs[ i ]){
-			CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
-			cdr_loops->add_loop(ab_info->get_CDR_loop(cdr, pose, stem_size));
-		}
+bool
+is_H3_rama_kinked(std::string const rama){
+	//TR <<"Rama: "<< rama << std::endl;
+	std::string last_two = rama.substr(rama.length() - 2);
+
+	//TR <<"Last two "<< last_two << std::endl;
+
+	if (last_two == "AB" || last_two == "DB"){
+		//TR << "kinked. " << std::endl;
+		return true;
 	}
-	return cdr_loops;
+	else{
+		return false;
+	}
 }
-
-
-core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
-	using namespace pack::task;
-	using namespace pack::task::operation;
-
-	TR.Debug << "Setting Up Packer Task" << std::endl;
-
-	core::pack::task::TaskFactoryOP tf( new TaskFactory );
-	tf->clear();
-
-	tf->push_back(TaskOperationCOP( new OperateOnCertainResidues(ResLvlTaskOperationOP(new PreventRepackingRLT), ResFilterOP(new ResidueLacksProperty("PROTEIN")) ) ));
-	tf->push_back(TaskOperationCOP( new InitializeFromCommandline ) );
-	tf->push_back(TaskOperationCOP( new IncludeCurrent ) );
-	tf->push_back(TaskOperationCOP( new RestrictToRepacking ) );
-	tf->push_back(TaskOperationCOP( new NoRepackDisulfides ) );
-
-	// incorporating Ian's UnboundRotamer operation.
-	// note that nothing happens if unboundrot option is inactive!
-	pack::rotamer_set::UnboundRotamersOperationOP
-	unboundrot( new pack::rotamer_set::UnboundRotamersOperation() );
-	unboundrot->initialize_from_command_line();
-
-	operation::AppendRotamerSetOP unboundrot_operation( new operation::AppendRotamerSet( unboundrot ) );
-	tf->push_back( unboundrot_operation );
-
-	// adds scoring bonuses for the "unbound" rotamers, if any
-	core::pack::dunbrack::load_unboundrot( pose_in ); ///FIXME: this is dangerous here..... JQX
-	//TODO:
-	//JQX: need to understand this pose_in!!!!
-
-	TR.Debug << "Done: Setting Up Packer Task" << std::endl;
-
-	return tf;
-
-} // setup_packer_task
-
-/*    void
- dle_extreme_repack(
- pose::Pose & pose_in,
- int repack_cycles,
- ObjexxFCL::FArray1D_bool & allow_repack,
- bool rt_min,
- bool rotamer_trials,
- bool force_one_repack,
- bool use_unbounds
- )
- {
- using namespace pose;
-
- // Exit if not fullatom
- if( !pose_in.fullatom() ) {
- std::cout << "Repack called in centroid mode" << std::endl;
- std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << std::endl;
- std::cout << "------NOT REPACKING-----------" << std::endl;
- return;
- }
- // Saving parameters
- bool initial_rot_trial = score_get_try_rotamers();
- bool initial_min_rot = get_minimize_rot_flag();
- score_set_minimize_rot( rt_min );
- score_set_try_rotamers( rotamer_trials );
- // initial allowed chi movement
- FArray1D_bool old_chi_move( pose_in.total_residue(), false );
- for( int i = 1; i <= pose_in.total_residue(); i++ ) {
- // storing old
- old_chi_move(i) = pose_in.get_allow_chi_move(i);
- // setting new
- pose_in.set_allow_chi_move( i, allow_repack(i) || old_chi_move(i) );
- }
- Score_weight_map weight_map( score12 );
- Monte_carlo mc( pose_in, weight_map, 2.0 );
- // repack idealized native
- Pose start_native_pose;
- start_native_pose = pose_in;
- for(int i=1; i <= repack_cycles; i++) {
- pose_in = start_native_pose;
- if( use_unbounds )
- dle_pack_with_unbound( pose_in, allow_repack, true  ); // include_current = true
- else
- pose_in.repack( allow_repack, true ); //include_current =  true
- pose_in.score( weight_map );
- score_set_minimize_rot( false );
- score_set_try_rotamers( false );
- if( force_one_repack && (i == 1) ) mc.reset( pose_in );
- mc.boltzmann( pose_in );
- score_set_minimize_rot( rt_min );
- score_set_try_rotamers( rotamer_trials );
- }
- pose_in = mc.low_pose();
- pose_in.score( weight_map );
-
- // Restoring Globals
- score_set_minimize_rot( initial_rot_trial );
- score_set_try_rotamers( initial_min_rot );
- pose_in.set_allow_chi_move( old_chi_move );
-
- return;
- }
- */
-
-
-bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) {
-
-	bool closed_cutpoints = true;
-
-	for( loops::Loops::const_iterator it=antibody_info->get_AllCDRs_in_loopsop()->begin(),
-	        it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
-	        it_next; it != it_end; ++it ) {
-		Size cutpoint   = it->cut();
-		Real separation = 10.00; // an unlikely high number
-		separation = cutpoint_separation( pose, cutpoint );
-
-		if( separation > 1.9 ) {
-			closed_cutpoints = false;
-			break;
-		}
-	}
-	return( closed_cutpoints );
-} // cutpoints_separation
-
-Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
-
-	Size const N ( 1 ); // N atom
-	Size const C ( 3 ); // C atom
-
-	// Coordinates of the C atom of cutpoint res and N atom of res cutpoint+1
-	numeric::xyzVector_float peptide_C(pose_in.residue( cutpoint ).xyz( C )),
-	        peptide_N( pose_in.residue( cutpoint + 1 ).xyz( N ) );
-	//			Real cutpoint_separation=distance(peptide_C, peptide_N);
-	Real cutpoint_separation=peptide_C.distance(peptide_N);
-
-	return( cutpoint_separation );
-} // cutpoint_separation
-
-
-Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
-	if (pose_in.total_residue() != native_pose.total_residue() ) {
-		throw excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
-	}
-
-	using namespace scoring;
-
-	Size loop_start = (*current_loop)[1].start();
-	Size loop_end = (*current_loop)[1].stop();
-
-	using ObjexxFCL::FArray1D_bool;
-	FArray1D_bool superpos_partner ( pose_in.total_residue(), false );
-
-	for ( Size i = loop_start; i <= loop_end; ++i ) superpos_partner(i) = true;
-
-	using namespace core::scoring;
-	Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
-	return ( rmsG );
-}
-
-void align_to_native( core::pose::Pose & pose,
-                      core::pose::Pose const & native_pose,
-                      AntibodyInfoOP const ab_info,
-                      AntibodyInfoOP const native_ab_info,
-                      std::string const & reqeust_chain) {
-
-
-	std::string pose_seq        = pose.sequence();
-	std::string native_pose_seq = native_pose.sequence();
-	if(pose_seq != native_pose_seq   ) {
-		throw excn::EXCN_BadInput(" the pose sequence does not match native_pose sequence ");
-	}
-
-
-	core::id::AtomID_Map< core::id::AtomID > atom_map;
-	core::pose::initialize_atomid_map( atom_map, pose, core::id::BOGUS_ATOM_ID );
-
-	// loop over the L and H chains
-	for (Size i_chain=1; i_chain<=ab_info->get_AntibodyFrameworkInfo().size(); i_chain++) {
-		vector1<FrameWork>        chain_frmwk =        ab_info->get_AntibodyFrameworkInfo()[i_chain];
-		vector1<FrameWork> native_chain_frmwk = native_ab_info->get_AntibodyFrameworkInfo()[i_chain];
-
-		if(  (chain_frmwk[1].chain_name == reqeust_chain ) || (reqeust_chain =="LH")  ) {
-
-			// loop over the segments on the framework of one chain
-			for (Size j_seg=1; j_seg<=chain_frmwk.size(); j_seg++) { // for loop of the framework segments
-				Size count=0;
-
-				// loop over the residues on one segment on one framework of one chain
-				for (Size k_res=chain_frmwk[j_seg].start; k_res<= chain_frmwk[j_seg].stop; k_res++) {
-					count++;
-					Size res_counter = k_res;
-					Size nat_counter = native_chain_frmwk[j_seg].start+count-1;
-					//TR<<"Matching Residue "<< res_counter<<" with  "<<nat_counter<<std::endl;
-
-					// loop over the backbone atoms including Oxygen
-					for( core::Size latm=1; latm <= 4; latm++ ) {
-						core::id::AtomID const id1( latm, res_counter );
-						core::id::AtomID const id2( latm, nat_counter );
-						atom_map[ id1 ] = id2;
-					}
-				}
-
-			}// end of the for loop
-
-		}//end of the if statement
-	}
-
-	core::scoring::superimpose_pose( pose, native_pose, atom_map );
-
-} // align_to_native()
-
-vector1<bool>
-select_epitope_residues(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, core::Size const interface_distance) {
-	vector1<bool> epitope(pose.total_residue(), false);
-	if (! ab_info->antigen_present()) return epitope;
-	
-	std::string interface = ab_info->get_antibody_chain_string()+"_"+ab_info->get_antigen_chain_string();
-	
-	//I really should have just used a TF and operation.  Oh well.  Now we have an interface namespace...
-	
-	vector1<bool> interface_residues = protocols::interface::select_interface_residues(pose, interface, interface_distance);
-	
-	//Turn off L or H residues at the interface
-	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-		char chain = core::pose::get_chain_from_chain_id(pose.chain(i), pose);
-		if (chain == 'L' || chain == 'H'){
-			interface_residues[i] = false;
-		}
-	}
-	return interface_residues;
-
-}
-
 } // namespace antibody
 } // namespace protocols
 

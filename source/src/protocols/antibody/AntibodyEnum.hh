@@ -28,8 +28,7 @@
 
 namespace protocols {
 namespace antibody {
-using utility::vector1;
-using core::Size;
+
 
 enum CDRNameEnum {
 	h1 = 1,
@@ -39,6 +38,12 @@ enum CDRNameEnum {
 	l2,
 	l3,
 	
+	/// Proto, not quite CDR loops for design and analysis ///
+	/// Also known as the DE loop ///
+	
+	proto_h4,
+	proto_l4,
+	
 	///////// Convenience //////////////////
 	start_cdr_loop = h1,
 	H_chain_last_loop = h3,
@@ -46,7 +51,14 @@ enum CDRNameEnum {
 	camelid_last_loop = h3,
 	num_cdr_loops = l3,
 	CDRNameEnum_start = h1,
-	CDRNameEnum_total = l3
+	CDRNameEnum_total = l3,
+	
+	//Proto CDR Loops
+	CDRNameEnum_proto_start = proto_h4,
+	CDRNameEnum_proto_total = proto_l4,
+	l4 = proto_l4,
+	h4 = proto_h4
+	
 };
 
 enum AntibodyNumberingSchemeEnum {
@@ -77,6 +89,7 @@ enum CDRDefinitionEnum {
 enum LightChainTypeEnum {
 	lambda =1,
 	kappa,
+	lambda6,
 	unknown,
 	LightChainTypeEnum_start = lambda,
 	LightChainTypeEnum_total = unknown

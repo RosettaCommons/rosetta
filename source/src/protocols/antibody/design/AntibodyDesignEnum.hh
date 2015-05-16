@@ -11,8 +11,8 @@
 /// @brief Antibody Design enumerators
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody_design_ANTIBODYDESIGNENUM_HH
-#define INCLUDED_protocols_antibody_design_ANTIBODYDESIGNENUM_HH
+#ifndef INCLUDED_protocols_antibody_design_ANTIBODYDESIGNENUM_hh
+#define INCLUDED_protocols_antibody_design_ANTIBODYDESIGNENUM_hh
 
 namespace protocols {
 namespace antibody {
@@ -26,28 +26,30 @@ enum MinTypeEnum{
 	minimize_cartesian,
 	dualspace,
 	repack,
+	backrub_protocol,
 	no_min,
 	MinTypeEnum_total = no_min
 			
 };
 
-enum DesignTypeEnum{
-	
-	relaxed_design = 1,
-	docked_design,
-	fixbb,
-	flxbb,
-	DesignTypeEnum_total = flxbb
-			
-};
 
 //Can be moved generally somewhere else
 enum SeqDesignStrategyEnum {
 	seq_design_profiles = 1,
 	seq_design_conservative,
+	seq_design_profile_sets,
+	seq_design_profile_sets_combined,
 	seq_design_basic,
+	seq_design_none,
 	
-	SeqDesignStrategyEnum_total = seq_design_basic
+	SeqDesignStrategyEnum_total = seq_design_none
+};
+
+enum AntibodyDesignProtocolEnum {
+	generalized_monte_carlo = 1,
+	deterministic_graft,
+	
+	DesignProtocolEnum_total = deterministic_graft
 };
 
 

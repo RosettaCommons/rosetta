@@ -27,23 +27,24 @@ import tkFileDialog
 #Toolkit Imports
 from app.pyrosetta_toolkit.modules.tools.analysis import rmsd
 from app.pyrosetta_toolkit.window_main import global_variables
+from collections import defaultdict
 
 class ScoreAnalysis:
     """
     This class reads fasc, sc, or a ScoredPDBList.  It only cares about total score- for now.
     Will get top scores, write them to a txt file or copy them to a new directory.
-    Can do rmsd vs energy - but for now, we only use 1 processor to do this for now.
+    Can do rmsd vs energy - but for now, we only use 1 processor to do this
     """
     def __init__(self):
         
-        self.score_map = dict(); #[float score]:[path/name].  
+        self.score_map = defaultdict(); #[float score]:[path/name].
         self.score_pairs = []; #[[float score, string path], [float score, string path]] - For Redundancy
         
         self.score_rmsd_triplet = []; #[[float score, float RMSD, string path],[x, x, x]]
-        self.score_rmsd_triplet_loops = dict(); #[loop_string]:score_rmsd_triplet
-        self.top_score_map = dict()
-        self.top_scoring_by_percent_map = dict()
-        self.top_scoring_by_number_map = dict()
+        self.score_rmsd_triplet_loops = defaultdict(); #[loop_string]:score_rmsd_triplet
+        self.top_score_map = defaultdict()
+        self.top_scoring_by_percent_map = defaultdict()
+        self.top_scoring_by_number_map = defaultdict()
         self.filepath=""
         
         #self.read_scores()
@@ -209,7 +210,7 @@ class ScoreAnalysis:
             OUTFILE.write(line)
         if self.score_rmsd_triplet_loops:
             for loop_string in sorted(self.score_rmsd_triplet_loops):
-                line=line_string+" "
+                line=loop_string+" "
                 for triplet in sorted(self.score_rmsd_triplet_loops[loop_string], reverse=True):
                     line = line+"%.3f"%triplet[0]+" %.3f"%triplet[1]+' '+triplet[2]+"\n"
                     OUTFILE.write(line)
@@ -263,17 +264,17 @@ class ScoreAnalysis:
         self.score_pairs = sorted(self.score_pairs)
         FILE.close()
         
-    def copy_results(self, path_dict, type):
+    def copy_results(self, path_dict, type, ask = True, dir_suffix = ""):
         """
         Should run after top x is found.  Asks user to copy results.
         path_dict is [path]:[float score]
         type is a string for type of result - top score, top scoring, top percent, top_by_number.  Used to name files and directories
         """
+        if ask:
+            result = tkMessageBox.askyesno(title="Copy", message="Copy resultant structures?")
+            if not result:return
         
-        result = tkMessageBox.askyesno(title="Copy", message="Copy resultant structures?")
-        if not result:return
-        
-        new_dir = os.path.dirname(self.filepath)+"/TOP"
+        new_dir = os.path.dirname(self.filepath)+dir_suffix+"/TOP"
         if not os.path.exists(new_dir): os.mkdir(new_dir)
         
         new_dir2 = new_dir+"/"+type.upper()
@@ -283,13 +284,31 @@ class ScoreAnalysis:
         file_name = new_dir+'/'+os.path.basename(self.filepath).split(".")[0]+'_'+type.lower()+'.txt'
         FILE = open(file_name, 'w')
         
-        for path in sorted(path_dict, reverse=True):
-            print path; print path
+        for path in sorted(path_dict, key = path_dict.get):
+            print path;
             FILE.write(path+"\t%.3f"%path_dict[path]+"\n")
             os.system("cp "+path+' '+new_dir2+'/'+os.path.basename(path))
         FILE.close()
         
-        
+    def copy_results2(self, path_dict, txt_out_dir, pdb_out_dir, top_pdblist_out_name):
+        """
+        Same as copy results, but we specify where we put top models and the top models text.
+        """
+        if not os.path.exists(txt_out_dir): os.mkdir(txt_out_dir)
+
+        if not os.path.exists(pdb_out_dir): os.mkdir(pdb_out_dir)
+        print "Results are in "+txt_out_dir +" and "+pdb_out_dir
+
+        file_name = txt_out_dir+'/'+top_pdblist_out_name+'.txt'
+        FILE = open(file_name, 'w')
+        RAW_LIST = open(pdb_out_dir+"/ORDERED_PDBLIST.txt")
+        for path in sorted(path_dict, key = path_dict.get):
+            #print path;
+            FILE.write(path+"\t%.3f"%path_dict[path]+"\n")
+            RAW_LIST.write(path+"\n")
+            os.system("cp "+path+' '+pdb_out_dir+'/'+os.path.basename(path))
+        FILE.close()
+        RAW_LIST.close()
         
     
 if __name__ == '__main__':
