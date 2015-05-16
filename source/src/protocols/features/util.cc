@@ -195,7 +195,7 @@ get_protocol_and_batch_id(
 			write_batch_reports_table(features_reporters, batch_id, db_session);
 
 			send_new_ids_to_head_node=true;
-			runtime_assert(batch_id!=0)
+			runtime_assert(batch_id!=0);
 		} catch (cppdb_error error){
 			stringstream err_msg;
 			err_msg

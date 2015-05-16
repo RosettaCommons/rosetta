@@ -1603,8 +1603,8 @@ get_anchor_and_root_atoms(
 	Size & root_atomno
 	)
 {
-	ASSERT_ONLY(Size const anchor_pos( anchor_rsd.seqpos() );)
-	ASSERT_ONLY(Size const root_pos( root_rsd.seqpos() );)
+	ASSERT_ONLY(Size const anchor_pos( anchor_rsd.seqpos() ););
+	ASSERT_ONLY(Size const root_pos( root_rsd.seqpos() ););
 
 	if ( edge.is_polymer() ) {
 		// POLYMER EDGE

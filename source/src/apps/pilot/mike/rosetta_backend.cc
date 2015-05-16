@@ -72,7 +72,7 @@ class RosettaJob {
 
    bool request_job_from_server()
    {
-      runtime_assert( !initialized_ )
+     runtime_assert( !initialized_ );
 
       utility::CurlPost cg;
       std::string data;

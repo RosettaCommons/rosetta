@@ -1291,7 +1291,7 @@ void GeneralizedKIC::addtailgeometry(
 								break;
 							}
 						}
-						runtime_assert_string_msg(con!=0, "Internal error (con==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.")
+						runtime_assert_string_msg(con!=0, "Internal error (con==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.");
 
 						//Set anchorcon:
 						for(core::Size i=1, imax=pose.residue(anchorres_pose).n_residue_connections(); i<=imax; ++i) {
@@ -1300,7 +1300,7 @@ void GeneralizedKIC::addtailgeometry(
 								break;
 							}
 						}
-						runtime_assert_string_msg(anchorcon!=0, "Internal error (anchorcon==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.")
+						runtime_assert_string_msg(anchorcon!=0, "Internal error (anchorcon==0) in GeneralizedKIC::addtailgeometry().  This shouldn't happen.  Consult a developer or an exorcist.");
 
 						perturbedloop_pose.append_residue_by_bond((*rsd), build_ideal, con, jr, anchorcon, false, false);
 

@@ -138,7 +138,7 @@ TopEntitySet::update_entity_history(
 			assert( n_tied_for_worst_ <= top_entities_.size() );
 			if ( top_entities_.size() + 1 - n_tied_for_worst_ >= desired_entity_history_size_ ) {
 				// start popping entities from the heap
-				ASSERT_ONLY( core::Real const old_worst_fitness = top_entities_.front().first->fitness();)
+				ASSERT_ONLY( core::Real const old_worst_fitness = top_entities_.front().first->fitness(););
 				for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
 					assert( top_entities_.front().first->fitness() == old_worst_fitness );
 					removed_entities.push_back( top_entities_.front().first );

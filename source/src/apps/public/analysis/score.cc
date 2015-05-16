@@ -134,7 +134,7 @@ main( int argc, char * argv [] )
 	std::cout << "  Examples: " << std::endl;
 	std::cout << "   score  -database ~/minirosetta_database -in:file:silent silent.out -in::file::binary_silentfile -in::file::fullatom -native 1a19.pdb " << std::endl;
 	std::cout << "   Will rescore all structures in silent.out, in full atom mode and accounting for nonideal structure if present. Additionally " << std::endl;
-	std::cout << " 	 it will print a PDB for every structure with -out:output flag " << std::endl;
+	std::cout << "   it will print a PDB for every structure with -out:output flag " << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;

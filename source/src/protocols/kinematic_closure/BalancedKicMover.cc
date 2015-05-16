@@ -153,7 +153,7 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	ChainedSolutionList all_solutions(
 			unperturbed_solutions, perturbed_solutions);
 
-	runtime_assert(! all_solutions.empty())
+	runtime_assert(! all_solutions.empty());
 
 	// Calculate the Jacobian for each solution and keep the sum.  The Jacobian
 	// relates to the probability that a certain set of pivot torsions will lead
