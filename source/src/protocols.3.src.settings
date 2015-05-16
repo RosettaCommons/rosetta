@@ -626,6 +626,7 @@ sources = {
 		"PackRotamersMoverLazy",
 		"PDBReloadMover",
 		"PeptideStapleMover",
+		"PeriodicBoxMover",
 		"ProlineFixMover",
 		"PSSM2BfactorMover",
         "RandomTorsionMover",

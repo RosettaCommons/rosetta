@@ -212,6 +212,7 @@ static MoverRegistrator< matdes::SchemePlaceMotifsMoverCreator > reg_SchemePlace
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
+static MoverRegistrator< simple_moves::PeriodicBoxMoverCreator > reg_PeriodicBoxMoverCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
