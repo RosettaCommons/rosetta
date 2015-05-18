@@ -44,10 +44,10 @@ public:
 	/// @brief default constructor
 	DisulfidizeMover();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~DisulfidizeMover();
 
-  /// @brief Parses the DisulfidizerMoverTags
+	/// @brief Parses the DisulfidizerMoverTags
 	void parse_my_tag(
 			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & data,
@@ -55,10 +55,10 @@ public:
 			protocols::moves::Movers_map const & movers,
 			core::pose::Pose const & pose );
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
 	// public methods
@@ -76,6 +76,17 @@ public:
 		recursive_multiple_disulfide_former(
 				DisulfideList const & disulfides_formed,
 				DisulfideList const & disulfides_possible ) const;
+
+	/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
+	void tag_disulfide(
+			core::pose::Pose & pose,
+			core::Size const res1,
+			core::Size const res2 ) const;
+
+	/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
+	void tag_disulfides(
+			core::pose::Pose & pose,
+			DisulfidizeMover::DisulfideList const & disulf ) const;
 
 	/// @brief forms a disulfide between res1 and res2, optionally allowing backbone movement
 	void make_disulfide(
@@ -104,7 +115,7 @@ public:
 			core::pack::task::residue_selector::ResidueSubset const & residueset1,
 			core::pack::task::residue_selector::ResidueSubset const & residueset2 ) const;
 
-	/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
+	/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 	DisulfideList find_possible_disulfides(
 			core::pose::Pose const & pose,
 			std::set< core::Size > const & set1,
@@ -168,7 +179,7 @@ private:   // options
 	core::Size min_loop_;
 	core::Size min_disulfides_ ;
 	core::Size max_disulfides_ ;
-  bool include_current_ds_;
+	bool include_current_ds_;
 	bool keep_current_ds_;
 	bool score_or_matchrt_;
 

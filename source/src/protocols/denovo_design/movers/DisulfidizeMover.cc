@@ -29,6 +29,7 @@
 #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pack/task/residue_selector/NeighborhoodResidueSelector.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
@@ -57,19 +58,19 @@ namespace denovo_design {
 std::string
 DisulfidizeMoverCreator::keyname() const
 {
-  return DisulfidizeMoverCreator::mover_name();
+	return DisulfidizeMoverCreator::mover_name();
 }
 
 protocols::moves::MoverOP
 DisulfidizeMoverCreator::create_mover() const
 {
-  return protocols::moves::MoverOP( new DisulfidizeMover() );
+	return protocols::moves::MoverOP( new DisulfidizeMover() );
 }
 
 std::string
 DisulfidizeMoverCreator::mover_name()
 {
-  return "Disulfidize";
+	return "Disulfidize";
 }
 
 ///  ---------------------------------------------------------------------------------
@@ -247,6 +248,7 @@ DisulfidizeMover::process_pose(
 
 			core::pose::PoseOP disulf_copy_pose( pose.clone() );
 			make_disulfides( *disulf_copy_pose, *ds_config, false );
+			tag_disulfides( *disulf_copy_pose, *ds_config );
 			results.push_back( disulf_copy_pose );
 		}
 	}
@@ -369,7 +371,7 @@ add_to_list( DisulfidizeMover::DisulfideList & disulf_partners, core::Size const
 	}
 }
 
-/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
+/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
 		core::pose::Pose const & pose,
@@ -403,7 +405,7 @@ DisulfidizeMover::find_possible_disulfides(
 	return find_possible_disulfides( pose, resid_set1, resid_set2 );
 }
 
-/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2 
+/// @brief find disulfides in the given neighborhood between residues in set 1 and residues in set 2
 DisulfidizeMover::DisulfideList
 DisulfidizeMover::find_possible_disulfides(
 		core::pose::Pose const & pose,
@@ -480,6 +482,32 @@ DisulfidizeMover::find_possible_disulfides(
 		}
 	}
 	return disulf_partners;
+}
+
+/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
+void
+DisulfidizeMover::tag_disulfide(
+		core::pose::Pose & pose,
+		core::Size const res1,
+		core::Size const res2 ) const
+{
+	if ( !pose.pdb_info() ) {
+		pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose ) ) );
+	}
+	debug_assert( pose.pdb_info() );
+	pose.pdb_info()->add_reslabel( res1, "DISULFIDIZE" );
+	pose.pdb_info()->add_reslabel( res2, "DISULFIDIZE" );
+}
+
+/// @brief creates a residue tags on disulfides to inform users that this disulfide was created by disulfidize
+void
+DisulfidizeMover::tag_disulfides(
+		core::pose::Pose & pose,
+		DisulfidizeMover::DisulfideList const & disulf ) const
+{
+	for ( DisulfideList::const_iterator itr=disulf.begin(); itr != disulf.end(); ++itr) {
+		tag_disulfide( pose, (*itr).first, (*itr).second );
+	}
 }
 
 /// @brief forms a disulfide between res1 and res2, optionally allowing backbone movement
@@ -610,7 +638,7 @@ DisulfidizeMover::check_disulfide_score(
 }
 
 /// @brief checks disulfide match rt
-bool 
+bool
 DisulfidizeMover::check_disulfide_match_rt(
 			core::pose::Pose const & pose,
 			core::Size const res1,
