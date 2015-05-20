@@ -77,7 +77,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using basic::T;
 
-static thread_local basic::Tracer TR( "protocols.rna.RNA_ProtocolUtil" );
+static thread_local basic::Tracer TR( "protocols.farna.util" );
 
 namespace protocols {
 namespace farna {
@@ -660,7 +660,6 @@ setup_base_pair_constraints(
 
 		if ( !pose.residue(i).is_RNA() ) continue;
 		if ( !pose.residue(j).is_RNA() ) continue;
-
 
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
 			Size const atom1 = pose.residue(i).type().atom_index( " C1'" ) ;

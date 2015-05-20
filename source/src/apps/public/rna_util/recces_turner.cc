@@ -59,6 +59,7 @@ OPT_KEY( RealVector, st_weights )
 OPT_KEY( String, out_prefix )
 OPT_KEY( Boolean, save_score_terms )
 OPT_KEY( Boolean, dump_pdb )
+OPT_KEY( Integer, n_intermediate_dump )
 //////////////////////////////////////////////////////////////////////////////
 // Histogram class for accumulating samples
 class Histogram {
@@ -324,6 +325,10 @@ MC_run () {
 	std::cout << "Start the main sampling loop." << std::endl;
 	if ( option[dump_pdb]() ) pose.dump_pdb( "init.pdb" );
 
+	Size const n_dump = option[n_intermediate_dump]();
+	Size curr_dump = 1;
+
+
 	// Main sampling cycle
 	for ( Size n = 1; n <= n_cycle_; ++n ) {
 		++sampler;
@@ -339,6 +344,12 @@ MC_run () {
 			if ( option[dump_pdb]() && scores[1] < min_score ) {
 				min_score = scores[1];
 				min_pose = pose;
+			}
+			if ( n_dump != 0 && n * (n_dump + 1) / double(n_cycle_) >= curr_dump ) {
+				std::ostringstream oss;
+				oss << "intermediate" << '_' << curr_dump << ".pdb";
+				pose.dump_pdb(oss.str());
+				++curr_dump;
 			}
 		} else {
 			++curr_counts;
@@ -416,6 +427,8 @@ main( int argc, char * argv [] )
 			"Save scores and individual score terms"
 			" of all sampled conformers", false );
 	NEW_OPT( dump_pdb, "Dump pdb files", false );
+	NEW_OPT( n_intermediate_dump,
+			     "Number of intermediate conformations to be dumped", 0 );
 
 	try {
 		core::init::init ( argc, argv );

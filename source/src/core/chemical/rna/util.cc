@@ -283,11 +283,6 @@ get_watson_crick_base_pair_atoms(
 		atom_ids1.push_back( " H61" );		atom_ids2.push_back( " O4 " );
 		return;
 	} else if ( aa1 == na_rgu && aa2 == na_rcy ) {
-		if ( rsd_type1.name3() == "IGU" && rsd_type2.name3() == "ICY" ){ // special case -- isoG/isoC
-			atom_ids1.push_back( " H61" );		atom_ids2.push_back( " O4 " );
-			atom_ids1.push_back( " H1 " );		atom_ids2.push_back( " N3 " );
-			atom_ids1.push_back( " O2 " );		atom_ids2.push_back( " H21" );
-		}
 		atom_ids1.push_back( " H1 " );		atom_ids2.push_back( " N3 " );
 		atom_ids1.push_back( " H21" );		atom_ids2.push_back( " O2 " );
 		atom_ids1.push_back( " O6 " );		atom_ids2.push_back( " H41" );
@@ -301,11 +296,6 @@ get_watson_crick_base_pair_atoms(
 		atom_ids2.push_back( " H61" );		atom_ids1.push_back( " O4 " );
 		return;
 	} else if ( aa2 == na_rgu && aa1 == na_rcy ) {
-		if ( rsd_type2.name3() == "IGU" && rsd_type2.name3() == "ICY" ){ // special case -- isoG/isoC
-			atom_ids2.push_back( " H61" );		atom_ids1.push_back( " O4 " );
-			atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " N3 " );
-			atom_ids2.push_back( " O2 " );		atom_ids1.push_back( " H21" );
-		}
 		atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " N3 " );
 		atom_ids2.push_back( " H21" );		atom_ids1.push_back( " O2 " );
 		atom_ids2.push_back( " O6 " );		atom_ids1.push_back( " H41" );
@@ -314,9 +304,19 @@ get_watson_crick_base_pair_atoms(
 		atom_ids2.push_back( " O6 " );		atom_ids1.push_back( " H3 " );
 		atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " O2 " );
 		return;
+
+	// special case -- isoG/isoC
+	} else if ( rsd_type2.name3() == " IG" && rsd_type1.name3() == " IC" ) {
+			atom_ids2.push_back( " H61" );		atom_ids1.push_back( " O4 " );
+			atom_ids2.push_back( " H1 " );		atom_ids1.push_back( " N3 " );
+			atom_ids2.push_back( " O2 " );		atom_ids1.push_back( " H21" );
+			return;
+	}	else if ( rsd_type1.name3() == " IG" && rsd_type2.name3() == " IC" ) {
+			atom_ids1.push_back( " H61" );		atom_ids2.push_back( " O4 " );
+			atom_ids1.push_back( " H1 " );		atom_ids2.push_back( " N3 " );
+			atom_ids1.push_back( " O2 " );		atom_ids2.push_back( " H21" );
+			return;
 	}
-
-
 }
 
 
