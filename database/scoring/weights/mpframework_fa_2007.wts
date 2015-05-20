@@ -27,6 +27,3 @@ dslf_ca_dih 5
 pro_close 1.0
 rama  0.2
 omega  0.5
-mp_nonhelix 1.0
-mp_tmproj 1.0
-mp_termini 1.0
