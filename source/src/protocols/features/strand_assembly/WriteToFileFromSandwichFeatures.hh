@@ -70,7 +70,6 @@ namespace strand_assembly {
 		core::Size	sw_can_by_sh_id,
 		core::Size	sw_res_size);
 
-
 	core::Size
 	write_beta_sheet_capping_info_to_a_file(
 		string	tag,
@@ -114,6 +113,21 @@ namespace strand_assembly {
 		std::string tag,
 		core::pose::Pose & dssp_pose);
 
+
+	core::Size
+	write_phi_psi_of_each_residue_to_a_file(
+		string	tag,
+		core::pose::Pose & dssp_pose,
+		utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+		bool	write_phi_psi_of_E_,
+		bool	write_phi_psi_of_all_,
+		core::Size	max_num_sw_per_pdb_,
+		StructureID struct_id,
+		utility::sql_database::sessionOP  db_session,
+		core::Real min_CA_CA_dis_,
+		core::Real max_CA_CA_dis_);
+
+
 	core::Size
 	write_rama_of_AAs_to_a_file(
 		std::string tag,
@@ -121,7 +135,7 @@ namespace strand_assembly {
 
 
 	core::Size
-  write_resfile_to_a_file(
+	write_resfile_to_a_file(
 		string  tag,
 		StructureID struct_id,
 		utility::sql_database::sessionOP  db_session,

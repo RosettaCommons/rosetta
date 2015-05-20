@@ -9,7 +9,7 @@
 
 /// @file protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.cc
 /// @brief Write to a DB after SandwichFeatures
-/// @author Doo Nam Kim
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 /// @overview
 
 //Devel
@@ -1083,7 +1083,7 @@ WriteToDB_number_of_core_heading_aro_AAs_in_a_pair_of_edge_strands	(
 
 
 //WriteToDB_number_of_sheets_that_surround_this_sheet
-core::Size
+Size
 WriteToDB_number_of_sheets_that_surround_this_sheet(
 	StructureID struct_id,
 	sessionOP db_session,
@@ -1159,7 +1159,10 @@ Size
 WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	StructureID struct_id,
 	sessionOP db_session,
-	Size sw_can_by_sh_id)
+	Size sw_can_by_sh_id,
+	Real	wt_for_pro_in_starting_loop_,
+	Real	wt_for_pro_in_1st_inter_sheet_loop_,
+	Real	wt_for_pro_in_3rd_inter_sheet_loop_)
 {
 	string select_pro_in_starting_loop =
 	"SELECT\n"
@@ -1253,7 +1256,7 @@ WriteToDB_prolines_that_seem_to_prevent_aggregation (
 	update_statement.bind(2,	number_of_pro_in_starting_loop);
 	update_statement.bind(3,	number_of_pro_in_1st_inter_sheet_loop);
 	update_statement.bind(4,	number_of_pro_in_3rd_inter_sheet_loop);
-	update_statement.bind(5,	(10*number_of_pro_in_starting_loop	+	5*number_of_pro_in_1st_inter_sheet_loop	+	number_of_pro_in_3rd_inter_sheet_loop));
+	update_statement.bind(5,	(number_of_pro_in_starting_loop*wt_for_pro_in_starting_loop_	+	number_of_pro_in_1st_inter_sheet_loop*wt_for_pro_in_1st_inter_sheet_loop_	+	number_of_pro_in_3rd_inter_sheet_loop*wt_for_pro_in_3rd_inter_sheet_loop_));
 	update_statement.bind(6,	struct_id);
 	update_statement.bind(7,	sw_can_by_sh_id);
 
@@ -1385,7 +1388,7 @@ WriteToDB_sheet (
 } //WriteToDB_sheet
 
 //WriteToDB_sheet_antiparallel
-core::Size
+Size
 WriteToDB_sheet_antiparallel(
 	StructureID struct_id,
 	sessionOP db_session,
@@ -1701,6 +1704,59 @@ WriteToDB_sw_res_size (
 
 	return sw_res_size;
 } // WriteToDB_sw_res_size
+
+
+
+// (begin) Run_WriteToDB_sandwich
+Size
+Run_WriteToDB_sandwich(
+	string tag,
+	Pose & dssp_pose,
+	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	Size	max_num_sw_per_pdb_,
+	StructureID	struct_id,	// needed argument
+	sessionOP	db_session,
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Size	sandwich_PK_id_counter
+)
+{
+	for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
+	{
+		if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+		{
+			break;
+		}
+		string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+
+		string strand_is_at_edge = is_this_strand_at_edge	(
+									dssp_pose,
+									struct_id,
+									db_session,
+									bs_of_sw_can_by_sh[ii].get_sheet_id(),
+									bs_of_sw_can_by_sh[ii].get_start(),
+									bs_of_sw_can_by_sh[ii].get_end(),
+									min_CA_CA_dis_,
+									max_CA_CA_dis_);
+
+		Size component_size = bs_of_sw_can_by_sh[ii].get_size();
+		WriteToDB_sandwich (struct_id,
+							db_session,
+							dssp_pose,
+							sandwich_PK_id_counter,
+							tag,
+							bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),
+							bs_of_sw_can_by_sh[ii].get_sheet_id(),
+							sheet_antiparallel,
+							bs_of_sw_can_by_sh[ii].get_strand_id(),
+							strand_is_at_edge,
+							component_size,
+							bs_of_sw_can_by_sh[ii].get_start(),
+							bs_of_sw_can_by_sh[ii].get_end());
+		sandwich_PK_id_counter++;
+	}
+	return sandwich_PK_id_counter;
+} // Run_WriteToDB_sandwich
 
 
 //WriteToDB_sandwich

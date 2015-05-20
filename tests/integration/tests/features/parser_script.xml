@@ -58,7 +58,7 @@
 			Experimental
 			<feature name=PdbDataFeatures/>
 
-			<feature name=SandwichFeatures/>
+			feature name=SandwichFeatures/> Doonam dropped this in 2015/05/19 since he assumed that db3 was not created in the first place
     </ReportToDB>
     <TrajectoryReportToDB name=trajectory_features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the trajectory report to db mover." task_operations=all stride=2>
     </TrajectoryReportToDB>

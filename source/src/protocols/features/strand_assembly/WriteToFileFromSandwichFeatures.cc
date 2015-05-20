@@ -521,7 +521,22 @@ write_heading_direction_of_all_AA_in_a_strand_to_a_file(
 	return 0;
 }	//write_heading_direction_of_all_AA_in_a_strand_to_a_file
 
-//write_number_of_electrostatic_interactions_of_residues_to_files
+
+
+
+
+
+//	write_number_of_electrostatic_interactions_of_residues_to_files
+//
+//	detail: according to
+//	write_electrostatic_interactions_of_surface_residues_in_a_strand_,
+//	write_electrostatic_interactions_of_all_residues_in_a_strand_,
+//	write_electrostatic_interactions_of_all_residues_,
+//	count number of electrostatic_interactions among selected residues,
+
+//	for example, count number of electrostatic_interactions among surface_residues_in_strands if
+//	write_electrostatic_interactions_of_surface_residues_in_a_strand_ is selected (2014/09/30)
+
 core::Size
 write_number_of_electrostatic_interactions_of_residues_to_files(
 	string	tag,
@@ -537,25 +552,31 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
-	string ElectroStatic_file_name;
+	string ElectroStatics_txt_file_name;
+	string SaltBridges_pymol_ready_file_name;
 	if	(dssp_code	==	"all_dssp") {
-		ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_all_residues.txt";
+		ElectroStatics_txt_file_name = pdb_file_name + "_electrostatic_interactions_among_all_residues.txt";
+		SaltBridges_pymol_ready_file_name = pdb_file_name + "_salt_bridges_among_all_residues.pymolready";
 	}
 	else // dssp_code = "E"
 	{
 		if (heading_direction == "surface")
 		{
-			ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_surface_residues_in_a_strand.txt";
+			ElectroStatics_txt_file_name = pdb_file_name + "_electrostatic_interactions_among_surface_residues_in_a_strand.txt";
+			SaltBridges_pymol_ready_file_name = pdb_file_name + "_salt_bridges_among_surface_residues_in_a_strand.pymolready";
 		}
 		else // (heading_direction == "all_direction")
 		{
-			ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_all_residues_in_a_strand.txt";
+			ElectroStatics_txt_file_name = pdb_file_name + "_electrostatic_interactions_among_all_residues_in_a_strand.txt";
+			SaltBridges_pymol_ready_file_name = pdb_file_name + "_salt_bridges_among_all_residues_in_a_strand.pymolready";
 		}
 	}
 
-	ofstream ElectroStatic_file;
+	ofstream ElectroStatics_txt_file;
+	ofstream SaltBridges_pymol_ready_file;
 
-	ElectroStatic_file.open(ElectroStatic_file_name.c_str());
+	ElectroStatics_txt_file.open(ElectroStatics_txt_file_name.c_str());
+	SaltBridges_pymol_ready_file.open(SaltBridges_pymol_ready_file_name.c_str());
 
 	string number_of_attractions_title;
 	string head_attrac = "attrac_by_centroid_w_";
@@ -575,7 +596,10 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	number_of_attractions_title.append(tail);
 	number_of_repulsions_title.append(tail);
 
-	ElectroStatic_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	attrac_minus_repul	salt_bridge	CC_bridge	NO_bridge	sum_of_salt_CC_NO_bridges	longer_range_ion_pair"	<<	endl;
+	ElectroStatics_txt_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	attrac_minus_repul	salt_bridge	CC_bridge	NO_bridge	sum_of_salt_CC_NO_bridges	longer_range_attrac_ion_pair"	<<	endl;
+
+	SaltBridges_pymol_ready_file << "select salt_bridges, resi ";
+	bool	first_addition_for_SaltBridges_pymol_ready_file	=	true;
 
 	utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sandwich_table	(struct_id,	db_session);
 
@@ -586,7 +610,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 	std::vector<int> vec_number_of_CC_bridges;
 	std::vector<int> vec_number_of_NO_bridges;
 	std::vector<int> vec_sum_of_salt_CC_NO_bridges;
-	std::vector<int> vec_number_of_longer_range_ion_pair;
+	std::vector<int> vec_number_of_longer_range_attrac_ion_pair;
 
 	for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); ++sw_ii) // per each beta-sandwich
 	{
@@ -614,7 +638,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			}
 			// <end> check whether "current" residue has low atom position uncertainty
 
-			ElectroStatic_file	<< residue_num	<<	"	"	<<	pose.residue_type(residue_num).name3();
+			ElectroStatics_txt_file	<< residue_num	<<	"	"	<<	pose.residue_type(residue_num).name3();
 
 			numeric::xyzVector< core::Real > xyz_of_centroid_of_RKDE;
 			numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_R;
@@ -704,7 +728,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			Size	number_of_salt_bridge	=	0;
 			Size	number_of_C_C_bridge	=	0;
 			Size	number_of_N_O_bridge	=	0;
-			Size	number_of_longer_range_ion_pair	=	0;
+			Size	number_of_longer_range_attrac_ion_pair	=	0;
 
 			for(Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_rkde.size(); ++other_residue_i)
 			{
@@ -852,7 +876,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 								}
 								else
 								{
-									number_of_longer_range_ion_pair++;
+									number_of_longer_range_attrac_ion_pair++;
 								}
 							}
 						}
@@ -896,7 +920,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 								}
 								else
 								{
-									number_of_longer_range_ion_pair++;
+									number_of_longer_range_attrac_ion_pair++;
 								}
 							}
 						}
@@ -952,7 +976,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 									}
 									else
 									{
-										number_of_longer_range_ion_pair++;
+										number_of_longer_range_attrac_ion_pair++;
 									}
 								}
 							}
@@ -982,7 +1006,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 									}
 									else
 									{
-										number_of_longer_range_ion_pair++;
+										number_of_longer_range_attrac_ion_pair++;
 									}
 								}
 							}
@@ -998,11 +1022,28 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 			vec_number_of_CC_bridges.push_back(number_of_C_C_bridge);
 			vec_number_of_NO_bridges.push_back(number_of_N_O_bridge);
 			vec_sum_of_salt_CC_NO_bridges.push_back(number_of_salt_bridge+number_of_C_C_bridge+number_of_N_O_bridge);
-			vec_number_of_longer_range_ion_pair.push_back(number_of_longer_range_ion_pair);
+			vec_number_of_longer_range_attrac_ion_pair.push_back(number_of_longer_range_attrac_ion_pair);
 
-			ElectroStatic_file	<<	"	"	<< number_of_attractions_by_centroid	<< "	"	<<	number_of_repulsions_by_centroid	<<	"	"	<<	number_of_attractions_by_centroid-number_of_repulsions_by_centroid	<<	"	"	<<	number_of_salt_bridge	<<	"	"	<<	number_of_C_C_bridge	<<	"	"	<<	number_of_N_O_bridge	<<	"	"	<<	number_of_salt_bridge+number_of_C_C_bridge+number_of_N_O_bridge	<<	"	"	<<		number_of_longer_range_ion_pair	<<	endl;
+			ElectroStatics_txt_file	<<	"	"	<< number_of_attractions_by_centroid	<< "	"	<<	number_of_repulsions_by_centroid	<<	"	"	<<	number_of_attractions_by_centroid-number_of_repulsions_by_centroid	<<	"	"	<<	number_of_salt_bridge	<<	"	"	<<	number_of_C_C_bridge	<<	"	"	<<	number_of_N_O_bridge	<<	"	"	<<	number_of_salt_bridge+number_of_C_C_bridge+number_of_N_O_bridge	<<	"	"	<<		number_of_longer_range_attrac_ion_pair	<<	endl;
+
+			if (number_of_salt_bridge + number_of_C_C_bridge + number_of_N_O_bridge > 0)
+			{
+
+				if (first_addition_for_SaltBridges_pymol_ready_file)
+				{
+					SaltBridges_pymol_ready_file	<< residue_num;
+				}
+				else
+				{
+					SaltBridges_pymol_ready_file	<< "+" << residue_num;
+				}
+				first_addition_for_SaltBridges_pymol_ready_file	=	false;
+			}
+
 		} // per each residue
 	}
+
+	SaltBridges_pymol_ready_file << endl;
 
 	// report avg (min~max)
 	// warning: this avg (min~max) assumes that I deal with 1 sandwich per 1 pdb file
@@ -1020,7 +1061,7 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 
 	float	avg_sum_of_salt_CC_NO_bridges	=	std::accumulate(vec_sum_of_salt_CC_NO_bridges.begin(),		vec_sum_of_salt_CC_NO_bridges.end(),	0)	/	static_cast<float>(vec_sum_of_salt_CC_NO_bridges.size());
 
-	float	avg_number_of_longer_range_ion_pair	=	std::accumulate(vec_number_of_longer_range_ion_pair.begin(),		vec_number_of_longer_range_ion_pair.end(),	0)	/	static_cast<float>(vec_number_of_longer_range_ion_pair.size());
+	float	avg_number_of_longer_range_attrac_ion_pair	=	std::accumulate(vec_number_of_longer_range_attrac_ion_pair.begin(),		vec_number_of_longer_range_attrac_ion_pair.end(),	0)	/	static_cast<float>(vec_number_of_longer_range_attrac_ion_pair.size());
 
 
 	int	min_attrac;
@@ -1115,30 +1156,30 @@ write_number_of_electrostatic_interactions_of_residues_to_files(
 		max_sum_of_salt_CC_NO_bridges	=	*std::max_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
 	}
 
-	int	min_number_of_longer_range_ion_pair;
-	int	max_number_of_longer_range_ion_pair;
-	if (vec_number_of_longer_range_ion_pair.size()	==	0)
+	int	min_number_of_longer_range_attrac_ion_pair;
+	int	max_number_of_longer_range_attrac_ion_pair;
+	if (vec_number_of_longer_range_attrac_ion_pair.size()	==	0)
 	{
-		min_number_of_longer_range_ion_pair	=	0;
-		max_number_of_longer_range_ion_pair	=	0;
+		min_number_of_longer_range_attrac_ion_pair	=	0;
+		max_number_of_longer_range_attrac_ion_pair	=	0;
 	}
 	else
 	{
-		min_number_of_longer_range_ion_pair	=	*std::min_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
-		max_number_of_longer_range_ion_pair	=	*std::max_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+		min_number_of_longer_range_attrac_ion_pair	=	*std::min_element(vec_number_of_longer_range_attrac_ion_pair.begin(),	vec_number_of_longer_range_attrac_ion_pair.end());
+		max_number_of_longer_range_attrac_ion_pair	=	*std::max_element(vec_number_of_longer_range_attrac_ion_pair.begin(),	vec_number_of_longer_range_attrac_ion_pair.end());
 	}
 
-	ElectroStatic_file	<<	"avg	(min~max)	";
-	ElectroStatic_file	<< round_to_float(avg_attrac)	<<	" ("	<<	min_attrac	<<	"~"	<<	max_attrac	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_repul)	<<	" ("	<<	min_repul	<<	"~"	<<	max_repul	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_net_attrac)	<<	" ("	<<	min_net_attrac	<<	"~"	<<	max_net_attrac	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_salt_bridges)	<<	" ("	<<	min_salt_bridge	<<	"~"	<<	max_salt_bridge	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_CC_bridges)	<<	" ("	<<	min_CC_bridge	<<	"~"	<<	max_CC_bridge	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_NO_bridges)	<<	" ("	<<	min_NO_bridge	<<	"~"	<<	max_NO_bridge	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_sum_of_salt_CC_NO_bridges)	<<	" ("	<<	min_sum_of_salt_CC_NO_bridges	<<	"~"	<<	max_sum_of_salt_CC_NO_bridges	<<	")	";
-	ElectroStatic_file	<< round_to_float(avg_number_of_longer_range_ion_pair)	<<	" ("	<<	min_number_of_longer_range_ion_pair	<<	"~"	<<	max_number_of_longer_range_ion_pair	<<	")	"	<<	endl;
+	ElectroStatics_txt_file	<<	"avg	(min~max)	";
+	ElectroStatics_txt_file	<< round_to_float(avg_attrac)	<<	" ("	<<	min_attrac	<<	"~"	<<	max_attrac	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_repul)	<<	" ("	<<	min_repul	<<	"~"	<<	max_repul	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_net_attrac)	<<	" ("	<<	min_net_attrac	<<	"~"	<<	max_net_attrac	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_salt_bridges)	<<	" ("	<<	min_salt_bridge	<<	"~"	<<	max_salt_bridge	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_CC_bridges)	<<	" ("	<<	min_CC_bridge	<<	"~"	<<	max_CC_bridge	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_NO_bridges)	<<	" ("	<<	min_NO_bridge	<<	"~"	<<	max_NO_bridge	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_sum_of_salt_CC_NO_bridges)	<<	" ("	<<	min_sum_of_salt_CC_NO_bridges	<<	"~"	<<	max_sum_of_salt_CC_NO_bridges	<<	")	";
+	ElectroStatics_txt_file	<< round_to_float(avg_number_of_longer_range_attrac_ion_pair)	<<	" ("	<<	min_number_of_longer_range_attrac_ion_pair	<<	"~"	<<	max_number_of_longer_range_attrac_ion_pair	<<	")	"	<<	endl;
 
-	ElectroStatic_file.close();
+	ElectroStatics_txt_file.close();
 
 	return 0;
 }	// write_number_of_electrostatic_interactions_of_residues_to_files
@@ -1165,11 +1206,242 @@ write_p_aa_pp_of_AAs_to_a_file(
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real resi_p_aa_pp = em1[core::scoring::p_aa_pp];
 
-		p_aa_pp_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	resi_p_aa_pp << endl;
+		p_aa_pp_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	round_to_Real(resi_p_aa_pp) << endl;
 	}
 	p_aa_pp_file.close();
 	return 0;
 }	//write_p_aa_pp_of_AAs_to_a_file
+
+
+/* before refactoring 2015/05/16
+// (begin) write_phi_psi_of_each_residue
+core::Size
+write_phi_psi_of_each_residue_to_a_file(
+	string tag,
+	Pose & dssp_pose,
+	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	bool	write_phi_psi_of_E_,
+	bool	write_phi_psi_of_all_,
+	Size	max_num_sw_per_pdb_,
+	StructureID	struct_id,	// needed argument
+	sessionOP	db_session,
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_,
+	Size sandwich_PK_id_counter
+)
+{
+	Size tag_len = tag.length();
+	string pdb_file_name = tag.substr(0, tag_len-5);
+
+	if (write_phi_psi_of_E_)
+	{
+		string phi_psi_file_name = pdb_file_name + "_phi_psi_of_strand_res.txt";
+		ofstream phi_psi_file;
+		phi_psi_file.open(phi_psi_file_name.c_str());
+		phi_psi_file << "tag	res_num	res_type	res_at_terminal	sheet_is_antiparallel	strand_is_at_edge	phi	psi" << endl;
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
+		{
+			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+			{
+				break;
+			}
+			string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+
+			string strand_is_at_edge = is_this_strand_at_edge	(
+										dssp_pose,
+										struct_id,
+										db_session,
+										bs_of_sw_can_by_sh[ii].get_sheet_id(),
+										bs_of_sw_can_by_sh[ii].get_start(),
+										bs_of_sw_can_by_sh[ii].get_end(),
+										min_CA_CA_dis_,
+										max_CA_CA_dis_);
+
+			Size component_size = bs_of_sw_can_by_sh[ii].get_size();
+			WriteToDB_sandwich (struct_id,
+								db_session,
+								dssp_pose,
+								sandwich_PK_id_counter,
+								tag,
+								bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),
+								bs_of_sw_can_by_sh[ii].get_sheet_id(),
+								sheet_antiparallel,
+								bs_of_sw_can_by_sh[ii].get_strand_id(),
+								strand_is_at_edge,
+								component_size,
+								bs_of_sw_can_by_sh[ii].get_start(),
+								bs_of_sw_can_by_sh[ii].get_end());
+			sandwich_PK_id_counter++;
+
+			Size res_at_terminal;
+			for (Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++)
+			{
+				if (res_num == bs_of_sw_can_by_sh[ii].get_start() || res_num == bs_of_sw_can_by_sh[ii].get_end())
+				{
+					res_at_terminal = 1;
+				}
+				else
+				{
+					res_at_terminal = 0;
+				}
+				Real phi = dssp_pose.phi(res_num);
+				Real psi = dssp_pose.psi(res_num);
+				phi_psi_file << tag << "	" << res_num << "	" << dssp_pose.residue_type(res_num).name3() << "	" << res_at_terminal << "	" <<	sheet_antiparallel << "	" << strand_is_at_edge << "	" << round_to_Real(phi) << "	" << round_to_Real(psi) << endl;
+			}
+		}
+		phi_psi_file.close();
+	} //write_phi_psi_of_E_
+
+
+	if (!write_phi_psi_of_E_ && write_phi_psi_of_all_) // 2014/10/11 it should be like this to avoid "ERROR: seqpos <= size() ERROR:: Exit from: src/core/conformation/Conformation.hh line: 361", when I have time, it should be debugged
+	//if (write_phi_psi_of_all_)
+	{
+		string phi_psi_file_name = pdb_file_name + "_phi_psi_of_all_res.txt";
+		ofstream phi_psi_file;
+		phi_psi_file.open(phi_psi_file_name.c_str());
+		phi_psi_file << "tag	res_num	res_type	dssp	phi	psi" << endl;
+
+		for(core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
+		{
+			char res_ss( dssp_pose.secstruct( ii ) ) ;
+			Real phi = dssp_pose.phi(ii);
+			Real psi = dssp_pose.psi(ii);
+			phi_psi_file << tag << "	" << ii << "	" << dssp_pose.residue_type(ii).name3() << "	" << res_ss	<< "	" << round_to_Real(phi) << "	" << round_to_Real(psi) << endl;
+		}
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
+		{
+			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+			{
+				break;
+			}
+			string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+
+			string strand_is_at_edge = is_this_strand_at_edge	(
+										dssp_pose,
+										struct_id,
+										db_session,
+										bs_of_sw_can_by_sh[ii].get_sheet_id(),
+										bs_of_sw_can_by_sh[ii].get_start(),
+										bs_of_sw_can_by_sh[ii].get_end(),
+										min_CA_CA_dis_,
+										max_CA_CA_dis_);
+
+			Size component_size = bs_of_sw_can_by_sh[ii].get_size();
+			WriteToDB_sandwich (struct_id,
+								db_session,
+								dssp_pose,
+								sandwich_PK_id_counter,
+								tag,
+								bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),
+								bs_of_sw_can_by_sh[ii].get_sheet_id(),
+								sheet_antiparallel,
+								bs_of_sw_can_by_sh[ii].get_strand_id(),
+								strand_is_at_edge,
+								component_size,
+								bs_of_sw_can_by_sh[ii].get_start(),
+								bs_of_sw_can_by_sh[ii].get_end());
+			sandwich_PK_id_counter++;
+		}
+	}//write_phi_psi_of_all_
+
+	return	sandwich_PK_id_counter;
+}
+// (end) write_phi_psi_of_each_residue
+// before refactoring 2015/05/16 to fix error "WriteToDB_sandwich should be executed regardless of write_phi_psi_of_all_ or write_phi_psi_of_E_*/
+
+
+
+
+
+
+
+
+// (begin) write_phi_psi_of_each_residue
+core::Size
+write_phi_psi_of_each_residue_to_a_file(
+	string tag,
+	Pose & dssp_pose,
+	utility::vector1<SandwichFragment> bs_of_sw_can_by_sh,
+	bool	write_phi_psi_of_E_,
+	bool	write_phi_psi_of_all_,
+	Size	max_num_sw_per_pdb_,
+	StructureID	struct_id,	// needed argument
+	sessionOP	db_session,
+	Real min_CA_CA_dis_,
+	Real max_CA_CA_dis_
+)
+{
+	Size tag_len = tag.length();
+	string pdb_file_name = tag.substr(0, tag_len-5);
+
+	if (write_phi_psi_of_E_)
+	{
+		string phi_psi_file_name = pdb_file_name + "_phi_psi_of_strand_res.txt";
+		ofstream phi_psi_file;
+		phi_psi_file.open(phi_psi_file_name.c_str());
+		phi_psi_file << "tag	res_num	res_type	res_at_terminal	sheet_is_antiparallel	strand_is_at_edge	phi	psi" << endl;
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
+		{
+			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+			{
+				break;
+			}
+			string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+
+			string strand_is_at_edge = is_this_strand_at_edge	(
+										dssp_pose,
+										struct_id,
+										db_session,
+										bs_of_sw_can_by_sh[ii].get_sheet_id(),
+										bs_of_sw_can_by_sh[ii].get_start(),
+										bs_of_sw_can_by_sh[ii].get_end(),
+										min_CA_CA_dis_,
+										max_CA_CA_dis_);
+
+			Size res_at_terminal;
+			for (Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++)
+			{
+				if (res_num == bs_of_sw_can_by_sh[ii].get_start() || res_num == bs_of_sw_can_by_sh[ii].get_end())
+				{
+					res_at_terminal = 1;
+				}
+				else
+				{
+					res_at_terminal = 0;
+				}
+				Real phi = dssp_pose.phi(res_num);
+				Real psi = dssp_pose.psi(res_num);
+				phi_psi_file << tag << "	" << res_num << "	" << dssp_pose.residue_type(res_num).name3() << "	" << res_at_terminal << "	" <<	sheet_antiparallel << "	" << strand_is_at_edge << "	" << round_to_Real(phi) << "	" << round_to_Real(psi) << endl;
+			}
+		}
+		phi_psi_file.close();
+	} //write_phi_psi_of_E_
+
+
+	if (!write_phi_psi_of_E_ && write_phi_psi_of_all_) // 2014/10/11 it should be like this to avoid "ERROR: seqpos <= size() ERROR:: Exit from: src/core/conformation/Conformation.hh line: 361", when I have time, it should be debugged
+	//if (write_phi_psi_of_all_)
+	{
+		string phi_psi_file_name = pdb_file_name + "_phi_psi_of_all_res.txt";
+		ofstream phi_psi_file;
+		phi_psi_file.open(phi_psi_file_name.c_str());
+		phi_psi_file << "tag	res_num	res_type	dssp	phi	psi" << endl;
+
+		for(core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
+		{
+			char res_ss( dssp_pose.secstruct( ii ) ) ;
+			Real phi = dssp_pose.phi(ii);
+			Real psi = dssp_pose.psi(ii);
+			phi_psi_file << tag << "	" << ii << "	" << dssp_pose.residue_type(ii).name3() << "	" << res_ss	<< "	" << round_to_Real(phi) << "	" << round_to_Real(psi) << endl;
+		}
+	}//write_phi_psi_of_all_
+
+	return	0;
+}
+// (end) write_phi_psi_of_each_residue
+
 
 
 //write_rama_of_AAs_to_a_file
@@ -1193,11 +1465,12 @@ write_rama_of_AAs_to_a_file(
 		core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 		Real rama_at_this_AA = em1[core::scoring::rama];
 
-		rama_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	rama_at_this_AA << endl;
+		rama_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	round_to_Real(rama_at_this_AA) << endl;
 	}
 	rama_file.close();
 	return 0;
 }	//write_rama_of_AAs_to_a_file
+
 
 // write_resfile_to_a_file_when_seq_rec_is_bad
 core::Size

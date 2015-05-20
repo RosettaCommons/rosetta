@@ -52,18 +52,19 @@ namespace strand_assembly {
 static thread_local basic::Tracer TR( "protocols.features.strand_assembly.SandwichFeatures" );
 
 // for parse_my_tag
-using utility::tag::TagCOP;
-using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
+using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
+using utility::tag::TagCOP;
 
 using namespace std;
 using namespace core;
 using core::pose::Pose;
+using cppdb::result;
+using cppdb::statement;
 using utility::vector1;
 using utility::sql_database::sessionOP;
-using cppdb::statement;
-using cppdb::result;
+
 
 //using core::id::NamedAtomID;
 //using numeric::xyzVector;
@@ -406,7 +407,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column num_PRO_in_1st_inter_sheet_loop	("num_PRO_in_1st_inter_sheet_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 	Column num_PRO_in_3rd_inter_sheet_loop	("num_PRO_in_3rd_inter_sheet_loop",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
 	Column weighted_num_PRO_prevent	("weighted_num_PRO_prevent",	DbDataTypeOP( new DbInteger() ), true /* could be null*/, false /*no autoincrement*/);
-
 	Column shortest_dis_between_facing_aro_in_sw	("shortest_dis_between_facing_aro_in_sw",	DbDataTypeOP( new DbReal() ), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
@@ -683,37 +683,6 @@ SandwichFeatures::generate_scorefxn( bool fullatom ) {
 	return scorefxn;
 }
 
-// (07/19/14) I can't refactor
-/*
-"In file included from src/protocols/features/strand_assembly/CheckForSandwichFeatures.cc:17:
-src/protocols/features/strand_assembly/CheckForSandwichFeatures.hh:183:3: error: non-member function cannot have 'const' qualifier
-) const;
-  ^~~~~
-src/protocols/features/strand_assembly/CheckForSandwichFeatures.cc:1113:49: error: non-member function cannot have 'const' qualifier
-        core::scoring::ScoreFunction const& scorefxn ) const
-                                                       ^~~~~
-In file included from src/protocols/features/strand_assembly/SandwichFeatures.cc:41:
-src/protocols/features/strand_assembly/CheckForSandwichFeatures.hh:183:3: error: non-member function cannot have 'const' qualifier
-) const;
-  ^~~~~
-In file included from src/protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.cc:20:
-In file included from src/protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh:19:
-src/protocols/features/strand_assembly/CheckForSandwichFeatures.hh:183:3: error: non-member function cannot have 'const' qualifier
-) const;
-  ^~~~~
-In file included from src/protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.cc:17:
-In file included from src/protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh:18:
-src/protocols/features/strand_assembly/CheckForSandwichFeatures.hh:183:3: error: non-member function cannot have 'const' qualifier"
-"
-*/
-void
-SandwichFeatures::process_decoy(
-	Pose &dssp_pose,
-	core::scoring::ScoreFunction const& scorefxn ) const
-{
-	scorefxn( dssp_pose );
-} // process_decoy
-
 
 void
 SandwichFeatures::parse_my_tag(
@@ -778,7 +747,7 @@ SandwichFeatures::parse_my_tag(
 	max_sheet_torsion_cen_res_ = tag->getOption<Real>("max_sheet_torsion_cen_res", 150.0);
 					//	definition: "maximum torsion between sheets (CA and CA) with respect to terminal central residues in each beta-sheet
 					//	usage: used in judge_facing "torsion_i_j < max_sheet_torsion_cen_res_"
-	min_num_strands_in_sheet_ = tag->getOption<core::Size>("min_num_strands_in_sheet", 3);
+	min_num_strands_in_sheet_ = tag->getOption<core::Size>("min_num_strands_in_sheet", 2);
 					//  definition: a sheet with < 3 strands will be ignored
 					//	usage: if (num_strands_i < min_num_strands_in_sheet_)
 	min_inter_sheet_dis_CA_CA_ = tag->getOption<Real>("min_inter_sheet_dis_CA_CA", 4.0);
@@ -804,6 +773,8 @@ SandwichFeatures::parse_my_tag(
 					//	definition: maximum number of sandwiches to be extracted per a pdb file
 	check_N_to_C_direction_by_ = tag->getOption<string>("check_N_to_C_direction_by", "PE");
 					//	definition: check N->C going direction by option
+	                                // PE: preceding residue in beta-strand
+	                                // FE: following residue in
 	check_canonicalness_cutoff_ = tag->getOption<Real>("check_canonicalness_cutoff", 80.0);
 					//	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
 
@@ -824,10 +795,10 @@ SandwichFeatures::parse_my_tag(
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", false);
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
 
-	exclude_sandwich_that_has_non_canonical_properties_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_properties", false);
-
 	exclude_sandwich_that_has_non_canonical_LR_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_LR", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_LR
+
+	exclude_sandwich_that_has_non_canonical_properties_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_properties", false);
 
 	exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_ = tag->getOption<bool>("exclude_sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw", false);
 					//	definition: if true, exclude sandwich_that_has_non_canonical_shortest_dis_between_facing_aro_in_sw_
@@ -847,8 +818,6 @@ SandwichFeatures::parse_my_tag(
 					//	definition: maximum starting loop size to extract
 	max_ending_loop_size_ = tag->getOption<core::Size>("max_ending_loop_size", 6);
 					//	definition: maximum ending loop size to extract
-	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
-					// if true, ignore any pdb that has helix
 	max_E_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_E_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of E residues in extracted sandwich loop
 					//	usefulness: If used, it is useful to exclude [1LOQ] which is a beta-propeller
@@ -856,6 +825,9 @@ SandwichFeatures::parse_my_tag(
 	max_H_in_extracted_sw_loop_ = tag->getOption<core::Size>("max_H_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of helix residues in extracted sandwich loop
 					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
+
+	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
+					// if true, ignore any pdb that has helix
 
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", 13.0);
 					//	definition: within this distance, sheets are considered to be too near each other
@@ -896,6 +868,12 @@ SandwichFeatures::parse_my_tag(
 	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
 
 
+	///////// proline options ///////
+	wt_for_pro_in_starting_loop_ = tag->getOption<Real>("wt_for_pro_in_starting_loop", 20);
+	wt_for_pro_in_1st_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_1st_inter_sheet_loop", 10);
+	wt_for_pro_in_3rd_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_3rd_inter_sheet_loop", 1);
+
+
 	///////// writing options ///////
 	write_all_info_files_ = tag->getOption<bool>("write_all_info_files", false);
 					//	definition: if true, write all below
@@ -903,7 +881,8 @@ SandwichFeatures::parse_my_tag(
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
 
-			///////// AA distribution ///////
+
+	///////// AA distribution ///////
 	write_loop_AA_distribution_files_ = tag->getOption<bool>("write_loop_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions without directions
 
@@ -1008,23 +987,27 @@ SandwichFeatures::report_features(
 		if (write_all_info_files_)
 		{
 			write_AA_kind_files_ = true;
+			write_beta_sheet_capping_info_	=	true;
+
 			write_strand_AA_distribution_files_ = true;
 			write_loop_AA_distribution_files_ = true;
+
 			write_chain_B_resnum_ = true;
+			write_electrostatic_interactions_of_surface_residues_in_a_strand_	=	true;
+			write_electrostatic_interactions_of_all_residues_in_a_strand_	=	true;
+			write_electrostatic_interactions_of_all_residues_	=	true;
+			write_heading_directions_of_all_AA_in_a_strand_	=	true;
+
+			write_p_aa_pp_files_	= true;
 			write_phi_psi_of_all_ = true;
 			write_phi_psi_of_E_	= true;
+
+			write_rama_at_AA_to_files_	=	true;
 			write_resfile_	= true;
 			write_resfile_to_minimize_too_much_hydrophobic_surface_	=	true;
 			write_resfile_to_minimize_too_many_core_heading_FWY_on_core_strands_	=	true;
 			write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_	=	true;
 			write_resfile_when_seq_rec_is_bad_ = true;
-			write_p_aa_pp_files_	= true;
-			write_rama_at_AA_to_files_	=	true;
-			write_heading_directions_of_all_AA_in_a_strand_	=	true;
-			write_electrostatic_interactions_of_surface_residues_in_a_strand_	=	true;
-			write_electrostatic_interactions_of_all_residues_in_a_strand_	=	true;
-			write_electrostatic_interactions_of_all_residues_	=	true;
-			write_beta_sheet_capping_info_	=	true;
 		}
 
 		if (exclude_sandwich_that_has_non_canonical_properties_)
@@ -1204,10 +1187,12 @@ SandwichFeatures::report_features(
 
 			else // all_strands[i].get_size() < min_res_in_strand_  // "this strand is too small, assign it into '99999' sheet"
 			{
-				WriteToDB_sheet (struct_id, db_session, sheet_PK_id_counter, 99999, get_segment_id(
-																								  struct_id,
-																								  db_session,
-																								  i));	// struct_id, db_session, sheet_PK_id_counter, sheet_id, segment_id
+				WriteToDB_sheet (struct_id, db_session, sheet_PK_id_counter,
+					99999, //sheet_id
+					get_segment_id( //// segment_id
+						struct_id,
+						db_session,
+						i));
 				sheet_PK_id_counter++;
 			}// all_strands[i].get_size() < min_res_in_strand_
 		}
@@ -1540,104 +1525,39 @@ SandwichFeatures::report_features(
 
 		if (bs_of_sw_can_by_sh.size() == 0)
 		{
-				TR.Info << "no beta segment in sandwich_by_sheet "	<< endl;
+				TR.Info << endl	<< "no beta segment in sandwich_by_sheet "	<< endl;
 				TR.Info << "(maybe these two sheets do not face each other <OR> " << endl;
 				TR.Info	<<	"there are only < " <<	min_num_strands_in_sheet_ << " number of strands in one sheet <OR> "	<< endl;
-				TR.Info	<<	"these are too distant sheets <OR> this is a beta barrel <OR> \"non-canonical\" like 1MSP"") " << endl << endl;
+				TR.Info	<<	"these are too distant sheets <OR> " << endl;
+				TR.Info	<<	"this is a beta barrel <OR> " << endl;
+				TR.Info	<<	"\"non-canonical\" like 1MSP"") " << endl << endl;
 				TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 			return 0;
 		}
 
-		if (write_phi_psi_of_E_)
-		{
-			Size tag_len = tag.length();
-			string pdb_file_name = tag.substr(0, tag_len-5);
-			string phi_psi_file_name = pdb_file_name + "_phi_psi_of_strand_res.txt";
-			ofstream phi_psi_file;
-			phi_psi_file.open(phi_psi_file_name.c_str());
-			phi_psi_file << "tag	res_num	res_type	res_at_terminal	sheet_is_antiparallel	strand_is_at_edge	phi	psi" << endl;
-			for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
-			{
-				if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
-				{
-					break;
-				}
-				string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
-				string strand_is_at_edge = is_this_strand_at_edge	(
-											pose,
-											struct_id,
-											db_session,
-											bs_of_sw_can_by_sh[ii].get_sheet_id(),
-											bs_of_sw_can_by_sh[ii].get_start(),
-											bs_of_sw_can_by_sh[ii].get_end(),
-											min_CA_CA_dis_,
-											max_CA_CA_dis_);
+		sandwich_PK_id_counter	=
+			Run_WriteToDB_sandwich(
+				tag,
+				dssp_pose,
+				bs_of_sw_can_by_sh,
+				max_num_sw_per_pdb_,
+				struct_id,	// needed argument
+				db_session,
+				min_CA_CA_dis_,
+				max_CA_CA_dis_,
+				sandwich_PK_id_counter);
 
-				Size component_size = bs_of_sw_can_by_sh[ii].get_size();
-				WriteToDB_sandwich (struct_id, db_session, pose, sandwich_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size, bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
-				sandwich_PK_id_counter++;
-
-				Size res_at_terminal;
-				for (Size res_num = bs_of_sw_can_by_sh[ii].get_start(); res_num <= bs_of_sw_can_by_sh[ii].get_end(); res_num++)
-				{
-					if (res_num == bs_of_sw_can_by_sh[ii].get_start() || res_num == bs_of_sw_can_by_sh[ii].get_end())
-					{
-						res_at_terminal = 1;
-					}
-					else
-					{
-						res_at_terminal = 0;
-					}
-					Real phi = pose.phi(res_num);
-					Real psi = pose.psi(res_num);
-					phi_psi_file << tag << "	" << res_num << "	" << pose.residue_type(res_num).name3() << "	" << res_at_terminal << "	" <<	sheet_antiparallel << "	" << strand_is_at_edge << "	" << phi << "	" << psi << endl;
-				}
-			}
-			phi_psi_file.close();
-		} //write_phi_psi_of_E_
-
-		else	// write_phi_psi_of_E_ = false
-		{
-			if (write_phi_psi_of_all_)
-			{
-				Size tag_len = tag.length();
-				string pdb_file_name = tag.substr(0, tag_len-5);
-				string phi_psi_file_name = pdb_file_name + "_phi_psi_of_all_res.txt";
-				ofstream phi_psi_file;
-				phi_psi_file.open(phi_psi_file_name.c_str());
-				phi_psi_file << "tag	res_num	res_type	dssp	phi	psi" << endl;
-				for(core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
-				{
-					char res_ss( dssp_pose.secstruct( ii ) ) ;
-					Real phi = pose.phi(ii);
-					Real psi = pose.psi(ii);
-					phi_psi_file << tag << "	" << ii << "	" << pose.residue_type(ii).name3() << "	" << res_ss	<< "	" << phi << "	" << psi << endl;
-				}
-			}
-			for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
-			{
-				if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
-				{
-					break;
-				}
-				string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
-
-				string strand_is_at_edge = is_this_strand_at_edge	(
-											pose,
-											struct_id,
-											db_session,
-											bs_of_sw_can_by_sh[ii].get_sheet_id(),
-											bs_of_sw_can_by_sh[ii].get_start(),
-											bs_of_sw_can_by_sh[ii].get_end(),
-											min_CA_CA_dis_,
-											max_CA_CA_dis_);
-
-				Size component_size = bs_of_sw_can_by_sh[ii].get_size();
-				WriteToDB_sandwich (struct_id, db_session, pose, sandwich_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size,	bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
-				sandwich_PK_id_counter++;
-			}
-		}	//!write_phi_psi_of_E_
-
+		write_phi_psi_of_each_residue_to_a_file(
+			tag,
+			dssp_pose,
+			bs_of_sw_can_by_sh,
+			write_phi_psi_of_E_,
+			write_phi_psi_of_all_,
+			max_num_sw_per_pdb_,
+			struct_id,	// needed argument
+			db_session,
+			min_CA_CA_dis_,
+			max_CA_CA_dis_);
 
 		if (count_AA_with_direction_)
 		{
@@ -1651,7 +1571,7 @@ SandwichFeatures::report_features(
 				WriteToDB_sandwich_by_AA_w_direction (struct_id, db_session, pose, pose_w_center_000,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
 			}
 			//// <end> count AA with direction
-		}
+		} //count_AA_with_direction_
 
 	/////////////////// <end> fill a table 'sandwich' by secondary_structure_segments
 			TR.Info << "<end> fill a table 'sandwich' by secondary_structure_segments" << endl;
@@ -1670,7 +1590,7 @@ SandwichFeatures::report_features(
 
 		for(Size ii=1; ii<=vec_sw_can_by_sh_id.size(); ii++)
 		{ // I think that mostly vec_sw_can_by_sh_id.size() = just 1
-				TR << "See whether sw_candidate_by_sheets_id " << vec_sw_can_by_sh_id[ii] << " be a canonical sw or not" << endl;
+				TR << "See whether 'sw_candidate_by_sheets_id = " << vec_sw_can_by_sh_id[ii] << " ' be a canonical beta-sandwich or not" << endl;
 
 			bool chance_of_being_canonical_sw	=	true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
 			Size size_sandwich_PK_id =
@@ -1760,6 +1680,7 @@ SandwichFeatures::report_features(
 	//////////// <begin> check numbers of helix and strand residues in loops
 
 
+				//string LR = check_LR(pose, start_res+1, next_start_res-1);
 				string LR = check_LR(dssp_pose, start_res+1, next_start_res-1);
 
 				std::pair<string, string> PA = check_PA(dssp_pose, start_res+1, next_start_res-1);
@@ -2109,11 +2030,19 @@ SandwichFeatures::report_features(
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
 
+				/*
+				
+				// 'WriteToDB_prolines_that_seem_to_prevent_aggregation' is defined in WriteToDBFromSandwichFeatures.hh
+ 
 				WriteToDB_prolines_that_seem_to_prevent_aggregation(
 					struct_id,
 					db_session,
-					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
+					wt_for_pro_in_starting_loop_,
+					wt_for_pro_in_1st_inter_sheet_loop_,
+					wt_for_pro_in_3rd_inter_sheet_loop_
 					);
+				*/
 
 				WriteToDB_topology_candidate(struct_id,	db_session,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
@@ -2178,7 +2107,6 @@ SandwichFeatures::report_features(
 						);
 			}
 
-			// refactored
 			// <begin> write_chain_B_resNum_to_a_file
 			if (write_chain_B_resnum_ && chance_of_being_canonical_sw)
 			{
@@ -2193,7 +2121,6 @@ SandwichFeatures::report_features(
 
 		}	// per each sandwich_candidate_by_sheet_id
 
-		// refactored
 		//	write_heading_direction_of_all_AA_in_a_strand_to_a_file
 		if (write_heading_directions_of_all_AA_in_a_strand_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2205,7 +2132,6 @@ SandwichFeatures::report_features(
 				bs_of_sw_can_by_sh);
 		}	//write_heading_direction_of_all_AA_in_a_strand_to_a_file
 
-		// refactored
 		//	prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files
 		if (canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2226,7 +2152,6 @@ SandwichFeatures::report_features(
 		}	//prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files
 
 
-		// refactored
 		// <begin> write_beta_sheet_capping_info_
 		if (write_beta_sheet_capping_info_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2242,7 +2167,6 @@ SandwichFeatures::report_features(
 		// <end> write_beta_sheet_capping_info_
 
 
-		// refactored
 		// <begin> write_AA_distribution_with_direction_to_a_file
 		if (write_strand_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2262,7 +2186,7 @@ SandwichFeatures::report_features(
 
 
 		// not needed now (was needed for just during development
-		/*
+		///*
 		{
 			core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false //fullatom
 			 ) );
@@ -2274,9 +2198,9 @@ SandwichFeatures::report_features(
 				//TR.Info << "Current energy terms that we deal with:"	<< endl;
 			//dssp_pose.energies().show_total_headers( std::cout );
 			//std::cout << std::endl;
-		}*/
+		}
+		//*/
 
-		// refactored
 		// <begin> write p_aa_pp to a file
 		if (write_p_aa_pp_files_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2287,7 +2211,6 @@ SandwichFeatures::report_features(
 		// <end> write p_aa_pp to a file
 
 
-		// refactored
 		// <begin> write rama of residue to a file
 		if (write_rama_at_AA_to_files_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2297,7 +2220,6 @@ SandwichFeatures::report_features(
 		}
 		// <end> write rama of residue to a file
 
-		// refactored
 		// <begin> write AA_distribution_without_direction to a file
 		if (write_loop_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2309,7 +2231,6 @@ SandwichFeatures::report_features(
 		// <end> write AA_distribution_without_direction to a file
 
 
-		// refactored
 		//// <begin> WriteToDB number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 		if (count_AA_with_direction_ && canonical_sw_extracted_from_this_pdb_file)
 		{
@@ -2325,7 +2246,6 @@ SandwichFeatures::report_features(
 		//// <end> WriteToDB number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 
 
-		// refactored
 		// <begin> write resfile automatically
 		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
 		// (07/10/2014) This automatic resfile generation seems useful only for design with ramping repulsions, for PackRotamersMover & OffRotamerPack, this kind of resfile seems not needed.

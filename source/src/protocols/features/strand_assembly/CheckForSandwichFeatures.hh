@@ -518,6 +518,12 @@ judge_facing(
 	Real	max_sheet_torsion_cen_res_,
 	Real	max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_);
 
+
+void process_decoy(
+	core::pose::Pose & dssp_pose,
+	core::scoring::ScoreFunction const&
+);
+
 string
 report_heading_directions_of_all_AA_in_a_strand	(
 	StructureID struct_id,

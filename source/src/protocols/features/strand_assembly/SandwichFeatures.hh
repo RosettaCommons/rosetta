@@ -23,6 +23,8 @@ namespace protocols {
 namespace features {
 namespace strand_assembly {
 
+using namespace core;
+
 class SandwichFeatures : public protocols::features::FeaturesReporter
 {
 
@@ -57,25 +59,20 @@ public:
 
 	/// @brief collect all the feature data for the pose
 	virtual
-	core::Size
+	Size
 	report_features(
 		core::pose::Pose const & pose, //core::pose::Pose & pose, // dropped 'const' for dssp info addition
 		utility::vector1<bool> const & relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	void process_decoy(
-		core::pose::Pose & dssp_pose,
-		core::scoring::ScoreFunction const&
-	) const;
-
 
 private:
 
-	core::Real
+	Real
 	allowed_deviation_for_turn_type_id_;
 
-	core::Real
+	Real
 	CB_b_factor_cutoff_for_electrostatic_interactions_;
 
 	std::string
@@ -84,13 +81,13 @@ private:
 								// 3) CBs: preceding_E's CB to following_E's CB vector
 
 
-	core::Real
+	Real
 	check_canonicalness_cutoff_;
 
 	bool
 	count_AA_with_direction_;
 
-	core::Real
+	Real
 	distance_cutoff_for_electrostatic_interactions_;
 
 	bool
@@ -131,91 +128,87 @@ private:
 	generate_scorefxn( bool fullatom = false );
 
 
-	core::Real
+	Real
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_;
 
 
-	core::Real
+	Real
 	min_CA_CA_dis_;
 
-	core::Real
+	Real
 	max_CA_CA_dis_;
 
-	core::Size
+	Size
 	min_num_strands_to_deal_;
 
-	core::Size
+	Size
 	max_num_strands_to_deal_;
 
-	core::Size
+	Size
 	min_res_in_strand_;
 
-	// KAB - below variables commented out (-Wunused-private-field) on 2014-09-11
-	// core::Real min_O_N_dis_;
-	// core::Real max_O_N_dis_;
-
-	core::Real
+	Real
 	min_C_O_N_angle_;
 
-	core::Real
+	Real
 	min_sheet_dis_;
 
-	core::Real
+	Real
 	max_sheet_dis_;
 
-	core::Real
+	Real
 	max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_;
 
-	core::Real
+	Real
 	min_sheet_angle_by_four_term_cen_res_;
 
-	core::Real
+	Real
 	max_sheet_angle_by_four_term_cen_res_;
 
-	core::Real
+	Real
 	min_sheet_torsion_cen_res_;
 
-	core::Real
+	Real
 	max_sheet_torsion_cen_res_;
 
-	core::Size
+	Size
 	min_num_strands_in_sheet_; //  definition: a sheet with < 3 strands will be ignored
 
-	core::Real
+	Real
 	min_inter_sheet_dis_CA_CA_;
 
-	core::Real
+	Real
 	max_inter_sheet_dis_CA_CA_;
 
 
-	core::Size
+	Size
 	max_H_in_extracted_sw_loop_;	//	definition: maximum allowable number of helix residues in extracted sandwich loop
 
-	core::Size
+	Size
 	max_E_in_extracted_sw_loop_;	//	definition: maximum allowable number of E residues in extracted sandwich loop
 
-	core::Real
+	Real
 	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_;
 
-	core::Real
+	Real
 	max_inter_strand_angle_to_not_be_same_direction_strands_;
 
-	core::Size
+	Size
 	max_starting_loop_size_;
 
-	core::Size
+	Size
 	max_ending_loop_size_;
 
-	core::Size
+	Size
 	max_num_sw_per_pdb_;
 
-	core::Real
+	Real
 	min_N_O_dis_between_two_sheets_;
 
-	core::Real
+	Real
 	min_N_H_O_angle_between_two_sheets_;
 
-	core::Size
+	Size
 	min_primary_seq_distance_diff_for_electrostatic_interactions_;
 
 	bool
@@ -232,6 +225,16 @@ private:
 
 	int
 	primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_;
+
+
+	Real
+	wt_for_pro_in_starting_loop_;
+
+	Real
+	wt_for_pro_in_1st_inter_sheet_loop_;
+
+	Real
+	wt_for_pro_in_3rd_inter_sheet_loop_;
 
 
 	bool
@@ -288,8 +291,8 @@ private:
 	bool
 	write_resfile_to_minimize_too_many_core_heading_FWY_on_edge_strands_;
 
-  bool
-  write_resfile_when_seq_rec_is_bad_;
+ 	bool
+	write_resfile_when_seq_rec_is_bad_;
 
 	bool
 	write_strand_AA_distribution_files_;

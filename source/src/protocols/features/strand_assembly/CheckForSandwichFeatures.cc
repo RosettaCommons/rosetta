@@ -152,7 +152,7 @@ cal_dis_angle_to_find_sheet(
 
 
 //cal_min_avg_dis_between_sheets_by_cen_res
-std::pair<Real, Real>
+pair<Real, Real>
 cal_min_avg_dis_between_sheets_by_cen_res (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -192,7 +192,7 @@ cal_min_avg_dis_between_sheets_by_cen_res (
 
 			if	(appropriate_sheet_num	==	2)
 			{
-				std::pair<Real, Real>	min_dis_AND_avg_dis_between_sheets_by_cen_res	=	cal_min_avg_dis_between_two_sheets_by_cen_res	(struct_id,	db_session,	dssp_pose,	all_distinct_sheet_ids[i],	all_distinct_sheet_ids[j]);
+				pair<Real, Real>	min_dis_AND_avg_dis_between_sheets_by_cen_res	=	cal_min_avg_dis_between_two_sheets_by_cen_res	(struct_id,	db_session,	dssp_pose,	all_distinct_sheet_ids[i],	all_distinct_sheet_ids[j]);
 				min_dis_between_sheets_by_cen_res	=	min_dis_AND_avg_dis_between_sheets_by_cen_res.first;
 				avg_dis_between_sheets_by_cen_res	=	min_dis_AND_avg_dis_between_sheets_by_cen_res.second;
 					//	avg_dis_between_sheets_by_cen_res	is the average between	min_dis_between_sheets_by_cen_res	and 2nd	min_dis_between_sheets_by_cen_res
@@ -210,7 +210,7 @@ cal_min_avg_dis_between_sheets_by_cen_res (
 } //	cal_min_avg_dis_between_sheets_by_cen_res
 
 //	cal_min_avg_dis_between_two_sheets_by_cen_res
-std::pair<float, float>
+pair<float, float>
 cal_min_avg_dis_between_two_sheets_by_cen_res (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -374,7 +374,7 @@ cal_num_of_sheets_that_surround_this_sheet (
 			continue;
 		}
 
-		std::pair<Real, Real>	min_dis_AND_avg_dis_between_sheets_by_cen_res	=	cal_min_avg_dis_between_two_sheets_by_cen_res	(
+		pair<Real, Real>	min_dis_AND_avg_dis_between_sheets_by_cen_res	=	cal_min_avg_dis_between_two_sheets_by_cen_res	(
 			struct_id,
 			db_session,
 			dssp_pose,
@@ -932,7 +932,7 @@ check_LR ( // check L/R chirality of sidechain
 } //check_LR
 
 //check_PA
-std::pair<string, string>
+pair<string, string>
 check_PA( // parallel & anti-parallel
 	Pose & dssp_pose,
 	Size residue_begin,
@@ -1089,6 +1089,7 @@ check_sw_by_dis(
 			{
 				continue;
 			}
+
 			return avg_dis_CA_CA;
 		} //for(Size strand_j_res=0; strand_j_res < strand_j.get_size(); strand_j_res++)
 	} //for(Size strand_i_res=0; strand_i_res < strand_i.get_size(); strand_i_res++)
@@ -2571,7 +2572,7 @@ get_closest_distance_between_strands(
 
 
 //get_central_residues_in_each_of_two_edge_strands
-std::pair<int, int>
+pair<int, int>
 get_central_residues_in_each_of_two_edge_strands(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -2667,7 +2668,7 @@ get_central_residues_in_each_of_two_edge_strands(
 
 
 // get_current_bs_id_and_closest_edge_bs_id_in_different_sheet
-std::pair<Size, Size>
+pair<Size, Size>
 get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -2846,7 +2847,7 @@ get_full_strands_from_sheet(
 
 
 //get_next_starting_res_for_connecting_strands
-std::pair<Size, Size> //Size
+pair<Size, Size> //Size
 get_next_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	sessionOP db_session,
@@ -3170,7 +3171,7 @@ get_start_end_res_num_in_the_longest_strand(
 
 
 //get_starting_res_for_connecting_strands
-std::pair<Size, Size>
+pair<Size, Size>
 get_starting_res_for_connecting_strands(
 	StructureID struct_id,
 	sessionOP db_session,
@@ -3774,7 +3775,7 @@ judge_facing(
 
 
 	// <begin> identify four terminal central residues
-	std::pair<int, int>
+	pair<int, int>
 	two_central_residues_in_two_edge_strands =	get_central_residues_in_each_of_two_edge_strands(
 		struct_id,
 		db_session,
@@ -3922,10 +3923,21 @@ judge_facing(
 
 	else
 	{
-		return 0; // these two strand_pairs are linear or	do not face	each other properly!
+			TR <<	"these two strand_pairs are linear or	do not face	each other properly!" << endl;
+		return 0;
 	}
 
 } // judge_facing
+
+
+void
+process_decoy(
+	Pose &dssp_pose,
+	core::scoring::ScoreFunction const& scorefxn )
+{
+	scorefxn( dssp_pose );
+} // process_decoy
+
 
 // report_heading_directions_of_all_AA_in_a_strand
 string
@@ -4039,8 +4051,8 @@ retrieve_residue_num_of_rkde(
 } //retrieve_residue_num_of_rkde
 
 
-// (07/19/14) but I(Doonam) confirms that 'round_to_Real' rounds as expected with 'float' argument
-// 'round_to_float' didn't round as expected with 'float' argument
+//	(07/19/14)
+//	Doonam confirms that 'round_to_float' didn't round as expected with 'float' argument
 float
 round_to_float(
 	float x)
@@ -4048,7 +4060,9 @@ round_to_float(
 	return floor((x	*	10)	+	0.5)	/	10;
 } //round_to_float
 
-//round_to_Real
+
+//	(07/19/14)
+//	Doonam confirms that 'round_to_Real' rounds as expected with 'float' argument
 Real
 round_to_Real(
 	Real x)
