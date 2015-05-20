@@ -58,8 +58,8 @@ virtual void apply( core::pose::Pose & pose_in )
 
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-	antibody::AntibodyInfoCOP ab_info_ = new AntibodyInfo( pose_in );
-	PoseCOP new_pose = new Pose( pose_in );
+	antibody::AntibodyInfoCOP ab_info_ = antibody::AntibodyInfoCOP ( new AntibodyInfo( pose_in ) );
+	PoseCOP new_pose = PoseOP( new Pose( pose_in ) );
 
 	vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
 
@@ -84,7 +84,7 @@ std::string get_name() const { return "PackingAngle"; }
   virtual
   protocols::moves::MoverOP
   fresh_instance() const {
-    return new PackingAngle;
+	  return protocols::moves::MoverOP( new PackingAngle() );
   }
 
   virtual
@@ -99,7 +99,7 @@ private:
 
 };
 
-typedef utility::pointer::owning_ptr< PackingAngle > PackingAngleOP;
+typedef utility::pointer::shared_ptr< PackingAngle > PackingAngleOP;
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ main( int argc, char * argv [] )
 		// initialize core
 		devel::init(argc, argv);
 
-		PackingAngleOP packing_angle = new PackingAngle;
+		PackingAngleOP packing_angle = PackingAngleOP( new PackingAngle );
 		protocols::jd2::JobDistributor::get_instance()->go( packing_angle );
 
     } catch ( utility::excn::EXCN_Base const & e ) {
