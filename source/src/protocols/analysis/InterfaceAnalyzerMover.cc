@@ -233,7 +233,7 @@ InterfaceAnalyzerMover::set_defaults() {
 
 void
 InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
-
+	
 	per_residue_data_ = PerResidueInterfaceData(); //Reinit to clear any data
 	per_residue_data_.regional_avg_per_residue_SASA_int.resize(3,0);
 	per_residue_data_.regional_avg_per_residue_SASA_sep.resize(3,0);
@@ -242,7 +242,7 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.regional_avg_per_residue_dG.resize(3, 0);
 	per_residue_data_.regional_avg_per_residue_dSASA.resize(3, 0);
 	per_residue_data_.regional_avg_per_residue_energy_sep.resize(3, 0);
-
+	
 	per_residue_data_.interface_residues.resize(pose.total_residue(), false);
 	per_residue_data_.complexed_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dG.resize(pose.total_residue(), 0.0);
@@ -251,7 +251,7 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.dhSASA.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dhSASA_sc.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dhSASA_rel_by_charge.resize(pose.total_residue(), 0.0);
-
+	
 	per_residue_data_.SASA.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dSASA_fraction.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_energy.resize(pose.total_residue(), 0.0);
@@ -260,21 +260,21 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 
 void
 InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
-
+	
 	data_ = InterfaceData(); //Reinit to clear any data
 	data_.sc_value = 0;
-
+	
 	data_.dSASA.resize(3, 0);
 	data_.dSASA_sc.resize(3, 0);
-
+	
 	data_.dhSASA.resize(3, 0);
 	data_.dhSASA_sc.resize(3, 0);
-
+	
 	data_.dhSASA_rel_by_charge.resize(3, 0);
-
+	
 	data_.complexed_SASA = 0;
 	data_.separated_SASA = 0;
-
+	
 	data_.dG.resize(3, 0);
 	data_.gly_dG = 0;
 	data_.centroid_dG = 0;
@@ -284,8 +284,8 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.complex_total_energy.resize(3, 0);
 	data_.separated_total_energy.resize(3, 0);
 	data_.total_hb_E = 0;
-
-
+	
+	
 	data_.packstat = 0;
 
 	data_.delta_unsat_hbonds = 0;
@@ -295,30 +295,30 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.aromatic_nres.resize(3, 0);
 	data_.aromatic_dSASA_fraction.resize(3, 0);
 	data_.aromatic_dG_fraction.resize(3, 0);
-
+	
 	data_.ss_sheet_nres.resize(3, 0);
 	data_.ss_loop_nres.resize(3, 0);
 	data_.ss_helix_nres.resize(3, 0);
-
+		
 	data_.interface_to_surface_fraction.resize(3, 0);
 	data_.interface_residues.resize(3, vector1< bool >(pose.total_residue(), false));
-
+	
 }
 
 void
 InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
-	//Reinit structs to make sure they are clear.
-
+	//Reinit structs to make sure they are clear. 
+	
 	init_data(pose);
 	init_per_residue_data(pose);
-
+	
 	interface_set_.clear();
 	upstream_chains_.insert(0);
 	downstream_chains_.insert(0);
 	included_nres_ = 0;
 	include_residue_.clear();
 	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
-
+	
 }
 
 void
@@ -338,12 +338,12 @@ InterfaceAnalyzerMover::setup_scorefxn() {
 }
 
 void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
-
+	
 	using namespace core;
 	
 	init_on_new_input(pose);
 	core::pose::Pose complexed_pose( pose );
-
+	
 	//If we've specified a ligand chain, then every other chain is the fixed chain
 	if ( ligand_chain_.size() != 0 ) {
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain( ligand_chain_, pose );
@@ -354,7 +354,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 			}
 		}
 	}
-
+	
 	//check for multichain poses
 	if ( explicit_constructor_ ){
 		//fix the foldtree to reflect the fixed chains we want
@@ -362,7 +362,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		if ( dock_chains_.size() != 0 ) {
 			setup_for_dock_chains( complexed_pose, dock_chains_ );
 		}
-
+		
 		//Find the jump to move relative chains:
 		core::Size newjump = reorder_foldtree_find_jump( complexed_pose, fixed_chains_ );
 		interface_jump_ = newjump;
@@ -378,7 +378,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	else {
 		TR << "Using normal constructor" << std::endl;
 	}
-
+	
 	set_pose_info( complexed_pose );
 	//register calculators here if need be
 	if ( !calcs_ready_ ) {
@@ -396,15 +396,15 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		TR << "No Interface detected.  Skipping calculations" << std::endl;
 		return;
 	}
-
+		
 	setup_scorefxn();
-
+	
 	//init compexed and separated pose objects
 	core::pose::Pose separated_pose( make_separated_pose( complexed_pose, interface_jump_) );
-
+	
 	//Redetect disulfides after separation to cleave any that are in the complex pose between the chains.
 	separated_pose.conformation().detect_disulfides();
-
+	
 	//actual computation here
 	if (compute_separated_sasa_ ) compute_separated_sasa( complexed_pose, separated_pose );
 	if (compute_interface_energy_ ) compute_interface_energy( complexed_pose, separated_pose );
@@ -487,16 +487,16 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 				TR << "Ignoring chain: " << core::pose::get_chain_from_chain_id( i, pose ) << std::endl;
 			}
 		}
-
+		
 		//Move the ignored chains far away so they arn't part of the calculations.
 		core::Size temp_jump = reorder_foldtree_find_jump( pose, temp_fixed_chains );
-
+		
 		//Large number to make sure These castaways will not be near mobile chains.  Axis would be find as well here, but this makes them at least 2000 A away.
 		core::pose::Pose sep_pose = make_separated_pose( pose, temp_jump, 3000 );
 		
 		//Debugging
 		//sep_pose.dump_pdb("ignored_chain_sep.pdb");
-
+		
 		//Give the pose a normal foldtree.  Copy data into current pose.
 		core::import_pose::set_reasonable_fold_tree( sep_pose );
 		
@@ -533,7 +533,7 @@ void InterfaceAnalyzerMover::make_interface_set( core::pose::Pose & pose ){
 		TR << "NO INTERFACE FOR: " << posename_base_ << std::endl;
 		return;
 	}
-
+	
 	//Transform interface_set_ to vector1<bool> to match all the per residue data and regular data.
 	data_.interface_nres[ total ] = interface_set_.size();
 	for ( core::Size i = 1; i <= pose.total_residue(); ++i){
@@ -571,7 +571,7 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	std::set<Size> fixed_side_residues, other_side_residues;
 	std::set<core::Size> fixed_chain_nums;
 	std::set<core::Size> other_chain_nums;
-
+	
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
 	for ( Size ii = 1; ii<= pose.total_residue(); ++ii ) {
@@ -626,7 +626,7 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 		utility_exit_with_message_status( "Can't find fixed chains.  Exiting...\n", 1 );
 	//now get info about chains
 	Size numchains ( pose.conformation().num_chains() );
-
+	
 	//Ligand chain last chain in pose, no need to reorder.
 	if ( ligand_chain_.size() != 0 ) {
 	    core::Size ligand_chain_id = core::pose::get_chain_id_from_chain( ligand_chain_, pose );
@@ -635,8 +635,8 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
             return newjump;
 	    }
 	}
-
-
+	
+	
 	utility::vector1<Size> chain_starts;
 	utility::vector1<Size> chain_ends;
 	for ( Size ii = 1; ii <= numchains; ++ii ) {
@@ -828,12 +828,12 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 		per_residue_data_.complexed_energy[ i ] = complexed_energy;
 		per_residue_data_.separated_energy[ i ] = separated_energy;
 	}
-
+	
 	//debugging step to make sure the jump is right
 	//copy.dump_pdb("IAM_test.pdb");
 	// 	TR<< "Post Packing complex_score: " << complex_score << "  sep_score: "
 	// 		<< separated_score << std::endl;
-
+	
 	TR << "included_nres: " << included_nres_ << std::endl;
 	
 	for ( core::Size i = 1; i <= 3; ++i ) {
@@ -847,14 +847,14 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose){
 	using namespace core;
-
+	
 	TR << "Calculating dSASA" << std::endl;
-
+	
 	//Speedup here can come from using SasaCalc directly instead of calculator to limit accessing all the vectors.
-
+	
 	//Complex Pose values.
 	basic::MetricValue< Real > mv_complex_sasa;
-
+	
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_sasa;
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_sasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_hsasa;
@@ -871,7 +871,7 @@ void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed
 	
 	//Separated Pose values.
 	basic::MetricValue< core::Real > mv_sep_sasa;
-
+	
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_sasa;
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_sasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_hsasa;
@@ -1050,7 +1050,7 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 	( *sf_ ) ( complexed_pose ); //shits, giggles, and segfault prevention
 	( *sf_ ) ( separated_pose );
 	//itterate over all residues calc total energy for each then take avg
-
+	
 	core::Real complexed_residue_score;
 	core::Real separated_residue_score;
 	
@@ -1075,7 +1075,7 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 		else {
 			region = side2;
 		}
-
+		
 		//Calculate side 1 and side2 interface score and other values.
 		data_.complexed_interface_score[ region ] += complexed_residue_score;
 		data_.complexed_interface_score[ total ] += complexed_residue_score;
@@ -1123,7 +1123,7 @@ void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pos
 			data_.aromatic_dG_fraction[ i ] = aromatic_dG[ i ] / data_.dG[ i ];
 		}
 	}
-
+	
 	//Loop over all regions, and avoid dividing by zero
 	for ( core::Size i = 1; i <= 3; ++i ) {
 		if ( data_.interface_nres[ i ] > 0 ){
@@ -1236,7 +1236,7 @@ InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose cons
 		}
 		surface_nres[ region ] += 1;
 	}
-
+	
 	//Would surface_nres ever be 0? Don't think so.
 	surface_nres[ total ] = surface_nres[ side1 ] + surface_nres[ side2 ];
 	for ( core::Size i = 1; i <= 3; ++i ) {
@@ -1463,15 +1463,9 @@ InterfaceAnalyzerMover::compute_interface_sc( core::Size &, core::pose::Pose con
 	TR << std::endl;
 
 	//actual calculate function
-	try{
-		sc_calc.Calc();
-		core::scoring::sc::RESULTS const results = sc_calc.GetResults();
-		data_.sc_value = results.sc;
-	}
-	catch (utility::excn::EXCN_Base& excn){
-		TR << "SC calculation failed.  Setting to 0" << std::endl;
-		data_.sc_value = 0;
-	}
+	sc_calc.Calc();
+	core::scoring::sc::RESULTS const results = sc_calc.GetResults();
+	data_.sc_value = results.sc;
 
 }//end compute_interface_sc
 
@@ -1829,8 +1823,8 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 	pymol_packing << "cmd.create(\"" << pymol_object_fullpose_pack << "\", \"" << posename_base_ << "\")" << std::endl;
 
 	///////////////////////////////////////////// WHOLE POSE COLOR BY PACKING /////////////////////
-	TR << "Total: "<< pose.total_residue() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl;
-
+	TR << "Total: "<< pose.total_residue() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl; 
+	
 	//JAB  - This can sometimes not match - Temp fix.  I've emailed Will to help fix this bug in packstat.
 	if ( pose.total_residue() != interface_pack_scores.size() ) {
 		TR << "Packscores and residues do not match. Skipping pymol selection of packing" << std::endl;

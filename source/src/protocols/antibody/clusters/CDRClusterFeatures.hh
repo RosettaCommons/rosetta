@@ -27,8 +27,10 @@
 namespace protocols {
 namespace antibody {
 namespace clusters {
+	using namespace protocols::features;
+	using namespace protocols::antibody;
 	
-class CDRClusterFeatures : public features::FeaturesReporter {
+class CDRClusterFeatures : public FeaturesReporter {
 
 public:
 	CDRClusterFeatures();
@@ -49,7 +51,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & residues,
-		features::StructureID struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 	
 	/// @brief Specify specific CDRs to load and analyze, with cdr_definition and scheme
@@ -65,7 +67,7 @@ public:
 	
 	/// @brief Limit CDRs being analyzed.
 	void
-	set_cdrs_to_use(utility::vector1< CDRNameEnum > cdrs );
+	set_cdrs_to_use(vector1< CDRNameEnum > cdrs );
 	
 	/// @brief set the numbering scheme used by the pose.
 	void

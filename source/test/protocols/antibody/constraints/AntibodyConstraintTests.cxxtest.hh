@@ -21,8 +21,6 @@
 #include <protocols/antibody/constraints/util.hh>
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMover.hh>
 #include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMover.hh>
-#include <protocols/antibody/constraints/CDRDihedralConstraintMover.hh>
-
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
@@ -55,7 +53,6 @@ class AntibodyConstraintTests : public CxxTest::TestSuite {
 	AntibodyInfoOP ab_info;
 	ParatopeSiteConstraintMoverOP paratope_mover;
 	ParatopeEpitopeSiteConstraintMoverOP para_epitope_mover;
-	CDRDihedralConstraintMoverOP cdr_dihedral_cst_mover;
 	
 
 public:
@@ -66,13 +63,11 @@ public:
 		ab_info = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 		paratope_mover = ParatopeSiteConstraintMoverOP( new constraints::ParatopeSiteConstraintMover(ab_info) );
 		para_epitope_mover = ParatopeEpitopeSiteConstraintMoverOP( new constraints::ParatopeEpitopeSiteConstraintMover(ab_info) );
-		cdr_dihedral_cst_mover = CDRDihedralConstraintMoverOP( new CDRDihedralConstraintMover(ab_info));
 		
 	}
 	
 	void test_constraints(){
-		cdr_dihedral_cst_mover->set_cdr(l1);
-		TS_ASSERT_THROWS_NOTHING(cdr_dihedral_cst_mover->apply(pose));
+		TS_ASSERT_THROWS_NOTHING(protocols::antibody::constraints::add_harmonic_cluster_cst_or_coordinate_cst(ab_info, pose, l1));
 		
 		core::scoring::constraints::ConstraintSetCOP  csts = pose.constraint_set();
 		TS_ASSERT(csts->has_constraints());

@@ -18,13 +18,6 @@
 
 #include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
 
-#include <protocols/antibody/constraints/CDRDihedralConstraintMoverCreator.hh>
-#include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMoverCreator.hh>
-#include <protocols/antibody/constraints/ParatopeSiteConstraintMoverCreator.hh>
-
-#include <protocols/antibody/design/AntibodyDesignMoverCreator.hh>
-#include <protocols/antibody/design/AntibodyDesignProtocolCreator.hh>
-
 #include <protocols/backrub/BackrubMoverCreator.hh>
 #include <protocols/backrub/BackrubSidechainMoverCreator.hh>
 
@@ -313,7 +306,6 @@
 #include <protocols/simple_moves/ContingentAcceptMoverCreator.hh>
 #include <protocols/simple_moves/CoupledMoverCreator.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
-#include <protocols/simple_moves/DeleteChainsMoverCreator.hh>
 #include <protocols/simple_moves/DisulfideInsertionMoverCreator.hh>
 #include <protocols/simple_moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/simple_moves/FavorSequenceProfileCreator.hh>
@@ -399,7 +391,6 @@
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
 
-#include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
 #include <protocols/membrane/AddMPLigandMoverCreator.hh> 
 #include <protocols/relax/membrane/MPFastRelaxMoverCreator.hh>
 
@@ -407,4 +398,5 @@
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
 
 #include <protocols/symmetric_docking/membrane/MPSymDockMoverCreator.hh>
+
 

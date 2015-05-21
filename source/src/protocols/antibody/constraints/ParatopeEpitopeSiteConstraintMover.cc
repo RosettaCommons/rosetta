@@ -8,14 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/ParatopeEpitopeSiteConstraintMover.cc
-/// @brief
+/// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMover.hh>
-#include <protocols/antibody/constraints/ParatopeEpitopeSiteConstraintMoverCreator.hh>
-
-#include <protocols/antibody/design/util.hh>
-#include <protocols/antibody/util.hh>
 
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
@@ -29,16 +25,15 @@
 #include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.constraints.ParatopeEpitopeSiteConstraintMover");
+static thread_local basic::Tracer TR("antibody.constraints.ParatopeEpitopeSiteConstraintMover");
 
 namespace protocols {
 namespace antibody {
 namespace constraints {
 	using utility::vector1;
 
-ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover() :
+ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover() : 
 	protocols::moves::Mover(),
 	ab_info_(/* NULL */),
 	current_func_(/* NULL */)
@@ -73,12 +68,12 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover(AntibodyI
 	constrain_to_paratope_cdrs(paratope_cdrs);
 	interface_distance_ = 10.0;
 }
-
+		
 ParatopeEpitopeSiteConstraintMover::~ParatopeEpitopeSiteConstraintMover(){}
 
 void
 ParatopeEpitopeSiteConstraintMover::set_defaults(){
-
+	
 	paratope_cdrs_.clear();
 	paratope_cdrs_.resize(6, true);
 	paratope_residues_.clear();
@@ -88,76 +83,12 @@ ParatopeEpitopeSiteConstraintMover::set_defaults(){
 }
 
 void
-ParatopeEpitopeSiteConstraintMover::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap & ,
-		Filters_map const & ,
-		moves::Movers_map const & ,
-		Pose const & pose
-){
-	//Paratope Constraint options
-	if (tag->hasOption("paratope_cdrs")){
-		paratope_cdrs_ = get_cdr_bool_from_tag(tag, "paratope_cdrs");
-	}
-	else{
-		paratope_cdrs_.clear();
-		paratope_cdrs_.resize(6, true);
-	}
-
-	interface_distance_ = tag->getOption< core::Real >("interface_dis", interface_distance_);
-
-
-	if (tag->hasOption("paratope_residues_pdb") && tag->hasOption("paratope_residues")){
-		utility_exit_with_message("Cannot specify both paratope_residues_pdb and paratope_residues.");
-	}
-
-	if (tag->hasOption("epitope_residues_pdb") && tag->hasOption("epitope_residues")){
-		utility_exit_with_message("Cannot specify both epitope_residues_pdb and epitope_residues.");
-	}
-	//Rosetta Numberings
-	if (tag->hasOption("paratope_residues")){
-		TR << "Using paratope as user set residues." << std::endl;
-		paratope_residues_.clear();
-		paratope_residues_.resize(pose.total_residue(), false);
-		utility::vector1<std::string> residues = utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues"), ",'`~+*&|;. ");
-		for (core::Size i = 1; i <= residues.size(); ++i){
-			paratope_residues_[ utility::string2Size( residues[ i ])] = true;
-		}
-
-	}
-	if (tag->hasOption("epitope_residues")){
-		TR << "Using epitope as user set residues." << std::endl;
-		epitope_residues_.clear();
-		epitope_residues_.resize(pose.total_residue(), false);
-		utility::vector1<std::string> residues = utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues"), ",'`~+*&|;. ");
-		for (core::Size i = 1; i <= residues.size(); ++i){
-			epitope_residues_[ utility::string2Size( residues[ i ])] = true;
-		}
-
-	}
-	//PDB Numbering
-	if (tag->hasOption("paratope_residues_pdb")){
-		TR << "Using paratope as user set residues." << std::endl;
-
-		paratope_residues_ = design::get_resnums_from_strings_with_ranges(pose, utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues_pdb"), ",; ") );
-
-	}
-	if (tag->hasOption("epitope_residues_pdb")){
-		TR << "Using epitope as user set residues." << std::endl;
-
-		epitope_residues_ = design::get_resnums_from_strings_with_ranges(pose, utility::string_split_multi_delim(tag->getOption<std::string>("epitope_residues_pdb"), ",; ") );
-
-	}
-
-}
-
-void
 ParatopeEpitopeSiteConstraintMover::set_constraint_func(core::scoring::func::FuncOP constraint_func){
 	current_func_ = constraint_func;
 }
 
 void
-ParatopeEpitopeSiteConstraintMover::set_interface_distance(const core::Real distance){
+ParatopeEpitopeSiteConstraintMover::set_interface_distance(const core::Size distance){
 	interface_distance_ = distance;
 }
 
@@ -168,7 +99,7 @@ ParatopeEpitopeSiteConstraintMover::constrain_to_epitope_residues(vector1<bool> 
 
 void
 ParatopeEpitopeSiteConstraintMover::constrain_to_epitope_residues(const vector1<design::PDBNumbering >& epitope_residues, const core::pose::Pose& pose) {
-
+	
 	epitope_residues_ = protocols::antibody::design::get_resnum_from_pdb_numbering(pose, epitope_residues);
 }
 
@@ -183,12 +114,12 @@ ParatopeEpitopeSiteConstraintMover::constrain_to_paratope_cdrs(vector1<CDRNameEn
 
 void
 ParatopeEpitopeSiteConstraintMover::constrain_to_paratope_cdrs(const vector1<bool>& paratope_cdrs) {
-
+	
 	if (paratope_cdrs.size() != 6){
 		utility_exit_with_message("Passed paratope cdrs does not equal the total number of cdrs!");
 	}
 	paratope_cdrs_ = paratope_cdrs;
-
+	
 
 }
 
@@ -199,7 +130,7 @@ ParatopeEpitopeSiteConstraintMover::constrain_to_paratope_residues(vector1<bool>
 
 vector1<bool>
 ParatopeEpitopeSiteConstraintMover::paratope_residues_from_cdrs(core::pose::Pose const & pose, const vector1<bool>& paratope_cdrs) const {
-
+	
 	vector1<bool> residues(pose.total_residue(), false);
 	for (core::Size i = 1; i <= paratope_cdrs.size(); ++i){
 		if (paratope_cdrs[i]){
@@ -211,60 +142,60 @@ ParatopeEpitopeSiteConstraintMover::paratope_residues_from_cdrs(core::pose::Pose
 			}
 		}
 	}
-	return residues;
+	return residues;	
 }
 
 void
 ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 	using namespace core::scoring::constraints;
-
+	
 	if (! ab_info_){
 		ab_info_ = AntibodyInfoCOP( AntibodyInfoOP( new AntibodyInfo(pose) ) );
 	}
-
+	
 	//Check if antigen is present
 	if (! ab_info_->antigen_present()){
 		TR <<"Antigen not present!  Could not apply constraints" << std::endl;
 		set_last_move_status(protocols::moves::FAIL_BAD_INPUT);
 		return;
 	}
-
+	
 	//If we have a camelid, only add constraints to H:
 	if ( ab_info_->is_camelid()){
 		paratope_cdrs_[l1] = false;
 		paratope_cdrs_[l2] = false;
 		paratope_cdrs_[l3] = false;
 	}
-
+	
 	if (paratope_residues_.size() == 0){
 		paratope_residues_ = this->paratope_residues_from_cdrs(pose, paratope_cdrs_);
 	}
-
-
+	
+	
 	//If no constraint is set.  Use the default.
 	if (!current_func_){
 		current_func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc(0, 1, interface_distance_) );
 	}
-
+	
 	//Setup antigen paratope residues if none are set.
 	if (epitope_residues_.size() == 0){
 		epitope_residues_ = protocols::antibody::select_epitope_residues(ab_info_, pose, interface_distance_);
 	}
-
+	
 	assert(paratope_residues_.size() == pose.total_residue());
 	assert(epitope_residues_.size() == pose.total_residue());
-
-	TR << "added constraints "<<std::endl;
+	
+	TR << "Currently added constraints: "<<std::endl;
 	//pose.constraint_set()->show(TR);
-
+	
 	//Setup constraint from paratope to epitope and from epitope to paratope.
 	ConstraintCOPs current_csts = pose.constraint_set()->get_all_constraints();
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-
+		
 		if ((paratope_residues_[ i ] == true) && (epitope_residues_[ i ] == true)){
 			utility_exit_with_message("Cannot be both paratope and epitope residue ");
 		}
-
+		
 		if (paratope_residues_[i]){
 			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues_);
 			if (std::find(current_csts.begin(), current_csts.end(), constraint) == current_csts.end()){
@@ -278,23 +209,23 @@ ParatopeEpitopeSiteConstraintMover::apply(core::pose::Pose& pose) {
 				pose.add_constraint(constraint);
 				//TR << "Adding epitope-> paratope constraint: "<<i <<std::endl;
 			}
-
+			
 		}
 
 	}
-
+	
 } // apply
 
 void
 ParatopeEpitopeSiteConstraintMover::remove(core::pose::Pose & pose){
-
+	
 	using namespace core::scoring::constraints;
-
+	
 	vector1<ConstraintOP> csts_to_be_removed;
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
-
+		
 		assert(paratope_residues_[i] != true && epitope_residues_[i] != true);
-
+		
 		if (paratope_residues_[i]){
 			core::scoring::constraints::SiteConstraintOP constraint = setup_constraints(pose, i, epitope_residues_);
 			//constraint_map_[i].push_back(L_constraint);
@@ -312,35 +243,19 @@ ParatopeEpitopeSiteConstraintMover::remove(core::pose::Pose & pose){
 core::scoring::constraints::SiteConstraintOP
 ParatopeEpitopeSiteConstraintMover::setup_constraints(core::pose::Pose const & pose, core::Size residue, vector1<bool> const & residues) const {
 	using namespace core::scoring::constraints;
-
+	
 	//core::scoring::constraints::ConstraintSetOP atom_constraints = new ConstraintSet();
-
+	
 	SiteConstraintOP atom_constraint( new SiteConstraint() );
 	atom_constraint->setup_csts(
-				residue,
-				"CA",
-				residues,
-				pose,
+				residue, 
+				"CA", 
+				residues, 
+				pose, 
 				current_func_);
-
+		
 
 	return atom_constraint;
-}
-
-protocols::moves::MoverOP
-ParatopeEpitopeSiteConstraintMoverCreator::create_mover() const {
-	ParatopeEpitopeSiteConstraintMoverOP ptr(new ParatopeEpitopeSiteConstraintMover);
-	return ptr;
-}
-
-std::string
-ParatopeEpitopeSiteConstraintMoverCreator::keyname() const {
-	return ParatopeEpitopeSiteConstraintMoverCreator::mover_name();
-}
-
-std::string
-ParatopeEpitopeSiteConstraintMoverCreator::mover_name() {
-	return "ParatopeEpitopeConstraintMover";
 }
 
 } //constraints

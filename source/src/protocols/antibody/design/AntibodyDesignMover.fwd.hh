@@ -8,21 +8,21 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyDesignMover.fwd.hh
-/// @brief 
+/// @brief Handles all loading of CDR, Framework, and cluster/dmap info from database file.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
 #ifndef INCLUDED_protocols_antibody_design_AntibodyDesignMover_fwd_hh
 #define INCLUDED_protocols_antibody_design_AntibodyDesignMover_fwd_hh
 
+
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 
-// C++ Headers
-namespace protocols{
-namespace antibody{
-namespace design{
+namespace protocols {
+namespace antibody {
+namespace design {
 
 // Forward
 class AntibodyDesignMover;
@@ -31,10 +31,9 @@ typedef utility::pointer::shared_ptr< AntibodyDesignMover > AntibodyDesignMoverO
 typedef utility::pointer::shared_ptr< AntibodyDesignMover const > AntibodyDesignMoverCOP;
 
 
-} //namespace design
-} //namespace antibody
+}
+} //namespace antibody_design
 } //namespace protocols
 
-
-#endif	//INCLUDED_protocols_antibody_design_AntibodyDesignMover.fwd.hh
+#endif //INCLUDED_protocols_antibody_design_AntibodyDesignMover_fwd_hh
 

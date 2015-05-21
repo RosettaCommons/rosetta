@@ -1935,16 +1935,6 @@ get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 	return chain_ids;
 }
 
-utility::vector1<core::Size>
-get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose){
-	utility::vector1<core::Size> chain_ids;
-	for (Size i = 1; i <= chains.size(); ++i){
-		Size chain_id = get_chain_id_from_chain(chains[ i ], pose);
-		chain_ids.push_back(chain_id);
-	}
-	return chain_ids;
-}
-
 core::Size
 get_jump_id_from_chain(std::string const & chain, core::pose::Pose const & pose){
 	core::Size chain_id= get_chain_id_from_chain(chain, pose);

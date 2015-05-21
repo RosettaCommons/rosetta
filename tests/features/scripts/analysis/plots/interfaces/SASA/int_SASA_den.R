@@ -84,7 +84,6 @@ run=function(self, sample_sources, output_dir, output_formats){
     side
   FROM
     interface_sides
-  ORDER BY dSASA DESC
   "
   
   #Polar fraction - from Ben Strange's Paper
@@ -117,6 +116,7 @@ run=function(self, sample_sources, output_dir, output_formats){
   
   #Backbone SASA may not be interesting, but I want I still want to know for now.
   fields = c("dSASA", "dSASA_bb", "dSASA_sc", "dhSASA", "dhSASA_bb", "dhSASA_sc", "dhSASA_rel_by_charge")
+  
   for (field in fields){
 
     parts = list(plot_parts, scale_x_continuous("SASA"))
@@ -153,67 +153,7 @@ run=function(self, sample_sources, output_dir, output_formats){
       
 #  plot_field(p, paste("dSASA_all", "den_sides","by_interface", sep="_"), grid=side~interface)
   
-  ####  Means  #########
-  fields = c("dSASA", "dhSASA")
-  for (field in fields){
-
-  avgs <- ddply(data, .(sample_source, side, field), function(d2){
-    data.frame(m = mean(d2[,field]), std_dev = sd(d2[,field]), m_top10 = mean(d2[1:10,field]), std_dev_top_10 = sd(d2[1:10,field]), top = d2[1,field])
-  })
-    
-  p <- ggplot(data=avgs ) +
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field,"Average", sep=" "))+
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "avg_sides_by_all", grid=side ~ .)
   
-  #Average Top 10
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m_top10 , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field, "Average Best 10",sep=" ")) +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "avg_sides_top_10_by_all", grid=side ~ .)
-  
-  #Best
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= top , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field, "top", sep=" ")) +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "sides_top_by_all", grid=side ~ .)
-  
-  avgs <- ddply(data, .(sample_source, side, field, interface), function(d2){
-    data.frame(m = mean(d2[,field]), std_dev = sd(d2[,field]), m_top10 = mean(d2[1:10,field]), std_dev_top_10 = sd(d2[1:10,field]), top = d2[1,field])
-  })
-      
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field,"Average", sep=" ")) +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "avg_sides_by_interface", grid=side ~ interface)
-  
-  #Average Top 10
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m_top10 , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field, "Average Best 10",sep=" ")) +
-    scale_x_discrete(labels = abbreviate) +
-    ylab(field)
-  plot_field(p, "avg_sides_top_10_by_interface", grid=side ~ interface)
-  
-  #Best
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= top , fill=sample_source)) +
-    theme_bw() +
-    ggtitle(paste("Buried", field, "top", sep=" ")) +
-    scale_x_discrete(labels = abbreviate) +
-    ylab(field)
-  plot_field(p, "sides_top_by_interface", grid=side ~ interface)
-    
-  }
   #Fractions
   field = "aromatic_dSASA_fraction"
   parts = list(plot_parts, scale_x_continuous("fraction", limit=c(0, 1.0)))
@@ -221,7 +161,7 @@ run=function(self, sample_sources, output_dir, output_formats){
   dens <- estimate_density_1d(data,  group, field)
   p <- ggplot(data=dens, na.rm=T) + parts +
     geom_line(aes(x, y, colour=sample_source), size=1.2) +
-    ggtitle("Aromatic dSASA Fraction") +
+    ggtitle("Aromatic dSASA Fraction")
   plot_field(p, "dSASA_aromatic_fraction_den_by_all", grid=side ~ .)
   
   group = c("sample_source", "interface", "side")

@@ -168,7 +168,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H1-13-10"] = H1_13_10;
 	string_to_enum_["H1-13-11"] = H1_13_11;
 	string_to_enum_["H1-13-cis9-1"] = H1_13_cis9_1;
-	string_to_enum_["H1-13-CIS9-1"] = H1_13_cis9_1;
 	string_to_enum_["H1-14-1"] = H1_14_1;
 	string_to_enum_["H1-15-1"] = H1_15_1;
 	string_to_enum_["H1-16-1"] = H1_16_1;
@@ -200,14 +199,12 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H3-5-1"] = H3_5_1;
 	string_to_enum_["H3-11-2"] = H3_11_2;
 	string_to_enum_["H3-12-cis9-1"] = H3_12_cis9_1;
-	string_to_enum_["H3-12-CIS9-1"] = H3_12_cis9_1;
 	string_to_enum_["H3-9-1"] = H3_9_1;
 	string_to_enum_["H3-7-1"] = H3_7_1;
 	string_to_enum_["H3-13-3"] = H3_13_2;
 	string_to_enum_["H3-19-1"] = H3_19_1;
 	string_to_enum_["H3-16-1"] = H3_16_1;
 	string_to_enum_["H3-7-cis4-1"] = H3_7_cis4_1;
-	string_to_enum_["H3-7-CIS4-1"] = H3_7_cis4_1;
 	string_to_enum_["H3-6-1"] = H3_6_1;
 	string_to_enum_["H3-18-2"] = H3_18_2;
 	string_to_enum_["H3-21-1"] = H3_21_1;
@@ -218,23 +215,19 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H3-5-2"] = H3_5_2;
 	string_to_enum_["H3-10-2"] = H3_10_2;
 	string_to_enum_["H3-13-cis7-1"] = H3_13_cis7_1;
-	string_to_enum_["H3-13-CIS7-1"] = H3_13_cis7_1;
 	string_to_enum_["H3-10-cis5-1"] = H3_10_cis5_1;
-	string_to_enum_["H3-10-CIS5-1"] = H3_10_cis5_1;
 	string_to_enum_["H3-14-2"] = H3_14_2;
 	string_to_enum_["H3-7-2"] = H3_7_2;
 	string_to_enum_["H3-15-1"] = H3_15_1;
 	string_to_enum_["H3-10-3"] = H3_10_3;
 	string_to_enum_["H3-20-1"] = H3_20_1;
 	string_to_enum_["H3-14-cis7-1"] = H3_14_cis7_1;
-	string_to_enum_["H3-14-CIS7-1"] = H3_14_cis7_1;
 	string_to_enum_["H3-18-1"] = H3_18_1;
 	string_to_enum_["H3-24-1"] = H3_24_1;
 	string_to_enum_["H3-26-1"] = H3_26_1;
 	string_to_enum_["H3-8-2"] = H3_8_2;
 	string_to_enum_["H3-14-4"] = H3_14_4;
 	string_to_enum_["H3-13-cis8-1"] = H3_13_cis8_1;
-	string_to_enum_["H3-13-CIS8-1"] = H3_13_cis8_1;
 	string_to_enum_["H3-22-1"] = H3_22_1;
 	string_to_enum_["L1-10-1"] = L1_10_1;
 	string_to_enum_["L1-10-2"] = L1_10_2;
@@ -267,7 +260,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3-8-1"] = L3_8_1;
 	string_to_enum_["L3-8-2"] = L3_8_2;
 	string_to_enum_["L3-8-cis6-1"] = L3_8_cis6_1;
-	string_to_enum_["L3-8-CIS6-1"] = L3_8_cis6_1;
 	string_to_enum_["L3-9-1"] = L3_9_1;
 	string_to_enum_["L3-9-2"] = L3_9_2;
 	string_to_enum_["L3-9-cis6-1"] = L3_9_cis6_1;
@@ -277,13 +269,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3-10-cis8-1"] = L3_10_cis8_1;
 	string_to_enum_["L3-10-cis7,8-1"] = L3_10_cis7_8_1;
 	string_to_enum_["L3-11-cis7-1"] = L3_11_cis7_1;
-	string_to_enum_["L3-9-CIS6-1"] = L3_9_cis6_1;
-	string_to_enum_["L3-9-CIS7-1"] = L3_9_cis7_1;
-	string_to_enum_["L3-9-CIS7-2"] = L3_9_cis7_2;
-	string_to_enum_["L3-9-CIS7-3"] = L3_9_cis7_3;
-	string_to_enum_["L3-10-CIS8-1"] = L3_10_cis8_1;
-	string_to_enum_["L3-10-CIS7,8-1"] = L3_10_cis7_8_1;
-	string_to_enum_["L3-11-CIS7-1"] = L3_11_cis7_1;
 	string_to_enum_["NA"] = NA;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	string_to_enum_["H1_10_1"] = H1_10_1;
@@ -300,7 +285,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H1_13_10"] = H1_13_10;
 	string_to_enum_["H1_13_11"] = H1_13_11;
 	string_to_enum_["H1_13_cis9_1"] = H1_13_cis9_1;
-	string_to_enum_["H1_13_CIS9_1"] = H1_13_cis9_1;
 	string_to_enum_["H1_14_1"] = H1_14_1;
 	string_to_enum_["H1_15_1"] = H1_15_1;
 	string_to_enum_["H1_16_1"] = H1_16_1;
@@ -332,14 +316,12 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H3_5_1"] = H3_5_1;
 	string_to_enum_["H3_11_2"] = H3_11_2;
 	string_to_enum_["H3_12_cis9_1"] = H3_12_cis9_1;
-	string_to_enum_["H3_12_CIS9_1"] = H3_12_cis9_1;
 	string_to_enum_["H3_9_1"] = H3_9_1;
 	string_to_enum_["H3_7_1"] = H3_7_1;
 	string_to_enum_["H3_13_3"] = H3_13_2;
 	string_to_enum_["H3_19_1"] = H3_19_1;
 	string_to_enum_["H3_16_1"] = H3_16_1;
 	string_to_enum_["H3_7_cis4_1"] = H3_7_cis4_1;
-	string_to_enum_["H3_7_CIS4_1"] = H3_7_cis4_1;
 	string_to_enum_["H3_6_1"] = H3_6_1;
 	string_to_enum_["H3_18_2"] = H3_18_2;
 	string_to_enum_["H3_21_1"] = H3_21_1;
@@ -350,23 +332,19 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["H3_5_2"] = H3_5_2;
 	string_to_enum_["H3_10_2"] = H3_10_2;
 	string_to_enum_["H3_13_cis7_1"] = H3_13_cis7_1;
-	string_to_enum_["H3_13_CIS7_1"] = H3_13_cis7_1;
 	string_to_enum_["H3_10_cis5_1"] = H3_10_cis5_1;
-	string_to_enum_["H3_10_CIS5_1"] = H3_10_cis5_1;
 	string_to_enum_["H3_14_2"] = H3_14_2;
 	string_to_enum_["H3_7_2"] = H3_7_2;
 	string_to_enum_["H3_15_1"] = H3_15_1;
 	string_to_enum_["H3_10_3"] = H3_10_3;
 	string_to_enum_["H3_20_1"] = H3_20_1;
 	string_to_enum_["H3_14_cis7_1"] = H3_14_cis7_1;
-	string_to_enum_["H3_14_CIS7_1"] = H3_14_cis7_1;
 	string_to_enum_["H3_18_1"] = H3_18_1;
 	string_to_enum_["H3_24_1"] = H3_24_1;
 	string_to_enum_["H3_26_1"] = H3_26_1;
 	string_to_enum_["H3_8_2"] = H3_8_2;
 	string_to_enum_["H3_14_4"] = H3_14_4;
 	string_to_enum_["H3_13_cis8_1"] = H3_13_cis8_1;
-	string_to_enum_["H3_13_CIS8_1"] = H3_13_cis8_1;
 	string_to_enum_["H3_22_1"] = H3_22_1;
 	string_to_enum_["L1_10_1"] = L1_10_1;
 	string_to_enum_["L1_10_2"] = L1_10_2;
@@ -399,7 +377,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3_8_1"] = L3_8_1;
 	string_to_enum_["L3_8_2"] = L3_8_2;
 	string_to_enum_["L3_8_cis6_1"] = L3_8_cis6_1;
-	string_to_enum_["L3_8_CIS6_1"] = L3_8_cis6_1;
 	string_to_enum_["L3_9_1"] = L3_9_1;
 	string_to_enum_["L3_9_2"] = L3_9_2;
 	string_to_enum_["L3_9_cis6_1"] = L3_9_cis6_1;
@@ -408,12 +385,6 @@ CDRClusterEnumManager::setup() {
 	string_to_enum_["L3_10_cis8_1"] = L3_10_cis8_1;
 	string_to_enum_["L3_10_cis7_8_1"] = L3_10_cis7_8_1;
 	string_to_enum_["L3_11_cis7_1"] = L3_11_cis7_1;
-	string_to_enum_["L3_9_CIS6_1"] = L3_9_cis6_1;
-	string_to_enum_["L3_9_CIS7_1"] = L3_9_cis7_1;
-	string_to_enum_["L3_9_CIS7_2"] = L3_9_cis7_2;
-	string_to_enum_["L3_10_CIS8_1"] = L3_10_cis8_1;
-	string_to_enum_["L3_10_CIS7_8_1"] = L3_10_cis7_8_1;
-	string_to_enum_["L3_11_CIS7_1"] = L3_11_cis7_1;
 }
 
 std::string

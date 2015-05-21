@@ -75,8 +75,8 @@ run=function(self, sample_sources, output_dir, output_formats){
     xlab("CDR") +
     ylab("n")
   plot_field(p, "avg_contacts_per_residue_per_cdr_hist")
-  #save_tables(self, means, "avg_contacts_per_residue_per_cdr_table", sample_sources, output_dir, output_formats,
-  #  caption="Avg contacts per residue per cdr", caption.placement="top", quote_strings=F)
+  save_tables(self, means, "avg_contacts_per_residue_per_cdr_table", sample_sources, output_dir, output_formats,
+    caption="Avg contacts per residue per cdr", caption.placement="top", quote_strings=F)
 
   #Residues in contact per CDR
   means = ddply(data, .(sample_source, CDR), function(data){

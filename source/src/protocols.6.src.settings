@@ -55,7 +55,6 @@ sources = {
 	"protocols/antibody/constraints":[
 		"ParatopeEpitopeSiteConstraintMover",
 		"ParatopeSiteConstraintMover",
-		"CDRDihedralConstraintMover",
 		"util",
 	],
 	"protocols/antibody/database":[
@@ -66,23 +65,19 @@ sources = {
 	"protocols/antibody/design":[
 		"AntibodyDesignModeler",
 		"AntibodyDesignMover",
-		"AntibodyDesignProtocol",
+		"AntibodyDesignMoverGenerator",
+		"AntibodyGraftDesignMover",
+		"AntibodySeqDesignMover",
 		"AntibodySeqDesignTFCreator",
+		"ConservativeDesignOperation",
 		"CDRGraftDesignOptions",
 		"CDRSeqDesignOptions",
-                "MutateFrameworkForCluster",
+		"ResidueProbDesignOperation",
 		"util",
 	],
 	"protocols/antibody/snugdock":[
 		"SnugDock",
 		"SnugDockProtocol",
-	],
-	"protocols/antibody/task_operations":[
-		"AddCDRProfilesOperation",
-		"AddCDRProfileSetsOperation",
-		"DisableAntibodyRegionOperation",
-		"DisableCDRsOperation",
-		"RestrictToCDRsAndNeighbors",
 	],
 	"protocols/cryst" : [
 	        "cryst_movers",
@@ -186,7 +181,7 @@ sources = {
 		"MatDesPointMutationCalculator",
 		"SymDofMover",
 		"SymDofMoverSampler",
-		"SchemePlaceMotifsMover",
+		"SchemePlaceMotifsMover",		
 		"SymUnsatHbondFilter",
 	],
 	"protocols/protein_interface_design": [

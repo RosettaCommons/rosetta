@@ -102,7 +102,7 @@ extern std::string const DOCK_LOW_PATCH;
 
 /// @brief A helper function which returns a scoring function owning pointer according to the
 /// user's command line parameters -score:weights and -score:patch
-/// By default it returns weights=talaris2013 for fullatom,
+/// By default it returns weights=standard and patch=score12 for fullatom,
 /// and weights=cen_std and patch="" for centroid
 core::scoring::ScoreFunctionOP get_score_function( bool const is_fullatom = true );
 

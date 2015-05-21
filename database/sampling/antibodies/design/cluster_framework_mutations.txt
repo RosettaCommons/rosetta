@@ -1,6 +1,0 @@
-#Jared Adolf-Bryfogle (3/22/15).  Data originally from North/Dunbrack JMB 2011 - A new clustering of Antibody CDR Loop Conformations
-
-#cluster position mutations(s) numbering_scheme
-L1-11-1 L:89:~ F AHO_Scheme
-L1-11-2 L:89:~ Y AHO_Scheme
-#H2-10-1 H:82:~ ADQR AHO_Scheme

@@ -9,24 +9,23 @@
 #-out:level 400
 
 #####PyMol #####################
-#-show_simulation_in_pymol .2
-#-update_pymol_on_energy_changes_only
+-show_simulation_in_pymol .5
+-update_pymol_on_energy_changes_only
 #-update_pymol_on_conformation_changes_only
-#-keep_pymol_simulation_history
+-keep_pymol_simulation_history
 
 #####General Options ###########
 #-in:file:s mis_start_3FO9_0006.pdb
 #-in:file:s mis_start_0001.pdb
 -in:file:s mis_start.pdb
 #-in:file:s mis_start_no_antigen.pdb
-#-in:file:s 2r0l_1_1.pdb
 -nstruct 1
 
 #-run:debug
 -pdb_comments
 #-restore_pre_talaris_2013_behavior #Speed
 -ignore_unrecognized_res
--ignore_zero_occupancy false
+
 
 
 ############################################
@@ -35,42 +34,44 @@
 #-antibody:design:antibody_database /sampling/antibodies/ab_db_for_tests.db
 
 #-design_cdrs L1
--top_designs 1
--antibody:design:outer_cycles 2
+-top_graft_designs 1
+-graft_rounds 10
 #-antibody:design:design_rounds 1
+-design_method fixbb
 
--antibody:light_chain kappa
-#-interface_dis 7.0
+-antibody:light_chain lambda
+-interface_dis 7.0
 #-antibody:design:interface_dis 3.0
-#-antibody:design:neighbor_dis 6.0
--use_outliers false
+#-antibody:design:neighbor_dis 3.0
+
 
 ######### Protocol Options #################
+-do_graft_design true
+-do_sequence_design false
 
 #-post_graft_rb_min false
-#-post_graft_dock
-
+-post_graft_dock
+-post_graft_seq_design
 #-design_antigen
-#-design_framework
+-design_framework
 
 ######## Post Modeling Options ##############
-
-#-run_snugdock
-#-run_relax
+#-do_post_design_modeling
+#-do_post_graft_design_modeling
 
 
 #########Epitope and Paratope Options ########
-#-paratope L1 L2 L3
+-paratope L1 L2 L3
 #-use_epitope_constraints
 #-epitope 58S 60S 62S 64S 68S 72S 74S 76S 77S 78S 79S 80S 81S
 #-epitope 58S 60S 62S 64S 68S 72S 74S 76S 77S 78S 79S 80S 81S 82S 83S 85S 66S 89S 90S 92S 93S 94S 95S 97S 98S 99S
 
 
 ########Benchmarking Options ##################
--benchmark_graft_design false
+#-benchmark_graft_design
 -adapt_graft true
-#-antibody:design:dump_post_graft_designs
--add_graft_log_to_pdb
+-antibody:design:dump_post_graft_designs
+
 
 
 

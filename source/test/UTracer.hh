@@ -38,13 +38,12 @@ namespace test {
 class UTracer : public basic::otstream
 {
 public:
-	UTracer(std::string const & file_name, bool ignore_extra_lines = false) :
+	UTracer(std::string const & file_name) :
 	  u_file_name_(file_name),
 	  file_original_(file_name.c_str(), std::fstream::in),
 	  file_new_((file_name+"._tmp_").c_str(), std::fstream::out),
 	  abs_tolerance_(1e-200), rel_tolerance_(1e-200),
-	  error_(false), //error_signal(false), ufile_line_(-1),
-	  ignore_extra_lines_(ignore_extra_lines)
+	  error_(false) //error_signal(false), ufile_line_(-1),
 	{
 		static char const * nfi = "NoFileInfo";
 		line_ = 0;
@@ -119,9 +118,9 @@ public:
 
 		if( ! error_ ) {
 			std::string line;
-			if( ! ignore_extra_lines_ && getline(file_original_, line) ) { ///< Some lines remain in the buffer
+			if( getline(file_original_, line) ) { ///< Some lines remain in the buffer
 
-				line = "(UTrace: "+ u_file_name_ + ") Extra line in the end of a file to compare with: " + line + "\n";
+				line = "(UTrace: "+ u_file_name_ + ") Extra line in the end of a file to comapre with: " + line + "\n";
 				_TS_FAIL(file_, line_, line.c_str() );
 			}
 		}
@@ -145,12 +144,6 @@ public:
 	//UTracer & rel_tolerance(double r) { rel_tolerance_ = r; return *this; };
 	UTracer & rel_tolerance(double r) {	(*this) << "set_rel_tolerance(" <<  r << ")"; return *this; };
 
-	
-	///@brief Set boolean to ignore extra lines from a UTracer .u file (JAB). 
-	void set_ignore_extra_lines(bool ignore_extra_lines){
-		ignore_extra_lines_= ignore_extra_lines;
-	}
-	
 protected:
 	/// @brief overload member function.
 	virtual void t_flush(std::string const & s) {
@@ -176,10 +169,7 @@ private:
 	///        and futher errors should not be reported.
 	bool error_;
 
-	///@brief Ignore extra lines at the end of a .u file if set.  Drives me crazy (JAB).
-	bool ignore_extra_lines_;
-	
-	/// @brief flag indicating that error happened at current line.
+	/// @brief flag indicating that error happend at current line.
 	//bool error_signal_;
 
 	/// @brief buffers that holds original and new lines, we use it for error reporting.

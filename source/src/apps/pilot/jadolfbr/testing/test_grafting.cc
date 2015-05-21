@@ -104,7 +104,7 @@ public:
 			}
 			core::Size cdr_index = RG.random_range(1, cdr_set_[cdr].size());
 
-			CDRDBPose c_p = cdr_set_[cdr][cdr_index];
+			CDRPose c_p = cdr_set_[cdr][cdr_index];
 
 			core::pose::Pose piece = *(c_p.pose);
 			TR <<"Grafting: " << ab_info_->get_cluster_name(c_p.cluster)<<" from "<<c_p.pdb << std::endl;
@@ -136,7 +136,7 @@ public:
 		}
 		core::Size cdr_index = RG.random_range(1, cdr_set_[cdr].size());
 
-		CDRDBPose c_p = cdr_set_[cdr][cdr_index];
+		CDRPose c_p = cdr_set_[cdr][cdr_index];
 
 		core::pose::Pose piece = *(c_p.pose);
 		TR <<"Grafting: " << ab_info_->get_cluster_name(c_p.cluster)<<" from "<<c_p.pdb << std::endl;

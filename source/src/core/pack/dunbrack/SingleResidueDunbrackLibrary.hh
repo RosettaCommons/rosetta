@@ -26,8 +26,6 @@
 #include <utility/assert.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
@@ -277,13 +275,9 @@ public:
 		Real chi,
 		Size which_chi
 	) const {
-		debug_assert( ! dun02_ );
-		//assert( -180.0 <= chi && chi <= 180.0 );
-		if ( !(-180.0 <= chi && chi <= 180.0 )){
-			throw utility::excn::EXCN_RangeError(
-				"chi angle must be between -180 and 180: "+utility::to_string(chi));
-		}
-		
+	debug_assert( ! dun02_ );
+	debug_assert( -180.0 <= chi && chi <= 180.0 );
+
 		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/) {
 			if ( which_chi == 1 ) {
 				if ( chi > 0 ) { return 1; }

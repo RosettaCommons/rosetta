@@ -288,9 +288,8 @@ class Tester:
             if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
                 print 'Test suite %s not found!' % Options.one
                 print "Available test suites are"
-                tests = [s for (l,s) in self.all_test_suites]
-                for test in sorted(tests):
-                    print "\t%s" % test
+                for (l,s) in self.all_test_suites:
+                    print "\t%s" % s
                 sys.exit(1)
 
             for lib in UnitTestExecutable:

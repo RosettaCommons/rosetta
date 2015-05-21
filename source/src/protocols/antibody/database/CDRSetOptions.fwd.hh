@@ -37,4 +37,3 @@ typedef utility::pointer::shared_ptr< CDRSetOptions const > CDRSetOptionsCOP;
 #endif	//INCLUDED_protocols_antibody_design_AntibodyCDRSetInstructions.fwd.hh
 
 
-

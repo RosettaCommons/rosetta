@@ -8,15 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/antibody_design/ParatopeSiteConstraintMover.cc
-/// @brief
+/// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
 #include <protocols/antibody/constraints/ParatopeSiteConstraintMover.hh>
-#include <protocols/antibody/constraints/ParatopeSiteConstraintMoverCreator.hh>
-#include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/util.hh>
 
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
@@ -27,9 +24,8 @@
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
 
-static thread_local basic::Tracer TR("protocols.antibody.constraints.ParatopeSiteConstraintMover");
+static thread_local basic::Tracer TR("antibody.constraints.ParatopeSiteConstraintMover");
 
 namespace protocols {
 namespace antibody {
@@ -56,61 +52,11 @@ void
 ParatopeSiteConstraintMover::set_defaults() {
 	cdrs_to_apply_.clear();
 	cdrs_to_apply_.resize(6, true);
-
+	
 	antigen_chains_.clear();
 	paratope_residues_.clear();
 	interface_distance_ = 10;
 	//cst_set_ = new core::scoring::constraints::ConstraintSet();
-}
-
-void
-ParatopeSiteConstraintMover::parse_my_tag(
-		TagCOP tag,
-		basic::datacache::DataMap &,
-		Filters_map const & ,
-		moves::Movers_map const & ,
-		Pose const & pose
-){
-	//Paratope Constraint options
-	if (tag->hasOption("paratope_cdrs")){
-		cdrs_to_apply_ = get_cdr_bool_from_tag(tag, "paratope_cdrs");
-	}
-	else{
-		cdrs_to_apply_.clear();
-		cdrs_to_apply_.resize(6, true);
-	}
-
-	interface_distance_ = tag->getOption< core::Real >("interface_dis", interface_distance_);
-
-	if (tag->hasOption("antigen_chains")){
-		utility::vector1<std::string> chain_strings = utility::string_split_multi_delim(tag->getOption<std::string>("antigen_chains"), ":,'`~+*&|;.");
-		antigen_chains_ = core::pose::get_chain_ids_from_chains(chain_strings, pose);
-	}
-
-	if (tag->hasOption("paratope_residues_pdb") && tag->hasOption("paratope_residues")){
-		utility_exit_with_message("Cannot specify both paratope_residues_pdb and paratope_residues.");
-	}
-
-	//Rosetta Numberings
-	if (tag->hasOption("paratope_residues")){
-		TR << "Using paratope as user set residues." << std::endl;
-		paratope_residues_.clear();
-		paratope_residues_.resize(pose.total_residue(), false);
-		utility::vector1<std::string> residues = utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues"), ",'`~+*&|;. ");
-		for (core::Size i = 1; i <= residues.size(); ++i){
-			paratope_residues_[ utility::string2Size( residues[ i ])] = true;
-		}
-
-	}
-
-	//PDB Numbering
-	if (tag->hasOption("paratope_residues_pdb")){
-		TR << "Using paratope as user set residues." << std::endl;
-
-		paratope_residues_ = design::get_resnums_from_strings_with_ranges(pose, utility::string_split_multi_delim(tag->getOption<std::string>("paratope_residues_pdb"), ",; ") );
-
-	}
-
 }
 
 void
@@ -120,7 +66,7 @@ ParatopeSiteConstraintMover::constrain_to_paratope_cdrs(const vector1<CDRNameEnu
 	for (core::Size i = 1; i <= paratope_cdrs.size(); ++i){
 		cdrs_to_apply_[core::Size(paratope_cdrs[i])] = true;
 	}
-
+	
 }
 
 void
@@ -151,20 +97,20 @@ ParatopeSiteConstraintMover::set_interface_distance(core::Real interface_distanc
 void
 ParatopeSiteConstraintMover::remove(core::pose::Pose& pose, bool reset_paratope_residues){
 	using namespace core::scoring::constraints;
-
+	
 	if (! reset_paratope_residues){
 		assert(paratope_residues_.size() == pose.total_residue());
 	}
 	else{
 		this->setup_paratope_residues_from_cdrs(pose);
 	}
-
+	
 	if (antigen_chains_.size() == 0) antigen_chains_ = ab_info_->get_antigen_chain_ids(pose);
-
+	
 	vector1<ConstraintOP> csts_to_be_removed;
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
 		if (! paratope_residues_[i]) continue;
-
+		
 		for (core::Size x = 1; x <= antigen_chains_.size(); ++x){
 			SiteConstraintOP res_constraint = setup_constraints(pose, i, utility::to_string(core::pose::get_chain_from_chain_id(x, pose)));
 			csts_to_be_removed.push_back(res_constraint);
@@ -175,12 +121,12 @@ ParatopeSiteConstraintMover::remove(core::pose::Pose& pose, bool reset_paratope_
 
 void
 ParatopeSiteConstraintMover::setup_paratope_residues_from_cdrs(core::pose::Pose const & pose){
-
+	
 	paratope_residues_.clear();
 	paratope_residues_.resize(pose.total_residue(), false);
 	for (core::Size i =1; i <= core::Size(CDRNameEnum_total); ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-
+		
 		if (cdrs_to_apply_[cdr]){
 			for (core::Size x = ab_info_->get_CDR_start(cdr, pose); x <= ab_info_->get_CDR_end(cdr, pose); ++x){
 				paratope_residues_[x] = true;
@@ -193,7 +139,7 @@ void
 ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 
 	using namespace core::scoring::constraints;
-
+	
 	if (! ab_info_){
 		ab_info_ = AntibodyInfoCOP( AntibodyInfoOP( new AntibodyInfo(pose) ) );
 	}
@@ -211,32 +157,28 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 		cdrs_to_apply_[l2] = false;
 		cdrs_to_apply_[l3] = false;
 	}
-
+	
 	//Check any settings, set defaults from our antibody info.
 	if (antigen_chains_.size() == 0) antigen_chains_ = ab_info_->get_antigen_chain_ids(pose);
 	if (paratope_residues_.size() == 0) setup_paratope_residues_from_cdrs(pose);
-
-	if (paratope_residues_.size() != pose.total_residue()){
-		TR << "Paratope residues does not match total residues. Using settings from paratope CDRs."<<std::endl;
-		setup_paratope_residues_from_cdrs(pose);
-	}
+	
 	//Check any set function
 	if (! current_func_){
 		current_func_ = core::scoring::func::FuncOP( new core::scoring::func::FlatHarmonicFunc(0, 1, interface_distance_) );
 	}
-
+	
 	assert(paratope_residues_.size() == pose.total_residue());
-
+	
 	//Ready to go!
 	ConstraintCOPs current_csts = pose.constraint_set()->get_all_constraints();
 
 	//pose.constraint_set()->show(TR);
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
 		if (! paratope_residues_[i]) continue;
-
+		
 		for (core::Size x = 1; x <= antigen_chains_.size(); ++x){
 			SiteConstraintOP res_constraint = setup_constraints(pose, i, utility::to_string(core::pose::get_chain_from_chain_id(antigen_chains_[x], pose)));
-
+			
 			//Use find  - this may take some time.  Also, the func comparisons seem to be by value - I really don't think they would ever be the same since we clone.
 			//Looks like clone of atom pair constraint DOES NOT clone the func, so we should be ok.
 			if (std::find(current_csts.begin(), current_csts.end(), res_constraint) == current_csts.end()){
@@ -250,38 +192,23 @@ ParatopeSiteConstraintMover::apply(core::pose::Pose& pose){
 core::scoring::constraints::SiteConstraintOP
 ParatopeSiteConstraintMover::setup_constraints(core::pose::Pose const & pose, core::Size resnum, const std::string chain){
 	using namespace core::scoring::constraints;
-
+	
 	//core::scoring::constraints::ConstraintSetOP atom_constraints = new ConstraintSet();
 	//AmbiguousConstraintOP res_constraint = new AmbiguousConstraint();
-
+	
 
 	SiteConstraintOP atom_constraint( new SiteConstraint() );
 	atom_constraint->setup_csts(
-				resnum,
-				"CA",
-				chain,
-				pose,
+				resnum, 
+				"CA", 
+				chain, 
+				pose, 
 				current_func_);
-
+		
 	return atom_constraint;
-
+	
 }
 
-protocols::moves::MoverOP
-ParatopeSiteConstraintMoverCreator::create_mover() const {
-	ParatopeSiteConstraintMoverOP ptr(new ParatopeSiteConstraintMover);
-	return ptr;
-}
-
-std::string
-ParatopeSiteConstraintMoverCreator::keyname() const {
-	return ParatopeSiteConstraintMoverCreator::mover_name();
-}
-
-std::string
-ParatopeSiteConstraintMoverCreator::mover_name() {
-	return "ParatopeSiteConstraintMover";
-}
 
 } //constraints
 } //antibody

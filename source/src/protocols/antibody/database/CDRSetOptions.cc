@@ -16,7 +16,6 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 
-
 namespace protocols {
 namespace antibody {
 
@@ -26,7 +25,7 @@ CDRSetOptions::CDRSetOptions(bool load):
 	utility::pointer::ReferenceCount(),
 	load_(load)
 {
-	set_defaults();
+
 }
 CDRSetOptions::CDRSetOptions(CDRNameEnum cdr, bool load):
 	utility::pointer::ReferenceCount(),
@@ -52,8 +51,7 @@ CDRSetOptions::CDRSetOptions(const CDRSetOptions& src):
 	exclude_species_(src.exclude_species_),
 	include_only_species_(src.include_only_species_),
 	exclude_germlines_(src.exclude_germlines_),
-	include_only_germlines_(src.include_only_germlines_),
-	sampling_cutoff_(src.sampling_cutoff_)
+	include_only_germlines_(src.include_only_germlines_)
 {
 
 }
@@ -76,8 +74,6 @@ CDRSetOptions::set_defaults() {
 	include_only_species_.clear();
 	exclude_germlines_.clear();
 	include_only_germlines_.clear();
-	
-	sampling_cutoff_ = 0;
 
 }
 
@@ -291,17 +287,6 @@ CDRSetOptions::min_length(core::Size length) {
 	min_length_ =length;
 }
 
-void
-CDRSetOptions::cluster_sampling_cutoff(core::Size cutoff){
-
-	sampling_cutoff_ = cutoff;
-
-}
-
-core::Size
-CDRSetOptions::cluster_sampling_cutoff() const {
-	return sampling_cutoff_;
-}
 
 }
 }

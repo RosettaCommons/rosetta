@@ -44,10 +44,10 @@ static thread_local basic::Tracer TR( "protocols.grafting.CCDEndsGraftMover" );
 
 namespace protocols {
 namespace grafting {
-
+    
     using core::kinematics::MoveMapCOP;
     using core::Size;
-
+    
 CCDEndsGraftMover::CCDEndsGraftMover():
 	AnchoredGraftMover(0u, 0u) // 0u to avoid spurious rewrite
 {
@@ -60,7 +60,7 @@ CCDEndsGraftMover::CCDEndsGraftMover(const Size start, Size const end, bool copy
 {
 	Nter_overhang_length(2);
 	Cter_overhang_length(2);
-
+	
 	copy_pdbinfo(copy_pdb_info);
 }
 
@@ -79,7 +79,7 @@ CCDEndsGraftMover::CCDEndsGraftMover(
 CCDEndsGraftMover::CCDEndsGraftMover(const CCDEndsGraftMover& src):
 	AnchoredGraftMover(src)
 {
-
+	
 }
 
 CCDEndsGraftMover::~CCDEndsGraftMover() {}
@@ -87,7 +87,7 @@ CCDEndsGraftMover::~CCDEndsGraftMover() {}
 
 void
 CCDEndsGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
-
+    
 	scaffold_movemap(scaffold_mm);
 	insert_movemap(insert_mm);
 
@@ -123,22 +123,22 @@ CCDEndsGraftMover::fresh_instance() const{
 
 SmallMoverOP
 CCDEndsGraftMover::setup_default_small_mover(){
-
+    
 	using namespace core::kinematics;
 	using namespace protocols::simple_moves;
 	//Smaller moves for sampling than AnchoredGraftMover - Just to help CCD a bit
 	//Will check whether this does indeed help or hinder later.
-
-	//200 seems extraordinarily high.
-	// Lets take nmoves as twice the number of
-	// movable residues in the movemap instead.
-
+    
+	//200 seems extraordinarily high.  
+	// Lets take nmoves as twice the number of 
+	// movable residues in the movemap instead.  
+	
 	core::Size nmoves = 0;
-
+	
 	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
-
+	
 	for (MoveMapTorsionID_Map::const_iterator it=movemap()->movemap_torsion_id_begin(), it_end=movemap()->movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Scaffold to new MM
 	    if (it->second && it->first.second == core::id::BB){
@@ -146,7 +146,7 @@ CCDEndsGraftMover::setup_default_small_mover(){
 	    }
 	}
 
-   	SmallMoverOP small( new SmallMover(movemap(), 2, nmoves*2) );
+   	SmallMoverOP small( new SmallMover(movemap(), 2, nmoves*2) ); 
 	small->angle_max( 'H', 10.0 );
 	small->angle_max( 'E', 10.0 );
 	small->angle_max( 'L', 30.0 );
@@ -160,31 +160,31 @@ CCDEndsGraftMover::apply(Pose & pose){
 	using core::pose::add_variant_type_to_pose_residue;
 	using protocols::moves::MonteCarlo;
 	using protocols::moves::MonteCarloOP;
-
+	
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
-
+	
 	if (tag()){
 		core::Size scaffold_start = core::pose::get_resnum(tag(), pose, "start_");
 		core::Size scaffold_end = core::pose::get_resnum(tag(), pose, "end_");
-
+	
 		set_insert_region(scaffold_start, scaffold_end);
 	}
-
+	
 	TR << "Start: " << start() << " End: " << end() << " NterO: "<<Nter_overhang_length() <<" CterO: " << Cter_overhang_length()<<std::endl;
-
+	
 	protocols::grafting::superimpose_overhangs_heavy(pose, *piece(), true, start(), end(), Nter_overhang_length(), Cter_overhang_length() );
-
+	
 
 	Pose combined = insert_piece(pose);
-
+	
 	setup_movemap_and_regions(pose);
-
+    
 	TR << "Start: "<<start() << std::endl;
 	TR << "Original End: " << original_end() << std::endl;
 	TR << "End: " << end() << std::endl;
 	TR << "Insert Length: " << insertion_length() << std::endl;
-
+	
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
 	//Setup for the remodeling
 	core::Size const insert_start(start()+1); //this will be the first residue of the insert
@@ -192,95 +192,62 @@ CCDEndsGraftMover::apply(Pose & pose){
 
 
 	setup_scorefunction();
-
+	
 	///Add variants, create the loops and set the foldtree that will be used for CCD.
-
-
+	
+	
 	Loop Nter_loop;
 	Loop Cter_loop;
 	LoopsOP loop_set( new Loops() );
 	std::map< Loop, loop_closure::ccd::CCDLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
 
-	//Cut should always be at the position of the insert.
-
-	//Nter_loop = Loop(Nter_loop_start(), Nter_loop_end()+1, Nter_loop_end());//(LEFT LOOP)
-	//Cter_loop = Loop(Cter_loop_start()-1, Cter_loop_end(), Cter_loop_start()-1);//(RIGHT LOOP)
-
-
-	//We need the loops to be one off from the cutpoint.  However, if we are insert flexibility, we are already OK.
-
-	core::Size Nter_end;
-	core::Size Cter_start;
-
-	if (get_nterm_insert_flexibility() == 0){
-		Nter_end = Nter_loop_end() +1;
-	}
-	else {
-		Nter_end = Nter_loop_end();
-	}
-
-	if (get_cterm_insert_flexibility() == 0 ){
-		Cter_start = Cter_loop_start() -1;
-	}
-	else{
-		Cter_start = Cter_loop_start();
-	}
-
-	Nter_loop = Loop(Nter_loop_start(), Nter_end , start());//(LEFT LOOP)
-	Cter_loop = Loop(Cter_start, Cter_loop_end(), end()-1);//(RIGHT LOOP)
-
-	TR << Nter_loop << std::endl;
-	TR << Cter_loop << std::endl;
-
+	Nter_loop = Loop(Nter_loop_start(), Nter_loop_end()+1, Nter_loop_end());//(LEFT LOOP)
+	Cter_loop = Loop(Cter_loop_start()-1, Cter_loop_end(), Cter_loop_start()-1);//(RIGHT LOOP)
+	
 	loop_set->add_loop(Nter_loop);
 	loop_set->add_loop(Cter_loop);
-
-	//movemap()->show(TR);
-	//TR << "Loops: " << *loop_set << std::endl;
-
-	if ( Cter_start - Nter_end < 1 ){
-		utility_exit_with_message("Cannot setup correct loops for CCDEndsGraftMover as the loop FT is not proper.\n"
-				"The loop is short two loops on either side cannot be set.  Decrease Insert movement.  \n");
-	}
+	
+	movemap()->show(TR);
+	TR << "Loops: " << *loop_set << std::endl;
 	//combined.dump_pdb("combined_pose.pdb");
-
-	FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
-	ft_loop.loops(loop_set);
-	ft_loop.apply(combined);
-
+	
+    FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
+    ft_loop.loops(loop_set);
+    ft_loop.apply(combined);
+	
 	set_loops(loop_set);
-
+	
 	add_cutpoint_variants_for_ccd(combined, *loop_set);
 
 	loop_set_map[Nter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Nter_loop, movemap()) );
 	loop_set_map[Cter_loop] = protocols::loops::loop_closure::ccd::CCDLoopClosureMoverOP( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap()) );
-
+	
 	//combined.dump_pdb("before_idealize.pdb");
 
 	idealize_combined_pose(combined, movemap(), start(), insert_start, insert_end, Nter_loop_start(), Cter_loop_end(), idealize_insert());
 	movemap()->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap()->set( TorsionID(insert_end, BB, psi_torsion), true);
-
+	
 	//combined.dump_pdb("after_idealize.pdb");
-
+	
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains( new  protocols::simple_moves::ReturnSidechainMover(combined ) );
 	typeset_swap.apply( combined );
 
 	//TR <<"After type swap" <<std::endl;
-
+	
 	//combined.dump_pdb("combined_preclose_cen.pdb");
 
 	MinMoverOP min_mover = setup_default_min_mover();
 	SmallMoverOP small = setup_default_small_mover();
-
+	
 	//Testing
 	if (test_control_mode()){perturb_backbone_for_test(combined, movemap());}
 
 	MonteCarlo mc(combined, (*cen_scorefxn()), 0.8);
 
-
+	
 	/////////////////////////Protocol//////////////////////////////////////////////////////////
 	TR << "start " << ((*cen_scorefxn()))(combined) << std::endl;
 
@@ -305,7 +272,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 		}
 		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 	}
-
+        
 	if (! skip_mc) mc.recover_low(combined);
 	TR << "finish " << ((*cen_scorefxn()))(combined) << std::endl;
 	//combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
@@ -318,7 +285,7 @@ CCDEndsGraftMover::apply(Pose & pose){
 	//Give back foldtree from pose_into_pose.
 	combined.fold_tree(original_ft);
 	if (final_repack()){
-		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn(),
+		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn(), 
 			start(), end(), movemap(), neighbor_dis());
 	}
 	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loop_set) << std::endl;

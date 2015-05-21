@@ -21,8 +21,10 @@
 #include <core/pose/util.hh>
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
-
-
+using basic::T;
+using basic::Error;
+using basic::Warning;
+static thread_local basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
 #include <utility/tag/Tag.hh>
 
 #include <core/pose/Pose.hh>
@@ -34,14 +36,9 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>
 
-static thread_local basic::Tracer TR( "protocols.simple_moves.AddChainMover" );
-
 namespace protocols {
 namespace simple_moves {
-	
-	using basic::T;
-	using basic::Error;
-	using basic::Warning;
+
 
 std::string
 AddChainMoverCreator::keyname() const

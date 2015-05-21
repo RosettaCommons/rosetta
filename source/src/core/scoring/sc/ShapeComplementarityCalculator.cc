@@ -46,8 +46,6 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
-#include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // C headers
 #include <stdio.h>
@@ -173,11 +171,7 @@ int ShapeComplementarityCalculator::Calc()
 	for(int i = 0; i < 2; ++i) {
 		run_.results.surface[i].trimmedArea = TrimPeripheralBand(run_.dots[i], trimmed_dots[i]);
 		if(!trimmed_dots[i].size())
-			//throw ShapeComplementarityCalculatorException("No molecular dots for surface %d", i); (JAB) This actually segfaults during the throw. Commenting out
-
-
-			throw utility::excn::EXCN_Msg_Exception("No molecular dots for surface " + utility::to_string( i ));
-
+			throw ShapeComplementarityCalculatorException("No molecular dots for surface %d", i);
 		run_.results.surface[i].nTrimmedDots = trimmed_dots[i].size();
 		run_.results.surface[i].nAllDots = run_.dots[i].size();
 	}

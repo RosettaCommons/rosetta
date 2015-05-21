@@ -32,8 +32,6 @@ namespace design {
 
 	typedef utility::vector1<CDRGraftDesignOptionsOP> AntibodyCDRGraftDesignOptions;
 
-///@brief Class that holds CDRGraftDesign Options.  Now that GraftDesign is not a separate 'thing', this should be split into 
-/// CDRGraftOptions and CDRMinOptions eventually.
 class CDRGraftDesignOptions : public utility::pointer::ReferenceCount {
 public:
 
@@ -45,32 +43,32 @@ public:
 
 public:
 
-	///@brief Set the CDR type for this instance of options.
+	/// @brief Set the CDR type for this instance of options.
 	void
 	set_cdr(CDRNameEnum cdr);
 
-	///@brief Should this CDR be designed?
+	/// @brief Should this CDR be designed?
 	void
 	design(bool design);
 
-	///@brief Should this CDR be designed?
+	/// @brief Should this CDR be designed?
 	bool
 	design() const {
 		return design_;
 	}
 
-	///@brief Set the weight we will use for choosing this particular CDR for design.
+	/// @brief Set the weight we will use for choosing this particular CDR for design.
 	void
 	weight(core::Real weight);
 
-	///@brief Return the weight we will use for choosing this particular CDR for design.
+	/// @brief Return the weight we will use for choosing this particular CDR for design.
 	core::Real
 	weight() const {
 		return cdr_weight_;
 	}
 
 
-	///@brief Options are: relax, minimize, repack, dualspace. Default is repack for time, but relax is the best
+	/// @brief Options are: relax, minimize, repack, dualspace. Default is repack for time, but relax is the best
 	void
 	mintype(MinTypeEnum mintype);
 
@@ -79,7 +77,7 @@ public:
 		return mintype_;
 	}
 
-	///@brief Minimize neighbor sidechains?
+	/// @brief Minimize neighbor sidechains?
 	void
 	min_neighbor_sc(bool min_neighbor_sc);
 
@@ -88,7 +86,7 @@ public:
 		return min_neighbor_sc_;
 	}
 
-	///@brief Minimize sidechains during minimization (relax/min/etc) (default True?
+	/// @brief Minimize sidechains during minimization (relax/min/etc) (default True?
 	void
 	min_sc(bool min_sc);
 
@@ -97,8 +95,8 @@ public:
 		return min_sc_;
 	}
 
-	///@brief  Use rigid body optimization during minimization of the CDR (Minimize jump bt antigen and antibody)?
-	///@details Does nothing if repacking the cdr.  Default False.
+	/// @brief  Use rigid body optimization during minimization of the CDR (Minimize jump bt antigen and antibody)?
+	/// @details Does nothing if repacking the cdr.  Default False.
 	void
 	min_rb(bool min_rb);
 
@@ -107,7 +105,7 @@ public:
 		return min_rb_;
 	}
 
-	///@brief Set other CDRs to minimize when this CDR is minimized
+	/// @brief Set other CDRs to minimize when this CDR is minimized
 	void
 	neighbor_min(utility::vector1<CDRNameEnum> neighbor_min);
 
@@ -128,7 +126,7 @@ public:
 	CDRGraftDesignOptionsOP
 	clone() const;
 
-	///@brief Set defaults - !!! these are not the defaults from the database default instruction file.
+	/// @brief Set defaults - !!! these are not the defaults from the database default instruction file.
 	/// Use the parser to parse those instructions if you wish.
 	void
 	set_defaults();
@@ -157,7 +155,7 @@ public:
 	CDRGraftDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
 
-	///@brief Parse default_instructions (mainly used for AbDesign) then parse user file
+	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRGraftDesignOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
 
@@ -171,7 +169,7 @@ public:
 	parse_default_and_user_options(std::string filename);
 
 private:
-	///@brief Tries to find the path in either database, relative, or absolute, sets it.
+	/// @brief Tries to find the path in either database, relative, or absolute, sets it.
 	void
 	check_path();
 
@@ -179,7 +177,7 @@ private:
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const mode, utility::vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const mode, vector1<std::string> & lineSP);
 
 
 	void
@@ -200,7 +198,6 @@ private:
 	set_cdr_graft_general_option(std::string const option);
 
 
-
 private:
 
 	std::string instructions_path_;
@@ -213,7 +210,6 @@ private:
 }
 }
 }
-
 
 
 #endif	//INCLUDED_ CDRGraftDesignOptions.hh

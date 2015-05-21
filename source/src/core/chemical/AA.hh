@@ -30,7 +30,7 @@
 namespace core {
 namespace chemical {
 
-
+// temporary -- probably an enum?
 ///////////////////////////////////////////////////////////////////////////
 /// @brief enumeration for amino acids and nucleotides types with the total
 /// number as num_aa_types

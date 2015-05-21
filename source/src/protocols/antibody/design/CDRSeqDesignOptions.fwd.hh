@@ -17,12 +17,12 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace antibody {
 namespace design {
-		
+			
 
 // Forward
 class CDRSeqDesignOptions;
@@ -36,15 +36,10 @@ class CDRSeqDesignOptionsParser;
 typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser > CDRSeqDesignOptionsParserOP;
 typedef utility::pointer::shared_ptr< CDRSeqDesignOptionsParser const > CDRSeqDesignOptionsParserCOP;
 
-typedef utility::vector1<CDRSeqDesignOptionsOP> AntibodyCDRSeqDesignOptions;	
-
 }
 }
 }
 
 #endif	//INCLUDED_ TestClass2.fwd.hh
-
-
-
 
 

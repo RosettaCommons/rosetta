@@ -37,7 +37,7 @@
 #include <utility/string_util.hh>
 
 using namespace protocols::antibody;
-using namespace protocols::antibody::clusters;
+
 
 //Documentation:  This application identifies the CDR cluster in an antibody, renumbered with North_AHO (Used by North clusters).  Works with one PDB.  Prints to screen
 //  Use: Renumber antibody using [http://dunbrack.fccc.edu/IgClassify/].  Outputs info, and appends it to a new PDB that it will write.
@@ -57,23 +57,21 @@ public:
 	void
 	apply(core::pose::Pose & pose){
 
-		//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-		//	utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  "
-		//			                             "Please visit http://dunbrack2.fccc.edu/PyIgClassify/ for renumbering");
-		//}
-
-		AntibodyInfoOP ab_info( new AntibodyInfo(pose, North) );
+		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
+			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  "
+					                             "Please visit http://dunbrack2.fccc.edu/PyIgClassify/ for renumbering");
+		}
+		AntibodyInfoOP ab_info( new AntibodyInfo(pose, AHO_Scheme, North) );
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
 
 
-		for (core::Size i = 1; i<= core::Size(ab_info->get_total_num_CDRs()); ++i){
+		for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			CDRClusterCOP result = ab_info->get_CDR_cluster(cdr_name);
 			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->normalized_distance_in_degrees());
 			std::cout << output << std::endl;
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
-			check_fix_aho_cdr_numbering(ab_info, cdr_name, pose);
 		}
 		std::cout << "Info added to any echo PDB" << std::endl;
 		//std::string reference = "REF: North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.";

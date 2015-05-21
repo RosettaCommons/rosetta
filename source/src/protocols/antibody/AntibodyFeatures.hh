@@ -185,8 +185,6 @@ private:
 	ParatopeMetric< core::SSize>paratope_charge_;
 	vector1<core::Size> ag_ab_atomic_contacts_;
 	
-	bool include_proto_cdr4_;
-	
 };
 
 } //antibody

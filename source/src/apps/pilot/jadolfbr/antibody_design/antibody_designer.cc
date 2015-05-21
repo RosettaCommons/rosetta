@@ -12,7 +12,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/antibody/design/AntibodyDesignProtocol.hh>
+#include <protocols/antibody/design/AntibodyDesignMover.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <devel/init.hh>
@@ -20,13 +20,13 @@
 
 using namespace protocols::antibody::design;
 
-//Description:  This application will become the Rosetta Antibody Designer.  Main code is handled through AntibodyDesignProtocol
+//Description:  This application will become the Rosetta Antibody Designer.  Main code is handled through AntibodyDesignMover
 int main(int argc, char* argv[])
 {
 	try{
 		devel::init(argc, argv);
 
-		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignProtocol ));
+		protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AntibodyDesignMover ));
 	}catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception: "<<std::endl;
 		excn.show(std::cerr);

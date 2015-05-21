@@ -19,10 +19,6 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -112,20 +108,10 @@ CDRClusterFeatures::features_reporter_dependencies() const {
 
 void
 CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	
 	cdrs_.clear();
 	AntibodyEnumManagerCOP enum_manager( AntibodyEnumManagerOP( new AntibodyEnumManager() ) );
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");
-	std::string scheme;
-	
-	if (tag->hasOption("numbering_scheme")){
-		scheme = tag->getOption< std::string >("numbering_scheme");
-	}
-	else{
-		scheme = option [OptionKeys::antibody::numbering_scheme]();
-	}
+	std::string scheme = tag->getOption< std::string >("numbering_scheme", "AHO_Scheme");
 	
 	if (! enum_manager->numbering_scheme_is_present(scheme)){
 		throw utility::excn::EXCN_RosettaScriptsOption( "Numbering scheme not recognized: "+ scheme);
@@ -160,11 +146,13 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 	using cppdb::statement;
 	
 	AntibodyInfoOP ab_info( new AntibodyInfo(pose, numbering_scheme_, North) );
-		
+	
+	//utility::vector1<bool > relavent_residues = residues;
+	
 	std::string stmt_string = "INSERT INTO CDR_clusters( struct_id, resnum_begin, resnum_end, chain, CDR, length, fullcluster, dis, normDis, normDis_deg, sequence) VALUES (?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 	
-	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
+	for (core::Size i = 1; i <= 6; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRClusterCOP cluster = ab_info->get_CDR_cluster(cdr);
 		

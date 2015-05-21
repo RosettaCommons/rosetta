@@ -18,20 +18,12 @@ run=function(self, sample_sources, output_dir, output_formats){
   
   sele <- "
   SELECT
-    interfaces.dG as dG,
-    interfaces.dG_cross as dG_cross,
-    interfaces.hbond_E_fraction as hbond_E_fraction,
-    interfaces.interface as interface,
-    structure_scores.score_value as total_score
+    dG,
+    dG_cross,
+    hbond_E_fraction,
+    interface
   FROM
-    interfaces,
-    score_types,
-    structure_scores
-  WHERE
-    score_types.score_type_name='total_score' AND
-    structure_scores.score_type_id = score_types.score_type_id AND
-    structure_scores.struct_id = interfaces.struct_id 
-  ORDER BY dG;
+    interfaces
   "
 
   plot_parts <- list(
@@ -95,33 +87,4 @@ run=function(self, sample_sources, output_dir, output_formats){
   #Side energies?
   
   
-  #Averages:
-  avgs <- ddply(data, .(sample_source, interface), function(d2){
-    data.frame(m = mean(d2$dG), std_dev = sd(d2$dG), m_top10 = mean(d2[1:10,]$dG), std_dev_top_10 = sd(d2[1:10,]$dG), top = d2[1,]$dG)
-  })
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m , fill=sample_source)) +
-    theme_bw() +
-    ggtitle("Average Interface dG") +
-    ylab("REU") +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "avg_dG_by_interface", grid=interface ~ .)
-  
-  #Average Top 10
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= m_top10 , fill=sample_source)) +
-    theme_bw() +
-    ggtitle("Average Best 10 Interface dG") +
-    ylab("REU") +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "avg_dG_top_10_by_interface", grid=interface ~ .)
-  
-  #Best
-  p <- ggplot(data=avgs ) + 
-    geom_bar(position="dodge", stat='identity', aes(x = sample_source, y= top , fill=sample_source)) +
-    theme_bw() +
-    ggtitle("Top Interface dG") +
-    ylab("REU") +
-    scale_x_discrete(labels = abbreviate)
-  plot_field(p, "dG_top_by_interface", grid=interface ~ .)
 })) # end FeaturesAnalysis

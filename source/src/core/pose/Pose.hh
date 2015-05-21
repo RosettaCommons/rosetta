@@ -711,7 +711,7 @@ public:
 	///     Pose.sequence
 	std::string
 	chain_sequence( core::Size const chain_in ) const;
-	
+
 	/// @brief Returns the Residue at position  <seqpos>  (read access)
 	/// Note: this method will trigger a refold if either the
 	/// torsions or the coordinates are out-of-date

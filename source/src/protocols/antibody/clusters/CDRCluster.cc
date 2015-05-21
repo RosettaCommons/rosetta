@@ -14,7 +14,6 @@
 #include <protocols/antibody/clusters/CDRCluster.hh>
 #include <core/pose/PDBInfo.hh>
 #include <math.h>
-#include <numeric/NumericTraits.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace protocols {
@@ -24,15 +23,13 @@ namespace clusters {
 
 
 CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length,
-		CDRClusterEnum const cluster, core::Size const start, core::Real const distance,
-		bool cis_trans_match /*true*/):
+		CDRClusterEnum const cluster, core::Size const start, core::Real const distance):
 		utility::pointer::ReferenceCount(),
 		cdr_(cdr),
 		cluster_(cluster),
 		distance_(distance),
 		start_(start),
-		length_(cdr_length),
-		cis_trans_match_(cis_trans_match)
+		length_(cdr_length)
 {
 	end_ = start+cdr_length-1;
 	normalized_distance_ = distance/(cdr_length*2);
@@ -52,8 +49,7 @@ CDRCluster::CDRCluster(const CDRCluster& src):
 		start_(src.start_),
 		end_(src.end_),
 		length_(src.length_),
-		chain_(src.chain_),
-		cis_trans_match_(src.cis_trans_match_)
+		chain_(src.chain_)
 
 {
 
@@ -69,7 +65,7 @@ CDRCluster::~CDRCluster(){}
 core::Real
 CDRCluster::normalized_distance_in_degrees() const {
 
-	core::Real result = acos(1 - (normalized_distance_/2)) *(180/numeric::NumericTraits<core::Real>::pi());
+	core::Real result = acos(1-(distance_/(2*length_)));
 	return result;
 }
 

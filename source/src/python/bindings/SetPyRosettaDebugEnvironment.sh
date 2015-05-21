@@ -5,11 +5,11 @@
 
 if [[ "${BASH_SOURCE[0]}" == "" ]]; then
     #echo "zsh like shell..."
-    #OLD_PATH=`pwd`
+    OLD_PATH=`pwd`
     PYROSETTA="$( cd "$( dirname "$0" )" && pwd )"/debug
 else
     #echo "bash like shell..."
-    #OLD_PATH=`pwd`
+    OLD_PATH=`pwd`
     PYROSETTA="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"/debug
 fi
 
@@ -34,4 +34,4 @@ export DYLD_LIBRARY_PATH=$PYROSETTA:$PYROSETTA/rosetta${DYLD_LIBRARY_PATH+:$DYLD
 export LD_LIBRARY_PATH=$PYROSETTA/rosetta${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}
 export PYROSETTA_DATABASE=$PYROSETTA/rosetta_database
 
-cd -
+cd $OLD_PATH

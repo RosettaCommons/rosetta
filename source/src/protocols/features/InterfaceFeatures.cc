@@ -50,7 +50,7 @@ namespace features {
 	using cppdb::result;
 	using std::string;
 	using namespace core::scoring;
-
+	
 InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
 {
@@ -171,7 +171,7 @@ InterfaceFeatures::report_features(
 		const utility::vector1<bool>& relevant_residues,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session) {
-
+	
 	if (interfaces_.empty()){
 		make_interface_combos(pose, interfaces_);
 	}
@@ -191,7 +191,7 @@ InterfaceFeatures::report_all_interface_features(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		std::string const interface,
-		std::string const db_interface)
+		std::string const db_interface) 
 {
 		TR << "reporting features for: "<< interface << std::endl;
 		//Check to make sure interface/chain definition is solid.
@@ -200,10 +200,10 @@ InterfaceFeatures::report_all_interface_features(
 		}
 
 		if (!chains_exist_in_pose(pose, interface)){
-			TR <<"All chains do not exist in the given pose.  Skipping interface: " << interface << std::endl;
+			TR <<"All chains do not exist in the given pose: "<<interface<< " skipping..." << std::endl;
 			return;
 		}
-
+		
 		vector1<std::string> interface_sides = utility::string_split(db_interface, '_');
 		std::string interface_side1 = interface_sides[1];
 		std::string interface_side2 = interface_sides[2];
@@ -532,12 +532,12 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 	Column dSASA("dSASA", DbDataTypeOP( new DbReal() ));
 	Column dSASA_bb("dSASA_bb", DbDataTypeOP( new DbReal() ));
 	Column dSASA_sc("dSASA_sc", DbDataTypeOP( new DbReal() ));
-
+	
 	Column dhSASA("dhSASA", DbDataTypeOP( new DbReal() ));
 	Column dhSASA_bb("dhSASA_bb", DbDataTypeOP( new DbReal() ));
 	Column dhSASA_sc("dhSASA_sc", DbDataTypeOP( new DbReal() ));
 	Column dhSASA_rel("dhSASA_rel_by_charge", DbDataTypeOP( new DbReal() ));
-
+	
 	Column dG("dG", DbDataTypeOP( new DbReal() ));
 	Column interface_nres("interface_nres", DbDataTypeOP( new DbInteger() ));
 
@@ -628,7 +628,7 @@ InterfaceFeatures::report_interface_side_features(
 			"ss_sheet_fraction,"
 			"ss_helix_fraction,"
 			"ss_loop_fraction) VALUES "+get_question_mark_string(27);
-
+	
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
 
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
@@ -689,11 +689,11 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	PrimaryKey primary_key(primary_keys);
 
 	ForeignKey struct_foreign_key(struct_id, "structures", "struct_id", true);
-
+	
 	Columns foreign_keys;
 	foreign_keys.push_back(struct_id);
 	foreign_keys.push_back(resnum);
-
+	
 	vector1< std::string > reference_columns;
 	reference_columns.push_back("struct_id");
 	reference_columns.push_back("resNum");
@@ -709,7 +709,7 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	Column dhSASA_bb("dhSASA_bb", DbDataTypeOP( new DbReal() ));
 	Column dhSASA_sc("dhSASA_sc", DbDataTypeOP( new DbReal() ));
 	Column dhSASA_rel("dhSASA_rel_by_charge", DbDataTypeOP( new DbReal() ));
-
+	
 	Column rel_dSASA_fraction("relative_dSASA_fraction", DbDataTypeOP( new DbReal() ));
 	Column energy_sep("energy_sep", DbDataTypeOP( new DbReal() ));
 	Column energy_int("energy_int", DbDataTypeOP( new DbReal() ));
@@ -765,7 +765,7 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 			"dG,"
 			"energy_int,"
 			"energy_sep) VALUES "+get_question_mark_string(17);
-
+	
 	statement stmnt(basic::database::safely_prepare_statement(stmnt_string, db_session));
 
 	core::Size i = 0;

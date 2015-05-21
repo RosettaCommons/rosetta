@@ -15,9 +15,6 @@
 #define INCLUDED_protocols_antibody_clusters_UTIL_HH
 
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
-#include <protocols/antibody/AntibodyInfo.fwd.hh>
-#include <protocols/antibody/AntibodyEnum.hh>
-
 #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
@@ -29,9 +26,6 @@ namespace clusters {
 	using utility::vector1;
 	using core::Real;
 
-void
-add_cluster_comments_to_pose(core::pose::Pose& pose, AntibodyInfoCOP ab_info);
-		
 std::string
 get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const start, core::Size const end);
 
@@ -43,9 +37,6 @@ calculate_dihedral_distance(vector1< Real > cluster_phis, vector1< Real> pose_ph
 /// @details If any of these anchor residues that are checked are missing, it will return false.
 bool
 check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose);
-
-CDRClusterEnum
-get_cluster_from_cache_or_ab_info(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, CDRNameEnum const cdr);
 
 } //clusters
 } //antibody

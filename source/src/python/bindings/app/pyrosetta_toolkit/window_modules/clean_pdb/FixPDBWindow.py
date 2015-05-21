@@ -90,7 +90,6 @@ class FixPDBWindow:
           self.loadbutton = Button(self.main, text = "Load PDB", command = lambda: self.load_cleaned_pdb())
           #This may need to change to use __init__, but hopefully not.
           self.ignore_unrecognized = Button(self.main, text = "Set -ignore_unrecognized_res option", command = lambda: self.input_class.options_manager.add_option('-ignore_unrecognized_res'))
-          self.zero_occupancy = Button(self.main, text = "Set -ignore_zero_occupancy false", command = lambda: self.input_class.options_manager.add_option('-ignore_zero_occupancy false'))
           self.pathEntry.grid(row = r, column=c)
           self.pathbutton_.grid(row=r, column = c+1)
           self.remH20.grid(row=r, column=c+2, sticky=W)
@@ -104,7 +103,6 @@ class FixPDBWindow:
           
           self.loadbutton.config(state=DISABLED)
           self.ignore_unrecognized.grid(row=r+7, column=c, columnspan=3, sticky=W+E)
-          self.zero_occupancy.grid(row=r+8, column=c, columnspan = 3, sticky = W+E)
      
      def enable_load(self):
           """

@@ -55,4 +55,4 @@ export PYROSETTA_DATABASE=$PYROSETTA/database
 echo "Aliasing PyRosetta Toolkit GUI to pyrosetta_toolkit"
 alias pyrosetta_toolkit='python $PYROSETTA/app/pyrosetta_toolkit/pyrosetta_toolkit.py'
 
-cd -
+cd $OLD_PATH

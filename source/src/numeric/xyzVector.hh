@@ -42,7 +42,6 @@
 
 #include <ObjexxFCL/FArrayTraits.hh>
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
 
 // Boost Headers
 #include <boost/functional/hash.hpp>
@@ -700,11 +699,7 @@ public: // Methods
 	normalize()
 	{
 		Value const length_ = length();
-		//assert ( length_ != Value ( 0 ));
-		if ( length_ == Value ( 0 )){
-			throw utility::excn::EXCN_BadInput("Cannot normalize xyzVector of length() zero");
-		}
-		
+		assert( length_ != Value ( 0 ) );
 		Value const inv_length( Value( 1 ) / length_ );
 		x_ *= inv_length;
 		y_ *= inv_length;

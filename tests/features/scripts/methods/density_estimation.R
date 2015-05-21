@@ -14,7 +14,7 @@ estimate_density_1d <-function(
   ids,
   variable,
   weight_fun=uniform_normalization,
-  min_count=10,
+  min_count=20,
   n_pts=512,
   histogram=FALSE,
 	sample_domain=NULL,

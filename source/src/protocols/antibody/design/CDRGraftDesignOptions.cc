@@ -50,7 +50,7 @@ namespace design {
 CDRGraftDesignOptions::CDRGraftDesignOptions():
 	utility::pointer::ReferenceCount()
 {
-	set_defaults();
+
 }
 
 CDRGraftDesignOptions::CDRGraftDesignOptions(CDRNameEnum cdr):
@@ -73,7 +73,6 @@ CDRGraftDesignOptions::CDRGraftDesignOptions(CDRGraftDesignOptions const & src):
 {
 
 }
-
 
 
 CDRGraftDesignOptions::~CDRGraftDesignOptions() {}
@@ -213,7 +212,7 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	if(instruction_file.bad()){
 		utility_exit_with_message("Unable to open grafting instruction file.");
 	}
-	//TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
+	TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
 	while (getline(instruction_file, line)){
 
 		//Skip any comments + empty lines
@@ -253,7 +252,7 @@ CDRGraftDesignOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		}
 	}
 	instruction_file.close();
-	//TR << "Instructions read successfully" <<std::endl;
+	TR << "Instructions read successfully" <<std::endl;
 	return cdr_options_->clone();
 }
 
@@ -277,11 +276,7 @@ CDRGraftDesignOptionsParser::check_path() {
 void
 CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
 
-	///Since we are now including SeqDesign and GraftDesign as part of the overall protocol,
-	/// it does not make sense to include MIN as part of GraftDesign, since it is overall part of the protocol.
-	/// that said, I cannot make up my mind as to what the hell the the tag should be called.
-	if (mode == "GRAFT" || mode == "GRAFT_DESIGN" || mode == "GRAFTDESIGN" ||
-	     mode == "GRAFTING" || mode == "MINPROTOCOL" || mode == "MIN_PROTOCOL" || mode == "MIN_STEP" || mode == "MINSTEP"){
+	if (mode == "GRAFT" || mode == "GRAFT_DESIGN" || mode == "GRAFTDESIGN" || mode == "GRAFTING"){
 		check_line_len(lineSP, 3);
 		std::string adjective = lineSP[3];
 		boost::to_upper(adjective);
@@ -289,14 +284,6 @@ CDRGraftDesignOptionsParser::parse_cdr_option(std::string const mode, vector1<st
 	}
 	else if (lineSP.size() == 2){
 		parse_cdr_general_option(lineSP);
-	}
-	else if (lineSP.size() == 3){
-		std::string setting = lineSP[ 2 ];
-		boost::to_upper( setting );
-		if (setting == "WEIGHT" || setting == "WEIGHTS"){
-			check_line_len(lineSP, 3);
-			cdr_options_->weight(utility::string2Real(lineSP[3]));
-		}
 	}
 
 }
@@ -326,7 +313,7 @@ CDRGraftDesignOptionsParser::parse_cdr_graft_option(std::string const setting, v
 		set_cdr_graft_mintype_options(type);
 		return;
 	}
-	else if (setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS" || setting == "Min_Other" || setting == "MinOther") {
+	else if (setting == "MIN_OTHER_CDRS" || setting == "MIN_NEIGHBOR_CDRS" || setting == "MIN_NEIGHBORS") {
 		set_cdr_graft_neighbor_mintype_options(lineSP);
 		return;
 	}
@@ -364,29 +351,26 @@ void
 CDRGraftDesignOptionsParser::set_cdr_graft_mintype_options(std::string const mintype) {
 
 	///If we ever have a design enum manager, add these to it to make this simpler.
-	if (mintype == "REPACK" || mintype == "PACK"){
+	if (mintype == "REPACK"){
 		cdr_options_->mintype(protocols::antibody::design::repack);
 	}
 	else if (mintype == "MIN" || mintype == "MINIMIZE" || mintype == "MINIMIZER"){
 		cdr_options_->mintype(minimize);
 	}
-	else if (mintype == "MIN_CART" || mintype == "MINIMIZE_CART" || mintype == "MINIMIZE_CARTESIAN" || mintype == "CARTMIN"){
+	else if (mintype == "MIN_CART" || mintype == "MINIMIZE_CART" || mintype == "MINIMIZE_CARTESIAN"){
 		cdr_options_->mintype(minimize_cartesian);
 	}
 	else if (mintype == "RELAX"){
 		cdr_options_->mintype(relax);
 	}
-	else if (mintype == "DUALSPACE" || mintype == "DUALSPACE_RELAX" || mintype == "DS_RELAX") {
+	else if (mintype == "DUALSPACE" || mintype == "DUALSPACE_RELAX") {
 		cdr_options_->mintype(dualspace);
-	}
-	else if (mintype == "BACKRUB") {
-		cdr_options_->mintype(backrub_protocol);
-	}
-	else if (mintype == "INCLUDE_RB" || mintype == "RB" || mintype == "W_RB"){
-		cdr_options_->min_rb(true);
 	}
 	else if (mintype == "NONE"){
 		cdr_options_->mintype(no_min);
+	}
+	else if (mintype == "INCLUDE_RB" || mintype == "RB" || mintype == "W_RB"){
+		cdr_options_->min_rb(true);
 	}
 	else {utility_exit_with_message("Unrecognized mintype option: "+mintype);}
 
@@ -422,14 +406,5 @@ CDRGraftDesignOptionsParser::set_cdr_graft_neighbor_mintype_options(utility::vec
 }
 }
 }
-
-
-
-
-
-
-
-
-
 
 

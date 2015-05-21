@@ -159,7 +159,6 @@ public:
 		for (core::Size i = 41; i <=starting_residues + 4; ++i){
 			TS_ASSERT(combined_mm->get_bb(i) == false);
 		}
-		TR << "Combining Movemaps Complete." << std::endl;
 	}
     
 	void test_graft_classes(){
@@ -168,12 +167,6 @@ public:
 		
 		//////////////CCD Ends Graft ///////////////////////////////////
 		TR << "Testing CCDEndsGraftMover Mover" << std::endl;
-		TR << "start: " << start << std::endl;
-		TR << "end: " << end << std::endl;
-		TR <<"nter overhang: " << nter_overhang << std::endl;
-		TR <<"cter overhang: " << cter_overhang << std::endl;
-		TR << "Flex: " << flex << std::endl;
-		
 		CCDEndsGraftMoverOP cdr_grafter( new protocols::grafting::CCDEndsGraftMover(start, end, piece, nter_overhang, cter_overhang) );
 		core::pose::Pose scaffold_copy = core::pose::Pose(scaffold_pose);
 		

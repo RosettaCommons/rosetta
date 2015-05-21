@@ -344,7 +344,7 @@ class Menus():
 	self.pdblist_tools_menu.add_command(label = "Create PDBList Recursively + Load", command = lambda: self.toolkit.input_class.PDBLIST.set(output_tools.make_PDBLIST_recursively()))
 	self.pdblist_tools_menu.add_separator()
 	self.score_menu = Menu(self.main_menu, tearoff=0)
-	self.score_menu.add_command(label = "Rescore PDBList + Output ScoredPDBList + Load", command = lambda: self.score_analyzer.set_filepath(output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score, self.toolkit.output_class.processors.get(), self.toolkit.output_class)))
+	self.score_menu.add_command(label = "Rescore PDBList + Output ScoredPDBList", command = lambda: output_tools.score_PDBLIST(self.toolkit.input_class.PDBLIST.get(), self.toolkit.score_class.score, self.toolkit.output_class))
 	self.score_menu.add_command(label = "Load Scores (.sc, .fasc, or ScoredPDBList)", command = lambda: self.load_scores_for_score_analysis())
 	self.score_menu.add_separator()
     	self.score_menu.add_command(label = "Get top model", command = lambda: self.score_analyzer.get_top_scoring())
@@ -416,98 +416,98 @@ class Menus():
 ##### MENU FUNCTIONS #######
 
     def load_scores_for_score_analysis(self):
-        filename = tkFileDialog.askopenfilename(title="Open ScoredPDBList, .fasc, or .sc file", initialdir=global_variables.current_directory)
-        if not filename:return
-        global_variables.current_directory = os.path.dirname(filename)
-        self.score_analyzer.set_filepath(filename)
+	filename = tkFileDialog.askopenfilename(title="Open ScoredPDBList, .fasc, or .sc file", initialdir=global_variables.current_directory)
+	if not filename:return
+	global_variables.current_directory = os.path.dirname(filename)
+	self.score_analyzer.set_filepath(filename)
 
-    #These are bullshit.
+#These are bullshit.
     def get_path(self, string):
-        path = tkFileDialog.askopenfilename(title=string,initialdir = global_variables.current_directory)
-        return path
+	path = tkFileDialog.askopenfilename(title=string,initialdir = global_variables.current_directory)
+	return path
     
     def run_design_breakdown(self):
 	
-    #Super huge bug in Tkinter, which is not allowing multiple dialog boxes to be called in succession. ~jadolfbr
-    #Jan 2013 MacBookPro~2010 OS 10.6, Python 2.6.
+	#Super huge bug in Tkinter, which is not allowing multiple dialog boxes to be called in succession. ~jadolfbr
+	#Jan 2013 MacBookPro~2010 OS 10.6, Python 2.6.
 	
-        if self.toolkit.pose.total_residue()==0:
-            print "Please load a pose for reference."
-            return
+	if self.toolkit.pose.total_residue()==0:
+	    print "Please load a pose for reference."
+	    return
 	
-        fasta_path = self.get_path("FASTA Path")
-        if not fasta_path:return
-        global_variables.current_directory = os.path.dirname(fasta_path)
-        outpath = os.path.dirname(fasta_path)+"/RESULTS"
+	fasta_path = self.get_path("FASTA Path")
+	if not fasta_path:return
+	global_variables.current_directory = os.path.dirname(fasta_path)
+	outpath = os.path.dirname(fasta_path)+"/RESULTS"
 	
 
 	    
-        #else:
-            #answer = tkMessageBox.askokcancel(title = "Current", message = "Using current pose as reference.  Continue?")
-            #if not answer: return
-        reference_path=self.toolkit.input_class.pdb_path.get()
-        if not reference_path:return
-        #native = tkMessageBox.askyesno(title="Native", message="Use pose as Native?")
+	#else:
+	    #answer = tkMessageBox.askokcancel(title = "Current", message = "Using current pose as reference.  Continue?")
+	    #if not answer: return
+	reference_path=self.toolkit.input_class.pdb_path.get()
+	if not reference_path:return
+	#native = tkMessageBox.askyesno(title="Native", message="Use pose as Native?")
 		    
-        breakdown = DesignBreakdown(fasta_path, reference_path,  outpath)
-        breakdown.run_outputs()
+	breakdown = DesignBreakdown(fasta_path, reference_path,  outpath)
+	breakdown.run_outputs()
 	
 #### WINDOWS ##### (ADD NEW WINDOWS TO THIS THAT NEED TO BE SET UP) #######
     def show_fullcontrol_window(self):
-        self.fullcontrol_class = FullControlWindow(self.toolkit.score_class, self.toolkit.pose, self.toolkit.input_class, self.toolkit.output_class);
-        self.fullcontrol_class.show_window(self.main, 0, 0)
+	self.fullcontrol_class = FullControlWindow(self.toolkit.score_class, self.toolkit.pose, self.toolkit.input_class, self.toolkit.output_class);
+	self.fullcontrol_class.show_window(self.main, 0, 0)
 	
     def show_graftmover_window(self):
-        grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
-        top_level_tk = Toplevel(self.main)
-        grafter.setTk(top_level_tk)
-        grafter.shoTk(0,0)
+	grafter = GraftMoverWindow(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class)
+	top_level_tk = Toplevel(self.main)
+	grafter.setTk(top_level_tk)
+	grafter.shoTk(0,0)
 	
     def show_fxpdb_window(self):
-        cleaner = FixPDBWindow(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
-        cleaner.runfixPDBWindow(self.main, 0, 0)
+	cleaner = FixPDBWindow(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
+	cleaner.runfixPDBWindow(self.main, 0, 0)
 	
     def show_ligand_ncaa_ptm_manager(self):
-        top_level_tk = Toplevel(self.main)
-        ptm = ligand_ncaa_ptm_manager(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
-        ptm.setTk(top_level_tk)
-        ptm.shoTk(0, 0)
-
+	top_level_tk = Toplevel(self.main)
+	ptm = ligand_ncaa_ptm_manager(self.toolkit.input_class, self.toolkit.score_class, self.toolkit.pose)
+	ptm.setTk(top_level_tk)
+	ptm.shoTk(0, 0)
+	
     def show_OptionsSystemManager(self):
-        """
-        Main Design window interacting with options system
-        """
+	"""
+	Main Design window interacting with options system
+	"""
 
-        top_level_tk = Toplevel(self.main)
-        self.toolkit.input_class.options_manager.setTk(top_level_tk)
-        self.toolkit.input_class.options_manager.shoTk()
+	top_level_tk = Toplevel(self.main)
+	self.toolkit.input_class.options_manager.setTk(top_level_tk)
+	self.toolkit.input_class.options_manager.shoTk()
 	
     def show_ResfileDesignWindow(self):
-        """
-        Main Design window for creating a ResFile
-        """
+	"""
+	Main Design window for creating a ResFile
+	"""
 
-        top_level_tk = Toplevel(self.main)
-        resfile_design_window = ResfileDesignWindow(top_level_tk, self.toolkit.DesignDic, self.toolkit.pose)
-        resfile_design_window.setTk()
-        resfile_design_window.shoTk()
-        resfile_design_window.setTypes()
+	top_level_tk = Toplevel(self.main)
+	resfile_design_window = ResfileDesignWindow(top_level_tk, self.toolkit.DesignDic, self.toolkit.pose)
+	resfile_design_window.setTk()
+	resfile_design_window.shoTk()
+	resfile_design_window.setTypes()
 
     def show_RosettaProtocolBuilder(self):
-        """
-        Rosetta Protocols - Used to make commands from lists of possible options.
-        """
+	"""
+	Rosetta Protocols - Used to make commands from lists of possible options.
+	"""
 
-        top_level_tk = Toplevel(self.main)
-        rosetta_protocol_builder = RosettaFlagFileBuilder(top_level_tk)
-        if not rosetta_protocol_builder.result:return
-        rosetta_protocol_builder.setTk()
-        rosetta_protocol_builder.shoTk(0, 0)
-        rosetta_protocol_builder.setMenu(top_level_tk)
+	top_level_tk = Toplevel(self.main)
+	rosetta_protocol_builder = RosettaFlagFileBuilder(top_level_tk)
+	if not rosetta_protocol_builder.result:return
+	rosetta_protocol_builder.setTk()
+	rosetta_protocol_builder.shoTk(0, 0)
+	rosetta_protocol_builder.setMenu(top_level_tk)
 
     def show_IpythonWindow(self):
-        """
-        IPython Interactive Window.  Isolated from variables for now.
-        """
-        term = IPythonView(Toplevel(self.main))
-        term.pack()
+	"""
+	IPython Interactive Window.  Isolated from variables for now.
+	"""
+	term = IPythonView(Toplevel(self.main))
+	term.pack()

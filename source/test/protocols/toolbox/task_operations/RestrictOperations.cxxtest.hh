@@ -240,7 +240,6 @@ public:
 		mm_op->set_cutoff_distance(10.0);
 		tf.push_back(mm_op);
 		task = tf.create_task_and_apply_taskoperations(pose);
-		task->show(std::cout);
 		test::UTracer UT_MMNEI("protocols/toolbox/task_operations/RestrictToMoveMapChiWNeighbors.u");
 		
 		UT_MMNEI << *task << std::endl;

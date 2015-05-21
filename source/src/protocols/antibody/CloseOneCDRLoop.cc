@@ -44,8 +44,7 @@ CloseOneCDRLoop::CloseOneCDRLoop( ) : Mover( "CloseOneCDRLoop" ) {
 } // CloseOneCDRLoop default constructor
 
 
-
-CloseOneCDRLoop::CloseOneCDRLoop( core::Size query_start, core::Size query_end ) : Mover( "CloseOneCDRLoop" ) {
+CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "CloseOneCDRLoop" ) {
 	set_default();
 	cdr_loop_start_ = query_start;
 	cdr_loop_end_   = query_end;
