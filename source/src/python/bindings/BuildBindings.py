@@ -1090,7 +1090,7 @@ def get_vc_compile_options():
         # adding /bigobj
         # Win32: return common + ' /bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP'
         # Win64: removing /Oi, ---- Adding /GL  <-- scratch that  /GL seems to enable gloabal optimization which make linking super slow...
-        return common + ' /bigobj /Oi /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo'
+        return common + ' /bigobj /Oi /O2 /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /Gm-'
 
 def get_vc_link_options():
     #return 'zlibstat.lib /MACHINE:X64 /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:p:/win_lib_64'
