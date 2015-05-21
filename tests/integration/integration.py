@@ -59,6 +59,9 @@ Intended usage is to run the tests once with a clean checkout, and again after c
 The exact results of many runs are hardware-dependent, so "expected" results cannot be kept in SVN.
 If tests fail in expected ways, the appropriate subdirectories can be copied from new/ to ref/ to update the expected results.
 
+A special case are MPI integration tests, which are defined by command.mpi files.  These can be run with the --mpi_tests
+flag (which implies extras=mpi).
+
 EXAMPLES:
 
 rm -r ref/; ./integration.py    # create reference results using only default settings
@@ -68,6 +71,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 ./integration.py -d ~/minidb -j2    # again, but using 2 processors and custom database location
 
 ./integration.py ligand_dock_7cpa    # only run the "ligand_dock_7cpa" test
+
+./integration.py -d ~/database -j5 --mpi-tests # run the special MPI integration tests using a custom database location and 5 processors.
+
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]", formatter=ParagraphHelpFormatter())
     parser.set_description(main.__doc__)
@@ -204,6 +210,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       action="store_true",
       help="Tell Valgrind to output details about memory leaks in addition to finding uninitialized variables. (default is no info, which is faster)",
     )
+    parser.add_option("--mpi-tests",
+      action="store_true",
+      dest="mpi_tests",
+      help="Run only those tests defined in command.mpi files.  This option implies --extras=mpi.",
+    )
 
     (options, remaining_args) = parser.parse_args(args=argv)
 
@@ -288,8 +299,15 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         for test in tests:
             queue.put(test)
             #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
-            copytree( path.join("tests", test), path.join(outdir, test),
-                accept=lambda src, dst: path.basename(src) != '.svn' )
+                      
+            if ( ( not Options.mpi_tests )
+                 or
+                 ( Options.mpi_tests
+                   and
+                   os.path.isfile( path.join( "tests", test , "command.mpi") )
+                 )
+               ) :
+                copytree( path.join("tests", test), path.join(outdir, test), accept=lambda src, dst: path.basename(src) != '.svn' )
 
         if options.fork or options.jobs==1:
             simple_job_running( generateTestCommandline, queue, outdir, runtimes, options )
@@ -331,10 +349,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             results = {}
             full_log = []
             for test in tests:
-                if options.valgrind:
-                    errors += analyze_valgrind_test(test, outdir, results, full_log )
-                else:
-                    errors += analyze_integration_test(test, outdir, results, full_log)
+            	 if( (not Options.mpi_tests) or (Options.mpi_tests and os.path.isfile( path.join("tests", test, "command.mpi") ) ) ) :
+                    if options.valgrind:
+                        errors += analyze_valgrind_test(test, outdir, results, full_log )
+                    else:
+                        errors += analyze_integration_test(test, outdir, results, full_log)
             full_log = ''.join(full_log)
 
             if options.daemon:
@@ -604,7 +623,12 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
 
     compiler = Options.compiler
     mode = Options.mode
-    extras = Options.extras if Options.extras else 'default'
+    if (Options.extras) :
+        extras = Options.extras
+    elif (Options.mpi_tests) :
+        extras='mpi'
+    else :
+        extras='default'
     binext = extras+"."+platform+compiler+mode
     #print 'binext: %s, extras: %s, Options.extras: %s' % (binext, repr(extras), repr(Options.extras) )
 
@@ -649,7 +673,13 @@ def generateTestCommandline(test, outdir, options=None, host=None):
     if host is not None:
       cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
     cmd += '\n'
-    cmd += file(path.join(workdir, "command")).read().strip()
+    if( options.mpi_tests ):
+        if( os.path.isfile( path.join(workdir,"command.mpi") ) ):
+            cmd += file(path.join(workdir,"command.mpi")).read().strip()
+        else:
+            return None, None #If the command.mpi file doesn't exist, then this isn't an MPI integration test and should be skipped.
+    else :
+        cmd += file(path.join(workdir, "command")).read().strip()
     cmd = cmd % params # variable substitution using Python printf style
 
     if options.valgrind:
@@ -660,7 +690,10 @@ def generateTestCommandline(test, outdir, options=None, host=None):
         # We also don't need the standard output restrictions (as we're not doing comparisons
         cmd = re.sub( r'egrep -vf ../../ignore_list', 'cat', cmd )
 
-    cmd_line_sh = path.join(workdir, "command.sh")
+    if( options.mpi_tests ):
+        cmd_line_sh = path.join(workdir, "command.mpi.sh")
+    else :
+        cmd_line_sh = path.join(workdir, "command.sh")
     f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
     #print cmd; print
@@ -824,6 +857,10 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         if test is None: break
 
         cmd_line_sh, workdir = GenerateJob(test, outdir, options);
+        
+        if ( ( cmd_line_sh is None ) or (workdir is None) ) :
+            print "No command file found for %s.  Skipping." % test
+            continue
 
         def run(nt, times):
             #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
@@ -921,6 +958,10 @@ class Worker:
                     start = time.time() # initial guess at start time, in case of exception
                     try: # Make sure job is marked done even if we throw an exception
                         cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host)
+                        
+                        if ( ( cmd_line_sh is None ) or ( workdir is None ) ) :
+                            print "No command file found for %s.  Skipping." % test
+                            continue
 
                         if self.host is None:
                             print "Running  %-40s on localhost ..." % test

@@ -73,7 +73,8 @@ enum mpi_tags {
 	BAD_INPUT_TAG = 20,
 	JOB_SUCCESS_TAG = 30,
 	REQUEST_MESSAGE_TAG = 40,
-	RECEIVE_MESSAGE_TAG = 50
+	RECEIVE_MESSAGE_TAG = 50,
+	JOB_GO_TAG = 60
 };
 
 /// @details This job distributor is meant for running jobs where the machine you are using has a large number of
@@ -182,6 +183,37 @@ protected:
 	virtual
 	void
 	slave_job_succeeded(core::pose::Pose & pose, std::string const & tag);
+	
+	/// @brief Set whether the JobDistributor sends jobs to each slave in sequence (1, 2, 3, etc.)
+	///
+	virtual
+	void set_sequential_distribution( bool const val ) { sequential_distribution_ = val; return; }
+	
+	/// @brief Get whether the JobDistributor sends jobs to each slave in sequence (1, 2, 3, etc.)?
+	///
+	virtual
+	bool sequential_distribution() const { return sequential_distribution_; }
+	
+	/// @brief Set whether this is the process that should start requesting jobs (be the first for sequential distribution).
+	///
+	virtual
+	void set_starter_for_sequential_distribution( bool const val ) { starter_for_sequential_distribution_ = val; return; }
+	
+	/// @brief Is this the process that should start requesting jobs (be the first for sequential distribution)?
+	///
+	virtual
+	bool starter_for_sequential_distribution() const { return starter_for_sequential_distribution_; }
+	
+	/// @brief Wait for a signal from the n-1 process saying that I can proceed.
+	///
+	virtual
+	void wait_for_go_signal() const;
+
+	/// @brief Send a signal to the n+1 process saying that it can proceed.
+	/// @details This also sets starter_for_sequential_distribution_ to false, since we no longer
+	/// want this process to refrain from waiting.
+	virtual
+	void send_go_signal();
 
 protected:
 
@@ -205,7 +237,14 @@ protected:
 
 	/// @brief should the go() function call MPI_finalize?  There are very few cases where this should be false
 	bool finalize_MPI_;
+	
+	/// @brief Should the JobDistributor send jobs to each slave in sequence (1, 2, 3, etc.)?  Default false -- slaves request jobs as they
+	/// become available.
+	bool sequential_distribution_;
 
+	/// @brief Is this the process that should start requesting jobs (be the first for sequential distribution)?
+	/// @details Default false
+	bool starter_for_sequential_distribution_;
 
 };
 

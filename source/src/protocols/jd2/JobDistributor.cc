@@ -365,7 +365,7 @@ bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 	if (current_job_id_ == 0) {
 		if (next_batch()) { //query if there is a new batch to run after this one has finished
 			current_job_id_ = 0;
-			return obtain_new_job(); //set to first job of new batch... --- if batch is already computed fully this migh call next_batch() !
+			return obtain_new_job(); //set to first job of new batch... --- if batch is already computed fully this might call next_batch() !
 		}
 		return false;
 	} else if (current_job_id_ <= jobs_.size()) {

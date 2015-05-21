@@ -65,7 +65,9 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 	next_job_to_assign_( 0 ),
 	bad_job_id_( 0 ),
 	repeat_job_( false ),
-	finalize_MPI_( true )
+	finalize_MPI_( true ),
+	sequential_distribution_(false),
+	starter_for_sequential_distribution_(false)
 {
 	// set npes and rank based on whether we are using MPI or not
 #ifdef USEMPI
@@ -91,6 +93,10 @@ MPIWorkPoolJobDistributor::~MPIWorkPoolJobDistributor()
 void
 MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 {
+#ifdef USEMPI
+	set_sequential_distribution( option[ OptionKeys::jd2::sequential_mpi_job_distribution	].user() ); //Set whether we're sending jobs to slaves in sequence (1,2,3,etc.) or whether slaves request jobs as they become available. 
+#endif
+
 	if ( rank_ == 0 ) {
 	master_go( mover );
 	} else {
@@ -283,6 +289,9 @@ void
 MPIWorkPoolJobDistributor::slave_go( protocols::moves::MoverOP mover )
 {
 	runtime_assert( !( rank_ == 0 ) );
+	
+	if( sequential_distribution() && rank_ == 1 ) set_starter_for_sequential_distribution( true );
+	
 	go_main( mover );
 }
 
@@ -333,6 +342,8 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 {
 #ifdef USEMPI
 	runtime_assert( !( rank_ == 0 ) );
+	
+	if( sequential_distribution() && !starter_for_sequential_distribution()) wait_for_go_signal();
 
 	if ( repeat_job_ == true ) {
 		TR << "Slave Node " << rank_ << ": Repeating job id " << current_job_id_ <<std::endl;
@@ -348,6 +359,9 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 		MPI_Recv( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
 		TR << "Slave Node " << rank_ << ": Received job id " << current_job_id_ << " from master" <<std::endl;
 	}
+	
+	if( sequential_distribution() ) send_go_signal();
+	
 #endif
 	return current_job_id_;
 }
@@ -482,6 +496,31 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 	}
 #endif
+}
+
+/// @brief Wait for a signal from the n-1 process saying that I can proceed.
+///
+void MPIWorkPoolJobDistributor::wait_for_go_signal() const {
+#ifdef USEMPI
+	core::Size const prev_proc ( rank_ - 1 > 0 ? rank_ - 1 : npes_ - 1 );
+	bool dummy_signal(true);
+	MPI_Status status;
+	MPI_Recv( &dummy_signal, 1, MPI_C_BOOL, prev_proc, JOB_GO_TAG, MPI_COMM_WORLD, &status);
+#endif
+	return;
+}
+
+/// @brief Send a signal to the n+1 process saying that it can proceed.
+/// @details This also sets starter_for_sequential_distribution_ to false, since we no longer
+/// want this process to refrain from waiting.
+void MPIWorkPoolJobDistributor::send_go_signal() {
+#ifdef USEMPI
+	core::Size const next_proc ( rank_ + 1 >= npes_ ? 1 : rank_ + 1 );
+	bool dummy_signal(true);
+	MPI_Send( &dummy_signal, 1, MPI_C_BOOL, next_proc, JOB_GO_TAG, MPI_COMM_WORLD);
+	set_starter_for_sequential_distribution(false);
+#endif
+	return;
 }
 
 
