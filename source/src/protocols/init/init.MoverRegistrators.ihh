@@ -221,6 +221,7 @@ static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::ResetBaselineMoverCreator > reg_ResetBaselineMoverCreator;
+static MoverRegistrator< simple_moves::LabelPDBInfoMoverCreator > reg_LabelPDBInfoMoverCreator;
 static MoverRegistrator< simple_moves::RingConformationMoverCreator > reg_RingConformationMoverCreator;
 
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;

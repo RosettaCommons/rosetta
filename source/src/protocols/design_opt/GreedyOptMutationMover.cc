@@ -50,6 +50,9 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace design_opt {
@@ -337,6 +340,36 @@ cmp_pair_vec_by_first_vec_val(
   pair< Size, vector1< pair< AA, vector1< Real > > > > const pair2 )
 {
   return pair1.second[ 1 ].second[ 1 ] < pair2.second[ 1 ].second[ 1 ];
+}
+
+void
+GreedyOptMutationMover::downsample_pfront_poses(){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
+	//sample nstruct numbers from *poses_.size() member data vectors and reassign
+	Size nstruct( 1 );
+  if ( option[ run::shuffle ]() ) { 
+    nstruct = option[ out::shuffle_nstruct ]();
+  } else {
+    nstruct= option[ out::nstruct ]();
+  }
+	// skip if want more structs than exist poses
+	if( nstruct < pfront_poses_.size() ){
+		vector1< Size > ds_idxs;
+		for( Size i=1; i <= pfront_poses_.size(); ++i ) ds_idxs.push_back( i );
+		numeric::random::random_permutation( ds_idxs, numeric::random::rg() );
+		ds_idxs.resize( nstruct );
+		vector1< pose::Pose > ds_poses;
+		vector1< vector1< core::Real > > ds_filter_vals;
+		for( Size i = 1; i <= ds_idxs.size(); ++i ){
+			Size ds_idx( ds_idxs[ i ] );
+			ds_poses.push_back( pfront_poses_[ ds_idx ] );
+			ds_filter_vals.push_back( pfront_poses_filter_vals_[ ds_idx ] );
+		}
+		pfront_poses_ = ds_poses;
+		pfront_poses_filter_vals_ = ds_filter_vals;
+	}
 }
 
 void
@@ -737,8 +770,13 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 				delta_filter->ref_baseline( fbaseline );
 				TR<<"Reset baseline for DeltaFilter "<<fname<<" to "<<fbaseline<<std::endl;
 			}
+			TR << "Generated  " << pfront_poses_.size() << " new structures at residue " << seqpos << " :";
+			downsample_pfront_poses();
+			TR << " Downsampled pareto front to  " << pfront_poses_.size() << " structures" << std::endl;
 		}
-		TR << "Generated  " << pfront_poses_.size() << " final structures" << std::endl;
+		//randomly downsample cached parreto front data to -nstruct structures
+		downsample_pfront_poses();
+		TR << "Generated  " << pfront_poses_.size() << " final structures." << std::endl;
 		calc_pfront_poses_filter_ranks();
 	}
 	//assign the apply pose to the next pfront_pose 
