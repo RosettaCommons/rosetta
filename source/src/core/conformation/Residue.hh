@@ -37,6 +37,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/RingConformer.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/types.hh>
 
@@ -1546,6 +1547,10 @@ public:
 	{
 		return rsd_type_.nu_atoms(index);
 	}
+
+
+	/// @brief  Return the current RingConformer of this residue.
+	chemical::RingConformer const & ring_conformer() const;
 
 
 	/// @brief Returns the sequence position of this residue

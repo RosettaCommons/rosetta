@@ -69,13 +69,19 @@ public:
 		using namespace core::chemical;
 		using namespace utility;
 
-		TS_TRACE( "Testing get_ideal_conformer_by_name() and get_ideal_conformer_by_CP_parameters() methods of"
-				" RingConformerSet for 5- and 6-membered rings." );
+		TS_TRACE( "Testing get_ideal_conformer_by_name(), get_ideal_conformer_by_CP_parameters(), and "
+				" get_ideal_conformer_from_nus() methods of RingConformerSet for 5- and 6-membered rings." );
 
+		// Set up variables.
 		vector1< Real > params5, params6, params_bad;
 		params5.resize( 2 );
 		params6.resize( 3 );
 
+		vector1< Angle > nus5, nus6, nus_bad;
+		nus5.resize( 4 );
+		nus6.resize( 5 );
+
+		// Test some exact-match values.
 		params5[ q ] = 0.4;
 		params5[ PHI ] = 180.0;
 
@@ -83,22 +89,53 @@ public:
 		params6[ PHI ] = 180.0;
 		params6[ THETA ] = 90.0;
 
+		nus5[ 1 ] = -30.0;
+		nus5[ 2 ] = 0.0;
+		nus5[ 3 ] = 30.0;
+		nus5[ 4 ] = -60.0;
+
+		nus6[ 1 ] = 0.0;
+		nus6[ 2 ] = -60.0;
+		nus6[ 3 ] = 60.0;
+		nus6[ 4 ] = 0.0;
+		nus6[ 5 ] = -60.0;
+
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "EO" ).specific_name,
 				set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "BO,3" ).specific_name,
 				set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
 
+		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "EO" ).specific_name,
+						set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
+		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "BO,3" ).specific_name,
+				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
+
 		// Test that rounding is handled properly.
 		params5[ PHI ] = 43.2;  // should round to 36.0
 
+		nus5[ 1 ] = 65.4;  // ideal is -60.0
+		nus5[ 2 ] = -32.1;  // ideal is 30.0
+		nus5[ 3 ] = -0.123;  // ideal is 0.0
+		nus5[ 4 ] = 34.5;  // ideal is -30.0
+
 		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "E1" ).specific_name,
 				set5_->get_ideal_conformer_by_CP_parameters( params5 ).specific_name );
+		TS_ASSERT_EQUALS( set5_->get_ideal_conformer_by_name( "E1" ).specific_name,
+				set5_->get_ideal_conformer_from_nus( nus5 ).specific_name );
 
 		params6[ PHI ] = 123.4;  // should round to 120.0
 		params6[ THETA ] = 123.4;  // should round to 135.0
 
+		nus6[ 1 ] = -0.987;  // ideal is 0.0
+		nus6[ 2 ] = -0.123;  // ideal is 0.0
+		nus6[ 3 ] = -32.1;  // ideal is -30.0
+		nus6[ 4 ] = 67.8;  // ideal is 60.0
+		nus6[ 5 ] = -67.8;  // ideal is -60.0
+
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "5E" ).specific_name,
 				set6_->get_ideal_conformer_by_CP_parameters( params6 ).specific_name );
+		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "5E" ).specific_name,
+				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
 
 		// Test that chairs are handled correctly, as they reside at the poles where phi is meaningless.
 		params6[ THETA ] = 0.0;
@@ -116,6 +153,7 @@ public:
 					"ERROR: No conformer with given name found in this set; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
+
 		TS_TRACE( "A series of bad-input errors should follow:" );
 		try {
 			set6_->get_ideal_conformer_by_CP_parameters( params_bad );  // This should force an exit.
@@ -155,6 +193,21 @@ public:
 			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
 					"ERROR: An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
 					"yet a different number was provided; exiting.\n\n" );
+			TS_TRACE( "The above error message was expected." );
+		}
+
+		TS_TRACE( "A not-found error should follow:" );
+		nus_bad.push_back( 180.0 );  // impossible angle; no such ring would be possible
+		nus_bad.push_back( 180.0 );
+		nus_bad.push_back( 180.0 );
+		nus_bad.push_back( 180.0 );
+		nus_bad.push_back( 180.0 );
+		try {
+			set6_->get_ideal_conformer_from_nus( nus_bad );  // This should force an exit.
+			TS_ASSERT( false );  // Exception was not thrown!
+		} catch ( utility::excn::EXCN_Base const & e) {
+			TS_ASSERT_EQUALS( e.msg().substr( e.msg().find( "ERROR: " ) ),
+					"ERROR: No conformer with given nu angles found in this set; exiting.\n\n" );
 			TS_TRACE( "The above error message was expected." );
 		}
 	}

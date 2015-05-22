@@ -1804,6 +1804,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			short='Are rings allowed to flip or pucker?',
 			legal=['true', 'false'],
 			default='false'),
+		Option('idealize_rings', 'Boolean',
+			desc='Sets whether or not the ring conformations of input poses '
+				'are idealized (set to the lowest-energy ring conformer, '
+				'according to the toplogy file for that residue).  The '
+				'default is false: the input ring conformations will be used.',
+			short='Are rings pre-set to low-energy conformations?',
+			legal=['true', 'false'],
+			default='false'),
 		Option('sample_high_energy_conformers', 'Boolean',
 			desc='Sets whether or not even ring conformations that are energy '
 				'energy maxima will be sampled by the protocol.  The default '

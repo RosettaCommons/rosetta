@@ -30,6 +30,7 @@
 #include <numeric/angle.functions.hh>
 
 // C++ headers
+#include <cmath>
 #include <iostream>
 
 
@@ -205,7 +206,9 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 			// Adjust input to the nearest 18th degree.
 			adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 18/2 ) / 18 ) * 18;
 
-			TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
+			}
 
 			for ( uint i( 1 ); i <= n_conformers; ++i ) {
 				RingConformer const & conformer( nondegenerate_conformers_[ i ] );
@@ -229,7 +232,10 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 				adjusted_phi = 180;
 			}
 
-			TR.Debug << "Searching for phi = " << adjusted_phi << " and theta = " << adjusted_theta << "..." << endl;
+			if ( TR.Debug.visible() ) {
+				TR.Debug << "Searching for phi = " << adjusted_phi;
+				TR.Debug << " and theta = " << adjusted_theta << "..." << endl;
+			}
 
 			for ( uint i( 1 ); i <= n_conformers; ++i ) {
 				RingConformer const & conformer( nondegenerate_conformers_[ i ] );
@@ -250,9 +256,67 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 }
 
 // Return the conformer that is the best fit for the provided list of nu angles.
-//RingConformer const &
-//RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const angles ) const
-//{}
+/// @param    <angles>: an appropriate, ordered list of nu angles in degrees, one less than the ring size.
+/// @return   matching RingConformer or exits, if no match is found
+/// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
+/// subsets.
+RingConformer const &
+RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > const angles ) const
+{
+	using namespace std;
+	using namespace numeric;
+
+	// Drop out if this is not a 4- to 6-membered ring set.
+	if ( ring_size_ == 3 ) {
+		utility_exit_with_message( "A 3-membered ring can only be planar; exiting." );
+	}
+	if ( ring_size_ > 6 ) {
+		utility_exit_with_message(
+				"Rosetta does not currently handle rings larger than size 6; exiting." );
+	}
+
+	Size const n_angles( angles.size() );
+
+	if ( n_angles != ring_size_ - 1 ) {
+		TR.Error << "A " << ring_size_ << "-membered ring requires ";
+		TR.Error << ring_size_ - 1 << " nu angles; exiting." << endl;
+		utility_exit();
+	}
+
+	// Now search for best match.
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Searching for";
+		for ( uint i( 1 ); i <= n_angles; ++i ) {
+			TR.Debug << " nu" << i << " = " << angles[ i ];
+			if ( i != n_angles ) {
+				TR.Debug << ',';
+			}
+		}
+		TR.Debug << "..." << endl;
+	}
+	Size const n_conformers( size() );
+	Angle best_match_score( 90.0 * n_angles );  // the highest possible sum of angle deviations halved
+	uint best_conformer( 0 );
+	for ( uint i( 1 ); i <= n_conformers; ++i ) {
+		RingConformer const & conformer( nondegenerate_conformers_[ i ] );
+		Angle match_score( 0.0 );
+		for ( uint j( 1 ); j <= n_angles; ++j ) {
+			// The match score is simply the sum of the angle deviations. 0 is a perfect match.
+			match_score += abs( conformer.nu_angles[ j ] - angles[ j ] );
+		}
+		if ( match_score < best_match_score ) {
+			best_match_score = match_score;
+			best_conformer = i;
+		}
+	}
+
+	if ( ! best_conformer ) {
+		utility_exit_with_message( "No conformer with given nu angles found in this set; exiting." );
+	}
+
+	RingConformer const & conformer( nondegenerate_conformers_[ best_conformer ] );
+	return conformer;
+}
 
 
 // Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.

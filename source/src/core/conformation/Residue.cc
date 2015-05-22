@@ -27,6 +27,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Atom.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // Basic headers
@@ -63,7 +64,7 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	seqpos_( 0 ),
 	chain_( 0 ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
-	nus_(rsd_type_.n_nus(), 0.0),
+	nus_( rsd_type_.n_nus(), 0.0 ),
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
 	data_cache_( 0 ),
@@ -74,6 +75,21 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
 		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
 				rsd_type_.atom(i).mm_atom_type_index() ) );
+	}
+
+	// Assign nus.
+	Size const n_nus( rsd_type_.n_nus() );
+	for ( uint i( 1 ); i <= n_nus; ++i ) {
+		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
+
+		// Calculate the current nu angle from the coordinates.
+		Angle const current_nu( numeric::dihedral_degrees(
+				atom( nu_atoms[ 1 ] ).xyz(),
+				atom( nu_atoms[ 2 ] ).xyz(),
+				atom( nu_atoms[ 3 ] ).xyz(),
+				atom( nu_atoms[ 4 ] ).xyz() ) );
+
+		nus_[ i ] = current_nu;
 	}
 
 	// Assign orbitals.
@@ -104,7 +120,7 @@ Residue::Residue(
 	seqpos_( current_rsd.seqpos() ),
 	chain_( current_rsd.chain() ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
-	nus_(rsd_type_.n_nus(), 0.0),
+	nus_( current_rsd.nus() ),
 	mainchain_torsions_( current_rsd.mainchain_torsions() ),
 	actcoord_( 0.0 ),
 	data_cache_( 0 ),
@@ -119,7 +135,7 @@ Residue::Residue(
 				rsd_type_.atom(i).mm_atom_type_index() ));
 	}
 
-debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
+	debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
 
 	// Now orient the residue.
 	place( current_rsd, conformation, preserve_c_beta );
@@ -155,18 +171,18 @@ debug_assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_ato
 	}
 
 	// Assign nus.
-	Size const n_nus = rsd_type_.n_nus();
-	for (uint i = 1; i <= n_nus; ++i) {
-		AtomIndices const & nu_atoms = rsd_type_.nu_atoms(i);
+	Size const n_nus( rsd_type_.n_nus() );
+	for ( uint i( 1 ); i <= n_nus; ++i ) {
+		AtomIndices const & nu_atoms( rsd_type_.nu_atoms( i ) );
 
 		// Calculate the current nu angle from the coordinates.
-		Angle const current_nu = numeric::dihedral_degrees(
-				atom(nu_atoms[1]).xyz(),
-				atom(nu_atoms[2]).xyz(),
-				atom(nu_atoms[3]).xyz(),
-				atom(nu_atoms[4]).xyz());
+		Angle const current_nu( numeric::dihedral_degrees(
+				atom( nu_atoms[ 1 ] ).xyz(),
+				atom( nu_atoms[ 2 ] ).xyz(),
+				atom( nu_atoms[ 3 ] ).xyz(),
+				atom( nu_atoms[ 4 ] ).xyz() ) );
 
-		nus_[i] = current_nu;
+		nus_[ i ] = current_nu;
 	}
 
 	// Assign orbitals.
@@ -224,7 +240,9 @@ Residue::show( std::ostream & output, bool output_atomic_details ) const
 
 	output << "Residue " << seqpos_ << ": ";
 	rsd_type_.show( output, output_atomic_details );
-
+	if ( rsd_type_.is_cyclic() ) {
+		output << "Ring Conformer: " << ring_conformer() << endl;
+	}
 	output << " Atom Coordinates:" << endl;
 	Size n_atoms = natoms();
 	for ( core::uint i = 1; i <= n_atoms; ++i ) {
@@ -285,6 +303,17 @@ debug_assert(rsd_type_.is_carbohydrate());
 	PyAssert(rsd_type_.is_carbohydrate(), "Residue::carbohydrate_info(): This residue is not a carbohydrate!");
 
 	return rsd_type_.carbohydrate_info();
+}
+
+
+// Return the current RingConformer of this residue.
+chemical::RingConformer const &
+Residue::ring_conformer() const
+{
+	PyAssert( rsd_type_.is_cyclic(), "Residue::ring_conformer(): This residue is not cyclic!" );
+	debug_assert( rsd_type_.is_cyclic() );
+
+	return rsd_type_.ring_conformer_set()->get_ideal_conformer_from_nus( nus_ );
 }
 
 
