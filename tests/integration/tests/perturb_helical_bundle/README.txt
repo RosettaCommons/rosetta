@@ -7,5 +7,7 @@ In this case, the backbone generated is non-ideal (i.e. the mainchain bond angle
 Changes to the logfile or to the output pdb mean that the mover has changed somehow.  Note that the MakeBundle mover is deterministic, while the PerturbBundle mover is stocahstic.
 Note also that scores are expected to be extremely high, since there is no energy-minimization or whatnot; this is just a crude backbone generation script.
 
+A second test has been added for input in degrees instead of radians.
+
 Author: Vikram K. Mulligan, Ph.D., Baker laboratory, University of Washington (vmullig@uw.edu).
 

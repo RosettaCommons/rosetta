@@ -44,6 +44,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
+#include <numeric/constants.hh>
 
 #include <set>
 
@@ -97,6 +98,13 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 //          PUBLIC FUNCTIONS                                                  //
 ////////////////////////////////////////////////////////////////////////////////
+
+	/// @brief Ensure that an angle value is in radians.
+	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
+	core::Real convert_angle( core::Real const &val ) const {
+		if( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
+		return val; //Default case -- don't alter the value.
+	}
 
 	/// @brief Set which bundle parameters set will be used, if more than one is defined in the pose's Conformation object.
 	/// @details  A value of n indicates that the nth bundle paramets set encountered will be perturbed.
@@ -263,6 +271,14 @@ public:
 	/// @brief Add options for a new helix
 	/// @details Return value is the current total number of helices after the addition.
 	core::Size add_helix( core::Size const helix_index );
+	
+	/// @brief Set whether user input is in degrees (true) or radians (false).
+	///
+	void set_use_degrees( bool const val ) { use_degrees_=val; return; }
+	
+	/// @brief Get whether user input is in degrees (true) or radians (false).
+	///
+	bool use_degrees() const { return use_degrees_; }
 
 
 private:
@@ -329,6 +345,10 @@ private:
 	/// @brief Which set of bundle parameters (if there exists more than one) should the mover alter?
 	/// @details Defaults to 1.  Higher values indicate the nth set encountered in the ParametersSet list.
 	core::Size bundleparametersset_index_;
+	
+	/// @brief Should user input be interpreted as being in radians (false) or degrees (true)?
+	/// @details Default radians (false).
+	bool use_degrees_;
 	
 private:
 ////////////////////////////////////////////////////////////////////////////////

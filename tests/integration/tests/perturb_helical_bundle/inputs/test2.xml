@@ -1,0 +1,32 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" / >
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<MakeBundle name=bundle1 set_bondlengths=true set_bondangles=true residue_name=ALA crick_params_file=beta_strand symmetry=16 symmetry_copies=3 r0=29 omega0=0.075 helix_length=20 >
+			<Helix />
+			<Helix delta_omega0=0.19634954 invert=1 delta_t=0.25 delta_omega1=1.5707963 />
+			<Helix r0=21 omega0=0.05 crick_params_file=alpha_helix helix_length=40 />
+		</MakeBundle>
+
+		<DumpPdb name=dump fname="test2_pre_perturbation.pdb" scorefxn=tala tag_time=0 />
+
+		<PerturbBundle name=perturbbundle1 use_degrees=true default_perturbation_type=gaussian r0_perturbation=1.0 omega0_perturbation=1.71887341 delta_omega0_perturbation=1.1459156 delta_t_perturbation=0.03>
+			<Helix helix_index=1 r0_perturbation=1.5 omega0_perturbation=11.459156 delta_omega1_perturbation=42.9718346 delta_omega0_perturbation=17.1887339 delta_t_perturbation=0.5 delta_t_perturbation_type="uniform" />
+			<Helix helix_index=2 r0_copies_helix=1 delta_omega1_perturbation=42.9718346 omega0_copies_helix=1 />
+			<Helix helix_index=3 delta_t_perturbation=0.05 /> Delta omega1 not perturbed.
+		</PerturbBundle>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bundle1 />
+		<Add mover=dump />
+		<Add mover=perturbbundle1 />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

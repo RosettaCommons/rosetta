@@ -6,5 +6,7 @@ Changes to the logfile or to the output pdb mean that the mover has changed some
 imprecision is a possibility.  Note that scores are expected to be extremely high, since there is no energy-minimization or whatnot; this is just a crude backbone generation
 script.
 
+Test 2 has been added to test the mover with input in degrees instead of radians.  The generated structure should be identical (within numerical error) to the one created using radians.
+
 Author: Vikram K. Mulligan, Ph.D., Baker laboratory, University of Washington (vmullig@uw.edu).
 

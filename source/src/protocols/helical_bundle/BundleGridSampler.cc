@@ -610,6 +610,10 @@ namespace protocols {
 				set_pdb_prefix(val);
 				if(TR.visible()) TR << "Setting prefix for PDB output to " << val << "." << std::endl;
 			}
+			
+			//Determine whether we'll be parsing values in degrees or in radians:
+			make_bundle_->set_use_degrees( tag->getOption<bool>("use_degrees", false) );
+			if(TR.visible()) TR << "Setting mover to interpret angles in RosettaScripts as though they were specified in " << (make_bundle_->use_degrees() ? "degrees." : "radians.") << "  Note that internally and in output, the mover uses radians." << std::endl;
 
 			//Set symmetry options for the MakeBundle mover (symmetry, symmetry_copies):
 			make_bundle_->set_symmetry_options_from_tag( tag );
@@ -680,9 +684,9 @@ namespace protocols {
 					"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("omega0", 0.0) );
 				if(TR.visible()) TR << "Setting default omega0 value to " << val << "." << std::endl;
-				default_omega0()->set_default_value(val);
+				default_omega0()->set_default_value( make_bundle_->convert_angle(val) );
 				default_omega0()->set_perturbable(false);
-				make_bundle_->set_default_omega0(val);
+				make_bundle_->set_default_omega0( make_bundle_->convert_angle(val) );
 			} else if ( tag->hasOption("omega0_min") ) {
 				runtime_assert_string_msg(!tag->hasOption("omega0"),
 					"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
@@ -692,10 +696,10 @@ namespace protocols {
 				core::Real const val2( tag->getOption<core::Real>("omega0_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
 				if(TR.visible()) TR << "Setting default omega0_min and omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
-				default_omega0()->set_lower_value(val1);
-				default_omega0()->set_upper_value(val2);
+				default_omega0()->set_lower_value( make_bundle_->convert_angle(val1) );
+				default_omega0()->set_upper_value( make_bundle_->convert_angle(val2) );
 				default_omega0()->set_perturbable(true);
-				make_bundle_->set_default_omega0(val1);
+				make_bundle_->set_default_omega0( make_bundle_->convert_angle(val1) );
 				runtime_assert_string_msg( tag->hasOption("omega0_samples"),
 					"When parsing options for the BundleGridSampler mover, found omega0_min and omega0_max options, but no omega0_samples option.  The number of omega0 samples must be specified." );
 				core::Size const val3( tag->getOption<core::Size>( "omega0_samples", 0 ) );
@@ -713,9 +717,9 @@ namespace protocols {
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("delta_omega0", 0.0) );
 				if(TR.visible()) TR << "Setting default delta_omega0 value to " << val << "." << std::endl;
-				default_delta_omega0()->set_default_value(val);
+				default_delta_omega0()->set_default_value( make_bundle_->convert_angle(val) );
 				default_delta_omega0()->set_perturbable(false);
-				make_bundle_->set_default_delta_omega0(val);
+				make_bundle_->set_default_delta_omega0( make_bundle_->convert_angle(val) );
 			} else if ( tag->hasOption("delta_omega0_min") ) {
 				runtime_assert_string_msg(!tag->hasOption("delta_omega0"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
@@ -725,10 +729,10 @@ namespace protocols {
 				core::Real const val2( tag->getOption<core::Real>("delta_omega0_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega0_max value less than or equal to the delta_omega0_min value.");
 				if(TR.visible()) TR << "Setting default delta_omega0_min and delta_omega0_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
-				default_delta_omega0()->set_lower_value(val1);
-				default_delta_omega0()->set_upper_value(val2);
+				default_delta_omega0()->set_lower_value( make_bundle_->convert_angle(val1) );
+				default_delta_omega0()->set_upper_value( make_bundle_->convert_angle(val2) );
 				default_delta_omega0()->set_perturbable(true);
-				make_bundle_->set_default_delta_omega0(val1);
+				make_bundle_->set_default_delta_omega0( make_bundle_->convert_angle(val1) );
 				runtime_assert_string_msg( tag->hasOption("delta_omega0_samples"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega0_min and delta_omega0_max options, but no delta_omega0_samples option.  The number of delta_omega0 samples must be specified." );
 				core::Size const val3( tag->getOption<core::Size>( "delta_omega0_samples", 0 ) );
@@ -746,9 +750,9 @@ namespace protocols {
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 				core::Real const val( tag->getOption<core::Real>("delta_omega1", 0.0) );
 				if(TR.visible()) TR << "Setting default delta_omega1 value to " << val << "." << std::endl;
-				default_delta_omega1()->set_default_value(val);
+				default_delta_omega1()->set_default_value( make_bundle_->convert_angle(val) );
 				default_delta_omega1()->set_perturbable(false);
-				make_bundle_->set_default_delta_omega1_all(val);
+				make_bundle_->set_default_delta_omega1_all( make_bundle_->convert_angle(val) );
 			} else if ( tag->hasOption("delta_omega1_min") ) {
 				runtime_assert_string_msg(!tag->hasOption("delta_omega1"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
@@ -758,10 +762,10 @@ namespace protocols {
 				core::Real const val2( tag->getOption<core::Real>("delta_omega1_max", 0.0) );
 				runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega1_max value less than or equal to the delta_omega1_min value.");
 				if(TR.visible()) TR << "Setting default delta_omega1_min and delta_omega1_max values to " << val1 << " and " << val2 << ", respectively." << std::endl;
-				default_delta_omega1()->set_lower_value(val1);
-				default_delta_omega1()->set_upper_value(val2);
+				default_delta_omega1()->set_lower_value( make_bundle_->convert_angle(val1) );
+				default_delta_omega1()->set_upper_value( make_bundle_->convert_angle(val2) );
 				default_delta_omega1()->set_perturbable(true);
-				make_bundle_->set_default_delta_omega1_all(val1);
+				make_bundle_->set_default_delta_omega1_all( make_bundle_->convert_angle(val1) );
 				runtime_assert_string_msg( tag->hasOption("delta_omega1_samples"),
 					"When parsing options for the BundleGridSampler mover, found delta_omega1_min and delta_omega1_max options, but no delta_omega1_samples option.  The number of delta_omega1 samples must be specified." );
 				core::Size const val3( tag->getOption<core::Size>( "delta_omega1_samples", 0 ) );
@@ -971,10 +975,10 @@ namespace protocols {
 								"When parsing options for the BundleGridSampler mover, found omega0 defined alongside omega0_min or omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 							core::Real const val( (*tag_it)->getOption<core::Real>("omega0", 0.0) );
 							if(TR.visible()) TR << "Setting the omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
-							omega0(helix_index)->set_default_value(val);
+							omega0(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 							omega0(helix_index)->set_perturbable(false);
 							omega0(helix_index)->set_use_defaults(false);
-							make_bundle_->helix(helix_index)->set_omega0(val);
+							make_bundle_->helix(helix_index)->set_omega0( make_bundle_->convert_angle(val) );
 						} else if ( (*tag_it)->hasOption("omega0_min") ) {
 							runtime_assert_string_msg(!(*tag_it)->hasOption("omega0_copies_helix"),
 								"When parsing options for the BundleGridSampler mover, found omega0_min defined alongside an omega0_copies_helix statement.  This does not makes sense: either omega0 is sampled, or its value copies the omega0 value of another helix (not both).");
@@ -986,11 +990,11 @@ namespace protocols {
 							core::Real const val2( (*tag_it)->getOption<core::Real>("omega0_max", 0.0) );
 							runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an omega0_max value less than or equal to the omega0_min value.");
 							if(TR.visible()) TR << "Setting omega0_min and omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
-							omega0(helix_index)->set_lower_value(val1);
-							omega0(helix_index)->set_upper_value(val2);
+							omega0(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
+							omega0(helix_index)->set_upper_value( make_bundle_->convert_angle(val2) );
 							omega0(helix_index)->set_perturbable(true);
 							omega0(helix_index)->set_use_defaults(false);
-							make_bundle_->helix(helix_index)->set_omega0(val1);
+							make_bundle_->helix(helix_index)->set_omega0( make_bundle_->convert_angle(val1) );
 							runtime_assert_string_msg( (*tag_it)->hasOption("omega0_samples"),
 								"When parsing options for the BundleGridSampler mover, found omega0_min and omega0_max options, but no omega0_samples option.  The number of omega0 samples must be specified." );
 							core::Size const val3( (*tag_it)->getOption<core::Size>( "omega0_samples", 0 ) );
@@ -1019,10 +1023,10 @@ namespace protocols {
 							"When parsing options for the BundleGridSampler mover, found delta_omega0 defined alongside delta_omega0_min or delta_omega0_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega0", 0.0) );
 						if(TR.visible()) TR << "Setting the delta_omega0 value for helix " << helix_index << " to " << val << "." << std::endl;
-						delta_omega0(helix_index)->set_default_value(val);
+						delta_omega0(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 						delta_omega0(helix_index)->set_perturbable(false);
 						delta_omega0(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_delta_omega0(val);
+						make_bundle_->helix(helix_index)->set_delta_omega0( make_bundle_->convert_angle(val) );
 					} else if ( (*tag_it)->hasOption("delta_omega0_min") ) {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega0_copies_helix"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega0_min defined alongside an delta_omega0_copies_helix statement.  This does not makes sense: either delta_omega0 is sampled, or its value copies the delta_omega0 value of another helix (not both).");
@@ -1034,11 +1038,11 @@ namespace protocols {
 						core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega0_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega0_max value less than or equal to the delta_omega0_min value.");
 						if(TR.visible()) TR << "Setting delta_omega0_min and delta_omega0_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
-						delta_omega0(helix_index)->set_lower_value(val1);
-						delta_omega0(helix_index)->set_upper_value(val2);
+						delta_omega0(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
+						delta_omega0(helix_index)->set_upper_value( make_bundle_->convert_angle(val2) );
 						delta_omega0(helix_index)->set_perturbable(true);
 						delta_omega0(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_delta_omega0(val1);
+						make_bundle_->helix(helix_index)->set_delta_omega0( make_bundle_->convert_angle(val1) );
 						runtime_assert_string_msg( (*tag_it)->hasOption("delta_omega0_samples"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega0_min and delta_omega0_max options, but no delta_omega0_samples option.  The number of delta_omega0 samples must be specified." );
 						core::Size const val3( (*tag_it)->getOption<core::Size>( "delta_omega0_samples", 0 ) );
@@ -1066,10 +1070,10 @@ namespace protocols {
 							"When parsing options for the BundleGridSampler mover, found delta_omega1 defined alongside delta_omega1_min or delta_omega1_max.  This does not make sense -- it suggests that the value should both be sampled and not sampled.");
 						core::Real const val( (*tag_it)->getOption<core::Real>("delta_omega1", 0.0) );
 						if(TR.visible()) TR << "Setting the delta_omega1 value for helix " << helix_index << " to " << val << "." << std::endl;
-						delta_omega1(helix_index)->set_default_value(val);
+						delta_omega1(helix_index)->set_default_value( make_bundle_->convert_angle(val) );
 						delta_omega1(helix_index)->set_perturbable(false);
 						delta_omega1(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_delta_omega1_all(val);
+						make_bundle_->helix(helix_index)->set_delta_omega1_all( make_bundle_->convert_angle(val) );
 					} else if ( (*tag_it)->hasOption("delta_omega1_min") ) {
 						runtime_assert_string_msg(!(*tag_it)->hasOption("delta_omega1_copies_helix"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega1_min defined alongside an delta_omega1_copies_helix statement.  This does not makes sense: either delta_omega1 is sampled, or its value copies the delta_omega1 value of another helix (not both).");
@@ -1081,11 +1085,11 @@ namespace protocols {
 						core::Real const val2( (*tag_it)->getOption<core::Real>("delta_omega1_max", 0.0) );
 						runtime_assert_string_msg( val2 > val1, "When parsing options for the BundleGridSampler mover, found an delta_omega1_max value less than or equal to the delta_omega1_min value.");
 						if(TR.visible()) TR << "Setting delta_omega1_min and delta_omega1_max values for helix " << helix_index << " to " << val1 << " and " << val2 << ", respectively." << std::endl;
-						delta_omega1(helix_index)->set_lower_value(val1);
-						delta_omega1(helix_index)->set_upper_value(val2);
+						delta_omega1(helix_index)->set_lower_value( make_bundle_->convert_angle(val1) );
+						delta_omega1(helix_index)->set_upper_value( make_bundle_->convert_angle(val2) );
 						delta_omega1(helix_index)->set_perturbable(true);
 						delta_omega1(helix_index)->set_use_defaults(false);
-						make_bundle_->helix(helix_index)->set_delta_omega1_all(val1);
+						make_bundle_->helix(helix_index)->set_delta_omega1_all( make_bundle_->convert_angle(val1) );
 						runtime_assert_string_msg( (*tag_it)->hasOption("delta_omega1_samples"),
 							"When parsing options for the BundleGridSampler mover, found delta_omega1_min and delta_omega1_max options, but no delta_omega1_samples option.  The number of delta_omega1 samples must be specified." );
 						core::Size const val3( (*tag_it)->getOption<core::Size>( "delta_omega1_samples", 0 ) );

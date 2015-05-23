@@ -43,6 +43,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
+#include <numeric/constants.hh>
 
 #include <set>
 
@@ -91,6 +92,13 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const &
 	);
+	
+	/// @brief Ensure that an angle value is in radians.
+	/// @details  Checks the use_degrees_ boolean.  If true, converts degrees to radians; if false, returns input value.
+	core::Real convert_angle( core::Real const &val ) const {
+		if( use_degrees_ ) return (val / 180.0 * numeric::constants::d::pi);
+		return val; //Default case -- don't alter the value.
+	}
 
 	/// @brief Set crick_params_file, set_bondlengths, set_bondangles, and set_dihedrals options for a single helix, based on an input tag.
 	///
@@ -184,7 +192,7 @@ public:
 
 	/// @brief Set the default omega0 value (major helix rise per residue)
 	///
-	void set_default_omega0(core::Real const &val) { default_omega0_=val; default_omega0_set_=true; }
+	void set_default_omega0(core::Real const &val) { default_omega0_=convert_angle(val); default_omega0_set_=true; }
 
 	/// @brief Returns true if and only if the default omega0 value (major helix rise per residue) has been set
 	///
@@ -196,7 +204,7 @@ public:
 
 	/// @brief Set the default delta_omega0 value (major helix turn)
 	///
-	void set_default_delta_omega0(core::Real const &val) { default_delta_omega0_=val; default_delta_omega0_set_=true; }
+	void set_default_delta_omega0(core::Real const &val) { default_delta_omega0_=convert_angle(val); default_delta_omega0_set_=true; }
 
 	/// @brief Returns true if and only if the default delta_omega0 value (major helix turn) has been set
 	///
@@ -205,7 +213,6 @@ public:
 	/// @brief Returns the default delta_omega0 value (major helix turn).
 	///
 	core::Real default_delta_omega0() const;
-
 
 	/// @brief Set the default Crick params file name.
 	///
@@ -221,7 +228,7 @@ public:
 
 	/// @brief Set the default omega1 value (minor helix turn per residue)
 	///
-	void set_default_omega1(core::Real const &val) { default_omega1_=val; default_omega1_set_=true; }
+	void set_default_omega1(core::Real const &val) { default_omega1_=convert_angle(val); default_omega1_set_=true; }
 
 	/// @brief Returns true if and only if the default omega1 value (minor helix turn per residue) has been set
 	///
@@ -245,7 +252,7 @@ public:
 
 	/// @brief Set the default delta_omega1_all value (minor helix rotation)
 	///
-	void set_default_delta_omega1_all(core::Real const &val) { default_delta_omega1_all_=val; default_delta_omega1_all_set_=true; }
+	void set_default_delta_omega1_all(core::Real const &val) { default_delta_omega1_all_=convert_angle(val); default_delta_omega1_all_set_=true; }
 
 	/// @brief Returns true if and only if the default delta_omega1_all value (minor helix rotation) has been set
 	///
@@ -362,6 +369,14 @@ public:
 	/// @brief Returns the default for whether bond lengths should be set by the mover
 	///
 	bool default_allow_dihedrals() const;
+	
+	/// @brief Set whether we're using degrees (true) or radians (false).
+	///
+	void set_use_degrees( bool const val=true ) { use_degrees_=val; return; }
+
+	/// @brief Get whether we're using degrees (true) or radians (false).
+	///
+	bool use_degrees() const { return use_degrees_; }
 
 	/// @brief Returns true or false based on whether the last call to the apply() function
 	/// failed (true) or succeeded (false).
@@ -525,6 +540,10 @@ private:
 	/// @brief Has the allow_dihedrals value been specified?
 	///
 	bool default_allow_dihedrals_set_;
+	
+	/// @brief Are we using degrees (true) or radians (false)?  Default radians (false).
+	///
+	bool use_degrees_;
 
 	/// @brief Did the last apply fail?
 	///

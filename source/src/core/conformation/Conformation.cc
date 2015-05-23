@@ -3944,6 +3944,15 @@ debug_assert( src.size() == size() );
 	chain_endings_ = src.chain_endings_;
 	// secstruct
 	secstruct_ = src.secstruct_;
+	
+	// parametric conformations
+	parameters_set_.clear();
+	if(src.parameters_set_.size() > 0) {
+		for(core::Size i=1, imax=src.parameters_set_.size(); i<=imax; ++i) {
+			parameters_set_.push_back( src.parameters_set_[i]->clone() );
+			//parameters_set_[parameters_set_.size()]->update_residue_links( *this );
+		}
+	}
 
 	// bookkeeping
 	residue_coordinates_need_updating_ = src.residue_coordinates_need_updating_;
@@ -3953,7 +3962,12 @@ debug_assert( src.size() == size() );
 	xyz_moved_ = src.xyz_moved_;
 
 	structure_moved_ = src.structure_moved_;
-}
+
+	// final update of records -- keep this last in this scope:
+	for(core::Size i=1, imax=parameters_set_.size(); i<=imax; ++i)
+		parameters_set_[i]->update_residue_links( *this );
+
+} // in_place_copy
 
 
 /// @details Copy any un-registered coordinate or DOF changes into the existing residues.

@@ -89,7 +89,8 @@ PerturbBundle::PerturbBundle():
 		z1_offset_(),
 		default_z0_offset_( new PerturbBundleOptions ),
 		z0_offset_(),
-		bundleparametersset_index_(1)
+		bundleparametersset_index_(1),
+		use_degrees_(false)
 {}
 
 
@@ -110,7 +111,8 @@ PerturbBundle::PerturbBundle( PerturbBundle const & src ):
 	z1_offset_(),
 	default_z0_offset_( src.default_z0_offset_->clone() ),
 	z0_offset_(),
-	bundleparametersset_index_(src.bundleparametersset_index_)
+	bundleparametersset_index_(src.bundleparametersset_index_),
+	use_degrees_( src.use_degrees_ )
 {
 	r0_.clear();
 	omega0_.clear();
@@ -150,7 +152,7 @@ protocols::moves::MoverOP PerturbBundle::fresh_instance() const {
 
 
 /// @brief Actually apply the mover to the pose.
-void PerturbBundle::apply (core::pose::Pose & pose)
+void PerturbBundle::apply( core::pose::Pose & pose )
 {
 	bool failed=false;
 
@@ -185,14 +187,15 @@ void PerturbBundle::apply (core::pose::Pose & pose)
 	}
 
 	if(!failed) {
-		if(TR.visible()) TR << "Rebuilding the helical bundle conformation using the Crick parameterss stored in the pose." << std::endl;
+		if(TR.visible()) TR << "Rebuilding the helical bundle conformation using the Crick parameters stored in the pose." << std::endl;
 		rebuild_conformation(pose_copy, params_set, params_set_index, failed);
 	}
 
 	if(!failed) {
 		if(TR.visible()) TR << "Perturbation successful.  Copying result to the input pose." << std::endl;
 		pose = pose_copy;	
-		write_report( params_set, false); //Write a post-perturbation report summarizing the final Crick parameter values.	
+		//write_report( params_set, false); //Write a post-perturbation report summarizing the final Crick parameter values.	
+		write_report( utility::pointer::dynamic_pointer_cast< BundleParametersSet >( pose.conformation().parameters_set(params_set_index) ), false); //Write a post-perturbation report summarizing the final Crick parameter values.	
 	} else {
 		if(TR.visible()) TR << "The current attempt generated Crick parameters that did not permit sensible geometry.  Returning input pose." << std::endl;
 	}
@@ -227,13 +230,15 @@ PerturbBundle::parse_my_tag(
 		core::pose::Pose const & /*pose*/
 ) {
 
-	//TODO: ADD SUPPORT FOR Z-OFFSET.
-
 	if ( tag->getName() != "PerturbBundle" ){
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
 	}
 
 	if(TR.visible()) TR << "Parsing options for PerturbBundle (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
+	
+	//Determine whether input is in degrees or radians.
+	set_use_degrees( tag->getOption<bool>( "use_degrees", false ) );
+	if(TR.visible()) TR << "Interpreting user-input angles as being in " << (use_degrees() ? "degrees" : "radians") << ".  (Internally, radians are always used, and output will be in radians.)" << std::endl;
 
 	//Set a default perturbation type:
 	if( tag->hasOption("default_perturbation_type")) {
@@ -282,8 +287,8 @@ PerturbBundle::parse_my_tag(
 
 	if( tag->hasOption("omega0_perturbation") ) {
 		core::Real omega0pert( tag->getOption<core::Real>("omega0_perturbation", 0.0) );
-		default_omega0()->set_perturbation_magnitude(omega0pert);
-		if(TR.visible()) TR << "Set omega0 perturbation magnitude to " << omega0pert << std::endl;
+		default_omega0()->set_perturbation_magnitude( convert_angle( omega0pert ) );
+		if(TR.visible()) TR << "Set omega0 perturbation magnitude to " << omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	}
 	if( tag->hasOption("omega0_perturbation_type") ) {
 		if(default_omega0()->is_perturbable()) {
@@ -300,8 +305,8 @@ PerturbBundle::parse_my_tag(
 
 	if( tag->hasOption("delta_omega0_perturbation") ) {
 		core::Real delta_omega0pert( tag->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
-		default_delta_omega0()->set_perturbation_magnitude(delta_omega0pert);
-		if(TR.visible()) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << std::endl;
+		default_delta_omega0()->set_perturbation_magnitude( convert_angle( delta_omega0pert) );
+		if(TR.visible()) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	}
 	if( tag->hasOption("delta_omega0_perturbation_type") ) {
 		if(default_delta_omega0()->is_perturbable()) {
@@ -318,8 +323,8 @@ PerturbBundle::parse_my_tag(
 
 	if( tag->hasOption("delta_omega1_perturbation") ) {
 		core::Real delta_omega1pert( tag->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
-		default_delta_omega1()->set_perturbation_magnitude(delta_omega1pert);
-		if(TR.visible()) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << std::endl;
+		default_delta_omega1()->set_perturbation_magnitude( convert_angle( delta_omega1pert ) );
+		if(TR.visible()) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 	}
 	if( tag->hasOption("delta_omega1_perturbation_type") ) {
 		if(default_delta_omega1()->is_perturbable()) {
@@ -450,8 +455,8 @@ PerturbBundle::parse_my_tag(
 				} else {
 					if( (*tag_it)->hasOption("omega0_perturbation") ) {
 						core::Real omega0pert( (*tag_it)->getOption<core::Real>("omega0_perturbation", 0.0) );
-						omega0(this_helix)->set_perturbation_magnitude(omega0pert);
-						if(TR.visible()) TR << "Set omega0 perturbation magnitude to " << omega0pert << std::endl;
+						omega0(this_helix)->set_perturbation_magnitude( convert_angle( omega0pert ) );
+						if(TR.visible()) TR << "Set omega0 perturbation magnitude to " << omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 						has_perturbable_dofs=true;
 					}
 					if( (*tag_it)->hasOption("omega0_perturbation_type") ) {
@@ -480,8 +485,8 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if( (*tag_it)->hasOption("delta_omega0_perturbation") ) {
 					core::Real delta_omega0pert( (*tag_it)->getOption<core::Real>("delta_omega0_perturbation", 0.0) );
-					delta_omega0(this_helix)->set_perturbation_magnitude(delta_omega0pert);
-					if(TR.visible()) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << std::endl;
+					delta_omega0(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega0pert ) );
+					if(TR.visible()) TR << "Set delta_omega0 perturbation magnitude to " << delta_omega0pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				}
 				if( (*tag_it)->hasOption("delta_omega0_perturbation_type") ) {
@@ -509,8 +514,8 @@ PerturbBundle::parse_my_tag(
 			} else {
 				if( (*tag_it)->hasOption("delta_omega1_perturbation") ) {
 					core::Real delta_omega1pert( (*tag_it)->getOption<core::Real>("delta_omega1_perturbation", 0.0) );
-					delta_omega1(this_helix)->set_perturbation_magnitude(delta_omega1pert);
-					if(TR.visible()) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << std::endl;
+					delta_omega1(this_helix)->set_perturbation_magnitude( convert_angle( delta_omega1pert) );
+					if(TR.visible()) TR << "Set delta_omega1 perturbation magnitude to " << delta_omega1pert << (use_degrees() ? " degrees." : " radians.") << std::endl;
 					has_perturbable_dofs=true;
 				}
 				if( (*tag_it)->hasOption("delta_omega1_perturbation_type") ) {

@@ -109,6 +109,7 @@ MakeBundle::MakeBundle():
 		default_allow_bondangles_set_(false),
 		default_allow_dihedrals_(true),
 		default_allow_dihedrals_set_(false),
+		use_degrees_(false),
 		last_apply_failed_(false)
 {}
 
@@ -154,6 +155,7 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 		default_allow_bondangles_set_(src.default_allow_bondangles_set_),
 		default_allow_dihedrals_(src.default_allow_dihedrals_),
 		default_allow_dihedrals_set_(src.default_allow_dihedrals_set_),
+		use_degrees_(src.use_degrees_),
 		last_apply_failed_(src.last_apply_failed_)
 {
 	make_bundle_helix_movers_.clear();
@@ -273,8 +275,6 @@ MakeBundle::parse_my_tag(
 		core::pose::Pose const & /*pose*/
 ) {
 
-	//TODO: ADD SUPPORT FOR Z-OFFSET.
-
 	if ( tag->getName() != "MakeBundle" ){
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible -- the tag name does not match the mover name.");
 	}
@@ -282,6 +282,10 @@ MakeBundle::parse_my_tag(
 	if(TR.visible()) TR << "Parsing options for MakeBundle (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
 
 	runtime_assert_string_msg( !tag->hasOption("delta_omega1_all"), "The delta_omega1_all option has been renamed delta_omega1 for simplicity.  Please update your scripts accordingly." );
+	
+	//Get whether we're using radians or degrees:
+	set_use_degrees( tag->getOption<bool>("use_degrees", false) );
+	if(TR.visible()) TR << "Reading " << (use_degrees() ? "degrees" : "radians") << " for all input angle measurements.  (Radians are used internally, and output is in radians.)" << std::endl;
 
 	//Set symmetry options for the MakeBundle mover:
 	set_symmetry_options_from_tag(tag);
@@ -355,12 +359,12 @@ MakeBundle::parse_my_tag(
 			}
 			if( (*tag_it)->hasOption( "omega0" ) ) {
 				core::Real const omega0val( (*tag_it)->getOption<core::Real>("omega0", 0) );
-				helix(helix_index)->set_omega0(omega0val);
+				helix(helix_index)->set_omega0( convert_angle(omega0val) );
 				if(TR.visible()) TR << "\tSet omega0 value (major helix turn per residue) to " << omega0val << "." << std::endl;
 			}
 			if( (*tag_it)->hasOption( "delta_omega0" ) ) {
 				core::Real const delta_omega0val( (*tag_it)->getOption<core::Real>("delta_omega0", 0) );
-				helix(helix_index)->set_delta_omega0(delta_omega0val);
+				helix(helix_index)->set_delta_omega0( convert_angle(delta_omega0val) );
 				if(TR.visible()) TR << "\tSet delta_omega0 value (major helix rotation) to " << delta_omega0val << "." << std::endl;
 			}
 
@@ -432,7 +436,7 @@ void MakeBundle::set_minor_helix_params_from_tag( core::Size const helix_index, 
 {
 			if( tag->hasOption( "omega1" ) ) {
 				core::Real const omega1val( tag->getOption<core::Real>("omega1", 0) );
-				helix(helix_index)->set_omega1(omega1val);
+				helix(helix_index)->set_omega1( convert_angle(omega1val) );
 				if(TR.visible()) TR << "\tSet omega1 value (minor helix turn per residue) to " << omega1val << "." << std::endl;
 			}
 			if( tag->hasOption( "z1" ) ) {
@@ -442,7 +446,7 @@ void MakeBundle::set_minor_helix_params_from_tag( core::Size const helix_index, 
 			}
 			if( tag->hasOption( "delta_omega1" ) ) {
 				core::Real const deltaomega1val( tag->getOption<core::Real>("delta_omega1", 0) );
-				helix(helix_index)->set_delta_omega1_all(deltaomega1val);
+				helix(helix_index)->set_delta_omega1_all( convert_angle(deltaomega1val) );
 				if(TR.visible()) TR << "\tSet delta_omega1 value (minor helix rotation) to " << deltaomega1val << "." << std::endl;
 			}
 			return;
@@ -533,7 +537,7 @@ void MakeBundle::set_minorhelix_defaults_from_tag( utility::tag::TagCOP tag )
 		if(TR.visible()) TR << "Default Crick params file set to " << default_crick_params_file() << "." << std::endl;
 	}
 	if (tag->hasOption("omega1")) {
-		set_default_omega1( tag->getOption<core::Real>("omega1", 0) );
+		set_default_omega1( convert_angle( tag->getOption<core::Real>("omega1", 0) ) );
 		if(TR.visible()) TR << "Default omega1 (minor helix turn per residue) set to " << default_omega1() << "." << std::endl;
 	}
 	if (tag->hasOption("z1")) {
