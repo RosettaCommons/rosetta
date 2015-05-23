@@ -204,7 +204,6 @@
 #include <protocols/simple_moves/MonteCarloTestCreator.hh>
 #include <protocols/simple_moves/MonteCarloResetCreator.hh>
 #include <protocols/simple_moves/ResetBaselineMoverCreator.hh>
-#include <protocols/simple_moves/LabelPDBInfoMoverCreator.hh>
 #include <protocols/simple_moves/RingConformationMoverCreator.hh>
 
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>

@@ -76,7 +76,6 @@ public:
 private:
 	core::pose::PoseCOP reference_pose_;
 	bool verbose_,prevent_repacking_;
-	bool invert_;
 };
 
 

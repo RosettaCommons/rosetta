@@ -80,11 +80,9 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose pose_copy=pose;
 
   //pose_copy.dump_pdb("input.pdb");
-	if( !align_to_pdbname_.empty() ){
-		core::pose::PoseOP ref_pose= core::import_pose::pose_from_pdb( align_to_pdbname_, false ); 
-		protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP( new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true) );
-		SuperimposeMoverOP->apply(pose_copy);
-	}
+  core::pose::PoseOP ref_pose= core::import_pose::pose_from_pdb( align_to_pdbname_, false ); 
+  protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP( new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true) );
+	SuperimposeMoverOP->apply(pose_copy);
   //pose_copy.dump_pdb("inputAlign.pdb");
 
   //Append target pose
@@ -158,7 +156,9 @@ ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache:
 	///if the save pose mover has been instantiated, this filter can calculate the rms
 	if( tag->hasOption("align_to_pdbname") ){
 				  align_to_pdbname_=tag->getOption<std::string>("align_to_pdbname");
-	} 
+	} else {
+          throw utility::excn::EXCN_RosettaScriptsOption("Must specify the align_to_pdbname, should NOT be required");
+  }
 
   if( tag->hasOption("context_pdbname") ){
           context_pdbname_=tag->getOption<std::string>("context_pdbname");

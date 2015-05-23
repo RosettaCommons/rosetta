@@ -606,7 +606,6 @@ sources = {
 		"GenericMonteCarloMover",
 		"GreenPacker",
 		"GunnCost",
-		"LabelPDBInfoMover",
 		"LoadPDBMover",
 		"LoadUnboundRotMover",
 		"MakePolyXMover",

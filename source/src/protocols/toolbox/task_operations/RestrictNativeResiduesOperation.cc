@@ -148,38 +148,19 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 		utility_exit_with_message( "Reference pose and current pose have a different number of residues" );
 	std::string select_non_native_resis("select non_native_resis, resi ");
 	core::Size designable_resis = 0;
-	if( !invert_ ){
-		for( core::Size resi=1; resi<=total_residue; ++resi ) {
-			if ( asym_ref_pose.residue(resi).name3() == asym_pose.residue(resi).name3() ) {
-				if ( prevent_repacking_ ) task.nonconst_residue_task(resi).prevent_repacking();
-				else task.nonconst_residue_task(resi).restrict_to_repacking();
-			} else {
-				if ( verbose_ ) {
-					core::Size output_resi = resi;
-					if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-						output_resi = pose.pdb_info()->number( resi );
-					}
-					select_non_native_resis.append(ObjexxFCL::string_of(output_resi) + "+");
+	for( core::Size resi=1; resi<=total_residue; ++resi ) {
+		if ( asym_ref_pose.residue(resi).name3() == asym_pose.residue(resi).name3() ) {
+			if ( prevent_repacking_ ) task.nonconst_residue_task(resi).prevent_repacking();
+			else task.nonconst_residue_task(resi).restrict_to_repacking();
+		} else {
+			if ( verbose_ ) {
+				core::Size output_resi = resi;
+				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
+					output_resi = pose.pdb_info()->number( resi );
 				}
-				designable_resis++;
+				select_non_native_resis.append(ObjexxFCL::string_of(output_resi) + "+");
 			}
-		}
-	}
-	else {
-		for( core::Size resi=1; resi<=total_residue; ++resi ) {
-			if ( asym_ref_pose.residue(resi).name3() != asym_pose.residue(resi).name3() ) {
-				if ( prevent_repacking_ ) task.nonconst_residue_task(resi).prevent_repacking();
-				else task.nonconst_residue_task(resi).restrict_to_repacking();
-			} else {
-				if ( verbose_ ) {
-					core::Size output_resi = resi;
-					if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-						output_resi = pose.pdb_info()->number( resi );
-					}
-					select_non_native_resis.append(ObjexxFCL::string_of(output_resi) + "+");
-				}
-				designable_resis++;
-			}
+			designable_resis++;
 		}
 	}
 	// turn off everything in symmetric copies
@@ -219,9 +200,6 @@ RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 		TR<<"Using pdb "<<reference_pdb<<" as reference."<<std::endl;
 	}	else {
 		throw utility::excn::EXCN_RosettaScriptsOption( "Native PDB not specified." );
-	}
-	if ( tag->hasOption("invert") ) {
-		invert_ = tag->getOption< bool >( "invert", false );
 	}
 }
 
