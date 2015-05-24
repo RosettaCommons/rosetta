@@ -19,13 +19,13 @@ class HPC_Exception(Exception):
 
 
 
-def execute(message, commandline, return_=False, untilSuccesses=False, tracer=lambda x:None, terminate_on_failure=True):
+def execute(message, commandline, return_=False, until_successes=False, tracer=lambda x:None, terminate_on_failure=True):
     tracer(message);  tracer(commandline)
     while True:
         (res, output) = commands.getstatusoutput(commandline)
         tracer(output)
 
-        if res and untilSuccesses: pass  # Thats right - redability COUNT!
+        if res and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
         print "Error while executing %s: %s\n" % (message, output)

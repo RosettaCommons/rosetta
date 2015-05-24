@@ -69,14 +69,14 @@ def Tracer(verbose=False):
     return print_ if verbose else lambda x: None
 
 
-def execute(message, commandline, return_=False, untilSuccesses=False, terminate_on_failure=True):
+def execute(message, commandline, return_=False, until_successes=False, terminate_on_failure=True):
     TR = Tracer()
     TR(message);  TR(commandline)
     while True:
         (res, output) = commands.getstatusoutput(commandline)
         TR(output)
 
-        if res and untilSuccesses: pass  # Thats right - redability COUNT!
+        if res and until_successes: pass  # Thats right - redability COUNT!
         else: break
 
         print "Error while executing %s: %s\n" % (message, output)
