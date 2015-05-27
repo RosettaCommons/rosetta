@@ -9,7 +9,7 @@
 
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
 /// @brief Extract and analyze beta-sandwich features
-/// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
+/// @author Doo Nam Kim (doonam.kim@gmail.com, started from Tim Jacobs' code)
 /// @overview
 ///		@ task 0: Determine whether we deal with given pdb file
 ///		@ task 1: Identify all beta-strands
@@ -34,7 +34,6 @@
 ///				@ task 4-4: Write total size of sandwich
 ///		@ task 5: Write resfiles automatically
 
-//Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>

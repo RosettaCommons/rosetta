@@ -10,7 +10,6 @@
 /// @file protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.cc
 /// @brief Write to a DB after SandwichFeatures
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
-/// @overview
 
 //Devel
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>

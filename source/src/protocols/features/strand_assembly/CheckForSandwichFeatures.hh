@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file CheckForSandwichFeatures.hh
+/// @file protocols/features/strand_assembly/CheckForSandwichFeatures.hh
 /// @brief Check various properties for SandwichFeatures
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
 

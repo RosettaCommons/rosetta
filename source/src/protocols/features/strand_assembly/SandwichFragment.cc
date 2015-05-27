@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file /rosetta/main/source/src/protocols/features/strand_assembly/SandwichFragment.cc
-/// @brief
-/// @author Doo Nam Kim based on Tim jacobs' code
+/// @file protocols/features/strand_assembly/SandwichFragment.cc
+/// @brief Small helper class that stores the start and end of a strand secondary structure
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 //Unit Headers
 #include <protocols/features/strand_assembly/SandwichFragment.hh>

@@ -17,9 +17,15 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+namespace protocols{
+	namespace features{
+
 class SecondaryStructureSegmentFeatures;
 typedef utility::pointer::shared_ptr< SecondaryStructureSegmentFeatures > SecondaryStructureSegmentFeaturesOP;
 typedef utility::pointer::shared_ptr< SecondaryStructureSegmentFeatures const > SecondaryStructureSegmentFeaturesCOP;
+
+	}//features
+}//protocols
 
 #endif
 

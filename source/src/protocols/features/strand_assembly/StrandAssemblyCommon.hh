@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StrandAssemblyCommon.hh
-/// @brief Has most basic inclusions and namespace usings
+/// @file protocols/features/strand_assembly/StrandAssemblyCommon.hh
+/// @brief Has most common/shared inclusions and namespace usings
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
 
 #ifndef INCLUDED_protocols_features_strand_assembly_StrandAssemblyCommon_hh

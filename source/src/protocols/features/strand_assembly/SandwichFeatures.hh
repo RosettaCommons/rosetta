@@ -7,9 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SandwichFeatures.hh
-/// @brief
-/// @author Doo Nam Kim (doonam.kim@gmail.com, started with Tim Jacobs' code)
+/// @file protocols/features/strand_assembly/SandwichFeatures.hh
+/// @brief Extract and analyze beta-sandwich features
+/// @author Doo Nam Kim (doonam.kim@gmail.com, started from Tim Jacobs' code)
+/// @overview
+///		@ task 0: Determine whether we deal with given pdb file
+///		@ task 1: Identify all beta-strands
+///		@ task 2: Identify all beta-sheets with these strands
+///		@ task 3: Identify all beta-sandwiches with these sheets
+///			@ task 3-1: Merge sheets to each other if possible
+///			@ task 3-2: Make beta-sandwiches with sheets that are ideal only
+///				@ task 3-2-1: Exclude if this_sheet_is_surrounded_by_more_than_1_other_sheet
+///				@ task 3-2-2: Exclude sheets that are too close to each other
+///				@ task 3-2-3: Exclude sheets that are too distant to each other
+///				@ task 3-2-4: Exclude sheets that do not face each other
+///					@	task 3-2-4-1: Exclude sheets that do not face each other by an angle with two terminal residues and one central residue
+///					@	task 3-2-4-2: Exclude sheets that do not face each other by an angle with four terminal residues in two edge strands
+///			@ task 3-4: Test canonical sandwich test
+///				@ task 3-4-1: Canonical sandwiches need to have low number of helix or strand residues in any loop (beta-hairpin-loop or inter-sheet-loop)
+///				@ task 3-4-2: Canonical sandwiches need to not have same-direction-strands as connecting two beta-sheets
+///				@ task 3-4-3: Canonical sandwiches should not be beta-barrel obviously
+///		@ task 4: Write beta-sandwiches that passed canonical tests into database
+///				@ task 4-1: Write hairpin_loop and inter-sheet loop
+///				@ task 4-2: Write starting_loop and endng_loop
+///				@ task 4-3: Write ratio_hydrophobic_philic/net_charge
+///				@ task 4-4: Write total size of sandwich
+///		@ task 5: Write resfiles automatically
+
 
 #ifndef INCLUDED_protocols_features_strand_assembly_SandwichFeatures_hh
 #define INCLUDED_protocols_features_strand_assembly_SandwichFeatures_hh

@@ -9,10 +9,8 @@
 
 /// @file protocols/features/strand_assembly/CheckForSandwichFeatures.cc
 /// @brief Check various properties for SandwichFeatures
-/// @author Doo Nam Kim
-/// @overview
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 
-//Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 //#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>

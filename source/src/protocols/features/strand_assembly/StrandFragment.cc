@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /rosetta/main/source/src/protocols/features/strand_assembly/StrandFragment.cc
-/// @brief
+/// @brief Small helper class that stores the start and end of a strand secondary structure
 /// @author Doo Nam Kim (doonam.kim@gmail.com) based on Tim jacobs' helix assembly
 
 //Unit Headers

@@ -14,7 +14,6 @@
 #ifndef INCLUDED_protocols_features_strand_assembly_WriteToDBFromSandwichFeatures_HH
 #define INCLUDED_protocols_features_strand_assembly_WriteToDBFromSandwichFeatures_HH
 
-//Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>

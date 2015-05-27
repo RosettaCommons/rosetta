@@ -11,11 +11,11 @@
 /// @brief Write to a file after SandwichFeatures
 /// @author Doo Nam Kim (doonam.kim@gmail.com)
 /// @overview
+///		Write AA distribution
 
 #ifndef INCLUDED_protocols_features_strand_assembly_WriteToFileFromSandwichFeatures_HH
 #define INCLUDED_protocols_features_strand_assembly_WriteToFileFromSandwichFeatures_HH
 
-//Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/StrandAssemblyCommon.hh>
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>

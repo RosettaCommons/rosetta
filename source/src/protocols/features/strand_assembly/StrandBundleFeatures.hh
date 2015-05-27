@@ -7,9 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/features/strand_assembly/StrandBundleFeatures.hh
+/// @file protocols/features/strand_assembly/StrandBundleFeatures.cc
 /// @brief extract beta strand, strand pairs, sandwiches in pdb file, see wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StrandBundleFeatures for detail
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
+/// @overview
+///		@ task 1: Identify all beta-strands
+///			@ task 1-1: Write beta-strands into database
+///		@ task 2: Identify all beta-sheets with these strands
+///			@ task 2-1: Identify beta-sheets if their strands' two consecutive N-O pairs H-bond to each other
+///			@ task 2-2: Write beta-sheets into database
+///		@ task 3: Identify all beta-sandwiches with these sheets
+///			@ task 3-1: Write beta-sandwiches into database
 
 #ifndef INCLUDED_protocols_features_strand_assembly_StrandBundleFeatures_hh
 #define INCLUDED_protocols_features_strand_assembly_StrandBundleFeatures_hh
