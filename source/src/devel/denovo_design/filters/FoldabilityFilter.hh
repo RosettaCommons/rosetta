@@ -51,27 +51,27 @@ namespace filters {
 class FoldabilityFilter : public protocols::filters::Filter {
 public:
 
-  /// @brief Initialize FoldabilityFilter
-  FoldabilityFilter();
+	/// @brief Initialize FoldabilityFilter
+	FoldabilityFilter();
 
-  /// @brief virtual constructor to allow derivation
+	/// @brief virtual constructor to allow derivation
 	virtual ~FoldabilityFilter();
 
-  /// @brief Parses the FoldabilityFilter tags
+	/// @brief Parses the FoldabilityFilter tags
 	void parse_my_tag(
-	  utility::tag::TagCOP tag,
-	  basic::datacache::DataMap & data,
-	  protocols::filters::Filters_map const &,
-	  protocols::moves::Movers_map const &,
-	  core::pose::Pose const & );
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap & data,
+			protocols::filters::Filters_map const &,
+			protocols::moves::Movers_map const &,
+			core::pose::Pose const & );
 
-  /// @brief Return the name of this mover.
-  virtual std::string get_name() const;
+	/// @brief Return the name of this mover.
+	virtual std::string get_name() const;
 
-  /// @brief return a fresh instance of this class in an owning pointer
+	/// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::filters::FilterOP clone() const;
 
-  /// @brief Apply the FoldabilityFilter. Overloaded apply function from filter base class.
+	/// @brief Apply the FoldabilityFilter. Overloaded apply function from filter base class.
 	virtual protocols::filters::FilterOP fresh_instance() const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -133,6 +133,8 @@ private:   // options
 	core::Size start_res_;
 	/// @brief residue number to stop building
 	core::Size end_res_;
+	/// @brief "success" is achieved when distance is below this threshold
+	core::Real distance_threshold_;
 	/// @brief if true, abego values in the input pose will be ignored for the segment we are rebuilding
 	bool ignore_pose_abego_;
 	/// @brief if true, poses will be outputted for each foldability step (default=false)

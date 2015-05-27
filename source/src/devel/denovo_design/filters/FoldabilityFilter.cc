@@ -95,7 +95,7 @@ FoldabilityFilterCreator::filter_name()
 	return "Foldability";
 }
 
-	/*
+/*
 		NOTES
 		test case is a long helix, 12 residues fixed helical
 		plus 9 residues variable for fragment insertion
@@ -104,13 +104,13 @@ FoldabilityFilterCreator::filter_name()
 		Architecture: Javier writes code to make a fragment insertion move
 		I write code that evaluates the move
 		Possible metrics for study :
-		   independent variable fragment length and abego
-		   angle of H-axis bend
-		   dihedral about H-axis
-			 could go with 6-D translation/rotation IF we are changing insert lengths.
-			 if we are not, project the a parametric helix forward or back to find the closest point
-			 to a predefined end point in euclidean space.
-	 */
+			independent variable fragment length and abego
+			angle of H-axis bend
+			dihedral about H-axis
+			could go with 6-D translation/rotation IF we are changing insert lengths.
+			if we are not, project the a parametric helix forward or back to find the closest point
+			to a predefined end point in euclidean space.
+*/
 
 ///  ---------------------------------------------------------------------------------
 ///  FoldabilityFilter main code:
@@ -121,6 +121,7 @@ FoldabilityFilter::FoldabilityFilter() :
 	tries_( 100 ),
 	start_res_( 1 ),
 	end_res_( 1 ),
+	distance_threshold_( 4.0 ),
 	ignore_pose_abego_( false ),
 	output_poses_( false ),
 	selector_(),
@@ -175,13 +176,14 @@ FoldabilityFilter::parse_my_tag(
 		}
 		assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
-	} else {  
+	} else {
 		set_start_res( tag->getOption< core::Size >( "start_res", start_res_ ) );
 		set_end_res( tag->getOption< core::Size >( "end_res", end_res_ ) );
 	}
 	motif_ = tag->getOption< std::string >( "motif", motif_ );
 	ignore_pose_abego_ = tag->getOption< bool >( "ignore_pose_abego", ignore_pose_abego_ );
 	output_poses_ = tag->getOption< bool >( "output_poses", output_poses_ );
+	distance_threshold_ = tag->getOption< core::Real >( "distance_threshold", distance_threshold_ );
 	if ( ignore_pose_abego_ && ( motif_ == "" ) ) {
 		utility_exit_with_message( "You need to specify a motif if you are ignoring pose abego values." );
 	}
@@ -461,8 +463,8 @@ FoldabilityFilter::fragment_insertion(
 			posecopy.dump_pdb( "foldability" + boost::lexical_cast< std::string >( i ) + ".pdb" );
 		}
 		core::Real const distance = end_res.xyz( "N" ).distance( posecopy.residue( end ).xyz( "N" ) );
-		TR << "Distance is " << distance << std::endl;
-		if ( distance < 4.0 ) {
+		TR << "Distance is " << distance << ", success threshold=" << distance_threshold_ << std::endl;
+		if ( distance < distance_threshold_ ) {
 			++good_count;
 		}
 	}
