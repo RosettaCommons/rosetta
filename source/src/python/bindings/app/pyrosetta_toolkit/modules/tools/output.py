@@ -34,6 +34,7 @@ from app.pyrosetta_toolkit.modules.SQLPDB import *
 from app.pyrosetta_toolkit.modules.tools import loops as loop_tools
 from app.pyrosetta_toolkit.window_main import global_variables
 from app.pyrosetta_toolkit.modules.definitions import restype_definitions
+from collections import defaultdict
 
 def dumpPDB(p, native_pose, filepath, score, overwrite=False):
     """
@@ -469,7 +470,7 @@ def rescore_single_pdb(path, scorefunction, manager_dict):
     else:
         return
     
-def score_PDBLIST(pdblist_path, score, output_class):
+def score_PDBLIST(pdblist_path, score, processors, output_class = None):
     """
     Outputs a simple pdb vs score for simple analysis.
     if pdblist_path=False, a dialog box opens.
@@ -484,8 +485,7 @@ def score_PDBLIST(pdblist_path, score, output_class):
     else:
         PDBLIST = open(pdblist_path, 'r')
     SCORED_PDBLIST = open(os.path.dirname(pdblist_path)+"/SCORED_PDBLIST.txt", 'w')
-    
-    processors = output_class.processors.get()
+
     if processors==1:
         for path in PDBLIST:
             path = path.strip()
@@ -504,7 +504,8 @@ def score_PDBLIST(pdblist_path, score, output_class):
         
     #Multiprocessing - Slower for extremely small PDBs, great for large ones.
     else:
-        output_class.terminal_output.set(1)
+        if output_class:
+            output_class.terminal_output.set(1)
         manager = multiprocessing.Manager()
         result_map = manager.dict(); #[path]:[score]
         workers = []
@@ -561,16 +562,24 @@ def score_PDBLIST(pdblist_path, score, output_class):
         
             if total_running_jobs==0:
                 job_complete=True
-        
+
+        d = defaultdict()
+
+        #Convert Multiprocessing dictionary to regular one so it can be sorted
         for path in result_map.keys():
-            e = result_map[path]
+            d[path] = result_map[path]
+
+        for path in sorted(d, key=d.get):
+            e = d[path]
             print path+"\t%.3f\n"%e
             SCORED_PDBLIST.write(path+"\t%.3f\n"%e)
             
-        print "\nComplete. File written to SCORED_PDBLIST.txt\n"
-        output_class.terminal_output.set(0)
+        print "\nComplete. File written to "+os.path.dirname(pdblist_path)+"/SCORED_PDBLIST.txt\n"
+        if output_class:
+            output_class.terminal_output.set(0)
         SCORED_PDBLIST.close()
-        
+
+    return os.path.dirname(pdblist_path)+"/SCORED_PDBLIST.txt"
 
 #### FASTA OUTPUT ####
 
@@ -619,8 +628,11 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=None, regions=None):
     
     OUTFILE = open(outfilename, 'w')
     PDBLIST = open(pdblist_path, 'r')
+    i = 1
     for pdbpath in PDBLIST:
         pdbpath = pdbpath.strip()
+        if not pdbpath: continue
+
         pdb = os.path.basename(pdbpath)
         pdbID = pdb.split(".")[0]
         print pdbID
@@ -629,23 +641,25 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=None, regions=None):
         try:
             pose_from_pdb(pose, pdbpath)
         except PyRosettaException:
-            print "Could not load.. "+pdbID+"..Continueing.."
+            print "Could not load.. "+pdbID+"..continueing.."
             continue
         if regions:
             for region in region_array:
                 #if not region.region_exists(pose):continue
                 seq = region.get_sequence(pose)
                 
-                
-                header = ">"+pdbID+" "+region.get_region_string_with_all_residues(pose)+" "+pdbpath
+
+                header = ">"+repr(i)+"_"+os.path.basename(pdbpath)+" "+region.get_region_string_with_all_residues(pose)
                 print header
                 print seq
                 OUTFILE.write(header+"\n")
-                OUTFILE.write(seq+"\n")
+                OUTFILE.write(seq+"\n\n")
         else:
             seq=pose.sequence()
             OUTFILE.write(">"+pdbID+" "+pdbpath+"\n")
             OUTFILE.write(seq+"\n")
+        i+1
+
     PDBLIST.close()
     OUTFILE.close()
     print "Fasta written..."

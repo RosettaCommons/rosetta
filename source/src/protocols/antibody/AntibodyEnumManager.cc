@@ -34,7 +34,7 @@ void
 AntibodyEnumManager::setup() {
 
 	///Initialize the length of the vectors
-	cdr_name_to_string_.resize(num_cdr_loops);
+	cdr_name_to_string_.resize(CDRNameEnum_proto_total);
 	numbering_scheme_to_string_.resize(AntibodyNumberingSchemeEnum_total);
 	cdr_definition_to_string_.resize(CDRDefinitionEnum_total);
 	light_chain_type_to_string_.resize(LightChainTypeEnum_total);
@@ -42,9 +42,9 @@ AntibodyEnumManager::setup() {
 	packing_angle_to_string_.resize(PackingAngleEnum_total);
 	cdr_landmark_to_string_.resize(CDRLandmarkEnum_total);
 	antibody_region_to_string_.resize(AntibodyRegionEnum_total);
-	
+
 	///Manually construct the variables
-	
+
 	////////////////// CDR names ///////////////////////////////////////////////
 	cdr_name_to_string_[h1] = "H1";
 	cdr_name_to_string_[h2] = "H2";
@@ -52,22 +52,37 @@ AntibodyEnumManager::setup() {
 	cdr_name_to_string_[l1] = "L1";
 	cdr_name_to_string_[l2] = "L2";
 	cdr_name_to_string_[l3] = "L3";
-
+	
+	cdr_name_to_string_[proto_l4] = "Proto_L4";
+	cdr_name_to_string_[proto_h4] = "Proto_H4";
+	
 	cdr_name_to_enum_["H1"] = h1;
 	cdr_name_to_enum_["H2"] = h2;
 	cdr_name_to_enum_["H3"] = h3;
 	cdr_name_to_enum_["L1"] = l1;
 	cdr_name_to_enum_["L2"] = l2;
 	cdr_name_to_enum_["L3"] = l3;
-
+	
+	cdr_name_to_enum_["L4"] = proto_l4;
+	cdr_name_to_enum_["H4"] = proto_h4;
+	cdr_name_to_enum_["PROTO_L4"] = proto_l4;
+	cdr_name_to_enum_["PROTO_H4"] = proto_h4;
+	
 	///Just in case these are used in files.
 	cdr_name_to_enum_["h1"] = h1;
 	cdr_name_to_enum_["h2"] = h2;
 	cdr_name_to_enum_["h3"] = h3;
 	cdr_name_to_enum_["l1"] = l1;
 	cdr_name_to_enum_["l2"] = l2;
-	cdr_name_to_enum_["l3"] =l3;
-
+	cdr_name_to_enum_["l3"] = l3;
+	
+	cdr_name_to_enum_["l4"] = l4;
+	cdr_name_to_enum_["h4"] = h4;
+	cdr_name_to_enum_["proto_l4"] = proto_l4;
+	cdr_name_to_enum_["proto_h4"] = proto_h4;
+	cdr_name_to_enum_["Proto_L4"] = proto_l4;
+	cdr_name_to_enum_["Proto_H4"] = proto_h4;
+	
 	////////////////// Numbering Schemes ///////////////////////////////////////
 	numbering_scheme_to_string_[Chothia_Scheme] = "Chothia_Scheme";
 	numbering_scheme_to_string_[Kabat_Scheme] ="Kabat_Scheme";
@@ -87,22 +102,24 @@ AntibodyEnumManager::setup() {
 	cdr_definition_to_string_[North] = "North";
 	cdr_definition_to_string_[Kabat] = "Kabat";
 	cdr_definition_to_string_[Martin] = "Martin";
-	
+
 	cdr_definition_to_enum_["Chothia"] = Chothia;
 	cdr_definition_to_enum_["Aroop"] = Aroop;
 	cdr_definition_to_enum_["North"] = North;
 	cdr_definition_to_enum_["Kabat"] = Kabat;
 	cdr_definition_to_enum_["Martin"] = Martin;
-	
+
 	///////////////// LightChain Types ////////////////////////////////////////////
 	light_chain_type_to_string_[lambda] = "lambda";
 	light_chain_type_to_string_[kappa] = "kappa";
+	light_chain_type_to_string_[lambda6] = "lambda6";
 	light_chain_type_to_string_[unknown] = "unknown";
-	
+
 	light_chain_type_to_enum_["lambda"] = lambda;
 	light_chain_type_to_enum_["kappa"] = kappa;
+	light_chain_type_to_enum_["lambda6"] = lambda6;
 	light_chain_type_to_enum_["unknown"] = unknown;
-	
+
 	////////////////// H3 Base Type ////////////////////////////////////////////
 	h3_base_type_to_string_[Kinked] = "KINKED";
 	h3_base_type_to_string_[Extended] = "EXTENDED";
@@ -124,13 +141,13 @@ AntibodyEnumManager::setup() {
 	packing_angle_to_enum_["VL_sheet_2"] = VL_sheet_2;
 	packing_angle_to_enum_["VH_sheet_1"] = VH_sheet_1;
 	packing_angle_to_enum_["VH_sheet_2"] = VH_sheet_2;
-	
+
 	///////////////// Antibody Landmarks ////////////////////////////////////////////
 	cdr_landmark_to_enum_["cdr_start"] = cdr_start;
 	cdr_landmark_to_enum_["CDR_START"] =  cdr_start;
 	cdr_landmark_to_enum_["cdr_stop"] = cdr_end;
 	cdr_landmark_to_enum_["cdr_end"] = cdr_end;
-	
+
 	cdr_landmark_to_string_[cdr_start] = "cdr_start";
 	cdr_landmark_to_string_[cdr_end] = "cdr_end";
 
@@ -138,11 +155,11 @@ AntibodyEnumManager::setup() {
 	antibody_region_to_enum_["antigen_region"] = antigen_region;
 	antibody_region_to_enum_["cdr_region"] = cdr_region;
 	antibody_region_to_enum_["framework_region"] = framework_region;
-	
+
 	antibody_region_to_string_[antigen_region] = "antigen_region";
 	antibody_region_to_string_[cdr_region] = "cdr_region";
 	antibody_region_to_string_[framework_region] = "framework_region";
-	
+
 }
 
 CDRNameEnum
@@ -278,6 +295,18 @@ bool
 AntibodyEnumManager::cdr_landmark_is_present(std::string const &landmark) const {
 	std::map< std::string, CDRLandmarkEnum >::const_iterator iter( cdr_landmark_to_enum_.find( landmark ) );
 	return iter != cdr_landmark_to_enum_.end();
+}
+
+///////////////// Antibody Regions ////////////////////////////////////////////
+std::string
+AntibodyEnumManager::antibody_region_enum_to_string(AntibodyRegionEnum const antibody_region) const {
+	return antibody_region_to_string_[ antibody_region ];
+}
+
+AntibodyRegionEnum
+AntibodyEnumManager::antibody_region_string_to_enum(std::string const & antibody_region) const {
+	std::map< std::string, AntibodyRegionEnum >::const_iterator iter( antibody_region_to_enum_.find( antibody_region ) );
+	return iter->second;
 }
 
 }

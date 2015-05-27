@@ -13,19 +13,26 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "int_energies-dG_vs",
 author = "Jared Adolf-Bryfogle",
 brief_description = "Graphs basic interface energy information",
-feature_reporter_dependencies = c("InterfaceFeatures/AntibodyFeatures"),
+feature_reporter_dependencies = c("InterfaceFeatures/AntibodyFeatures", "StructureScoreFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
   
   sele <- "
   SELECT
-    dG,
-    dG_cross,
-    delta_unsatHbonds,
-    hbond_E_fraction,
-    dSASA,
-    interface
+    interfaces.dG as dG,
+    interfaces.dG_cross as dG_cross,
+    interfaces.delta_unsatHbonds as delta_unsatHbonds,
+    interfaces.hbond_E_fraction as hbond_E_fraction,
+    interfaces.dSASA as dSASA,
+    interfaces.interface as interface,
+    structure_scores.score_value as total_score
   FROM
-    interfaces
+    interfaces,
+    score_types,
+    structure_scores
+  WHERE
+    score_types.score_type_name='total_score' AND
+    structure_scores.score_type_id = score_types.score_type_id AND
+    structure_scores.struct_id = interfaces.struct_id
   "
 
   plot_parts <- list(
@@ -49,31 +56,45 @@ run=function(self, sample_sources, output_dir, output_formats){
   data_rm_out = data[data$dG<=5000 & data$dG>-5000,]#Remove high energy outliers
   
   parts = list(
-    geom_point(size=1.2, pch="o"),
+    geom_point(size=1.0, pch="o"),
     #stat_smooth(color="grey"),
     stat_smooth(method=lm),
-    geom_density2d(size=.5),
+    geom_density2d(size=.1),
     #stat_density2d(aes(fill = ..level..), geom="polygon"),
     #stat_density2d(geom="tile", aes(fill = ..density..), contour = FALSE),
     theme_bw())
   
+  parts_no_density = list(
+    geom_point(size=1.2, pch="o"),
+    stat_smooth(method=lm),
+    theme_bw()
+    )
+  
   #dG vs dSASA
-  p <- ggplot(data=data_rm_out, aes(y = dSASA, x = dG, colour=sample_source)) + parts +
+  p <- ggplot(data=data_rm_out, aes(y = dSASA, x = dG, colour=sample_source)) + parts_no_density +
     ggtitle("dG vs dSASA") +
     ylab("SASA") +
     xlab("REU")
   plot_field(p, "dG_vs_dSASA_by_all")
   plot_field(p, "dG_vs_dSASA_by_interface", grid=~ interface)
   
+  #dG vs Total Energy
+  p <- ggplot(data=data_rm_out, aes(y = total_score, x = dG, colour=sample_source)) + parts_no_density +
+    ggtitle("dG vs total_score") +
+    ylab("REU") +
+    xlab("REU")
+  plot_field(p, "dG_vs_total_score_by_all")
+  plot_field(p, "dG_vs_total_score_by_interface", grid=~ interface)
+  
   #dG vs dG_cross
-  p <- ggplot(data = data_rm_out, aes(x=dG, y=dG_cross, colour=sample_source)) + parts +
+  p <- ggplot(data = data_rm_out, aes(x=dG, y=dG_cross, colour=sample_source)) + parts_no_density +
     ggtitle("dG vs Crossterm dG") +
     xlab("REU") +
     ylab("REU")
   plot_field(p, "dG_vs_dG_cross_by_all")
   plot_field(p, "dG_vs_dG_cross_by_interface", grid= ~ interface)
   
-  p <- ggplot(data = data_rm_out, aes(x=dG, y=dG_cross, color=dSASA)) + parts +
+  p <- ggplot(data = data_rm_out, aes(x=dG, y=dG_cross, color=dSASA)) + parts_no_density +
     ggtitle("dG vs Crossterm dG") +
     xlab("REU") +
     ylab("REU") +
@@ -82,7 +103,7 @@ run=function(self, sample_sources, output_dir, output_formats){
   plot_field(p, "dG_vs_dG_cross_col_by_dSASA_by_interface", grid=sample_source ~ interface) 
   
   #dG_cross vs dSASA
-  p <- ggplot(data = data_rm_out, aes(x=dG_cross, y=dSASA, colour=sample_source)) + parts +
+  p <- ggplot(data = data_rm_out, aes(x=dG_cross, y=dSASA, colour=sample_source)) + parts_no_density +
     ggtitle("dG_cross vs dSASA") +
     xlab("REU") +
     ylab("SASA")

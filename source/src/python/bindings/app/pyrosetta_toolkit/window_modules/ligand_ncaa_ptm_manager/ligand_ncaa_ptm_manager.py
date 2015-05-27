@@ -49,8 +49,12 @@ class ligand_ncaa_ptm_manager:
             self.score_class = ScoreFxnControl()
             
         self.param_paths = []; #[array path string]
-        self.patch_directory = rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/patches'
-        self.params_directory = rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/residue_types'
+        self.fa_std_dir = rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard'
+        self.patch_directory = self.fa_std_dir+ '/patches'
+        self.patches_on = self.fa_std_dir+"/patches.txt"
+
+        self.params_directory = self.fa_std_dir+'/residue_types'
+        self.params_on = self.fa_std_dir+"/residue_types.txt"
         
         
         
@@ -100,8 +104,9 @@ class ligand_ncaa_ptm_manager:
         main.title("Ligand/NCAA/PTM Manager")
         print "\n"
         print "To permenantly enable patches and parameters for amino acids, polymers, and ligands uncomment the file in: "
-        print rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/patches.txt'
-        print rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
+        print self.patches_on
+        print self.params_on
+
         print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based fa_elec potential (Ligands/PTM)"
         print "Consider using the mm_std scorefunction for NCAA (No DNA)"
         print "Consider using the orbitals scorefunction for DNA/RNA/NCAA"
@@ -457,7 +462,7 @@ class ligand_ncaa_ptm_manager:
         
         files = glob.glob(self.patch_directory+"/*.txt")
         for path in files:
-            p = PatchProperties(path)
+            p = PatchProperties(path, self.patches_on)
             self.__populate_type_map__(self.patch_type_map, p)
             self.__populate_name_map__(self.patch_name_map, p)
             #self.populate_variant_map(self.variant_map, p)
@@ -468,7 +473,7 @@ class ligand_ncaa_ptm_manager:
             dir_path = self.patch_directory+"/"+type
             files = glob.glob(dir_path+"/*.txt")
             for path in files:
-                p = PatchProperties(path)
+                p = PatchProperties(path, self.patches_on)
 
                 self.__populate_type_map__(self.patch_type_map, p)
                 self.__populate_name_map__(self.patch_name_map, p)
@@ -483,12 +488,12 @@ class ligand_ncaa_ptm_manager:
             dir_path = self.params_directory+"/"+type
             files = glob.glob(dir_path+"/*.params")
             for path in files:
-                p = ParamsProperties(path, type)
+                p = ParamsProperties(path, type, self.params_on)
                 self.__populate_main_map__(self.param_main_map, p)
                 self.__populate_type_map__(self.param_type_map, p)
                 self.__populate_name_map__(self.param_name_map, p)
                 self.__populate_three_letter_map__(self.three_letter_to_prop_map, p)
-        
+
     def __populate_type_map__(self, dictionary, property_class):
         """
         Populate type map for use in type_listbox
@@ -500,7 +505,7 @@ class ligand_ncaa_ptm_manager:
         else:
             dictionary[property_class.molecule_type.get().lower()]=[]
             self.__populate_type_map__(dictionary, property_class)
-            
+
     def __populate_name_map__(self, dictionary, property_class):
         """
         Populate name map for use in name_listbox
@@ -509,36 +514,37 @@ class ligand_ncaa_ptm_manager:
             pass
         else:
             dictionary[property_class.name.get()]=property_class
-    
+
     def __populate_main_map__(self, dictionary, property_class):
         """
         Populate main_map for use in main callback - differentiate between ligand and polymer for params.
         """
         if property_class.main_type.get()=="":
             property_class.main_type.set('unknown')
-            
+
         if dictionary.has_key(property_class.main_type.get().lower()):
             dictionary[property_class.main_type.get().lower()][(property_class.molecule_type.get().lower())]=0
         else:
             dictionary[property_class.main_type.get().lower()]=dict()
-            dictionary[property_class.main_type.get().lower()][(property_class.molecule_type.get().lower())]=0   
-    
+            dictionary[property_class.main_type.get().lower()][(property_class.molecule_type.get().lower())]=0
+
     def __populate_three_letter_map__(self, dictionary, property_class):
         if not property_class.three_letter_name.get():
             dictionary[property_class.three_letter_name.get()] = property_class
             #property_class.three_letter_name.set('unknown')
-        
-    
+
+
 class Properties:
     """
     Properties Base class. Lightweight.  Could maybe use decorator instead once I understand it.
     """
-    
-    def __init__(self, path):
+
+    def __init__(self, path, patch_or_param_on_file):
         self.path = path
         self.basename = os.path.basename(self.path).split(".")[0]
         self.properties=dict()
-    
+        self.main_file = patch_or_param_on_file
+
     def get_property(self, type):
         """
         Returns specific property from self.properties dictionary.
@@ -546,14 +552,14 @@ class Properties:
         if not self.properties:
             print "Properties not set."
             return
-        
+
         return self.properties[type].get()
-        
+
     def read_properties(self):
         """
         Sets properties specified in self.properties dictionary.
         """
-        
+
         FILE = open(self.path)
         #Doing it manually.  Want control of variable names.
         for line in FILE:
@@ -565,32 +571,32 @@ class Properties:
             except IndexError:
                 continue
         FILE.close()
-      
-    def check_if_on_by_default(self, main_file):
+
+    def check_if_on_by_default(self):
         """
         checks if patch/param is on by default.
         """
-        
-        FILE = open(main_file)
+
+        FILE = open(self.main_file)
         self.rosetta_read_state = False
         for line in FILE:
             line = line.strip()
             if re.search("#", line):
                 pass
-                
+
             if re.search(self.basename, line) and not re.search("#", line):
                 self.rosetta_read_state = True
                 break
-        FILE.close()      
-                
+        FILE.close()
+
 class PatchProperties(Properties):
     """
     Reads patch files.  Grabs properties to show/manipulate in GUI.
     Container for properties, which are stored in StringVar objects and can be accessed through properties dictionary or get_property() function
     """
-    
-    def __init__(self, path):
-        Properties.__init__(self, path)
+
+    def __init__(self, path, patch_on_path):
+        Properties.__init__(self, path, patch_on_path)
         #Initialize since setattr did not work.
         self.name = StringVar()
         self.name.set(os.path.basename(path).split(".")[0])
@@ -599,27 +605,27 @@ class PatchProperties(Properties):
         self.protein_or_dna=StringVar()
         self.found_name = StringVar(); #Name in file
         #So that we organize by variant type.
-        
+
         self.properties = {
             "NAME":self.found_name,
             "PROPERTY":self.protein_or_dna,
             "SET_IO_STRING":self.three_letter_name,
             "TYPES":self.molecule_type}
-        
+
         self.read_properties()
-        self.check_if_on_by_default(rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/patches.txt')
-    
-        
+        self.check_if_on_by_default()
+
+
 class ParamsProperties(Properties):
     """
     Reads param files.  Grabs properties to show/manipulate in GUI.
     Container for properties, which are stored in StringVar objects and can be accessed through properties dictionary or get_property() function
     """
-    def __init__(self, path, base_type):
-        Properties.__init__(self, path)
+    def __init__(self, path, base_type, params_on_path):
+        Properties.__init__(self, path, params_on_path)
         self.molecule_type = StringVar()
         self.molecule_type.set(base_type); #Type of the param.  Since this information is not sepecifically in the params files, we grab from the directory name.
-        
+
         #Initialize
         self.name = StringVar()
         self.name.set(os.path.basename(path).split(".")[0])
@@ -635,7 +641,7 @@ class ParamsProperties(Properties):
             "TYPE":self.main_type
         }
         self.read_properties()
-        self.check_if_on_by_default(rosetta.rosetta_database_from_env()+'/chemical/residue_type_sets/fa_standard/residue_types.txt')
+        self.check_if_on_by_default()
                 
 
             

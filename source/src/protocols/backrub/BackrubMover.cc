@@ -9,11 +9,12 @@
 
 /// @file protocols/backrub/BackrubMover.cc
 /// @brief implementation of BackrubMover class and functions
-/// @author Colin A. Smith (colin.smith@ucsf.edu)
+/// @author Colin A. Smith (colin.smith@mpibpc.mpg.de)
 
 
 #include <protocols/backrub/BackrubMover.hh>
 #include <protocols/backrub/BackrubMoverCreator.hh>
+#include <protocols/backrub/util.hh>
 
 // Protocols Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
@@ -27,6 +28,7 @@
 #include <core/id/DOF_ID_Range.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -100,7 +102,9 @@ protocols::backrub::BackrubMover::BackrubMover() :
 	preserve_detailed_balance_(false),
 	require_mm_bend_(true),
 	custom_angle_(false)
-{}
+{
+	init_with_options();
+}
 
 protocols::backrub::BackrubMover::BackrubMover(
 	BackrubMover const & mover
@@ -144,7 +148,7 @@ init_backrub_mover_with_options(
 		if (option[ OptionKeys::backrub::pivot_residues ][i] >= 1) pivot_residues.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
 	}
 
-  mover.set_pivot_residues(pivot_residues);
+	mover.set_pivot_residues(pivot_residues);
 	mover.set_pivot_atoms(option[ OptionKeys::backrub::pivot_atoms ]);
 	mover.set_min_atoms(option[ OptionKeys::backrub::min_atoms ]);
 	mover.set_max_atoms(option[ OptionKeys::backrub::max_atoms ]);
@@ -206,7 +210,6 @@ protocols::backrub::BackrubMover::initialize_simulation(
 		}
 
 		// this code shouldn't get called when the parser is in use
-		init_with_options();
 		clear_segments();
 		add_mainchain_segments();
 	}
@@ -695,6 +698,11 @@ protocols::backrub::BackrubMover::set_pivot_residues(
 )
 {
 	pivot_residues_ = pivot_residues;
+}
+
+void
+protocols::backrub::BackrubMover::set_movemap(core::kinematics::MoveMapCOP movemap){
+	pivot_residues_ = get_pivot_residues_from_movemap(movemap);
 }
 
 utility::vector1<std::string> const &

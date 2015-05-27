@@ -1,54 +1,86 @@
 
 #These flags are meant for a very quick run, as turning all of the modeling on during the design protocol will result in a very long integration test.
 
-
-#-rb_min_post_graft
-
-#-show_simulation_in_pymol 2
-#-update_pymol_on_energy_changes_only
-#-update_pymol_on_conformation_changes_only
-
--keep_pymol_simulation_history
-
--restore_pre_talaris_2013_behavior #Speed
--ignore_unrecognized_res
-
--pdb_comments
-#-in:file:s mis_start_no_antigen.pdb
--in:file:s mis_start.pdb
--run:debug
+#####Tracer Levels##############
+-out:levels antibody.constraints.ParatopeSiteConstraintMover:500 antibody.design.AntibodyGraftDesignMover:500
+#-mute core.pack protocols.docking
 -mute core.util.prof # dont show timing info
 -mute core.io.database
--antibody:design:instructions design_instructions.txt
-#-antibody:design:antibody_database antibody_database_rosetta_design.db
+
+#-out:level 400
+
+#####PyMol #####################
+#-show_simulation_in_pymol .2
+#-update_pymol_on_energy_changes_only
+#-update_pymol_on_conformation_changes_only
+#-keep_pymol_simulation_history
+
+#####General Options ###########
+#-in:file:s mis_start_3FO9_0006.pdb
+#-in:file:s mis_start_0001.pdb
+-in:file:s mis_start.pdb
+#-in:file:s mis_start_no_antigen.pdb
+#-in:file:s 2r0l_1_1.pdb
+-nstruct 1
+
+#-run:debug
+-paper_ab_db
+-pdb_comments
+-restore_pre_talaris_2013_behavior #Speed
+-ignore_unrecognized_res
+-ignore_zero_occupancy false
+-mute core.util.prof # dont show timing info
+-mute core.io.database
+
+############################################
+#########General Design Options ############
+-antibody:design:instructions cdr_design_instructions.txt
 -antibody:design:paper_ab_db
 
--antibody:design:do_post_design_modeling false
--antibody:design:do_post_graft_design_modeling false
--antibody:design:benchmark_graft_design
--antibody:design:adapt_graft
-
--antibody:design:top_graft_designs 2
-
--antibody:design:graft_rounds 2
--antibody:design:design_rounds 1
--antibody:design:design_method fixbb
--antibody:design:paratope L1 L2 L3
--antibody:design:use_epitope_constraints
-
-#-antibody:design:dock_post_graft
-#-antibody:design:top_graft_designs 2
-
+#-design_cdrs L1
+-top_designs 2
+-antibody:design:outer_cycle_rounds 2
 
 -antibody:light_chain lambda
+#-interface_dis 7.0
+#-antibody:design:interface_dis 3.0
+#-antibody:design:neighbor_dis 6.0
+
+######### Protocol Options #################
+
+#-post_graft_rb_min
+#-post_graft_dock
+#-design_antigen
+#-design_framework
+
+######## Post Modeling Options ##############
+#-run_snugdock
+#-run_relax
 
 
--antibody:design:dump_post_graft_designs
--run:test_cycles # reduce the number of high resolution snugdock cycles
+#########Epitope and Paratope Options ########
+-antibody:design:paratope L1 L2 L3
+-antibody:design:use_epitope_constraints
+#-epitope 58S 60S 62S 64S 68S 72S 74S 76S 77S 78S 79S 80S 81S
+#-epitope 58S 60S 62S 64S 68S 72S 74S 76S 77S 78S 79S 80S 81S 82S 83S 85S 66S 89S 90S 92S 93S 94S 95S 97S 98S 99S
+
+
+########Benchmarking Options ##################
+#-benchmark_graft_design true
+-adapt_graft true
+-add_graft_log_to_pdb
+
+####### Outliers and Fine Control #############
+-use_outliers false
+-force_use_of_cluster_csts_with_outliers false
+#-cluster_csts_stats_cutoff 5
+#-general_dihedral_cst_phi_sd 25
+#-general_dihedral_cst_psi_sd 25
+
+######### Docking Cycles ##########################
+
+#-run:test_cycles # reduce the number of high resolution snugdock cycles
 -loops:max_inner_cycles 3 # make the ccd loop refinement go faster
 -docking:docking_centroid_outer_cycles 1 # make the low resolution docking phase of the test fast
 -docking:docking_centroid_inner_cycles 3 # make the low resolution docking phase of the test fast
-
-
-
 

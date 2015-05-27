@@ -111,7 +111,14 @@ public:
 	std::string
 	packing_angle_enum_to_string(PackingAngleEnum const angle_type) const;
 
+	///////////////// Antibody Region  ////////////////////////////////////////////
 
+	AntibodyRegionEnum
+	antibody_region_string_to_enum(std::string const & antibody_region) const;
+
+	std::string
+	antibody_region_enum_to_string(AntibodyRegionEnum const antibody_region) const;
+	
 private:
 
 

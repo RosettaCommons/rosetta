@@ -113,7 +113,7 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 	if(instruction_file.bad()){
 		utility_exit_with_message("Unable to open grafting instruction file.");
 	}
-	TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
+	//TR <<"Reading "<<path << " for "<< ab_manager_->cdr_name_enum_to_string(cdr) << std::endl;
 	while (getline(instruction_file, line)){
 
 		//Skip any comments + empty lines
@@ -126,6 +126,7 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		}
 
 		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
+		
 		check_line_len(lineSP, 2);
 		//TR << utility::to_string(lineSP) << std::endl;
 
@@ -153,7 +154,7 @@ CDRSetOptionsParser::parse_options(CDRNameEnum cdr, std::string path) {
 		}
 	}
 	instruction_file.close();
-	TR << "Instructions read successfully" <<std::endl;
+	//TR << "Instructions read successfully" <<std::endl;
 	return cdr_options_->clone();
 }
 
@@ -176,6 +177,7 @@ CDRSetOptionsParser::check_path() {
 
 void
 CDRSetOptionsParser::parse_cdr_option(std::string const mode, vector1<string>& lineSP) {
+
 
 
 	if (mode == "CDR_SET" || mode == "CDRS" || mode == "GRAFT_SET" || mode == "CDRSET"){
@@ -231,6 +233,24 @@ CDRSetOptionsParser::parse_cdr_set_option(std::string const setting, vector1<str
 			utility_exit_with_message("Cannot parse cdr_set instructions. " + type);
 		}
 	}
+	else if( setting == "CLUSTER_CUTOFF" || 
+			 setting == "CLUSTER_CUTOFFS"|| 
+			 setting == "USE_CLUSTER_CUTOFF" ||
+			 setting == "USE_CLUSTER_CUTOFFS" ||
+			 setting == "LIMIT_CLUSTERS" || 
+			 setting == "LARGE_CLUSTERS_ONLY")
+	{
+		check_line_len(lineSP, 4);
+		std::string option = lineSP[4];
+		boost::to_upper(option);
+		
+		if (option == "FALSE" || option == "NO" || option == "NONE"){
+			cdr_options_->cluster_sampling_cutoff(0);
+		}
+		else {
+			cdr_options_->cluster_sampling_cutoff(utility::string2int(option));
+		}
+	}
 }
 
 void
@@ -262,7 +282,7 @@ CDRSetOptionsParser::set_cdr_set_include_options(std::string const type, vector1
 		boost::to_upper(item);
 
 		if (type == "CLUSTERS" || type == "CLUSTER"){
-
+			TR << item<<std::endl;
 			cdr_options_->include_only_clusters_add(cluster_manager_->cdr_cluster_string_to_enum(item));
 		}
 		else if (type == "PDBIDS" || type == "PDBID" || type == "PDB") {
@@ -361,5 +381,15 @@ CDRSetOptionsParser::clear_cdr_set_exclude_options(const std::string type) {
 
 }
 }
+
+
+
+
+
+
+
+
+
+
 
 

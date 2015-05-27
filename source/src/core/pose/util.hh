@@ -501,6 +501,9 @@ get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pos
 utility::vector1<core::Size>
 get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose);
 
+utility::vector1<core::Size>
+get_chain_ids_from_chains(utility::vector1<std::string> const & chains, core::pose::Pose const & pose);
+
 char
 get_chain_from_chain_id(core::Size const & chain_id, core::pose::Pose const & pose);
 

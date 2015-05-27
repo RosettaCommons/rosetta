@@ -1,7 +1,8 @@
 Added by Jared Adolf-Bryfogle jadolfbr@gmail.com (Jan 2013)
-Data used to create constraints based on an SQLITE3 antibody database of the PDB from June 2012.
+Data used to create constraints based on an SQLITE3 antibody database of the PDB from June 2012 and Nov 2014.
 
-3168 CDR sequences
+
+All data based on:
 
 2.8 A res cutoff
 .3 R factor cutoff
@@ -12,3 +13,9 @@ Reduncancy by:
   ->Lowest Resolution
    ->Lowest R
     ->Highest Chain Length
+
+1) original includes outliers and the standard deviation is off by a few degrees.  Means are the means of the cluster. Created June 2012
+
+2) __outliers_true Created Nov 2014 on updated antibody database.  Means are the center cluster member.  If no center, means were used.  Standard deviations were corrected.
+
+3) outliers_false_liberal Nov 2014 on updated antibody database.  Same as 2, except outliers are left out.  An outlier using the liberal definition is any structure with > 40 DistDegree to cluster center AND a CDR BB heavy RMSD to the cluster center > 1.5 Angstroms.   

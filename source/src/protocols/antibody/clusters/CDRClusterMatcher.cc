@@ -111,19 +111,23 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 	
 	core::Size length = end - start +1;
 	bool cluster_found = false;
+	TR << length << " "<< cis_trans_conf << std::endl;
+	bool cis_trans_match = false;
+	
 	for (core::Size i = 1; i <= cluster_data_.size(); ++i){
 		ClusterData data = cluster_data_[i];
 		
 		if ((data.cdr ==  cdr) && (data.length ==  length) && (data.cis_trans_conf == cis_trans_conf )){
 			cluster_found = true;
-			
+			cis_trans_match = true;
 			core::Real k_distance_to_cluster = calculate_dihedral_distance(data.phis, pose_angles["phi"], data.psis, pose_angles["psi"]);
 			k_distances_to_cluster[k_distance_to_cluster] = data;
 			k_distances.push_back(k_distance_to_cluster);
 		}
 		else{ continue; }
 	}
-
+	
+	
 	///Take the minimum distance as the cluster.
 	
 	CDRClusterEnum cluster;
@@ -139,7 +143,7 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 
 	}
 	
-	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance) );
+	CDRClusterOP cdr_cluster( new CDRCluster(pose, cdr, length, cluster, start, distance, cis_trans_match) );
 	return cdr_cluster;
 	
 	

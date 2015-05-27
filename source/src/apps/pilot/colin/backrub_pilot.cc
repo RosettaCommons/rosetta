@@ -74,23 +74,15 @@
 
 static thread_local basic::Tracer TR( "apps.backrub" );
 
-OPT_1GRP_KEY(Integer, backrub, ntrials)
+//JAB - This is a fork of Backrub, and looks like it acted as a test for the detailed balance paper and code. 
+// It should probably be deprecated.
+
 OPT_1GRP_KEY(Real, backrub, backrub_sc_prob)
-OPT_1GRP_KEY(Real, backrub, sc_prob)
-OPT_1GRP_KEY(Real, backrub, sm_prob)
 OPT_1GRP_KEY(Real, backrub, sm_angle_max)
-OPT_1GRP_KEY(Real, backrub, sc_prob_uniform)
-OPT_1GRP_KEY(Real, backrub, sc_prob_withinrot)
-OPT_1GRP_KEY(Real, backrub, mc_kt)
-OPT_1GRP_KEY(Real, backrub, mm_bend_weight)
 OPT_1GRP_KEY(Boolean, backrub, detailed_balance)
 OPT_1GRP_KEY(Boolean, backrub, test_detailed_balance)
-OPT_1GRP_KEY(Boolean, backrub, initial_pack)
-OPT_1GRP_KEY(File, backrub, minimize_movemap)
-OPT_1GRP_KEY(Boolean, backrub, trajectory)
-OPT_1GRP_KEY(Boolean, backrub, trajectory_gz)
-OPT_1GRP_KEY(Integer, backrub, trajectory_stride)
 
+				
 void *
 my_main( void* );
 
@@ -110,22 +102,10 @@ main( int argc, char * argv [] )
 	OPT(backrub::pivot_atoms);
 	OPT(backrub::min_atoms);
 	OPT(backrub::max_atoms);
-	NEW_OPT(backrub::ntrials, "number of Monte Carlo trials to run", 1000);
 	NEW_OPT(backrub::backrub_sc_prob, "probability of making a side chain move during 3 residue backrub moves", 0);
-	NEW_OPT(backrub::sc_prob, "probability of making a side chain move", 0.25);
-	NEW_OPT(backrub::sm_prob, "probability of making a small move", 0);
 	NEW_OPT(backrub::sm_angle_max, "small move maximum band of angluar perturbation", 6);
-	NEW_OPT(backrub::sc_prob_uniform, "probability of uniformly sampling chi angles", 0.1);
-	NEW_OPT(backrub::sc_prob_withinrot, "probability of sampling within the current rotamer", 0.0);
-	NEW_OPT(backrub::mc_kt, "value of kT for Monte Carlo", 0.6);
-	NEW_OPT(backrub::mm_bend_weight, "weight of mm_bend bond angle energy term", 1.0);
 	NEW_OPT(backrub::detailed_balance, "preserve detailed balance", false);
 	NEW_OPT(backrub::test_detailed_balance, "test that detailed balance is preserved", false);
-	NEW_OPT(backrub::initial_pack, "force a repack at the beginning regardless of whether mutations are set in the resfile", false);
-	NEW_OPT(backrub::minimize_movemap, "specify degrees of freedom for minimization", "");
-	NEW_OPT(backrub::trajectory, "record a trajectory", false);
-	NEW_OPT(backrub::trajectory_gz, "gzip the trajectory", false);
-	NEW_OPT(backrub::trajectory_stride, "write out a trajectory frame every N steps", 100);
 
 	// initialize Rosetta
 	devel::init(argc, argv);

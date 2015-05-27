@@ -64,7 +64,20 @@ public:
 	design_strategy() const {
 		return design_strategy_;
 	}
-
+	
+	///@brief Set the fallback strategy - which will be used if using a profile-based primary strategy, and there is not enough data
+	void
+	fallback_strategy(SeqDesignStrategyEnum strategy);
+	
+	SeqDesignStrategyEnum
+	fallback_strategy() const {
+		return fallback_strategy_;
+	}
+	
+	
+	bool
+	fallback() const;
+	
 public:
 	CDRSeqDesignOptionsOP
 	clone() const;
@@ -77,7 +90,11 @@ private:
 	bool design_;
 
 	SeqDesignStrategyEnum design_strategy_;
+	SeqDesignStrategyEnum fallback_strategy_;
+	
 };
+
+
 
 
 class CDRSeqDesignOptionsParser : public utility::pointer::ReferenceCount {
@@ -91,9 +108,10 @@ public:
 	CDRSeqDesignOptionsOP
 	parse_options(CDRNameEnum cdr, std::string filename);
 
-	/// @brief Parse default_instructions (mainly used for AbDesign) then parse user file
+	///@brief Parse default_instructions (mainly used for AbDesign) then parse user file
 	CDRSeqDesignOptionsOP
 	parse_default_and_user_options(CDRNameEnum cdr, std::string filename);
+
 
 
 	///ALL CDRs
@@ -112,17 +130,20 @@ private:
 	check_line_len(const utility::vector1<std::string> & lineSP, const core::Size len_check) const;
 
 	void
-	parse_cdr_option(std::string const mode, vector1<std::string> & lineSP);
+	parse_cdr_option(std::string const mode, utility::vector1<std::string> & lineSP);
 
 	void
-	parse_cdr_design_option(std::string const adjective, vector1< std::string> & lineSP) ;
+	parse_cdr_design_option(std::string const adjective, utility::vector1< std::string> & lineSP) ;
 
 	void
 	parse_cdr_general_option(utility::vector1<std::string> & lineSP) ;
 
 	void
-	set_cdr_design_profile_option(std::string const option);
+	set_cdr_design_primary_option(std::string const option);
 
+	void
+	set_cdr_design_fallback_option(std::string const option);
+	
 private:
 	std::string instructions_path_;
 	AntibodyEnumManagerOP ab_manager_;
@@ -130,6 +151,7 @@ private:
 	bool default_and_user_;
 
 };
+
 
 
 }

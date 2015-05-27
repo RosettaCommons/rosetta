@@ -72,8 +72,9 @@ namespace grafting {
 	using namespace basic::options;
 	using namespace protocols::loops;
 	using namespace protocols::simple_moves;
-	
-	
+	using namespace core::kinematics;
+
+
 AnchoredGraftMover::AnchoredGraftMover():
 	GraftMoverBase("AnchoredGraftMover")
 {
@@ -101,7 +102,7 @@ AnchoredGraftMover::AnchoredGraftMover(
 	Size Cter_overhang_length,
 	bool copy_pdb_info /*false*/)
 	:GraftMoverBase(start, end, "AnchoredGraftMover", piece, Nter_overhang_length, Cter_overhang_length)
-	
+
 {
 	set_defaults();
 	copy_pdbinfo(copy_pdb_info);
@@ -135,7 +136,7 @@ AnchoredGraftMover::AnchoredGraftMover(const AnchoredGraftMover& src):
 	insert_movemap_ = src.insert_movemap_;
 	cen_scorefxn_ = src.cen_scorefxn_;
 	fa_scorefxn_ = src.fa_scorefxn_;
-	
+
 }
 
 void
@@ -147,7 +148,7 @@ AnchoredGraftMover::set_defaults(){
 	insert_movemap_ = NULL;
 	tag_ = NULL;
 	loops_ = protocols::loops::LoopsOP( new protocols::loops::Loops() );
-	
+
 	idealize_insert(false);
 	set_skip_sampling(false);
 	set_mintype("dfpmin_armijo_nonmonotone");
@@ -165,6 +166,9 @@ protocols::moves::MoverOP
 AnchoredGraftMover::clone() const{
 	return protocols::moves::MoverOP( new AnchoredGraftMover(*this) );
 }
+
+std::string
+AnchoredGraftMover::get_name() const { return "AnchoredGraftMover"; }
 
 protocols::moves::MoverOP
 AnchoredGraftMover::fresh_instance() const
@@ -188,24 +192,24 @@ AnchoredGraftMover::parse_my_tag(
 	skip_sampling_ = (tag->getOption<bool>("skip_sampling", skip_sampling_));
 	set_mintype(tag->getOption<std::string>("mintype", mintype_));
 	copy_pdbinfo(tag->getOption<bool>("copy_pdbinfo", copy_pdbinfo()));
-	
+
 	Nter_scaffold_flexibility_ = tag->getOption<core::Size>("scaffold_flex_Nter", Nter_scaffold_flexibility_);
 	Cter_scaffold_flexibility_ = tag->getOption<core::Size>("scaffold_flex_Cter", Cter_scaffold_flexibility_);
-	
+
 	Nter_insert_flexibility_ = tag->getOption<core::Size>("insert_flex_Nter", Nter_insert_flexibility_);
 	Cter_insert_flexibility_ = tag->getOption<core::Size>("insert_flex_Cter", Cter_insert_flexibility_);
-	
+
 	Nter_overhang_length(tag->getOption<core::Size>("Nter_overhang", Nter_overhang_length()));
 	Cter_overhang_length(tag->getOption<core::Size>("Cter_overhang", Cter_overhang_length()));
-	
+
 	tag_ = tag->clone();
-	
+
 	//Protect from unused option crash.
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
-	
+
 	piece(protocols::rosetta_scripts::saved_reference_pose(tag, data, "spm_reference_name"));
-	
+
 	if (tag->hasOption("cen_scorefxn")){
 		std::string cen_scorefxn = tag->getOption<std::string>("cen_scorefxn");
 		cen_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", cen_scorefxn);
@@ -214,10 +218,10 @@ AnchoredGraftMover::parse_my_tag(
 		std::string fa_scorefxn = tag->getOption<std::string>("fa_scorefxn");
 		fa_scorefxn_ = data.get_ptr<core::scoring::ScoreFunction>("scorefxns", fa_scorefxn);
 	}
-	
+
 	if (protocols::rosetta_scripts::has_branch(tag, "MoveMap")){
 		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
-		
+
 	}
 	if (data.has("movemaps", "scaffold_movemap") && data.has("movemaps", "scaffold_movemap")){
 		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
@@ -227,7 +231,7 @@ AnchoredGraftMover::parse_my_tag(
 		utility_exit_with_message("Movemaps must be specified using the names scaffold_movemap and insert_movemap");
 	}
 	else {
-		TR <<"scaffold_movemap and insert_movemap unspecified.  Using set flexibility settings." << std::endl; 
+		TR <<"scaffold_movemap and insert_movemap unspecified.  Using set flexibility settings." << std::endl;
 	}
 
 }
@@ -252,6 +256,16 @@ AnchoredGraftMover::get_nterm_scaffold_flexibility(){
 Size
 AnchoredGraftMover::get_cterm_scaffold_flexibility(){
 	return Cter_scaffold_flexibility_;
+}
+
+Size
+AnchoredGraftMover::get_nterm_insert_flexibility(){
+	return Nter_insert_flexibility_;
+}
+
+Size
+AnchoredGraftMover::get_cterm_insert_flexibility() {
+	return Cter_insert_flexibility_;
 }
 
 void
@@ -289,7 +303,7 @@ AnchoredGraftMover::set_test_control_mode(bool test_control_mode){
 
 void
 AnchoredGraftMover::set_movemaps(MoveMapCOP scaffold_mm, MoveMapCOP insert_mm){
-    
+
 	scaffold_movemap_ = scaffold_mm;
 	insert_movemap_ = insert_mm;
 
@@ -300,7 +314,7 @@ AnchoredGraftMover::setup_scorefunction(){
     if (! cen_scorefxn_){
 	this->set_default_cen_scorefunction();
     }
-    
+
     if (! fa_scorefxn_){
 	this->set_default_fa_scorefunction();
     }
@@ -351,9 +365,9 @@ AnchoredGraftMover::set_default_fa_scorefunction(){
 void
 AnchoredGraftMover::setup_movemap_and_regions(Pose & pose){
 	if (scaffold_movemap_ && insert_movemap_){
-		movemap_ = protocols::grafting::combine_movemaps_post_insertion(scaffold_movemap_, insert_movemap_, 
+		movemap_ = protocols::grafting::combine_movemaps_post_insertion(scaffold_movemap_, insert_movemap_,
 				end(), original_end(), insertion_length());
-		
+
 		set_regions_from_movemap(pose);
 	}
 	else{
@@ -502,17 +516,17 @@ AnchoredGraftMover::apply(Pose & pose){
 	using namespace core::id;
 	using protocols::moves::MonteCarlo;
 	using protocols::moves::MonteCarloOP;
-	
+
 	//TR <<"Beginning of anchored graft mover" <<std::endl;
 	//pose.constraint_set()->show(TR);
-	
+
 	if (tag_){
 		core::Size scaffold_start = core::pose::get_resnum(tag_, pose, "start_");
 		core::Size scaffold_end = core::pose::get_resnum(tag_, pose, "end_");
-	
+
 		set_insert_region(scaffold_start, scaffold_end);
 	}
-	
+
 	Pose combined = insert_piece(pose);
 	setup_movemap_and_regions(pose);
 	core::kinematics::FoldTree original_ft = combined.fold_tree();
@@ -522,38 +536,38 @@ AnchoredGraftMover::apply(Pose & pose){
 
 
 	setup_scorefunction();
-	
+
 	///Add variants, create the loops and set the foldtree that will be used for CCD.
-	
-	
-	
+
+
+
 	setup_single_loop_single_arm_remodeling_foldtree(combined, Nter_loop_start_, Cter_loop_end_);
 	Loop Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);
-	
+
 	loops_->clear();
 	loops_->add_loop(Cter_loop);
-	
+
 	TR << "Loops: " << *loops_ << std::endl;
 	loop_closure::ccd::CCDLoopClosureMoverOP ccd_mover( new loop_closure::ccd::CCDLoopClosureMover(Cter_loop, movemap_) );
-	
+
 	add_cutpoint_variants_for_ccd(combined, *loops_);
 
 	idealize_combined_pose(combined, movemap_, start(), insert_start, insert_end, Nter_loop_start_, Cter_loop_end_, idealize_insert());
 	movemap_->set( TorsionID(insert_start, BB, phi_torsion), true);
 	movemap_->set( TorsionID(insert_end, BB, psi_torsion), true);
-	
+
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains( new  protocols::simple_moves::ReturnSidechainMover(combined ) );
 	typeset_swap.apply( combined );
 
 	//TR <<"After type swap" <<std::endl;
-	
+
 	//combined.dump_pdb("combined_preclose_cen.pdb");
 
 	MinMoverOP min_mover = setup_default_min_mover();
 	SmallMoverOP small = setup_default_small_mover();
-	
+
 
 	if (test_control_mode_){perturb_backbone_for_test(combined, movemap_);}
 	MonteCarlo mc(combined, (*cen_scorefxn_), 0.8);
@@ -565,12 +579,12 @@ AnchoredGraftMover::apply(Pose & pose){
 	for( core::Size i(1); i<=cycles_; ++i){
 		TR <<"round "<<i <<std::endl;
 		if (!skip_sampling_){small->apply(combined);}
-		
+
 		ccd_mover->apply(combined);
 		combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut()); //Not sure if this really helps, but Steven had it, so it probably does.
 		min_mover->apply(combined);
 		combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
-		
+
 		if (stop_at_closure() && graft_closed(combined, *loops_)){
 			TR << "Graft Closed early - returning" << std::endl;
 			skip_mc = true;
@@ -579,26 +593,26 @@ AnchoredGraftMover::apply(Pose & pose){
 		}
 		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn()))(combined) << std::endl;
 	}
-        
-	if (! skip_mc) mc.recover_low(combined);
-	
 
-	
+	if (! skip_mc) mc.recover_low(combined);
+
+
+
 	TR << "finish " << ((*cen_scorefxn_))(combined) << std::endl;
 	//combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
-	
+
 	return_sidechains->apply( combined );
-	
+
 	//Remove cutpoints that were required for CCD.
 	remove_cutpoint_variants_for_ccd(combined, *loops_);
 	combined.fold_tree(original_ft);
-	
+
 	if (final_repack_){
-		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn_, 
+		repack_connection_and_residues_in_movemap_and_piece_and_neighbors( pose, fa_scorefxn_,
 			start(), end(), movemap_, neighbor_dis());
 	}
 	TR <<"Graft meets ideal geometry " << std::boolalpha << graft_closed(combined, *loops_) << std::endl;
-	
+
 	TR << "Complete"<<std::endl;
 	pose = combined;
 

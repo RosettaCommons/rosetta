@@ -22,7 +22,6 @@
 #
 #
 # An option definition is of the form:
-#
 #   Option( 'Name', 'Type',
 #          desc="Description",
 #          legal=[ 'First', 'Second', 'Third' ],
@@ -3265,7 +3264,28 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Display constraints file for use with camelid H3 modeler',
 			default='false'
 			),
-
+		### Only used for antibody design at the moment ###
+		############# CDR Dihedral Constraints ############
+		Option('use_mean_cluster_cst_data', 'Boolean',
+			desc= 'Use CDR Dihedral cluster-based constraints which have the means as the actual cluster means.  Setting this to false will use constraints that have the means set as cluster center data.',
+			default = 'true'
+			),
+		Option('force_use_of_cluster_csts_with_outliers', 'Boolean',
+			desc= 'Force the use of cluster dihedral constraints to use ones with outliers.',
+			default = 'false'
+			),
+		Option('cluster_csts_stats_cutoff', 'Integer',
+			desc='Value for cluster-based dihedral csts -> general dihedral csts switch.  If number of total structures used for cluster-based constraints is less than this value, general dihedral constraints will be used.  More data = better predictability.',
+			default='10'
+			),
+        Option('general_dihedral_cst_phi_sd', 'Real',
+            desc = 'Standard deviation to use for phi while using general dihedral circular harmonic constraints',
+            default='16.0'
+            ),
+        Option('general_dihedral_cst_psi_sd', 'Real',
+            desc = 'Standard deviation to use for psi while using general dihedral circular harmonic constraints',
+            default = '16.0'
+            ),
 		##############################################################################
 		# Rosetta AntibodyDesign Options -----------------------------------------------
 		Option_Group( 'design',
@@ -3275,14 +3295,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 
 			Option('instructions', 'String',
-				desc='Path for instruction file',
+				desc='Path to CDR Instruction File',
 				),
 			Option('antibody_database', 'String',
 				desc='Path to the current Antibody Database, updated weekly.  Download from http://dunbrack2.fccc.edu/PyIgClassify/ ',
 				default='/sampling/antibodies/antibody_database_rosetta_design.db'
 				),
 			Option('paper_ab_db', 'Boolean',
-				desc='Use the Antibody Database from the North clustering paper.  This is included in Rosetta, but is not recommended for general use. The full ab db is available at http://dunbrack2.fccc.edu/PyIgClassify/',
+				desc='Force the use the Antibody Database with data from the North clustering paper.  This is included in Rosetta, but is not recommended for general use. If a newer antibody database is not found, we will use this. The full ab db is available at http://dunbrack2.fccc.edu/PyIgClassify/',
 				default='false'
 				),
 			Option('paper_ab_db_path', 'String',
@@ -3291,158 +3311,199 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 			Option('design_cdrs', 'StringVector',
 				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
-				desc = "Design these CDRs in graft and sequence design steps (if enabled).  Use to override instructions file"
+				desc = "Design these CDRs in graft and sequence design steps.  Use to override instructions file"
 				),
-			Option('top_graft_designs', 'Integer',
-				desc='Number of top graft designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol.',
-				default='10'
+			Option('top_designs', 'Integer',
+				desc='Number of top designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol.',
+				default='1'
 				),
-			Option('dump_post_graft_designs', 'Boolean',
-				desc='Write the top ensembles to file directly after the graft-design step and after any optional modeling.',
+			###### Protocol Steps
+			Option('design_protocol', 'String',
+				desc='Set the main protocol to use.  Note that deterministic is currently only available for the grafting of one CDR.',
+				default='generalized_monte_carlo',
+				legal = ['generalized_monte_carlo', 'deterministic_graft']
+				),
+			Option('run_snugdock', 'Boolean',
+				desc='Run snugdock on each ensemble after designing.',
 				default='false'
+				),
+			Option('run_relax', 'Boolean',
+				desc = 'Run Dualspace Relax on each ensemble after designing (after snugdock if run).',
+				default = 'false'
 				),
 			###### Paratope + Epitope
 			Option('paratope', 'StringVector',
-				desc = "Use these CDRs as the paratope. Default is all of them.  Currently only used for constraints.",
+				desc = "Use these CDRs as the paratope. Default is all of them.  Currently only used for constraints. Note that these site constraints are only used during docking unless -enable_full_protocol_atom_pair_cst is set.",
 				legal = ['L1', 'L2', 'L3', 'H1', 'H2', 'H3', 'l1', 'l2', 'l3', 'h1', 'h2', 'h3'],
 				),
 			Option('epitope', 'StringVector',
-				desc = "Use these residues as the antigen epitope.  Default is to auto-identify them within the set interface distance at protocol start if epitope constraints are enabled. Currently only used for constraints.  PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A", default = []
+				desc = "Use these residues as the antigen epitope.  Default is to auto-identify them within the set interface distance at protocol start if epitope constraints are enabled. Currently only used for constraints.  PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A. Note that these site constraints are only used during docking unless -enable_full_protocol_atom_pair_cst is set.", default = []
   			),
-			Option('epitope_file', 'File',
-				desc = "A file which lists the epitope residues in PDB numbering one per line.  Example - 1A or 1A:A for insertion code. Not currently implemented."
-				),
 			Option('use_epitope_constraints', 'Boolean',
 				default = 'false',
-				desc = "Enable use of epitope constraints to add SiteConstraints between the epitope and paratope.  Note that paratope constraints are always used."
+				desc = "Enable use of epitope constraints to add SiteConstraints between the epitope and paratope.  Note that paratope constraints are always used.  Note that these site constraints are only used during docking unless -global_atom_pair_cst_scoring is set."
 				),
-			###### Protocol Steps
-            Option('do_graft_design', 'Boolean',
-      		    desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling.',
-				default='true'
-				),
-			Option('do_post_graft_design_modeling', 'Boolean',
-				desc='Run dock/min modeling step after the graft design step if run.',
-				default='false'
-				),
-			Option('do_sequence_design', 'Boolean',
-				desc='Run the CDRDesign step for high-resolution cluster-based CDR sequence design.',
-				default='true'
-				),
-			Option('do_post_design_modeling', 'Boolean',
-				desc='Run dock/min modeling step after the sequence design step if run',
-				default='false'
-				),
-            ###### Regional Sequence Design
-            Option('design_antigen', 'Boolean',
-                desc='Design antigen residues during sequence design.  Intelligently.  Typically, only the neighbor antigen residues of designing cdrs or interfaces will be co-designed.  Useful for specific applications.',
-                default = 'false'
+            ###### Constraint Control
+            Option('dihedral_cst_weight', 'Real',
+                default = '1.0',
+                desc = 'Weight to use for CDR CircularHarmonic cluster-based or general constraints that are automatically added to each structure and updated after each graft. Set to zero if you dont want to use these constraints. Note that they are not used for the backrub mintype. Overrides weight/patch settings.'
                 ),
-            Option('design_framework', 'Boolean',
-                desc='Design framework residues during sequence design.  Typically done with only neighbor residues of designing CDRs or during interface minimization.',
-                default = 'false'
+            Option('atom_pair_cst_weight', 'Real',
+                default = '0.01',
+                desc = 'Weight to use for Epitope/Paratope SiteConstraints.  Paratope Side contraints are always used.  Set to zero to completely abbrogate these constraints. Overrides weight/patch settings.'
                 ),
-			###### Post-Graft Optimizations
-			Option('post_graft_dock', 'Boolean',
-				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.',
+            Option('global_dihedral_cst_scoring', 'Boolean',
+                default = 'true',
+                desc = 'Use the dihedral cst score throughout the protocol, including final scoring of the poses instead of just during minimization step'
+                ),
+            Option('global_atom_pair_cst_scoring', 'Boolean',
+                default = 'false',
+                desc = 'Use the atom pair cst score throughout the protocol, including final scoring of the poses instead of just during docking. Typically, the scoreterm is set to zero for scorefxns other than docking to decrease bias via loop lengths, relax, etc.  It may indeed help to target a particular epitope quicker during monte carlo design if epitope constraints are in use, as well for filtering final models on score towards a particular epitope if docking.'
+                ),
+			###### Optimization Step
+			Option('do_dock', 'Boolean',
+				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.  If sequence design is enabled, will design regions/CDRs set during the high-res dock. Recommended to ',
 				default='false'
 				),
-			Option('post_graft_rb_min', 'Boolean',
+			Option('do_rb_min', 'Boolean',
 				desc='Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump',
 				default='false'
 				),
-			Option('post_graft_seq_design', 'Boolean',
-				desc='Design any time the packer is called post graft according to instructions file.  This includes relax, high-res docking, etc.  Will only attempt to design those CDRs that are set to SeqDesign in the instructions file as well as already being minimized/repacked. Used to increasing sampling of potential designs. See Sequence Design options for more control.',
+			Option('dock_min_dock', 'Boolean',
+				desc='Do Dock -> Min -> Dock instead of Dock->Min where you would otherwise want 2 cycles. Must already be passing do_dock',
 				default='false'
 				),
-            Option('post_graft_seq_design_framework_only', 'Boolean',
-                desc='Design ONLY the neighbor framework of the just-grafted CDR.  Not currently implemented.',
-                default='false'
-                ),
 			###### Protocol Rounds
-			Option('graft_rounds', 'Integer',
-				desc='Rounds for graft_design.  Each round is one CDR graft from set',
-				default='1000'
+			Option('outer_cycle_rounds', 'Integer',
+				desc='Rounds for outer loop of the protocol (not for deterministic_graft ).  Each round chooses a CDR and designs',
+				default='150'
 				),
-			Option('dock_rounds', 'Integer',
-				desc='Number of rounds for any post_graft docking.  If you are seeing badly docked structures, increase this value.',
+            Option('inner_cycle_rounds', 'Integer',
+                desc='Number of times to run the inner minimization protocol after each graft.  Higher (2-3) rounds recommended for pack/min/backrub mintypes or if including dock in the protocol.',
+                default = '1'
+                ),
+			Option('dock_cycle_rounds', 'Integer',
+				desc='Number of rounds for any docking.  If you are seeing badly docked structures, increase this value.',
 				default='1'
-				),
-			Option('design_rounds', 'Integer',
-				desc="Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.",
-				default='3'
 				),
 			##### Distance Detection
 			Option('interface_dis', 'Real',
-				desc='Interface distance cutoff.  Used for repacking of interface, etc.',
-				default='6.0'
+				desc='Interface distance cutoff.  Used for repacking of interface, epitope detection, etc.',
+				default='8.0'
 				),
 			Option('neighbor_dis', 'Real',
 				desc='Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.',
-				default='4.0'
+				default='6.0'
 				),
+			###### Outlier Control
+			Option('use_outliers', 'Boolean',
+				desc='Include outlier data for GraftDesign, profile-based sequence design stats, and cluster-based dihedral constraints.  Outliers are defined as having a dihedral distance of > 40 degrees and an RMSD of >1.5 A to the cluster center.  Use to increase sampling of small or rare clusters.',
+				default='false'
+				),
+      Option('use_H3_graft_outliers', 'Boolean',
+         desc='Include outliers when grafting H3.  H3 does not cluster well, so most structures have high dihedral distance and RMSD to the cluster center.  Due to this, cluster-based dihedral constraints for H3 are not used.  Sequence profiles can be used for clusters, but not usually.',
+         default = 'true'
+         ),
+			Option('use_only_H3_kinked', 'Boolean',
+				desc = 'Remove any non-kinked CDRs from the CDRSet if grafting H3.  For now, the match is based on the ramachandran area of the last two residues of the H3. Kinked in this case is defined as having AB or DB regions at the end.  Will be improved for detection.',
+				default = 'false'
+				),
+      ###### Regional Sequence Design
+      Option('design_antigen', 'Boolean',
+        desc='Design antigen residues during sequence design.  Intelligently.  Typically, only the neighbor antigen residues of designing cdrs or interfaces will be co-designed.  Useful for specific applications.',
+        default = 'false'
+        ),
+      Option('design_framework', 'Boolean',
+        desc='Design framework residues during sequence design.  Typically done with only neighbor residues of designing CDRs or during interface minimization.',
+        default = 'false'
+        ),
+      Option('conservative_framework_design', 'Boolean',
+        desc='If designing Framework positions, use conservative mutations instead of all of them.',
+        default='true'
+        ),
+			###### Seq Design Control
+			Option('design_H3_stem', 'Boolean',
+				default='false',
+				desc='Enable design of the first 2 and last 3 residues of the H3 loop if sequence designing H3.  These residues play a role in the extended vs kinked H3 conformation.  Designing these residues may negatively effect the overall H3 structure by potentially switching a kinked loop to an extended and vice versa.  Rosetta may get it right.  But it is off by default to err on the cautious side of design. Sequence designing H3 may be already risky.'
+				),
+			Option('design_proline', 'Boolean',
+				default='false',
+				desc='Enable proline design.  Profiles for proline are very good, but designing them is a bit risky.  Enable this if you are feeling daring.'
+				),  
+			Option('sample_zero_probs_at', 'Real',
+				default='0',
+				desc='Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions. '
+				),
+            Option('force_mutate_framework_for_cluster', 'Boolean',
+                default = 'true',
+                desc = "Force framework mutations that maintain certain clusters. Currently L1-11-1 vs L1-11-2.  See North cluster paper for these dependencies, or checkout rosetta/database/sampling/antibodies/design/cluster_framework_mutations.txt",
+                ),
+			      ## Profile Stats
+			Option('seq_design_stats_cutoff', 'Integer',
+				default='10',
+				desc='Value for probabilistic -> conservative sequence design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur. More data = better predictability.'
+				
+				),
+			Option('seq_design_profile_samples', 'Integer',
+				default='1',
+				desc='If designing using profiles, this is the number of times the profile is sampled each time packing done.  Increase this number to increase variability of designs - especially if not using relax as the mintype.' 
+				), 
 			##### Fine Control
 			Option('use_light_chain_type','Boolean',
 				default='true',
 				desc='Use the light chain type, lambda or kappa IF given via option -antibody:light_chain.  This limits any aspect of the design protocol to use only data and cdrs for the given antibody type.  It (will) also add lambda vs kappa optimization steps such as L4 optimization.  Extremely useful for denovo design as lambda/kappa mixing can result in lower stability and non-expression of designs.  Failed mixed designs would then require manual framework mutations, framework switching, or other optimizations for succes.  Use PyIgClassify (see docs) to identify your framework as lambda or kappa.  Switch this to false or do not pass the -light_chain option to increase sampling with a greater risk of failed designs.'
 				),
-			Option('initial_perturb', 'Boolean',
-				desc='Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact.',
-				default='false'
-				),
-			Option('use_deterministic', 'Boolean',
-				desc='Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed.',
-				default='false'
-				),
-			Option('use_filters', 'Boolean',
-				desc='Use filters after graft step and design step.  Defaults false for now to optimize sensitivity. Not Implemented',
-				default='false'
-				),
-			Option('disable_full_cdr_min', 'Boolean',
-				desc='Disable the use of all CDRs during any minimization/Repacking steps.  Currently all CDRs are minimized only during the SeqDesign phase.',
-				default = 'false'
-				),
-			###### Seq Design Control
-			Option('design_method', 'String',
-				desc='Design method to use.',
-				legal = ['fixbb', 'flxbb', 'relaxed_design'],
-				default='fixbb'
-				),
-			Option('design_scorefxn', 'String',
-				desc="Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set."
-				),
-			Option('stats_cutoff', 'Integer',
-				desc='Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability.',
-				default='10'
-				),
-            Option('conservative_framework_design', 'Boolean',
-                desc='If designing Framework positions, use conservative mutations instead of all of them.',
-                default='true'
-                ),
-			Option('sample_zero_probs_at', 'Integer',
-				desc='Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions.  Use with caution.',
-				default='0'
-				),
-			Option('turn_conservation', 'Boolean',
-				desc='try to conserve turn structure using known turn-based conservative mutations during conservative design. Not Implemented',
-				default='true'
-				),
+      Option('idealize_graft_cdrs', 'Boolean',
+        desc='Idealize the CDR before grafting.  May help or hinder.  Still testing.',
+        default = 'false'
+        ),
+        Option('add_backrub_pivots', 'StringVector',
+        desc = 'Additional backrub pivot residues if running backrub as the MinType. PDB Numbering. Optional insertion code. Example: 1A 1B 1B:A.  Can also specify ranges: 1A-10:A.  Note no spaces in the range.',
+        ),
+        Option('inner_kt', 'Real',
+            desc = "KT used in the inner min monte carlo after each graft.",
+            default = '2.0'),
+        Option('outer_kt', 'Real',
+            desc = 'KT used for the outer graft Monte Carlo.  Each graft step will use this value',
+            default = '1.0'),
 			###### Benchmarking
-			Option('benchmark_basic_design', 'Boolean',
-				desc="Used to benchmark basic design vs probabilistic vs conservative.  Not for general use.",
-				default = 'false'
-				),
 			Option('benchmark_graft_design', 'Boolean',
 				desc = 'Start graft design with a new set of CDRs as to not bias the run with native CDRs.',
 				default='false'
 				),
 			Option('adapt_graft', 'Boolean',
-				desc = 'Adapt the grafting algorithm to ensure a closed graft.  Takes more time.  Grafts that cannot be closed may not be very compatable with the framework in the first place.',
-				default='false'
+				desc = 'Adapt the grafting algorithm to increase rate of closed grafts.  Takes more time.  Grafts that cannot be closed may not be very compatable with the framework in the first place.',
+				default='true'
 				),
+			Option('enable_adapt_graft_cartesian', 'Boolean',
+				desc = 'Cartesian minimization seems to be causing numerous bugs since the Lukis AST pointer rewrite.  These only happen on the cluster and it is very difficult to reproduce them. Until this is fixed, we can skip the cartesian adaptation where cartesian minimization would run when the graft could not close properly.  Exceptions are wrapped so that when it does fail we skip the graft. Set this to false to disable its use',
+				default = 'true'
+				),
+       Option('remove_antigen', 'Boolean',
+        desc = 'Remove the antigen from the pose before doing any design on it',
+        default = 'false'
+        ),
+			 Option('add_graft_log_to_pdb', 'Boolean',
+				desc = 'Add the full graft log to the output pose.  Must also pass -pdb_comments option.',
+				default = 'false'
+				),
+            Option('mutate_framework_for_cluster', 'Boolean',
+                desc = 'Mutate the framework to maintain certain clusters post-graft.',
+                default = 'false'
+                ),
 		), #design
 	), # antibody
 
+	## Options for specific task operations - outside global packing options.
+	Option_Group( 'task_operations',
+		Option( 'cons_design_data_source', 'String',
+			desc='Data source used for the ConservativeDesignOperation.  This guides the set of allowed mutations.  Higher blosum means higher conservation (numbers indicate sequence similarity cutoffs.',
+			default='blosum62',
+			legal = ['chothia_1976', 'BLOSUM30', 'blosum30', 'BLOSUM35', 'blosum35', 'BLOSUM40', 'blosum40', 'BLOSUM45', 'blosum45', 'BLOSUM50', 'blosum50', 'BLOSUM55', 'blosum55', 'BLOSUM60', 'blosum60', 'BLOSUM62', 'blosum62', 'BLOSUM65', 'blosum65', 'BLOSUM70', 'blosum70', 'BLOSUM75', 'blosum75', 'BLOSUM80', 'blosum80', 'BLOSUM85', 'blosum85', 'BLOSUM90', 'blosum90', 'BLOSUM100', 'blosum100']
+		),
+	),
+
+	##########################################################################
 	Option_Group( 'assembly',
 		Option( 'pdb1','File', desc='pdb1 file' ),
 		Option( 'pdb2','File', desc='pdb2 file' ),
@@ -3460,6 +3521,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'pivot_atoms', 'StringVector', desc='main chain atoms usable as pivots', default = 'utility::vector1<std::string>(1, "CA")'),
 		Option( 'min_atoms', 'Integer', desc='minimum backrub segment size (atoms)', default = '3'),
 		Option( 'max_atoms', 'Integer', desc='maximum backrub segment size (atoms)', default = '34'),
+
+		#BackrubProtocol
+		Option( 'ntrials', 'Integer', desc='number of Monte Carlo trials to run', default = '1000'),
+		Option( 'sc_prob', 'Real', desc='probability of making a side chain move', default = '0.25'),
+		Option( 'sm_prob', 'Real', desc='probability of making a small move', default = '0'),
+		Option( 'sc_prob_uniform', 'Real', desc='probability of uniformly sampling chi angles', default = '0.1'),
+		Option( 'sc_prob_withinrot', 'Real', desc='probability of sampling within the current rotamer', default = '0.0'),
+		Option( 'mc_kt', 'Real', desc='value of kT for Monte Carlo', default = '0.6'),
+		Option( 'mm_bend_weight', 'Real', desc = 'weight of mm_bend bond angle energy term', default = '1.0'),
+		Option( 'initial_pack', 'Boolean', desc = 'force a repack at the beginning regardless of whether mutations are set in the resfile', default = 'false'),
+		Option( 'minimize_movemap', 'File', desc = 'specify degrees of freedom for minimization'),
+		Option( 'trajectory', 'Boolean', desc = 'record a trajectory', default = 'false'),
+		Option( 'trajectory_gz', 'Boolean', desc = 'gzip the trajectory', default = 'false'),
+		Option( 'trajectory_stride', 'Integer', desc = 'write out a trajectory frame every N steps', default = '100'),
+
 	), # -backrub
 
 	# batch_relax mode -----------------------------------------------------------
@@ -5817,7 +5893,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 #		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
 		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
-		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
+		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended.  Use of the -nonideal flag switches all these and sets up correct min cycles, minimizer type, etc.' ),
 
 		## Options for Sequence Relax
 		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),

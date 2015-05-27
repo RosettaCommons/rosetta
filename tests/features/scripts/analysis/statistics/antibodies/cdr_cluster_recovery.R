@@ -98,6 +98,7 @@ run=function(self, sample_sources, output_dir, output_formats){
     
       data = query_sample_sources_against_ref(sample_sources, sele, sele_args_frame=tag_frame, char_as_factor=F) 
       data = create_zero_data(data)
+      
       #Type is length or cluster here:
       combine_data <- function(data, type){
         res_by_ss = ddply(data, "sample_source", function(data_by_ss, type){
@@ -137,6 +138,7 @@ run=function(self, sample_sources, output_dir, output_formats){
     #Recovery for CDR by individual PDB
     #print(all_data)
     all_data$X1 = NULL #Remove extra column
+    all_data = all_data[all_data$total != 0,]
     grouped_data = sort(all_data, by = ~ native + CDR + sample_source)
     
     save_tables(self,

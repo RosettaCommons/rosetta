@@ -38,6 +38,10 @@ namespace residue_selector {
 /// @brief The NeighborhoodResidueSelector selects residues neighboring a defined set of residues
 /// (the focus). The focus residue set can be obtained from another ResidueSelector, from a
 /// std::set of residue positions or from a string specifying residue positions.
+///
+/// Note: ResidueSubset includes focus residues, also does not use 
+///  interaction graph to calculate neighbors.
+///
 class NeighborhoodResidueSelector : public ResidueSelector {
 public:
 	// derived from base class

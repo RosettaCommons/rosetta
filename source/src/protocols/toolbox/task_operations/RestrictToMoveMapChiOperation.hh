@@ -54,6 +54,7 @@ public:
 
 	virtual ~RestrictToMoveMapChiOperation();
 	
+	RestrictToMoveMapChiOperation(RestrictToMoveMapChiOperation const & src);
 
 public:
 	
@@ -89,6 +90,9 @@ private:
 	
 	void
 	init();
+	
+	void
+	init_for_equal_operator_and_copy_constructor( RestrictToMoveMapChiOperation & lhs, RestrictToMoveMapChiOperation const & rhs);
 	
 	MoveMapCOP movemap_;
 	bool design_;

@@ -51,21 +51,21 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	std::set<core::Size> side1_chains;
 	std::set<core::Size> side2_chains;
 	vector1<std::string> sides = utility::string_split(interface, '_');
-	TR <<"Interface:"<< interface <<":"<<std::endl;
-	TR << "side1:" << sides[1] << ":" << std::endl;
-	TR << "side3:" << sides[2] << ":" << std::endl;
+	//TR <<"Interface:"<< interface <<":"<<std::endl;
+	//TR << "side1:" << sides[1] << ":" << std::endl;
+	//TR << "side3:" << sides[2] << ":" << std::endl;
 	
 	for (core::Size i = 0; i <= sides[1].length() -1; ++i){
-		TR <<"C:"<<utility::to_string(sides[1][i]) << std::endl;
+		//TR <<"C:"<<utility::to_string(sides[1][i]) << std::endl;
 		side1_chains.insert(pose::get_chain_id_from_chain(sides[1][i], pose));
 	}
 	for (core::Size i = 0; i <= sides[2].length() -1; ++i){
-		TR <<"C:"<<utility::to_string(sides[2][i]) << std::endl;
+		//TR <<"C:"<<utility::to_string(sides[2][i]) << std::endl;
 		side2_chains.insert(pose::get_chain_id_from_chain(sides[2][i], pose));
 	}
 	
-debug_assert (side1_chains.size() >= 1);
-debug_assert (side2_chains.size() >= 1);
+	debug_assert (side1_chains.size() >= 1);
+	debug_assert (side2_chains.size() >= 1);
 	
 	std::set<Size> side1_residues, side2_residues;
 	
