@@ -393,6 +393,8 @@ residue_types/l-ncaa/homocysteine.params
 
 
 ## Metal-binding NCAA types
+#residue_types/metal_binding_ncaa/2S-2-amino-7-sulfanylheptanoic-acid.params
+#residue_types/metal_binding_ncaa/6-mercapto-norleucine.params
 #residue_types/metal_binding_ncaa/BPY.params
 
 ## Peptoid Types

@@ -9,3 +9,4 @@
 -inout:connect_info_cutoff 0.0
 ##### these are general flags
 -score:weights talaris2014
+-mpi_tracer_to_file log
