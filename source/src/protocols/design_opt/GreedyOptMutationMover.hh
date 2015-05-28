@@ -59,6 +59,7 @@ public:
 	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 	void filter_seqpos_pareto_opt_ptmuts();
 	void filter_pareto_opt_poses();
+	void downsample_pfront_poses();
 	void clear_cached_data();
 	void calc_pfront_poses_filter_ranks();
 	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
