@@ -77,10 +77,10 @@ void set_rb_constraints(
 	core::Real cst_stdev,
 	core::Size cst_seqwidth
                    ) {
-					   
+
 	using core::scoring::constraints::ConstraintOP;
 	using core::scoring::constraints::ConstraintCOP;
-	
+
 	core::scoring::constraints::ConstraintSetOP new_csts( new core::scoring::constraints::ConstraintSet );
 
 	for (int i =  1; i <= (int)rbsegs.size(); ++i) {

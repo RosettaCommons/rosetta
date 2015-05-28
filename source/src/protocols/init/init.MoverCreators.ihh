@@ -279,6 +279,7 @@
 
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
+#include <protocols/relax/LocalRelaxCreator.hh>
 
 #include <protocols/rigid/RigidBodyMoverCreator.hh>
 #include <protocols/rigid/RollMoverCreator.hh>

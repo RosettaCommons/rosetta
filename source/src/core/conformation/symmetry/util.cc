@@ -893,10 +893,15 @@ symmetrize_fold_tree(
 	for ( Size i = 1; i<= f_orig.num_jump(); ++i ) {
 		Size down ( f_orig.downstream_jump_residue(i) );
 		Size up ( f_orig.upstream_jump_residue(i) );
-		if ( up > nres_subunit ) {
+		if ( up > nres_subunit && new_anchor == 0) {
 			new_anchor = down;
 			TR << "symmetrize_fold_tree(): setting anchor to " << new_anchor << std::endl;
 		} else {
+			if (up > nres_subunit && new_anchor != 0) {
+				TR << "Warning!  Fold tree has multiple jumps from anchor, which is not allowed in symmetry.  Modifying." << std::endl;
+				up = new_anchor;
+			}
+
 			// add this jump in each subunit
 			for ( Size j=0;  j<nsubunits; ++j) {
 				// dont worry about order, they get sorted later

@@ -365,6 +365,7 @@ sources = {
 		"ClassicRelax",
 		"cst_util",
 		"FastRelax",
+		"LocalRelax",
 		"MiniRelax",
 		"Ramady",
 		"relax_main",

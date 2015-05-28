@@ -56,6 +56,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/CrystInfo.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -981,6 +982,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		for (int i=1; i<=(int)residue_sample_template_.size(); ++i) allowed_to_move[i] = allowed_to_move[i] && residue_sample_template_[i];
 		for (int i=1; i<=(int)residue_sample_abinitio_.size(); ++i) allowed_to_move[i] = allowed_to_move[i] && residue_sample_abinitio_[i];
 
+		// (7) steal crystal parameters (if specified)
+		if ( templates_[initial_template_index]->pdb_info() ) {
+			core::pose::CrystInfo ci = templates_[initial_template_index]->pdb_info()->crystinfo();
+			if (ci.A()*ci.B()*ci.C() != 0) {
+				pose.pdb_info()->set_crystinfo( ci );
+			}
+		}
 
 		// STAGE 1
 		//fpd constraints are handled a little bit weird

@@ -1009,7 +1009,7 @@ void PhenixInterface::initialize_target_evaluator(
 
 	// (9) map type
 	oss.clear(); oss.str("");
-  if (( map_type_.length() != 0 ) && (map_type_ != "Auto")) {
+  if (( map_type_.length() != 0 ) && (map_type_ != "Auto") && (map_type_.substr(0,2) != "%%") ) { // 3rd case bad RS tag
 		if (map_type_ == "dm" || map_type_ == "density_modify") {
 			oss << "density_modify=True";
 		} else if (map_type_ == "prime_and_switch") {
@@ -1018,7 +1018,7 @@ void PhenixInterface::initialize_target_evaluator(
 			oss << "map_type=" << map_type_;
 		}
 	} else {
-		// default: prime and switch
+		// default: prime and switch ???
 		oss << "prime_and_switch=True";
 	}
 	std::string arg9 = oss.str();

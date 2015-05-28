@@ -292,6 +292,7 @@ static MoverRegistrator< rbsegment_relax::IdealizeHelicesMoverCreator > reg_Idea
 
 static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
+static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
 
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
 static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;
