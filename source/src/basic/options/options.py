@@ -70,7 +70,8 @@ def main(args):
                 '#include <basic/options/option.cc.include.gen.hh>\n' + \
                 '#include <utility/options/OptionCollection.hh>\n'
 
-            footer_gen_hh = '\ninline void add_all_rosetta_options( utility::options::OptionCollection &option ) { add_rosetta_options_0(option); add_rosetta_options_1(option); add_rosetta_options_2(option); add_rosetta_options_3(option); }\n#endif\n'
+            footer_gen_hh_pre = '\ninline void add_all_rosetta_options( utility::options::OptionCollection &option ) {\n'
+            footer_gen_hh_post = '}\n#endif\n'
 
 
             #def callback(arg, directory, files):
@@ -110,17 +111,20 @@ def main(args):
                     f = KeepSameFile(outfile, 'wb')
                     f.write( header_gen_hh )
 
-                    split_len = len( output[ file_prefix ] ) // 4 + 1  # for now we generate 4 functions instead of 1
+                    split_len = len( output[ file_prefix ] ) // 16 + 1  # for now we generate 16 functions instead of 1
                     groups = [ output[ file_prefix ][i: i+split_len] for i in range(0, len(output[ file_prefix ]), split_len) ]
                     for i,g in enumerate(groups):
                             lines = 'inline void add_rosetta_options_%s( utility::options::OptionCollection &option ) {' % i
                             lines += "".join(g) + '\n}\n'
                             f.write( lines )
                     #lines = output[ file_prefix ]
-                    f.write( footer_gen_hh )
+                    f.write( footer_gen_hh_pre )
+                    for i,g in enumerate(groups):
+                        f.write( '\tadd_rosetta_options_%s( option );\n' %i )
+                    f.write( footer_gen_hh_post )
                     num_changed_files += f.close()
                 elif file_prefix == 'keys/OptionKeys.cc.gen':
-                    split_len = len( output[ file_prefix ] ) // 4 + 1  # for now we split .cc just in four files
+                    split_len = len( output[ file_prefix ] ) // 16 + 1  # for now we split .cc just in 16 files
                     groups = [ output[ file_prefix ][i: i+split_len] for i in range(0, len(output[ file_prefix ]), split_len) ]
                     for i,g in enumerate(groups):
                         outfile = file_prefix + '%s.hh' % i
