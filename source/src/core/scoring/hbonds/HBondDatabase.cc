@@ -31,6 +31,8 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/options/util.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 // Utility Headers
@@ -635,44 +637,76 @@ HBondDatabase::initialize_don_strength() {
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/DonStrength.csv";
 	izstream s;
 
-	if ( !file_exists( full_name( don_strength_fname, false /*warn*/ ) ) ) return;
-	open(s, don_strength_fname, false);
+	bool open_failed( true );
+	if ( file_exists( full_name( don_strength_fname, false /*warn*/ ) ) ) {
+		open_failed = false;
+		open(s, don_strength_fname, false);
+	}
 
-	Size line_number(0);
-	Size expected_n_tokens(2);
-	vector1<string> tokens;
-	string line;
-	string don_type_name;
-	Real site_strength;
-	HBDonChemType don_chem_type;
-	while(getline(s, line)){
-		++line_number;
-		tokens = string_split(line, ',');
-		if(tokens.size() != expected_n_tokens){
-			stringstream message;
-			message
-				<< "BondStrength.csv:" << line_number << " "
-				<< "should have " << expected_n_tokens << ", "
-				<< "however it has " << tokens.size() << endl;
-			message
-				<< line << endl;
-			utility_exit_with_message(message.str());
-		}
+	if ( !open_failed ) {
+		Size line_number(0);
+		Size expected_n_tokens(2);
+		vector1<string> tokens;
+		string line;
+		string don_type_name;
+		Real site_strength;
+		HBDonChemType don_chem_type;
+		while(getline(s, line)){
+			++line_number;
+			tokens = string_split(line, ',');
+			if(tokens.size() != expected_n_tokens){
+				stringstream message;
+				message
+					<< "BondStrength.csv:" << line_number << " "
+					<< "should have " << expected_n_tokens << ", "
+					<< "however it has " << tokens.size() << endl;
+				message
+					<< line << endl;
+				utility_exit_with_message(message.str());
+			}
 
-		Size i(1);
-		{
-			stringstream buf;
-			buf << tokens[i]; i++;
-			buf >> don_type_name;
-		}
-		{
-			stringstream buf;
-			buf << tokens[i]; i++;
-			buf >> site_strength;
-		}
+			Size i(1);
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> don_type_name;
+			}
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> site_strength;
+			}
 
-		don_chem_type = HBondTypeManager::don_chem_type_from_name(don_type_name);
-		don_strength_lookup_[don_chem_type] = site_strength;
+			don_chem_type = HBondTypeManager::don_chem_type_from_name(don_type_name);
+			don_strength_lookup_[don_chem_type] = site_strength;
+		}
+	} // db file present?
+	/// now adjust from cmdline
+	if ( basic::options::option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+		utility::vector1< std::string > const hb_don_strength_tags
+			( basic::options::option[ basic::options::OptionKeys::score::hb_don_strength ] );
+		BOOST_FOREACH( std::string const & tag, hb_don_strength_tags ) {
+			utility::vector1< std::string > const tokens( string_split( tag, ':' ) );
+			runtime_assert( tokens.size() == 2 );
+			string don_type_name("tmp");
+			Real site_strength(0);
+			Size i(1);
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> don_type_name;
+			}
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> site_strength;
+			}
+
+			HBDonChemType don_chem_type( HBondTypeManager::don_chem_type_from_name(don_type_name) );
+			don_strength_lookup_[don_chem_type] = site_strength;
+			tr.Trace << "initialize_don_strength from cmdline " << don_type_name << ' ' << don_chem_type << ' ' <<
+				site_strength << std::endl;
+		}
 	}
 }
 
@@ -681,45 +715,80 @@ HBondDatabase::initialize_acc_strength() {
 	string acc_strength_fname =
 		"scoring/score_functions/hbonds/" + params_database_tag_ + "/AccStrength.csv";
 	izstream s;
-	if ( !file_exists( full_name( acc_strength_fname, false /*warn*/ ) ) ) return;
-	open(s, acc_strength_fname, false);
 
-	Size line_number(0);
-	Size expected_n_tokens(2);
-	vector1<string> tokens;
-	string line;
-	string acc_type_name;
-	Real site_strength;
-	HBAccChemType acc_chem_type;
-	while(getline(s, line)){
-		++line_number;
-		tokens = string_split(line, ',');
-		if(tokens.size() != expected_n_tokens){
-			stringstream message;
-			message
-				<< "BondStrength.csv:" << line_number << " "
-				<< "should have " << expected_n_tokens << ", "
-				<< "however it has " << tokens.size() << endl;
-			message
-				<< line << endl;
-			utility_exit_with_message(message.str());
-		}
-
-		Size i(1);
-		{
-			stringstream buf;
-			buf << tokens[i]; i++;
-			buf >> acc_type_name;
-		}
-		{
-			stringstream buf;
-			buf << tokens[i]; i++;
-			buf >> site_strength;
-		}
-
-		acc_chem_type = HBondTypeManager::acc_chem_type_from_name(acc_type_name);
-		acc_strength_lookup_[acc_chem_type] = site_strength;
+	bool open_failed( true );
+	if ( file_exists( full_name( acc_strength_fname, false /*warn*/ ) ) ) {
+		open_failed = false;
+		open(s, acc_strength_fname, false);
 	}
+
+	if ( !open_failed ) {
+		Size line_number(0);
+		Size expected_n_tokens(2);
+		vector1<string> tokens;
+		string line;
+		string acc_type_name;
+		Real site_strength;
+		HBAccChemType acc_chem_type;
+		while(getline(s, line)){
+			++line_number;
+			tokens = string_split(line, ',');
+			if(tokens.size() != expected_n_tokens){
+				stringstream message;
+				message
+					<< "BondStrength.csv:" << line_number << " "
+					<< "should have " << expected_n_tokens << ", "
+					<< "however it has " << tokens.size() << endl;
+				message
+					<< line << endl;
+				utility_exit_with_message(message.str());
+			}
+
+			Size i(1);
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> acc_type_name;
+			}
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> site_strength;
+			}
+
+			acc_chem_type = HBondTypeManager::acc_chem_type_from_name(acc_type_name);
+			acc_strength_lookup_[acc_chem_type] = site_strength;
+		}
+	} // read from db file if present
+
+	/// now adjust from cmdline
+	if ( basic::options::option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+		utility::vector1< std::string > const hb_acc_strength_tags
+			( basic::options::option[ basic::options::OptionKeys::score::hb_acc_strength ] );
+		BOOST_FOREACH( std::string const & tag, hb_acc_strength_tags ) {
+			utility::vector1< std::string > const tokens( string_split( tag, ':' ) );
+			runtime_assert( tokens.size() == 2 );
+			string acc_type_name("tmp");
+			Real site_strength(0);
+			Size i(1);
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> acc_type_name;
+			}
+			{
+				stringstream buf;
+				buf << tokens[i]; i++;
+				buf >> site_strength;
+			}
+
+			HBAccChemType acc_chem_type( HBondTypeManager::acc_chem_type_from_name(acc_type_name) );
+			acc_strength_lookup_[acc_chem_type] = site_strength;
+			tr.Trace << "initialize_acc_strength from cmdline " << acc_type_name << ' ' << acc_chem_type << ' ' <<
+				site_strength << std::endl;
+		}
+	}
+
 }
 
 FadeIntervalCOP

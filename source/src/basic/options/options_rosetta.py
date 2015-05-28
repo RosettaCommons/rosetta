@@ -1160,6 +1160,8 @@ Options = Option_Group( '',
 		Option( 'ramaneighbors', 'Boolean', desc='Uses neighbor-dependent ramachandran maps', default='false'),
 		Option( 'optH_weights', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'optH_patch', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
+		Option( 'hb_don_strength', 'StringVector', desc="Modification of hbond donor-atom strengths, over-rides any database file settings. Format is -hb_don_strength <atm1>:<wt1> <atm2>:<wt2> ...   For example -hb_don_strength hbdon_IND:1.5 hbdon_AHX:0.5" ),
+		Option( 'hb_acc_strength', 'StringVector', desc="Modification of hbond acceptor-atom strengths, over-rides any database file settings. Format is -hb_acc_strength <atm1>:<wt1> <atm2>:<wt2> ...   For example -hb_acc_strength hbacc_CXA:1.5 hbdon_HXL:0.5" ),
 		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_elec_params'),
 		Option( 'hbond_bb_per_residue_energy', 'Boolean', desc="In score tables, separate out backbone hydrogens bond energies per residue. By default, bb hbonds are included in the total energy, but not per residue energies",default='false'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
@@ -3429,7 +3431,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option('design_proline', 'Boolean',
 				default='false',
 				desc='Enable proline design.  Profiles for proline are very good, but designing them is a bit risky.  Enable this if you are feeling daring.'
-				),  
+				),
 			Option('sample_zero_probs_at', 'Real',
 				default='0',
 				desc='Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions. '
@@ -3442,12 +3444,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option('seq_design_stats_cutoff', 'Integer',
 				default='10',
 				desc='Value for probabilistic -> conservative sequence design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur. More data = better predictability.'
-				
+
 				),
 			Option('seq_design_profile_samples', 'Integer',
 				default='1',
-				desc='If designing using profiles, this is the number of times the profile is sampled each time packing done.  Increase this number to increase variability of designs - especially if not using relax as the mintype.' 
-				), 
+				desc='If designing using profiles, this is the number of times the profile is sampled each time packing done.  Increase this number to increase variability of designs - especially if not using relax as the mintype.'
+				),
 			##### Fine Control
 			Option('use_light_chain_type','Boolean',
 				default='true',
