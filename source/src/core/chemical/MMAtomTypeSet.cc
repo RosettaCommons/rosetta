@@ -77,7 +77,7 @@ MMAtomTypeSet::read_file( std::string const & filename )
 	{
 		using namespace basic;
 
-		std::string line, tag, name_wo_whitespace;
+		std::string line/*, tag*/, name_wo_whitespace;
 		while ( getline( data,line ) ) {
 			std::istringstream l( line );
 			l >> name_wo_whitespace;

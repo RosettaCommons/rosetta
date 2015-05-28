@@ -611,7 +611,6 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 	core::PackerEnergy top10[ num_to_relax ];
 	int which10[ num_to_relax ];
 	core::PackerEnergy bottom_of_top10;
-	int whichBottom;
 	for ( int ii = 0; ii < num_to_relax; ++ii ) {
 		top10[ ii ] = 0;
 		which10[ ii ] = 0;
@@ -619,6 +618,7 @@ void FASTERNode::tell_neighbors_to_prep_for_relaxation()
 
 	//decide which neighbors to relax
 	if ( get_num_incident_edges() > num_to_relax ) {
+		int whichBottom;
 		for ( int ii = 1; ii <= num_to_relax; ++ii ) {
 			top10[ ii - 1 ] = std::abs(perturbed_two_body_energies_[ ii ]);
 			which10[ ii - 1] = ii;
@@ -1321,7 +1321,7 @@ void FASTERInteractionGraph::prepare_for_FASTER()
 			//note: no increment statement here
 	){
 		std::list< EdgeBase* >::iterator next_iter = iter;
-		next_iter++;
+		++next_iter;
 		//edges sometimes delete themselves, invalidating iterators, so
 		//get the next iterator before calling prepare_for_simulated_annealing
 		((FASTEREdge* ) (*iter))->prepare_for_FASTER();

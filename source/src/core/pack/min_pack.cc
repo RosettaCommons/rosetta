@@ -347,7 +347,8 @@ get_residue_current_energy(
 
 #ifdef APL_FULL_DEBUG
 	for ( Size ii = 1; ii <= ratc.active_residue().natoms(); ++ii ) {
-		if ( std::abs( ratc.active_residue().xyz( ii ).distance_squared( curr_state.momento_for_moltenres( moltenres_id ).coord( ii ) ) > 1e-6 )){
+		// AMW cppcheck: misplaced )
+		if ( std::abs( ratc.active_residue().xyz( ii ).distance_squared( curr_state.momento_for_moltenres( moltenres_id ).coord( ii ) ) ) > 1e-6 ) {
 			std::cout << "  RATC and momento coordinate discrepancy before func eval " << ii << std::endl;
 		}
 	}
@@ -381,7 +382,7 @@ get_residue_current_energy(
 #ifdef APL_FULL_DEBUG
 	bool bad = false;
 	for ( Size ii = 1; ii <= ratc.active_residue().natoms(); ++ii ) {
-		if ( std::abs( ratc.active_residue().xyz( ii ).distance_squared( curr_state.momento_for_moltenres( moltenres_id ).coord( ii ) ) > 1e-6 )){
+		if ( std::abs( ratc.active_residue().xyz( ii ).distance_squared( curr_state.momento_for_moltenres( moltenres_id ).coord( ii ) ) ) > 1e-6 ){
 			std::cout << "  RATC and momento coordinate discrepancy! " << ii << std::endl;
 			bad = true;
 		}

@@ -305,7 +305,10 @@ void AssignOrbitals::assign_orbitals( )
 					std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p",AOhybridization_) );
 					std::string const orbital_element_name( make_orbital_element_name() );
 					std::string const orbital_element_name2( make_orbital_element_name() );
-					std::string const orbital_element_name3( make_orbital_element_name() );
+					// amw cppcheck:orbital_element_name3 is not used, but commenting out its unuse is wrong!
+					// you see, make_orbital_element_name() has side effects...
+					make_orbital_element_name();
+					//std::string const orbital_element_name3( make_orbital_element_name() );
 
 					set_orbital_type_and_bond(atm_index, orbital_element_name, orbital_type_full_name);
 					set_orbital_type_and_bond(atm_index, orbital_element_name2, orbital_type_full_name);

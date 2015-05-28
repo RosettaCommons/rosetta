@@ -111,6 +111,8 @@ centroids_by_jump(
 	int upstream_atoms = 0, downstream_atoms = 0;
 
 	for(int ii = 1, ii_end = pose.total_residue(); ii <= ii_end; ++ii) {
+		// Use a reference so we have to evaluate is_upstream only once per residue
+		// but still increment the correct variable.
 		int & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
 		core::Vector & ctrd = ( is_upstream(ii) ? upstream_ctrd : downstream_ctrd );
 		core::conformation::Residue const & rsd = pose.residue(ii);
@@ -127,10 +129,17 @@ centroids_by_jump(
 		}
 	}
 
-	upstream_ctrd /= upstream_atoms;
+	// AMW cppcheck: this is falsely found as a division by zero. The above code redirects the int reference
+	// natoms to add to either upstream or downstream atoms depending on the residue's location
+	// This is definitely opaque and I will add a comment indicating such
+	// AMW: oh, I see: what if there are zero atoms in all? Take an empty pose (somehow) or a pose with two zero-atom residues (somehow) or...
+	// so I will make a clear modification 
+	if ( upstream_atoms > 0 ) upstream_ctrd /= upstream_atoms;
+	else TR << "critical error: upstream_atoms was zero; could not divide!" << std::endl;
 	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
 	//TR << "upstream_ctrd:  " << upstream_ctrd.x() << " " << upstream_ctrd.y() << " " << upstream_ctrd.z() << std::endl;
-	downstream_ctrd /= downstream_atoms;
+	if ( downstream_atoms > 0 ) downstream_ctrd /= downstream_atoms;
+	else TR << "critical error: downstream_atoms was zero; could not divide!" << std::endl;
 	//TR << "Upstream:   " << upstream_atoms << " atoms, " << upstream_ctrd << std::endl;
 	//TR << "Downstream: " << downstream_atoms << " atoms, " << downstream_ctrd << std::endl;
 }

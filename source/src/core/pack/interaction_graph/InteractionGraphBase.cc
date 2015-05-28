@@ -244,7 +244,7 @@ void NodeBase::drop_all_edges()
 EdgeBase* NodeBase::find_edge(int other_node) const
 {
 	for (std::list< EdgeBase* >::const_iterator iter = incident_edge_list_.begin();
-			iter != incident_edge_list_.end(); iter++) {
+			iter != incident_edge_list_.end(); ++iter) {
 		if ( (*iter)->same_edge( node_index_, other_node) ) return (*iter);
 	}
 	return NULL;
@@ -335,8 +335,7 @@ void NodeBase::update_edge_vector()
 		incident_edge_vector_[ii]->set_pos_in_node_edgevector( node_index_, ii );
 		adjacent_node_ind_[ ii ] = incident_edge_vector_[ii]->get_other_ind( node_index_);
 
-	debug_assert( (adjacent_node_ind_[ii] < node_index_ &&
-			ii <= num_edges_to_smaller_indexed_nodes_)
+	debug_assert( ( ii <= num_edges_to_smaller_indexed_nodes_ && adjacent_node_ind_[ii] < node_index_ )
 			||
 			( adjacent_node_ind_[ii] > node_index_ &&
 			ii > num_edges_to_smaller_indexed_nodes_ ) );
@@ -694,7 +693,7 @@ InteractionGraphBase::~InteractionGraphBase()
 			iter != ig_edge_list_.end(); )
 	{
 			std::list< EdgeBase* >::iterator next_iter = iter;
-			next_iter++;
+			++next_iter;
 			delete (*iter);
 			iter = next_iter;
 	}
@@ -904,7 +903,7 @@ void InteractionGraphBase::prepare_for_simulated_annealing()
 			iter != get_edge_list_end();
 			/* note: no increment statement here */ ) {
 		std::list< EdgeBase* >::iterator next_iter = iter;
-		next_iter++;
+		++next_iter;
 		//edges sometimes delete themselves, invalidating iterators, so
 		//get the next iterator before calling prepare_for_simulated_annealing
 		(*iter)->prepare_for_simulated_annealing();
@@ -968,7 +967,7 @@ void InteractionGraphBase::output_connectivity(std::ostream & os) const
 {
 	int counter = 1;
 	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); iter++)
+			iter != ig_edge_list_.end(); ++iter)
 	{  os << "edge " << counter << " between " << (*iter)->get_first_node_ind()
 					<< " " << (*iter)->get_second_node_ind() << std::endl;
 			counter++;
@@ -1003,7 +1002,7 @@ void InteractionGraphBase::output_dimacs(std::ostream & os) const
 	os << "DIMACS: " << "p edges " << num_ig_nodes_ << " " ;
 	os << num_edges << std::endl;
 	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); iter++)
+			iter != ig_edge_list_.end(); ++iter)
 	{
 			os << "DIMACS: " << "e " << (*iter)->get_first_node_ind();
 			os << " " << (*iter)->get_second_node_ind() << std::endl;
@@ -1240,7 +1239,7 @@ InteractionGraphBase::getTotalMemoryUsage() const
 		total_memory += ig_nodes_[ ii ]->count_static_memory();
 	}
 	for (std::list< EdgeBase* >::const_iterator iter = ig_edge_list_.begin();
-			iter != ig_edge_list_.end(); iter++) {
+			iter != ig_edge_list_.end(); ++iter) {
 		total_memory += (*iter)->count_dynamic_memory();
 		total_memory += (*iter)->count_static_memory();
 	}

@@ -436,6 +436,7 @@ core::Real interface_residue_ddg (core::pose::Pose const & pose, core::Size resn
         token = strtok (NULL, " ");
       }
     }
+	  delete[] str;
   }
   return out;
 }
@@ -458,10 +459,12 @@ bool is_interface_residue (const char chain, const int resno){
         }else {break;}
       }else if (token_count == 1){
         if (chain == token[0]){
+			delete[] str;
           return true;
         }else {break;}
       }
     }
+	delete[] str;
   }
   return out;
 }

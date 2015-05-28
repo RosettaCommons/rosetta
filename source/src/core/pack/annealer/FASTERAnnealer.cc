@@ -138,12 +138,12 @@ FASTERAnnealer::run( )
 		}
 
 		ig_->prepare_for_FASTER();
-		core::PackerEnergy energy = ig_->get_energy_current_state_assignment();
+		/*core::PackerEnergy energy = */ig_->get_energy_current_state_assignment();
 		//std::cout << "Energy following quick-and-dirty sim annealing: " << energy << std::endl;
 		//std::cout << "FASTER::run -- bestenergy: " << best_energy << std::endl;
 
 		sBR();
-		energy = ig_->get_energy_current_state_assignment();
+		core::PackerEnergy energy = ig_->get_energy_current_state_assignment();
 		if ( energy < best_energy ) {
 			//std::cout << "Found a better energy after completing sBR on rotamer assignment from Fixbb Sim Annealer: " << best_energy << std::endl;
 			best_energy = energy;

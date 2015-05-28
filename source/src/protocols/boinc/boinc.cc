@@ -95,7 +95,9 @@ Boinc::initialize_worker( void )
 	// allow upload of stdout.txt
 	char filename[256];
 	boinc_resolve_filename("stdout.txt", filename, 256);
-	freopen(filename, "a", stdout);
+	if ( freopen(filename, "a", stdout) == NULL ) {
+		cerr << "BOINC:: error redirecting stdout";
+	}
 
 	boinc_fraction_done(0.00);
 

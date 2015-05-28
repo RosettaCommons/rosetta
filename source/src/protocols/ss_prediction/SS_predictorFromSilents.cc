@@ -140,7 +140,11 @@ void SS_predictorFromSilents::output_training_data(){
 		//out15:
 		//type 1:oneSheet 2-44:psipred_pos[L,H,E] 45-89:silent_pos[L,H,E]
 		//2:psipred-7 10:psipred@pos 17:psipred+7 18:silent-7(for sheet) 26:silents@pos 33::silent+7
-		for(Size ii=1; ii<=native_pose.total_residue(); ++ii){
+	
+		// AMW: not sure how this got into master in its present state or how it builds (maybe it doesn't?)
+		// but I'm commenting it out for now so cppcheck stops crying.
+	
+		/*for(Size ii=1; ii<=native_pose.total_residue(); ++ii){
 				Size type = 0;
 				if(native_pose.secstruct(ii) == "H")
 						type = 1;
@@ -168,7 +172,7 @@ void SS_predictorFromSilents::output_training_data(){
               else
                 if(i_ss_dssp=="E")
                   hle_type = 3
-
+		*/
 
 		}
 

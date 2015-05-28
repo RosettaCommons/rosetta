@@ -76,7 +76,7 @@ static thread_local basic::Tracer tr( "core.chemical" );
 /// @brief helper fxn
 id::AtomID
 atom_id_from_icoor_line(
-	std::string const name,
+	std::string const & name,
 	ResidueType const & rsd
 )
 {
@@ -527,7 +527,6 @@ read_topology_file(
 
 	std::string myname;
 	while ( getline( data, line ) ) {
-		std::istringstream l( line );
 		//if ( line.size() < 1 || line[0] == '#' ) continue;
 		if ( line.size() < 1 ) continue;
 		std::string::size_type pound = line.find('#', 0);
@@ -636,7 +635,7 @@ read_topology_file(
 	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
-		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital, bond_type;
+		std::string tag,atom1,atom2,atom3,atom4, rotate, /*orbitals_tag, orbital, */bond_type;
 		core::Real value;
 		l >> tag;
 		if ( l.fail() ) continue;
@@ -1220,7 +1219,7 @@ write_topology_file(
 	if ( rsd.actcoord_atoms().size() > 0 ){
 		out << "ACT_COORD_ATOMS ";
 		AtomIndices act_atoms = rsd.actcoord_atoms();
-		for(AtomIndices::iterator at_it = act_atoms.begin(); at_it != act_atoms.end(); at_it++ ){
+		for(AtomIndices::iterator at_it = act_atoms.begin(); at_it != act_atoms.end(); ++at_it ){
 			out << rsd.atom_name( *at_it ) << " ";
 		}
 		out << "END \n";

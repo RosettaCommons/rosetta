@@ -2620,8 +2620,7 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 		// get an instance of RotamericSingleResidueDunbrackLibrary, but need a RotamerLibrary to do it
 		// this means that when ever you read in the NCAA libraries you will also read in the Dunbrack libraries
 		// this may need to be a pointer to the full type and not just a SRRLOP
-		std::string empty_string("");
-
+		
 		// this comes almost directally from RotmerLibrary.cc::create_rotameric_dunlib()
 		SingleResidueRotamerLibraryOP ncaa_rotlib;
 		if ( !dun02 ) {

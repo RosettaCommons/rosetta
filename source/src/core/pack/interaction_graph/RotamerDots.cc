@@ -1983,10 +1983,9 @@ debug_assert( dist_sq <= (rad1 + rad2) * (rad1 + rad2) );
 ///
 void InvRotamerDots::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) const {
 	for ( Size bb = 1; bb <= RotamerDots::num_bytes_; ++bb ) {
-		int bit;
 		if ( (bb-1)*8 % 16 == 0 ) std::cout << (bb-1) * 8 << ":";
 		for ( int index=7; index >= 0; index-- ) {
-			bit = ( ( (int)values[ bb ] >> index ) & 1 );
+			int bit = ( ( (int)values[ bb ] >> index ) & 1 );
 			std::cout << bit;
 		}
 		std::cout << " ";

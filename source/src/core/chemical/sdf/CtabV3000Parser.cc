@@ -117,7 +117,7 @@ bool CtabV3000Parser::parse_atom_line( std::string line, MolFileIOAtom & atom) {
 
 bool CtabV3000Parser::parse_bond_line( std::string line, MolFileIOBond & bond) {
 	std::stringstream lstream( line );
-	std::string M, V30, kvpair;
+	std::string M, V30;//, kvpair;
 	core::Size type, atom1, atom2, index;
 
 	lstream >> M >> V30 >> index >> type >> atom1 >> atom2;

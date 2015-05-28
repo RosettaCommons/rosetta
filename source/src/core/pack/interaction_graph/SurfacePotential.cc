@@ -741,8 +741,8 @@ void SurfacePotential::compute_pose_hpatch_score(
 	std::map< Size, utility::vector1< Size > >::iterator it;
 
 	core::Real patch_area = 0.0;
-	for ( it = sets.begin() ; it != sets.end(); it++ ) {
-		std::ostringstream strstream;
+	for ( it = sets.begin() ; it != sets.end(); ++it ) {
+		//std::ostringstream strstream;
 		patch_area = 0.0;
 
 		// only score patches with 4 or more atoms in them. without this filter, the small patches worsen the ability of
@@ -798,7 +798,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	// output all of the scores on a single line
 	TR << "calculated total hpatch score: " << total_hpatch_score_ << ", individual patch scores: [ ";
 	std::map< Size, std::pair< Real, Real > >::iterator scores_iter;
-	for ( scores_iter = patch_scores_.begin(); scores_iter != patch_scores_.end(); scores_iter++ ) {
+	for ( scores_iter = patch_scores_.begin(); scores_iter != patch_scores_.end(); ++scores_iter ) {
 		TR << (*scores_iter).second.first << ", ";
 	}
 	TR << "]" << std::endl;
@@ -806,8 +806,8 @@ void SurfacePotential::compute_pose_hpatch_score(
 
 	// iterate over the connected components again, but this time output only patches greater than or equal to 250A2
 	// by using a score cutoff.
-	for ( it = sets.begin() ; it != sets.end(); it++ ) {
-		std::ostringstream strstream;
+	for ( it = sets.begin() ; it != sets.end(); ++it ) {
+		//std::ostringstream strstream;
 		
 		std::map< core::Size, std::pair< core::Real, core::Real > >::iterator ps_it = patch_scores_.find( (*it).first );
 		if ( ps_it == patch_scores_.end() ) { continue; } // this shouldn't happen though

@@ -69,47 +69,49 @@ numeric::Real corrcoef(
 	return corrcoef_with_provided_mean_and_std_dev( vec1, m1, sd1, vec2, m2, sd2 );
  }
 
-numeric::Real corrcoef_with_provided_mean_and_std_dev(utility::vector1< numeric::Real > const & vec1,
-																											numeric::Real m1,
-																											numeric::Real sd1,
-																											utility::vector1< numeric::Real > const & vec2,
-																											numeric::Real m2,
-																											numeric::Real sd2)
-{
+numeric::Real corrcoef_with_provided_mean_and_std_dev(
+	utility::vector1< numeric::Real > const & vec1,
+	numeric::Real m1,
+	numeric::Real sd1,
+	utility::vector1< numeric::Real > const & vec2,
+	numeric::Real m2,
+	numeric::Real sd2
+) {
 	numeric::Real cov(0);
 	Size n(0);
 	typedef utility::vector1< numeric::Real >::const_iterator iter;
-	for(iter v1=vec1.begin(),v2=vec2.begin(),v1_end=vec1.end(),v2_end=vec2.end();
-			v1 != v1_end && v2 != v2_end;
-			++v1,++v2,n++)
-		cov+=(*v1-m1)*(*v2-m2);
-	cov/=(n-1);
-	return cov/(sd1*sd2);
+	for ( iter v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
+		  v1 != v1_end && v2 != v2_end;
+		  ++v1, ++v2, n++ )
+		cov += ( *v1 - m1 ) * ( *v2 - m2 );
+	cov /= ( n - 1 );
+	return cov / ( sd1 * sd2 );
 }
-numeric::Real cov(
-				 utility::vector1< numeric::Real > const & vec1,
-				 utility::vector1< numeric::Real > const & vec2)
 
-{
+numeric::Real cov(
+	utility::vector1< numeric::Real > const & vec1,
+	utility::vector1< numeric::Real > const & vec2
+) {
 	assert( vec1.size() == vec2.size() );
 	numeric::Real m1 = mean( vec1.begin(),vec1.end(),0.0 );
 	numeric::Real m2 = mean( vec2.begin(),vec2.end(),0.0 );
 	return cov_with_provided_mean( vec1, m1, vec2, m2 );
  }
 
-numeric::Real cov_with_provided_mean(utility::vector1< numeric::Real > const & vec1,
-									numeric::Real m1,
-									utility::vector1< numeric::Real > const & vec2,
-									numeric::Real m2)
-{
+numeric::Real cov_with_provided_mean(
+	utility::vector1< numeric::Real > const & vec1,
+	numeric::Real m1,
+	utility::vector1< numeric::Real > const & vec2,
+	numeric::Real m2
+) {
 	numeric::Real cov(0);
 	Size n(0);
 	typedef utility::vector1< numeric::Real >::const_iterator iter;
-	for(iter v1=vec1.begin(),v2=vec2.begin(),v1_end=vec1.end(),v2_end=vec2.end();
-			v1 != v1_end && v2 != v2_end;
-			++v1,++v2,n++)
-		cov+=(*v1-m1)*(*v2-m2);
-	cov/=(n-1);
+	for ( iter v1 = vec1.begin(), v2 = vec2.begin(), v1_end = vec1.end(), v2_end = vec2.end();
+		  v1 != v1_end && v2 != v2_end;
+		  ++v1, ++v2, n++ )
+		cov += ( *v1 - m1 ) * ( *v2 - m2 );
+	cov /= ( n - 1 );
 	return cov;
 }
 
@@ -127,27 +129,26 @@ cmplx errfcx(cmplx z, double relerr) {
 // compute the error function erf(x)
 double errf(double x)
 {
-  double mx2 = -x*x;
-  if (mx2 < -750) // underflow
-    return (x >= 0 ? 1.0 : -1.0);
+	double mx2 = -x*x;
+	if (mx2 < -750) // underflow
+		return (x >= 0 ? 1.0 : -1.0);
 
-  if (x >= 0) {
-    if (x < 8e-2) goto taylor;
-    return 1.0 - exp(mx2) * errfcx(x);
-  }
-  else { // x < 0
-    if (x > -8e-2) goto taylor;
-    return exp(mx2) * errfcx(-x) - 1.0;
-  }
+	if (x >= 0) {
+		if (x < 8e-2) goto taylor;
+		return 1.0 - exp(mx2) * errfcx(x);
+	} else { // x < 0
+		if (x > -8e-2) goto taylor;
+		return exp(mx2) * errfcx(-x) - 1.0;
+	}
 
-  // Use Taylor series for small |x|, to avoid cancellation inaccuracy
-  //   erf(x) = 2/sqrt(pi) * x * (1 - x^2/3 + x^4/10 - x^6/42 + x^8/216 + ...)
- taylor:
-  return x * (1.1283791670955125739
-              + mx2 * (0.37612638903183752464
-                       + mx2 * (0.11283791670955125739
-                                + mx2 * (0.026866170645131251760
-                                         + mx2 * 0.0052239776254421878422))));
+	// Use Taylor series for small |x|, to avoid cancellation inaccuracy
+	//   erf(x) = 2/sqrt(pi) * x * (1 - x^2/3 + x^4/10 - x^6/42 + x^8/216 + ...)
+	taylor:
+		return x * (1.1283791670955125739
+					+ mx2 * (0.37612638903183752464
+							 + mx2 * (0.11283791670955125739
+									  + mx2 * (0.026866170645131251760
+											   + mx2 * 0.0052239776254421878422))));
 }
 
 // compute the error function erf(z)
@@ -558,6 +559,15 @@ cmplx w(cmplx z, double relerr) {
     // Somewhat ugly copy-and-paste duplication here, but I see significant
     //   speedups from using the special-case code with the precomputed
     //   exponential, and the x < 5e-4 special case is needed for accuracy.
+	  
+	// AMW: cppcheck gives errors for the expa2n2 array accesses for good reason--
+	// there is no explicit insurance that we do not read past the end of the array
+	// it does not do so in practice only because the final term of the array is zero
+	// which means the final "coef" value is zero and the if test breaks
+	// (to me this is no better than including an or with the HARD CODED size of the array
+	// let alone the computed size. Anyone who cares can change this, but at least it's not
+	// a true problem at the moment.
+	  
     if (relerr == DBL_EPSILON) { // use precomputed exp(-a2*(n*n)) table
       if (x < 5e-4) { // compute sum4 and sum5 together as sum5-sum4
         const double x2 = x*x;

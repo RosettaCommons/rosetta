@@ -735,12 +735,13 @@ setup_rna_working_parameters( bool check_for_previously_closed_cutpoint_with_inp
 
 	/////////////////////////////////////////////////////
 	Size const cutpoint_closed_ = option[ OptionKeys::full_model::cutpoint_closed ].user() ? option[ OptionKeys::full_model::cutpoint_closed ]()[1] : 0;
-	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup( option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the modeler_res*/
-																																		full_sequence,
-																																		get_input_res( nres, "1" ),
-																																		get_input_res( nres, "2" ),
-																																		option[ OptionKeys::full_model::cutpoint_open ](),
-																																		cutpoint_closed_ );
+	StepWiseWorkingParametersSetup stepwise_rna_working_parameters_setup(
+		option[ OptionKeys::full_model::sample_res ](), /*the first element of moving_res_list is the modeler_res*/
+		full_sequence,
+		get_input_res( nres, "1" ),
+		get_input_res( nres, "2" ),
+		option[ OptionKeys::full_model::cutpoint_open ](),
+		cutpoint_closed_ );
 	stepwise_rna_working_parameters_setup.set_simple_append_map( option[ OptionKeys::stepwise::rna::simple_append_map]() );
 	stepwise_rna_working_parameters_setup.set_add_virt_res_as_root( option[ OptionKeys::stepwise::rna::add_virt_root]() );
 	stepwise_rna_working_parameters_setup.set_allow_fixed_res_at_moving_res( option[ OptionKeys::stepwise::rna::allow_fixed_res_at_moving_res ]() ); //Hacky just to get Hermann Duplex working. Need to called before set_fixed_res
@@ -955,18 +956,20 @@ ensure_directory_for_out_silent_file_exists(){
 			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
 			char * outfile_char = strdup( outfile.c_str() );
 			#ifdef WIN32
-				char * outdir;
+				//char * outdir; memory leak if we're just gonna exit right after?
 			 	utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
 			#else
-			char * outdir =  dirname( outfile_char );
-			#endif
+				char * outdir =  dirname( outfile_char );
 
-			std::stringstream mkdir_command;
-			mkdir_command << "mkdir -p " << outdir;
-			int return_code = system( mkdir_command.str().c_str() );
-			if ( return_code != 0 ) {
-				TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
-			}
+				std::stringstream mkdir_command;
+				mkdir_command << "mkdir -p " << outdir;
+				int return_code = system( mkdir_command.str().c_str() );
+				if ( return_code != 0 ) {
+					TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
+				}
+				// AMW cppcheck: deleting outdir if we're not on win32
+				delete[] outdir;
+			#endif
 		} else {
 			outstream.close();
 			std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...

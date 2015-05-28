@@ -229,7 +229,9 @@ AtomTypeSet::read_file( std::string const & filename )
 
 			// now parse the properties
 			l >> tag;
-			while ( !l.fail() && tag.find("#",0) != 0) {
+			// AMW: fixing up cppcheck errors
+			// string::find here is unnecessary because you are just checking the first character
+			while ( !l.fail() && tag.length() != 0 && tag[0] != '#') {//tag.find("#",0) != 0 ) {
 				atom_type_ptr->set_property( tag, true );
 				l >> tag;
 			}
@@ -336,7 +338,7 @@ AtomTypeSet::add_parameters_from_file( std::string const & filename )
 	Size const ntags( tags.size() );
 	std::map< std::string, utility::vector1< Real > > all_parameters;
 	{
-		std::string tag, name_wo_whitespace;
+		std::string tag;//, name_wo_whitespace;
 		for ( Size ii=1; ii<= lines.size(); ++ii ) {
 			std::string const & line( lines[ii] );
 			std::istringstream l( line );
@@ -517,7 +519,7 @@ AtomTypeSet::read_atom_type_extra_parameters_table(
 	stmt.bind(2, atom_type.name());
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
-	std::string parameter;
+	//std::string parameter;
 	Real value;
 	Size parameter_index(1);
 	while(res.next()){

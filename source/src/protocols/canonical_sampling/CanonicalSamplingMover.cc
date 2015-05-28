@@ -675,6 +675,7 @@ CanonicalSamplingMover::apply(Pose & pose){
       //test-- add ramp up temperature in order to equilibrate structure?
       if( ramp_temperature_ &&
 	  mc_->temperature() < ending_temp &&
+	  interval_inc_temp != 0 &&
 	  ( i_trial % interval_inc_temp ) == 0 ){
 
 	if( constrain_structure ){
@@ -686,6 +687,7 @@ CanonicalSamplingMover::apply(Pose & pose){
       if( ramp_temperature_ &&
 	  constrain_structure &&
 	  sfxn_->has_nonzero_weight( core::scoring::atom_pair_constraint ) &&
+	  interval_inc_temp != 0 &&
 	  (i_trial % (interval_inc_temp/10) == 0)
 	  ){
 	sfxn_->set_weight(

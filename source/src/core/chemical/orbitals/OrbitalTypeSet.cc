@@ -124,7 +124,7 @@ void OrbitalTypeSet::read_file(std::string const & filename)
 
 			// now parse the properties
 			l >> tag;
-			while ( !l.fail() && tag.find("#",0) != 0) {
+			while ( !l.fail() && tag.length() != 0 && tag[0] != '#' ) { //tag.find("#",0) != 0 ) {
 				orbital_type_ptr->set_property( tag, true );
 				l >> tag;
 			}

@@ -504,7 +504,8 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 		d = dot2.coor.distance_squared(dot1.coor);
 		if(d <= distmin) {
 			distmin = d;
-			neighbor = &dot2;
+			// AMW cppcheck can't assign neighbor &dot2 because it's stack?
+			neighbor = *idot2; //&dot2;
 		}
 	}
 	return neighbor;

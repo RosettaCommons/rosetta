@@ -731,7 +731,8 @@ std::string std_vector_repr(std::vector<T> const & v)
     std::ostringstream os;
 
     os << "[";
-    for(unsigned int i=1; i<=v.size(); i++) {
+	// AMW: cppcheck fixes - my friends, this is a vector, not a vector1
+    for(unsigned int i=0; i<v.size(); i++) {
         os << v[i] << ", ";
     }
     os << "]";

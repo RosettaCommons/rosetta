@@ -2024,51 +2024,57 @@ static void svm_group_classes(const svm_problem *prob, int *nr_class_ret, int **
 	int *data_label = Malloc(int,l);
 	int i;
 
-	for(i=0;i<l;i++)
-	{
-		int this_label = (int)prob->y[i];
+	for ( i = 0; i < l; i++ ) {
+		int this_label = ( int )prob->y[ i ];
 		int j;
-		for(j=0;j<nr_class;j++)
-		{
-			if(this_label == label[j])
-			{
+		for ( j = 0; j < nr_class; j++ ) {
+			if ( this_label == label[ j ] ) {
 				++count[j];
 				break;
 			}
 		}
-		data_label[i] = j;
-		if(j == nr_class)
-		{
-			if(nr_class == max_nr_class)
-			{
+		data_label[ i ] = j;
+		if ( j == nr_class ) {
+			if ( nr_class == max_nr_class ) {
 				max_nr_class *= 2;
-				label = (int *)realloc(label,max_nr_class*sizeof(int));
-				count = (int *)realloc(count,max_nr_class*sizeof(int));
+				// AMW cppcheck notes that we need to check for realloc success
+				int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
+				if ( new_label_data == NULL ) {
+					info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
+				} else {
+					label = new_label_data;
+				}
+				
+				int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
+				if ( new_count_data == NULL ) {
+					info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
+				} else {
+					count = new_count_data;
+				}
 			}
-			label[nr_class] = this_label;
-			count[nr_class] = 1;
+			label[ nr_class ] = this_label;
+			count[ nr_class ] = 1;
 			++nr_class;
 		}
 	}
 
 	int *start = Malloc(int,nr_class);
 	start[0] = 0;
-	for(i=1;i<nr_class;i++)
-		start[i] = start[i-1]+count[i-1];
-	for(i=0;i<l;i++)
-	{
-		perm[start[data_label[i]]] = i;
-		++start[data_label[i]];
+	for( i = 1; i < nr_class; i++ )
+		start[ i ] = start[ i - 1 ] + count[ i - 1 ];
+	for ( i = 0; i < l; i++ ) {
+		perm[ start[ data_label[ i ] ] ] = i;
+		++start[ data_label[ i ] ];
 	}
-	start[0] = 0;
-	for(i=1;i<nr_class;i++)
-		start[i] = start[i-1]+count[i-1];
+	start[ 0 ] = 0;
+	for( i = 1; i < nr_class; i++ )
+		start[ i ] = start[ i - 1 ] + count[ i - 1 ];
 
 	*nr_class_ret = nr_class;
 	*label_ret = label;
 	*start_ret = start;
 	*count_ret = count;
-	free(data_label);
+	free( data_label );
 }
 
 
@@ -3120,11 +3126,23 @@ const char *svm_check_parameter(const svm_problem *prob, const svm_parameter *pa
 				if(nr_class == max_nr_class)
 				{
 					max_nr_class *= 2;
-					label = (int *)realloc(label,max_nr_class*sizeof(int));
-					count = (int *)realloc(count,max_nr_class*sizeof(int));
+					// AMW cppcheck notes that we need to check for realloc success
+					int *new_label_data = static_cast< int * >( realloc( label, max_nr_class * sizeof( int ) ) );
+					if ( new_label_data == NULL ) {
+						info( "\n\n!!! Critical memory error in svm_group_classes, label allocation !!!\n\n" );
+					} else {
+						label = new_label_data;
+					}
+					
+					int *new_count_data = static_cast< int * >( realloc( count, max_nr_class * sizeof( int ) ) );
+					if ( new_count_data == NULL ) {
+						info( "\n\n!!! Critical memory error in svm_group_classes, count allocation !!!\n\n" );
+					} else {
+						count = new_count_data;
+					}
 				}
-				label[nr_class] = this_label;
-				count[nr_class] = 1;
+				label[ nr_class ] = this_label;
+				count[ nr_class ] = 1;
 				++nr_class;
 			}
 		}

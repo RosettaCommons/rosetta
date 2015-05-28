@@ -165,7 +165,6 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 {
 	bool start_with_current = get_start_with_current();
 	int ranrotamer = -1;
-	int num = 0;
 	if ( assign_state_to_all_nodes_immediately_ && core::Size(n_assigned_at_start_) < rots_for_nodes_.size() ) {
 		++n_assigned_at_start_;
 		return pick_a_rotamer_for_node( n_assigned_at_start_ );
@@ -174,7 +173,7 @@ int RotamerAssigningAnnealer::pick_a_rotamer( int cycle )
 	//bk if quench cycle, pass through all rotamers before
 	//bk repeating a rotamer
 	if ( quench() ){
-		num =  mod( cycle - 1, (int) num_rots_to_pack());
+		int num =  mod( cycle - 1, (int) num_rots_to_pack());
 		if (num == 0){
 			numeric::random::random_permutation( rot_to_pack_, numeric::random::rg() );
 		}

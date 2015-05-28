@@ -332,13 +332,12 @@ void FixbbLinkingRotamerSimAnnealer::run()
 					RotamerSetCOP other_rotamer_set( rotamer_sets()->rotamer_set_for_moltenresidue( *itr ) );
 					ResidueCOP other_rotamer( other_prevrotamer_state == 0 ? ResidueCOP(0) : other_rotamer_set->rotamer( other_prevrotamer_state ) );
 
-					int other_rotamer_state(0);
 					int const other_nrotamers( other_rotamer_set->num_rotamers() );
 					int tries = other_nrotamers;
 					 found_rotamer = false;
 					while ( tries ) {
 						// pick a rotamer at the other position
-						other_rotamer_state = tries;
+						int other_rotamer_state = tries;
 
 						other_rotamer = other_rotamer_set->rotamer(other_rotamer_state);
 						--tries;

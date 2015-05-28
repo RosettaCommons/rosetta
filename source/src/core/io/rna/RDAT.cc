@@ -427,7 +427,7 @@ namespace rna {
 						mut_res_shifted.push_back( mut_res[k-1] - offset_ );
 						if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
 							TR.Warning << "WARNING! Mismatch between mutation nucleotides (mutation annotation) vs. (sequence)\n"+tag << std::endl;
-							mut_res_shifted[k] = mut_res[ k ];
+							mut_res_shifted[k] = mut_res[ k - 1 ];
 							if ( sequence_[ mut_res_shifted[k] - 1 ] != start_seq[ k-1 ] ) {
 								TR.Warning << "OK, specified mutpos without taking into account offset..." << std::endl;
 							}

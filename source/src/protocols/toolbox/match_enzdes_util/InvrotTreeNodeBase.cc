@@ -58,6 +58,7 @@ InvrotCollector::set_invrots_for_listnum(
 
   //if( invrots_[listnum].size() != 0) utility_exit_with_message("Trying to overwrite rotamers in invrot collector");
   invrots_[listnum] = invrots;
+  // amw: flagged by cppcheck; is it truly necessary to check if it's in the container to erase it?
   if( owner_nodes_and_locations_.find( tree_node ) != owner_nodes_and_locations_.end() ) owner_nodes_and_locations_.erase( tree_node );
   owner_nodes_and_locations_.insert( std::pair< InvrotTreeNodeBaseCOP, Size >( tree_node, location_in_node ) );
 }

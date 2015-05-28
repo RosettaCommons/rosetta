@@ -137,8 +137,10 @@ xyzStripeHash::init(
 	//       TR<<F(7,3,gatom[ig].x)<<" "<<F(7,3,gatom[ig].y)<<" "<<F(7,3,gatom[ig].z)<<std::endl;
 	//     }
 	//   }
-	delete gridc;
-	delete gindex;
+	
+	// AMW cppcheck changes: use delete[] when deallocating from an allocated new type[size]
+ 	delete[] gridc;
+	delete[] gindex;
  }
 
 bool xyzStripeHash::sanity_check() const {

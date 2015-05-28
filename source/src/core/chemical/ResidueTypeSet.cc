@@ -392,7 +392,7 @@ ResidueTypeSet::name_map( std::string const & name_in ) const
 	std::string const name = fixup_patches( name_in );
 	if ( name_map_.find( name ) == name_map_.end() ) {
 		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
-					it != name_map_.end(); it++ ) tr << it->first << std::endl;
+					it != name_map_.end(); ++it ) tr << it->first << std::endl;
 
 		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
 	}
