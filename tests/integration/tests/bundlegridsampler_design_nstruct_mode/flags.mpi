@@ -4,7 +4,7 @@
 -jd2:failed_job_exception false
 -jd2:sequential_mpi_job_distribution true
 -mute all
--unmute core.init protocols.jd2 protocols.helical_bundle
+-unmute protocols.jd2 protocols.helical_bundle
 -inout:dump_connect_info
 -inout:connect_info_cutoff 0.0
 ##### these are general flags
