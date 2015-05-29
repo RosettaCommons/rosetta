@@ -81,6 +81,7 @@ static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
 	output_level_( OL_full ),
+	struct_id1_(0),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -98,6 +99,7 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
+	struct_id1_(0),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -114,6 +116,7 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel const output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
+	struct_id1_(0),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -417,6 +420,7 @@ RRReporterSQLite::report_rotamer_recovery(
 			pose1, pose2, res1, res2, score, recovered );
 		break;
 	case OL_features:
+		runtime_assert( struct_id1_ != 0 );
 		report_rotamer_recovery_features(struct_id1_, res1, score, recovered);
 		report_predicted_features(struct_id1_, res1, pose2, res2);
 		break;
@@ -464,6 +468,10 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string,db_session()));
 
+	// strings are passed to bind by reference
+	// we need the lifetime of the string to exist at least until safely_write_to_database()
+	std::string name1(1,res1.name1());
+
 	// primary key struct1
 	stmt.bind(1,struct1_name);
 	stmt.bind(2,res1.chain());
@@ -475,7 +483,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	stmt.bind(6,res2.seqpos());
 
 	// extra information about the residue
-	stmt.bind(7,string(1,res1.name1()));
+	stmt.bind(7,name1);
 	stmt.bind(8,res1.name3());
 	stmt.bind(9,res1.type().name());
 

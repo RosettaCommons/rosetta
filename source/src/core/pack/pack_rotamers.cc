@@ -465,7 +465,7 @@ symmetric_pack_rotamers_run(
 	/// Parameters passed by reference in task's constructor to which it writes at the
 	/// completion of sim annealing.
 	FArray1D_int bestrotamer_at_seqpos( pose.total_residue() );
-	core::PackerEnergy bestenergy;
+	core::PackerEnergy bestenergy( 0.0 ); // Initialization matches that of pack_rotamers_run()
 	bool start_with_current = false;
 	FArray1D_int current_rot_index( pose.total_residue(), 0 );
 	bool calc_rot_freq = false;

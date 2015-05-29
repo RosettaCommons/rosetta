@@ -68,14 +68,17 @@ MSDMoverCreator::mover_name()
 MSDMover::MSDMover() :
 	moves::VectorPoseMover( MSDMoverCreator::mover_name() ),
 	weight_(0.5),
-	current_pose_( 1 )
+	current_pose_( 1 ),
+	debug_( false )
 {}
 
 MSDMover::MSDMover( protocols::moves::MoverOP mover, utility::vector1< std::string > resfiles ) :
 		design_mover_( mover ),
 		resfiles_( resfiles ),
 		weight_(0.5),
-		current_pose_( 1 ) {}
+		current_pose_( 1 ),
+		debug_( false )
+{}
 
 MSDMover::~MSDMover() {}
 

@@ -379,7 +379,7 @@ void TopologyBroker::build_fold_tree( claims::DofClaims& claims, Size nres ) {
 			}
 		} else if ( root_ptr ) { // LegacyRootClaim -----------------------------
 			//we allow only a single non-exclusive setting of root --- this can be overwritten by a single exclusive clain
-			if ( ( root && !excl_root_set && root_ptr->exclusive() ) || !root || root == root_ptr->get_position() ) {
+			if ( ( root && !excl_root_set && root_ptr->exclusive() ) || !root /*|| root == root_ptr->get_position()*/ ) {
 				root = sequence_number_resolver_->find_global_pose_number(root_ptr->local_position()); // root_ptr->get_position();
 				excl_root_set = root_ptr->exclusive();
 			} else {

@@ -54,6 +54,7 @@ PDNode::PDNode(InteractionGraphBase * owner, int node_id, int num_states) :
 	num_states_for_aatype_( num_aa_types_, 0 ),
 	sparse_mat_info_for_state_( num_states + 1),
 	one_body_energies_(num_states + 1, 0.0f),
+	current_state_( 0 ),
 	curr_state_total_energy_( 0.0 ),
 	alternate_state_is_being_considered_( false )
 {}

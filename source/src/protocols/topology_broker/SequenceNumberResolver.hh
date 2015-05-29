@@ -40,48 +40,41 @@ public:
 
 	SequenceNumberResolver( const SequenceNumberResolver& );
 
-	//@throws EXCN_BadInput if label or offset is already taken
+	/// @throws EXCN_BadInput if label or offset is already taken
 	void register_label_offset( std::string const& label, core::Size offset );
 
-	//Returns global position of element at position resid in sequence claim with the specified label.
+	/// @brief Returns global position of element at position resid in sequence claim with the specified label.
 	core::Size find_global_pose_number( std::string const& label, core::Size resid) const;
 
 	core::Size find_global_pose_number( std::pair< std::string, core::Size> pos_pair ) const;
 
-
-	//Returns global position of first element of sequence claim with the specified label.
+	/// @brief Returns global position of first element of sequence claim with the specified label.
 	core::Size find_global_pose_number( std::string const& label) const;
 
-	//Returns label of sequence claim that corresponds to the global sequence position <pose_number>
+	/// @brief Returns label of sequence claim that corresponds to the global sequence position <pose_number>
 	std::string find_label( core::Size pose_number ) const;
 
-	//Returns position of global <pose_number> in corresponding sequence claim.
+	/// @breif Returns position of global <pose_number> in corresponding sequence claim.
 	core::Size find_local_pose_number( core::Size pose_number ) const;
 
-	//Returns offset of a given label.
-	core::Size offset( std::string const& label ) const {
-		OffsetMap::const_iterator p = offset_map_.find(label);
+	/// @brief Returns offset of a given label.
+	core::Size offset( std::string const& label ) const;
 
-		if( p != offset_map_.end() ) return p->second;
-		else throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
-												 + label + "', which does not match any SequenceClaim labels." );
-	}
-
-	// returns the map element with the largest offset = SequenceClaim at the end of the sequence
+	/// @brief returns the map element with the largest offset = SequenceClaim at the end of the sequence
 	std::pair <core::Size, std::string> terminal_pair() const;
 
 
 private:
 
-	// map sequence labels to offsets
+	/// @brief map sequence labels to offsets
 	typedef std::map< std::string, core::Size > OffsetMap;
 	OffsetMap offset_map_;
 
-	// Inverse map, mapping offsets to labels
+	/// @brief Inverse map, mapping offsets to labels
 	std::map< core::Size, std::string > offset_map_reversed_;
 
-	//Searches for entry in reversed map with highest offset that is smaller than the given pose_number.
-	//This entry contains label and offset corresponding to the given pose_number.
+	/// @brief Searches for entry in reversed map with highest offset that is smaller than the given pose_number.
+	/// This entry contains label and offset corresponding to the given pose_number.
 	std::map<core::Size, std::string>::const_iterator search_reversed_map( core::Size pose_number ) const;
 
 }; //class SequenceNumberResolver

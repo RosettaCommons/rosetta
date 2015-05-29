@@ -73,6 +73,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
 	allsc_ = false; // default
 	jumpid_ = 1; //default
 	ensure_variant_matching_ = false; //default
+	multi_use_ = false;
 	two_step_ = false;
 	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
 	first_apply_->obj = true;
@@ -91,6 +92,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	jumpid_( jumpid )
 {
 	init_pose_ = PoseOP( new core::pose::Pose( pose ) );
+	multi_use_ = false;
 	two_step_ = false;
 	first_apply_ = BoolDataCacheBoolOP( new basic::datacache::DataMapObj< bool > );
 	first_apply_->obj = true;

@@ -663,6 +663,9 @@ def generateTestCommandline(test, outdir, options=None, host=None):
             preamble = preamble + " --track-origins=yes"
         if( options.leakcheck ):
             preamble = preamble + " --leak-check=full"
+        # The fragment tests need special consideration
+        if( test.startswith("fragment") ):
+            preamble = preamble + " --main-stacksize=8990000"
         params["bin"] = preamble + " " + params["bin"]
 
     cmd=''

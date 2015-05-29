@@ -486,9 +486,13 @@ InterfaceFeatures::report_interface_features(
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
 	protocols::analysis::PerResidueInterfaceData res_data = interface_analyzer_->get_all_per_residue_data();
 
+	// strings are passed to bind by reference
+	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
+	std::string partners( chains_side1+"_"+chains_side2 );
+
 	core::Size i = 0;
 	stmt.bind(i+=1, struct_id);
-	stmt.bind(i+=1, chains_side1+"_"+chains_side2);
+	stmt.bind(i+=1, partners);
 	stmt.bind(i+=1, chains_side1);
 	stmt.bind(i+=1, chains_side2);
 	stmt.bind(i+=1, chains_side1.length());
@@ -634,9 +638,13 @@ InterfaceFeatures::report_interface_side_features(
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
 	protocols::analysis::PerResidueInterfaceData res_data = interface_analyzer_->get_all_per_residue_data();
 
+	// strings are passed to bind by reference
+	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
+	std::string partners( chains_side1+"_"+chains_side2 );
+
 	core::Size i = 0;
 	stmt.bind(i+=1, struct_id);
-	stmt.bind(i+=1, chains_side1+"_"+chains_side2);
+	stmt.bind(i+=1, partners);
 	stmt.bind(i+=1, region_string);
 	stmt.bind(i+=1, chains_side1);
 	stmt.bind(i+=1, chains_side2);
@@ -768,9 +776,13 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 
 	statement stmnt(basic::database::safely_prepare_statement(stmnt_string, db_session));
 
+	// strings are passed to bind by reference
+	// we need the lifetime of the combined string to exist at least until safely_write_to_database()
+	std::string partners( chains_side1+"_"+chains_side2 );
+
 	core::Size i = 0;
 	stmnt.bind(i+=1, struct_id);
-	stmnt.bind(i+=1, chains_side1+"_"+chains_side2);
+	stmnt.bind(i+=1, partners);
 	stmnt.bind(i+=1, resnum);
 	stmnt.bind(i+=1, chains_side1);
 	stmnt.bind(i+=1, chains_side2);

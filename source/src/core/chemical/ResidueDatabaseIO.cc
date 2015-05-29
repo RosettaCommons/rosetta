@@ -556,7 +556,10 @@ void ResidueDatabaseIO::report_residue_type(
 	utility::sql_database::sessionOP db_session
 )  {
 
-	std::stringstream name1; name1 << res_type.name1();
+	// This needs to be in a local variable as bind takes a reference, and the reference needs to be valid until the safely_write_to_database()
+	std::stringstream name1_stream;
+	name1_stream << res_type.name1();
+	std::string name1( name1_stream.str() );
 
 	int lower_terminus(-1), upper_terminus(-1);
 	if(res_type.is_polymer()){
@@ -571,7 +574,7 @@ void ResidueDatabaseIO::report_residue_type(
 	stmt.bind(2,res_type.name());
 	stmt.bind(3,version_);
 	stmt.bind(4,res_type.name3());
-	stmt.bind(5,name1.str());
+	stmt.bind(5,name1);
 	stmt.bind(6,res_type.aa());
 	stmt.bind(7,lower_terminus);
 	stmt.bind(8,upper_terminus);

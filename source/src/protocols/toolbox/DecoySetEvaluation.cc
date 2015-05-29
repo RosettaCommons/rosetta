@@ -102,7 +102,12 @@ typedef core::Real matrix[3][3];
 typedef core::Real rvec[3];
 
 
-DecoySetEvaluation::DecoySetEvaluation() : COM( 3 ),n_decoys_( 0 ), n_atoms_( 0 ), n_decoys_max_( 0 )
+DecoySetEvaluation::DecoySetEvaluation() :
+		COM( 3 ),
+		n_decoys_( 0 ),
+		n_atoms_( 0 ),
+		n_decoys_max_( 0 ),
+		store_energies_( false )
 {}
 
 DecoySetEvaluation::~DecoySetEvaluation() {}

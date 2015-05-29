@@ -170,7 +170,12 @@ public:
 		}
 
 		npoints_ = nX_*nY_*nZ_;
-		zones_ = new T[npoints_];
+		// Why npoints_+2 ?
+		// Because in deserialize() we use a function which does a 4->3 transformation on the input data
+		// ... which means we may run off the end of the array if the size of the array isn't divisible by 3
+		// By adding an extra 2 items padding, we give it a safe space to overrun.
+		// (All other uses include serialize() use npoints_ to know how big the array is, so won't use the extra space.)
+		zones_ = new T[npoints_+2];
 
 		return true;
 	}
@@ -518,6 +523,8 @@ public:
 		this->setupZones();
 
 		std::string point_data = grid_data["data"].get_str();
+
+		debug_assert( sizeof(T)*(npoints_+2)*4 >= point_data.size()*3 ) // 3 bytes of array data for every 4 bytes of string data
 		utility::decode6bit((unsigned char*)zones_,point_data);
 
 	}

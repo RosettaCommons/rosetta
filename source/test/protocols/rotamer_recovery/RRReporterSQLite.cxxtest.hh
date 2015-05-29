@@ -139,6 +139,7 @@ public:
       get_db_session(database_filename));
 
 		RRReporterSQLite rs;
+		rs.set_struct_id1(1);
 		rs.set_output_level( protocols::rotamer_recovery::OL_full );
     rs.write_schema_to_db( db_session );
     rs.db_session( db_session );
@@ -242,6 +243,7 @@ public:
       get_db_session(results_db_fname));
 
 		RRReporterSQLite rs;
+		rs.set_struct_id1(1);
 		rs.set_output_level( protocols::rotamer_recovery::OL_features );
     rs.set_predicted_report_to_db(rr_features);
     rs.write_schema_to_db(results_db_session);
@@ -251,7 +253,8 @@ public:
 		Residue residue1 ( pose.residue(3) );
 		Residue residue2 ( pose.residue(75) );
 		Real s(0);
-		rs.report_rotamer_recovery( pose, pose, residue1, residue1, s++, true );
+		rs.report_rotamer_recovery( pose, pose, residue1, residue1, s, true );
+		s += 1;
 		rs.report_rotamer_recovery( pose, pose, residue2, residue2, s, false );
 
     {

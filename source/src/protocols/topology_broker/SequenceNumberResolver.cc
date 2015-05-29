@@ -48,6 +48,21 @@ SequenceNumberResolver::SequenceNumberResolver( const SequenceNumberResolver&  s
 	offset_map_reversed_ = src.offset_map_reversed_;
 }
 
+/// @brief Returns offset of a given label.
+core::Size
+SequenceNumberResolver::offset( std::string const& label ) const {
+	OffsetMap::const_iterator p = offset_map_.find(label);
+
+	if( p != offset_map_.end() ) { return p->second; }
+	else if( label == "" ) {
+		tr.Warning << "Warning: Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
+		return 0;
+	} else {
+		throw utility::excn::EXCN_BadInput( "SequenceNumberResolver asked to resolve SequenceClaim label '"
+						+ label + "', which does not match any SequenceClaim labels." );
+	}
+}
+
 // offset = number of residues in front of sequence claim with specified label
 // offset + 1 = global position of first element of sequence claim with specified label
 void SequenceNumberResolver::register_label_offset( std::string const& label, core::Size offset ){
@@ -69,7 +84,7 @@ void SequenceNumberResolver::register_label_offset( std::string const& label, co
 }
 
 core::Size SequenceNumberResolver::find_global_pose_number(std::string const&label, core::Size resid) const {
-	return offset_map_.find(label)->second + resid ;
+	return offset(label) + resid ;
 }
 
 core::Size SequenceNumberResolver::find_global_pose_number(std::pair< std::string, core::Size> pos_pair ) const {

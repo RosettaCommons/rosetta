@@ -53,7 +53,7 @@ class LegacyRootClaim : public DofClaim {
 public:
 	LegacyRootClaim( TopologyClaimerAP tc, core::Size pos1, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
-		pos1_( pos1 )
+		local_position_( "", pos1 ) // An empty label has been hacked to mean no offset in SequenceNumberResolver
 	{}
 
 	LegacyRootClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > local_position, ClaimRight right = DofClaim::CAN_INIT ) :
@@ -63,18 +63,13 @@ public:
 
 	virtual DofClaimOP clone() const { return DofClaimOP( new LegacyRootClaim( *this ) ); }
 
-	Size get_position() const {
-		return pos1_;
-	}
-
 	std::pair< std::string, core::Size > local_position() const {
 		return local_position_;
 	}
 
 	virtual void show(std::ostream& os) const {
-		os << " with position: " << pos1_;
+		os << " with position: " << local_position_.second << " under claim label: " << local_position_.first;
 	}
-
 
 	virtual bool remove() const {
 		return false;
@@ -84,15 +79,8 @@ public:
 		return "ROOT";
 	}
 
-//    virtual std::string to_string() const {
-//        std::ostringstream str_stream;
-//        str_stream << "(LegacyRootClaim; owner, " << owner()->type() << "; pos, " << pos1_ << ")" ;
-//        return str_stream.str();
-//    }
-
 private:
 	//	bool permanent_; //true if this cut should still be present after loop-closing
-	Size pos1_;
 	std::pair< std::string, core::Size > local_position_;
 }; //LegacyRootClaim
 
