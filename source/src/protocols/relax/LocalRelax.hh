@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/relax/LocalRelax.hh
-/// @brief
-/// @details
-/// @author
+/// @brief A relax protocol that iteratively cart relaxes clustered subsets of residues
+/// @author Frank DiMaio
 
 
 #ifndef INCLUDED_protocols_relax_LocalRelax_hh
@@ -49,6 +48,8 @@ private:
 	core::Real K_, max_iter_;
 	bool ramp_cart_;
 	bool verbose_;
+
+	utility::vector1< core::Real > ramp_schedule_;
 
 	core::scoring::ScoreFunctionOP pack_sfxn_, min_sfxn_;
 

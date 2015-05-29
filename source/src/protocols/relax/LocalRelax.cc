@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/protocols/relax/LocalRelax.cc
-/// @brief
-/// @details
-/// @author
+/// @brief A relax protocol that iteratively cart relaxes clustered subsets of residues
+/// @author Frank DiMaio
 
 
 #include <protocols/relax/LocalRelax.hh>
@@ -156,6 +155,11 @@ LocalRelax::LocalRelax() {
 	verbose_ = false;
 	ramp_cart_ = false;
 
+	ramp_schedule_.push_back(0.02);
+	ramp_schedule_.push_back(0.25);
+	ramp_schedule_.push_back(0.55);
+	ramp_schedule_.push_back(1.0);
+
 	pack_sfxn_ = core::scoring::get_score_function();
 	min_sfxn_ = core::scoring::get_score_function();
 
@@ -285,7 +289,7 @@ LocalRelax::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const & /*pose*/
 ) {
 	using namespace basic::options;
 	using namespace core::scoring;
@@ -319,6 +323,17 @@ LocalRelax::parse_my_tag(
 		max_iter_ = tag->getOption< int >( "max_iter" );
 	}
 
+
+	if ( tag->hasOption( "ramp_schedule" ) ) {
+		std::string ramp_schedule_str = tag->getOption< std::string >( "ramp_schedule" );
+		utility::vector1< std::string > ramp_schedule_strs = utility::string_split ( ramp_schedule_str, ',' );
+		ramp_schedule_.clear();
+		for (core::Size i=1; i<= ramp_schedule_strs.size(); ++i) {
+			ramp_schedule_.push_back( atoi(ramp_schedule_strs[i].c_str()) );
+		}
+		runtime_assert( ramp_schedule_.size() >= 1);
+	}
+
 	verbose_ = tag->getOption< bool >( "verbose" , false );
 	ramp_cart_ = tag->getOption< bool >( "ramp_cart" , false );
 }
@@ -343,21 +358,10 @@ LocalRelax::apply( core::pose::Pose & pose) {
 	task->push_back( core::pack::task::operation::TaskOperationOP( new core::pack::task::operation::IncludeCurrent ) );
 	core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
-	// relax ramping schedule
-	utility::vector1< core::Real > ramp_schedule, tol_schedule;
-	ramp_schedule.push_back(0.02);
-	ramp_schedule.push_back(0.25);
-	ramp_schedule.push_back(0.55);
-	ramp_schedule.push_back(1.0);
-	tol_schedule.push_back(0.01);
-	tol_schedule.push_back(0.01);
-	tol_schedule.push_back(0.01);
-	tol_schedule.push_back(0.00001);
-
 	// for each residue
 	utility::vector1< utility::vector1<bool> > neighbor;
 	for ( Size cyc = 1; cyc <= NCYC_; ++cyc ) {
-		for ( Size innercyc = 1; innercyc <= ramp_schedule.size(); ++innercyc ) {
+		for ( Size innercyc = 1; innercyc <= ramp_schedule_.size(); ++innercyc ) {
 			get_neighbor_graph( pose, neighbor );
 
 			// "priority list" on residues
@@ -406,6 +410,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 
 					// "surface pack" << generally lots of surface residues in small clusters.  Pack them all at once
 					shell0 = neigh_merge;
+					shell1 = shell0;
 					for ( Size j=1; j<=nres; ++j ) {
 						if (shell0[j]) {
 							for ( Size k=1; k<=nres; ++k ) {
@@ -476,10 +481,10 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				}
 
 				// optimize
-				optimization_loop( pose, ptask_working, mm,  ramp_schedule[innercyc], tol_schedule[innercyc] );
+				optimization_loop( pose, ptask_working, mm,  ramp_schedule_[innercyc], 1e-4 );
 				TR << "[" << cyc << "." << innercyc << "] res " << currres << " [" << nsh0 << "/" << nsh1 << "] ("
 				   << nvis << "/" << nres_asu << ")  E=" << (*min_sfxn_)(pose)
-				   << "  ramp/tol=" << ramp_schedule[innercyc] << "/" << tol_schedule[innercyc] << std::endl;
+				   << "  ramp=" << ramp_schedule_[innercyc] << std::endl;
 			}
 		}
 	}
