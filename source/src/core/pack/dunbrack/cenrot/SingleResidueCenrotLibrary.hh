@@ -46,13 +46,16 @@ namespace cenrot {
 /// @brief Simple class storing all the data for one centroid-rotamer well
 class CentroidRotamerSampleData
 {
+private:
+	static Size const NUMBER_OF_PARAMS;
+
 public:
 	typedef utility::fixedsizearray1< Real, 3 > DOF3;
 
 	//prob, dis, ang, dih, sd_dis, sd_ang, sd_dih
-	Real data_[7];
-	Real deriv_phi_[7];
-	Real deriv_psi_[7];
+	Real *data_;
+	Real *deriv_phi_;
+	Real *deriv_psi_;
 
 private:
 	Real prob_;		/// probability for sidechain showing in this well
@@ -67,14 +70,21 @@ private:
 	Real norm_factor_; /// normalization factor sigma=sqrt(2pi)
 
 public:
-	CentroidRotamerSampleData(){}
+	CentroidRotamerSampleData(){
+		data_ = new Real [NUMBER_OF_PARAMS];
+		deriv_phi_ = new Real [NUMBER_OF_PARAMS];
+		deriv_psi_ = new Real [NUMBER_OF_PARAMS];
+	}
 	CentroidRotamerSampleData(Real p, Real d, Real a, Real w, Real vd, Real va, Real vw)
 	:prob_(p),distance_(d),angle_(a),dihedral_(w), sd_dis_(vd), sd_ang_(va), sd_dih_(vw) {
 		energy_ = -log(p);
 		norm_factor_ = 1.0; ///sqrt(2.0*3.14159265) no need
+		data_ = new Real [NUMBER_OF_PARAMS];
+		deriv_phi_ = new Real [NUMBER_OF_PARAMS];
+		deriv_psi_ = new Real [NUMBER_OF_PARAMS];
 	}
 
-	CentroidRotamerSampleData( const CentroidRotamerSampleData &cs)
+	CentroidRotamerSampleData( const CentroidRotamerSampleData &cs )
 	{
 		prob_		=cs.prob();
 		energy_ 	=cs.energy();
@@ -86,14 +96,22 @@ public:
 		sd_dih_	=cs.sd_dih();
 		norm_factor_ = cs.norm_factor();
 
-		for (Size i=0; i<7; i++) {
+		data_ = new Real [NUMBER_OF_PARAMS];
+		deriv_phi_ = new Real [NUMBER_OF_PARAMS];
+		deriv_psi_ = new Real [NUMBER_OF_PARAMS];
+
+		for (Size i=0; i<NUMBER_OF_PARAMS; i++) {
 			data_[i] = cs.data_[i];
 			deriv_phi_[i] = cs.deriv_phi_[i];
 			deriv_psi_[i] = cs.deriv_psi_[i];
 		}
 	}
 
-	~CentroidRotamerSampleData(){}
+	~CentroidRotamerSampleData(){
+		delete [] data_;
+		delete [] deriv_phi_;
+		delete [] deriv_psi_;
+	}
 
 	Real distance() const { return distance_; }
 	Real angle() const { return angle_; }

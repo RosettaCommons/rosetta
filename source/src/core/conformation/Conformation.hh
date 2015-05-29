@@ -959,7 +959,7 @@ public:  // for tracking changes to the structure
 public: //passport managment methods
 
 	virtual void push_passport( core::environment::DofPassportCOP ) {}
-	virtual core::environment::DofPassportCOP pop_passport() { return 0; }
+	virtual core::environment::DofPassportCOP pop_passport() { return core::environment::DofPassportCOP(); }
 	virtual bool has_passport() const { return false; }
   virtual bool is_protected() const { return false; }
 

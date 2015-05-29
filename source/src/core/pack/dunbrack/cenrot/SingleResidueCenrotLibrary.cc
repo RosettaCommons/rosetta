@@ -56,6 +56,8 @@ namespace cenrot {
 
 static thread_local basic::Tracer TR( "core.pack.dunbrack.cenrot" );
 
+Size const CentroidRotamerSampleData::NUMBER_OF_PARAMS = 7;
+
 Size const SingleResidueCenrotLibrary::N_PHIPSI_BINS = 36;
 Real const SingleResidueCenrotLibrary::PHIPSI_BINRANGE = 10.0;
 Real const SingleResidueCenrotLibrary::NEUTRAL_PHI = -90; //dun -60 //-60
@@ -387,14 +389,15 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
-		Real delta[3];
+		const Size NDOF = 3;
+		Real delta[NDOF];
 		Real cur_ang = sample.cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
 		Real sin_ang = sin(cur_ang);
 
 		Real tmp_phi(0.0), tmp_psi(0.0);
 		Size dat_shift = 1; // skip prob
-		Size dev_shift = 4; // skip prob + dat
-		for (Size i=0; i<3; i++) {
+		Size dev_shift = 1 + NDOF; // skip prob + dat
+		for (Size i=0; i<NDOF; i++) {
 
 			Real weight = 1.0;
 			//for dih(2) only, dis->0, ang->1
