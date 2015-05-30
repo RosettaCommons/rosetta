@@ -1064,6 +1064,33 @@ CT2 NH1 C NH1 1.8 1 0
 CT2 NH1 C NH2 1.8 1 0
 NH1 C NH2 H 0 3 180
 
+# Added for triazolemer linker (V. Mulligan, 29 May 2015):
+NH1	C	CT2	NR1	0.6000	2	90.00 # From NH1 C CT2 NH1 0.6000 1, but minima should be above and below plane of peptide bond.
+C	NH1	CT2	CPH1	0.6000	2	90.00 # From NH1 C CT2 NH1 0.6000 1, but minima should be above and below plane of peptide bond.
+H	NH1	CT2	CPH1	0.1000	2	90.00 # From NH1 C CT2 NH1 0.6000 1, but minima should be above and below plane of peptide bond.
+NH1	CT2	CPH1	CPH2	0.6000	2	90.00 # Minima above and below plane of ring.
+NH1	CT2	CPH1	NR2	0.6000	2	90.00 # Minima above and below plane of ring.
+HB	CT2	CPH1	CPH2	0.1000	2	90.00 # Minima above and below plane of ring.
+HB	CT2	CPH1	NR2	0.1000	2	90.00 # Minima above and below plane of ring.
+CT2	CPH1	CPH2	NR1	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CT2	CPH1	CPH2	H	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+NR2	CPH1	CPH2	NR1	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+NR2	CPH1	CPH2	H	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CT2	CPH1	NR2	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CPH2	CPH1	NR2	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CPH1	CPH2	NR1	CT2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CPH1	CPH2	NR1	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+H	CPH2	NR1	CT2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+H	CPH2	NR1	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CPH2	NR1	CT2	C	0.6000	2	90.00 # Minima above and below plane of ring.
+CPH2	NR1	CT2	HB	0.1000	2	90.00 # Minima above and below plane of ring.
+NR2	NR1	CT2	C	0.6000	2	90.00 # Minima above and below plane of ring.
+NR2	NR1	CT2	HB	0.6000	2	90.00 # Minima above and below plane of ring.
+CPH2	NR1	NR2	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+CT2	NR1	NR2	NR2	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+O	C	CT2	NR1	0.3000	3	180.00
+CPH1	NR2	NR2	NR1	1.0000	2	180.00 # From  HR1 CPH1 CPH1 CT2 1.0000 2 180.00
+
 # Added for SRI's novel heteropolymer backbones (V. Mulligan, 6 April 2015):
 CT2	CT2	NR2	CT1	0.2000	1	180.00 # From C	CT2	NH1	C	0.2000	1	180.00
 CT2	CT2	NR2	CA	0.2000	2	90.00 # From C	CT2	NH1	C	0.2000	1	180.00 -- but minima should be above and below the plane of the ring

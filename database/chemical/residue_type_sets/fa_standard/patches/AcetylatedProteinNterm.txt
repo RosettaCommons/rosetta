@@ -315,6 +315,48 @@ ADD_PROPERTY ACETYLATED_NTERMINUS
 END_CASE
 
 #############################################################################################
+## Triazolemer linker. 
+## internal coordinates are idealized to ensure symmetric scoring
+#############################################################################################
+BEGIN_CASE
+
+BEGIN_SELECTOR
+PROPERTY TRIAZOLEMER
+END_SELECTOR
+
+ADD_ATOM  CO  CObb   C     0.62
+ADD_ATOM  OP1 OCbb   O    -0.55
+ADD_ATOM  CP2 CH3    CT3  -0.27
+ADD_ATOM 1HP2 Hapo   HA    0.09
+ADD_ATOM 2HP2 Hapo   HA    0.09
+ADD_ATOM 3HP2 Hapo   HA    0.09
+
+SET_BACKBONE_HEAVYATOM CO
+SET_BACKBONE_HEAVYATOM OP1
+SET_BACKBONE_HEAVYATOM CP2
+
+PREPEND_MAINCHAIN_ATOM CO
+
+ADD_BOND  CO  N
+ADD_BOND  OP1 CO
+ADD_BOND  CP2 CO
+ADD_BOND 1HP2 CP2
+ADD_BOND 2HP2 CP2
+ADD_BOND 3HP2 CP2
+
+SET_ICOOR  CO   180.000000   57.684068    1.348791   N     C1    C2
+SET_ICOOR  OP1    0.000000   57.317771    1.203828   CO    N     C1
+SET_ICOOR  CP2  180.000000   64.195695    1.513616   CO    N     OP1
+SET_ICOOR 1HP2  180.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 2HP2   60.000000   71.360284    1.082267   CP2   CO    N
+SET_ICOOR 3HP2  -60.000000   71.360284    1.082267   CP2   CO    N
+
+SET_POLYMER_CONNECT LOWER NONE
+ADD_PROPERTY ACETYLATED_NTERMINUS
+
+END_CASE
+
+#############################################################################################
 ## Gamma-amino acids
 ## internal coordinates are idealized to ensure symmetric scoring
 #############################################################################################

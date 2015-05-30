@@ -100,6 +100,7 @@ residue_types/staple/08B.params
 #residue_types/crosslinker/1.3_bisbromomethylbenzene.params
 #residue_types/crosslinker/1.4_bisbromomethylbenzene.params
 #residue_types/crosslinker/BoronateLDopa.params
+#residue_types/crosslinker/triazolemer_linker.params
 
 ## Sidechain Conjugation Types
 #residue_types/sidechain_conjugation/CYX.params

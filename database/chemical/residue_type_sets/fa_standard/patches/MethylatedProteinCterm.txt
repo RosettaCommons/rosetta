@@ -138,6 +138,47 @@ ADD_PROPERTY METHYLATED_CTERMINUS
 END_CASE
 
 #############################################################################################
+## Triazolemer linker
+## internal coordinates are idealized to ensure symmetric scoring
+#############################################################################################
+BEGIN_CASE
+BEGIN_SELECTOR
+PROPERTY TRIAZOLEMER
+END_SELECTOR
+
+ADD_ATOM  NM  Nbb   NH1   -0.47
+ADD_ATOM  CN  CH3   CT3   -0.27
+ADD_ATOM 1HN  Hapo  HA    0.09
+ADD_ATOM 2HN  Hapo  HA    0.09
+ADD_ATOM 3HN  Hapo  HA    0.09
+ADD_ATOM  HM  HNbb  H     0.43
+
+SET_BACKBONE_HEAVYATOM NM
+SET_BACKBONE_HEAVYATOM CN
+
+#APPEND_MAINCHAIN_ATOM NM
+#APPEND_MAINCHAIN_ATOM CN
+
+ADD_BOND  C   NM
+ADD_BOND  HM  NM
+ADD_BOND  NM  CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+SET_ICOOR  NM  -180.000000   65.210767    1.349313   C     C4    O
+SET_ICOOR  CN   180.000000   58.286172    1.449020   NM    C     C4
+SET_ICOOR 1HN   180.000000   68.240467    1.083554   CN    NM    C
+SET_ICOOR 2HN    60.000000   68.240467    1.083554   CN    NM    C
+SET_ICOOR 3HN   -60.000000   68.240467    1.083554   CN    NM    C
+SET_ICOOR  HM  -180.000000   60.804865    0.993263   NM    C     CN
+
+SET_POLYMER_CONNECT UPPER NONE
+ADD_PROPERTY METHYLATED_CTERMINUS
+
+END_CASE
+
+#############################################################################################
 ## gamma-amino acids
 ## internal coordinates are idealized to ensure symmetric scoring
 #############################################################################################
