@@ -53,8 +53,9 @@ core::Size
 SequenceNumberResolver::offset( std::string const& label ) const {
 	OffsetMap::const_iterator p = offset_map_.find(label);
 
-	if( p != offset_map_.end() ) { return p->second; }
-	//else if( label == "" ) {
+	if( p != offset_map_.end() ) {
+		return p->second;
+	//} else if( label == "" ) {
 	//  //Zero offset sequences labels should be "BASE" - an empty label probably means a logic bug somewhere
 	//	tr.Warning << "Warning: Attempting to resolve a sequence number with an empty claim label - assuming zero offset." << std::endl;
 	//	return 0;
