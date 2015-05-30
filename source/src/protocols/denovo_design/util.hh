@@ -23,10 +23,12 @@
 // Package headers
 
 // Core headers
+#include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
+#include <basic/datacache/DataMap.fwd.hh>
 
 // C++ Headers
 #include <set>
@@ -51,6 +53,9 @@ void construct_poly_ala_pose(
 	core::pose::Pose & pose,
 	bool const keep_disulf,
 	std::set< core::Size > const & res_set );
+
+core::pack::task::residue_selector::ResidueSelectorCOP
+get_residue_selector( basic::datacache::DataMap const & data, std::string const & name );
 
 //////////////////////////////////////////////////////////////////////////
 /// Output operators for std template classes                          ///

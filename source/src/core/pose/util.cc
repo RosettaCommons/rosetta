@@ -2465,5 +2465,34 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	}
 }
 
+/// @brief returns true if the given residue in the pose is a chain ending or has upper/lower terminal variants
+bool
+pose_residue_is_terminal( Pose const & pose, Size const resid )
+{
+	return ( is_lower_terminus( pose, resid ) || is_upper_terminus( pose, resid ) );
+}
+
+/// @brief checks to see if this is a lower chain ending more intelligently than just checking residue variants
+bool
+is_lower_terminus( pose::Pose const & pose, Size const resid )
+{
+	return ( ( resid == 1 ) || //loop starts at first residue
+					( ! pose.residue(resid).is_polymer() ) || // this residue isn't a polymer
+					( ! pose.residue( resid-1 ).is_protein() ) || //residue before start is not protein
+					( pose.chain( resid-1 ) != pose.chain( resid ) ) || // residues before start are on another chain
+					( pose.residue( resid ).is_lower_terminus() ) ); // start of residue is lower terminus
+}
+
+/// @brief checks to see if this is a lower chain ending more intelligently than just checking residue variants
+bool
+is_upper_terminus( pose::Pose const & pose, Size const resid )
+{
+	return ( ( resid == pose.total_residue() ) || // loop end at last residue
+					( !pose.residue( resid ).is_polymer() ) || // this residue isn't a polymer
+					( !pose.residue( resid+1 ).is_protein() ) || // residue after end is not protein
+					( pose.chain( resid+1 ) != pose.chain( resid ) ) || // residues before start is other chain
+					( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
+}
+
 } // pose
 } // core

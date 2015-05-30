@@ -147,10 +147,6 @@ public:
 			core::Size const res2,
 			core::scoring::disulfides::DisulfideMatchingPotential const & disulfPot ) const;
 
-	/// @brief pulls a residue selector from the datamap
-	core::pack::task::residue_selector::ResidueSelectorCOP
-		get_residue_selector( std::string const & name, basic::datacache::DataMap const & data ) const;
-
 public: //mutators
 	/// @brief sets the selector for set 1 -- disulfides will connect residues in set 1 to residues in set 2
 	void set_set1_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );

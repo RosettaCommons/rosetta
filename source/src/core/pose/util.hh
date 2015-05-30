@@ -695,6 +695,18 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 																 Size const cutpoint_res,
 																 bool const check_fold_tree = true );
 
+/// @brief returns true if the given residue in the pose is a chain ending or has upper/lower terminal variants
+bool
+pose_residue_is_terminal( Pose const & pose, Size const resid );
+
+/// @brief checks to see if this is a lower chain ending more intelligently than just checking residue variants
+bool
+is_lower_terminus( pose::Pose const & pose, Size const resid );
+
+/// @brief checks to see if this is a lower chain ending more intelligently than just checking residue variants
+bool
+is_upper_terminus( pose::Pose const & pose, Size const resid );
+
 } // pose
 } // core
 

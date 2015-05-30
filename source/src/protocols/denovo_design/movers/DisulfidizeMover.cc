@@ -175,10 +175,10 @@ DisulfidizeMover::parse_my_tag(
 		score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt" );
 
 	if ( tag->hasOption( "set1" ) ) {
-		set_set1_selector( get_residue_selector( tag->getOption< std::string >( "set1" ), data ) );
+		set_set1_selector( get_residue_selector( data, tag->getOption< std::string >( "set1" ) ) );
 	}
 	if ( tag->hasOption( "set2" ) ) {
-		set_set2_selector( get_residue_selector( tag->getOption< std::string >( "set2" ), data ) );
+		set_set2_selector( get_residue_selector( data, tag->getOption< std::string >( "set2" ) ) );
 	}
 }
 
@@ -525,7 +525,7 @@ DisulfidizeMover::make_disulfide(
 	mm->set_bb( res2, relax_bb );
 	mm->set_chi( res1, true );
 	mm->set_chi( res2, true );
-	
+
 	core::conformation::form_disulfide( pose.conformation(), res1, res2 );
 	core::util::rebuild_disulfide( pose, res1, res2,
 			NULL, //task
@@ -655,22 +655,6 @@ DisulfidizeMover::check_disulfide_match_rt(
 		TR << "DISULF \tFailed match_rt_limit check." << std::endl;
 	}
 	return retval;
-}
-
-core::pack::task::residue_selector::ResidueSelectorCOP
-DisulfidizeMover::get_residue_selector( std::string const & name, basic::datacache::DataMap const & data ) const
-{
-	core::pack::task::residue_selector::ResidueSelectorCOP selector;
-	try {
-		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
-		std::stringstream error_msg;
-		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap from DisulfidizeMover.\n";
-		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-	}
-	assert( selector );
-	return selector;
 }
 
 } // namespace denovo_design

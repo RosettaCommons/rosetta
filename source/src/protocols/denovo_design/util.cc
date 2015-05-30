@@ -23,10 +23,12 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 //Core Headers
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Boost/ObjexxFCL Headers
 
@@ -107,6 +109,22 @@ void construct_poly_ala_pose(
 			keep_disulf ); // bool keep_disulfide_cys
 }
 
+core::pack::task::residue_selector::ResidueSelectorCOP
+get_residue_selector( basic::datacache::DataMap const & data, std::string const & name )
+{
+	core::pack::task::residue_selector::ResidueSelectorCOP selector;
+	try {
+		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
+	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::stringstream error_msg;
+			error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";
+			error_msg << e.msg();
+			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+	}
+	assert( selector );
+	return selector;
+}
+
 //////////////////////////////////////////////////////////////////////////
 /// Output operators for std classes                                   ///
 //////////////////////////////////////////////////////////////////////////
@@ -116,8 +134,8 @@ std::ostream &
 operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
 	os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
 	os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
- 	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
-	return os;	
+	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
+	return os;
 }
 
 /// @brief outputs a set
