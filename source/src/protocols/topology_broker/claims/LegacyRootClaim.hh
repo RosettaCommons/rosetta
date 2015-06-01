@@ -53,7 +53,7 @@ class LegacyRootClaim : public DofClaim {
 public:
 	LegacyRootClaim( TopologyClaimerAP tc, core::Size pos1, ClaimRight right = DofClaim::CAN_INIT ) :
 		DofClaim( tc, right ),
-		local_position_( "BASE", pos1 ) // Use a zero-offset sequence label
+		local_position_( "", pos1 ) // An empty label has been hacked to mean no offset in SequenceNumberResolver
 	{}
 
 	LegacyRootClaim( TopologyClaimerAP tc, std::pair< std::string, core::Size > local_position, ClaimRight right = DofClaim::CAN_INIT ) :
