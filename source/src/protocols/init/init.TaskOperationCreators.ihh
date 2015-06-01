@@ -32,6 +32,8 @@
 
 #include <protocols/matdes/BuildingBlockInterfaceOperationCreator.hh>
 
+#include <protocols/denovo_design/task_operations/ConsensusLoopDesignCreator.hh>
+
 #include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>

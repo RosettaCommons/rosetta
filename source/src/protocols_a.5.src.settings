@@ -19,6 +19,9 @@ sources = {
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 	],
+	"protocols/denovo_design/task_operations": [
+		"ConsensusLoopDesign",
+	],
 }
 include_path = [
 ]

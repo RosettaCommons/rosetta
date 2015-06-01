@@ -17,6 +17,7 @@
 namespace protocols {
 using core::pack::task::operation::TaskOperationRegistrator;
 
+static TaskOperationRegistrator< protocols::denovo_design::task_operations::ConsensusLoopDesignOperationCreator > ConsensusLoopDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::dna::RestrictDesignToProteinDNAInterfaceCreator > RestrictDesignToProteinDNAInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::dna::WatsonCrickRotamerCouplingsCreator > WatsonCrickRotamerCouplingsCreator_registrator;
 

@@ -126,6 +126,7 @@ sources = {
 	],
 
 	"denovo_design" :[
+		"ConsensusLoopDesign",
 		"DisulfidizeMover",
 	],
 
