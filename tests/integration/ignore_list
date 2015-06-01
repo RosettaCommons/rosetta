@@ -40,3 +40,5 @@ core.mm.MMTorsionLibrary: MM torsion sets added fully assigned: [0-9]+; wildcard
 core.scoring.mm.MMLJEnergyTable: Initializing MM LJ Energy Tables with [0-9]+ atom types
 core.mm.MMLJLibrary: MM lj sets added: [0-9]+
 core.mm.MMBondAngleLibrary: MM bond angle sets added fully assigned: [0-9]+; wildcard: [0-9]+ and [0-9]+ virtual parameter
+Processed a total of .+ significant \(.+ raw\) lines in .+ files
+Processing time: .+sec

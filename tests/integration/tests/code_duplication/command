@@ -45,8 +45,10 @@ then
 	"%(minidir)s/src/numeric/*.cc"     "%(minidir)s/src/numeric/**/*.cc" \
 	"%(minidir)s/src/protocols/*.cc"   "%(minidir)s/src/protocols/**/*.cc" \
 	"%(minidir)s/src/utility/*.cc"   "%(minidir)s/src/utility/**/*.cc" \
-	-language=c++ -threshold=10 2>&1 >> log
+	-language=c++ -threshold=10 2>&1 \
+	| egrep -vf ../../ignore_list >> log
 	exit 0
+
 else
 	echo 'Executable simian is not found, skipping code duplication test!' >log
 fi
