@@ -17,7 +17,7 @@
 #include <protocols/metal_interface/ZincSiteFinder.hh>
 #include <protocols/metal_interface/AddZincSiteConstraints.hh>
 
-#include <protocols/anchored_design/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/rigid/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MinMover.hh>
