@@ -24,8 +24,6 @@
 
 #include <utility/vector1.hh>
 
-#include <devel/init.hh>
-
 #include <utility/excn/Exceptions.hh>
 
 #include <basic/options/option.hh>

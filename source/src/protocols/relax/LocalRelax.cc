@@ -56,7 +56,6 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
-#include <devel/init.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -85,8 +84,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
-
-#include <devel/init.hh>
 
 #include <utility/excn/Exceptions.hh>
 
