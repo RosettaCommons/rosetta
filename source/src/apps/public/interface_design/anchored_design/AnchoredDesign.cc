@@ -40,8 +40,8 @@ int
 main( int argc, char* argv[] )
 {
 	try {
-	devel::init(argc, argv);
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new protocols::anchored_design::AnchoredDesignMover() ));
+	devel::init( argc, argv );
+	protocols::jd2::JobDistributor::get_instance()->go( protocols::moves::MoverOP( new protocols::anchored_design::AnchoredDesignMover() ) );
 	TR << "************************d**o**n**e**************************************" << std::endl;
 	}
 	catch (utility::excn::EXCN_Base const & e ) {

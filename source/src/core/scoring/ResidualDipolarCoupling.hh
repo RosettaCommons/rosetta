@@ -55,7 +55,7 @@ public:
 // 	}
 
 	ResidualDipolarCoupling( std::string const& filename = "" ) :
-		nex_(0), nrows_(0) {
+		nex_(0), nrows_(0), COMMON_DENOMINATOR(36.5089/1.041/1.041/1.041) {
 		reserve_buffers();
 		if ( filename != "" ) {
 			read_RDC_file( 1, filename );
@@ -69,7 +69,7 @@ public:
 
 	/// @brief alternative c'stor if you have a list of RDC lines
 	ResidualDipolarCoupling(RDC_lines data_in) :
-		All_RDC_lines_(data_in) {
+		All_RDC_lines_(data_in), COMMON_DENOMINATOR(36.5089/1.041/1.041/1.041) {
 		preprocess_data();
 		reserve_buffers();
 	}
@@ -96,6 +96,7 @@ public:
 	core::Real compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa);
 	core::Real compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const tensorR);
 	core::Real compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR);
+	core::Real compute_dipscore_nls(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR);
 
 	//wRDC (like wRMSD .. iter i + 1 tensor weights are ~exp(  - dev^2/sigma ))
 	Real iterate_tensor_weights(core::pose::Pose const& pose,
@@ -164,6 +165,14 @@ public:
 	//void show_tensor_stats_nlsDa( std::ostream&, core::Size ex, const double tensorDa, const double *par) const;
 	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const double tensorR, const double *par) const;
 	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const double tensorDa, const double tensorR, const double *par) const;
+	
+	void do_correct_NH(
+		utility::vector1<core::scoring::RDC>::const_iterator it,
+		numeric::xyzVector<Real> & r,
+		core::Real & r2,
+		core::Real & invr
+	);
+	
 private:
 	/// @brief read RDC data from file
 	void read_RDC_file( Size nex, std::string const& filename );
@@ -201,6 +210,8 @@ private:
 	core::Real* rdcconst_;
 	core::Real* rdcweight_;
 	core::Size* lenex_;
+	
+	Real const COMMON_DENOMINATOR;
 };
 
 /////////////////////////////////////////////////

@@ -121,141 +121,49 @@ ZincSiteFinder::find_zinc_site( pose::Pose const & pose )
 	}
 
 	//Now that we have the zinc, iterate through Cys/His/Asp/Glu residues, if coordinating atom is within 3.0 Angstroms, store the residue number, residue name, atom ids
+	
 	for ( Size i(1); i <= pose_length; ++i ) {
-
+		// AMW: assignment based on residue identity and all the other stuff are separate tasks.
+		std::string lig_atom, pre_lig_atom, pre_pre_lig_atom;
 		if ( pose.residue(i).name3() == "CYS" && !pose.residue(i).has_variant_type( chemical::DISULFIDE ) ) {
-			point p = pose.residue(i).atom(" SG ").xyz();
-			Real dist = zinc.distance( p );
-			if ( dist * dist < 9.0 ) {
-				msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-				++index;
-				msr_[index]->set_resname("CYS");
-				msr_[index]->set_seqpos( i );
-				msr_[index]->set_ligand_atom_xyz( p );
-				msr_[index]->set_ligand_atom_name(" SG ");
-				//atom_ids are required for metalsite constraints
-				msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" SG "), i ) );
-				msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CB"), i ) );
-				msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CA"), i ) );
-
+			lig_atom = " SG ";
+			pre_lig_atom = "CB";
+			pre_pre_lig_atom = "CA";
+		} else if ( pose.residue(i).name3() == "HIS" ) {
+			lig_atom = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
+			if ( lig_atom == " ND1" ) {
+				pre_lig_atom = "CG";
+				pre_pre_lig_atom = "CB";
+			} else {
+				pre_lig_atom = "CD2";
+				pre_pre_lig_atom = "CG";
 			}
+		} else if ( pose.residue(i).name3() == "ASP" ) {
+			lig_atom = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
+			pre_lig_atom = "CG";
+			pre_pre_lig_atom = "CB";
+		} else if ( pose.residue(i).name3() == "GLU" ) {
+			lig_atom = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
+			pre_lig_atom = "CD";
+			pre_pre_lig_atom = "CG";
+		} else {
+			continue;
 		}
-
-		else if ( pose.residue(i).name3() == "HIS" ) {
-			std::string atom_n = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
-
-			if ( atom_n == " ND1" ) {
-				point p = pose.residue(i).atom(" ND1").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("HIS");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" ND1");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" ND1"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CB"), i ) );
-				}
-
-			}
-			else if ( atom_n == " NE2" ) {
-				point p = pose.residue(i).atom(" NE2").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("HIS");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" NE2");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" NE2"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CD2"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-				}
-			}
+		
+		point p = pose.residue(i).atom(lig_atom).xyz();
+		Real dist = zinc.distance( p );
+		if ( dist * dist < 9.0 ) {
+			msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
+			++index;
+			msr_[index]->set_resname(pose.residue(i).name3());
+			msr_[index]->set_seqpos( i );
+			msr_[index]->set_ligand_atom_xyz( p );
+			msr_[index]->set_ligand_atom_name(lig_atom.c_str());
+			//atom_ids are required for metalsite constraints
+			msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(lig_atom.c_str()), i ) );
+			msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(pre_lig_atom.c_str()), i ) );
+			msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(pre_pre_lig_atom.c_str()), i ) );
 		}
-
-
-		else if ( pose.residue(i).name3() == "ASP" ) {
-			std::string atom_n = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
-
-			if ( atom_n == " OD1" ) {
-				point p = pose.residue(i).atom(" OD1").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("ASP");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" OD1");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" OD1"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CB"), i ) );
-				}
-			}
-
-			else if ( atom_n == " OD2" ) {
-				point p = pose.residue(i).atom(" OD2").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("ASP");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" OD2");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" OD2"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CB"), i ) );
-				}
-			}
-		}
-
-		else if ( pose.residue(i).name3() == "GLU" ) {
-			std::string atom_n = protocols::metal_interface::find_closest_atom( pose.residue(i), zinc );
-			if ( atom_n == " OE1" ) {
-				point p = pose.residue(i).atom(" OE1").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("GLU");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" OE1");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" OE1"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CD"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-				}
-			}
-
-			else if ( atom_n == " OE2" ) {
-				point p = pose.residue(i).atom(" OE2").xyz();
-				Real dist = zinc.distance( p );
-				if ( dist * dist < 9.0 ) {
-					msr_.push_back( protocols::metal_interface::MetalSiteResidueOP( new protocols::metal_interface::MetalSiteResidue ) );
-					++index;
-					msr_[index]->set_resname("GLU");
-					msr_[index]->set_seqpos( i );
-					msr_[index]->set_ligand_atom_xyz( p );
-					msr_[index]->set_ligand_atom_name(" OE2");
-					//atom_ids are required for metalsite constraints
-					msr_[index]->set_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index(" OE2"), i ) );
-					msr_[index]->set_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CD"), i ) );
-					msr_[index]->set_pre_pre_ligand_atom_id( core::id::AtomID( pose.residue(i).atom_index("CG"), i ) );
-				}
-			}
-		}
-
-
 	}
 
 	for (Size ii(1); ii <=index; ii++) {

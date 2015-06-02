@@ -560,7 +560,7 @@ void CloseOneMover::close_one_loop_stem (
 
 
 	// storing starting fold tree
-	kinematics::FoldTree tree_in( pose_in.fold_tree() );
+	//kinematics::FoldTree tree_in( pose_in.fold_tree() );
 
 	Size loop_flex_begin, loop_flex_end;
 	if( nter ) {
@@ -596,106 +596,8 @@ void CloseOneMover::close_one_loop_stem (
 		cutpoint = loop_flex_end;
 	}
 
-	loops::Loop one_loop( loop_begin, loop_end,	cutpoint,	0, false );
-	simple_one_loop_fold_tree( pose_in, one_loop );
+	close_one_loop_stem_helper( loop_begin, loop_end, cutpoint, pose_in, loop_map );
 
-	// set cutpoint variants for correct chainbreak scoring
-	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
-		if( !pose_in.residue( cutpoint ).has_variant_type(
-		            chemical::CUTPOINT_LOWER))
-			core::pose::add_variant_type_to_pose_residue( pose_in,
-			        chemical::CUTPOINT_LOWER,
-			        cutpoint );
-		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-		            chemical::CUTPOINT_UPPER ) )
-			core::pose::add_variant_type_to_pose_residue( pose_in,
-			        chemical::CUTPOINT_UPPER,
-			        cutpoint + 1 );
-	}
-
-	scoring::ScoreFunctionOP lowres_scorefxn;
-	lowres_scorefxn = scoring::ScoreFunctionFactory::
-	                  create_score_function( "cen_std", "score4L" );
-	lowres_scorefxn->set_weight( scoring::chainbreak, 10. / 3. );
-
-	Real min_tolerance = 0.001;
-	if( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
-	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
-	        lowres_scorefxn, min_type, min_tolerance, nb_list ) );
-
-	// more params
-	Size loop_size = ( loop_end - loop_begin ) + 1;
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 2 );
-	if( benchmark_ ) {
-		n_small_moves = 1;
-		inner_cycles = 1;
-		outer_cycles = 1;
-	}
-
-	Real high_move_temp = 2.00;
-	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
-	        high_move_temp,
-	        n_small_moves ) );
-	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
-	        high_move_temp,
-	        n_small_moves ) );
-	small_mover->angle_max( 'H', 2.0 );
-	small_mover->angle_max( 'E', 5.0 );
-	small_mover->angle_max( 'L', 6.0 );
-	shear_mover->angle_max( 'H', 2.0 );
-	shear_mover->angle_max( 'E', 5.0 );
-	shear_mover->angle_max( 'L', 6.0 );
-
-	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
-	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
-
-	SequenceMoverOP wiggle_cdr( new SequenceMover() );
-	wiggle_cdr->add_mover( small_mover );
-	wiggle_cdr->add_mover( shear_mover );
-	wiggle_cdr->add_mover( ccd_cycle );
-
-
-	loop_min_mover->apply( pose_in );
-
-	Real const init_temp( 2.0 );
-	Real const last_temp( 0.5 );
-	Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
-	Real temperature = init_temp;
-
-	MonteCarloOP mc;
-	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature ) );
-	mc->reset( pose_in ); // monte carlo reset
-
-	// outer cycle
-	for(Size i = 1; i <= outer_cycles; i++) {
-		mc->recover_low( pose_in );
-
-		// inner cycle
-		for ( Size j = 1; j <= inner_cycles; j++ ) {
-			temperature *= gamma;
-			mc->set_temperature( temperature );
-			wiggle_cdr->apply( pose_in );
-			loop_min_mover->apply( pose_in );
-
-			mc->boltzmann( pose_in );
-
-		} // inner cycles
-	} // outer cycles
-	mc->recover_low( pose_in );
-
-	// minimize
-	if( !benchmark_ )
-		loop_min_mover->apply( pose_in );
-
-	// Restoring pose stuff
-	pose_in.fold_tree( tree_in ); // Tree
-
-	return;
 } // CloseOneMover::close_one_loop_stem
 
 void CloseOneMover::close_one_loop_stem (
@@ -712,7 +614,7 @@ void CloseOneMover::close_one_loop_stem (
 
 
 	// storing starting fold tree
-	kinematics::FoldTree tree_in( pose_in.fold_tree() );
+	//kinematics::FoldTree tree_in( pose_in.fold_tree() );
 
 	//setting MoveMap
 	kinematics::MoveMapOP loop_map;
@@ -728,108 +630,129 @@ void CloseOneMover::close_one_loop_stem (
 	loop_map->set_bb( allow_bb_move );
 	loop_map->set_jump( 1, false );
 
+	close_one_loop_stem_helper( loop_begin, loop_end, cutpoint, pose_in, loop_map );
+
+} // CloseOneMover::close_one_loop_stem
+
+void
+CloseOneMover::close_one_loop_stem_helper(
+	Size loop_begin, Size loop_end, Size cutpoint, Pose & pose_in, kinematics::MoveMapOP loop_map
+) {
+	
+	using namespace protocols;
+	using namespace protocols::loops;
+	
+	using loop_closure::ccd::CCDLoopClosureMover;
+	using loop_closure::ccd::CCDLoopClosureMoverOP;
+	
+	kinematics::FoldTree tree_in( pose_in.fold_tree() );
+
 	loops::Loop one_loop( loop_begin, loop_end,	cutpoint,	0, false );
 	simple_one_loop_fold_tree( pose_in, one_loop );
-
+	
 	// set cutpoint variants for correct chainbreak scoring
 	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 		if( !pose_in.residue( cutpoint ).has_variant_type(
-		            chemical::CUTPOINT_LOWER))
+														  chemical::CUTPOINT_LOWER))
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-			        chemical::CUTPOINT_LOWER,
-			        cutpoint );
+														 chemical::CUTPOINT_LOWER,
+														 cutpoint );
 		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-		            chemical::CUTPOINT_UPPER ) )
+															  chemical::CUTPOINT_UPPER ) )
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-			        chemical::CUTPOINT_UPPER,
-			        cutpoint + 1 );
+														 chemical::CUTPOINT_UPPER,
+														 cutpoint + 1 );
 	}
-
+	
 	scoring::ScoreFunctionOP lowres_scorefxn;
 	lowres_scorefxn = scoring::ScoreFunctionFactory::
-	                  create_score_function( "cen_std", "score4L" );
+	create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn->set_weight( scoring::chainbreak, 10. / 3. );
-
+	
 	Real min_tolerance = 0.001;
 	if( benchmark_ ) min_tolerance = 1.0;
-	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
-	bool nb_list = true;
-	protocols::simple_moves::MinMoverOP loop_min_mover( new protocols::simple_moves::MinMover( loop_map,
-	        lowres_scorefxn, min_type, min_tolerance, nb_list ) );
-
-	// more params
-	Size loop_size = ( loop_end - loop_begin ) + 1;
-	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
-	Size inner_cycles( loop_size );
-	Size outer_cycles( 2 );
-	if( benchmark_ ) {
-		n_small_moves = 1;
-		inner_cycles = 1;
-		outer_cycles = 1;
-	}
-
+		std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
+		bool nb_list = true;
+		protocols::simple_moves::MinMoverOP loop_min_mover(
+				new protocols::simple_moves::MinMover( loop_map,
+						lowres_scorefxn, min_type, min_tolerance, nb_list ) );
+		
+		// more params
+		Size loop_size = ( loop_end - loop_begin ) + 1;
+		Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
+		Size inner_cycles( loop_size );
+		Size outer_cycles( 2 );
+		if( benchmark_ ) {
+			n_small_moves = 1;
+			inner_cycles = 1;
+			outer_cycles = 1;
+		}
+	
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
-	protocols::simple_moves::BackboneMoverOP small_mover( new protocols::simple_moves::SmallMover( loop_map,
-	        high_move_temp,
-	        n_small_moves ) );
-	protocols::simple_moves::BackboneMoverOP shear_mover( new protocols::simple_moves::ShearMover( loop_map,
-	        high_move_temp,
-	        n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP small_mover(
+			new protocols::simple_moves::SmallMover( loop_map,
+					high_move_temp,
+					n_small_moves ) );
+	protocols::simple_moves::BackboneMoverOP shear_mover(
+			new protocols::simple_moves::ShearMover( loop_map,
+					high_move_temp,
+					n_small_moves ) );
+	
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
 	shear_mover->angle_max( 'H', 2.0 );
 	shear_mover->angle_max( 'E', 5.0 );
 	shear_mover->angle_max( 'L', 6.0 );
-
-	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover(one_loop,loop_map) );
+	
+	CCDLoopClosureMoverOP ccd_moves( new CCDLoopClosureMover( one_loop, loop_map ) );
 	RepeatMoverOP ccd_cycle( new RepeatMover(ccd_moves, n_small_moves) );
-
+	
 	SequenceMoverOP wiggle_cdr( new SequenceMover() );
 	wiggle_cdr->add_mover( small_mover );
 	wiggle_cdr->add_mover( shear_mover );
 	wiggle_cdr->add_mover( ccd_cycle );
-
-
+	
+	
 	loop_min_mover->apply( pose_in );
-
+	
 	Real const init_temp( 2.0 );
 	Real const last_temp( 0.5 );
 	Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
 	Real temperature = init_temp;
-
+	
 	MonteCarloOP mc;
 	mc = MonteCarloOP( new moves::MonteCarlo( pose_in, *lowres_scorefxn, temperature ) );
 	mc->reset( pose_in ); // monte carlo reset
-
+	
 	// outer cycle
 	for(Size i = 1; i <= outer_cycles; i++) {
 		mc->recover_low( pose_in );
-
+		
 		// inner cycle
 		for ( Size j = 1; j <= inner_cycles; j++ ) {
 			temperature *= gamma;
 			mc->set_temperature( temperature );
 			wiggle_cdr->apply( pose_in );
 			loop_min_mover->apply( pose_in );
-
+			
 			mc->boltzmann( pose_in );
-
+			
 		} // inner cycles
 	} // outer cycles
 	mc->recover_low( pose_in );
-
+	
 	// minimize
 	if( !benchmark_ )
 		loop_min_mover->apply( pose_in );
-
+		
 	// Restoring pose stuff
 	pose_in.fold_tree( tree_in ); // Tree
-
+		
 	return;
-} // CloseOneMover::close_one_loop_stem
-
+}
+	
 LoopRlxMover::LoopRlxMover(
     Size query_start,
     Size query_end

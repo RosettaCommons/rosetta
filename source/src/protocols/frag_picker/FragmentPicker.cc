@@ -255,10 +255,10 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 		Candidates const & outi = fragment_set[qPosi];
 		for (Size fi = 1; fi <= outi.size(); ++fi) { // loop through selected fragments at qPosi
 
-      // for neighboring contacts
-      // chunks can be different chains
-      VallChunkOP chunk = outi[fi].first->get_chunk();
-      int cPos_offset = outi[fi].first->get_first_index_in_vall() - qPosi;
+			// for neighboring contacts
+			// chunks can be different chains
+			VallChunkOP chunk = outi[fi].first->get_chunk();
+			int cPos_offset = outi[fi].first->get_first_index_in_vall() - qPosi;
 
 			for (Size i=1; i<=fragment_size;++i) {
 				VallResidueOP ri = outi[fi].first->get_residue(i);
@@ -387,61 +387,9 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	if (output_all) output_all_contacts.close();
 
 	// now output pair counts - sorry for the copy and paste code here
-	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
-		if (*it == CEN) {
-			std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
-			replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
-			const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + scale_factor + "."  +
-					string_of(n_frags_) + "." + string_of(fragment_size) + "mers.contacts";
-			utility::io::ozstream output_contacts(out_file_name_contacts);
-			output_contacts << "# i j count";
-			if (neighbors > 0) output_contacts << " neighbors_" << neighbors << "_i_j_count";
-			output_contacts << std::endl;
-			std::pair<Real,ContactType> p(0,*it);
-			std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-			std::map<std::pair<Size,Size>, Size>::iterator iter;
-			for ( iter = query_counts.begin(); iter != query_counts.end(); iter++ ) {
-				std::pair<Size,Size> query_pair = iter->first;
-				output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
-				if (neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair)) {
-					std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-					std::map<std::pair<Size,Size>, Size>::iterator neigh_iter;
-					for ( neigh_iter = neighbor_counts.begin(); neigh_iter != neighbor_counts.end(); neigh_iter++ ) {
-						std::pair<Size,Size> neighbor_pair = neigh_iter->first;
-						output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
-					}
-				}
-				output_contacts << std::endl;
-			}
-			output_contacts.close();
-		} else {
-			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
-				const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoffs_squared_[i])) +
-						"." + string_of(n_frags_) + "."  + string_of(fragment_size) + "mers.contacts";
-				utility::io::ozstream output_contacts(out_file_name_contacts);
-				output_contacts << "# i j count";
-				if (neighbors > 0) output_contacts << " neighbors_" << neighbors << "_i_j_count";
-				output_contacts << std::endl;
-				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
-				std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-				std::map<std::pair<Size,Size>, Size>::iterator iter;
-				for ( iter = query_counts.begin(); iter != query_counts.end(); iter++ ) {
-					std::pair<Size,Size> query_pair = iter->first;
-					output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
-					if (neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair)) {
-						std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-						std::map<std::pair<Size,Size>, Size>::iterator neigh_iter;
-						for ( neigh_iter = neighbor_counts.begin(); neigh_iter != neighbor_counts.end(); neigh_iter++ ) {
-							std::pair<Size,Size> neighbor_pair = neigh_iter->first;
-							output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
-						}
-					}
-					output_contacts << std::endl;
-				}
-				output_contacts.close();
-			}
-		}
-	}
+	// AMW: sorry? sorry?!
+	output_pair_counts( fragment_size, neighbors, contact_counts );
+
 }
 
 
@@ -936,13 +884,30 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 	if (output_all) contacts_output_all.close();
 
 	// now output pair counts
-	// sorry for the copy and paste code below
-	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+	output_pair_counts( fragment_size, neighbors, contact_counts );
+
+	time_t time_end = time(NULL);
+
+	tr.Info << "... done.  Processed " << query_positions_.size() << " positions.  Time elapsed: "
+		<< (time_end - time_start) << " seconds." << std::endl;
+	tr.flush();
+
+	option[frags::write_ca_coordinates].value(orig_opt);
+}
+
+void
+FragmentPicker::output_pair_counts(
+	Size const fragment_size,
+	Size const neighbors,
+	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
+) {
+	using namespace ObjexxFCL;
+	for (std::set<ContactType>::iterator it=contact_types_.begin(); it!=contact_types_.end(); it++) {
 		if (*it == CEN) {
 			std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 			replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
 			const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + scale_factor + "."	+
-					string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
+			string_of(n_frags_) + "." + string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
 			utility::io::ozstream output_contacts(out_file_name_contacts);
 			output_contacts << "# i j count";
 			if (neighbors > 0) output_contacts << " neighbors_" << neighbors << "_i_j_count";
@@ -967,7 +932,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 		} else {
 			for (Size i=1; i<=contacts_dist_cutoffs_squared_.size();++i) {
 				const std::string out_file_name_contacts = prefix_ + "." + contact_name(*it) + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoffs_squared_[i])) +
-						"." + string_of(n_frags_) + "."	+ string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
+				"." + string_of(n_frags_) + "."	+ string_of(fragment_size) + "mers.nonlocal_pairs.contacts";
 				utility::io::ozstream output_contacts(out_file_name_contacts);
 				output_contacts << "# i j count";
 				if (neighbors > 0) output_contacts << " neighbors_" << neighbors << "_i_j_count";
@@ -992,16 +957,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			}
 		}
 	}
-
-	time_t time_end = time(NULL);
-
-	tr.Info << "... done.  Processed " << query_positions_.size() << " positions.  Time elapsed: "
-		<< (time_end - time_start) << " seconds." << std::endl;
-	tr.flush();
-
-	option[frags::write_ca_coordinates].value(orig_opt);
 }
-
 
 // should be thread safe
 void FragmentPicker::pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, Size const & index) {

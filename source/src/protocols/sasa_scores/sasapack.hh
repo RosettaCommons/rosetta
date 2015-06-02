@@ -27,10 +27,10 @@ namespace sasa_scores {
 /// @brief Compute residue sasa values for use in deriving and assigning sasapack-like scores
 void
 compute_residue_sasas_for_sasa_scores(
-																			core::Real const probe_radius,
-																			core::pose::Pose const & pose,
-																			utility::vector1< core::Real > & rsd_sasa
-																			);
+	core::Real const probe_radius,
+	core::pose::Pose const & pose,
+	utility::vector1< core::Real > & rsd_sasa
+);
 
 /// @brief Compute sasapack scores for the given pose.
 /// Currently only scores non-terminal, non-disulfide, protein residues.
@@ -43,12 +43,12 @@ compute_residue_sasas_for_sasa_scores(
 
 void
 compute_sasapack_scores(
-												core::pose::Pose const & pose,
-												utility::vector1< core::Real > & residue_sasapack,
-												utility::vector1< core::Real > & residue_normsasa,
-												core::Real & average_sasapack,
-												core::Real & average_normsasa
-												);
+	core::pose::Pose const & pose,
+	utility::vector1< core::Real > & residue_sasapack,
+	utility::vector1< core::Real > & residue_normsasa,
+	core::Real & average_sasapack,
+	core::Real & average_normsasa
+);
 
 /// @brief Compute normalize scores for the given pose based on average energies (hence "avgE") for pdb structures.
 /// Currently only scores non-terminal, non-disulfide, protein residues.
@@ -63,12 +63,12 @@ compute_sasapack_scores(
 
 void
 compute_avge_scores(
-										core::pose::Pose const & pose,
-										utility::vector1< core::Real > & residue_avge,
-										utility::vector1< core::Real > & residue_normsasa,
-										core::Real & average_avge,
-										core::Real & average_normsasa
-										);
+	core::pose::Pose const & pose,
+	utility::vector1< core::Real > & residue_avge,
+	utility::vector1< core::Real > & residue_normsasa,
+	core::Real & average_avge,
+	core::Real & average_normsasa
+);
 
 
 } // namespace sasa_scores

@@ -87,54 +87,53 @@ public:
 
 	virtual
 	void
-	apply( core::pose::Pose & pose ){
+	apply( core::pose::Pose & pose ) {
 
-		core::pose::remove_nonprotein_residues(pose);
-		core::pose::remove_ligand_canonical_residues(pose);
+		core::pose::remove_nonprotein_residues( pose );
+		core::pose::remove_ligand_canonical_residues( pose );
 
-		core::Size const nres(pose.total_residue());
-		bool quit(false);
-		utility::file::FileName const pdbname(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-		core::Size const num_chains(pose.conformation().num_chains());
+		core::Size const nres( pose.total_residue() );
+		bool quit( false );
+		utility::file::FileName const pdbname( protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() );
+		core::Size const num_chains( pose.conformation().num_chains() );
 
-		if (nres == 0) {
+		if ( nres == 0 ) {
 			TR << pdbname.base() << " empty, skipping (not a protein?)" << std::endl;
 			quit = true;
-		} else if( num_chains < 2 ){
+		} else if ( num_chains < 2 ){
 			TR << pdbname.base() << " less than two chains, AnchorFinderMover skipping! " << std::endl;
 			quit = true;
-		} else if (nres <= 20) {
+		} else if ( nres <= 20 ) {
 			TR << pdbname.base() << " too small, skipping" << std::endl;
 			quit = true;
 		}
-		if( quit ){
-			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+		if ( quit ) {
+			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 			return;
 		}
 		core::scoring::dssp::Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
 
 		//PointGraph will figure out whose neighbors are whose
-		core::Real const distcut(basic::options::option[basic::options::OptionKeys::pose_metrics::interface_cutoff].value());
+		core::Real const distcut( basic::options::option[ basic::options::OptionKeys::pose_metrics::interface_cutoff ].value() );
 
 		core::conformation::PointGraphOP pg( new core::conformation::PointGraph );
-		core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg);
-		core::conformation::find_neighbors<core::conformation::PointGraphVertexData,core::conformation::PointGraphEdgeData>( pg, distcut );
+		core::conformation::residue_point_graph_from_conformation( pose.conformation(), *pg );
+		core::conformation::find_neighbors< core::conformation::PointGraphVertexData, core::conformation::PointGraphEdgeData >( pg, distcut );
 
 		utility::vector1< utility::vector1< core::Size > > table;
-		for( core::Size i(1); i<=nres; ++i) table.push_back( utility::vector1< core::Size >(num_chains, 0) );
+		for( core::Size i( 1 ); i <= nres; ++i) table.push_back( utility::vector1< core::Size >(num_chains, 0) );
 		//table is now nres x num_chains filled with zeroes
 
 		//for each residue
-		for ( core::Size res1(1); res1<=nres; ++res1 ) {
+		for ( core::Size res1( 1 ); res1 <= nres; ++res1 ) {
 			//for each neighbor of that residue
 			for ( core::conformation::PointGraph::UpperEdgeListConstIter edge_iter = pg->get_vertex( res1 ).upper_edge_list_begin(),
 							edge_end_iter = pg->get_vertex( res1 ).upper_edge_list_end(); edge_iter != edge_end_iter; ++edge_iter ) {
 
 				Size const res2 = edge_iter->upper_vertex(); //a partner
-				++table[res1][pose.chain(res2)];
-				++table[res2][pose.chain(res1)];
-
+				++table[ res1 ][ pose.chain( res2 ) ];
+				++table[ res2 ][ pose.chain( res1 ) ];
 			}//for all partners
 		}//for all residues
 
@@ -142,35 +141,32 @@ public:
 		std::ostringstream datafile;
 		datafile << "Rows are residues, columns are chains, data are neighbors in that chain for each residue" << std::endl;
 		datafile << "residue\tchain\tPDBdata\tDSSP";
-		for( core::Size j(1); j<=num_chains; ++j ) datafile << '\t' << j;
+		for ( core::Size j( 1 ); j <= num_chains; ++j ) datafile << '\t' << j;
 		datafile << std::endl;
-		for( core::Size i(1); i<=nres; ++i){
+		for ( core::Size i( 1 ); i <= nres; ++i){
 			datafile << i << '\t' << pose.chain(i) << '\t' << pose.pdb_info()->pose2pdb(i)
 							 << '\t' << pose.secstruct(i);
-			for( core::Size j(1); j<=num_chains; ++j ) datafile << '\t' << table[i][j];
+			for ( core::Size j( 1 ); j <= num_chains; ++j ) datafile << '\t' << table[i][j];
 			datafile << std::endl;
 		}
 		TR << datafile.str() << std::endl;
-		utility::io::ozstream rawdata(pdbname.base() + ".data");
+		utility::io::ozstream rawdata( pdbname.base() + ".data" );
 		rawdata << datafile.str() << std::endl;
 		rawdata.close();
-		//can't use jd2; we're under no output
-		//protocols::jd2::JobOP job_me(protocols::jd2::JobDistributor::get_instance()->current_job());
-		//protocols::jd2::JobDistributor::get_instance()->job_outputter()->file( job_me, datafile.str() );
 
-		core::Size const windowsize(basic::options::option[window_size].value());
-		core::Size const loopness_cutoff(core::Size(basic::options::option[loopness].value()) * windowsize);
-		core::Size const nbrs_cutoff(core::Size(basic::options::option[nbrs_per_residue].value()) * windowsize);
+		core::Size const windowsize( basic::options::option[ window_size ].value() );
+		core::Size const loopness_cutoff( core::Size( basic::options::option[ loopness ].value() ) * windowsize );
+		core::Size const nbrs_cutoff( core::Size(basic::options::option[nbrs_per_residue].value() ) * windowsize );
 
 		//now we look for stretches with large numbers of other neighbors AND loop-ish neighbors
-		for( core::Size window(1), windowstart(1), windowend(basic::options::option[window_size].value());
-				 windowend <= nres; ++window, ++windowstart, ++windowend){
+		for ( core::Size window( 1 ), windowstart( 1 ), windowend( basic::options::option[ window_size ].value() );
+				 windowend <= nres; ++window, ++windowstart, ++windowend ) {
 
 			//skip cross-chain windows
-			bool skip(false);
-			core::Size const chain(pose.chain(windowstart));
-			for( core::Size i(windowstart+1); i<=windowend; ++i ) if( core::Size(pose.chain(i)) != chain ) skip = true;
-			if(skip) continue;
+			bool skip( false );
+			core::Size const chain( pose.chain( windowstart ) );
+			for ( core::Size i( windowstart + 1 ); i <= windowend; ++i ) if ( core::Size( pose.chain( i ) ) != chain ) skip = true;
+			if ( skip ) continue;
 
 			core::Size loopness(0);
 			utility::vector1< core::Size > interface_nbrs(num_chains, 0);
@@ -183,20 +179,20 @@ public:
 				}
 			}
 
-			core::Size const pdb_windowstart(pose.pdb_info()->number(windowstart));
-			core::Size const pdb_windowend(pose.pdb_info()->number(windowend));
+			core::Size const pdb_windowstart( pose.pdb_info()->number( windowstart ) );
+			core::Size const pdb_windowend( pose.pdb_info()->number( windowend ) );
 
 			outcopy << "PDB " << pdbname.base() << " window " << window << " loopness " << loopness << " nbrs";
-			for( core::Size j(1); j<=num_chains; ++j) outcopy << " " << interface_nbrs[j];
-			outcopy << " start " << pose.pdb_info()->pose2pdb(windowstart)
-							<< " pymol select " << pdbname.base() << " and chain " << pose.pdb_info()->chain(windowstart)
+			for ( core::Size j( 1 ); j <= num_chains; ++j ) outcopy << " " << interface_nbrs[ j ];
+			outcopy << " start " << pose.pdb_info()->pose2pdb( windowstart )
+							<< " pymol select " << pdbname.base() << " and chain " << pose.pdb_info()->chain( windowstart )
 							<< " and resi " << pdb_windowstart << "-" << pdb_windowend;
 
-			bool good_interfacenbrs(false);
-			for( core::Size j(1); j<=num_chains; ++j) if( interface_nbrs[j] > nbrs_cutoff ) good_interfacenbrs = true;
+			bool good_interfacenbrs( false );
+			for( core::Size j( 1 ); j <= num_chains; ++j ) if( interface_nbrs[ j ] > nbrs_cutoff ) good_interfacenbrs = true;
 
 			TR << outcopy.str() << std::endl;
-			if ((loopness >= loopness_cutoff) && good_interfacenbrs){
+			if ( ( loopness >= loopness_cutoff ) && good_interfacenbrs ) {
 				out << outcopy.str() << std::endl;
 			}
 
@@ -237,17 +233,17 @@ int main( int argc, char* argv[] )
 {
 	try {
 	using basic::options::option;
-	option.add( window_size, "window size for loops").def(5);
-	option.add( loopness, "fraction of residues in window that need to be loop").def(0.6);
-	option.add( nbrs_per_residue, "# cross-interface interactions per residue in loop window").def(4.0);
-	option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer").def("goodfile.out");
-	devel::init(argc, argv);
+	option.add( window_size, "window size for loops" ).def( 5 );
+	option.add( loopness, "fraction of residues in window that need to be loop" ).def( 0.6 );
+	option.add( nbrs_per_residue, "# cross-interface interactions per residue in loop window" ).def( 4.0 );
+	option.add( bestoutfile, "file to print best loops in (ALL windows printed to tracer" ).def( "goodfile.out" );
+	devel::init( argc, argv );
 
-	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ));
+	protocols::jd2::JobDistributor::get_instance()->go(protocols::moves::MoverOP( new AnchorFinderMover ) );
 
 	TR << "************************d**o**n**e**************************************" << std::endl;
 	}
-	catch (utility::excn::EXCN_Base const & e ) {
+	catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception" << e.msg() << std::endl;
 		return -1;
 	}

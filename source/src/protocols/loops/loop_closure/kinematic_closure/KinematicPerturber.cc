@@ -501,12 +501,12 @@ VicinitySamplingKinematicPerturber::perturb_chain(
 
 void
 VicinitySamplingKinematicPerturber::set_pose_after_closure(
-														   core::pose::Pose & pose,
-														   utility::vector1<core::Real> const & torsions,
-														   utility::vector1<core::Real> const & bond_ang,
-														   utility::vector1<core::Real> const & bond_len,
-														   bool closure_successful // what is this used for?
-														   ) const
+	core::pose::Pose & pose,
+	utility::vector1<core::Real> const & torsions,
+	utility::vector1<core::Real> const & bond_ang,
+	utility::vector1<core::Real> const & bond_len,
+	bool closure_successful // what is this used for?
+) const
 {
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
@@ -748,13 +748,12 @@ NeighborDependentTorsionSamplingKinematicPerturber::perturb_chain(
 
 void
 NeighborDependentTorsionSamplingKinematicPerturber::set_pose_after_closure(
-																		   core::pose::Pose & pose,
-																		   utility::vector1<core::Real> const & torsions,
-																		   utility::vector1<core::Real> const & bond_ang,
-																		   utility::vector1<core::Real> const & bond_len,
-																		   bool closure_successful // what is this used for?
-																		   ) const
-{
+	core::pose::Pose & pose,
+	utility::vector1<core::Real> const & torsions,
+	utility::vector1<core::Real> const & bond_ang,
+	utility::vector1<core::Real> const & bond_len,
+	bool closure_successful // what is this used for?
+) const {
 
 	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );

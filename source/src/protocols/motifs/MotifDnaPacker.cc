@@ -582,92 +582,104 @@ MotifDnaPacker::expand_motifs(
 	pack::task::TaskFactoryOP taskfactory
 )
 {
-	for( std::map< core::Size, pack::rotamer_set::Rotamers >::const_iterator it( rotamer_map.begin() ),
+	for( std::map< core::Size, core::pack::rotamer_set::Rotamers >::const_iterator it( rotamer_map.begin() ),
 			end( rotamer_map.end() ); it != end; ++it ) {
-		std::string tag("");
 		std::set< std::string > name3s( types_map[it->first] );
 		std::set< core::Size > current_pos( src_pos );
 		current_pos.erase( it->first );
 		for( std::set< std::string >::const_iterator it2( name3s.begin() ),
 				end2( name3s.end() ); it2 != end2; ++it2 ) {
-			pose = *starting_pose_;
-			TaskFactoryOP my_tf2;
-			my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
-			pack::rotamer_set::Rotamers restricted_rotamers;
-			pack::rotamer_set::Rotamers src_rotamers( it->second );
-			for( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
-				if( src_rotamers[rot2]->name3() != *it2 ) continue;
-				restricted_rotamers.push_back( src_rotamers[rot2] );
-			}
-			utility::vector1< bool > keep_aas( num_canonical_aas, false );
-			keep_aas[ chemical::aa_from_name(*it2) ] = true;
-			my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
-			protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
-			ms_rsoop->set_new_rots( restricted_rotamers );
-			my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
-
-			for( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
-					end3( current_pos.end() ); it3 != end3; ++it3 ) {
-				if( rotamer_map[*it3].empty() ) continue;
-				pack::rotamer_set::Rotamers other_rotamers;
-				for( core::Size it4(1); it4<=(rotamer_map[*it3]).size(); ++it4 ) {
-					other_rotamers.push_back( rotamer_map[*it3][it4] );
-				}
-				protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
-				ms_rsoop2->set_new_rots( other_rotamers );
-				my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
-			}
-
-			std::stringstream mot_name;
-			mot_name << *it2 << "_" << pose.pdb_info()->chain(it->first) << pose.pdb_info()->number(it->first);
-			std::string mot_name2( mot_name.str() );
-
-			bool special_rotweight_zero( true );
-			if( special_rotweight_zero ) {
-				core::Real zero_special_rotweight( -0.0000000001 );
-				scorefxn_->set_weight( special_rot, ( zero_special_rotweight ) );
-				mot_name << "_ZPW";
-				std::string mot_name3( mot_name.str() );
-				std::stringstream filename;
-				filename << filename_root_ << "_" << mot_name3;
-				dna_packer_->task_factory( taskfactory );
-				dna_packer_->set_filename_root( filename.str() );
-				dna_packer_->apply( pose );
-				/*if ( minimize_dna_ ) {
-					minimize_dna( pose );
-					tag = "_min";
-				}*/
-				bool const overwrite_old_info(true);
-				pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
-				pdboutput_->score_function( *scorefxn_ );
-				(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
-
-				dna_packer_->clear_initialization();
-			}
-			pose = *starting_pose_;
-			core::Real special_rotweight( special_rotweight_ );
-			for ( core::Size trial(0); trial < num_repacks_; ++trial ) {
-				core::Real special_rotweight2 = ( special_rotweight / 2 );
-				scorefxn_->set_weight( special_rot, ( special_rotweight2 /*(trial+1)*/ ) );
-				special_rotweight = special_rotweight2;
-				std::stringstream filename;
-				filename << filename_root_ << "_" << mot_name2 << "_" << lead_zero_string_of( trial, 4 );
-				dna_packer_->task_factory( my_tf2 );
-				dna_packer_->set_filename_root( filename.str() );
-				dna_packer_->apply( pose );
-				/*if ( minimize_dna_ ) {
-					minimize_dna( pose );
-				}*/
-
-				bool const overwrite_old_info(true);
-				pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
-				pdboutput_->score_function( *scorefxn_ );
-				(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
-
-				dna_packer_->clear_initialization();
-			}
-
+			motif_expansion_inner_loop( pose, current_pos, it, it2, rotamer_map, info_lines, taskfactory );
 		}
+	}
+}
+
+void
+MotifDnaPacker::motif_expansion_inner_loop(
+	core::pose::Pose & pose,
+	std::set< core::Size > current_pos,
+	std::map< core::Size, core::pack::rotamer_set::Rotamers >::const_iterator it,
+	std::set< std::string >::const_iterator it2,
+	std::map< core::Size, core::pack::rotamer_set::Rotamers > & rotamer_map,
+	std::list< std::string > & info_lines,
+	pack::task::TaskFactoryOP taskfactory
+) {
+	std::string tag("");
+	pose = *starting_pose_;
+	TaskFactoryOP my_tf2;
+	my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
+	pack::rotamer_set::Rotamers restricted_rotamers;
+	pack::rotamer_set::Rotamers src_rotamers( it->second );
+	for( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
+		if( src_rotamers[rot2]->name3() != *it2 ) continue;
+		restricted_rotamers.push_back( src_rotamers[rot2] );
+	}
+	utility::vector1< bool > keep_aas( num_canonical_aas, false );
+	keep_aas[ chemical::aa_from_name(*it2) ] = true;
+	my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
+	protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
+	ms_rsoop->set_new_rots( restricted_rotamers );
+	my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
+	
+	for( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
+		end3( current_pos.end() ); it3 != end3; ++it3 ) {
+		if( rotamer_map[*it3].empty() ) continue;
+		pack::rotamer_set::Rotamers other_rotamers;
+		for( core::Size it4(1); it4<=(rotamer_map[*it3]).size(); ++it4 ) {
+			other_rotamers.push_back( rotamer_map[*it3][it4] );
+		}
+		protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
+		ms_rsoop2->set_new_rots( other_rotamers );
+		my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
+	}
+	
+	std::stringstream mot_name;
+	mot_name << *it2 << "_" << pose.pdb_info()->chain(it->first) << pose.pdb_info()->number(it->first);
+	std::string mot_name2( mot_name.str() );
+	
+	bool special_rotweight_zero( true );
+	if( special_rotweight_zero ) {
+		core::Real zero_special_rotweight( -0.0000000001 );
+		scorefxn_->set_weight( special_rot, ( zero_special_rotweight ) );
+		mot_name << "_ZPW";
+		std::string mot_name3( mot_name.str() );
+		std::stringstream filename;
+		filename << filename_root_ << "_" << mot_name3;
+		dna_packer_->task_factory( taskfactory );
+		dna_packer_->set_filename_root( filename.str() );
+		dna_packer_->apply( pose );
+		/*if ( minimize_dna_ ) {
+		 minimize_dna( pose );
+		 tag = "_min";
+		 }*/
+		bool const overwrite_old_info(true);
+		pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
+		pdboutput_->score_function( *scorefxn_ );
+		(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
+		
+		dna_packer_->clear_initialization();
+	}
+	pose = *starting_pose_;
+	core::Real special_rotweight( special_rotweight_ );
+	for ( core::Size trial(0); trial < num_repacks_; ++trial ) {
+		core::Real special_rotweight2 = ( special_rotweight / 2 );
+		scorefxn_->set_weight( special_rot, ( special_rotweight2 /*(trial+1)*/ ) );
+		special_rotweight = special_rotweight2;
+		std::stringstream filename;
+		filename << filename_root_ << "_" << mot_name2 << "_" << lead_zero_string_of( trial, 4 );
+		dna_packer_->task_factory( my_tf2 );
+		dna_packer_->set_filename_root( filename.str() );
+		dna_packer_->apply( pose );
+		/*if ( minimize_dna_ ) {
+		 minimize_dna( pose );
+		 }*/
+		
+		bool const overwrite_old_info(true);
+		pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
+		pdboutput_->score_function( *scorefxn_ );
+		(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
+		
+		dna_packer_->clear_initialization();
 	}
 }
 
@@ -684,7 +696,6 @@ MotifDnaPacker::aromatic_motifs(
 {
 	for( std::map< core::Size, pack::rotamer_set::Rotamers >::const_iterator it( rotamer_map.begin() ),
 			end( rotamer_map.end() ); it != end; ++it ) {
-		std::string tag("");
 		std::set< std::string > name3s( types_map[it->first] );
 		std::set< core::Size > current_pos( src_pos );
 		current_pos.erase( it->first );
@@ -702,83 +713,7 @@ MotifDnaPacker::aromatic_motifs(
 		}
 		for( std::set< std::string >::const_iterator it2( name3_arom.begin() ),
 				end2( name3_arom.end() ); it2 != end2; ++it2 ) {
-			pose = *starting_pose_;
-			TaskFactoryOP my_tf2;
-			my_tf2 = TaskFactoryOP( new TaskFactory( *taskfactory ) );
-			pack::rotamer_set::Rotamers restricted_rotamers;
-			pack::rotamer_set::Rotamers src_rotamers( it->second );
-			for( core::Size rot2(1); rot2 <= src_rotamers.size(); ++rot2 ) {
-				if( src_rotamers[rot2]->name3() != *it2 ) continue;
-				restricted_rotamers.push_back( src_rotamers[rot2] );
-			}
-			utility::vector1< bool > keep_aas( num_canonical_aas, false );
-			keep_aas[ chemical::aa_from_name(*it2) ] = true;
-			my_tf2->push_back( TaskOperationCOP( new RestrictAbsentCanonicalAAS( it->first, keep_aas ) ) );
-			protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( it->first ) );
-			ms_rsoop->set_new_rots( restricted_rotamers );
-			my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop ) ) );
-
-			for( std::set< core::Size >::const_iterator it3( current_pos.begin() ),
-					end3( current_pos.end() ); it3 != end3; ++it3 ) {
-				if( rotamer_map[*it3].empty() ) continue;
-				pack::rotamer_set::Rotamers other_rotamers;
-				for( core::Size it4(1); it4<=(rotamer_map[*it3]).size(); ++it4 ) {
-					other_rotamers.push_back( rotamer_map[*it3][it4] );
-				}
-				protocols::toolbox::rotamer_set_operations::SpecialRotamerRSOOP ms_rsoop2( new protocols::toolbox::rotamer_set_operations::SpecialRotamerRSO( *it3 ) );
-				ms_rsoop2->set_new_rots( other_rotamers );
-				my_tf2->push_back( TaskOperationCOP( new AppendRotamerSet( ms_rsoop2 ) ) );
-			}
-
-			std::stringstream mot_name;
-			mot_name << *it2 << "_" << pose.pdb_info()->chain(it->first) << pose.pdb_info()->number(it->first);
-			std::string mot_name2( mot_name.str() );
-
-			bool special_rotweight_zero( true );
-			if( special_rotweight_zero ) {
-				core::Real zero_special_rotweight( -0.0000000001 );
-				scorefxn_->set_weight( special_rot, ( zero_special_rotweight ) );
-				mot_name << "_ZPW";
-				std::string mot_name3( mot_name.str() );
-				std::stringstream filename;
-				filename << filename_root_ << "_" << mot_name3;
-				dna_packer_->task_factory( taskfactory );
-				dna_packer_->set_filename_root( filename.str() );
-				dna_packer_->apply( pose );
-				/*if ( minimize_dna_ ) {
-					minimize_dna( pose );
-					tag = "_min";
-				}*/
-				bool const overwrite_old_info(true);
-				pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
-				pdboutput_->score_function( *scorefxn_ );
-				(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
-
-				dna_packer_->clear_initialization();
-			}
-			pose = *starting_pose_;
-			core::Real special_rotweight( special_rotweight_ );
-			for ( core::Size trial(0); trial < num_repacks_; ++trial ) {
-				core::Real special_rotweight2 = ( special_rotweight / 2 );
-				scorefxn_->set_weight( special_rot, ( special_rotweight2 /*(trial+1)*/ ) );
-				special_rotweight = special_rotweight2;
-				std::stringstream filename;
-				filename << filename_root_ << "_" << mot_name2 << "_" << lead_zero_string_of( trial, 4 );
-				dna_packer_->task_factory( my_tf2 );
-				dna_packer_->set_filename_root( filename.str() );
-				dna_packer_->apply( pose );
-				/*if ( minimize_dna_ ) {
-					minimize_dna( pose );
-				}*/
-
-				bool const overwrite_old_info(true);
-				pdboutput_->add_info( "REMARK DESIGNED POSITIONS " + filename_root_ + ":", info_lines, !overwrite_old_info );
-				pdboutput_->score_function( *scorefxn_ );
-				(*pdboutput_)(pose, dna_packer_->pdbname() + tag + ".pdb");
-
-				dna_packer_->clear_initialization();
-			}
-
+			motif_expansion_inner_loop( pose, current_pos, it, it2, rotamer_map, info_lines, taskfactory );
 		}
 	}
 	aromatic_motifs_ = false;

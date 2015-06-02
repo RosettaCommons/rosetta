@@ -18,6 +18,7 @@
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 
 // package headers
+#include <protocols/frag_picker/ContactCounts.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
 #include <protocols/frag_picker/VallChunkFilter.hh>
@@ -74,7 +75,6 @@ public:
 private:
 	QuotaDebug(QuotaDebug const &);
 };
-
 
 /// @brief The core of the fragment picking machinery
 /// @details FragmentPicker class does:\n
@@ -422,6 +422,12 @@ private:
 	// atom pair constraint contact map
 	utility::vector1<utility::vector1<Real> >  atom_pair_constraint_contact_map_;
 
+	void
+	output_pair_counts(
+		Size const fragment_size,
+		Size const neighbors,
+		std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
+	);
 };
 
 

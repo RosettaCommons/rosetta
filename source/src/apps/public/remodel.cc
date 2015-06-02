@@ -167,27 +167,6 @@ void fill_optional_options( KeyVec & keys ) {
 	keys.push_back( &out::file::o );
 	keys.push_back( &out::file::silent );
 	keys.push_back( &out::file::silent_struct_type );
-
-	// either the following three or 'ufv_loops' is required; conditional
-	// options don't appear easily encodeable, so just mark these as optional
-	// and check the conditions explicitly
-/*
-	keys.push_back( &Remodel::default_centroid_aa_as );
-	keys.push_back( &Remodel::keep_junction_torsions );
-	keys.push_back( &Remodel::use_fullmer );
-	keys.push_back( &Remodel::centroid_loop_mover );
-	keys.push_back( &Remodel::no_neighborhood_design );
-	keys.push_back( &Remodel::dr_cycles );
-	keys.push_back( &Remodel::centroid_sfx );
-	keys.push_back( &Remodel::centroid_sfx_patch );
-	keys.push_back( &Remodel::fullatom_sfx );
-	keys.push_back( &Remodel::fullatom_sfx_patch );
-
-	keys.push_back( &Remodel::insert::insert_pdb );
-	keys.push_back( &Remodel::insert::attached_pdb );
-	keys.push_back( &Remodel::insert::connection_scheme );
-	*/
-
 }
 
 
@@ -218,42 +197,6 @@ bool check_option_conflicts() {
 	using basic::options::option;
 
 	bool flags_ok = true;
-
-//if ( !option[ ufv::ufv_loops ].user() ) {
-//
-//		if ( !option[ ufv::ss ].user() ) {
-//			flags_ok &= false;
-//			TR.Fatal << "no ufv:ufv_loops option specified, so ufv:ss required!" << std::endl;
-//		}
-//
-//		if ( !option[ ufv::left ].user() ) {
-//			flags_ok &= false;
-//			TR.Fatal << "no ufv:ufv_loops option specified, so ufv:left required!" << std::endl;
-//		}
-//
-//		if ( !option[ ufv::right ].user() ) {
-//			flags_ok &= false;
-//			TR.Fatal << "no ufv:ufv_loops option specified, so ufv:right required!" << std::endl;
-//		}
-//
-//		if ( option[ ufv::aa_during_build ].user() ) {
-//			String aa = core::pose::annotated_to_oneletter_sequence( option[ ufv::aa_during_build ] );
-//			flags_ok &= aa.length() == option[ ufv::ss ].value().length();
-//
-//			if ( !flags_ok ) {
-//				TR.Fatal << "length of ufv:ss string and one letter version of ufv::aa_during_build must be equal!" << std::endl;
-//			}
-//		}
-//
-//		if ( option[ ufv::aa_during_design_refine ].user() ) {
-//			String aa = core::pose::annotated_to_oneletter_sequence( option[ ufv::aa_during_design_refine ] );
-//			flags_ok &= aa.length() == option[ ufv::ss ].value().length();
-//
-//			if ( !flags_ok ) {
-//				TR.Fatal << "length of ufv:ss string and one letter version of ufv::aa_during_design_refine must be equal!" << std::endl;
-//			}
-//		}
-//	}
 
 	if ( option[ run::max_retry_job ] < 0 ) {
 		flags_ok = false;
@@ -476,82 +419,8 @@ void* graphics_main( void* ) {
 	// init BDR
 	RemodelMover_OP rmdl( new RemodelMover );
 
-	//if ( option[ ufv::ufv_loops ].user() ) {
-//
-//		load_loops_from_file( *bdr, option[ ufv::ufv_loops ] );
-//
-//	} else {
-//		bdr->add_segment(
-//			option[ ufv::left ],
-//			option[ ufv::right ],
-//			option[ ufv::ss ],
-//			aa_during_build,
-//			aa_during_design_refine
-//		);
-//	}
-
-//		load_loops_from_file( *bdr, option[ ufv::ufv_loops ] );
-//
-//	} else {
-//
-//		if ( option[ ufv::insert::insert_pdb ].user() ) { // SegmentInsert
-//
-//			setup_segment_insert( *bdr );
-//
-//		} else { // SegmentRebuild
-//
-//			bdr->add_instruction(
-//				new SegmentRebuild(
-//					Interval( option[ ufv::left ], option[ ufv::right ] ),
-//					option[ ufv::ss ], aa_during_build,
-//					core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ),
-//					option[ ufv::keep_junction_torsions ]
-//				),
-//				aa_during_design_refine
-//			);
-//
-//		}
-//
-//		bdr->use_sequence_bias( !aa_during_build.empty() );
-//	}
-//
-//
-//	bdr->use_fullmer( option[ ufv::use_fullmer ].value() );
-//	bdr->centroid_loop_mover_str( option[ ufv::centroid_loop_mover ] );
-//	bdr->redesign_loop_neighborhood( !option[ ufv::no_neighborhood_design ].value() );
-//	bdr->dr_cycles( option[ ufv::dr_cycles ] );
-
-//String centroid_sfx = option[ ufv::centroid_sfx ].user() ? option[ ufv::centroid_sfx ].value() : "remodel_cen";
-//String centroid_sfx_patch = option[ ufv::centroid_sfx_patch ].user() ? option[ ufv::centroid_sfx_patch ].value() : String();
-//String fullatom_sfx = option[ ufv::fullatom_sfx ].user() ? option[ ufv::fullatom_sfx ].value() : core::scoring::STANDARD_WTS;
-//String fullatom_sfx_patch = option[ ufv::fullatom_sfx_patch ].user() ? option[ ufv::fullatom_sfx_patch ].value() : core::scoring::SCORE12_PATCH;
-
-//rmdl->centroid_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( centroid_sfx, centroid_sfx_patch ) );
-//rmdl->fullatom_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( fullatom_sfx, fullatom_sfx_patch ) );
-
-	// resfile only if requested
-//	if ( option[ packing::resfile ].user() ) {
-//		bdr->resfile( option[ packing::resfile ].value().at( 1 ) );
-//	}
-
-//#if defined GL_GRAPHICS
-//	core::pose::Pose pose;
-//	core::import_pose::pose_from_pdb( pose, option[ in::file::s ].value().at( 1 ) );
-//	protocols::viewer::add_conformation_viewer( pose.conformation(), "ufv" );
-//	rmdl->apply( pose );
-//#else
-	// setup evaluators (currently only works with silent file output?)
-//	JobDistributor::get_instance()->job_outputter()->add_evaluation(
-//		new PoseMetricEvaluator< Size >( BDR::loops_buns_polar_calc_name(), "special_region_bur_unsat_polars" )
-//	);
-
-//	JobDistributor::get_instance()->job_outputter()->add_evaluation(
-//		new PoseMetricEvaluator< Size >( BDR::neighborhood_buns_polar_calc_name(), "special_region_bur_unsat_polars" )
-//	);
-
 	// run job
 	JobDistributor::get_instance()->go( rmdl );
-//#endif
 
 	protocols::viewer::clear_conformation_viewers();
   exit( 0 ); // ensures graceful exit of graphics.
@@ -561,37 +430,20 @@ void* graphics_main( void* ) {
 int main( int argc, char * argv [] ) {
 try {
 	// check to see if no flags or the -h flag were specified.
-	// can't use the option remodel::help because options don't get init'd until after devel::init. use argc/argv instead.
-	//if ( !( option[ remodel::help ].active() ) ) {
 	if ( argc == 1 || ( argc > 1 && strcmp(argv[ 1 ], "-h") == 0 ) ) {
 		init_usage_prompt( argv[0] );
 		std::cout << usage_string;
 		exit(0);
 	}
 
-	// track options
-	//KeyVec required_options;
-	//fill_required_options( required_options );
-
 	KeyVec optional_options;
 	fill_optional_options( optional_options );
 
 	// register options so help file appears correctly
-	//register_options( required_options );
 	register_options( optional_options );
 
 	// initialize rosetta
 	devel::init( argc, argv );
-
-	// check required options are specified
-//	if ( !check_required_options( required_options ) ) {
-//		return 1;
-//	}
-
-//	// check option conflicts
-//	if ( !check_option_conflicts() ) {
-//		return 1;
-//	}
 
 	// viewer_main() just calls graphics_main with the parameter NULL and returns 0
 	protocols::viewer::viewer_main( graphics_main );

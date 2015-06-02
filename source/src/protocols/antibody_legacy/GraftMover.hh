@@ -175,6 +175,14 @@ public:
 	    core::Size loop_end,
 	    core::Size cutpoint );
 
+	void close_one_loop_stem_helper(
+		core::Size loop_begin,
+		core::Size loop_end,
+		core::Size cutpoint,
+		core::pose::Pose & pose_in,
+		core::kinematics::MoveMapOP loop_map
+	);
+	
 	/// @brief enable benchmark mode
 	inline void enable_benchmark_mode( bool setting ) {
 		benchmark_ = setting;

@@ -573,7 +573,7 @@ void Bool3DGrid::or_with( Bool3DGrid const & other )
 
 void Bool3DGrid::and_with( Bool3DGrid const & other )
 {
-	assert( bin_width_ == other.bin_width_ );
+		assert( bin_width_ == other.bin_width_ );
 
 	/// 1. Compute the bin overlap
 	Vector overlap_low(

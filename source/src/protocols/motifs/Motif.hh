@@ -394,6 +394,28 @@ private:
 	bool has_remark_;
 	bool has_path_;
 
+	void
+	place_residue_helper(
+		core::kinematics::Stub & end_stub,
+		core::kinematics::Stub & mobile_stub,
+		core::conformation::Residue const & fixed,
+		core::conformation::Residue & mobile,
+		bool forward,
+		Size const & res2_atom1_index_in,
+		Size const & res2_atom2_index_in,
+		Size const & res2_atom3_index_in,
+		bool one_three
+	) const;
+	
+	void
+	place_residue_helper(
+		core::kinematics::Stub & end_stub,
+		core::kinematics::Stub & mobile_stub,
+		core::conformation::Residue const & fixed,
+		core::conformation::Residue & mobile,
+		bool forward,
+		bool one_three
+	) const;
 };
 
 } // namespace motifs

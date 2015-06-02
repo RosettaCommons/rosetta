@@ -168,65 +168,23 @@ void
 ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 	sessionOP db_session
 ) const {
-	using namespace basic::database::schema_generator;
-
-	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
-	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
-	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
-	Column resNum2("resNum2", DbDataTypeOP( new DbInteger() ));
-	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
-	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
-	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
-
-	Columns primary_key_columns;
-	primary_key_columns.push_back(batch_id);
-	primary_key_columns.push_back(struct_id);
-	primary_key_columns.push_back(resNum1);
-	primary_key_columns.push_back(resNum2);
-	primary_key_columns.push_back(score_type_id);
-	PrimaryKey primary_key(primary_key_columns);
-
-	Columns foreign_key_columns1;
-	foreign_key_columns1.push_back(struct_id);
-	foreign_key_columns1.push_back(resNum1);
-	vector1< std::string > reference_columns1;
-	reference_columns1.push_back("struct_id");
-	reference_columns1.push_back("resNum");
-	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
-
-	Columns foreign_key_columns2;
-	foreign_key_columns2.push_back(struct_id);
-	foreign_key_columns2.push_back(resNum2);
-	vector1< std::string > reference_columns2;
-	reference_columns2.push_back("struct_id");
-	reference_columns2.push_back("resNum");
-	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
-
-	Columns foreign_key_columns3;
-	foreign_key_columns3.push_back(batch_id);
-	foreign_key_columns3.push_back(score_type_id);
-	vector1< std::string > reference_columns3;
-	reference_columns3.push_back("batch_id");
-	reference_columns3.push_back("score_type_id");
-	ForeignKey foreign_key3(foreign_key_columns3, "score_types", reference_columns3, true);
-
-
-	Schema table("residue_scores_2b", primary_key);
-	table.add_foreign_key(foreign_key1);
-	table.add_foreign_key(foreign_key2);
-	table.add_foreign_key(foreign_key3);
-	table.add_column(score_value);
-	table.add_column(context_dependent);
-
-	table.write(db_session);
+	write_residue_scores_2b_table_schema_helper( "residue_scores_2b", db_session );
 }
 
 void
 ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	sessionOP db_session
 ) const {
-	using namespace basic::database::schema_generator;
+	write_residue_scores_2b_table_schema_helper( "residue_scores_lr_2b", db_session );
+}
 
+void
+ResidueScoresFeatures::write_residue_scores_2b_table_schema_helper(
+	std::string name,
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+	
 	Column batch_id("batch_id", DbDataTypeOP( new DbInteger() ));
 	Column struct_id("struct_id", DbDataTypeOP( new DbBigInt() ));
 	Column resNum1("resNum1", DbDataTypeOP( new DbInteger() ));
@@ -234,7 +192,7 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	Column score_type_id("score_type_id", DbDataTypeOP( new DbInteger() ));
 	Column score_value("score_value", DbDataTypeOP( new DbReal() ));
 	Column context_dependent("context_dependent", DbDataTypeOP( new DbInteger() ));
-
+	
 	Columns primary_key_columns;
 	primary_key_columns.push_back(batch_id);
 	primary_key_columns.push_back(struct_id);
@@ -242,7 +200,7 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	primary_key_columns.push_back(resNum2);
 	primary_key_columns.push_back(score_type_id);
 	PrimaryKey primary_key(primary_key_columns);
-
+	
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
 	foreign_key_columns1.push_back(resNum1);
@@ -250,7 +208,7 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	reference_columns1.push_back("struct_id");
 	reference_columns1.push_back("resNum");
 	ForeignKey foreign_key1(foreign_key_columns1, "residues", reference_columns1, true);
-
+	
 	Columns foreign_key_columns2;
 	foreign_key_columns2.push_back(struct_id);
 	foreign_key_columns2.push_back(resNum2);
@@ -258,7 +216,7 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	reference_columns2.push_back("struct_id");
 	reference_columns2.push_back("resNum");
 	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
-
+	
 	Columns foreign_key_columns3;
 	foreign_key_columns3.push_back(batch_id);
 	foreign_key_columns3.push_back(score_type_id);
@@ -266,18 +224,17 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	reference_columns3.push_back("batch_id");
 	reference_columns3.push_back("score_type_id");
 	ForeignKey foreign_key3(foreign_key_columns3, "score_types", reference_columns3, true);
-
-
-	Schema table("residue_scores_lr_2b", primary_key);
+	
+	
+	Schema table(name, primary_key);
 	table.add_foreign_key(foreign_key1);
 	table.add_foreign_key(foreign_key2);
 	table.add_foreign_key(foreign_key3);
 	table.add_column(score_value);
 	table.add_column(context_dependent);
-
+	
 	table.write(db_session);
 }
-
 
 utility::vector1<std::string>
 ResidueScoresFeatures::features_reporter_dependencies() const {

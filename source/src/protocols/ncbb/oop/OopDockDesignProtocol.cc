@@ -242,8 +242,7 @@ OopDockDesignProtocol::OopDockDesignProtocol(
 void
 OopDockDesignProtocol::apply(
 	core::pose::Pose & pose
-)
-{
+) {
 	// create score function
 	
 	scoring::ScoreFunctionOP soft_score_fxn  = get_score_function();
@@ -252,9 +251,9 @@ OopDockDesignProtocol::apply(
 
 	scoring::ScoreFunctionOP pert_score_fxn;
 	if ( use_soft_rep_  )
-    		pert_score_fxn = soft_score_fxn;
+		pert_score_fxn = soft_score_fxn;
 	else
-    		pert_score_fxn = score_fxn_;
+		pert_score_fxn = score_fxn_;
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
@@ -293,8 +292,7 @@ OopDockDesignProtocol::apply(
    	////kdrew: automatically find oop positions
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 
-	for ( Size i = 1; i <= oop_seq_positions.size(); i++  )
-	{
+	for ( Size i = 1; i <= oop_seq_positions.size(); i++ ) {
 		pert_pep_mm->set_bb( oop_seq_positions[i], false );
 
 		if( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) )
@@ -512,150 +510,21 @@ OopDockDesignProtocol::apply(
 	TR << "Ending main loop..." << std::endl;
 	TR << "Checking pose energy..." << std::endl;
 
-	// create  MetricValues
-	basic::MetricValue< core::Real > mv_sasa_complex;
-	basic::MetricValue< core::Real > mv_sasa_seperated;
-	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
-	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_seperated;
-	basic::MetricValue< core::Real > mv_pack_complex;
-	basic::MetricValue< core::Real > mv_pack_seperated;
-
-	basic::MetricValue< core::Real > mv_repack_sasa_seperated;
-	basic::MetricValue< utility::vector1< core::Size > > mv_repack_unsat_res_seperated;
-	basic::MetricValue< core::Real > mv_repack_pack_seperated;
-	core::Real repack_energy_seperated;
-	core::Real repack_hbond_ener_sum_seperated;
-
-	core::Real energy_complex;
-	core::Real energy_seperated;
-	core::Real hbond_ener_sum_complex;
-	core::Real hbond_ener_sum_seperated;
-
 	// calc energy
-	energy_complex = (*score_fxn_)(pose);
-
+	//energy_complex = (*score_fxn_)(pose);
+	// we don't actually apply a cutoff here, it seems.
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
-	if ( final_design_min_ )
-	{
-		// get packer task from task factory
-		PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
-
-		// add extra chi and extra chi cut off to pt
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
-			final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
-			final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
-		}
-
-		// create a pack rotamers mover for the final design
-		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn_, final_desn_pt, 10 ) );
-		//final_desn_pr->packer_task( final_desn_pt );
-		//final_desn_pr->score_function( score_fxn );
-		//final_desn_pr->nloop( 10 );
-
-		// design with final pr mover
-		final_desn_pr->apply( pose );
-
-		// create move map for minimization
-		kinematics::MoveMapOP final_min_mm( new kinematics::MoveMap() );
-		final_min_mm->set_bb( true );
-		final_min_mm->set_chi( true );
-		final_min_mm->set_jump( 1, true );
-
-		// create minimization mover
-		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
-		// final min (okay to use ta min here)
-		final_min->apply( pose );
+	if ( final_design_min_ ) {
+		final_design_min( pose, score_fxn_, desn_tf );
 	}
 
-	// make copy of pose to calc stats
-	Pose stats_pose( pose );
-
-	// complex stats
-	energy_complex = (*score_fxn_)(stats_pose);
-	stats_pose.metric("sasa","total_sasa",mv_sasa_complex);
-	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_complex);
-	utility::vector1< core::Size > const unsat_res_complex(mv_unsat_res_complex.value());
-	stats_pose.metric( "pack", "total_packstat", mv_pack_complex );
-	scoring::EnergyMap complex_emap( stats_pose.energies().total_energies() );
-	hbond_ener_sum_complex = complex_emap[ hbond_sr_bb ] + complex_emap[ hbond_lr_bb ] + complex_emap[ hbond_bb_sc ] + complex_emap[ hbond_sc ];
-
-	// seperate designed chain from other chains
-	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, 1 ) ); // HARDCODED JUMP NUMBER
-	translate->step_size( 1000.0 );
-	translate->apply( stats_pose );
-	//stats_pose.dump_pdb("stats_trans1000.pdb");
-
-	Pose repack_stats_pose( stats_pose );
-
-	//kdrew: probably should repack and minimize here after separation
-	TaskFactoryOP tf( new TaskFactory() );
-	tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
-	//kdrew: do not do design, makes NATAA if res file is not specified
-	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
-	tf->push_back( rtrp );
-	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
-	packer->task_factory( tf );
-	packer->score_function( score_fxn_ );
-	packer->apply( repack_stats_pose );
-
-	// create move map for minimization
-	kinematics::MoveMapOP separate_min_mm( new kinematics::MoveMap() );
-	separate_min_mm->set_bb( true );
-	separate_min_mm->set_chi( true );
-	separate_min_mm->set_jump( 1, true );
-
-	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
-	// final min (okay to use ta min here)
-	separate_min->apply( repack_stats_pose );
-
-	// seperate stats
-	energy_seperated = (*score_fxn_)(stats_pose);
-	repack_energy_seperated = (*score_fxn_)(repack_stats_pose);
-	stats_pose.metric("sasa","total_sasa",mv_sasa_seperated);
-	repack_stats_pose.metric("sasa","total_sasa",mv_repack_sasa_seperated);
-	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_seperated);
-	repack_stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_repack_unsat_res_seperated);
-	utility::vector1< core::Size > const unsat_res_seperated(mv_unsat_res_seperated.value());
-	stats_pose.metric( "pack", "total_packstat", mv_pack_seperated );
-	repack_stats_pose.metric( "pack", "total_packstat", mv_repack_pack_seperated );
-	scoring::EnergyMap seperated_emap( stats_pose.energies().total_energies() );
-	hbond_ener_sum_seperated = seperated_emap[ hbond_sr_bb ] + seperated_emap[ hbond_lr_bb ] + seperated_emap[ hbond_bb_sc ] + seperated_emap[ hbond_sc ];
-	scoring::EnergyMap repack_seperated_emap( repack_stats_pose.energies().total_energies() );
-	repack_hbond_ener_sum_seperated = repack_seperated_emap[ hbond_sr_bb ] + repack_seperated_emap[ hbond_lr_bb ] + repack_seperated_emap[ hbond_bb_sc ] + repack_seperated_emap[ hbond_sc ];
-
-	// add values to job so that they will be output in the pdb
-	curr_job->add_string_real_pair( "ENERGY_COMPLEX:\t\t", energy_complex );
-	curr_job->add_string_real_pair( "ENERGY_SEPERATE:\t\t", energy_seperated );
-	curr_job->add_string_real_pair( "ENERGY_DIFF:\t\t", energy_complex - energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_SEPERATE:\t\t", repack_energy_seperated );
-	curr_job->add_string_real_pair( "REPACK_ENERGY_DIFF:\t\t", energy_complex - repack_energy_seperated );
-
-	curr_job->add_string_real_pair( "SASA_COMPLEX:\t\t", mv_sasa_complex.value() );
-	curr_job->add_string_real_pair( "SASA_SEPERATE:\t\t", mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_SEPERATE:\t\t", mv_repack_sasa_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_SASA_DIFF:\t\t", mv_sasa_complex.value() - mv_repack_sasa_seperated.value() );
-
-	curr_job->add_string_real_pair( "HB_ENER_COMPLEX:\t\t", hbond_ener_sum_complex );
-	curr_job->add_string_real_pair( "HB_ENER_SEPERATE:\t\t", hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_SEPERATE:\t\t", repack_hbond_ener_sum_seperated );
-	curr_job->add_string_real_pair( "REPACK_HB_ENER_DIFF:\t\t", hbond_ener_sum_complex - repack_hbond_ener_sum_seperated );
-
-	curr_job->add_string_real_pair( "PACK_COMPLEX:\t\t", mv_pack_complex.value() );
-	curr_job->add_string_real_pair( "PACK_SEPERATE:\t\t", mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "PACK_DIFF:\t\t", mv_pack_complex.value() - mv_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_SEPERATE:\t\t", mv_repack_pack_seperated.value() );
-	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
-
+	calculate_statistics( curr_job, pose, score_fxn_ );
+	
 }
 
 protocols::moves::MoverOP
-OopDockDesignProtocol::clone() const
-{
+OopDockDesignProtocol::clone() const {
     return protocols::moves::MoverOP( new OopDockDesignProtocol (
                                            score_fxn_,
                                            mc_temp_,

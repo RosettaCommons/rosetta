@@ -58,7 +58,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+	devel::init( argc, argv );
 
 	core::Real initial_E = 0.0;
 	core::Real old_energy = 0.0;
@@ -68,24 +68,23 @@ main( int argc, char * argv [] )
 		in_pose,
 		option[ OptionKeys::in::file::s ]().vector().front());
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( option[ cp::relax_sfxn ] );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 	// Perform a pre-relaxation of the starting point
 
 	{
 		std::string rmover = option[ cp::relax_mover ];
-		if( rmover == "relax" ){
-			protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::FastRelax( scorefxn , 15 ) );
-			relaxmover->apply(in_pose);
-		} else if( rmover == "classic_relax" ){
+		if ( rmover == "relax" ) {
+			protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::FastRelax( scorefxn, 15 ) );
+			relaxmover->apply( in_pose );
+		} else if ( rmover == "classic_relax" ) {
 			protocols::relax::RelaxProtocolBaseOP relaxmover( new protocols::relax::ClassicRelax( scorefxn ) );
-			relaxmover->apply(in_pose);
-		} else if( rmover == "cst_relax" ){
+			relaxmover->apply( in_pose );
+		} else if ( rmover == "cst_relax" ) {
 			protocols::relax::RelaxProtocolBaseOP cstrelaxmover( new protocols::relax::MiniRelax( scorefxn ) );
-			cstrelaxmover->apply(in_pose);
+			cstrelaxmover->apply( in_pose );
 		}
-
 
 	}
 
@@ -114,7 +113,7 @@ main( int argc, char * argv [] )
 
 		protocols::vip::VIP_Mover();
 		protocols::vip::VIP_Mover vip_mover;
-		if( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.total_residue() > 0 ) ) {
+		if ( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.total_residue() > 0 ) ) {
 			vip_mover.set_initial_pose( stored_unrelaxed_pose );
 			//TR << "Recovering stored pose with total residues = " << stored_unrelaxed_pose.total_residue() << std::endl;
 		} else {
@@ -129,35 +128,34 @@ main( int argc, char * argv [] )
 		bool improved( new_energy < old_energy ? true : false );
 
 		// Check for bogus final_pose
-		if( out_pose.total_residue() == 0 ) {
+		if ( out_pose.total_residue() == 0 ) {
 			improved = false;
 		} else {
-			if( use_unrelaxed_mutants ) {
+			if ( use_unrelaxed_mutants ) {
 				stored_unrelaxed_pose = vip_mover.get_unrelaxed_pose();
 			}
 			TR << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
 		}
 
-		if( improved ){
+		if ( improved ) {
 			// Print out the accepted mutation
 
-			for( core::Size j = 1 ; j <= in_pose.total_residue() ; ++j ) {
-				if( out_pose.residue(j).name() != in_pose.residue(j).name() ) {
-					core::Size pdb_position( out_pose.pdb_info()->number(j) );
-					char pdb_chain( out_pose.pdb_info()->chain(j) );
-        	TR << "Accepting mutation at position " << pdb_position << " chain " << pdb_chain <<
-												" from " << in_pose.residue(j).name() << " to " <<
-												out_pose.residue(j).name() << std::endl;
+			for ( core::Size j = 1 ; j <= in_pose.total_residue() ; ++j ) {
+				if ( out_pose.residue( j ).name() != in_pose.residue( j ).name() ) {
+					core::Size pdb_position( out_pose.pdb_info()->number( j ) );
+					char pdb_chain( out_pose.pdb_info()->chain( j ) );
+					TR << "Accepting mutation at position " << pdb_position << " chain " << pdb_chain
+					   << " from " << in_pose.residue( j ).name()
+					   << " to " << out_pose.residue( j ).name() << std::endl;
 
-					if( option[ cp::print_intermediate_pdbs ] ) {
+					if ( option[ cp::print_intermediate_pdbs ] ) {
 						std::string pdb_file = "vip_iter_" + utility::to_string( it ) + ".pdb";
 						TR << "Dumping intermediate pdb file " << pdb_file << std::endl;
 						out_pose.dump_pdb( pdb_file );
 					}
 
-				vip_mover.set_energy_to_beat( easy_acceptance ? initial_E : new_energy );
-				vip_mover.set_use_stored_energy( true );
-
+					vip_mover.set_energy_to_beat( easy_acceptance ? initial_E : new_energy );
+					vip_mover.set_use_stored_energy( true );
 					break;
 				}
 			}
@@ -171,14 +169,14 @@ main( int argc, char * argv [] )
 			TR << "Rejecting attempted mutation!" << std::endl;
 		}
 
-
 		bool done_improving( (current_failures >= max_failures) && !improved );
 
 		// if the requested ncycles is 0, quit as soon as improvement stops.  If ncycles
 		// is set at a non-zero value, quit either after improvement stops or the number of
 		// cycles has been hit.
-		not_finished = ( ncycles == 0 ? !done_improving : (it <= ncycles && !done_improving) );
+		not_finished = ( ncycles == 0 ? !done_improving : ( it <= ncycles && !done_improving ) );
 	}
+
 	out_pose.dump_pdb( option[ cp::output ] );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

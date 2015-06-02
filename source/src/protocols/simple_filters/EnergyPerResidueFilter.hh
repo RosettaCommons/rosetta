@@ -34,6 +34,7 @@ public:
 	EnergyPerResidueFilter( core::Size const resnum, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_interface = false, bool const whole_protein = false, bool const select_resnums = false, bool const select_around_resnums = false, core::Real aournd_shell=8.0, std::string string_resnums="", std::string string_around_resnums="", core::Size const rb_jump = 1, core::Real const interface_distance_cutoff =  8.0 , bool const bb_bb = false );
 
 	EnergyPerResidueFilter( EnergyPerResidueFilter const &init );
+	void apply_helper( std::string name, core::pose::Pose const & pose, utility::vector1< bool > & use_all_residues ) const;
 	bool apply( core::pose::Pose const & pose ) const;
 	filters::FilterOP clone() const {
 		return filters::FilterOP( new EnergyPerResidueFilter( *this ) );

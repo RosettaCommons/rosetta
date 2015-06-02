@@ -97,6 +97,17 @@ private:
 		std::list< std::string > & info_lines,
 		core::pack::task::TaskFactoryOP taskfactory
 	);
+	
+	void
+	motif_expansion_inner_loop(
+		core::pose::Pose & pose,
+		std::set< core::Size > current_pos,
+		std::map< core::Size, core::pack::rotamer_set::Rotamers >::const_iterator it,
+		std::set< std::string >::const_iterator it2,
+		std::map< core::Size, core::pack::rotamer_set::Rotamers > & rotamer_map,
+		std::list< std::string > & info_lines,
+		core::pack::task::TaskFactoryOP taskfactory
+	);
 
 private:
 	protocols::dna::DnaInterfacePackerOP dna_packer_;

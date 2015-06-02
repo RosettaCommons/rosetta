@@ -828,17 +828,17 @@ Motif::place_residue(
 }
 
 void
-Motif::place_residue_(
+Motif::place_residue_helper(
+	core::kinematics::Stub & end_stub,
+	core::kinematics::Stub & mobile_stub,
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
 	bool one_three
-) const
-{
-	core::kinematics::Stub end_stub;
-	core::kinematics::Stub mobile_stub;
+) const {
+	
 	core::kinematics::Stub start_stub1;
-
+	
 	if( forward ) {
 		// Extract a stub from the fixed residue
 		if( one_three ) {
@@ -850,7 +850,7 @@ Motif::place_residue_(
 			);
 			start_stub1 = start_stub;
 		} else {
-				core::kinematics::Stub start_stub(
+			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_name_ ).xyz(),
 				fixed.atom( res1_atom3_name_ ).xyz(),
 				fixed.atom( res1_atom2_name_ ).xyz(),
@@ -858,17 +858,17 @@ Motif::place_residue_(
 			);
 			start_stub1 = start_stub;
 		}
-
+		
 		mobile_stub.from_four_points(
 			mobile.atom( res2_atom2_name_ ).xyz(),
 			mobile.atom( res2_atom1_name_ ).xyz(),
 			mobile.atom( res2_atom2_name_ ).xyz(),
 			mobile.atom( res2_atom3_name_ ).xyz()
 		);
-
+		
 		// Get the stub at the other end of the jump
 		forward_jump_.make_jump( start_stub1, end_stub );
-
+		
 	} else {
 		// Extract a stub from the fixed residue
 		core::kinematics::Stub start_stub(
@@ -877,7 +877,7 @@ Motif::place_residue_(
 			fixed.atom( res2_atom2_name_ ).xyz(),
 			fixed.atom( res2_atom3_name_ ).xyz()
 		);
-
+		
 		// This one_three bool assumes that res1 is always the amino acid of a base-protein interaction
 		// The base will never need automorphism
 		if( one_three ) {
@@ -888,18 +888,32 @@ Motif::place_residue_(
 				mobile.atom( res1_atom3_name_ ).xyz()
 			);
 		} else {
-				mobile_stub.from_four_points(
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom3_name_ ).xyz(),
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom1_name_ ).xyz()
-				);
+			mobile_stub.from_four_points(
+				mobile.atom( res1_atom2_name_ ).xyz(),
+				mobile.atom( res1_atom3_name_ ).xyz(),
+				mobile.atom( res1_atom2_name_ ).xyz(),
+				mobile.atom( res1_atom1_name_ ).xyz()
+			);
 		}
-
+		
 		// Get the stub at the other end of the jump
 		backward_jump_.make_jump( start_stub, end_stub );
 	}
+}
 
+void
+Motif::place_residue_(
+	core::conformation::Residue const & fixed,
+	core::conformation::Residue & mobile,
+	bool forward,
+	bool one_three
+) const {
+	core::kinematics::Stub end_stub;
+	core::kinematics::Stub mobile_stub;
+	//core::kinematics::Stub start_stub1;
+
+	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
+	
 	// Apply to the mobile residue
 	for( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
@@ -908,9 +922,10 @@ Motif::place_residue_(
 	return;
 }
 
-// place_residue_ for ligand motifs
 void
-Motif::place_residue_(
+Motif::place_residue_helper(
+	core::kinematics::Stub & end_stub,
+	core::kinematics::Stub & mobile_stub,
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
@@ -918,12 +933,8 @@ Motif::place_residue_(
 	Size const & res2_atom2_index_in,
 	Size const & res2_atom3_index_in,
 	bool one_three
-) const
-{
-	core::kinematics::Stub end_stub;
-	core::kinematics::Stub mobile_stub;
+) const {
 	core::kinematics::Stub start_stub1;
-
 	if( forward ) {
 		// Extract a stub from the fixed residue
 		if( one_three ) {
@@ -935,7 +946,7 @@ Motif::place_residue_(
 			);
 			start_stub1 = start_stub;
 		} else {
-				core::kinematics::Stub start_stub(
+			core::kinematics::Stub start_stub(
 				fixed.atom( res1_atom2_name_ ).xyz(),
 				fixed.atom( res1_atom3_name_ ).xyz(),
 				fixed.atom( res1_atom2_name_ ).xyz(),
@@ -943,7 +954,7 @@ Motif::place_residue_(
 			);
 			start_stub1 = start_stub;
 		}
-
+		
 		mobile_stub.from_four_points(
 			mobile.atom( res2_atom2_index_in ).xyz(),
 			mobile.atom( res2_atom1_index_in ).xyz(),
@@ -960,7 +971,7 @@ Motif::place_residue_(
 			fixed.atom( res2_atom2_index_in ).xyz(),
 			fixed.atom( res2_atom3_index_in ).xyz()
 		);
-
+		
 		// This one_three bool assumes that res1 is always the amino acid of a base-protein interaction
 		// The base will never need automorphism
 		if( one_three ) {
@@ -971,16 +982,37 @@ Motif::place_residue_(
 				mobile.atom( res1_atom3_name_ ).xyz()
 			);
 		} else {
-				mobile_stub.from_four_points(
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom3_name_ ).xyz(),
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom1_name_ ).xyz()
-				);
+			mobile_stub.from_four_points(
+				mobile.atom( res1_atom2_name_ ).xyz(),
+				mobile.atom( res1_atom3_name_ ).xyz(),
+				mobile.atom( res1_atom2_name_ ).xyz(),
+				mobile.atom( res1_atom1_name_ ).xyz()
+			);
 		}
 		// Get the stub at the other end of the jump
 		backward_jump_.make_jump( start_stub, end_stub );
 	}
+}
+
+// place_residue_ for ligand motifs
+void
+Motif::place_residue_(
+	core::conformation::Residue const & fixed,
+	core::conformation::Residue & mobile,
+	bool forward,
+	Size const & res2_atom1_index_in,
+	Size const & res2_atom2_index_in,
+	Size const & res2_atom3_index_in,
+	bool one_three
+) const
+{
+	core::kinematics::Stub end_stub;
+	core::kinematics::Stub mobile_stub;
+//	core::kinematics::Stub start_stub1;
+	
+	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward,
+						  res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
+
 	// Apply to the mobile residue
 	for( Size i(1), end_i = mobile.natoms() ; i <= end_i ; ++i ) {
 		mobile.set_xyz( i, end_stub.local2global( mobile_stub.global2local( mobile.xyz( i ) ) ) );
@@ -1077,66 +1109,9 @@ Motif::place_atoms_(
 {
 	core::kinematics::Stub end_stub;
 	core::kinematics::Stub mobile_stub;
-	core::kinematics::Stub start_stub1;
+	//core::kinematics::Stub start_stub1;
 
-	if( forward ) {
-		// Extract a stub from the fixed residue
-		if( one_three ) {
-			core::kinematics::Stub start_stub(
-				fixed.atom( res1_atom2_name_ ).xyz(),
-				fixed.atom( res1_atom1_name_ ).xyz(),
-				fixed.atom( res1_atom2_name_ ).xyz(),
-				fixed.atom( res1_atom3_name_ ).xyz()
-			);
-			start_stub1 = start_stub;
-		} else {
-				core::kinematics::Stub start_stub(
-					fixed.atom( res1_atom2_name_ ).xyz(),
-					fixed.atom( res1_atom3_name_ ).xyz(),
-					fixed.atom( res1_atom2_name_ ).xyz(),
-					fixed.atom( res1_atom1_name_ ).xyz()
-				);
-			start_stub1 = start_stub;
-		}
-
-		mobile_stub.from_four_points(
-			mobile.atom( res2_atom2_name_ ).xyz(),
-			mobile.atom( res2_atom1_name_ ).xyz(),
-			mobile.atom( res2_atom2_name_ ).xyz(),
-			mobile.atom( res2_atom3_name_ ).xyz()
-		);
-
-		// Get the stub at the other end of the jump
-		forward_jump_.make_jump( start_stub1, end_stub );
-
-	} else {
-		// Extract a stub from the fixed residue
-		core::kinematics::Stub start_stub(
-			fixed.atom( res2_atom2_name_ ).xyz(),
-			fixed.atom( res2_atom1_name_ ).xyz(),
-			fixed.atom( res2_atom2_name_ ).xyz(),
-			fixed.atom( res2_atom3_name_ ).xyz()
-		);
-
-		if( one_three ) {
-			mobile_stub.from_four_points(
-				mobile.atom( res1_atom2_name_ ).xyz(),
-				mobile.atom( res1_atom1_name_ ).xyz(),
-				mobile.atom( res1_atom2_name_ ).xyz(),
-				mobile.atom( res1_atom3_name_ ).xyz()
-			);
-		} else {
-				mobile_stub.from_four_points(
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom3_name_ ).xyz(),
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom1_name_ ).xyz()
-				);
-		}
-
-		// Get the stub at the other end of the jump
-		backward_jump_.make_jump( start_stub, end_stub );
-	}
+	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward, one_three );
 
 	// Apply to the mobile residue
 	for( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {
@@ -1153,74 +1128,18 @@ Motif::place_atoms_(
 	core::conformation::Residue & mobile,
 	bool forward,
 	utility::vector1< Size > const & atoms,
-	  Size const & res2_atom1_index_in,
-	  Size const & res2_atom2_index_in,
+	Size const & res2_atom1_index_in,
+	Size const & res2_atom2_index_in,
     Size const & res2_atom3_index_in,
 	bool one_three
 ) const
 {
 	core::kinematics::Stub end_stub;
 	core::kinematics::Stub mobile_stub;
-	core::kinematics::Stub start_stub1;
+	//core::kinematics::Stub start_stub1;
 
-	if( forward ) {
-		// Extract a stub from the fixed residue
-		if( one_three ) {
-			core::kinematics::Stub start_stub(
-				fixed.atom( res1_atom2_name_ ).xyz(),
-				fixed.atom( res1_atom1_name_ ).xyz(),
-				fixed.atom( res1_atom2_name_ ).xyz(),
-				fixed.atom( res1_atom3_name_ ).xyz()
-			);
-			start_stub1 = start_stub;
-		} else {
-				core::kinematics::Stub start_stub(
-					fixed.atom( res1_atom2_name_ ).xyz(),
-					fixed.atom( res1_atom3_name_ ).xyz(),
-					fixed.atom( res1_atom2_name_ ).xyz(),
-					fixed.atom( res1_atom1_name_ ).xyz()
-				);
-			start_stub1 = start_stub;
-		}
-
-		mobile_stub.from_four_points(
-			mobile.atom( res2_atom2_index_in ).xyz(),
-			mobile.atom( res2_atom1_index_in ).xyz(),
-			mobile.atom( res2_atom2_index_in ).xyz(),
-			mobile.atom( res2_atom3_index_in ).xyz()
-		);
-
-		// Get the stub at the other end of the jump
-		forward_jump_.make_jump( start_stub1, end_stub );
-
-	} else {
-		// Extract a stub from the fixed residue
-		core::kinematics::Stub start_stub(
-			fixed.atom( res2_atom2_index_in ).xyz(),
-			fixed.atom( res2_atom1_index_in ).xyz(),
-			fixed.atom( res2_atom2_index_in ).xyz(),
-			fixed.atom( res2_atom3_index_in ).xyz()
-		);
-
-		if( one_three ) {
-			mobile_stub.from_four_points(
-				mobile.atom( res1_atom2_name_ ).xyz(),
-				mobile.atom( res1_atom1_name_ ).xyz(),
-				mobile.atom( res1_atom2_name_ ).xyz(),
-				mobile.atom( res1_atom3_name_ ).xyz()
-			);
-		} else {
-				mobile_stub.from_four_points(
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom3_name_ ).xyz(),
-					mobile.atom( res1_atom2_name_ ).xyz(),
-					mobile.atom( res1_atom1_name_ ).xyz()
-				);
-		}
-
-		// Get the stub at the other end of the jump
-		backward_jump_.make_jump( start_stub, end_stub );
-	}
+	place_residue_helper( end_stub, mobile_stub, fixed, mobile, forward,
+						 res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 
 	// Apply to the mobile residue
 	for( Size i(1), end_i = atoms.size() ; i <= end_i ; ++i ) {

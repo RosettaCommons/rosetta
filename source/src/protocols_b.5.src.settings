@@ -37,6 +37,7 @@ sources = {
 		"Template",
 		"TemplateJumpSetup",
 		"Templates",
+		"util",
 		#"TMHTopologySampler",
 		"vs_test",
 	],

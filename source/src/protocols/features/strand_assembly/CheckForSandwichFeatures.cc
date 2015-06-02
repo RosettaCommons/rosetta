@@ -2431,6 +2431,8 @@ get_central_residues_in_this_sheet(
 	sessionOP db_session,
 	Size sheet_id)
 {
+	
+	
 	string select_string =
 	"SELECT\n"
 	"	residue_begin \n"

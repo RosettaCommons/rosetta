@@ -180,9 +180,40 @@ ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, Tria
 }
 
 void
+final_design_min( core::pose::Pose & pose, ScoreFunctionOP score_fxn_, core::pack::task::TaskFactoryOP desn_tf ) {
+	// get packer task from task factory
+	PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
+	
+	// add extra chi and extra chi cut off to pt
+	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+		final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
+		final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
+		final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
+	}
+	
+	// create a pack rotamers mover for the final design
+	simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn_, final_desn_pt, 10 ) );
+	//final_desn_pr->packer_task( final_desn_pt );
+	//final_desn_pr->score_function( score_fxn );
+	//final_desn_pr->nloop( 10 );
+	
+	// design with final pr mover
+	final_desn_pr->apply( pose );
+	
+	// create move map for minimization
+	kinematics::MoveMapOP final_min_mm( new kinematics::MoveMap() );
+	final_min_mm->set_bb( true );
+	final_min_mm->set_chi( true );
+	final_min_mm->set_jump( 1, true );
+	
+	// create minimization mover
+	simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	// final min (okay to use ta min here)
+	final_min->apply( pose );
+}
+	
+void
 calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, core::scoring::ScoreFunctionOP score_fxn ) {
-
-	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
 
 	// create  MetricValues
 	basic::MetricValue<  Real  > mv_sasa_complex;

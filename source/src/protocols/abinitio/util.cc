@@ -7,10 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/abinitio/BrokerMain.cc
-/// @author Oliver Lange
-/// @author Christopher Miles (cmiles@uw.edu)
-
+/// @file protocols/abinitio/util.cc
+/// @author Andy Watkins
 // keep these headers first for compilation with Visual Studio C++
 
 // Package Headers
@@ -18,7 +16,9 @@
 #include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
@@ -27,9 +27,8 @@
 
 //archive headers
 #include <protocols/abinitio/IterativeAbrelax.hh>
-#include <protocols/abinitio/util.hh>
-
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -58,7 +57,7 @@ static thread_local basic::Tracer tr( "main" );
 namespace protocols  {
 namespace abinitio {
 	
-/*void register_common_options() {
+void register_common_options() {
 	
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -177,61 +176,6 @@ namespace abinitio {
 	option.add_relevant(frags::nr_large_copies);
 	option.add_relevant(frags::annotate);
 
-}*/
-
-void register_options_broker() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
-
-	option.add_relevant(broker::setup);
-
-	register_common_options();
-	
-	option.add_relevant(chunk::pdb2);
-	option.add_relevant(chunk::loop2);
-
-
-#ifdef BOINC
-	std::cerr << "Registered extra options." << std::endl;
-	std::cerr.flush();
-#endif
-}
-
-void common_setup() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using core::scoring::constraints::BoundFunc;
-	using core::scoring::constraints::ConstraintFactory;
-	using core::scoring::constraints::ConstraintIO;
-	using core::scoring::constraints::ConstraintCreatorOP;
-	using core::scoring::constraints::ConstraintCreatorCOP;
-	using core::scoring::func::FuncOP;
-	using protocols::constraints_additional::NamedAtomPairConstraintCreator;
-
-	if ( option[ constraints::no_linearize_bounded ] ) {
-		tr.Info << "use fully harmonic potential for BOUNDED " << std::endl;
-		ConstraintIO::get_func_factory().add_type("BOUNDED", FuncOP( new BoundFunc(0,0,0,1000,"dummy") ) );
-	}
-
-	if ( option[ constraints::named ] ) {
-		tr.Info << "use named constraints in AtomPairConstraint to avoid problems with cutpoint-variants " << std::endl;
-		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
-		ConstraintFactory::get_instance()->replace_creator(
-			ConstraintCreatorCOP( ConstraintCreatorOP( new NamedAtomPairConstraintCreator() ) ));
-	}
-}
-
-// note: initialization now takes place in AbrelaxMover::set_defaults()
-void Broker_main() {
-	common_setup();
-	AbrelaxMoverOP m( new AbrelaxMover() );
-	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
-	protocols::jd2::archive::MPIArchiveJobDistributor* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
-	if ( archive_jd && archive_jd->is_archive_rank() ) {
-		archive_jd->set_archive( protocols::jd2::archive::ArchiveBaseOP( new IterativeAbrelax ) );
-	}
-	protocols::jd2::JobDistributor::get_instance()->go(m);
 }
 
 }

@@ -178,95 +178,60 @@ std::istream & operator >>( std::istream & is, PPoly & pp )
 	}
 	return is;
 }
+	
+void
+help_load_data(
+	utility::vector1< PPoly > & polys,
+	Reals & avg_sasa14s,
+	std::string datafile,
+	std::string tag1,
+	std::string tag2,
+	std::string function_name
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 load_sasapack_polynomial_coefficients(
-																			vector1< PPoly > & polys,
-																			Reals & avg_sasa14s
-																			)
-{
-	polys.clear();
-	polys.resize( num_canonical_aas );
-	avg_sasa14s.clear();
-	avg_sasa14s.resize( num_canonical_aas );
-
-	utility::io::izstream data;
-	string const datafile( "scoring/sasa_scores/sasapack_datafile_v1.txt" ); // TO DO: make this an option
-	basic::database::open( data, datafile );
-
-	map< std::pair< AA, Size >, vector1< std::pair< Real, Real > > > all_polyvals;
-
-	string line;
-	bool found_avg_sasa( false );
-	while ( getline( data,line ) ) {
-		string linetag, name1;
-		Size degree;
-		istringstream is(line );
-		is >> linetag;
-		if ( linetag == "PPOLY_SASAPACK" ) {
-			PPoly p;
-			is >> name1 >> degree >> p;
-			runtime_assert( !is.fail() );
-			AA const aa( aa_from_oneletter_code( name1[0] ) );
-			runtime_assert( aa >= aa_ala && aa <= num_canonical_aas );
-			polys[ aa ] = p;
-		} else if ( linetag == "PPOLYVAL_SASAPACK" ) {
-			Real x,y;
-			is >> name1 >> degree >> x >> y;
-			std::pair< AA, Size > const p( make_pair( aa_from_oneletter_code( name1[0] ), degree ) );
-			all_polyvals[p].push_back( make_pair(x,y) );
-		} else if ( linetag == "AVG_SASA" ) {
-			Real mean;
-			is >> name1 >> linetag >> mean;
-			found_avg_sasa = true;
-			AA const aa( aa_from_oneletter_code( name1[0] ) );
-			runtime_assert( aa >= aa_ala && aa <= num_canonical_aas );
-			avg_sasa14s[ aa ] = mean;
-		}
-	}
-	runtime_assert( found_avg_sasa );
-	for ( Size i=1; i<= 20; ++i ) {
-		AA const aa = AA(i);
-		PPoly const & p( polys[i] );
-		Size const degree( p.max_degree() );
-		cout << "load_sasapack_polynomial_coefficients: using degree " << degree << " polynomial for " << aa <<
-			" datafile: " << datafile << endl; /// NOTE: cout
-		vector1< std::pair< Real, Real > > const polyvals( all_polyvals[ make_pair( aa, degree ) ] );
-		Size count(0);
-		Real err( 0.0 );
-		for ( Size ii=1; ii<= polyvals.size(); ++ii ) {
-			Real const x( polyvals[ii].first ), expected_y( polyvals[ii].second ), recomputed_y( p(x) );
-			err += ( expected_y - recomputed_y ) * ( expected_y - recomputed_y );
-			++count;
-		}
-		if ( count ) err /= count;
-		TR.Trace << "polyval_err: " << aa << ' ' << degree << " npoints: " << I(4,count) << " err-per-point: " <<
-			F(9,3,err) << endl;
-		runtime_assert( err < 1e-3 );
-	}
-	data.close();
+	vector1< PPoly > & polys,
+	Reals & avg_sasa14s
+) {
+	string const datafile( "scoring/sasa_scores/sasapack_datafile_v1.txt" );// TO DO: make this an option
+	help_load_data( polys, avg_sasa14s, datafile, "PPOLY_SASAPACK", "PPOLYVAL_SASAPACK", "load_sasapack_polynomial_coefficients" );
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 load_avge_polynomial_coefficients(
-																	vector1< PPoly > & polys,
-																	Reals & avg_sasa14s
-																	)
-{
+	vector1< PPoly > & polys,
+	Reals & avg_sasa14s
+) {
+	string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
+	help_load_data( polys, avg_sasa14s, datafile, "PPOLY_NORME", "PPOLYVAL_NORME", "load_avge_polynomial_coefficients" );
+}
+	
+///////////////////////////////////////////////////////////////////////////////
+/// helper function to open a file and respond to appropriate flags
+void
+help_load_data(
+	vector1< PPoly > & polys,
+	Reals & avg_sasa14s,
+	string datafile,
+	string tag1,
+	string tag2,
+	string function_name
+) {
 	polys.clear();
 	polys.resize( num_canonical_aas );
 	avg_sasa14s.clear();
 	avg_sasa14s.resize( num_canonical_aas );
-
+	
 	utility::io::izstream data;
-	string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
+	//string const datafile( "scoring/sasa_scores/avge_datafile_score12prime_v1.txt" );// TO DO: make this an option
 	basic::database::open( data, datafile );
-
+	
 	map< std::pair< AA, Size >, vector1< std::pair< Real, Real > > > all_polyvals;
-
+	
 	string line;
 	bool found_avg_sasa( false );
 	while ( getline( data,line ) ) {
@@ -274,14 +239,14 @@ load_avge_polynomial_coefficients(
 		Size degree;
 		istringstream is(line );
 		is >> linetag;
-		if ( linetag == "PPOLY_NORME" ) {
+		if ( linetag == tag1 ) {
 			PPoly p;
 			is >> name1 >> degree >> p;
 			runtime_assert( !is.fail() );
 			AA const aa( aa_from_oneletter_code( name1[0] ) );
 			runtime_assert( aa >= aa_ala && aa <= num_canonical_aas );
 			polys[ aa ] = p;
-		} else if ( linetag == "PPOLYVAL_NORME" ) {
+		} else if ( linetag == tag2 ) {
 			Real x,y;
 			is >> name1 >> degree >> x >> y;
 			std::pair< AA, Size > const p( make_pair( aa_from_oneletter_code( name1[0] ), degree ) );
@@ -296,13 +261,13 @@ load_avge_polynomial_coefficients(
 		}
 	}
 	runtime_assert( found_avg_sasa );
-
+	
 	for ( Size i=1; i<= 20; ++i ) {
 		AA const aa = AA(i);
 		PPoly const & p( polys[i] );
 		Size const degree( p.max_degree() );
-		cout << "load_avge_polynomial_coefficients: using degree " << degree << " polynomial for " << aa <<
-			" datafile: " << datafile << endl; /// NOTE: cout
+		cout << function_name << ": using degree " << degree << " polynomial for " << aa <<
+		" datafile: " << datafile << endl; /// NOTE: cout
 		vector1< std::pair< Real, Real > > const polyvals( all_polyvals[ make_pair( aa, degree ) ] );
 		Size count(0);
 		Real err( 0.0 );
@@ -313,7 +278,7 @@ load_avge_polynomial_coefficients(
 		}
 		if ( count ) err /= count;
 		TR.Trace << "polyval_err: " << aa << ' ' << degree << " npoints: " << I(4,count) << " err-per-point: " <<
-			F(9,3,err) << endl;
+		F(9,3,err) << endl;
 		runtime_assert( err < 1e-3 );
 	}
 	data.close();
