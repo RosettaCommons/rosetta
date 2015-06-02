@@ -10,7 +10,7 @@
 
 /// @notes Monte Carlo backbone sampling for polypeptides with variable bond angles
 /// and dihedral angles using concerted rotations and a Gaussian bias
-/// Jakob P. Ulmschneider, JCP, VOl 118, 9
+/// Jakob P. Ulmschneider, JCP, VOl 118, 9, 2003
 
 #ifndef INCLUDED_protocols_simple_moves_BBConRotMover_hh
 #define INCLUDED_protocols_simple_moves_BBConRotMover_hh

@@ -189,6 +189,29 @@ AddMembraneMover::AddMembraneMover(
     init_from_cmd();
 }
 
+	/// @brief Custom Constructor using both anchor rsd and membrane rsd
+	/// @details Creates a membrane pose setting the anchor residue and
+	///			membrane residue; topology is read from cmd line
+	AddMembraneMover::AddMembraneMover(
+		   core::Size anchor_rsd,
+		   core::Size membrane_rsd
+		   ) :
+	protocols::moves::Mover(),
+	include_lips_( false ),
+	spanfile_( "" ),
+	topology_( new SpanningTopology() ),
+	lipsfile_(),
+	anchor_rsd_( anchor_rsd ),
+	membrane_rsd_( membrane_rsd ),
+	center_( mem_center ),
+	normal_( mem_normal ),
+	thickness_( 15 ),
+	steepness_( 10 )
+	{
+		register_options();
+		init_from_cmd();
+	}
+
 /// @brief Custorm Constructur with lips info - for PyRosetta
 /// @details Creates a membrane pose setting the membrane
 /// center at emb_center and normal at emb_normal and will load
@@ -413,9 +436,9 @@ AddMembraneMover::apply( Pose & pose ) {
 	using namespace core::pack::task; 
 	using namespace core::conformation::membrane;
 
-	std::cout << "\n=====================================================================" << std::endl;
-	std::cout << "||           WELCOME TO THE WORLD OF MEMBRANE PROTEINS...          ||" << std::endl;
-	std::cout << "=====================================================================\n" << std::endl;
+	TR << "=====================================================================" << std::endl;
+	TR << "||           WELCOME TO THE WORLD OF MEMBRANE PROTEINS...          ||" << std::endl;
+	TR << "=====================================================================" << std::endl;
 	
 	// If there is a membrane residue in the PDB, take total resnum as the membrane_pos
 	// Otherwise, setup a new membrane virtual
@@ -496,6 +519,12 @@ AddMembraneMover::apply( Pose & pose ) {
         TR << "Setting initial membrane center and normal to position used by the user-provided membrane residue" << std::endl;
         center_ = pose.conformation().membrane_info()->membrane_center();
         normal_ = pose.conformation().membrane_info()->membrane_normal();
+		
+		// slide the membrane jump to match the desired anchor point
+		core::kinematics::FoldTree ft = pose.fold_tree();
+		Size memjump = pose.conformation().membrane_info()->membrane_jump();
+		ft.slide_jump( memjump, anchor_rsd_, mem_rsd_in_pdb[1] );
+		pose.fold_tree( ft );
     }
     
     // Use set membrane positon mover to set the center/normal pair

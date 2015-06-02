@@ -149,8 +149,9 @@ void membrane_normal_to_length_15( pose::Pose & pose );
 ///			 use AddMembraneMover to do that
 void reorder_membrane_foldtree( pose::Pose & pose );
 
-/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
-core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
+/// @brief Calculates translation axis lying in the membrane (= projection axis
+///			between embedding centers)
+core::Vector const membrane_axis( pose::Pose & pose, int jumpnum );
 
 /// @brief Splits the SpanningTopology object into two objects, depending on
 ///			given jump number
@@ -158,6 +159,8 @@ core::Vector const membrane_axis( core::pose::Pose &, int jumpnum );
 ///			structure: this can now easily be accomplished by creating two
 ///			empty topology objects, call this function, and then use both topology
 ///			objects and subposes to call compute_structure_based_membrane_embedding
+///			BEWARE: this does not work for splitting topology by spans! It only works
+///			chainwise
 void split_topology_by_jump(
 		pose::Pose const & pose,		// full pose
 		Size const jumpnum,				// jump number to split on
@@ -167,6 +170,26 @@ void split_topology_by_jump(
 		SpanningTopology & topo_up,		// topology of upstream pose
 		SpanningTopology & topo_down	// topology of downstream pose
 		);
+
+/// @brief Splits the SpanningTopology object into two objects, depending on
+///			given jump number
+/// @details This doesn't shift the topology to start at 1 for each partner, it
+///				remains exactly the same as it would be for the complete pose, just split
+///			BEWARE: this does not work for splitting topology by spans! It only works
+///			chainwise
+void split_topology_by_jump_noshift(
+		pose::Pose const & pose,		// full pose
+		Size const jumpnum,				// jump number to split on
+		SpanningTopologyOP topo,	// topology to split
+		SpanningTopologyOP topo_up,		// topology of upstream pose
+		SpanningTopologyOP topo_down	// topology of downstream pose
+		);
+
+/// @brief Update embedding of the partners after a move
+/// @details Requires the jump number between the partners, the topology will
+///				be taken from MembraneInfo and will be split accordingly; up and
+///				down means upstream and downstream
+void update_partner_embeddings( pose::Pose const & pose, Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down );
 
 } // geometry
 } // membrane

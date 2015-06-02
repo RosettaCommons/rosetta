@@ -93,7 +93,13 @@ public:
         core::Size membrane_rsd=0
         );
     
-    
+	/// @brief Custom Constructor using both anchor rsd and membrane rsd
+	/// @details Creates a membrane pose setting the anchor residue and membrane residue; topology is read from cmd line
+	AddMembraneMover(
+		core::Size anchor_rsd,
+		core::Size membrane_rsd
+		);
+	
     /// @brief Custorm Constructur with lips info - mainly for PyRosetta
 	/// @details Creates a membrane pose setting the membrane
 	/// center at emb_center and normal at emb_normal and will load

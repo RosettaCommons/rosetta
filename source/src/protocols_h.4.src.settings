@@ -36,7 +36,9 @@ sources = {
 	],
 	"protocols/docking/membrane":[
 		"MPDockingMover",
-		"MPDockingSetupMover",	
+		"MPDockingSetupMover",
+		"MPFindInterfaceMover",
+		"QuickRelaxPartnersSeparately",	
 	],
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",

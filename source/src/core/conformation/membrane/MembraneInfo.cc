@@ -173,7 +173,7 @@ MembraneInfo::show(std::ostream & output ) const {
 	output << "MembraneInfo: Information about this Membrane Protein" << std::endl;
 	output << "Membrane Residue Num: " << membrane_rsd_num_ << std::endl;
 	output << "Membrane Fold Tree Jump: " << membrane_jump_ << std::endl;
-	output << "Membrane Thicnkess: " << thickness_ << std::endl;
+	output << "Membrane Thickness: " << thickness_ << std::endl;
 	output << "Membrane Steepness: " << steepness_ << std::endl;
 	output << "Membrane Spanning Topology " << std::endl;
 	

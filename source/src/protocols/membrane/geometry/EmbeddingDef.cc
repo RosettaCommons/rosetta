@@ -97,8 +97,8 @@ EmbeddingDef::~EmbeddingDef() {}
 
 /// @brief Standard Rosetta Show Method for Debugging
 void
-EmbeddingDef::show( std::ostream & output ) const {
-	output << "Embedding: center: " << center_.to_string() << ", normal: " << normal_.to_string() << std::endl;
+EmbeddingDef::show( std::ostream & ) const {
+	TR << "Embedding: center: " << center_.to_string() << ", normal: " << normal_.to_string() << std::endl;
 }
 
 /// @brief Check reasonable range of vectors in embedding object

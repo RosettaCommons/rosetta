@@ -429,13 +429,20 @@ sources = {
 	"pilot/jkleman" : [
 		#"mp_parameters", # /* Checking parameters */
 		#"input_from_cmd", # /* read input files */
-		"mpdocking",
-		"spanfile_from_pdb",
-		"mpdocking_setup",
-		"mpframework_test",
-		"mpfolding",
-		"transform_into_membrane",
 		"add_membrane",
+		"interface_statistics",
+		"mpdocking",
+		"mpdocking_setup",
+		"mp_find_interface",
+#		"mp_find_interface_test",
+		"mpfolding",
+		"mpframework_test",
+		"mpframework_test1",
+		"mp_mutate_relax",
+		"mp_quick_relax",
+		"mp_relax_partners_separately",
+		"spanfile_from_pdb",
+		"transform_into_membrane",
 	],
 	"pilot/johnk" : [
 		#"chet_trp_to_gly",

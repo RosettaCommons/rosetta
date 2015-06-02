@@ -81,17 +81,31 @@ public:
 	/////////////////////
 
 	/// @brief Default Constructor
-	/// @details uses membrane coords: center(0,0,0), normal(0,0,1)
+	/// @details uses membrane coords: center(0,0,0), normal(0,0,15) and membrane jump
 	TransformIntoMembraneMover();
-	
+
+	/// @brief Constructor that uses jump number for transformation
+	/// @details uses membrane coords: center(0,0,0), normal(0,0,15);
+	///				downstream jump will be transformed
+	TransformIntoMembraneMover( SSize jump );
+
 	/// @brief Custom Constructor - mainly for PyRosetta
 	/// @details user can specify membrane coords into which protein should be
-	///          transformed to
+	///          transformed to; uses membrane jump
 	TransformIntoMembraneMover(
 		Vector mem_center,
 		Vector mem_normal,
 		std::string spanfile = ""
 	);
+
+	/// @brief Custom Constructor using jumpnumber
+	/// @details user can specify membrane coords into which protein should be
+	///          transformed to; downstream partner will be transformed
+	TransformIntoMembraneMover( SSize jump,
+							   Vector mem_center,
+							   Vector mem_normal,
+							   std::string spanfile = ""
+							   );
 
 	/// @brief Copy Constructor
 	TransformIntoMembraneMover( TransformIntoMembraneMover const & src );
@@ -136,13 +150,13 @@ private: // methods
 
 	/// @brief Register Options from Command Line
 	/// @details Register mover-relevant options with JD2 - includes
-	/// mp, seutp options: center, normal, spanfiles
+	/// mp, setup options: center, normal, spanfiles, jumpnum
 	void register_options();
 	
 	/// @brief Initialize Mover options from the commandline
 	/// @details Initialize mover settings from the commandline
 	/// mainly in the mp, setup group: center, normal,
-	/// spanfiles
+	/// spanfiles, jumpnum
 	void init_from_cmd();
 	
 	
@@ -151,6 +165,9 @@ private: // data
 	// Pose residue typeset, and visualization
 	bool fullatom_;
 
+	// jump number: downstream partner will be transformed
+	SSize jump_;
+	
 	// center and normal coordinates with respect to fixed membrane
 	Vector mem_center_;
 	Vector mem_normal_;

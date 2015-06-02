@@ -351,7 +351,7 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 	// Read file Header "TM region prediction for"
     getline( stream, line );
     
-		// Read line which includes number of tm spans and total resnum
+	// Read line which includes number of tm spans and total resnum
     getline( stream, line );
     std::istringstream l( line );
     Size total_tmhelix;
@@ -411,6 +411,8 @@ SpanningTopology::create_from_spanfile( std::string spanfile, Size nres ){
 		throw utility::excn::EXCN_Msg_Exception( "SpanningTopology invalid: check your span file!" );
 //		utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
+	
+	this->show();
 	return *this;
 } // create from spanfile
 
@@ -542,6 +544,8 @@ SpanningTopology::create_from_structure(
 		TR << "SpanningTopology invalid" << std::endl;
 		utility_exit_with_message( "SpanningTopology invalid: check your span file!" );
 	}
+	
+	this->show();
 	return *this;
 	
 } // create from structure

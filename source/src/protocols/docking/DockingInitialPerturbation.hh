@@ -155,8 +155,10 @@ public:
 
 	// protocol functions
 	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
 	virtual void show(std::ostream & output=std::cout) const;
+
+	// getters
+	virtual std::string get_name() const;
 	core::Size get_jump_num() const { return rb_jump_; }
 
 private:
@@ -165,6 +167,7 @@ private:
 	// which jump to use for docking
 	core::Size rb_jump_;
 	core::Vector slide_axis_; //used if a specific slide axis is specified in the constructor
+	
 };  // class DockingSlideIntoContact
 
 std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );

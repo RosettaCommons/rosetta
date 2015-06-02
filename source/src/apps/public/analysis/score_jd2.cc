@@ -27,6 +27,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 
 #include <basic/Tracer.hh>
@@ -227,8 +228,12 @@ main( int argc, char * argv [] )
 	if ( option[ OptionKeys::in::membrane ].user() ) {
 		protocols::moves::SequenceMoverOP seqmov( new protocols::moves::SequenceMover );
 		seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::AddMembraneMover ) );
-        
-        // Iif user asks, position the protein in a membrane, position determined
+
+		if ( option[ OptionKeys::mp::setup::transform_into_membrane ].user() ) {
+			seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::TransformIntoMembraneMover ) );
+		}
+		
+        // If user asks, position the protein in a membrane, position determined
         // by transmembrane spanning topology
         if ( option[ OptionKeys::mp::setup::position_from_topo ].user() ) {
             seqmov->add_mover( protocols::moves::MoverOP( new protocols::membrane::MembranePositionFromTopologyMover ) );

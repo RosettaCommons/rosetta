@@ -226,7 +226,7 @@ namespace
 
 				// Test without contact
 				// Separate jump 2
-				protocols::rigid::RigidBodyTransMover jump2_translate( testpose, 2);
+				protocols::rigid::RigidBodyTransMover jump2_translate( testpose, 2, false );
 				jump2_translate.step_size( 1000.0 );
 				jump2_translate.trans_axis(core::Vector(1, 0, 0));
 				jump2_translate.apply( testpose );
@@ -241,7 +241,7 @@ namespace
 				TS_ASSERT_EQUALS(cross_chain_count_sep, 9);
 
 				// Separate jump 1
-				protocols::rigid::RigidBodyTransMover jump1_translate( testpose, 1);
+				protocols::rigid::RigidBodyTransMover jump1_translate( testpose, 1, false );
 				jump1_translate.step_size( 1000.0 );
 				jump1_translate.trans_axis(core::Vector(1, 0, 0));
 				jump1_translate.apply( testpose );

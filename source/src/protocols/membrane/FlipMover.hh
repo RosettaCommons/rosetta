@@ -115,6 +115,14 @@ public:
 	/// @brief Flip the downstream partner in the membrane
 	virtual void apply( Pose & pose );
 	
+	/// @brief Set Random flip angle between 135 and 225 degrees to keep
+	///			protein oriented in the membrane correctly
+	void set_random_membrane_flip_angle();
+	
+	/// @brief Set angle range
+	/// @details Maximum angle deviation from 180 degrees
+	void set_range( Real max_angle_dev );
+	
 private: // methods
 	
 	/////////////////////
@@ -138,6 +146,12 @@ private: // data
 
 	/// @brief Rotation angle in degrees
 	Real angle_;
+	
+	/// @brief Random flip angle between 135 and 225 degrees in the membrane
+	bool random_angle_;
+	
+	/// @brief Maximum angle deviation from 180 degrees
+	Real max_angle_dev_;
 };
 
 } // membrane

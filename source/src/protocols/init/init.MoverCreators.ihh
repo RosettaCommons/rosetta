@@ -392,7 +392,11 @@
 #include <protocols/membrane/AddMembraneMoverCreator.hh>
 #include <protocols/membrane/FlipMoverCreator.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMoverCreator.hh>
+#include <protocols/membrane/MPQuickRelaxMoverCreator.hh>
+#include <protocols/membrane/OptimizeMembranePositionMoverCreator.hh>
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
+#include <protocols/membrane/SpinAroundPartnerMoverCreator.hh>
+#include <protocols/membrane/TiltMoverCreator.hh>
 #include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
 
 #include <protocols/membrane/symmetry/SymmetricAddMembraneMoverCreator.hh>

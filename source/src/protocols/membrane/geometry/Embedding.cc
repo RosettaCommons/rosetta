@@ -137,7 +137,7 @@ Embedding::Embedding( SpanningTopology const & topology, Pose const & pose ){
 		this->invert();
 	}
 	
-	this->show();
+	this->show( TR );
 	
 }// from topology and pose
 
@@ -178,11 +178,11 @@ void Embedding::show( std::ostream & out ) const {
     out << "Span Embedding: " << std::endl;
     for ( Size i = 1; i <= embeddings_.size(); ++i ){
         out << "\t";
-        embeddings_[ i ]->show();
+        embeddings_[ i ]->show( TR );
     }
     out << "Total Embedding: " << std::endl;
 	out << "\t";
-    total_embed_->show();
+    total_embed_->show( TR );
 
 }// show
 
@@ -251,7 +251,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 	EmbeddingDef embedding1 = EmbeddingDef( pose, start1, end1 );
 	Vector const center1 = embedding1.center();
 	Vector const normal1 = embedding1.normal();
-	TR << "first span center and normal: " << center1.to_string() << ", " << normal1.to_string() << std::endl;
+//	TR << "first span center and normal: " << center1.to_string() << ", " << normal1.to_string() << std::endl;
 	
     // go through rest of TMspans
     for ( Size i = 1; i <= topology.nspans(); ++i ){
@@ -264,7 +264,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
         EmbeddingDefOP embedding( new EmbeddingDef( pose, start, end ) );
 		Vector center = embedding->center();
 		Vector normal = embedding->normal();
-		TR << "center: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+//		TR << "center: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
 
 		// calculate points for dihedral angle calculation
 		Vector p1 = center1 + normal1;
@@ -272,7 +272,7 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 		
 		// calculate dihedral angle between normals of first object and this one
 		Real dih( numeric::dihedral_degrees( p1, center1, center, p ) );
-		TR << "dihedral angle to first span: " << dih << std::endl;
+//		TR << "dihedral angle to first span: " << dih << std::endl;
 
 		// check if angle of normal is < 100 degrees to first normal
 		// if yes, then add to embedding object, if no add inverted vector

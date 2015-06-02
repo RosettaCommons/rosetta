@@ -44,6 +44,7 @@ public:
 	/// @brief copy ctor
 	MutateResidue(MutateResidue const& dm);
 	/// @brief Mutate a single residue to a new amino acid
+	/// @details new_res is three letter code in capital letters, example PHE
 	MutateResidue( core::Size const target, std::string const new_res );
 	MutateResidue( core::Size const target, int const new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
 	virtual ~MutateResidue() {};

@@ -653,6 +653,7 @@ RigidBodySpinMover::get_name() const {
 	return "RigidBodySpinMover";
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
 {
@@ -724,36 +725,42 @@ RigidBodyDeterministicSpinMover::get_name() const {
     return "RigidBodyDeterministicSpinMover";
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
-RigidBodyTransMover::RigidBodyTransMover() : RigidBodyMover()
+RigidBodyTransMover::RigidBodyTransMover( bool vary_stepsize ) : RigidBodyMover()
 {
 	moves::Mover::type( "RigidBodyTrans" );
+	vary_stepsize_ = vary_stepsize;
 }
 
 // constructor with arguments
 RigidBodyTransMover::RigidBodyTransMover(
 	core::pose::Pose const & pose_in,
-	int const rb_jump_in
+	int const rb_jump_in,
+	bool vary_stepsize
 ):
 	RigidBodyMover( rb_jump_in )
 {
 	moves::Mover::type( "RigidBodyTrans" );
 	step_size_ = 1.0;
 	trans_axis_ = centroid_axis(pose_in);
+	vary_stepsize_ = vary_stepsize;
 }
 
-RigidBodyTransMover::RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in  ) :
+RigidBodyTransMover::RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in, bool vary_stepsize  ) :
 	RigidBodyMover( rb_jump_in ), trans_axis_(trans_axis)
 {
 	moves::Mover::type( "RigidBodyTrans" );
 	step_size_ = 1.0;
+	vary_stepsize_ = vary_stepsize;
 }
 
 RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
 	//utility::pointer::ReferenceCount(),
 	parent( src ),
 	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ )
+	trans_axis_( src.trans_axis_ ),
+	vary_stepsize_ ( src.vary_stepsize_ )
 {}
 
 RigidBodyTransMover::~RigidBodyTransMover() {}
@@ -769,22 +776,46 @@ RigidBodyTransMover::centroid_axis(core::pose::Pose const & pose_in) const
 void
 RigidBodyTransMover::apply( core::pose::Pose & pose )
 {
+	// get translation axis
 	core::Vector axis( trans_axis_ );
 	if ( axis.is_zero() ) {
 		axis = centroid_axis(pose);
 	}
 
+	// set flexible jump in the pose
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	TRBM << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
-	//TRBM << "Translate: " << "Jump (before): " << flexible_jump << " step_size:  " << step_size_ <<
-	//			" trans_axis_x:  " << trans_axis_.x() << " trans_axis_y:  " << trans_axis_.y() << " trans_axis_z:  " << trans_axis_.z() << std::endl;
+
+	// get upstream stub
 	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
+
+	// variable stepsize means that the steps are larger when the partners are
+	// far away and that they get smaller the closer the partners are;
+	// should save time
+	if ( vary_stepsize_ == true ) {
+		core::Vector centroid_vector( centroid_axis( pose ) );
+		core::Real distance( centroid_vector.length() );
+		
+		// if partners are close, take small stepsize of 1A
+		if ( distance <= 5 ) {
+			step_size_ = 1.0;
+		}
+		else {
+			step_size_ = std::sqrt( distance );
+		}
+		TRBM << "distance between partners: " << distance << std::endl;
+	}
+
+	// do the actual translation
 	flexible_jump.translation_along_axis( upstream_stub, axis, step_size_ );
 	TRBM << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
-	//TRBM << "Translate: " << "Jump (after):  " << flexible_jump << " step_size:  " << step_size_ <<
-	//			" trans_axis_x:  " << trans_axis_.x() << " trans_axis_y:  " << trans_axis_.y() << " trans_axis_z:  " << trans_axis_.z() << std::endl;
+
+	// set flexible jump in the pose
 	pose.set_jump( rb_jump_, flexible_jump );
-}
+
+}// apply
+
+/////////////////// ROSETTA SCRIPTS STUFF //////////////////////////////
 
 std::string
 RigidBodyTransMover::get_name() const {
@@ -802,6 +833,7 @@ RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP tag,
 	rb_jump( tag->getOption< int >( "jump", 1 ) );
 	core::Vector axis( tag->getOption< core::Real >( "x", 0.0 ), tag->getOption< core::Real >( "y", 0.0 ), tag->getOption< core::Real >( "z", 0.0 ));
 	trans_axis( axis );
+	vary_stepsize_ = tag->getOption< bool >( "vary_stepsize", false );
 }
 
 moves::MoverOP
@@ -813,7 +845,6 @@ moves::MoverOP
 RigidBodyTransMover::fresh_instance() const {
 	return moves::MoverOP( new RigidBodyTransMover );
 }
-
 
 std::string
 RigidBodyTransMoverCreator::keyname() const {
@@ -830,6 +861,7 @@ RigidBodyTransMoverCreator::mover_name() {
 	return "RigidBodyTransMover";
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 UniformSphereTransMover::UniformSphereTransMover() : parent(), step_size_(1), random_step_(0), trans_axis_()
 {

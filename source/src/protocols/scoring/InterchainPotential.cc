@@ -53,7 +53,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TC( "protocols.scoring.InterchainPotential" );
+static thread_local basic::Tracer TR( "protocols.scoring.InterchainPotential" );
 
 // Singleton instance and mutex static data members
 namespace utility {
@@ -247,14 +247,31 @@ InterchainPotential::evaluate_pair_and_vdw_score(
 	pair_contribution = interchain_pair_log_( rsd1.aa(), rsd2.aa() );
 
 	using namespace core;
+
 	// calculation for vdw?
 	// atoms between two chains are guaranteed to not be bonded
 	// no countpair!
 	for ( Size i=1, i_end = rsd1.natoms(); i<= i_end; ++i ) {
+
 		Vector const & i_xyz( rsd1.xyz(i) );
 		Size const i_type( rsd1.atom_type_index(i) );
+
+		// if virtual atom, continue
+		if ( rsd1.is_virtual( i ) ){
+			continue;
+		}
+		
+		// get VDW radii
 		utility::vector1< Real > const & i_atom_vdw( atom_vdw_( i_type ) );
+
+		// iterate over interacting residue
 		for ( Size j=1, j_end = rsd2.natoms(); j<= j_end; ++j ) {
+
+			// if virtual atom, continue
+			if ( rsd2.is_virtual( j ) ){
+				continue;
+			}
+
 			Real const bump_dis( i_atom_vdw[ rsd2.atom_type_index(j) ] );
 			Real const clash( bump_dis - i_xyz.distance_squared( rsd2.xyz(j) ) );
 			if ( clash > 0.0 ) {

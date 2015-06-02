@@ -21,8 +21,11 @@
 #include <protocols/docking/metrics.hh>
 
 // Rosetta Headers
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
+
 #include <protocols/moves/Mover.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.hh> // zhe
 #include <protocols/docking/EllipsoidalRandomizationMover.hh> // NM
@@ -30,10 +33,14 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Conformation.hh>
-#include <basic/options/option.hh>
-#include <core/scoring/Energies.hh>
 
+#include <core/conformation/Conformation.hh>
+
+#include <core/kinematics/FoldTree.hh>
+
+#include <basic/options/option.hh>
+
+#include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -45,13 +52,15 @@
 #include <string>
 
 //Utility Headers
-
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh>
+
+#include <protocols/membrane/geometry/util.hh>
+
 using basic::T;
 
 // option key includes
@@ -455,7 +464,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	using namespace moves;
 	using namespace protocols::membrane::geometry;
 
-	rigid::RigidBodyTransMoverOP mover;
+	bool vary_stepsize( false );
 	
 	// for a membrane pose the translation axis should be in the membrane
 	if ( pose.conformation().is_membrane() ) {
@@ -466,17 +475,50 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		// get membrane axis from docking metrics function
 		slide_axis_ = membrane_axis( pose, rb_jump_ );
 		
-		// I have no idea why this needs to be negated, but is required to work
-		slide_axis_.negate();
+		// get direction of axis by making a trial move and seeing whether the partners
+		// move together or apart from each other
+		// this is stupid, but I don't know how else to fix this
+		
+		// create EmbeddinDef objects
+		EmbeddingDef emb_up, emb_down;
+		update_partner_embeddings( pose, rb_jump_, emb_up, emb_down );
+		TR << "center1: " << emb_up.center().to_string() << std::endl;
+		TR << "center2: " << emb_down.center().to_string() << std::endl;
+
+		// get distance between points
+		core::Real dist1 = ( emb_down.center() - emb_up.center() ).length();
+		
+		// trial move
+		rigid::RigidBodyTransMoverOP trial( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_, vary_stepsize ) );
+		trial->apply( pose );
+		
+		// get new distance between points
+		update_partner_embeddings( pose, rb_jump_, emb_up, emb_down );
+		core::Real dist2 = ( emb_down.center() - emb_up.center() ).length();
+		TR << "dist1: " << dist1 << ", dist2: " << dist2 << std::endl;
+		TR << "center1: " << emb_up.center().to_string() << std::endl;
+		TR << "center2: " << emb_down.center().to_string() << std::endl;
+
+		// negate or not, this is super counter intuitive!!!
+		if ( dist2 < dist1 ) {
+			TR << "slide axis negated..." << std::endl;
+			slide_axis_.negate();
+		}
+
 		slide_axis_.normalize();
 		TR << "     slide axis after: " << slide_axis_.to_string() << std::endl;
+		
+		// set variable stepsize for membrane proteins
+		vary_stepsize = true;
 	}
+
+	rigid::RigidBodyTransMoverOP mover;
 	
 	if (slide_axis_.length() != 0){
-		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_ ) );
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( slide_axis_, rb_jump_, vary_stepsize ) );
 	}
 	else{
-		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
+		mover = rigid::RigidBodyTransMoverOP( new rigid::RigidBodyTransMover( pose, rb_jump_, vary_stepsize ) );
 	}
 	( *scorefxn_ )( pose );
 
@@ -484,6 +526,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	TR << "Moving away" << std::endl;
 	core::Size const counter_breakpoint( 500 );
 	core::Size counter( 0 );
+	
 	// first try moving away from each other
 	while ( pose.energies().total_energies()[ scoring::interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
 		mover->apply( pose );
@@ -496,6 +539,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		return;
 	}
 	counter = 0;
+
 	// then try moving towards each other
 	TR << "Moving together" << std::endl;
 	mover->trans_axis().negate();
@@ -508,6 +552,24 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		TR<<"moving together failed. Aborting DockingSlideIntoContact."<<std::endl;
 		set_current_tag( "fail" );
 		return;
+	}
+
+	// if the stepsize was variable, do a few more tries with stepsize of 1, before
+	// moving it back out
+	counter = 0;
+	if ( mover->step_size() > 1.0 ){
+		TR << "step size of 1.0..." << std::endl;
+		TR << "interchain scores: " << pose.energies().total_energies()[ scoring::interchain_vdw ] << std::endl;
+		while ( counter <= 10 && pose.energies().total_energies()[ scoring::interchain_vdw ] < 0.1 ) {
+		
+			TR << "moving partners together" << std::endl;
+			TR << "interchain scores: " << pose.energies().total_energies()[ scoring::interchain_vdw ] << std::endl;
+			mover->vary_stepsize( false );
+			mover->step_size( 1.0 );
+			mover->apply( pose );
+			( *scorefxn_ )( pose );
+			++counter;
+		}
 	}
 	// move away again until just touching
 	mover->trans_axis().negate();
@@ -531,7 +593,6 @@ std::ostream &operator<< ( std::ostream & os, DockingSlideIntoContact const & mo
 	mover.show(os);
 	return os;
 }
-
 
 ////////////////////////////////////////// FaDockingSlideIntoContact ////////////////////////////////
 

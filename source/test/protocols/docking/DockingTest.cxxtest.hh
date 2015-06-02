@@ -215,7 +215,7 @@ public:
 
 		DockingSlideIntoContact slide( rb_jump );
 
-		protocols::rigid::RigidBodyTransMoverOP trans_mover( new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump) );
+		protocols::rigid::RigidBodyTransMoverOP trans_mover( new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump, false ) );
 		trans_mover->step_size(10.26);
 		trans_mover->apply(centroid_pose);
 		slide.apply( centroid_pose );

@@ -79,11 +79,11 @@ public:
 
 	/// @brief Default Constructor
 	/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-	MPDockingMover();
+	MPDockingMover( bool lowres=true, bool highres=true );
 
 	/// @brief Constructor with jump number to dock over
 	/// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-	MPDockingMover( Size jump_num );
+	MPDockingMover( Size jump_num, bool lowres=true, bool highres=true );
 	
 	/// @brief Copy Constructor
 	/// @details Create a deep copy of this mover
@@ -119,7 +119,15 @@ public: // methods
 	
 	/// @brief Get the name of this Mover (MPDockingMover)
 	virtual std::string get_name() const;
-		
+	
+	/// @brief Setters for the DockingProtocol
+	/// @details	These are set here because the mover doesn't inherit from
+	///				the DockingProtocol
+	void set_cycles_inner( Size cycles_inner );
+	
+	/// @brief Set outer cycles in DockingProtocol
+	void set_cycles_outer( Size cycles_outer );
+	
 	/// @brief Add membrane components to the pose, then dock proteins along
 	///			the flexible jump
 	virtual void apply( Pose & pose );
@@ -145,6 +153,10 @@ private: // data
 
 	// docking protocol
 	DockingProtocolOP docking_protocol_;
+	
+	// lowres and highres
+	bool lowres_;
+	bool highres_;
 
 	// scorefunction
 	ScoreFunctionOP lowres_scorefxn_;

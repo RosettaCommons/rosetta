@@ -183,7 +183,7 @@ public:
 		using protocols::rigid::RigidBodyTransMoverOP;
 		using protocols::rigid::RigidBodyTransMover;
 
-		RigidBodyTransMoverOP RB_mover( new RigidBodyTransMover(pose, rb_jump) );
+		RigidBodyTransMoverOP RB_mover( new RigidBodyTransMover(pose, rb_jump, false) );
 
 		/////////////////////////run
 		RB_mover->apply(pose);

@@ -372,11 +372,12 @@ public:
 	void angle_magnitude( float angle_magnitude );
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-
+	
 private:
 	float angle_magnitude_;
 };  // RigidBodyDeterministicSpinMover
 
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief This Mover translate down an axis.
 class RigidBodyTransMover : public RigidBodyMover {
@@ -385,16 +386,17 @@ public:
 
 public:
 	// default constructor
-	RigidBodyTransMover();
+	RigidBodyTransMover( bool vary_stepsize=false );
 
 	// constructor with arguments
 	RigidBodyTransMover(
 		core::pose::Pose const & pose_in,
-		int const rb_jump_in=1
+		int const rb_jump_in=1,
+		bool vary_stepsize=false
 	);
 	
 	// constructor with arguments that specify the trans axis
-	RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in=1 );
+	RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in=1, bool vary_stepsize=false );
 
 
 	virtual ~RigidBodyTransMover();
@@ -405,6 +407,8 @@ public:
 	void trans_axis( core::Vector trans_axis_in ) { trans_axis_ = trans_axis_in; }
 
 	void step_size( core::Real step_size_in ) { step_size_ = step_size_in; }
+	core::Real step_size() { return step_size_ ;}
+	void vary_stepsize( bool vary ) { vary_stepsize_ = vary; }
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -422,9 +426,12 @@ private:
 
 	core::Real step_size_;
 	core::Vector trans_axis_;
+	
+	bool vary_stepsize_;
 
 };  // class RigidBodyTransMover
 
+////////////////////////////////////////////////////////////////////////////////
 
 /// @brief Rigid-body move that evenly samples the space within a sphere
 class UniformSphereTransMover : public RigidBodyMover {

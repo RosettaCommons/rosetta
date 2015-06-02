@@ -343,13 +343,16 @@ public: // test functions
 	// split topology by jump
 	void test_split_topology_by_jump() {
 
-		TS_TRACE("Test average embeddings");
+		TS_TRACE("Test split topology by jump");
 		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
 		using namespace protocols::membrane::geometry;
 
 		// read in pose and create topology object
 		Pose pose, pose_up, pose_down;
 		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
+		AddMembraneMoverOP addmem9( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
+		addmem9->apply(pose);
 		
 		SpanningTopology topo = SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span" );
 		SpanningTopology topo_up, topo_down;
@@ -363,7 +366,35 @@ public: // test functions
 		TS_ASSERT_EQUALS( topo_down.span(1)->start(), 15 );
 		TS_ASSERT_EQUALS( topo_down.span(1)->end(), 33 );
 	}
-	
+
+	// split topology by jump
+	void test_split_topology_by_jump_noshift() {
+		
+		TS_TRACE("Test split topology by jump, no shift");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
+		AddMembraneMoverOP addmem10( new AddMembraneMover( "protocols/membrane/geometry/1AFO__tr.span" ) );
+		addmem10->apply(pose);
+		
+		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/geometry/1AFO__tr.span" ) );
+		SpanningTopologyOP topo_up( new SpanningTopology() );
+		SpanningTopologyOP topo_down( new SpanningTopology() );
+		
+		// call function
+		split_topology_by_jump_noshift( pose, 1, topo, topo_up, topo_down );
+		
+		// test
+		TS_ASSERT_EQUALS( topo_up->span(1)->start(), 15 );
+		TS_ASSERT_EQUALS( topo_up->span(1)->end(), 31 );
+		TS_ASSERT_EQUALS( topo_down->span(1)->start(), 55 );
+		TS_ASSERT_EQUALS( topo_down->span(1)->end(), 73 );
+	}
+
 		
 ////////////////////////////////////////////////////////////////////////////////
 

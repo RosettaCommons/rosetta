@@ -49,7 +49,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/mpdock.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/tag/Tag.hh>
@@ -83,8 +83,12 @@ using namespace basic::options::OptionKeys;
 
 /// @brief Default Constructor
 /// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-MPDockingMover::MPDockingMover() :
+MPDockingMover::MPDockingMover( bool lowres, bool highres ) :
 	protocols::moves::Mover(),
+	add_membrane_mover_( new AddMembraneMover() ),
+	docking_protocol_( new DockingProtocol() ),
+	lowres_( lowres ),
+	highres_( highres ),
 	center_(0, 0, 0),
 	normal_(0, 0, 1),
 	jump_num_( 1 )
@@ -92,8 +96,12 @@ MPDockingMover::MPDockingMover() :
 
 /// @brief Default Constructor
 /// @details Docks two proteins with default normal=(0,0,1) and center=(0,0,0)
-MPDockingMover::MPDockingMover( Size jump_num ) :
+MPDockingMover::MPDockingMover( Size jump_num, bool lowres, bool highres ) :
 	protocols::moves::Mover(),
+	add_membrane_mover_( new AddMembraneMover() ),
+	docking_protocol_( new DockingProtocol() ),
+	lowres_( lowres ),
+	highres_( highres ),
 	center_(0, 0, 0),
 	normal_(0, 0, 1),
 	jump_num_( jump_num )
@@ -103,8 +111,15 @@ MPDockingMover::MPDockingMover( Size jump_num ) :
 /// @brief Copy Constructor
 MPDockingMover::MPDockingMover( MPDockingMover const & src ) :
 	protocols::moves::Mover( src ), 
+	add_membrane_mover_( src.add_membrane_mover_ ),
+	docking_protocol_( src.docking_protocol_ ),
+	lowres_ ( src.lowres_ ),
+	highres_( src.highres_ ),
+	lowres_scorefxn_( src.lowres_scorefxn_ ),
+	highres_scorefxn_( src.highres_scorefxn_ ),
 	center_( src.center_ ),
-	normal_( src.normal_ )
+	normal_( src.normal_ ),
+	native_( src.native_ )
 {}
 
 /// @brief Destructor
@@ -194,6 +209,17 @@ MPDockingMover::get_name() const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// set inner cycles in DockingProtocol
+void MPDockingMover::set_cycles_inner( Size cycles_inner ) {
+	docking_protocol_->set_inner_cycles( cycles_inner );
+}
+
+// set outer cycles in DockingProtocol
+void MPDockingMover::set_cycles_outer( Size cycles_outer ) {
+	docking_protocol_->set_outer_cycles( cycles_outer );
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // sets default which can be overwritten by input flags
 void MPDockingMover::set_defaults( const Pose & pose ){
 
@@ -205,11 +231,22 @@ void MPDockingMover::set_defaults( const Pose & pose ){
 	// mpdocking_cen_14-7-23_no-penalties.wts
 	// mpdocking_fa_14-7-23_no-penalties.wts
 	// now I added the smooth term and took adjustments from MP fa score function
-	ScoreFunctionOP lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
-	ScoreFunctionOP highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
+	lowres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_cen_2015.wts" );
+	highres_scorefxn_ = ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 
-	// create new docking protocol; both low-res and high-res
-	docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	// set docking protocol
+	if ( lowres_ && highres_ ){
+		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	}
+	else if ( lowres_ && ! highres_ ){
+		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, true, false, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	}
+	else if ( ! lowres_ && highres_ ){
+		docking_protocol_ = DockingProtocolOP( new DockingProtocol( jump_num_, false, true, false, lowres_scorefxn_, highres_scorefxn_ ) );
+	}
+	else {
+		utility_exit_with_message( "You want to run the docking protocol neither in lowres nor in highres??? Quitting..." );
+	}
 	
 	// set native to pose, can be overwritten by flag -in:file:native
 	native_ = PoseOP( new Pose( pose ) );
@@ -222,8 +259,8 @@ void MPDockingMover::register_options(){
 	
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::docking::docking_local_refine );
-	option.add_relevant( OptionKeys::mpdock::weights_cen );
-	option.add_relevant( OptionKeys::mpdock::weights_fa );
+	option.add_relevant( OptionKeys::mp::dock::weights_cen );
+	option.add_relevant( OptionKeys::mp::dock::weights_fa );
 
 }// register options
 
@@ -244,17 +281,17 @@ void MPDockingMover::init_from_cmd(){
 	}
 
 	// read low-res weights
-	if ( option[OptionKeys::mpdock::weights_cen].user() ){
-		TR << "Weights for low-resolution step from flag -mpdock::weights_cen" << std::endl;
+	if ( option[OptionKeys::mp::dock::weights_cen].user() ){
+		TR << "Weights for low-resolution step from flag -mp::dock::weights_cen" << std::endl;
 		lowres_scorefxn_->reset();
-		lowres_scorefxn_->initialize_from_file( option[OptionKeys::mpdock::weights_cen].value_string() );
+		lowres_scorefxn_->initialize_from_file( option[OptionKeys::mp::dock::weights_cen].value_string() );
 	}
 	
 	// read high-res weights
-	if ( option[OptionKeys::mpdock::weights_fa].user() ){
-		TR << "Weights for high-resolution step from flag -mpdock::weights_fa" << std::endl;
+	if ( option[OptionKeys::mp::dock::weights_fa].user() ){
+		TR << "Weights for high-resolution step from flag -mp::dock::weights_fa" << std::endl;
 		highres_scorefxn_->reset();
-		highres_scorefxn_->initialize_from_file( option[OptionKeys::mpdock::weights_fa].value_string() );
+		highres_scorefxn_->initialize_from_file( option[OptionKeys::mp::dock::weights_fa].value_string() );
 	}
 
 }// init_from_cmd

@@ -2556,7 +2556,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		), # -loops:ccd' )
 	), # -loops
 
-	#New Membrane Protein Option group
+	#New Membrane Protein Option group (RosettaMP)
 	Option_Group( 'mp',
 
 		#Membrane options
@@ -2618,19 +2618,44 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'center', 'RealVector', desc="membrane center x,y,z" ),
 			Option( 'normal', 'RealVector', desc="membrane normal x,y,z" ),
 			Option( 'membrane_rsd', 'Real', desc="membrane residue number" ),
+
+			Option( 'transform_into_membrane', 'Boolean', desc="score_jd2: transform protein into fixed membrane before scoring; spanfile required" ),
 			Option( 'position_from_topo', 'Boolean', desc="determine a membrane position from the transmembrane spans of the protein" ),
 		),
+		
+		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
+		Option_Group( 'dock',
 
+			#Scoring options
+			Option( 'weights_cen', 'String', desc='Scorefunction for low-resolution step.'),
+			Option( 'weights_fa', 'String', desc='Scorefunction for high-resolution step.'),
+			Option( 'lowres', 'Boolean', desc='Use centroid score function for finding interface.'),
+			Option( 'highres', 'Boolean', desc='Use full-atom score function for finding interface.'),
+			Option( 'allow_flips', 'Boolean', desc='Allow partner 2 to flip in the membrane during global search. Default: yes.' ),
+			Option( 'flexible_bb', 'Boolean', desc='Do a flexible backbone docking: runs relax before and after docking.' ),
+
+		),
+		
+		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
+		Option_Group( 'quickrelax',
+
+			#Scoring options
+			Option( 'angle_max', 'Real', desc='Maximum allowed change in dihedral angles. Typical values around 1.'),
+			Option( 'nmoves', 'String', desc='Number of moves allowed. Typical value is close to the number of residues in the protein: [nres] is allowed value. '),
+
+		),
+
+		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
+		Option_Group( 'mutate_relax',
+
+			#Scoring options
+			Option( 'mutation', 'String', desc='Single mutation: Format: One-letter code / residue number / one-letter code. Example: A163F'),
+			Option( 'mutant_file', 'String', desc='Input file containing mutations'),
+			Option( 'iter', 'Integer', desc='Number of iterations to run. Typically 100.' )
+
+		),
 	),
 
-	#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
-	Option_Group( 'mpdock',
-
-		#Scoring options
-		Option( 'weights_cen', 'String', desc='Scorefunction for low-resolution step.'),
-		Option( 'weights_fa', 'String', desc='Scorefunction for high-resolution step.'),
-
-	),
 
 	# Old RosettaMembrane Option Group
 	# Last Modified: 1/12/14

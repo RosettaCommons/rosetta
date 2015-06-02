@@ -1996,6 +1996,21 @@ get_chain_residues(core::pose::Pose const & pose, core::Size const chain_id){
 	return residues;
 }
 
+/// @brief Is residue number in this chain?
+bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string chain ) {
+	
+	bool in_chain( false );
+	
+	Size chain_of_res = pose.chain( resnum );
+	Size chainid = get_chain_id_from_chain( chain[0], pose );
+
+	if ( chain_of_res == chainid ) {
+		in_chain = true;
+	}
+	
+	return in_chain;
+}
+
 char
 get_chain_from_chain_id(core::Size const & chain_id, core::pose::Pose const & pose){
 	core::Size first_chain_residue= pose.conformation().chain_begin( chain_id );

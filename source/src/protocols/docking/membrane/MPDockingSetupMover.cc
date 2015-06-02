@@ -29,8 +29,10 @@
 #include <core/conformation/membrane/util.hh>
 #include <protocols/membrane/geometry/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/FlipMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
+#include <protocols/simple_moves/AddChainMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
@@ -38,6 +40,7 @@
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
@@ -149,6 +152,7 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	using namespace core::conformation::membrane;
 	using namespace protocols::docking;
 	using namespace protocols::membrane;
+	using namespace protocols::simple_moves;
 
 	TR << "mpdocking_setup" << std::endl;
 	TR << "PLEASE MAKE SURE YOUR PDBS AND SPANFILES CORRESPOND TO EACH OTHER IN THE INPUT VECTORS!!!" << std::endl;
@@ -204,11 +208,14 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	SpanningTopologyOP total_topo( topo1 );
 	total_topo->concatenate_topology( *topo2 );
 	total_topo->write_spanfile("mpdocking_setup_out.span");
+	TR << "=== WROTE SPANFILE ===: mpdocking_setup_out.span" << std::endl;
 
 	// concatenate pose2_cp to end of pose1_cp, new chain yes
 	// pose1_cp is new master pose!!!
 	// this NEEDS to happen before the MEM virtual residue is attached!
 	core::pose::append_pose_to_pose( pose1_cp, pose2_cp, true );
+	bool renumber = renumber_pdbinfo_based_on_conf_chains( pose1_cp, true, true, false, true );
+	TR << "renumber successful? " << renumber << std::endl;
 
 	// add membrane, setup membrane object using known topology
 	AddMembraneMoverOP add_membrane3( new AddMembraneMover( topo1 ) );
@@ -225,7 +232,7 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	slide2contact->apply( pose1_cp );
 
 	pose1_cp.dump_pdb("mpdocking_setup_out.pdb");
-	TR << "=== DUMPED FINAL POSE ===" << std::endl;
+	TR << "=== DUMPED FINAL POSE ===: mpdocking_setup_out.pdb" << std::endl;
 	
 	// copy pose1_cp into the pose we are working with
 	pose = pose1_cp;
@@ -246,11 +253,11 @@ void MPDockingSetupMover::read_poses() {
 	}
 
 	// get filenames from option system
-	utility::vector1< std::string > pdbfiles = option[OptionKeys::in::file::s]();
+	utility::vector1< std::string > pdbs = option[OptionKeys::in::file::s]();
 
 	// put poses into private vector
-	for ( Size i = 1; i <= pdbfiles.size(); ++i ){
-		PoseOP pose = core::import_pose::pose_from_pdb( pdbfiles[i] );
+	for ( Size i = 1; i <= pdbs.size(); ++i ){
+		PoseOP pose = core::import_pose::pose_from_pdb( pdbs[i] );
 		poses_.push_back( pose );
 	}
 	
@@ -281,6 +288,12 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	// transform pose into membrane, false for viewing
 	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal, spanfile ) );
 	transform->apply( pose );
+	
+	// tilt pose slightly with random flip angle, default jump is membrane jump
+	FlipMoverOP flip( new FlipMover() );
+	flip->set_random_membrane_flip_angle();
+	flip->set_range( 30 );
+	flip->apply( pose );
 	
 }// transform pose into membrane
 	

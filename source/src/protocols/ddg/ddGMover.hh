@@ -47,8 +47,8 @@ public:
 	ddGMover();
 
 	ddGMover(
-		core::scoring::ScoreFunctionOP s,
-		core::scoring::ScoreFunctionOP m,
+		core::scoring::ScoreFunctionOP s,	// for scoring the pose?
+		core::scoring::ScoreFunctionOP m,	// for minimizing the pose?
 		utility::vector1<core::chemical::AA> res_to_mutate
 	);
 

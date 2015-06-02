@@ -42,6 +42,7 @@
 // Utility Headers
 #include <core/conformation/membrane/types.hh>
 #include <numeric/conversions.hh>
+#include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
@@ -127,7 +128,9 @@ FlipMover::FlipMover( Size jump_num, Vector axis, Real angle )
 FlipMover::FlipMover( FlipMover const & src ) : protocols::moves::Mover( src ),
 	jump_num_( src.jump_num_ ),
 	axis_( src.axis_ ),
-	angle_( src.angle_ )
+	angle_( src.angle_ ),
+	random_angle_( src.random_angle_ ),
+	max_angle_dev_( src.max_angle_dev_ )
 {}
 
 /// @brief Assignment Operator
@@ -214,6 +217,16 @@ void FlipMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	
 	TR << "Flipping along a jump in the membrane..." << std::endl;
+	
+	// if random angle, set it to random
+	if ( random_angle_ == true ) {
+		if ( max_angle_dev_ == 0 ) {
+			angle_ = numeric::random::random_range( 135, 225 );
+		}
+		else {
+			angle_ = numeric::random::random_range( 180 - max_angle_dev_, 180 + max_angle_dev_ );
+		}
+	}
 
 	// reorder foldtree
 	Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
@@ -291,6 +304,18 @@ void FlipMover::apply( Pose & pose ) {
 	
 }// apply
 
+/// @brief Set Random flip angle between 160 and 200 degrees to keep
+///			protein oriented in the membrane correctly
+void FlipMover::set_random_membrane_flip_angle() {
+	random_angle_ = true;
+} // set random membrane flip angle
+
+/// @brief Set angle range
+/// @details Maximum angle deviation from 180 degrees
+void FlipMover::set_range( Real max_angle_dev ) {
+	max_angle_dev_ = max_angle_dev;
+}
+
 /////////////////////
 /// Setup Methods ///
 /////////////////////
@@ -311,6 +336,10 @@ void FlipMover::set_defaults() {
 	// default rotation axis is x-axis
 	axis_.assign( 0, 0, 0 );
 	angle_ = 180;
+	
+	random_angle_ = false;
+	
+	max_angle_dev_ = 0;
 	
 }// set_defaults
 

@@ -79,41 +79,69 @@ using namespace protocols::moves;
 /////////////////////
 
 /// @brief Default Constructor
-/// @details uses default membrane coords: center(0,0,0), normal(0,0,15)
+/// @details uses default membrane coords: center(0,0,0), normal(0,0,15) and membrane jump
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
 	protocols::moves::Mover(),
-	fullatom_( true ), 
+	fullatom_( true ),
+	jump_( 0 ),
 	mem_center_( mem_center ),
 	mem_normal_( mem_normal )
-{
-	register_options();
-	init_from_cmd();
-}
+{}
+
+/// @brief Constructor that uses jump number for transformation
+/// @details uses membrane coords: center(0,0,0), normal(0,0,15);
+///				downstream jump will be transformed
+TransformIntoMembraneMover::TransformIntoMembraneMover( SSize jump ) :
+	protocols::moves::Mover(),
+	fullatom_( true ),
+	jump_( jump ),
+	mem_center_( mem_center ),
+	mem_normal_( mem_normal )
+{}
 
 /// @brief Custom Constructor - mainly for PyRosetta
 /// @details user can specify desired membrane coords
 ///		requires center and normal of the membrane into which the protein should be
 ///		moved to (NOT the coordinates of the protein relative to the membrane!!!)
+///		jump is membrane jump as default
 TransformIntoMembraneMover::TransformIntoMembraneMover(
-	 Vector center,
-	 Vector normal,
-	 std::string spanfile
-	 ) :
-	 protocols::moves::Mover(),
-	 fullatom_( true ), 
-	 mem_center_( center ),
-	 mem_normal_( normal ),
-	 spanfile_( spanfile )
-{
-	register_options();
-	init_from_cmd();
-}
-				
+		Vector center,
+		Vector normal,
+		std::string spanfile
+		) :
+	protocols::moves::Mover(),
+	fullatom_( true ),
+	jump_( 0 ),
+	mem_center_( center ),
+	mem_normal_( normal ),
+	spanfile_( spanfile )
+{}
+
+/// @brief Custom Constructor - mainly for PyRosetta
+/// @details user can specify desired membrane coords
+///		requires center and normal of the membrane into which the protein should be
+///		moved to (NOT the coordinates of the protein relative to the membrane!!!)
+///		jump is defined by user: downstream partner will be rotated
+TransformIntoMembraneMover::TransformIntoMembraneMover(
+		SSize jump,
+		Vector center,
+		Vector normal,
+		std::string spanfile
+		) :
+	protocols::moves::Mover(),
+	fullatom_( true ),
+	jump_( jump ),
+	mem_center_( center ),
+	mem_normal_( normal ),
+	spanfile_( spanfile )
+{}
+
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 TransformIntoMembraneMover::TransformIntoMembraneMover( TransformIntoMembraneMover const & src ) :
 	protocols::moves::Mover( src ), 
-	fullatom_( src.fullatom_ ), 
+	fullatom_( src.fullatom_ ),
+	jump_( src.jump_ ),
 	mem_center_( src.mem_center_ ),
 	mem_normal_( src.mem_normal_ ),
 	spanfile_( src.spanfile_ )
@@ -152,7 +180,12 @@ TransformIntoMembraneMover::parse_my_tag(
 	if ( tag->hasOption( "fullatom" ) ) {
 		fullatom_ = tag->getOption< bool >( "fullatom" );
 	}
-	
+
+	// Read in jump number
+	if ( tag->hasOption( "jumpnum" ) ) {
+		jump_ = tag->getOption< SSize >( "jumpnum" );
+	}
+
 	// Read in spanfile information
 	if ( tag->hasOption( "spanfile" ) ) {
 		spanfile_ = tag->getOption< std::string >( "spanfile" );
@@ -225,6 +258,16 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	
 	TR << "Transforming pose into membrane coordinates" << std::endl;
 
+	// initializations
+	register_options();
+	init_from_cmd();
+
+	// if jump not user-defined, take membrane jump: downstream partner will be transformed
+	if ( jump_ == 0 ) {
+		// membrane is upstream, pose downstream
+		jump_ = pose.conformation().membrane_info()->membrane_jump();
+	}
+
 	// reorder foldtree
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 	foldtree.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
@@ -237,12 +280,9 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	EmbeddingDefOP embedding = compute_structure_based_embedding( pose );
 	Vector old_center = embedding->center();
 	Vector old_normal = embedding->normal();
-	
-	// get membrane jump number: membrane is upstream, pose downstream
-	SSize jumpnum = pose.conformation().membrane_info()->membrane_jump();
-	
+		
 	// translate and rotate pose into membrane
-	TranslationRotationMoverOP rt( new TranslationRotationMover( old_center, old_normal, mem_center_, mem_normal_, jumpnum ) );
+	TranslationRotationMoverOP rt( new TranslationRotationMover( old_center, old_normal, mem_center_, mem_normal_, jump_ ) );
 	rt->apply( pose );
 
 }// apply

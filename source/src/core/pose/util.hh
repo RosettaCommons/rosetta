@@ -528,6 +528,9 @@ get_chain_from_jump_id(core::Size const & jump_id, core::pose::Pose const & pose
 core::conformation::ResidueCOPs
 get_chain_residues(core::pose::Pose const & pose, core::Size chain_id);
 
+/// @brief Is residue number in this chain?
+bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string chain );
+
 core::Size num_heavy_atoms(
 	core::Size begin,
 	core::Size const end,

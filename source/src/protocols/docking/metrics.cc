@@ -162,6 +162,56 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 }
 
 core::Real
+calc_P1rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps ){
+	using namespace core::scoring;
+	Real P1rmsd( 0 );
+	
+	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+		Size const rb_jump = *it;
+		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
+
+		/// this gets the wrong partner, therefore it is stored in a temporary
+		/// array and then the opposite is put in the actualy array that is used
+		/// for superpositioning.  there is probably a better way to do this
+		/// need to check TODO
+		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( temp_part( i ) ) superpos_partner( i )=true;
+			else superpos_partner( i ) = false;
+		}
+		
+		P1rmsd += core::scoring::rmsd_with_super_subset( native_pose, pose, superpos_partner, is_protein_backbone );
+	}
+	return P1rmsd;
+}
+
+core::Real
+calc_P2rmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, DockJumps const movable_jumps ){
+	using namespace core::scoring;
+	Real P2rmsd( 0 );
+	
+	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
+		Size const rb_jump = *it;
+		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
+		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
+
+		/// this gets the wrong partner, therefore it is stored in a temporary
+		/// array and then the opposite is put in the actualy array that is used
+		/// for superpositioning.  there is probably a better way to do this
+		/// need to check TODO
+		pose.fold_tree().partition_by_jump( rb_jump, temp_part );
+		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( temp_part( i ) ) superpos_partner( i )=false;
+			else superpos_partner( i ) = true;
+		}
+		
+		P2rmsd += core::scoring::rmsd_with_super_subset( native_pose, pose, superpos_partner, is_protein_backbone );
+	}
+	return P2rmsd;
+}
+
+core::Real
 calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose, const core::scoring::ScoreFunctionCOP dock_scorefxn, DockJumps const movable_jumps ) {
 	using namespace scoring;
 	Real Irmsd( 0 );

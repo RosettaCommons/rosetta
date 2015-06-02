@@ -399,32 +399,35 @@ void reorder_membrane_foldtree( pose::Pose & pose ) {
 	pose.fold_tree( foldtree );
 }
 
-/// @brief Calculates translation axis lying in the membrane (= projection of COM axis into the membrane plane)
-core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
+/// @brief Calculates translation axis lying in the membrane (= projection axis
+///			between embedding centers)
+core::Vector const membrane_axis( pose::Pose & pose, int jumpnum )
 {
-	using namespace rigid;
 	using namespace core::pose;
 	using namespace numeric;
+	using numeric::cross;
 
-	// get translation axis from mover that takes pose and jump
-	// axis is between COMs
-	RigidBodyTransMoverOP com_trans( new RigidBodyTransMover( pose, jumpnum ) );
-	core::Vector const com_axis( com_trans->trans_axis() );
-	TR.Debug << "com axis: " << com_axis.to_string() << std::endl;
+	// get embedding between partners
+	EmbeddingDef emb_up, emb_down;
+	update_partner_embeddings( pose, static_cast< core::Size > ( jumpnum ), emb_up, emb_down );
+	
+	// temporary axis is axis between partner embedding centers
+	// this doesn't need to be directly in the membrane plane.
+	// since we need this to be exactly in the membrane plane (since moving
+	// apart 100A or more can easily move things out of the membrane), we will
+	// compute the projection axis of the tmp_axis onto the membrane plane
+	core::Vector tmp_axis = emb_up.center() - emb_down.center();
 
 	// get membrane normal
-	core::Vector const normal( pose.conformation().membrane_info()->membrane_normal() );
+	core::Vector mem_normal = pose.conformation().membrane_info()->membrane_normal();
+	
+	// compute axis orthogonal to both tmp_axis and membrane normal
+	core::Vector ortho = cross( mem_normal, tmp_axis );
+	
+	// compute axis orthogonal to ortho and membrane normal
+	// core::Vector trans_axis = numeric::cross( ortho, mem_normal );
+	return cross( ortho, mem_normal );
 
-	// get cross-product between axis and membrane normal
-	// gives vector in membrane but perpendicular to the axis we want
-	core::Vector const in_membrane_axis = cross( com_axis, normal );
-
-	// get cross-product between this axis and the membrane normal
-	// should be axis that is the projection of the COM axis into the membrane plane
-	core::Vector const trans_axis = cross( in_membrane_axis, normal );
-	TR.Debug << "trans_axis: " << trans_axis.to_string() << std::endl;
-
-	return trans_axis;
 }// membrane axis
 
 /// @brief Splits the SpanningTopology object into two objects, depending on
@@ -433,6 +436,8 @@ core::Vector const membrane_axis( core::pose::Pose & pose, int jumpnum )
 ///			structure: this can now easily be accomplished by creating two
 ///			empty topology objects, call this function, and then use both topology
 ///			objects and subposes to call compute_structure_based_membrane_embedding
+///			BEWARE: this does not work for splitting topology by spans! It only works
+///			chainwise
 void split_topology_by_jump(
 		Pose const & pose,					// full pose
 		Size const jumpnum,					// jump number to split on
@@ -442,6 +447,10 @@ void split_topology_by_jump(
 		SpanningTopology & topo_up,			// topology of upstream pose
 		SpanningTopology & topo_down		// topology of downstream pose
 ) {
+	// can't split pose by membrane jump, partition_pose_by_jump function will fail
+	if ( jumpnum == static_cast< Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
+		utility_exit_with_message("Cannot split pose by membrane jump! Quitting...");
+	}
 
 	// split pose at jump, both new poses have residue numbering starting at 1!!!
 	partition_pose_by_jump( pose, jumpnum, pose_up, pose_down );
@@ -475,6 +484,84 @@ void split_topology_by_jump(
 	topo_down.show();
 }// split topology by jump
 
+/// @brief Splits the SpanningTopology object into two objects, depending on
+///			given jump number
+/// @details This doesn't shift the topology to start at 1 for each partner, it
+///				remains exactly the same as it would be for the complete pose, just split
+///			BEWARE: this does not work for splitting topology by spans! It only works
+///			chainwise
+void split_topology_by_jump_noshift(
+				pose::Pose const & pose,		// full pose
+				Size const jumpnum,				// jump number to split on
+				SpanningTopologyOP topo,	// topology to split
+				SpanningTopologyOP topo_up,		// topology of upstream pose
+				SpanningTopologyOP topo_down	// topology of downstream pose
+) {
+	// can't split pose by membrane jump, partition_pose_by_jump function will fail
+	if ( jumpnum == static_cast< Size > ( pose.conformation().membrane_info()->membrane_jump() ) ) {
+		utility_exit_with_message("Cannot split pose by membrane jump! Quitting...");
+	}
+
+	// MAKING ASSUMPTION THAT DOWNSTREAM PARTNER IS A SINGLE CHAIN!!!
+	// alternative implementation without making that assumption:
+	// = implement a function in the FoldTree that gives you all residues downstream
+	//   of a jump
+	// = go through entire pose and write a vector1<bool> per residue saying true
+	//   for downstream partner and false for upstream
+	
+	// find chain of downstream residue number
+	Size res_downstream = static_cast< Size > ( pose.fold_tree().downstream_jump_residue( jumpnum ) );
+	int chain_downstream = pose.chain( res_downstream );
+	
+	// go through TMspans
+	for ( Size i = 1; i <= topo->nspans(); ++i ) {
+		
+		// get start and end residues
+		Size start = topo->span( i )->start();
+		Size end = topo->span( i )->end();
+		
+		// if span is not in upstream partner, add to downstream topology
+		if ( pose.chain( start ) == chain_downstream ) {
+			topo_down->add_span( start, end, 0 );
+		}
+		
+		// else add to upstream topology
+		else {
+			topo_up->add_span( start, end, 0 );
+		}
+	}
+	
+//	TR << "topology of upward partner" << std::endl;
+//	topo_up.show();
+//	TR << "topology of downward partner" << std::endl;
+//	topo_down.show();
+}// split topology by jump, no shift in topology objects
+
+/// @brief Update embedding of the partners after a move
+/// @details Requires the jump number between the partners, the topology will
+///				be taken from MembraneInfo and will be split accordingly; up and
+///				down means upstream and downstream
+void update_partner_embeddings( pose::Pose const & pose, Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down ) {
+
+	// SpanningTopology objects
+	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo_up( new SpanningTopology() );	// upstream partner
+	SpanningTopologyOP topo_down( new SpanningTopology() ); // downstream partner
+	
+	// splitting topology by jump into upstream and downstream topology
+	split_topology_by_jump_noshift( pose, jumpnum, topo, topo_up, topo_down );
+	
+	// compute embedding for partners (compute structure-based embedding with split topologies)
+	EmbeddingDefOP emb1( compute_structure_based_embedding( pose, *topo_up ) );
+	EmbeddingDefOP emb2( compute_structure_based_embedding( pose, *topo_down ) );
+	
+	// create new embedding objects to be able to dereference the pointer
+	emb_up = EmbeddingDef( emb1->center(), emb1->normal() );
+	emb_down = EmbeddingDef( emb2->center(), emb2->normal() );
+	
+} // update partner embeddings
+
+	
 } // geometry
 } // membrane
 } // protocols
