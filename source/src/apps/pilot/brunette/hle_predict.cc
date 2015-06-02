@@ -25,7 +25,6 @@
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>
-#include <protocols/ss_prediction/SS_predictorFromSilents.hh>
 
 #include <ctime>
 #include <iostream>

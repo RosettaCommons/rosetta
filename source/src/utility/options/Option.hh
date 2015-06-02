@@ -106,6 +106,7 @@ protected: // Assignment
 	operator =( Option const & option )
 	{
 		if ( this != &option ){
+			is_group_ = option.is_group_;
 			been_accessed_ = option.been_accessed_;
 			restricted_access_ = option.restricted_access_;
 		}

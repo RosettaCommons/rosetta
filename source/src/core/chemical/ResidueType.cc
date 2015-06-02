@@ -2582,7 +2582,11 @@ ResidueType::update_derived_data()
 			//iwd  But if that child has no children, it ends up as its own abase2.
 			//iwd  So instead we use the second child of the parent,
 			//iwd  which must exist if there are 3+ atoms in this tree.
-			if(vd_to_index_.find( abase2_.find(ordered_atoms_[acceptor_position])->second )->second == acceptor_position ) {
+			std::map<VD, VD>::const_iterator  acc_abase2( abase2_.find(ordered_atoms_[acceptor_position]) );
+			debug_assert( acc_abase2 != abase2_.end() );
+			std::map<VD, Size>::const_iterator acc_abase2_index( vd_to_index_.find( acc_abase2->second ) );
+			debug_assert( acc_abase2_index != vd_to_index_.end() );
+			if( acc_abase2_index->second == acceptor_position ) {
 				AtomIndices const & i_base_nbrs(bonded_neighbor(acc_base) );
 				for(Size jj = 1, jj_end = i_base_nbrs.size(); jj <= jj_end; ++jj) {
 					if(i_base_nbrs[ jj ] != acceptor_position) {
@@ -2964,7 +2968,7 @@ ResidueType::atom_index( std::string const & name ) const
 		// chu temporary graphic fix for boinc
 		if ( name == "CA" && !is_protein() ) return 1;
 		#endif
-		if ( name == "CA" && is_membrane() ) return 2; 
+		if ( name == "CA" && is_membrane() ) return 2;
 		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;

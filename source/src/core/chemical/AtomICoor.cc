@@ -230,6 +230,7 @@ ICoorAtomID::xyz( conformation::Residue const & rsd ) const
 		return rsd.type().upper_connect().icoor().build( rsd );
 	} else if ( type_ == CONNECT ) {
 		return rsd.type().residue_connection( atomno_ ).icoor().build( rsd );
+	} else {
 		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 	return Vector( 0.0 ); //get rid of compiler warnings.

@@ -449,6 +449,8 @@ static const double expa2n2[] = {
   0.0 // underflow (also prevents reads past array end, below)
 };
 
+static const unsigned int expa2n2_length = 52;
+
 /////////////////////////////////////////////////////////////////////////
 
 cmplx w(cmplx z, double relerr) {
@@ -559,15 +561,7 @@ cmplx w(cmplx z, double relerr) {
     // Somewhat ugly copy-and-paste duplication here, but I see significant
     //   speedups from using the special-case code with the precomputed
     //   exponential, and the x < 5e-4 special case is needed for accuracy.
-	  
-	// AMW: cppcheck gives errors for the expa2n2 array accesses for good reason--
-	// there is no explicit insurance that we do not read past the end of the array
-	// it does not do so in practice only because the final term of the array is zero
-	// which means the final "coef" value is zero and the if test breaks
-	// (to me this is no better than including an or with the HARD CODED size of the array
-	// let alone the computed size. Anyone who cares can change this, but at least it's not
-	// a true problem at the moment.
-	  
+
     if (relerr == DBL_EPSILON) { // use precomputed exp(-a2*(n*n)) table
       if (x < 5e-4) { // compute sum4 and sum5 together as sum5-sum4
         const double x2 = x*x;
@@ -578,7 +572,7 @@ cmplx w(cmplx z, double relerr) {
           1 + ax2 * (1 + ax2 * (0.5 + 0.166666666666666666667*ax2));
         const double expm2ax =
           1 - ax2 * (1 - ax2 * (0.5 - 0.166666666666666666667*ax2));
-        for (int n = 1; 1; ++n) {
+        for (int n = 1; n <= int(expa2n2_length); ++n) {
           const double coef = expa2n2[n-1] * expx2 / (a2*(n*n) + y*y);
           prod2ax *= exp2ax;
           prodm2ax *= expm2ax;
@@ -595,7 +589,7 @@ cmplx w(cmplx z, double relerr) {
       } else { // x > 5e-4, compute sum4 and sum5 separately
         expx2 = exp(-x*x);
         const double exp2ax = exp((2*a)*x), expm2ax = 1 / exp2ax;
-        for (int n = 1; 1; ++n) {
+        for (int n = 1; n <= int(expa2n2_length); ++n) {
           const double coef = expa2n2[n-1] * expx2 / (a2*(n*n) + y*y);
           prod2ax *= exp2ax;
           prodm2ax *= expm2ax;

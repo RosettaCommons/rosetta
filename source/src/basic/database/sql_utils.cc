@@ -395,7 +395,7 @@ platform::SSize db_partition_from_options( DatabaseMode::e db_mode )
 	switch(db_mode)
 	{
 		case DatabaseMode::sqlite3:
-			if (!option[inout::dbms::database_partition].user()) 
+			if (!option[inout::dbms::database_partition].user())
 			{
 				return resolve_db_partition(
 						option[inout::dbms::separate_db_per_mpi_process]);
@@ -441,7 +441,7 @@ platform::SSize resolve_db_partition(
 	{
 		return manual_partition;
 	}
-	
+
 	return -1;
 }
 
@@ -454,7 +454,7 @@ statement safely_prepare_statement(
 	{
 		stmt = db_session->prepare(statement_string);
 		return stmt;
-	}catch(cppdb_error error)
+	}catch(cppdb_error const & error)
 	{
 		TR.Error << " Failed to safely prepare the following statement: " << std::endl;
 		TR.Error << statement_string << std::endl;
@@ -789,7 +789,7 @@ void write_schema_to_database(
 			try{
 				statement stmt = (*db_session) << trimmed_stmt_str + ";";
 				safely_write_to_database(stmt);
-			} catch (cppdb_error e) {
+			} catch (cppdb_error const & e) {
 				TR.Error
 					<< "ERROR reading schema \n"
 					<< trimmed_stmt_str << std::endl;
@@ -924,7 +924,7 @@ parse_database_connection(
 	}
 
 	utility::sql_database::DatabaseMode::e database_mode;
-	
+
 	if(tag->hasOption("database_mode")){
 		database_mode = utility::sql_database::database_mode_from_name(
 			tag->getOption<string>("database_mode"));
@@ -941,7 +941,7 @@ parse_database_connection(
 	}
 
 
-	// Parse pq_schema 
+	// Parse pq_schema
 	if(tag->hasOption("database_pq_schema") && (database_mode != utility::sql_database::DatabaseMode::postgres))
 	{
 		TR << "WARNING: You must specify 'database_mode=postgres' ";
@@ -955,7 +955,7 @@ parse_database_connection(
 		database_pq_schema = option[dbms::pq_schema];
 	}
 
-	
+
 	// Check for invalid tags
 	if(database_mode != utility::sql_database::DatabaseMode::sqlite3)
 	{
@@ -964,20 +964,20 @@ parse_database_connection(
 			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
 			TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
 		}
-		
+
 		if(tag->hasOption("database_partition"))
 		{
 			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
 			TR << "to use the 'database_partition' tag." << endl;
 		}
-		
+
 		if(tag->hasOption("database_read_only"))
 		{
 			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
 			TR << "to use the 'database_read_only tag." << endl;
 		}
 	}
-	
+
 	if(database_mode == utility::sql_database::DatabaseMode::sqlite3)
 	{
 		if(tag->hasOption("database_separate_db_per_mpi_process") && tag->hasOption("database_partition"))

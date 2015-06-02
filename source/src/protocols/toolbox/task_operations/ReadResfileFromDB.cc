@@ -113,7 +113,7 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	res >> resfile;
 	try{
 		parse_resfile_string(pose, task, resfile);
-	} catch(ResfileReaderException e){
+	} catch(ResfileReaderException const & e){
 		stringstream error_message;
 		error_message
 			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl

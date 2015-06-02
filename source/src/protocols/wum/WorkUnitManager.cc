@@ -195,6 +195,7 @@ bool WorkUnitManager::read_work_unit( WorkUnitBaseOP &qualified_wu,  std::istrea
 
 	if( raw_data_ptr[size_of_raw_data-1] != 0){
 		utility_exit_with_message( "  ERROR: cannot load data - terminal zero not found!" );
+		delete [] raw_data_ptr;
 		return false;
 	}
 	raw_data_ptr[size_of_raw_data-1] = 0;

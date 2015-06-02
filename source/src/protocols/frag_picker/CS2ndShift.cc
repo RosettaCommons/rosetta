@@ -141,10 +141,13 @@ CS2ndShift::CS2ndShift(CSTalosIO & input_data, bool use_sslimit) {
 
 			if (has_shift == true) {
 				if (sslimit.count(sequence[seqpos]) == 1) {
-					if (sslimit.find(sequence[seqpos])->second.count(shift_type.second) == 1) {
-
-						Real min( sslimit.find(sequence[seqpos])->second.find(shift_type.second)->second.first );
-						Real max( sslimit.find(sequence[seqpos])->second.find(shift_type.second)->second.second );
+					std::map<char,std::map<std::string,std::pair< Real, Real > > >::const_iterator sslimit_at_seqpos( sslimit.find(sequence[seqpos]) );
+					debug_assert( sslimit_at_seqpos != sslimit.end() );
+					if (sslimit_at_seqpos->second.count(shift_type.second) == 1) {
+						std::map<std::string,std::pair< Real, Real > >::const_iterator shift_type_itr( sslimit_at_seqpos->second.find(shift_type.second) );
+						debug_assert( shift_type_itr != sslimit_at_seqpos->second.end() );
+						Real min( shift_type_itr->second.first );
+						Real max( shift_type_itr->second.second );
 
 						// If use_sslimit == false, always accept
 						if ( ((shift_value >= min) && ( shift_value <= max )) || ( !use_sslimit) ) {

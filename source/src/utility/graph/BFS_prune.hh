@@ -82,7 +82,7 @@ void breadth_first_visit_prune
 			} // end for
 			boost::put(color, u, Color::black());          vis.finish_vertex(u, g);
 		} // end while
-	} catch ( EXCN_Stop_BFS e ) {
+	} catch ( EXCN_Stop_BFS const & e ) {
 		; // Do nothing. The exception was just there to cut through the remaining portions.
 	}
 
@@ -138,7 +138,7 @@ void breadth_first_search_prune
 			boost::put(color, *i, Color::white());
 		}
 		breadth_first_visit_prune(g, s, vis, color, Q);
-	} catch ( EXCN_Stop_BFS e ) {
+	} catch ( EXCN_Stop_BFS const & e ) {
 		; // Do nothing. Exception already halted.
 	}
 }

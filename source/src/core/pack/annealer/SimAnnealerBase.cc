@@ -280,7 +280,6 @@ core::PackerEnergy & SimAnnealerBase::bestenergy() { return bestenergy_;}
 bool SimAnnealerBase::start_with_current() const { return start_with_current_;}
 FArray1_int & SimAnnealerBase::current_rot_index() { return current_rot_index_;}
 FArray1_int const & SimAnnealerBase::current_rot_index() const  { return current_rot_index_;}
-bool & SimAnnealerBase::calc_rot_freq() { return calc_rot_freq_; }
 bool SimAnnealerBase::calc_rot_freq() const { return calc_rot_freq_; }
 FArray1D< core::PackerEnergy >& SimAnnealerBase::rot_freq() { return rot_freq_; }
 FArray1D< core::PackerEnergy > const & SimAnnealerBase::rot_freq() const { return rot_freq_; }

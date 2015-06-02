@@ -107,7 +107,6 @@ protected:
 	bool start_with_current() const;
 	ObjexxFCL::FArray1_int & current_rot_index();
 	ObjexxFCL::FArray1_int const & current_rot_index() const;
-	bool & calc_rot_freq();
 	bool calc_rot_freq() const;
 	ObjexxFCL::FArray1D< core::PackerEnergy >& rot_freq();
 	ObjexxFCL::FArray1D< core::PackerEnergy > const & rot_freq() const;

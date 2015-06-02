@@ -49,19 +49,16 @@ class RingDetection: public utility::graph::null_bfs_prune_visitor {
 	typedef typename boost::graph_traits<Graph>::edge_iterator EIter;
 	typedef typename boost::graph_traits<Graph>::out_edge_iterator OutEdgeIter;
 
-public:
 
 	//////////////////////////////////
 	// construction and destruction //
 	//////////////////////////////////
 
-	//! @brief default constructor
-	RingDetection() :
-	paths_(),
-	rings_(),
-	index_to_vd_(),
-	vd_to_index_()
-	{}
+private:
+	//! @brief default constructor - needs an initialization graph
+	RingDetection();
+
+public:
 
 	//! @brief constructor from a graph (either GraphWithData or ConstGraph)
 	//! @param graph graph for exhaustive ring detection

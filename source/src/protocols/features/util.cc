@@ -175,7 +175,7 @@ get_protocol_and_batch_id(
 
 			send_new_ids_to_head_node=true;
 			runtime_assert(protocol_id!=0);
-		} catch (cppdb_error error){
+		} catch (cppdb_error const & error){
 			stringstream err_msg;
 			err_msg
 				<< "Failed to set the protocol id for batch "
@@ -196,7 +196,7 @@ get_protocol_and_batch_id(
 
 			send_new_ids_to_head_node=true;
 			runtime_assert(batch_id!=0);
-		} catch (cppdb_error error){
+		} catch (cppdb_error const & error){
 			stringstream err_msg;
 			err_msg
 				<< "Failed to set the batch id for batch '" << batch_name << "' "
@@ -394,7 +394,7 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 	{
 		core::Size array_index = (atom_index - 1)*3;
 		numeric::xyzVector<core::Real> xyz_coords(residue.xyz(atom_index));
-		
+
 		coord_data[array_index] = xyz_coords.x();
 		coord_data[array_index + 1] = xyz_coords.y();
 		coord_data[array_index + 2] = xyz_coords.z();

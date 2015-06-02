@@ -180,8 +180,8 @@ public:
 		//       TR<<F(7,3,gatom[ig].x)<<" "<<F(7,3,gatom[ig].y)<<" "<<F(7,3,gatom[ig].z)<<std::endl;
 		//     }
 		//   }
-		delete gridc;
-		delete gindex;
+		delete [] gridc;
+		delete [] gindex;
 	}
 	virtual ~xyzStripeHashWithMeta() {
 		if(grid_atoms_)  delete grid_atoms_;
@@ -365,7 +365,7 @@ private:
 
 class xyzStripeHashWithMeta_float : public xyzStripeHashWithMeta<float>
 {
-	
+
 };
 
 } // namespace hashing
@@ -397,7 +397,7 @@ class xyzStripeHashWithMeta_float : public xyzStripeHashWithMeta<float>
 	// 		// return count;
 	// 		++(*this);
 	// 	}
-	// 	neighbor_iterator & operator++() { 
+	// 	neighbor_iterator & operator++() {
 	// 		using ObjexxFCL::format::I;
 	// 		while(iy < iyu){
 	// 			if(iz >= izu){

@@ -716,7 +716,6 @@ sources = {
 	],
 	"protocols/ss_prediction/":[
 		"SS_predictor",
-        #"SS_predictorFromSilents",
 	],
 	"protocols/toolbox": [
 		"AllowInsert",

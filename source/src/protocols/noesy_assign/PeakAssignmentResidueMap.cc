@@ -476,7 +476,7 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 					ResonanceList::Resonances const& retrieved( first_assignment.resonances().resonances_at_residue( *sit ) );
 					//					tr.Debug << resi << " " << resj << " resonance k @ " << *sit << std::endl;
 					copy( retrieved.begin(), retrieved.end(), back_inserter( resK ) );
-				} catch ( EXCN_UnknownResonance excn ) {
+				} catch ( EXCN_UnknownResonance const & excn ) {
 				}
 			}
 			//			for ( ResonanceList::Resonances::const_iterator itK = resK.begin(); itK != resK.end(); ++itK ) {
