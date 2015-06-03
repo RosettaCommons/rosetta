@@ -47,7 +47,9 @@ then
 	"%(minidir)s/src/utility/*.cc"   "%(minidir)s/src/utility/**/*.cc" \
 	-language=c++ -threshold=10 2>&1 \
 	| egrep -vf ../../ignore_list >> log
-	exit 0
+
+	python sort_simian_output.py
+	#exit 0
 
 else
 	echo 'Executable simian is not found, skipping code duplication test!' >log
