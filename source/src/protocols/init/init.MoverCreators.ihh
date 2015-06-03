@@ -63,6 +63,7 @@
 
 #include <protocols/cryst/cryst_movers_creator.hh>
 
+#include <protocols/denovo_design/connection/BridgeChainsCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>

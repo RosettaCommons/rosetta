@@ -13,6 +13,9 @@ sources = {
 	"protocols/denovo_design" : [
 		"util",
 	],
+	"protocols/denovo_design/connection" : [
+		"BridgeChains",
+	],
 	"protocols/denovo_design/movers" : [
 		"DisulfidizeMover",
 	],
