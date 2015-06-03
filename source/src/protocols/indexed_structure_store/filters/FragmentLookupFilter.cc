@@ -46,7 +46,11 @@ static thread_local basic::Tracer TR( "protocols.indexed_structure_store.filters
 using namespace core::indexed_structure_store;
 
 FragmentLookupFilter::FragmentLookupFilter() :
-  target_lookup_(/* NULL */)
+	target_lookup_(/* NULL */),
+	lookup_mode_(First),
+	target_chain_(0),
+	threshold_(0),
+	b_target_chain_(false)
 {
 }
 
