@@ -17,6 +17,7 @@
 // Unit headers
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <core/pack/task/PackerTask.hh>
 
 // Project headers
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
@@ -54,7 +55,7 @@ public:
 
 //	virtual void apply( core::pose::Pose & pose );
 
-	void
+	core::pack::task::PackerTaskOP
 	make_symmetric_task(
 		core::pose::Pose & pose,
 		core::pack::task::PackerTaskOP task

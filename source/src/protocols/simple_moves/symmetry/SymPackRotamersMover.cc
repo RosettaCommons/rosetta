@@ -22,12 +22,14 @@
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/make_symmetric_task.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+
 
 #include <core/pose/symmetry/util.hh>
 
@@ -149,7 +151,7 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
   }
   // in case PackerTask was not generated locally, verify compatibility with pose
   //else runtime_assert( task_is_valid( pose ) );
-	make_symmetric_task( pose, symmetric_task_ );
+	symmetric_task_ = make_symmetric_task( pose, symmetric_task_ );
 
 	symmetric_pack_rotamers_setup( pose, *( score_function() ), symmetric_task_, sym_rotamer_sets_, symmetric_ig_ );
 
@@ -161,14 +163,16 @@ core::PackerEnergy SymPackRotamersMover::run( pose::Pose & pose, utility::vector
 	return symmetric_pack_rotamers_run( pose, symmetric_task_, sym_rotamer_sets_, symmetric_ig_, rot_to_pack );
 }
 
-void
+task::PackerTaskOP
 SymPackRotamersMover::make_symmetric_task(
 	pose::Pose & pose,
 	task::PackerTaskOP task
 )
 {
 	assert( pose::symmetry::is_symmetric( pose ) );
-	if( task->symmetrize_by_union() || task->symmetrize_by_intersection() ) return; // new machinery
+    if( task->symmetrize_by_union() || task->symmetrize_by_intersection() ){
+				return make_new_symmetric_PackerTask_by_requested_method(pose,task);
+    } // new machinery
 
 	SymmetricConformation & SymmConf (
 		dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
@@ -180,7 +184,9 @@ SymPackRotamersMover::make_symmetric_task(
 			allow_repacked.at(res) = true;
 		}
 	}
-	task->restrict_to_residues( allow_repacked );
+    task::PackerTaskOP new_task ( task->clone() );
+	new_task->restrict_to_residues( allow_repacked );
+    return new_task;
 }
 
 protocols::moves::MoverOP SymPackRotamersMover::clone() const { return protocols::moves::MoverOP( new  SymPackRotamersMover( *this ) ); }
