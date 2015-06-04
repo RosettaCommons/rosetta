@@ -91,6 +91,7 @@ sources = {
 		"FeaturesReporterTests",
 		"InterfaceFeaturesTests",
 		"ProteinSilentReportTests",
+                "SandwichFeaturesTests",
 		"CoordSerializationTests",
 	],
 
@@ -492,6 +493,7 @@ testinputfiles = [
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
 	"features/2J88.pdb",
+        "features/3B83_nochain.pdb", # needed for SandwichFeaturesTests.cxxtest, I can't use 2J88 for this
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",
 	"forge/remodel/test.pdb",

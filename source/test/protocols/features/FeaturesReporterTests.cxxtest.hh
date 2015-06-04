@@ -46,13 +46,14 @@
 #include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
 #include <protocols/features/RotamerRecoveryFeatures.hh>
 #include <protocols/features/SaltBridgeFeatures.hh>
+#include <protocols/features/strand_assembly/SandwichFeatures.hh> // alphabetically reordered- doonam
+#include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
-#include <protocols/features/strand_assembly/SandwichFeatures.hh>
-#include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
+#include <protocols/features/TrajectoryReportToDB.hh> // alphabetically reordered- doonam
 #include <protocols/features/UnrecognizedAtomFeatures.hh>
 
-#include <protocols/features/TrajectoryReportToDB.hh>
+
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -142,9 +143,9 @@ public:
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new RotamerBoltzmannWeightFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new RotamerRecoveryFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new SaltBridgeFeatures() ));
-		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new StructureScoresFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new strand_assembly::SandwichFeatures() ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new strand_assembly::StrandBundleFeatures() ));
+		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new StructureScoresFeatures(score_function_) ));
 		features_reporters_.push_back(protocols::features::FeaturesReporterOP( new UnrecognizedAtomFeatures() ));
 
     // Use arbitrary outputtag and inputtag, instead of being dependent on getting this from JD2

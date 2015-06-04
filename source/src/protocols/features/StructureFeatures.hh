@@ -63,7 +63,7 @@ public:
 		utility::sql_database::sessionOP
 	) {
 		utility_exit_with_message(
-			"The score_type features reporter is a special feature reporter "
+			"The Structure features reporter is a special feature reporter "
 			" Please use the other interface for report_features");
 		return 0;
 	}

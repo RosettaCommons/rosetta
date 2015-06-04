@@ -9,7 +9,7 @@
 
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
 /// @brief Extract and analyze beta-sandwich features
-/// @author Doo Nam Kim (doonam.kim@gmail.com, started from Tim Jacobs' code)
+/// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
 /// @overview
 ///		@ task 0: Determine whether we deal with given pdb file
 ///		@ task 1: Identify all beta-strands
@@ -34,6 +34,7 @@
 ///				@ task 4-4: Write total size of sandwich
 ///		@ task 5: Write resfiles automatically
 
+//Devel
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
@@ -64,7 +65,6 @@ using cppdb::statement;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 
-
 //using core::id::NamedAtomID;
 //using numeric::xyzVector;
 
@@ -82,24 +82,9 @@ utility::vector1<std::string>
 SandwichFeatures::features_reporter_dependencies() const
 {
 	utility::vector1<std::string> dependencies;
-
-	dependencies.push_back("ProteinResidueConformationFeatures");
-
-	//dependencies.push_back("ResidueConformationFeatures");
-		/*
-		"protocols.features.ProteinResidueConformationFeatures: (3) In loading the residue coodinates, some of the residues did not have coordinates specified:
-		protocols.features.ProteinResidueConformationFeatures: (3) 	[181,]
-		protocols.features.ProteinResidueConformationFeatures: (3) This can
-		happen because you are using ProteinResidueConformationFeatures with a
-		structure that contains non-protein residues, for example. To avoid
-		this, extract with the ResidueConformationFeatures instead."
-		*/
-
-		// but format_converter regenerated pdb structures weirdly with 'ResidueConformationFeatures' 06/20/2014
-
-	dependencies.push_back("ResidueFeatures");
-	dependencies.push_back("ResidueScoresFeatures");
-	dependencies.push_back("ResidueSecondaryStructureFeatures");
+	dependencies.push_back("ResidueFeatures"); // needed for ResidueSecondaryStructureFeatures
+	dependencies.push_back("ResidueSecondaryStructureFeatures"); // needed for SecondaryStructureSegmentFeatures
+	dependencies.push_back("SecondaryStructureSegmentFeatures"); // needed for SandwichFeatures!
 
 	return dependencies;
 } //features_reporter_dependencies()
@@ -692,20 +677,49 @@ SandwichFeatures::parse_my_tag(
 	Pose const & /*pose*/
 )
 {
-	min_num_strands_to_deal_ = tag->getOption<core::Size>("min_num_strands_to_deal", 4);
-					// At least 4 strands should be in pdb file
-	max_num_strands_to_deal_ = tag->getOption<core::Size>("max_num_strands_to_deal", 140);
-					// example: (in all chains of 1FE8) There are 132 strands, it took ~ 7 cpu minutes to process
-	min_res_in_strand_ = tag->getOption<core::Size>("min_res_in_strand", 2);
-					// definition: minimum number of residues in a strand, for edge strand definition & analysis
-					// example: 4=< is recommended (in 1A8M) min_res_in_strand = 2, (in 1PMY) min_res_in_strand = 3
+	if( tag->hasOption( "min_num_strands_to_deal" ) ) {
+		min_num_strands_to_deal_ = tag->getOption<Size>("min_num_strands_to_deal", 4); //needed for development or custom use
+	} else {
+		min_num_strands_to_deal_ = 4; // needed for unit_test or default use
+	}
+		// At least 4 strands should be in pdb file
 
-	min_CA_CA_dis_ = tag->getOption<Real>("min_CA_CA_dis", 3.5);
-					// definition: minimum CA_CA_distance between strands in same sheet
-					// example: (in 1A8M) 'min_CA_CA_dis_= 3.5', (in 1KIT) 'min_CA_CA_dis_= 4.0'
 
-	max_CA_CA_dis_ = tag->getOption<Real>("max_CA_CA_dis", 6.2);
-					// example: (in 1A8M) 'max_CA_CA_dis_= 6.2', (in 1KIT) 'max_CA_CA_dis_= 5.7'
+	if( tag->hasOption( "max_num_strands_to_deal" ) ) {
+		max_num_strands_to_deal_ = tag->getOption<Size>("max_num_strands_to_deal", 140); //needed for development or custom use
+	} else {
+		max_num_strands_to_deal_ = 140; // needed for unit_test or default use
+	}
+		// example: (in all chains of 1FE8) There are 132 strands, it took ~ 7 cpu minutes to process
+
+
+
+	if( tag->hasOption( "min_res_in_strand" ) ) {
+		min_res_in_strand_ = tag->getOption<Size>("min_res_in_strand", 2); //needed for development or custom use
+	} else {
+		min_res_in_strand_ = 2; // needed for unit_test or default use
+	}
+		// definition: minimum number of residues in a strand, for edge strand definition & analysis
+		// example: 4=< is recommended (in 1A8M) min_res_in_strand = 2, (in 1PMY) min_res_in_strand = 3
+
+
+	if( tag->hasOption( "min_CA_CA_dis" ) ) {
+		min_CA_CA_dis_ = tag->getOption<Real>("min_CA_CA_dis", 3.5); //needed for development or custom use
+	} else {
+		min_CA_CA_dis_ = 3.5; // needed for unit_test or default use
+	}
+		// definition: minimum CA_CA_distance between strands in same sheet
+		// example: (in 1A8M) 'min_CA_CA_dis_= 3.5', (in 1KIT) 'min_CA_CA_dis_= 4.0'
+
+
+	if( tag->hasOption( "max_CA_CA_dis" ) ) {
+		max_CA_CA_dis_ = tag->getOption<Real>("max_CA_CA_dis", 6.2); //needed for development or custom use
+	} else {
+		max_CA_CA_dis_ = 6.2; // needed for unit_test or default use
+	}
+		// example: (in 1A8M) 'max_CA_CA_dis_= 6.2', (in 1KIT) 'max_CA_CA_dis_= 5.7'
+
+
 
 	min_N_O_dis_between_two_sheets_ = tag->getOption<Real>("min_N_O_dis_between_sheets", 3.3);
 					//	definition: min distance between bb N and bb O between two sheets
@@ -944,7 +958,9 @@ SandwichFeatures::report_features(
 {
 	try	// added try-catch according to rosetta/main/source/stubs/Application.cc
 	{
-			TR.Info << "======================= <begin> report_features =========================" << endl;
+			TR.Info << "======================= <begin> report_features of SandwichFeatures =========================" << endl;
+
+		unit_test_pass_identifier = 1; // assumed to pass unit_test now
 
 		string tag = get_tag(struct_id, db_session);
 		bool canonical_sw_extracted_from_this_pdb_file = false;
@@ -1035,7 +1051,9 @@ SandwichFeatures::report_features(
 
 		utility::vector1<SandwichFragment> all_strands = get_full_strands(struct_id, db_session);
 
+
 		if ((static_cast<core::Size>(all_strands.size()) < min_num_strands_to_deal_) || (static_cast<core::Size>(all_strands.size()) > max_num_strands_to_deal_)){
+
 				TR.Info << "Exit early since all_strands.size(): " << all_strands.size() << endl;
 			return 0;
 		}
@@ -1222,6 +1240,18 @@ SandwichFeatures::report_features(
 				continue;
 			}
 			Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
+
+			TR << "i: " << i << endl;
+			TR << "num_strands_i: " << num_strands_i << endl;
+
+			// <begin> unit_test specific for 3b83
+			if ((i == 1) && (num_strands_i != 3)){
+				unit_test_pass_identifier = 0;
+			}
+			if ((i == 2) && (num_strands_i != 5)){
+				unit_test_pass_identifier = 0;
+			}
+			// <end> unit_test specific for 3b83
 
 			if (num_strands_i < min_num_strands_in_sheet_)
 			{
@@ -1591,7 +1621,7 @@ SandwichFeatures::report_features(
 		{ // I think that mostly vec_sw_can_by_sh_id.size() = just 1
 				TR << "See whether 'sw_candidate_by_sheets_id = " << vec_sw_can_by_sh_id[ii] << " ' be a canonical beta-sandwich or not" << endl;
 
-			bool chance_of_being_canonical_sw	=	true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
+			chance_of_being_canonical_sw	=	true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
 			Size size_sandwich_PK_id =
 			get_size_sandwich_PK_id(
 				struct_id,
@@ -1918,9 +1948,11 @@ SandwichFeatures::report_features(
 			}
 
 				TR.Info << "chance_of_being_canonical_sw: " << chance_of_being_canonical_sw << endl;
+				if ((!unit_test_pass_identifier) || (!chance_of_being_canonical_sw)){
+					unit_test_pass_identifier = 0;
+				}
 
-			if (chance_of_being_canonical_sw)
-			{
+			if (chance_of_being_canonical_sw){
 				canonical_sw_extracted_from_this_pdb_file = true;
 
 				WriteToDB_starting_loop(
@@ -2220,8 +2252,7 @@ SandwichFeatures::report_features(
 		// <end> write rama of residue to a file
 
 		// <begin> write AA_distribution_without_direction to a file
-		if (write_loop_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
-		{
+		if (write_loop_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file){
 			write_AA_distribution_without_direction_to_a_file(
 				tag,
 				struct_id,
@@ -2231,8 +2262,7 @@ SandwichFeatures::report_features(
 
 
 		//// <begin> WriteToDB number_of_core_heading_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
-		if (count_AA_with_direction_ && canonical_sw_extracted_from_this_pdb_file)
-		{
+		if (count_AA_with_direction_ && canonical_sw_extracted_from_this_pdb_file){
 			WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 				struct_id,
 				db_session,
@@ -2246,11 +2276,9 @@ SandwichFeatures::report_features(
 
 
 		// <begin> write resfile automatically
-		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
+		if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file){
 		// (07/10/2014) This automatic resfile generation seems useful only for design with ramping repulsions, for PackRotamersMover & OffRotamerPack, this kind of resfile seems not needed.
-		{
-		  if (write_resfile_when_seq_rec_is_bad_)
-		    {
+		  if (write_resfile_when_seq_rec_is_bad_){
 			write_resfile_to_a_file_when_seq_rec_is_bad(
 				tag,
 				struct_id,	// needed argument
@@ -2294,7 +2322,15 @@ SandwichFeatures::report_features(
 	{
     	std::cout << "caught exception during SandwichFeatures" << e.msg() << std::endl;
 	}	//	catch
-	return 0;
+
+
+	// for unit_test, somehow hardcoded right now
+	if (unit_test_pass_identifier){
+		return 1; // passed well
+	}
+	else {
+		return 0; // something's wrong!
+	}
 
 } //SandwichFeatures::report_features
 

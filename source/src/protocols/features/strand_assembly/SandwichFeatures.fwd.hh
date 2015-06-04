@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/features/strand_assembly/SandwichFeatures.fwd.hh
-/// @brief
-/// @author Tim Jacobs
+/// @brief report sandwich data to database
+/// @author Doonam Kim
 
 #ifndef INCLUDED_protocols_features_strand_assembly_SandwichFeatures_fwd_hh
 #define INCLUDED_protocols_features_strand_assembly_SandwichFeatures_fwd_hh

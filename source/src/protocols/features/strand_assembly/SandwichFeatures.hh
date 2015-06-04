@@ -99,6 +99,9 @@ private:
 	Real
 	CB_b_factor_cutoff_for_electrostatic_interactions_;
 
+	bool
+	chance_of_being_canonical_sw;
+
 	std::string
 	check_N_to_C_direction_by_; // 1) PE: preceding_E's CA-CB vector,
 								// 2) FE: following_E's CA-CB vector,
@@ -143,6 +146,8 @@ private:
 
 	bool
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_;
+
+
 
 	bool
 	extract_sandwich_;
@@ -250,6 +255,8 @@ private:
 	int
 	primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_;
 
+	bool
+	unit_test_pass_identifier;
 
 	Real
 	wt_for_pro_in_starting_loop_;
