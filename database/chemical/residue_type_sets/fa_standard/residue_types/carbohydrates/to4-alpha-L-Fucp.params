@@ -25,17 +25,22 @@ ATOM  O6  VIRT VIRT  0.00  # allows for consistent chi angles
 # Hydrogens:
 ATOM  H1  Hapo  HA   0.09
 ATOM  HO1 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  HO1  H1O 
 ATOM  H2  Hapo  HA   0.09
 ATOM  HO2 Hpol  H    0.43
+ATOM_ALIAS  HO2  H2O 
 ATOM  H3  Hapo  HA   0.09
 ATOM  HO3 Hpol  H    0.43
+ATOM_ALIAS  HO3  H3O 
 ATOM  H4  Hapo  HA   0.09
 ATOM  HO4 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM_ALIAS  HO4  H4O 
 ATOM  H5  Hapo  HA   0.09
 ATOM 1H6  Hapo  HA   0.09
 ATOM 2H6  Hapo  HA   0.09
 ATOM 3H6  Hapo  HA   0.09
 ATOM  HO6 VIRT VIRT  0.00  # allows for consistent chi angles
+ATOM_ALIAS  HO6  H6O 
 
 LOWER_CONNECT C1
 UPPER_CONNECT O4

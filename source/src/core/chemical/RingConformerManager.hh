@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/RingConformerManager.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformerManager.
-/// @author  Labonte <JWLabonte@jhu.edu
+/// @author  Labonte <JWLabonte@jhu.edu>
 
 
 #ifndef INCLUDED_core_chemical_RingConformerManager_HH

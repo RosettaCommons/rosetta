@@ -49,7 +49,7 @@ public:
 	/// @brief string value of field, type of the field.
 	std::string type, value;
 
-	/// @brief begining position in line, ending postion in line
+	/// @brief beginning position in line, ending position in line
 	Size start, end;
 
 	/// @brief Debug output.

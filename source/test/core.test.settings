@@ -59,9 +59,9 @@ sources = {
 		"SymmDataLoader",
 		"SymmetricConformation",
 	],
-        "environment" : [
-                "FoldTreeSketch",
-        ],
+	"environment" : [
+		"FoldTreeSketch",
+	],
 	"fragment" : [
 		"BBTorsionSRFD",
 		"ConstantLengthFragments",
@@ -93,9 +93,11 @@ sources = {
 		"atom_tree_diff",
 	],
 	"io/pdb" : [
+		"alt_codes_io",
 		"Field",
 		"file_data_fixup",
 		"HeaderInformationTests",
+		"NomenclatureManagerTests",
 	],
 	"io/silent" : [
 		"binary_protein_silent",

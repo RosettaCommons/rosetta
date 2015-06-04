@@ -25,13 +25,18 @@ ATOM  O4  OH   OH1  -0.65
 ATOM 1H1  Hapo  HA   0.05
 ATOM 2H1  Hapo  HA   0.05
 ATOM  HO1 Hpol  H    0.40
+ATOM_ALIAS  HO1  H1O 
 ATOM  HO2 VIRT VIRT  0.00  # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  HO2  H2O 
 ATOM  H3  Hapo  HA   0.05
 ATOM  HO3 Hpol  H    0.40
+ATOM_ALIAS  HO3  H3O 
 ATOM  H4  Hapo  HA   0.05
 ATOM  HO4 Hpol  H    0.40
+ATOM_ALIAS  HO4  H4O 
 ATOM  H5  Hapo  HA   0.05
 ATOM  HO5 VIRT VIRT  0.00  # to next residue; allows for consistent chi angles
+ATOM_ALIAS  HO5  H5O 
 ATOM 1H6  Hapo  HA   0.05
 ATOM 2H6  Hapo  HA   0.05
 

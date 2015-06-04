@@ -56,7 +56,7 @@ public:
 	static Record mapStringToRecord(const String & s);
 
 
-	/// @brief Reverse opearation - create PDB string from given Record
+	/// @brief Reverse operation - create PDB string from given Record
 	static String createPDBString(const Record & R);
 
 
@@ -64,22 +64,22 @@ public:
 	static std::vector<Record> parse(const String &);
 
 
-	/// @brief create File data sturcture from array of Records. 
+	/// @brief create File data structure from array of Records.
 	static FileData createFileData(std::vector<Record> &);
 
-	/// @brief create File data sturcture from array of Records and a set of options. 
+	/// @brief create File data structure from array of Records and a set of options.
 	static FileData createFileData(std::vector<Record> &, PDB_DReaderOptions const & options);
 
-	/// @brief create File data sturcture from string containing PDB information.
+	/// @brief create File data structure from string containing PDB information.
 	static FileData createFileData(const String & data);
 
-	/// @brief create File data sturcture from string containing PDB information and a set of options.
+	/// @brief create File data structure from string containing PDB information and a set of options.
 	static FileData createFileData(const String & data, PDB_DReaderOptions const & options);
 	
 	/// @brief create PDB-like string to represent given FileData object
 	static String createPDBData(FileData const &fd);
 
-	/// @brief create PDB-like vector of string to represent given FileData object.
+	/// @brief create PDB-like vector of strings to represent given FileData object.
 	static utility::vector1< std::string > createPDBData_vector(FileData const & fd );
 
 

@@ -4,3 +4,4 @@
 -mute all
 -unmute core.chemical.carbohydrates
 -override_rsd_type_limit
+-alternate_3_letter_codes glycam

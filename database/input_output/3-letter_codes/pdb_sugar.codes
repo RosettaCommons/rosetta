@@ -1,0 +1,14 @@
+# A list of 3-letter codes for monosaccharide residues in the PDB and their
+# Rosetta equivalents, including default Rosetta HETNAM descriptions, which
+# may be overridden by conflicting information from LINK records.
+
+# To allow these codes, use the options flag
+# -alternate_3_letter_codes pdb_sugar.codes
+
+# CODES ARE CASE-SENSITIVE!
+
+# Code  Rosetta Code  Default HETNAM
+  GLC   Glc           ->4)-alpha-D-Glcp
+  MAN   Man           ->4)-alpha-D-Manp
+
+# (just a few test cases for now... ~Labonte)

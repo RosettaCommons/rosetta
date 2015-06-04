@@ -1,0 +1,269 @@
+# A list of 3-letter GLYCAM codes for monosaccharide residues and their
+# Rosetta equivalents, including default Rosetta HETNAM descriptions, which
+# may be overridden by conflicting information from LINK records.
+
+# To allow these codes, use the options flag
+# -alternate_3_letter_codes glycam.codes
+
+# See DeMarco & Woods (2008) Glycobiology, 18(6), 426-40 for more information.
+
+# CODES ARE CASE-SENSITIVE!
+
+# Code  Rosetta Code  Default HETNAM
+  0GA   Glc           ->4)-alpha-D-Glcp  # terminal
+  1GA   Glc           ->1)-alpha-D-Glcp
+  2GA   Glc           ->2)-alpha-D-Glcp
+  3GA   Glc           ->3)-alpha-D-Glcp
+  4GA   Glc           ->4)-alpha-D-Glcp
+  5GA   Glc           ->5)-alpha-D-Glcp
+  6GA   Glc           ->6)-alpha-D-Glcp
+  ZGA   Glc           ->2)-alpha-D-Glcp  # 2,3
+  YGA   Glc           ->2)-alpha-D-Glcp  # 2,4
+  OGA   Glc           ->2)-alpha-D-Glcp  # 2,5
+  XGA   Glc           ->2)-alpha-D-Glcp  # 2,6
+  WGA   Glc           ->3)-alpha-D-Glcp  # 3,4
+  NGA   Glc           ->3)-alpha-D-Glcp  # 3,5
+  VGA   Glc           ->3)-alpha-D-Glcp  # 3,6
+# ?GA   Glc           ->4)-alpha-D-Glcp  # 4,5
+  UGA   Glc           ->4)-alpha-D-Glcp  # 4,6
+  MGA   Glc           ->5)-alpha-D-Glcp  # 5,6
+  TGA   Glc           ->2)-alpha-D-Glcp  # 2,3,4
+  LGA   Glc           ->2)-alpha-D-Glcp  # 2,3,5
+  SGA   Glc           ->2)-alpha-D-Glcp  # 2,3,6
+# ?GA   Glc           ->2)-alpha-D-Glcp  # 2,4,5
+  RGA   Glc           ->2)-alpha-D-Glcp  # 2,4,6
+  KGA   Glc           ->2)-alpha-D-Glcp  # 2,5,6
+# ?GA   Glc           ->3)-alpha-D-Glcp  # 3,4,5
+  QGA   Glc           ->3)-alpha-D-Glcp  # 3,4,6
+  JGA   Glc           ->3)-alpha-D-Glcp  # 3,5,6
+# ?GA   Glc           ->2)-alpha-D-Glcp  # 2,3,4,5
+  PGA   Glc           ->2)-alpha-D-Glcp  # 2,3,4,6
+  IGA   Glc           ->2)-alpha-D-Glcp  # 2,3,5,6
+# ?GA   Glc           ->2)-alpha-D-Glcp  # 2,4,5,6
+# ?GA   Glc           ->3)-alpha-D-Glcp  # 3,4,5,6
+
+  0GB   Glc           ->4)-beta-D-Glcp  # terminal
+  1GB   Glc           ->1)-beta-D-Glcp
+  2GB   Glc           ->2)-beta-D-Glcp
+  3GB   Glc           ->3)-beta-D-Glcp
+  4GB   Glc           ->4)-beta-D-Glcp
+  5GB   Glc           ->5)-beta-D-Glcp
+  6GB   Glc           ->6)-beta-D-Glcp
+  ZGB   Glc           ->2)-beta-D-Glcp  # 2,3
+  YGB   Glc           ->2)-beta-D-Glcp  # 2,4
+  OGB   Glc           ->2)-beta-D-Glcp  # 2,5
+  XGB   Glc           ->2)-beta-D-Glcp  # 2,6
+  WGB   Glc           ->3)-beta-D-Glcp  # 3,4
+  NGB   Glc           ->3)-beta-D-Glcp  # 3,5
+  VGB   Glc           ->3)-beta-D-Glcp  # 3,6
+# ?GB   Glc           ->4)-beta-D-Glcp  # 4,5
+  UGB   Glc           ->4)-beta-D-Glcp  # 4,6
+  MGB   Glc           ->5)-beta-D-Glcp  # 5,6
+  TGB   Glc           ->2)-beta-D-Glcp  # 2,3,4
+  LGB   Glc           ->2)-beta-D-Glcp  # 2,3,5
+  SGB   Glc           ->2)-beta-D-Glcp  # 2,3,6
+# ?GB   Glc           ->2)-beta-D-Glcp  # 2,4,5
+  RGB   Glc           ->2)-beta-D-Glcp  # 2,4,6
+  KGB   Glc           ->2)-beta-D-Glcp  # 2,5,6
+# ?GB   Glc           ->3)-beta-D-Glcp  # 3,4,5
+  QGB   Glc           ->3)-beta-D-Glcp  # 3,4,6
+  JGB   Glc           ->3)-beta-D-Glcp  # 3,5,6
+# ?GB   Glc           ->2)-beta-D-Glcp  # 2,3,4,5
+  PGB   Glc           ->2)-beta-D-Glcp  # 2,3,4,6
+  IGB   Glc           ->2)-beta-D-Glcp  # 2,3,5,6
+# ?GB   Glc           ->2)-beta-D-Glcp  # 2,4,5,6
+# ?GB   Glc           ->3)-beta-D-Glcp  # 3,4,5,6
+
+  0gA   Glc           ->4)-alpha-L-Glcp  # terminal
+  1gA   Glc           ->1)-alpha-L-Glcp
+  2gA   Glc           ->2)-alpha-L-Glcp
+  3gA   Glc           ->3)-alpha-L-Glcp
+  4gA   Glc           ->4)-alpha-L-Glcp
+  5gA   Glc           ->5)-alpha-L-Glcp
+  6gA   Glc           ->6)-alpha-L-Glcp
+  ZgA   Glc           ->2)-alpha-L-Glcp  # 2,3
+  YgA   Glc           ->2)-alpha-L-Glcp  # 2,4
+  OgA   Glc           ->2)-alpha-L-Glcp  # 2,5
+  XgA   Glc           ->2)-alpha-L-Glcp  # 2,6
+  WgA   Glc           ->3)-alpha-L-Glcp  # 3,4
+  NgA   Glc           ->3)-alpha-L-Glcp  # 3,5
+  VgA   Glc           ->3)-alpha-L-Glcp  # 3,6
+# ?gA   Glc           ->4)-alpha-L-Glcp  # 4,5
+  UgA   Glc           ->4)-alpha-L-Glcp  # 4,6
+  MgA   Glc           ->5)-alpha-L-Glcp  # 5,6
+  TgA   Glc           ->2)-alpha-L-Glcp  # 2,3,4
+  LgA   Glc           ->2)-alpha-L-Glcp  # 2,3,5
+  SgA   Glc           ->2)-alpha-L-Glcp  # 2,3,6
+# ?gA   Glc           ->2)-alpha-L-Glcp  # 2,4,5
+  RgA   Glc           ->2)-alpha-L-Glcp  # 2,4,6
+  KgA   Glc           ->2)-alpha-L-Glcp  # 2,5,6
+# ?gA   Glc           ->3)-alpha-L-Glcp  # 3,4,5
+  QgA   Glc           ->3)-alpha-L-Glcp  # 3,4,6
+  JgA   Glc           ->3)-alpha-L-Glcp  # 3,5,6
+# ?gA   Glc           ->2)-alpha-L-Glcp  # 2,3,4,5
+  PgA   Glc           ->2)-alpha-L-Glcp  # 2,3,4,6
+  IgA   Glc           ->2)-alpha-L-Glcp  # 2,3,5,6
+# ?gA   Glc           ->2)-alpha-L-Glcp  # 2,4,5,6
+# ?gA   Glc           ->3)-alpha-L-Glcp  # 3,4,5,6
+
+  0gB   Glc           ->4)-beta-L-Glcp  # terminal
+  1gB   Glc           ->1)-beta-L-Glcp
+  2gB   Glc           ->2)-beta-L-Glcp
+  3gB   Glc           ->3)-beta-L-Glcp
+  4gB   Glc           ->4)-beta-L-Glcp
+  5gB   Glc           ->5)-beta-L-Glcp
+  6gB   Glc           ->6)-beta-L-Glcp
+  ZgB   Glc           ->2)-beta-L-Glcp  # 2,3
+  YgB   Glc           ->2)-beta-L-Glcp  # 2,4
+  OgB   Glc           ->2)-beta-L-Glcp  # 2,5
+  XgB   Glc           ->2)-beta-L-Glcp  # 2,6
+  WgB   Glc           ->3)-beta-L-Glcp  # 3,4
+  NgB   Glc           ->3)-beta-L-Glcp  # 3,5
+  VgB   Glc           ->3)-beta-L-Glcp  # 3,6
+# ?gB   Glc           ->4)-beta-L-Glcp  # 4,5
+  UgB   Glc           ->4)-beta-L-Glcp  # 4,6
+  MgB   Glc           ->5)-beta-L-Glcp  # 5,6
+  TgB   Glc           ->2)-beta-L-Glcp  # 2,3,4
+  LgB   Glc           ->2)-beta-L-Glcp  # 2,3,5
+  SgB   Glc           ->2)-beta-L-Glcp  # 2,3,6
+# ?gB   Glc           ->2)-beta-L-Glcp  # 2,4,5
+  RgB   Glc           ->2)-beta-L-Glcp  # 2,4,6
+  KgB   Glc           ->2)-beta-L-Glcp  # 2,5,6
+# ?gB   Glc           ->3)-beta-L-Glcp  # 3,4,5
+  QgB   Glc           ->3)-beta-L-Glcp  # 3,4,6
+  JgB   Glc           ->3)-beta-L-Glcp  # 3,5,6
+# ?gB   Glc           ->2)-beta-L-Glcp  # 2,3,4,5
+  PgB   Glc           ->2)-beta-L-Glcp  # 2,3,4,6
+  IgB   Glc           ->2)-beta-L-Glcp  # 2,3,5,6
+# ?gB   Glc           ->2)-beta-L-Glcp  # 2,4,5,6
+# ?gB   Glc           ->3)-beta-L-Glcp  # 3,4,5,6
+
+  0Ga   Glc           ->4)-alpha-D-Glcf  # terminal
+  1Ga   Glc           ->1)-alpha-D-Glcf
+  2Ga   Glc           ->2)-alpha-D-Glcf
+  3Ga   Glc           ->3)-alpha-D-Glcf
+  4Ga   Glc           ->4)-alpha-D-Glcf
+  5Ga   Glc           ->5)-alpha-D-Glcf
+  6Ga   Glc           ->6)-alpha-D-Glcf
+  ZGa   Glc           ->2)-alpha-D-Glcf  # 2,3
+  YGa   Glc           ->2)-alpha-D-Glcf  # 2,4
+  OGa   Glc           ->2)-alpha-D-Glcf  # 2,5
+  XGa   Glc           ->2)-alpha-D-Glcf  # 2,6
+  WGa   Glc           ->3)-alpha-D-Glcf  # 3,4
+  NGa   Glc           ->3)-alpha-D-Glcf  # 3,5
+  VGa   Glc           ->3)-alpha-D-Glcf  # 3,6
+# ?Ga   Glc           ->4)-alpha-D-Glcf  # 4,5
+  UGa   Glc           ->4)-alpha-D-Glcf  # 4,6
+  MGa   Glc           ->5)-alpha-D-Glcf  # 5,6
+  TGa   Glc           ->2)-alpha-D-Glcf  # 2,3,4
+  LGa   Glc           ->2)-alpha-D-Glcf  # 2,3,5
+  SGa   Glc           ->2)-alpha-D-Glcf  # 2,3,6
+# ?Ga   Glc           ->2)-alpha-D-Glcf  # 2,4,5
+  RGa   Glc           ->2)-alpha-D-Glcf  # 2,4,6
+  KGa   Glc           ->2)-alpha-D-Glcf  # 2,5,6
+# ?Ga   Glc           ->3)-alpha-D-Glcf  # 3,4,5
+  QGa   Glc           ->3)-alpha-D-Glcf  # 3,4,6
+  JGa   Glc           ->3)-alpha-D-Glcf  # 3,5,6
+# ?Ga   Glc           ->2)-alpha-D-Glcf  # 2,3,4,5
+  PGa   Glc           ->2)-alpha-D-Glcf  # 2,3,4,6
+  IGa   Glc           ->2)-alpha-D-Glcf  # 2,3,5,6
+# ?Ga   Glc           ->2)-alpha-D-Glcf  # 2,4,5,6
+# ?Ga   Glc           ->3)-alpha-D-Glcf  # 3,4,5,6
+
+  0Gb   Glc           ->4)-beta-D-Glcf  # terminal
+  1Gb   Glc           ->1)-beta-D-Glcf
+  2Gb   Glc           ->2)-beta-D-Glcf
+  3Gb   Glc           ->3)-beta-D-Glcf
+  4Gb   Glc           ->4)-beta-D-Glcf
+  5Gb   Glc           ->5)-beta-D-Glcf
+  6Gb   Glc           ->6)-beta-D-Glcf
+  ZGb   Glc           ->2)-beta-D-Glcf  # 2,3
+  YGb   Glc           ->2)-beta-D-Glcf  # 2,4
+  OGb   Glc           ->2)-beta-D-Glcf  # 2,5
+  XGb   Glc           ->2)-beta-D-Glcf  # 2,6
+  WGb   Glc           ->3)-beta-D-Glcf  # 3,4
+  NGb   Glc           ->3)-beta-D-Glcf  # 3,5
+  VGb   Glc           ->3)-beta-D-Glcf  # 3,6
+# ?Gb   Glc           ->4)-beta-D-Glcf  # 4,5
+  UGb   Glc           ->4)-beta-D-Glcf  # 4,6
+  MGb   Glc           ->5)-beta-D-Glcf  # 5,6
+  TGb   Glc           ->2)-beta-D-Glcf  # 2,3,4
+  LGb   Glc           ->2)-beta-D-Glcf  # 2,3,5
+  SGb   Glc           ->2)-beta-D-Glcf  # 2,3,6
+# ?Gb   Glc           ->2)-beta-D-Glcf  # 2,4,5
+  RGb   Glc           ->2)-beta-D-Glcf  # 2,4,6
+  KGb   Glc           ->2)-beta-D-Glcf  # 2,5,6
+# ?Gb   Glc           ->3)-beta-D-Glcf  # 3,4,5
+  QGb   Glc           ->3)-beta-D-Glcf  # 3,4,6
+  JGb   Glc           ->3)-beta-D-Glcf  # 3,5,6
+# ?Gb   Glc           ->2)-beta-D-Glcf  # 2,3,4,5
+  PGb   Glc           ->2)-beta-D-Glcf  # 2,3,4,6
+  IGb   Glc           ->2)-beta-D-Glcf  # 2,3,5,6
+# ?Gb   Glc           ->2)-beta-D-Glcf  # 2,4,5,6
+# ?Gb   Glc           ->3)-beta-D-Glcf  # 3,4,5,6
+
+  0ga   Glc           ->4)-alpha-L-Glcf  # terminal
+  1ga   Glc           ->1)-alpha-L-Glcf
+  2ga   Glc           ->2)-alpha-L-Glcf
+  3ga   Glc           ->3)-alpha-L-Glcf
+  4ga   Glc           ->4)-alpha-L-Glcf
+  5ga   Glc           ->5)-alpha-L-Glcf
+  6ga   Glc           ->6)-alpha-L-Glcf
+  Zga   Glc           ->2)-alpha-L-Glcf  # 2,3
+  Yga   Glc           ->2)-alpha-L-Glcf  # 2,4
+  Oga   Glc           ->2)-alpha-L-Glcf  # 2,5
+  Xga   Glc           ->2)-alpha-L-Glcf  # 2,6
+  Wga   Glc           ->3)-alpha-L-Glcf  # 3,4
+  Nga   Glc           ->3)-alpha-L-Glcf  # 3,5
+  Vga   Glc           ->3)-alpha-L-Glcf  # 3,6
+# ?ga   Glc           ->4)-alpha-L-Glcf  # 4,5
+  Uga   Glc           ->4)-alpha-L-Glcf  # 4,6
+  Mga   Glc           ->5)-alpha-L-Glcf  # 5,6
+  Tga   Glc           ->2)-alpha-L-Glcf  # 2,3,4
+  Lga   Glc           ->2)-alpha-L-Glcf  # 2,3,5
+  Sga   Glc           ->2)-alpha-L-Glcf  # 2,3,6
+# ?ga   Glc           ->2)-alpha-L-Glcf  # 2,4,5
+  Rga   Glc           ->2)-alpha-L-Glcf  # 2,4,6
+  Kga   Glc           ->2)-alpha-L-Glcf  # 2,5,6
+# ?ga   Glc           ->3)-alpha-L-Glcf  # 3,4,5
+  Qga   Glc           ->3)-alpha-L-Glcf  # 3,4,6
+  Jga   Glc           ->3)-alpha-L-Glcf  # 3,5,6
+# ?ga   Glc           ->2)-alpha-L-Glcf  # 2,3,4,5
+  Pga   Glc           ->2)-alpha-L-Glcf  # 2,3,4,6
+  Iga   Glc           ->2)-alpha-L-Glcf  # 2,3,5,6
+# ?ga   Glc           ->2)-alpha-L-Glcf  # 2,4,5,6
+# ?ga   Glc           ->3)-alpha-L-Glcf  # 3,4,5,6
+
+  0gb   Glc           ->4)-beta-L-Glcf  # terminal
+  1gb   Glc           ->1)-beta-L-Glcf
+  2gb   Glc           ->2)-beta-L-Glcf
+  3gb   Glc           ->3)-beta-L-Glcf
+  4gb   Glc           ->4)-beta-L-Glcf
+  5gb   Glc           ->5)-beta-L-Glcf
+  6gb   Glc           ->6)-beta-L-Glcf
+  Zgb   Glc           ->2)-beta-L-Glcf  # 2,3
+  Ygb   Glc           ->2)-beta-L-Glcf  # 2,4
+  Ogb   Glc           ->2)-beta-L-Glcf  # 2,5
+  Xgb   Glc           ->2)-beta-L-Glcf  # 2,6
+  Wgb   Glc           ->3)-beta-L-Glcf  # 3,4
+  Ngb   Glc           ->3)-beta-L-Glcf  # 3,5
+  Vgb   Glc           ->3)-beta-L-Glcf  # 3,6
+# ?gb   Glc           ->4)-beta-L-Glcf  # 4,5
+  Ugb   Glc           ->4)-beta-L-Glcf  # 4,6
+  Mgb   Glc           ->5)-beta-L-Glcf  # 5,6
+  Tgb   Glc           ->2)-beta-L-Glcf  # 2,3,4
+  Lgb   Glc           ->2)-beta-L-Glcf  # 2,3,5
+  Sgb   Glc           ->2)-beta-L-Glcf  # 2,3,6
+# ?gb   Glc           ->2)-beta-L-Glcf  # 2,4,5
+  Rgb   Glc           ->2)-beta-L-Glcf  # 2,4,6
+  Kgb   Glc           ->2)-beta-L-Glcf  # 2,5,6
+# ?gb   Glc           ->3)-beta-L-Glcf  # 3,4,5
+  Qgb   Glc           ->3)-beta-L-Glcf  # 3,4,6
+  Jgb   Glc           ->3)-beta-L-Glcf  # 3,5,6
+# ?gb   Glc           ->2)-beta-L-Glcf  # 2,3,4,5
+  Pgb   Glc           ->2)-beta-L-Glcf  # 2,3,4,6
+  Igb   Glc           ->2)-beta-L-Glcf  # 2,3,5,6
+# ?gb   Glc           ->2)-beta-L-Glcf  # 2,4,5,6
+# ?gb   Glc           ->3)-beta-L-Glcf  # 3,4,5,6
+
+# (I'm just generating the Glcs for now. I'll expand later by script. ~Labonte)

@@ -27,6 +27,7 @@
 #include <core/io/pdb/file_data_fixup.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.hh>
+#include <core/io/pdb/NomenclatureManager.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -316,7 +317,7 @@ FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & tex
 
 	string needed_residue_type_base_name = string(text.begin() + 7, text.end());  // name starts after 7th character
 
-	carbohydrate_residue_type_base_names[key] = needed_residue_type_base_name;
+	residue_type_base_names[key] = needed_residue_type_base_name;
 }
 
 
@@ -1024,7 +1025,7 @@ build_pose_from_pdb_as_is(
 	build_pose_as_is1( fd, pose, residue_set, missing, pdr_options);
 }
 
-/// Fills the pose with the data from FileData
+// Fills the pose with the data from FileData
 void
 build_pose_as_is1(
 	io::pdb::FileData & fd,
@@ -1035,11 +1036,8 @@ build_pose_as_is1(
 )
 {
 	typedef std::map< std::string, double > ResidueTemps;
-	//typedef std::map< std::string, ResidueTemps > Temps;
 	typedef std::map< std::string, Vector > ResidueCoords;
-	//typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;
-	//typedef numeric::xyzVector< double > Vector;
 
 	using namespace chemical;
 	using namespace conformation;
@@ -1048,13 +1046,13 @@ build_pose_as_is1(
 	pose.clear();
 
 	utility::vector1< ResidueInformation > rinfos;
-	id::NamedAtomID_Mask coordinates_assigned(false);
+	id::NamedAtomID_Mask coordinates_assigned( false );
 	// Map pose residue numbers to indices into rinfos.
-	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc)
+	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc.)
 	utility::vector1< Size > pose_to_rinfo;
 	fd.create_working_data( rinfos, options );
 	fixup_rinfo_based_on_residue_type_set( rinfos, residue_set );
-//	Strings pose_resids;
+	//	Strings pose_resids;
 	utility::vector1<ResidueTemps> pose_temps;
 
 	Strings branch_lower_termini;
@@ -1087,13 +1085,22 @@ build_pose_as_is1(
 
 	// Loop over every residue in the FileData extracted from the PDB file, select appropriate ResidueTypes,
 	// create Residues, and build the Pose.
-	for ( Size i=1; i<= nres_pdb; ++i ) {
-		ResidueInformation const & rinfo = rinfos[i];
+	for ( Size i = 1; i <= nres_pdb; ++i ) {
+		ResidueInformation const & rinfo = rinfos[ i ];
+		char chainID = rinfo.chainID;
 		std::string const & pdb_name = rinfo.resName;
 		std::string const & resid = rinfo.resid();
-		char chainID = rinfo.chainID;
 
 		runtime_assert( resid.size() == 6 );
+
+		// Convert PDB 3-letter code to Rosetta 3-letter code, if a list of alternative codes has been provided.
+		std::pair< std::string, std::string > const & rosetta_names(
+				NomenclatureManager::get_instance()->rosetta_names_from_pdb_code( pdb_name ) );
+		std::string const & name3( rosetta_names.first );
+		if ( rosetta_names.second != "" ) {
+			fd.residue_type_base_names[ resid ] = rosetta_names.second;
+		}
+
 		bool const separate_chemical_entity = find(entities_begin, entities_end, chainID ) !=  entities_end;
 		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID &&
 				rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
@@ -1126,9 +1133,9 @@ build_pose_as_is1(
 		ResidueTemps  const & rtemp = rinfo.temps;
 
 		// Get a list of ResidueTypes that could apply for this particular 3-letter PDB residue name.
-		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( pdb_name ) );
-		if(!is_residue_type_recognized(
-				i, pdb_name, rsd_type_list, xyz, rtemp,
+		ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( name3 ) );
+		if ( ! is_residue_type_recognized(
+				i, name3, rsd_type_list, xyz, rtemp,
 				UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options)) {
 			last_residue_was_recognized = false;
 			continue;
@@ -1184,7 +1191,7 @@ build_pose_as_is1(
 			// Commenting out this logic causes anything that lacks a HG (i.e. crystal structures) to be assigned as the
 			// disulfide type instead of the CYS type--which MIGHT be right, but might be wrong and leads to wasteful
 			// disulfide reversion.
-			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
+			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && name3 != "CYD" ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the disulfide state" << std::endl;
 				continue;
@@ -1198,7 +1205,7 @@ build_pose_as_is1(
 
 			// special checks to ensure selecting the proper carbohydrate ResidueType
 			if ( rsd_type.is_carbohydrate() &&
-					residue_type_base_name( rsd_type ) != fd.carbohydrate_residue_type_base_names[ resid ] ) {
+					residue_type_base_name( rsd_type ) != fd.residue_type_base_names[ resid ] ) {
 				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because the residue is not a carbohydrate" << std::endl;
 				continue;
@@ -1265,7 +1272,7 @@ build_pose_as_is1(
 			}
 			utility_exit_with_message( "No match found for unrecognized residue at position " +
 					boost::lexical_cast<string>(i) +
-					"\nLooking for" + variant + " residue with 3-letter code: " + pdb_name);
+					"\nLooking for" + variant + " residue with 3-letter code: " + name3 );
 		}
 
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
@@ -1277,13 +1284,13 @@ build_pose_as_is1(
 		// Map the atom names.
 		fill_name_map(rinfo_name_map[i], rinfo, rsd_type, options);
 
-	debug_assert( rsd_type.natoms() >= rinfo_name_map[i].left.size() );
+		debug_assert( rsd_type.natoms() >= rinfo_name_map[i].left.size() );
 		core::Size missing_atoms( rsd_type.natoms() - rinfo_name_map[i].left.size() );
 		if( missing_atoms > 0 ) {
 			TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << missing_atoms << " coordinates" << std::endl;
 		}
 
-	debug_assert( rinfo.xyz.size() >= rinfo_name_map[i].left.size() );
+		debug_assert( rinfo.xyz.size() >= rinfo_name_map[i].left.size() );
 		core::Size discarded_atoms( rinfo.xyz.size() - rinfo_name_map[i].left.size() );
 		if( is_lower_terminus && rinfo.xyz.count(" H  ") && ! rinfo_name_map[i].left.count(" H  ") ) {
 			// Don't worry about missing BB H if Nterm
@@ -1320,7 +1327,7 @@ build_pose_as_is1(
 				}
 				if ( !mainchain_core_present ) {
 					TR.Warning << "[ WARNING ] skipping pdb residue b/c it's missing too many mainchain atoms: " <<
-							resid << ' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
+							resid << ' ' << name3 << ' ' << rsd_type.name() << std::endl;
 					for ( Size k=1; k<= nbb; ++k ) {
 						std::string const & name(rsd_type.atom_name(mainchain[k]));
 						if( !rinfo_name_map[i].right.count(name) ||

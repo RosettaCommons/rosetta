@@ -784,81 +784,6 @@ ScoreFunction::score( pose::Pose & pose ) const {
 	return (*this)(pose);
 }
 
-/*
-/// @details This operates much like the regular score function evaluation, except
-/// that it waits to compute the two-body energies until after the other components of the
-/// score function evaluation has completed.  It relies on the mechanism already present in
-/// the Energies object to update the component energies lazily.  This mechanism will
-/// update both the EnergyGraph and the EnergyGraphLite objects.
-Real
-ScoreFunction::score_components( pose::Pose & pose ) const
-{
-	// completely unnecessary temporary hack to force refold if nec. for profiling
-	pose.residue( pose.total_residue() );
-
-	PROF_START( basic::SCORE );
-	//std::cout << "ScoreFunction::operator()\n";
-
-	// notify the pose that we are starting a score evaluation.
-	// also tells the cached energies object about the scoring
-	// parameters, for the purposes of invalidating cached data
-	// if necessary
-	//
-	// at this point the dof/xyz-moved information will be converted
-	// to a domain map. Energy/neighbor links between pair-moved residues
-	// will be deleted, and 1d energies of res-moved residues will be
-	// cleared.
-	//
-	// further structure modification will be prevented until scoring is
-	// completed
-	//
-	pose.scoring_begin( *this );
-	//std::cout << "ScoreFunction::operator() 1\n";
-
-	if ( pose.energies().total_energy() != 0.0 ) {
-		std::cout << "STARTING SCORE NON-ZERO!" << std::endl;
-	}
-
-	// ensure that the total_energies are zeroed out -- this happens in Energies.scoring_begin()
-	// unneccessary pose.energies().total_energies().clear();
-	//std::cout << "ScoreFunction::operator() 2\n";
-
-	// do any setup necessary
-	setup_for_scoring( pose );
-
-	// evaluate the residue pair energies that exist between possibly-distant residues
-	PROF_START( basic::LONG_RANGE_ENERGIES );
-
-	eval_long_range_twobody_energies( pose );
-
-	PROF_STOP ( basic::LONG_RANGE_ENERGIES );
-
-	// evaluate the onebody energies -- rama, dunbrack, ...
-	eval_onebody_energies( pose );
-
-	// give energyfunctions a chance update/finalize energies
-	// etable nblist calculation is performed here
-	for ( AllMethods::const_iterator it=all_methods_.begin(),
-			it_end = all_methods_.end(); it != it_end; ++it ) {
-		(*it)->finalize_total_energy( pose, *this, pose.energies().finalized_energies() );
-	}
-
-	// notify that scoring is over
-	pose.scoring_end( *this );
-
-	PROF_STOP ( basic::SCORE );
-
-	/// Now go back and score to the two-body energies -- triggered automatically accessing the
-	/// energy graph.
-	pose.energies().energy_graph();
-
-	/// The above call forced the computation of the total_energies emap; the total score can
-	/// now be computed.
-	EnergyMap const & total_energies( pose.energies().total_energies() );
-
-	pose.energies().total_energy() = total_energies.dot( weights_ );
-	return pose.energies().total_energy();
-}*/
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -1382,117 +1307,6 @@ ScoreFunction::eval_long_range_twobody_energies( pose::Pose & pose ) const
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/*
-void
-ScoreFunction::accumulate_residue_total_energies(
-	pose::Pose & pose
-) const
-{
-	// cached energies object
-	Energies & energies( pose.energies() );
-
-	// the neighbor/energy links
-	EnergyGraph & energy_graph( energies.energy_graph() );
-
-	// debug
-debug_assert( !energies.use_nblist() && energies.energies_updated() );
-
-	// zero out the scores we are going to accumulate
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		EnergyMap & emap( energies.residue_total_energies(i) );
-		emap.zero();
-		emap += energies.onebody_energies(i);
-	}
-
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		for ( graph::Graph::EdgeListIter
-				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
-				irue = energy_graph.get_node(i)->upper_edge_list_end();
-				iru != irue; ++iru ) {
-
-			EnergyEdge * edge( static_cast< EnergyEdge *> (*iru) );
-
-			Size const j( edge->get_second_node_ind() );
-
-			// the pair energies cached in the link
-			EnergyMap const & emap( edge->energy_map());
-
-		debug_assert( !edge->energies_not_yet_computed() );
-
-			// accumulate energies
-			energies.residue_total_energies(i).accumulate( emap, ci_2b_types(), 0.5 );
-			energies.residue_total_energies(i).accumulate( emap, cd_2b_types(), 0.5 );
-
-			energies.residue_total_energies(j).accumulate( emap, ci_2b_types(), 0.5 );
-			energies.residue_total_energies(j).accumulate( emap, cd_2b_types(), 0.5 );
-		} // nbrs of i
-	} // i=1,nres
-
-	Real tmp_score( 0.0 );
-
-	for ( LR_2B_Methods::const_iterator iter = lr_2b_methods_.begin(),
-			iter_end = lr_2b_methods_.end(); iter != iter_end; ++iter ) {
-		// Why is this non-const?!
-		LREnergyContainerOP lrec
-			= pose.energies().nonconst_long_range_container( (*iter)->long_range_type() );
-	debug_assert( lrec );
-		if ( lrec->empty() ) continue;
-		ScoreTypes const & lrec_score_types = score_types_by_method_type_[ (*iter)->method_type() ];
-
-		// Potentially O(N^2) operation...
-		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			for ( ResidueNeighborConstIteratorOP
-					rni = lrec->const_upper_neighbor_iterator_begin( i ),
-					rniend = lrec->const_upper_neighbor_iterator_end( i );
-					(*rni) != (*rniend); ++(*rni) ) {
-				Size j = rni->upper_neighbor_id();
-				EnergyMap emap;
-				rni->retrieve_energy( emap );
-
-				energies.residue_total_energies(i).accumulate( emap, lrec_score_types, 0.5 );
-				energies.residue_total_energies(j).accumulate( emap, lrec_score_types, 0.5 );
-			}
-		}
-	}
-
-	for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
-		EnergyMap & emap( energies.residue_total_energies(i) );
-		emap[ total_score ] = emap.dot( weights_ );
-		tmp_score += emap[ total_score ];
-	}
-
-#ifdef NDEBUG
-	return;
-#endif
-
-	/////////////////////////////////////////////////////////////////////////////
-	// just for debugging, since this involves some extra calculation
-
-	{ // extra scores
-		EnergyMap emap;
-		for ( AllMethods::const_iterator it=all_methods_.begin(),
-				it_end = all_methods_.end(); it != it_end; ++it ) {
-			(*it)->finalize_total_energy( pose, *this, emap );
-		}
-		//std::cout << "before: " << tmp_score << std::endl;
-		tmp_score += emap.dot( weights_ );
-
-
-		// this warning is only relevant if all energies are 1body or 2body,
-		// ie no whole-structure energies which are not assigned to an
-		// individual residue
-		Real const expected_score( energies.total_energy() );
-		//std::cout << "[ DEBUG ] score-check: " << tmp_score << ' ' <<
-		//	expected_score << std::endl;
-		if ( std::abs( tmp_score - expected_score ) > 1e-2 ) {
-			std::cout << "[ WARNING ] score mismatch: " << tmp_score << ' ' <<
-				expected_score << std::endl;
-		}
-	}
-} // accumulate_residue_total_energies
-
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -2734,25 +2548,6 @@ debug_assert( pose.energies().minimization_graph() );
 	return eval_dof_deriv_for_minnode( minnode, rsd, pose, dof_id, torsion_id, *this, weights_ );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// void
-// ScoreFunction::zero_energies(
-// 	methods::EnergyMethodType const & t,
-// 	EnergyMap & emap
-// ) const
-// {
-// 	using namespace methods;
-
-// 	for ( AllMethods::const_iterator iter= all_methods_.begin(),
-// 					iter_end = all_methods_.end(); iter != iter_end; ++iter ) {
-// 		if ( (*iter)->method_type() == t ) {
-// 			for ( ScoreTypes::const_iterator it2 = (*iter)->score_types().begin(),
-// 							it2_end = (*iter)->score_types().end(); it2 != it2_end; ++it2 ) {
-// 				emap[ *it2 ] = 0.0;
-// 			}
-// 		}
-// 	}
-// }
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -3045,7 +2840,6 @@ ScoreFunction::indicate_required_context_graphs(
 /// @brief Utility function to locate a weights or patch file, either with a fully qualified path,
 /// in the local directory, or in the database. Names may be passed either with or without the
 /// optional extension.
-
 std::string
 find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 	utility::io::izstream data1( name );

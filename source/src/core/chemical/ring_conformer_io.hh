@@ -23,7 +23,6 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <string>

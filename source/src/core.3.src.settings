@@ -24,11 +24,13 @@ sources = {
 		"PositionDdGInfo",
 	],
 	"core/io/pdb": [
+		"alt_codes_io",
 		"Field",
 		"file_data",
 		"file_data_fixup",
 		"file_data_options",
 		"HeaderInformation",
+		"NomenclatureManager",
 		"pdb_dynamic_reader",
 		"pdb_dynamic_reader_options",
 		"pose_io",

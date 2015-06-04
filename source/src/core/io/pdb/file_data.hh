@@ -208,7 +208,7 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 
 	// map for storing carbohydrate ResidueType base (non-variant) names; parsed from HETNAM records:
 	// key is 6-character resID
-	std::map<std::string, std::string> carbohydrate_residue_type_base_names;
+	std::map<std::string, std::string> residue_type_base_names;
 
 	// Data for HETSYN records should be declared here if ever implemented.
 
@@ -268,6 +268,7 @@ public:
 	/// @brief Store heterogen name information in a map.
 	void store_heterogen_names(std::string const & hetID, std::string & text);
 
+	// TODO: There is no reason for this to be carbohydrate-only. Come back and merge this with the more general case.
 	/// @brief Parse heterogen name data for a given carbohydrate and save the particular base (non-variant)
 	/// ResidueType needed in a map.
 	void parse_heterogen_name_for_carbohydrate_residues(std::string const & text);

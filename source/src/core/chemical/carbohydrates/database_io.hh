@@ -15,12 +15,6 @@
 #ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
 #define INCLUDED_core_chemical_carbohydrates_database_io_HH
 
-// Project headers
-#include <core/types.hh>
-
-// Utility headers
-#include <utility/vector1.hh>
-
 // C++ headers
 #include <map>
 #include <string>

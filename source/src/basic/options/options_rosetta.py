@@ -200,8 +200,17 @@ Options = Option_Group( '',
 					default="1.0" ),
 
 		# Other input options -------------------------------------------------
+		Option("alternate_3_letter_codes", "StringVector",
+			desc="Specify the filename(s) of (a) *.codes files that includes "
+				"a list of alternative 3-letter codes.  "
+				"The default directory is "
+				"database/input_output/3-letter_codes/ but any path can be "
+				"provided.  "
+				"Duplicate codes in successive files will overwrite previous "
+				"ones.",
+			short="Specify (a) *.codes file(s) of alternate 3-letter codes."),
 		Option( 'fix_disulf', 'File',
-				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated "
+				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-separated "
 						"residue indices per line.  This option replaces the old '-run:fix_disulf' option.", ),
 
 		Option( 'missing_density_to_jump', 'Boolean',
