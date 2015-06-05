@@ -28,6 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -51,6 +52,8 @@ EnergyMethodOptions::EnergyMethodOptions():
 	// hard-wired default, but you can set this with etable_type( string )
 	atom_vdw_atom_type_set_name_(chemical::CENTROID), // can be set, see below
 	unfolded_energies_type_( UNFOLDED_SCORE12 ),
+	split_unfolded_label_type_(SPLIT_UNFOLDED_MM),
+	split_unfolded_value_type_(SPLIT_UNFOLDED_BOLTZ),
 	exclude_protein_protein_fa_elec_(false), // rosetta++ defaulted to true!
 	exclude_monomer_fa_elec_(false),
 	elec_max_dis_(5.5),
@@ -120,6 +123,16 @@ void EnergyMethodOptions::initialize_from_options() {
 	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
 	envsmooth_zero_negatives_ = basic::options::option[ basic::options::OptionKeys::score::envsmooth_zero_negatives ]();
 
+	// check to see if the unfolded state command line options are set by the user
+	if ( basic::options::option[basic::options::OptionKeys::unfolded_state::unfolded_energies_file].user() ) {
+		unfolded_energies_type_ = UNFOLDED_SPLIT_USER_DEFINED;
+	}
+
+	if ( basic::options::option[basic::options::OptionKeys::unfolded_state::split_unfolded_energies_file].user() ) {
+		split_unfolded_label_type_ = SPLIT_UNFOLDED_USER_DEFINED;
+		split_unfolded_value_type_ = SPLIT_UNFOLDED_USER_DEFINED;
+	}
+
 	if ( basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ].user()) {
 		fastdens_perres_weights_.resize( core::chemical::num_canonical_aas, basic::options::option[ basic::options::OptionKeys::edensity::sc_scaling ]() );
 	}
@@ -140,6 +153,8 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 	if ( this != &src ) {
 		atom_vdw_atom_type_set_name_ = src.atom_vdw_atom_type_set_name_;
 		unfolded_energies_type_ = src.unfolded_energies_type_;
+		split_unfolded_label_type_=src.split_unfolded_label_type_;
+		split_unfolded_value_type_=src.split_unfolded_value_type_;
 		method_weights_ = src.method_weights_;
 		ss_weights_ = src.ss_weights_;
 		exclude_protein_protein_fa_elec_ = src.exclude_protein_protein_fa_elec_;
@@ -211,6 +226,26 @@ EnergyMethodOptions::unfolded_energies_type() const {
 void
 EnergyMethodOptions::unfolded_energies_type(string const & type ) {
 	unfolded_energies_type_ = type;
+}
+
+string const &
+EnergyMethodOptions::split_unfolded_label_type() const {
+	return split_unfolded_label_type_;
+}
+
+void
+EnergyMethodOptions::split_unfolded_label_type(string const & label_type) {
+	split_unfolded_label_type_=label_type;
+}
+
+string const &
+EnergyMethodOptions::split_unfolded_value_type() const {
+	return split_unfolded_value_type_;
+}
+
+void
+EnergyMethodOptions::split_unfolded_value_type(string const & value_type) {
+	split_unfolded_value_type_=value_type;
 }
 
 bool
@@ -668,6 +703,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 
 	return (( a.atom_vdw_atom_type_set_name_ == b.atom_vdw_atom_type_set_name_ ) &&
 		( a.unfolded_energies_type_ == b.unfolded_energies_type_ ) &&
+		( a.split_unfolded_label_type_ == b.split_unfolded_label_type_ ) &&
+		( a.split_unfolded_value_type_ == b.split_unfolded_value_type_ ) &&
 		( a.method_weights_ == b.method_weights_ ) &&
 		( a.ss_weights_ == b.ss_weights_ ) &&
 		( a.exclude_protein_protein_fa_elec_ == b.exclude_protein_protein_fa_elec_ ) &&
@@ -731,6 +768,8 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 		out << '\n';
 	}
 	out << "EnergyMethodOptions::show: unfolded_energies_type: " << unfolded_energies_type_ << std::endl;
+	out << "EnergyMethodOptions::show: split_unfolded_label_type: " << split_unfolded_label_type_ << std::endl;
+	out << "EnergyMethodOptions::show: split_unfolded_value_type: " << split_unfolded_value_type_ << std::endl;
 	out << "EnergyMethodOptions::show: atom_vdw_atom_type_set_name: " << atom_vdw_atom_type_set_name_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_protein_protein_fa_elec: "
 			<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
@@ -848,6 +887,12 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("unfolded_energies_type");
 	option_values.push_back(unfolded_energies_type_);
+
+	option_keys.push_back("split_unfolded_label_type");
+	option_values.push_back(split_unfolded_label_type_);
+
+	option_keys.push_back("split_unfolded_value_type");
+	option_values.push_back(split_unfolded_value_type_);
 
 	option_keys.push_back("exclude_protein_protein_fa_elec");
 	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");

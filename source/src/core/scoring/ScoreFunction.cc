@@ -324,6 +324,14 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			std::string type;
 			l >> type;
 			energy_method_options_->unfolded_energies_type( type );
+		} else if ( tag == "SPLIT_UNFOLDED_LABEL_TYPE" ) {
+			std::string label_type;
+			l >> label_type;
+			energy_method_options_->split_unfolded_label_type( label_type );
+		} else if ( tag == "SPLIT_UNFOLDED_VALUE_TYPE" ) {
+			std::string value_type;
+			l >> value_type;
+			energy_method_options_->split_unfolded_value_type( value_type );
 		} else if ( tag == "FA_ELEC_MIN_DIS" ) {
 			l >> real_value;
 			energy_method_options_->elec_min_dis( real_value );

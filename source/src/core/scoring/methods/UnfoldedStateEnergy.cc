@@ -62,6 +62,20 @@ ScoreTypes
 UnfoldedStateEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( unfolded );
+	sts.push_back( fa_intra_atr_ref );
+	sts.push_back( fa_intra_rep_ref );
+	sts.push_back( fa_intra_sol_ref );
+	sts.push_back( pro_close_ref );
+	sts.push_back( fa_dun_ref );
+	sts.push_back( fa_dun_dev_ref );
+	sts.push_back( fa_dun_rot_ref );
+	sts.push_back( fa_dun_semi_ref );
+	sts.push_back( rama_ref );
+	sts.push_back( p_aa_pp_ref );
+	sts.push_back( omega_ref );
+	sts.push_back( mm_lj_intra_rep_ref );
+	sts.push_back( mm_lj_intra_atr_ref );
+	sts.push_back( mm_twist_ref );
 	return sts;
 }
 
@@ -115,6 +129,30 @@ UnfoldedStateEnergy::residue_energy(
 	// don't forget to include the weight for the entire term. no, wait, that weight should get applied later
 	// in the scoring process. this method should just return the unweighted unfolded state energy.
 	emap[ unfolded ] += unweighted_unfolded_energies.dot( score_type_weights_ );
+
+	//Add split out unfolded/reference energies. Basically each component that would go into the combined unfolded term is given its own energy term(referred to with the "_ref" suffix).
+	//Each of these terms has its own weight defined in the .wts file, which needs to be selected with optE.
+	emap[ fa_intra_atr_ref ] += unweighted_unfolded_energies[ fa_intra_atr ];
+	emap[ fa_intra_rep_ref ] += unweighted_unfolded_energies[ fa_intra_rep ];
+	emap[ fa_intra_sol_ref ] += unweighted_unfolded_energies[ fa_intra_sol ];
+	emap[ pro_close_ref ] += unweighted_unfolded_energies[ pro_close ];
+	emap[ rama_ref ] += unweighted_unfolded_energies[ rama ];
+	emap[ p_aa_pp_ref ] += unweighted_unfolded_energies[ p_aa_pp ];
+	emap[ omega_ref ] += unweighted_unfolded_energies[ omega ];
+
+	//Should these ones be combined into one term? They normally all get combined and have the same weight, but theoretically they might want to vary independently during optE? Easy to change if needed.
+	emap[ fa_dun_ref ] += unweighted_unfolded_energies[ fa_dun ];
+	emap[ fa_dun_dev_ref ] += unweighted_unfolded_energies[ fa_dun_dev ];
+	emap[ fa_dun_rot_ref ] += unweighted_unfolded_energies[ fa_dun_rot ];
+	emap[ fa_dun_semi_ref ] += unweighted_unfolded_energies[ fa_dun_semi ];
+
+	//mm_std specific terms.
+	emap[ mm_lj_intra_rep_ref ] += unweighted_unfolded_energies[ mm_lj_intra_rep ];
+	emap[ mm_lj_intra_atr_ref ] += unweighted_unfolded_energies[ mm_lj_intra_atr ];
+	emap[ mm_twist_ref ] += unweighted_unfolded_energies[ mm_twist ];
+
+	//Leaving out two body terms since for the split unfolded energy they are covered in SplitUnfoldedTwoBodyEnergy, and I'm not sure if the standard unfolded energy should be optimized with separated energies. It's simple enough to add them later if need be.
+
 
 	return;
 }

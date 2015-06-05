@@ -29,6 +29,24 @@ extern std::string const UNFOLDED_SCORE12;
 extern std::string const UNFOLDED_MM_STD;
 extern std::string const UNFOLDED_RNA;
 
+extern std::string const UNFOLDED_SPLIT_TALARIS2013;
+extern std::string const UNFOLDED_SPLIT_MM_STD;
+
+extern std::string const UNFOLDED_SPLIT_USER_DEFINED;
+
+extern std::string const SPLIT_UNFOLDED_ELE;
+extern std::string const SPLIT_UNFOLDED_PDB;
+extern std::string const SPLIT_UNFOLDED_ROSETTA;
+extern std::string const SPLIT_UNFOLDED_MM;
+extern std::string const SPLIT_UNFOLDED_UNIQUE;
+
+extern std::string const SPLIT_UNFOLDED_MEAN;
+extern std::string const SPLIT_UNFOLDED_MEDIAN;
+extern std::string const SPLIT_UNFOLDED_MODE;
+extern std::string const SPLIT_UNFOLDED_BOLTZ;
+
+extern std::string const SPLIT_UNFOLDED_USER_DEFINED;
+
 } // namespace core
 } // namespace scoring
 

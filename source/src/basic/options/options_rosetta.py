@@ -4354,6 +4354,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='5.0'
 			),
 
+
 		###################################################################################
 		# ligand options ( part of docking )--------------------------------------
 		Option_Group( 'ligand',
@@ -6481,7 +6482,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	## Unfolded State Options ##
 	Option_Group( 'unfolded_state',
-		Option( 'unfolded_energies_file', 'File', desc='path to an alternative unfolded state energies file' ),
+		   Option( 'unfolded_energies_file', 'File', desc='path to an alternative unfolded state energies file' ),
+		   Option( 'split_unfolded_energies_file', 'File', desc='path to an alternative split unfolded state energies file' ),
+		   Option( 'split_unfolded_energies_atom_type', 'String', desc='name of the atom type specfied in the file defeined by the split_unfolded_energies_file option', legal = ['rosetta', 'mm', 'elemental', 'pdb', 'unique'], ),
 	), # -unfolded_state
 
 	Option_Group( 'wum',

@@ -1,0 +1,10 @@
+#Split unfolded energy two body component using median values
+#Author: Riley Simmons-Edler (rse231@nyu.edu)
+ATOM fa_atr fa_rep fa_sol fa_elec hbond_sc dslf_fa13
+WEIGHT 0.8 0.44 0.65 1.0 1.15 1.0
+C -0.544445 0.013481 0.133761 -0.000855594 0.0 0.0
+H 0.0 0.000650433 0.0 -0.00130668 0.0 0.0
+O -0.674445 0.0611415 0.95782 -0.15013 0.0 0.0
+N -0.687016 0.045011 0.58814 -0.00285809 0.0 0.0
+S -0.89776 0.0276045 0.719025 -0.0147517 0.0 0.0
+X 0.0 0.0 0.0 0.0 0.0 0.0

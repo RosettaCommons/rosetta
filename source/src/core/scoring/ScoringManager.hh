@@ -45,6 +45,9 @@
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
+#include <core/scoring/UnfoldedStatePotential.fwd.hh>
+#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
+#include <core/scoring/SplitUnfoldedTwoBodyPotential.fwd.hh>
 
 #include <core/scoring/dna/DNA_BasePotential.fwd.hh>
 #include <core/scoring/dna/DNABFormPotential.fwd.hh>
@@ -207,6 +210,8 @@ public:
 
 	PoissonBoltzmannPotential const & get_PoissonBoltzmannPotential() const;
 
+	SplitUnfoldedTwoBodyPotential const & get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type) const;
+
 	disulfides::FullatomDisulfidePotential &
 	get_FullatomDisulfidePotential() const;
 
@@ -311,6 +316,7 @@ private:
 	mutable Membrane_FAPotentialOP membrane_fapotential_; //pba
 	mutable ProQPotentialOP ProQ_potential_;
 	mutable PoissonBoltzmannPotentialOP PB_potential_;
+	mutable SplitUnfoldedTwoBodyPotentialOP sutbp_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;
 	mutable UnfoldedStatePotentialOP unf_state_;
 	mutable carbohydrates::CHIEnergyFunctionOP CHI_energy_function_;

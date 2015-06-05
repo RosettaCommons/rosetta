@@ -2,3 +2,4 @@
 -resfile 1l2y_hybrid.resfile
 -score:weights mm_std
 -overwrite
+-out:suffix _mm_std

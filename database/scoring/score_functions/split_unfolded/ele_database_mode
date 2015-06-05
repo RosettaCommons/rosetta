@@ -1,0 +1,10 @@
+#Split unfolded energy two body component using mode values
+#Author: Riley Simmons-Edler (rse231@nyu.edu)
+ATOM fa_atr fa_rep fa_sol fa_elec hbond_sc dslf_fa13
+WEIGHT 0.8 0.44 0.65 1.0 1.15 1.0
+C -0.44782 0.00413918 0.081049 0.010086 0.0 0.0
+H 0.0 0.000177524 0.0 0.017337 0.0 0.0
+O -0.934354 0.018058 1.15074 0.0144035 0.0 0.0
+N -0.743345 0.0104989 0.649326 -0.00967329 0.0 0.0
+S -0.886257 0.0144666 0.750195 0.000139432 0.0 0.0
+X 0.0 0.0 0.0 0.0 0.0 0.0

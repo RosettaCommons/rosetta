@@ -1,16 +1,13 @@
 -include_patches patches/oop_pre.txt patches/oop_post.txt
 -s input/mdm2_oop.pdb
--out:nstruct 1
 -resfile input/oop_dimer.res
--constraints::cst_fa_weight 1 
--in:file:fullatom 
+-constraints::cst_fa_weight 1
+-in:file:fullatom
 -pert_num 10
 -pert_pep_num_rep 10
 -final_design_min false
 -dock_design_loop_num 1
--score:weights mm_std 
--packing:linmem_ig 10 
-#<<<<<<< HEAD
-#=======
+-score:weights mm_std
+-packing:linmem_ig 10
 -in:detect_oops true
-#>>>>>>> 1ce2a73e8e484d60a59552aa23905ef117b279f8
+-out:suffix _mm_std

@@ -1,0 +1,5 @@
+-s 1l2y_hybrid.pdb
+-resfile 1l2y_hybrid.resfile
+-score:weights mm_std_fa_elec_dslf_fa13_split_unfolded
+-overwrite
+-out:suffix _mm_std_fa_elec_dslf_fa13_split_unfolded

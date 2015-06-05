@@ -434,6 +434,29 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hpatch" ] = hpatch;
 	name2score_type_[ "p_aa" ] = p_aa;
 	name2score_type_[ "unfolded" ] = unfolded;
+	name2score_type_[ "split_unfolded_two_body" ] = split_unfolded_two_body;
+
+	// individual terms for split unfolded weight calculation
+	name2score_type_[ "fa_atr_ref" ] = fa_atr_ref;
+	name2score_type_[ "fa_rep_ref" ] = fa_rep_ref;
+	name2score_type_[ "fa_sol_ref" ] = fa_sol_ref;
+	name2score_type_[ "fa_elec_ref" ] = fa_elec_ref;
+	name2score_type_[ "hbond_ref" ] = hbond_ref;
+	name2score_type_[ "dslf_fa13_ref" ] = dslf_fa13_ref;
+	name2score_type_[ "fa_intra_atr_ref" ] = fa_intra_atr_ref;
+	name2score_type_[ "fa_intra_rep_ref" ] = fa_intra_rep_ref;
+	name2score_type_[ "fa_intra_sol_ref" ] = fa_intra_sol_ref;
+	name2score_type_[ "pro_close_ref" ] = pro_close_ref;
+	name2score_type_[ "fa_dun_ref" ] = fa_dun_ref;
+	name2score_type_[ "fa_dun_dev_ref" ] = fa_dun_dev_ref;
+	name2score_type_[ "fa_dun_rot_ref" ] = fa_dun_rot_ref;
+	name2score_type_[ "fa_dun_semi_ref" ] = fa_dun_semi_ref;
+	name2score_type_[ "rama_ref" ] = rama_ref;
+	name2score_type_[ "p_aa_pp_ref" ] = p_aa_pp_ref;
+	name2score_type_[ "omega_ref" ] = omega_ref;
+	name2score_type_[ "mm_lj_intra_rep_ref" ] = mm_lj_intra_rep_ref;
+	name2score_type_[ "mm_lj_intra_atr_ref" ] = mm_lj_intra_atr_ref;
+	name2score_type_[ "mm_twist_ref" ] = mm_twist_ref;
 
 	name2score_type_[ "elec_dens_fast" ] = elec_dens_fast;
 	name2score_type_[ "elec_dens_window" ] = elec_dens_window;

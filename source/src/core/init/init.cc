@@ -164,6 +164,7 @@
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
 #include <core/scoring/methods/SymmetricLigandEnergyCreator.hh>
 #include <core/scoring/methods/UnfoldedStateEnergyCreator.hh>
+#include <core/scoring/methods/SplitUnfoldedTwoBodyEnergyCreator.hh>
 #include <core/scoring/methods/WaterAdductHBondEnergyCreator.hh>
 #include <core/scoring/methods/WaterAdductIntraEnergyCreator.hh>
 #include <core/scoring/nv/NVscoreCreator.hh>
@@ -465,6 +466,7 @@ static EnergyMethodRegistrator< pack::interaction_graph::SurfaceEnergyCreator > 
 static EnergyMethodRegistrator< pack::interaction_graph::HPatchEnergyCreator > HPatchEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SymmetricLigandEnergyCreator > SymmetricLigandEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::UnfoldedStateEnergyCreator > UnfoldedStateEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::SplitUnfoldedTwoBodyEnergyCreator > SplitUnfoldedTwoBodyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::WaterAdductHBondEnergyCreator > WaterAdductHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::WaterAdductIntraEnergyCreator > WaterAdductIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::packing::HolesEnergyCreator > HolesEnergyCreator_registrator;

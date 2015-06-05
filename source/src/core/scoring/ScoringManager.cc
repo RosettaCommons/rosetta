@@ -60,6 +60,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
 #include <core/scoring/PoissonBoltzmannPotential.hh>
+#include <core/scoring/SplitUnfoldedTwoBodyPotential.hh>
 #include <core/scoring/methods/vall_lookback/VallLookbackPotential.hh>
 
 // Package headers
@@ -164,6 +165,7 @@ ScoringManager::ScoringManager() :
 	membrane_fapotential_( /* 0 */ ), //pba
 	ProQ_potential_(/* 0 */),
 	PB_potential_(/* 0 */),
+	sutbp_( /* 0 */),
 	unf_state_( /* 0 */ ),
 	CHI_energy_function_( /* 0 */ ),
 	NV_lookup_table_(/* 0 */),
@@ -751,20 +753,82 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 	if ( unf_state_ == 0 ) {
-		if ( option[ unfolded_state::unfolded_energies_file ].user() ) {
-			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() ) );
+		if ( type == UNFOLDED_SPLIT_USER_DEFINED || option[ unfolded_state::unfolded_energies_file ].user() ) {
 			std::cout << "Creating unfolded state potential using file: " <<  option[ unfolded_state::unfolded_energies_file ].value() << std::endl;
+			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( option[ unfolded_state::unfolded_energies_file ].value() ) );
 		} else if ( type == UNFOLDED_SCORE12 ) {
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_score12" ) ) );
 		} else if ( type == UNFOLDED_MM_STD ) {
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_mm_std" ) ) );
 		} else if ( type == UNFOLDED_RNA ) {
 			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/unfolded/unfolded_state_residue_energies_rna" ) ) );  // This will later get more elaborated
+		} else if ( type == UNFOLDED_SPLIT_TALARIS2013 ) {
+			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_talaris2013" ) ) ); //for the split unfolded energy one body term.
+		} else if ( type == UNFOLDED_SPLIT_MM_STD ) {
+			unf_state_ = UnfoldedStatePotentialOP( new UnfoldedStatePotential( basic::database::full_name( "scoring/score_functions/split_unfolded/split_unfolded_one_body_mm_std" ) ) ); //for the split unfolded energy one body term.
 		} else {
 			utility_exit_with_message("unrecognized unfolded type: "+type );
 		}
 	}
 	return *unf_state_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+SplitUnfoldedTwoBodyPotential const &
+ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type) const
+{
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
+	if ( sutbp_ == 0 )	{
+		std::string database_path = "";
+		std::string atom_label_type = "";
+
+		if ( label_type == SPLIT_UNFOLDED_USER_DEFINED || value_type == SPLIT_UNFOLDED_USER_DEFINED || option[ unfolded_state::split_unfolded_energies_file ].user() ) {
+			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( option[ unfolded_state::split_unfolded_energies_file ].value(), option[ unfolded_state::split_unfolded_energies_atom_type ].value() ) );
+			std::cout << "Creating split unfolded state potential using file: " <<  option[ unfolded_state::split_unfolded_energies_file ].value()
+			          << " with an atom type of " << option[ unfolded_state::split_unfolded_energies_atom_type ].value() << std::endl;
+			return *sutbp_;
+		}
+
+		if ( label_type == SPLIT_UNFOLDED_ELE ) {
+			atom_label_type = "elemental";
+			database_path = "scoring/score_functions/split_unfolded/ele_database_";
+		} else if ( label_type==SPLIT_UNFOLDED_PDB ) {
+			atom_label_type = "pdb";
+			database_path = "scoring/score_functions/split_unfolded/pdb_database_";
+		} else if ( label_type == SPLIT_UNFOLDED_ROSETTA ) {
+			atom_label_type = "rosetta";
+			database_path = "scoring/score_functions/split_unfolded/rosetta_database_";
+		} else if ( label_type == SPLIT_UNFOLDED_MM ) {
+			atom_label_type = "mm";
+			database_path = "scoring/score_functions/split_unfolded/mm_database_";
+		} else if ( label_type == SPLIT_UNFOLDED_UNIQUE ) {
+			atom_label_type = "unique";
+			database_path = "scoring/score_functions/split_unfolded/unique_database_";
+		} else {
+			database_path="scoring/score_functions/split_unfolded/split_unfolded_two_body_default";
+		}
+
+		if ( value_type == SPLIT_UNFOLDED_MEAN ) {
+			database_path += "mean";
+		} else if ( value_type == SPLIT_UNFOLDED_MEDIAN ) {
+			database_path += "median";
+		} else if ( value_type == SPLIT_UNFOLDED_MODE ) {
+			database_path += "mode";
+		} else if ( value_type == SPLIT_UNFOLDED_BOLTZ ) {
+			database_path += "boltz";
+		} else {
+			database_path += "boltz";
+		}
+
+		if ( atom_label_type != "" ) {
+			sutbp_ =  SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
+		} else {
+			sutbp_ =  SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
+		}
+	}
+	return *sutbp_;
 }
 
 
@@ -1053,6 +1117,24 @@ std::string const FA_STANDARD_SOFT   ( "FA_STANDARD_SOFT" );
 std::string const UNFOLDED_SCORE12( "UNFOLDED_SCORE12" );
 std::string const UNFOLDED_MM_STD( "UNFOLDED_MM_STD" );
 std::string const UNFOLDED_RNA( "UNFOLDED_RNA" ); // This will later get more elaborated
+
+std::string const UNFOLDED_SPLIT_TALARIS2013( "UNFOLDED_SPLIT_TALARIS2013" ); //to use the split unfolded energy one body term.
+std::string const UNFOLDED_SPLIT_MM_STD( "UNFOLDED_SPLIT_MM_STD" ); //to use the split unfolded energy one body term.
+
+std::string const UNFOLDED_SPLIT_USER_DEFINED( "UNFOLDED_SPLIT_USER_DEFINED" );
+
+std::string const SPLIT_UNFOLDED_ELE("SPLIT_UNFOLDED_ELE");
+std::string const SPLIT_UNFOLDED_PDB("SPLIT_UNFOLDED_PDB");
+std::string const SPLIT_UNFOLDED_ROSETTA("SPLIT_UNFOLDED_ROSETTA");
+std::string const SPLIT_UNFOLDED_MM("SPLIT_UNFOLDED_MM");
+std::string const SPLIT_UNFOLDED_UNIQUE("SPLIT_UNFOLDED_UNIQUE");
+
+std::string const SPLIT_UNFOLDED_MEAN("SPLIT_UNFOLDED_MEAN");
+std::string const SPLIT_UNFOLDED_MEDIAN("SPLIT_UNFOLDED_MEDIAN");
+std::string const SPLIT_UNFOLDED_MODE("SPLIT_UNFOLDED_MODE");
+std::string const SPLIT_UNFOLDED_BOLTZ("SPLIT_UNFOLDED_BOLTZ");
+
+std::string const SPLIT_UNFOLDED_USER_DEFINED( "SPLIT_UNFOLDED_USER_DEFINED" );
 
 } // namespace core
 } // namespace scoring

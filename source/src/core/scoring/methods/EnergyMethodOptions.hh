@@ -95,7 +95,23 @@ public:
 	void
 	unfolded_energies_type( std::string const & type );
 
+	///
+	std::string const &
+	split_unfolded_label_type() const;
 
+	///
+	void
+	split_unfolded_label_type(std::string const & label_type);
+
+	///
+	std::string const &
+	split_unfolded_value_type() const;
+
+	///
+	void
+	split_unfolded_value_type(std::string const & value_type);
+
+	///
 	bool
 	exclude_protein_protein_fa_elec() const;
 
@@ -441,6 +457,8 @@ private:
 	/////////////////////////////////////////////////
 	std::string atom_vdw_atom_type_set_name_;
 	std::string unfolded_energies_type_;
+	std::string split_unfolded_label_type_;
+	std::string split_unfolded_value_type_;
 	MethodWeights method_weights_;
 	SecondaryStructureWeights ss_weights_;
 	bool exclude_protein_protein_fa_elec_;
