@@ -7,6 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+/// @file protocols/simple_moves/SetTorsion.c
+/// @brief Sets the value of a desired torsion.
+/// @author Modified 4 June 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker Laboratory,
+/// to add perturb torsion option (I didn't write this file, though).
+
 // Unit headers
 #include <protocols/simple_moves/SetTorsion.hh>
 #include <protocols/simple_moves/SetTorsionCreator.hh>
@@ -88,13 +93,37 @@ SetTorsion::~SetTorsion() {}
 
 /// @brief default ctor
 SetTorsion::SetTorsion() :
-	parent()
+	parent(),
+	random_set_(false),
+	angle_(),
+	residues_(),
+	torsion_name_(),
+	extending_(),
+	torsion_atoms_(),
+	perturbation_type_(),
+	perturbation_magnitude_(),
+	fold_tree_root_(0)
 {}
 
+/// @brief Actually get the value that the torsion will be set to.
+/// @details Depending on settings, this will look up a value, generate a random value, or perturb an input value.
 core::Real
-SetTorsion::angle(core::Size iset) const {
+SetTorsion::angle(
+	core::Size const iset,
+	core::Real const &old_angle
+) const {
     if (angle_[iset] == "random") {
-			return 360.*numeric::random::rg().uniform()-180.;
+			return 360.0*numeric::random::rg().uniform()-180.0;
+    } else if (angle_[iset] == "perturb") {
+    	core::Real returnval( old_angle );
+    	if(perturbation_type(iset)==perturbtorsion_uniform) {
+    		returnval += (numeric::random::rg().uniform()-0.5)*perturbation_magnitude(iset);
+    	} else if (perturbation_type(iset)==perturbtorsion_gaussian) {
+				returnval += numeric::random::rg().gaussian()*perturbation_magnitude(iset);
+    	} else {
+				utility_exit_with_message("Error in protocols::simple_moves::SetTorsion::angle(): Perturbation type not recognized!");
+    	}
+    	return returnval;
     }
     else {
         return boost::lexical_cast<core::Real>(angle_[iset]);
@@ -183,12 +212,21 @@ void SetTorsion::apply( Pose & pose ) {
             if (iset != picked_set) continue;
         }
         if (residues_[iset] == "pick_atoms") {
+        		core::Real angle_in( //The original torsion angle value
+        			pose.conformation().torsion_angle(
+                id::AtomID(pose.residue(torsion_atoms_[iset][1].rsd()).atom_index(torsion_atoms_[iset][1].atom()), torsion_atoms_[iset][1].rsd()),
+                id::AtomID(pose.residue(torsion_atoms_[iset][2].rsd()).atom_index(torsion_atoms_[iset][2].atom()), torsion_atoms_[iset][2].rsd()),
+                id::AtomID(pose.residue(torsion_atoms_[iset][3].rsd()).atom_index(torsion_atoms_[iset][3].atom()), torsion_atoms_[iset][3].rsd()),
+                id::AtomID(pose.residue(torsion_atoms_[iset][4].rsd()).atom_index(torsion_atoms_[iset][4].atom()), torsion_atoms_[iset][4].rsd())
+        			)
+        		);
             pose.conformation().set_torsion_angle(
                                                   id::AtomID(pose.residue(torsion_atoms_[iset][1].rsd()).atom_index(torsion_atoms_[iset][1].atom()), torsion_atoms_[iset][1].rsd()),
                                                   id::AtomID(pose.residue(torsion_atoms_[iset][2].rsd()).atom_index(torsion_atoms_[iset][2].atom()), torsion_atoms_[iset][2].rsd()),
                                                   id::AtomID(pose.residue(torsion_atoms_[iset][3].rsd()).atom_index(torsion_atoms_[iset][3].atom()), torsion_atoms_[iset][3].rsd()),
                                                   id::AtomID(pose.residue(torsion_atoms_[iset][4].rsd()).atom_index(torsion_atoms_[iset][4].atom()), torsion_atoms_[iset][4].rsd()),
-                                                  radians(angle(iset)));
+                                                  radians( angle(iset, angle_in) )
+                                                 );
         }
         else {
             for (core::Size ires=1; ires<=residue_list(iset, pose).size(); ++ires) {
@@ -196,22 +234,22 @@ void SetTorsion::apply( Pose & pose ) {
                 
                 if( torsion_name(iset) == "phi" ) {
                     if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
-                        pose.set_phi( resnum, angle(iset) );
+                        pose.set_phi( resnum, angle(iset, pose.phi(resnum)) );
                     }
                 }
 								else if( torsion_name(iset) == "theta" ) {
 									if ( pose.residue(resnum).type().is_beta_aa() ) {
-										pose.set_theta( resnum, angle(iset) );
+										pose.set_theta( resnum, angle(iset, pose.theta(resnum)) );
 									}
 								}
                 else if( torsion_name(iset) == "psi" ) {
                     if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
-                        pose.set_psi( resnum, angle(iset) );
+                        pose.set_psi( resnum, angle(iset, pose.psi(resnum)) );
                     }
                 }
                 else if( torsion_name(iset) == "omega" ) {
                     if ( pose.residue(resnum).type().is_alpha_aa() || pose.residue(resnum).type().is_beta_aa() ) {
-                        pose.set_omega( resnum, angle(iset) );
+                        pose.set_omega( resnum, angle(iset, pose.omega(resnum)) );
                     } //TODO -- beta-amino acids.
                 }
                 else if( torsion_name(iset) == "rama" ) {
@@ -224,9 +262,9 @@ void SetTorsion::apply( Pose & pose ) {
                             pose.set_psi( resnum, psi );
                         }
                         else {
-                            pose.set_phi( resnum, angle(iset) );
-                            pose.set_psi( resnum, angle(iset) );
-														if( pose.residue(resnum).type().is_beta_aa() ) pose.set_theta( resnum, angle(iset) );
+                            pose.set_phi( resnum, angle(iset, pose.phi(resnum)) );
+                            pose.set_psi( resnum, angle(iset, pose.psi(resnum)) );
+														if( pose.residue(resnum).type().is_beta_aa() ) pose.set_theta( resnum, angle(iset, pose.theta(resnum)) );
                         }
                     }
                 }
@@ -265,10 +303,11 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
             atoms.resize(4, id::BOGUS_NAMED_ATOM_ID);
 
             angle_.push_back((*tag_it)->getOption< std::string >( "angle" ));
+            add_perturbation_type( (*tag_it)->getOption< std::string >("perturbation_type", "gaussian") );
+            add_perturbation_magnitude( (*tag_it)->getOption< core::Real >("perturbation_magnitude", 1.0) );
             residues_.push_back((*tag_it)->getOption< std::string >( "residue" ));
             torsion_name_.push_back((*tag_it)->getOption< std::string >( "torsion_name", ""));
             extending_.push_back((*tag_it)->getOption< Size >( "extending", 0 )); // expanding picked residue
-
 
             utility::vector1< utility::tag::TagCOP > const sub_branch_tags( (*tag_it)->getTags() );
             utility::vector1< utility::tag::TagCOP >::const_iterator sub_tag_it;
