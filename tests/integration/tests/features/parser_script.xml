@@ -24,7 +24,7 @@
 			<feature name=ResidueBurialFeatures/>
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=SecondaryStructureSegmentFeatures/>
-			<feature name=SmotifFeatures/>
+			<feature name=SmotifFeatures/> 
 
 			Two-Body
 			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
@@ -38,7 +38,6 @@
 			Multi-Body
 			<feature name=GeometricSolvationFeatures/>
 			<feature name=HelixBundleFeatures/>
-			<feature name=StrandBundleFeatures/>
 			<feature name=PairFeatures/>
 			<feature name=PoseConformationFeatures/>
 			<feature name=RadiusOfGyrationFeatures/>
@@ -46,6 +45,8 @@
 			Multi-Structure
 			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
+			<feature name=SandwichFeatures/>
+			<feature name=StrandBundleFeatures/>
 
 			Energy-Function
 			<feature name=HBondParameterFeatures scorefxn=s/>
@@ -58,7 +59,6 @@
 			Experimental
 			<feature name=PdbDataFeatures/>
 
-			<!-- feature name=SandwichFeatures/> Doonam dropped this in 2015/05/19 since he assumed that db3 was not created in the first place -->
     </ReportToDB>
     <TrajectoryReportToDB name=trajectory_features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the trajectory report to db mover." task_operations=all stride=2>
     </TrajectoryReportToDB>

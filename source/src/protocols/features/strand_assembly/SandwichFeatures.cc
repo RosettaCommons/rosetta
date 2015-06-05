@@ -9,7 +9,7 @@
 
 /// @file protocols/features/strand_assembly/SandwichFeatures.cc
 /// @brief Extract and analyze beta-sandwich features
-/// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
+/// @author Doo Nam Kim (doonam.kim@gmail.com)
 /// @overview
 ///		@ task 0: Determine whether we deal with given pdb file
 ///		@ task 1: Identify all beta-strands
@@ -82,9 +82,17 @@ utility::vector1<std::string>
 SandwichFeatures::features_reporter_dependencies() const
 {
 	utility::vector1<std::string> dependencies;
+
+	// needed for SandwichFeatures!
 	dependencies.push_back("ResidueFeatures"); // needed for ResidueSecondaryStructureFeatures
 	dependencies.push_back("ResidueSecondaryStructureFeatures"); // needed for SecondaryStructureSegmentFeatures
-	dependencies.push_back("SecondaryStructureSegmentFeatures"); // needed for SandwichFeatures!
+	dependencies.push_back("SecondaryStructureSegmentFeatures");
+
+
+	// not needed for SandwichFeatures, but for format_converter
+	dependencies.push_back("ResidueFeatures"); // needed for ProteinResidueConformationFeatures & ResidueSecondaryStructureFeatures
+	dependencies.push_back("PoseConformationFeatures");
+	dependencies.push_back("ProteinResidueConformationFeatures");
 
 	return dependencies;
 } //features_reporter_dependencies()

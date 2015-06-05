@@ -61,8 +61,9 @@ public:
 
 	void
 	setUp() {
-  	tr << "setUp ()" << std::endl;
-		tr << "which version I compiled : 	 ss << " << std::endl;
+		//  	tr << "setUp ()" << std::endl;
+		//    tr << "which version I compiled : 	 ss << " << std::endl;
+
 		using utility::sql_database::DatabaseSessionManager;
 		using namespace protocols::features;
 
