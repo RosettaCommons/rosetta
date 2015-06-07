@@ -39,6 +39,7 @@ main( int argc, char * argv [] )
 		devel::init(argc, argv);
 		
 		MPQuickRelaxMoverOP mqr( new MPQuickRelaxMover() );
+		mqr->add_membrane_again( true );
 		JobDistributor::get_instance()->go(mqr);
 	}
 	catch ( utility::excn::EXCN_Base const & e ) {

@@ -226,6 +226,7 @@ void MPMutateRelaxMover::apply( Pose & pose ) {
 			// do quick relax
 			TR << "Running MP quick relax..." << std::endl;
 			MPQuickRelaxMoverOP relax( new MPQuickRelaxMover() );
+			relax->add_membrane_again( true );
 			relax->apply( working_pose );
 	
 			// create output filename
