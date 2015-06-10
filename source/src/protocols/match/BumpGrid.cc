@@ -633,7 +633,7 @@ void Bool3DGrid::and_with( Bool3DGrid const & other )
 
 				index_mask_pair my_indmask    =       index_and_mask_for_bin( my_pos    );
 				index_mask_pair other_indmask = other.index_and_mask_for_bin( other_pos );
-				if ( ! grid_[ my_indmask.first ] & my_indmask.second ) continue;
+				if ( ! (grid_[ my_indmask.first ] & my_indmask.second) ) continue;
 				if ( other.grid_[ other_indmask.first ] & other_indmask.second ) continue;
 				grid_[ my_indmask.first ] &= ~my_indmask.second;  // set the bit to 0.
 			}
@@ -706,9 +706,9 @@ void Bool3DGrid::subtract( Bool3DGrid const & other )
 
 				index_mask_pair my_indmask    =       index_and_mask_for_bin( my_pos    );
 				index_mask_pair other_indmask = other.index_and_mask_for_bin( other_pos );
-				if ( ! grid_[ my_indmask.first ] & my_indmask.second ) continue;
+				if ( ! (grid_[ my_indmask.first ] & my_indmask.second) ) continue;
 
-				if ( ! other.grid_[ other_indmask.first ] & other_indmask.second ) continue;
+				if ( ! (other.grid_[ other_indmask.first ] & other_indmask.second) ) continue;
 
 				grid_[ my_indmask.first ] &= ~my_indmask.second;  // set the bit to 0.
 			}
