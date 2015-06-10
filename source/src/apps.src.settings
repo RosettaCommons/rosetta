@@ -166,6 +166,14 @@ sources = {
 		"gen_lig_grids",
 		"match",
 	],
+	"public/membrane" : [
+		"mp_dock", 
+		"mp_dock_setup", 
+		"mp_transform", 
+		"mp_symdock", 
+		"mp_span_from_pdb", 
+		"mp_viewer",
+	],
 	"public/membrane_abinitio": [
 		"membrane_abinitio2",
 	],
