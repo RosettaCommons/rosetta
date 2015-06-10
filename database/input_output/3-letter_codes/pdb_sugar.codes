@@ -23,13 +23,13 @@
   G3H   Gly           ->2)-D-Gly
   GXV   Gly           ->3)-L-Gly
 
-  
+
 # Aldotetroses
 
 # Code  Rosetta Code  Default HETNAM
   E4P   Ery           ->3)-D-Ery
 
-  
+
 # Aldopentoses
 
 # Code  Rosetta Code  Default HETNAM
@@ -186,7 +186,7 @@
 # Code  Rosetta Code  Default HETNAM
   KDO   Kdo           ->8)-D-alpha-Kdop
 
-  
+
 # Ketononoses (e.g., Sialic Acids)
 
 # Code  Rosetta Code  Default HETNAM
