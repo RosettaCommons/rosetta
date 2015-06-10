@@ -1112,7 +1112,7 @@ Options = Option_Group( '',
 								# save the computer time...
 		Option( 'mpi_nowait_for_remaining_jobs','Boolean', desc='exit immediately (not graceful -- not complete) if the last job has been sent out', default='false'),
 
-		Option( 'mpi_timeout_factor','Real', desc='timeout is X times average job-completion time - set to 0 to switch off', default='3'),
+		Option( 'mpi_timeout_factor','Real', desc='timeout is X times average job-completion time - set to 0 to switch off', default='0'),
 
 
 		Option( 'mpi_work_partition_job_distributor', 'Boolean', desc='determine if we should use the WorkPartition job distributor', default='false' ),
@@ -1136,6 +1136,7 @@ Options = Option_Group( '',
 		Option( 'checkpoint_file', 'File', desc='write/read nstruct-based checkpoint files to the desired filename.' ),
 		Option( 'nthreads', 'Integer', desc='The maximum number of threads to run at once using the MultiThreadedJobDistributor' ),
 		Option( 'failed_job_exception', 'Boolean', default = 'true', desc = 'If JD2 encounters an error during job execution, raise an exception at the end of the run', ),
+		Option( 'max_nstruct_in_memory', 'Integer', default = '1000000', desc = 'If nstruct is set higher than this number, JD2 will keep only this many jobs in memory in the jobs list at any given time (to keep the jobs list from filling up memory).  As jobs complete, they will be deleted and the jobs list will be filled out with new jobs.  This option is intended for exteremly large runs on systems like the Blue Gene/Q supercomputer.  To disable this sort of memory management, set this option to 0.', ),
 		Option( 'sequential_mpi_job_distribution', 'Boolean', default='false', desc = 'If specified, MPI versions of the JobDistributor send jobs to each slave in sequence (slave1, slave2, slave3 etc.).  False by default.  Note that this should NOT be used for production runs; it is intended only for regression tests in which non-sequential job distribution would result in stochastic variations.', ),
 	), # jd2
 

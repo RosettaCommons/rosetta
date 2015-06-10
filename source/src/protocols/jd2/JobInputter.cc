@@ -58,6 +58,13 @@ core::Size JobInputter::get_nstruct( ) const {
 	}
 }
 
+/// @brief This function is only called by certain JobInputters to update the jobs list after it has already been created.
+/// @details An example case would be the LargeNstructJobInputter, which uses this function to load additional jobs after the first N have started to come back.
+void JobInputter::update_jobs_list( JobsContainerOP /*jobs*/ ) {
+	//Do nothing by default, unless implemented in a derived class.
+	return;
+}
+
 std::string
 JobInputter::job_inputter_input_source_to_string(
 	JobInputterInputSource::Enum source

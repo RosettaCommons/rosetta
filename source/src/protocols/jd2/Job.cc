@@ -45,19 +45,48 @@ Job::Job( InnerJobOP inner_job, core::Size nstruct_index )
 	: inner_job_(inner_job),
 		nstruct_index_(nstruct_index),
 		status_prefix_( "" ),
+		long_strings_(),
+		string_string_pairs_(),
+		string_real_pairs_(),
 		completed_(false),
+		can_be_deleted_(false),
 		start_time_(0),
 		end_time_(0),
 		timestamp_("")
+{
+}
+
+/// @brief Copy constructor
+///
+Job::Job( Job const &src )
+	: inner_job_(src.inner_job_->clone()),
+		nstruct_index_(src.nstruct_index_),
+		status_prefix_( src.status_prefix_ ),
+		long_strings_(src.long_strings_),
+		string_string_pairs_(src.string_string_pairs_),
+		string_real_pairs_(src.string_real_pairs_),
+		completed_(src.completed_),
+		can_be_deleted_(src.can_be_deleted_),
+		start_time_(src.start_time_),
+		timestamp_(src.timestamp_)
 {
 	//TR.Trace << "Using Job (base class) for JobDistributor" << std::endl;
 }
 
 Job::~Job(){}
 
+
+
 /// @brief returns a copy of this object whose "output fields" are zeroed out.  Used by the JobDistributor in cases where the job fails and must be retried to prevent accumulation of Job state after a failure.  This implementation was chosen over a clear_all_output function to prevent mover A from deleting mover B's hard work!  You probably should not be trying to call this function.
 JobOP Job::copy_without_output() const{
 	return JobOP( new Job(inner_job_, nstruct_index_) );
+}
+
+/// @brief Return an owning pointer to a copy of this object.
+///
+JobOP Job::clone() const
+{
+	return JobOP( new Job( *this ) );
 }
 
 InnerJobCOP Job::inner_job() const { return inner_job_; }
@@ -94,6 +123,15 @@ void Job::add_string_string_pair( std::string const & string1, std::string const
 /// @brief add a string/real pair
 void Job::add_string_real_pair( std::string const & string_in, core::Real const real_in ){
 	string_real_pairs_[ string_in ] = real_in;
+}
+
+/// @brief Delete the output strings, string/string pairs, and string/real pairs.
+///
+void Job::clear_output() {
+	long_strings_.clear();
+	string_string_pairs_.clear();
+	string_real_pairs_.clear();
+	return;
 }
 
 /// @brief return a COP to the input pose
@@ -163,6 +201,8 @@ bool Job::bad() const {
 
 void Job::set_bad(bool value)  {
 	inner_job_->set_bad( value );
+	if(inner_job_->bad()) can_be_deleted_=true; //If this job is bad, it can be deleted to free up memory.  If not, it may or may not be deletable, so don't touch the value of can_be_deleted_.
+	return;
 }
 
 core::Size Job::start_time() const {
@@ -237,7 +277,8 @@ operator==(
 		a.long_strings_ == b.long_strings_ &&
 		a.string_string_pairs_ == b.string_string_pairs_ &&
 		a.string_real_pairs_ == b.string_real_pairs_ &&
-		a.completed_ == b.completed_;
+		a.completed_ == b.completed_ &&
+		a.can_be_deleted_ == b.can_be_deleted_;
 }
 
 
@@ -275,6 +316,7 @@ Job::show(
 
 	out
 		<< "completed: " << completed_ << std::endl
+		<< "can be deleted: " << (can_be_deleted_ ? "true" : "false") << std::endl
 		<< "String -> String Pairs:" << std::endl;
 	for(
 		StringStringPairs::const_iterator

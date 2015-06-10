@@ -84,7 +84,7 @@ MSDJobDistributor::go( protocols::moves::MoverOP mover ) {
 	current_nstruct_ = 1;
 	job_inputter_ = job_inputter();
 	job_outputter_ = job_outputter();
-	Jobs jobs = get_jobs();
+	JobsContainer jobs = get_jobs();
 
 	randomize_input_ = basic::options::option[ basic::options::OptionKeys::run::msd_randomize ].user();
 	core::Size ntrials = 1;

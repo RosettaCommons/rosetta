@@ -48,7 +48,7 @@ namespace jd2 {
   
 
   void
-  protocols::jd2::LazySilentFileJobInputter::fill_jobs( Jobs & jobs ) {
+  protocols::jd2::LazySilentFileJobInputter::fill_jobs( JobsContainer & jobs ) {
     using namespace utility;
     using namespace core;
     using namespace basic::options;
@@ -90,8 +90,8 @@ namespace jd2 {
       inner_jobs.push_back( ijob );
     }
     
-    tr.Debug << "reserve list for " << inner_jobs.size() * nstruct << " Job Objects" << std::endl;
-    jobs.reserve( nstruct * inner_jobs.size() );
+    //tr.Debug << "reserve list for " << inner_jobs.size() * nstruct << " Job Objects" << std::endl;
+    //jobs.reserve( nstruct * inner_jobs.size() );
     
     tr.Debug << "fill job list with... " << std::endl;
     for ( core::Size index = 1; index <= nstruct; ++index ) {

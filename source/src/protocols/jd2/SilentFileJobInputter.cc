@@ -115,7 +115,7 @@ void protocols::jd2::SilentFileJobInputter::pose_from_job(
 
 /// @details this function determines what jobs exist from -in::file::silent and
 /// -in::file::tags
-void protocols::jd2::SilentFileJobInputter::fill_jobs( Jobs & jobs ){
+void protocols::jd2::SilentFileJobInputter::fill_jobs( JobsContainer & jobs ){
 	tr.Debug << "SilentFileJobInputter::fill_jobs" << std::endl;
 
 	jobs.clear(); //should already be empty anyway
@@ -175,8 +175,8 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( Jobs & jobs ){
 		inner_jobs.push_back( ijob );
 	}
 
-	tr.Debug << "reserve list for " << inner_jobs.size() * nstruct << " Job Objects" << std::endl;
-	jobs.reserve( nstruct * inner_jobs.size() );
+	//tr.Debug << "reserve list for " << inner_jobs.size() * nstruct << " Job Objects" << std::endl;
+	//jobs.reserve( nstruct * inner_jobs.size() );
 
 	tr.Debug << "fill job list with... " << std::endl;
 	for ( core::Size index = 1; index <= nstruct; ++index ) {

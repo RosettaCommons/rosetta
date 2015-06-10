@@ -17,6 +17,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -146,6 +147,11 @@ JobInputterFactory::get_new_JobInputter()
 		return get_JobInputter_from_string( "DatabaseJobInputter" );
 	} else if ( option[ OptionKeys::make_rot_lib::options_file ].user() ) {
 		return get_JobInputter_from_string( "MakeRotLibJobInputter" );
+	} else if (
+		option[ OptionKeys::jd2::max_nstruct_in_memory ].value()!=0 &&
+		option[ OptionKeys::jd2::max_nstruct_in_memory ].value() < option[ OptionKeys::out::nstruct ].value()
+	) {
+		return get_JobInputter_from_string( "LargeNstructJobInputter" ); //handles cases where the total job list won't fit into memory (e.g. big runs on a Blue Gene/Q machine)
 	} else {
 		return get_JobInputter_from_string( "GenericJobInputter" ); //handles -nstruct alone; works for abinitio with no structure input
 	}

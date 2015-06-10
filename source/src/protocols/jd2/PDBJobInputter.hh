@@ -19,6 +19,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/PDBJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -43,7 +44,7 @@ public:
  	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
 
 	/// @brief this function determines what jobs exist from -s/-l
-	virtual void fill_jobs( Jobs & jobs );
+	virtual void fill_jobs( JobsContainer & jobs );
 
 	/// @brief Return the type of input source that the PDBJobInputter is currently
 	///  using.

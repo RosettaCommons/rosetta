@@ -25,6 +25,8 @@
 #include <basic/message_listening/MessageListenerFactory.hh>
 #include <basic/message_listening/MessageListener.hh>
 #include <basic/message_listening/util.hh>
+#include <protocols/jd2/JobInputter.hh>
+#include <protocols/jd2/LargeNstructJobInputter.hh>
 
 
 #include <protocols/moves/Mover.hh>
@@ -78,6 +80,7 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
   MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
   rank_ = int_rank;
   npes_ = int_npes;
+  if(rank_!=0) get_jobs_nonconst().set_force_job_purging(true); //If this is a slave process, the jobs list should purge old jobs even if not marked for deletion when higher-index jobs are requested.
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIWorkPoolJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
@@ -134,39 +137,47 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	core::Size slave_data( 0 );
 	MPI_Status status;
+	bool dummy(false); //A dummy variable for when I need to send an acknowledgement signal.
+	core::Size completed_job_id(0); //A storage spot for keeping track of what job has just been named as completed by the slave.
 
 	// set first job to assign
 	master_get_new_job_id();
 
 	// Job Distribution Loop
 	while ( next_job_to_assign_ != 0 ) {
-		TR << "Master Node: Waiting for job requests..." << std::endl;
-		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
-		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
+		if(TR.visible()) TR << "Master Node: Waiting for job requests..." << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
+		if(TR.visible()) TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		//switch ( status.MPI::Status::Get_tag() ) {
 		switch ( status.MPI_TAG ) {
-			case NEW_JOB_ID_TAG:
-				//TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI::Status::Get_source() << " with tag " << NEW_JOB_ID_TAG << std::endl;
-				//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
-				TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
+			case NEW_JOB_ID_TAG:  //The slave node has requested a new job id.
+				if(TR.visible()) TR << "Master Node: Sending new job id " << next_job_to_assign_ << " to node " << status.MPI_SOURCE << " with tag " << NEW_JOB_ID_TAG << std::endl;
 				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 				master_get_new_job_id();
 				break;
-			case BAD_INPUT_TAG:
-				//TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI::Status::Get_source() << std::endl;
-				TR << "Master Node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+			case BAD_INPUT_TAG: //The slave node has reported a bad job.
+				if(TR.visible()) TR << "Master Node: Received job failure message (due to bad input) for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 				bad_job_id_ = slave_data;
-				master_remove_bad_inputs_from_job_list();
+				master_remove_bad_inputs_from_job_list(); //This will mark the job as deletable
 				break;
-			case JOB_SUCCESS_TAG:
-				TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+			case JOB_SUCCESS_TAG: //The slave node has reported a successful job completion.
+				if(TR.visible()) TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+				completed_job_id = slave_data; //Store the id of the job just completed by the slave
 				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 				MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-				TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+				if(TR.visible()) TR << "Master Node: Received job output finish message for job id " << completed_job_id << " from node " << status.MPI_SOURCE << std::endl;
+				master_mark_job_as_completed( completed_job_id ); //This will mark the job as completed/deletable.
+				break;
+			case JOB_FAILURE_TAG:
+				if(TR.visible()) {
+					TR << "Master node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << "." << std::endl;
+					TR.flush();
+				}
+				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
+				//Master needs to acknowledge the failure before the slave requests a new job.  Otherwise, master might see the slave's NEW_JOB_ID_TAG request before seeing the JOB_FAILURE_TAG.
+				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
@@ -181,7 +192,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				bool request_slave_data = listener->request(message_data, return_info);
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
 
-				TR
+				if(TR.visible()) TR
 					<< "Master Node: node '" << status.MPI_SOURCE << "' "
 					<< "requests from the message listener '" << listener_tag_to_name(listener_tag) << "' "
 					<< "data on '" << message_data << "', "
@@ -190,7 +201,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 				if(request_slave_data){
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-					TR
+					if(TR.visible()) TR
 						<< "Master Node: Received from node '" << status.MPI_SOURCE << "' "
 						<< "'" << message_data << "'" << std::endl;
 					listener->receive(message_data);
@@ -217,11 +228,11 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	// Node Spin Down loop
 	while ( n_nodes_left_to_spin_down > 0 ) {
-		TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
+		if(TR.visible()) TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
 		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
 		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
+		if(TR.visible()) TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		//switch ( status.MPI::Status::Get_tag() ) {
@@ -229,17 +240,30 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case NEW_JOB_ID_TAG:
 				//TR << "Master Node: Sending spin down signal to node " << status.MPI::Status::Get_source() << std::endl;
 				//MPI::COMM_WORLD.Send( &next_job_to_assign_, 1, MPI::INT, status.MPI::Status::Get_source(), NEW_JOB_ID_TAG );
-				TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
+				if(TR.visible()) TR << "Master Node: Sending spin down signal to node " << status.MPI_SOURCE << std::endl;
 				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
 				n_nodes_left_to_spin_down--;
 				break;
 			case BAD_INPUT_TAG:
+				if(TR.visible()) TR << "Master Node: Received job failure message (due to bad input) for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+				bad_job_id_ = slave_data;
+				master_remove_bad_inputs_from_job_list(); //This will mark the job as deletable
 				break;
 			case JOB_SUCCESS_TAG:
-				TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+				if(TR.visible()) TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
+				completed_job_id = slave_data; //Store the id of the job just completed by the slave
 				MPI_Send( &next_job_to_assign_, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 				MPI_Recv( &slave_data, 1, MPI_UNSIGNED_LONG, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-				TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+				if(TR.visible()) TR << "Master Node: Received job output finish message for job id " << completed_job_id << " from node " << status.MPI_SOURCE << std::endl;
+				master_mark_job_as_completed( completed_job_id ); //This will mark the job as completed/deletable.
+				break;
+			case JOB_FAILURE_TAG:
+				if(TR.visible()) TR << "Master node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << "." << std::endl;
+				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
+				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
+				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
+				//Master needs to acknowledge the failure before the slave requests a new job.  Otherwise, master might see the slave's NEW_JOB_ID_TAG request before seeing the JOB_FAILURE_TAG.
+				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
@@ -253,7 +277,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				bool request_slave_data = listener->request(message_data, return_info);
 				utility::send_string_to_node(status.MPI_SOURCE, return_info);
 
-				TR
+				if(TR.visible()) TR
 					<< "Master Node: node '" << status.MPI_SOURCE << "' "
 					<< "requests from the message listener '" << listener_tag_to_name(listener_tag) << "' "
 					<< "data on '" << message_data << "', "
@@ -262,7 +286,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 				if(request_slave_data){
 					message_data = utility::receive_string_from_node(status.MPI_SOURCE);
-					TR
+					if(TR.visible()) TR
 						<< "Master Node: Received from node '" << status.MPI_SOURCE << "' "
 						<< "'" << message_data << "'" << std::endl;
 					listener->receive(message_data);
@@ -281,7 +305,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			}
 		}
 	}
-	TR << "Master Node: Finished sending spin down signals to slaves" << std::endl;
+	if(TR.visible()) TR << "Master Node: Finished sending spin down signals to slaves" << std::endl;
 #endif
 }
 
@@ -316,20 +340,20 @@ MPIWorkPoolJobDistributor::master_get_new_job_id()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	Jobs const & jobs( get_jobs() );
+	JobsContainer & jobs( get_jobs_nonconst() ); //Must be non-const access in case jobs list needs to be updated.
 	JobOutputterOP outputter = job_outputter();
 
 	while( next_job_to_assign_ <= jobs.size()) {
 		++next_job_to_assign_;
 		if ( next_job_to_assign_ > jobs.size() ) {
-			TR << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
+			if(TR.visible()) TR << "Master Node: No more jobs to assign, setting next job id to zero" << std::endl;
 			next_job_to_assign_ = 0;
 			return 0;
 		}	else if ( !outputter->job_has_completed( jobs[ next_job_to_assign_ ] ) ) {
-			TR << "Master Node: Getting next job to assign from list id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
+			if(TR.visible()) TR << "Master Node: Getting next job to assign from list id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
 			return next_job_to_assign_; //not used by callers
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign_ ] ) && option[ out::overwrite ].value() ) {
-			TR << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
+			if(TR.visible()) TR << "Master Node: Getting next job to assign from list, overwriting id " << next_job_to_assign_ << " of " << jobs.size() << std::endl;
 			return next_job_to_assign_; //not used by callers
 		}
 	}
@@ -346,18 +370,35 @@ MPIWorkPoolJobDistributor::slave_get_new_job_id()
 	if( sequential_distribution() && !starter_for_sequential_distribution()) wait_for_go_signal();
 
 	if ( repeat_job_ == true ) {
-		TR << "Slave Node " << rank_ << ": Repeating job id " << current_job_id_ <<std::endl;
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Repeating job id " << current_job_id_ <<std::endl;
 		repeat_job_ = false;
 	}	else {
-		TR << "Slave Node " << rank_ << ": Requesting new job id from master" <<std::endl;
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Requesting new job id from master" <<std::endl;
 		core::Size empty_data( 0 );
 		MPI_Status status;
 		current_job_id_ = 0;
 		//MPI::COMM_WORLD.Send( &empty_data, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
 		//MPI::COMM_WORLD.Recv( &current_job_id_, 1, MPI::INT, 0, NEW_JOB_ID_TAG );
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD );
+
 		MPI_Recv( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, NEW_JOB_ID_TAG, MPI_COMM_WORLD, &status );
-		TR << "Slave Node " << rank_ << ": Received job id " << current_job_id_ << " from master" <<std::endl;
+		
+		//If we're using the LargeNstructJobInputter, which limits the number of jobs held in memory at any given time, then we need to ensure that
+		//the slave knows that lower-numbered jobs can be deleted:		
+		JobsContainer & jobs( get_jobs_nonconst() ); //Must be nonconst to mark jobs as deletable.
+		bool greater_than=false;
+		if(jobs.highest_job_index() < current_job_id_) { //Mark all jobs with lower id values as deletable if we've received a higher job id.  We will definitely not receive a lower job id, I think.
+			greater_than=true;
+			for(core::Size i=1, imax=jobs.highest_job_index(); i<=imax; ++i) {
+				if(jobs.has_job(i)) jobs[i]->set_can_be_deleted(true);
+			}
+		}
+
+		if(TR.visible()) {
+			TR << "Slave Node " << rank_ << ": Received job id " << current_job_id_ << " from master.";
+			if(greater_than) TR << "  This index was higher than the highest index currently loaded in memory.  Purging old jobs.";
+			TR << std::endl;
+		}		
 	}
 	
 	if( sequential_distribution() ) send_go_signal();
@@ -382,7 +423,7 @@ void
 MPIWorkPoolJobDistributor::master_mark_current_job_id_for_repetition()
 {
 	runtime_assert( rank_ == 0 );
-	TR << "Master Node: Mark current job for repetition" << std::endl;
+	if(TR.visible()) TR << "Master Node: Mark current job for repetition" << std::endl;
 	utility_exit_with_message( "Master Node: master_mark_current_job_id_for_repetition() should never be called" );
 
 }
@@ -391,7 +432,7 @@ void
 MPIWorkPoolJobDistributor::slave_mark_current_job_id_for_repetition()
 {
 	runtime_assert( !( rank_ == 0 ) );
-	TR << "Slave Node " << rank_ << ": Mark current job for repetition, id " << current_job_id_ << std::endl;
+	if(TR.visible()) TR << "Slave Node " << rank_ << ": Mark current job for repetition, id " << current_job_id_ << std::endl;
 	repeat_job_ = true;
 }
 
@@ -412,14 +453,16 @@ MPIWorkPoolJobDistributor::master_remove_bad_inputs_from_job_list()
 	//#ifdef USEMPI
 	runtime_assert( rank_ == 0 );
 
-	Jobs const & jobs( get_jobs() );
+	JobsContainer & jobs( get_jobs_nonconst() ); //Must be nonconst to mark jobs as deletable.
 
 	std::string const & bad_job_id_input_tag( jobs[ bad_job_id_ ]->input_tag() );
 
-	TR << "Master Node: Job id " << bad_job_id_ << " failed, reporting bad input; other jobs of same input will be canceled: " << job_outputter()->output_name( jobs[ bad_job_id_ ] ) << std::endl;
+	if(TR.visible()) TR << "Master Node: Job id " << bad_job_id_ << " failed, reporting bad input; other jobs of same input will be canceled: " << job_outputter()->output_name( jobs[ bad_job_id_ ] ) << std::endl;
+	jobs[bad_job_id_]->set_can_be_deleted(true);
 
 	while( next_job_to_assign_ <= jobs.size() && jobs[ next_job_to_assign_ ]->input_tag() == bad_job_id_input_tag ) {
-		TR << "Master Node: Job canceled without trying due to previous bad input: " << job_outputter()->output_name( jobs[ next_job_to_assign_ ] ) << " id " << next_job_to_assign_ << std::endl;
+		if(TR.visible()) TR << "Master Node: Job canceled without trying due to previous bad input: " << job_outputter()->output_name( jobs[ next_job_to_assign_ ] ) << " id " << next_job_to_assign_ << std::endl;
+		jobs[next_job_to_assign_]->set_can_be_deleted(true);
 		++next_job_to_assign_;
 	}
 
@@ -443,13 +486,35 @@ MPIWorkPoolJobDistributor::slave_remove_bad_inputs_from_job_list()
 
 /// @brief dummy for master/slave version
 void
-MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real /*run_time*/, std::string const & tag)
+MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real /*run_time*/, std::string const & tag)
 {
 	if ( rank_ == 0 ) {
 	master_job_succeeded( pose, tag );
 	} else {
 	slave_job_succeeded( pose, tag );
 	}
+}
+
+/// @brief Called if the job failed.
+///
+void MPIWorkPoolJobDistributor::job_failed(
+		core::pose::Pose & /*pose*/,
+		bool /*will_retry*/
+) {
+#ifdef USEMPI
+	if(rank_==0) {
+		utility_exit_with_message( "In protocols::jd2::MPIWorkPoolJobDistributor::job_failed(): This function should never be called on the master node!\n" );
+	} else {
+		MPI_Status status;
+		increment_failed_jobs();
+		bool dummy_val(false);
+		if(TR.visible()) TR << "Job " << current_job_id_ << " failed!  Slave process " << rank_ << " transmitting failure to master." << std::endl;
+		MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, JOB_FAILURE_TAG, MPI_COMM_WORLD );
+		//We need to wait for acknowledgement, lest this process request a new job id (and be given one) before Master has seen the failure message and cleaned up the job list.
+		MPI_Recv( &dummy_val, 1, MPI_C_BOOL, 0, JOB_FAILURE_TAG, MPI_COMM_WORLD, &status);
+	}
+	return;
+#endif
 }
 
 void MPIWorkPoolJobDistributor::mpi_finalize(bool finalize)
@@ -462,7 +527,7 @@ MPIWorkPoolJobDistributor::master_job_succeeded(core::pose::Pose & /*pose*/, std
 {
 #ifdef USEMPI
 	runtime_assert( rank_ == 0 );
-	TR << "Master Node: Job Succeeded" << std::endl;
+	if(TR.visible()) TR << "Master Node: Job Succeeded" << std::endl;
 	utility_exit_with_message( "Master Node: master_job_succeeded() should never be called" );
 #endif
 }
@@ -480,20 +545,60 @@ MPIWorkPoolJobDistributor::slave_job_succeeded(core::pose::Pose & MPI_ONLY( pose
 		MPI_Status status;
 
 		// send job success message to master
-		TR << "Slave Node " << rank_ << ": Finished job successfully! Sending output request to master." << std::endl;
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Finished job successfully! Sending output request to master." << std::endl;
 		MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 
 		// receive message from master that says is okay to write
-		TR << "Slave Node " << rank_ << ": Received output confirmation from master. Writing output." << std::endl;
 		MPI_Recv( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status );
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Received output confirmation from master. Writing output." << std::endl;
 		// time and write output (pdb, silent file, score file etc.)
 		clock_t starttime = clock();
 		job_outputter()->final_pose( current_job(), pose, tag );
 		clock_t stoptime = clock();
 
-		// send message to master that we are done outputing
-		TR << "Slave Node " << rank_ << ": Finished writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
+			// send message to master that we are done outputing
+		if(TR.visible()) TR << "Slave Node " << rank_ << ": Finished writing output in " << ((double) stoptime-starttime) / CLOCKS_PER_SEC << " seconds. Sending message to master" << std::endl;
 		MPI_Send( &empty_data, 1, MPI_UNSIGNED_LONG, 0, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
+	}
+#endif
+}
+
+/// @brief Mark the job as completed/deletable in the jobs list on the master process.
+///
+void
+MPIWorkPoolJobDistributor::master_mark_job_as_completed(
+#ifdef USEMPI
+	core::Size const job_index
+#else
+	core::Size const
+#endif
+) {
+#ifdef USEMPI
+	JobsContainer & jobs( get_jobs_nonconst() ); //Must be non-const access in case jobs list needs to be updated.
+	jobs[job_index]->set_completed(true); //The job has been completed.  (Also sets it to be deletable, if we're using the LargeNstructJobInputter to save memory.)
+	if(TR.visible()) {
+		TR << "Master set job " << job_index << " as completed/deletable." << std::endl; //DELETE ME or switch to debug output.
+		TR.flush();
+	}
+#endif
+}
+
+/// @brief Mark the job as deletable in the jobs list on the master process.
+///
+void
+MPIWorkPoolJobDistributor::master_mark_job_as_failed(
+#ifdef USEMPI
+	core::Size const job_index
+#else
+	core::Size const
+#endif
+) {
+#ifdef USEMPI
+	JobsContainer & jobs( get_jobs_nonconst() ); //Must be non-const access in case jobs list needs to be updated.
+	jobs[job_index]->set_can_be_deleted(true); //The job can be deleted, since it failed.
+	if(TR.visible()) {
+		TR << "Master set job " << job_index << " as failed/deletable." << std::endl; //DELETE ME or switch to debug output.
+		TR.flush();
 	}
 #endif
 }
@@ -522,7 +627,6 @@ void MPIWorkPoolJobDistributor::send_go_signal() {
 #endif
 	return;
 }
-
 
 }//jd2
 }//protocols

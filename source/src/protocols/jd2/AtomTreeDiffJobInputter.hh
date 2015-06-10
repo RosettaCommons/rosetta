@@ -19,6 +19,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/AtomTreeDiffJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -51,7 +52,7 @@ public:
 
 	/// @brief this function determines what jobs exist from -in::file::silent and
 	/// -in::file::tags.
-	virtual void fill_jobs( Jobs & jobs );
+	virtual void fill_jobs( JobsContainer & jobs );
 
 	/// @brief Return the type of input source that the AtomTreeDiffJobInputter is currently
 	///  using.

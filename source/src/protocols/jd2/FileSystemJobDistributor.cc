@@ -106,7 +106,7 @@ FileSystemJobDistributor::get_new_job_id()
 		utility_exit_with_message("ambiguous, cannot have both -out::overwrite and -run::multiple_processes_writing_to_one_directory");
 	}
 
-	Jobs const & jobs( get_jobs() );
+	JobsContainer & jobs( get_jobs_nonconst() ); //Must be nonconst for cases where the joblist is not necessarily loaded into memory all at the same time.
 	JobOutputterOP outputter = job_outputter();
 	core::Size next_job_to_try_assigning( current_job_id() + ( retry_count_ > 0 ? 0 : 1 ) );
 	next_job_to_try_assigning = std::max( next_job_to_try_assigning, get_min_nstruct_index_checkpoint_file() );
@@ -185,7 +185,7 @@ FileSystemJobDistributor::remove_bad_inputs_from_job_list()
 	// this latter stuff requires that jobs come in sequence of input... some application might prefer to
 	// reshuffle ...
 
-// 	Jobs const & jobs( get_jobs() );
+// 	JobsContainer const & jobs( get_jobs() );
 // 	core::Size next_job_to_try_assigning( current_job_id() );
 // 	while(next_job_to_try_assigning <= jobs.size() && //MUST BE FIRST for c++ shortcut logical evaluation
 // 				jobs[next_job_to_try_assigning]->inner_job()->input_tag() == current_input_tag) {
@@ -262,7 +262,7 @@ void FileSystemJobDistributor::handle_interrupt()
 void FileSystemJobDistributor::delete_in_progress_files()
 {
 	if ( basic::options::option[ basic::options::OptionKeys::run::multiple_processes_writing_to_one_directory ].value() ) {
-		Jobs const & jobs( get_jobs() );
+		JobsContainer const & jobs( get_jobs() );
 		JobOutputterCOP outputter = job_outputter();
 		std::string const output_name( temporary_file_name( jobs[ current_job_id() ] ) );
 		utility::file::file_delete( output_name.c_str() );

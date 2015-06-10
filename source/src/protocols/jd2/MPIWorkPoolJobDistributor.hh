@@ -72,9 +72,10 @@ enum mpi_tags {
 	NEW_JOB_ID_TAG = 10,
 	BAD_INPUT_TAG = 20,
 	JOB_SUCCESS_TAG = 30,
-	REQUEST_MESSAGE_TAG = 40,
-	RECEIVE_MESSAGE_TAG = 50,
-	JOB_GO_TAG = 60
+	JOB_FAILURE_TAG = 40,
+	REQUEST_MESSAGE_TAG = 50,
+	RECEIVE_MESSAGE_TAG = 60,
+	JOB_GO_TAG = 70
 };
 
 /// @details This job distributor is meant for running jobs where the machine you are using has a large number of
@@ -122,6 +123,11 @@ public:
 	virtual
 	void
 	job_succeeded(core::pose::Pose & pose, core::Real run_time, std::string const & tag);
+	
+	/// @brief Called if job fails.
+	///
+	virtual
+	void job_failed(core::pose::Pose &pose, bool will_retry);
 
 	/// @brief should the go() function call MPI_finalize()? It probably should, this is true by default.
 	virtual
@@ -184,6 +190,18 @@ protected:
 	void
 	slave_job_succeeded(core::pose::Pose & pose, std::string const & tag);
 	
+	/// @brief Mark the job as completed/deletable in the jobs list on the master process.
+	///
+	virtual
+	void
+	master_mark_job_as_completed( core::Size const job_index );
+
+	/// @brief Mark the job as deletable in the jobs list on the master process.
+	///
+	virtual
+	void
+	master_mark_job_as_failed( core::Size const job_index );
+
 	/// @brief Set whether the JobDistributor sends jobs to each slave in sequence (1, 2, 3, etc.)
 	///
 	virtual

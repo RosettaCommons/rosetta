@@ -29,5 +29,6 @@ static JobInputterRegistrator< features::DatabaseJobInputterCreator > reg_Databa
 static JobInputterRegistrator< comparative_modeling::GenericJobInputterCreator > reg_GenericJobInputterCreator;
 static JobInputterRegistrator< make_rot_lib::MakeRotLibJobInputterCreator > reg_MakeRotLibJobInputterCreator;
 static JobInputterRegistrator< ScreeningJobInputterCreator > reg_ScreeningJobInputterCreator;
+static JobInputterRegistrator< LargeNstructJobInputterCreator > reg_LargeNstructJobInputterCreator;
 
 } //namespace protocols

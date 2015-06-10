@@ -13,6 +13,7 @@
 /// @author Steven Lewis smlewi@gmail.com
 /// @author Mike Tyka
 /// @author Oliver Lange
+/// @author Vikram K. Mulligan (vmullig@uw.edu) -- Rewrite of jobs list to permit on-the-fly job generation when the list is too large to hold in memory.
 
 // Unit headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -154,6 +155,10 @@ JobDistributor::JobDistributor() :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
+		job_inputter_(),
+		job_outputter_(),
+		parser_(),
+		jobs_(),
 		current_job_(JD2_BOGUS_JOB->copy_without_output()),
 		current_job_id_(0),
 		last_completed_job_(0),
@@ -169,6 +174,10 @@ JobDistributor::JobDistributor(bool empty) :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
+		job_inputter_(),
+		job_outputter_(),
+		parser_(),
+		jobs_(),
 		current_job_(JD2_BOGUS_JOB->copy_without_output()),
 		current_job_id_(0),
 		last_completed_job_(0),
@@ -184,6 +193,7 @@ JobDistributor::JobDistributor(bool empty) :
 		job_inputter_ = NULL;
 		job_outputter_ = JobOutputterOP( new NoOutputJobOutputter );
 		parser_ = JobDistributorFactory::create_parser();
+		jobs_ = JobsContainerOP( new JobsContainer );
 	}
 }
 
@@ -217,7 +227,8 @@ void JobDistributor::init_jd()
 
 	// get jobs
 	try {
-		job_inputter_->fill_jobs(jobs_);
+		jobs_ = JobsContainerOP( new JobsContainer ); //Create the jobs container object
+		job_inputter_->fill_jobs(*jobs_);
 	} catch (utility::excn::EXCN_Base & excn) {
 			basic::Error()
 				<< "ERROR: Exception caught by JobDistributor while trying to fill the input jobs with JobInputter of type type '"
@@ -249,7 +260,7 @@ void JobDistributor::populate_batch_list_from_cmd()
 /// @details restart job-distribution from beginning -- useful if you need a second pass over decoys...
 void JobDistributor::restart()
 {
-	jobs_.clear();
+	jobs_->clear();
 	current_job_id_ = 0;
 	last_completed_job_ = 0;
 	current_job_ = JD2_BOGUS_JOB->copy_without_output();
@@ -298,9 +309,9 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 
 	note_all_jobs_finished();
 	if (batches_.size()) {
-		tr.Info << jobs_.size() << " jobs in last batch... in total ";
+		tr.Info << jobs_->size() << " jobs in last batch... in total ";
 	} else {
-		tr.Info << jobs_.size() << " jobs considered, ";
+		tr.Info << jobs_->size() << " jobs considered, ";
 	}
 	tr.Info << tried_jobs << " jobs attempted in "
 		<< (time(NULL) - allstarttime) << " seconds" << std::endl;
@@ -368,8 +379,11 @@ bool JobDistributor::obtain_new_job(bool reconsider_current_job)
 			return obtain_new_job(); //set to first job of new batch... --- if batch is already computed fully this might call next_batch() !
 		}
 		return false;
-	} else if (current_job_id_ <= jobs_.size()) {
-		current_job_ = jobs_[current_job_id_];
+	} else if (current_job_id_ <= jobs_->size()) {
+		current_job_ = (*jobs_)[current_job_id_];
+		if (reconsider_current_job) {
+			current_job_->clear_output();
+		}
 		return true;
 	}	else {
 		utility_exit_with_message(
@@ -396,22 +410,23 @@ void JobDistributor::job_failed(core::pose::Pose & /*pose*/,
 		bool will_retry)
 {
 	if ( ! will_retry ) {
-		number_failed_jobs_++;
+		increment_failed_jobs();
+		(*jobs_)[current_job_id_]->set_can_be_deleted(true);
 	}
 }
 
 void JobDistributor::mark_job_as_completed(core::Size job_id,
 		core::Real run_time)
 {
-	jobs_[job_id]->set_completed();
-	tr.Info << job_outputter_->output_name(jobs_[job_id])
+	(*jobs_)[job_id]->set_completed();
+	tr.Info << job_outputter_->output_name((*jobs_)[job_id])
 			<< " reported success in " << run_time << " seconds" << std::endl;
-	//	tr.Info << "completed job: " << job_outputter_->output_name( jobs_[ job_id ] ) << std::endl;
+	//	tr.Info << "completed job: " << job_outputter_->output_name( (*jobs_)[ job_id ] ) << std::endl;
 }
 
 void JobDistributor::mark_job_as_bad(core::Size job_id)
 {
-	jobs_[job_id]->set_bad();
+	(*jobs_)[job_id]->set_bad();
 }
 
 void JobDistributor::remove_bad_inputs_from_job_list()
@@ -429,7 +444,7 @@ void JobDistributor::note_all_jobs_finished()
 //This next line prevents accumulation of state within the Job object - should it be within another function?
 void JobDistributor::clear_current_job_output()
 {
-	jobs_[current_job_id_] = current_job_->copy_without_output(); //is this unsafe?  should be its own function? MT: It is now!
+	(*jobs_)[current_job_id_] = current_job_->copy_without_output(); //is this unsafe?  should be its own function? MT: It is now!
 }
 
 void
@@ -574,9 +589,9 @@ JobDistributor::run_one_job(
 		//probably be applied by default, once the issues with the
 		//special uses are worked out.
 
-		if (!first_job && last_completed_job_ != 0) {
+		if (!first_job && last_completed_job_ != 0 && jobs_->has_job(last_completed_job_) ) {
 			tr.Debug << "deleting pose from job " << last_completed_job_ << std::endl;
-			jobs_[last_completed_job_]->inner_job_nonconst()->set_pose( 0 );
+			(*jobs_)[last_completed_job_]->inner_job_nonconst()->set_pose( 0 );
 		}
 	}
 	//delete pointer to pose of last input; if that was last pointer
@@ -721,10 +736,13 @@ core::Size
 JobDistributor::get_job_time_estimate() const {
 	core::Size time_sum( 0 );
 	core::Size number_completed( 0 );
-	for( core::Size ii(1); ii <= jobs_.size(); ++ii ) {
-		if( jobs_[ii]->end_time() != 0 ) {
-			time_sum += jobs_[ii]->elapsed_time();
+	for( core::Size ii(1); ii <= jobs_->size(); ++ii ) {
+		if( jobs_->has_job(ii) && (*jobs_)[ii]->end_time() != 0 ) {
+			time_sum += (*jobs_)[ii]->elapsed_time();
 			++number_completed;
+		} else if (!jobs_->has_job(ii) && tr.Warning.visible()) {
+			tr.Warning << "Warning!  Job time estimation is not guaranteed to work properly if a JobInputter is used that prunes old jobs to save memory!" << std::endl;
+			tr.Warning.flush();
 		}
 	}
 	if( number_completed != 0 ) {
@@ -825,6 +843,7 @@ void JobDistributor::write_output_from_job(
 			mark_current_job_id_for_repetition();
 			tr.Warning << job_outputter_->output_name(current_job_)
 					<< " reported failure and will retry" << std::endl;
+			current_job_->clear_output();
 			job_failed(pose, true /* will retry */);
 		}
 	} else if (status == protocols::moves::FAIL_DO_NOT_RETRY) {
@@ -852,7 +871,7 @@ void JobDistributor::end_critical_section()
 
 void JobDistributor::set_current_job_by_index( core::Size curr_job_index )
 {
-	current_job_ = jobs_[ curr_job_index ];
+	current_job_ = (*jobs_)[ curr_job_index ];
 	current_job_id_ = curr_job_index;
 }
 
@@ -862,14 +881,20 @@ core::Size JobDistributor::current_job_id() const
 	return current_job_id_;
 }
 
-Jobs const &
+JobsContainer const &
 JobDistributor::get_jobs() const
 {
-	return jobs_;
+	return *jobs_;
 }
 
-// Jobs &
-// JobDistributor::get_jobs()  { return jobs_; }
+/// @brief Jobs is the container of Job objects
+/// @details This version provides nonconst access, for cases where
+/// the job list must be updated on the fly.
+JobsContainer &
+JobDistributor::get_jobs_nonconst()
+{
+	return *jobs_;
+}
 
 JobInputterOP JobDistributor::job_inputter() const
 {
@@ -972,7 +997,7 @@ void JobDistributor::load_new_batch()
 	runtime_assert( current_batch_id_ <= batches_.size());
 	//paranoid
 
-	jobs_.clear();
+	(*jobs_).clear();
 	current_job_id_ = 0;
 	current_job_ = JD2_BOGUS_JOB->copy_without_output();
 
@@ -982,7 +1007,7 @@ void JobDistributor::load_new_batch()
 	tr.Info << "start batch " << batches_[current_batch_id_] << std::endl;
 	job_inputter_ = JobInputterOP( new BatchJobInputter(batches_[current_batch_id_]) );
 
-	job_inputter_->fill_jobs(jobs_);
+	job_inputter_->fill_jobs(*jobs_);
 	// have to initialize these AFTER BatchJobInputter->fill_jobs an new batch
 	// might change options
 

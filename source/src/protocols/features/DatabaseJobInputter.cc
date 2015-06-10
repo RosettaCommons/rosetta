@@ -302,7 +302,7 @@ DatabaseJobInputter::pose_from_job(
 }
 
 /// @details this function determines what jobs exist
-void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs & jobs ){
+void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ){
 	tr.Debug << "DatabaseJobInputter::fill_jobs" << std::endl;
 	jobs.clear(); //should already be empty anyway
 
@@ -346,11 +346,11 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 		inner_jobs.push_back(protocols::jd2::InnerJobOP( new protocols::jd2::InnerJob(iter->first, nstruct) ));
 	}
 
-	tr.Debug
-		<< "reserve list for " << inner_jobs.size() * nstruct
-		<< " Job Objects" << endl;
+	//tr.Debug
+	//	<< "reserve list for " << inner_jobs.size() * nstruct
+	//	<< " Job Objects" << endl;
 
-	jobs.reserve(inner_jobs.size() * nstruct);
+	//jobs.reserve(inner_jobs.size() * nstruct);
 
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {

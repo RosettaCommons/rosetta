@@ -90,7 +90,7 @@ void devel::domain_assembly::DomainAssemblyJobInputter::pose_from_job( core::pos
 }
 
 /// @details this function determines what jobs exist
-void devel::domain_assembly::DomainAssemblyJobInputter::fill_jobs( protocols::jd2::Jobs & jobs ){
+void devel::domain_assembly::DomainAssemblyJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ){
 	TR << "DomainAssemblyJobInputter::fill_jobs" << std::endl;
 
 	jobs.clear();

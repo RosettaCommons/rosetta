@@ -108,7 +108,7 @@ protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose 
 }
 
 /// @details this function determines what jobs exist from the make rot lib options data. Each job calculates the rotamers for one omg, phi, psi, eps bin.
-void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::Jobs & jobs )
+void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::JobsContainer & jobs )
 {
 	TR << "MakeRotLibJobInputter::fill_jobs" << std::endl;
 

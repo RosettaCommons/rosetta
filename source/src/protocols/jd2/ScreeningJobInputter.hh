@@ -18,6 +18,7 @@
 #include <protocols/jd2/ScreeningJobInputter.fwd.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -37,7 +38,7 @@ public:
 	virtual void pose_from_job(core::pose::Pose & pose, JobOP job);
 
 	/// @brief fill the jobs based on the specified json file
-	virtual void fill_jobs(Jobs & jobs);
+	virtual void fill_jobs(JobsContainer & jobs);
 
 	/// @brief return the input source
 	virtual JobInputterInputSource::Enum input_source() const;

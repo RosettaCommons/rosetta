@@ -23,6 +23,7 @@
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -64,8 +65,13 @@ go_main() {
 	/// INPUT
 
 	JobInputterOP inputter( JobDistributorFactory::create_job_inputter() );
+	protocols::jd2::JobsContainer inputs_container;
+	inputter->fill_jobs( inputs_container );
+	
 	protocols::jd2::Jobs inputs;
-	inputter->fill_jobs( inputs );
+	for(core::Size i=1; i<=inputs_container.size(); ++i) {
+		inputs.push_back( inputs_container[i] );
+	}
 
 	core::import_pose::atom_tree_diffs::ScoresPairList scores_list;
 	std::map< std::string, JobOP> tag_job_map;

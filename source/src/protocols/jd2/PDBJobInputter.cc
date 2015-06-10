@@ -73,7 +73,7 @@ void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, Job
 }
 
 /// @details this function determines what jobs exist from -s/-l
-void protocols::jd2::PDBJobInputter::fill_jobs( Jobs & jobs ){
+void protocols::jd2::PDBJobInputter::fill_jobs( JobsContainer & jobs ){
 	TR << "PDBJobInputter::fill_jobs" << std::endl;
 
 	jobs.clear(); //should already be empty anyway

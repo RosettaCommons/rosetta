@@ -79,7 +79,7 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
   determine_job_ids_to_run();
   next_job_to_try_assigning_ = job_id_start_;
 
-  Jobs const & jobs( get_jobs() );
+  JobsContainer const & jobs( get_jobs() );
   TR << "RANK: " << rank_ << " NUM_PROCS: " << npes_ << " NUM_JOBS: " << jobs.size()
 		 << " START_ID: " << job_id_start_ << " END_ID: " << job_id_end_ << std::endl;
 }
@@ -101,7 +101,7 @@ MPIWorkPartitionJobDistributor::~MPIWorkPartitionJobDistributor()
 void
 MPIWorkPartitionJobDistributor::determine_job_ids_to_run()
 {
-  Jobs const & jobs( get_jobs() );
+  JobsContainer const & jobs( get_jobs() );
 
   core::Size num_jobs( 0 );
   core::Size jobs_mod_procs( jobs.size() % npes_ );
@@ -153,7 +153,7 @@ MPIWorkPartitionJobDistributor::go( protocols::moves::MoverOP mover )
 core::Size
 MPIWorkPartitionJobDistributor::get_new_job_id()
 {
-  Jobs const & jobs( get_jobs() );
+  JobsContainer const & jobs( get_jobs() );
   JobOutputterOP outputter = job_outputter();
 
   while ( next_job_to_try_assigning_ <= job_id_end_ ) {
@@ -195,7 +195,7 @@ MPIWorkPartitionJobDistributor::remove_bad_inputs_from_job_list()
   TR << "job failed, reporting bad input; other jobs of same input will be canceled: "
      << job_outputter()->output_name( current_job() ) << std::endl;
 
-  Jobs const & jobs( get_jobs() );
+  JobsContainer const & jobs( get_jobs() );
 
   while(next_job_to_try_assigning_ <= job_id_end_ && //MUST BE FIRST for c++ shortcut logical evaluation
     jobs[next_job_to_try_assigning_]->input_tag() == current_input_tag) {

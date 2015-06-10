@@ -93,7 +93,7 @@ void ScreeningJobInputter::pose_from_job(core::pose::Pose & pose, JobOP job)
 	}
 }
 
-void ScreeningJobInputter::fill_jobs(Jobs & jobs)
+void ScreeningJobInputter::fill_jobs(JobsContainer & jobs)
 {
 	std::string file_name(basic::options::option[basic::options::OptionKeys::in::file::screening_job_file]());
 	utility::io::izstream data(file_name.c_str(),std::ifstream::in);
@@ -241,7 +241,8 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 
 	if(basic::options::option[basic::options::OptionKeys::in::file::shuffle_screening_jobs]())
 	{
-		std::random_shuffle(jobs.begin(),jobs.end());
+		jobs.shuffle();
+		//std::random_shuffle(jobs.begin(),jobs.end());
 	}
 }
 

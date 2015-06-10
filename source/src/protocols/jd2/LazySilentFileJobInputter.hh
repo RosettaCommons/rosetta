@@ -12,6 +12,7 @@
 
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -34,7 +35,7 @@ namespace jd2 {
 
     virtual core::io::silent::SilentStruct const& struct_from_job( JobOP job );
 
-    virtual void fill_jobs( Jobs & jobs );
+    virtual void fill_jobs( JobsContainer & jobs );
 
     virtual JobInputterInputSource::Enum input_source() const;
 

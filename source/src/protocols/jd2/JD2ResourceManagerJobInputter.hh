@@ -20,6 +20,7 @@
 // Basic headers
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/resource_manager/JobOptions.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -168,7 +169,7 @@ public:
  	virtual void pose_from_job( core::pose::Pose & pose, JobOP job );
 
 	/// @brief this function determines what jobs exist.  This function neither knows nor cares what jobs are already complete on disk/memory - it just figures out what ones should exist given the input.  NOTE: your JobInputter should order Job objects in the Jobs vector to have as few "transitions" between inputs as possible (group all Jobs of the same input next to each other).  This improves efficiency of the "FAIL_BAD_INPUT" functionality.  Note I said "should", not "must".
-	virtual void fill_jobs( Jobs & jobs );
+	virtual void fill_jobs( JobsContainer & jobs );
 
 	/// @brief return the type of input source that the JobInputter is currently
 	///  using

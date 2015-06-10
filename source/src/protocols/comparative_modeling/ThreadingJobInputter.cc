@@ -224,7 +224,7 @@ void ThreadingJobInputter::pose_from_job(
 } // pose_from_job
 
 /// @details this function determines what jobs
-void ThreadingJobInputter::fill_jobs( protocols::jd2::Jobs & jobs ) {
+void ThreadingJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ) {
 	tr.Debug << "ThreadingJobInputter::fill_jobs" << std::endl;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

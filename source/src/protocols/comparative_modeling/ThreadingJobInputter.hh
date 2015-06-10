@@ -18,6 +18,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/comparative_modeling/ThreadingJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -52,7 +53,7 @@ public:
  	virtual void pose_from_job( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
 	/// @brief this function determines what jobs exist
-	virtual void fill_jobs( protocols::jd2::Jobs & jobs );
+	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
 
 	/// @brief Return the type of input source that the ThreadingJobInputter is
 	/// currently using for template structures.

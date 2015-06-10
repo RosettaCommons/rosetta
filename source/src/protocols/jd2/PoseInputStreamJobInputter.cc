@@ -62,7 +62,7 @@ void PoseInputStreamJobInputter::pose_from_job(
 
 /// @details this function determines what jobs exist from -in::file::silent and
 /// -in::file::tags
-void PoseInputStreamJobInputter::fill_jobs( Jobs & jobs ) {
+void PoseInputStreamJobInputter::fill_jobs( JobsContainer & jobs ) {
 	tr.Debug << "PoseInputStreamJobInputter::fill_jobs" << std::endl;
 
 	jobs.clear(); //should already be empty anyway

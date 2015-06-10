@@ -82,7 +82,7 @@ BOINCJobDistributor::go( protocols::moves::MoverOP mover )
 {
 
 #ifdef BOINC
-	Jobs const & jobs( get_jobs() );
+	JobsContainer const & jobs( get_jobs() );
 	JobOutputterOP outputter = job_outputter();
 	// Count completed jobs
 	for( core::Size i = 1; i <= jobs.size(); i ++ ){
@@ -98,7 +98,7 @@ BOINCJobDistributor::go( protocols::moves::MoverOP mover )
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
 #ifdef BOINC
-//	Jobs const & jobs( get_jobs() );
+//	JobsContainer const & jobs( get_jobs() );
 //	JobOutputterOP outputter = job_outputter();
 
 	// Count completed jobs:

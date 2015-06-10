@@ -57,7 +57,7 @@ ShuffleFileSystemJobDistributor::~ShuffleFileSystemJobDistributor()
 core::Size
 ShuffleFileSystemJobDistributor::get_new_job_id()
 {
-	Jobs const & jobs( get_jobs() );
+	JobsContainer const & jobs( get_jobs() );
 	if( jobs.size() == 0 ) return 0; // no jobs;
 
 	JobOutputterOP outputter = job_outputter();

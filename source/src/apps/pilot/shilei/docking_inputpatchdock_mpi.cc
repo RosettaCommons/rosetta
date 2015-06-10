@@ -312,9 +312,9 @@ void change_docking_pose(core::pose::Pose & to_change_pose, utility::vector1< do
 ///////////////////////////////////////////////////////////////////////////////
 void run_parallel_docking() {
 
-	int my_rank( 0 ), nprocs( 1 ), tag_( 1 );
+	int my_rank( 0 ), nprocs( 1 )/*, tag_( 1 )*/;
 
-	MPI_Status stat_;
+	//MPI_Status stat_;
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);/* get current process id */
 	MPI_Comm_size(MPI_COMM_WORLD, &nprocs);/* get number of processes */
 
@@ -357,7 +357,7 @@ void run_parallel_docking() {
 
 	//read_patchdock_entry(saved_transformations_, basic::options::option[basic::options::OptionKeys::docking_parallel::patchdock_file]);
 	Size total=saved_transformations_.size();
-	Size part=total/nprocs;
+	//Size part=total/nprocs;
 	Size random_start=numeric::random::random_range(1,total);
 	utility::vector1< double > transformation=saved_transformations_[random_start];
 	//pose.dump_pdb( "dump_start_"+string_of(my_rank)+".pdb");
@@ -420,7 +420,9 @@ void run_parallel_docking() {
 
 		//silent io setup
 		std::string outtag= basic::options::option[basic::options::OptionKeys::docking_parallel::outtag];
-		std::string silentfilename=outtag+"highres_dock_" + string_of( my_rank ) + ".sc";
+		std::stringstream silentfilestreamname;
+		silentfilestreamname << outtag << "highres_dock_" << my_rank << ".sc";
+		std::string silentfilename=silentfilestreamname.str();
 		std::ofstream o(silentfilename.c_str());
 		Size n=0;
 		while ( n < nstruct*(nprocs-1) ) {
@@ -496,7 +498,7 @@ void run_parallel_docking() {
 		core::Size nres = pose.total_residue();
 		core::Size chain2start(pose.conformation().chain_begin( 2 ));
 		core::Size chain1end(pose.conformation().chain_end( 1 ));
-		core::Size jumppoint=chain2start;
+		//core::Size jumppoint=chain2start;
 		fold_tree_.add_edge( 1, chain1end, core::kinematics::Edge::PEPTIDE );
 		fold_tree_.add_edge( chain2start, nres, core::kinematics::Edge::PEPTIDE );
 		fold_tree_.add_edge( 1, chain2start, 1 );

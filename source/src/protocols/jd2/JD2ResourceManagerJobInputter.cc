@@ -18,6 +18,7 @@
 // Package headers
 #include <protocols/jd2/JD2ResourceManager.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobsContainer.hh>
 #include <basic/resource_manager/JobOptions.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -188,7 +189,7 @@ JD2ResourceManagerJobInputter::pose_from_job(
 }
 
 void
-JD2ResourceManagerJobInputter::fill_jobs( Jobs & jobs )
+JD2ResourceManagerJobInputter::fill_jobs( JobsContainer & jobs )
 {
 	tr << "Initializing jobs from resource definition files" << std::endl;
 	utility::vector1< utility::file::FileName > resource_definition_files
@@ -197,7 +198,11 @@ JD2ResourceManagerJobInputter::fill_jobs( Jobs & jobs )
 
 		tr.Debug << "Reading from resource definition file " << resource_definition_files[ii] << std::endl;
 		utility::io::izstream instream( resource_definition_files[ii]().c_str() );
-		fill_jobs_from_stream( instream, jobs );
+		utility::vector1 < JobOP > jobs_list;
+		fill_jobs_from_stream( instream, jobs_list );
+		for(core::Size jj=1; jj<=jobs_list.size(); ++jj) {
+			jobs.push_back(jobs_list[jj]);
+		}
 	}
 }
 

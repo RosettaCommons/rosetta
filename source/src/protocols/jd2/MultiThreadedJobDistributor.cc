@@ -362,7 +362,7 @@ int MultiThreadedJobDistributor::determine_starting_rng_seed()
 	return numeric::random::rg().get_seed();
 }
 void MultiThreadedJobDistributor::initialize_jobs_list() {
-	Jobs const & parent_jobs_list( get_jobs() );
+	JobsContainer const & parent_jobs_list( get_jobs() );
 	//all_mt_jobs_.reserve( parent_job_list.size() );
 
 	int seed = determine_starting_rng_seed();
@@ -376,7 +376,7 @@ void MultiThreadedJobDistributor::initialize_jobs_list() {
 		MTJobOP mtjob( new MTJob );
 		mtjob->index( ii );
 		mtjob->rng_seed( seed + ii );
-		mtjob->job( parent_jobs_list[ ii ] );
+		mtjob->job( parent_jobs_list[ ii ]->clone() );
 		mtjob->output_name( job_outputter()->output_name( parent_jobs_list[ ii ] ));
 		if ( ii != 1 && job_outputter()->output_name( parent_jobs_list[ ii-1 ] ) != job_outputter()->output_name( parent_jobs_list[ ii ] ) ) {
 			group = MTJobGroupOP( new MTJobGroup );

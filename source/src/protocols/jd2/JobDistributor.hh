@@ -24,12 +24,15 @@
 #include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+
 
 // Utility headers
 #include <utility/SingletonBase.hh>
@@ -132,7 +135,7 @@ public:
 	virtual void restart();
 
 	core::Size total_nr_jobs() const {
-		return jobs_.size();
+		return jobs_->size();
 	}
 
 	/// @brief integer access - which job are we on?
@@ -150,8 +153,15 @@ protected:
 	/// Read access to private data for derived classes.
 
 	/// @brief Jobs is the container of Job objects
-	Jobs const &
+	JobsContainer const &
 	get_jobs() const;
+
+	/// @brief Jobs is the container of Job objects
+	/// @details This version provides nonconst access, for cases where
+	/// the job list must be updated on the fly.
+	JobsContainer &
+	get_jobs_nonconst();
+
 
 	/// @brief Jobs is the container of Job objects
 	/// need non-const to mark Jobs as completed on Master in MPI-JobDistributor
@@ -272,6 +282,10 @@ protected:
 		core::Size jobtime,
 		core::Size & retries_this_job
 	);
+	
+	/// @brief Increment the number of failed jobs.
+	///
+	void increment_failed_jobs() { ++number_failed_jobs_; return; };
 
 	/// @brief Get an estimate of the time to run an additional job.
 	/// If it can't be estimated, return a time of zero.
@@ -288,14 +302,18 @@ private:
 	JobOutputterOP job_outputter_;
 	ParserOP parser_;
 
-	Jobs jobs_;
+	/// @brief Container for the array of owning pointers to the Job objects.
+	/// @details By making this a class, it makes it easier to permit easy updating of the jobs list (e.g. if it's too long
+	/// to hold the whole thing in memory).
+	JobsContainerOP jobs_;
+
 	/// @brief pointer to current job.  Information is somewhat duplicated with current_job_id_.
 	JobOP current_job_;
 
-	/// @brief access into jobs_ vector indicating current job.  Contains more information than current_job_ in that it can be incremented...
+	/// @brief access into jobs_ object indicating current job.  Contains more information than current_job_ in that it can be incremented...
 	core::Size current_job_id_;
 
-	/// @brief access into jobs_ bector indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
+	/// @brief access into jobs_ object indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
 	core::Size last_completed_job_;
 
 	/// @brief Number of failed jobs - kept track of so we can exit properly at the end of execution

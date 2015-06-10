@@ -19,6 +19,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/features/DatabaseJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobsContainer.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -102,7 +103,7 @@ public:
 
 	/// @brief this function determines what jobs exist from -in::file::silent and
 	/// -in::file::tags.
-	virtual void fill_jobs( protocols::jd2::Jobs & jobs );
+	virtual void fill_jobs( protocols::jd2::JobsContainer & jobs );
 
 	/// @brief Return the type of input source that the DatabaseJobInputter is currently
 	///  using.

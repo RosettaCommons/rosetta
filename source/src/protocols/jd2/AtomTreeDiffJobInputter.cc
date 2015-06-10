@@ -90,7 +90,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::pose_from_job(
 
 /// @details this function determines what jobs exist -in:file:atom_tree_diff
 
-void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
+void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( JobsContainer & jobs ){
 	tr.Debug << "AtomTreeDiffJobInputter::fill_jobs" << std::endl;
 
 	jobs.clear(); //should already be empty anyway

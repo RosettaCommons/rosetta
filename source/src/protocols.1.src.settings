@@ -79,6 +79,8 @@ sources = {
 		"JobOutputter",
 		"JobOutputterCreator",
 		"JobOutputterFactory",
+		"JobsContainer",
+		"LargeNstructJobInputter",
 		"LazySilentFileJobInputter",
 		"MpiFileBuffer",
 		"MPIFileBufJobDistributor",

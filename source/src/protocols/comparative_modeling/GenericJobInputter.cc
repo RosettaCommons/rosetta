@@ -80,7 +80,7 @@ void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::
 }
 
 /// @details this function determines what jobs exist from -s/-l
-void GenericJobInputter::fill_jobs( protocols::jd2::Jobs & jobs ){
+void GenericJobInputter::fill_jobs( protocols::jd2::JobsContainer & jobs ){
   tr.Debug << "GenericJobInputter::fill_jobs" << std::endl;
 
   jobs.clear(); //should already be empty anyway

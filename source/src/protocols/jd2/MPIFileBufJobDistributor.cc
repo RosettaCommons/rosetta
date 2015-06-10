@@ -365,7 +365,7 @@ MPIFileBufJobDistributor::master_get_new_job_id()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-  Jobs const & jobs( get_jobs() );
+  JobsContainer const & jobs( get_jobs() );
   JobOutputterOP outputter = job_outputter();
 
 	//increase job-id until a new job is found
@@ -377,7 +377,7 @@ MPIFileBufJobDistributor::master_get_new_job_id()
 		if ( jobs[ next_job_to_assign ]->bad() ) { //don't start jobs with known bad input
       tr.Debug << "Job " << ObjexxFCL::string_of(next_job_to_assign) << " being skipped due to known bad input." << std::endl;
 			continue;
-		} else if ( !outputter->job_has_completed( jobs[ next_job_to_assign ] ) ) { //don't start jobs with have been completed ( in previous runs )
+		} else if ( !outputter->job_has_completed( jobs[ next_job_to_assign ] ) ) { //don't start jobs which have been completed ( in previous runs )
 				tr.Debug << "Master Node: Getting next job to assign from list id " << next_job_to_assign << " of " << jobs.size() << std::endl;
 				return next_job_to_assign;
 		} else if ( outputter->job_has_completed( jobs[ next_job_to_assign ] ) &&
@@ -469,7 +469,7 @@ MPIFileBufJobDistributor::master_remove_bad_inputs_from_job_list()
 	runtime_assert( rank_ == master_rank_ );
 
 	if ( tr.Debug.visible() ) {
-		Jobs const& jobs( get_jobs() );
+		JobsContainer const& jobs( get_jobs() );
 		std::string const & bad_job_id_input_tag( jobs[ bad_job_id_ ]->input_tag() );
 		tr.Debug << "Master Node: Job id "
 						 << job_outputter()->output_name( jobs[ bad_job_id_ ] )

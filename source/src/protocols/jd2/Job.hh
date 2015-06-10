@@ -54,6 +54,8 @@ public:
 
 	Job( InnerJobOP inner_job, core::Size nstruct_index );
 
+	Job( Job const & src );
+
 	/// @brief returns a copy of this object whose "output fields" are zeroed
 	/// out.  Used by the JobDistributor in cases where the job fails and must be
 	/// retried to prevent accumulation of Job state after a failure.  This
@@ -63,6 +65,10 @@ public:
 	/// intermediate-output pose (not the final pose) to not have the aggregated
 	/// accessory data in the "real" Job object.
 	JobOP copy_without_output() const;
+	
+	/// @brief Return an owning pointer to a copy of this object.
+	///
+	JobOP clone() const;
 
 	virtual ~Job();
 
@@ -125,6 +131,10 @@ public:
 
 	/// @brief add a string/real pair
 	void add_string_real_pair( std::string const & string_in, core::Real const real_in );
+	
+	/// @brief Delete the output strings, string/string pairs, and string/real pairs.
+	///
+	void clear_output();
 
 
 	////////////////////THIS SECTION OF FUNCTIONS IS FORBIDDEN FOR USE BY MOVERS//////////////////////////////////
@@ -165,6 +175,12 @@ public:
 	bool to_do() const {
 		return !completed_ && !bad();
 	}
+	
+	/// @brief Returns true iff this job can be deleted to free up memory.
+	/// @details Should only be true if the job has completed, is bad, or has failed.
+	bool can_be_deleted() const {
+		return can_be_deleted_;
+	}
 
 	bool bad() const;
 
@@ -177,6 +193,15 @@ public:
 
 	void set_completed(bool value = true)  {
 		completed_ = value;
+		if(completed_) can_be_deleted_ = true; //If the job has completed, it can be deleted; if not, it may or may not be deletable.
+		return;
+	}
+	
+	/// @brief Set whether this job can be deleted to free up memory.
+	///
+	void set_can_be_deleted( bool value=true ) {
+		can_be_deleted_ = value;
+		return;
 	}
 
 	void set_bad(bool value = true);
@@ -213,6 +238,11 @@ private:
 	//Oliver??
 
 	bool completed_;
+
+	/// @brief Can the job be deleted?  Used by the LargeNstructJobDistributor to determine
+	/// which jobs can be removed to free up memory.
+	/// @details False by default.  True if the job has failed, is bad, or is completed.
+	bool can_be_deleted_;
 
 	core::Size start_time_;  // seconds
 	core::Size end_time_;  // seconds
