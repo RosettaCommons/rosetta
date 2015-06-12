@@ -588,7 +588,8 @@ settings = {
                     "funroll-loops",
                     "finline-functions",
                     "finline-limit=20000",
-                    "s"
+                    "s",
+		    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
                 ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
@@ -1997,7 +1998,10 @@ settings = {
     "clang, release_debug_no_symbols" : {
         "appends" : {
             "flags" : {
-                "compile" : [ "O3" ],
+                "compile" : [
+		    "O3",
+		    "ffloat-store", # "mfpmath=sse", "msse2",  WARNING WARNING WARNING this flags SIGNIFICANTLY degrade performance and only used to improved stability for integration tests, they should NEVER be enabled for production code
+		],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
                 "warn" : [
