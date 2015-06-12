@@ -548,6 +548,9 @@ read_topology_file(
 	std::map< std::string, std::string > atom_type_reassignments;
 	setup_atom_type_reassignments_from_commandline( myname, rsd_type_set->name(), atom_type_reassignments );
 
+	std::map< std::string, Real > atomic_charge_reassignments;
+	setup_atomic_charge_reassignments_from_commandline( myname, rsd_type_set->name(), atomic_charge_reassignments );
+
 	// Decide what type of Residue to instantiate.
 	// would scan through for the TYPE line, to see if polymer or ligand...
 	//
@@ -608,6 +611,13 @@ read_topology_file(
 			tr.Trace << "reassigning atom " << atom_name << " atomtype: " << atom_type_name << " --> " <<
 				atom_type_reassignments.find( stripped( atom_name ) )->second << ' ' << filename << std::endl;
 			atom_type_name = atom_type_reassignments.find( stripped( atom_name ) )->second;
+		}
+
+		if ( atomic_charge_reassignments.find( stripped( atom_name ) ) != atomic_charge_reassignments.end() ) {
+			tr.Trace << "reassigning atomic charge " << atom_name << " atomtype: " << atom_type_name << " --> " <<
+				atomic_charge_reassignments.find( stripped( atom_name ) )->second << ' ' << filename << std::endl;
+			// note that we set charge and also parse_charge, so this will over-ride the parse_charge if those are the charges we are using
+			charge = parse_charge = atomic_charge_reassignments.find( stripped( atom_name ) )->second;
 		}
 
 		if ( ! basic::options::option[ basic::options::OptionKeys::corrections::chemical::parse_charge ]() ) {
@@ -1300,6 +1310,57 @@ setup_atom_type_reassignments_from_commandline(
 		tr.Trace << "setup_atom_type_reassignments_from_commandline: reassigning " << rsd_type_set_name << ' ' << rsd_type_name << ' ' << atom_name << " to new atomtype: " << new_atom_type_name << std::endl;
 
 		atom_type_reassignments[ atom_name ] = new_atom_type_name;
+	}
+
+
+}
+////////////////////////////////////////////////////////
+void
+setup_atomic_charge_reassignments_from_commandline(
+																									 std::string const & rsd_type_name,
+																									 std::string const & rsd_type_set_name,
+																									 std::map< std::string, Real > & atomic_charge_reassignments
+																									 )
+{
+	if ( !basic::options::option[ basic::options::OptionKeys::chemical::set_atomic_charge ].user() ) return;
+
+	if ( rsd_type_name.empty() ) {
+		utility_exit_with_message("setup_atomic_charge_reassignments_from_commandline, empty rsd_type_name");
+	}
+
+	utility::vector1< std::string > mods
+		( basic::options::option[ basic::options::OptionKeys::chemical::set_atomic_charge ] );
+
+	std::string const errmsg( "-set_atomic_charge format should be::  -chemical:set_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-charge> <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-charge>  ... For example: '-chemical:set_atomic_charge fa_standard:ARG:NE:-1' ");
+
+	for ( Size i=1; i<= mods.size(); ++i ) {
+		///
+		/// mod should look like (for example):  "fa_standard:OOC:LK_RADIUS:4.5"
+		///
+		std::string const & mod( mods[i] );
+
+		Size const pos1( mod.find(":") );
+		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_set_name( mod.substr(0,pos1) );
+		if ( mod_rsd_type_set_name != rsd_type_set_name ) continue;
+
+		Size const pos2( mod.substr(pos1+1).find(":") );
+		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const mod_rsd_type_name( mod.substr(pos1+1,pos2) );
+		if ( mod_rsd_type_name != rsd_type_name ) continue;
+
+		Size const pos3( mod.substr(pos1+1+pos2+1).find(":") );
+		if ( pos3 == std::string::npos ) utility_exit_with_message(errmsg);
+		std::string const atom_name( mod.substr(pos1+1+pos2+1,pos3) );
+
+		std::string const new_atomic_charge_string( mod.substr(pos1+1+pos2+1+pos3+1) );
+
+		if ( !ObjexxFCL::is_float( new_atomic_charge_string ) ) utility_exit_with_message(errmsg);
+		Real const new_atomic_charge( ObjexxFCL::float_of( new_atomic_charge_string ) );
+
+		tr.Trace << "setup_atomic_charge_reassignments_from_commandline: setting charge of " << rsd_type_set_name << ' ' << rsd_type_name << ' ' << atom_name << " to " << new_atomic_charge << std::endl;
+
+		atomic_charge_reassignments[ atom_name ] = new_atomic_charge;
 	}
 
 

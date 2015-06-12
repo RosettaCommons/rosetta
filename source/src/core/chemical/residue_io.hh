@@ -72,6 +72,14 @@ setup_atom_type_reassignments_from_commandline(
 
 
 void
+setup_atomic_charge_reassignments_from_commandline(
+	std::string const & rsd_type_name,
+	std::string const & rsd_type_set_name,
+	std::map< std::string, Real > & atomic_charge_reassignments
+);
+
+
+void
 setup_icoor_reassignments_from_commandline(
 	std::string const & rsd_type_name,
 	std::string const & rsd_type_set_name,
