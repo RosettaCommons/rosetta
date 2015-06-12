@@ -2632,7 +2632,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'transform_into_membrane', 'Boolean', desc="score_jd2: transform protein into fixed membrane before scoring; spanfile required" ),
 			Option( 'position_from_topo', 'Boolean', desc="determine a membrane position from the transmembrane spans of the protein" ),
 		),
-		
+
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
 		Option_Group( 'dock',
 
@@ -2645,7 +2645,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'flexible_bb', 'Boolean', desc='Do a flexible backbone docking: runs relax before and after docking.' ),
 
 		),
-		
+
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
 		Option_Group( 'quickrelax',
 
@@ -4077,6 +4077,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'pdb_pos', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb, eg: -pdb_pos 125:A 127:A 4:C'),
 			Option( 'methylate', 'StringVector', default = '""', desc = 'list of one or more positions in the input pdb to be methylated, eg: -methylate 125:A 127:A 4:C'),
 			Option( 'lk_ball_wtd_tag', 'String'),
+			Option( 'lk_ball_wtd_prefactors', 'RealVector', desc = '6 scale factors that are applied to the lk_ball_wtd per-atom weights; the order is <donor-iso> <donor-ball> <acceptor-iso> <acceptor-ball> <don+acc-iso> <don+acc-ball>; where <don+acc> means atom-types that are both donors and acceptors (SP3 hybridized OH for example)'),
 		), # -dna:specificity
 
 		# ashworth
