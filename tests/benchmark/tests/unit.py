@@ -60,7 +60,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     if debug: res, output = 0, 'unit.py: debug is enabled, skipping build phase...\n'
     else: res, output = execute('Compiling...', build_command_line, return_='tuple')
 
-    full_log += 'Compiling: {}\n'.format(build_command_line) + output  #file(working_dir+'/build-log.txt', 'w').write(output)
+    full_log += 'Compiling: {}\n'.format(build_command_line) + output
+
+    with file(working_dir+'/build-log.txt', 'w') as f: f.write(full_log)
 
     if res:
         results[_StateKey_] = _S_build_failed_
