@@ -69,7 +69,11 @@ HBondOptions::HBondOptions( std::string params_db_tag /* = "sp2_elec_params") */
 	ldsrbb_low_scale_( 0.5 ),
 	ldsrbb_high_scale_( 2.0 ),
 	ldsrbb_minlength_( 4 ),
-	ldsrbb_maxlength_( 17 )
+	ldsrbb_maxlength_( 17 ),
+	use_hb_env_dep_new_ ( false ),  //fpd new envdep HB
+	hb_env_dep_new_low_scale_ ( 0.2 ),  //fpd new envdep HB
+	hb_env_dep_new_low_nneigh_ ( 10 ),  //fpd new envdep HB
+	hb_env_dep_new_high_nneigh_ ( 20 )  //fpd new envdep HB
 {
 	using namespace basic::options;
 	if ( params_database_tag_.size() == 0 ) {
@@ -106,6 +110,15 @@ void HBondOptions::initialize_from_options() {
     ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
   if (option[ OptionKeys::score::ldsrbb_maxlength ].user())
     ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
+
+	if (option[ OptionKeys::score::hb_env_dep_new ].user())
+		use_hb_env_dep_new_ = option[ OptionKeys::score::hb_env_dep_new ]();
+	if (option[ OptionKeys::score::hb_env_dep_new_low_scale ].user())
+		hb_env_dep_new_low_scale_ = option[ OptionKeys::score::hb_env_dep_new_low_scale ]();
+	if (option[ OptionKeys::score::hb_env_dep_new_low_nneigh ].user())
+		hb_env_dep_new_low_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_low_nneigh ]();
+	if (option[ OptionKeys::score::hb_env_dep_new_high_nneigh ].user())
+		hb_env_dep_new_high_nneigh_ = option[ OptionKeys::score::hb_env_dep_new_high_nneigh ]();
 
 	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
@@ -156,6 +169,11 @@ HBondOptions::operator=( HBondOptions const & src )
 	ldsrbb_high_scale_ = src.ldsrbb_high_scale_;
 	ldsrbb_minlength_ = src.ldsrbb_minlength_;
 	ldsrbb_maxlength_ = src.ldsrbb_maxlength_;
+	use_hb_env_dep_new_ = src.use_hb_env_dep_new_;
+	hb_env_dep_new_low_scale_ = src.hb_env_dep_new_low_scale_;
+	hb_env_dep_new_low_nneigh_ = src.hb_env_dep_new_low_nneigh_;
+	hb_env_dep_new_high_nneigh_ = src.hb_env_dep_new_high_nneigh_;
+
   return *this;
 }
 
@@ -466,6 +484,18 @@ void HBondOptions::length_dependent_srbb_minlength( Size setting ) { ldsrbb_minl
 Size HBondOptions::length_dependent_srbb_maxlength() const { return ldsrbb_maxlength_; }
 void HBondOptions::length_dependent_srbb_maxlength( Size setting ) { ldsrbb_maxlength_ = setting; }
 
+bool HBondOptions::use_hb_env_dep_new() const { return use_hb_env_dep_new_; }
+void HBondOptions::use_hb_env_dep_new(bool val) { use_hb_env_dep_new_=val; }
+
+core::Real HBondOptions::hb_env_dep_new_low_scale() const { return hb_env_dep_new_low_scale_; }
+void HBondOptions::hb_env_dep_new_low_scale(core::Real val) { hb_env_dep_new_low_scale_=val; }
+
+core::Real HBondOptions::hb_env_dep_new_low_nneigh() const { return hb_env_dep_new_low_nneigh_; }
+void HBondOptions::hb_env_dep_new_low_nneigh(core::Real val) { hb_env_dep_new_low_nneigh_=val; }
+
+core::Real HBondOptions::hb_env_dep_new_high_nneigh() const { return hb_env_dep_new_high_nneigh_; }
+void HBondOptions::hb_env_dep_new_high_nneigh(core::Real val) { hb_env_dep_new_high_nneigh_=val; }
+
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
@@ -487,7 +517,17 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.fade_energy_ == b.fade_energy_ ) &&
 		( a.Mbhbond_ == b.Mbhbond_ ) && //pba
 		( a.mphbond_ == b.mphbond_ ) &&
-		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) );
+		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) &&
+		( a.hbond_energy_shift_ == b.hbond_energy_shift_) &&
+		( a.length_dependent_srbb_ == b.length_dependent_srbb_) &&
+		( a.ldsrbb_low_scale_ == b.ldsrbb_low_scale_) &&
+		( a.ldsrbb_high_scale_ == b.ldsrbb_high_scale_) &&
+		( a.ldsrbb_minlength_ == b.ldsrbb_minlength_) &&
+		( a.ldsrbb_maxlength_ == b.ldsrbb_maxlength_) &&
+		( a.use_hb_env_dep_new_ == b.use_hb_env_dep_new_) &&
+		( a.hb_env_dep_new_low_scale_ == b.hb_env_dep_new_low_scale_) &&
+		( a.hb_env_dep_new_low_nneigh_ == b.hb_env_dep_new_low_nneigh_) &&
+		( a.hb_env_dep_new_high_nneigh_ == b.hb_env_dep_new_high_nneigh_) );
 }
 
 bool

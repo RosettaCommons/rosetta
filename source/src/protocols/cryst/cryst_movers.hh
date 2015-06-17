@@ -30,9 +30,43 @@
 namespace protocols {
 namespace cryst {
 
+
+class ReportGradientsMover : public moves::Mover {
+public:
+	ReportGradientsMover() :
+		Mover(), verbose_(false) {}
+
+	ReportGradientsMover(core::scoring::ScoreFunctionOP sfin) :
+		Mover(), verbose_(false), score_function_(sfin) {}
+
+	virtual std::string get_name() const { return ReportGradientsMoverCreator::mover_name(); }
+	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ReportGradientsMover( *this ) ) ); }
+
+	virtual void apply( core::pose::Pose & pose );
+
+	// compute gradients
+	core::Real compute(core::pose::Pose & pose );
+
+	// helper function normalizes gradients for a single atom
+	core::Real normalization(core::pose::Pose & pose, core::id::AtomID atmid, core::scoring::ScoreFunctionOP sfxn );
+
+	virtual void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
+
+private:
+	bool verbose_;
+	core::scoring::ScoreFunctionOP score_function_;
+	std::string outfile_;
+};
+
 class SetCrystWeightMover : public moves::Mover {
 public:
-	SetCrystWeightMover() : Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(2000.0) {}
+	SetCrystWeightMover() :
+		Mover(), autoset_wt_(true), cartesian_(false), weight_(0.0), weight_scale_(1.0), weight_min_(2000.0) {}
 
 	virtual std::string get_name() const { return SetCrystWeightMoverCreator::mover_name(); }
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetCrystWeightMover( *this ) ) ); }
@@ -144,7 +178,7 @@ private:
 
 class TagPoseWithRefinementStatsMover : public moves::Mover {
 public:
-	TagPoseWithRefinementStatsMover() : Mover(), tag_(""), dump_pose_(false) {}
+	TagPoseWithRefinementStatsMover() : Mover(), tag_(""), dump_pose_(false),report_grads_(false) {}
 
 	virtual std::string get_name() const { return TagPoseWithRefinementStatsMoverCreator::mover_name(); }
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new TagPoseWithRefinementStatsMover( *this ) ) ); }
@@ -159,7 +193,7 @@ public:
 
 private:
 	std::string tag_;
-	bool dump_pose_;
+	bool dump_pose_,report_grads_;
 };
 
 class SetRefinementOptionsMover : public moves::Mover {

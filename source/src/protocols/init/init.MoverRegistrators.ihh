@@ -41,6 +41,7 @@ static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > r
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
 static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCountObserverCreator;
 
+static MoverRegistrator< cryst::ReportGradientsMoverCreator > reg_ReportGradientsMoverCreator;
 static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;
 static MoverRegistrator< cryst::RecomputeDensityMapMoverCreator > reg_RecomputeDensityMapMoverCreator;
 static MoverRegistrator< cryst::LoadDensityMapMoverCreator > reg_LoadDensityMapMoverCreator;

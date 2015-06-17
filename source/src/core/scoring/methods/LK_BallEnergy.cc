@@ -1583,9 +1583,16 @@ LK_BallEnergy::eval_residue_pair_derivatives(
 	LKB_ResidueInfo const & rsd1_info( retrieve_lkb_resdata( res1data ) );
 	LKB_ResidueInfo const & rsd2_info( retrieve_lkb_resdata( res2data ) );
 
-	debug_assert( dynamic_cast< ResiduePairNeighborList const * > (&*min_data.get_data( etab_pair_nblist )));
-	ResiduePairNeighborList const & nblist
-		( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
+	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (&*min_data.get_data( etab_pair_nblist )));
+	//ResiduePairNeighborList const & nblist
+	//	( static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist )) );
+
+	//fpd  there are two possible ways nblist may be stored
+	ResiduePairNeighborList const & nblist =
+		utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( etab_classic_intrares_pair_nblist )) ?
+			static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_classic_intrares_pair_nblist )) :
+			static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( etab_pair_nblist ));
+
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {

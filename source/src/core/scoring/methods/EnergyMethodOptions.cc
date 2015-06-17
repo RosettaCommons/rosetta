@@ -780,6 +780,11 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: elec_die: " << elec_die_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_no_dis_dep_die: "
 			<< (elec_no_dis_dep_die_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: elec_sigmoidal_die: "
+			<< (elec_sigmoidal_die_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: elec_sigmoidal_D: " << elec_sigmoidal_D_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_sigmoidal_D0: " << elec_sigmoidal_D0_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_sigmoidal_S: " << elec_sigmoidal_S_ << std::endl;
 	out << "EnergyMethodOptions::show: smooth_fa_elec: " << ( smooth_fa_elec_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: grpelec_fade_type: " << grpelec_fade_type_ << std::endl;
 	out << "EnergyMethodOptions::show: grpelec_fade_param1: " << grpelec_fade_param1_ << std::endl;

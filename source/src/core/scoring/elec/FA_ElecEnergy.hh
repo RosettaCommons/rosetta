@@ -30,6 +30,7 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -461,6 +462,11 @@ private:
 	bool exclude_protein_protein_;
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
+
+	//fpd: envdep hbonds
+	bool use_env_dep_;
+	core::Real env_dep_low_scale_, env_dep_low_nneigh_, hb_env_dep_high_nneigh_;
+
 
 	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
 	mutable Real wbb_bb_;

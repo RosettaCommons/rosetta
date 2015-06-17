@@ -27,9 +27,18 @@
 #include <core/scoring/cryst/XtalMLEnergy.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/coulomb/Coulomb.hh>
+#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/methods/LK_BallEnergy.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
@@ -71,6 +80,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
+#include <fstream>
 
 
 using basic::T;
@@ -92,6 +102,23 @@ using namespace core;
 //////////////////
 /// creators
 
+
+std::string
+ReportGradientsMoverCreator::keyname() const {
+	return ReportGradientsMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+ReportGradientsMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new ReportGradientsMover );
+}
+
+std::string
+ReportGradientsMoverCreator::mover_name() {
+	return "ReportGradients";
+}
+
+///
 
 std::string
 SetCrystWeightMoverCreator::keyname() const {
@@ -208,93 +235,332 @@ SetRefinementOptionsMoverCreator::mover_name() {
 //////////////////
 /// movers
 
-void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
-	// if a weight is <0, then report detailed information on gradients
-	if (weight_ < 0) {
-		using namespace core::optimization;
-		using namespace core::optimization::symmetry;
+void ReportGradientsMover::apply( core::pose::Pose & pose ) {
+	compute (pose);
+}
 
-		// report!
-		core::scoring::ScoreFunctionOP rosetta_scorefxn( new core::scoring::ScoreFunction() );
-		core::scoring::ScoreFunctionOP xtal_scorefxn( new core::scoring::ScoreFunction() );
+core::Real ReportGradientsMover::compute(core::pose::Pose & pose ) {
+	using namespace core::scoring;
+	using namespace core::optimization;
+	using namespace core::optimization::symmetry;
 
-		rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
-		xtal_scorefxn->set_weight( core::scoring::xtal_ml, 1.0 );
+	core::scoring::ScoreFunctionOP reference_scorefxn( score_function_->clone() );
+	core::scoring::ScoreFunctionOP working_scorefxn( new core::scoring::ScoreFunction() );
 
-		core::kinematics::MoveMap move_map;
-		move_map.set_bb  ( true );
-		move_map.set_chi ( true );
-		move_map.set_jump( true );
-		if (core::pose::symmetry::is_symmetric(pose)) {
-			core::conformation::symmetry::SymmetricConformation const & symm_conf (
-					dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
-			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+	working_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
+	reference_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
 
-			// symmetrize scorefunct & movemap
-			rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
-			xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
-			core::pose::symmetry::make_symmetric_movemap( pose, move_map );
+	core::kinematics::MoveMap move_map;
+	move_map.set_bb  ( true );
+	move_map.set_chi ( true );
+	move_map.set_jump( true );
+
+	// additional setup for symmetric poses
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+
+		// symmetrize scorefunct & movemap
+		working_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *working_scorefxn );
+		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
+	}
+
+	// compute gradients using both scorefunctions
+	CartesianMinimizerMap min_map;
+	min_map.setup( pose, move_map );
+
+	Multivec vars( min_map.ndofs() );
+	min_map.copy_dofs_from_pose( pose, vars );
+
+	Multivec dEros_dvars;
+	(*reference_scorefxn)(pose);  // score pose first
+	reference_scorefxn->setup_for_minimizing( pose, min_map );
+	CartesianMultifunc f_ros( pose, min_map, *reference_scorefxn, false, false );
+	f_ros.dfunc( vars, dEros_dvars );
+
+	// lkball setup
+	core::scoring::methods::LK_BallEnergy lkb( reference_scorefxn->energy_method_options() );
+	lkb.setup_for_scoring(pose, *reference_scorefxn);
+
+	utility::vector1< Multivec > dEros_i_dvars;
+	utility::vector1< core::scoring::ScoreType > term_i;
+
+	// per score-term gradients
+	// used for:
+	//  a) verbose output
+	//  b) normalization for non-etable derivs
+	for (int ii=1; ii<=(int)core::scoring::n_score_types; ++ii) {
+		if (reference_scorefxn->get_weight( (core::scoring::ScoreType)ii ) == 0.0) continue;
+
+		term_i.push_back( (core::scoring::ScoreType)ii );
+		dEros_i_dvars.push_back( Multivec() );
+
+		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , reference_scorefxn->get_weight( (core::scoring::ScoreType)ii )  );
+
+		// lk ball hack
+		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
+			working_scorefxn->set_weight( fa_atr, 1e-9 );
 		}
 
-		// compute gradients using both scorefunctions
-		CartesianMinimizerMap min_map;
-		min_map.setup( pose, move_map );
-		Multivec vars( min_map.ndofs() ), dExtal_dvars;
-		min_map.copy_dofs_from_pose( pose, vars );
+		(*working_scorefxn)(pose);
+		working_scorefxn->setup_for_minimizing( pose, min_map );
+		CartesianMultifunc f_ros_i( pose, min_map, *working_scorefxn, false, false );
+		f_ros_i.dfunc( vars, dEros_i_dvars[ dEros_i_dvars.size() ] );
 
-		(*xtal_scorefxn)(pose);  // score pose first
-		xtal_scorefxn->setup_for_minimizing( pose, min_map );
-		CartesianMultifunc f_xtal( pose, min_map, *xtal_scorefxn, false, false );
-		f_xtal.dfunc( vars, dExtal_dvars );
+		working_scorefxn->set_weight( (core::scoring::ScoreType)ii , 0.0  );
+		if ( (core::scoring::ScoreType)ii == lk_ball_wtd ) {
+			working_scorefxn->set_weight( fa_atr, 0 );
+		}
+	}
 
-		utility::vector1< Multivec > dEros_dvars(1);
-		for (int ii=0; ii<1; ++ii) {
-			rosetta_scorefxn->set_weight( core::scoring::fa_atr       , (ii<=1 || ii==2)? score_function_ref_->get_weight(core::scoring::fa_atr) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_rep       , (ii<=1 || ii==3)? score_function_ref_->get_weight(core::scoring::fa_rep) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_sol       , (ii<=1 || ii==4)? score_function_ref_->get_weight(core::scoring::fa_sol) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_intra_rep , (ii<=1 || ii==5)? score_function_ref_->get_weight(core::scoring::fa_intra_rep) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_pair      , (ii<=1 || ii==6)? score_function_ref_->get_weight(core::scoring::fa_pair) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::fa_dun       , (ii<=1 || ii==7)? score_function_ref_->get_weight(core::scoring::fa_dun) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::hbond_lr_bb  , (ii<=1 || ii==8)? score_function_ref_->get_weight(core::scoring::hbond_lr_bb) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::hbond_sr_bb  , (ii<=1 || ii==9)? score_function_ref_->get_weight(core::scoring::hbond_sr_bb) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::hbond_bb_sc  , (ii<=1 || ii==10)? score_function_ref_->get_weight(core::scoring::hbond_bb_sc) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::hbond_sc     , (ii<=1 || ii==11)? score_function_ref_->get_weight(core::scoring::hbond_sc) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::p_aa_pp      , (ii<=1 || ii==12)? score_function_ref_->get_weight(core::scoring::p_aa_pp) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::dslf_ss_dst  , (ii<=1 || ii==13)? score_function_ref_->get_weight(core::scoring::dslf_ss_dst) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::dslf_cs_ang  , (ii<=1 || ii==14)? score_function_ref_->get_weight(core::scoring::dslf_cs_ang) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::dslf_ss_dih  , (ii<=1 || ii==15)? score_function_ref_->get_weight(core::scoring::dslf_ss_dih) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::dslf_ca_dih  , (ii<=1 || ii==16)? score_function_ref_->get_weight(core::scoring::dslf_ca_dih) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::pro_close    , (ii<=1 || ii==17)? score_function_ref_->get_weight(core::scoring::pro_close) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::rama         , (ii<=1 || ii==18)? score_function_ref_->get_weight(core::scoring::rama) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::omega        , (ii<=1 || ii==19)? score_function_ref_->get_weight(core::scoring::omega) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_angle , (ii==0 || ii==20)?
-				score_function_ref_->get_weight(core::scoring::cart_bonded_angle)+score_function_ref_->get_weight(core::scoring::cart_bonded) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_length , (ii==0 || ii==21)?
-				score_function_ref_->get_weight(core::scoring::cart_bonded_length)+score_function_ref_->get_weight(core::scoring::cart_bonded) : 0.0 );
-			rosetta_scorefxn->set_weight( core::scoring::cart_bonded_torsion , (ii==0 || ii==22)?
-				score_function_ref_->get_weight(core::scoring::cart_bonded_torsion)+score_function_ref_->get_weight(core::scoring::cart_bonded) : 0.0 );
+	// compute the total gradient sum
+	core::Size natoms = dEros_dvars.size()/3;  // integer division, numerator is always divisible by 3
+	core::Real gradsum=0.0;
 
-			(*rosetta_scorefxn)(pose);  // score pose first
-			rosetta_scorefxn->setup_for_minimizing( pose, min_map );
-			CartesianMultifunc f_ros( pose, min_map, *rosetta_scorefxn, false, false );
-			f_ros.dfunc( vars, dEros_dvars[ii+1] );
+	for (core::Size ii_atm=0; ii_atm<natoms; ++ii_atm) {
+		id::AtomID id = min_map.get_atom( ii_atm+1 );
+		numeric::xyzVector< core::Real > grad_i(dEros_dvars[3*ii_atm+1], dEros_dvars[3*ii_atm+2], dEros_dvars[3*ii_atm+3]);
+
+		if (grad_i.length()<1e-6) continue;
+
+		// etable terms
+		core::Real norm = normalization(pose,  min_map.get_atom( ii_atm+1 ), reference_scorefxn );
+
+		// other terms
+		for (int ii=1; ii<=(int)term_i.size(); ++ii) {
+			if ( term_i[ii] == fa_rep || term_i[ii] == fa_atr || term_i[ii] == fa_sol ) continue;
+			if ( term_i[ii] == fa_elec || term_i[ii] == fa_grpelec ) continue;
+			if ( term_i[ii] == fa_intra_rep || term_i[ii] == fa_intra_atr || term_i[ii] == fa_intra_sol ) continue;
+			if ( term_i[ii] == fa_intra_rep_xover4 || term_i[ii] == fa_intra_atr_xover4 || term_i[ii] == fa_intra_sol_xover4 ) continue;
+			if ( term_i[ii] == lk_ball_wtd ) continue;
+
+			numeric::xyzVector< core::Real > grad_ij (dEros_i_dvars[ii][3*ii_atm+1], dEros_i_dvars[ii][3*ii_atm+2], dEros_i_dvars[ii][3*ii_atm+3]);
+			norm += grad_ij.length();
 		}
 
-		// GRAD  name id atom_name total total_no_cartbond fa_atr fa_rep fa_sol fa_intra_rep fa_pair fa_dun hbond_lr_bb hbond_sr_bb hbond_bb_sc hbond_sc p_aa_pp dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih pro_close rama omega cart_bonded_angle cart_bonded_length cart_bonded_torsion
-		for (core::Size counter=0; counter<dEros_dvars[1].size()/3; ++counter) {
-			id::AtomID id = min_map.get_atom( counter+1 );
+		if (norm<1e-6) {
+			TR << "ERROR! at atom " << id << " got grad = " << grad_i.length() << " with norm " << norm << std::endl;
+		}
 
+		gradsum += grad_i.length() / norm;
+
+	}
+	gradsum /= (core::Real) natoms;
+	TR << "[grad] average gradient " << gradsum << std::endl;
+
+	// (optionally) report per-atom/per-scoreterm gradients
+	if (verbose_) {
+		// header
+		TR << "[grad] restype resid chnid atomname grad_unnorm norm grad_norm ";
+		for (int ii=1; ii<=(int)term_i.size(); ++ii) {
+			TR << term_i[ii] << " ";
+		}
+		TR << std::endl;
+
+		for (core::Size ii_atm=0; ii_atm<natoms; ++ii_atm) {
+			id::AtomID id = min_map.get_atom( ii_atm+1 );
 			core::conformation::Residue const & rsd_i = pose.residue( id.rsd() );
+
+			// ASSUMES PDBINFO IS PRESENT!!!!
 			core::Size pdb_res = pose.pdb_info()->number( id.rsd() );
 			char pdb_chain = pose.pdb_info()->chain( id.rsd() );
 
 			if (id.atomno() <= rsd_i.natoms()) {
-				std::cout << "gradient " << rsd_i.name3() << " " << pdb_res << " " << pdb_chain<< " " << rsd_i.atom_name( id.atomno() )
-					<< ": " << dEros_dvars[1][3*counter+1] << "," << dEros_dvars[1][3*counter+2] << "," << dEros_dvars[1][3*counter+3]
-					<< std::endl;
+				numeric::xyzVector< core::Real > grad_i(dEros_dvars[3*ii_atm+1], dEros_dvars[3*ii_atm+2], dEros_dvars[3*ii_atm+3]);
+				TR << "[grad] " << rsd_i.name3() << " " << pdb_res << " " << pdb_chain<< " " << rsd_i.atom_name( id.atomno() );
+
+				// etable terms
+				core::Real norm = normalization(pose,  min_map.get_atom( ii_atm+1 ), reference_scorefxn );
+
+				// other terms
+				for (int jj=1; jj<=(int)term_i.size(); ++jj) {
+					if ( term_i[jj] == fa_rep || term_i[jj] == fa_atr || term_i[jj] == fa_sol ) continue;
+					if ( term_i[jj] == fa_elec || term_i[jj] == fa_grpelec ) continue;
+					if ( term_i[jj] == fa_intra_rep || term_i[jj] == fa_intra_atr || term_i[jj] == fa_intra_sol ) continue;
+					if ( term_i[jj] == fa_intra_rep_xover4 || term_i[jj] == fa_intra_atr_xover4 || term_i[jj] == fa_intra_sol_xover4 ) continue;
+					if ( term_i[jj] == lk_ball_wtd ) continue;
+
+					numeric::xyzVector< core::Real > grad_ij(dEros_i_dvars[jj][3*ii_atm+1], dEros_i_dvars[jj][3*ii_atm+2], dEros_i_dvars[jj][3*ii_atm+3]);
+					norm += grad_ij.length();
+				}
+
+				TR << " " << grad_i.length() << " " << norm << " " << grad_i.length()/norm;
+				for (int jj=1; jj<=(int)term_i.size(); ++jj) {
+					numeric::xyzVector< core::Real > grad_ij(dEros_i_dvars[jj][3*ii_atm+1], dEros_i_dvars[jj][3*ii_atm+2], dEros_i_dvars[jj][3*ii_atm+3]);
+					TR << " " << grad_ij.length();
+				}
+				TR << std::endl;
 			}
 		}
-	} else if (autoset_wt_) {
+	}
+
+	if (outfile_.length() > 0) {
+		std::ofstream OUT(outfile_.c_str());
+		OUT << gradsum << std::endl;
+	}
+	return gradsum;
+}
+
+core::Real ReportGradientsMover::normalization(core::pose::Pose & pose, core::id::AtomID atmid, core::scoring::ScoreFunctionOP sfxn ) {
+	using namespace core;
+	using namespace core::scoring;
+	using namespace core::scoring::etable;
+	using namespace core::scoring::etable::coulomb;
+	using namespace core::scoring::etable::count_pair;
+	using namespace core::scoring::methods;
+
+	core::Real symmscale=1.0;
+	if (core::pose::symmetry::is_symmetric(pose)) {
+		core::conformation::symmetry::SymmetricConformation const & symm_conf (
+				dynamic_cast<core::conformation::symmetry::SymmetricConformation const & > ( pose.conformation() ) );
+		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+		symmscale = symm_info->score_multiply_factor();
+	}
+
+	(*sfxn)(pose); // make sure energies obj initialized
+
+	core::Real norm=0.0;
+
+	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+	methods::EnergyMethodOptions e_opts = sfxn->energy_method_options();
+	Etable etable = *( ScoringManager::get_instance()->etable( e_opts ).lock() ); // copy
+
+	// TO DO: update to group elec / intra elec
+	core::Real fa_atr_wt = sfxn->get_weight( core::scoring::fa_atr );
+	core::Real fa_rep_wt = sfxn->get_weight( core::scoring::fa_rep );
+	core::Real fa_sol_wt = sfxn->get_weight( core::scoring::fa_sol );
+	core::Real fa_elec_wt = sfxn->get_weight( core::scoring::fa_elec );
+	//core::Real fa_gpelec_wt = sfxn->get_weight( core::scoring::fa_grpelec );
+
+	core::Real fa_intra_atr_wt = sfxn->get_weight( core::scoring::fa_intra_atr );
+	core::Real fa_intra_rep_wt = sfxn->get_weight( core::scoring::fa_intra_rep );
+	core::Real fa_intra_sol_wt = sfxn->get_weight( core::scoring::fa_intra_sol );
+
+	core::Real fa_intra_atr_x4_wt = sfxn->get_weight( core::scoring::fa_intra_atr_xover4 );
+	core::Real fa_intra_rep_x4_wt = sfxn->get_weight( core::scoring::fa_intra_rep_xover4 );
+	core::Real fa_intra_sol_x4_wt = sfxn->get_weight( core::scoring::fa_intra_sol_xover4 );
+
+	core::Real lk_ball_wtd_wt = sfxn->get_weight( core::scoring::lk_ball_wtd );
+
+	Size ires = atmid.rsd();
+	Size iatm = atmid.atomno();
+	core::conformation::Residue const & rsd1( pose.residue(ires) );
+
+	// lkball
+	core::scoring::methods::LK_BallEnergy lkb(e_opts);
+	LKB_PoseInfo const & lkbposeinfo
+		( static_cast< LKB_PoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::LK_BALL_POSE_INFO ) ) );
+	LKB_ResidueInfo const &lkbinfo1 = lkbposeinfo[ires];
+
+	// needed for electrostatic calcs
+	Coulomb coulomb( sfxn->energy_method_options() );
+	coulomb.initialize();
+
+	// get inter-res etable energies
+	if (fa_atr_wt>0 || fa_rep_wt>0 || fa_sol_wt>0 || fa_elec_wt>0 || lk_ball_wtd_wt>0) {
+		for ( graph::Graph::EdgeListConstIter
+				iru  = energy_graph.get_node(ires)->const_edge_list_begin(),
+				irue = energy_graph.get_node(ires)->const_edge_list_end();
+				iru != irue; ++iru ) {
+			EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+			Size jres=edge->get_other_ind(ires);
+			core::conformation::Residue const &rsd2( pose.residue(jres) );
+
+			if (ires == jres) continue;
+
+			LKB_ResidueInfo const &lkbinfo2 = lkbposeinfo[jres];
+
+			// count pair - assume 4 for now (actually 3 for ligands/RNA or if rama is off)
+			CountPairFunctionOP cpfxn =
+				CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+			for ( Size jatm=1; jatm<= rsd2.natoms(); ++jatm ) {
+				core::Real weight=1.0;
+				core::Size path_dist;
+				core::Real d_faatr=0, d_farep=0, d_fasol=0, d_faelec=0, d_lkball=0, invD;
+				if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
+					etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd2.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
+
+					Real const dis = (rsd1.xyz(iatm)-rsd2.xyz(jatm)).length();
+					Real const dis2 = dis*dis;
+
+					d_faelec = coulomb.eval_dfa_elecE_dr_over_r( dis2, rsd1.atomic_charge(iatm), rsd2.atomic_charge(jatm) );
+
+					Vector f1(0,0,0),f2(0,0,0);
+					lkb.sum_deriv_contributions_for_atom_pair(
+						dis2, iatm, rsd1, lkbinfo1, jatm, rsd2, lkbinfo2, pose, sfxn->weights(),
+						weight, f1, f2 );
+
+					d_lkball = f2.length() /weight;
+
+					norm += symmscale * weight *(
+							fa_atr_wt*std::abs(d_faatr) +
+							fa_rep_wt*std::abs(d_farep) +
+							fa_sol_wt*std::abs(d_fasol) +
+							dis*fa_elec_wt*std::abs(d_faelec) +
+							lk_ball_wtd_wt*std::abs(d_lkball));
+				}
+			}
+		}
+	}
+
+	// add fa_intra_* contribution
+	if (fa_intra_atr_wt>0 || fa_intra_rep_wt>0 || fa_intra_sol_wt>0) {
+		CountPairFunctionOP cpfxn =
+			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_3 );
+		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
+			core::Real weight=1.0;
+			core::Size path_dist;
+			core::Real d_faatr, d_farep, d_fasol, invD;
+			if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
+				etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd1.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
+				//Real const dis = (rsd1.xyz(iatm)-rsd1.xyz(jatm)).length();
+				norm += symmscale * weight* (
+					fa_intra_atr_wt*std::abs(d_faatr) +
+					fa_intra_rep_wt*std::abs(d_farep) +
+					fa_intra_sol_wt*std::abs(d_fasol) );
+			}
+		}
+	}
+
+	// add fa_intra_*_xover4 contribution
+	if (fa_intra_atr_x4_wt>0 || fa_intra_rep_x4_wt>0 || fa_intra_sol_x4_wt>0) {
+		CountPairFunctionOP cpfxn =
+			CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4 );
+		for ( Size jatm=1; jatm<= rsd1.natoms(); ++jatm ) {
+			core::Real weight=1.0;
+			core::Size path_dist;
+			core::Real d_faatr, d_farep, d_fasol, invD;
+			if ( cpfxn->count( iatm, jatm, weight, path_dist ) ) {
+				etable.analytic_etable_derivatives(rsd1.atom(iatm), rsd1.atom(jatm),  d_faatr, d_farep, d_fasol, invD );
+				//Real const dis = (rsd1.xyz(iatm)-rsd1.xyz(jatm)).length();
+				norm += symmscale * weight*(
+						fa_intra_atr_x4_wt*std::abs(d_faatr) +
+						fa_intra_rep_x4_wt*std::abs(d_farep) +
+						fa_intra_sol_x4_wt*std::abs(d_fasol) );
+			}
+		}
+	}
+
+	return norm;
+}
+
+void ReportGradientsMover::parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap &data,
+			filters::Filters_map const & /*filters*/,
+			moves::Movers_map const & /*movers*/,
+			core::pose::Pose const & /*pose*/ ) {
+	score_function_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	verbose_ = tag->getOption<bool>("verbose", false);
+	outfile_ = tag->getOption<std::string>("outfile", "");
+}
+
+////
+
+void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
+	if (autoset_wt_) {
 		// if autoset_wt_ guess at cryst wt
 		//    use score_function_ref_ to do the scaling
 		core::Real auto_weight = 0;
@@ -563,6 +829,12 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 		oss << " rms=" << rms;
 	}
 
+	if (report_grads_) {
+		ReportGradientsMover RGG(scorefxn);
+		core::Real gradsum = RGG.compute(pose);
+		oss << " grad=" << gradsum;
+	}
+
 	TR << oss.str() << std::endl;
 	remark.num = 1;	remark.value = oss.str();
 	pose.pdb_info()->remarks().push_back( remark );
@@ -583,6 +855,7 @@ void TagPoseWithRefinementStatsMover::parse_my_tag(
 {
 	tag_ = tag->getOption<std::string>("tag", "");
 	dump_pose_ = tag->getOption<bool>("dump", 0);
+	report_grads_ = tag->getOption<bool>("report_grads", 0);
 }
 
 ////

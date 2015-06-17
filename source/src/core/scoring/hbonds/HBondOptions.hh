@@ -223,6 +223,16 @@ public:
 	Real hbond_energy_shift() const;
 	void hbond_energy_shift( Real );
 
+	bool use_hb_env_dep_new() const;
+	void use_hb_env_dep_new(bool);
+	core::Real hb_env_dep_new_low_scale() const;
+	void hb_env_dep_new_low_scale(core::Real);
+	core::Real hb_env_dep_new_low_nneigh() const;
+	void hb_env_dep_new_low_nneigh(core::Real);
+	core::Real hb_env_dep_new_high_nneigh() const;
+	void hb_env_dep_new_high_nneigh(core::Real);
+
+
 	friend
 	bool
 	operator==( HBondOptions const & a, HBondOptions const & b );
@@ -263,6 +273,12 @@ private:
 	bool length_dependent_srbb_;
 	Real ldsrbb_low_scale_, ldsrbb_high_scale_; // linear scaling based on helix length from minlength->maxlength residues
 	Size ldsrbb_minlength_, ldsrbb_maxlength_;
+
+	//fpd new hbond envdep
+	bool use_hb_env_dep_new_;
+	core::Real hb_env_dep_new_low_scale_;
+	core::Real hb_env_dep_new_low_nneigh_;
+	core::Real hb_env_dep_new_high_nneigh_;
 };
 
 
