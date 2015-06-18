@@ -1,0 +1,4 @@
+-s 1l2y.pdb
+-dun10
+-out:file:o 1l2y_dun10_0001.pdb
+-corrections::score::dun_entropy_correction

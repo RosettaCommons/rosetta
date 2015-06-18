@@ -157,7 +157,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	//create mover instance
-	HbsCreatorMoverOP HC_mover( new HbsCreatorMover() );
+	HbsCreatorMoverOP HC_mover;
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( HC_mover );
@@ -300,7 +300,7 @@ HbsCreatorMover::apply(
 
 		// create a task factory and task operations
 		TaskFactoryOP tf(new TaskFactory());
-		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 
 		using namespace basic::resource_manager;
 		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {

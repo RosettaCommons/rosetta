@@ -307,7 +307,7 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 
 		return rmsd;
 	}
-    
+	
 	if ( !symmetry_ )
 		runtime_assert_msg( copy_pose.total_residue() == native.total_residue(), "the reference pose must be the same size as the working pose" );
 

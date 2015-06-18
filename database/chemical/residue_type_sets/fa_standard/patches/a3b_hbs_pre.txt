@@ -1,0 +1,108 @@
+## By Andrew Watkins, March 2015, amw579@nyu.edu
+
+NAME a3b_hbs_pre
+TYPES A3B_HBS_PRE
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+VARIANT_TYPE LOWER_TERMINUS_VARIANT
+NOT VARIANT_TYPE A3B_HBS_PRE
+NOT VARIANT_TYPE A3B_HBS_POST
+NOT VARIANT_TYPE HBS_PRE
+NOT VARIANT_TYPE HBS_POST
+NOT VARIANT_TYPE OOP_PRE
+NOT VARIANT_TYPE OOP_POST
+NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPER uses H as stub
+NOT VARIANT_TYPE N_ACETYLATION # would not have two N mods
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS_VARIANT #
+NOT AA PRO
+NOT NAME3 DPR
+NOT NAME3 HPR
+NOT NAME3 B19
+NOT NAME3 C89
+NOT NAME3 B59
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### n-terminal and general case##########################################
+
+## these are the operations involved
+## Change this to guassian calculated charges
+ADD_ATOM  CYA  CAbb   CT2   -0.17
+ADD_ATOM  CY   CObb   C   0.63
+ADD_ATOM  CY1  CH2   CT2   -0.17
+ADD_ATOM  OY   OCbb  O   -0.75
+ADD_ATOM  HY1  Hapo  HA   0.10
+ADD_ATOM  HY2  Hapo  HA   0.10
+ADD_ATOM  CY2  CH2   CT2   -0.11
+ADD_ATOM  CY3  aroC  CE1   -0.11
+ADD_ATOM  CYH  aroC  CE1   -0.11
+ADD_ATOM VZH   VIRT 	 VIRT  	0.00
+ADD_ATOM  HYH  Haro  HE1   0.12
+ADD_ATOM  3HY  Haro  HE1   0.12
+ADD_ATOM  HY3  Hapo  HA   0.10
+ADD_ATOM  HY4  Hapo  HA   0.10
+ADD_ATOM  HY5  Hapo  HA   0.10
+ADD_ATOM  HY6  Hapo  HA   0.10
+ADD_BOND  CY	 N
+ADD_BOND  CY   CYA
+ADD_BOND  CYA   CY1
+ADD_BOND  CYA   HY1
+ADD_BOND  CYA   HY2
+ADD_BOND  CY   OY
+ADD_BOND  CY1   HY3
+ADD_BOND  CY1   HY4
+ADD_BOND  CY1   CY2
+ADD_BOND  CY2   HY5
+ADD_BOND  CY2   HY6
+ADD_BOND  CY2   CY3
+ADD_BOND  CY3   CYH
+ADD_BOND  CYH   HYH
+ADD_BOND  CYH   VZH
+ADD_BOND  CY3   3HY
+
+SET_BACKBONE_HEAVYATOM CY
+SET_BACKBONE_HEAVYATOM CYA
+
+SET_ICOOR    CY    -37.6   51.9    1.34   N    CA    C
+SET_ICOOR    CYA  -173.5   63.8	   1.53   CY    N    CA
+SET_ICOOR    CY1   -71.8   66.1    1.54   CYA    CY    N
+SET_ICOOR    OY    131.0   60.2    1.23   CY   CYA    CY1
+SET_ICOOR    CY2   -75.0   65.3    1.54   CY1    CYA    CY
+SET_ICOOR    CY3    76.1   66.1    1.52   CY2    CY1    CYA
+SET_ICOOR    CYH  -106.4   56.2    1.34   CY3    CY2    CY1
+
+SET_ICOOR    HY1   122.3   70.0    1.09   CYA    CY1    CY
+SET_ICOOR    HY2   116.2   69.8    1.09   CYA    CY1    HY1
+SET_ICOOR    HY3   125.7   69.0    1.09   CY1    CYA    CY2
+SET_ICOOR    HY4   114.6   72.6    1.09   CY1    CYA    HY3
+SET_ICOOR    HY5   120.0   69.5    1.09   CY2    CY1    CY3
+SET_ICOOR    HY6   116.0   70.1    1.09   CY2    CY1    HY5
+
+SET_ICOOR    3HY  -178.8   64.0    1.08   CY3    CY2    CYH
+SET_ICOOR    HYH  -179.6   62.2    1.08   CYH    CY3    3HY
+SET_ICOOR    VZH  -178.1   55.4    1.52   CYH    CY3    HYH
+
+ADD_CONNECT	 CYH  ICOOR -106.4   56.2    1.34   CY3    CY2    CY1
+
+ADD_ATOM  H   HNbb H    0.31
+SET_MM_ATOM_TYPE N NH1
+ADD_BOND  N   H
+SET_ICOOR H 148.6 64.0 1.01 N CA C
+
+#kdrew: raises assertion on line 1135 of ResidueType.cc, unless NOT VARIANT_TYPE CUTPOINT_UPPER
+DELETE_ATOM 3H
+DELETE_ATOM 2H
+DELETE_ATOM 1H
+
+NBR_ATOM CA
+NBR_RADIUS 8.0
+
+END_CASE
+

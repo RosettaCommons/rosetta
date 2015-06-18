@@ -3220,15 +3220,9 @@ cluster_rotamers(bool const second_stage,
 			(*scorefxn)(pose);
 
 
-<<<<<<< HEAD
 			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8);
 
 			BinarySilentStruct s( pose, tag ); //Does this take a long time to create?
-=======
-			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8);
-
-			BinaryRNASilentStruct s( pose, tag ); //Does this take a long time to create?
->>>>>>> master
 			silent_file_data.write_silent_struct(s, silent_file, true);
 
 			dump_pdb( pose, tag+".pdb");

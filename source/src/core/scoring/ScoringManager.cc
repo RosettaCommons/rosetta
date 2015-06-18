@@ -823,9 +823,9 @@ using namespace basic::options::OptionKeys;
 		}
 
 		if ( atom_label_type != "" ) {
-			sutbp_ =  SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
+			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
 		} else {
-			sutbp_ =  SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
+			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
 		}
 	}
 	return *sutbp_;

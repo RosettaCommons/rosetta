@@ -44,6 +44,10 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 void add_hbs_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
 /// @brief  Add constraints to keep hydrogen bond surrogate (hbs) ring closed 
 void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_seq_position, core::Real distance, core::Real std );
+/// @brief  Add constraints to keep a3b hydrogen bond surrogate (hbs) macrocycle closed, default values (distance = 1.52, std = 0.05)
+void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
+/// @brief  Add constraints to keep a3b hydrogen bond surrogate (hbs) ring closed
+void add_a3b_hbs_constraint( core::pose::Pose & pose, core::Size hbs_seq_position, core::Real distance, core::Real std );
 
 }  // namespace ncbb
 }  // namespace pose

@@ -83,6 +83,7 @@ namespace a3b_test
 
 int main ( int argc, char* argv[] )
 {
+try {
 	option.add(a3b_test::bin_size, "The number of degrees to step when enumerating each bond angle, e.g. 5 means 5 degree bins, or 72 per bond. Defaults to 10.").def(10);
 
 	devel::init(argc, argv);
@@ -95,16 +96,16 @@ int main ( int argc, char* argv[] )
 	//  bool save_best_for_last(option[a3b_test::save_best_for_last]());
 
 	//now do initialization stuff.
-	TaskFactoryOP task_factory( new TaskFactory );
-	task_factory->push_back( new operation::InitializeFromCommandline );
+	TaskFactoryOP task_factory = TaskFactoryOP( new TaskFactory );
+	task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	//need these to keep pack_rotamers from redesigning the residue.
-	operation::RestrictToRepackingOP rtrop = new operation::RestrictToRepacking;
+	operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );
 	task_factory->push_back( rtrop );
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "mm_std" );
 
 	//Get the residue set we are drawing from.
-	core::chemical::ResidueTypeSetCAP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
+	core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 	Pose pose;  //master pose of whatever residue we are working on now.
 	pose.clear();
@@ -156,6 +157,7 @@ int main ( int argc, char* argv[] )
 
 	pose.dump_pdb ( "B3A_initial.pdb");
 	Real score = ( *scorefxn ) ( pose );
+	std::cout << "Initial score is " << score << std::endl;
 	Real best_score = 1000000;
 	Pose best_pose = pose;
 	utility::vector1< Pose > best_poses;
@@ -188,4 +190,10 @@ int main ( int argc, char* argv[] )
 		fn << "B3A_best_" << j << ".pdb";
 		best_pose.dump_pdb( fn.str() );
 	}
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
+	return 0;
+
 }

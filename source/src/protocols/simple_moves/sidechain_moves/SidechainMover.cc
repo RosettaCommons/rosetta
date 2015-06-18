@@ -362,16 +362,20 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 		}*/
 
 		if ( move_type_prob > (prob_uniform_ + prob_withinrot_ + prob_random_pert_to_current_ ) || last_mutation_ ) {
+			utility::fixedsizearray1< Real, 5 > bbs;
+			bbs[ 1 ] = phi; bbs[ 2 ] = psi;
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > rotamer_sample_data(
-				residue_dunbrack_library->get_all_rotamer_samples(phi, psi)
+				residue_dunbrack_library->get_all_rotamer_samples(/*phi, psi*/bbs)
 			);
 			make_rotwell_jump( rotamer_sample_data ); // returns last_chi_angles_
 		} else if ( move_type_prob > (prob_uniform_ + prob_withinrot_) ) {
 			//ek added in new option to perturb current chi and evaluate according to dunbrack
 			preturb_rot_and_dunbrack_eval( input_residue ); // ?
 		} else if (move_type_prob > prob_uniform_) {
+			utility::fixedsizearray1< Real, 5 > bbs;
+			bbs[ 1 ] = phi; bbs[ 2 ] = psi;
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > rotamer_sample_data(
-				residue_dunbrack_library->get_all_rotamer_samples(phi, psi)
+				residue_dunbrack_library->get_all_rotamer_samples(/*phi, psi*/bbs)
 			);
 			perturb_rot_within_well( rotamer_sample_data, previous_chi_angles );
 		}
@@ -678,8 +682,10 @@ SidechainMover::proposal_density(
 		core::Real const phi( residue_dunbrack_library->get_phi_from_rsd( proposed_residue ) );
 		core::Real const psi( residue_dunbrack_library->get_psi_from_rsd( proposed_residue ) );
 
+		utility::fixedsizearray1< Real, 5 > bbs;
+		bbs[ 1 ] = phi; bbs[ 2 ] = psi;
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > rotamer_sample_data(
-			residue_dunbrack_library->get_all_rotamer_samples(phi, psi)
+			residue_dunbrack_library->get_all_rotamer_samples(/*phi, psi*/bbs)
 		);
 
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > most_probable_rotamers;

@@ -16,6 +16,7 @@
 #define INCLUDED_core_scoring_func_SumFunc_hh
 
 #include <core/scoring/func/Func.hh>
+#include <core/scoring/func/SumFunc.fwd.hh>
 
 #include <core/types.hh>
 

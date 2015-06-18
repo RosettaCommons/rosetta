@@ -20,6 +20,8 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/pointer/owning_ptr.hh>
+
 
 namespace core {
 namespace scoring {

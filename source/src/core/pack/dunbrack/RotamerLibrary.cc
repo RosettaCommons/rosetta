@@ -181,7 +181,8 @@ void rotamer_from_chi_02(Real4 const & chi, chemical::AA const res, Size nchi,
 	using namespace chemical;
 
 	// This code assumes that we're dealing with a canonical aa - fail if not the case.
-debug_assert( res <= num_canonical_aas );
+	// amw possibly temporarily commenting out so that this works for get_dihedral_b3aa
+//debug_assert( res <= num_canonical_aas );
 
 	// default to 0
 	// right now this means 0 for rot numbers larger than dunbrack's nchi
@@ -2455,7 +2456,6 @@ RotamerLibrary::initialize_and_read_srsrdl(
 	utility::io::izstream & rotamer_definitions,
 	utility::io::izstream & regular_library,
 	utility::io::izstream & continuous_minimization_bbdep
-	// phasing out bbind sampling -- utility::io::izstream & rnchi_bbind_probabilities
 ) const
 {
 	initialize_srsrdl( srsrdl, nrchi_is_symmetric, nrchi_start_angle );
@@ -2560,11 +2560,9 @@ void RotamerLibrary::read_from_binary(utility::io::izstream & in) {
 		//TR << "amw reading binlib for " << which_aa << std::endl;
 
 		/// 3. Read the data associated with that amino acid.
-		SingleResidueDunbrackLibraryOP single_lib = create_srdl(which_aa);
-		if (!single_lib) {
-			utility_exit_with_message(
-					"Error reading single residue rotamer library for "
-							+ name_from_aa(which_aa));
+		SingleResidueDunbrackLibraryOP single_lib = create_srdl( which_aa );
+		if ( !single_lib ) {
+			utility_exit_with_message( "Error reading single residue rotamer library for " + name_from_aa( which_aa ) );
 		}
 		single_lib->read_from_binary(in);
 		add_residue_library(which_aa, single_lib);
@@ -2590,10 +2588,10 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 	// amw: this should come from somewhere else that has the opportunity to define how many bbs the rotlib depends on!
 	// amw: it could come from the rsd type via the params file but doesn't currently; it could also come from the rotlib
 	// this is compatible with THREE backbone torsion beta rotlibs
-	//Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
+	Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
 	// because of the prohibitive size of proper beta AA rotamer libraries
 	// we have to keep using the bad ones for a while...
-	Size n_rotlib_bb( 2 );
+	// Size n_rotlib_bb( 2 );
 	chemical::AA aan( rsd_type.aa() );
 
 	if (ncaa_rotlibs_.find(aa_name3) == ncaa_rotlibs_.end()) {

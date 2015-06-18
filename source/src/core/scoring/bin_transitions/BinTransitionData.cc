@@ -758,7 +758,6 @@ namespace core {
 					{
 						return ( bin_index == which_bin_iplus1( rsd.mainchain_torsions() ) );
 					} //in_bin_iplus1
-
 					
 					/// @brief Do final post-load calculations (e.g. precomputing the sum of the transition probability matrix entries,
 					/// the sum of the columns, the sum of the rows, etc.)

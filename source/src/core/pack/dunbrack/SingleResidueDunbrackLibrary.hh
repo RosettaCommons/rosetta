@@ -82,18 +82,18 @@ public:
 	/// The returned samples should be in semi-decrasing order by probability; semi, because the
 	/// rotamers are constructed in sorted order by their probability in the lower phi-psi bin that
 	/// the input phi/psi perscribes.
-	virtual
+	/*virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		Real phi,
 		Real psi
-	) const = 0;
+	) const = 0;*/
 	
-	/*virtual
+	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		utility::vector1< Real > bbs
-	) const = 0;*/
+		utility::fixedsizearray1< Real, 5 > bbs
+	) const = 0;
 
 	/// @brief Return the probability for a particular rotamer where rotamers are
 	/// indexed in order of decreasing probability (or something very close to

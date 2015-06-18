@@ -38,28 +38,6 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-/// DOUG DOUG DOUG
-// template < Size T >
-// class RotamericData : public RotamerBuildingData
-// {
-// public:
-// 	RotamericData( DunbrackRotamer< T, Real > const & rotamer_in )
-// 	:
-// 		rotamer_( rotamer_in )
-// 	{}
-
-// 	virtual ~RotamericData() {}
-
-// 	DunbrackRotamer< T, Real > const &
-// 	rotamer() const {
-// 		return rotamer_;
-// 	}
-
-
-// private:
-// 	DunbrackRotamer< T, Real > rotamer_;
-// };
-
 template < Size T, Size N >
 class RotamericSingleResidueDunbrackLibrary : public SingleResidueDunbrackLibrary
 {
@@ -134,18 +112,18 @@ public:
 		RotamerVector & rotamers
 	) const;
 
-	/// @brief Return all of the rotamer sample data given a particular phi/psi.
-	/// For N-terminus residues, hand in the phi value SingleResidueDunbrackLibrary::PHI_NEUTRAL and
-	/// for C-terminus residues, hand in the psi value SingleResidueDunbrackLibrary::PSI_NEUTRAL.
+	/// @brief Return all of the rotamer sample data given a particular backbone bin.
+	/// For N-terminus residues, hand in the first bb value SingleResidueDunbrackLibrary::PHI_NEUTRAL and
+	/// for C-terminus residues, hand in the final bb value SingleResidueDunbrackLibrary::PSI_NEUTRAL.
 	/// The returned samples should be in semi-decrasing order by probability; semi, because the
-	/// rotamers are constructed in sorted order by their probability in the lower phi-psi bin that
-	/// the input phi/psi perscribes.
+	/// rotamers are constructed in sorted order by their probability in the lower torsion bin that
+	/// the input backbone torsions prescribe.
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		utility::fixedsizearray1< Real, N > bbs
+		utility::fixedsizearray1< Real, 5 > bbs
 	) const;
-
+	
 	virtual
 	Real
 	get_probability_for_rotamer(
@@ -158,13 +136,6 @@ public:
 	get_rotamer(
 		utility::fixedsizearray1< Real, N > bbs,
 		Size rot_ind
-	) const;
-
-	virtual
-	utility::vector1< DunbrackRotamerSampleData >
-	get_all_rotamer_samples(
-		Real phi,
-		Real psi
 	) const;
 
 	virtual
@@ -191,14 +162,6 @@ public:
 
 	virtual
 	Size n_rotamer_bins() const;
-
-	//XRW_B_T1
-	/*
-	virtual
-	SingleResidueRotamerLibraryOP
-	coarsify(coarse::Translator const &map) const;
-	*/
-	//XRW_E_T1
 
 	virtual
 	void
@@ -253,16 +216,9 @@ public:
 	);
 
 public:
-    // amw I don't see a strong reason to keep these constants protected
-    // and SemiRotamericSingleResidueDunbrackLibrary needs to access them
-    // and I would sooner change their access than I would change the
-    // inheritance between the two from public to protected
-	// hard coded constants
 
-    // for some reason I can't have this static anymore, so I will now assign it in the ctor
-    // this is probably appropriate anyway because eventually this may vary!
-    Size const N_PHIPSI_BINS;
-	static Real const PHIPSI_BINRANGE;
+	utility::fixedsizearray1< Size, N > N_PHIPSI_BINS;
+	utility::fixedsizearray1< Real, N > PHIPSI_BINRANGE;
 
 protected:
 	/// Read and write access for derived classes
@@ -287,7 +243,6 @@ protected:
 		return packed_rotno_2_sorted_rotno_;
 	}
 
-//change it back
 protected:
 	/// Worker functions
 
@@ -324,28 +279,16 @@ public:
 	) const;
 
 protected:
-	/*void
-	interpolate_rotamers(
-		RotamerLibraryScratchSpace & scratch,
-		Size const packed_rotno,
-		Size const phibin,
-		Size const psibin,
-		Size const phibin_next,
-		Size const psibin_next,
-		Real const phi_alpha,
-		Real const psi_alpha,
-		PackedDunbrackRotamer< T, Real > & interpolated_rotamer
-    ) const;*/
 
     void
 	interpolate_rotamers(
-                         RotamerLibraryScratchSpace & scratch,
-                         Size const packed_rotno,
-						 utility::fixedsizearray1< Size, N > const bb_bin,
-                         utility::fixedsizearray1< Size, N > const bb_bin_next,
-                         utility::fixedsizearray1< Real, N > const bb_alpha,
-                         PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
-                         ) const;
+		RotamerLibraryScratchSpace & scratch,
+		Size const packed_rotno,
+		utility::fixedsizearray1< Size, N > const bb_bin,
+		utility::fixedsizearray1< Size, N > const bb_bin_next,
+		utility::fixedsizearray1< Real, N > const bb_alpha,
+		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+	) const;
 
 	/// @brief Assigns random chi angles and returns the packed_rotno for the chosen random rotamer.
 	void
@@ -385,29 +328,28 @@ protected:
 
 	void
 	get_bb_bins(
-				utility::fixedsizearray1< Real, N > bbs,
-                utility::fixedsizearray1< Size, N > & bb_bin,
-                utility::fixedsizearray1< Size, N > & bb_bin_next,
-                utility::fixedsizearray1< Real, N > & bb_alpha
-                    ) const;
+		utility::fixedsizearray1< Real, N > bbs,
+		utility::fixedsizearray1< Size, N > & bb_bin,
+		utility::fixedsizearray1< Size, N > & bb_bin_next,
+		utility::fixedsizearray1< Real, N > & bb_alpha
+	) const;
 
 	void
 	get_bb_bins(
-                    utility::fixedsizearray1< Real, N > bbs,
-                    utility::fixedsizearray1< Size, N > & bb_bin
-                    ) const;
+		utility::fixedsizearray1< Real, N > bbs,
+		utility::fixedsizearray1< Size, N > & bb_bin
+	) const;
 
-
-    utility::fixedsizearray1< Real, N >
+	utility::fixedsizearray1< Real, N >
 	get_bbs_from_rsd(
-                     conformation::Residue const & rsd
-                     ) const;
+		conformation::Residue const & rsd
+	) const;
 
 	Real
 	get_bb_from_rsd(
-                    core::Size bbn,
-					conformation::Residue const & rsd
-					) const;
+		core::Size bbn,
+		conformation::Residue const & rsd
+	) const;
 
 
 private:
@@ -439,10 +381,10 @@ private:
     ) const;
 
 	void verify_bb_bins(
-                        utility::fixedsizearray1< Real, N > bbs,
-                        utility::fixedsizearray1< Size, N > const bb_bin,
-                        utility::fixedsizearray1< Size, N > const bb_bin_next
-                            ) const;
+		utility::fixedsizearray1< Real, N > bbs,
+		utility::fixedsizearray1< Size, N > const bb_bin,
+		utility::fixedsizearray1< Size, N > const bb_bin_next
+	) const;
 
 protected:
 
@@ -510,25 +452,18 @@ protected:
 private:
 
 	/// The (chi_mean, chi_sd, packed_rotno, and prob) data for the chi dihedrals
-	/// The FArray3D is indexed into by (phi, psi, sorted_index ), where
+	/// The FArray3D is indexed into by (bb_bin_index, sorted_index ), where
 	/// sorted index simply means the order for a particular packed_rotno in the
-	/// list of rotamers sorted by probability.
-	// amw NOW IT IS INDEXED BY ONE NUMBER, PLUS SORTED INDEX
+	/// list of rotamers sorted by probability and the bb_bin_index is a composite
+	/// of what you would get from essentially expressing the backbone torsions as
+	/// a number in base N_PHIPSI_BINS (often 36).
     typename ObjexxFCL::FArray2D< PackedDunbrackRotamer< T, N > > rotamers_;
 	/// Quick lookup that lists the sorted position for the packed rotamer number
-	/// given a phi/psi.  Indexed by (phi, psi, packed_rotno ).
-	// amw NOW IT IS INDEXED BY ONE NUMBER, PLUS PACKED INDEX
+	/// given a phi/psi.  Indexed by (bb_bin_index, packed_rotno ).
     ObjexxFCL::FArray2D< Size > packed_rotno_2_sorted_rotno_;
 
 	// Entropy correction
-    // amw NOW 1D NOT 2D
-    // amw ALSO NOW A VECTOR OF THIS ARRAY FOR THE N DERIVS
     utility::fixedsizearray1< ObjexxFCL::FArray1D< Real >, ( 1 << N ) > ShanonEntropy_n_derivs_;
-
-	/// Maximum probability of any rotamer, stored by phi,psi bin.
-	/// Could be derived from rotset_ but stored here for easy lookup.
-	/// Wasteful.
-	/// typename ObjexxFCL::FArray2D< DunbrackReal > max_rotprob_;
 
 };
 

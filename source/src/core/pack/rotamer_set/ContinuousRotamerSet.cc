@@ -109,7 +109,11 @@ void ContinuousRotamerSet::build_rotamers(
 			dunbrack::SingleResidueDunbrackLibraryCOP dunlib =
 				utility::pointer::dynamic_pointer_cast<dunbrack::SingleResidueDunbrackLibrary const > ( rotlib );
 			if ( dunlib ) {
-				samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples( pose.phi( resid ), pose.psi( resid ) );
+				// amw
+				utility::fixedsizearray1< Real, 5 > bbs;
+				bbs[ 1 ] = pose.phi( resid );
+				bbs[ 2 ] = pose.psi( resid );
+				samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples(bbs );// pose.phi( resid ), pose.psi( resid ) );
 			} else {
 				utility_exit_with_message("ContinuousRotamerSet cannot support non-Dunbrack rotamer libraries at this time" );
 			}

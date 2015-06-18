@@ -199,10 +199,17 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 
 	if ( !residue_dunbrack_library ) return;
 
+	//amw
 	//get phi-psi dependent rotamer library
 	Real const phi( residue_dunbrack_library->get_phi_from_rsd( residue ) );
 	Real const psi( residue_dunbrack_library->get_psi_from_rsd( residue ) );
-	RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( phi, psi ) );
+	utility::fixedsizearray1< Real, 5 > bbs;
+	//for ( Size i = 1; i <= residue.type().mainchain_torsions().size() - 1; ++i )
+	bbs[ 1 ] = phi;
+	bbs[2] = psi; 
+	//residue_dunbrack_library->get_bb_from_rsd( i, residue );
+	//RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( phi, psi ) );
+	RotamerList rotamers_raw( residue_dunbrack_library->get_all_rotamer_samples( bbs ) );
 
 	//make short list of most probable rotamers
 	if ( !filter_low_probabilities ) {

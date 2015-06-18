@@ -685,6 +685,9 @@ sources = {
 	"protocols/simple_moves/chiral": [
 		"ChiralMover",
 	],
+	"protocols/simple_moves/a3b_hbs": [
+		"A3BHbsPatcher",
+	],
 	"protocols/simple_moves/hbs": [
 		"HbsPatcher",
 	],

@@ -1,0 +1,20 @@
+#Test addition of fa_elec and dslf_fa13 and split unfolded terms to mm_std
+#fa_elec weight approximately proportional to the talaris2013 weight relative to the hbond term weights.
+UNFOLDED_ENERGIES_TYPE UNFOLDED_SPLIT
+SPLIT_UNFOLDED_LABEL_TYPE SPLIT_UNFOLDED_MM
+SPLIT_UNFOLDED_VALUE_TYPE SPLIT_UNFOLDED_MEDIAN
+fa_atr 0.8
+fa_rep 0.634454
+fa_sol 1.16497
+mm_lj_intra_rep 0.324341
+mm_lj_intra_atr 0.537815
+mm_twist 0.2662
+cart_bonded 0.625
+fa_elec 0.73
+hbond_sr_bb 0.656728
+hbond_lr_bb 1.50186
+hbond_bb_sc 1.45367
+hbond_sc 1.18477
+dslf_fa13 1.0
+unfolded -0.4
+split_unfolded_two_body 0.6

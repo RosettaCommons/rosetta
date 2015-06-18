@@ -109,7 +109,7 @@ namespace core {
 						core::conformation::Residue const &rsd_iplus1,
 						core::Real &probability
 					) const;
-					
+
 					/// @brief Is the given residue in the given bin?
 					/// @details For the bin definitions, this uses the first BinTransitionsData object that it finds where residue i matches the properties of the given
 					/// residue.  Checks the i+1 definitions if nothing is found for the i transitions.  Fails if no bin definitions for the given residue type are found.

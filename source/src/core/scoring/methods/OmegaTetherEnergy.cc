@@ -35,7 +35,6 @@
 
 
 // C++
-#include <stdio.h> //For printf for debugging -- DELETE ME
 
 namespace core {
 namespace scoring {
@@ -145,7 +144,8 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		if (tor_id.torsion() == index_phi) deriv = dscore_dphi;
 		if (tor_id.torsion() == index_psi) deriv = dscore_dpsi;
-    if (tor_id.torsion() == index_omega) deriv = dscore_domega; // Will be 3 by default (i.e. for alpha-aas or peptoids) and 4 for beta-aas.
+		if (tor_id.torsion() == index_omega) deriv = dscore_domega; // Will be 3 by default (i.e. for alpha-aas or peptoids) and 4 for beta-aas.
+	
 	}
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }

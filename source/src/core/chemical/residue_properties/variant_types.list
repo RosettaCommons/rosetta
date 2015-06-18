@@ -171,6 +171,8 @@ OOP_PRE  # used for oligooxopiperazines (OOPs)
 OOP_POST  # used for oligooxopiperazines (OOPs)
 HBS_PRE  # used for hydrogen bond surrogates
 HBS_POST  # used for hydrogen bond surrogates
+A3B_HBS_PRE  # used for a3b hydrogen bond surrogates
+A3B_HBS_POST  # used for a3b hydrogen bond surrogates
 
 
 # MISCELLANEOUS VARIANTS

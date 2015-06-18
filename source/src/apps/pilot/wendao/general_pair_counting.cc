@@ -544,7 +544,7 @@ void my_main()
 		}
 	}
 
-	octave_scr2 << "dih_table = zeros(" << nrottype << "," 
+	octave_scr2 << "dih_table = zeros(" << nrottype << ","
 		<< nrottype << "," << nbin_pair << ","
 		<< nbin_dih << ");" << std::endl;
 	for (Size i=1; i<=rot_type_list.size(); ++i) {

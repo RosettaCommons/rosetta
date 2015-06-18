@@ -31,7 +31,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-//#include <ObjexxFCL/FArray4D.hh>
 
 #include <utility/vector1.hh>
 
@@ -108,9 +107,7 @@ public:
 	BBDepSemiRotamericData(
 		DunbrackRotamer< T, N, Real > const & rotamer_in,
 		BBDepNRChiSample< Real > const & bbdep_nrchi_sample_in
-	)
-	:
-		parent( rotamer_in ),
+	) : parent( rotamer_in ),
 		bbdep_nrchi_sample_( bbdep_nrchi_sample_in )
 	{}
 
@@ -130,8 +127,7 @@ template < Size N >
 struct BBDepScoreInterpData
 {
 public:
-    BBDepScoreInterpData()
-    {}
+    BBDepScoreInterpData() {}
 
 	inline bool operator==( BBDepScoreInterpData< N > const & other ) const;
 
@@ -156,9 +152,7 @@ public:
 		DunbrackRotamer< T, N, Real > const & rotamer,
 		BBIndNRChiSample<> const & bbind_nrchi_sample_in,
 		Size const nrchi_bin_id_in
-	)
-	:
-		parent( rotamer ),
+	) : parent( rotamer ),
 		bbind_nrchi_sample_( bbind_nrchi_sample_in ),
 		nrchi_bin_id_( nrchi_bin_id_in )
 	{}
@@ -267,6 +261,16 @@ public:
 		bool perturb_from_rotamer_center
 	) const;
 
+	
+	void
+	interpolate_nrchi_values(
+		utility::fixedsizearray1< Size, N > bb_bin,
+		utility::fixedsizearray1< Size, N > bb_bin_next,
+		utility::fixedsizearray1< Real, N > bb_alpha,
+		Size packed_rotno,
+		utility::vector1< Real > & interpolated_nrchi_distribution
+	) const;
+	
 	virtual
 	void
 	fill_rotamer_vector(
@@ -290,7 +294,7 @@ public:
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
-		utility::fixedsizearray1< Real, N > bbs
+		utility::fixedsizearray1< Real, 5 > bbs
 	) const;
 
 	virtual
@@ -315,15 +319,6 @@ public:
 
 	virtual
 	Size n_rotamer_bins() const;
-
-	//XRW_B_T1
-	/*
-	// stubbed out
-	virtual
-	SingleResidueRotamerLibraryOP
-	coarsify(coarse::Translator const &map) const;
-	*/
-	//XRW_E_T1
 
 	// stubbed out
 	virtual
@@ -368,7 +363,6 @@ public:
 public:
 	/// Initialization functions that must be called before reading the input libraries.
 
-
 	/// @brief For the non rotameric chi, how many asymmetric degrees are there?  (e.g. 360 for asn, 180 for asp)
 	void
 	set_nrchi_periodicity( Real angle_in_degrees );
@@ -397,22 +391,6 @@ protected:
 		bool eval_deriv
 	) const;
 
-	Real
-	rotamer_energy_deriv_bbind(
-		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
-		bool eval_deriv
-	) const;
-
-	void
-	assign_random_rotamer_with_bias_bbind(
-		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
-		numeric::random::RandomGenerator & RG,
-		ChiVector & new_chi_angles,
-		bool perturb_from_rotamer_center
-	) const;
-
 	void
 	assign_random_rotamer_with_bias_bbdep(
 		conformation::Residue const & rsd,
@@ -423,32 +401,11 @@ protected:
 	) const;
 
 	Real
-	bbind_nrchi_score(
-		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
-		Real & dnrchi_score_dnrchi
-	) const;
-
-	Real
 	bbdep_nrchi_score(
 		conformation::Residue const & rsd,
 		RotamerLibraryScratchSpace & scratch,
 		Real & dnrchi_score_dnrchi,
         utility::fixedsizearray1< Real, N > & dnrchi_score_dbb
-	) const;
-
-
-	void
-	fill_rotamer_vector_bbind(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scorefxn,
-		pack::task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
-		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const & existing_residue,
-		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-		bool buried,
-		RotamerVector & rotamers
 	) const;
 
 	void
@@ -465,33 +422,15 @@ protected:
 	) const;
 
 	utility::vector1< DunbrackRotamerSampleData >
-	get_all_rotamer_samples_bbind(
-		utility::fixedsizearray1<Real, N> bbs
-	) const;
-
-	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples_bbdep(
-		utility::fixedsizearray1<Real, N> bbs
+		utility::fixedsizearray1<Real, 5> bbs
 	) const;
-
-	Real
-	get_probability_for_rotamer_bbind(
-		utility::fixedsizearray1<Real, N> bbs,
-		Size rot_ind
-	) const;
-
+	
 	Real
 	get_probability_for_rotamer_bbdep(
 		utility::fixedsizearray1<Real, N> bbs,
 		Size rot_ind
 	) const;
-
-	DunbrackRotamerSampleData
-	get_rotamer_bbind(
-		utility::fixedsizearray1<Real, N> bbs,
-		Size rot_ind
-	) const;
-
 
 	DunbrackRotamerSampleData
 	get_rotamer_bbdep(
@@ -526,9 +465,6 @@ private:
 	read_bbdep_continuous_minimization_data( utility::io::izstream & in_contmin );
 
 	void
-	read_bbind_continuous_minimization_data( utility::io::izstream & in_contmin );
-
-	void
 	read_rotameric_data( utility::io::izstream & in_rotameric );
 
 	void
@@ -544,36 +480,6 @@ private:
 		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		BBDepNRChiSample< Real > const interpolated_sample,
 		RotamerVector & rotamers
-	) const;
-
-	void
-	build_bbind_rotamers(
-		pose::Pose const & pose,
-		scoring::ScoreFunction const & scorefxn,
-		pack::task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,
-		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const& existing_residue,
-		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-		bool buried,
-		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
-		Size const nrchi_rotno,
-		BBIndNRChiSample<> const & interpolated_sample,
-		RotamerVector & rotamers
-	) const;
-
-	void
-	bbind_chisamples_for_rotamer_chi(
-		chemical::ResidueType const & rsd_type,
-		pack::task::ResidueLevelTask const & rtask,
-		bool buried,
-		Size const chi_index,
-		RotamericData< T, N > const & rotamer_data,
-		utility::vector1< Real > const & extra_steps,
-		utility::vector1< Real > & total_chi,
-		utility::vector1< int  > & total_rot,
-		utility::vector1< Real > & total_ex_steps,
-		utility::vector1< Real > & chisample_prob
 	) const;
 
 	void
@@ -598,28 +504,21 @@ private:
 		Size & bin_upper,
 		Real & nrchi_alpha
 	) const;
-
-	void get_bbind_nrchi_bin(
-		Real nrchi,
-		Size & bin_lower,
-		Size & bin_upper,
-		Real & nrchi_alpha
-	) const;
-
+	
     BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
-                                   Size const packed_rotno,
-                                   Size const nrchi_bin,
-                                   utility::fixedsizearray1< Size, N > const bb_bin,
-                                   utility::fixedsizearray1< Size, N > const bb_bin_next,
-                                   utility::fixedsizearray1< Real, N > const bb_alpha
-                                   ) const;
+		Size const packed_rotno,
+		Size const nrchi_bin,
+		utility::fixedsizearray1< Size, N > const bb_bin,
+		utility::fixedsizearray1< Size, N > const bb_bin_next,
+		utility::fixedsizearray1< Real, N > const bb_alpha
+	) const;
 
 	BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
-                                   utility::vector1< BBDepNRChiSample<> > const & nrchi_sample,
-                                   utility::fixedsizearray1< Real, N > const bb_alpha
-                                   ) const;
+		utility::fixedsizearray1< BBDepNRChiSample<>, ( 1 << N ) > const & nrchi_sample,
+		utility::fixedsizearray1< Real, N > const bb_alpha
+	) const;
 
 
 private:
@@ -635,11 +534,6 @@ private:
 	Real nrchi_lower_angle_; // Starting angle for both bbdep and bbind nrchi data
 
 	/// The non rotameric chi is n_rotameric_chi + 1;
-	/// The FArray3D is indexed as (phi, psi, nrchi).  Probabilities are input; the
-	/// parameters for tricubic interpolation are stored.  The supporting information is used to snap chi values stored in a
-	/// residue to a meaningful periodic range and to make tricubic interpolation possible.
-	/// This data is used only if bbind_nrchi_scoring is false.
-    // amw now indexed as index, nrchi
 	utility::vector1< ObjexxFCL::FArray2D< BBDepScoreInterpData<N> > > bbdep_nrc_interpdata_;
 	Size bbdep_nrchi_nbins_;
 	Real bbdep_nrchi_binsize_;
@@ -650,7 +544,6 @@ private:
 	Size bbind_nrchi_nbins_;
 	Real bbind_nrchi_binsize_;
 
-
 	/// For rotamer sampling, "pseudo rotamers" are defined for the non rotameric chi.  These
 	/// rotamers are arbitrary bins in chi space, and each bin gives a left and right edge
 	/// as well as a median (mode?) angle which is used for rotamer sampling iff bbind_nrchi_sampling_
@@ -658,7 +551,6 @@ private:
 
 	// Used in both bbind and bbdep rotamer building.  Read from rotamer definition file.
 	Size n_nrchi_sample_bins_;
-
 
 	/// This variable is used iff bbind_nrchi_sampling_ is true;
 	/// Space is not allocated if it is false.
@@ -669,7 +561,6 @@ private:
 
 	/// This variable is used iff bbind_nrchi_sampling_ is false;
 	/// Space is not allocated if it is true.
-    // amw reduced
 	ObjexxFCL::FArray2D< BBDepNRChiSample<> > bbdep_rotamers_to_sample_;
 	ObjexxFCL::FArray3D< Size > bbdep_rotsample_sorted_order_;
 

@@ -1254,7 +1254,7 @@ debug_assert( false );
 	srsrdl_51.memory_usage_static();
 	srsrdl_52.memory_usage_static();
 
-	rsrdl_11.get_all_rotamer_samples( bb1 );
+	/*rsrdl_11.get_all_rotamer_samples( bb1 );
 	rsrdl_12.get_all_rotamer_samples( bb2 );
 	rsrdl_13.get_all_rotamer_samples( bb3 );
 	rsrdl_14.get_all_rotamer_samples( bb4 );
@@ -1284,7 +1284,37 @@ debug_assert( false );
 	srsrdl_42.get_all_rotamer_samples( bb4 );
 	srsrdl_51.get_all_rotamer_samples( bb5 );
 	srsrdl_52.get_all_rotamer_samples( bb5 );
-
+*/
+	rsrdl_11.get_all_rotamer_samples( bb5 );
+	rsrdl_12.get_all_rotamer_samples( bb5 );
+	rsrdl_13.get_all_rotamer_samples( bb5 );
+	rsrdl_14.get_all_rotamer_samples( bb5 );
+	rsrdl_15.get_all_rotamer_samples( bb5 );
+	srsrdl_11.get_all_rotamer_samples( bb5 );
+	srsrdl_12.get_all_rotamer_samples( bb5 );
+	rsrdl_21.get_all_rotamer_samples( bb5 );
+	rsrdl_22.get_all_rotamer_samples( bb5 );
+	rsrdl_23.get_all_rotamer_samples( bb5 );
+	rsrdl_24.get_all_rotamer_samples( bb5 );
+	rsrdl_25.get_all_rotamer_samples( bb5 );
+	srsrdl_21.get_all_rotamer_samples( bb5 );
+	srsrdl_22.get_all_rotamer_samples( bb5 );
+	rsrdl_31.get_all_rotamer_samples( bb5 );
+	rsrdl_32.get_all_rotamer_samples( bb5 );
+	rsrdl_33.get_all_rotamer_samples( bb5 );
+	rsrdl_34.get_all_rotamer_samples( bb5 );
+	rsrdl_35.get_all_rotamer_samples( bb5 );
+	srsrdl_31.get_all_rotamer_samples( bb5 );
+	srsrdl_32.get_all_rotamer_samples( bb5 );
+	rsrdl_41.get_all_rotamer_samples( bb5 );
+	rsrdl_42.get_all_rotamer_samples( bb5 );
+	rsrdl_43.get_all_rotamer_samples( bb5 );
+	rsrdl_44.get_all_rotamer_samples( bb5 );
+	rsrdl_45.get_all_rotamer_samples( bb5 );
+	srsrdl_41.get_all_rotamer_samples( bb5 );
+	srsrdl_42.get_all_rotamer_samples( bb5 );
+	srsrdl_51.get_all_rotamer_samples( bb5 );
+	srsrdl_52.get_all_rotamer_samples( bb5 );
 
 	ChiVector chiv;
 
@@ -1381,6 +1411,29 @@ debug_assert( false );
 	srsrdl_51.get_rotamer( bb5, 1 );
 	srsrdl_52.get_rotamer( bb5, 1 );
 
+	utility::fixedsizearray1< Size, 1 > sizevec1;
+	utility::fixedsizearray1< Real, 1 > realvec1;
+	utility::fixedsizearray1< Size, 2 > sizevec2;
+	utility::fixedsizearray1< Real, 2 > realvec2;
+	utility::fixedsizearray1< Size, 3 > sizevec3;
+	utility::fixedsizearray1< Real, 3 > realvec3;
+	utility::fixedsizearray1< Size, 4 > sizevec4;
+	utility::fixedsizearray1< Real, 4 > realvec4;
+	utility::fixedsizearray1< Size, 5 > sizevec5;
+	utility::fixedsizearray1< Real, 5 > realvec5;
+	utility::vector1< Real > realvec( 5 );
+	
+	srsrdl_11.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
+	srsrdl_12.interpolate_nrchi_values( sizevec1, sizevec1, realvec1, 1, realvec );
+	srsrdl_21.interpolate_nrchi_values( sizevec2, sizevec2, realvec2, 1, realvec );
+	srsrdl_22.interpolate_nrchi_values( sizevec2, sizevec2, realvec2, 1, realvec );
+	srsrdl_31.interpolate_nrchi_values( sizevec3, sizevec3, realvec3, 1, realvec );
+	srsrdl_32.interpolate_nrchi_values( sizevec3, sizevec3, realvec3, 1, realvec );
+	srsrdl_41.interpolate_nrchi_values( sizevec4, sizevec4, realvec4, 1, realvec );
+	srsrdl_42.interpolate_nrchi_values( sizevec4, sizevec4, realvec4, 1, realvec );
+	srsrdl_51.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
+	srsrdl_52.interpolate_nrchi_values( sizevec5, sizevec5, realvec5, 1, realvec );
+	
 }
 
 

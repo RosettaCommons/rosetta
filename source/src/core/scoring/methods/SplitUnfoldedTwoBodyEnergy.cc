@@ -31,7 +31,7 @@ namespace scoring {
 namespace methods {
 
   SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type ):
-		parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
+	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
     label_type_( label_type ),
 		value_type_( value_type ),
     sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type ) ),
@@ -41,7 +41,7 @@ namespace methods {
   }
 
   SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, const EnergyMap & emap_in ):
-		parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
+	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
 		label_type_( label_type ),
 		value_type_( value_type ),
     sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type ) ),

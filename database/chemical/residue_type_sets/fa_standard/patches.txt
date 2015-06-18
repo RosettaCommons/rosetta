@@ -145,6 +145,9 @@ patches/carbohydrates/N-acetyl-2-amination.txt
 #patches/hbs_pre.txt
 #patches/hbs_post.txt
 
+#patches/a3b_hbs_pre.txt
+#patches/a3b_hbs_post.txt
+
 #patches/oop_pre.txt
 #patches/oop_post.txt
 

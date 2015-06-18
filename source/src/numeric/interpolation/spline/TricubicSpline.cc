@@ -125,24 +125,8 @@ void TricubicSpline::train
 				dsecoy(   layer) = dsecoy_(  layer, row, col);
 				dsecoz(   layer) = dsecoz_(  layer, row, col);
 				dsecoyz(  layer) = dsecoyz_( layer, row, col);
-                if ( (layer == 0 && row == 0 && col == 0 )||
-                    (layer == 17 && row == 17 && col == 17) ||
-                    (layer == 35 && row == 35 && col == 35 )) {
-                    std::cout << "Assigned to values(   " << layer << " ) the value " << values_(  layer, row, col ) << std::endl;
-                    std::cout << "Assigned to dsecoz(   " << layer << " ) the value " << dsecoz_(  layer, row, col ) << std::endl;
-                    std::cout << "Assigned to dsecoy(   " << layer << " ) the value " << dsecoy_(  layer, row, col ) << std::endl;
-                    std::cout << "Assigned to dsecoyz(  " << layer << " ) the value " << dsecoyz_(  layer, row, col ) << std::endl;
-                }
 			}
 			CubicSpline cs, csz, csy, csyz;
-            if ( (row == 0 && col == 0) ||
-                 (row == 17 && col == 17) ||
-                 (row == 35 && col == 35) ) {
-                std::cout << "About to cubic train   cs.train(   "<<BORDER[ 0]<<", "<<START[0]<<", "<<DELTA[ 0]<<",  values , FIRSTBE[ 0]);"<<std::endl;
-                std::cout << "About to cubic train  csz.train(   "<<BORDER[ 0]<<", "<<START[0]<<", "<<DELTA[ 0]<<",  dsecoy , FIRSTBE[ 0]);"<<std::endl;
-                std::cout << "About to cubic train  csy.train(   "<<BORDER[ 0]<<", "<<START[0]<<", "<<DELTA[ 0]<<",  dsecoz , FIRSTBE[ 0]);"<<std::endl;
-                std::cout << "About to cubic train csyz.train(   "<<BORDER[ 0]<<", "<<START[0]<<", "<<DELTA[ 0]<<",  dsecoyz, FIRSTBE[ 0]);"<<std::endl;
-            }
 			cs.train(   BORDER[ 0], START[ 0], DELTA[ 0], values , FIRSTBE[ 0]);
 			csy.train(  BORDER[ 0], START[ 0], DELTA[ 0], dsecoy , FIRSTBE[ 0]);
 			csz.train(  BORDER[ 0], START[ 0], DELTA[ 0], dsecoz , FIRSTBE[ 0]);
@@ -153,14 +137,6 @@ void TricubicSpline::train
 				dsecoxy_(  layer, row, col ) = csy.get_dsecox()(   layer);
 				dsecoxz_(  layer, row, col ) = csz.get_dsecox()(   layer);
 				dsecoxyz_( layer, row, col ) = csyz.get_dsecox()(  layer);
-                if ( (layer == 0 && row == 0 && col == 0) ||
-                    (layer == 17 && row == 17 && col == 17) ||
-                    (layer == 35 && row == 35 && col == 35) ) {
-                    std::cout << "Assigned to dsecox_(   " << layer << ", " << row << ", " <<col << ", ) the value " <<cs.get_dsecox()(    layer) << std::endl;
-                    std::cout << "Assigned to dsecoxz_(  " << layer << ", " << row << ", " <<col << ", ) the value " <<csz.get_dsecox()(    layer) << std::endl;
-                    std::cout << "Assigned to dsecoxy_(  " << layer << ", " << row << ", " <<col << ", ) the value " <<csy.get_dsecox()(    layer) << std::endl;
-                    std::cout << "Assigned to dsecoxyz_( " << layer << ", " << row << ", " <<col << ", ) the value " <<csyz.get_dsecox()(    layer) << std::endl;
-                }
 			}
 		}
 	}

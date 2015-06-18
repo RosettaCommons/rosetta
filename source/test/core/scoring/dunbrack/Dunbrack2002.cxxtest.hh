@@ -57,6 +57,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <utility/fixedsizearray1.hh>
 
 
 using basic::T;
@@ -228,6 +229,9 @@ public:
 
 		Real const phi_example = -59;
 		Real const psi_example =  61;
+		utility::fixedsizearray1< Real, 5 > bbs;
+		bbs[1] = phi_example;
+		bbs[2] = psi_example;
         
 		for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 
@@ -241,7 +245,7 @@ public:
 			}
 
 			Size const ii_nrots = aa_dunlib->n_rotamer_bins();
-            utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( phi_example, psi_example );
+            utility::vector1< DunbrackRotamerSampleData > aa_samples = aa_dunlib->get_all_rotamer_samples( bbs );
 
 			TS_ASSERT( aa_samples.size() <= ii_nrots );
 			for ( Size jj = 1; jj <= aa_samples.size(); ++jj ) {

@@ -416,17 +416,26 @@ namespace pack {
 namespace dunbrack {
 
 template < Size T, Size N >
-Real const RotamericSingleResidueDunbrackLibrary< T, N >::PHIPSI_BINRANGE = 10.0;
-
-template < Size T, Size N >
 RotamericSingleResidueDunbrackLibrary< T, N >::RotamericSingleResidueDunbrackLibrary(
 	AA const aa_in,
 	bool dun02
 ) :
-	parent( aa_in, T, dun02 ),
-	N_PHIPSI_BINS( 36 )
-	//max_rotprob_( N_PHIPSI_BINS, N_PHIPSI_BINS, 0.0 )
-{}
+	parent( aa_in, T, dun02 )
+{
+	// This is horrible but temporarily necessarily until we figure out how to distribute full beta rotlibs
+	// Betas automatically (if 3 BB) have phipsi binrange of 30
+	if ( N > 2 ) {
+		for ( Size i = 1; i <= N; ++i ) {
+			N_PHIPSI_BINS[ i ] = 12;
+			PHIPSI_BINRANGE[ i ] = 360 / N_PHIPSI_BINS[ i ];
+		}
+	} else {
+		for ( Size i = 1; i <= N; ++i ) {
+			N_PHIPSI_BINS[ i ] = 36;
+			PHIPSI_BINRANGE[ i ] = 360 / N_PHIPSI_BINS[ i ];
+		}
+	}
+}
 
 template < Size T, Size N >
 RotamericSingleResidueDunbrackLibrary< T, N >::~RotamericSingleResidueDunbrackLibrary() throw()
@@ -864,7 +873,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_bb_bins(
 ) const
 {
 	for ( Size ii = 1; ii <= N; ++ii )
-		parent::bin_angle( -180.0, PHIPSI_BINRANGE, 360.0, N_PHIPSI_BINS, basic::periodic_range( bbs[ ii ], 360 ),
+		parent::bin_angle( -180.0, PHIPSI_BINRANGE[ ii ], 360.0, N_PHIPSI_BINS[ ii ], basic::periodic_range( bbs[ ii ], 360 ),
 						   bb_bin[ ii ], bb_bin_next[ ii ], bb_alpha[ ii ] );
 
 	verify_bb_bins( bbs, bb_bin, bb_bin_next );
@@ -1118,13 +1127,16 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 template < Size T, Size N >
 utility::vector1< DunbrackRotamerSampleData >
 RotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
-	utility::fixedsizearray1< Real, N > bbs
+	utility::fixedsizearray1< Real, 5 > bbs2
 ) const
 {
 	RotamerLibraryScratchSpace scratch;
 
 	utility::fixedsizearray1< Size, N > bb_bin, bb_bin_next;
 	utility::fixedsizearray1< Real, N > bb_alpha;
+	
+	utility::fixedsizearray1< Real, N > bbs;
+	for ( Size i = 1 ; i <= N; ++i ) bbs[ i ] = bbs2[ i ];
 	get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
 	Size const n_rots = n_packed_rots();
@@ -1149,20 +1161,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
 	}
 	return all_rots;
 }
-
-template < Size T, Size N >
-utility::vector1< DunbrackRotamerSampleData >
-RotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples(
-	Real phi,
-	Real psi
-) const
-{
-	utility::fixedsizearray1< Real, N > bbs;
-	bbs[1] = phi;
-	bbs[2] = psi;
-	return get_all_rotamer_samples( bbs );
-}
-
+	
 template < Size T, Size N >
 Real
 RotamericSingleResidueDunbrackLibrary< T, N >::get_probability_for_rotamer(
@@ -1315,7 +1314,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::build_rotamers(
 		*concrete_residue, task, existing_residue.seqpos(), buried,
 		rotameric_rotamer_building_data,
 		extra_chi_steps, chi_set_vector );
-
+	
 	create_rotamers_from_chisets(
 		pose, scorefxn, task,
 		packer_neighbor_graph, concrete_residue, existing_residue,
@@ -1436,7 +1435,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::enumerate_chi_sets(
 
 	// previously named min_extrachi_rot_prob in rosetta++
 	Real const minimum_probability_for_extra_rotamers = 0.001; // make this a virtual function call...
-
+	
 	bool first_rotamer( true );
 	for ( utility::LexicographicalIterator lex( lex_sizes ); ! lex.at_end(); ++lex ) {
 		Real chi_set_prob = base_probability;
@@ -1597,7 +1596,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 
 	/// 1. rotamers_
 	{
-	Size const ntotalrot = positive_pow( N_PHIPSI_BINS, N ) * parent::n_packed_rots();
+	Size const ntotalrot = product( N_PHIPSI_BINS ) * parent::n_packed_rots();
 	Size const ntotalchi = ntotalrot * T;
 	///a. means
 	DunbrackReal * rotamer_means = new DunbrackReal[ ntotalchi ];
@@ -1617,6 +1616,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 	Size count_chi( 0 ), count_rots( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1636,10 +1637,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 			++count_rots;
 
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 			}
 		}
 	}
@@ -1662,11 +1663,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 
 	/// 2. packed_rotno_to_sorted_rotno_
 	{
-	Size const ntotalpackedrots = positive_pow( N_PHIPSI_BINS, N ) * parent::n_packed_rots();
+	Size const ntotalpackedrots = product( N_PHIPSI_BINS ) * parent::n_packed_rots();
 	boost::int32_t * packed_rotno_2_sorted_rotno = new boost::int32_t[ ntotalpackedrots ];
 	Size count( 0 );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1674,10 +1677,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 			++count;
 
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1) p = 1;
 			}
 		}
 	}
@@ -1691,7 +1694,7 @@ void
 RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::izstream & in )
 {
 	parent::read_from_binary( in );
-	Size n_rot_bins = positive_pow( N_PHIPSI_BINS, N );
+	Size n_rot_bins = product( N_PHIPSI_BINS );
 	/// 1. rotamers_
 	{
 	Size const ntotalrot = n_rot_bins * parent::n_packed_rots();
@@ -1723,6 +1726,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1739,12 +1744,12 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 			rotamers_( bb_rot_index, ii ).packed_rotno( ( Size ) packed_rotnos[ count_rots ] );
 
 			++count_rots;
-
+			
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 			}
 		}
 	}
@@ -1768,6 +1773,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1775,10 +1782,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 			++count;
 
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 			}
 		}
 	}
@@ -1821,6 +1828,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 	debug_assert( parent::n_packed_rots() == other.n_packed_rots() );
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 			Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
@@ -1863,10 +1872,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 			}
 
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 			}
 		}
 	}
@@ -1874,6 +1883,8 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 	/// 2. packed_rotno_to_sorted_rotno_
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+		utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+		for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 		Size p = 1;
 		while ( bb_bin[ N + 1 ] == 1 ) {
 			Size bb_rot_index = make_index( N, N_PHIPSI_BINS, bb_bin );
@@ -1885,10 +1896,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamer
 			}
 
 			bb_bin[ 1 ]++;
-			while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+			while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 				bb_bin[ p ] = 1;
 				bb_bin[ ++p ]++;
-				if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+				if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 			}
 		}
 	}
@@ -1906,11 +1917,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 {
 	// Iter again in order to reference ShanonEntropy
 	for ( Size dimi = 1; dimi <= ( 1 << N ); ++dimi ) {
-		ShanonEntropy_n_derivs_[ dimi ].dimension( positive_pow( N_PHIPSI_BINS, N ) );
+		ShanonEntropy_n_derivs_[ dimi ].dimension( product( N_PHIPSI_BINS ) );
 	}
 
 	// Get entropy values first
 	utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+	utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+	for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 	Size p = 1;
 	while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -1933,10 +1946,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 			ShanonEntropy_n_derivs_[ 1 ]( bb_rot_index ) += -rotamers_( bb_rot_index, ii ).n_derivs()[ 1 ] * rotamers_( bb_rot_index, ii ).rotamer_probability() / psum;
 
 		bb_bin[ 1 ]++;
-		while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+		while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 			bb_bin[ p ] = 1;
 			bb_bin[ ++p ]++;
-			if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+			if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 		}
 	}
 
@@ -1951,63 +1964,82 @@ RotamericSingleResidueDunbrackLibrary< T, N >::setup_entropy_correction()
 
 	// Derivatives
 
-	utility::fixedsizearray1< Size, (N+1) > indices( 0 );
+	for ( Size i = 1; i <= N; ++i ) bb_bin       = 1;
+	for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 	p = 1;
-	while ( indices[ N + 1 ] == 0 ) {
+	while ( bb_bin[ N + 1 ] == 1 ) {
 
-		utility::fixedsizearray1< Size, N > bb_ri_plus( 1 );
-		utility::fixedsizearray1< Size, N > bb_ri_minus( 1 );
-		Size base = 1;
+		// AMW
+		// Entropy derivative setup for each bb bin (used to be over jj, kk
+		// phi/psi indices, but now you construct bb_bin from one plus the
+		// first N indices and call make_index)
 
-		for ( Size indi = 1; indi <= N; ++indi ) {
-			Size ip = indices[ indi ] + 1;
-			Size i  = indices[ indi ];
-			Size im = indices[ indi ] - 1;
-			if ( i == 0 ) {
-				im = N_PHIPSI_BINS - 1;
-			} else if ( i == N_PHIPSI_BINS - 1 ) {
-				ip = 0;
+		// Set up denominators for each bb
+		utility::fixedsizearray1< Real, N > dbb2( 0 );
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			dbb2[ ii ] = 4.0 * PHIPSI_BINRANGE[ ii ] * PHIPSI_BINRANGE[ ii ];
+		}
+
+		// Make "this index"
+		Size bin_index = make_index( N, N_PHIPSI_BINS, bb_bin );
+
+		// Make an array of "next indices" for each BB
+		utility::fixedsizearray1< Real, N > next_bb_index( 0 );
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			Size old_number = bb_bin[ ii ];
+			if ( bb_bin[ ii ] == N_PHIPSI_BINS[ ii ] ) {
+				bb_bin[ ii ] = 1;
+			} else {
+				++bb_bin[ ii ];
 			}
+			next_bb_index[ ii ] = make_index( N, N_PHIPSI_BINS, bb_bin );
+			bb_bin[ ii ] = old_number;
+		}
 
+		// Make an array of "previous indices" for each BB
+		utility::fixedsizearray1< Real, N > prev_bb_index( 0 );
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			Size old_number = bb_bin[ ii ];
+			if ( bb_bin[ ii ] == 1 ) {
+				bb_bin[ ii ] = N_PHIPSI_BINS[ ii ];
+			} else {
+				--bb_bin[ ii ];
+			}
+			prev_bb_index[ ii ] = make_index( N, N_PHIPSI_BINS, bb_bin );
+			bb_bin[ ii ] = old_number;
+		}
+
+		// Indices all acquired... now to calculate.
+		// Note that ShanonEntropy_n_derivs_ has already been set for 1
+		// because that is the value
+		for ( Size deriv_i = 2; deriv_i <= ( 1 << N ); ++deriv_i ) {
+			ShanonEntropy_n_derivs_[ deriv_i ]( bin_index ) = 1;
+		}
+
+		for ( Size deriv_i = 2; deriv_i <= ( 1 << N ); ++deriv_i ) {
+			// No clever pre-computation available
+			// (In the 2D case, you just wrote down dsecophi and dsecopsi
+			// and dsecophipsi was the product)
+			// No ordering guarantee in 3+ dimensions
+			
 			for ( Size bbi = 1; bbi <= N; ++bbi ) {
-				if ( bbi == indi ) {
-					bb_ri_plus[ indi ] += positive_pow( N_PHIPSI_BINS, N - indi ) * ip;
-					bb_ri_minus[ indi ] += positive_pow( N_PHIPSI_BINS, N - indi ) * im;
-				} else {
-					bb_ri_plus[ indi ] += positive_pow( N_PHIPSI_BINS, N - indi ) * i;
-					bb_ri_minus[ indi ] += positive_pow( N_PHIPSI_BINS, N - indi ) * i;
-				}
-			}
-			base += positive_pow( N_PHIPSI_BINS, N - indi ) * i;
-		}
-
-		//  derivatives
-		// Let's do this later...
-		Real const dbb2( 4.0 * PHIPSI_BINRANGE * PHIPSI_BINRANGE );
-
-		for ( Size d_i = 2; d_i <= ( 1 << N ); ++d_i ) {
-			Size possible_power_of_two = d_i - 1;
-			Size bb = N;
-			while ( ( ( possible_power_of_two & 1 ) == 0 ) && possible_power_of_two > 1 ) { // while x is even and > 1
-				possible_power_of_two >>= 1; bb--;
-			}
-
-			if ( possible_power_of_two == 1 ) {
-				ShanonEntropy_n_derivs_[ d_i ] = ( ShanonEntropy_n_derivs_[ 1 ]( bb_ri_plus[ bb ] ) - ShanonEntropy_n_derivs_[ 1 ]( bb_ri_minus[ bb ] ) ) / dbb2;
-			} else { // we know the parts have been set because deriv_i increases with more components
-				ShanonEntropy_n_derivs_[ d_i ]( base ) = 1;
-				for ( Size bbi = 1; bbi <= N; ++bbi ) {
-					Size factor = ( d_i - 1 ) & ( 1 << ( N - bbi ) );
-					if ( factor ) ShanonEntropy_n_derivs_[ d_i ]( base ) *= ShanonEntropy_n_derivs_[ factor ]( base );
+				// You get a factor of (next_val - prev_val) / dbb2[bbi] if
+				// the derivative bit is set for this bb angle
+				// Otherwise, factor of 1
+				if ( ( deriv_i - 1 ) & ( 1 << ( N - bbi ) ) ) {
+					ShanonEntropy_n_derivs_[ deriv_i ]( bin_index ) *=
+							( ShanonEntropy_n_derivs_[ 1 ]( next_bb_index[ bbi ] )
+							- ShanonEntropy_n_derivs_[ 1 ]( prev_bb_index[ bbi ] ) )
+							/ dbb2[ bbi ];
 				}
 			}
 		}
 
-		indices[ 1 ]++;
-		while ( indices[ p ] == N_PHIPSI_BINS ) {
-			indices[ p ] = 0;
-			indices[ ++p ]++;
-			if ( indices[ p ] != N_PHIPSI_BINS ) p = 1;
+		bb_bin[ 1 ]++;
+		while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
+			bb_bin[ p ] = 1;
+			bb_bin[ ++p ]++;
+			if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 		}
 	}
 }
@@ -2021,7 +2053,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 	bool first_line_three_letter_code_already_read
 )
 {
-	Size const num_bb_bins = positive_pow( N_PHIPSI_BINS, N );
+	Size const num_bb_bins = product( N_PHIPSI_BINS );
 
 	std::string const my_name( chemical::name_from_aa( aa() ) );
 	std::string next_name; // empty string to start
@@ -2227,10 +2259,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			using namespace numeric::interpolation::spline;
 
 			BicubicSpline rotEspline;
-			MathMatrix< Real > energy_vals( N_PHIPSI_BINS, N_PHIPSI_BINS );
-			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
-				for ( Size kk = 0; kk < N_PHIPSI_BINS; ++kk ) {
-					Size jp1kp1 = jj * N_PHIPSI_BINS + kk+1;
+			MathMatrix< Real > energy_vals( N_PHIPSI_BINS[1], N_PHIPSI_BINS[2] );
+			for ( Size jj = 0; jj < N_PHIPSI_BINS[1]; ++jj ) {
+				for ( Size kk = 0; kk < N_PHIPSI_BINS[2]; ++kk ) {
+					Size jp1kp1 = jj * N_PHIPSI_BINS[2] + kk+1;
 					Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1, ii );
 					PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1, sortedrotno );
 					DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
@@ -2246,9 +2278,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			unused[0] = std::make_pair( 0.0, 0.0 );
 			unused[1] = std::make_pair( 0.0, 0.0 );
 			rotEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
-			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
-				for ( Size kk = 0; kk < N_PHIPSI_BINS; ++kk ) {
-					Size jp1kp1 = jj * N_PHIPSI_BINS + kk+1;
+			for ( Size jj = 0; jj < N_PHIPSI_BINS[1]; ++jj ) {
+				for ( Size kk = 0; kk < N_PHIPSI_BINS[2]; ++kk ) {
+					Size jp1kp1 = jj * N_PHIPSI_BINS[2] + kk+1;
 					Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1, ii );
 					PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1, sortedrotno );
 					rot.n_derivs()[ 3 ] = rotEspline.get_dsecox()(  jj, kk );
@@ -2264,14 +2296,15 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			using namespace numeric::interpolation::spline;
 
 			TricubicSpline rotEspline;
-			MathTensor< Real > energy_vals( N_PHIPSI_BINS, N_PHIPSI_BINS, N_PHIPSI_BINS );
-			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
-				for ( Size kk = 0; kk < N_PHIPSI_BINS; ++kk ) {
-					for ( Size ll = 0; ll < N_PHIPSI_BINS; ++ll ) {
-						Size jp1kp1lp1 = jj * N_PHIPSI_BINS * N_PHIPSI_BINS + kk * N_PHIPSI_BINS + ll+1;
+			MathTensor< Real > energy_vals( N_PHIPSI_BINS[1], N_PHIPSI_BINS[2], N_PHIPSI_BINS[3] );
+			for ( Size jj = 0; jj < N_PHIPSI_BINS[1]; ++jj ) {
+				for ( Size kk = 0; kk < N_PHIPSI_BINS[2]; ++kk ) {
+					for ( Size ll = 0; ll < N_PHIPSI_BINS[3]; ++ll ) {
+						Size jp1kp1lp1 = jj * N_PHIPSI_BINS[3] * N_PHIPSI_BINS[2] + kk * N_PHIPSI_BINS[3] + ll+1;
 						Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1lp1, ii );
 						PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1lp1, sortedrotno );
-						if ( rot.rotamer_probability() <= 1e-6 ) rot.rotamer_probability() = 1e-6;
+						rot.rotamer_probability() = rotamers_( jp1kp1lp1, sortedrotno ).rotamer_probability();
+						//if ( rot.rotamer_probability() <= 1e-6 ) rot.rotamer_probability() = 1e-6;
 						DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
 						rot.n_derivs()[ 1 ] = rotamer_energy;
 						energy_vals( jj, kk, ll ) = rotamer_energy;
@@ -2280,17 +2313,17 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			}
 			BorderFlag periodic_boundary[3] = { e_Periodic, e_Periodic, e_Periodic };
 			Real start_vals[3] = {0.0, 0.0, 0.0}; // grid is placed on the ten-degree marks
-			Real deltas[3] = {10.0, 10.0, 10.0}; // grid is 10 degrees wide
+			Real deltas[3] = {PHIPSI_BINRANGE[1], PHIPSI_BINRANGE[2], PHIPSI_BINRANGE[3]}; // grid is 10 degrees wide
 			bool lincont[3] = {false,false,false}; //meaningless argument for a bicubic spline with periodic boundary conditions
 			std::pair< Real, Real > unused[3];
 			unused[0] = std::make_pair( 0.0, 0.0 );
 			unused[1] = std::make_pair( 0.0, 0.0 );
 			unused[2] = std::make_pair( 0.0, 0.0 );
 			rotEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
-			for ( Size jj = 0; jj < N_PHIPSI_BINS; ++jj ) {
-				for ( Size kk = 0; kk < N_PHIPSI_BINS; ++kk ) {
-					for ( Size ll = 0; ll < N_PHIPSI_BINS; ++ll ) {
-						Size jp1kp1lp1 = jj * N_PHIPSI_BINS * N_PHIPSI_BINS + kk * N_PHIPSI_BINS + ll+1;
+			for ( Size jj = 0; jj < N_PHIPSI_BINS[1]; ++jj ) {
+				for ( Size kk = 0; kk < N_PHIPSI_BINS[2]; ++kk ) {
+					for ( Size ll = 0; ll < N_PHIPSI_BINS[3]; ++ll ) {
+						Size jp1kp1lp1 = jj * N_PHIPSI_BINS[3] * N_PHIPSI_BINS[2] + kk * N_PHIPSI_BINS[3] + ll+1;
 						Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1lp1, ii );
 						PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1lp1, sortedrotno );
 						rot.n_derivs()[ 2 ] = rotEspline.get_dsecoz()(  jj, kk, ll  );
@@ -2310,10 +2343,13 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 			using namespace numeric::interpolation::spline;
 
 			PolycubicSpline rotEspline( N );
-			utility::vector1< Size > n_dims( N, N_PHIPSI_BINS );
+			utility::vector1< Size > n_dims( N );
+			for ( Size i = 1; i <= N; ++i ) n_dims[ i ] = N_PHIPSI_BINS[i];
 			MathNTensor< Real > energy_vals( n_dims, 0.0 );
 
 			utility::fixedsizearray1< Size, (N+1) > bb_bin( 1 );
+			utility::fixedsizearray1< Size, (N+1) > bb_bin_maxes( 1 );
+			for ( Size i = 1; i <= N; ++i ) bb_bin_maxes = N_PHIPSI_BINS[i];
 			Size p = 1;
 			while ( bb_bin[ N + 1 ] == 1 ) {
 
@@ -2327,16 +2363,17 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 				energy_vals( indices ) = rotamer_energy;
 
 				bb_bin[ 1 ]++;
-				while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+				while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 					bb_bin[ p ] = 1;
 					bb_bin[ ++p ]++;
-					if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+					if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 				}
 			}
 
 			utility::vector1< BorderFlag > periodic_boundary( N, e_Periodic );
 			utility::vector1< Real > start_vals( N, 0.0 );
 			utility::vector1< Real > deltas( N, 10.0 );
+			for ( Size s = 1; s <= N; ++s ) deltas[ s ] = PHIPSI_BINRANGE[ s ];
 			utility::vector1< bool > lincont( N, false );
 			utility::vector1< std::pair< Real, Real > > unused( N, std::make_pair( 0.0, 0.0 ) );
 			rotEspline.train( periodic_boundary, start_vals, deltas, energy_vals, lincont, unused );
@@ -2354,10 +2391,10 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 				for ( Size i = 1; i <= ( 1 << N ); ++i ) rot.n_derivs()[ i ] = rotEspline.get_deriv( i )( indices );
 
 				bb_bin[ 1 ]++;
-				while ( bb_bin[ p ] == N_PHIPSI_BINS+1 ) {
+				while ( bb_bin[ p ] == bb_bin_maxes[p]+1 ) {
 					bb_bin[ p ] = 1;
 					bb_bin[ ++p ]++;
-					if ( bb_bin[ p ] != N_PHIPSI_BINS+1 ) p = 1;
+					if ( bb_bin[ p ] != bb_bin_maxes[p]+1 ) p = 1;
 				}
 			}
 		}

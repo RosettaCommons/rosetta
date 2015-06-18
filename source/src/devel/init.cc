@@ -43,19 +43,15 @@
 #include <devel/loop_creation/FragmentLoopInserterCreator.hh>
 #include <devel/matdes/SymmetrizerMoverCreator.hh>
 #include <devel/replica_docking/AddEncounterConstraintMoverCreator.hh>
-#include <devel/replica_docking/UnbiasedRigidBodyMoverCreator.hh>
-#include <devel/replica_docking/TempWeightedMetropolisHastingsMoverCreator.hh>
 #include <devel/replica_docking/ModulatedMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
 #include <devel/splice/SpliceCreator.hh>
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
 #include <devel/splice/FindEndpointsOperationCreator.hh>
 #include <devel/splice/AlignEndsMoverCreator.hh>
-#include <devel/splice/AddFoldUnitCreator.hh>
 #include <devel/cutoutdomain/CutOutDomainCreator.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
 #include <devel/splice/RBInMoverCreator.hh>
-#include <devel/splice/FoldUnitsFilterCreator.hh>
 
 // Filter creators
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
@@ -112,8 +108,6 @@ static protocols::moves::MoverRegistrator< devel::matdes::SymmetrizerMoverCreato
 static protocols::moves::MoverRegistrator< devel::matdes::GenericSymmetricSamplerCreator > reg_GenericSymmetricSamplerCreator;
 static protocols::moves::MoverRegistrator< replica_docking::AddEncounterConstraintMoverCreator > reg_AddEncounterConstraintMoverCreator;
 static protocols::moves::MoverRegistrator< replica_docking::ModulatedMoverCreator > reg_ModulatedMoverCreator;
-static protocols::moves::MoverRegistrator< replica_docking::UnbiasedRigidBodyPerturbNoCenterMoverCreator > reg_UnbiasedRigidBodyPerturbNoCenterMoverCreator;
-static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropolisHastingsMoverCreator > reg_TempWeightedMetropolisHastingsMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > reg_RBOutMoverCreator;
@@ -121,8 +115,6 @@ static protocols::moves::MoverRegistrator< devel::splice::RBInMoverCreator > reg
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
 static protocols::moves::MoverRegistrator< devel::splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
-static protocols::moves::MoverRegistrator< devel::splice::AddFoldUnitMoverCreator > reg_AddFoldUnitCreator;
-static protocols::moves::MoverRegistrator< devel::splice::StartFreshMoverCreator > reg_StartFreshMoverCreator;
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
 // Task creators
@@ -144,7 +136,7 @@ static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilte
 static protocols::filters::FilterRegistrator< devel::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilter2Creator > BuriedUnsatHbondFilter2_registrator;
-static protocols::filters::FilterRegistrator< devel::splice::FoldUnitsFilterCreator > reg_FoldUnitsFilter_registrator;
+
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 
 void init( int argc, char * argv [] )

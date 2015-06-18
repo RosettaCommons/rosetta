@@ -88,6 +88,8 @@ sources = {
 	],
 	"protocols/ncbb": [
 		"NcbbDockDesignProtocol",
+		"SecStructFinder",
+		"SecStructMinimizeMultiFunc",
 		"util",
 	],
 	"protocols/pack_daemon": [

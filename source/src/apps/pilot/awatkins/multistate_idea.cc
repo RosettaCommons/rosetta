@@ -50,7 +50,6 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>

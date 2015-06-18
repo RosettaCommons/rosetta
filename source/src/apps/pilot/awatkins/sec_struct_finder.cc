@@ -121,6 +121,7 @@ namespace ss_finder {
 	RealOptionKey const dihedral_min ( "ss_finder::dihedral_min");
 	RealOptionKey const dihedral_max ( "ss_finder::dihedral_max");
 	BooleanOptionKey const cart ( "ss_finder::cart");
+	BooleanOptionKey const constrain ( "ss_finder::constrain");
 	RealOptionKey const dissimilarity ( "ss_finder::dissimilarity");
 }
 
@@ -140,6 +141,7 @@ try {
 	option.add( ss_finder::dihedral_min, "Dihedral min, default -180" ).def(-180);
 	option.add( ss_finder::dihedral_max, "Dihedral max, default 180" ).def(180);
 	option.add( ss_finder::cart, "cart min? default false" ).def(false);
+	option.add( ss_finder::constrain, "in minimization, apply dihedral constraints of approximate stdev of bin_size?" ).def(false);
 	option.add( ss_finder::dissimilarity, "If A and B are given dihedrals closer than this to each other, they'll be skipped. Default 10 degrees or bin size, whichever greater" ).def(10);
 
 
@@ -155,12 +157,13 @@ try {
 	Real dihedral_min = option[ ss_finder::dihedral_min ]();
 	Real dihedral_max = option[ ss_finder::dihedral_max ]();
 	bool cart = option[ ss_finder::cart ]();
+	bool constrain = option[ ss_finder::constrain ]();
 	Real dissimilarity = option[ ss_finder::dissimilarity ]();
 	if ( dissimilarity < bin_size ) dissimilarity = bin_size;
 	
 	//Pose pose;
 	
-	protocols::ncbb::SecStructFinderOP ssf( new protocols::ncbb::SecStructFinder( residue, min_length, max_length, bin_size, dissimilarity, dihedral_min, dihedral_max, dump_threshold, dihedral_pattern, alpha_beta_pattern, min_everything, cart ) );
+	protocols::ncbb::SecStructFinderOP ssf( new protocols::ncbb::SecStructFinder( residue, min_length, max_length, bin_size, dissimilarity, dihedral_min, dihedral_max, dump_threshold, dihedral_pattern, alpha_beta_pattern, min_everything, cart, constrain ) );
 	
 	protocols::jd2::JobDistributor::get_instance()->go( ssf );
 	

@@ -50,7 +50,6 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/a3b_hbs/A3BHbsRandomSmallMover.hh>
 #include <protocols/simple_moves/a3b_hbs/A3BHbsPatcher.hh>
 #include <protocols/simple_moves/chiral/ChiralMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -244,12 +243,12 @@ A3BHbsCreatorMover::apply(
 
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
-	for(core::Size i=1; i<=pose.total_residue(); ++i){
+	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		pose.conformation().update_polymeric_connection(i);
 	}
 
-    if( option[ a3b_hbs_creator::final_mc ].value() )
-	{
+    if( option[ a3b_hbs_creator::final_mc ].value() ) {
+
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
 
@@ -276,22 +275,18 @@ A3BHbsCreatorMover::apply(
     	pert_mc->recover_low( pose );
 	}
 
-	if( option[ a3b_hbs_creator::final_repack ].value() )
-	{
+	if( option[ a3b_hbs_creator::final_repack ].value() ) {
 
 		// create a task factory and task operations
 		TaskFactoryOP tf(new TaskFactory());
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
-		{
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) {
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
 			tf->push_back( rrop );
-		}
-		else
-		{
+		} else {
 			//kdrew: do not do design, makes NATAA if res file is not specified
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
@@ -307,16 +302,14 @@ A3BHbsCreatorMover::apply(
 	}
 
 
-	if( option[ a3b_hbs_creator::final_minimize ].value() )
-	{
+	if( option[ a3b_hbs_creator::final_minimize ].value() ) {
 		using namespace core::id;
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
 		//kdrew: add constraints to omega angle, (this problem might have been fixed and these constraints are unnecessary)
 		//iwatkins: this is general stuff, not hbs or oop specific
-		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i )
-		{
+		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
 			id::AtomID id1,id2,id3,id4;
 			core::id::TorsionID torsion_id = TorsionID( i, id::BB, 3 ); //kdrew: 3 is omega angle
 
@@ -332,15 +325,10 @@ A3BHbsCreatorMover::apply(
 			pose.add_constraint( dihedral1 );
 		}
 		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
-		if( score_fxn->has_zero_weight( dihedral_constraint ) )
-		{
+		if ( score_fxn->has_zero_weight( dihedral_constraint ) )
         	score_fxn->set_weight( dihedral_constraint, 1.0 );
-		}
-		if( score_fxn->has_zero_weight( atom_pair_constraint ) )
-		{
+		if ( score_fxn->has_zero_weight( atom_pair_constraint ) )
         	score_fxn->set_weight( atom_pair_constraint, 1.0 );
-		}
-
 
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );

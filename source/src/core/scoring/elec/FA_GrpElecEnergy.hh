@@ -366,6 +366,7 @@ private:
 	Real context_minstrength_;
 	Real ncb_maxburial_, ncb_minburial_;
 
+
 	mutable Size nres_monomer_;
 
 	// temporary for derivative stuffs; turn off for now

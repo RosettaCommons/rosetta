@@ -162,7 +162,7 @@ public:
 
 	void num_virtuals( Size const setting );
 	Size get_nres_subunit() const;  //fpd same as num_independent_residues?
-	void set_nres_subunit( Size const setting ); 
+	void set_nres_subunit( Size const setting );
 	Size get_njumps_subunit() const;
 
 	// accessors for Torsion/DOF IDs

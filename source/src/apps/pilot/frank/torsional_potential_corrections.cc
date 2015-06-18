@@ -497,8 +497,12 @@ correct_dunbrack() {
 		// rotameric...
 		for (int x=1; x<=36; ++x)
 		for (int y=1; y<=36; ++y) {
+			// amw
+			utility::fixedsizearray1< core::Real, 5 > bbs;
+			bbs[1] = (x-1)*10.0-180.0;
+			bbs[2] = (y-1)*10.0-180.0;
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
-				rotlib->get_all_rotamer_samples((x-1)*10.0-180.0, (y-1)*10.0-180.0);
+				rotlib->get_all_rotamer_samples(bbs);//(x-1)*10.0-180.0, (y-1)*10.0-180.0);
 			core::Size nrot = allrots.size();
 			if (nrot == 0) continue;
 
@@ -563,8 +567,12 @@ if (aa == aa_ser && x==13 && y==14) {
 
 		for (int x=1; x<=36; ++x)
 		for (int y=1; y<=36; ++y) {
+
+			utility::fixedsizearray1< core::Real, 5 > bbs;
+			bbs[1] = core::Real( (x-1)*10-180);
+			bbs[2] = core::Real( (y-1)*10-180);
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
-				rotlib->get_all_rotamer_samples((x-1)*10.0-180.0, (y-1)*10.0-180.0);
+				rotlib->get_all_rotamer_samples(bbs );//(x-1)*10.0-180.0, (y-1)*10.0-180.0);
 			core::Size nrot = allrots.size();
 			if (nrot == 0) continue;
 
@@ -669,11 +677,15 @@ if (aa == aa_ser && x==13 && y==14) {
 			if (xp==37) xp=1;
 			if (yp==37) yp=1;
 
+			//amw
+			utility::fixedsizearray1<core::Real, 5 > bbs;
+			bbs[1] = core::Real( (x-19)*10);
+			bbs[2] = core::Real((y-19)*10);
 			int phi = (x-19)*10;
 			int psi = (y-19)*10;
 
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
-				rotlib->get_all_rotamer_samples( (core::Real)phi, (core::Real)psi );
+				rotlib->get_all_rotamer_samples( bbs );//(core::Real)phi, (core::Real)psi );
 			core::Size nrot = allrots.size();
 			if (nrot == 0) continue;
 
@@ -734,11 +746,15 @@ if (aa == aa_ser && x==13 && y==14) {
 			if (xp==37) xp=1;
 			if (yp==37) yp=1;
 
+			utility::fixedsizearray1<core::Real, 5 > bbs;
+			bbs[1] = core::Real( (x-19)*10);
+			bbs[2] = core::Real((y-19)*10);
+			
 			int phi = (x-19)*10;
 			int psi = (y-19)*10;
 
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
-					rotlib->get_all_rotamer_samples( (core::Real)phi, (core::Real)psi );
+					rotlib->get_all_rotamer_samples(bbs);// (core::Real)phi, (core::Real)psi );
 
 			core::Size nrot = allrots.size();
 			if (nrot == 0) continue;
@@ -853,8 +869,11 @@ calc_scores() {
 
 		if (!rotlib) continue;
 
+		utility::fixedsizearray1< core::Real, 5 >bbs;
+		bbs[1] = frag.phi(center);
+		bbs[2] = frag.psi( center);
 		utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > allrots=
-			rotlib->get_all_rotamer_samples(frag.phi(center), frag.psi(center));
+			rotlib->get_all_rotamer_samples(bbs );//frag.phi(center), frag.psi(center));
 
 		core::Size nrot = allrots.size();
 		if (nrot == 0) continue;

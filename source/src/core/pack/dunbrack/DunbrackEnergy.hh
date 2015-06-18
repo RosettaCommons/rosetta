@@ -108,10 +108,7 @@ public:
 
 	// data
 private:
-	// changed to & so that it does not duplicate the dunbrack lib; arguably should be COP.
-	//RotamerLibrary const & rot_lib_;
-
-	//mutable dunbrack::RotamerLibraryScratchSpaceOP scratch_;
+	
 virtual
 core::Size version() const;
 

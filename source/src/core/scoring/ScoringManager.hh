@@ -231,6 +231,10 @@ public:
 	methods::EnergyMethodOP
 	energy_method( ScoreType const & t, methods::EnergyMethodOptions const & options ) const;
 
+	///
+	void
+	add_etable( std::string const & name, etable::EtableOP etable );
+	
 	/// @brief make etable for extra partially softies
 	etable::EtableOP
 	make_partially_soft_etable( std::string const & name, etable::EtableOptions etable_options ) const;
@@ -328,7 +332,7 @@ private:
 	// data
 
 	// original map using string as key, let's keep it
-	// mutable std::map< std::string, etable::EtableOP > etables_by_string_;
+	mutable std::map< std::string, etable::EtableOP > etables_by_string_;
 
 	// new map for etables using EtableOptions as key
 	mutable std::map< etable::EtableOptions, etable::EtableOP > etables_by_options_;

@@ -183,8 +183,8 @@ class HbsDockDesignMinimizeMover : public Mover {
 
 };
 
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
+typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
+typedef utility::pointer::shared_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
 
 
 int
@@ -232,7 +232,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	//create mover instance
-	HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover() );
+	HbsDockDesignMinimizeMoverOP HDDM_mover;
 
 	protocols::ncbb::setup_filter_stats();
 
@@ -391,7 +391,7 @@ HbsDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP pert_tf(new TaskFactory());
-	pert_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	pert_tf->push_back( operation::TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP pert_rrop( new operation::ReadResfile() );
 	pert_rrop->default_filename();
@@ -433,7 +433,7 @@ HbsDockDesignMinimizeMover::apply(
 
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
-	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	desn_tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 
 	operation::ReadResfileOP desn_rrop( new operation::ReadResfile() );
 	desn_rrop->default_filename();
@@ -468,7 +468,7 @@ HbsDockDesignMinimizeMover::apply(
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
+	TaskAwareMinMoverOP desn_ta_min = TaskAwareMinMoverOP( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	/*********************************************************
 	Common Setup
@@ -567,10 +567,9 @@ if( option[ hddm::pymol ].value() )
 
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
-	if ( option[ hddm::final_design_min].value() )
-	{
+	if ( option[ hddm::final_design_min].value() ) {
 		// get packer task from task factory
-		PackerTaskOP final_desn_pt( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
+		PackerTaskOP final_desn_pt( desn_tf->create_task_and_apply_taskoperations( pose ) );
 
 		// add extra chi and extra chi cut off to pt
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
@@ -580,7 +579,7 @@ if( option[ hddm::pymol ].value() )
 		}
 
 		// create a pack rotamers mover for the final design
-		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
+		simple_moves::PackRotamersMoverOP final_desn_pr( simple_moves::PackRotamersMoverOP( new simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) ) );
 		//final_desn_pr->packer_task( final_desn_pt );
 		//final_desn_pr->score_function( score_fxn );
 		//final_desn_pr->nloop( 10 );
@@ -622,7 +621,7 @@ if( option[ hddm::pymol ].value() )
 
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
-	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
+	tf->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	//kdrew: do not do design, makes NATAA if res file is not specified
 	operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 	tf->push_back( rtrp );

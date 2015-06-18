@@ -84,6 +84,7 @@ int main( int argc, char * argv [] ) {
 		vector1< vector1 <Real> > ss_pred = hle_predictor->predict_ss(fasta);
 		predict_ss(ss_pred,fasta,id);
     }
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;

@@ -95,15 +95,9 @@ DunbrackEnergy::residue_energy(
 	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
 		return;
 	}
-
-
-	//static boost::detail::atomic_count count_present( 0 );
-	//++count_present;
-	//std::cout << "D" << count_present << std::flush;
-
+	
 	if ( rsd.is_virtual_residue() ) return;
 
-	/* old emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
 	//Returns the equivalent L-amino acid library if a D-amino acid is provided
 	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 
@@ -140,15 +134,12 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
 	debug_assert( rsd.seqpos() == tor_id.rsd() );
-		//utility::vector1< Real > dE_dbb, dE_dchi;
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
+
 		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
 			RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
 		if ( rsd.is_protein() && rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			rotlib->rotamer_energy_deriv( rsd, scratch );
-			// amw the goal is to implement 4 possible torsions, not necessarily torsion 1
-			// through torsion 4--at the moment, this will have to do!
 			if ( tor_id.type() == id::BB && tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 				deriv      = scratch.dE_dbb()[ tor_id.torsion() ];
 				deriv_dev  = scratch.dE_dbb_dev()[ tor_id.torsion() ];
@@ -161,6 +152,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 			}
 		}
 	}
+	
 	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
 }
 
@@ -179,18 +171,12 @@ DunbrackEnergy::eval_dof_derivative(
 		return 0.0;
 	}
 
-
-	//static boost::detail::atomic_count count_present( 0 );
-	//++count_present;
-	//std::cout << "dD" << count_present << std::flush;
-
 	Real deriv( 0.0 );
 	Real deriv_dev( 0.0 );
 	Real deriv_rot( 0.0 );
 	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
-		//utility::vector1< Real > dE_dbb, dE_dchi;
-		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
+		
 		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
 			RotamerLibrary::get_instance()->get_rsd_library( pose.residue( tor_id.rsd() ).type() );
 
@@ -215,8 +201,7 @@ DunbrackEnergy::eval_dof_derivative(
 			}
 		}
 	}
-	//--count_present;
-	//std::cout << "dD" << count_present << std::flush;
+
 	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi );
 }
 

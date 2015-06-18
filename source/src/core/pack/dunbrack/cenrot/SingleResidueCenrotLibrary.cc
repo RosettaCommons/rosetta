@@ -89,11 +89,11 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 	Real phi, psi;
 	Real prob, dis, ang, dih, vdis, vang, vdih;
 	Size count;
-
+	
 	//make up a dummy sample for GLY/ALA
 	CentroidRotamerSampleData crsd(1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
 	dummy_sample_.push_back(crsd);
-
+	
 	while (infile) {
 		/// 1. peek at the line; if it starts with #, skip to the next line.
 		char first_char = infile.peek();
@@ -102,7 +102,7 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 			infile.getline( line );
 			continue;
 		}
-
+		
 		/// currently no bb-dependent info, do we need that?
 		/// if so, how to cal, grab from dunlib directly? average for each chi1?
 		/// 2. Read the line.  Format is:
@@ -113,7 +113,7 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 		/// e. angle
 		/// f. dihedral
 		/// g. std
-
+		
 		if ( first_line_three_letter_code_already_read ) {
 			/// The last library to read from this file already ate my three letter code;
 			/// skip directly to reading phi/psi values...
@@ -126,43 +126,43 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 				break;
 			}
 		}
-
+		
 		infile >> phi >> psi >> count;
 		infile >> prob >> dis >> ang >> dih >> vdis >> vang >> vdih;
-
+		
 		if (count>max_rot_num) max_rot_num=count;
-
+		
 		Size phi_bin, psi_bin;
 		get_phipsi_bins(phi, psi, phi_bin, psi_bin);
-
+		
 		if(count<=all_rots_bb_(phi_bin,psi_bin).size())break;
-
+		
 		// ang,  dih  -- degree
 		// vang, vdih -- radian^2
 		//convert deg to rad
 		CentroidRotamerSampleData crsd(
-				prob, dis,
-				ang*numeric::constants::r::pi_over_180,
-				dih*numeric::constants::r::pi_over_180,
-				vdis, vang, vdih);
+									   prob, dis,
+									   ang*numeric::constants::r::pi_over_180,
+									   dih*numeric::constants::r::pi_over_180,
+									   vdis, vang, vdih);
 		all_rots_bb_(phi_bin,psi_bin).push_back(crsd);
-
+		
 		if (all_rots_bb_(phi_bin,psi_bin).size()!=count) {
 			TR.Debug << "Warning: index (col-2) in cenrotlib file is wrong!" << std::endl;
-			TR.Debug << "Warning: " << my_name << ": ndx=" 
-			<< count << " real=" << all_rots_bb_(phi_bin,psi_bin).size() 
+			TR.Debug << "Warning: " << my_name << ": ndx="
+			<< count << " real=" << all_rots_bb_(phi_bin,psi_bin).size()
 			<< " phi=" << phi << " psi=" << psi << std::endl;
-
+			
 		}
 	}
-
+	
 	//reference energy:
 	ref_energy_ = log(float(max_rot_num));
-
+	
 	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
 		setup_entropy_correction();
 	}
-
+	
 	TR.Debug << "Cenrotlib for AA " << my_name << " has been loaded!" << std::endl;
 	return next_name;
 }
@@ -205,14 +205,14 @@ Real SingleResidueCenrotLibrary::rotamer_energy(
 }
 
 Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
-		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
-		bool eval_deriv
-	) const {
+	conformation::Residue const & rsd,
+	RotamerLibraryScratchSpace & scratch,
+	bool eval_deriv
+) const {
 	Real p(0.0);
 	Real factori[10]; //for each rot (max=9)
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
-
+	
 	////////////////////////////////////////////////////////
 	//entropy correction
 	////////////////////////////////////////////////////////
@@ -223,47 +223,47 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		Size phibin, psibin;
 		Size phibin_next, psibin_next;
 		Real phi_alpha, psi_alpha;
-
+		
 		Real phi(get_phi_from_rsd(rsd));
 		Real psi(get_psi_from_rsd(rsd));
-
+		
 		get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
-
+		
 		//calculate entropy for phi, psi
 		Real s00(entropy_(phibin, psibin));
 		Real s01(entropy_(phibin, psibin_next));
 		Real s10(entropy_(phibin_next, psibin));
 		Real s11(entropy_(phibin_next, psibin_next));
-
+		
 		basic::interpolate_bilinear_by_value(
-			s00, s10, s01, s11,
-			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
-			entropy, dS_dphi, dS_dpsi
-		);
+											 s00, s10, s01, s11,
+											 phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
+											 entropy, dS_dphi, dS_dpsi
+											 );
 	}
 	////////////////////////////////////////////////////////
-
+	
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
-
+		
 		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
 		Real sin_ang = sin( cur_ang );
 		Real weight = sin_ang * sin_ang;
 		
 		factori[nr] = rotamer_sample_data[nr].prob() \
-			* rotamer_sample_data[nr].norm_factor()  \
-			* exp(
-				-d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
-				-a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
-				-w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
-			);
-	 	p += factori[nr];
+		* rotamer_sample_data[nr].norm_factor()  \
+		* exp(
+			  -d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
+			  -a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
+			  -w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
+			  );
+		p += factori[nr];
 	}
-
+	
 	if (p<MIN_ROT_PROB) return MAX_ROT_ENERGY; //too far away
-
+	
 	Real e = -log(p);
-
+	
 	//check meaningless score
 	if (e!=e || e>MAX_ROT_ENERGY+4.0) {
 		TR.Error << "Dunbrack term calculation fail!" << std::endl;
@@ -275,23 +275,23 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 			Real sin_ang = sin( cur_ang );
 			TR.Error << "delta: " << d_sq << " " << a_sq << " " << w_sq << std::endl;
 			TR.Error << "sigma: " << rotamer_sample_data[nr].sd_dis() << " "
-				<< rotamer_sample_data[nr].sd_ang() << " "
-				<< rotamer_sample_data[nr].sd_dih() << std::endl;
+			<< rotamer_sample_data[nr].sd_ang() << " "
+			<< rotamer_sample_data[nr].sd_dih() << std::endl;
 			TR.Error << "Sin(ang): " << sin_ang << std::endl;
 			utility_exit();
 		}
 		return MAX_ROT_ENERGY;
 	}
-
+	
 	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
 		e += entropy;
 	}
 	else {
 		e -= ref_energy_;
 	}
-
+	
 	if (!eval_deriv) return e ;
-
+	
 	//cal devriv
 	Real dE_ddis(0.0), dE_dang(0.0), dE_ddih(0.0);
 	for (Size nr=1; nr<=max_rot_num; nr++) {
@@ -302,21 +302,21 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates(rsd, delta_dis, delta_ang, delta_dih);
 		Real sin_ang = sin(cur_ang);
 		Real cos_ang = cos(cur_ang);
-
+		
 		dE_ddis += factori[nr] * delta_dis / sample.sd_dis();
-		dE_dang -= factori[nr] * ( 
-			delta_ang / sample.sd_ang() + 
-			delta_dih * delta_dih * sin_ang * cos_ang / sample.sd_dih() 
-		);
+		dE_dang -= factori[nr] * (
+								  delta_ang / sample.sd_ang() +
+								  delta_dih * delta_dih * sin_ang * cos_ang / sample.sd_dih()
+								  );
 		dE_ddih += factori[nr] * delta_dih * sin_ang * sin_ang / sample.sd_dih();
 	}
-
+	
 	//hack save derivs (dis, ang, dih) in scratch.dE_dchi
 	Real4 & dE_dchi(scratch.dE_dchi());
 	dE_dchi[1] = dE_ddis / p;
 	dE_dchi[2] = dE_dang / p;
 	dE_dchi[3] = dE_ddih / p;
-
+	
 	return e ;
 }
 
@@ -327,7 +327,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	Real p(0.0);
 	Real factori[10]; //for each rot (max=9)
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
-
+	
 	////////////////////////////////////////////////////////
 	//entropy correction
 	////////////////////////////////////////////////////////
@@ -338,62 +338,62 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 		Size phibin, psibin;
 		Size phibin_next, psibin_next;
 		Real phi_alpha, psi_alpha;
-
+		
 		Real phi(get_phi_from_rsd(rsd));
 		Real psi(get_psi_from_rsd(rsd));
-
+		
 		get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
-
+		
 		//calculate entropy for phi, psi
 		Real s00(entropy_(phibin, psibin));
 		Real s01(entropy_(phibin, psibin_next));
 		Real s10(entropy_(phibin_next, psibin));
 		Real s11(entropy_(phibin_next, psibin_next));
-
+		
 		basic::interpolate_bilinear_by_value(
-			s00, s10, s01, s11,
-			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
-			entropy, dS_dphi, dS_dpsi
-		);
+											 s00, s10, s01, s11,
+											 phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
+											 entropy, dS_dphi, dS_dpsi
+											 );
 	}
 	////////////////////////////////////////////////////////
-
+	
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
 		Real cur_ang = rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
 		Real sin_ang = sin( cur_ang );
 		Real weight = sin_ang * sin_ang;
-
+		
 		//debug
 		//std::cout << "sq: " << nr << "- " << d_sq << " " << a_sq << " " << w_sq << std::endl;
 		factori[nr] = rotamer_sample_data[nr].norm_factor() * exp(
-			-d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
-			-a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
-			-w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
-		);
+																  -d_sq / ( 2.0 * rotamer_sample_data[nr].sd_dis() )
+																  -a_sq / ( 2.0 * rotamer_sample_data[nr].sd_ang() )
+																  -w_sq * weight / ( 2.0 * rotamer_sample_data[nr].sd_dih() )
+																  );
 		
 		p +=  rotamer_sample_data[nr].prob() * factori[nr];
 	}
-
+	
 	if (p<MIN_ROT_PROB) return MAX_ROT_ENERGY; //too far away
-
+	
 	Real e = -log(p);
-
+	
 	//check meaningless score
 	if (e!=e || e>MAX_ROT_ENERGY+4.0) {
 		TR.Error << "Dunbrack term calculation fail!" << std::endl;
 		utility_exit();
 	}
-
-    utility::fixedsizearray1<Real, FIVE> & dE_dbb(scratch.dE_dbb());
-
+	
+	utility::fixedsizearray1<Real, FIVE> & dE_dbb(scratch.dE_dbb());
+	
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
 		const Size NDOF = 3;
 		Real delta[NDOF];
 		Real cur_ang = sample.cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
 		Real sin_ang = sin(cur_ang);
-
+		
 		Real tmp_phi(0.0), tmp_psi(0.0);
 		Size dat_shift = 1; // skip prob
 		Size dev_shift = 1 + NDOF; // skip prob + dat
@@ -402,25 +402,25 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 			Real weight = 1.0;
 			//for dih(2) only, dis->0, ang->1
 			if (i==2) weight = sin_ang * sin_ang;
-
+			
 			Real f = delta[i] * delta[i] * weight;
 			Real df_dphi = - 2.0 * delta[i] * sample.deriv_phi_[ i + dat_shift ] * weight;
 			Real df_dpsi = - 2.0 * delta[i] * sample.deriv_psi_[ i + dat_shift ] * weight;
 			Real g = sample.data_[ i + dev_shift ];
 			Real dg_dphi = sample.deriv_phi_[ i + dev_shift ];
 			Real dg_dpsi = sample.deriv_psi_[ i + dev_shift ];
-
+			
 			tmp_phi += ( df_dphi * g - dg_dphi * f ) / ( g * g ) / 2.0;
 			tmp_psi += ( df_dpsi * g - dg_dpsi * f ) / ( g * g ) / 2.0;
 		}
-
+		
 		dE_dbb[RSD_PHI_INDEX] += factori[nr] * ( tmp_phi * sample.prob() - sample.deriv_phi_[0] );
 		dE_dbb[RSD_PSI_INDEX] += factori[nr] * ( tmp_psi * sample.prob() - sample.deriv_psi_[0] );
 	}
-
+	
 	dE_dbb[RSD_PHI_INDEX] /= p;
 	dE_dbb[RSD_PSI_INDEX] /= p;
-
+	
 	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
 		e += entropy;
 		dE_dbb[RSD_PHI_INDEX] += dS_dphi;
@@ -429,7 +429,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	else {
 		e -= ref_energy_;
 	}
-
+	
 	return e ;
 }
 
@@ -442,24 +442,24 @@ CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotame
 		dis_sq = 0.0;
 		return dummy_sample_[nrot];
 	}
-
+	
 	//get the rotamer int
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
-
+	
 	/// find the closest rotamer
 	Real closest_dis = 9999;
 	Size closest_rot = 0;
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d2 = rotamer_sample_data[nr].cal_distance_squared(rsd);
-	 	if ( closest_dis>d2 ) {
-	 		closest_dis = d2;
-	 		closest_rot = nr;
-	 	}
+		if ( closest_dis>d2 ) {
+			closest_dis = d2;
+			closest_rot = nr;
+		}
 	}
-
+	
 	dis_sq = closest_dis;
 	nrot = closest_rot;
-
+	
 	return rotamer_sample_data[nrot];
 }
 
@@ -490,39 +490,39 @@ void SingleResidueCenrotLibrary::assign_random_rotamer_with_bias(
 }
 
 void SingleResidueCenrotLibrary::fill_rotamer_vector(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const &, //scorefxn,
-	pack::task::PackerTask const & task,
-	graph::GraphCOP, //packer_neighbor_graph,
-	chemical::ResidueTypeCOP concrete_residue,
-	conformation::Residue const& existing_residue,
-	utility::vector1< utility::vector1< Real > > const &, //extra_chi_steps,
-	bool, //buried,
-	RotamerVector & rotamers
-) const {
+													 pose::Pose const & pose,
+													 scoring::ScoreFunction const &, //scorefxn,
+													 pack::task::PackerTask const & task,
+													 graph::GraphCOP, //packer_neighbor_graph,
+													 chemical::ResidueTypeCOP concrete_residue,
+													 conformation::Residue const& existing_residue,
+													 utility::vector1< utility::vector1< Real > > const &, //extra_chi_steps,
+													 bool, //buried,
+													 RotamerVector & rotamers
+													 ) const {
 	Size const max_rots_that_can_be_built = max_rot_num;
 	Size count_rotamers_built = 0;
 	Real accumulated_probability(0.0);
 	Real const requisit_probability(1.0);
-
+	
 	// ** new logic: since we use interperlate value, should call get_rotamer_samples here
 	const utility::vector1< CentroidRotamerSampleData > samples( get_rotamer_samples( existing_residue ) );
-
+	
 	while (accumulated_probability<requisit_probability-MIN_ROT_PROB) {
 		++count_rotamers_built;
-
+		
 		//build it
 		pack::task::ResidueLevelTask const & rtask( task.residue_task( existing_residue.seqpos() ) );
 		conformation::ResidueOP rotamer = conformation::ResidueFactory::create_residue(
-			*concrete_residue, existing_residue, pose.conformation(), rtask.preserve_c_beta() );
-
+																					   *concrete_residue, existing_residue, pose.conformation(), rtask.preserve_c_beta() );
+		
 		if ( concrete_residue->aa()==core::chemical::aa_gly
 			|| concrete_residue->aa()==core::chemical::aa_ala) {
 			// no other rotamer, no suppose to be here
 			rotamers.push_back( rotamer );
 			break;
 		}
-
+		
 		// ** this is the old logic: get phi/psi from the exsisting_residue and read rot data from all_rots_bb_
 		//utility::fixedsizearray1< Real, 3 > sample;
 		//Size phi_bin, psi_bin;
@@ -530,33 +530,33 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 		//Real psi(get_psi_from_rsd(existing_residue));
 		//get_phipsi_bins(phi, psi, phi_bin, psi_bin);
 		//all_rots_bb_(phi_bin,psi_bin)[count_rotamers_built].assign_best_rotamer(sample);
-
+		
 		//get sample from CentroidRotamerSampleData
 		utility::fixedsizearray1< Real, 3 > sample;
 		samples[count_rotamers_built].assign_best_rotamer(sample);
-
+		
 		core::kinematics::Stub::Vector a, b, c;
 		a = rotamer->atom("N").xyz();
 		b = rotamer->atom("CA").xyz();
 		c = rotamer->atom("CB").xyz();
-
-
+		
+		
 		core::kinematics::Stub stub(c,b,a);
-    	core::kinematics::Stub::Matrix M(stub.M * numeric::x_rotation_matrix_radians( sample[3] ));
-    	M *= numeric::z_rotation_matrix_radians( sample[2] );
-    	core::kinematics::Stub::Vector new_v(stub.v + sample[1] * M.col_x());
+		core::kinematics::Stub::Matrix M(stub.M * numeric::x_rotation_matrix_radians( sample[3] ));
+		M *= numeric::z_rotation_matrix_radians( sample[2] );
+		core::kinematics::Stub::Vector new_v(stub.v + sample[1] * M.col_x());
 		rotamer->set_xyz("CEN", new_v);
-
+		
 		accumulated_probability += samples[count_rotamers_built].prob();
-
+		
 		// ** discard low prob rot
 		// ** 0.16 optimized by sc recovery benchmark
 		Real rot_cut = 	option[ OptionKeys::packing::cenrot_cutoff ]();
-
+		
 		if (samples[count_rotamers_built].prob()> rot_cut/max_rots_that_can_be_built ) {
 			rotamers.push_back( rotamer );
 		}
-
+		
 		if ( count_rotamers_built == max_rots_that_can_be_built ) {
 			break;
 		}
@@ -572,67 +572,67 @@ const utility::vector1< CentroidRotamerSampleData >
 SingleResidueCenrotLibrary::get_rotamer_samples(
 	conformation::Residue const & rsd
 ) const {
-
+	
 	// ** comment out, existing_residue could be different from the current rotlib
 	//if (rsd.aa()==core::chemical::aa_gly || rsd.aa()==core::chemical::aa_ala) {
 	//	return dummy_sample_;
 	//}
-
+	
 	Size phibin, psibin;
 	Size phibin_next, psibin_next;
 	Real phi_alpha, psi_alpha;
-
+	
 	Real phi(get_phi_from_rsd(rsd));
 	Real psi(get_psi_from_rsd(rsd));
-
+	
 	//get_phipsi_bins(phi, psi, phi_bin, psi_bin);
 	get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
-
+	
 	//prepare to call interpolate_bilinear_by_value
 	utility::vector1< CentroidRotamerSampleData > r00( all_rots_bb_(phibin, psibin) );
 	utility::vector1< CentroidRotamerSampleData > r01( all_rots_bb_(phibin, psibin_next) );
 	utility::vector1< CentroidRotamerSampleData > r10( all_rots_bb_(phibin_next, psibin) );
 	utility::vector1< CentroidRotamerSampleData > r11( all_rots_bb_(phibin_next, psibin_next) );
-
+	
 	utility::vector1< CentroidRotamerSampleData > samples(max_rot_num);
-
+	
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		//load
 		r00[nr].private_data_to_public_array();
 		r01[nr].private_data_to_public_array();
 		r10[nr].private_data_to_public_array();
 		r11[nr].private_data_to_public_array();
-
+		
 		//interp
 		//CentroidRotamerSampleData sample;
 		for (Size i=0; i<7; i++) {
 			if (i==3) {
 				//only for i==3, dih, treat as pbc 360!! unit!!
 				basic::interpolate_bilinear_by_value(
-					r00[nr].data_[i]*numeric::constants::r::radians_to_degrees,
-					r10[nr].data_[i]*numeric::constants::r::radians_to_degrees,
-					r01[nr].data_[i]*numeric::constants::r::radians_to_degrees,
-					r11[nr].data_[i]*numeric::constants::r::radians_to_degrees,
-					phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
-					samples[nr].data_[i], samples[nr].deriv_phi_[i], samples[nr].deriv_psi_[i]
-				);
+													 r00[nr].data_[i]*numeric::constants::r::radians_to_degrees,
+													 r10[nr].data_[i]*numeric::constants::r::radians_to_degrees,
+													 r01[nr].data_[i]*numeric::constants::r::radians_to_degrees,
+													 r11[nr].data_[i]*numeric::constants::r::radians_to_degrees,
+													 phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
+													 samples[nr].data_[i], samples[nr].deriv_phi_[i], samples[nr].deriv_psi_[i]
+													 );
 				samples[nr].data_[i]*=numeric::constants::r::pi_over_180;
 				samples[nr].deriv_phi_[i]*=numeric::constants::r::pi_over_180;
 				samples[nr].deriv_psi_[i]*=numeric::constants::r::pi_over_180;
 			} else {
 				basic::interpolate_bilinear_by_value(
-					r00[nr].data_[i], r10[nr].data_[i],
-					r01[nr].data_[i], r11[nr].data_[i],
-					phi_alpha, psi_alpha, PHIPSI_BINRANGE, false,
-					samples[nr].data_[i], samples[nr].deriv_phi_[i], samples[nr].deriv_psi_[i]
-				);
+													 r00[nr].data_[i], r10[nr].data_[i],
+													 r01[nr].data_[i], r11[nr].data_[i],
+													 phi_alpha, psi_alpha, PHIPSI_BINRANGE, false,
+													 samples[nr].data_[i], samples[nr].deriv_phi_[i], samples[nr].deriv_psi_[i]
+													 );
 			}
 		}
-
+		
 		//save
 		samples[nr].public_array_to_private_data();
 	}
-
+	
 	return samples;
 }
 
@@ -648,7 +648,7 @@ void SingleResidueCenrotLibrary::get_phipsi_bins(
 ) const {
 	bin_angle( -180.0, PHIPSI_BINRANGE, 360.0, N_PHIPSI_BINS, basic::periodic_range( phi, 360 ), phibin, phibin_next, phi_alpha );
 	bin_angle( -180.0, PHIPSI_BINRANGE, 360.0, N_PHIPSI_BINS, basic::periodic_range( psi, 360 ), psibin, psibin_next, psi_alpha );
-
+	
 	verify_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next );
 }
 
@@ -666,7 +666,7 @@ void SingleResidueCenrotLibrary::get_phipsi_bins(
 Real SingleResidueCenrotLibrary::get_phi_from_rsd(
 	conformation::Residue const & rsd
 ) const {
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 	if ( rsd.is_lower_terminus() ) return NEUTRAL_PHI;
 	else return rsd.mainchain_torsion( RSD_PHI_INDEX );
 }
@@ -674,7 +674,7 @@ debug_assert( rsd.is_protein() );
 Real SingleResidueCenrotLibrary::get_psi_from_rsd(
 	conformation::Residue const & rsd
 ) const {
-debug_assert( rsd.is_protein() );
+	debug_assert( rsd.is_protein() );
 	if ( rsd.is_upper_terminus() ) return NEUTRAL_PSI;
 	else return rsd.mainchain_torsion( RSD_PSI_INDEX );
 }
@@ -690,7 +690,7 @@ void SingleResidueCenrotLibrary::verify_phipsi_bins(
 	if (( phibin < 1 || phibin > 36 ) || (psibin < 1 || psibin > 36 ) ||
 		( phibin_next < 1 || phibin_next > 36 ) || (psibin_next < 1 || psibin_next > 36 )) {
 		std::cerr << "ERROR: phi/psi bin out of range: " <<
-			aa() << " " << phi << " " << psi;
+		aa() << " " << phi << " " << psi;
 		std::cerr << phibin << " " << phibin_next << " " << psibin << " " << psibin_next <<  std::endl;
 		utility_exit();
 	}
@@ -699,37 +699,37 @@ void SingleResidueCenrotLibrary::verify_phipsi_bins(
 
 /// CentroidRotamerSampleData
 Real CentroidRotamerSampleData::cal_delta_internal_coordinates_squared(
-		const conformation::Residue & rsd,
-		Real & d_sq, Real & a_sq, Real & w_sq ) const
+	const conformation::Residue & rsd,
+	Real & d_sq, Real & a_sq, Real & w_sq ) const
 {
 	Real ddis, dang, ddih;
 	Real cur_ang = cal_delta_internal_coordinates(rsd, ddis, dang, ddih);
-
+	
 	d_sq = ddis * ddis;
 	a_sq = dang * dang;
 	w_sq = ddih * ddih;
-
+	
 	return cur_ang;
 }
 
 Real CentroidRotamerSampleData::cal_delta_internal_coordinates(
-		const conformation::Residue & rsd,
-		Real & ddis, Real & dang, Real & ddih ) const
+	const conformation::Residue & rsd,
+	Real & ddis, Real & dang, Real & ddih ) const
 {
 	using namespace numeric::constants::f;
-
+	
 	//get rsd.sidechain coordinates
 	core::kinematics::Stub::Vector const a(rsd.atom("N").xyz());
 	core::kinematics::Stub::Vector const b(rsd.atom("CA").xyz());
 	core::kinematics::Stub::Vector const c(rsd.atom("CB").xyz());
 	core::kinematics::Stub::Vector const d(rsd.atom("CEN").xyz());
-
+	
 	//get centroid_rot int
 	Real cur_ang = numeric::constants::r::pi-numeric::angle_radians(b,c,d);
 	ddis = (d-c).length() - distance_;
 	dang = cur_ang - angle_;
 	ddih = basic::periodic_range( numeric::dihedral_radians(a,b,c,d) - dihedral_, pi_2 );
-
+	
 	return cur_ang;
 }
 
@@ -740,13 +740,13 @@ Real CentroidRotamerSampleData::cal_distance_squared( const conformation::Residu
 	core::kinematics::Stub::Vector const b(rsd.atom("CA").xyz());
 	core::kinematics::Stub::Vector const c(rsd.atom("CB").xyz());
 	core::kinematics::Stub::Vector const d(rsd.atom("CEN").xyz());
-
+	
 	//get centroid_rot int
 	DOF3 sample;
 	sample[1] = (d-c).length();
 	sample[2] = numeric::constants::r::pi-numeric::angle_radians(b,c,d);
 	sample[3] = numeric::dihedral_radians(a,b,c,d);
-
+	
 	//std::cout << sample[1] << " " << sample[2] << " " << sample[3] << std::endl;
 	// DOF3 sample;
 	// core::kinematics::Stub::Vector const cenxyz(rsd.atom("CEN").xyz());
@@ -764,7 +764,7 @@ Real CentroidRotamerSampleData::cal_distance( const DOF3 & sample, bool use_xyz)
 Real CentroidRotamerSampleData::cal_distance_squared( const DOF3 & sample, bool use_xyz) const
 {
 	Real x1, y1, z1;
-
+	
 	if (use_xyz) {
 		x1 = sample[1];
 		y1 = sample[2];
@@ -776,12 +776,12 @@ Real CentroidRotamerSampleData::cal_distance_squared( const DOF3 & sample, bool 
 		y1 = sample[1]*sin(ang1)*sin(sample[3]);
 		z1 = sample[1]*cos(ang1);
 	}
-
+	
 	Real ang2 = numeric::constants::r::pi - angle_;
 	Real x2 = distance_*sin(ang2)*cos(dihedral_);
 	Real y2 = distance_*sin(ang2)*sin(dihedral_);
 	Real z2 = distance_*cos(ang2);
-
+	
 	Real dx = x1-x2;
 	Real dy = y1-y2;
 	Real dz = z1-z2;

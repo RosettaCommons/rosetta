@@ -272,7 +272,7 @@ bool LoopModeler::do_apply(Pose & pose) { // {{{1
 		TR << "Build Time: " << end_time - start_time << " sec" << endl;
 	}
 
-	// Output score and RMSD to debug tracer?  That sounds good.  I need two 
+	// Output score and RMSD to debug tracer?  That sounds good.  I need two
 	// versions of a function that outputs score and rmsd.  One version uses the 
 	// standard tracer, fills up the pose extra scores, and deals with buried 
 	// H-bonds.  The other version just outputs to a debug tracer.

@@ -54,6 +54,7 @@ public:
 
   Environment& env() { return *env_; }
 
+
   virtual std::string get_name() const;
 
   virtual moves::MoverOP clone() const;

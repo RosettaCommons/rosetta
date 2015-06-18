@@ -287,7 +287,7 @@ namespace core {
 						}
 						return 0;
 					}
-					
+
 					/// @brief Get the number of bins for the ith residue.
 					///
 					core::Size n_bins_i() const { return n_bins_i_; }

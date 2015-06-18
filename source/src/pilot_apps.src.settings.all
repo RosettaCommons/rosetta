@@ -53,15 +53,16 @@ sources = {
 		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
 	],
 	"pilot/awatkins" : [
-		#"a3b_hbs_dock_design",
-		#"a3b_test",
-		#"b3a_distro_kinemage",
-		#"build_a3b",
-		#"multistate_idea",
-		#"oop_conformations",
-		#"sec_struct_finder",
-		#"hbs_dock_design",
-		#"hbs_creator",
+		"a3b_hbs_dock_design",
+		"a3b_test",
+		"b3a_distro_kinemage",
+		"build_a3b",
+		"get_dihedral_b3aa",
+		"multistate_idea",
+		"oop_conformations",
+		"sec_struct_finder",
+		"hbs_dock_design",
+		"hbs_creator",
 	],
 
 	# B ######################################################################

@@ -49,6 +49,13 @@ namespace dunbrack {
 
 Size positive_pow( Size mantissa, Size exponent );
 
+template< Size N >
+inline Size product( utility::fixedsizearray1< Size, N > factors ) {
+	Size x = factors[ 1 ];
+	for ( Size i = 2; i <= N; ++i ) x *= factors[ i ];
+	return x;
+}
+	
 inline bool
 bit_is_set(
     Size num,
@@ -57,41 +64,73 @@ bit_is_set(
 ) {
     return ( num - 1 ) & ( 1 << ( num_len - pos ) );
 }
-
+	
 template< Size N >
 inline Size make_index(
 	Size n_bb,
-    Size num_bins,
-    utility::fixedsizearray1< Size, N > bb_bin
+	utility::fixedsizearray1< Size, N > num_bins,
+	utility::fixedsizearray1< Size, N > bb_bin
+) {
+	Size index = 1;
+	for ( Size bbi = 1; bbi <= N; ++bbi ) {
+		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+	}
+	return index;
+}
+
+	
+template< Size N >
+inline Size make_index(
+	Size n_bb,
+    utility::fixedsizearray1< Size, N > num_bins,
+    utility::fixedsizearray1< Size, N+1 > bb_bin
 ) {
     Size index = 1;
-	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
-		//std::cout << "N is " << N << " and bb_bin[ " << bbi << " ] is " << bb_bin[ bbi ];
-		//std::cout << " so I am going to add " << ( bb_bin[ bbi ] - 1 ) << " * " << positive_pow( num_bins, n_bb - bbi ) << " equals " << (( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi )) << std::endl;
-        index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi );
+	for ( Size bbi = 1; bbi <= N; ++bbi ) {
+		index += ( bb_bin[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
 	}
     return index;
+}
+	
+template < Size N >
+inline Size make_conditional_index(
+	Size n_bb,
+	utility::fixedsizearray1< Size, N > num_bins,
+	Size cond_i,
+	utility::fixedsizearray1< Size, N > bin_true,
+	utility::fixedsizearray1< Size, N > bin_false
+) {
+	Size index = 1;
+	for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
+		if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) ) {
+			index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		} else {
+			index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		}
+	}
+	return index;
 }
 
 template < Size N >
 inline Size make_conditional_index(
 	Size n_bb,
-    Size num_bins,
+	utility::fixedsizearray1< Size, N > num_bins,
     Size cond_i,
-    utility::fixedsizearray1< Size, N > bin_true,
-    utility::fixedsizearray1< Size, N > bin_false
+    utility::fixedsizearray1< Size, N+1 > bin_true,
+    utility::fixedsizearray1< Size, N+1 > bin_false
 ) {
     Size index = 1;
     for ( Size bbi = 1; bbi <= n_bb; ++bbi ) {
-        if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) )
-            index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins, n_bb - bbi );
-        else
-            index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins, n_bb - bbi );
+		if ( ( cond_i - 1 ) & ( 1 << ( n_bb - bbi ) ) ) {
+            index += ( bin_true[ bbi ]  - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		} else {
+            index += ( bin_false[ bbi ] - 1 ) * positive_pow( num_bins[ bbi ], n_bb - bbi );
+		}
     }
     return index;
 }
 
-/// @brief A class who's size is known at compile time.  A vector of these objects
+/// @brief A class whose size is known at compile time.  A vector of these objects
 /// will occupy a perfectly contiguous region of memory, with no extra space
 /// allocated for pointers.  These objects may be rapidly allocated and deallocated
 /// on the stack.
@@ -294,12 +333,7 @@ public:
 		) :
     parent( rhs ),
     packed_rotno_( rhs.packed_rotno() )
-	{
-		/*for ( Size ii = 1; ii <= S; ++ii ) {
-			chi_mean( ii ) = rhs.chi_mean( ii );
-			chi_sd( ii )   = rhs.chi_sd( ii );
-		}*/
-	}
+	{}
 
 
     PackedDunbrackRotamer(
@@ -307,12 +341,7 @@ public:
                           ) :
     parent( rhs ),
     packed_rotno_( rhs.packed_rotno() )
-	{
-		/*for ( Size ii = 1; ii <= S; ++ii ) {
-			chi_mean( ii ) = rhs.chi_mean( ii );
-			chi_sd( ii )   = rhs.chi_sd( ii );
-		}*/
-	}
+	{}
 
 
 	PackedDunbrackRotamer() :
@@ -418,38 +447,6 @@ expand_proton_chi(
 	utility::vector1< ChiSetOP > & chi_set_vector
 );
 
-void bicubic_interpolation(
-	Real v00, Real d2dx200, Real d2dy200, Real d4dx2y200,
-	Real v01, Real d2dx201, Real d2dy201, Real d4dx2y201,
-	Real v10, Real d2dx210, Real d2dy210, Real d4dx2y210,
-	Real v11, Real d2dx211, Real d2dy211, Real d4dx2y211,
-	Real dxp, // in the range [0..1) representing the distance to the left bin boundary
-	Real dyp, // in the range [0..1) representing the distance to the lower bin boundary
-	Real binwx, // the size of the bin witdh for x
-	Real binwy, // the size of the bin width for y
-	Real & val,
-	Real & dvaldx,
-	Real & dvaldy
-);
-
-void
-tricubic_interpolation(
-	Real v000, Real dvdx000, Real dvdy000, Real dvdz000, Real dvdxy000, Real dvdxz000, Real dvdyz000, Real dvdxyz000,
-	Real v001, Real dvdx001, Real dvdy001, Real dvdz001, Real dvdxy001, Real dvdxz001, Real dvdyz001, Real dvdxyz001,
-	Real v010, Real dvdx010, Real dvdy010, Real dvdz010, Real dvdxy010, Real dvdxz010, Real dvdyz010, Real dvdxyz010,
-	Real v011, Real dvdx011, Real dvdy011, Real dvdz011, Real dvdxy011, Real dvdxz011, Real dvdyz011, Real dvdxyz011,
-	Real v100, Real dvdx100, Real dvdy100, Real dvdz100, Real dvdxy100, Real dvdxz100, Real dvdyz100, Real dvdxyz100,
-	Real v101, Real dvdx101, Real dvdy101, Real dvdz101, Real dvdxy101, Real dvdxz101, Real dvdyz101, Real dvdxyz101,
-	Real v110, Real dvdx110, Real dvdy110, Real dvdz110, Real dvdxy110, Real dvdxz110, Real dvdyz110, Real dvdxyz110,
-	Real v111, Real dvdx111, Real dvdy111, Real dvdz111, Real dvdxy111, Real dvdxz111, Real dvdyz111, Real dvdxyz111,
-	Real dxp, Real dyp, Real dzp,
-	Real binwx, Real binwy, Real binwz,
-	Real & val,
-	Real & dvaldx,
-	Real & dvaldy,
-	Real & dvaldz
-);
-
 template < Size N >
 void
 alternate_tricubic_interpolation(
@@ -460,7 +457,6 @@ alternate_tricubic_interpolation(
 	utility::fixedsizearray1< Real, N > & dvaldbb
 )
 {
-
 	utility::fixedsizearray1< Real, N > invbinwbb;
 	utility::fixedsizearray1< Real, N > binwbb_over_6;
 	utility::fixedsizearray1< Real, N > dbbm;
@@ -530,88 +526,86 @@ interpolate_polylinear_by_value(
 	bool const angles,
 	double & val,
 	utility::fixedsizearray1< double, N > & dval_dbb
-)
-	{
-		assert( N != 0 );
+) {
+	assert( N != 0 );
 
-		if ( angles ) {
-			val = 0;
+	if ( angles ) {
+		val = 0;
 
-			utility::vector1< double > w;
-			utility::vector1< double > a;
+		utility::vector1< double > w;
+		utility::vector1< double > a;
 
-			Size total = vals.size();
+		Size total = vals.size();
 
-			for ( Size ii = 1; ii <= total; ++ii ) {
-				double w_val = 1;
-				for ( Size jj = 1; jj <= N; ++jj ) {
-					w_val *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : 1.0f - bbd[ jj ];
-				}
-				w.push_back( w_val );
+		for ( Size ii = 1; ii <= total; ++ii ) {
+			double w_val = 1;
+			for ( Size jj = 1; jj <= N; ++jj ) {
+				w_val *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : 1.0f - bbd[ jj ];
 			}
+			w.push_back( w_val );
+		}
 
-			for ( Size total = vals.size(); total >= 4; total /= 2 ) {
-				for ( Size ii = 1; ii <= total/2; ++ii ) {
-					double a_val = 0;
-					if ( w[ ii ] + w[ ii + total/2 ] != 0.0 )
-						a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
-					a.push_back( a_val );
-				}
-				if ( total > 4 ) {
-					w = a;
-					a = utility::vector1< double >();
+		for ( Size total = vals.size(); total >= 4; total /= 2 ) {
+			for ( Size ii = 1; ii <= total/2; ++ii ) {
+				double a_val = 0;
+				if ( w[ ii ] + w[ ii + total/2 ] != 0.0 )
+					a_val = ( w[ ii ] * vals[ ii ] + w[ ii + total/2 ] * ( basic::subtract_degree_angles(vals[ ii + total/2 ], vals[ ii ] ) + vals[ ii ] ) ) / ( w[ ii ] + w[ ii + total/2 ] );
+				a.push_back( a_val );
+			}
+			if ( total > 4 ) {
+				w = a;
+				a = utility::vector1< double >();
+			}
+		}
+
+		val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
+		basic::angle_in_range(val);
+
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			dval_dbb[ ii ] = 0.0f;
+
+			for ( Size kk = 1; kk <= N; ++kk ) {
+				if ( kk != ii ) {
+					Size ind1 = 1;
+					Size ind2 = ind1 + (1<<N>>ii);
+					dval_dbb[ ii ] += ( 1.0f - bbd[ kk ] ) * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
+					ind1 += (1<<N>>kk); ind2 += (1<<N>>kk);
+					dval_dbb[ ii ] +=          bbd[ kk ]   * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
 				}
 			}
+			dval_dbb[ ii ] /= binrange[ii];
+		}
 
-			val = ( w[ 1 ] + w[ 3 ] ) * a[ 1 ] + ( w[ 2 ] + w[ 4 ] ) * ( basic::subtract_degree_angles( a[ 2 ], a[ 1 ] ) + a[ 1 ] );
-			basic::angle_in_range(val);
+	} else {
+		val = 0;
 
-			for ( Size ii = 1; ii <= N; ++ii ) {
-				dval_dbb[ ii ] = 0.0f;
+		for ( Size ii = 1; ii <= vals.size(); ++ii ) {
+			double valterm = vals[ ii ];
+			for ( Size jj = 1; jj <= N; ++jj ) {
+				valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
+			}
+			val += valterm;
+		}
+
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			dval_dbb[ ii ] = 0.0f;
+			for ( Size jj = 1; jj <= vals.size(); ++jj ) {
+				double valterm = 1;
 
 				for ( Size kk = 1; kk <= N; ++kk ) {
-					if ( kk != ii ) {
-						Size ind1 = 1;
-						Size ind2 = ind1 + (1<<N>>ii);
-						dval_dbb[ ii ] += ( 1.0f - bbd[ kk ] ) * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
-						ind1 += (1<<N>>kk); ind2 += (1<<N>>kk);
-						dval_dbb[ ii ] +=          bbd[ kk ]   * basic::subtract_degree_angles( vals[ ind2 ], vals[ ind1 ] );
+					if ( kk == ii ) {
+						valterm *= vals[ jj ];
+						valterm *= bit_is_set( jj, N, kk ) ?      1.0f : -1.0f;
+					} else {
+						valterm *= bit_is_set( jj, N, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
 					}
 				}
-				dval_dbb[ ii ] /= binrange[ii];
+				dval_dbb[ ii ] += valterm;
 			}
-
-		} else {
-			val = 0;
-
-			for ( Size ii = 1; ii <= vals.size(); ++ii ) {
-				double valterm = vals[ ii ];
-				for ( Size jj = 1; jj <= N; ++jj ) {
-					valterm *= bit_is_set( ii, N, jj ) ? bbd[ jj ] : (1.0f - bbd[ jj ]);
-				}
-				val += valterm;
-			}
-
-			for ( Size ii = 1; ii <= N; ++ii ) {
-				dval_dbb[ ii ] = 0.0f;
-				for ( Size jj = 1; jj <= vals.size(); ++jj ) {
-					double valterm = 1;
-
-					for ( Size kk = 1; kk <= N; ++kk ) {
-						if ( kk == ii ) {
-							valterm *= vals[ jj ];
-							valterm *= bit_is_set( jj, N, kk ) ?      1.0f : -1.0f;
-						} else {
-							valterm *= bit_is_set( jj, N, kk ) ? bbd[ kk ] :  (1.0f - bbd[ kk ]);
-						}
-					}
-					dval_dbb[ ii ] += valterm;
-				}
-				dval_dbb[ ii ] /= binrange[ii];
-			}
-
+			dval_dbb[ ii ] /= binrange[ii];
 		}
 	}
+}
 
 
 template < Size S, Size N/*, class P*/ >
