@@ -55,6 +55,7 @@
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
 
 //Exception for NaN in hbonds.
 #include <utility/excn/Exceptions.hh>
@@ -76,7 +77,7 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
-static thread_local basic::Tracer tr( "core.scoring.hbonds" );
+static thread_local basic::Tracer tr( "core.scoring.hbonds.hbonds_geom" );
 
 Real DUMMY_DERIV(0.0);
 bool DUMMY_BOOL(false);
@@ -1117,6 +1118,8 @@ hb_energy_deriv(
 		std::string const warning( "NAN occurred in H-bonding calculations!" );
 		PyAssert(false, warning); // allows for better error handling from within Python
 		tr.Error << warning << std::endl;
+		tr.Error << "Dxyz " << Dxyz << "  Hxyz " << Hxyz << std::endl;
+		print_backtrace();
 
 #ifndef BOINC
 		bool fail_on_bad_hbond = basic::options::option[ basic::options::OptionKeys::in::file::fail_on_bad_hbond ]();
@@ -1232,14 +1235,13 @@ assign_abase_derivs(
 	HBondOptions const & hbondoptions,
 	conformation::Residue const & acc_rsd,
 	Size acc_atom,
-	HBEvalTuple const hbt,
+	chemical::Hybridization const & acc_hybrid,
 	DerivVectorPair const & abase_deriv,
 	Real weighted_energy,
 	utility::vector1< DerivVectorPair > & acc_atom_derivs
 )
 {
 	using namespace chemical;
-	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
 	switch( acc_hybrid ){
 		case SP2_HYBRID:  {
 			acc_atom_derivs[ acc_rsd.atom_base( acc_atom ) ].f1() += weighted_energy * abase_deriv.f1();
@@ -1266,6 +1268,27 @@ assign_abase_derivs(
 			utility_exit();
 	}
 
+}
+
+/// @details Divide up the f1/f2 contributions calculated for the PBxyz coordinate
+/// among the atom(s) that define the location of the PBxyz coordinate.  In the
+/// base of ring-hybridized acceptors, half of the derivative goes to the abase,
+/// and half of hte derivative goes to the abase2.  This code mirrors the logic
+/// in the make_hbBasetoAcc_unitvector code above.
+void
+assign_abase_derivs(
+	HBondOptions const & hbondoptions,
+	conformation::Residue const & acc_rsd,
+	Size acc_atom,
+	HBEvalTuple const hbt,
+	DerivVectorPair const & abase_deriv,
+	Real weighted_energy,
+	utility::vector1< DerivVectorPair > & acc_atom_derivs
+)
+{
+	using namespace chemical;
+	Hybridization acc_hybrid( get_hbe_acc_hybrid( hbt.eval_type() ) );
+	assign_abase_derivs( hbondoptions, acc_rsd, acc_atom, acc_hybrid, abase_deriv, weighted_energy, acc_atom_derivs );
 }
 
 

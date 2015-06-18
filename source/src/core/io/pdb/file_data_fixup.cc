@@ -103,6 +103,11 @@ convert_res_name( std::string const & name )
 		return "MET";
 	}
 
+	//	if ( name2 == "WAT" ) {
+	//		TR << "Reading WAT as HOH!" << std::endl;
+	//		return "HOH";
+	//	}
+
 	//If this is one of these metal ions and there is a 1 or 2 appended to the name (e.g. "CU2"), return just the first two characters as the name.
 	//if(name2!="ZNx" && name2!="ZNX") { //Special zinc variants used in unit tests.  Grr.
 	std::string const firsttwo = name2.substr(0,2);

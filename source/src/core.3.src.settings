@@ -443,6 +443,12 @@ sources = {
 		"LoopGraph",
 		"LoopScoreInfo",
 	],
+	"core/scoring/magnesium": [
+	    "MgKnowledgeBasedPotential",
+	    "MgEnergy",
+	    "RNA_MgPointEnergy",
+	    "util"
+	],
 	"core/scoring/memb_etable": [
 		"MembEtable",
 	],
@@ -627,8 +633,6 @@ sources = {
 		"RNA_JR_SuiteEnergy",
 		"RNA_LJ_BaseEnergy",
 		"RNA_LowResolutionPotential",
-		"RNA_Mg_Energy",
-		"RNA_Mg_KnowledgeBasedPotential",
 		"RNA_PairwiseLowResolutionEnergy",
 		"RNA_RawBaseBaseInfo",
 		"RNA_ScoringInfo",

@@ -7,23 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_Mg_Energy.hh
+/// @file   core/scoring/magnesium/RNA_MgPointEnergy.hh
 /// @brief  Statistically derived Mg(2+) binding potential for RNA.
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_Mg_Energy_hh
-#define INCLUDED_core_scoring_rna_RNA_Mg_Energy_hh
+#ifndef INCLUDED_core_scoring_rna_RNA_MgPointEnergy_hh
+#define INCLUDED_core_scoring_rna_RNA_MgPointEnergy_hh
 
 // Unit Headers
-#include <core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.fwd.hh>
+#include <core/scoring/magnesium/MgKnowledgeBasedPotential.fwd.hh>
 
 // Package headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,17 +34,17 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace magnesium {
 
 
-class RNA_Mg_Energy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_MgPointEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
 
-	RNA_Mg_Energy();
+	RNA_MgPointEnergy();
 
 	/// clone
 	virtual
@@ -143,33 +141,18 @@ private:
 															pose::Pose const & pose,
 															EnergyMap & emap
 															) const;
-	Real
-	get_gaussian_potential_score(
-															 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
-															 Vector const & pos1,
-															 Vector const & pos2 ) const;
-
-	Real
-	get_gaussian_score(
-										 core::chemical::rna::GaussianParameter const & mg_potential_gaussian_parameter,
-										 Real const d ) const;
-
-	Real
-	get_cos_theta( core::conformation::Residue const & rsd1,
-						 Size const i, Vector const & i_xyz, Vector const & j_xyz ) const;
 
 	virtual
 	core::Size version() const;
 
-	RNA_Mg_KnowledgeBasedPotentialOP rna_mg_knowledge_based_potential_;
-	core::scoring::hbonds::HBondOptionsOP hbond_options_;
+	MgKnowledgeBasedPotentialOP rna_mg_knowledge_based_potential_;
 
   bool const verbose_;
 
 };
 
 
-} //rna
+} //magnesium
 } //scoring
 } //core
 

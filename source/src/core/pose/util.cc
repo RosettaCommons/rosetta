@@ -284,6 +284,21 @@ pdbslice( core::pose::Pose & new_pose,
 			full_model_info->set_res_list( new_res_list );
 			set_full_model_info( new_pose, full_model_info );
 		}
+
+		PDBInfoCOP pdb_info = pose.pdb_info();
+		if ( pdb_info != 0 ) {
+			utility::vector1< Size > new_numbering;
+			utility::vector1< char > new_chains;
+			for ( Size n = 1; n <= slice_res.size(); n++ ){
+				new_numbering.push_back( pdb_info->number( slice_res[ n ] ) );
+				new_chains.push_back( pdb_info->chain( slice_res[ n ] ) );
+			}
+			PDBInfoOP new_pdb_info( new PDBInfo( new_pose, true /*init*/ ) );
+			new_pdb_info->set_numbering( new_numbering );
+			new_pdb_info->set_chains( new_chains );
+			new_pose.pdb_info( new_pdb_info );
+		}
+
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1998,16 +2013,16 @@ get_chain_residues(core::pose::Pose const & pose, core::Size const chain_id){
 
 /// @brief Is residue number in this chain?
 bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string chain ) {
-	
+
 	bool in_chain( false );
-	
+
 	Size chain_of_res = pose.chain( resnum );
 	Size chainid = get_chain_id_from_chain( chain[0], pose );
 
 	if ( chain_of_res == chainid ) {
 		in_chain = true;
 	}
-	
+
 	return in_chain;
 }
 
@@ -2478,6 +2493,53 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
 		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
 	}
+}
+
+/// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
+utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1< int > const & pdb_res ){
+	utility::vector1< Size > pose_res;
+	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		if ( pdb_res.has_value( pose.pdb_info()->number( n ) ) ) pose_res.push_back( n );
+	}
+	runtime_assert( pose_res.size() == pdb_res.size() );
+	return pose_res;
+}
+
+/// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
+utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, std::pair< utility::vector1< int >, utility::vector1<char> > const & pdb_res ){
+	utility::vector1< Size > pose_res;
+	runtime_assert( pdb_res.first.size() == pdb_res.second.size() );
+	for ( Size n = 1; n <= pdb_res.first.size(); n++ ) {
+		pose_res.push_back( pdb_to_pose( pose, pdb_res.first[ n ], pdb_res.second[ n ] ) );
+	}
+	return pose_res;
+}
+
+/// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
+Size
+pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain /* = ' ' */ ) {
+	bool found_match( false );
+	Size res_num_in_full_numbering( 0 );
+	for ( Size n = 1; n <= pose.total_residue() ; n++ ){
+		if ( res_num != pose.pdb_info()->number( n ) ) continue;
+		if ( chain != ' ' && pose.pdb_info()->chain( n ) != ' ' &&
+				 pose.pdb_info()->chain( n ) != chain ) continue;
+		res_num_in_full_numbering = n;
+		if ( found_match != 0 ) utility_exit_with_message( "Ambiguous match to pdb number " + ObjexxFCL::string_of(res_num ) + " and chain " + ObjexxFCL::string_of( chain ) );
+		found_match = true;
+	}
+	if ( !found_match ) utility_exit_with_message( "Could not match residue number  " + ObjexxFCL::string_of( res_num ) + " and chain " + ObjexxFCL::string_of(chain) );
+	return res_num_in_full_numbering;
+}
+
+/// @brief Convert pose numbering to pdb numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
+utility::vector1< Size > pose_to_pdb( pose::Pose const & pose, utility::vector1< Size > const & pose_res ){
+	utility::vector1< Size > pdb_res;
+	for ( Size i = 1; i <= pose_res.size(); i++ ){
+		runtime_assert( pose_res[ i ] <= pose.total_residue() );
+		pdb_res.push_back( pose.pdb_info()->number( pose_res[ i ] ) );
+	}
+	return pdb_res;
 }
 
 /// @brief returns true if the given residue in the pose is a chain ending or has upper/lower terminal variants

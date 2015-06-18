@@ -47,6 +47,7 @@
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
+#include <numeric/xyz.io.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -440,10 +441,14 @@ GeometricSolEnergyEvaluator::set_water_base_atm(
 	Vector x,y,z, direction;
 
 	//Define coordinate system.
-	z = cross( (water_v - atom_v),  (atom_v - base_v) );
-	z.normalize();
 	y = water_v - atom_v;
 	y.normalize();
+
+	z = cross( y,  (atom_v - base_v) );
+	if ( z.length() == 0.0 )	z = cross( water_v - atom_v, water_v + atom_v ); // arbitrary
+	runtime_assert( z.length() > 0.0 );
+	z.normalize();
+
 	x = cross( y, z );
 
 	// Plop the atom down
@@ -642,8 +647,6 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	HBEvalTuple & hbe /* = HBEvalTuple() */
 ) const
 {
-	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
-
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
 	// and, during design, the residue type doesn't actually
@@ -656,14 +659,7 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	if ( occ_rsd.is_virtual( occ_atm ) ) return;
 	if ( don_rsd.is_virtual( don_h_atm ) ) return;
 
-	//Need to know about backbone/backbone H-bonds for proteins
-	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( HBOND_SET )));
-	TenANeighborGraph const & tenA_neighbor_graph
-		( pose.energies().tenA_neighbor_graph() );
-
-debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
+	debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 
 	Size const don_base_atm( don_rsd.atom_base( don_h_atm ) );
 
@@ -682,9 +678,14 @@ debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 		( don_rsd.is_protein() && don_rsd.atom_is_backbone( don_h_atm ) );
 	bool const occ_atm_is_protein_backbone_acceptor
 		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) && occ_rsd.heavyatom_is_an_acceptor( occ_atm ) );
-	if ( don_h_atm_is_protein_backbone && hbond_set.don_bbg_in_bb_bb_hbond( don_rsd.seqpos() ) &&
-			 !occ_atm_is_protein_backbone_acceptor ) {
-		return;
+	if ( don_h_atm_is_protein_backbone && !occ_atm_is_protein_backbone_acceptor ) {
+		using core::scoring::EnergiesCacheableDataType::HBOND_SET;
+		if ( pose.energies().data().has( HBOND_SET ) ){
+			hbonds::HBondSet const & hbond_set
+				( static_cast< hbonds::HBondSet const & >
+					( pose.energies().data().get( HBOND_SET )));
+			if ( hbond_set.don_bbg_in_bb_bb_hbond( don_rsd.seqpos() ) )	return;
+		}
 	}
 
 	// an atom directly bound to the donor isn't allowed to occlude solvent
@@ -708,6 +709,9 @@ debug_assert( don_rsd.atom_is_polar_hydrogen( don_h_atm ) );
 
 	Size don_nbrs( 0 ), occ_nbrs( 0 );
 	if (options_.hbond_options().use_hb_env_dep() ) {
+		//Need to know about backbone/backbone H-bonds for proteins
+		TenANeighborGraph const & tenA_neighbor_graph
+			( pose.energies().tenA_neighbor_graph() );
 		don_nbrs = tenA_neighbor_graph.get_node( don_rsd.seqpos() )->num_neighbors_counting_self();
 		occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
 	}
@@ -773,7 +777,6 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	HBEvalTuple & hbe /* = HBEvalTuple() */
 ) const
 {
-	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 
 	//Why do we need to send in the pose and the residue stuff?
 	// Well, the pose has info on backbone H-bonds.
@@ -787,24 +790,26 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 	if ( occ_rsd.is_virtual( occ_atm ) ) return;
 	if ( acc_rsd.is_virtual( acc_atm ) ) return;
 
-	//Need to know about backbone/backbone H-bonds for proteins
-	hbonds::HBondSet const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
-			( pose.energies().data().get( HBOND_SET )));
-	TenANeighborGraph const & tenA_neighbor_graph
-		( pose.energies().tenA_neighbor_graph() );
-
-debug_assert(  acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
+	debug_assert( acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
 
 	bool const acc_atm_is_protein_backbone
 		( acc_rsd.is_protein() && acc_rsd.atom_is_backbone( acc_atm ) );
+
 	// if a backbone acceptor participates in a backbone-backbone Hbond,
 	// nothing is allowed to occlude solvent except a backbone donor
 	bool const occ_atm_is_protein_backbone_donor
 		( occ_rsd.is_protein() && occ_rsd.atom_is_backbone( occ_atm ) &&
 			occ_rsd.heavyatom_has_polar_hydrogens( occ_atm ) );
-	if ( acc_atm_is_protein_backbone && hbond_set.acc_bbg_in_bb_bb_hbond( acc_rsd.seqpos() ) &&
-			 !occ_atm_is_protein_backbone_donor ) return;
+	if ( acc_atm_is_protein_backbone && !occ_atm_is_protein_backbone_donor) {
+		//Need to know about backbone/backbone H-bonds for proteins
+		using core::scoring::EnergiesCacheableDataType::HBOND_SET;
+		if ( pose.energies().data().has( HBOND_SET ) ){
+			hbonds::HBondSet const & hbond_set
+				( static_cast< hbonds::HBondSet const & >
+					( pose.energies().data().get( HBOND_SET )));
+			if ( hbond_set.acc_bbg_in_bb_bb_hbond( acc_rsd.seqpos() ) ) return;
+		}
+	}
 
 	// For a backbone NH occluding a backbone CO, use the backbone-backbone (linear) geometry
 	// to compute solvation penalty
@@ -845,6 +850,8 @@ debug_assert(  acc_rsd.heavyatom_is_an_acceptor( acc_atm ) );
 
 	Size acc_nbrs( 0 ), occ_nbrs( 0 );
 	if (options_.hbond_options().use_hb_env_dep() ) {
+		TenANeighborGraph const & tenA_neighbor_graph
+			( pose.energies().tenA_neighbor_graph() );
 		acc_nbrs = tenA_neighbor_graph.get_node( acc_rsd.seqpos() )->num_neighbors_counting_self();
 		occ_nbrs = tenA_neighbor_graph.get_node( occ_rsd.seqpos() )->num_neighbors_counting_self();
 	}

@@ -20,10 +20,14 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+
+// Tracer instance for this file
+static thread_local basic::Tracer TR( "core.io.pdb.file_data_options" );
 
 namespace core {
 namespace io {
@@ -94,7 +98,14 @@ void FileDataOptions::set_exit_if_missing_heavy_atoms( bool exit_if_missing_heav
 { exit_if_missing_heavy_atoms_ = exit_if_missing_heavy_atoms; }
 
 void FileDataOptions::set_ignore_unrecognized_res( bool ignore_unrecognized_res )
-{ ignore_unrecognized_res_ = ignore_unrecognized_res; }
+{
+	ignore_unrecognized_res_ = ignore_unrecognized_res;
+  if ( ignore_unrecognized_res_ ) {
+		// Move this warning into file_data -- only show if HOH is actually ignored.
+		// TR << TR.Red << "For backwards compatibility, setting -ignore_unrecognized_res leads ALSO to -ignore_waters. You can set -ignore_waters false to get waters." << TR.Reset << std::endl;
+		ignore_waters_ = true;
+	}
+}
 
 void FileDataOptions::set_ignore_waters( bool ignore_waters )
 { ignore_waters_ = ignore_waters; }
@@ -149,8 +160,15 @@ void FileDataOptions::init_from_options()
 	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
 	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
 	set_exit_if_missing_heavy_atoms( option[ run::exit_if_missing_heavy_atoms ].value());
-	set_ignore_unrecognized_res( option[ in::ignore_unrecognized_res ]());
-	set_ignore_waters( option[ in::ignore_waters ]());
+
+	// Following rigamarole is to maintain backwards compatibility with old Rosetta which did
+	//  not read in HOH. Most modes that did not want HOH used the flag "-ignore_unrecognized_res",
+	//  and this was understood to also ignore HOH (see description in options_rosetta.py!).
+	// Now allow user to -ignore_unrecognized_res but to also restore HOH through "-ignore_waters false".
+	set_ignore_waters( false );
+	set_ignore_unrecognized_res( option[ in::ignore_unrecognized_res ]()); // this can change ignore_waters
+  if ( option[ in::ignore_waters ].user() ) set_ignore_waters( option[ in::ignore_waters ]()); // overrides ignore_waters
+
 	set_ignore_zero_occupancy( option[ run::ignore_zero_occupancy ]());
 	set_keep_input_protonation_state( option[ pH::keep_input_protonation_state ]());
 	set_preserve_header( option[ run::preserve_header ].value());

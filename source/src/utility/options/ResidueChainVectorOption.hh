@@ -106,7 +106,7 @@ public: // Properties
 	inline
 	std::string
 	type_string() const {
-		return "(S" + size_constraint_string() + ')';
+		return "(RC" + size_constraint_string() + ')';
 	}
 
 	// @brief Specialized function that converts tags like A:1-4 B:1-3 into a pair of  [1 2 3 4 1 2 3], [A A A A B B B]

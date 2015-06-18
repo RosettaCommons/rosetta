@@ -1,0 +1,9 @@
+rna_mg_point          1.0
+rna_mg_point_indirect 1.0
+fa_rep 1.0
+geom_sol_fast 0.3
+lk_nonpolar 0.3
+NO_HB_ENV_DEP
+#HACK_ELEC_MIN_DIS 3.5
+#HACK_ELEC_NO_DIS_DEP_DIE
+#hack_elec 0.5

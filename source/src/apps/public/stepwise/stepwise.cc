@@ -108,8 +108,8 @@ stepwise_monte_carlo()
 
 	// setup test move specified via -stepwise:move option
 	StepWiseMove const test_move( option[ OptionKeys::stepwise::move ](), const_full_model_info( pose ).full_model_parameters() );
-	
-	// actual pose to be sampled... do not score pose is user has specified a move  
+
+	// actual pose to be sampled... do not score pose is user has specified a move
 	if ( pose.total_residue() > 0 && test_move.move_type() == NO_MOVE ) ( *scorefxn )( pose );
 	Vector center_vector = ( align_pose != 0 ) ? get_center_of_mass( *align_pose ) : Vector( 0.0 );
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500, false, ( align_pose != 0 ), center_vector );
@@ -211,6 +211,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::erraser );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
+		option.add_relevant( OptionKeys::stepwise::rna::integration_test );
 		option.add_relevant( OptionKeys::stepwise::protein::allow_virtual_side_chains );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 		option.add_relevant( OptionKeys::rna::data_file );

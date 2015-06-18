@@ -528,7 +528,7 @@ public: // Methods
 	show_help_hier( std::ostream & stream );
 
 	/// @brief Show one option and it description in a hierarchy format
-	void show_option_help_heir(OptionKey const &, std::string &group, std::ostream & stream );
+	void show_option_help_hier(OptionKey const &, std::string &group, std::ostream & stream );
 
 
 	/// @brief Show the user-specified options and their values

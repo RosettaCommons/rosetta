@@ -166,12 +166,15 @@ sources = {
 		"gen_lig_grids",
 		"match",
 	],
+	"public/magnesium" : [
+		"mg_modeler", # Rhiju Das, 2015.
+	],
 	"public/membrane" : [
-		"mp_dock", 
-		"mp_dock_setup", 
-		"mp_transform", 
-		"mp_symdock", 
-		"mp_span_from_pdb", 
+		"mp_dock",
+		"mp_dock_setup",
+		"mp_transform",
+		"mp_symdock",
+		"mp_span_from_pdb",
 		"mp_viewer",
 	],
 	"public/membrane_abinitio": [

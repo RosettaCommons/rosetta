@@ -5,7 +5,7 @@
 NAME TP3
 IO_STRING WAT w
 TYPE LIGAND
-AA H2O
+AA HOH
 
 ATOM  O   OH   OH1  -0.834 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
 

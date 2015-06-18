@@ -543,7 +543,7 @@ viewer_main( VoidFunc worker_main )
 	pthread_attr_t stack_size_attr;
 	pthread_attr_init( &stack_size_attr );
 
-#ifdef THREAD_STACK_SIZE	
+#ifdef THREAD_STACK_SIZE
 	// set stack size allocated to thread
 	size_t thread_stack_size;
 	int error = pthread_attr_getstacksize( &stack_size_attr, &thread_stack_size );
@@ -757,6 +757,7 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
     sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
     sidechain_color_rhiju[ "  U" ] = Vector( 0.0, 0.0, 0.5); //blue [now matching EteRNA]
+    sidechain_color_rhiju[ " MG" ] = Vector( 0.0, 1.0, 0.0); //bright green
 
     return sidechain_color_rhiju;
 }
@@ -777,7 +778,7 @@ Vector get_atom_color(
 			return atom_color_by_element( residues[r]->atom_type(i).element());
 
 		case RAINBOW_COLOR:
-			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
+			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
 			return Vector(red, green, blue);
 
 		case RESIDUE_COLOR:
@@ -793,7 +794,7 @@ Vector get_atom_color(
 			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 				return atom_color_by_element( residues[r]->atom_type(i).element());
 			}
-			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
+			rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, true /*mute_color*/);
 			return Vector(red, green, blue);
 
 		case RESIDUE_CPK_COLOR:
@@ -808,7 +809,7 @@ Vector get_atom_color(
 			if ( residues[r]->is_virtual(i) ){
 				return Vector( 1.0, 1.0, 1.0 );
 			} else if ( residues[r]->atom_is_backbone(i)  ) {
-				rainbow_color( float(r)/ float(residues.size()), red, green, blue, false /*mute_color*/);
+				rainbow_color( float(r)/ float(gs.nres_for_graphics), red, green, blue, false /*mute_color*/);
 				return Vector(red, green, blue);
 			}	else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
 				return sidechain_color_rhiju[ residues[r]->name3() ];
@@ -975,7 +976,7 @@ void get_direction( Vector & direction, const int & next_res, const int & prior_
 void get_normal( Vector & normal, const int n, utility::vector1< core::conformation::ResidueCOP > const & residues ) {
 	normal = cross( (residues[ n ]->xyz( "CA" )-residues[ n-1 ]->xyz( "CA" )),
 			(residues[ n+1 ]->xyz( "CA" )-residues[ n ]->xyz( "CA" )) );
-#ifdef BOINC	
+#ifdef BOINC
 	if (normal.length_squared() > 0.00001) normal.normalize();
 #else
 	if (normal.length_squared() > 0.00001) normal.normalize(15);
@@ -1147,7 +1148,7 @@ void draw_secstruct_chunk(
 		if (gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
 		} else  {
-			get_residue_color( static_cast<float>(n - 1) + p, red, green, blue, false, residues.size());
+			get_residue_color( static_cast<float>(n - 1) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
 		const core::Real half_width = get_half_width( taper, secstruct_half_width, p );
 		draw_next_polygon(CA_segment - half_width*axis_segment, CA_segment + half_width*axis_segment,
@@ -1307,7 +1308,7 @@ void draw_coil_chunk(
 		if (gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[n]->chain(), red, green, blue );
 		} else  {
-			get_residue_color ( static_cast<float>(n) + p, red, green, blue, false, residues.size());
+			get_residue_color ( static_cast<float>(n) + p, red, green, blue, false, gs.nres_for_graphics );
 		}
 		//Need to replace the following with a real cylinder.
 		bond = CA_segment - prev_CA_segment;
@@ -1451,7 +1452,7 @@ void draw_Calpha_trace(
 		if ( gs.Color_mode == CHAIN_COLOR ) {
 			chain_color( residues[i]->chain(), red, green, blue );
 		} else {
-			get_residue_color( i, red, green, blue, false, residues.size() );
+			get_residue_color( i, red, green, blue, false,  gs.nres_for_graphics );
 		}
 		if ( i > 1 && last_bonded) {
 			glColor3f(red, green, blue);
@@ -1900,6 +1901,19 @@ draw_conformation_and_density(
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+fill_nres_for_graphics( GraphicsState & gs, utility::vector1< conformation::ResidueCOP > const & residues ) {
+	Size nres( 0 );
+	for ( Size n = 1; n <= residues.size(); n++ ) {
+		if ( residues[ n ]->is_protein() || residues[ n ]->is_NA() ) {
+			nres++;
+		}
+	}
+	if ( nres == 0 ) nres = 1;
+	gs.nres_for_graphics = nres;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void draw_conformation( utility::vector1< conformation::ResidueCOP > const & residues,
                         utility::vector1< char > const & ss,
@@ -1940,7 +1954,7 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 		}
 	}
 
-
+	fill_nres_for_graphics( gs, residues );
 	if  ( residues_protein.size() > 0 ){
 		draw_backbone( gs, residues_protein, ss );
 		draw_sidechains( gs, residues_protein, 1, residues_protein.size() );
@@ -1954,7 +1968,12 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 		gs.Color_mode = colormode_save;
 	}
 
-	if ( residues_sphere.size() > 0 ) draw_sphere( gs, residues_sphere );
+	if ( residues_sphere.size() > 0 ) {
+		ColorMode colormode_save = gs.Color_mode;
+		gs.Color_mode = RESIDUE_COLOR;
+		draw_sphere( gs, residues_sphere );
+		gs.Color_mode = colormode_save;
+	}
 
 	glPopMatrix();
 	glDisable(GL_LIGHT0);// Turn lighting off

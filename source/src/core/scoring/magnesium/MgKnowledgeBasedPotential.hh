@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.hh
+/// @file   core/scoring/magnesium/MgKnowledgeBasedPotential.hh
 /// @brief  Information on which atoms to use for computing clashes
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_Mg_KnowledgeBasedPotential_hh
-#define INCLUDED_core_scoring_rna_RNA_Mg_KnowledgeBasedPotential_hh
+#ifndef INCLUDED_core_scoring_rna_MgKnowledgeBasedPotential_hh
+#define INCLUDED_core_scoring_rna_MgKnowledgeBasedPotential_hh
 
 // Unit Headers
-#include <core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.fwd.hh>
+#include <core/scoring/magnesium/MgKnowledgeBasedPotential.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
@@ -32,14 +32,14 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace magnesium {
 
-class RNA_Mg_KnowledgeBasedPotential : public utility::pointer::ReferenceCount {
+class MgKnowledgeBasedPotential : public utility::pointer::ReferenceCount {
 
 public:
 
 	/// @brief ctor, reads data file
-	RNA_Mg_KnowledgeBasedPotential();
+	MgKnowledgeBasedPotential();
 
 	core::chemical::rna::GaussianParameter
 	get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const;
@@ -58,12 +58,16 @@ public:
 	core::chemical::rna::GaussianParameter
 	get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
+	core::Real
+	v_angle_width() const { return v_angle_width_; }
+
 private: //data
 
 	core::chemical::rna::GaussianParameter const gaussian_parameter_phosphate_oxygen_;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_imine_           ;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_exocyclic_oxygen_;
-	core::chemical::rna::GaussianParameter const gaussian_parameter_o2prime_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_o2prime_         ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_water_oxygen_    ;
 
 	core::chemical::rna::GaussianParameter const gaussian_parameter_phosphate_p_     ;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_polar_H_         ;
@@ -77,18 +81,20 @@ private: //data
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_imine_           ;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_;
-	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_          ;
-	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_polar_H_          ;
-	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_nonpolar_H_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_         ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_water_oxygen_    ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_polar_H_         ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_nonpolar_H_      ;
 
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_imine_indirect_           ;
 	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_          ;
+	core::chemical::rna::GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_         ;
 
+	Real const v_angle_width_;
 	};
 
-} //rna
+} //magnesium
 } //scoring
 } //core
 

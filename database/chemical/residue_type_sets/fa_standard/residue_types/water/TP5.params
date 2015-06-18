@@ -6,7 +6,7 @@
 NAME TP5
 IO_STRING TP5 w
 TYPE LIGAND
-AA H2O
+AA HOH
 
 ATOM  O   OH   OH1  0.0 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
 ATOM  H1  Hpol H    0.241

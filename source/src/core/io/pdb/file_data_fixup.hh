@@ -62,7 +62,7 @@ convert_res_name( std::string const & name );
 std::string
 convert_atom_name( std::string const & res_name, std::string atom_name );
 
-	void convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & rinfo, bool const force_RNA = false );
+void convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & rinfo, bool const force_RNA = false );
 
 bool is_potential_old_DNA( std::string const & res_name );
 

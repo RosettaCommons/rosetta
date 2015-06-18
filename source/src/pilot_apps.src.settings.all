@@ -708,11 +708,11 @@ sources = {
 	"pilot/rhiju" : [
 		"rna_test",
 		#"rna_assemble_test",
-	    #"gaussian_chain_func_test",
-	    "mg_test",
-		"mg_pdbstats",
+	        #"gaussian_chain_func_test", # should become a unit test
+		"mg_lores_pdbstats",
+		"mg_hires_pdbstats",
 		"dna_test",
-	    "screen_phosphates",
+	        "screen_phosphates",
 		#"rna_protein_test",
 		#"pdbstats_test"
 	],

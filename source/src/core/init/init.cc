@@ -162,6 +162,8 @@
 #include <core/scoring/methods/YHHPlanarityEnergyCreator.hh>
 #include <core/pack/interaction_graph/SurfaceEnergyCreator.hh>
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
+#include <core/scoring/magnesium/MgEnergyCreator.hh>
+#include <core/scoring/magnesium/RNA_MgPointEnergyCreator.hh>
 #include <core/scoring/methods/SymmetricLigandEnergyCreator.hh>
 #include <core/scoring/methods/UnfoldedStateEnergyCreator.hh>
 #include <core/scoring/methods/SplitUnfoldedTwoBodyEnergyCreator.hh>
@@ -183,7 +185,6 @@
 #include <core/scoring/rna/RNA_SuiteEnergyCreator.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
 #include <core/scoring/rna/RNA_VDW_EnergyCreator.hh>
-#include <core/scoring/rna/RNA_Mg_EnergyCreator.hh>
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/rna/StackElecEnergyCreator.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh>
@@ -406,6 +407,8 @@ static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAro
 static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::loop_graph::LoopCloseEnergyCreator > LoopCloseEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::magnesium::MgEnergyCreator > MgEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::magnesium::RNA_MgPointEnergyCreator > RNA_MgPointEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DNA_BaseEnergyCreator > DNA_BaseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > DirectReadoutEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;
@@ -484,7 +487,6 @@ static EnergyMethodRegistrator< scoring::rna::RNA_SugarCloseEnergyCreator > RNA_
 static EnergyMethodRegistrator< scoring::rna::RNA_SuiteEnergyCreator > RNA_SuiteEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_TorsionEnergyCreator > RNA_TorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_EnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
@@ -1060,7 +1062,7 @@ init_profiling(){
 
 void
 init_resources() {
-#ifdef PROCESS_STACK_SIZE 
+#ifdef PROCESS_STACK_SIZE
 	// set stack size of process at runtime
 	struct rlimit rl;
 	int error = getrlimit( RLIMIT_STACK, &rl );
@@ -1122,7 +1124,7 @@ void init(int argc, char * argv [])
     //Profiling measures execution performance
     init_profiling();
 
-	//Set up system resources 
+	//Set up system resources
 	init_resources();
 
     // help out user...

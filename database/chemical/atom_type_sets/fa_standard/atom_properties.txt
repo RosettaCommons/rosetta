@@ -15,8 +15,8 @@ OH       O    1.5500    0.1591   -6.7000    3.5000   10.8000 ACCEPTOR SP3_HYBRID
 ONH2     O    1.5500    0.1591   -5.8500    3.5000   10.8000 ACCEPTOR SP2_HYBRID ORBITALS
 OOC      O    1.5500    0.2100  -10.0000    6.0000   10.8000 ACCEPTOR SP2_HYBRID ORBITALS
 Oaro     O    1.5500    0.1591   -4.0000    3.5000   10.8000 ACCEPTOR AROMATIC RING_HYBRID ORBITALS # aromatic ring oxygen (e.g. furan) modeled on OH and Nhis (IWD)
-Oes2     O    1.5500    0.1591   -5.8500    3.5000   10.8000 ACCEPTOR SP2_HYBRID ORBITALS # copied from ONH2, for use in esters (nucleic acid O5',O3')
-Oes3     O    1.5500    0.1591   -6.7000    3.5000   10.8000 ACCEPTOR SP3_HYBRID DONOR ORBITALS # copied from OH, for use in esters (nucleic acid O4')
+Oes2     O    1.5500    0.1591   -5.8500    3.5000   10.8000 ACCEPTOR SP2_HYBRID ORBITALS # copied from ONH2, for use in ethers (nucleic acid O5',O3')
+Oes3     O    1.5500    0.1591   -6.7000    3.5000   10.8000 ACCEPTOR SP3_HYBRID DONOR ORBITALS # copied from OH, for use in ethers (nucleic acid O4')
 S        S    1.9000    0.1600   -4.1000    3.5000   14.7000  
 Nbb      N    1.7500    0.2384   -5.0000    3.5000    4.4000 DONOR
 CAbb     C    2.0000    0.0486    1.0000    3.5000   23.7000

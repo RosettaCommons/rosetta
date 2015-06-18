@@ -20,7 +20,9 @@
 
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
+#include <numeric/Quaternion.hh>
 #include <numeric/xyzMatrix.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/types.hh>
 
 namespace numeric {
@@ -271,7 +273,6 @@ public:
 
 		std::cout << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
 	}
-
 }; // class UniformRotationSampler
 
 } // namespace numeric

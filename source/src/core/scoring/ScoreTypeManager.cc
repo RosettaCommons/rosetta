@@ -261,7 +261,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "free_res"] = free_res;
 	name2score_type_[ "free_dof"] = free_dof;
 	name2score_type_[ "intermol"] = intermol;
-	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
 
@@ -371,9 +370,14 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_data_base"] = rna_data_base;
 	name2score_type_[ "rna_data_backbone"] = rna_data_backbone;
 
-	name2score_type_[ "rna_mg"] = rna_mg;
-	name2score_type_[ "rna_mg_rep"] = rna_mg_rep;
-	name2score_type_[ "rna_mg_indirect"] = rna_mg_indirect;
+	name2score_type_[ "rna_mg_point"] = rna_mg_point;
+	name2score_type_[ "rna_mg_point_indirect"] = rna_mg_point_indirect;
+
+	name2score_type_[ "mg"] = mg;
+	name2score_type_[ "mg_lig"] = mg_lig;
+	name2score_type_[ "mg_sol"] = mg_sol;
+	name2score_type_[ "mg_ref"] = mg_ref;
+	name2score_type_[ "hoh_ref"] = hoh_ref;
 
 	//Will these ever really be used?
 	name2score_type_[ "rna_base_pair_pairwise"] = rna_base_pair_pairwise;

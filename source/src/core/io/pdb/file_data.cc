@@ -509,7 +509,7 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 			header = HeaderInformationOP( new HeaderInformation() );
 		}
 	}
-	
+
 	// Get parametric information
 	if( options.write_pdb_parametric_info() ) {
 		get_parametric_info(remarks, pose);
@@ -603,10 +603,10 @@ void FileData::get_parametric_info(pose::RemarksOP remarks, core::pose::Pose con
 		ParametersSetCOP curset( pose.conformation().parameters_set(iset) );
 		std::stringstream curset_summary;
 		curset->get_pdb_remark( curset_summary );
-		
+
 		int cur_remark_number(1); //int instead of core::Size, to match the Remarks class.
 		if(remarks->size() > 0) cur_remark_number = (*remarks)[remarks->size()-1].num + 1;
-		
+
 		std::string cur_remark_str;
 		while(std::getline(curset_summary,cur_remark_str)) {
 			pose::RemarkInfo cur_remark;
@@ -616,7 +616,7 @@ void FileData::get_parametric_info(pose::RemarksOP remarks, core::pose::Pose con
 			cur_remark_str.clear();
 		}
 	}
-	
+
 	return;
 }
 
@@ -1750,6 +1750,16 @@ is_residue_type_recognized(
 			UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
 }
 
+/// @brief Tell user about ancient Rosetta choice to ignore HOH waters if -ignore_unrecognized_res is set.
+void
+output_ignore_water_warning_once( FileDataOptions const & options ) {
+	static bool outputted_warning ( false );
+	if ( outputted_warning ) return;
+	if ( options.ignore_unrecognized_res() && options.ignore_waters() ) {
+		TR << TR.Red << "For backwards compatibility, setting -ignore_unrecognized_res leads ALSO to -ignore_waters. You can set -ignore_waters false to get waters." << TR.Reset << std::endl;
+		outputted_warning = true;
+	}
+}
 
 /// @details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
@@ -1775,14 +1785,16 @@ is_residue_type_recognized(
 	utility::vector1<core::Real> & UA_temps,
 	FileDataOptions const & options){
 
-	if(!rsd_type_list.empty()){
+	bool const is_HOH_to_ignore ( pdb_name == "HOH" && options.ignore_waters() );
+
+	if( !rsd_type_list.empty() && !is_HOH_to_ignore ){
 		return true;
 	}
 
 	using namespace basic::options;
 	if( !(options.ignore_unrecognized_res() ||
-			options.remember_unrecognized_res() ||
-			(pdb_name == "HOH" && options.ignore_waters())) ) {
+				options.remember_unrecognized_res() ||
+				is_HOH_to_ignore ) ) {
 		// We should fail fast on unrecognized input rather than produce bad results!
 		utility_exit_with_message(" unrecognized residue " + pdb_name );
 	}
@@ -1808,9 +1820,10 @@ is_residue_type_recognized(
 			UA_temps.push_back( rtemp.find(iter->first)->second );
 		}
 	}
+
+	if ( is_HOH_to_ignore ) output_ignore_water_warning_once( options );
 	return false;
 }
-
 
 void
 pose_from_pose(

@@ -110,6 +110,7 @@ residue_types/staple/08B.params
 ## Water Types
 residue_types/water/TP3.params
 residue_types/water/TP5.params
+residue_types/water/HOH.params
 
 ## D-CAA Types
 #residue_types/d-caa/DALA.params

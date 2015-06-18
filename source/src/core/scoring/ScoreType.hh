@@ -171,9 +171,14 @@ enum ScoreType {
 	rna_base_stack,   // Stacking interactions
 	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
 
-	rna_mg, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
-	rna_mg_rep, // ad-hoc, empirically validated term to prevent uncommon mg(2+)/atom interactions.
-	rna_mg_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+	rna_mg_point, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+	rna_mg_point_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
+
+	mg,      // total hi-res term for mg(2+), including potential h2o ligands.
+  mg_lig,  // mg -- ligand interactions
+	mg_sol,  // cost of blocking fluid h2o
+	mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
+  hoh_ref, // may remove later in favor of h2o_intra, or pointwater.
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
@@ -348,7 +353,6 @@ enum ScoreType {
 	envsmooth,
 	e_pH,
 	rna_bulge,
-	mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
 
 	// Context-Independent, One-Body Carbohydrate Scoring Terms
 	sugar_bb,

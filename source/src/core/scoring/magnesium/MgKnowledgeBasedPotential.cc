@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.hh
+/// @file   core/scoring/magnesium/MgKnowledgeBasedPotential.hh
 /// @brief
 /// @author Rhiju Das
 
 
 // Unit Headers
-#include <core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.hh>
+#include <core/scoring/magnesium/MgKnowledgeBasedPotential.hh>
 
 // Package headers
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -29,18 +29,20 @@
 #include <basic/Tracer.hh>
 
 
-static thread_local basic::Tracer tr( "core.scoring.rna.RNA_Mg_KnowledgeBasedPotential" );
+static thread_local basic::Tracer tr( "core.scoring.rna.MgKnowledgeBasedPotential" );
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace magnesium {
 
 /// @details ctor
-RNA_Mg_KnowledgeBasedPotential::RNA_Mg_KnowledgeBasedPotential():
+MgKnowledgeBasedPotential::MgKnowledgeBasedPotential():
 	gaussian_parameter_phosphate_oxygen_( -5.93, 2.22, 0.55 ), // amplitude, center, width
 	gaussian_parameter_imine_           ( -3.41, 2.40, 0.33 ),
 	gaussian_parameter_exocyclic_oxygen_( -4.20, 2.33, 0.43 ), // Reduced this from 5.2 to 3.4 after seeing too many close interactions.
-	gaussian_parameter_o2prime_          ( -3.88, 2.54, 0.34 ),
+	gaussian_parameter_o2prime_         ( -3.88, 2.54, 0.34 ),
+	gaussian_parameter_water_oxygen_    ( -6.13, 2.13, 0.48 ),
+	// following are repulsive terms, used for legacy RNA_MgPointEnergy; should be described instead by 'mg_sol'
 	gaussian_parameter_phosphate_p_     ( 5.00, 2.00, 0.25 ), //this is a penalty!
 	gaussian_parameter_polar_H_         ( 5.00, 2.25, 0.50 ), //this is a penalty!
 	gaussian_parameter_nonpolar_H_      ( 5.00, 2.00, 0.50 ), //this is a penalty!
@@ -54,58 +56,60 @@ RNA_Mg_KnowledgeBasedPotential::RNA_Mg_KnowledgeBasedPotential():
 	gaussian_parameter_costheta_phosphate_oxygen_( 1.00, -0.91, 0.49 ), // amplitude, center, width of angular 'form factor'
 	gaussian_parameter_costheta_imine_           ( 1.00, -0.97, 0.18 ), // note how sharp this is!
 	gaussian_parameter_costheta_exocyclic_oxygen_( 1.00, -0.79, 0.34 ),
-	gaussian_parameter_costheta_o2prime_          ( 1.00, -0.91, 0.49 ), // not enough stats, copy from phosphate_oxygen
+	gaussian_parameter_costheta_o2prime_         ( 1.00, -0.91, 0.49 ), // not enough stats, copy from phosphate_oxygen
+	gaussian_parameter_costheta_water_oxygen_    ( 1.00, -0.91, 0.49 ), // not enough stats, copy from phosphate_oxygen
+	// following are repulsive terms, used for legacy RNA_MgPointEnergy; should be described instead by 'mg_sol'
 	gaussian_parameter_costheta_polar_H_         ( 1.00, -1.00, 0.25 ), //guess
 	gaussian_parameter_costheta_nonpolar_H_      ( 1.00, -1.00, 0.25 ), //guess
 
 	gaussian_parameter_costheta_phosphate_oxygen_indirect_( 1.00, -0.74, 0.55 ), // amplitude, center, width of angular 'form factor'
 	gaussian_parameter_costheta_imine_indirect_           ( 1.00, -0.94, 0.46 ),
 	gaussian_parameter_costheta_exocyclic_oxygen_indirect_( 1.00, -0.56, 0.61 ),
-	gaussian_parameter_costheta_o2prime_indirect_          ( 1.00, -0.74, 0.55 ) // not enough stats, copy from phosphate_oxygen
+	gaussian_parameter_costheta_o2prime_indirect_          ( 1.00, -0.74, 0.55 ), // not enough stats, copy from phosphate_oxygen
 
+  // Followinig is a guess: Note that this ends up defining alignment of
+  // acceptors to orbitals to radians -- width becomes 0.1 * 180/pi ~ 6 degrees.
+	v_angle_width_( 0.1 ) // guess.
 {
 }
 
 //////////////////////////////////////////////////////////////////
 core::chemical::rna::GaussianParameter
-RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
+MgKnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 	bool is_phosphate_oxygen( false );
 	return get_mg_potential_gaussian_parameter( rsd, j, is_phosphate_oxygen );
 }
-
 
 /////////////////////////////////
 // This is actually pretty general, and would even work for non-RNA residues, but
 // for now stick to RNA where I've tried to derive a reasonable low resolution potential
 // from the available PDB statistics in the RNA09 set.
 core::chemical::rna::GaussianParameter
-RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const{
+MgKnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const{
 
 	is_phosphate_oxygen = false;
 
-	if ( rsd.is_RNA() ) {
+	std::string const atom_type_name = rsd.atom_type( j ).name();
 
-		std::string const atom_type_name = rsd.atom_type( j ).name();
-
-		//tr << "atom check: " << j << " " << atom_type_name << "." << std::endl;
-
-		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
-			is_phosphate_oxygen = true;
-			return gaussian_parameter_phosphate_oxygen_;
-		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
-			return gaussian_parameter_imine_;
-		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
-			return gaussian_parameter_exocyclic_oxygen_;
-		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_o2prime_;
-		} else if ( rsd.atom_name( j ) == " P  " ){
-			return gaussian_parameter_phosphate_p_;
-		} else if ( atom_type_name == "Hpol" ){
-			return gaussian_parameter_polar_H_;
-		} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
-			return gaussian_parameter_nonpolar_H_;
-		}
+	if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
+		if ( rsd.is_RNA() ) is_phosphate_oxygen = true;
+		return gaussian_parameter_phosphate_oxygen_;
+	} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
+		return gaussian_parameter_imine_;
+	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
+		return gaussian_parameter_exocyclic_oxygen_;
+	} else if ( rsd.atom_name( j ) == " O2'" ){
+		return gaussian_parameter_o2prime_;
+	} else if ( rsd.atom_name( j ) == " O  " ){
+		return gaussian_parameter_water_oxygen_;
+	} else if ( atom_type_name == "Oes3" || atom_type_name == "Oes2" ){
+		return gaussian_parameter_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
+	} else if ( rsd.atom_name( j ) == " P  " ){
+		return gaussian_parameter_phosphate_p_;
+	} else if ( atom_type_name == "Hpol" ){ // repulsive term?
+		return gaussian_parameter_polar_H_;
+	} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
+		return gaussian_parameter_nonpolar_H_; // repulsive term?
 	}
 
 	return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
@@ -114,7 +118,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::confo
 
 /////////////////////////////////
 core::chemical::rna::GaussianParameter
-RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
+MgKnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
 	if ( rsd.is_RNA() ) {
 
@@ -129,6 +133,8 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( co
 			return gaussian_parameter_exocyclic_oxygen_indirect_;
 		} else if ( rsd.atom_name( j ) == " O2'" ){
 			return gaussian_parameter_o2prime_indirect_;
+		} else if ( rsd.atom_name( j ) == " O  " ){
+			return gaussian_parameter_water_oxygen_;
 		}
 	}
 
@@ -138,26 +144,26 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( co
 
 /////////////////////////////////
 core::chemical::rna::GaussianParameter
-RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
+MgKnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
-	if ( rsd.is_RNA() ) {
+	std::string const atom_type_name = rsd.atom_type( j ).name();
 
-		std::string const atom_type_name = rsd.atom_type( j ).name();
-
-		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
-			return gaussian_parameter_costheta_phosphate_oxygen_;
-		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
-			return gaussian_parameter_costheta_imine_;
-		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
-			return gaussian_parameter_costheta_exocyclic_oxygen_;
-		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_costheta_o2prime_;
-		} else if ( atom_type_name == "Hpol" ){
-			return gaussian_parameter_costheta_polar_H_;
-		} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
-			return gaussian_parameter_costheta_nonpolar_H_;
-		}
+	if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
+		return gaussian_parameter_costheta_phosphate_oxygen_;
+	} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
+		return gaussian_parameter_costheta_imine_;
+	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
+		return gaussian_parameter_costheta_exocyclic_oxygen_;
+	} else if ( rsd.atom_name( j ) == " O2'" ){
+		return gaussian_parameter_costheta_o2prime_;
+	} else if ( rsd.atom_name( j ) == " O  " ){
+		return gaussian_parameter_costheta_water_oxygen_;
+	} else if ( atom_type_name == "Oes3" || atom_type_name == "Oes2" ){
+		return gaussian_parameter_costheta_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
+	} else if ( atom_type_name == "Hpol" ){
+		return gaussian_parameter_costheta_polar_H_;
+	} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
+		return gaussian_parameter_costheta_nonpolar_H_;
 	}
 
 	return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
@@ -165,22 +171,19 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( co
 
 /////////////////////////////////
 core::chemical::rna::GaussianParameter
-RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
+MgKnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
-	if ( rsd.is_RNA() ) {
+	std::string const atom_type_name = rsd.atom_type( j ).name();
 
-		std::string const atom_type_name = rsd.atom_type( j ).name();
-
-		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
-			return gaussian_parameter_costheta_phosphate_oxygen_indirect_;
-		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
-			return gaussian_parameter_costheta_imine_indirect_;
-		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
-			return gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_costheta_o2prime_indirect_;
-		}
+	// This information should probably go into a special RNA_Mg_Potential.cc function or something.
+	if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
+		return gaussian_parameter_costheta_phosphate_oxygen_indirect_;
+	} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
+		return gaussian_parameter_costheta_imine_indirect_;
+	} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
+		return gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
+	} else if ( rsd.atom_name( j ) == " O2'" ){
+		return gaussian_parameter_costheta_o2prime_indirect_;
 	}
 
 	return core::chemical::rna::GaussianParameter( 0.0, 0.0, 0.0 );
@@ -189,12 +192,12 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_para
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_Mg_KnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) const
+MgKnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) const
 {
-	//We don't know a priori which atom numbers correspond to which
-	// atom names (e.g., O2' on an adenosine could be different depending
-	// on whether its at a chainbreak, terminus, etc.)
-	//Better to do a quick setup every time to pinpoint atoms that require
+	// We don't know a priori which atom numbers correspond to which
+	//  atom names (e.g., O2' on an adenosine could be different depending
+	//  on whether its at a chainbreak, terminus, etc.)
+	// Better to do a quick setup every time to pinpoint atoms that require
 	//  monitoring for Mg binding.
 
 	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
@@ -240,6 +243,6 @@ RNA_Mg_KnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose
 }
 
 
-} //rna
+} //magnesium
 } //scoring
 } //core

@@ -179,8 +179,11 @@ namespace modeler {
 		using namespace core::optimization;
 		atom_tree_minimizer_ = core::optimization::AtomTreeMinimizerOP( new AtomTreeMinimizer );
 		cartesian_minimizer_ = core::optimization::CartesianMinimizerOP( new CartesianMinimizer );
+
     bool const use_nblist( true );
-    minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type() /*default dfpmin_armijo_nonmonotone*/, options_->min_tolerance() /* default 0.000025*/, use_nblist, false, false ) );
+		std::string const min_type = "dfpmin_armijo_nonmonotone";
+		//Real const min_tolerance = 0.000025;
+    minimizer_options_ = core::optimization::MinimizerOptionsOP( new MinimizerOptions( options_->min_type() /*default */, options_->min_tolerance() /* default */, use_nblist, false, false ) );
     minimizer_options_->nblist_auto_update( true );
 	}
 

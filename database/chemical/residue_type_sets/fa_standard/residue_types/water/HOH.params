@@ -1,6 +1,7 @@
 # This HOH params is currently a direct copy of TP3.params
-# Its in fa_standard so that some PDBs can get read in directly without cleanup.
-# rosetta residue topology file
+# Its in fa_standard so that some PDBs can get HOH read in directly without cleanup.
+# (TP3.params looks for the residue name "WAT" in PDBs)
+# Might potentially want to unify with TP3.params.
 #
 # taken from TP3 params in amber: dat/leap/lib/solvents.cmd
 NAME HOH

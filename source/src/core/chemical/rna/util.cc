@@ -169,6 +169,7 @@ std::string const	default_jump_atom( conformation::Residue const & rsd ) {
 		return " CA "; // note that this does not match 'traditional' choice in FoldTree.cc
 	}
 	if ( rsd.name3() == " MG" )		return "MG  ";
+	if ( rsd.name3() == "HOH" )		return " O  ";
 	if ( rsd.name3() == " ZN" )		return "ZN  ";
 	if ( rsd.name3() == "XXX" )	return " Y  ";
 

@@ -1,0 +1,6 @@
+-s arich_2r8s_RNA.pdb
+-out:file:silent arich_mg_hydrate.out
+-score:weights test_hires2.wts
+-o arich_2r8s_hydrate_mgscan.pdb
+-pose_ligand_res 8
+-integration_test

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/rna/RNA_Mg_EnergyCreator.hh
-/// @brief  Declaration for the class that connects RNA_Mg_Energy with the ScoringManager
+/// @file   src/core/scoring/magnesium/MgEnergyCreator.hh
+/// @brief  Declaration for the class that connects MgEnergy with the ScoringManager
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_rna_RNA_Mg_EnergyCreator_hh
-#define INCLUDED_core_scoring_rna_RNA_Mg_EnergyCreator_hh
+#ifndef INCLUDED_core_scoring_rna_MgEnergyCreator_hh
+#define INCLUDED_core_scoring_rna_MgEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,12 +24,12 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace magnesium {
 
-class RNA_Mg_EnergyCreator : public methods::EnergyMethodCreator
+class MgEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new RNA_Mg_Energy
+	/// @brief Instantiate a new MgEnergy
 	virtual
 	methods::EnergyMethodOP
 		create_energy_method(
@@ -44,7 +44,7 @@ public:
 
 };
 
-} //rna
+} //magnesium
 } //scoring
 } //core
 

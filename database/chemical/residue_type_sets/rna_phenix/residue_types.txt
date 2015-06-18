@@ -12,8 +12,8 @@ MM_ATOM_TYPE_SET fa_standard
 ../fa_standard/residue_types/rosetta_specific/VRT1.params
 
 ## water & metal ions
-#../fa_standard/residue_types/water/TP3.params
-#../fa_standard/residue_types/metal_ions/MG.params
+../fa_standard/residue_types/water/HOH.params
+../fa_standard/residue_types/metal_ions/MG.params
 
 # Non-natural na
 ../fa_standard/residue_types/nucleic/rna_nonnatural/INO.params

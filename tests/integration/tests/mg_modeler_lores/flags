@@ -1,0 +1,8 @@
+-s arich_2r8s_RNA.pdb
+-out:file:silent arich_mg.out
+-score:weights test_lores.wts
+-o arich_2r8s_mgscan.pdb
+-score_cut -14
+-pose_ligand_res 8
+-lores_scan
+-integration_test

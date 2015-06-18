@@ -1,0 +1,11 @@
+fa_rep        0.21
+fa_atr        0.20
+geom_sol_fast 0.17
+mg_lig        1.0
+mg_sol        0.2
+mg_ref        1.0
+hoh_ref       3.0
+hbond_sc      1.0
+
+NO_HB_ENV_DEP
+ENLARGE_H_LJ_WDEPTH

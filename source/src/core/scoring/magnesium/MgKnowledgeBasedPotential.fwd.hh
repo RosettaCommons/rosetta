@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_Mg_KnowledgeBasedPotential_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_Mg_KnowledgeBasedPotential_fwd_hh
+#ifndef INCLUDED_core_scoring_rna_MgKnowledgeBasedPotential_fwd_hh
+#define INCLUDED_core_scoring_rna_MgKnowledgeBasedPotential_fwd_hh
 
 // Unit Headers
 
@@ -26,14 +26,14 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace magnesium {
 
-class RNA_Mg_KnowledgeBasedPotential;
+class MgKnowledgeBasedPotential;
 
-typedef utility::pointer::shared_ptr< RNA_Mg_KnowledgeBasedPotential > RNA_Mg_KnowledgeBasedPotentialOP;
-typedef utility::pointer::shared_ptr< RNA_Mg_KnowledgeBasedPotential const > RNA_Mg_KnowledgeBasedPotentialCOP;
+typedef utility::pointer::shared_ptr< MgKnowledgeBasedPotential > MgKnowledgeBasedPotentialOP;
+typedef utility::pointer::shared_ptr< MgKnowledgeBasedPotential const > MgKnowledgeBasedPotentialCOP;
 
-} //rna
+} //magnesium
 } //scoring
 } //core
 

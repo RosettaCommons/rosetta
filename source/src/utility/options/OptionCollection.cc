@@ -569,7 +569,7 @@ void OptionCollection::load_option_from_file(
 #define COL2 25
 #define COL3 30
 
-	void OptionCollection::show_option_help_heir(OptionKey const &key, std::string &group, std::ostream & stream )
+	void OptionCollection::show_option_help_hier(OptionKey const &key, std::string &group, std::ostream & stream )
 	{
 		using std::string;
 
@@ -590,10 +590,16 @@ void OptionCollection::load_option_from_file(
 					stream << RJ( COL1-3, opt_group )<<":" << RJ( 3, "" ) << "| " << A( COL2, "" ) << " | " << A(3,"") << "| \n";
 				}
 			};
-			stream << RJ( COL1, opt_str ) << " | "  << A( COL2, opt.value_string() ) //<< A( COL2/2, opt.default_string() )
-						 << " |" + A(4,opt.type_string())+ "| "
-						 <<  wrapped( opt.description(), 2, COL3, empty_separator.str() ) << "\n";
-
+			if ( opt_str.size() <= COL1 ) {
+				stream << RJ( COL1, opt_str ) << " | "  << A( COL2, opt.value_string() ) //<< A( COL2/2, opt.default_string() )
+							 << " |" + A(4,opt.type_string())+ "| "
+							 <<  wrapped( opt.description(), 2, COL3, empty_separator.str() ) << "\n";
+			} else {
+				platform::Size col2_adjusted = COL2 - ( opt_str.size() - COL1 );
+				stream << RJ( COL1, opt_str ) << " | "  << A( col2_adjusted, opt.value_string() ) //<< A( COL2/2, opt.default_string() )
+							 << " |" + A(4,opt.type_string())+ "| "
+							 <<  wrapped( opt.description(), 2, COL3, empty_separator.str() ) << "\n";
+			}
 			//stream << RJ( COL1, "" ) << " | " << A( COL2, "" ) << " | " << A(3,"") << " | \n";
 
 
@@ -646,13 +652,13 @@ void OptionCollection::load_option_from_file(
 			stream << "--------------------------------------------------------------------------------------\n";
 			for( unsigned int i=0; i<relevant_.size(); i++) {
 				OptionKey const & key( *relevant_[i] );
-				show_option_help_heir( key, group, stream );
+				show_option_help_hier( key, group, stream );
 			}
 		}
 		else {
 			for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 				OptionKey const & key( *i );
-				show_option_help_heir( key, group, stream );
+				show_option_help_hier( key, group, stream );
 			}
 		}
 	}

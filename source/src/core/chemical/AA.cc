@@ -118,6 +118,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "URA" ] = na_ura;
 
 	n2aa[ "H2O" ] = aa_h2o;
+	n2aa[ "HOH" ] = aa_h2o; //ok to have redundant?
 
     // Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;

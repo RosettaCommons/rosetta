@@ -1236,6 +1236,7 @@ Options = Option_Group( '',
 		Option( 'bond_angle_sd_polar_hydrogen', 'Real', desc="Standard deviation for bond_geometry angle term with -vary_polar_hydrogen_geometry flag, in degrees", default='60.0'),
 		Option( 'bond_torsion_sd_polar_hydrogen', 'Real', desc="Standard deviation for bond_geometry torsion term with -vary_polar_hydrogen_geometry flag, in degrees", default='30.0'),
     Option( 'rna_bulge_bonus_once_per_loop', 'Boolean', desc='For legacy stepwise term rna_bulge in SWM runs, compute bulge bonus on a per-loop basis, rather than a bonus for each virtual residue.', default='true' ),
+		Option( 'compute_mg_sol_for_hydrogens', 'Boolean', desc='mg_sol includes penalties for hydrogens near Mg(2+)', default='false'),
 		Option( 'rg_local_span', 'IntegerVector', desc="First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20",default ="0"),
 		Option( 'unmodifypot', 'Boolean', desc="Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms"),
 		Option( 'conc', 'Real', desc="intermolecular concentration to use in intermol term (give in M)", default="1.0"),
@@ -5451,6 +5452,37 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 	),
 
+
+	# options for motif protocol stuff
+	Option_Group( 'magnesium',
+		Option( 'scan', 'Boolean', desc="default mode: scan Mg(2+) through PDB", default='true' ),
+		Option( 'mg_res', 'IntegerVector', desc="supply PDB residue numbers of Mg(2+) to look at [leave blank to scan a new Mg(2+)]", default='' ),
+		Option( 'minimize_during_scoring', 'Boolean', desc="minimize mg(2+) during scoring/hydration of each position", default='true' ),
+		Option( 'ligand_res', 'ResidueChainVector', desc="in scan, look at positions near these residues (PDB numbering/chains)", default='' ),
+		Option( 'pose_ligand_res', 'IntegerVector', desc="in scan, look at positions near these residues, pose numbering (1,2,..)", default='' ),
+		Option( 'lores_scan', 'Boolean', desc="do not try hydration or minimization during scan", default='false' ),
+		Option( 'xyz_step', 'Real', desc="increment in Angstroms for xyz scan", default='0.50' ),
+		Option( 'score_cut', 'Real', desc="score cut for silent output (5.0 for hires; -8.0 for lores)", default='5.0' ), # /* used to be -8.0 for low res */
+		Option( 'score_cut_PDB', 'Real', desc="score cut for PDB output from scanning (deprecated)", default='0.0' ),
+		Option( 'integration_test', 'Boolean', desc="Stop after first mg position found -- for testing", default='false' ),
+		Option( 'tether_to_closest_res', 'Boolean', desc="stay near closest ligand res; helps force unique grid sampling in different cluster jobs.", default='false' ),
+		Option( 'fixup', 'Boolean', desc="test mode: align the 6 octahedral virtual 'orbitals' for specified mg_res", default='false' ),
+		Option( 'pack_water_hydrogens', 'Boolean', desc="test mode: strip out non-mg waters, align mg frames, pack mg waters for specified mg_res", default='false' ),
+		Option( 'hydrate', 'Boolean', desc="test mode: strip out waters and hydrate mg(2+) for specified mg_res", default='false' ),
+		Option( 'monte_carlo', 'Boolean', desc="test mode: monte carlo sampling of Mg(2+) and surrounding waters", default='false' ),
+		Option( 'scored_hydrogen_sampling', 'Boolean', desc="in -pack_water_hydrogens test mode, when packing water hydrogens, use a complete scorefunction to rank (slow)", default='false' ),
+		Option( 'all_hydration_frames', 'Boolean', desc="in -hydration test mode, Sample all hydration frames (slow)", default='false' ),
+		Option( 'leave_other_waters', 'Boolean', desc="in -hydration test mode, do not remove all waters", default='false' ),
+		Option( 'minimize', 'Boolean', desc="minimize Mg(2+) after hydration or hydrogen-packing", default='false' ),
+		Option( 'minimize_mg_coord_constraint_distance', 'Real', desc="harmonic tether to Mg(2+) during minimize", default='0.2' ),
+
+		Option_Group('montecarlo',
+        Option( 'temperature', 'Real', desc="temperature for Monte Carlo", default='1.0' ),
+				Option( 'cycles', 'Integer', desc="Monte Carlo cycles", default='100000' ),
+				Option( 'dump', 'Boolean', desc="dump PDBs from Mg monte carlo", default='false' ),
+				Option( 'add_delete_frequency', 'Real', desc="add_delete_frequency for Monte Carlo", default='0.1' ),
+ 		) # monte_carlo
+ 	), # magnesium
 
 	# options for motif protocol stuff
 	Option_Group( 'motifs',

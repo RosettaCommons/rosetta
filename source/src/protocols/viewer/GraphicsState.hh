@@ -62,6 +62,7 @@ class GraphicsState {
 
 		core::Real density_sigma;  // contour level of density
 		bool density_redraw;
+	  std::size_t nres_for_graphics;
 
 		GraphicsState() :
 			BBdisplay_state (SHOW_CARTOON),//default
@@ -70,8 +71,10 @@ class GraphicsState {
 			Trajectory_state (SHOW_ALL_TRIALS),//default
 			show_H_state (SHOW_NO_H), //default
 			previous_vertex1( 0.0 ), previous_vertex2( 0.0 ), previous_width_vector( 0.0 ),
-			density_sigma( 2.0 ), density_redraw(true)  //default
+			density_sigma( 2.0 ), density_redraw(true),  //default
+			nres_for_graphics( 0 )
 		{}
+
 		GraphicsState(
 									BBdisplayState BBdisplay_state_in,
 									SCdisplayState SCdisplay_state_in,
@@ -85,7 +88,8 @@ class GraphicsState {
 			Trajectory_state (Trajectory_state_in),
 			show_H_state (show_H_state_in),
 			previous_vertex1( 0.0 ), previous_vertex2( 0.0 ), previous_width_vector( 0.0 ),
-			density_sigma( 2.0 ), density_redraw(true)  // default
+			density_sigma( 2.0 ), density_redraw(true),  // default
+			nres_for_graphics( 1 )
 		{}
 };
 

@@ -1467,6 +1467,9 @@ Etable::precalc_etable_coefficients(
 				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).is_polar_hydrogen() ) ||
 										( atom_type(i).is_polar_hydrogen() && atom_type(j).is_acceptor() ) ) {
 					sigma = lj_hbond_hdis;
+				} else if ( ( atom_type(i).is_acceptor() && atom_type(j).name() == "MG2p" ) ||
+										( atom_type(i).name() == "MG2p" && atom_type(j).is_acceptor() ) ) {
+					sigma = lj_hbond_hdis;
 //           if (tight_hb && ((i == 15 && j == 22) || (j == 15 && i == 22)))
 // 						sigma = lj_hbond_accOch_hdis;
 				}

@@ -200,7 +200,7 @@ public: // accessors
 	Data const &
 	get( std::size_t slot ) const
 	{
-		assert( data_[ slot ] );
+		debug_assert( data_[ slot ] );
 		return *( data_[ slot ] );
 	}
 
