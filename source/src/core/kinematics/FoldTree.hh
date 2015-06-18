@@ -531,6 +531,10 @@ public:
 	utility::vector1< Edge >
 	get_outgoing_edges( int const seqpos ) const;
 
+	/// @brief Returns all chemical edges from fold tree
+	utility::vector1< Edge >
+	get_chemical_edges( ) const;
+
 	/// @brief  Get the number of the jump that builds (connects to) a given residue
 	int
 	get_jump_that_builds_residue( int const seqpos ) const;

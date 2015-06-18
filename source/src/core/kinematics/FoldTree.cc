@@ -2225,6 +2225,17 @@ FoldTree::get_outgoing_edges( int const seqpos ) const
 	return outgoing;
 }
 
+utility::vector1< Edge >
+FoldTree::get_chemical_edges( ) const
+{
+	utility::vector1< Edge > outgoing;
+	for ( const_iterator it = begin(), it_end = end(); it != it_end; ++it ) {
+		if ( it->is_chemical_bond() )
+			outgoing.push_back( *it );
+	}
+	return outgoing;
+}
+
 ///////////////////////////////////////////////////////////////////////
 /// @details  Returns the folding direction of a given polymer (peptide) residue. If the residue
 /// is in a peptide edge this is the direction in which that edge is traveled if

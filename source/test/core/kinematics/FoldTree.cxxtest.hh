@@ -95,6 +95,46 @@ class FoldTreeTest : public CxxTest::TestSuite {
     }
   }
 
+	void test_get_chemical_edges() {
+		FoldTree ft;
+		ft.add_edge( 1, 5, -1 );
+		ft.add_edge( 3, 6, "ND2", "C1" );
+		ft.add_edge( 6, 10, -1 );
+		ft.add_edge( 1, 11, 1 );
+		ft.add_edge( 11, 20, -1 );
+		ft.add_edge( 15, 21, "O2", "C1" );
+		ft.add_edge( 21, 23, -1 );
+		ft.add_edge( 20, 24, 2 );
+		ft.add_edge( 24, 30, -1 );
+		ft.add_edge( 22, 31, "O6", "C1" );
+		ft.add_edge( 31, 33, -1 );
+
+		TS_ASSERT( ft.check_fold_tree() );
+
+		utility::vector1< core::kinematics::Edge > const chemical_edges( ft.get_chemical_edges() );
+		TS_ASSERT_EQUALS( chemical_edges.size(), 3 );
+
+		core::kinematics::Edge const edge1( chemical_edges[ 1 ] );
+		core::kinematics::Edge const edge2( chemical_edges[ 2 ] );
+		core::kinematics::Edge const edge3( chemical_edges[ 3 ] );
+
+		TS_ASSERT( edge1.is_valid() );
+		TS_ASSERT( edge1.is_chemical_bond() );
+		TS_ASSERT( ! edge1.is_jump() ); //assert that it is not a jump
+		TS_ASSERT( ! edge1.is_peptide() ); //assert that it is not a peptide
+
+		TS_ASSERT_EQUALS( edge2.start_atom(), "O2" );
+		TS_ASSERT_EQUALS( edge2.stop_atom(), "C1" );
+		TS_ASSERT_EQUALS( edge2.label(), -2 );
+
+		TS_ASSERT_EQUALS( edge3.start(), 22 );
+		TS_ASSERT_EQUALS( edge3.stop(), 31 );
+		TS_ASSERT_EQUALS( edge3.polymer_direction(), 1 );
+	}
+
+
+
+
 	///SML 10-19-12 this is a utility function in kinematics/util.*, but it seems appropriate to test with FoldTree
 	void test_utility_function_remodel_fold_tree_to_account_for_insertion() {
 
