@@ -1117,7 +1117,8 @@ check_whether_hairpin_connects_short_strand(
 	select_statement.bind(2,	start_res);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size component_size_1;
+	//Size component_size_1;
+	Size component_size_1=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
 	while(res.next())
 	{
 		res >> component_size_1;
@@ -1125,7 +1126,7 @@ check_whether_hairpin_connects_short_strand(
 
 	if (component_size_1 < 3)
 	{
-		return true; // don't use this hairpin for LR/PA
+		return true; // don't use this hairpin for LR/PA judgement
 	}
 
 	string	select_string_2 =
@@ -1142,7 +1143,8 @@ check_whether_hairpin_connects_short_strand(
 	select_statement_2.bind(2,	next_start_res);
 	result res_2(basic::database::safely_read_from_database(select_statement_2));
 
-	Size component_size_2;
+	//Size component_size_2;
+	Size component_size_2=0; // http://benchmark.graylab.jhu.edu/sub_test/17264163 shows that component_size_1 was not initialized
 	while(res_2.next())
 	{
 		res_2 >> component_size_2;
@@ -1150,10 +1152,10 @@ check_whether_hairpin_connects_short_strand(
 
 	if (component_size_2 < 3)
 	{
-		return true; // don't use this hairpin for LR/PA
+		return true; // don't use this hairpin for LR/PA judgement
 	}
 
-	return false; // use this hairpin for LR/PA
+	return false; // use this hairpin for LR/PA judgement
 } //check_whether_hairpin_connects_short_strand
 
 
