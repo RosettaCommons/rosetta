@@ -231,10 +231,6 @@ public:
 	methods::EnergyMethodOP
 	energy_method( ScoreType const & t, methods::EnergyMethodOptions const & options ) const;
 
-	///
-	void
-	add_etable( std::string const & name, etable::EtableOP etable );
-	
 	/// @brief make etable for extra partially softies
 	etable::EtableOP
 	make_partially_soft_etable( std::string const & name, etable::EtableOptions etable_options ) const;
