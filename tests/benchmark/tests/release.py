@@ -262,7 +262,7 @@ def py_rosetta_release(kind, rosetta_dir, working_dir, platform, config, hpc_dri
                             elif os.path.isdir(src): shutil.copytree(src, dest)
                             execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
 
-		build_rosetta_namespace_dir = buildings_path + '/rosetta'
+                build_rosetta_namespace_dir = buildings_path + '/rosetta'
                 git_rosetta_namespace_dir = working_dir+'/'+git_repository_name+'/rosetta'
                 if os.path.isdir(build_rosetta_namespace_dir):
                     shutil.copytree(build_rosetta_namespace_dir, git_rosetta_namespace_dir)
