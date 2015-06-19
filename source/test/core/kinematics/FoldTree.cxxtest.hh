@@ -118,7 +118,7 @@ class FoldTreeTest : public CxxTest::TestSuite {
 		core::kinematics::Edge const edge2( chemical_edges[ 2 ] );
 		core::kinematics::Edge const edge3( chemical_edges[ 3 ] );
 
-		TS_ASSERT( edge1.is_valid() );
+		TS_ASSERT( edge1.valid() );
 		TS_ASSERT( edge1.is_chemical_bond() );
 		TS_ASSERT( ! edge1.is_jump() ); //assert that it is not a jump
 		TS_ASSERT( ! edge1.is_peptide() ); //assert that it is not a peptide
@@ -129,10 +129,7 @@ class FoldTreeTest : public CxxTest::TestSuite {
 
 		TS_ASSERT_EQUALS( edge3.start(), 22 );
 		TS_ASSERT_EQUALS( edge3.stop(), 31 );
-		TS_ASSERT_EQUALS( edge3.polymer_direction(), 1 );
 	}
-
-
 
 
 	///SML 10-19-12 this is a utility function in kinematics/util.*, but it seems appropriate to test with FoldTree
