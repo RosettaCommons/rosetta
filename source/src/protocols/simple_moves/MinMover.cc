@@ -173,8 +173,8 @@ MinMover::score_function( ScoreFunctionCOP scorefxn_in )
 }
 
 // Why would you want a deep copy of the ScoreFunction here?
-// In any case, commenting this out, because PyRosetta cannot distinguish between these two function signature, always
-// chosing this one and leading to unexpected behavior. ~Labonte
+// In any case, commenting this out, because PyRosetta cannot distinguish between these two function signatures, always
+// choosing this one and leading to unexpected behavior. ~Labonte
 /*void
 MinMover::score_function( ScoreFunction const & scorefxn_in )
 {

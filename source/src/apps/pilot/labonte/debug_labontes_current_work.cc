@@ -74,7 +74,7 @@ main( int argc, char *argv[] )
 		//make_pose_from_sequence( pose, "AAAAAAAAAA", "fa_standard" );
 
 		pose_from_pdb( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.pdb" );
-		io::carbohydrates::dump_gws( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.gws" );
+		core::io::carbohydrates::dump_gws( pose, "/home/labonte/Workspace/Carbohydrates/4NCO_fixed3.gws" );
 		cout << "GWS file generated." << endl;
 
 		/*

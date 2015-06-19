@@ -33,18 +33,20 @@ namespace id {
 /// @details Consider a few examples to get a better picture for how torsions 
 /// are uniquely identified:
 ///
-///	@code
-///	#include <core/id/types.hh>
-///	using core::id::BB;
+/// @code
+/// #include <core/id/types.hh>
+/// using core::id::BB;
 ///
-///	TorsionID(253, BB, 1)  // Phi backbone torsion of residue 253.
-///	TorsionID(253, BB, 2)  // Psi backbone torsion of residue 253.
-///	TorsionID(253, BB, 3)  // Omega backbone torsion of residue 253.
-///	@endcode
+/// TorsionID(253, BB, 1)  // Phi backbone torsion of residue 253.
+/// TorsionID(253, BB, 2)  // Psi backbone torsion of residue 253.
+/// TorsionID(253, BB, 3)  // Omega backbone torsion of residue 253.
+/// @endcode
 ///
 /// Note the order of the elements in construction calls (residue, type, 
 /// torsion) go from least to most specific.
 ///
+/// TorsionIDs are very different for JUMP TorsionTypes. In such a case, they are interpreted as follows:
+/// TorsionID(1, JUMP, 2)  // RB2 of jump #1 for the Pose.
 class TorsionID
 {
 public: // Creation
@@ -79,32 +81,40 @@ public: // Creation
 
 public: // Properties
 
+	/// @brief For this TorsionID, return the Residue number within the complex OR the Jump number for the Pose.
 	inline
 	Size
 	rsd() const { return rsd_; }
 
+	/// @brief For this TorsionID, set the Residue number within the complex OR the Jump number for the Pose.
 	inline
 	Size &
 	rsd() { return rsd_; }
 
+	/// @brief Return the type (BB, CHI,NU, BRANCH, JUMP) of this torsion.
 	inline
 	TorsionType
 	type() const { return type_; }
 
+	/// @brief Set the type (BB, CHI,NU, BRANCH, JUMP) of this torsion.
 	inline
 	TorsionType &
 	type() { return type_; }
 
+	/// @brief Return the torsion number of the given type within the residue OR
+	/// the rigid-body identifier for a JUMP TorsionType.
 	inline
 	uint
 	torsion() const { return torsion_; }
 
+	/// @brief Set the torsion number of the given type within the residue OR
+	/// the rigid-body identifier for a JUMP TorsionType.
 	inline
 	Size &
 	torsion() { return torsion_; }
 
 	/// @brief Is this id valid?
-	/// \note Must return false for BOGUS_TORSION_ID
+	/// @note Must return false for BOGUS_TORSION_ID
 	inline
 	bool
 	valid() const { return ( rsd_ > 0 && torsion_ > 0 ); }
@@ -119,7 +129,7 @@ public: // Friends
  		TorsionID const & a
  	)
 	{
-		os << "TorsionID " << a.rsd_ << ' ' << a.type_ << ' ' << a.torsion_;
+		os << "TorsionID " << a.rsd_ << ' ' << to_string( a.type_ ) << ' ' << a.torsion_;
 		return os;
 	}
 
@@ -166,14 +176,13 @@ public: // Friends
 
 private: // Fields
 
-
-	/// @brief Residue number within the complex
+	// Residue number within the complex OR the Jump number for the Pose
 	Size rsd_;
 
-	/// @brief  The type (BB,CHI,JUMP) of this torsion
+	// The type (BB, CHI,NU, BRANCH, JUMP) of this torsion
 	TorsionType type_;
 
-	/// @brief Torsion number of the given type within the residue
+	// Torsion number of the given type within the residue OR the rigid-body identifier for a JUMP TorsionType
 	Size torsion_;
 
 
@@ -182,7 +191,6 @@ private: // Fields
 
 /// @brief Globals
 extern TorsionID const BOGUS_TORSION_ID;
-
 
 } // namespace id
 } // namespace core

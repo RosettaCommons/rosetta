@@ -12,11 +12,8 @@
 /// @author Phil Bradley
 
 
-// Unit headers
+// Unit header
 #include <core/id/TorsionID.hh>
-
-
-// C++ headers
 
 
 namespace core {
@@ -24,7 +21,6 @@ namespace id {
 
 /// @brief Globals
 TorsionID const BOGUS_TORSION_ID( 0, BB, 0 );
-
 
 } // namespace id
 } // namespace core

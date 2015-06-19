@@ -1,6 +1,7 @@
 -include_sugars
 -include_lipids
 -read_pdb_link_records
+-write_pdb_link_records
 -mute all
 -unmute core.chemical.carbohydrates
 -override_rsd_type_limit

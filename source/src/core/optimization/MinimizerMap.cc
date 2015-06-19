@@ -283,17 +283,15 @@ MinimizerMap::setup(
 	kinematics::MoveMap const & move_map
 )
 {
-	// this clears dof_nodes_ and dimensions dof_node_pointer_
+	// This clears dof_nodes_ and dimensions dof_node_pointer_
 	reset( pose );
 
-	// convert the allow_bb,allow_chi,allow_jump information
-	// in the MoveMap into a simple boolean mask over AtomTree
-	// degrees of freedom
-	// this is necessary because the AtomTree doesn't know which degrees
-	// of freedom are chi angles, which are phi angles, etc
-	// the dof_mask is a low-level type of allow-move information
-	// that's used by the atomtree atoms inside Atom::setup_min_map
-	//
+	// Convert the allow_bb, allow_chi, allow_jump, etc. information
+	// in the MoveMap into a simple boolean mask over AtomTree degrees of freedom.
+	// This is necessary because the AtomTree doesn't know which degrees
+	// of freedom are chi angles, which are phi angles, etc.
+	// The dof_mask is a low-level type of allow-move information
+	// that's used by the AtomTree atoms inside Atom::setup_min_map
 	id::DOF_ID_Mask dof_mask( false );
 	pose::setup_dof_mask_from_move_map( move_map, pose, dof_mask );
 
@@ -305,7 +303,6 @@ MinimizerMap::setup(
 	dof_nodes_.sort( DOF_Node_sorter );
 
 	// identify phi/psi/omega...
-	//
 	this->assign_rosetta_torsions( pose );
 
 

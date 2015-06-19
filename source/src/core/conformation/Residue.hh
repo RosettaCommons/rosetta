@@ -771,9 +771,12 @@ public:
 	///     Residue.lower_connect_atom
 	///     Residue.upper_connect_atom
 	///     Pose
-
 	Size
 	connect_atom( Residue const & other ) const;
+
+	/// @brief  Scan through the list of atoms connected to a given atom and return the 1st heavy atom found.
+	uint first_adjacent_heavy_atom( uint const atom_index ) const;
+
 
 	/// @brief Returns the shortest path distance from  <atom>  to any other atom in this residue
 	///

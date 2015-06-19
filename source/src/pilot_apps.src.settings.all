@@ -323,7 +323,7 @@ sources = {
 	],
 
 	"pilot/hpark" : [
-	        #"test_sampling",
+		#"test_sampling",
 		"mpi_refinement",
 		#"serial_refinement"
 	],
@@ -348,7 +348,7 @@ sources = {
 		#"class_tests",
 		#"test_grafting",
 		],
-        "pilot/james" : [
+	"pilot/james" : [
 		"analyze_casp9",
 		"per_residue_features",
 		"jdock",
@@ -516,6 +516,7 @@ sources = {
 	"pilot/labonte" : [
 		"debug_labontes_current_work",
 		"dock_glycans",
+		"test_C-terminal_conjugation",
 		"test_ResidueProperties",
 		"test_sugar_torsion_getters_and_setters",
 	],

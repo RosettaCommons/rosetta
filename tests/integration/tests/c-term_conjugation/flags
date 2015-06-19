@@ -1,0 +1,8 @@
+-ignore_unrecognized_res
+-include_sugars
+-override_rsd_type_limit
+-read_pdb_link_records
+-write_pdb_link_records
+-packing::repack_only
+-out:levels core.import_pose.import_pose:300
+-out:levels core.io.pdb.file_data:300

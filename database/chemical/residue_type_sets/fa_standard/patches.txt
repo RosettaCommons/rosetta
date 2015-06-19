@@ -42,6 +42,11 @@ patches/nucleic/rna/Virtual_RNA_Residue.txt       # VIRTUAL_RNA_RESIDUE
 # Special
 patches/SpecialRotamer.txt
 
+# Branching/Conjugation (requires -read_pdb_link_records flag to patch)
+patches/branching/O-linked_conjugation.txt
+patches/branching/S-linked_conjugation.txt
+patches/branching/C-terminal_conjugation.txt
+
 #################################################################################################
 # Instead of just uncommenting below, consider setting up a CMDLINE_SELECTOR in the patch file,
 #  and in your app, put in a line like this after init():
@@ -129,9 +134,8 @@ patches/carbohydrates/upper_terminus.txt
 ### cutpoints
 patches/carbohydrates/cutpoint_lower.txt
 patches/carbohydrates/cutpoint_upper.txt
-### glycosylation/branching (requires -read_pdb_link_records flag to patch)
+### branching (requires -read_pdb_link_records flag to patch)
 patches/carbohydrates/N-linked_glycosylation.txt
-patches/carbohydrates/O-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/3-branch.txt

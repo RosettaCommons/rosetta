@@ -44,9 +44,6 @@ core::uint find_seqpos_of_saccharides_parent_residue( conformation::Residue cons
 std::pair< conformation::ResidueCOP, conformation::ResidueCOP > get_glycosidic_bond_residues( Pose const & pose,
 		uint const sequence_position );
 
-/// @brief  Scan through the list of atoms connected to a given "connect_atom" and return the first heavy atom found.
-core::uint atom_next_to_connect_atom( conformation::Residue const & residue, core::uint const connect_atom_index );
-
 
 /// @brief  Return the AtomIDs of the four phi torsion reference atoms.
 utility::vector1< id::AtomID > get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position );

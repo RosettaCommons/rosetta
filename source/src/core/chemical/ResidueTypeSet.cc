@@ -209,9 +209,15 @@ void ResidueTypeSet::init(
 			line = utility::string_split( line, '#' )[1];
 			line = utility::string_split( line, ' ' )[1];
 
+			// Skip branching/conjugation patches unless included with read_pdb_link_records flag.
+			if ( ( ! option[ OptionKeys::in::file::read_pdb_link_records ] ) &&
+					( line.substr( 0, 17 ) == "patches/branching" ) ) {
+				continue;
+			}
+
 			// Skip carbohydrate patches unless included with include_sugars flag.
-			if ((!option[OptionKeys::in::include_sugars]) &&
-					(line.substr(0, 21) == "patches/carbohydrates")) {
+			if ( ( ! option[ OptionKeys::in::include_sugars ] ) &&
+					( line.substr( 0, 21 ) == "patches/carbohydrates" ) ) {
 				continue;
 			}
 

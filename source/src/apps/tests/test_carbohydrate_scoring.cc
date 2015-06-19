@@ -88,61 +88,103 @@ main( int argc, char *argv[] )
 		// Initialize core.
 		devel::init( argc, argv );
 
-		// Declare variables.
-		Pose maltotriose, lactose;
-		ScoreFunctionOP sf( get_score_function() );
+		// Declare Pose variables.
+		Pose maltotriose, lactose, LeX;
+
+		// Set up ScoreFunctions.
+		ScoreFunctionOP sf_full( get_score_function() );
+		ScoreFunctionOP sf_bb( new ScoreFunction );
+		sf_bb->set_weight( sugar_bb, 1.0 );
+
+		// Set up MinMovers.
+		kinematics::MoveMapOP mm( new kinematics::MoveMap );
+		mm->set_bb( true );
+		mm->set_chi( false );
+		mm->set_nu( false );
+		mm->set_branches( true );
+		simple_moves::MinMover minimizer( mm, sf_full, "dfpmin", 0.01, true );
+		cout << minimizer << endl;
 
 
-		cout << "Importing maltotriose:" << endl;
+		// Begin testing. /////////////////////////////////////////////////////
+
+		cout << "Importing maltotriose (D-alpha1->4 linkage):" << endl;
 
 		pose_from_pdb( maltotriose, PATH + "maltotriose.pdb" );
 
-		sample_torsions( maltotriose, 2, *sf );
+		sample_torsions( maltotriose, 2, *sf_full );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing lactose:" << endl;
+		cout << "Importing lactose (D-beta1->4 linkage):" << endl;
 
 		pose_from_pdb( lactose, PATH + "lactose.pdb" );
 
-		sample_torsions( lactose, 2, *sf );
+		sample_torsions( lactose, 2, *sf_full );
 
 		cout << "Setting lactose on slope toward minimum..." << endl;
 		lactose.set_phi( 2, -120.0 );
 		lactose.set_psi( 2, 180 );
 
-		output_score( lactose, 2, *sf );
+		output_score( lactose, 2, *sf_full );
 
 		cout << "Minimizing lactose..." << endl;
 
-		kinematics::MoveMapOP mm( new kinematics::MoveMap );
-		mm->set_bb( true );
-		mm->set_chi( false );
-		mm->set_nu( false );
-		simple_moves::MinMover minimizer( mm, sf, "dfpmin", 0.01, true );
-
 		minimizer.apply( lactose );
 
-		output_score( lactose, 2, *sf );
+		output_score( lactose, 2, *sf_full );
 
 		cout << "Repeating process using the sugar_bb scoring term only..." << endl;
 
-		sf = ScoreFunctionOP( new ScoreFunction );
-		sf->set_weight( sugar_bb, 1.0 );
-		minimizer.score_function( sf );
+		minimizer.score_function( sf_bb );
 
 		lactose.set_phi( 2, -120.0 );
 		lactose.set_psi( 2, 180 );
 
-		output_score( lactose, 2, *sf );
+		output_score( lactose, 2, *sf_bb );
 
 		minimizer.apply( lactose );
 
-		output_score( lactose, 2, *sf );
+		output_score( lactose, 2, *sf_bb );
 
 		cout << "(The minimized angles should be close to -60/120.)" << endl;
 
-		sf->show( cout, lactose );
+		sf_bb->show( cout, lactose );
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing LewisX (D-beta1->4 main-chain linkage and L-alpha1->3 branch linkage):" << endl;
+
+		pose_from_pdb( LeX, PATH + "Lex.pdb" );
+
+		output_score( LeX, 3, *sf_full );
+
+		cout << "Setting LewisX on slope toward minimum..." << endl;
+		LeX.set_phi( 3, -120.0 );
+		LeX.set_psi( 3, 150 );
+
+		output_score( LeX, 3, *sf_full );
+
+		cout << "Minimizing LewisX..." << endl;
+
+		minimizer.score_function( sf_full );
+		minimizer.apply( LeX );
+
+		output_score( LeX, 3, *sf_full );
+
+		cout << "Repeating process using the sugar_bb scoring term only..." << endl;
+
+		minimizer.score_function( sf_bb );
+
+		LeX.set_phi( 3, -120.0 );
+		LeX.set_psi( 3, 150 );
+
+		output_score( LeX, 3, *sf_bb );
+
+		minimizer.apply( LeX );
+
+		output_score( LeX, 3, *sf_bb );
+
+		cout << "(The minimized angles should be close to -60/210.)" << endl;
 	} catch ( excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return -1;

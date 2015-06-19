@@ -37,9 +37,10 @@
 namespace core {
 namespace import_pose {
 
+typedef std::string String;
+
 /// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
 /// extern basic::Tracer TR_dump_pdb_dummy;
-
 void
 read_all_poses(
   const utility::vector1<std::string>& filenames,
@@ -61,11 +62,6 @@ read_additional_pdb_data(
 	bool read_fold_tree = false
 );
 
-/* Undefined, commenting out to fix PyRosetta build  void
-read_pdbinfo_labels(
-  std::string const & s,
-  pose::Pose & pose
-); */
 
 /// @brief Returns a PoseOP object from the Pose created from input
 /// PDB  <filename>
@@ -191,20 +187,6 @@ poses_from_pdbs(
   bool read_fold_tree
 );
 
-/* utility::vector1< core::pose::Pose >
-poses_from_pdbs(
-	chemical::ResidueTypeSet const & residue_set,
-	utility::vector1< std::string > const & filenames,
-	ImportPoseOptions const & options,
-	bool read_fold_tree = false
-); */
-
-/* utility::vector1< core::pose::PoseOP >
-poseOPs_from_pdbs(
-	chemical::ResidueTypeSet const & residue_set,
-	utility::vector1< std::string > const & filenames,
-	bool read_fold_tree = false
-); */
 
 // FA_STANDARD residue set
 
@@ -257,7 +239,7 @@ void pose_from_pdb_stream(
 	ImportPoseOptions const & options
 );
 
-/// uses the CENTROID residue_set
+// uses the CENTROID residue_set
 
 /// @brief Reads in data from input PDB  <filename>  and stores it in the Pose
 /// <pose>  using the CENTROID ResidueTypeSet (centroid)
@@ -268,12 +250,9 @@ centroid_pose_from_pdb(
 	bool read_fold_tree = false
 );
 
-typedef std::string String;
 
 void set_reasonable_fold_tree( core::pose::Pose & pose );
 
-/// @brief Look for peptide bonds connected by >3A and replace them with a jump
-// Undefinded commenting out to fix PyRosetta build void convert_missing_dens_to_jump( pose::Pose & pose );
 
 /// @brief Create pose object, using given FileData object.
 /// If PDB cleanin specified - it will be applied first.

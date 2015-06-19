@@ -28,10 +28,11 @@ namespace id {
 // Types
 
 /// @brief DOF (degrees of freedom) type
-/// - PHI: torsion or improper angle
-/// - THETA: bond angle
-/// - D: distance
-/// - RB1-RB6: rigid-body jump translation and rotation
+/// @details
+/// - PHI     : torsion or improper angle
+/// - THETA   : bond angle
+/// - D       : distance
+/// - RB1-RB6 : rigid-body jump translation and rotation
 enum DOF_Type {
 	PHI = 1, // used for lookup into utility::vector1
 	THETA,
@@ -72,14 +73,17 @@ to_string( DOF_Type const & type ) {
 }
 
 /// @brief Torsion type -- used in the TorsionID class
-/// - BB: backbone torsion
-/// - CHI: sidechain torsion
-/// - NU: internal ring torsion
-/// - JUMP: rigid-body transformation
+/// @details
+/// - BB     : "backbone" torsion (Actually, this is a main-chain torsion.)
+/// - CHI    : sidechain torsion
+/// - NU     : internal ring torsion
+/// - BRANCH : torsions at branch connection points which are CHEMICAL edges of the FoldTree
+/// - JUMP   : rigid-body transformation
 enum TorsionType {
 	BB = 1,
 	CHI,
 	NU,
+	BRANCH,
 	JUMP
 };
 
@@ -92,6 +96,8 @@ to_string( TorsionType const & type ) {
 		return "SC";
 	case NU:
 		return "NU";
+	case BRANCH:
+		return "BRANCH";
 	case JUMP:
 		return "JUMP";
 	default:

@@ -181,6 +181,10 @@ Options = Option_Group( '',
 						"disulfides causes severe clashes for native disulfides.",
 				legal=['true','false'], ),
 		Option( 'detect_disulf_tolerance', 'Real', desc='disulf tolerance', default="0.5" ),
+		Option( 'constraints_from_link_records', 'Boolean',
+			   desc="Turn link records into atom pair and angle constraints",
+			   legal=['true','false'],
+			   default='false' ),
 
 		# Auto-detection options for metalloproteins --------------------------
 		Option( "auto_setup_metals", "Boolean", desc="Automatically adds covalent linkages to bound metal ions, as well as atom pair "

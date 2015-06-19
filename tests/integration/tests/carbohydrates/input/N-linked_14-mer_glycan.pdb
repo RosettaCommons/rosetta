@@ -13,6 +13,9 @@ HETNAM     Man C   3  ->2)-alpha-D-Manp
 HETNAM     Man D   1  ->2)-alpha-D-Manp
 HETNAM     Man D   2  ->2)-alpha-D-Manp
 LINK         ND2 ASN A   2                 C1  Glc B   1     1555   1555  1.48
+LINK         O4  Glc B   1                 C1  Glc B   2     1555   1555  1.4
+LINK         O4  Glc B   2                 C1  Man B   3     1555   1555  1.4
+LINK         O3  Man B   3                 C1  Man B   4     1555   1555  1.4
 LINK         O6  Man B   3                 C1  Man C   1     1555   1555  1.42
 LINK         O6  Man C   1                 C1  Man D   1     1555   1555  1.37
 ATOM      1  N   ALA A   1      10.210   1.504   1.746  1.00 20.00           N1+

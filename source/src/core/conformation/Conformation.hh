@@ -637,7 +637,6 @@ public:  // Bonds, Connections, Atoms, & Stubs
 
 
 	/// @brief identify polymeric connections
-  ///
 	void
 	set_polymeric_connection(
 		Size res_id_lower,
@@ -645,93 +644,94 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	);
 
 	/// @brief Create an arbitrary covalent connection between two residues.
-	///
-  void
-  set_noncanonical_connection(
-          Size res_id_lower,
-          Size lr_conn_id,
-          Size res_id_upper,
-          Size ur_conn_id
+	void
+	set_noncanonical_connection(
+		Size res_id_lower,
+		Size lr_conn_id,
+		Size res_id_upper,
+		Size ur_conn_id
   );
 
 
-  /// @brief Update the polymer connection status between lower_seqpos and lower_seqpos+1
-  /// based on chainID's and termini.  If update_connection_dep_atoms is true, positions of
-  /// atoms dependent on the polymer connection are updated.
-  void
-  update_polymeric_connection( Size lower_seqpos, bool update_connection_dep_atoms=false );
+	/// @brief Update the polymer connection status between lower_seqpos and lower_seqpos+1
+	/// based on chainID's and termini.  If update_connection_dep_atoms is true, positions of
+	/// atoms dependent on the polymer connection are updated.
+	void
+	update_polymeric_connection( Size lower_seqpos, bool update_connection_dep_atoms=false );
 
 	/// @brief Update the connection status between the lower_seqpos residue's lr_conn_id connection ID and
 	/// the upper_seqpos residue's ur_conn_id connection ID.
-  void
-  update_noncanonical_connection(Size lower_seqpos,
-                                 Size lr_conn_id,
-                                 Size upper_seqpos,
-                                 Size ur_conn_id);
+	void
+	update_noncanonical_connection(Size lower_seqpos,
+		Size lr_conn_id,
+		Size upper_seqpos,
+		Size ur_conn_id);
 
 	/// @brief Detect existing disulfides from the protein structure.
-  ///
 	virtual
 	void
 	detect_disulfides();
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
-  ///
-  void
-  fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
+	void
+	fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
 
 public: // Access to the ParametersSets -- Vikram K. Mulligan (vmullig@uw.edu), 17 Nov. 2014
 
-/// @brief Create a new (empty) ParametersSet object and add its owning pointer
-/// to the current Conformation object.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-void create_new_parameters_set() {
-	parameters_set_.push_back( ParametersSetOP( new ParametersSet ) );
-	return;
-}
+	/// @brief Create a new (empty) ParametersSet object and add its owning pointer
+	/// to the current Conformation object.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	void create_new_parameters_set() {
+		parameters_set_.push_back( ParametersSetOP( new ParametersSet ) );
+		return;
+	}
 
-/// @brief Add a (predefined) ParametersSet object (via its owning pointer)
-/// to the current Conformation object.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-void add_parameters_set( ParametersSetOP newset ) {
-	parameters_set_.push_back( newset );
-	return;
-}
+	/// @brief Add a (predefined) ParametersSet object (via its owning pointer)
+	/// to the current Conformation object.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	void add_parameters_set( ParametersSetOP newset ) {
+		parameters_set_.push_back( newset );
+		return;
+	}
 
-/// @brief Get the number of parameters sets defined for this Conformation.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-core::Size n_parameters_sets() const {
-	return parameters_set_.size();
-}
+	/// @brief Get the number of parameters sets defined for this Conformation.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	core::Size n_parameters_sets() const {
+		return parameters_set_.size();
+	}
 
-/// @brief Delete the list of ParametersSetOP objects.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-void clear_parameters_set_list() {
-	parameters_set_.clear();
-	return;
-}
+	/// @brief Delete the list of ParametersSetOP objects.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	void clear_parameters_set_list() {
+		parameters_set_.clear();
+		return;
+	}
 
-/// @brief Access one of the ParametersSets objects linked to this Conformation.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-ParametersSetOP parameters_set( core::Size const index ) {
-	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
-		"In core::conformation::Conformation::parameters_set() : Index is out of range.  Index value is expected to be greater than zero and less than or equal to the number of parameters sets in this Conformation object.");
-	return parameters_set_[index];
-}
+	/// @brief Access one of the ParametersSets objects linked to this Conformation.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	ParametersSetOP parameters_set( core::Size const index ) {
+		runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+			"In core::conformation::Conformation::parameters_set() : Index is out of range. "
+			"Index value is expected to be greater than zero and less than or equal to "
+			"the number of parameters sets in this Conformation object.");
+		return parameters_set_[index];
+	}
 
-/// @brief Const access to one of the ParametersSets objects linked to this Conformation.
-/// @author Vikram K. Mulligan (vmullig@uw.edu)
-virtual
-ParametersSetCOP parameters_set( core::Size const index ) const {
-	runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
-		"In core::conformation::Conformation::parameters_set() : Index is out of range.  Index value is expected to be greater than zero and less than or equal to the number of parameters sets in this Conformation object.");
-	return parameters_set_[index];
-}
+	/// @brief Const access to one of the ParametersSets objects linked to this Conformation.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	virtual
+	ParametersSetCOP parameters_set( core::Size const index ) const {
+		runtime_assert_string_msg(index > 0 && index <= parameters_set_.size(),
+			"In core::conformation::Conformation::parameters_set() : Index is out of range. "
+			"Index value is expected to be greater than zero and less than or equal to "
+			"the number of parameters sets in this Conformation object.");
+		return parameters_set_[index];
+	}
 
 
 public:  // Conformation Cutting/Pasting
@@ -778,14 +778,15 @@ public:  // DoFs/xyzs
 	set_dof( DOF_ID const & id, Real setting );
 
 
-	/// @brief Returns the torsion angle  <id>
+	/// @brief Return the torsion angle OR rigid-body offset for  <id>
 	Real
 	torsion( TorsionID const & id ) const;
 
-	/// @brief Sets the AtomTree DOF and the torsion in the corresponding Residue
+	/// @brief Sets the AtomTree DOF and the torsion OR rigid-body offset in the corresponding Residue or Jump
 	virtual
 	void
 	set_torsion( TorsionID const & id, Real setting );
+
 
 	/// @brief Returns the torsion angle defined by  <atom[1-4]>
 	Real
@@ -961,7 +962,7 @@ public: //passport managment methods
 	virtual void push_passport( core::environment::DofPassportCOP ) {}
 	virtual core::environment::DofPassportCOP pop_passport() { return core::environment::DofPassportCOP(); }
 	virtual bool has_passport() const { return false; }
-  virtual bool is_protected() const { return false; }
+	virtual bool is_protected() const { return false; }
 
 public:  // observer management
 
@@ -1231,6 +1232,7 @@ private:
 	Real
 	atom_tree_torsion( TorsionID const & tor_id ) const;
 
+
 	/// @brief get four backbone atoms which define this backbone torsion
 	/// @note  Returns TRUE to signal FAILURE
 	bool
@@ -1241,6 +1243,15 @@ private:
 		AtomID & id3,
 		AtomID & id4
 	) const;
+
+	/// @brief  Find the four atoms that define the torsion angle of this branch connection.
+	bool branch_connection_torsion_angle_atoms(
+			TorsionID const & torsion,
+			AtomID & id1,
+			AtomID & id2,
+			AtomID & id3,
+			AtomID & id4 ) const;
+
 
 	/// @brief Helper method to determine whether two atoms have a chemical bond linking them.
 	/// @details Intended for internal use, but there's really no reason not to make this a public

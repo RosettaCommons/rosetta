@@ -31,8 +31,16 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 
-// Numeric header
+// Numeric headers
 #include <numeric/conversions.hh>
+#include <numeric/angle.functions.hh>
+
+// Basic header
+#include <basic/Tracer.hh>
+
+
+// Construct tracer.
+static thread_local basic::Tracer TR( "core.scoring.methods.carbohydrates.SugarBackboneEnergy" );
 
 
 namespace core {
@@ -81,6 +89,10 @@ SugarBackboneEnergy::residue_energy(
 	Energy score( 0.0 );
 
 	// Calculate phi component.
+	if ( info->is_L_sugar() ) {
+		// L-Sugars use the mirror image of the score functions.
+		phi = 360 - phi;
+	}
 	if ( info->is_alpha_sugar() ) {
 		score += E_( ALPHA_LINKS, phi );
 	} else if ( info->is_beta_sugar() ) {
@@ -107,6 +119,8 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	using namespace pose::carbohydrates;
 	using namespace scoring::carbohydrates;
 
+	std::cout << "Evaluating torsion: " << torsion_id << std::endl;
+
 	Real deriv( 0.0 );
 
 	// This is a carbohydrate-only scoring method.
@@ -115,8 +129,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	// Ignore REPLONLY variants.
 	if ( rsd.has_variant_type( chemical::REPLONLY ) ) { return deriv; }
 
-	// This scoring method only considers glycosidic torsions, which may have either BB or CHI TorsionIDs.
+	// This scoring method only considers glycosidic torsions, which may have either BB, CHI, or BRANCH TorsionIDs.
 	if ( ! torsion_id.valid() ) {
+		std::cout << "Torsion not valid: " << torsion_id << std::endl;
 		return deriv;
 	}
 
@@ -124,19 +139,35 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// Rosetta defines this torsion angle differently than IUPAC.  In addition, this torsion belongs to the next
 		// residue.  We need to figure out what that residue is, use pose.phi() to get the value, and see if it's
 		// alpha or beta.
+
+		// First, what is the next residue?
+		uint next_rsd( 0 );
 		if ( torsion_id.type() == BB ) {
 			// If this is a main-chain torsion, we can be confident that the next residue on this chain MUST be n+1.
-			uint const next_rsd( torsion_id.rsd() + 1 );
-			chemical::carbohydrates::CarbohydrateInfoCOP info( pose.residue( next_rsd ).carbohydrate_info() );
-		  	if ( info->is_alpha_sugar() ) {
-				deriv = E_.evaluate_derivative( ALPHA_LINKS, pose.phi( next_rsd ) );
-			} else if ( info->is_beta_sugar() ) {
-				deriv = E_.evaluate_derivative( BETA_LINKS, pose.phi( next_rsd ) );
-			}  // ...else it's a linear sugar, and this scoring method does not apply.
+			next_rsd = torsion_id.rsd() + 1;
+		} else if ( torsion_id.type() == BRANCH ) {
+			Size const n_mainchain_connections( rsd.n_polymeric_residue_connections() );
+			next_rsd = rsd.residue_connection_partner( n_mainchain_connections + torsion_id.torsion() );
 		} else {
-			// This must be the phi of a branch residue.  Figuring out which one is more complicated.
-			// TODO: Figure it out.
+			TR.Error << "Torsion " << torsion_id << " cannot be a phi torsion!" << std::endl;
 		}
+
+		// Now, get the next residue's phi and its info.
+		chemical::carbohydrates::CarbohydrateInfoCOP info( pose.residue( next_rsd ).carbohydrate_info() );
+		Angle phi( pose.phi( next_rsd ) );
+		std::cout << "Phi: " << phi << std::endl;
+		if ( info->is_L_sugar() ) {
+			// L-Sugars use the mirror image of the score functions. The phi functions run from -180 to 180.
+			//phi = numeric::principal_angle_degrees( 360 - phi );
+			phi = -phi;
+		}
+
+		// Finally, we can evaluate.
+	  	if ( info->is_alpha_sugar() ) {
+			deriv = E_.evaluate_derivative( ALPHA_LINKS, phi );
+		} else if ( info->is_beta_sugar() ) {
+			deriv = E_.evaluate_derivative( BETA_LINKS, phi );
+		}  // ...else it's a linear sugar, and this scoring method does not apply.
 	} else if ( is_psi_torsion( pose, torsion_id ) ) {
 		// Rosetta defines this torsion angle the same way as IUPAC; however, it is the psi of the following residue.
 		// This should not matter, though, because the CHI energy function only cares about whether the linkage is

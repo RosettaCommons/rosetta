@@ -44,10 +44,16 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/io/pdb/file_data.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>
@@ -1692,48 +1698,66 @@ pose_max_nbr_radius( Pose const & pose )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-setup_dof_to_torsion_map(
-	pose::Pose const & pose,
-	id::DOF_ID_Map< id::TorsionID > & dof_map
-	)
+setup_dof_to_torsion_map( pose::Pose const & pose, id::DOF_ID_Map< id::TorsionID > & dof_map )
 {
-	Size const n_res( pose.n_residue() );
+	using namespace id;
 
 	// Set DOF mask size and initialize to an invalid TorsionID
 	core::pose::initialize_dof_id_map( dof_map, pose, id::BOGUS_TORSION_ID );
 
+	// Torsion angles
+	Size const n_res( pose.n_residue() );
 	for ( Size i = 1; i <= n_res; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
+		// PHIL note the Residue-based helper functions you need for this
+		// PHIL also note the pose.conformation() interface
+
+		conformation::Residue const & rsd( pose.residue( i ) );
 
 		// first the backbone torsion angles
-		{
-			// PHIL note the Residue-based helper functions you need for this
-			// PHIL also note the pose.conformation() interface
-			int const n_torsions( rsd.mainchain_atoms().size() );
-			for ( int j=1; j<= n_torsions; ++j ) {
-				id::TorsionID const tor_id( i, id::BB, j );
-				id::DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
-				if ( id.valid() ) {
-					dof_map[ id ] = tor_id;
-				}
+		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
+		for ( uint j( 1 ); j <= n_bb_torsions; ++j ) {
+			TorsionID const tor_id( i, BB, j );
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
+			if ( id.valid() ) {
+				dof_map[ id ] = tor_id;
 			}
-		}
+		}  // j=1, n_bb_torsions
 
-		{
-			// PHIL note the Residue-based helper functions you need for this
-			// PHIL also note the pose.conformation() interface
-			int const n_torsions( rsd.nchi() );
-			for ( int j=1; j<= n_torsions; ++j ) {
-				id::TorsionID const tor_id( i, id::CHI, j );
-				id::DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
-				if ( id.valid() ) {
-					dof_map[ id ] = tor_id;
+		// then the side chain torsions
+		Size const n_chi_torsions( rsd.nchi() );
+		for ( uint j( 1 ); j <= n_chi_torsions; ++j ) {
+			TorsionID const tor_id( i, CHI, j );
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
+			if ( id.valid() ) {
+				if ( dof_map[ id  ] != BOGUS_TORSION_ID ) {
+					// This chi angle was already assigned to the DoF map as a BB TorsionType. Do not change it.
+					continue;
 				}
-			} // j=1,chi-torsions
-		} // scope
+				dof_map[ id ] = tor_id;
+			}
+		}  // j=1, n_chi_torsions
 
+		// next, the internal ring torsions
+		Size const n_nu_torsions( rsd.n_nus() );
+		for ( uint j( 1 ); j <= n_nu_torsions; ++j ) {
+			TorsionID const tor_id( i, NU, j );
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
+			if ( id.valid() ) {
+				dof_map[ id ] = tor_id;
+			}
+		}  // j=1, n_nu_torsions
 
-	} // i=1,n_res
+		// finally, any branch connection torsions
+		Size const n_branch_torsions( rsd.n_non_polymeric_residue_connections() );
+		for ( uint j( 1 ); j <= n_branch_torsions; ++j ) {
+			TorsionID const tor_id( i, BRANCH, j );
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( tor_id ) );
+			if ( id.valid() ) {
+				dof_map[ id ] = tor_id;
+			}
+		}  // j=1, n_branch_torsions
+
+	}  // i=1, n_res
 
 	for ( Size i = 1; i <= pose.num_jump(); ++i ) {
 		for ( int j=1; j<= 6; ++j ) {
@@ -1746,7 +1770,7 @@ setup_dof_to_torsion_map(
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
+// Convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
 setup_dof_mask_from_move_map(
 		kinematics::MoveMap const & mm,
@@ -1774,7 +1798,7 @@ setup_dof_mask_from_move_map(
 		// PHIL note the Residue-based helper functions you need for this
 		// PHIL also note the pose.conformation() interface
 
-		conformation::Residue const & rsd( pose.residue(i));
+		conformation::Residue const & rsd( pose.residue( i ) );
 
 		// first the backbone torsion angles
 		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
@@ -1787,25 +1811,26 @@ setup_dof_mask_from_move_map(
 		// carbohydrates, but if any other ResidueTypes have strict definitions of backbone vs ring angles, similar code
 		// could be added here to "subtract out" main chain torsions already covered by nu torsions. ~Labonte
 		Size n_cyclic_main_chain_torsions = 0;  // By default, a residue is acyclic.
-		if (rsd.is_carbohydrate()) {
-			if (rsd.carbohydrate_info()->is_acyclic()) {
+		if ( rsd.is_carbohydrate() ) {
+			if ( rsd.carbohydrate_info()->is_acyclic() ) {
 				n_cyclic_main_chain_torsions = 0;
-			} else if (rsd.carbohydrate_info()->has_exocyclic_linkage()) {
+			} else if ( rsd.carbohydrate_info()->has_exocyclic_linkage() ) {
 				n_cyclic_main_chain_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
 			} else /* doesn't have an omega angle */ {
 				n_cyclic_main_chain_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
 			}
 		}
 
-		for ( uint j=1; j<= n_bb_torsions; ++j ) {
+		for ( uint j( 1 ); j<= n_bb_torsions; ++j ) {
+			TorsionID const torsion( i, BB, j );
 			bool mm_setting;
-			if (j <= n_cyclic_main_chain_torsions) {
+			if ( j <= n_cyclic_main_chain_torsions ) {
 				mm_setting = false;  // Do not move "backbone" torsions that are part of a ring.
 			} else {
-				mm_setting = mm.get(TorsionID(i, BB, j));
+				mm_setting = mm.get( torsion );
 			}
-			if ( mm_setting == PHI_default ) continue;
-			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, BB, j)));
+			if ( mm_setting == PHI_default ) { continue; }
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {  // If not valid, it's probably just a terminal/chainbreak torsion.
 				dof_mask[ id ] = mm_setting;
 			}
@@ -1814,9 +1839,10 @@ setup_dof_mask_from_move_map(
 		// then the side chain torsions
 		Size const n_chi_torsions( rsd.nchi() );
 		for ( uint j = 1; j <= n_chi_torsions; ++j ) {
-			bool mm_setting = mm.get(TorsionID(i, CHI, j));
-			if ( mm_setting == PHI_default ) continue;
-			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, CHI, j)));
+			TorsionID const torsion( i, CHI, j );
+			bool const mm_setting( mm.get( torsion ) );
+			if ( mm_setting == PHI_default ) { continue; }
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
 				dof_mask[ id ] = mm_setting;
 			} else {
@@ -1825,12 +1851,13 @@ setup_dof_mask_from_move_map(
 			}
 		} // j=1, n_chi_torsions
 
-		// finally, the internal ring torsions
-		Size const n_nu_torsions = rsd.n_nus();
-		for ( uint j = 1; j <= n_nu_torsions; ++j ) {
-			bool mm_setting = mm.get(TorsionID(i, NU, j));
-			if ( mm_setting == PHI_default ) continue;
-			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, NU, j)));
+		// next, the internal ring torsions
+		Size const n_nu_torsions( rsd.n_nus() );
+		for ( uint j( 1 ); j <= n_nu_torsions; ++j ) {
+			TorsionID const torsion( i, NU, j );
+			bool const mm_setting = mm.get( torsion );
+			if ( mm_setting == PHI_default ) { continue; }
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
 				dof_mask[ id ] = mm_setting;
 			} else {
@@ -1838,6 +1865,21 @@ setup_dof_mask_from_move_map(
 						"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
 			}
 		} // j=1, n_nu_torsions
+
+		// finally, any branch connection torsions
+		Size const n_branch_torsions( rsd.n_non_polymeric_residue_connections() );
+		for ( uint j( 1 ); j <= n_branch_torsions; ++j ) {
+			TorsionID const torsion( i, BRANCH, j );
+			bool const mm_setting = mm.get( torsion );
+			if ( mm_setting == PHI_default ) { continue; }
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
+			if ( id.valid() ) {
+				dof_mask[ id ] = mm_setting;
+			} else {
+				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+						"Rosetta branch connection angle: residue " << i << " BRANCH " << j << std::endl;
+			}
+		} // j=1, n_branch_torsions
 	} // i=1, n_res
 
 	// Jumps.
@@ -2492,6 +2534,72 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 	}	else if ( pose.residue_type( cutpoint_res ).is_protein() ) {
 		runtime_assert( pose.residue_type( cutpoint_res + 1 ).is_protein() );
 		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
+	}
+}
+	
+void
+get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd )
+{
+	using namespace scoring::func;
+	
+	/*HarmonicFuncOP amide_harm_func    ( new HarmonicFunc( 1.34, 0.05 ) );
+	HarmonicFuncOP thioester_harm_func( new HarmonicFunc( 1.83, 0.1 ) );
+	*/
+	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	
+	for ( std::map< std::string, utility::vector1<io::pdb::LinkInformation> >::iterator it = fd.link_map.begin(),
+			end = fd.link_map.end(); it != end; ++it ) {
+		for ( Size ii = 1; ii <= it->second.size(); ++ii ) {
+			Size id1 = pose.pdb_info()->pdb2pose( it->second[ii].chainID1, it->second[ii].resSeq1 );
+			Size id2 = pose.pdb_info()->pdb2pose( it->second[ii].chainID2, it->second[ii].resSeq2 );
+			conformation::Residue const & NUC = pose.residue( id1 );
+			conformation::Residue const & ELEC = pose.residue( id2 );
+			
+			id::AtomID aidNUC( NUC.atom_index( it->second[ii].name1 ), id1 );
+			id::AtomID aidC( ELEC.atom_index( it->second[ii].name2 ), id2 );
+			
+			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it->second[ii].length, 0.05 ) );
+			scoring::constraints::ConstraintCOP atompair(
+					new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
+			pose.add_constraint( atompair );
+			
+			// Now let's add constraints based on residue identities and atom names. For example, let's cover
+			if ( it->second[ii].name2 == "C" ) {
+				// the C-terminal conjugation case:
+				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
+				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
+				scoring::constraints::ConstraintCOP ang(
+						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				pose.add_constraint( ang );
+				scoring::constraints::ConstraintCOP dih(
+						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				pose.add_constraint( dih );
+			} else if ( it->second[ii].name2 == "CD" ) {
+				// The sidechain conjugation to glx case
+				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
+				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
+				scoring::constraints::ConstraintCOP ang(
+						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				pose.add_constraint( ang );
+				scoring::constraints::ConstraintCOP dih(
+						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				pose.add_constraint( dih );
+			} else if ( it->second[ii].name2 == "CG" ) {
+				// The sidechain conjugation to asx case
+				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
+				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
+				scoring::constraints::ConstraintCOP ang(
+						new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) );
+				pose.add_constraint( ang );
+				scoring::constraints::ConstraintCOP dih(
+						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				pose.add_constraint( dih );
+			}
+
+			//AtomID aidO( list[ ii ].second.id_O_, list[ ii ].second.resnum_ );
+			//AtomID aidCA( list[ ii ].second.id_CA_, list[ ii ].second.resnum_ );
+		}
 	}
 }
 

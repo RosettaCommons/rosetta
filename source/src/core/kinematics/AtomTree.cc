@@ -468,8 +468,8 @@ AtomTree::torsion_angle_dof_id(
 
 	//if ( debug ) update_xyz_coords();
 
-debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
-					atom_pointer( atom3_in_id ) && atom_pointer( atom4_in_id ) );
+	debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
+			atom_pointer( atom3_in_id ) && atom_pointer( atom4_in_id ) );
 
 	// TODO: STUART -- (low priority) I'd like to be able to cache the results of this calculation
 	// to allow faster access.
@@ -513,7 +513,7 @@ debug_assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
 		return DOF_ID( atom4->id(), id::PHI );
 	}
 
-debug_assert( !atom4->is_jump() &&
+	debug_assert( !atom4->is_jump() &&
 			atom4->raw_input_stub_atom0() == atom3 &&
 			atom4->raw_input_stub_atom1() == atom3 &&
 			atom4->raw_input_stub_atom2() == atom2 &&
@@ -648,7 +648,7 @@ debug_assert( !atom4->is_jump() &&
 		Real const cos_theta2 = std::cos( theta1 ) * std::cos( theta3 ) +
 			std::sin( theta1 ) * std::sin( theta3 ) * std::cos( phi2 );
 		Real const theta2 = std::acos( cos_theta2 );
-	debug_assert( 0 <= theta2 && theta2 <= pi );
+		debug_assert( 0 <= theta2 && theta2 <= pi );
 
 		// use formula again interchanging 2 and 3
 		Real cos_phi3 = ( cos( theta3 ) - cos( theta1 ) * cos_theta2 ) /

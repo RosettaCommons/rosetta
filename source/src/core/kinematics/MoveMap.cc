@@ -39,7 +39,7 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace kinematics {
 
-/// @details Auto-generated virtual destructor
+// Auto-generated virtual destructor
 MoveMap::~MoveMap() {}
 
 void MoveMap::set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >& ranges) {
@@ -376,25 +376,6 @@ MoveMap::init_from_file( std::string const & filename ) {
  		utility_exit_with_message("ERROR: could not open file " + filename );
  	}
 
-// 	Size seqpos;
-// 	std::string token, line;
-// 	while( getline(data,line) ) {
-// 		if ( line.substr(0,1) == "#" ) continue;
-// 		std::istringstream l( line );
-// 		l >> seqpos >> token;
-// 		if ( token == "BB" ) {
-// 			set_bb( seqpos, true );
-// 		} else if ( token == "CHI" ) {
-// 			set_chi( seqpos, true );
-// 		} else if ( token == "JUMP" ) {
-// 			// here seqpos represents the JUMP number, NOT a sequence position!!
-// 			set_jump( seqpos, true );
-// 		} else {
-// 			std::cerr << "ERROR: don't recognize token " << token << " in file "
-// 								<< filename << "!" << std::endl;
-// 		}
-// 	} // while( getline(data,line) )
-
  	std::string line;
 	bool res_default_set=false, jump_default_set=false;
  	while( getline(data,line) ) {
@@ -504,15 +485,18 @@ MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 {
 	PyAssert( (n_residues_to_show>0), "MoveMap::show( std::ostream & out , Size n_residues_to_show ): "
 			"input variable total_residue has a meaningless value");
-	out << A(8, "resnum") << ' ' << A(8, "BB") << ' ' << A(8, "CHI") << ' ' << A(8, "NU") << std::endl;
-	for (Size i = 1; i <= n_residues_to_show; ++i){
+	out << A(8, "resnum") << ' ';
+	out << A(8, "BB") << ' ' << A(8, "CHI") << ' ' << A(8, "NU") << A(8, "BRANCH") << std::endl;
+	for ( Size i = 1; i <= n_residues_to_show; ++i ) {
 		std::string bb = "FALSE";
 		std::string chi = "FALSE";
 		std::string nu = "FALSE";
-		if (get_bb(i)) bb = "TRUE ";
-		if (get_chi(i)) chi = "TRUE ";
-		if (get_nu(i)) nu = "TRUE ";
-		out << I(8,3,i) << ' ' << A(8, bb) << ' ' << A(8, chi) << A(8, nu) << std::endl;
+		std::string branches = "FALSE";
+		if ( get_bb( i ) ) { bb = "TRUE "; }
+		if ( get_chi( i ) ) { chi = "TRUE "; }
+		if ( get_nu( i ) ) { nu = "TRUE "; }
+		if ( get_branches( i ) ) { branches = "TRUE "; }
+		out << I(8,3,i) << ' ' << A(8, bb) << ' ' << A(8, chi) << A(8, nu) << A(8, branches) << std::endl;
 		}
 	}
 
@@ -525,8 +509,10 @@ MoveMap::show( std::ostream & out ) const
 	out << "-------------------------------\n";
 	// The general settings:
 	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BB) ) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
-	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::CHI)) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
-	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::NU) ) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::CHI)) << "  " << A(8,( get(id::CHI) ? "TRUE":"FALSE")) << "\n";
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::NU) ) << "  " << A(8,( get(id::NU) ? "TRUE":"FALSE")) << "\n";
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BRANCH) ) << "  "
+			<< A(8,( get(id::BRANCH) ? "TRUE":"FALSE")) << "\n";
 	// The overrides:
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;

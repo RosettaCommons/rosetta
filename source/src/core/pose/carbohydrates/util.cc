@@ -97,26 +97,6 @@ get_glycosidic_bond_residues( Pose const & pose, uint const sequence_position )
 }
 
 
-// Scan through the list of atoms connected to a given "connect atom" and return the first heavy atom found.
-/// @return  The atom index of the 1st heavy atom next to the given "connect atom" or 0 no heavy atom is found
-core::uint
-atom_next_to_connect_atom( conformation::Residue const & residue, core::uint const connect_atom_index ) {
-	using namespace utility;
-
-	// Get list of indices of all atoms connected to given connect atom.
-	vector1< uint > const atom_indices( residue.bonded_neighbor( connect_atom_index ) );
-
-	// Search for heavy atoms.  (A residue connection is not an atom.)
-	Size const n_indices( atom_indices.size() );
-	for ( uint i( 1 ); i <= n_indices; ++i ) {
-		if ( ! residue.atom_is_hydrogen( atom_indices[ i ] ) ) {
-			return atom_indices[ i ];
-		}
-	}
-	return 0;
-}
-
-
 // Return the AtomIDs of the four phi torsion reference atoms.
 /// @details For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
 /// where X is the position of the glycosidic linkage.\n
@@ -161,7 +141,7 @@ get_reference_atoms_for_phi( Pose const & pose, uint const sequence_position )
 	ids.push_back(ref3);
 
 	// Reference 4 is CX(n-1) for polysaccharides.
-	AtomID ref4( atom_next_to_connect_atom( *residues.second, ref3.atomno() ), residues.second->seqpos() );
+	AtomID ref4( residues.second->first_adjacent_heavy_atom( ref3.atomno() ), residues.second->seqpos() );
 	ids.push_back( ref4 );
 
 	TR.Debug << "Reference atoms for phi: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
@@ -199,7 +179,7 @@ get_reference_atoms_for_psi( Pose const & pose, uint const sequence_position )
 	ids.push_back( ref2 );
 
 	// Reference 3 is CX(n-1) for polysaccharides.
-	AtomID ref3( atom_next_to_connect_atom( *residues.second, ref2.atomno() ), residues.second->seqpos() );
+	AtomID ref3( residues.second->first_adjacent_heavy_atom( ref2.atomno() ), residues.second->seqpos() );
 	ids.push_back( ref3 );
 
 	// Reference 4 is CX-1(n-1) for polysaccharides.
@@ -247,7 +227,7 @@ get_reference_atoms_for_1st_omega( Pose const & pose, uint const sequence_positi
 	ids.push_back( ref1 );
 
 	// Reference 2 is CX(n-1) for polysaccharides.
-	AtomID ref2( atom_next_to_connect_atom( *residues.second, ref1.atomno() ), residues.second->seqpos() );
+	AtomID ref2( residues.second->first_adjacent_heavy_atom( ref1.atomno() ), residues.second->seqpos() );
 	ids.push_back( ref2 );
 
 	// Reference 3 is CX-1(n-1) for polysaccharides.
@@ -338,7 +318,7 @@ align_virtual_atoms_in_carbohydrate_residue( conformation::Conformation & conf, 
 		uint const parent_res_seqpos( find_seqpos_of_saccharides_parent_residue( *res ) );
 		ResidueCOP parent_res( conf.residue( parent_res_seqpos ).get_self_ptr() );
 		uint const OY_ref( parent_res->connect_atom( *res ) );
-		uint const HOY_ref( atom_next_to_connect_atom( *parent_res, OY_ref ) );
+		uint const HOY_ref( parent_res->first_adjacent_heavy_atom( OY_ref ) );
 
 		conf.set_xyz( AtomID( HOY, sequence_position ), conf.xyz( AtomID( HOY_ref, parent_res_seqpos ) ) );
 		TR.Debug << "  HOY aligned with atom " << parent_res->atom_name( HOY_ref ) <<
@@ -402,22 +382,15 @@ is_phi_torsion( Pose const & pose, id::TorsionID const & torsion_id )
 {
 	using namespace id;
 
-	if ( torsion_id.type() == BB /*|| torsion_id.type() == CHI*/ ) {  // Phi for a branched saccharide has a ??? type.
+	if ( torsion_id.type() == BRANCH ) {  // Phi for a branched saccharide has a BRANCH TorsionType.
+		return true;  // If it's a branch, it must be the phi from the branching residue.
+	} else if ( torsion_id.type() == BB ) {
 		conformation::Residue const & residue( pose.residue( torsion_id.rsd() ) );
 
 		debug_assert( residue.is_carbohydrate() );
 
-		switch( torsion_id.type() ) {
-			case BB:
-				if ( ! residue.is_upper_terminus() ) {
-					return ( torsion_id.torsion() == residue.n_mainchain_atoms() );
-				}
-				break;
-			/*case CHI:
-				// TODO: I don't know how to handle CHEMICAL Edges yet; they aren't going to be CHIs though.
-				break;*/
-			default:
-				break;
+		if ( ! residue.is_upper_terminus() ) {
+			return ( torsion_id.torsion() == residue.n_mainchain_atoms() );
 		}
 	}
 	return false;

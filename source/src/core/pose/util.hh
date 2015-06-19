@@ -46,6 +46,9 @@
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/MiniPose.fwd.hh>
 
+
+#include <core/io/pdb/file_data.hh>
+
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -698,6 +701,11 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 																 Size const cutpoint_res,
 																 bool const check_fold_tree = true );
 
+
+void
+get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd );
+
+
 /// @brief Convert PDB numbering to pose numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pdb_to_pose( pose::Pose const & pose, utility::vector1< int > const & pdb_res );
 
@@ -709,6 +717,7 @@ Size pdb_to_pose( pose::Pose const & pose, int const res_num, char const chain =
 
 /// @brief Convert pose numbering to pdb numbering. Must exist somewhere else, but I couldn't find it. -- rhiju
 utility::vector1< Size > pose_to_pdb( pose::Pose const & pose, utility::vector1< Size > const & pose_res );
+
 
 /// @brief returns true if the given residue in the pose is a chain ending or has upper/lower terminal variants
 bool

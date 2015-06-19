@@ -128,7 +128,7 @@ extern DOF_ID const BOGUS_DOF_ID;
 inline
 DOF_Type
 get_rb_type( Size const k ) {
-debug_assert( k>=1 && k<=6 );
+	debug_assert( k>=1 && k<=6 );
 //	return ( k == 1 ? RB1 : ( k==2 ? RB2 : ( k == 3 ? RB3 :
 //				 ( k == 4 ? RB4 : ( k==5 ? RB5 : RB6 ) ) ) ) );
 	return DOF_Type( RB1 + k - 1 ); //SGM I think this should work and be a little faster: Requires RB's to be contiguous but that seem safe

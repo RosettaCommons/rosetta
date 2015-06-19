@@ -162,20 +162,5 @@ private:
 } // core
 
 
-#endif
-// 	int other_rsd_;
-// 	std::string other_atom_name_;
-// 	///
-// 	int
-// 	other_rsd() const
-// 	{
-// 		return other_rsd_;
-// 	}
-
-// 	///
-// 	std::string const &
-// 	other_atom_name() const
-// 	{
-// 		return other_atom_name_;
-// 	}
+#endif  // INCLUDED_core_chemical_ResidueConnection_hh
 

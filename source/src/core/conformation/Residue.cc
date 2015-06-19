@@ -1108,6 +1108,28 @@ Residue::connect_atom( Residue const & other ) const
 	return 0;
 }
 
+// Scan through the list of atoms connected to a given atom and return the 1st heavy atom found.
+/// @return The atom index of the 1st heavy atom next to the given atom (by index) or 0 if no heavy atom is found
+/// @remark This method is crucial for determining atoms defining non-standard torsion angles, such as those found
+/// across branch connections or in glycosidic linkages.
+/// @author Labonte <JWLabonte@jhu.edu>
+uint
+Residue::first_adjacent_heavy_atom( uint const atom_index ) const
+{
+	// Get list of indices of all atoms connected to given connect atom.
+	utility::vector1< uint > const atom_indices( bonded_neighbor( atom_index ) );
+
+	// Search for heavy atoms.  (A residue connection is not an atom.)
+	Size const n_indices( atom_indices.size() );
+	for ( uint i( 1 ); i <= n_indices; ++i ) {
+		if ( ! atom_is_hydrogen( atom_indices[ i ] ) ) {
+			return atom_indices[ i ];
+		}
+	}
+	TR.Warning << "There are no adjacent heavy atoms to atom index " << atom_index << '!' << std::endl;
+	return 0;
+}
+
 PseudoBondCollectionCOP
 Residue::get_pseudobonds_to_residue( Size resid ) const
 {

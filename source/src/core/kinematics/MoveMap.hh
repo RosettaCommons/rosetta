@@ -45,35 +45,35 @@ namespace kinematics {
 
 /// @brief A class specifying DOFs to be flexible or fixed
 ///
-/// currently there are two groups of data, one is residue-based Torsion
-/// definition, such as BB, CHI, NU, and JUMP; the other is atom-based DOF
-/// definition, such as bond length D, bond angle THETA and torsion angle PHI
-/// which are used in atom-tree. MoveMap does not automatically handle
+/// @details Currently there are two groups of data, one is a residue-based Torsion
+/// definition, such as BB, CHI, NU, and JUMP; the other is an atom-based DOF
+/// definition, such as bond length D, bond angle THETA, and torsion angle PHI,
+/// which are used in the AtomTree. MoveMap does not automatically handle
 /// conversion from one group to the other, i.e., setting PHI false for
 /// DOF_type does not affect setting for BB and CHI torsion though they are
 /// PHIs in atom-tree.
 ///
-/// within each group, there are multiple levels of control
+/// Within each group, there are multiple levels of control
 /// (from general/high to specific/lower):
-/// @li Torsion-based: TorsionType(BB, CHI, NU, JUMP) -> MoveMapTorsionID
+/// @li Torsion-based: TorsionType(BB, CHI, NU, BRANCH, JUMP) -> MoveMapTorsionID
 /// (BB, CHI of one residue) -> TorsionID ( BB torsion 2 or CHI torsion 3 of
 /// one residue)
 /// @li DOF-base: DOF_type( D, THETA, PHI ) -> DOF_ID (D, THETA, PHI of one atom)
 ///
-/// setting for each level are stored in a map structure and they are only
+/// Settings for each level are stored in a map structure and they are only
 /// added to the map when setting methods are invoked. As a result, MoveMap
-/// does not behave like a "Boolean vector" which always contains setting for
+/// does not behave like a "Boolean vector", which always contains setting for
 /// each residue or atom in a conformation. Setting for a higher level will
 /// override setting for lower levels (remove it from map); Similarly, when
 /// querying a lower level finds no setting, it will check setting for its
 /// higher level. For example, setting TorsionType BB to be true will remove
-/// any data of BB setting for a residue or a specific BB torsion ( such as
-/// backbone psi ) in a residue. And querying setting for BB torsion 2 of
-/// residue 4 will first check if there is any specific setting, if not,
+/// any data of BB setting for a residue or a specific BB torsion (such as
+/// backbone psi) in a residue. And querying the setting for BB torsion 2 of
+/// residue 4 will first check if there is any specific setting, if not, it will
 /// check if there is a setting for all BB torsions for residue 4, if not
-/// again, use setting for BB torsions for all residues.
+/// again, it will use the setting for BB torsions for all residues.
 ///
-/// example:
+/// Example:
 ///     movemap = MoveMap()
 /// See also:
 ///     Pose
@@ -99,10 +99,10 @@ public:
 	/// e.g., phi/psi/omega in BB torsion.  Useful when setting residue k backbone fixed.
 	typedef std::pair< Size, TorsionType > MoveMapTorsionID;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for all residues
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, BRANCH, JUMP), for all residues
 	typedef std::map< TorsionType, bool > TorsionTypeMap;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for one residue,
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, BRANCH, JUMP), for one residue,
 	/// e.g., no distinction between phi/psi/omega
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
@@ -137,6 +137,7 @@ public:
 	///     MoveMap
 	///     MoveMap.set_chi
 	///     MoveMap.set_nu
+	///     MoveMap.set_branches
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -156,6 +157,7 @@ public:
 	///     MoveMap
 	///     MoveMap.set_chi
 	///     MoveMap.set_nu
+	///     MoveMap.set_branches
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -187,6 +189,7 @@ public:
 	///     MoveMap.set_bb
 	///     MoveMap.set_chi
 	///     MoveMap.set_nu
+	///     MoveMap.set_branches
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -215,6 +218,7 @@ public:
 	///     MoveMap
 	///     MoveMap.set_bb
 	///     MoveMap.set_nu
+	///     MoveMap.set_branches
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -234,6 +238,7 @@ public:
 	///     MoveMap
 	///     MoveMap.set_bb
 	///     MoveMap.set_nu
+	///     MoveMap.set_branches
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -266,6 +271,8 @@ public:
 	///     MoveMap.set_chi
 	///     MoveMap.set_nu
 	///     MoveMap.set_nu_true_range
+	///     MoveMap.set_branches
+	///     MoveMap.set_branches_true_range
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -292,15 +299,15 @@ public:
 	///     MoveMap\n
 	///     MoveMap.set_bb\n
 	///     MoveMap.set_chi\n
+	///     MoveMap.set_branches\n
 	///     Pose\n
 	///     MinMover\n
 	///     ShearMover\n
 	///     SmallMover
-	inline
-	void
-	set_nu(bool const setting)
+	inline void
+	set_nu( bool const setting )
 	{
-		set(id::NU, setting);
+		set( id::NU, setting );
 	}
 
 	/// @brief Set whether or not the NU torsions of residue <seqpos> are movable.
@@ -309,26 +316,26 @@ public:
 	///     MoveMap\n
 	///     MoveMap.set_bb\n
 	///     MoveMap.set_chi\n
+	///     MoveMap.set_branches\n
 	///     Pose\n
 	///     MinMover\n
 	///     ShearMover\n
 	///     SmallMover
 	void
-	set_nu(core::uint const seqpos, bool const setting)
+	set_nu( core::uint const seqpos, bool const setting )
 	{
-		PyAssert((seqpos > 0), "MoveMap::set_nu(core::uint const seqpos, bool const setting): "
-				"Input variable <seqpos> has a meaningless value.");
-		set(MoveMapTorsionID(seqpos, id::NU), setting);
+		PyAssert( ( seqpos > 0 ), "MoveMap::set_nu( core::uint const seqpos, bool const setting ): "
+				"Input variable <seqpos> has a meaningless value." );
+		set( MoveMapTorsionID( seqpos, id::NU ), setting );
 	}
 
 	/// @brief Set which NU torsions are movable based on input array.
-	inline
-	void
-	set_nus(utility::vector1<bool> const settings)
+	inline void
+	set_nus( utility::vector1< bool > const settings )
 	{
-		Size const n_settings = settings.size();
-		for (uint i = 1; i <= n_settings; ++i) {
-			set(MoveMapTorsionID(i, id::NU), settings[i]);
+		Size const n_settings( settings.size() );
+		for ( uint i( 1 ); i <= n_settings; ++i ) {
+			set( MoveMapTorsionID( i, id::NU ), settings[ i ] );
 		}
 	}
 
@@ -342,22 +349,104 @@ public:
 	///     MoveMap.set_chi\n
 	///     MoveMap.set_chi_true_range\n
 	///     MoveMap.set_nu\n
+	///     MoveMap.set_branches\n
+	///     MoveMap.set_branches_true_range\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	inline void
+	set_nu_true_range( core::uint const begin, core::uint const end )
+	{
+		PyAssert( ( begin > 0 ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <begin> has a meaningless value." );
+		PyAssert( ( end > 0 ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <end> has a meaningless value." );
+		PyAssert( ( begin <= end ), "MoveMap::set_nu_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <begin> must be <= input variable <end>." );
+		set_nu( false );
+		for ( uint resnum( begin ); resnum <= end; ++resnum ) {
+			set_nu( resnum, true );
+		}
+	}
+
+
+	/// @brief Set whether or not BRANCH TorsionTypes are movable.
+	///
+	/// @details Example: movemap.set_branches( True )\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_chi\n
+	///     MoveMap.set_nu\n
 	///     Pose\n
 	///     MinMover\n
 	///     ShearMover\n
 	///     SmallMover
 	inline
-	void set_nu_true_range(core::uint const begin, core::uint const end)
+	void
+	set_branches( bool const setting )
 	{
-		PyAssert((begin > 0), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <begin> has a meaningless value.");
-		PyAssert((end > 0), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <end> has a meaningless value.");
-		PyAssert((begin <= end), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
-				"Input variable <begin> must be <= input variable <end>.");
-		set_nu(false);
-		for(uint resnum = begin; resnum <= end; ++resnum) {
-			set_nu(resnum, true);
+		set( id::BRANCH, setting );
+	}
+
+	/// @brief Set whether or not the BRANCH torsions of residue <seqpos> are movable.
+	/// @details Example: movemap.set_branches(49, True)\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_chi\n
+	///     MoveMap.set_nu\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	void
+	set_branches( core::uint const seqpos, bool const setting )
+	{
+		PyAssert( ( seqpos > 0 ), "MoveMap::set_branches( core::uint const seqpos, bool const setting ): "
+				"Input variable <seqpos> has a meaningless value." );
+		set( MoveMapTorsionID( seqpos, id::BRANCH ), setting );
+	}
+
+	/// @brief Set which BRANCH torsions are movable based on input array.
+	inline void
+	set_branches( utility::vector1< bool > const settings )
+	{
+		Size const n_settings( settings.size() );
+		for ( uint i( 1 ); i <= n_settings; ++i ) {
+			set( MoveMapTorsionID( i, id::BRANCH ), settings[ i ] );
+		}
+	}
+
+	/// @brief Set the BRANCH torsions between residues <begin> and <end>
+	/// as movable and all other residues are non-movable.
+	/// @details Example: movemap.set_branches_true_range(40, 60)\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_bb_true_range\n
+	///     MoveMap.set_chi\n
+	///     MoveMap.set_chi_true_range\n
+	///     MoveMap.set_nu\n
+	///     MoveMap.set_nu_true_range\n
+	///     MoveMap.set_branches\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	inline void
+	set_branches_true_range( core::uint const begin, core::uint const end )
+	{
+		PyAssert( ( begin > 0 ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <begin> has a meaningless value." );
+		PyAssert( ( end > 0 ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <end> has a meaningless value." );
+		PyAssert( ( begin <= end ), "MoveMap::set_branches_true_range( core::uint const begin, core::uint const end ): "
+				"Input variable <begin> must be <= input variable <end>." );
+		set_branches( false );
+		for ( uint resnum( begin ); resnum <= end; ++resnum ) {
+			set_branches( resnum, true );
 		}
 	}
 
@@ -399,7 +488,7 @@ public:
 	void
 	set_jump( id::JumpID const & jump, bool const setting );
 
-	/// @brief set a specific TorsionType movable: currently BB, CHI, NU, or JUMP
+	/// @brief set a specific TorsionType movable: currently BB, CHI, NU, BRANCH, or JUMP
 	void
 	set( TorsionType const & t, bool const setting );
 
@@ -448,11 +537,22 @@ public: // accessors
 	/// @details: Example: movemap.get_nu(49)
 	inline
 	bool
-	get_nu(core::uint const seqpos) const
+	get_nu( core::uint const seqpos ) const
 	{
-		PyAssert((seqpos > 0), "MoveMap::get_nu(core::uint const seqpos): "
-				"Input variable <seqpos> has a meaningless value.");
-		return get(MoveMapTorsionID(seqpos, id::NU));
+		PyAssert( ( seqpos > 0 ), "MoveMap::get_nu(core::uint const seqpos): "
+				"Input variable <seqpos> has a meaningless value." );
+		return get( MoveMapTorsionID( seqpos, id::NU ) );
+	}
+
+	/// @brief Return if BRANCH torsions are movable or not for residue <seqpos>.
+	/// @details: Example: movemap.get_branches(49)
+	inline
+	bool
+	get_branches( core::uint const seqpos ) const
+	{
+		PyAssert( ( seqpos > 0 ), "MoveMap::get_branches(core::uint const seqpos): "
+				"Input variable <seqpos> has a meaningless value." );
+		return get( MoveMapTorsionID( seqpos, id::BRANCH ) );
 	}
 
 	/// @brief Returns if JUMP  <jump_number>  is movable or not
@@ -642,11 +742,11 @@ public: // i/o
 	void init_from_file( std::string const & filename );
 
 public: // status
-	/// @brief gives the BB and CHI bool values up to a given residue number
+	/// @brief Give the TorsionType bool values up to a given residue number.
 	void
 	show( std::ostream & out, Size i) const;
 
-	/// @brief gives the BB and CHI bool values up to a given residue number
+	/// @brief Give the TorsionType bool values up to a given residue number.
 	/// wrapper for PyRosetta
 	void
 	show( Size i) const { show(std::cout, i);};
@@ -676,10 +776,10 @@ private: // movemap-movemap functionality
 	// implementation of the data
 	// WARNING: if you add something here also add it to ::clear() and ::import()
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for all residues
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, BRANCH, JUMP), for all residues
 	TorsionTypeMap torsion_type_map_;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for one residue,
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, BRANCH, JUMP), for one residue,
 	/// e.g., no distinction between phi/psi/omega
 	MoveMapTorsionID_Map move_map_torsion_id_map_;
 
