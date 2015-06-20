@@ -29,7 +29,7 @@
 cd %(workdir)s
 
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-mpirun -np 4 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags.mpi -database %(database)s -run:constant_seed -nodelay  2>&1 \
+mpirun -np 3 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags.mpi -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
@@ -52,8 +52,8 @@ grep -v 'seconds' log_1 > log_1_noseconds
 rm log_1
 grep -v 'seconds' log_2 > log_2_noseconds
 rm log_2
-grep -v 'seconds' log_3 > log_3_noseconds
-rm log_3
+#grep -v 'seconds' log_3 > log_3_noseconds
+#rm log_3
 
 # It's also necessary to sort the results file, since it will be printed in variable order.
 cat score.sc | sort -nrk2 >score_sorted.sc
