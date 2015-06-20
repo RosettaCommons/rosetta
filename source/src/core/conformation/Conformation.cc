@@ -1787,69 +1787,30 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 		// Prefer SG to SG (fullatom) or CEN to CEN (centroid) bonds
 		// Allow SG to CEN bonds, but give a warning
 		// If neither atom is found (neither fullatom nor centroid) throw an error.
-		Size l_bond_atom, u_bond_atom;
 
-		bool l_has_sg  = l_res.type().has("SG");
-		bool u_has_sg  = u_res.type().has("SG");
-		bool l_has_sd  = l_res.type().has("SD");
-		bool u_has_sd  = u_res.type().has("SD");
-		bool l_has_sg1  = l_res.type().has("SG1");
-		bool u_has_sg1  = u_res.type().has("SG1");
-		bool l_has_cen = l_res.type().has("CEN");
-		bool u_has_cen = u_res.type().has("CEN");
-
-		if( l_has_sg ) {
-			l_bond_atom = l_res.atom_index( "SG" );
-			if(! u_has_sg && ! u_has_sd && !u_has_sg1 )
-				TR.Warning << "Bonding SG of residue " << l_index
-					<< " to non-SG/SD/SG1 of residue "<< u_index << std::endl;
-		}
-		else if( l_has_sd ) {
-			l_bond_atom = l_res.atom_index( "SD" );
-			if(! u_has_sg && ! u_has_sd && !u_has_sg1 )
-				TR.Warning << "Bonding SD of residue " << l_index
-					<< " to non-SG/SD/SG1 of residue "<< u_index << std::endl;
-		}
-		else if( l_has_sg1 ) {
-			l_bond_atom = l_res.atom_index( "SG1" );
-			if(! u_has_sg && !u_has_sd && !u_has_sg1 )
-				TR.Warning << "Bonding SG1 of residue " << l_index
-				<< " to non-SG/SD/SG1 of residue "<< u_index << std::endl;
-		}
-		else if(l_has_cen) {
-			l_bond_atom = l_res.atom_index( "CEN" );
-		}
-		else {
-			TR.Error << "Cannot form disulfide bond with residue "<<l_index<< std::endl;
+		if ( l_res.type().get_disulfide_atom_name() == "NONE" ) {
+			TR.Error << "Cannot form disulfide bond with residue " << l_index << std::endl;
 			continue;
 		}
-
-		if( u_has_sg ) {
-			u_bond_atom = u_res.atom_index( "SG" );
-			if(! l_has_sg && ! l_has_sd && !l_has_sg1 )
-				TR.Warning << "Bonding SG of residue " << u_index
-					<< " to non-SG/SD/SG1 of residue "<< l_index << std::endl;
-		}
-		else if( u_has_sd ) {
-			u_bond_atom = u_res.atom_index( "SD" );
-			if(! l_has_sg && ! l_has_sd && !l_has_sg1 )
-				TR.Warning << "Bonding SD of residue " << u_index
-					<< " to non-SG/SD/SG1 of residue "<< l_index << std::endl;
-		}
-		else if( u_has_sg1 ) {
-			u_bond_atom = u_res.atom_index( "SG1" );
-			if(! l_has_sg && ! l_has_sd && !l_has_sg1 )
-				TR.Warning << "Bonding SG1 of residue " << u_index
-				<< " to non-SG/SD/SG1 of residue "<< l_index << std::endl;
-		}
-		else if(u_has_cen) {
-			u_bond_atom = u_res.atom_index( "CEN" );
-		}
-		else {
-			TR.Error << "Cannot form disulfide bond with residue "<<l_index<< std::endl;
+		if ( u_res.type().get_disulfide_atom_name() == "NONE" ) {
+			TR.Error << "Cannot form disulfide bond with residue " << u_index << std::endl;
 			continue;
 		}
+		
+		Size l_bond_atom = l_res.atom_index( l_res.type().get_disulfide_atom_name() );
+		Size u_bond_atom = u_res.atom_index( u_res.type().get_disulfide_atom_name() );
 
+		// We only care about warning FA to CEN
+		
+		if ( l_res.type().get_disulfide_atom_name() == "CEN" && u_res.type().get_disulfide_atom_name() != "CEN" ) {
+			TR.Warning << "Forming a disulfide bond between FA residue " << u_index
+			<< " and centroid residue "<< l_index << std::endl;
+		}
+		if ( l_res.type().get_disulfide_atom_name() != "CEN" && u_res.type().get_disulfide_atom_name() == "CEN" ) {
+			TR.Warning << "Forming a disulfide bond between FA residue " << l_index
+			<< " and centroid residue "<< u_index << std::endl;
+		}
+		
 		//Now have the correct atoms, so bond them
 		Size l_connid = l_res.type().residue_connection_id_for_atom( l_bond_atom );
 		Size u_connid = u_res.type().residue_connection_id_for_atom( u_bond_atom );

@@ -200,6 +200,7 @@ ResidueType::ResidueType( ResidueType const & residue_type ):
 		all_bb_atoms_(residue_type.all_bb_atoms_),
 		all_sc_atoms_(residue_type.all_sc_atoms_),
 		metal_binding_atoms_(residue_type.metal_binding_atoms_),
+		disulfide_atom_name_(residue_type.disulfide_atom_name_),
 		mainchain_atoms_(residue_type.mainchain_atoms_),
 		actcoord_atoms_(residue_type.actcoord_atoms_),
 		chi_atoms_(residue_type.chi_atoms_),

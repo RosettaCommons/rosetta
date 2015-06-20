@@ -180,14 +180,17 @@ FullatomDisulfideEnergy::defines_score_for_residue_pair(
 ) const
 {
 	using namespace chemical;
-    std::string atom1 = res1.type().has( "SG" ) ? "SG" : "SD";
-    std::string atom2 = res2.type().has( "SG" ) ? "SG" : "SD";
-    
+	std::string atom1 = res1.type().get_disulfide_atom_name();
+    std::string atom2 = res2.type().get_disulfide_atom_name();
+	
+	// Formerly tested if the residue had its own disulfide atom name,
+	// but checking if it is NONE is just clearer (and heads off the
+	// case where a new residue is added with an atom named NONE
 	return res_moving_wrt_eachother
         && res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE )
-        && ( res1.type().has( "SG" ) || res1.type().has( "SD" ) || res1.type().has( "SG1" ) )
+        && res1.type().get_disulfide_atom_name() != "NONE"
         && res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( atom1 ) ) ).resid() == res2.seqpos()
-        && ( res2.type().has( "SG" ) || res2.type().has( "SD" ) || res2.type().has( "SG1" ) )
+        && res2.type().get_disulfide_atom_name() != "NONE"
         && res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( atom2 ) ) ).resid() == res1.seqpos();
 }
 

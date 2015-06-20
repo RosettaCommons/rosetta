@@ -1959,26 +1959,14 @@ form_disulfide(
 	chemical::ResidueTypeSetCOP restype_set =
 	chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-	//Identify the sulphur atom.  Gamma sulphur by default; delta sulphur if and only if the residue type is D- or L-homocysteine:
-	std::string lcatom = "SG";
 	std::string lcname = conformation.residue_type(lower_res).name3();
-	if ( lcname == "C26" || lcname == "F26" ) {
-		lcatom = "SD";
-	} else if ( lcname == "C41" || lcname == "F41" ) {
-		lcatom = "SG1";
-	}
-	std::string ucatom = "SG";
 	std::string ucname = conformation.residue_type(upper_res).name3();
-	if ( ucname == "C26" || ucname == "F26" ) {
-		ucatom = "SD";
-	} else if ( ucname == "C41" || ucname == "F41" ) {
-		ucatom = "SG1";
-	}
 	
 	// Break existing disulfide bonds to lower
 	if ( /*conformation.residue(lower_res).type().is_disulfide_bonded()
         &&*/ conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) // full atom residue
 	{
+		std::string lcatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
 		Size const connect_atom( conformation.residue( lower_res ).atom_index( lcatom ) );
 		Size other_res( 0 );
 		Size conn(0);
@@ -2010,6 +1998,7 @@ form_disulfide(
 	if ( /*conformation.residue( upper_res ).type().is_disulfide_bonded()
       && */conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) )
 	{
+		std::string ucatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
 		Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
 		Size other_res( 0 );
 		Size conn(0);
@@ -2039,6 +2028,11 @@ form_disulfide(
 	runtime_assert( conformation.residue(upper_res).has_variant_type(chemical::DISULFIDE) );
 
 	//form the bond between the two residues
+	// NOW we still need to get the lc and uc atoms, because we couldn't get them before
+	// since this function doesn't necessarily start with a cys type
+	// (damn this function!)
+	std::string lcatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
+	std::string ucatom = conformation.residue_type(upper_res).get_disulfide_atom_name();
 	conformation.declare_chemical_bond(lower_res,lcatom,upper_res,ucatom);
 
 }

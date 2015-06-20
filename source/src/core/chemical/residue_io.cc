@@ -365,6 +365,9 @@ read_topology_file(
 /// For polymer residue types that can bind metals (METALBINDING property), this is a list of the atoms
 /// that can form a direct bond to the metal.  For example, in ASP.params, it would read:
 /// "METAL_BINDING_ATOMS OD1 OD2"
+/// DISULFIDE_ATOM_NAME:
+/// For polymer residue types that can form disulfide bonds (FORMS_DISULFIDE_BOND property), this is the atom it does so with.  For example, in CYS.params, it would read:
+/// "DISULFIDE_ATOM_NAME SG"
 ///
 /// NAME:
 /// Gives the name for this ResidueType.  The name for each ResidueType
@@ -641,6 +644,10 @@ read_topology_file(
 	bool found_PDB_ROTAMERS_record = false;
 	std::string pdb_rotamers_filename = "";
 	AtomIndices mainchain_atoms;
+	
+	// Set disulfide atom name to "NONE"
+	// So that's the default
+	rsd->set_disulfide_atom_name( "NONE" );
 
 	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
@@ -667,6 +674,9 @@ read_topology_file(
 				rsd->add_metalbinding_atom( atom1 );
 				l >> atom1;
 			}
+		} else if ( tag == "DISULFIDE_ATOM_NAME" ) {
+			l >> tag;
+			rsd->set_disulfide_atom_name( tag );
 		} else if ( tag == "ATOM_ALIAS" ) {
 			if( line.size() < 20 ) {
 				utility_exit_with_message("ATOM_ALIAS line too short");

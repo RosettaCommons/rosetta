@@ -419,6 +419,21 @@ public:
 
 		return;
 	}
+	
+	/// @brief Gets disulfide atom name
+	/// @author Andrew M. Watkins (amw579@nyu.edu).
+	std::string
+	get_disulfide_atom_name() const {
+		return disulfide_atom_name_;
+	}
+	
+	
+	/// @brief Sets disulfide atom name
+	/// @author Andrew M. Watkins (amw579@nyu.edu).
+	void
+	set_disulfide_atom_name( std::string n ) {
+		disulfide_atom_name_ = n;
+	}
 
 	/// @brief Indices of all backbone atoms, hydrogens and heavyatoms
 	AtomIndices const &
@@ -2336,6 +2351,9 @@ private:
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
+	
+	/// @brief Name of the disulfide-forming atom, if any
+	std::string disulfide_atom_name_;
 
 	/// @brief Verticies of all mainchain atoms -- Primary
 	/// @details mainchain_atoms are those atoms on a path from polymer lower_connect

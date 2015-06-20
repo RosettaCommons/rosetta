@@ -16,6 +16,7 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <utility/vector1.hh>
 
@@ -26,37 +27,25 @@ namespace disulfides {
 
 
 DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) :
-	c_alpha_index_( res.type().has("SD") ? res.atom_index( "CB" ) : res.atom_index( "CA" ) ),
-	c_beta_index_( res.type().has("SD") ? res.atom_index( "CG" ): res.atom_index( "CB" ) ),
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
 {
-	disulf_atom_index_ =  res.type().has("SG") ? res.atom_index( "SG" ) :
-						( res.type().has("SD") ? res.atom_index( "SD" ) :
-						( res.type().has("SG1") ? res.atom_index( "SG1" ) : 0 ) );
+	core::chemical::ResidueType rt = res.type();
 	
-	if( res.type().has("SG") || res.type().has("SG1") || res.type().has("SD")) {
-        derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
-        derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
-		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
-	}
-	/*else if( res.type().has("SD") ) {
-		disulf_atom_index_ = res.atom_index( "SD" );
-        derivative_atom_types_[ c_alpha_index_ ] = CYS_C_BETA;
-        derivative_atom_types_[ c_beta_index_  ] = CYS_C_GAMMA;
-		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
-	}
-	else if( res.type().has("SG1") ) {
-		disulf_atom_index_ = res.atom_index( "SG1" );
-		derivative_atom_types_[ c_alpha_index_ ] = CYS_C_BETA;
-		derivative_atom_types_[ c_beta_index_  ] = CYS_C_GAMMA;
-		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_DELTA;
-	}*/
-	else {
-	debug_assert(res.type().has("CEN") );//disulfides form to SG or CEN only
-
+	std::string disulf_atom_name = rt.get_disulfide_atom_name();
+	disulf_atom_index_ = rt.has( disulf_atom_name ) ? res.atom_index( disulf_atom_name ) : 0;
+	
+	if ( disulf_atom_name == "CEN" ) {
+	debug_assert(rt.has("CEN") );//disulfides form to SG or CEN only
 		disulf_atom_index_ = res.atom_index( "CEN" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_CEN;
+	} else {
+		c_beta_index_ = rt.atom_base( disulf_atom_index_ ); //rt.has("SD") ? res.atom_index( "CG" ): res.atom_index( "CB" ) );
+		c_alpha_index_ = rt.atom_base( c_beta_index_ ); //rt.has("SD") ? res.atom_index( "CB" ) : res.atom_index( "CA" ) );
+		derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
+		derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
+		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
 	}
+
 }
 
 bool

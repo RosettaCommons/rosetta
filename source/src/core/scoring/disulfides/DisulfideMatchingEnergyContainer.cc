@@ -588,16 +588,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			//Centroid models are bonded CEN to CEN, fullatom are bonded SG to SG.
 			//This code originally forgot to put the whole SG bit in so maybe this is a hack. I don't care!
 			// -rv
-			Size ii_connect_atom(0);
-			if ( pose.residue_type( ii ).has( "CEN" ) ) {
-				ii_connect_atom = res.atom_index( "CEN" );
-			} else if (pose.residue_type( ii ).has( "SG" ) ) {
-				ii_connect_atom = res.atom_index( "SG" );
-			} else if (pose.residue_type( ii ).has( "SG1" ) ) {
-				ii_connect_atom = res.atom_index( "SG1" );
-			} else {
-				ii_connect_atom = res.atom_index( "SD" );
-			}	
+			Size ii_connect_atom = res.atom_index( res.type().get_disulfide_atom_name() );
 
 			Size other_res_ii( 0 );
 			for ( Size jj = 1; jj <= res.type().n_residue_connections(); ++jj ) {
