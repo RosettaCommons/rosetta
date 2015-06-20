@@ -58,11 +58,13 @@ sources = {
 		"b3a_distro_kinemage",
 		"build_a3b",
 		"get_dihedral_b3aa",
+		"hbs_dock_design",
+		"hbs_creator",
+		"indel",
 		"multistate_idea",
 		"oop_conformations",
 		"sec_struct_finder",
-		"hbs_dock_design",
-		"hbs_creator",
+		"trivial_alascan",
 	],
 
 	# B ######################################################################

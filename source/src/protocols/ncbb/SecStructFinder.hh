@@ -84,12 +84,10 @@ private:
 	
 	std::string alpha_to_beta( std::string alpha );
 	std::string expand_pattern_to_fit( std::string pattern, Size length );
-	void count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs );
 	bool uniq_refers_to_beta ( char uniq );
 	utility::vector1< core::chemical::ResidueType > initialize_rtype_vector();
 	std::string make_filename ( Size number_dihedrals, utility::vector1< Real > dihedrals );
 	Size get_number_dihedrals ( utility::vector1< char > uniqs );
-	Size give_dihedral_index( Size n, utility::vector1< char > uniqs );
 	bool too_similar( Size i, Size j, utility::vector1< Real > dihedrals );
 	void show_current_dihedrals( Size number_dihedral_sets, utility::vector1< char > uniqs, utility::vector1< Real > dihedrals );
 	Pose add_dihedral_constraints_to_pose( Pose pose, utility::vector1< Real > dihedrals, Size number_dihedral_sets, utility::vector1< char > uniqs );

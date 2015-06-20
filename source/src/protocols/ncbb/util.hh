@@ -103,6 +103,17 @@ namespace protocols {
 namespace ncbb {
 
 void
+count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs );
+	
+Size
+give_dihedral_index(
+	Size n,
+	utility::vector1< char > uniqs,
+	std::string dihedral_pattern,
+	std::string alpha_beta_pattern
+);
+
+void
 ncbb_design_main_loop( Size loop_num, Size pert_num, Pose pose, TrialMoverOP pert_trial, utility::vector1<Size> designable_positions, Size pep_start, Size pep_end, TaskAwareMinMoverOP desn_ta_min, ScoreFunctionOP score_fxn, MonteCarloOP mc );
 
 void

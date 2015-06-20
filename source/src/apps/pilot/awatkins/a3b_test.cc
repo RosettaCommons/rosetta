@@ -96,7 +96,7 @@ try {
 	//  bool save_best_for_last(option[a3b_test::save_best_for_last]());
 
 	//now do initialization stuff.
-	TaskFactoryOP task_factory = TaskFactoryOP( new TaskFactory );
+	TaskFactoryOP task_factory( new TaskFactory );
 	task_factory->push_back( operation::TaskOperationCOP( new operation::InitializeFromCommandline ) );
 	//need these to keep pack_rotamers from redesigning the residue.
 	operation::RestrictToRepackingOP rtrop = operation::RestrictToRepackingOP( new operation::RestrictToRepacking );

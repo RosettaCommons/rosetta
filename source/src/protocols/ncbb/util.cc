@@ -106,6 +106,55 @@ static thread_local basic::Tracer TR( "NCBB" );
 namespace protocols {
 namespace ncbb {
 
+Size
+give_dihedral_index(
+	Size n,
+	utility::vector1< char > uniqs,
+	std::string dihedral_pattern,
+	std::string alpha_beta_pattern
+) {
+	// for all characters from uniqs that are earlier than this residue's
+	// add 2 or 3 depending on if those uniqs are for alphas or betas
+	
+	Size index = 1;
+	
+	for ( Size i = 1; i < n; ++i ) {
+		for ( Size j = 0; j < dihedral_pattern.length(); ++j ) {
+			if ( dihedral_pattern[j] == uniqs[i] ) {
+				if (alpha_beta_pattern[j] == 'A' || alpha_beta_pattern[j]=='P' ) {
+					// it's an alpha
+					index += 2;
+				} else if (alpha_beta_pattern[j] == 'B' ) {
+					index += 3;
+				}
+				j = dihedral_pattern.length();
+			}
+		}
+	}
+	return index;
+}
+
+void
+count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs ) {
+	num = 1;
+	uniqs.push_back( pattern[ 0 ] );
+	for ( Size i = 1; i < pattern.length(); ++i ) {
+		// assume i unique
+		Size increment = 1;
+		for ( Size j = 0; j < i; ++j ) {
+			if ( pattern[j]  == pattern[ i ] ) {
+				// repeat
+				increment = 0;
+			} else {
+				// new!
+				increment *= 1;
+			}
+		}
+		if ( increment == 1 ) uniqs.push_back( pattern[ i ] );
+		num += increment;
+	}
+}
+
 void
 ncbb_design_main_loop( Size loop_num, Size pert_num, core::pose::Pose pose, TrialMoverOP pert_trial, utility::vector1<Size> designable_positions, Size pep_start, Size pep_end, TaskAwareMinMoverOP desn_ta_min, core::scoring::ScoreFunctionOP score_fxn, MonteCarloOP mc ) {
 

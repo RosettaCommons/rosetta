@@ -61,6 +61,7 @@
 #include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
 #include <protocols/ncbb/SecStructFinder.hh>
 #include <protocols/ncbb/SecStructFinderCreator.hh>
+#include <protocols/ncbb/util.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
@@ -224,27 +225,6 @@ SecStructFinder::expand_pattern_to_fit( std::string pattern, Size length ) {
 	}
 }
 
-void
-SecStructFinder::count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs ) {
-	num = 1;
-	uniqs.push_back( pattern[ 0 ] );
-	for ( Size i = 1; i < pattern.length(); ++i ) {
-		// assume i unique
-		Size increment = 1;
-		for ( Size j = 0; j < i; ++j ) {
-			if ( pattern[j]  == pattern[ i ] ) {
-				// repeat
-				increment = 0;
-			} else {
-				// new!
-				increment *= 1;
-			}
-		}
-		if ( increment == 1 ) uniqs.push_back( pattern[ i ] );
-		num += increment;
-	}
-}
-
 bool
 SecStructFinder::uniq_refers_to_beta (
 	char uniq
@@ -327,32 +307,6 @@ SecStructFinder::get_number_dihedrals (
 	return number;
 }
 
-Size
-SecStructFinder::give_dihedral_index(
-	Size n,
-	utility::vector1< char > uniqs
-) {
-	// for all characters from uniqs that are earlier than this residue's
-	// add 2 or 3 depending on if those uniqs are for alphas or betas
-	
-	Size index = 1;
-	
-	for ( Size i = 1; i < n; ++i ) {
-		for ( Size j = 0; j < dihedral_pattern_.length(); ++j ) {
-			if ( dihedral_pattern_[j] == uniqs[i] ) {
-				if (alpha_beta_pattern_[j] == 'A' || alpha_beta_pattern_[j]=='P' ) {
-					// it's an alpha
-					index += 2;
-				} else if (alpha_beta_pattern_[j] == 'B' ) {
-					index += 3;
-				}
-				j = dihedral_pattern_.length();
-			}
-		}
-	}
-	return index;
-}
-
 bool
 SecStructFinder::too_similar( Size i, Size j, utility::vector1< Real > dihedrals ) {
 	bool similar = false;
@@ -378,7 +332,7 @@ SecStructFinder::show_current_dihedrals( Size number_dihedral_sets, utility::vec
 	TR << "Presently ";
 	for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
 		TR << uniqs[i] << " ( ";
-		Size take_from_here = give_dihedral_index( i, uniqs );
+		Size take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 		if ( uniq_refers_to_beta( uniqs[i] ) ) {
 			TR << dihedrals[ take_from_here ] << ", " << dihedrals[ take_from_here+1 ] << ", " << dihedrals[ take_from_here+2 ] << " ), ";
 		} else {
@@ -407,7 +361,7 @@ SecStructFinder::add_dihedral_constraints_to_pose(
 		
 		if ( pose.residue( resi ).type().is_beta_aa() ) {
 			
-			Size take_from_here = give_dihedral_index( vec_index, uniqs );
+			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 			
 			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_tht (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
@@ -437,7 +391,7 @@ SecStructFinder::add_dihedral_constraints_to_pose(
 			
 		} else if ( pose.residue( resi ).type().is_alpha_aa() ) {
 			
-			Size take_from_here = give_dihedral_index( vec_index, uniqs );
+			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_ );
 			
 			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
@@ -464,7 +418,7 @@ SecStructFinder::add_dihedral_constraints_to_pose(
 			
 		} /*else {
 		
-			Size take_from_here = give_dihedral_index( vec_index, uniqs );
+			Size take_from_here = give_dihedral_index( vec_index, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
 			
 			CircularHarmonicFuncOP dih_func_phi (new CircularHarmonicFunc( dihedrals[ take_from_here ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
 			CircularHarmonicFuncOP dih_func_psi (new CircularHarmonicFunc( dihedrals[ take_from_here+1 ]*numeric::NumericTraits<float>::pi()/180, bin_size_rad ) );
@@ -551,7 +505,7 @@ SecStructFinder::apply( Pose & pose )
 				Size take_from_here = 1;
 				for ( Size i = 1; i <= number_dihedral_sets; ++i ) {
 					if ( dihedral_pattern_[ resi-1 ] == uniqs[ i ] ) { // -1 to sync indexing
-						take_from_here = give_dihedral_index( i, uniqs );
+						take_from_here = give_dihedral_index( i, uniqs, dihedral_pattern_, alpha_beta_pattern_  );
 					}
 				}
 					

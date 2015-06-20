@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/SplitUnfoldedTwoBodyEnergyCreator.cc
-/// @brief  Energy creator for the split unfolded two body energy method
+/// @file src/core/scoring/methods/SplitUnfoldedTwoBodyEnergyCreator.cc
+/// @briefEnergy creator for the split unfolded two body energy method
 /// @author Riley Simmons-Edler (rse231@nyu.edu)
 
 
@@ -29,35 +29,33 @@ namespace scoring {
 namespace methods {
 
 
-  methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(const methods::EnergyMethodOptions & options) const
-  {
-    if(options.has_method_weights(split_unfolded_two_body))
-      {
-				utility::vector1<Real> const & v = options.method_weights(split_unfolded_two_body);
-				assert(v.size()==scoring::n_score_types);
+methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(const methods::EnergyMethodOptions & options) const
+{
+	if ( options.has_method_weights( split_unfolded_two_body ) ) {
+				utility::vector1<Real> const & v = options.method_weights( split_unfolded_two_body );
+				assert( v.size() == scoring::n_score_types );
 				EnergyMap e;
-				for(Size ii=1;ii<scoring::n_score_types;ii++)
-					{
-						e[(ScoreType)ii]=v[ii];
-					}
-				//using the same type option as unfolded state energy since those two need to match when using the split unfolded energy(since unfolded state holds the one body component).
-				return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type(),e) );
-      }
-    return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type()) );
-  }
+				for ( Size ii = 1; ii < scoring::n_score_types; ++ii ) {
+					e[(ScoreType)ii]=v[ii];
+				}
+			//using the same type option as unfolded state energy since those two need to match when using the split unfolded energy(since unfolded state holds the one body component).
+			return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type(),e) );
+	}
+	return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type()) );
+}
 
-  ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const
-  {
-    ScoreTypes sts;
-    sts.push_back(split_unfolded_two_body);
-		sts.push_back(fa_atr_ref);
-		sts.push_back(fa_rep_ref);
-		sts.push_back(fa_sol_ref);
-		sts.push_back(fa_elec_ref);
-		sts.push_back(hbond_ref);
-		sts.push_back(dslf_fa13_ref);
-    return sts;
-  }
+ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const
+{
+	ScoreTypes sts;
+	sts.push_back( split_unfolded_two_body );
+	sts.push_back( fa_atr_ref );
+	sts.push_back( fa_rep_ref );
+	sts.push_back( fa_sol_ref );
+	sts.push_back( fa_elec_ref );
+	sts.push_back( hbond_ref );
+	sts.push_back( dslf_fa13_ref );
+	return sts;
+}
 
 
 }

@@ -9,6 +9,7 @@
 
 /// Unit headers
 #include <protocols/ncbb/SecStructMinimizeMultiFunc.hh>
+#include <protocols/ncbb/util.hh>
 
 /// Package headers
 #include <numeric/crick_equations/HelixParams.hh>
@@ -135,53 +136,6 @@ SecStructMinimizeMultiFunc::SecStructMinimizeMultiFunc(
 	
 	get_dofs_map();
 	get_dofs_for_pose0();
-}
-
-void
-SecStructMinimizeMultiFunc::count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs ) const {
-	num = 1;
-	uniqs.push_back( pattern[ 0 ] );
-	for ( Size i = 1; i < pattern.length(); ++i ) {
-		// assume i unique
-		Size increment = 1;
-		for ( Size j = 0; j < i; ++j ) {
-			if ( pattern[j]  == pattern[ i ] ) {
-				// repeat
-				increment = 0;
-			} else {
-				// new!
-				increment *= 1;
-			}
-		}
-		if ( increment == 1 ) uniqs.push_back( pattern[ i ] );
-		num += increment;
-	}
-}
-
-Size
-SecStructMinimizeMultiFunc::give_dihedral_index(
-	Size n,
-	utility::vector1< char > uniqs
-) const {
-	// for all characters from uniqs that are earlier than this residue's
-	// add 2 or 3 depending on if those uniqs are for alphas or betas
-	
-	Size index = 1;
-	
-	for ( Size i = 1; i < n; ++i ) {
-		for ( Size j = 0; j < dihedral_pattern_.length(); ++j ) {
-			if ( dihedral_pattern_[j] == uniqs[i] ) {
-				if (alpha_beta_pattern_[j] == 'A' || alpha_beta_pattern_[j] == 'P' ) {
-					// it's an alpha
-					index += 2;
-				} else if (alpha_beta_pattern_[j] == 'B' ) {
-					index += 3;
-				}
-				j = dihedral_pattern_.length();
-			}
-		}
-	}
-	return index;
 }
 
 Real

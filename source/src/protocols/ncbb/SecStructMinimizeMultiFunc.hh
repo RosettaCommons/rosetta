@@ -96,15 +96,7 @@ private:
 	std::map< Size, Size > map_DOF_to_BB_;
 	
 	void
-	count_uniq_char( std::string pattern, Size & num, utility::vector1<char> & uniqs ) const;
-	
-	void
 	setup_minimization_graph( pose::Pose & pose, scoring::ScoreFunction const & sfxn, MinimizerMap const & min_map ) const;
-	
-	Size
-	give_dihedral_index(
-		Size n,
-		utility::vector1< char > uniqs ) const;
 	
 	core::pose::Pose & pose_;
 	
