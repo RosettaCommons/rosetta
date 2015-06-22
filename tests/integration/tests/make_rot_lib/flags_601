@@ -1,2 +1,3 @@
 -options_file 601_rot_lib_options_0_-90_180_180.in
 -two_fold_symmetry_0_180 2
+-score:weights mm_std

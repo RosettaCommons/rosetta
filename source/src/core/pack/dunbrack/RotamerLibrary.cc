@@ -2585,13 +2585,22 @@ RotamerLibrary::get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type
 	// one fewer rotameric rotlib chi if semirotameric
 	Size n_rotlib_chi( rsd_type.nchi() - rsd_type.n_proton_chi() - ( dun02 ? 0 : 1 ) );
 	
-	// amw: this should come from somewhere else that has the opportunity to define how many bbs the rotlib depends on!
-	// amw: it could come from the rsd type via the params file but doesn't currently; it could also come from the rotlib
-	// this is compatible with THREE backbone torsion beta rotlibs
+	// AMW: Long term, the rotamer library should specify how many torsions
+	// it depends on, and you should be able to tell your protocol how many
+	// (and which) dependencies you want. For example, you should be able to
+	// switch between alpha AA rotamers and specialized beta rotamers for the
+	// betas!
+	// AMW: Presently, we are compatible with THREE backbone torsion beta rotlibs.
 	Size n_rotlib_bb( rsd_type.mainchain_atoms().size() - 1 ); // 2 for alpha 3 for beta
-	// because of the prohibitive size of proper beta AA rotamer libraries
-	// we have to keep using the bad ones for a while...
-	// Size n_rotlib_bb( 2 );
+	
+	// AMW: This code sends a hideous shiver down my spine and it should do the same for yours.
+	// The last passage was a regrettable tragedy--where this function had to figure something out about
+	// the residue type besides whether its rotamer library was already known.
+	// This passage requires that we even check for variant types. What's next???
+	if ( rsd_type.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {
+		--n_rotlib_bb;
+	}
+	
 	chemical::AA aan( rsd_type.aa() );
 
 	if (ncaa_rotlibs_.find(aa_name3) == ncaa_rotlibs_.end()) {

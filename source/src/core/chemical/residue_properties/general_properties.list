@@ -44,6 +44,9 @@ METAL  # This residue type is a metal ion.
 SURFACE
 WATER
 VIRTUAL_RESIDUE
+TERMINUS
+UPPERTERM_CAP
+LOWERTERM_CAP
 
 ## Variants
 LOWER_TERMINUS  # first residue in a chain

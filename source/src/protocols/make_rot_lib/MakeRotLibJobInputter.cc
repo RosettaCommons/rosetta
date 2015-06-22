@@ -32,12 +32,14 @@
 
 ///Utility headers
 #include <utility/vector1.hh>
+#include <utility/file/FileName.hh>
 
 // basic headers
 #include <basic/Tracer.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/make_rot_lib.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/util.hh>
 
 // c++ headers
@@ -56,6 +58,10 @@ protocols::make_rot_lib::MakeRotLibJobInputter::MakeRotLibJobInputter() :
 	using namespace basic::options::OptionKeys;
 
 	TR << "Instantiate MakeRotLibJobInputter" << std::endl;
+	
+	// add ACE and NME residues even if they're not uncommented!
+	option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/ACE.params" ) ) );
+	option[ in::file::extra_res_fa ].push_back( utility::file::FileName( std::string( "terminal/NME.params" ) ) );
 
 	mrlod_ = MakeRotLibOptionsDataOP( new MakeRotLibOptionsData( option[ OptionKeys::make_rot_lib::options_file ].value() ) );
 }
@@ -69,6 +75,9 @@ protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose 
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::conformation;
+	
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::make_rot_lib;
 
 	TR << "MakeRotLibJobInputter::pose_from_job" << std::endl;
 
@@ -88,14 +97,32 @@ protocols::make_rot_lib::MakeRotLibJobInputter::pose_from_job( core::pose::Pose 
 		}
 
 		// create fully patched name
-		std::stringstream fullname;
-		fullname << mrlod_->get_name() << patch_name;
-		//TR << "fullname is " << fullname << std::endl;
-		// make single residue pose
-		ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		ResidueType const & RT( RTS->name_map( fullname.str() ) );
-		Residue R( RT, true );
-		pose.append_residue_by_jump( R, 1 );
+		if ( option[ use_terminal_residues ].value() ) {
+			std::string fullname = mrlod_->get_name();
+			//TR << "fullname is " << fullname << std::endl;
+			// make single residue pose
+			if ( option[ use_terminal_residues ].value( ) ) {
+				ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+				ResidueType const & ACE( RTS->name_map( "ACE" ) );
+				ResidueType const & RT( RTS->name_map( fullname ) );
+				ResidueType const & NME( RTS->name_map( "NME" ) );
+				Residue N( ACE, true );
+				Residue R( RT, true );
+				Residue C( NME, true );
+				pose.append_residue_by_jump( N, 1 );
+				pose.append_residue_by_bond( R, true );
+				pose.append_residue_by_bond( C, true );
+			}
+		} else {
+			std::stringstream fullname;
+			fullname << mrlod_->get_name() << patch_name;
+			
+			// make single residue pose
+			ResidueTypeSetCOP RTS( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+			ResidueType const & RT( RTS->name_map( fullname.str() ) );
+			Residue R( RT, true );
+			pose.append_residue_by_jump( R, 1 );
+		}
 		
 		// load pose in to inner job
 		load_pose_into_job(pose, job);
@@ -180,7 +207,7 @@ void protocols::make_rot_lib::MakeRotLibJobInputter::fill_jobs( jd2::JobsContain
 				jobs.push_back( jd2::JobOP( new MakeRotLibJob( ij, nstruct, o, bbs, bb_ids, e, mrlod_, semirotameric ) ) );
 			}
 
-			i [ 1 ] += steps[ 1 ];
+			i[ 1 ] += steps[ 1 ];
 			while ( i[ p ] > maxes[ p ] ) {
 				if ( p <= n_bb ) i[ p ] = mrlod_->get_bb_range( p ).low;
 				else             i[ p ] = 0;

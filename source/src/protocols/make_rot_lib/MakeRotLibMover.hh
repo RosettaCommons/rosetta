@@ -57,8 +57,10 @@ public:
 	void minimize_all_rotamers( core::pose::Pose & pose, utility::vector1< core::Real> bbs, utility::vector1<core::Size> bb_ids, MakeRotLibPolymerType polymer_type );
 
 	// cluster loop
+	void seed_centroids( bool semirotameric ); // for k-medoids only
 	void calc_all_dist();
 	bool calc_rotamer_clusters();
+	bool calc_medoids();
 	bool calc_centroids();
 	bool bbs_appropriate_for_definitions( utility::vector1< core::Real > bbs );
 

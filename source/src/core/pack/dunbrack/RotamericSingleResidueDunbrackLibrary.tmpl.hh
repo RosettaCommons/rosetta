@@ -2120,7 +2120,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_file(
 			}/// else, we're still reading data for the intended amino acid, so let's continue...
 		}
 
-		for ( Size ii = 1; ii <= N; ++ii ) infile >> bb[ ii ];
+		for ( Size ii = 1; ii <= N; ++ii ) {
+			infile >> bb[ ii ];
+		}
 
 		infile >> count;
 		infile >> rotwell[ 1 ] >> rotwell[ 2 ] >> rotwell[ 3 ] >> rotwell[ 4 ];

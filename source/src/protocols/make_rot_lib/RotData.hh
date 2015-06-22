@@ -138,6 +138,8 @@ public:
 	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster );
 	RotData( core::Size NumChi, core::Size NumBBs, core::Size NumCluster, bool semirotameric );
 
+	friend bool operator== ( RotData & r1, RotData & r2 );
+	
 	// setters and getters
 	void set_bb( core::Size i, core::Real BB ) {
 		bbs_[ i ] = BB;

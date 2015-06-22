@@ -18,6 +18,78 @@ namespace make_rot_lib {
 
 static thread_local basic::Tracer TR( "protocols.make_rot_lib.RotData" );
 
+	
+bool operator==( RotData & r1, RotData & r2 ) {
+
+	if ( r1.get_num_bbs() != r2.get_num_bbs()) {
+		return false;
+	}
+	if (r1.get_bbs() == r2.get_bbs() ) {
+		return false;
+	}
+	for ( core::Size i = 1; i <= r1.get_num_bbs(); ++i ) {
+		if (r1.get_bb_id( i ) != r2.get_bb_id( i ) ) {
+			return false;
+		}
+	}
+	if ( r1.get_omg() != r2.get_omg() ) {
+		return false;
+	}
+	if ( r1.get_min_omg() != r2.get_min_omg() ) {
+		return false;
+	}
+	
+	if ( r1.get_eps() != r2.get_eps() ) {
+		return false;
+	}
+	if ( r1.get_min_eps() != r2.get_min_eps() ) {
+		return false;
+	}
+	
+	
+	if ( r1.get_energy() != r2.get_energy() ) {
+		return false;
+	}
+	
+	if ( r1.get_probability() != r2.get_probability() ) {
+		return false;
+	}
+	
+	if ( r1.get_num_chi() != r2.get_num_chi() ) {
+		return false;
+	}
+
+	if ( r1.get_num_clusters() != r2.get_num_clusters() ) {
+		return false;
+	}
+	
+	if ( r1.get_num_chi() != r2.get_num_chi() ) {
+		return false;
+	}
+	
+	core::Size num_chi = r1.get_num_chi();
+	for ( core::Size i = 1; i <= num_chi; ++i ) {
+		
+		if ( r1.get_inp_chi(i) != r2.get_inp_chi(i) ) {
+			return false;
+		}
+		
+		if ( r1.get_min_chi(i) != r2.get_min_chi(i) ) {
+			return false;
+		}
+		
+		if ( r1.get_lib_chi_val(i) != r2.get_lib_chi_val(i) ) {
+			return false;
+		}
+		
+		if ( r1.get_std_dev(i) != r2.get_std_dev(i) ) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 RotData::RotData( core::Size NumChi, core::Size NumCluster ) :
 	num_bbs_( 2 ),
 	omega_( 0 ),

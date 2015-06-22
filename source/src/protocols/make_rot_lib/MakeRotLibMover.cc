@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/make_rot_lib/MakeRotLibMover.hh
-/// @brief Implimentation file for MakeRotLibMover
+/// @brief Implementation file for MakeRotLibMover
 /// @author P. Douglas Renfrew ( renfrew@nyu.edu )
+/// @author Andy Watkins ( amw579@nyu.edu )
 
 // unit headers
 #include <protocols/make_rot_lib/MakeRotLibMover.hh>
@@ -61,20 +62,8 @@ protocols::moves::Mover("MakeRotLibMover")
 		
 	TR << "Creating score function..." << std::endl;
 	
-	scrfxn_ = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS );
-	scrfxn_->set_weight( fa_dun, 0.0 );
-	scrfxn_->set_weight( p_aa_pp, 0.0 );
-	scrfxn_->set_weight( rama, 0.0 );
-	scrfxn_->set_weight( fa_intra_rep, 0.0 );
-	scrfxn_->set_weight( fa_intra_atr, 0.0 );
-	scrfxn_->set_weight( fa_rep, 0.0 );
-	scrfxn_->set_weight( fa_atr, 0.0 );
-	scrfxn_->set_weight( mm_twist, 1.0 );
-	scrfxn_->set_weight( mm_lj_inter_rep, 1.0 );
-	scrfxn_->set_weight( mm_lj_inter_atr, 1.0 );
-	scrfxn_->set_weight( mm_lj_intra_rep, 1.0 );
-	scrfxn_->set_weight( mm_lj_intra_atr, 1.0 );
-		
+	scrfxn_ = core::scoring::get_score_function();
+	
 }
 
 void
@@ -111,7 +100,7 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 
 	TR << "Initializing centroids..." << std::endl;
 	init_centroids( mrlod->get_centroid_data(), mrlod->get_n_chi(), mrlod->get_semirotameric() );
-
+	
 	TR << "Initializing rotamers..." << std::endl;
 	init_rotamers( mrlod->get_chi_data(), mrlod->get_n_centroids(), omg, bbs, bb_ids, eps, mrlod->get_semirotameric() );
 	TR << "Minimizing rotamers..." << std::endl;
@@ -145,6 +134,12 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 	//+-----------------------------------------+
 
 	TR << "Clustering..." << std::endl;
+	
+	
+	if ( option[ k_medoids ].user() ) {
+		seed_centroids( mrlod->get_semirotameric() );
+	}
+
 	bool clusters_changed( true );
 	bool centroids_changed( true );
 	core::Size num_iter(0);
@@ -157,7 +152,11 @@ MakeRotLibMover::apply( core::pose::Pose & pose )
 		++num_iter;
 		calc_all_dist();
 		clusters_changed = calc_rotamer_clusters();
-		centroids_changed = calc_centroids();
+		if ( option[ k_medoids ].user() ) {
+			centroids_changed = calc_medoids();
+		} else {
+			centroids_changed = calc_centroids();
+		}
 	} while ( ( clusters_changed || centroids_changed ) && num_iter <= 499 );
 
 	//+-----------------------------------------+
@@ -282,6 +281,44 @@ MakeRotLibMover::init_centroids( CentroidRotNumVecVec const & centroid_data, cor
 
 }
 
+/// @brief For k-medoids, seed centroids to nearest element of rotamers_
+void
+MakeRotLibMover::seed_centroids( bool semirotameric )
+{
+	using namespace core;
+
+	Size num_rotameric_chi = rotamers_[1].get_num_chi();
+	if ( semirotameric ) num_rotameric_chi--;
+
+	// Assign each centroid to the nearest rotamer or to no rotamer at all
+	// Done WITHOUT replacement
+	utility::vector1< Size > used_ids;
+	
+	for ( Size i(1); i <= centroids_.size(); ++i ) {
+		Real best_distance = 360;
+		Size best_id = 0;
+		for ( Size j(1); j <= rotamers_.size(); ++j ) {
+			Real distance = calc_dist( rotamers_[j], centroids_[i] );
+			if ( distance < best_distance ) {
+				bool id_clean = true;
+				for ( Size id_iter = 1; id_iter <= used_ids.size(); ++id_iter ) {
+					if ( used_ids[ id_iter ] == j ) {
+						id_clean = false;
+					}
+				}
+				if ( id_clean ) {
+					best_distance = distance;
+					best_id = j;
+				}
+			}
+		}
+		if ( best_id != 0 ) {
+			centroids_[ i ] = rotamers_[ best_id ];
+			used_ids.push_back( best_id );
+		}
+	}
+}
+
 /// @brief Initializes rotamer arrays based on data from the MRLOptionsData
 void
 MakeRotLibMover::init_rotamers( TorsionRangeVec const & chi_ranges, core::Size num_cluster,
@@ -371,7 +408,16 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	using namespace scoring;
 	using namespace chemical;
 	using namespace conformation;
+	
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::make_rot_lib;
 
+	Size resi = option[ use_terminal_residues ].value() ? 2 : 1;
+	
+	// We use BB ids that count the first omega as a mainchain torsion so phi is 2 and psi is 3
+	// if we have terminal residues there is no extra mainchain torsion so we decrease by one
+	Size offset = option[ use_terminal_residues ].value() ? 1 : 0;
+	
 	// get number of chi
 	Size const nchi( rd.get_num_chi() );
 
@@ -390,12 +436,15 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
     // AMW: prior version used mainchain_torsions().size() to find epsilon's id
     // I am not actually sure why that no longer works, but it may relate to the mainchain atoms
     // that are being prepended in the C and N term patches, which work more consistently now.
-	id::TorsionID omg_id( 1, id::BB, 1 );
+	//id::TorsionID omg_id( resi, id::BB, 1 );
     //TR << "Going to set omega to " << rd.get_omg() << std::endl;
-	pose.set_torsion( omg_id, rd.get_omg() );
-	core::Size eps_num = pose.residue( 1 ).mainchain_torsions().size()-1;
+	id::TorsionID omg_id = ( option[ use_terminal_residues ].value() ?
+							id::TorsionID( resi, id::BB, 1 ) :
+							id::TorsionID( 1,    id::BB, 1 ) );
+	pose.set_torsion( omg_id , rd.get_omg() );
+	core::Size eps_num = pose.residue( resi ).mainchain_torsions().size()-1;
     //TR << "Going to set epsilon (torsion " << eps_num << ") to " << rd.get_eps() << std::endl;
-	id::TorsionID eps_id( 1, id::BB, eps_num );
+	id::TorsionID eps_id( resi, id::BB, eps_num );
 	pose.set_torsion( eps_id, rd.get_eps() );
 
     // bb_i is a counter that iterates through the array of backbone dihedral values stored in the RotamerData object
@@ -403,27 +452,25 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
     // to interact with the pose. These two arrays share the bb_i counter.
 	for ( Size bb_i( 1 ); bb_i <= bbs.size(); ++bb_i ) {
         TR << "About to set bb id " << bb_ids[ bb_i ] << " to " << rd.get_bb( bb_i ) << std::endl;
-		id::TorsionID bb_id( 1, id::BB, bb_ids[ bb_i ] );
+		id::TorsionID bb_id( resi, id::BB, bb_ids[ bb_i ] - offset );
 		pose.set_torsion( bb_id, rd.get_bb( bb_i ) );
 	}
-	//id::TorsionID psi_id( 1, id::BB, 3 );
-	//pose.set_torsion( psi_id, rd.get_psi() );
 
 	// set chi angles
 	if ( rd.get_semirotameric() ) {
 		for ( Size j( 1 ); j <= ( nchi - 1 ); ++j ) {
-			pose.set_chi( j, 1, rd.get_inp_chi( j ) );
-			TR << pose.conformation().residue(1).chi(j) << std::endl;
+			pose.set_chi( j, resi, rd.get_inp_chi( j ) );
+			TR << pose.conformation().residue( resi ).chi(j) << std::endl;
 		}
 	} else {
 		for ( Size j( 1 ); j <= nchi; ++j ) {
-			pose.set_chi( j, 1, rd.get_inp_chi( j ) );
-			TR << pose.conformation().residue(1).chi(j) << std::endl;
+			pose.set_chi( j, resi, rd.get_inp_chi( j ) );
+			TR << pose.conformation().residue( resi ).chi(j) << std::endl;
 		}
 	}
 	// setup the movemap
 	kinematics::MoveMapOP mvmp( new kinematics::MoveMap );
-	mvmp->set_chi( 1, true );
+	mvmp->set_chi( resi, true );
 	if ( polymer_type == PEPTIDE ) {
 		mvmp->set( omg_id, true );
 		mvmp->set( eps_id, true );
@@ -442,7 +489,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	// perform minimization until we are stabilized ( delta 0.001 ) or we reach 100 steps
 	// should probably make these magic numbers options
 	Real current_ener( orig_ener ), previous_ener( orig_ener );
-	Size iter(0);
+	Size iter( 0 );
 	do {
 	 	previous_ener = current_ener;
 	 	mnmvr.apply( pose );
@@ -456,17 +503,17 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 
 	TR << "ORIG ENER: " << orig_ener << " MIN ENER: " << min_ener << " found in " << iter << " steps" << std::endl;
 
-	EnergyMap em( pose.energies().residue_total_energies(1) );
-	rd.set_twist( em[ mm_twist ] );
-	rd.set_inter_rep( em[ mm_lj_inter_rep ] );
-	rd.set_inter_atr( em[ mm_lj_inter_atr ] );
+	EnergyMap em( pose.energies().residue_total_energies( resi ) );
+	rd.set_inter_rep( em[ fa_rep ] );
+	rd.set_inter_atr( em[ fa_atr ] );
+	rd.set_solvation( em[ fa_sol ] );
 	rd.set_intra_rep( em[ mm_lj_intra_rep ] );
 	rd.set_intra_atr( em[ mm_lj_intra_atr ] );
-	rd.set_solvation( em[ fa_sol ] );
+	rd.set_twist( em[ mm_twist ] );
 	
 	// record min chi, energy
 	for ( Size j = 1; j <= nchi; ++j ) {
-		rd.set_min_chi( pose.chi( j, 1 ), j );
+		rd.set_min_chi( pose.chi( j, resi ), j );
 	}
 	
 	if ( rd.get_semirotameric() ) {
@@ -486,7 +533,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 			       nchi_setting <= high;
 			 nchi_setting += step, ++i ) {
 
-			pose.set_chi( nchi, 1, nchi_setting );
+			pose.set_chi( nchi, resi, nchi_setting );
 			Real energy = ( ( * scrfxn_ ) ( pose ) );
 			
 			// dump pdb for debugging
@@ -519,7 +566,7 @@ MakeRotLibMover::minimize_rotamer( RotData & rd, core::pose::Pose & pose, utilit
 	}
 	
 	// restore minimum chi2 from before the semirotameric scan
-	pose.set_chi( nchi, 1, rd.get_min_chi( nchi ) );
+	pose.set_chi( nchi, resi, rd.get_min_chi( nchi ) );
 	
 	rd.set_energy( min_ener );
 	rd.set_min_omg( numeric::nonnegative_principal_angle_degrees( pose.torsion( omg_id ) ) );
@@ -625,6 +672,62 @@ MakeRotLibMover::calc_centroids()
 		}
 	}
 
+	return centroid_change;
+}
+
+bool
+MakeRotLibMover::calc_medoids()
+{
+	using namespace core;
+	using namespace utility;
+	
+	bool centroid_change( false );
+	Size ncluster( centroids_.size() );
+	
+	Real score_current_config = 0;
+	for ( Size k = 1; k <= rotamers_.size(); ++k ) {
+		score_current_config += rotamers_[ k ].get_min_cent_dist();
+	}
+	
+	for ( Size i( 1 ); i <= ncluster; ++i ) { // for each medoid
+		
+		for ( Size j( 1 ); j <= rotamers_.size(); ++j ) { // for each rotamer
+			bool is_a_centroid = false;
+			for ( Size k = 1; k <= ncluster; ++k ) {
+				if ( rotamers_[ j ] == centroids_[ k ] ) {
+					is_a_centroid = true;
+				}
+			}
+			if ( is_a_centroid ) continue;
+
+			RotDataVec centroids_new( centroids_ );
+			RotDataVec rotamers_new( rotamers_ );
+			centroids_new[ i ] = rotamers_new[ j ];
+
+			// score new configuration with rotamers_ and centroids_new
+			Real score_new_configuration = 0;
+			for ( Size k = 1; k <= rotamers_new.size(); ++k ) {
+				Real min_dist = 100000;
+				for ( Size l = 1; l <= ncluster; ++l ) {
+					Real dist = calc_dist( rotamers_new[ k ], centroids_new[ l ] );
+					if ( dist < min_dist ) {
+						min_dist = dist;
+						rotamers_new[ k ].set_cen_dist( dist, l );
+						rotamers_new[ k ].set_cluster_num( l );
+					}
+				}
+				score_new_configuration += min_dist;
+			}
+			
+			if ( score_new_configuration < score_current_config ) {
+				score_current_config = score_new_configuration;
+				rotamers_ = rotamers_new;
+				centroids_ = centroids_new;
+				centroid_change = true;
+
+			}
+		}
+	}
 	return centroid_change;
 }
 
@@ -741,7 +844,13 @@ void
 MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vector1<core::Real> bbs, utility::vector1<core::Size> bb_ids, MakeRotLibPolymerType polymer_type )
 {
 	using namespace core;
-
+	
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::make_rot_lib;
+	
+	// was 1 in the patched case
+	Size resi = option[ use_terminal_residues ].value() ? 2 : 1;
+	
 	// iterate over final rotamers
 	for ( Size i( 1 ); i <= final_rotamers_.size(); ++i ) {
 		Size const nchi ( final_rotamers_[ i ].get_semirotameric() ?
@@ -770,9 +879,9 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 	 		Real new_ener( 0 );
 	 		while ( new_ener < cut_off_ener && ( k * chi_step ) <= 30 ) {
 	 			k = k + 1;
-	 			pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers_[ i ].get_min_chi( j ) + k * chi_step ) );
+	 			pose.set_chi( j, resi, numeric::nonnegative_principal_angle_degrees( final_rotamers_[ i ].get_min_chi( j ) + k * chi_step ) );
 	 			Real plus_ener( ( *scrfxn_ )( pose ) );
-	 			pose.set_chi( j, 1, numeric::nonnegative_principal_angle_degrees( final_rotamers_[ i ].get_min_chi( j ) - k * chi_step ) );
+	 			pose.set_chi( j, resi, numeric::nonnegative_principal_angle_degrees( final_rotamers_[ i ].get_min_chi( j ) - k * chi_step ) );
 	 			Real neg_ener( ( *scrfxn_ )( pose ) );
 	 			// set new_ener to highest energy in either direction
 	 			new_ener = ( plus_ener >= neg_ener ? plus_ener : neg_ener );
@@ -780,7 +889,7 @@ MakeRotLibMover::calc_standard_deviations( core::pose::Pose & pose, utility::vec
 	 		final_rotamers_[ i ].set_std_dev( k*chi_step, j );
 
 	 		//reset pose
-	 		pose.set_chi( j, 1, final_rotamers_[ i ].get_min_chi( j ) );
+	 		pose.set_chi( j, resi, final_rotamers_[ i ].get_min_chi( j ) );
 	 	}
 	}
 }
