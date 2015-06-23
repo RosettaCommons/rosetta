@@ -95,6 +95,15 @@ public:
 		dock_pert_ = dock_pert;
 		if_dock_pert_ = true;
 	}
+	void set_tilt(utility::vector1< core::Real > tilt){
+		tilt_ = tilt;
+	}
+	void set_tilt1_center(std::string tilt_center){
+		tilt1_center_ = tilt_center;
+	}
+	void set_tilt2_center(std::string tilt_center){
+		tilt2_center_ = tilt_center;
+	}
 	void set_uniform_trans(core::Real uniform_trans){
 		uniform_trans_ = uniform_trans;
 		if_uniform_trans_ = true;
@@ -130,7 +139,11 @@ private:
 
 	utility::vector1< core::Real > dock_pert_;
 	core::Real uniform_trans_;
-	
+
+	utility::vector1< core::Real > tilt_;
+	std::string tilt1_center_;
+	std::string tilt2_center_;
+
 	core::Vector slide_axis_;
 	core::Vector spin_center_;
 
@@ -147,7 +160,7 @@ public:
 
 	// constructor with arguments
 	DockingSlideIntoContact( core::Size const rb_jump );
-	
+
 	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis );
 
 	//destructor

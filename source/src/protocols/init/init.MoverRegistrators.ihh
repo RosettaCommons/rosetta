@@ -297,6 +297,7 @@ static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
 
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
+static MoverRegistrator< rigid::RigidBodyTiltMoverCreator > reg_RigidBodyTiltMoverCreator;
 static MoverRegistrator< rigid::RigidBodyTransMoverCreator > reg_RigidBodyTransMoverCreator;
 static MoverRegistrator< rigid::RollMoverCreator > reg_RollMoverCreator;
 static MoverRegistrator< rigid::UniformRigidBodyCMCreator > reg_UniformRigidBodyCMCreator;

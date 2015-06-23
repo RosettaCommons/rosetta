@@ -49,6 +49,10 @@ class RigidBodyDeterministicSpinMover;
 typedef utility::pointer::shared_ptr< RigidBodySpinMover > RigidBodyDeterministicSpinMoverOP;
 typedef utility::pointer::shared_ptr< RigidBodySpinMover const > RigidBodyDeterministicSpinMoverCOP;
 
+class RigidBodyTiltMover;
+typedef utility::pointer::shared_ptr< RigidBodyTiltMover > RigidBodyTiltMoverOP;
+typedef utility::pointer::shared_ptr< RigidBodyTiltMover const > RigidBodyTiltMoverCOP;
+
 class RigidBodyTransMover;
 typedef utility::pointer::shared_ptr< RigidBodyTransMover > RigidBodyTransMoverOP;
 typedef utility::pointer::shared_ptr< RigidBodyTransMover const > RigidBodyTransMoverCOP;

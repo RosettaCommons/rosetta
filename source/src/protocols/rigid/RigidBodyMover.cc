@@ -25,6 +25,7 @@
 // Rosetta Headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -727,6 +728,189 @@ RigidBodyDeterministicSpinMover::get_name() const {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+RigidBodyTiltMover::RigidBodyTiltMover():
+	RigidBodyMover(),
+	tilt1_mag_( 0.0 ),
+	tilt2_mag_( 0.0 ),
+	tilt1_center_( 0 ),
+	tilt2_center_( 0 ),
+	spin_axis_( 0.0 )
+{
+	moves::Mover::type( "RigidBodyTilt" );
+}
+
+///@brief constructor with arguments
+///       spin axis is initialized to 0 and then calculated during apply()
+RigidBodyTiltMover::RigidBodyTiltMover(
+	int const rb_jump_in,
+	core::Real const tilt1_mag_in, //max tilt of partner1 in degrees
+	core::Real const tilt2_mag_in, //max tilt of partner2 in degrees
+	core::Size const tilt1_center_in, //resID for residue tilt of partner1 is centered at
+	core::Size const tilt2_center_in //resID for residue tilt of partner2 is centered at
+):
+	RigidBodyMover( rb_jump_in ),
+	tilt1_mag_(tilt1_mag_in),
+	tilt2_mag_(tilt2_mag_in),
+	tilt1_center_(tilt1_center_in),
+	tilt2_center_(tilt2_center_in),
+	spin_axis_( 0.0 )
+{
+	moves::Mover::type( "RigidBodyTilt" );
+}
+
+RigidBodyTiltMover::RigidBodyTiltMover( RigidBodyTiltMover const & src ) :
+	parent( src ),
+	tilt1_mag_(src.tilt1_mag_),
+	tilt2_mag_(src.tilt2_mag_),
+	tilt1_center_(src.tilt1_center_),
+	tilt2_center_(src.tilt2_center_),
+	spin_axis_( src.spin_axis_ )
+{}
+
+RigidBodyTiltMover::~RigidBodyTiltMover() {}
+
+void
+RigidBodyTiltMover::spin_axis ( core::Vector const & spin_axis_in )
+{
+	spin_axis_ = spin_axis_in;
+}
+
+void
+RigidBodyTiltMover::apply( core::pose::Pose & pose )
+{
+	// retrieve stubs based on moveable jump
+	core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
+	core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
+
+	// Find partner centers.
+	core::Vector partner1_center, partner2_center;
+	protocols::geometry::centroids_by_jump(pose, rb_jump_, partner1_center, partner2_center);
+
+	// update spin axis, if needed
+	core::Vector spin_axis( spin_axis_ );
+	if ( spin_axis.is_zero() ){
+		TRBM <<"Updating spin axis"<<std::endl;
+		spin_axis = partner1_center - partner2_center;
+	}
+
+	// tilt partner 1
+	if (tilt1_mag_ > 0) {
+		core::Vector tilt_center( find_tilt_center(pose, tilt1_center_, partner1_center ) );
+		tilt( pose, "1", tilt1_mag_, tilt_center, spin_axis, partner1_center, c2n, upstream_stub, downstream_stub);
+	}
+
+	// tilt partner 2
+	if (tilt2_mag_ > 0){
+		core::Vector tilt_center( find_tilt_center(pose, tilt2_center_, partner2_center ) );
+		tilt( pose, "2", tilt2_mag_, tilt_center, spin_axis, partner2_center, dir_, upstream_stub, downstream_stub);
+	}
+}
+
+void RigidBodyTiltMover::tilt(
+			core::pose::Pose & pose,
+			std::string const & which,
+			core::Real tilt_mag,
+			core::Vector const & tilt_center,
+			core::Vector const & spin_axis,
+			core::Vector const & partner_center,
+			Direction dir,
+			core::kinematics::Stub const & upstream_stub,
+			core::kinematics::Stub const & downstream_stub
+) const {
+	// calculate a vector perpendicular to the spin axis
+	core::Vector rot_vector1 = (core::Vector(-(spin_axis.y()+spin_axis.z())/spin_axis.x(),1,1));
+	// calculate third vector that is perpendicular to spin axis and rot_vector1
+	core::Vector rot_vector2 = spin_axis.cross(rot_vector1);
+
+	core::Real tilt_angle1 = tilt_mag-2*tilt_mag*numeric::random::rg().uniform();
+	core::Real tilt_angle2 = tilt_mag-2*tilt_mag*numeric::random::rg().uniform();
+	TRBM <<"Tilt: tilt of partner "<<which<<" - " <<tilt_angle1 <<" degrees (axis 1) and "<<tilt_angle2<< " degrees (axis 2) (limit: "<<tilt_mag<< " degrees)" <<std::endl;
+
+	// Get jump and apply rotation
+	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
+	flexible_jump.set_rb_center( dir, downstream_stub, partner_center );
+	flexible_jump.rotation_by_axis( upstream_stub, rot_vector1, tilt_center, tilt_angle1);
+	flexible_jump.rotation_by_axis( upstream_stub, rot_vector2, tilt_center, tilt_angle2);
+	pose.set_jump( rb_jump_, flexible_jump );
+}
+
+core::Vector RigidBodyTiltMover::find_tilt_center(
+			core::pose::Pose const & pose,
+			core::Size tilt_center_res,
+			core::Vector const & partner_center
+) const {
+	if( tilt_center_res == 0 ) {
+		TRBM.Debug << "Tilt center on center of mass." << std::endl;
+		return partner_center;
+	} else {
+		TRBM.Debug << "Tilt center on residue " << tilt_center_res << std::endl;
+		return pose.residue(tilt_center_res).atom("CA").xyz();
+	}
+}
+
+
+std::string
+RigidBodyTiltMover::get_name() const {
+	return "RigidBodyTiltMover";
+}
+
+void
+RigidBodyTiltMover::parse_my_tag( utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & pose )
+{
+	rb_jump( tag->getOption< int >( "jump", 1 ) );
+	core::Vector axis( tag->getOption< core::Real >( "x", 0.0 ), tag->getOption< core::Real >( "y", 0.0 ), tag->getOption< core::Real >( "z", 0.0 ));
+	spin_axis( axis );
+	tilt1_mag( tag->getOption< core::Real >( "tilt1_mag", 0.0 )  );
+	tilt2_mag( tag->getOption< core::Real >( "tilt2_mag", 0.0 )  );
+	if( tag->hasOption( "tilt1_center" ) ) {
+		core::Size tilt1_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt1_center" ), pose ) );
+		TRBM.Debug << "Tilt 1 center " << tilt1_cent << std::endl;
+		if( tilt1_cent == 0 ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt1_center.");
+		}
+		tilt1_center( tilt1_cent );
+	}
+	if( tag->hasOption( "tilt2_center" ) ) {
+		core::Size tilt2_cent( core::pose::parse_resnum( tag->getOption< std::string >( "tilt2_center" ), pose ) );
+		TRBM.Debug << "Tilt 2 center " << tilt2_cent << std::endl;
+		if( tilt2_cent == 0 ) {
+			throw utility::excn::EXCN_RosettaScriptsOption("In RigidBodyTiltMover: can't understand value passed to tilt2_center.");
+		}
+		tilt2_center( tilt2_cent );
+	}
+}
+
+moves::MoverOP
+RigidBodyTiltMover::clone() const {
+	return moves::MoverOP( new RigidBodyTiltMover(*this) );
+}
+
+moves::MoverOP
+RigidBodyTiltMover::fresh_instance() const {
+	return moves::MoverOP( new RigidBodyTiltMover );
+}
+
+std::string
+RigidBodyTiltMoverCreator::keyname() const {
+	return RigidBodyTiltMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+RigidBodyTiltMoverCreator::create_mover() const {
+	return protocols::moves::MoverOP( new RigidBodyTiltMover );
+}
+
+std::string
+RigidBodyTiltMoverCreator::mover_name() {
+	return "RigidBodyTiltMover";
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 RigidBodyTransMover::RigidBodyTransMover( bool vary_stepsize ) : RigidBodyMover()
 {
 	moves::Mover::type( "RigidBodyTrans" );
@@ -795,7 +979,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 	if ( vary_stepsize_ == true ) {
 		core::Vector centroid_vector( centroid_axis( pose ) );
 		core::Real distance( centroid_vector.length() );
-		
+
 		// if partners are close, take small stepsize of 1A
 		if ( distance <= 5 ) {
 			step_size_ = 1.0;

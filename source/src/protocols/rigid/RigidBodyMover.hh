@@ -28,6 +28,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 
 // Numeric headers
@@ -379,6 +380,76 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// @brief A Mover that tilts around the spin axis.
+class RigidBodyTiltMover : public RigidBodyMover {
+public:
+	typedef RigidBodyMover parent;
+
+public:
+	// default constructor
+	RigidBodyTiltMover();
+
+	///@brief constructor with arguments
+	///       spin axis is initialized to 0 and then calculated during apply()
+	RigidBodyTiltMover(
+		int const rb_jump_in,
+		core::Real const tilt1_mag_in, //max tilt of partner1 in degrees
+		core::Real const tilt2_mag_in, //max tilt of partner2 in degrees
+		core::Size const tilt1_center_in, //resID for residue tilt of partner1 is centered at
+		core::Size const tilt2_center_in //resID for residue tilt of partner2 is centered at
+	);
+
+	RigidBodyTiltMover( RigidBodyTiltMover const & src );
+	~RigidBodyTiltMover();
+
+	void spin_axis( core::Vector const & spin_axis_in );
+	void tilt1_mag(core::Real const tilt1_mag_in ){tilt1_mag_ =tilt1_mag_in;}
+	void tilt2_mag(core::Real const tilt2_mag_in ){tilt2_mag_ =tilt2_mag_in;}
+	void tilt1_center(core::Size const tilt1_center_in ){tilt1_center_ =tilt1_center_in;}
+	void tilt2_center(core::Size const tilt2_center_in ){tilt2_center_ =tilt2_center_in;}
+
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
+	);
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
+
+private:
+
+	void tilt(
+			core::pose::Pose & pose,
+			std::string const & which,
+			core::Real tilt_mag,
+			core::Vector const & tilt_center,
+			core::Vector const & spin_axis,
+			core::Vector const & partner_center,
+			Direction dir,
+			core::kinematics::Stub const & upstream_stub,
+			core::kinematics::Stub const & downstream_stub ) const;
+
+	core::Vector find_tilt_center(
+			core::pose::Pose const & pose,
+			core::Size tilt_center_res,
+			core::Vector const & partner_center) const;
+
+protected:
+	core::Real tilt1_mag_;
+	core::Real tilt2_mag_;
+	core::Size tilt1_center_;
+	core::Size tilt2_center_;
+	core::Vector spin_axis_;
+
+};  // class RigidBodyTiltMover
+
+
 /// @brief This Mover translate down an axis.
 class RigidBodyTransMover : public RigidBodyMover {
 public:
@@ -394,7 +465,7 @@ public:
 		int const rb_jump_in=1,
 		bool vary_stepsize=false
 	);
-	
+
 	// constructor with arguments that specify the trans axis
 	RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in=1, bool vary_stepsize=false );
 
