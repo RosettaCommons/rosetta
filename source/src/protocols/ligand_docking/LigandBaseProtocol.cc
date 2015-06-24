@@ -37,7 +37,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -983,7 +984,7 @@ LigandBaseProtocol::get_non_bb_clashing_rotamers(
 
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( res_type->nchi() );
 
-	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib( core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *res_type ) );
+	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *res_type ) );
 
 	if( rotlib ){
 		rotlib->fill_rotamer_vector( pose, *scofx, *help_task, neighbor_graph, res_type, existing_residue, extra_chi_steps, true /*buried*/, suggested_rotamers );

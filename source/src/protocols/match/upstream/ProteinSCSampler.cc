@@ -22,6 +22,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <utility/string_util.hh>
 
@@ -56,15 +57,15 @@ DunbrackSCSampler::samples(
 {
 	using namespace core::scoring;
 	using namespace core::pack::dunbrack;
+	using namespace core::pack::rotamers;
 
-	RotamerLibrary const & rotlib( * RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( restype );
+	SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
+	SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( restype ) );
 
 	if ( res_rotlib != 0 ) {
 
 		SingleResidueDunbrackLibraryCOP dun_rotlib(
-			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const >
-			( res_rotlib ));
+			utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
 		if ( dun_rotlib == 0 ) {
 			utility_exit_with_message( "ERROR: Failed to retrieve a Dunbrack rotamer library for AA: " +

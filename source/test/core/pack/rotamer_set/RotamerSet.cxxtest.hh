@@ -260,16 +260,16 @@ public:
 		Size count_rots_per_restype = 1;
 		for ( Size ii = 2; ii <= res5rots.num_rotamers(); ++ii ) {
 			if ( & res5rots.rotamer(ii)->type() != & res5rots.rotamer(ii-1)->type() ) {
-				TS_ASSERT( count_rots_per_restype == res5rots.get_n_rotamers_for_residue_type( count_restypes ));
+				TS_ASSERT_EQUALS( count_rots_per_restype, res5rots.get_n_rotamers_for_residue_type( count_restypes ));
 				count_rots_per_restype = 1;
 				++count_restypes;
-				TS_ASSERT( res5rots.get_residue_type_begin( count_restypes ) == ii );
+				TS_ASSERT_EQUALS( res5rots.get_residue_type_begin( count_restypes ), ii );
 			} else {
 				++count_rots_per_restype;
 			}
-			TS_ASSERT( res5rots.get_residue_type_index_for_rotamer( ii ) == count_restypes );
+			TS_ASSERT_EQUALS( res5rots.get_residue_type_index_for_rotamer( ii ), count_restypes );
 		}
-		TS_ASSERT( count_restypes == res5rots.get_n_residue_types() );
+		TS_ASSERT_EQUALS( count_restypes, res5rots.get_n_residue_types() );
 	}
 
 };

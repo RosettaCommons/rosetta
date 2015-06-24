@@ -17,10 +17,10 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 #include <core/conformation/Conformation.hh>

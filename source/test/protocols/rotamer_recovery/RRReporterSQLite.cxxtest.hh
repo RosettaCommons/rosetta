@@ -168,21 +168,21 @@ public:
     res >> name1 >> name3 >> residue_type;
     res >> protocol_name >> protocol_params >> comparer_name >> comparer_params;
     res >> score >> recovered;
-    TS_ASSERT(struct1_name == "EMPTY_JOB_use_jd2");
-    TS_ASSERT(struct2_name == "EMPTY_JOB_use_jd2");
-    TS_ASSERT(name1 == "L");
-    TS_ASSERT(name3 == "LEU");
-    TS_ASSERT(residue_type == "LEU:NtermProteinFull");
-    TS_ASSERT(chain1 == 1);
-    TS_ASSERT(res1 == 1);
-    TS_ASSERT(chain2 == 1);
-    TS_ASSERT(res2 == 1);
-    TS_ASSERT(protocol_name == "");
-    TS_ASSERT(protocol_params == "");
-    TS_ASSERT(comparer_name == "");
-    TS_ASSERT(comparer_params == "");
-    TS_ASSERT(score == 0.0);
-    TS_ASSERT(recovered == true);
+    TS_ASSERT_EQUALS(struct1_name, "EMPTY_JOB_use_jd2");
+    TS_ASSERT_EQUALS(struct2_name, "EMPTY_JOB_use_jd2");
+    TS_ASSERT_EQUALS(name1, "L");
+    TS_ASSERT_EQUALS(name3, "LEU");
+    TS_ASSERT_EQUALS(residue_type, "LEU:NtermProteinFull");
+    TS_ASSERT_EQUALS(chain1, 1);
+    TS_ASSERT_EQUALS(res1, 1);
+    TS_ASSERT_EQUALS(chain2, 1);
+    TS_ASSERT_EQUALS(res2, 1);
+    TS_ASSERT_EQUALS(protocol_name, "");
+    TS_ASSERT_EQUALS(protocol_params, "");
+    TS_ASSERT_EQUALS(comparer_name, "");
+    TS_ASSERT_EQUALS(comparer_params, "");
+    TS_ASSERT_DELTA(score, 0.0, 0.0001);
+    TS_ASSERT_EQUALS(recovered, true);
 
     res.next();
     res >> struct1_name >> chain1 >> res1;
@@ -190,21 +190,21 @@ public:
     res >> name1 >> name3 >> residue_type;
     res >> protocol_name >> protocol_params >> comparer_name >> comparer_params;
     res >> score >> recovered;
-    TS_ASSERT(struct1_name == "EMPTY_JOB_use_jd2");
-    TS_ASSERT(struct2_name == "EMPTY_JOB_use_jd2");
-    TS_ASSERT(name1 == "D");
-    TS_ASSERT(name3 == "ASP");
-    TS_ASSERT(residue_type == "ASP");
-    TS_ASSERT(chain1 == 1);
-    TS_ASSERT(res1 == 2);
-    TS_ASSERT(chain2 == 1);
-    TS_ASSERT(res2 == 2);
-    TS_ASSERT(protocol_name == "");
-    TS_ASSERT(protocol_params == "");
-    TS_ASSERT(comparer_name == "");
-    TS_ASSERT(comparer_params == "");
-    TS_ASSERT(score == 1.0);
-    TS_ASSERT(recovered == false);
+    TS_ASSERT_EQUALS(struct1_name, "EMPTY_JOB_use_jd2");
+    TS_ASSERT_EQUALS(struct2_name, "EMPTY_JOB_use_jd2");
+    TS_ASSERT_EQUALS(name1, "D");
+    TS_ASSERT_EQUALS(name3, "ASP");
+    TS_ASSERT_EQUALS(residue_type, "ASP");
+    TS_ASSERT_EQUALS(chain1, 1);
+    TS_ASSERT_EQUALS(res1, 2);
+    TS_ASSERT_EQUALS(chain2, 1);
+    TS_ASSERT_EQUALS(res2, 2);
+    TS_ASSERT_EQUALS(protocol_name, "");
+    TS_ASSERT_EQUALS(protocol_params, "");
+    TS_ASSERT_EQUALS(comparer_name, "");
+    TS_ASSERT_EQUALS(comparer_params, "");
+    TS_ASSERT_DELTA(score, 1.0, 0.0001);
+    TS_ASSERT_EQUALS(recovered, false);
 
 	}
 
@@ -269,15 +269,15 @@ public:
 
 	    res.next();
 	    res >> struct_id >> resNum >> divergence >> recovered;
-	    TS_ASSERT(resNum == 3);
-	    TS_ASSERT(divergence == 0.0);
-	    TS_ASSERT(recovered == true);
+	    TS_ASSERT_EQUALS(resNum, 3);
+	    TS_ASSERT_DELTA(divergence, 0.0, 0.0001);
+	    TS_ASSERT_EQUALS(recovered, true);
 
 	    res.next();
 	    res >> struct_id >> resNum >> divergence >> recovered;
-	    TS_ASSERT(resNum == 75);
-	    TS_ASSERT(divergence == 1.0);
-	    TS_ASSERT(recovered == false);
+	    TS_ASSERT_EQUALS(resNum, 75);
+	    TS_ASSERT_DELTA(divergence, 1.0, 0.0001);
+	    TS_ASSERT_EQUALS(recovered, false);
     }
 
     {
@@ -292,15 +292,15 @@ public:
 
 	    res.next();
 	    res >> struct_id >> resNum >> predicted_struct_id >> predicted_resNum;
-	    TS_ASSERT(resNum == 3);
-	    TS_ASSERT(predicted_struct_id = 1);
-	    TS_ASSERT(predicted_resNum = 1);
+	    TS_ASSERT_EQUALS(resNum,3);
+	    TS_ASSERT_EQUALS(predicted_struct_id, 1);
+	    TS_ASSERT(predicted_resNum = 1); // THIS IS ALMOST CERTAINLY AN ERROR.
 
 	    res.next();
 	    res >> struct_id >> resNum >> predicted_struct_id >> predicted_resNum;
-	    TS_ASSERT(resNum == 75);
-	    TS_ASSERT(predicted_struct_id = 2);
-	    TS_ASSERT(predicted_resNum = 75);
+	    TS_ASSERT_EQUALS(resNum, 75);
+	    TS_ASSERT_EQUALS(predicted_struct_id, 2);
+	    TS_ASSERT_EQUALS(predicted_resNum, 75);
     }
 
     {
@@ -312,7 +312,7 @@ public:
 
 	    res.next();
 	    res >> n_struct;
-	    TS_ASSERT(n_struct == 2);
+	    TS_ASSERT_EQUALS(n_struct, 2);
     }
 	}
 

@@ -18,7 +18,6 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -28,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -250,7 +250,7 @@ RotamerFeatures::report_features(
 			continue;
 		}
 
-		if(residue.type().get_use_ncaa_rotlib()){
+		if(residue.type().rotamer_library_specification() && residue.type().rotamer_library_specification()->keyname() == "NCAA"){
 			TR.Warning << "Currently the RotamerFeatures only supports canonical amino acids, but this residue type is '" << residue.type().name() << "'" << endl;
 			continue;
 		}

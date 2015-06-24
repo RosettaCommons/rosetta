@@ -21,7 +21,7 @@
 // Program headers
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/import_pose/import_pose_options.hh>
-#include <core/chemical/residue_io.cc>
+#include <core/chemical/residue_io.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ElementSet.hh>

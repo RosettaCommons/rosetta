@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/dunbrack/SingleLigandRotamerLibrary.cc
+/// @file   core/scoring/rotamers/SingleLigandRotamerLibrary.cc
 ///
 /// @brief
 /// @author Ian W. Davis
 #include <utility/fixedsizearray1.hh>
 // Unit headers
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 // Package headers
 #include <core/pack/dunbrack/ChiSet.hh>
@@ -55,10 +55,10 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 
-static thread_local basic::Tracer TR( "core.pack.dunbrack.SingleLigandRotamerLibrary" );
+static thread_local basic::Tracer TR( "core.pack.rotamers.SingleLigandRotamerLibrary" );
 
 
 // helper for debugging
@@ -77,7 +77,7 @@ void dump_library(std::string filename, RotamerVector const & rotamers)
 
 SingleLigandRotamerLibrary::SingleLigandRotamerLibrary():
 	SingleResidueRotamerLibrary(),
-	rotamers_(),
+	atom_positions_(),
 	ref_energy_(0.0)
 //	rigid_frags_(),
 //	automorphs_(),
@@ -86,15 +86,6 @@ SingleLigandRotamerLibrary::SingleLigandRotamerLibrary():
 {}
 
 SingleLigandRotamerLibrary::~SingleLigandRotamerLibrary()
-{}
-
-
-SingleLigandRotamerLibrary::SingleLigandRotamerLibrary(
-	utility::vector1< conformation::ResidueOP > & rotamers_in,
-	Real ref_E_in ):
-	SingleResidueRotamerLibrary(),
-	rotamers_( rotamers_in ),
-	ref_energy_( ref_E_in )
 {}
 
 /// @details Reads conformers from PDB-format file.
@@ -110,19 +101,15 @@ SingleLigandRotamerLibrary::init_from_file(
 	if ( !data.good() ) {
 		utility_exit_with_message( "Unable to open file: " + filename + '\n' );
 	}
-	rotamers_.clear();
+	atom_positions_.clear();
 
-	std::set< std::string > skipped_atom_names;
-	conformation::ResidueOP rsd = NULL;
+	NamePosMap name_map;
 	bool found_ref_energy = false;
 	std::string line;
 	// This code is not currently as smart as the general-purpose PDB reader.
 	// Any atoms in the residue that don't have coordinate entries will be
 	// left with their default values, leading to really weird bugs.
 	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
-	core::Size set_xyzs = 0;
-	utility::vector1< bool > missing(restype.natoms(),true);
-	utility::vector1< bool > missed(restype.natoms(),false); // Don't reset - only notify once, instead of for each library entry
 	while( std::getline( (std::istream&)data, line) ) {
 		if( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
 			if( line.length() < 54 ) {
@@ -135,19 +122,13 @@ SingleLigandRotamerLibrary::init_from_file(
 			y = std::atof( line.substr(38,8).c_str() );
 			z = std::atof( line.substr(46,8).c_str() );
 			//std::cout << x << " " << y << " " << z << "\n";
-			if( rsd.get() == NULL ) {
-				rsd = conformation::ResidueFactory::create_residue( restype );
-				missing.clear(); missing.resize( restype.natoms(), true );
-				set_xyzs = 0;
+
+			if( name_map.count( atom_name ) != 0 ) {
+				//TODO: cache so we only print this once.
+				TR.Warning << "ATOM name " << atom_name << " found more than once in rotamer - using later position. " << std::endl;
 			}
-			if( rsd->has( atom_name ) ) {
-				rsd->set_xyz( atom_name, core::Vector( x, y, z ) );
-				missing[ rsd->atom_index(atom_name) ] = false;
-				set_xyzs += 1;
-			} else if( skipped_atom_names.count(atom_name) == 0 ) {
-				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype.name() << std::endl;
-				skipped_atom_names.insert(atom_name);
-			}
+			name_map[ atom_name ] = core::Vector( x, y, z );
+
 		} else if( utility::startswith(line, "REF_EN") ) {
 			if( found_ref_energy ) {
 				TR.Error << "Reference energy specified more than once in PDB-format rotamer file!" << std::endl;
@@ -156,27 +137,18 @@ SingleLigandRotamerLibrary::init_from_file(
 			ref_energy_ = std::atof( line.substr(6).c_str() );
 			TR << "Reference energy for " << restype.name() << " is " << ref_energy_ << std::endl;
 		} else { // e.g. TER lines
-			if( rsd.get() != NULL ) {
-				if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
-				rotamers_.push_back( rsd );
-				rsd = NULL;
-				set_xyzs = 0;
+			if( name_map.size() ) {
+				atom_positions_.push_back( name_map );
 			}
+			name_map.clear();
 		}
 	}
-	if( rsd.get() != NULL ) {
-		if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
-		rotamers_.push_back( rsd );
+	// Catch the last entry if we don't end with a TER
+	if( name_map.size() ) {
+		atom_positions_.push_back( name_map );
 	}
 
-	// Torsion angles are not automatically calculated from the coordinates.
-	// We should manually assign chi() and mainchain_torsions() for each conformer.
-	for(Size i = 1, i_end = rotamers_.size(); i <= i_end; ++i) {
-		conformation::set_chi_according_to_coordinates( *(rotamers_[i]) );
-		//for(Size j = 1, j_end = rotamers_[i]->nchi(); j <= j_end; ++j) std::cout << rotamers_[i]->chi(j) << std::endl;
-	}
-
-	TR << "Read in " << rotamers_.size() << " rotamers for " << restype.name() << "!" << std::endl;
+	TR << "Read in " << atom_positions_.size() << " rotamers from " << filename << " !" << std::endl;
 	data.close();
 
 	// Breaking the ligand into rigid fragments that would supply (putative) pharamacophores
@@ -191,11 +163,11 @@ SingleLigandRotamerLibrary::init_from_file(
 Real
 SingleLigandRotamerLibrary::rotamer_energy_deriv(
 	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch
+	dunbrack::RotamerLibraryScratchSpace & scratch
 ) const
 {
-    Real5 & dE_dbb( scratch.dE_dbb() );
-	Real4 & dE_dchi( scratch.dE_dchi() );
+	dunbrack::Real5 & dE_dbb( scratch.dE_dbb() );
+	dunbrack::Real4 & dE_dchi( scratch.dE_dchi() );
 	std::fill( dE_dbb.begin(), dE_dbb.end(), 0 );
 	std::fill( dE_dchi.begin(), dE_dchi.end(), 0 );
 	return rotamer_energy(rsd, scratch);
@@ -208,7 +180,7 @@ SingleLigandRotamerLibrary::rotamer_energy_deriv(
 Real
 SingleLigandRotamerLibrary::rotamer_energy(
 	conformation::Residue const & /*rsd*/,
-	RotamerLibraryScratchSpace & /*scratch*/
+	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
 	return ref_energy_; //0.0;
@@ -222,7 +194,7 @@ Real
 SingleLigandRotamerLibrary::best_rotamer_energy(
 	conformation::Residue const & /*rsd*/,
 	bool /*curr_rotamer_only*/,
-	RotamerLibraryScratchSpace & /*scratch*/
+	dunbrack::RotamerLibraryScratchSpace & /*scratch*/
 ) const
 {
 	return ref_energy_; //0.0;
@@ -303,7 +275,6 @@ dup_residue(
 }
 
 
-/// @details Assumes that rotamers is already empty or doesn't need to be cleared...
 void
 SingleLigandRotamerLibrary::fill_rotamer_vector(
 	pose::Pose const & pose,
@@ -317,10 +288,16 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	RotamerVector & rotamers //utility::vector1< conformation::ResidueOP >
 ) const
 {
-
 	//std::cout << "SingleLigandRotamerLibrary :: fill_rotamer_vector() being called...\n";
 	//rotamers.clear(); // am I supposed to do this?  No: might contain rotamers for other residue types already!
 	int const start_size = rotamers.size();
+
+	// Build the base set of rotamer from PDB data
+
+	RotamerVector base_rotamers;
+	build_base_rotamers( *concrete_residue, base_rotamers );
+
+	// Expand base rotamers with extra proton chi sampling
 
 	bool expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
 	Size const max_total_rotamers = 21654; // = 401 rotamers * 54 hydroxyl variations = 401 * (2 * 3^3)
@@ -346,26 +323,28 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 			// In a pathological case, I've seen 30 rotamers * 20,000 proton chi variations = 600,000 rotamers = out of memory
 			// That's 9, count 'em 9, hydroxyls in the ligand for PDB 1u33.
 			// Wait, wait -- I can do better -- 19 hydroxyls in PDB 1xd1.
-			if( rotamers_.size()*proton_chi_chisets.size() > max_total_rotamers ) {
+			if( base_rotamers.size()*proton_chi_chisets.size() > max_total_rotamers ) {
 				TR.Warning << "Aborting proton_chi expansion for " << concrete_residue->name() << " because we would exceed " << max_total_rotamers << " rotamers!" << std::endl;
-				proton_chi_chisets.resize( max_total_rotamers / rotamers_.size() );
+				proton_chi_chisets.resize( max_total_rotamers / base_rotamers.size() );
 				break;
 			}
 		}
-		new_rotamers.reserve( rotamers_.size()*proton_chi_chisets.size() );
+		new_rotamers.reserve( base_rotamers.size()*proton_chi_chisets.size() );
 	} else {
-		new_rotamers.reserve( rotamers_.size() );
+		new_rotamers.reserve( base_rotamers.size() );
 	}
 
 
 	// Fill new_rotamers with new Residues, including proton_chi expansions
-	for(Size i = 1; i <= rotamers_.size(); ++i)
+	for(Size i = 1; i <= base_rotamers.size(); ++i)
 	{
-	debug_assert( concrete_residue->name() == rotamers_[i]->name() );
-	debug_assert( concrete_residue->residue_type_set().name() == rotamers_[i]->residue_type_set().name() ); // fa_standard / centroid
+		debug_assert( concrete_residue->name() == base_rotamers[i]->name() );
+		if( concrete_residue->in_residue_type_set() ) {
+			debug_assert( concrete_residue->residue_type_set().name() == base_rotamers[i]->residue_type_set().name() ); // fa_standard / centroid
+		}
 		if ( expand_proton_chi ) {
 			for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
-				conformation::ResidueOP newrsd = dup_residue( existing_residue, *rotamers_[i] );
+				conformation::ResidueOP newrsd = dup_residue( existing_residue, *base_rotamers[i] );
 				new_rotamers.push_back( newrsd );
 				for ( Size jj = 1; jj <= concrete_residue->n_proton_chi(); ++jj ) {
 					newrsd->set_chi(
@@ -375,8 +354,8 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 			}
 		} else {
 			// This is bad:  fields like seqpos, chain, etc. don't match existing residue!
-			//conformation::ResidueOP newrsd = rotamers_[i]->clone();
-			conformation::ResidueOP newrsd = dup_residue( existing_residue, *rotamers_[i] );
+			//conformation::ResidueOP newrsd = base_rotamers[i]->clone();
+			conformation::ResidueOP newrsd = dup_residue( existing_residue, *base_rotamers[i] );
 			new_rotamers.push_back( newrsd );
 		}
 	}
@@ -422,6 +401,48 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	//dump_library(concrete_residue->name()+".rotlib.pdb", rotamers);
 }
 
+/// @brief Build a set of rotamers for the given ResidueType
+void
+SingleLigandRotamerLibrary::build_base_rotamers( chemical::ResidueType const & restype, RotamerVector & base_rotamers ) const {
+
+	// Why do we do this on the fly, instead of when loading?
+	// Because the same SingleLigandRotamerLibrary might be applied to more than one ResidueType,
+	// which means the Residues being built would be different.
+	// (Storing Residue objects also means that references to orphan ResidueTypes hang around after they're destroyed.)
+
+	base_rotamers.reserve( base_rotamers.size() + atom_positions_.size() ); // Adding rotamers
+
+	// Any atoms in the residue that don't have coordinate entries will be
+	// left with their default values, leading to really weird bugs.
+	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
+	std::set< std::string > skipped_atom_names;
+	utility::vector1< bool > missed(restype.natoms(),false); // Don't reset - only notify once, instead of for each library entry
+	for( core::Size resn(1); resn <= atom_positions_.size(); ++resn ) {
+		NamePosMap const & name_map( atom_positions_[resn] );
+		conformation::ResidueOP rsd = conformation::ResidueFactory::create_residue( restype );
+		core::Size set_xyzs = 0;
+		utility::vector1< bool > missing(rsd->natoms(),true);
+		for( NamePosMap::const_iterator iter( name_map.begin() ), iter_end( name_map.end() ); iter != iter_end; ++iter ) {
+			std::string const & atom_name( iter->first );
+			core::Vector const & pos( iter->second );
+			if( rsd->has( atom_name ) ) {
+				rsd->set_xyz( atom_name, pos );
+				missing[ rsd->atom_index(atom_name) ] = false;
+				set_xyzs += 1;
+			} else if( skipped_atom_names.count(atom_name) == 0 ) {
+				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype.name() << std::endl;
+				skipped_atom_names.insert(atom_name);
+			}
+		}
+		if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
+		// Torsion angles are not automatically calculated from the coordinates.
+		// We should manually assign chi() and mainchain_torsions() for each conformer.
+		conformation::set_chi_according_to_coordinates( *rsd );
+		base_rotamers.push_back( rsd );
+	}
+
+}
+
 /// @brief Fills in missing hydrogens/virtual atoms from library load
 void
 SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing, conformation::ResidueOP rsd, utility::vector1< bool > & missed ) const
@@ -459,19 +480,6 @@ debug_assert( missing.size() == rsd->natoms() );
 		}
 	}
 }
-
-//XRW_B_T1
-/*
-/// @details Not implemented -- will cause program termination.
-/// This is used only by coarse representations!
-SingleResidueRotamerLibraryOP
-SingleLigandRotamerLibrary::coarsify(coarse::Translator const & map) const
-{
-	utility_exit_with_message("Ligand residue rotamers can't be coarsified!");
-	return NULL; // make compiler happy
-}
-*/
-//XRW_E_T1
 
 
 /// @details Not implemented -- will cause program termination.
@@ -602,6 +610,6 @@ SingleLigandRotamerLibrary::write_to_file( utility::io::ozstream & /*out*/ ) con
 //}
 
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core

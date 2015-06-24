@@ -42,6 +42,7 @@
 
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -320,15 +321,15 @@ public:
 class CenRotSidechainMover : public Mover
 {
 private:
-	core::pack::dunbrack::RotamerLibrary const & rotamer_library_;
 
 	CentroidRotamerSampleData const get_random_rotamer( Residue const &mobile_res )
 	{
+		using namespace core::pack::rotamers;
+
 		ResidueType const &residue_type( mobile_res.type() );
 
-		SingleResidueRotamerLibraryCOP residue_rotamer_library(
-			rotamer_library_.get_rsd_library(residue_type)
-		);
+		SingleResidueRotamerLibraryFactory const & rotamer_library_factory( *SingleResidueRotamerLibraryFactory::get_instance() );
+		SingleResidueRotamerLibraryCOP residue_rotamer_library( rotamer_library_factory.get(residue_type)	);
 
 		SingleResidueCenrotLibraryCOP residue_cenrot_library(
 			utility::pointer::dynamic_pointer_cast< SingleResidueCenrotLibrary const >(residue_rotamer_library)
@@ -352,7 +353,7 @@ private:
 	}
 
 public:
-	CenRotSidechainMover(): rotamer_library_( * RotamerLibrary::get_instance() ) {}
+	CenRotSidechainMover() {}
 
 	virtual std::string get_name() const {return "CenRotSidechainMover";}
 

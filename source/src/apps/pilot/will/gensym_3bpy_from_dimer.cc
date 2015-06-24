@@ -662,7 +662,7 @@ void run() {
 
 
 	core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( (rs->name_map("TYR")) );
+	core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( (rs->name_map("TYR")) );
 	core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	Pose bpy,ala,tyr;

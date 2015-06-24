@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/scoring/dunbrack/RotamericSingleResiduePeptoidLibrary.hh
+/// @file    core/scoring/rotamers/RotamericSingleResiduePeptoidLibrary.hh
 /// @brief   Declaration of rotameric peptoid rotamer libraries
 /// @author  P. Douglas Renfrew (renfrew@nyu.edu)
 
 
-#ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_tmpl_hh
-#define INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_tmpl_hh
+#ifndef INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_tmpl_hh
+#define INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_tmpl_hh
 
 // Unit Headers
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -113,9 +113,9 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <utility/LexicographicalIterator.fwd.hh>
@@ -241,7 +241,9 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
+
+using namespace core::pack::dunbrack;
 
 /// DOUG DOUG DOUG This use to be PHIPSI_BINRANGE
 template < Size T, Size N >
@@ -2071,8 +2073,8 @@ RotamericSingleResiduePeptoidLibrary< T, N >::packed_rotno_2_sorted_rotno( Real 
 	return trans_packed_rotno_2_sorted_rotno_; // we should never get here
 }
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_TMPL_HH
+#endif // INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_TMPL_HH

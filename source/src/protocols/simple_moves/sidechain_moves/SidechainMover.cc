@@ -32,6 +32,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
@@ -327,8 +328,8 @@ SidechainMover::make_move( core::conformation::ResidueOP input_residue )
 
 	if (residue_type->aa() != (input_residue->type()).aa()) last_mutation_ = true;
 
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP residue_rotamer_library(
-		rotamer_library_.get_rsd_library(*residue_type)
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP residue_rotamer_library(
+		core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get(*residue_type)
 	);
 	core::pack::dunbrack::SingleResidueDunbrackLibraryCOP residue_dunbrack_library(
 		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >(residue_rotamer_library)
@@ -670,8 +671,8 @@ SidechainMover::proposal_density(
 
 	core::Real density(0);
 
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP residue_rotamer_library(
-		rotamer_library_.get_rsd_library(proposed_residue.type())
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP residue_rotamer_library(
+		core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get(proposed_residue.type())
 	);
 	core::pack::dunbrack::SingleResidueDunbrackLibraryCOP residue_dunbrack_library(
 		utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const >(residue_rotamer_library)

@@ -32,6 +32,9 @@ class BumpSelector
 public:
 	BumpSelector();
 
+	/// @brief Set the max energy and "reset" the selector in a single call
+	BumpSelector( Energy max_rot_energy );
+
 	void set_max_rot_bumpenergy( Energy setting );
 
 	/// @brief reset bump selector best energy

@@ -19,7 +19,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+
 #include <basic/Tracer.hh>
 
 
@@ -84,9 +86,8 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 				TR << "Can't use " << rsd.type().name() << " " << rsd_num << " for residue constraint -- protein only." << std::endl;
 				continue;
 			}
-
 			// no point in creating constrains if the residue doesn't have a rotamer library
-			if ( ! core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rsd.type() ) ) continue;
+			if( ! core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() ) ) continue;
 
 			if( by_res_type.find( rsd.type().name() ) == by_res_type.end() ) { // first one, create constraint
 				TR.Debug << "Creating rotamer constraint for " << rsd.type().name() << " at " << rsd_num << std::endl;
@@ -101,6 +102,26 @@ void load_unboundrot(pose::Pose & pose, core::pose::PoseCOPs const & unboundrot_
 	}
 }
 
+RotamerConstraint::RotamerConstraint():
+	Constraint( core::scoring::fa_dun ), // most like a Dunbrack rotamer energy, and should share the same weight
+	seqpos_( 0 ),
+	rsd_type_name_(""),
+	atom_ids_(),
+	rotlib_( 0 ),
+	favored_rotamers_(),
+	favored_rotamer_numbers_()
+{}
+
+RotamerConstraint::RotamerConstraint(RotamerConstraint const & other):
+	Constraint( core::scoring::fa_dun ), // most like a Dunbrack rotamer energy, and should share the same weight
+	seqpos_( other.seqpos_ ),
+	rsd_type_name_( other.rsd_type_name_ ),
+	atom_ids_( other.atom_ids_ ),
+	rotlib_( other.rotlib_ ),
+	favored_rotamers_( other.favored_rotamers_ ),
+	favored_rotamer_numbers_( other.favored_rotamer_numbers_ )
+{}
+
 RotamerConstraint::RotamerConstraint(
 	pose::Pose const & pose,
 	Size seqpos
@@ -109,7 +130,7 @@ RotamerConstraint::RotamerConstraint(
 	seqpos_( seqpos ),
 	rsd_type_name_( pose.residue_type(seqpos).name() ),
 	atom_ids_(),
-	rotlib_( core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(seqpos) ) ), // may be NULL
+	rotlib_( core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(seqpos) ) ), // may be NULL
 	favored_rotamers_(),
 	favored_rotamer_numbers_()
 {
@@ -165,7 +186,7 @@ RotamerConstraint::score(
 	EnergyMap & emap
 ) const
 {
-	SingleResidueRotamerLibraryCOP rotlib( rotlib_ );
+	rotamers::SingleResidueRotamerLibraryCOP rotlib( rotlib_ );
 	if( ! rotlib ) return;
 	if( weights[ this->score_type() ] == 0 ) return; // what's the point?
 

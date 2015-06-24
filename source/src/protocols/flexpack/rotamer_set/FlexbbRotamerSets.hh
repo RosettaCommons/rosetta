@@ -67,7 +67,7 @@ public:
 	inline FlexbbRotamerSetsOP  get_self_ptr() { return shared_from_this(); }
 	inline FlexbbRotamerSetsCAP get_self_weak_ptr() const { return FlexbbRotamerSetsCAP( shared_from_this() ); }
 	inline FlexbbRotamerSetsAP  get_self_weak_ptr() { return FlexbbRotamerSetsAP( shared_from_this() ); }
-	
+
 	void
 	set_frames(
 		Pose const & pose,
@@ -352,6 +352,10 @@ public:
 		return bbconf[ rot1 ] == bbconf[ rot2 ];
 	}
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
 protected:
 
 	void
@@ -385,7 +389,6 @@ private:
 		core::graph::GraphCOP flexpack_neighbor_graph,
 		interaction_graph::FlexbbInteractionGraph & flexbb_ig
 	) const;
-
 
 private:
 

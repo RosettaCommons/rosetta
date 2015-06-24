@@ -16,6 +16,7 @@
 
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 
@@ -99,8 +100,8 @@ void ContinuousRotamerSet::build_rotamers(
 		++count_restype_ind;
 		aa_for_rotblock_[ count_restype_ind ] = (*allowed_iter)->aa();
 		restype_for_rotblock_[ count_restype_ind ] = (*allowed_iter);
-		dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			dunbrack::RotamerLibrary::get_instance()->get_rsd_library( **allowed_iter );
+		rotamers::SingleResidueRotamerLibraryCOP rotlib =
+			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( **allowed_iter );
 
 		if ( rotlib ) {
 			// OK -- two options -- we're dealing with a Dunbrack library, in which case, we should

@@ -38,6 +38,8 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
@@ -373,7 +375,7 @@ PackerTask & task) const
 					}
 				} else if ( repack_res[i] == true ) {
 					task.nonconst_residue_task(i).restrict_to_repacking();
-				} else if ( pose.residue(i).is_ligand() && ( ! core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(i) )) ) {
+				} else if ( pose.residue(i).is_ligand() && ( ! core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(i) )) ){
 					task.nonconst_residue_task(i).restrict_to_repacking();
 				} else {
 					task.nonconst_residue_task( i ).prevent_repacking();

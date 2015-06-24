@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -56,10 +57,11 @@ SameChiBinComboGrouper::assign_group_for_match(
 {
 	using namespace core::scoring;
 	using namespace core::pack::dunbrack;
+	using namespace core::pack::rotamers;
 
 	runtime_assert( m.upstream_hits.size() == n_geometric_constraints_ );
 
-	RotamerLibrary const & rotlib( * RotamerLibrary::get_instance() );
+	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
 
 	utility::vector1< Size > rot_vector( n_geometric_constraints_ * 3, 0 );
 	for ( Size ii = 1; ii <= n_geometric_constraints_; ++ii ) {
@@ -82,13 +84,13 @@ SameChiBinComboGrouper::assign_group_for_match(
 
 		rot_vector[	n_geometric_constraints_ + ii ] = iires->aa();
 
-		SingleResidueRotamerLibraryCOP srrl = rotlib.get_rsd_library( iires->type() );
+		SingleResidueRotamerLibraryCOP srrl( rotlib.get( iires->type() ) );
 		if ( ! srrl ) {
 			/// ?!?! What do we without a library?
 			rot_vector[	2*n_geometric_constraints_ + ii ] = 1;
 		} else {
 			SingleResidueDunbrackLibraryCOP srdl(
-				utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srrl ) );
+				utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srrl ));
 			if ( srdl ) {
 				RotVector rotvect;
 				srdl->get_rotamer_from_chi( iires->chi(), rotvect );

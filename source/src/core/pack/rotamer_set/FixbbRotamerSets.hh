@@ -80,6 +80,9 @@ public:
 	utility::vector1< uint > const &
 	moltenres_2_resid_vector() const = 0;
 
+	virtual
+	void
+	show( std::ostream & out ) const = 0;
 };
 
 } // namespace rotamer_set

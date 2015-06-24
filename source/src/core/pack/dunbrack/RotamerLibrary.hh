@@ -23,7 +23,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
 
 // Project headers
@@ -41,7 +41,7 @@
 #ifdef WIN32 //VC++ needs full class declaration
 	#include <core/graph/Graph.hh>
 	#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-	#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+	#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #endif
 
 // Utility headers
@@ -105,6 +105,11 @@ subtract_chi_angles(
 );
 
 ///////////////////////////////////////////////////////////////////////////////
+/// @brief A class to manage the Dunbrack Rotamer Libraries
+/// @details This class no longer manages arbitrary rotamer libraries.
+/// Use core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( restype );
+/// to get rotamer libraries for an arbitrary ResidueType.
+
 class RotamerLibrary : public utility::SingletonBase< RotamerLibrary >
 {
 public:
@@ -137,54 +142,17 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const;
 
+// // get_rsd_library() is no longer valid! Use core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( restype ); instead.
+//	SingleResidueRotamerLibraryCOP
+//	get_rsd_library( chemical::ResidueType const & rsd_type ) const;
 
-	void
-	add_residue_library(
-		AA const & aa,
-		SingleResidueRotamerLibraryCOP rot_lib
-	) const;
-
-	/// @brief Overrides the library for AA
-	void
-	add_residue_library(
-		ResidueType const & rsd_type,
-		SingleResidueRotamerLibraryCOP rot_lib
-	) const;
-
-	//XRW_B_T1
-	//	RotamerLibraryOP coarsify(coarse::TranslatorSet const &map_set) const;
-	//XRW_E_T1
-
-	bool
-	rsd_library_already_loaded( chemical::ResidueType const & rsd_type ) const;
-
-	SingleResidueRotamerLibraryCOP
-	get_rsd_library( chemical::ResidueType const & rsd_type ) const;
-
-	SingleResidueRotamerLibraryCOP
+	rotamers::SingleResidueRotamerLibraryCOP
 	get_library_by_aa( chemical::AA const & aa ) const;
-
-	//output dunbrack library  -- coarse rotamers can be cached on disk
-	void
-	write_to_file( std::string filename ) const;
-
-	/// @brief Public interface to read in dunbrack libraries.  dun10 option checks
-	/// are handled inside.
-	void create_fa_dunbrack_libraries();
-
-	/// @brief Get the rotamer library specified by the NCAA_ROTLIB flag in the residue type paramater file
-	/// in the residue type paramater file if it exists
-	SingleResidueRotamerLibraryCOP
-	get_NCAA_rotamer_library( chemical::ResidueType const & rsd_type ) const;
-
-	/// @brief Get the rotamer library specified by the PEPTOID_ROTLIB flag in the residue type paramater file
-	/// in the residue type paramater file if it exists
-	SingleResidueRotamerLibraryCOP
-	get_peptoid_rotamer_library( chemical::ResidueType const & rsd_type ) const;
 
 	/// @brief Reload the Dunbrack Rotamer libraries from ASCII, and make sure that they match the ones loaded from binary.
 	/// Return true if the binary file is valid, false if the binary is invalid.
 	/// NOTE WELL: This is *not* a const function, as reloading from ASCII modifies internals.
+	/// It's also *VERY* thread unsafe. Never call this function from a multithreaded context.
 	bool
 	validate_dunbrack_binary();
 
@@ -223,6 +191,10 @@ private:
 	Size current_binary_format_version_id_02() const;
 	Size current_binary_format_version_id_10() const;
 
+	/// @brief Main interface for reading in dunbrack libraries.
+	/// Version option checks are handled inside.
+	void create_fa_dunbrack_libraries();
+
 	void create_fa_dunbrack_libraries_from_ASCII();
 
 	void create_fa_dunbrack_libraries_from_binary();
@@ -230,10 +202,18 @@ private:
 	void create_fa_dunbrack_libraries_02_from_ASCII();
 	void create_fa_dunbrack_libraries_02_from_binary();
 
-	void create_centroid_rotamer_libraries_from_ASCII();
-
 	void create_fa_dunbrack_libraries_10_from_ASCII();
 	void create_fa_dunbrack_libraries_10_from_binary();
+
+	/// @brief Add a fullatom canonical AA Dunbrack library
+	/// @details This, along with the create_* functions, are
+	/// private and should only be called during singleton construction.
+	/// If you need to make it public, you need to add a mutex
+	void
+	add_residue_library(
+		AA const & aa,
+		rotamers::SingleResidueRotamerLibraryCOP rot_lib
+	);
 
 	void write_binary_fa_dunbrack_libraries() const;
 
@@ -241,26 +221,6 @@ private:
 	void write_binary_fa_dunbrack_libraries_10() const;
 
 	std::string random_tempname( std::string const & prefix ) const;
-
-	template < Size T, Size N >
-	void
-	initialize_and_read_srsrdl(
-		SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
-		bool const nrchi_is_symmetric,
-		Real const nrchi_start_angle,
-		utility::io::izstream & rotamer_definitions,
-		utility::io::izstream & regular_library,
-		utility::io::izstream & continuous_minimization_bbdep
-		// phasing out bbind sampling -- utility::io::izstream & rnchi_bbind_probabilities
-	) const;
-
-	template < Size T, Size N >
-	void
-	initialize_srsrdl(
-		SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
-		bool const nrchi_is_symmetric,
-		Real const nrchi_start_angle
-	) const;
 
 	/// @brief Instantiate the appropriate RSRDL< T > library given the n_chi input and initialize
 	/// the library from the input stream.  Return the string that the library returns after reading
@@ -377,6 +337,9 @@ private:
 	void
 	write_to_binary( utility::io::ozstream & out ) const;
 
+	/// @brief Initialize the RotamerLibrary from the stored binary
+	/// @details Invoked through create_singleron_instance()
+	/// Not threadsafe in itself. Do not call directly.
 	void
 	read_from_binary( utility::io::izstream & in );
 
@@ -391,37 +354,13 @@ private:
 
 private:
 
-	typedef std::map< AA, SingleResidueRotamerLibraryCOP > LibraryMap;
-	typedef LibraryMap::const_iterator library_iterator;
+	// NOTE: If you make the data in this singleton mutable,
+	// you will need to add a ReadWriteMutex to make it threadsafe.
 
-	// These entries take precedence over the entries for an amino acid.
-	// The string used for the key is ResidueType.name()
-	typedef std::map< std::string, SingleResidueRotamerLibraryCOP > ResLibraryMap;
-	typedef ResLibraryMap::const_iterator reslibrary_iterator;
-
-	// APL NOTE: All the mutable data in this class will need a ReadWriteMutex to
-	// be made threadsafe.
-
-	mutable ResLibraryMap reslibraries_;
-	mutable LibraryMap libraries_;
-	mutable utility::vector1< SingleResidueRotamerLibraryCOP > aa_libraries_;
-	mutable utility::vector1< SingleResidueRotamerLibraryCOP > libraries_ops_;
-
-	/// @brief Map that associates three letter codes with SRRLCOPs for the
-	/// noncanonical alpha-amino acid sidechain rotamer libraries
-	mutable std::map< std::string, SingleResidueRotamerLibraryCOP > ncaa_rotlibs_;
-
-	/// @brief Map that associates three letter codes with SRRLCOPs for the
-	/// peptoid sidechain rotamer libraries
-	mutable std::map< std::string, SingleResidueRotamerLibraryCOP > peptoid_rotlibs_;
+	utility::vector1< rotamers::SingleResidueRotamerLibraryCOP > aa_libraries_;
+	typedef utility::vector1< rotamers::SingleResidueRotamerLibraryCOP > library_iterator;
 
 };
-
-void
-read_dunbrack_library(
-	RotamerLibrary & rotamer_library
-);
-
 
 } // dunbrack
 } // pack

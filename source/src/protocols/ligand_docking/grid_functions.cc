@@ -20,7 +20,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>
@@ -215,8 +216,7 @@ void rotamers_for_trials(
 
 	core::graph::GraphCOP empty_graph( core::graph::GraphOP( new core::graph::Graph() ) );
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib =
-		core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(rsd_no) );
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(rsd_no) );
 	if( reslib.get() == NULL ) return;
 
 	core::chemical::ResidueType const & res_type =  pose.residue_type(rsd_no);

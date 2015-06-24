@@ -4,6 +4,8 @@ NAME PRO
 IO_STRING PRO P
 TYPE POLYMER #residue type
 AA PRO
+# "Rotamers" here are for design using the packer.
+ROTAMERS BASIC
 ATOM  N   Nbb  N    -0.29
 ATOM  CA  CAbb CP1  0.02
 ATOM  C   CObb C    0.51

@@ -490,6 +490,32 @@ void RotamerSubset::steal_rotamer( conformation::ResidueOP rotamer ) {
 	rotamers_.push_back( rotamer );
 }
 
+void
+RotamerSubset::show( std::ostream & out ) const {
+	out << "RotamerSubset for residue " << resid() << "; " << num_rotamers() << " rotamers for "
+		<< get_n_residue_types() << " types in " << get_n_residue_groups() << " groups. " << std::endl;
+	for( core::Size ii(1); ii <= rotamers_.size(); ++ii) {
+		core::conformation::Residue const & rot( *rotamers_[ii] );
+		out << "Rotamer " << ii << ": " << rot.name() << " ";
+		utility::vector1< Real > const & mainchains( rot.mainchain_torsions() );
+		for( core::Size jj(1); jj <= mainchains.size(); ++jj ) {
+			out << mainchains[jj] << " ";
+		}
+		out << "| ";
+		utility::vector1< Real > const & chis( rot.chi() );
+		for( core::Size jj(1); jj <= chis.size(); ++jj ) {
+			out << chis[jj] << " ";
+		}
+		utility::vector1< Real > const & nus( rot.nus() );
+		if( nus.size() ) {
+			out << "| ";
+			for( core::Size jj(1); jj <= nus.size(); ++jj ) {
+				out << nus[jj] << " ";
+			}
+		}
+		out << std::endl;
+	}
+}
 
 } // rotamer_set
 } // pack

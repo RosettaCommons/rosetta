@@ -7,29 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/dunbrack/SingleLigandRotamerLibrary.hh
+/// @file   core/scoring/rotamers/SingleLigandRotamerLibrary.hh
 /// @brief  SingleLigandRotamerLibrary class
 /// @author Ian W. Davis
 
-#ifndef INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh
-#define INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh
+#ifndef INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_hh
+#define INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_hh
 
 // Unit Headers
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
 
+#include <map>
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
+
+typedef std::map< std::string, core::Vector > NamePosMap;
 
 /// @brief A fixed library of conformations for some residue type (doesn't have to be a ligand).
 /// @details Reads residue conformations in PDB format separated by mandatory TER records.
@@ -47,11 +49,6 @@ public:
 
 	virtual ~SingleLigandRotamerLibrary();
 
-	/// @brief explicit constructor
-	SingleLigandRotamerLibrary(
-		utility::vector1< conformation::ResidueOP > & rotamers_in,
-		Real ref_E_in
-	);
 	/// @brief Reads conformers from PDB-format file (must be separated by TER records!)
 	virtual
 	void
@@ -65,7 +62,7 @@ public:
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
@@ -73,7 +70,7 @@ public:
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	virtual
@@ -81,7 +78,7 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	virtual
@@ -89,9 +86,9 @@ public:
 	assign_random_rotamer_with_bias(
 		conformation::Residue const &,// rsd,
 		pose::Pose const & /*pose*/,
-		RotamerLibraryScratchSpace &,// scratch,
+		dunbrack::RotamerLibraryScratchSpace &,// scratch,
 		numeric::random::RandomGenerator &,// RG,
-		ChiVector &,// new_chi_angles,
+		dunbrack::ChiVector &,// new_chi_angles,
 		bool //perturb_from_rotamer_center
 	) const {} // stubbed out for the moment.
 
@@ -110,15 +107,6 @@ public:
 		RotamerVector & rotamers
 	) const;
 
-	//XRW_B_T1
-	/*
-	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
-	virtual
-	SingleResidueRotamerLibraryOP
-	coarsify(coarse::Translator const &map) const;
-	*/
-	//XRW_E_T1
-
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
 	virtual
 	void
@@ -133,15 +121,9 @@ public:
 		ref_energy_ = ref_E_in;
 	}
 
-	void set_rotamers( utility::vector1< conformation::ResidueOP > & rotamers_in ){
-		rotamers_ = rotamers_in;
-	}
-
-	utility::vector1< conformation::ResidueOP > const &
-	get_rotamers() const {
-		return rotamers_;
-	}
-
+	/// @brief Build a set of rotamers for the given ResidueType
+	void
+	build_base_rotamers( chemical::ResidueType const & restype, RotamerVector & base_rotamers ) const;
 
 private:
 
@@ -168,8 +150,8 @@ private:
 
 private:
 
-	utility::vector1< conformation::ResidueOP > rotamers_;
-    
+	utility::vector1< NamePosMap > atom_positions_;
+
 	// A baseline reference energy applied to *all* conformers in this library,
 	// like amino acid reference energies.
 	Real ref_energy_;
@@ -193,8 +175,8 @@ private:
 }; // SingleLigandRotamerLibrary
 
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_hh
+#endif // INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_hh

@@ -32,6 +32,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -186,11 +187,13 @@ PerturbRotamerSidechainMover::build_rotamer_list(
 	RotamerList& rotamers
 ) const {
 	using namespace pack::dunbrack;
+	using namespace pack::rotamers;
+
 	rotamers.clear();
 	rotamers.reserve( 200 ); //no idea but that should be plenty.
 
 	SingleResidueRotamerLibraryCOP residue_rotamer_library(
-  	 rotamer_library().get_rsd_library( residue.type() )
+		core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() )
 	);
 
 	SingleResidueDunbrackLibraryCOP residue_dunbrack_library(

@@ -202,6 +202,23 @@
 #include <core/scoring/fiber_diffraction/FiberDiffractionEnergyGpuCreator.hh>
 #endif
 
+// Rotamer Library registration
+#include <core/chemical/rotamers/RotamerLibrarySpecificationRegistrator.hh>
+#include <core/chemical/rotamers/BasicRotamerLibrarySpecificationCreator.hh>
+#include <core/chemical/rotamers/CenrotRotamerLibrarySpecificationCreator.hh>
+#include <core/chemical/rotamers/DunbrackRotamerLibrarySpecificationCreator.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecificationCreator.hh>
+#include <core/chemical/rotamers/PeptoidRotamerLibrarySpecificationCreator.hh>
+#include <core/chemical/rotamers/PDBRotamerLibrarySpecificationCreator.hh>
+
+#include <core/pack/dunbrack/SingleResidueDunbrackLibraryCreator.hh>
+#include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibraryCreator.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryRegistrator.hh>
+#include <core/pack/rotamers/SingleBasicRotamerLibraryCreator.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibraryCreator.hh>
+#include <core/pack/rotamers/SingleNCAARotamerLibraryCreator.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibraryCreator.hh>
+
 // Constraint registration
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/BasicConstraintCreators.hh>
@@ -505,6 +522,23 @@ static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEner
 static EnergyMethodRegistrator< scoring::fiber_diffraction::FiberDiffractionEnergyGpuCreator > FiberDiffractionEnergyGpuCreator_registrator;
 #endif
 
+/// RotamerLibrary Registrators
+
+using chemical::rotamers::RotamerLibrarySpecificationRegistrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::BasicRotamerLibrarySpecificationCreator > BasicRotamerLibrarySpecificationCreator_registrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::CenrotRotamerLibrarySpecificationCreator > CenrotRotamerLibrarySpecificationCreator_registrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::DunbrackRotamerLibrarySpecificationCreator > DunbrackRotamerLibrarySpecificationCreator_registrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::NCAARotamerLibrarySpecificationCreator > NCAARotamerLibrarySpecificationCreator_registrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::PeptoidRotamerLibrarySpecificationCreator > PeptoidRotamerLibrarySpecificationCreator_registrator;
+static RotamerLibrarySpecificationRegistrator< chemical::rotamers::PDBRotamerLibrarySpecificationCreator > PDBRotamerLibrarySpecificationCreator_registrator;
+
+using pack::rotamers::SingleResidueRotamerLibraryRegistrator;
+static SingleResidueRotamerLibraryRegistrator< pack::dunbrack::SingleResidueDunbrackLibraryCreator > SingleResidueDunbrackLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::dunbrack::cenrot::SingleResidueCenrotLibraryCreator > SingleCenrotPeptoidLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleBasicRotamerLibraryCreator > SingleBasicRotamerLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleLigandRotamerLibraryCreator > SingleLigandRotamerLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleNCAARotamerLibraryCreator > SingleNCAARotamerLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleResiduePeptoidLibraryCreator > SingleResiduePeptoidLibraryCreator_registrator;
 
 /// Constraint Registrators
 using namespace scoring::constraints;

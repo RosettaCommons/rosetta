@@ -208,8 +208,8 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	using namespace numeric::kinematic_closure;
 	chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	db_len[ 9] = 7.1;
@@ -364,8 +364,8 @@ Real ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	using namespace numeric::kinematic_closure;
 	chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	dt_ang[ 9] = 180.0;
@@ -512,8 +512,8 @@ Real ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	using namespace numeric::kinematic_closure;
 	chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	db_len[ 9] = 7.1;
@@ -663,8 +663,8 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 	order [1]=1; order [2]=2; order [3]=3;
 	pivots[1]=5, pivots[2]=8, pivots[3]=11;
 	numeric::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd1).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	dt_ang[ 9] = 180.0;
@@ -790,7 +790,7 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	order [1]= 1; order [2]= 2; order [3]= 3;
 	pivots[1]= 8, pivots[2]=11, pivots[3]=14;
 
-	//core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	// get rotamers
@@ -979,7 +979,7 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
 	order [1]=1; order [2]= 2; order [3]= 3;
 	pivots[1]=8, pivots[2]=11, pivots[3]=14;
 
-	//  core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
+	//  core::pack::rotamers::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue(rsd2).type() );
 	///core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
 	// get rotamers
@@ -1757,8 +1757,8 @@ int main (int argc, char *argv[]) {
 	//   Hit hi(*hits[ih]);
 
 	//   Pose wp(pose);
-	//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( asp.residue(1).type() );
-	//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
+	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( asp.residue(1).type() );
+	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
 	//   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 	//   ScoreFunctionOP sf = new core::scoring::ScoreFunction();
 	//   sf->set_weight(core::scoring::fa_atr,1.0);
@@ -1953,8 +1953,8 @@ int main (int argc, char *argv[]) {
 	// ObjexxFCL::FArray3D<Real> eallow2(CHI2.size(),CHI1.size(),pose.n_residue(),9e9);
 	// {
 	//   Pose wp(pose);
-	//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( asp.residue(1).type() );
-	//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
+	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( asp.residue(1).type() );
+	//   core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
 	//   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 	//   for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 	//     if(sasa[ir] > 0) continue;

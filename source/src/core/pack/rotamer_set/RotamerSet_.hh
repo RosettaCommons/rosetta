@@ -140,7 +140,7 @@ public:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,		
+		graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const;
@@ -304,6 +304,10 @@ public:
 		graph::GraphCOP packer_neighbor_graph
 	) const;
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
 private:
 
 	/// @brief logic for building TP3 water rotamers
@@ -340,6 +344,12 @@ private:
 	/// for the number of rotamers for the current value of n_residue_types.
 	void
 	push_back_rotamer( conformation::ResidueOP );
+
+	/// @brief append a vector of rotamers to the list of rotamers,
+	/// and increments the count for the number of rotamers for the current value of n_residue_types.
+	/// It is assumed that all of the rotamers in the vector of are the current type and group.
+	void
+	push_back_rotamers( Rotamers const & );
 
 	void
 	update_rotamer_offsets() const;

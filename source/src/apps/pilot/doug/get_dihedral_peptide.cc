@@ -46,10 +46,10 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 
 // devel headers
 #include <devel/init.hh>
@@ -231,13 +231,13 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 			// need this for each res
 			chemical::ResidueTypeCOP concrete_residue( pose.residue( i ).type() );
 			conformation::Residue existing_residue( pose.residue( i ) );
-			core::pack::dunbrack::RotamerVector rotamers;
+			core::pack::rotamers::RotamerVector rotamers;
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
 			std::cout << "DEBUG BEFORE YUCK" << std::endl;
 			// get srdl (yuck)
-			core::pack::dunbrack::SingleResidueRotamerLibraryCAP      blah1      = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
-			const core::pack::dunbrack::SingleResidueRotamerLibrary*  blah2      = blah1.get();
+			core::pack::rotamers::SingleResidueRotamerLibraryCAP      blah1      = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
+			const core::pack::rotamers::SingleResidueRotamerLibrary*  blah2      = blah1.get();
 			const core::pack::dunbrack::SingleResidueDunbrackLibrary* peptide_rl = static_cast<const core::pack::dunbrack::SingleResidueDunbrackLibrary*>(blah2);
 			std::cout << "AFTER BEFORE YUCK" << std::endl;
 

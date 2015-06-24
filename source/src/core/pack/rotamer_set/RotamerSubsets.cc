@@ -181,6 +181,14 @@ RotamerSubsets::moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) c
 }
 
 
+void
+RotamerSubsets::show( std::ostream & out ) const {
+	out << "RotamerSubsets with " << nmoltenres_ << " molten residues for " << total_residue_ << " total residues and " << nrotamers_ << " rotamers." << std::endl;
+	for( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii) {
+		out << ii << ": " << *(set_of_rotamer_sets_[ii]) << std::endl;
+	}
+}
+
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core

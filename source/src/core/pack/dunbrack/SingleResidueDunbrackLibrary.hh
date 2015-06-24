@@ -18,7 +18,7 @@
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
@@ -39,7 +39,7 @@ namespace core {
 namespace pack {
 namespace dunbrack {
 
-class SingleResidueDunbrackLibrary : public SingleResidueRotamerLibrary {
+class SingleResidueDunbrackLibrary : public rotamers::SingleResidueRotamerLibrary {
 public:
 	typedef chemical::AA AA;
 
@@ -88,7 +88,7 @@ public:
 		Real phi,
 		Real psi
 	) const = 0;*/
-	
+
 	virtual
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
@@ -105,7 +105,7 @@ public:
 		Real psi,
 		Size rot_ind
 	) const = 0;
-	
+
 	/*virtual
 	Real
 	get_probability_for_rotamer(
@@ -120,7 +120,7 @@ public:
 		Real psi,
 		Size rot_ind
 	) const = 0;
-    
+
 	/*virtual
 	DunbrackRotamerSampleData
 	get_rotamer(
@@ -139,7 +139,7 @@ public:
 	get_psi_from_rsd(
 		conformation::Residue const & rsd
 	) const = 0;
-    
+
 	//virtual
 	//Real
 	//get_bb_from_rsd(
@@ -161,7 +161,7 @@ public:
 	/// @brief The number of chi represented by the library.
 	virtual
 	Size nchi() const = 0;
-    
+
     /// @brief the number of backbone dihedrals represented by the library
     virtual
     Size nbb() const = 0;
@@ -283,7 +283,7 @@ public:
 			throw utility::excn::EXCN_RangeError(
 				"chi angle must be between -180 and 180: "+utility::to_string(chi));
 		}
-		
+
 		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/) {
 			if ( which_chi == 1 ) {
 				if ( chi > 0 ) { return 1; }
@@ -371,7 +371,7 @@ public:
 	/// Values tested should parallel those used in the read_from_binary() function.
 	virtual
 	bool
-	operator ==( SingleResidueRotamerLibrary const & ) const;
+	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const;
 
 private:
 
@@ -388,7 +388,7 @@ private:
 	Size const n_rotameric_chi_;
 	utility::vector1< Size > n_chi_bins_;
 	utility::vector1< Size > n_chi_products_; // n_chi_products_[ i ] = prod( j in i+1 to nchi, n_chi_bins_[ j ] );
-    
+
 	Size n_packed_rots_;
 	Size n_possible_rots_; // prod( i in 1 to nchi, n_chi_bins_[ i ] );
 

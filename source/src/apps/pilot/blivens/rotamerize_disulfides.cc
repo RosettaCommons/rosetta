@@ -47,7 +47,7 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -131,8 +131,8 @@ int main( int argc, char * argv [] )
 //	rot_mover.set_resnum(target);
 //	rot_mover.set_scorefxn(sfxn);
 
-	pack::dunbrack::SingleResidueRotamerLibraryCAP rot_lib( RotamerLibrary::get_instance()->get_rsd_library( restype ));
-//	pack::dunbrack::SingleLigandRotamerLibrary const& lig_rot_lib(dynamic_cast< pack::dunbrack::SingleLigandRotamerLibrary const& > (*rot_lib) );
+	pack::rotamers::SingleResidueRotamerLibraryCAP rot_lib( RotamerLibrary::get_instance()->get_rsd_library( restype ));
+//	pack::rotamers::SingleLigandRotamerLibrary const& lig_rot_lib(dynamic_cast< pack::rotamers::SingleLigandRotamerLibrary const& > (*rot_lib) );
 
 	utility::vector1< conformation::ResidueOP> rotamers;
 	utility::vector1< utility::vector1< Real > > extra_chi_steps( restype.nchi() );

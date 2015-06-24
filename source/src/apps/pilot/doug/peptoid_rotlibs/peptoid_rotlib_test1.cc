@@ -17,10 +17,10 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 #include <core/conformation/Residue.hh>
@@ -112,8 +112,8 @@ main( int argc, char * argv [] )
 	std::cout << "Reading in rot lib " << dir_name + file_name << "..." << std::endl;
 
 	std::cout << "CREATION" << std::endl;
-	//pack::dunbrack::RotamericSingleResiduePeptoidLibrary< pack::dunbrack::THREE > peptoid_rotlib;
-	pack::dunbrack::RotamericSingleResiduePeptoidLibrary< pack::dunbrack::TWO > peptoid_rotlib;
+	//pack::rotamers::RotamericSingleResiduePeptoidLibrary< pack::dunbrack::THREE > peptoid_rotlib;
+	pack::rotamers::RotamericSingleResiduePeptoidLibrary< pack::dunbrack::TWO > peptoid_rotlib;
 
 	std::cout << "SET_N_CHI_BINS" << std::endl;
 	peptoid_rotlib.set_n_chi_bins( rsd_type.get_peptoid_rotlib_n_bin_per_rot() );

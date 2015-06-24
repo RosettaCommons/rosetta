@@ -23,6 +23,13 @@ BumpSelector::BumpSelector() :
 	max_rot_bumpenergy_( 5.0 )
 {}
 
+
+BumpSelector::BumpSelector( Energy max_rot_energy ) :
+	starting_rot_bumpenergy_( 1e9 ),
+	max_rot_bumpenergy_( max_rot_energy ),
+	best_rot_bumpenergy_( starting_rot_bumpenergy_ )
+{}
+
 void
 BumpSelector::set_max_rot_bumpenergy( Energy setting )
 {

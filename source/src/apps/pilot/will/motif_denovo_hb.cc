@@ -240,7 +240,7 @@ get_rot_score(
 	Size ir,
 	core::pack::dunbrack::RotamerLibraryScratchSpace & scratch
 ){
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
+	core::pack::rotamers::SingleResidueRotamerLibraryCAP rotlib =
 		core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(ir).type() );
 	return rotlib->rotamer_energy( pose.residue(ir), scratch );
 

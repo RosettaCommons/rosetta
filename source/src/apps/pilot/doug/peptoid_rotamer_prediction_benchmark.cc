@@ -47,9 +47,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 
 // devel headers
 #include <devel/init.hh>

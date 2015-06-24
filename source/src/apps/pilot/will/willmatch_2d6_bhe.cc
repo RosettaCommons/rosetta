@@ -233,9 +233,9 @@ void run() {
 		ObjexxFCL::FArray1D<Real> ballow0(                        in_fa.n_residue(),9e9),eallow0(                        in_fa.n_residue(),9e9),hallow0(                        in_fa.n_residue(),9e9);
 		ObjexxFCL::FArray2D<Real> ballow1(            CHI1.size(),in_fa.n_residue(),9e9),eallow1(            CHI1.size(),in_fa.n_residue(),9e9),hallow1(            CHI1.size(),in_fa.n_residue(),9e9);
 		ObjexxFCL::FArray3D<Real> ballow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),eallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),hallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9);
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP plib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rtphe );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP hlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( hsd.residue(1).type() );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
+		core::pack::rotamers::SingleResidueRotamerLibraryCAP plib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rtphe );
+		core::pack::rotamers::SingleResidueRotamerLibraryCAP hlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( hsd.residue(1).type() );
+		core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( glu.residue(1).type() );
 		core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 		{
 

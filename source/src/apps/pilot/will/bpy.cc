@@ -241,7 +241,7 @@ core::fragment::FragSetOP make_frag_set(Size start, std::string ss, std::map<std
 
 class ChiMover : public protocols::moves::Mover {
 	Size residue_;
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP lib_;
+	core::pack::rotamers::SingleResidueRotamerLibraryCAP lib_;
 	core::pack::dunbrack::RotamerLibraryScratchSpace scratch_;
 public:
 	ChiMover(core::pose::Pose const & pose, Size residue) : residue_(residue) {

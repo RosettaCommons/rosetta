@@ -7,20 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/dunbrack/SingleResiduePeptoidLibrary.hh
+/// @file   core/pack/rotamers/SingleResiduePeptoidLibrary.hh
 /// @brief  SingleResiduePeptoidLibrary class
 /// @brief  Similar to SingleResidueDunbrackLibrary class
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
 // Unit headers
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
 
 // Package headers
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -52,9 +50,10 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
-static thread_local basic::Tracer SRPL_TR( "core.pack.dunbrack" );
+static thread_local basic::Tracer SRPL_TR( "core.pack.rotamers.SingleResiduePeptoidLibrary" );
+
 // static const Real MIN_ROT_PROB = 1.e-8; - KAB - unused variable
 
 Real const SingleResiduePeptoidLibrary::NEUTRAL_OMG = 180; // DOUG DOUG DOUG: Need to determine good values for peptoids
@@ -685,7 +684,7 @@ debug_assert( false );
 }
 
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 

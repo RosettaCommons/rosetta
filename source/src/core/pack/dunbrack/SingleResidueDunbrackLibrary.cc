@@ -104,7 +104,7 @@ SingleResidueDunbrackLibrary::set_n_chi_bins( utility::vector1< Size > const & n
 	// load rot size vector
 	n_chi_bins_.resize( n_chi_bins.size() );
 	for ( Size i = 1; i <= n_chi_bins.size(); ++i ) n_chi_bins_[i] = n_chi_bins[i];
-	
+
 	// basically the same as the ctor
 	for ( Size ii = n_rotameric_chi_; ii > 1; --ii ) {
 		n_chi_products_[ ii - 1 ] = n_chi_products_[ ii ] * n_chi_bins_[ ii ];
@@ -938,7 +938,7 @@ debug_assert( false );
 	core::graph::GraphOP png;
 	chemical::ResidueTypeCOP cr;
 	utility::vector1< utility::vector1< Real > > ecs;
-	RotamerVector rv;
+	rotamers::RotamerVector rv;
 
 	rsrdl_11.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );
 	rsrdl_12.fill_rotamer_vector( pose, sfxn, task, png, cr, rsd, ecs, true, rv );

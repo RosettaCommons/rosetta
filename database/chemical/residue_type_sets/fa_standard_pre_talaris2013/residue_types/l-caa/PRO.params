@@ -4,6 +4,7 @@ NAME PRO
 IO_STRING PRO P
 TYPE POLYMER #residue type
 AA PRO
+ROTAMER_AA PRO
 ATOM  N   Npro N    -0.29
 ATOM  CA  CAbb CP1  0.02
 ATOM  C   CObb C    0.51

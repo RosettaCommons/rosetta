@@ -30,7 +30,8 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <protocols/idealize/IdealizeMover.hh>
 
@@ -673,22 +674,24 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 	using namespace core::conformation;
 	using namespace core::scoring;
 	using namespace core::pack::dunbrack;
+	using namespace core::pack::rotamers;
 
-	RotamerLibrary const & rotlib( * core::pack::dunbrack::RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib = rotlib.get_rsd_library( residue.type() );
+	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
+	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( residue.type() ) );
 
 	if ( res_rotlib != 0 ) {
-		/// stoopid
-		/// typedef utility::pointer::access_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
+		SingleLigandRotamerLibraryCOP lig_rotlib( utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
 
-		SingleLigandRotamerLibraryCOP lig_rotlib( utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleLigandRotamerLibrary const > ( res_rotlib ));
-
+		// RM: Dependance on SingleLigandRotamerLibrary here is poor - ideally this should be generalized to work with
+		// any type of SingleResidueRotamerLibrary
 		if ( lig_rotlib == 0 ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
 				+ residue.name() + ". Did you mean to remove the -match::enumerate_ligand_rotamers flag from your command line?");
 		}
 
-		Size const nligrots = lig_rotlib->get_rotamers().size();
+		RotamerVector rot_vector;
+		lig_rotlib->build_base_rotamers( residue.type(), rot_vector );
+		Size const nligrots = rot_vector.size();
 		if ( nligrots == 0 ) {
 			utility_exit_with_message( "Ligand rotamer library for " + residue.name() + " has 0 rotamers." );
 		}
@@ -714,14 +717,14 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 				lig_conformers_[ ii ] = protocols::toolbox::match_enzdes_util::LigandConformerOP( new toolbox::match_enzdes_util::LigandConformer );
 				lig_conformers_[ ii ]->ignore_h_collisions( ignore_h_collisions_ );
 
-				ligpose.replace_residue( 1, *lig_rotlib->get_rotamers()[ ii ], false );
+				ligpose.replace_residue( 1, *rot_vector[ ii ], false );
 				idealize::IdealizeMover idealizer;
 				idealizer.report_CA_rmsd( false );
 				idealizer.apply( ligpose );
 
 				Real rms( 0.0 );
 				for ( Size jj = 1; jj <= residue.nheavyatoms(); ++jj ) {
-					rms += lig_rotlib->get_rotamers()[ ii ]->xyz(jj).distance_squared( ligpose.residue(1).xyz(jj) );
+					rms += rot_vector[ ii ]->xyz(jj).distance_squared( ligpose.residue(1).xyz(jj) );
 				}
 				Real rms_this_rot( std::sqrt( rms ) / residue.nheavyatoms() );
 				if( rms_this_rot >= 0.1 )  TR << "WARNING: Ligand rotamer " << ii << " has idealized RMS of " << rms_this_rot <<". Usually this number is < 0.1. Check whether ligand rotamers have the same bond lengths/bond angles as specified in the ligand .params file."  << std::endl;
@@ -746,7 +749,7 @@ LigandConformerBuilder::initialize_conformers( core::conformation::Residue const
 				lig_conformers_[ ii ]->initialize_from_residue(
 					atoms_123_[ 1 ], atoms_123_[ 2 ], atoms_123_[ 3 ],
 					orientation_atoms_[ 1 ], orientation_atoms_[ 2 ], orientation_atoms_[ 3 ],
-					* lig_rotlib->get_rotamers()[ ii ] );
+					* rot_vector[ ii ] );
 			}
 
 			/// Error checking.  Make sure that the geometries specified in the input pdb files

@@ -44,6 +44,7 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 #include <core/graph/Graph.hh>
 
@@ -51,8 +52,8 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
 // External headers
@@ -139,10 +140,10 @@ get_tht_from_rsd(
 ) {
 	using namespace core;
 	assert( rsd.type().is_beta_aa() );
-	
+
 	assert( pose.residue( rsd.seqpos() ).is_protein() );
 	return pose.residue( rsd.seqpos() ).mainchain_torsion( 2 );
-	
+
 }
 
 /// @details Handle lower-term residues by returning a "neutral" phi value
@@ -150,28 +151,28 @@ core::Real
 get_phi_from_rsd( core::conformation::Residue const & rsd ) {
 	using namespace core;
 	assert( rsd.type().is_beta_aa() );
-	
+
 	if ( rsd.is_lower_terminus() ) {
 		return -90.0;
-		
+
 	}	else {
 		return rsd.mainchain_torsion( 1 );
 	}
-	
+
 }
 
 core::Real
 get_psi_from_rsd( core::conformation::Residue const & rsd ) {
 	using namespace core;
 	assert( rsd.type().is_beta_aa() );
-	
+
 	if ( rsd.is_upper_terminus() ) {
 		return 180.0;
-		
+
 	}	else {
 		return rsd.mainchain_torsion( 3 );
 	}
-	
+
 }
 
 
@@ -195,8 +196,13 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		// create izstream from path
 		std::string dir_name;
 		dir_name = basic::database::full_name( "/rotamer/ncaa_rotlibs/" );
-		
-		std::string file_name = rsd_type.get_ncaa_rotlib_path();
+
+		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
+				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( rsd_type.rotamer_library_specification() ) );
+		if( rotamer_spec == 0 ) {
+			utility_exit_with_message("NCAA rotamer set not found for residue type " + rsd_type.name() );
+		}
+		std::string file_name = rotamer_spec->ncaa_rotlib_path();
 		utility::io::izstream rotlib_in( dir_name + file_name );
 		std::cout << "Reading in rot lib " << dir_name + file_name << "...";
 
@@ -212,7 +218,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		case 1: {
 			RotamericSingleResidueDunbrackLibrary< ONE, THREE > * r1 =
 				new RotamericSingleResidueDunbrackLibrary< ONE, THREE >(aan, true);
-			r1->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+			r1->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r1->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r1);
 			break;
@@ -220,7 +226,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		case 2: {
 			RotamericSingleResidueDunbrackLibrary< TWO, THREE > * r2 =
 				new RotamericSingleResidueDunbrackLibrary< TWO, THREE >(aan, true);
-			r2->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+			r2->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r2->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r2);
 			break;
@@ -228,7 +234,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		case 3: {
 			RotamericSingleResidueDunbrackLibrary< THREE, THREE > * r3 =
 				new RotamericSingleResidueDunbrackLibrary< THREE, THREE >(aan, true);
-			r3->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+			r3->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r3->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r3);
 			break;
@@ -236,7 +242,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 		case 4: {
 			RotamericSingleResidueDunbrackLibrary< FOUR, THREE > * r4 =
 				new RotamericSingleResidueDunbrackLibrary< FOUR, THREE >(aan, true);
-			r4->set_n_chi_bins( rsd_type.get_ncaa_rotlib_n_bin_per_rot() );
+			r4->set_n_chi_bins( rotamer_spec->ncaa_rotlib_n_bin_per_rot() );
 			r4->read_from_file( rotlib_in, false );
 			dunbrack_rotlib = SingleResidueDunbrackLibraryOP( r4);
 			break;
@@ -315,7 +321,7 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 		<<   ", 'num_chi': " << pose.residue( i ).type().nchi() -  pose.residue( i ).type().n_proton_chi()
 		<<   ", 'res': " << std::setw( 3 ) << i << ", " ;
 
-		
+
 		id::TorsionID bb1( i, id::BB, 1 );
 		id::TorsionID bb2( i, id::BB, 2 );
 		id::TorsionID bb3( i, id::BB, 3 );
@@ -351,10 +357,12 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 		// need this for each res
 		chemical::ResidueTypeOP concrete_residue( new chemical::ResidueType( pose.residue( i ).type() ) );
 		conformation::Residue existing_residue( pose.residue( i ) );
-		core::pack::dunbrack::RotamerVector rotamers;
+		core::pack::rotamers::RotamerVector rotamers;
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
-		if( !concrete_residue->get_ncaa_rotlib_path().empty() ) {
+		core::chemical::rotamers::NCAARotamerLibrarySpecificationCOP rotamer_spec(
+				utility::pointer::dynamic_pointer_cast< core::chemical::rotamers::NCAARotamerLibrarySpecification const >( concrete_residue->rotamer_library_specification() ) );
+		if( rotamer_spec && ! rotamer_spec->ncaa_rotlib_path().empty() ) {
 
 			// get srrl
 			core::pack::dunbrack::SingleResidueDunbrackLibraryCOP dunbrack_rl;
@@ -369,7 +377,7 @@ B3AADihedralGrabber::apply( core::pose::Pose & pose ) {
 			utility::fixedsizearray1< Real, 5 > bbs;
 			bbs[1] = phi_rl; bbs[2] = tht_rl; bbs[3] = psi_rl;
 			utility::vector1< core::pack::dunbrack::DunbrackRotamerSampleData > drsd( dunbrack_rl->get_all_rotamer_samples( bbs ) );
-			
+
 			Size min = rotamers.size() < drsd.size() ? rotamers.size() : drsd.size();
 			for ( Size j(1); j <= min; ++j ) {//drsd.size(); ++j ) {
 				std::stringstream stupid;

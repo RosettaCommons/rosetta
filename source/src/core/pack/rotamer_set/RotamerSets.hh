@@ -237,6 +237,10 @@ public: // WHY? G++, WHY?!
 		return moltenres_2_resid_;
 	}
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
 private:
 	uint nmoltenres_;
 	uint total_residue_;

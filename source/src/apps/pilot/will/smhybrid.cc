@@ -2229,7 +2229,7 @@ core::fragment::FragSetOP make_frag_set_9mers(Size nres) {
 
 class ChiMover : public protocols::moves::Mover {
 	Size residue_,nchi;
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP lib_;
+	core::pack::rotamers::SingleResidueRotamerLibraryCAP lib_;
 	core::pack::dunbrack::RotamerLibraryScratchSpace scratch_;
 public:
 	ChiMover(core::pose::Pose const & pose, Size residue) : residue_(residue) {

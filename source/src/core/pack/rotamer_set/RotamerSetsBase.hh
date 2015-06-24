@@ -83,7 +83,17 @@ public:
 	uint
 	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const = 0;
 
+	virtual
+	void
+	show( std::ostream & out ) const = 0;
 };
+
+inline
+std::ostream &
+operator<<( std::ostream & out, RotamerSetsBase const & rs) {
+	rs.show( out );
+	return out;
+}
 
 } // namespace rotamer_set
 } // namespace pack

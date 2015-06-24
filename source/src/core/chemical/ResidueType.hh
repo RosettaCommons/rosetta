@@ -48,6 +48,7 @@
 #include <core/chemical/ResidueConnection.fwd.hh>
 #endif
 #include <core/chemical/rna/RNA_ResidueType.fwd.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>  // TODO: Fix this to use the fwd.hh.
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
@@ -791,6 +792,9 @@ public:
 	void
 	residue_type_set( ResidueTypeSetCAP set_in );
 
+	bool
+	in_residue_type_set() const;
+
 	/// @brief number of chi angles
 	Size
 	nchi() const
@@ -1432,7 +1436,7 @@ public:
 
 	/// @brief is this a beta amino acid?
 	bool is_beta_aa() const;
-	
+
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
 	bool is_sri() const;
@@ -1589,18 +1593,6 @@ public:
 	{
 		aa_ = aa_from_name( type );
 	}
-	/// @brief AA to use for rotamer library
-	void
-	rotamer_aa( AA const & type )
-	{
-		rotamer_aa_ = type;
-	}
-	/// @brief AA to use for rotamer library
-	void
-	rotamer_aa( std::string const & type )
-	{
-		rotamer_aa_ = aa_from_name( type );
-	}
 
 	/// @brief AA to use for backbone scoring
 	void
@@ -1667,14 +1659,14 @@ public:
 	{
 		name1_ = code;
 	}
-	
+
 	/// @brief get our chiral equivalent name
 	std::string const &
 	chiral_equivalent_name() const
 	{
 		return chiral_equivalent_name_;
 	}
-	
+
 	/// @brief set our chiral equivalent  name
 	void
 	chiral_equivalent_name( std::string const & name_in )
@@ -1728,13 +1720,6 @@ public:
 		return aa_;
 	}
 
-	AA const &
-	rotamer_aa() const
-	{
-		if(rotamer_aa_==aa_unk) return aa_;
-		return rotamer_aa_;
-	}
-
 	/// @brief Returns the amino acid type to be used for backbone scoring (rama and p_aa_pp).
 	AA const &
 	backbone_aa() const
@@ -1743,13 +1728,11 @@ public:
 		return backbone_aa_;
 	}
 
+	void
+	rotamer_library_specification( rotamers::RotamerLibrarySpecificationOP );
 
-	void set_RotamerLibraryName( std::string const & filename );
-
-	/// @brief A residue parameter file can refer to a set of "pdb rotamers" that can be
-	/// superimposed onto a starting position for use in the packer.  These rotamers
-	/// are loaded into the pack::dunbrack::RotamerLibrary at the time of their first use.
-	std::string get_RotamerLibraryName() const;
+	rotamers::RotamerLibrarySpecificationCOP
+	rotamer_library_specification() const;
 
 	////////////////////////////////////////////////////////////////////////////
 	/// dihedral methods
@@ -1841,159 +1824,6 @@ public:
 	/// @brief print chemical-bond path distances to standard out
 	void
 	print_pretty_path_distances() const; // for debug
-
-	/// @brief Sets the path for the NCAA rotlib for the ResidueType
-	void
-	set_ncaa_rotlib_path( std::string const & path )
-	{
-		ncaa_rotlib_path_ = path;
-	}
-
-	/// @brief Returns the path to the NCAA rotlib for the residue type
-	std::string const &
-	get_ncaa_rotlib_path() const
-	{
-		return ncaa_rotlib_path_;
-	}
-
-	/// @brief Sets whether we are using a NCAA rotlib for the residue type
-	void
-	set_use_ncaa_rotlib( bool flag )
-	{
-		use_ncaa_rotlib_ = flag;
-	}
-	
-	/// @brief Sets whether our NCAA rotlib is semirotameric
-	void
-	set_semirotameric_ncaa_rotlib( bool flag )
-	{
-		semirotameric_ncaa_rotlib_ = flag;
-	}
-
-	/// @brief Returns whether we are using a NCAA rotlib for the residue type
-	bool
-	get_use_ncaa_rotlib() const
-	{
-		return use_ncaa_rotlib_;
-	}
-	
-	/// @brief Returns whether our NCAA rotlib is semirotameric
-	bool
-	get_semirotameric_ncaa_rotlib() const
-	{
-		return semirotameric_ncaa_rotlib_;
-	}
-
-	/// @brief Sets the number of rotatable bonds described by the NCAA rotlib (not nesesarily equal to nchi)
-	void
-	set_ncaa_rotlib_n_rotameric_bins( Size n_rots )
-	{
-		ncaa_rotlib_n_rots_ = n_rots;
-	}
-
-	/// @brief Returns the number of rotatable bonds described by the NCAA rotlib  (not nesesarily equal to nchi)
-	Size
-	get_ncaa_rotlib_n_rotameric_bins() const
-	{
-		return ncaa_rotlib_n_rots_;
-	}
-	
-	void
-	set_nrchi_symmetric( bool setting ) {
-		nrchi_symmetric_ = setting;
-	}
-	
-	Real get_nrchi_start_angle() const {
-		return nrchi_start_angle_;
-	}
-	
-	void
-	set_nrchi_start_angle( Real setting ) {
-		nrchi_start_angle_ = setting;
-	}
-	
-	bool get_nrchi_symmetric() const {
-		return nrchi_symmetric_;
-	}
-	
-	/// @brief Sets the number of rotamers for each rotatable bond described by the NCAA rotlib
-	void
-	set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot );
-
-	/// @brief Returns the number of rotamers for each rotatable bond described by the NCAA rotlib for a single bond
-	Size
-	get_ncaa_rotlib_n_bin_per_rot( Size n_rot )
-	{
-		return ncaa_rotlib_n_bins_per_rot_[ n_rot ];
-	}
-
-	/// @brief Returns the number of rotamers for each rotatable bond described by the NCAA rotlib for all bonds
-	utility::vector1<Size> const &
-	get_ncaa_rotlib_n_bin_per_rot() const
-	{
-		return ncaa_rotlib_n_bins_per_rot_;
-	}
-
-	/// DOUG DOUG DOUG
-	/// @brief Sets the path for the peptoid rotlib for the ResidueType
-	void
-	set_peptoid_rotlib_path( std::string const & path )
-	{
-		peptoid_rotlib_path_ = path;
-	}
-
-	/// @brief Returns the path to the peptoid rotlib for the residue type
-	std::string const &
-	get_peptoid_rotlib_path() const
-	{
-		return peptoid_rotlib_path_;
-	}
-
-	/// @brief Sets whether we are using a peptoid rotlib for the residue type
-	void
-	set_use_peptoid_rotlib( bool flag )
-	{
-		use_peptoid_rotlib_ = flag;
-	}
-
-	/// @brief Returns whether we are using a peptoid rotlib for the residue type
-	bool
-	get_use_peptoid_rotlib() const
-	{
-		return use_peptoid_rotlib_;
-	}
-
-	/// @brief Sets the number of rotatable bonds described by the peptoid rotlib (not nesesarily equal to nchi)
-	void
-	set_peptoid_rotlib_n_rotameric_bins( Size n_rots )
-	{
-		peptoid_rotlib_n_rots_ = n_rots;
-	}
-
-	/// @brief Returns the number of rotatable bonds described by the peptoid rotlib  (not nesesarily equal to nchi)
-	Size
-	set_peptoid_rotlib_n_rotameric_bins() const
-	{
-		return peptoid_rotlib_n_rots_;
-	}
-
-	/// @brief Sets the number of rotamers for each rotatable bond described by the peptoid rotlib
-	void
-	set_peptoid_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot );
-
-	/// @brief Returns the number of rotamers for each rotatable bond described by the peptoid rotlib for a single bond
-	Size
-	get_peptoid_rotlib_n_bin_per_rot( Size n_rot )
-	{
-		return peptoid_rotlib_n_bins_per_rot_[ n_rot ];
-	}
-
-	/// @brief Returns the number of rotamers for each rotatable bond described by the peptoid rotlib for all bonds
-	utility::vector1<Size> const &
-	get_peptoid_rotlib_n_bin_per_rot() const
-	{
-		return peptoid_rotlib_n_bins_per_rot_;
-	}
 
 	/// @brief Returns a list of those atoms within one bond of a residue connection.  For residue connection i,
 	/// its position in this array is a list of pairs of atom-id's, the first of which is always the id
@@ -2407,45 +2237,8 @@ private:
 	///
 	utility::vector1< utility::vector1< std::pair< Real, Real > > > chi_rotamers_;
 
-	/// @brief The filename of the PDBRotamersLibrary -- Primary.
-	std::string rotamer_library_name_;
-
-	////////
-	/// NCAA rotlib stuff some of this is hardcoded elsewhere for the CAAs
-
-	/// @brief whether or not we should use the NCAA rotlib if it exists -- Primary.
-	bool use_ncaa_rotlib_;
-	
-	/// @brief whether or not the NCAA rotlib is semirotameric -- Primary.
-	bool semirotameric_ncaa_rotlib_;
-
-	/// @brief path to the NCAA rotlib -- Primary
-	std::string ncaa_rotlib_path_;
-
-	/// @brief the number of non-hydrogen chi angles in the NCAA rotlib -- Primary
-	Size ncaa_rotlib_n_rots_;
-
-	/// @brief the number of rotamer bins for each chi angle in the NCAA rotlib -- Primary
-	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
-
-	bool nrchi_symmetric_;
-	Real nrchi_start_angle_;
-
-	/////////////////////////////////////
-	// peptoid rotlib stuff: some of this is hardcoded elsewhere for the CAAs
-
-	/// @brief whether or not we should use the peptoid rotlib if it exists -- Primary
-	bool use_peptoid_rotlib_;
-
-	/// @brief path to the peptoid rotlib -- Primary
-	std::string peptoid_rotlib_path_;
-
-	/// @brief the number of non-hydrogen chi angles in the peptoid rotlib -- Primary
-	Size peptoid_rotlib_n_rots_;
-
-	/// @brief the number of rotamer bins for each chi angle in the peptoid rotlib -- Primary
-	utility::vector1< Size > peptoid_rotlib_n_bins_per_rot_;
-
+	/// @brief How to construct a rotamer library for this ResidueType -- Primary
+	rotamers::RotamerLibrarySpecificationOP rotamer_library_specification_;
 
 	///////////////////////////////////////////////////////////////////////////
 

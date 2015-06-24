@@ -110,10 +110,10 @@ ResidueLevelTask_::ResidueLevelTask_(
 	operate_on_ex4_( false )
 {
 	using namespace chemical;
-	// pb -- get the residue_set from the current residue
-	ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 
+	// Note: we defer getting the residue set until we need it, as some types may not have a ResidueTypeSet
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
+		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
@@ -132,6 +132,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 		if (original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) )
 			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
 	} else if ( original_residue.is_DNA() ) {
+		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 		// default: all canonical DNA types w/ adducts
 	  ResidueTypeCOPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
 		for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
@@ -141,6 +142,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 			}
 		}
 	} else if ( original_residue.is_RNA() ) {
+		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 		ResidueType const & match_residue_type(
 				residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );

@@ -987,6 +987,11 @@ FlexbbRotamerSets::compute_onebody_interactions_with_background(
 
 }
 
+void
+FlexbbRotamerSets::show( std::ostream & out ) const {
+	out << "FlexbbRotamerSets with " << nmoltenres_ << " molten residues for " << total_residue_ << " total residues and " << nrotamers_ << " rotamers." << std::endl;
+}
+
 
 }
 }

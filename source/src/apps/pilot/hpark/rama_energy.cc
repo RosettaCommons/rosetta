@@ -65,7 +65,7 @@ scan_Evalue( chemical::AA aa,
 
   pack::dunbrack::RotamerLibrary const &rotlib = * pack::dunbrack::RotamerLibrary::get_instance();
 
-  pack::dunbrack::SingleResidueRotamerLibraryCAP 
+  pack::rotamers::SingleResidueRotamerLibraryCAP 
     residue_rotamer_library( rotlib.get_rsd_library( pose.residue( 2 ).type() ) );
   pack::dunbrack::SingleResidueDunbrackLibraryCAP 
     dun_rotlib( dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >

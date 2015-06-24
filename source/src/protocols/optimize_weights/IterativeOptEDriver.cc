@@ -27,6 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -3720,6 +3721,7 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 	using namespace pack::task;
 	using namespace pack::rotamer_set;
 	using namespace pack::dunbrack;
+	using namespace pack::rotamers;
   using namespace chemical;
 
 	TR.Trace << "Getting native rotamer opte data for " << pdb_name << ":";
@@ -3779,11 +3781,10 @@ IterativeOptEDriver::get_nat_rot_opte_data(
 		if ( rot_wells.size()  == 0 ) continue;
 
 		SingleResidueRotamerLibraryCOP srlib(
-			core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( resi ) ) );
+			core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type( resi ) ) );
 
-		runtime_assert( dynamic_cast< SingleResidueDunbrackLibrary const * > ( srlib.get() ) );
-		SingleResidueDunbrackLibraryCOP srdlib( utility::pointer::static_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( srlib ));
-
+		SingleResidueDunbrackLibraryCOP srdlib( utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( srlib ));
+		runtime_assert( srdlib != 0 );
 
 		PNatRotOptEPositionDataOP this_pos_data( new PNatRotOptEPositionData );
 		this_pos_data->aa() = pose.residue( resi ).aa();
@@ -5217,7 +5218,7 @@ IterativeOptEDriver::repack_and_minimize_pose(
 	using namespace moves;
 	using namespace core::pack::task;
 	using core::pack::task::operation::TaskOperationCOP;
-	
+
 	protocols::simple_moves::PackRotamersMover packer( sfxn );
 	TaskFactoryOP factory( new TaskFactory );
 	factory->push_back( TaskOperationCOP( new operation::RestrictToRepacking ) );

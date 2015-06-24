@@ -109,7 +109,7 @@ public:
 		conformation::Residue const & existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		RotamerVector & rotamers
+		rotamers::RotamerVector & rotamers
 	) const;
 
 	/// @brief Return all of the rotamer sample data given a particular backbone bin.
@@ -366,7 +366,7 @@ private:
 		conformation::Residue const& existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		RotamerVector & rotamers,
+		rotamers::RotamerVector & rotamers,
 		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 	) const;
 
@@ -443,7 +443,7 @@ protected:
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const& existing_residue,
 		utility::vector1< ChiSetOP > const & chi_set_vector,
-		RotamerVector & rotamers
+		rotamers::RotamerVector & rotamers
 	) const;
 
 	void setup_entropy_correction();

@@ -46,9 +46,9 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.tmpl.hh>
 
 // devel headers
 #include <devel/init.hh>
@@ -136,13 +136,14 @@ calc_dist( core::conformation::Residue res1, core::conformation::Residue res2 )
 
 
 // some ugly functions to get rotamer sample data from rotlibs
-std::map< std::string, core::pack::dunbrack::SingleResiduePeptoidLibraryCOP > peptoid_rotlibs_;
-core::pack::dunbrack::SingleResiduePeptoidLibraryCAP
+std::map< std::string, core::pack::rotamers::SingleResiduePeptoidLibraryCOP > peptoid_rotlibs_;
+core::pack::rotamers::SingleResiduePeptoidLibraryCAP
 get_rsrpl(core::chemical::ResidueType const & rsd_type )
 {
 	using namespace core;
 	using namespace pack;
 	using namespace dunbrack;
+	using namespace core::pack::rotamers;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -401,13 +402,13 @@ PeptoidDihedralGrabber::apply( core::pose::Pose & pose )
 		// need this for each res
 		chemical::ResidueTypeCOP concrete_residue( pose.residue( i ).type() );
 		conformation::Residue existing_residue( pose.residue( i ) );
-		core::pack::dunbrack::RotamerVector rotamers;
+		core::pack::rotamers::RotamerVector rotamers;
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
 		if( !concrete_residue->get_peptoid_rotlib_path().empty() ) {
 
 			// get srrl
-			core::pack::dunbrack::SingleResiduePeptoidLibraryCAP peptoid_rl;
+			core::pack::rotamers::SingleResiduePeptoidLibraryCAP peptoid_rl;
 			peptoid_rl = get_rsrpl( pose.residue( i ).type() );
 			//peptoid_rl =  rl.get_peptoid_rotamer_library( pose.residue( i ).type() );
 

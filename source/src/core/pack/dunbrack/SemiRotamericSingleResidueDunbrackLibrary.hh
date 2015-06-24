@@ -261,7 +261,7 @@ public:
 		bool perturb_from_rotamer_center
 	) const;
 
-	
+
 	void
 	interpolate_nrchi_values(
 		utility::fixedsizearray1< Size, N > bb_bin,
@@ -270,7 +270,7 @@ public:
 		Size packed_rotno,
 		utility::vector1< Real > & interpolated_nrchi_distribution
 	) const;
-	
+
 	virtual
 	void
 	fill_rotamer_vector(
@@ -282,7 +282,7 @@ public:
 		conformation::Residue const & existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		RotamerVector & rotamers
+		rotamers::RotamerVector & rotamers
 	) const;
 
 	/// @brief Return all of the rotamer sample data given a particular phi/psi.
@@ -351,7 +351,7 @@ public:
 	/// Values tested should parallel those used in the read_from_binary() function.
 	virtual
 	bool
-	operator ==( SingleResidueRotamerLibrary const & ) const;
+	operator ==( rotamers::SingleResidueRotamerLibrary const & ) const;
 
 	virtual
 	void
@@ -418,14 +418,14 @@ protected:
 		conformation::Residue const & existing_residue,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
-		RotamerVector & rotamers
+		rotamers::RotamerVector & rotamers
 	) const;
 
 	utility::vector1< DunbrackRotamerSampleData >
 	get_all_rotamer_samples_bbdep(
 		utility::fixedsizearray1<Real, 5> bbs
 	) const;
-	
+
 	Real
 	get_probability_for_rotamer_bbdep(
 		utility::fixedsizearray1<Real, N> bbs,
@@ -479,7 +479,7 @@ private:
 		bool buried,
 		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		BBDepNRChiSample< Real > const interpolated_sample,
-		RotamerVector & rotamers
+		rotamers::RotamerVector & rotamers
 	) const;
 
 	void
@@ -504,7 +504,7 @@ private:
 		Size & bin_upper,
 		Real & nrchi_alpha
 	) const;
-	
+
     BBDepNRChiSample< Real >
 	interpolate_bbdep_nrchi_sample(
 		Size const packed_rotno,
@@ -566,6 +566,25 @@ private:
 
 };
 
+
+template < Size T, Size N >
+void
+initialize_and_read_srsrdl(
+	SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
+	bool const nrchi_is_symmetric,
+	Real const nrchi_start_angle,
+	utility::io::izstream & rotamer_definitions,
+	utility::io::izstream & regular_library,
+	utility::io::izstream & continuous_minimization_bbdep
+);
+
+template < Size T, Size N >
+void
+initialize_srsrdl(
+	SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
+	bool const nrchi_is_symmetric,
+	Real const nrchi_start_angle
+);
 
 } // namespace dunbrack
 } // namespace scoring

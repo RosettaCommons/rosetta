@@ -22,16 +22,16 @@ Rosetta version
 svn_version
 TIME_STAMP
 Warning: Unable to locate database file .*Dunbrack[0-9]+.lib.bin
-core.pack.dunbrack: Opening file .* for output.
-core.pack.dunbrack: Moving temporary file to .*Dunbrack[0-9]+.lib.bin
-core.pack.dunbrack: Reading .*
-core.pack.dunbrack: Finished reading Dunbrack Libraries
-core.pack.dunbrack: Memory usage:
-core.pack.dunbrack: ... with [0-9]+ bytes
-core.pack.dunbrack: Total memory on Dunbrack Libraries: [0-9]+ bytes.
-core.pack.dunbrack: dunbrack library is out-dated
-core.pack.dunbrack: cannot find binary dunbrack library under name
-core.pack.dunbrack: Random tempname will be:
+core.pack.dunbrack.RotamerLibrary: Opening file .* for output.
+core.pack.dunbrack.RotamerLibrary: Moving temporary file to .*Dunbrack[0-9]+.lib.bin
+core.pack.dunbrack.RotamerLibrary: Reading .*
+core.pack.dunbrack.RotamerLibrary: Finished reading Dunbrack Libraries
+core.pack.dunbrack.RotamerLibrary: Memory usage:
+core.pack.dunbrack.RotamerLibrary: ... with [0-9]+ bytes
+core.pack.dunbrack.RotamerLibrary: Total memory on Dunbrack Libraries: [0-9]+ bytes.
+core.pack.dunbrack.RotamerLibrary: dunbrack library is out-dated
+core.pack.dunbrack.RotamerLibrary: cannot find binary dunbrack library under name
+core.pack.dunbrack.RotamerLibrary: Random tempname will be:
 current_directory=
 reating tricubic splines
 core.chemical.ResidueTypeSet: Finished initializing fa_standard residue type set.  Created [0-9]+ residue types

@@ -152,7 +152,7 @@ public:
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const = 0;
-		
+
 	/// for OptE
 	virtual
 	void
@@ -215,6 +215,10 @@ public:
 	void
 	drop_rotamers_by_index( utility::vector1< Size > const & rotamer_indices_to_delete ) = 0;
 
+	virtual
+	void
+	show( std::ostream & out ) const = 0;
+
 private:
 	// deny use of the copy constructor (no pass-by-value)
 	RotamerSet( RotamerSet const & );
@@ -228,6 +232,12 @@ private:
 
 };
 
+inline
+std::ostream &
+operator<<( std::ostream & out, RotamerSet const & rs ) {
+	rs.show(out);
+	return out;
+}
 
 } // namespace rotamer_set
 } // namespace pack

@@ -297,7 +297,7 @@ initialize_data(){
     
     chemical::ResidueType const rsdtype( rsd_set->name_map( id_to_aa(iaa) ) );
 
-    pack::dunbrack::SingleResidueRotamerLibraryCAP 
+    pack::rotamers::SingleResidueRotamerLibraryCAP 
       residue_rotamer_library( rotlib.get_rsd_library( rsdtype ) );
     pack::dunbrack::SingleResidueDunbrackLibraryCAP 
       dun_rotlib( dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >

@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/scoring/dunbrack/RotamericSingleResiduePeptoidLibrary.fwd.hh
+/// @file    core/scoring/rotamers/RotamericSingleResiduePeptoidLibrary.fwd.hh
 /// @brief   Forward declaration of rotameric peptoid rotamer libraries
 /// @brief   Similar to RotamericSingleResidueDunbrackLibrary
 /// @author  P. Douglas Renfrew (renfrew@nyu.edu)
 
 
-#ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_fwd_hh
-#define INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_fwd_hh
+#ifndef INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_fwd_hh
+#define INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_fwd_hh
 
 #include <core/types.hh>
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 template < Size T, Size N >
 class RotamericSingleResiduePeptoidLibrary;
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_SemiRotamericSingleResiduePeptoidLibrary_FWD_HH
+#endif // INCLUDED_core_pack_rotamers_SemiRotamericSingleResiduePeptoidLibrary_FWD_HH

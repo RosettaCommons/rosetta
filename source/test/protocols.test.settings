@@ -177,6 +177,10 @@ sources = {
     #    "ClosureTests",
     #],
 
+	"drug_design": [
+		"orphan_restypes",
+	],
+
 	"ligand_docking": [
 		"ResidueTorsionRestraints",
 		"StartFrom",

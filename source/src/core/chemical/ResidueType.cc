@@ -41,6 +41,7 @@
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/bond_support.hh>
 
@@ -111,19 +112,11 @@ ResidueType::ResidueType(
 		n_hbond_donors_(0),
 		n_backbone_heavyatoms_(0),
 		first_sidechain_hydrogen_( 0 ),
-		rotamer_library_name_( "" ),
-		use_ncaa_rotlib_( false ),
-		semirotameric_ncaa_rotlib_( false ),
-		ncaa_rotlib_n_rots_( 0 ),
-		nrchi_symmetric_( false ),
-		nrchi_start_angle_( 0 ),
-		use_peptoid_rotlib_( false ),
-		peptoid_rotlib_n_rots_( 0 ),
+		rotamer_library_specification_( 0 ),
 		lowest_ring_conformer_( "" ),
 		low_ring_conformers_(),
 		properties_( ResiduePropertiesOP( new ResidueProperties( this ) ) ),
 		aa_( aa_unk ),
-		rotamer_aa_( aa_unk ),
 		backbone_aa_( aa_unk ),
 		name_(),
 		name3_(),
@@ -215,23 +208,11 @@ ResidueType::ResidueType( ResidueType const & residue_type ):
 		atom_aliases_(residue_type.atom_aliases_),
 		orbitals_index_(residue_type.orbitals_index_),
 		chi_rotamers_(residue_type.chi_rotamers_),
-		rotamer_library_name_( residue_type.rotamer_library_name_ ),
-		use_ncaa_rotlib_( residue_type.use_ncaa_rotlib_ ),
-		semirotameric_ncaa_rotlib_( residue_type.semirotameric_ncaa_rotlib_ ),
-		ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
-		ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
-		ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
-		nrchi_symmetric_( residue_type.nrchi_symmetric_),
-		nrchi_start_angle_( residue_type.nrchi_start_angle_),
-		use_peptoid_rotlib_( residue_type.use_peptoid_rotlib_ ),
-		peptoid_rotlib_path_( residue_type.peptoid_rotlib_path_),
-		peptoid_rotlib_n_rots_( residue_type.peptoid_rotlib_n_rots_ ),
-		peptoid_rotlib_n_bins_per_rot_(residue_type.peptoid_rotlib_n_bins_per_rot_),
+		rotamer_library_specification_( residue_type.rotamer_library_specification_ ),
 		lowest_ring_conformer_( residue_type.lowest_ring_conformer_ ),
 		low_ring_conformers_( residue_type.low_ring_conformers_ ),
 		properties_( ResiduePropertiesOP( new ResidueProperties( *residue_type.properties_, this ) ) ),
 		aa_( residue_type.aa_ ),
-		rotamer_aa_( residue_type.rotamer_aa_ ),
 		backbone_aa_( residue_type.backbone_aa_ ),
 		name_( residue_type.name_),
 		name3_( residue_type.name3_),
@@ -480,6 +461,12 @@ ResidueType::residue_type_set() const
 		utility_exit_with_message( "ResidueType::residue_type_set: pointer is not set!");
 	}
 	return *residue_type_set;
+}
+
+bool
+ResidueType::in_residue_type_set() const
+{
+	return ! residue_type_set_.expired();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -3243,20 +3230,15 @@ ResidueType::set_orbital_icoor_id(
 
 }
 
-
-void ResidueType::set_RotamerLibraryName( std::string const & filename )
-{
-	rotamer_library_name_ = filename;
+void
+ResidueType::rotamer_library_specification( rotamers::RotamerLibrarySpecificationOP rotlibspec) {
+	rotamer_library_specification_ = rotlibspec;
 }
 
-/// @brief A residue parameter file can refer to a set of "pdb rotamers" that can be
-/// superimposed onto a starting position for use in the packer.  These rotamers
-/// are loaded into the pack::dunbrack::RotamerLibrary at the time of their first use.
-std::string ResidueType::get_RotamerLibraryName() const
-{
-	return rotamer_library_name_;
+rotamers::RotamerLibrarySpecificationCOP
+ResidueType::rotamer_library_specification() const {
+	return rotamer_library_specification_;
 }
-
 
 void ResidueType::assign_neighbor_atom()
 {
@@ -3690,26 +3672,6 @@ ResidueType::show_all_atom_names( std::ostream & out ) const {
 		out << a.name() << " " << &graph_[vd] << std::endl;
 	}
 
-}
-
-void
-ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot )
-{
-debug_assert( ncaa_rotlib_n_rots_ == n_bins_per_rot.size() );
-	ncaa_rotlib_n_bins_per_rot_.resize( ncaa_rotlib_n_rots_ );
-	for( Size i = 1; i <= ncaa_rotlib_n_rots_; ++i ) {
-		ncaa_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
-	}
-}
-
-void
-ResidueType::set_peptoid_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot )
-{
-debug_assert( peptoid_rotlib_n_rots_ == n_bins_per_rot.size() );
-	peptoid_rotlib_n_bins_per_rot_.resize( peptoid_rotlib_n_rots_ );
-	for( Size i = 1; i <= peptoid_rotlib_n_rots_; ++i ) {
-		peptoid_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
-	}
 }
 
 /// @brief  Check if atom is virtual.

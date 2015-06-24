@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pack/dunbrack/SingleResiduePeptoidLibrary.fwd.hh
+/// @file core/pack/rotamers/SingleResiduePeptoidLibrary.fwd.hh
 /// @brief SingleResiduePeptoidLibrary forward declarations and typedefs
 /// @author
 
-#ifndef INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_fwd_hh
-#define INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_fwd_hh
+#ifndef INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_fwd_hh
+#define INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 class SingleResiduePeptoidLibrary;
 typedef utility::pointer::shared_ptr< SingleResiduePeptoidLibrary > SingleResiduePeptoidLibraryOP;
@@ -27,9 +27,9 @@ typedef utility::pointer::weak_ptr< SingleResiduePeptoidLibrary > SingleResidueP
 typedef utility::pointer::shared_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCOP;
 typedef utility::pointer::weak_ptr< SingleResiduePeptoidLibrary const > SingleResiduePeptoidLibraryCAP;
 
-} // dunbrack
+} // rotamers
 } // pack
 } // core
 
-#endif // INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_HH
+#endif // INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_HH
 

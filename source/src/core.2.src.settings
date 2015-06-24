@@ -72,6 +72,17 @@ sources = {
 		"util",
 	],
 
+	"core/chemical/rotamers": [
+		"BasicRotamerLibrarySpecification",
+		"CenrotRotamerLibrarySpecification",
+		"DunbrackRotamerLibrarySpecification",
+		"NCAARotamerLibrarySpecification",
+		"PDBRotamerLibrarySpecification",
+		"PeptoidRotamerLibrarySpecification",
+		"RotamerLibrarySpecification",
+		"RotamerLibrarySpecificationFactory",
+	],
+
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
 		"database_io",

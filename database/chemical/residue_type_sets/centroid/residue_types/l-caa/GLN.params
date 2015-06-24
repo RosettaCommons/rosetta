@@ -4,6 +4,8 @@ NAME GLN
 IO_STRING GLN Q
 TYPE POLYMER #residue type
 AA GLN
+# "Rotamers" here are for design using the packer.
+ROTAMERS BASIC
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
 ATOM  C   CObb C    0.51

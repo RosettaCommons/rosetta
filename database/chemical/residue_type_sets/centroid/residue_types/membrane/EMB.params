@@ -9,6 +9,7 @@ IO_STRING EMB Z
 TYPE LIGAND
 PROPERTIES MEMBRANE             
 AA UNK
+ROTAMERS BASIC
 ATOM DPTH MPdp H    0.0 # Embedding Depth
 ATOM CNTR MPct H    0.0 # Embedding Center
 ATOM NORM MPnm H    0.0 # Embedding Normal

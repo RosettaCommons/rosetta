@@ -33,6 +33,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -74,6 +75,8 @@ using namespace chemical;
 using namespace scoring;
 using namespace pose;
 using namespace ObjexxFCL;
+using namespace core::pack::dunbrack;
+using namespace core::pack::rotamers;
 
 ///////////////////////////////////////////////////////////////////////////
 /// @name Dunbrack2002Test
@@ -116,7 +119,7 @@ public:
 			assert( is_int(temp1) && is_int(temp2) );
 			pos  = int_of(temp1);
 			nchi = int_of(temp2);
-            
+
             TS_ASSERT( pose.residue( pos ).nchi() == nchi );
 			utility::vector1< Real > chis;
 			chi_gold.push_back( chis );
@@ -143,11 +146,11 @@ public:
 			// generate empty list of extra_chi_steps
 			utility::vector1< utility::vector1< Real > > extra_chi_steps( residue.nchi() );
 
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( residue.type() );
+			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 			if (rotlib) {
 				rotlib->fill_rotamer_vector( pose, dummy_scorefxn, *task, dummy_graph, residue.type().get_self_ptr(), residue, extra_chi_steps, false /*buried*/, suggested_rotamers);
 			}
-            
+
             bool bOut ( false  );//switch to true to produce a new test_input file
 			for ( utility::vector1< ResidueOP >::const_iterator it = suggested_rotamers.begin(),
 							eit = suggested_rotamers.end();
@@ -163,7 +166,7 @@ public:
 				if ( bOut )	std::cout << pos << " " << residue.nchi() << " ";
 				else {
 					if ( chi_gold[ct].size() != residue.nchi() ) {
-                        
+
 						TS_ASSERT( chi_gold[ ct ].size() == residue.nchi() );
 						++ct;
 						break; // something is very wrong
@@ -197,6 +200,7 @@ public:
 	{
 		using namespace core;
 		using namespace scoring;
+		using namespace core::pack;
 		using namespace pack::dunbrack;
 		test::UTracer UT("core/scoring/dunbrack/best_rotamer_energy.u"); // the name "UT" matters -- it goes with the UTRACE macro
 
@@ -205,8 +209,8 @@ public:
 
 		for (Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 			Residue const & residue( pose.residue( pos ) );
-			SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( residue.type() );
-			if( rotlib.get() == NULL ) continue;
+			SingleResidueRotamerLibraryCOP rotlib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
+			if( ! rotlib ) continue;
 
 			RotamerLibraryScratchSpace scratch;
 			Real const this_rotamerE = rotlib->best_rotamer_energy(residue, true /*current well only*/, scratch);
@@ -229,15 +233,16 @@ public:
 
 		Real const phi_example = -59;
 		Real const psi_example =  61;
+
 		utility::fixedsizearray1< Real, 5 > bbs;
 		bbs[1] = phi_example;
 		bbs[2] = psi_example;
-        
+
 		for ( Size ii = 1; ii <= num_canonical_aas; ++ii ) {
 
 			if ( AA( ii ) == aa_ala || AA( ii ) == aa_gly ) continue;
 			SingleResidueRotamerLibraryCOP aa_rotlib = rotlib.get_library_by_aa( (AA) ii );
-			SingleResidueDunbrackLibraryCOP aa_dunlib( utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( aa_rotlib ) );
+			SingleResidueDunbrackLibraryCOP aa_dunlib( utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( aa_rotlib ) );
 			TS_ASSERT( aa_dunlib );
 			if ( ! aa_dunlib ) {
 				std::cerr << "Failed to find dunbrack library for aa " << (AA) ii << std::endl;
@@ -340,7 +345,7 @@ public:
                     std::cout << "Now looking at residue " << ( ( jj+2 )/3 ) << " which is a " << pose.residue_type( (jj+2)/3 ).name() << std::endl;
                 else
                     std::cout << "Angle jj " << jj << " or for this residue, specifically " << (jj%3 ) << std::endl;
-                
+
 				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-6 );
 			}
 		}

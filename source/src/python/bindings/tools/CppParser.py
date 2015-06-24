@@ -1467,6 +1467,7 @@ _import_order_ = {
     'basic': ['datacache', 'resource_manager'],
 
     'core': ['graph', 'conformation', 'id', 'io', 'scoring'],
+    'core/pack' : ['rotamers'],
     'core/scoring': ['trie', 'methods', 'func', 'hbonds'],
 
     'protocols': ['moves', 'jd2', 'jumping', 'environment', 'features', 'evaluation', 'canonical_sampling', 'farna', 'filters',

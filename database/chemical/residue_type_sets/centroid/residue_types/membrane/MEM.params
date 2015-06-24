@@ -9,6 +9,7 @@ IO_STRING MEM Z
 TYPE LIGAND             
 PROPERTIES MEMBRANE
 AA UNK
+ROTAMERS BASIC
 ATOM THKN MPtk H    0.0 # Membrane Thickness
 ATOM CNTR MPct H    0.0 # Membrane Center
 ATOM NORM MPnm H    0.0 # Membrane Normal

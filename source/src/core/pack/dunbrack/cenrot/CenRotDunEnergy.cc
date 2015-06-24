@@ -18,6 +18,7 @@
 
 // Package headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
@@ -92,12 +93,14 @@ void CenRotDunEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & ) c
 
 using namespace core::pack::dunbrack;
 using namespace core::pack::dunbrack::cenrot;
+using namespace core::pack::rotamers;
 
 void CenRotDunEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,  //pose,
 	EnergyMap & emap
 ) const {
+
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
@@ -107,8 +110,8 @@ void CenRotDunEnergy::residue_energy(
 	Real dun_score( 0.0 );
 
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library( rsd.type() );
+	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
+	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
 	if ( residue_rotamer_library == 0 ) return;
 
@@ -149,8 +152,8 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 	debug_assert( rsd.seqpos() == tor_id.rsd() );
 		if ( rsd.is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
+		SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
+		SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
 		if (residue_rotamer_library==0) return 0.0;
 
@@ -191,8 +194,8 @@ debug_assert(pose.residue( tor_id.rsd() ).residue_type_set().name()==chemical::C
 
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 
-		RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
-		SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(pose.residue( tor_id.rsd() ).type());
+		SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
+		SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( pose.residue( tor_id.rsd() ).type() ));
 
 		if (residue_rotamer_library==0) return 0.0;
 
@@ -229,8 +232,8 @@ debug_assert(rsd.residue_type_set().name()==chemical::CENTROID_ROT);
 	Real weight = weights[ cen_rot_dun ];
 
 	//cal single residue cenrot lib
-	RotamerLibrary const & rotlib = * RotamerLibrary::get_instance();
-	SingleResidueRotamerLibraryCOP residue_rotamer_library = rotlib.get_rsd_library(rsd.type());
+	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
+	SingleResidueRotamerLibraryCOP residue_rotamer_library(rotlibfact.get( rsd.type() ));
 
 	if (residue_rotamer_library==0) return;
 

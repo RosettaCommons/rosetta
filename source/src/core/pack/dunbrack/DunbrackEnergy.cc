@@ -18,9 +18,10 @@
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <core/scoring/ScoreType.hh>
 
@@ -95,11 +96,11 @@ DunbrackEnergy::residue_energy(
 	if ( rsd.has_variant_type( core::chemical::REPLONLY )){
 		return;
 	}
-	
+
 	if ( rsd.is_virtual_residue() ) return;
 
 	//Returns the equivalent L-amino acid library if a D-amino acid is provided
-	pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
+	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib = rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 
 	if ( rotlib ) {
 		dunbrack::RotamerLibraryScratchSpace scratch;
@@ -135,8 +136,8 @@ DunbrackEnergy::eval_residue_dof_derivative(
 	if ( tor_id.valid() ) {
 	debug_assert( rsd.seqpos() == tor_id.rsd() );
 
-		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			RotamerLibrary::get_instance()->get_rsd_library( rsd.type() );
+		pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( rsd.type() );
 		if ( rsd.is_protein() && rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			rotlib->rotamer_energy_deriv( rsd, scratch );
@@ -152,7 +153,7 @@ DunbrackEnergy::eval_residue_dof_derivative(
 			}
 		}
 	}
-	
+
 	return numeric::conversions::degrees( weights[ fa_dun ] * deriv + weights[ fa_dun_dev ] * deriv_dev + weights[ fa_dun_rot ] * deriv_rot + weights[ fa_dun_semi ] * deriv_semi);
 }
 
@@ -176,9 +177,9 @@ DunbrackEnergy::eval_dof_derivative(
 	Real deriv_rot( 0.0 );
 	Real deriv_semi( 0.0 );
 	if ( tor_id.valid() ) {
-		
-		pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib =
-			RotamerLibrary::get_instance()->get_rsd_library( pose.residue( tor_id.rsd() ).type() );
+
+		pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+			rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue( tor_id.rsd() ).type() );
 
 		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
 

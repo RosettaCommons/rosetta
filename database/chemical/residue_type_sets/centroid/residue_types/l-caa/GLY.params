@@ -4,6 +4,8 @@ NAME GLY
 IO_STRING GLY G
 TYPE POLYMER #residue type
 AA GLY
+# "Rotamers" here are for design using the packer.
+ROTAMERS BASIC
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT2  -0.02
 ATOM  C   CObb C    0.51

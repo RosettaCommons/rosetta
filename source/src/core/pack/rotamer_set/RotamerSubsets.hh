@@ -120,6 +120,10 @@ public:
 	uint
 	moltenres_rotid_2_rotid( uint moltenres, uint moltenresrotid ) const;
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
 private:
 	void update_offset_data();
 

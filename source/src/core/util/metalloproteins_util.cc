@@ -56,7 +56,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -188,19 +188,13 @@ add_covalent_linkage_helper(
 		//holy jesus, we have to change the residue type set.
 		//we not only need to clone, modify and add  the residue type
 		//currently in the pose, but all similar ones (same basename )
-		//in the ResidueTypeSet. We also need to create a copy of the
-		// SingleLigandRotamerLibrary in case it exists.
+		//in the ResidueTypeSet.
 		//reminds me of open heart surgery...
 
-		//the following line is necessary to ensure that a ligand rotamer library exists
-		//if this function is called before any scoring happened
-		RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( res_pos ));
-
-		SingleLigandRotamerLibraryOP new_lrots = NULL;
-		if( pose.residue_type(res_pos).is_ligand() &&
-				RotamerLibrary::get_instance()->rsd_library_already_loaded( pose.residue_type(res_pos) ) ) {
-			new_lrots = SingleLigandRotamerLibraryOP( new SingleLigandRotamerLibrary() );
-		}
+		// With the current scheme of SingleLigandRotamerLibrary loading,
+		// we don't need to (necessarily) change the associated rotamer library,
+		// as the copied rotamer library specification will use atom names to build rotamers.
+		// Of course, if any atom name changes, then things may need to change.
 
 		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set().name() );
 
@@ -288,11 +282,6 @@ add_covalent_linkage_helper(
 					}
 				}
 
-				//new_lrots is empty at the moment, but will be filled a couple of lines down
-				if( pose.residue_type( res_pos ).is_ligand() ) {
-					RotamerLibrary::get_instance()->add_residue_library( *mod_res, new_lrots );
-				}
-
 				//finalize again just to make sure
 				mod_res->nondefault(true);
 				mod_res->base_restype_name( base_name );
@@ -302,43 +291,6 @@ add_covalent_linkage_helper(
 			}
 		}
 
-		//and last but not least we have to regenerate the rotamer library for the ligand
-		if( pose.residue_type( res_pos ).is_ligand() ) {
-
-			SingleResidueRotamerLibraryCOP old_rrots = RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type( res_pos ) );
-			SingleLigandRotamerLibraryCOP old_lrots = utility::pointer::static_pointer_cast< SingleLigandRotamerLibrary const >( old_rrots );
-
-			if( old_lrots != 0 ){
-
-				using namespace core::conformation;
-				utility::vector1< ResidueOP > new_rotamers;
-				new_rotamers.clear();
-				utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();
-
-				//std::cerr << "old rotamer library has " << old_rotamers.size() << "members";
-				for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
-					ResidueOP new_rot_res( new Residue( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true) );
-					//set the coordinates
-					//1. we go over the atoms of the NEW residue on purpose, to make sure that no atom gets skipped
-					for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
-						if( !(*oldrot_it)->has( new_rot_res->atom_name( at_ct ) ) ){
-							std::cerr << "Unexpected ERROR: when regenerating ligand rotamer library (for covalent constraints), one atom wasn't found in a template rotamer." << std::endl;
-							utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-						}
-						else{
-							new_rot_res->set_xyz( at_ct, (*oldrot_it)->xyz( new_rot_res->atom_name( at_ct ) ) );
-						}
-					}
-					//2. we also set the chis, to make sure everything is properly in place
-					new_rot_res->chi( (*oldrot_it)->chi() );
-
-					new_rotamers.push_back( new_rot_res );
-				}
-				new_lrots->set_reference_energy( old_lrots->get_reference_energy() );
-				new_lrots->set_rotamers( new_rotamers );
-				//std::cerr << "new rotlibrary has " << new_lrots->get_rotamers().size() << " members." << std::endl;
-			}
-		}
 	}
 
 	core::conformation::Residue new_res( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true);

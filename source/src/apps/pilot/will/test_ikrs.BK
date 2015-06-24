@@ -147,8 +147,8 @@
   //   Hit hi(*hits[ih]);
 
   //   Pose wp(pose);
-  //   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
-  //   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
+  //   core::pack::rotamers::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
+  //   core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
   //   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
   //   ScoreFunctionOP sf = new core::scoring::ScoreFunction();
   //   sf->set_weight(core::scoring::fa_atr,1.0);
@@ -334,8 +334,8 @@
 // ObjexxFCL::FArray3D<Real> eallow2(CHI2.size(),CHI1.size(),pose.n_residue(),9e9);
 // {
 //   Pose wp(pose);
-//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
-//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
+//   core::pack::rotamers::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
+//   core::pack::rotamers::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
 //   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 //   for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 //     if(sasa[ir] > 0) continue;

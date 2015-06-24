@@ -21,8 +21,9 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <basic/Tracer.hh>
@@ -104,10 +105,10 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 	//RotamerSet_ duplicate lines over
 
 	// Attempt to create rotamer library for the given type.
-	core::pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
-		core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *concrete_residue );
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+		core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( *concrete_residue );
 
-	if(!rotlib.expired())
+	if( rotlib )
 	{
 		tr.Debug << "At seqpos " << sequence_position << " retrieved rotamer library." << std::endl;
 	}
@@ -128,10 +129,9 @@ RigidBodyMoveBaseRSO::alter_rotamer_set(
 
 		// Generate full list of candidate rotamers at the rb conf if a rotamer library is available
 		// otherwise just add the additional rb conf.
-		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib_op = rotlib.lock();
-		if( rotlib_op )
+		if( rotlib )
 		{
-			rotlib_op->fill_rotamer_vector( pose, sfxn, ptask, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers_this_rbconf);
+			rotlib->fill_rotamer_vector( pose, sfxn, ptask, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers_this_rbconf);
 		}
 		else
 		{

@@ -21,6 +21,7 @@
 #include <core/chemical/ResidueDatabaseIO.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/icoor_support.hh>
+#include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
@@ -580,7 +581,12 @@ void ResidueDatabaseIO::report_residue_type(
 	stmt.bind(8,upper_terminus);
 	stmt.bind(9,res_type.nbr_atom());
 	stmt.bind(10,res_type.nbr_radius());
-	stmt.bind(11,res_type.get_RotamerLibraryName());
+	std::string libname("");
+	rotamers::PDBRotamerLibrarySpecificationCOP pdb_rotlibspec( utility::pointer::dynamic_pointer_cast< rotamers::PDBRotamerLibrarySpecification const >( res_type.rotamer_library_specification() ) );
+	if( pdb_rotlibspec ) {
+		libname = pdb_rotlibspec->pdb_rotamers_file();
+	}
+	stmt.bind(11,libname);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -658,8 +664,12 @@ void ResidueDatabaseIO::read_residue_type(
 
 	if(rotamer_library != "")
 	{
-		utility::file::FileName rot_file( rotamer_library );
-		res_type.set_RotamerLibraryName(rotamer_library);
+		rotamers::PDBRotamerLibrarySpecificationCOP pdb_rotlibspec( utility::pointer::dynamic_pointer_cast< rotamers::PDBRotamerLibrarySpecification const >( res_type.rotamer_library_specification() ) );
+		// If we have an existing library which isn't a PDB rotamers one
+		if( res_type.rotamer_library_specification() && ! pdb_rotlibspec ) {
+			utility_exit_with_message("Cannot set PDB rotamer library name, restype already has a " + res_type.rotamer_library_specification()->keyname() + " library." );
+		}
+		res_type.rotamer_library_specification( rotamers::PDBRotamerLibrarySpecificationOP( new rotamers::PDBRotamerLibrarySpecification( rotamer_library ) ) );
 	}
 
 }

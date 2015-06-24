@@ -162,6 +162,10 @@ public:
 	void
 	drop_rotamers_by_index( utility::vector1< Size > const & rotamer_indices_to_delete );
 
+	virtual
+	void
+	show( std::ostream & out ) const;
+
 private:
 	/// @brief (private) No copy-constructor
 	RotamerSubset( RotamerSubset const & );
@@ -249,11 +253,11 @@ public: // noop functions:
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scorefxn,
 		task::PackerTask const & task,
-		graph::GraphCOP packer_neighbor_graph,		
+		graph::GraphCOP packer_neighbor_graph,
 		utility::vector1< core::PackerEnergy > & one_body_energies,
 		utility::vector1< utility::vector1< core::PackerEnergy > > & two_body_energies,
 		utility::vector1< core::Size > & packable_neighbors ) const;
-		
+
 	/// for OptE
 	virtual
 	void

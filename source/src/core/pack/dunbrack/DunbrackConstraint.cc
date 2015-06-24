@@ -20,7 +20,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 
 #include <basic/Tracer.hh>

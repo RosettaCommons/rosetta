@@ -23,7 +23,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <numeric/random/random.hh>
 
 // option key includes
@@ -61,8 +62,7 @@ void RandomConformerMover::apply( core::pose::Pose & pose )
 	core::graph::GraphCOP dummy_graph( core::graph::GraphOP( new core::graph::Graph() ) );
 
 	// Retrieve conformers
-	core::pack::dunbrack::SingleResidueRotamerLibraryCOP reslib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( pose.residue_type(resid_) );
-
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP reslib = core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( pose.residue_type(resid_) );
 	if( ! reslib ) return;
 	reslib->fill_rotamer_vector(
 		pose,

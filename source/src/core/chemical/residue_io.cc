@@ -24,6 +24,12 @@
 #include <core/chemical/Bond.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecificationFactory.hh>
+#include <core/chemical/rotamers/RotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/DunbrackRotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/PDBRotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/PeptoidRotamerLibrarySpecification.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 
 // Project headers
 #include <platform/types.hh>
@@ -230,7 +236,7 @@ read_topology_file(
 /// BACKBONE_AA:
 /// Sets the "backbone_aa" for a particular residue, which can be used
 /// to template the backbone scoring (rama and p_aa_pp terms).  For example,
-/// "ROTAMER_AA ILE" in the non-canonical 4,5-dihydroxyisoleucine params file
+/// "BACKBONE_AA ILE" in the non-canonical 4,5-dihydroxyisoleucine params file
 /// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
 /// this noncanonical.
 ///
@@ -397,11 +403,15 @@ read_topology_file(
 /// Gives the path to the rotamer library file to use for a non-canonical
 /// amino acid.  E.g., "NCAA_ROTLIB_PATH E35.rotlib" from
 /// d-ncaa/d-5-fluoro-tryptophan.params
+/// See the ROTAMERS tag for a more general way of specifying how to
+/// build rotamers.
 ///
 /// NCAA_ROTLIB_NUM_ROTAMER_BINS:
 /// Lists the number of rotamers and the number of bins for each rotamer.
 /// E.g., "NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2" from
 /// d-ncaa/d-5-fluoro-tryptophan.params
+/// See the ROTAMERS tag for a more general way of specifying how to
+/// build rotamers.
 ///
 /// NCAA_SEMIROTAMERIC:
 /// Indicates if a NCAA is semirotameric (this is hard coded for canonicals)
@@ -437,9 +447,9 @@ read_topology_file(
 /// PDB_ROTAMERS:
 /// Gives the file name that describes entire-residue rotamers which
 /// can be used in the packer to consider alternate conformations for
-/// a residue.  This is commonly used for small molecules.  See also
-/// the CHI_ROTAMERS and NCAA_ROTLIB_PATH tags for alternate ways to
-/// provide rotamers.
+/// a residue.  This is commonly used for small molecules.
+/// See the ROTAMERS tag for a more general way of specifying how to
+/// build rotamers.
 ///
 /// PROPERTIES:
 /// Adds a given set of property strings to a residue type.  E.g.,
@@ -469,8 +479,26 @@ read_topology_file(
 /// ROTAMER_AA:
 /// Sets the "rotamer_aa" for a particular residue, which can be used
 /// to describe to the RotamerLibrary what amino acid to mimic for the
-/// sake of building rotamers.  E.g., "ROTAMER_AA SER" No examples
-/// currently found in the database (10/13).
+/// sake of building rotamers.  E.g., "ROTAMER_AA SER"
+/// See the ROTAMERS tag for a more general way of specifying how to
+/// build rotamers.
+///
+/// ROTAMERS:
+/// Sets the rotamer generation to a given type. The line should be formatted as
+/// "ROTAMERS <TAG> <optional data>", where <TAG> specifies what sort of rotamer
+/// library to build for this residue, and <optional data> is type-specific data
+/// describing how to build.
+/// E.g. "ROTAMERS DUNBRACK SER" will cause Serine-like Dunbrack rotamers
+/// to be used for this residue type, and "ROTAMERS PDB /path/to/ligand.conf.pdb"
+/// will cause the rotamer library to be read from the PDB file "/path/to/ligand.conf.pdb"
+/// Currently the following types are known (more may be added):
+/// * BASIC - simple rotamer library with no parameters (Just the input residue)
+/// * DUNBRACK - Dunbrack rotamer library for the given aa (e.g. "SER")
+/// * CENROT - Centroid rotamers for the given aa (e.g. "SER")
+/// * NCAA - Non-canonical amino acid libraries (<filename> <bins for each rotamer>)
+/// * PEPTOID - Peptoid libraries (<filename> <bins for each rotamer>)
+/// * PDB - Rotamer library loaded from PDB (<filename>) - Note that unlike PDB_ROTAMERS,
+///      the filename is not relative to the params file location.
 ///
 /// STRING_PROPERTY:
 /// Stores an arbitrary string value with a given string key.
@@ -513,7 +541,6 @@ read_topology_file(
 		//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
 		chemical::ResidueTypeSetCAP rsd_type_set_ap )
 {
-	chemical::ResidueTypeSetCOP rsd_type_set( rsd_type_set_ap );
 
 	using id::AtomID;
 	using id::DOF_ID;
@@ -549,10 +576,11 @@ read_topology_file(
 	data.close();
 
 	std::map< std::string, std::string > atom_type_reassignments;
-	setup_atom_type_reassignments_from_commandline( myname, rsd_type_set->name(), atom_type_reassignments );
-
 	std::map< std::string, Real > atomic_charge_reassignments;
-	setup_atomic_charge_reassignments_from_commandline( myname, rsd_type_set->name(), atomic_charge_reassignments );
+	if( rsd_type_set_ap.lock() ) {
+		setup_atom_type_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atom_type_reassignments );
+		setup_atomic_charge_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), atomic_charge_reassignments );
+	}
 
 	// Decide what type of Residue to instantiate.
 	// would scan through for the TYPE line, to see if polymer or ligand...
@@ -567,7 +595,9 @@ read_topology_file(
 	// of stub atoms, etc., etc.
 
 	ResidueTypeOP rsd( new ResidueType( atom_types.lock(), elements.lock(), mm_atom_types.lock(), orbital_atom_types.lock() ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
-	rsd->residue_type_set( rsd_type_set_ap );  // Give this rsd_type a backpointer to its set.
+	if( ! rsd_type_set_ap.expired() ) {
+		rsd->residue_type_set( rsd_type_set_ap );  // Give this rsd_type a backpointer to its set.
+	}
 
 	// Add the atoms.
 	Size const nlines( lines.size() );
@@ -641,8 +671,6 @@ read_topology_file(
 
 	// Add the bonds; parse the rest of file.
 	bool found_AA_record = false;
-	bool found_PDB_ROTAMERS_record = false;
-	std::string pdb_rotamers_filename = "";
 	AtomIndices mainchain_atoms;
 	
 	// Set disulfide atom name to "NONE"
@@ -652,7 +680,8 @@ read_topology_file(
 	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
-		std::string tag,atom1,atom2,atom3,atom4, rotate, /*orbitals_tag, orbital, */bond_type;
+		std::string tag,atom1,atom2,atom3,atom4, rotate, /*orbitals_tag, orbital,*/ bond_type;
+		std::string pdb_rotamers_filename;
 		core::Real value;
 		l >> tag;
 		if ( l.fail() ) continue;
@@ -745,7 +774,7 @@ read_topology_file(
 			}
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling ]
 					&& (rsd->aa() == aa_ser || rsd->aa() == aa_thr )
-					&& rsd_type_set->name() == FA_STANDARD ) {
+					&& rsd_type_set_ap.lock() && rsd_type_set_ap.lock()->name() == FA_STANDARD ) {
 				// ugly, temporary hack. change the sampling for serine and threonine chi2 sampling
 				// so that proton chi rotamers are sampled ever 20 degrees
 				tr << "Expanding chi2 sampling for amino acid " << rsd->aa() << std::endl;
@@ -848,10 +877,6 @@ read_topology_file(
 			rsd->aa( tag );
 			found_AA_record = true;
 
-		} else if ( tag == "ROTAMER_AA" ) {
-			l >> tag;
-			rsd->rotamer_aa( tag );
-
 		} else if ( tag == "BACKBONE_AA" ) {
 			l >> tag;
 			rsd->backbone_aa( tag );
@@ -869,9 +894,6 @@ read_topology_file(
 				rsd->add_chi_rotamer( chino, mean, sdev );
 				l >> mean >> sdev;
 			}
-		} else if ( tag == "PDB_ROTAMERS" ) {
-			found_PDB_ROTAMERS_record = true;
-			l >> pdb_rotamers_filename;
 		} else if ( tag == "REMAP_PDB_ATOM_NAMES" ) {
 			rsd->remap_pdb_atom_names( true );
 		} else if ( tag == "ACT_COORD_ATOMS" ) {
@@ -899,53 +921,133 @@ read_topology_file(
 				adduct_phi, adduct_theta, adduct_d,
 				atom1, atom2, atom3 );
 			rsd->add_adduct( new_adduct );
-		} else if ( tag == "NCAA_ROTLIB_PATH" ) {
-			std::string path;
-			l >> path;
-			rsd->set_ncaa_rotlib_path( path );
-			rsd->set_use_ncaa_rotlib( true );
-		} else if ( tag == "NCAA_SEMIROTAMERIC" ) {
-			rsd->set_semirotameric_ncaa_rotlib( true );
-		} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
-			Size n_rots(0);
-			utility::vector1<Size> n_bins_per_rot;
-			l >> n_rots;
-			rsd->set_ncaa_rotlib_n_rotameric_bins( n_rots );
-			n_bins_per_rot.resize( n_rots );
-			for( Size i = 1; i <= n_rots; ++i ) {
-				Size bin_size(0);
-				l >> bin_size;
-				n_bins_per_rot[i] = bin_size;
-			}
-			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
-		} else if ( tag == "NRCHI_SYMMETRIC" ) {
-			// this tag present = true
-			rsd->set_nrchi_symmetric( true );
-		} else if ( tag == "NRCHI_START_ANGLE" ) {
-			Real angle(-180);
-			l >> angle;
-			rsd->set_nrchi_start_angle( angle );
 		} else if ( tag == "CHIRAL_EQUIVALENT_NAME" ) {
 			std::string cen;
 			l >> cen;
 			rsd->chiral_equivalent_name( cen );
-		} else if ( tag == "PEPTOID_ROTLIB_PATH" ) {
-			std::string path;
-			l >> path;
-			rsd->set_peptoid_rotlib_path( path );
-			rsd->set_use_peptoid_rotlib( true );
-		} else if ( tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
-			Size n_rots(0);
-			utility::vector1<Size> n_bins_per_rot;
-			l >> n_rots;
-			rsd->set_peptoid_rotlib_n_rotameric_bins( n_rots );
-			n_bins_per_rot.resize( n_rots );
-			for( Size i = 1; i <= n_rots; ++i ) {
-				Size bin_size(0);
-				l >> bin_size;
-				n_bins_per_rot[i] = bin_size;
+		} else if ( tag == "ROTAMERS" ) {
+			using namespace core::chemical::rotamers;
+			if( rsd->rotamer_library_specification() ) {
+				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
 			}
-			rsd->set_peptoid_rotlib_n_bin_per_rot( n_bins_per_rot );
+			l >> tag;
+			if( ! l ) { utility_exit_with_message("Must provide rotamer library type in ROTAMERS line."); }
+			RotamerLibrarySpecificationOP rls( RotamerLibrarySpecificationFactory::get_instance()->get( tag, l ) ); // Create with remainder of line.
+			rsd->rotamer_library_specification( rls );
+		} else if ( tag == "ROTAMER_AA" ) {
+			using namespace core::chemical::rotamers;
+			if( rsd->rotamer_library_specification() ) {
+				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set ROTAMERS specification" << std::endl;
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+			}
+			tag = DunbrackRotamerLibrarySpecification::library_name();
+			RotamerLibrarySpecificationOP rls( RotamerLibrarySpecificationFactory::get_instance()->get( tag, l ) ); // Create with remainder of line (aa)
+			rsd->rotamer_library_specification( rls );
+			// TODO: Expand for d-aa and nucleic ?
+		} else if ( tag == "PDB_ROTAMERS" ) {
+			// Assume name of rotamers file has no path info, etc
+			// and is in same directory as the residue parameters file.
+			using namespace utility::file;
+			l >> pdb_rotamers_filename;
+			FileName this_file( filename ), rot_file( pdb_rotamers_filename );
+			rot_file.vol( this_file.vol() );
+			rot_file.path( this_file.path() );
+
+			if( rsd->rotamer_library_specification() ) {
+				tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname() << " when attempting to set PDB_ROTAMERS parameters." << std::endl;
+				utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+			}
+			rsd->rotamer_library_specification( core::chemical::rotamers::PDBRotamerLibrarySpecificationOP( new core::chemical::rotamers::PDBRotamerLibrarySpecification( rot_file() ) ) );
+
+			tr.Debug << "Setting up conformer library for " << rsd->name() << std::endl;
+		} else if ( tag == "NCAA_ROTLIB_PATH" || tag == "NCAA_SEMIROTAMERIC" || tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ||
+					tag == "NRCHI_SYMMETRIC" || tag == "NRCHI_START_ANGLE") {
+
+			using namespace core::chemical::rotamers;
+			NCAARotamerLibrarySpecificationOP ncaa_libspec;
+			if( rsd->rotamer_library_specification() ) {
+				NCAARotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >( rsd->rotamer_library_specification() ) );
+				if( ! old_libspec ) {
+					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
+					tr.Error << " when attempting to set " << tag << " parameter for NCAA rotamer libraries." << std::endl;
+					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+				}
+				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+			} else {
+				ncaa_libspec = NCAARotamerLibrarySpecificationOP( new core::chemical::rotamers::NCAARotamerLibrarySpecification );
+			}
+
+			if( tag == "NCAA_ROTLIB_PATH" ) {
+				std::string path;
+				l >> path;
+
+				ncaa_libspec->ncaa_rotlib_path( path );
+			} else if ( tag == "NCAA_SEMIROTAMERIC" ) {
+				ncaa_libspec->semirotameric_ncaa_rotlib( true );
+			} else if ( tag == "NCAA_ROTLIB_NUM_ROTAMER_BINS" ) {
+				Size n_rots(0);
+				utility::vector1<Size> n_bins_per_rot;
+				l >> n_rots;
+				n_bins_per_rot.resize( n_rots );
+				for( Size i = 1; i <= n_rots; ++i ) {
+					Size bin_size(0);
+					l >> bin_size;
+					n_bins_per_rot[i] = bin_size;
+				}
+				ncaa_libspec->ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
+			} else if ( tag == "NRCHI_SYMMETRIC" ) {
+				// this tag present = true
+				ncaa_libspec->nrchi_symmetric( true );
+			} else if ( tag == "NRCHI_START_ANGLE" ) {
+				Real angle(-180);
+				l >> angle;
+				ncaa_libspec->nrchi_start_angle( angle );
+			} else {
+				tr.Error << "Did not expect " << tag << " when reading NCAA rotamer info." << std::endl;
+				utility_exit_with_message("Logic error in params file reading.");
+			}
+
+			rsd->rotamer_library_specification( ncaa_libspec );
+
+		// End of NCAA library entries.
+		}	else if ( tag == "PEPTOID_ROTLIB_PATH" || tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
+			using namespace core::chemical::rotamers;
+			PeptoidRotamerLibrarySpecificationOP peptoid_libspec;
+			if( rsd->rotamer_library_specification() ) {
+				PeptoidRotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< PeptoidRotamerLibrarySpecification const >( rsd->rotamer_library_specification() ) );
+				if( ! old_libspec ) {
+					tr.Error << "Found existing rotamer specification " << rsd->rotamer_library_specification()->keyname();
+					tr.Error << " when attempting to set " << tag << " parameter for peptoid rotamer libraries." << std::endl;
+					utility_exit_with_message("Cannot have multiple rotamer specifications in params file.");
+				}
+				peptoid_libspec = PeptoidRotamerLibrarySpecificationOP( new PeptoidRotamerLibrarySpecification( *old_libspec ) );
+			} else {
+				peptoid_libspec = PeptoidRotamerLibrarySpecificationOP( new core::chemical::rotamers::PeptoidRotamerLibrarySpecification );
+			}
+
+			if ( tag == "PEPTOID_ROTLIB_PATH" ) {
+				std::string path;
+				l >> path;
+				peptoid_libspec->peptoid_rotlib_path( path );
+			} else if ( tag == "PEPTOID_ROTLIB_NUM_ROTAMER_BINS" ) {
+				Size n_rots(0);
+				utility::vector1<Size> n_bins_per_rot;
+				l >> n_rots;
+				n_bins_per_rot.resize( n_rots );
+				for( Size i = 1; i <= n_rots; ++i ) {
+					Size bin_size(0);
+					l >> bin_size;
+					n_bins_per_rot[i] = bin_size;
+				}
+				peptoid_libspec->peptoid_rotlib_n_bin_per_rot( n_bins_per_rot );
+			} else {
+				tr.Error << "Did not expect " << tag << " when reading peptoid rotamer info." << std::endl;
+				utility_exit_with_message("Logic error in params file reading.");
+			}
+
+			rsd->rotamer_library_specification( peptoid_libspec );
+		// End of peptoid library entries.
 		} else if ( tag == "VIRTUAL_SHADOW" ) {
 			std::string shadower, shadowee;
 			l >> shadower >> shadowee;
@@ -969,7 +1071,9 @@ read_topology_file(
 	// also sets up base_atom
 	{
 		std::map< std::string, utility::vector1< std::string > > icoor_reassignments;
-		setup_icoor_reassignments_from_commandline( myname, rsd_type_set->name(), icoor_reassignments );
+		if( rsd_type_set_ap.lock() ) {
+			setup_icoor_reassignments_from_commandline( myname, rsd_type_set_ap.lock()->name(), icoor_reassignments );
+		}
 
 		std::map< std::string, Vector > rsd_xyz;  // The coordinates of each atom in the residue.
 
@@ -1095,29 +1199,6 @@ read_topology_file(
 
 	// calculate any remaining derived data
 	rsd->finalize();
-
-	// If we found a PDB_ROTAMERS library, load them now that the ResidueType
-	// is totally initialized:
-	if( found_PDB_ROTAMERS_record ) {
-		using namespace utility::file;
-		// Assume name of rotamers file has no path info, etc
-		// and is in same directory as the residue parameters file.
-		FileName this_file( filename ), rot_file( pdb_rotamers_filename );
-		rot_file.vol( this_file.vol() );
-		rot_file.path( this_file.path() );
-
-		rsd->set_RotamerLibraryName( rot_file() );
-
-		tr.Debug << "Setting up conformer library for " << rsd->name() << std::endl;
-		/*using namespace core::pack::dunbrack;
-		using namespace utility::file;
-		SingleLigandRotamerLibraryOP pdb_rotamers = new SingleLigandRotamerLibrary();
-		// Assume name of rotamers file has no path info, etc
-		// and is in same directory as the residue parameters file.
-
-		pdb_rotamers->init_from_file( rot_file.name(), rsd );
-		rsd->set_RotamerLibrary( pdb_rotamers );*/
-	}
 
 	return rsd;
 }

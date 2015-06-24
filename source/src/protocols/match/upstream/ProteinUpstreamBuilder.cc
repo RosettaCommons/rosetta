@@ -28,9 +28,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -807,14 +808,13 @@ ProteinUpstreamBuilder::build(
 	Size upstream_state = 1;
 	Size n_possible_hits = 0;
 	for ( Size ii = 1; ii <= build_sets_.size(); ++ii ) {
+		using namespace core::pack::dunbrack;
+		using namespace core::pack::rotamers;
 		core::conformation::Residue rescoords( build_sets_[ ii ].restype(), false );
 		//TR << "Building residue type: " << rescoords.type().name() << std::endl;
 
-		core::pack::dunbrack::RotamerLibraryScratchSpace dunscratch; //in case we're checking fa_dun for rotamer
-		// Warning: rotlib is assumed to be always valid, yet it throws a bad_weak_ptr exception in the match integration test -- what should it be?
-		// Do we expect the rotamer library to be always there? Was:
-		// core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib(  core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rescoords.type() ) );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib = core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rescoords.type() );
+		RotamerLibraryScratchSpace dunscratch; //in case we're checking fa_dun for rotamer
+		SingleResidueRotamerLibraryCOP rotlib( SingleResidueRotamerLibraryFactory::get_instance()->get( rescoords.type() ) );
 
 		bool check_fa_dun( build_sets_[ii].check_fa_dun() );
 		core::Real fa_dun_cutoff( build_sets_[ii].fa_dun_cutoff() );

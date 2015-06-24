@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/dunbrack/SingleLigandRotamerLibrary.fwd.hh
+/// @file   core/scoring/rotamers/SingleLigandRotamerLibrary.fwd.hh
 /// @brief  SingleLigandRotamerLibrary forward declarations and typedefs
 /// @author Ian W. Davis
 
-#ifndef INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_fwd_hh
-#define INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_fwd_hh
+#ifndef INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_fwd_hh
+#define INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 class SingleLigandRotamerLibrary;
 typedef utility::pointer::shared_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryOP;
@@ -27,8 +27,8 @@ typedef utility::pointer::shared_ptr< SingleLigandRotamerLibrary const > SingleL
 typedef utility::pointer::weak_ptr< SingleLigandRotamerLibrary > SingleLigandRotamerLibraryAP;
 typedef utility::pointer::weak_ptr< SingleLigandRotamerLibrary const > SingleLigandRotamerLibraryCAP;
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_SingleLigandRotamerLibrary_fwd_hh
+#endif // INCLUDED_core_pack_rotamers_SingleLigandRotamerLibrary_fwd_hh

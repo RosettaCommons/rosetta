@@ -7,20 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/dunbrack/SingleResidueRotamerLibrary.hh
+/// @file   core/pack/rotamers/SingleResidueRotamerLibrary.hh
 /// @brief  SingleResidueRotamerLibrary virtual base class
 /// @author Andrew Leaver-Fay
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
-#ifndef INCLUDE_core_pack_dunbrack_SingleResidueRotamerLibrary_hh
-#define INCLUDE_core_pack_dunbrack_SingleResidueRotamerLibrary_hh
+#ifndef INCLUDE_core_pack_rotamers_SingleResidueRotamerLibrary_hh
+#define INCLUDE_core_pack_rotamers_SingleResidueRotamerLibrary_hh
 
 // Unit Headers
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // ChiVector and RotVector
+#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // ChiVector
 
 //Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -40,7 +40,7 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 /// @brief  SingleResidueRotamerLibrary pure virtual base class
 class SingleResidueRotamerLibrary : public utility::pointer::ReferenceCount
@@ -53,14 +53,14 @@ public:
   Real
   rotamer_energy_deriv(
 		conformation::Residue const & rsd,
-    RotamerLibraryScratchSpace & scratch
+    dunbrack::RotamerLibraryScratchSpace & scratch
   ) const = 0;
 
   virtual
   Real
   rotamer_energy(
     conformation::Residue const & rsd,
-    RotamerLibraryScratchSpace & scratch
+    dunbrack::RotamerLibraryScratchSpace & scratch
   ) const = 0;
 
   /// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -72,7 +72,7 @@ public:
   best_rotamer_energy(
     conformation::Residue const & rsd,
     bool curr_rotamer_only,
-    RotamerLibraryScratchSpace & scratch
+    dunbrack::RotamerLibraryScratchSpace & scratch
   ) const = 0;
 
   /// @brief Pick a rotamer for the input residue according to the rotamer probability
@@ -86,9 +86,9 @@ public:
   assign_random_rotamer_with_bias(
     conformation::Residue const & rsd,
 		pose::Pose const & pose, // DOUG MAY CAUSE PROBLEMS BUILDONG
-    RotamerLibraryScratchSpace & scratch,
+    dunbrack::RotamerLibraryScratchSpace & scratch,
     numeric::random::RandomGenerator & RG,
-    ChiVector & new_chi_angles,
+    dunbrack::ChiVector & new_chi_angles,
     bool perturb_from_rotamer_center
   ) const = 0;
 
@@ -105,6 +105,77 @@ public:
     bool buried,
     RotamerVector & rotamers
   ) const = 0;
+
+	/// @brief Filter a RotamerVector by "bump energy" of a rotamer:
+	/// All rotamers with bump energies over a certain threshold will be discarded
+	/// Exception: if all rotamers are over the threshold, one rotamer (with the lowest
+	/// bump energy) will be reserved.
+	/// The vector "rotamers" will be modified "in-place"
+	virtual
+	void
+	bump_filter(
+		RotamerVector & rotamers,
+		core::Size resid,
+		scoring::ScoreFunction const & sf,
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph
+	) const;
+
+	/// @brief Computes the "bump energy" of a rotamer: the bump energy is the
+	/// sum of rotamer's interactions with 1) the backbone-and-side chains of
+	/// neighboring residues that are held fixed during this repacking optimization
+	/// and 2) the backbones of neighboring residues that are changable during this
+	/// repacking optimization.
+	virtual
+	core::PackerEnergy
+	bump_check(
+		core::conformation::ResidueCOP rotamer,
+		core::Size resid,
+		scoring::ScoreFunction const & sf,
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		graph::GraphCOP packer_neighbor_graph
+	) const;
+
+	/// @brief Adds the current rotamer to rotamer vector, if the Rotlib supports it
+	/// @details This is in this class mainly because of historical
+	/// behavior of certain rotamer libraries not supporting current rotamers
+	virtual
+	core::Size
+	current_rotamer(
+		RotamerVector & rotamers,
+		core::Size resid,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue
+	) const;
+
+	/// @brief Generate an "emergency rotamer" if we don't have any
+	/// @details This is in this class mainly because of historical
+	/// behavior of certain rotamer libraries not supporting current rotamers
+	virtual
+	void
+	emergency_rotamer(
+		RotamerVector & rotamers,
+		core::Size resid,
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue
+	) const;
+
+	/// @brief Add a virtualized sidechain to the rotamer vector if
+	/// settings call for it.
+	RotamerVector
+	virtual_sidechain(
+		RotamerVector const & rotamers,
+		core::Size resid,
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue
+	) const;
 
   //XRW_B_T1
   /*
@@ -126,7 +197,7 @@ public:
 
 };
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace pack
 } // namespace core
 

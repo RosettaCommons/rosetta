@@ -7,21 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/scoring/dunbrack/RotamericSingleResiduePeptoidLibrary.hh
+/// @file    core/scoring/rotamers/RotamericSingleResiduePeptoidLibrary.hh
 /// @brief   Declaration of rotameric peptoid rotamer libraries
 /// @brief   Similar to RotamericSingleResidueDunbrackLibrary
 /// @author  P. Douglas Renfrew (renfrew@nyu.edu)
 
 
-#ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_hh
-#define INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_hh
+#ifndef INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_hh
+#define INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_hh
 
 // Unit Headers
-#include <core/pack/dunbrack/RotamericSingleResiduePeptoidLibrary.fwd.hh>
+#include <core/pack/rotamers/RotamericSingleResiduePeptoidLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project Headers
@@ -35,7 +35,7 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 template < Size T, Size N >
 class RotamericSingleResiduePeptoidLibrary : public SingleResiduePeptoidLibrary
@@ -61,14 +61,14 @@ public:
 	Real
 	rotamer_energy(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	virtual
 	Real
 	rotamer_energy_deriv(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -80,7 +80,7 @@ public:
 	best_rotamer_energy(
 		conformation::Residue const & rsd,
 		bool curr_rotamer_only,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	virtual
@@ -88,9 +88,9 @@ public:
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
+		dunbrack::RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
-		ChiVector & new_chi_angles,
+		dunbrack::ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
 	) const;
 
@@ -116,7 +116,7 @@ public:
 	/// rotamers are constructed in sorted order by their probability in the lower phi-psi bin that
 	/// the input phi/psi perscribes.
 	virtual
-	utility::vector1< DunbrackRotamerSampleData >
+	utility::vector1< dunbrack::DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 		Real omg,
 		Real phi,
@@ -133,7 +133,7 @@ public:
 	) const;
 
 	virtual
-	DunbrackRotamerSampleData
+	dunbrack::DunbrackRotamerSampleData
 	get_rotamer(
 		Real omg,
 		Real phi,
@@ -157,8 +157,8 @@ public:
 	virtual
 	void
 	get_rotamer_from_chi(
-		ChiVector const & chi,
-		RotVector & rot
+		dunbrack::ChiVector const & chi,
+		dunbrack::RotVector & rot
 	) const;
 
 protected:
@@ -166,15 +166,15 @@ protected:
 	/// @brief When given a statically sized fixedsizearray, use this method.
 	void
 	get_rotamer_from_chi_static(
-		ChiVector const & chi,
-		Size4 & rot
+		dunbrack::ChiVector const & chi,
+		dunbrack::Size4 & rot
 	) const;
 
 	/// @brief When given a statically sized fixedsizearray, use this method.
 	void
 	get_rotamer_from_chi_static(
-		Real4 const & chi,
-		Size4 & rot
+		dunbrack::Real4 const & chi,
+		dunbrack::Size4 & rot
 	) const;
 
 
@@ -205,10 +205,10 @@ protected:
 protected:
 	/// Read and write access for derived classes
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const &
+	typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > const &
 	rotamers( Real omg_angle ) const;
 
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > &
+	typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > &
 	rotamers( Real omg_angle );
 
 	ObjexxFCL::FArray4D< Size > const &
@@ -232,14 +232,14 @@ protected:
 	Real
 	eval_rotameric_energy_deriv(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch,
+		dunbrack::RotamerLibraryScratchSpace & scratch,
 		bool eval_deriv
 	) const;
 
 	Size
 	find_another_representative_for_unlikely_rotamer(
 		conformation::Residue const & rsd,
-		Size4 & rotwell
+		dunbrack::Size4 & rotwell
 	) const;
 
 
@@ -247,16 +247,16 @@ protected:
 	interpolate_rotamers(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
+		dunbrack::RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
-		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+		dunbrack::PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
 
 	void
 	interpolate_rotamers(
-		typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > const & rotamers,
+		typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > const & rotamers,
 		ObjexxFCL::FArray4D< Size > const & packed_rotno_2_sorted_rotno,
-		RotamerLibraryScratchSpace & scratch,
+		dunbrack::RotamerLibraryScratchSpace & scratch,
 		Size const packed_rotno,
 		Size const omgbin,
 		Size const phibin,
@@ -267,7 +267,7 @@ protected:
 		Real const omg_alpha,
 		Real const phi_alpha,
 		Real const psi_alpha,
-		PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
+		dunbrack::PackedDunbrackRotamer< T, N, Real > & interpolated_rotamer
 	) const;
 
 	/// @brief Assigns random chi angles and returns the packed_rotno for the chosen random rotamer.
@@ -275,26 +275,26 @@ protected:
 	assign_random_rotamer(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		RotamerLibraryScratchSpace & scratch,
+		dunbrack::RotamerLibraryScratchSpace & scratch,
 		numeric::random::RandomGenerator & RG,
-		ChiVector & new_chi_angles,
+		dunbrack::ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center,
 		Size & packed_rotno
 	) const;
 
 	void
 	assign_chi_for_interpolated_rotamer(
-		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
+		dunbrack::PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 		conformation::Residue const & rsd,
 		numeric::random::RandomGenerator & RG,
-		ChiVector & new_chi_angles,
+		dunbrack::ChiVector & new_chi_angles,
 		bool perturb_from_rotamer_center
 	) const;
 
 	void
 	correct_termini_derivatives(
 		conformation::Residue const & rsd,
-		RotamerLibraryScratchSpace & scratch
+		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const;
 
 	/// DOUG DOUG DOUG Make public just for now
@@ -361,7 +361,7 @@ private:
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 		bool buried,
 		RotamerVector & rotamers,
-		PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
+		dunbrack::PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 	) const;
 
 
@@ -380,9 +380,9 @@ private:
 protected:
 
 	template< class P >
-	DunbrackRotamer< T, N, P >
+	dunbrack::DunbrackRotamer< T, N, P >
 	packed_rotamer_2_regular_rotamer(
-		PackedDunbrackRotamer< T, N, P > const & packedrot
+		dunbrack::PackedDunbrackRotamer< T, N, P > const & packedrot
 	) const;
 
 	/// @brief This member function constructs a list of all combinations of chi angles
@@ -395,9 +395,9 @@ protected:
 		pack::task::PackerTask const & task,
 		Size const seqpos,
 		bool buried,
-		RotamericData< T, N > const & rotamer_data,
+		dunbrack::RotamericData< T, N > const & rotamer_data,
 		utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-		utility::vector1< ChiSetOP > & chi_set_vector
+		utility::vector1< dunbrack::ChiSetOP > & chi_set_vector
 	) const;
 
 	/// @brief Used in tandem with enumerate_chi_sets, this function pushes
@@ -413,7 +413,7 @@ protected:
 		pack::task::ResidueLevelTask const & rtask,
 		bool buried,
 		Size const chi_index,
-		RotamericData< T, N > const & rotamer_data,
+		dunbrack::RotamericData< T, N > const & rotamer_data,
 		utility::vector1< Real > const & extra_steps,
 		utility::vector1< Real > & total_chi,
 		utility::vector1< int  > & total_rot,
@@ -433,7 +433,7 @@ protected:
 		graph::GraphCOP packer_neighbor_graph,
 		chemical::ResidueTypeCOP concrete_residue,
 		conformation::Residue const& existing_residue,
-		utility::vector1< ChiSetOP > const & chi_set_vector,
+		utility::vector1< dunbrack::ChiSetOP > const & chi_set_vector,
 		RotamerVector & rotamers
 	) const;
 
@@ -487,8 +487,8 @@ private:
 	/// The FArray4D is indexed into by (omg, phi, psi, sorted_index ), where
 	/// sorted index simply means the order for a particular packed_rotno in the
 	/// list of rotamers sorted by probability.
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > trans_rotamers_;
-	typename ObjexxFCL::FArray4D< PackedDunbrackRotamer< T, N > > cis_rotamers_;
+	typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > trans_rotamers_;
+	typename ObjexxFCL::FArray4D< dunbrack::PackedDunbrackRotamer< T, N > > cis_rotamers_;
 
 	/// Quick lookup that lists the sorted position for the packed rotamer number
 	/// given a omg/phi/psi.  Indexed by (omg, phi, psi, packed_rotno ).
@@ -497,8 +497,8 @@ private:
 };
 
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_pack_dunbrack_RotamericSingleResiduePeptoidLibrary_HH
+#endif // INCLUDED_core_pack_rotamers_RotamericSingleResiduePeptoidLibrary_HH

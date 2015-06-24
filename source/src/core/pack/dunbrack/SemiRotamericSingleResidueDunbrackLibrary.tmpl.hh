@@ -747,7 +747,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::best_rotamer_energy(
 		utility::fixedsizearray1< Real, N > const bbs2( parent::get_bbs_from_rsd( rsd ) );
 		utility::fixedsizearray1< Real, 5 > bbs( 0 );
 		for ( Size i = 1; i <= N; ++i ) bbs[ i ] = bbs2[ i ];
-		
+
 		utility::vector1< DunbrackRotamerSampleData > rotamer_samples=/*dunlib->*/get_all_rotamer_samples( bbs );
 		//this could be smarter since the T+1 position of the sc_torsions are not used
 
@@ -818,7 +818,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::assign_random_rotamer_with_bi
 		interpolated_nrchi_sample = interpolate_bbdep_nrchi_sample(
 			nrchi_sample_00.packed_rotno_, nrchi_sample_00.nrchi_bin_,
 			bb_bin, bb_bin_next, bb_alpha );
-		
+
 		random_prob -= interpolated_nrchi_sample.prob_;
 		if ( count == bbdep_rotamers_to_sample_.size2() ) break;
 	}
@@ -852,7 +852,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_nrchi_values(
 	for ( Size ii = 1; ii <= ( 1 << N ); ++ii ) {
 		indices[ ii ] = make_conditional_index( N, parent::N_PHIPSI_BINS, ii, bb_bin, bb_bin_next );
 	}
-	
+
 	utility::fixedsizearray1< Real, ( 1 << N ) > vals;
 	utility::vector1< Real > energies( 0, bbdep_nrchi_nbins_ );
 	utility::fixedsizearray1< Real, N > dummy;
@@ -880,7 +880,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const
 {
 	fill_rotamer_vector_bbdep( pose, scorefxn, task, packer_neighbor_graph,
@@ -899,7 +899,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector_bbdep(
 	conformation::Residue const & existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const
 {
 	RotamerLibraryScratchSpace scratch;
@@ -1024,7 +1024,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::get_all_rotamer_samples_bbdep
 	utility::fixedsizearray1< Real, N > bb_alpha;
 	utility::fixedsizearray1< Real, N > bbs;
 	for ( Size i = 1 ; i <= N; ++i ) bbs[ i ] = bbs2[ i ];
-	
+
 	parent::get_bb_bins( bbs, bb_bin, bb_bin_next, bb_alpha );
 
 	Size const n_rots = grandparent::n_packed_rots() * n_nrchi_sample_bins_;
@@ -1182,7 +1182,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::build_bbdep_rotamers(
 	bool buried,
 	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer,
 	BBDepNRChiSample< Real > const interpolated_sample,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const
 {
 	DunbrackRotamer< T, N, Real > interpolated_rot( parent::packed_rotamer_2_regular_rotamer( interpolated_rotamer ));
@@ -1318,7 +1318,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io:
 	}
 	out.write( (char*) bbdep_nrc_interpdata, n_bbdep_scores * sizeof( BBDepScoreInterpData<N> ) );
 	delete [] bbdep_nrc_interpdata;
-	
+
 	/// 4.n_nrchi_sample_bins_
 	{
 	boost::int32_t n_nrchi_sample_bins =  n_nrchi_sample_bins_;
@@ -1483,7 +1483,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 		}
 	}
 	delete [] bbdep_nrc_interpdata;
-	
+
 	/// 4.n_nrchi_sample_bins_
 	{
 	boost::int32_t n_nrchi_sample_bins( 0 );
@@ -1593,7 +1593,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io
 /// Values tested should parallel those used in the read_from_binary() function.
 template < Size T, Size N >
 bool
-SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRotamerLibrary const & rhs) const {
+SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( rotamers::SingleResidueRotamerLibrary const & rhs) const {
 	static thread_local basic::Tracer TR( "core.pack.dunbrack.SemiRotamericSingleResidueDunbrackLibrary" );
 
 	// Raw pointer okay, we're just using it to check for conversion
@@ -1690,7 +1690,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::operator ==( SingleResidueRot
 			}
 		}
 	}
-	
+
 	/// 4.n_nrchi_sample_bins_
 	if( n_nrchi_sample_bins_ != other.n_nrchi_sample_bins_ ) {
 		TR.Debug << "Comparsion failure in " << core::chemical::name_from_aa( grandparent::aa() )
@@ -2102,7 +2102,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 		bool cont = false;
 		for ( Size ii = 1; ii <= N; ++ii ) if ( bbs[ ii ] == -180 ) cont = true; // duplicated data...
 		if ( cont ) continue;
-	
+
 		/// APL -- On the advice of Roland Dunbrack, modifying the minimum probability to the
 		/// resolution of the library.  This helps avoid overwhelmingly unfavorable energies
 		/// (5 log-units difference between 1e-4 and 1e-9) for rare rotamers.
@@ -2144,7 +2144,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 	first_be.push_back( std::pair< double, double>( 10, 10 ) );
 
 	for ( Size ii = 1; ii <= grandparent::n_packed_rots(); ++ii ) {
-	
+
 		utility::vector1< Size > dimensions( N );
 		for ( Size i = 1; i <= N; ++i ) dimensions[ i ] = parent::N_PHIPSI_BINS[i];
 		dimensions.push_back( bbdep_nrchi_nbins_ );
@@ -2300,7 +2300,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_rotamer_definitions(
 			bbind_rotamers_to_sample_( jj, count_packed_rots ).prob_   = probs[ ii ][ jj ];
 		}
 	}
-	
+
 	/// Allocate space for bbdep rotamer sampling for the nrchi.
 	bbdep_rotamers_to_sample_.dimension( num_bins, grandparent::n_packed_rots() * n_nrchi_sample_bins_ );
 	bbdep_rotsample_sorted_order_.dimension( num_bins, grandparent::n_packed_rots(), n_nrchi_sample_bins_ );
@@ -2393,6 +2393,39 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::interpolate_bbdep_nrchi_sampl
 
 
 	return interpolated_sample;
+}
+
+template < Size T, Size N >
+void
+initialize_and_read_srsrdl(
+	SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
+	bool const nrchi_is_symmetric,
+	Real const nrchi_start_angle,
+	utility::io::izstream & rotamer_definitions,
+	utility::io::izstream & regular_library,
+	utility::io::izstream & continuous_minimization_bbdep
+)
+{
+	initialize_srsrdl( srsrdl, nrchi_is_symmetric, nrchi_start_angle );
+	srsrdl.read_from_files( rotamer_definitions, regular_library, continuous_minimization_bbdep );
+}
+
+template < Size T, Size N >
+void
+initialize_srsrdl(
+	SemiRotamericSingleResidueDunbrackLibrary< T, N > & srsrdl,
+	bool const nrchi_is_symmetric,
+	Real const nrchi_start_angle
+)
+{
+	Real const nrchi_periodicity	 = nrchi_is_symmetric ? 180.0 : 360.0;
+	Real const nrchi_bbdep_step_size = nrchi_is_symmetric ?   5.0 :  10.0;
+	Real const nrchi_bbind_step_size = nrchi_is_symmetric ?   0.5 :   1.0;
+
+	srsrdl.set_nrchi_periodicity( nrchi_periodicity );
+	srsrdl.set_nonrotameric_chi_start_angle( nrchi_start_angle );
+	srsrdl.set_nonrotameric_chi_bbdep_scoring_step_size( nrchi_bbdep_step_size );
+	srsrdl.set_nonrotameric_chi_bbind_scoring_step_size( nrchi_bbind_step_size );
 }
 
 } // namespace dunbrack

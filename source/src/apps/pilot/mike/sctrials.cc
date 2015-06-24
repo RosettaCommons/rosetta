@@ -118,7 +118,7 @@ ScTrials::apply( Pose & pose ) {
 		EnergyMap emap = pose.energies().onebody_energies(ir);
 
 		core::pack::dunbrack::RotamerLibrary const & rotamer_library_ = * core::pack::dunbrack::RotamerLibrary::get_instance();
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP residue_rotamer_library(
+		core::pack::rotamers::SingleResidueRotamerLibraryCAP residue_rotamer_library(
     	rotamer_library_.get_rsd_library(pose.residue( ir ).type())
 		);
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCAP dun_rotlib(

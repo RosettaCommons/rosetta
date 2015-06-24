@@ -53,6 +53,7 @@
 
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
@@ -867,13 +868,14 @@ void Matcher::initialize_from_file(
 
 								using namespace core::scoring;
 								using namespace core::pack::dunbrack;
-								RotamerLibrary const & rotlib( * core::pack::dunbrack::RotamerLibrary::get_instance() );
-								SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( *upres[ jj ] ) );
+								using namespace core::pack::rotamers;
+								SingleResidueRotamerLibraryFactory const & rotlibfact( *SingleResidueRotamerLibraryFactory::get_instance() );
+								SingleResidueRotamerLibraryCOP res_rotlib( rotlibfact.get( *upres[ jj ] ) );
 
 								if ( res_rotlib != 0 ) {
 
 									SingleResidueDunbrackLibraryCOP dun_rotlib(
-										utility::pointer::dynamic_pointer_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const > ( res_rotlib ));
+										utility::pointer::dynamic_pointer_cast< SingleResidueDunbrackLibrary const > ( res_rotlib ));
 
 									if ( dun_rotlib == 0 ) {
 										utility_exit_with_message( "Failed to retrieve a Dunbrack rotamer library for AA: " +

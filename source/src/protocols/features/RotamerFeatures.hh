@@ -27,7 +27,7 @@
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 //External
 
@@ -58,14 +58,16 @@ public:
 		core::Size & rotamer_bin
 	) {
 		using namespace core::pack::dunbrack;
+		using namespace core::pack::rotamers;
 
 		SingleResidueRotamerLibraryCOP generic_rotlib =
-			RotamerLibrary::get_instance()->get_rsd_library( residue.type() );
+			core::pack::rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( residue.type() );
 
 		if(!generic_rotlib){
 			return false;
 		}
 
+		// This will throw a std::bad_cast if the residue has a non Dunbrack rotamer library.
 		RotamericSingleResidueDunbrackLibrary< T, N > const & rotlib(
 			dynamic_cast< RotamericSingleResidueDunbrackLibrary< T, N > const & >(
 				* generic_rotlib));

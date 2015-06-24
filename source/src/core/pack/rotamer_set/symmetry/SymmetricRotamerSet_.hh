@@ -20,7 +20,6 @@
 
 //Package headers
 #include <core/pack/rotamer_set/RotamerSet_.hh>
-#include <core/pack/rotamer_set/BumpSelector.hh>
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/dunbrack/SingleResidueRotamerLibrary.fwd.hh
+/// @file   core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh
 /// @brief  SingleResidueRotamerLibrary forward declarations and typedefs
 /// @author Andrew Leaver-Fay
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
-#ifndef INCLUDE_core_pack_dunbrack_SingleResidueRotamerLibrary_fwd_hh
-#define INCLUDE_core_pack_dunbrack_SingleResidueRotamerLibrary_fwd_hh
+#ifndef INCLUDE_core_pack_rotamers_SingleResidueRotamerLibrary_fwd_hh
+#define INCLUDE_core_pack_rotamers_SingleResidueRotamerLibrary_fwd_hh
 
 #include <core/conformation/Residue.fwd.hh>
 
@@ -22,7 +22,7 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 class SingleResidueRotamerLibrary;
 
@@ -33,7 +33,7 @@ typedef utility::pointer::weak_ptr< SingleResidueRotamerLibrary const > SingleRe
 
 typedef utility::vector1< conformation::ResidueOP > RotamerVector;
 
-} // namespace dunbrack
+} // namespace rotamers
 } // namespace pack
 } // namespace core
 

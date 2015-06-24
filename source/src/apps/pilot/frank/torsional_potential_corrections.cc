@@ -34,6 +34,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/optimizeH.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 #include <core/pose/CrystInfo.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
@@ -490,7 +491,7 @@ correct_dunbrack() {
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
 			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
-				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *(restype[1]) ) );
+				core::pack::dunbrack::RotamerLibrary::get_instance()->get_library_by_aa( (core::chemical::AA)aa ) );
 
 		if (!rotlib) continue;
 
@@ -650,12 +651,9 @@ if (aa == aa_ser && x==13 && y==14) {
 	}
 
 	for (int aa = 1; aa<=20; aa++) {
-		core::chemical::ResidueTypeCOPs restype =
-			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->aa_map((core::chemical::AA)aa);
-
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
 			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
-				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( *(restype[1]) ) );
+				core::pack::dunbrack::RotamerLibrary::get_instance()->get_library_by_aa( (core::chemical::AA)aa ) );
 
 		if (!rotlib) continue;
 
@@ -865,7 +863,7 @@ calc_scores() {
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
 			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
-				core::pack::dunbrack::RotamerLibrary::get_instance()->get_rsd_library( rsd.type() ) );
+				core::pack::dunbrack::RotamerLibrary::get_instance()->get_library_by_aa( aa ) );
 
 		if (!rotlib) continue;
 

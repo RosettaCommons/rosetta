@@ -7,21 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/dunbrack/SingleResiduePeptoidLibrary.hh
+/// @file   core/pack/rotamers/SingleResiduePeptoidLibrary.hh
 /// @brief  SingleResiduePeptoidLibrary class
 /// @brief  Similar to SingleResidueDunbrackLibrary class
 /// @author P. Douglas Renfrew (renfrew@nyu.edu)
 
-#ifndef INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_hh
-#define INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_hh
+#ifndef INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_hh
+#define INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_hh
 
 // Unit Headers
-#include <core/pack/dunbrack/SingleResiduePeptoidLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResiduePeptoidLibrary.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
+#include <core/chemical/AA.hh>
 
 // Utility Headers
 #include <utility/assert.hh>
@@ -33,7 +32,7 @@
 
 namespace core {
 namespace pack {
-namespace dunbrack {
+namespace rotamers {
 
 class SingleResiduePeptoidLibrary : public SingleResidueRotamerLibrary {
 public:
@@ -80,7 +79,7 @@ public:
 	/// semi-decrasing order by probability; semi, because the rotamers are constructed in sorted order
 	/// by their probability in the lower phi-psi bin that the input phi/psi perscribes.
 	virtual
-	utility::vector1< DunbrackRotamerSampleData >
+	utility::vector1< dunbrack::DunbrackRotamerSampleData >
 	get_all_rotamer_samples(
 	  Real omg,
 		Real phi,
@@ -100,7 +99,7 @@ public:
 	) const = 0;
 
 	virtual
-	DunbrackRotamerSampleData
+	dunbrack::DunbrackRotamerSampleData
 	get_rotamer(
 		Real omg,
 		Real phi,
@@ -222,8 +221,8 @@ public:
 	virtual
 	void
 	get_rotamer_from_chi(
-		ChiVector const & chi,
-		RotVector & rot ) const = 0;
+		dunbrack::ChiVector const & chi,
+		dunbrack::RotVector & rot ) const = 0;
 
 public:
 	/// Conversion functions
@@ -236,7 +235,7 @@ public:
 	/// @brief Convert from the rotamer bin indices for each chi to the
 	/// (non-compact) "rotamer number"
 	Size
-	rotwell_2_rotno( Size4 const & rotwell ) const;
+	rotwell_2_rotno( dunbrack::Size4 const & rotwell ) const;
 
 	/// @brief Convert from the rotamer number to the compacted
 	/// "packed rotamer number".  Returns 0 if rotno has no corresponding packed rotno.
@@ -251,7 +250,7 @@ public:
 	/// @brief Convert from the rotamer bin indices for each chi to the
 	/// compacted "packed rotamer number." Returns 0 if rotwell has no corresponding packed rotno
 	Size
-	rotwell_2_packed_rotno( Size4 const & rotwell ) const;
+	rotwell_2_packed_rotno( dunbrack::Size4 const & rotwell ) const;
 
 	/// @brief Convert from the packed rotamer number to the rotamer well
 	void
@@ -260,7 +259,7 @@ public:
 	void
 	packed_rotno_2_rotwell(
 	  Size const packed_rotno,
-		Size4 & rotwell
+		dunbrack::Size4 & rotwell
 	) const;
 
 	utility::vector1< Size > const &
@@ -345,7 +344,7 @@ public:
 	void
 	n_rotamer_bins_for_aa(
 		chemical::AA const aa,
-		RotVector & rot
+		dunbrack::RotVector & rot
 	);
 
 	/// @brief Reports information about the *rotameric* chi only; no details
@@ -354,7 +353,7 @@ public:
 	void
 	n_rotameric_bins_for_aa(
 		chemical::AA const aa,
-		RotVector & rot,
+		dunbrack::RotVector & rot,
 		bool dun02
 	);
 
@@ -363,7 +362,7 @@ public:
 	void
 	n_rotamer_bins_for_aa_02(
 		chemical::AA const aa,
-		RotVector & rot
+		dunbrack::RotVector & rot
 	);
 
 private:
@@ -397,9 +396,9 @@ private:
 };
 
 
-} // dunbrack
+} // rotamers
 } // pack
 } // core
 
-#endif // INCLUDED_core_pack_dunbrack_SingleResiduePeptoidLibrary_HH
+#endif // INCLUDED_core_pack_rotamers_SingleResiduePeptoidLibrary_HH
 

@@ -38,7 +38,8 @@
 #include <protocols/match/output/MatchProcessor.hh>
 
 
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleLigandRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibraryFactory.hh>
 
 #include <basic/Tracer.hh>
 
@@ -169,6 +170,8 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 	using namespace core::conformation;
 	using namespace core::scoring;
 	using namespace core::pack::dunbrack;
+	using namespace core::pack::rotamers;
+
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -180,20 +183,21 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 			+ utility::to_string( option[ match::ligand_rotamer_index ]() ) + ").  Must be greater than 0." );
 	}
 
-	RotamerLibrary const & rotlib( * core::pack::dunbrack::RotamerLibrary::get_instance() );
-	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get_rsd_library( ligpose.residue_type( 1 ) ) );
+	SingleResidueRotamerLibraryFactory const & rotlib( *SingleResidueRotamerLibraryFactory::get_instance() );
+	SingleResidueRotamerLibraryCOP res_rotlib( rotlib.get( ligpose.residue_type( 1 ) ) );
 
 	if ( res_rotlib != 0 ) {
 		SingleLigandRotamerLibraryCOP lig_rotlib(
-			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const >
-			( res_rotlib ));
+			utility::pointer::dynamic_pointer_cast< SingleLigandRotamerLibrary const > ( res_rotlib ));
 
 		if ( lig_rotlib == 0 ) {
 			utility_exit_with_message( "Failed to retrieve a ligand rotamer library for "
 				+ ligpose.residue_type(1).name() + " after finding the flag match::ligand_rotamer_index <int> on the command line");
 		}
 
-		Size const nligrots = lig_rotlib->get_rotamers().size();
+		core::pack::rotamers::RotamerVector rot_vector;
+		lig_rotlib->build_base_rotamers( ligpose.residue_type( 1 ), rot_vector );
+		Size const nligrots = rot_vector.size();
 
 		if ( (Size) option[ match::ligand_rotamer_index ] > nligrots ) {
 			utility_exit_with_message( "Illegal rotamer index given in command line flag match::ligand_rotamer_index ("
@@ -201,7 +205,7 @@ set_ligpose_rotamer( core::pose::Pose & ligpose )
 				" of ligand rotamers ( " + utility::to_string( nligrots ) + ")" );
 		}
 
-		ResidueCOP ligrot = lig_rotlib->get_rotamers()[ option[ match::ligand_rotamer_index ] ];
+		ResidueCOP ligrot = rot_vector[ option[ match::ligand_rotamer_index ] ];
 		ligpose.replace_residue( 1, *ligrot, false );
 	} else {
 		utility_exit_with_message( "Failed to find ligand rotamer library for " +

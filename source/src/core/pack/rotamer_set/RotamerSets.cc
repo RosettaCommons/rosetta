@@ -154,7 +154,7 @@ RotamerSets::build_rotamers(
 
 		set_of_rotamer_sets_[ ii ] = rotset;
 	}
-	
+
 	Size asym_length = 0;
 	// make sure we have a symmetric RotamerSet_ if we have a symmetric pose
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -896,6 +896,15 @@ RotamerSets::get_sc_bbE(
 	sfxn.eval_ci_2b_bb_sc( res2, res1, pose, emap );
 	sfxn.eval_cd_2b_bb_sc( res2, res1, pose, emap );
 	return static_cast< core::PackerEnergy > ( sfxn.weights().dot( emap ) );
+}
+
+
+void
+RotamerSets::show( std::ostream & out ) const {
+	out << "RotamerSets with " << nmoltenres_ << " molten residues for " << total_residue_ << " total residues and " << nrotamers_ << " rotamers." << std::endl;
+	for( core::Size ii(1); ii <= set_of_rotamer_sets_.size(); ++ii) {
+		out << ii << ": " << *(set_of_rotamer_sets_[ii]) << std::endl;
+	}
 }
 
 

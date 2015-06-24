@@ -19,6 +19,7 @@
 
 // Project headers
 #include <core/chemical/Atom.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
 #include <core/chemical/Bond.hh>
 
 // Numeric headers
@@ -705,8 +706,21 @@ NCAARotLibPath::NCAARotLibPath( std::string const & path_in ) :
 bool
 NCAARotLibPath::apply( ResidueType & rsd ) const
 {
-	rsd.set_ncaa_rotlib_path( path_ );
-	rsd.set_use_ncaa_rotlib( true );
+	using namespace core::chemical::rotamers;
+
+	NCAARotamerLibrarySpecificationOP ncaa_libspec;
+	if( rsd.rotamer_library_specification() ) {
+		NCAARotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >( rsd.rotamer_library_specification() ) );
+		if( ! old_libspec ) {
+			tr.Error << "Found existing rotamer specification " << rsd.rotamer_library_specification()->keyname() << " when attempting to patch NCAA rotlib path." << std::endl;
+			utility_exit_with_message("Cannot have multiple rotamer specifications.");
+		}
+		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
+	} else {
+		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new core::chemical::rotamers::NCAARotamerLibrarySpecification );
+	}
+	ncaa_libspec->ncaa_rotlib_path( path_ );
+	rsd.rotamer_library_specification( ncaa_libspec );
 	return false;
 }
 

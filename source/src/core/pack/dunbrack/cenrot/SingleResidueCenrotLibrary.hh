@@ -21,7 +21,7 @@
 // Package Headers
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 
 // Utility Headers
 #include <utility/assert.hh>
@@ -160,7 +160,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-class SingleResidueCenrotLibrary : public SingleResidueRotamerLibrary {
+class SingleResidueCenrotLibrary : public core::pack::rotamers::SingleResidueRotamerLibrary {
 
 public:
 typedef chemical::AA AA;
@@ -235,7 +235,7 @@ fill_rotamer_vector(
 	conformation::Residue const & existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const;
 
 virtual void write_to_file( utility::io::ozstream &out ) const;

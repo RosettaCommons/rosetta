@@ -27,7 +27,7 @@
 #include <core/id/AtomID.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResidueRotamerLibrary.fwd.hh>
+#include <core/pack/rotamers/SingleResidueRotamerLibrary.fwd.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
 
@@ -59,6 +59,10 @@ public:
 	virtual std::string type() const {
 		return "Rotamer";
 	}
+
+	RotamerConstraint();
+
+	RotamerConstraint(RotamerConstraint const & other);
 
 	RotamerConstraint(
 		pose::Pose const & pose,
@@ -108,7 +112,7 @@ private:
 	Size seqpos_;
 	std::string rsd_type_name_;
 	utility::vector1< AtomID > atom_ids_;
-	SingleResidueRotamerLibraryCAP rotlib_;
+	core::pack::rotamers::SingleResidueRotamerLibraryCOP rotlib_;
 	utility::vector1< ChiVector > favored_rotamers_;
 	utility::vector1< RotVector > favored_rotamer_numbers_;
 

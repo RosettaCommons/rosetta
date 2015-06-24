@@ -1086,7 +1086,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::fill_rotamer_vector(
 	conformation::Residue const & existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const
 {
 	RotamerLibraryScratchSpace scratch;
@@ -1300,7 +1300,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::build_rotamers(
 	conformation::Residue const& existing_residue,
 	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
 	bool buried,
-	RotamerVector & rotamers,
+	rotamers::RotamerVector & rotamers,
 	PackedDunbrackRotamer< T, N, Real > const & interpolated_rotamer
 ) const
 {
@@ -1350,7 +1350,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::create_rotamers_from_chisets(
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
 	utility::vector1< ChiSetOP > const & chi_set_vector,
-	RotamerVector & rotamers
+	rotamers::RotamerVector & rotamers
 ) const
 {
 	using namespace utility;
