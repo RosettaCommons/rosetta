@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pack/task/PackerTask.cc
+/// @file   core/pack/task/ResidueLevelTask.cc
 /// @brief  Task class to describe packer's behavior
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
 
 // Unit Headers
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/ResidueLevelTask.hh>
 
 #include <utility/vector1.hh>
 
@@ -21,7 +21,7 @@ namespace core {
 namespace pack {
 namespace task {
 
-PackerTask::~PackerTask() {}
+ResidueLevelTask::~ResidueLevelTask() {}
 
 }
 }
