@@ -333,6 +333,8 @@ user(
   protocols::loops::LoopsOP loops
 ){
 	fragbias_tr << "user is chosen" << std::endl;
+	fragProbs_assigned_ = true;
+
 	// user defined segments to rebuild
 	runtime_assert( user_pos.size()>0 || (loops && !loops->empty()) );
 

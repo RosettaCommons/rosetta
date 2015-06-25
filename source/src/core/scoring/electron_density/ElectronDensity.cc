@@ -300,9 +300,15 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	ATOM_MASK_PADDING = 2;
 
 	// 2 rho_calc
+	// this logic is duplicated ... we should call calcRhoC
+
 	density.dimension(grid[0],grid[1],grid[2]);
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) density[i]=0.0;
 	for (Size n=1; n<=nposes; ++n) {
+		bool use_Bs = pose_has_nonzero_Bs( *(poses[n]) );
+		if (!use_Bs)
+			TR << "Input pose has no nonzero B factors ... setting to " << effectiveB << std::endl;
+
 		// pose->poseCoords
 		poseCoords litePose;
 		for (core::Size i = 1; i <= poses[n]->total_residue(); ++i) {
@@ -316,9 +322,9 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 						poseCoord coord_j;
 						coord_j.x_ = rsd_i.xyz( j );
 
-						// force B to be at least at resolution limit
-						coord_j.B_ = effectiveB;
-						if ( poses[n]->pdb_info() ) coord_j.B_ = std::max( poses[n]->pdb_info()->temperature( i, j ), effectiveB);
+						if ( use_Bs && poses[n]->pdb_info() )
+							coord_j.B_ = std::max( poses[n]->pdb_info()->temperature( i, j ), minimumB);
+
 						coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 
 						litePose.push_back( coord_j );
