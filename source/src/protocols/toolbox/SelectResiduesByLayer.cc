@@ -256,9 +256,14 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("2HA")).xyz() ;
 			my_bb_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("CA")).xyz() ;
 		} else {
-			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).first_sidechain_atom()).xyz() ;
-			core::Size parent_atom_index = pose.residue(i).icoor( pose.residue(i).first_sidechain_atom() ).stub_atom1().atomno();
-			my_bb_coordinates = pose.residue(i).atom( parent_atom_index ).xyz() ;
+			if(pose.residue(i).is_polymer()) {
+				my_sc_coordinates = pose.residue(i).atom(pose.residue(i).first_sidechain_atom()).xyz() ;
+				core::Size parent_atom_index = pose.residue(i).icoor( pose.residue(i).first_sidechain_atom() ).stub_atom1().atomno();
+				my_bb_coordinates = pose.residue(i).atom( parent_atom_index ).xyz() ;
+			} else {
+				rsd_sc_neighbors.push_back(0); //For now, ligands do not have their neighbours counted.  This could change in the future.
+				continue;
+			}
 		}
 
 		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize() ;
@@ -271,8 +276,13 @@ SelectResiduesByLayer::calc_sc_neighbors( Pose const & pose ) const {
 				if ( pose.residue(j).name3() == "GLY" ) {
 					other_bb_coordinates = pose.residue(j).atom(pose.residue(j).atom_index("CA")).xyz();
 				} else {
-					core::Size parent_atom_index = pose.residue(j).icoor( pose.residue(j).first_sidechain_atom() ).stub_atom1().atomno();
-					other_bb_coordinates = pose.residue(j).atom( parent_atom_index ).xyz();
+					if( pose.residue(j).is_polymer() ) { //If this is a polymer atom, use the parent of the first sidechain atom.
+						core::Size parent_atom_index = pose.residue(j).icoor( pose.residue(j).first_sidechain_atom() ).stub_atom1().atomno();
+						other_bb_coordinates = pose.residue(j).atom( parent_atom_index ).xyz();
+					} else { //If this is not a polymer residue, use the nbr_atom:
+						core::Size nbr_atom_index = pose.residue(j).nbr_atom();
+						other_bb_coordinates = pose.residue(j).atom( nbr_atom_index ).xyz();
+					}
 				}
 				numeric::xyzVector< Real > new_sc_vector(other_bb_coordinates - my_sc_coordinates);
 				//TR << new_sc_vector.length() << std::endl;

@@ -397,18 +397,18 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	
 	// get per-residue SASA
 	SasaCalc calc = SasaCalc();
-	Real total_sasa( calc.calculate( pose ) );
+	core::Real total_sasa( calc.calculate( pose ) );
 	
 	// partition pose by jump
 	Pose partner1, partner2;
 	partition_pose_by_jump( pose, jump_, partner1, partner2 );
 
 	// calculate SASAs of individual partners
-	Real p1_sasa( calc.calculate( partner1 ) );
-	Real p2_sasa( calc.calculate( partner2 ) );
+	core::Real p1_sasa( calc.calculate( partner1 ) );
+	core::Real p2_sasa( calc.calculate( partner2 ) );
 	
 	// calculate interface
-	Real intf_sasa = - ( total_sasa - p1_sasa - p2_sasa) / 2;
+	core::Real intf_sasa = - ( total_sasa - p1_sasa - p2_sasa) / 2;
 
 	return intf_sasa;
 
