@@ -728,7 +728,7 @@ class PR_PyMOLServer:
 
 ###############################################################################
 # Membranes
-class XYZCoord():
+class XYZCoord:
     """
     Class for storing xyz coord or just a triple of real values
     """
@@ -741,7 +741,7 @@ class XYZCoord():
     def __str__(self):
         return "(%8.3f, %8.3f, %8.3f)" % (self.x, self.y, self.z)
 
-class PlanePoints(): 
+class PlanePoints: 
     """
     Class for storing position of membrane planes
     """
@@ -750,7 +750,7 @@ class PlanePoints():
         self.upper_points = []
         self.lower_points = []
 
-class Matrix(): 
+class Matrix: 
     """ 
     Class for storing a 3x3 matrix (used for rotation matrices
     in membranes)
