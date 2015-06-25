@@ -66,11 +66,15 @@ public:
 		
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void set_target( core::Size const target_in ) { target_ = target_in; return; }
+	void set_target( std::string const &target_in ) { target_ = target_in; return; }
+	
+	/// @brief Set this mover's target residue index, based on the Rosetta indexing.
+	///
+	void set_target(core::Size const target_in);
 
 	/// @brief Get this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	core::Size target() { return target_; }
+	std::string target() const { return target_; }
 	
 	/// @brief Set the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
@@ -90,15 +94,11 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
-  virtual void parse_def( utility::lua::LuaObject const & def,
-		utility::lua::LuaObject const & score_fxns,
-		utility::lua::LuaObject const & tasks,
-		protocols::moves::MoverCacheSP cache );
 private:
 
 	/// @brief The index of the residue to mutate.
-	/// @details In Rosetta residue numbering.
-	core::Size target_;
+	/// @details In Rosetta residue numbering, PDB numbering, or ReferencePose numbering.
+	std::string target_;
 
 	/// @brief The name (full name, not three-letter code) of the residue to mutate to.
 	///

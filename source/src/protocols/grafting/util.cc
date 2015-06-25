@@ -81,14 +81,14 @@ delete_region(Pose & pose, Size const start, Size const end){
 		TR <<"Nothing to delete..." << std::endl;
 		return;
 	}
-	pose.conformation().delete_residue_range_slow(start, end);
+	pose.delete_residue_range_slow(start, end);
 	pose.conformation().detect_disulfides();
 	//for (core::Size i = 1; i <= num_residues; ++i) {
 		//pose_.conformation().delete_polymer_residue(resnum);
 		//pose.conformation().delete_residue_slow(start);
 
 	//}
-	pose.pdb_info()->obsolete(false);
+	if(pose.pdb_info()) pose.pdb_info()->obsolete(false);
 }
 
 

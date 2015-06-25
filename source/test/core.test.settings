@@ -175,6 +175,9 @@ sources = {
 	"pose/carbohydrates" : [
 		"util",
 	],
+	"pose/reference_pose" : [
+		"ReferencePose",
+	],
 	"pose/symmetry" : [
 		"util",
 	],
@@ -569,6 +572,7 @@ testinputfiles = [
 	"pack/task/operation/DisallowIfNonnativeTaskOperation.u",
 	"pack/task/operation/ReplicateTaskOperation.u",
 	"pose/pdbinfo_test_in.pdb",
+	"pose/reference_pose/1AFO_AB.pdb",
 	"scoring/2GB3.pdb",
 	"scoring/4dO8B.pdb",
 	"scoring/1pqc.params",

@@ -137,20 +137,20 @@ DeleteRegionMover::parse_my_tag(
 {
 	
 	tag_ = tag->clone();
-	std::cout << "Parsing tag"<<std::endl;
+	//std::cout << "Parsing tag"<<std::endl;
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag_, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag_, "end_");
 	
 	nter_overhang_ = tag_->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag_->getOption<core::Size>("cter_overhang", 0);
-	std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
+	//std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
 	
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "start_");
 	protocols::rosetta_scripts::parse_bogus_res_tag(tag, "end_");
 	
 	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
 	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
-	std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
+	//std::cout << " N "<<nter_overhang_<< " C " << cter_overhang_<<std::endl;
 }
 
 void
@@ -161,7 +161,7 @@ DeleteRegionMover::apply(core::pose::Pose& pose){
 		end_ = core::pose::get_resnum(tag_, pose, "end_");
 	}
 	
-	std::cout <<"Start: "<<start_ << " End: " << end_ << std::endl;
+	//std::cout <<"Start: "<<start_ << " End: " << end_ << std::endl;
 	PyAssert(start_ != 0, "Cannot delete region starting with 0 - make sure region is set for DeleteRegionMover");
 	PyAssert(end_ !=0, "Cannot delete region ending with 0 - make sure region is set for DeleteRegionMover");
 	PyAssert(end_ > start_, "Cannot delete region where end > start");

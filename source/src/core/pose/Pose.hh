@@ -34,6 +34,7 @@
 // Package headers
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
+#include <core/pose/reference_pose/ReferencePoseSet.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>
 #include <core/pose/signals/DestructionEvent.fwd.hh>
 #include <core/pose/signals/EnergyEvent.fwd.hh>
@@ -341,7 +342,7 @@ public:
 
 	ConstraintSetCOP
 	constraint_set() const;
-
+	
 	/// @brief adding a constraint is done by cloning the input constraint. A const copy is then returned
 	scoring::constraints::ConstraintCOP
 	add_constraint( scoring::constraints::ConstraintCOP cst );
@@ -370,6 +371,44 @@ public:
 	constraint_set( ConstraintSetOP );
 
 	void transfer_constraint_set( const pose::Pose &pose );
+
+//////////////////////////////// ReferencePose and ReferencePoseSet methods /////////////////////////////////////
+
+	/// @brief Create a new reference pose from the current state of the pose.
+	/// @details If a ReferencePoseSet object does not exist, this function will create it.
+	void reference_pose_from_current( std::string const &ref_pose_name );
+
+	/// @brief Access the ReferencePoseSet object (non-const).
+	/// @details If a ReferencePoseSet object does not exist, this function will create it.
+	core::pose::reference_pose::ReferencePoseSetOP reference_pose_set();
+
+	/// @brief Const-access the ReferencePoseSet object.
+	/// @details If a ReferencePoseSet object does not exist, this function will throw an error.
+	core::pose::reference_pose::ReferencePoseSetCOP reference_pose_set_cop() const;
+	
+	/// @brief Returns the index of a residue in this pose corresponding to a residue in a reference pose.
+	/// @details Throws an error if the reference pose with the given name doesn't exist, or the residue number
+	/// doesn't exist in that reference pose.  Returns zero if no corresponding residue exists in this pose (e.g.
+	/// if the residue in question has been deleted.
+	core::Size corresponding_residue_in_current( core::Size const ref_residue_index, std::string const &ref_pose_name ) const;
+
+	/// @brief Find all mappings in the new pose after seqpos in all ReferencePose objects, and increment them by 1.
+	/// @details If there is no ReferencePose object, do nothing.
+	void increment_reference_pose_mapping_after_seqpos( core::Size const seqpos );
+
+	/// @brief Find all mappings in the new pose after seqpos in all ReferencePose objects, and decrement them by 1.
+	/// @details If there is no ReferencePose object, do nothing.
+	void decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos ); 
+
+	/// @brief Find all mappings in the new pose to seqpos in all ReferencePose objects, and set them to point to residue 0 (deletion signal).
+	/// @details If there is no ReferencePose object, do nothing.
+	void zero_reference_pose_mapping_at_seqpos( core::Size const seqpos );
+	
+	/// @brief Returns true if a pose has at least one reference pose, false otherwise.
+	///
+	bool has_reference_pose() const;
+
+//////////////////////////////// PDBInfo methods /////////////////////////////////////
 
 	/// @brief Returns the pose PDBInfo (const)
 	///
@@ -516,6 +555,11 @@ public:
 
 	void
 	delete_polymer_residue( Size const seqpos );
+
+	/// @brief Delete a range of residues in the pose.
+	/// @details Calls confromation::delete_residue_range_slow().  Also, updates
+  /// reference poses, if present.
+	void delete_residue_range_slow( Size const start, Size const end); 
 
 	/// @brief Copy a stretch of coordinates/torsions from  <src>
 	/// to pose
@@ -1560,6 +1604,11 @@ private:
 
 	// constraint set
 	ConstraintSetOP constraint_set_;
+	
+	/// @brief The set of ReferencePose objects that this pose stores.
+	/// @details By default, this owning pointer is null, and there is next to no memory overhead
+	/// associated with having it here.
+	core::pose::reference_pose::ReferencePoseSetOP reference_pose_set_;
 
 	/// @brief DestructionEvent observers
 	/// @remarks notification only occurs when Pose object is destroyed

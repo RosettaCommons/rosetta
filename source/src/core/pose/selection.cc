@@ -64,7 +64,7 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 			std::string pdbnum( tag_ptr->getOption<std::string>( prefix + "pdb_num" ) );
 			char const chain( pdbnum[ pdbnum.length() - 1 ] );
 			std::stringstream ss( pdbnum.substr( 0, pdbnum.length() - 1 ) );
-			core::Size number;
+			core::Size number(0);
 			ss >> number;
 			resnum = pose_map.find( chain, number );
 		}
@@ -77,17 +77,32 @@ get_resnum( utility::tag::TagCOP tag_ptr, core::pose::Pose const & pose, std::st
 }
 
 /// @brief Extracts a residue number from a string.
-/// @detail Recognizes two forms of numbering:
+/// @detail Recognizes three forms of numbering:
 ///   - Rosetta residue numbers (numbered sequentially from 1 to the last residue
 ///     in the pose). These have the form [0-9]+
 ///   - PDB numbers. These have the form [0-9]+[A-Z], where the trailing letter
 ///     is the chain ID.
+///		- Reference pose numbers.  These have the form refpose([refpose name],[refpose number]).
+/// In addition, relative numbers are permitted (of the form +[number] or -[number]) in conjunction
+/// with reference pose numbering.  For example, one might say "refpose(state1,17)+3", which means
+/// three residues past the residue correpsonding to residue 17 in the reference pose called "state1".
 /// @return the rosetta residue number for the string, or 0 upon an error
 core::Size
 parse_resnum(
 	std::string const& resnum,
-	core::pose::Pose const& pose)
-{
+	core::pose::Pose const& pose,
+	bool const check_for_refpose
+) {
+	if(check_for_refpose) { //Scope 1: Check whether this string is of the form "resnum(<refpose_name>,<refpose_number>)+/-<offset>" and parse accordingly if it is.
+		std::string refpose_name("");
+		core::Size refpose_number(0);
+		signed long refpose_offset(0); //Must be signed!
+		if( is_referencepose_number(resnum, refpose_name, refpose_number, refpose_offset) )
+		{
+			return get_resnumber_from_reference_pose(refpose_name, refpose_number, refpose_offset, pose);
+		}
+	}
+	//Otherwise, this is NOT of that form, and we should parse it as a Rosetta number or as a PDB number:
 
 	string::const_iterator input_end = resnum.end();
 	//Set number to the sequence of digits at the start of input [0-9]*
@@ -116,7 +131,7 @@ parse_resnum(
 		return Size(0);
 	}
 
-	Size n;
+	Size n(0);
 	std::istringstream ss( number );
 	ss >> n;
 	if( chain.size() == 1 ) { // PDB Number
@@ -185,7 +200,7 @@ get_resnum_list(
 
 set<Size>
 get_resnum_list(
-	std::string const str,
+	std::string const &str,
 	core::pose::Pose const & pose
 ){
 	using namespace std;
@@ -224,7 +239,7 @@ get_resnum_list(
 // fpd same as 'get_resnum_list', but preserve ordering from input list
 utility::vector1<Size>
 get_resnum_list_ordered(
-	std::string const str,
+	std::string const &str,
 	core::pose::Pose const & pose
 ){
 	using namespace std;
@@ -259,6 +274,105 @@ get_resnum_list_ordered(
 	return resid;
 }
 
+/// @brief Is a string of the format "refpose(<refposename>,<refposenumber>)" or "refpose(<refposename>,<refposenumber>)+/-<number>"?
+/// @details  If this successfully determines that this is a string of this format, it populates the refpose_string, refpose_resnumber,
+/// and refpose_offset variables with the name of the ReferencePose, the number of the residue in the reference pose, and the +/- offset
+/// number parsed from this string.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+bool is_referencepose_number(
+	std::string const &str,
+	std::string &refpose_string,
+	core::Size &refpose_resnumber,
+	signed long &refpose_offset
+)
+{
+
+	//TR << "Input string to is_referencepose_number():" << str << std::endl; //DELETE ME
+	
+	// 1.  Does the string start with "refpose("?
+  if(str.substr(0,8)!="refpose(") return false;
+  
+  //TR << "Check 1 passed -- the string begins with \"refpose(\"." << std::endl; //DELETE ME
+
+	// 2.  Does the string have a comma, and then a bracket?
+  core::Size commaposition(0);
+  core::Size endbracketposition(0);
+  for(core::Size i=8; i<str.length(); ++i) {
+  	if(commaposition==0) {
+  		if(str[i] == ',') commaposition=i;
+  	} else {
+  		if(str[i] == ')') {
+  			endbracketposition=i;
+  			break;
+  		}
+  	}
+  }
+  if(commaposition==0 || commaposition<9 || endbracketposition==0 || endbracketposition <= commaposition+1) return false;
+  
+  //TR << "Check 2 passed -- the string has a comma following the opening of the parentheses, and a close parenthesis, with stuff in between." << std::endl; //DELETE ME
+  
+  std::string const refpose_string_out( str.substr( 8, commaposition-8 ) ); //Store what's between the first parenthesis and the comma.  This is the name of the reference pose.
+	//TR << "refpose_string_out=" << refpose_string_out << std::endl; //DELETE ME
+
+	//Parse the number in the reference pose:
+	std::string const refpose_resnumber_string_out( str.substr(commaposition+1, endbracketposition-commaposition-1) );
+	//TR << "refpose_resnumber_string_out=" << refpose_resnumber_string_out << std::endl;
+	for(core::Size i=0, imax=refpose_resnumber_string_out.length(); i<imax; ++i) {
+		if(refpose_resnumber_string_out[i]<'0' || refpose_resnumber_string_out[i]>'9') return false; //Fail if there isn't a number between the comma and the close of the parentheses
+	}
+	core::Size refpose_resnumber_out(0);
+	{ //Scope for temporary istringstream variable:
+		std::istringstream ss( refpose_resnumber_string_out );
+		ss >> refpose_resnumber_out; //Parse the number into a core::Size.
+  }
+  
+  //TR << "Check 3 passed -- the number in the reference pose is, indeed, a number, which we have parsed as " << refpose_resnumber_out << "." << std::endl; //DELETE ME
+
+	bool hasoffset(false);
+	if(str.length()>endbracketposition+1) { //If the string doesn't end with the end bracket position, then there must be an offset.
+		//Check for an offset:
+		if(str[endbracketposition+1]!='+' && str[endbracketposition+1]!='-') return false; //Fail if the position after the bracket isn't a + or a -.
+		for(core::Size i=endbracketposition+2, imax=str.length(); i<imax; ++i) {
+			if(str[i] < '0' || str[i] > '9') return false; //Fail if the positions after the +/- contain non-numbers.
+		}
+		hasoffset = true;
+	}
+	
+	//TR << "Check 4 passed.  " << (hasoffset ? "There is a properly-formatted offset." : "There is no offset.") << std::endl; //DELETE ME
+	
+	//At this point, we know that we will be returning "true" -- the string is formatted properly.
+	//Now we can load the stored values into the output variables.
+	refpose_string=refpose_string_out;
+	refpose_resnumber=refpose_resnumber_out;
+	
+	//Parse the offset:
+	if(hasoffset) {
+		std::istringstream ss( str.substr( endbracketposition+2, str.length() ) );
+		ss >> refpose_offset;
+		if(str[endbracketposition+1] == '-') refpose_offset*=(-1);
+	} else {
+		refpose_offset=0;
+	}
+	
+	//TR << "Parsing complete.  This string refers to ReferencePose " << refpose_string << ", residue " << refpose_resnumber << ", offset " << refpose_offset << ".  Returning true." << std::endl; //DELETE ME
+  
+	return true;
+}
+
+/// @brief Given the name of a ReferencePose object in the pose, a residue number in that reference pose, and a residue offset,
+/// this function returns the Rosetta number of the corresponding residue in the pose.  Should throw an error if the ReferencePose
+/// doesn't exist in the pose, or 0 if no corresponding residue exists in the pose.
+/// @author Vikram K. Mulligan, Baker laboratory (vmullig@uw.edu)
+core::Size get_resnumber_from_reference_pose(
+	std::string const &refpose_name,
+	core::Size const refpose_number,
+	signed long const refpose_offset,
+	core::pose::Pose const &pose
+) {
+	signed long returnval( static_cast< signed long >( pose.corresponding_residue_in_current(refpose_number, refpose_name) ) + refpose_offset );
+	if(returnval <= 0 || returnval > static_cast< signed long >( pose.n_residue() ) ) return 0;
+	return static_cast< core::Size >( returnval ); 
+}
 
 } //pose
 } //core

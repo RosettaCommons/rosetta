@@ -656,6 +656,7 @@ sources = {
 		"SetTorsion",
 		"ShakeStructureMover",
 		"ShortBackrubMover",
+		"StorePoseSnapshot",
 		"SmoothFragmentMover",
 		"SuperimposeMover",
 		"SwitchChainOrderMover",

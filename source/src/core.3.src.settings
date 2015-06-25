@@ -120,6 +120,10 @@ sources = {
 	"core/pose/ncbb": [
 		"util",
 	],
+	"core/pose/reference_pose": [
+		"ReferencePose",
+		"ReferencePoseSet",
+	],
 	"core/pose/rna": [
 		"RNA_BasePairClassifier",
 		"RNA_IdealCoord",

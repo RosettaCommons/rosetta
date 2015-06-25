@@ -18,6 +18,7 @@
 
 // Package headers
 #include <core/pose/util.hh>
+#include <core/pose/reference_pose/ReferencePoseSet.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
@@ -105,7 +106,8 @@ void Pose::init(void)
 /// @details default constructor
 Pose::Pose() :
 	pdb_info_( /* NULL */ ),
-	constraint_set_( /* 0 */ )
+	constraint_set_( /* 0 */ ),
+	reference_pose_set_()
 {
 	init();
 }
@@ -129,14 +131,15 @@ Pose::Pose( Pose const & src ) :
 /// @brief partial copy constructor
 Pose::Pose( Pose const & src, Size begin, Size const end):
 	pdb_info_( /* NULL */ ),
-	constraint_set_( /* 0 */ )
+	constraint_set_( /* 0 */ ),
+	reference_pose_set_( )
 {
 	init();
 	utility::vector1< core::Size > residue_indices;
 	for(; begin <= end; ++begin){
 		residue_indices.push_back(begin);
 	}
-	core::io::pdb::pose_from_pose(*this, src, residue_indices);
+	core::io::pdb::pose_from_pose(*this, src, residue_indices); //TODO copy reference poses
 }
 
 /// @brief copy assignment
@@ -180,6 +183,9 @@ Pose::operator=( Pose const & src )
 	} else {
 		constraint_set_.reset();
 	}
+	
+	//Clone the reference poses:
+	if( src.reference_pose_set_ ) reference_pose_set_ = src.reference_pose_set_->clone();
 
 	// transfer remaining observers that honor the Conformation::TRANSFER
 	// event after everything else is done
@@ -193,7 +199,7 @@ Pose::operator=( Pose const & src )
 	return *this;
 }
 
-/// @brief clone the conformation
+/// @brief clone the pose
 PoseOP
 Pose::clone() const
 {
@@ -409,6 +415,7 @@ Pose::append_residue_by_jump(
 	//PyAssert( (jump_anchor_residue>0) && (jump_anchor_residue<total_residue()), "Pose::append_residue_by_jump( ...Size const jump_anchor_residue... ): variable jump_anchor_residue is out of range!" );    // check later: may be fixed in conformation
 	energies_->clear(); // TEMPORARY
 	conformation_->append_residue_by_jump( new_rsd, jump_anchor_residue, jump_anchor_atom, jump_root_atom, start_new_chain );
+	//Since this is appending a new index at the end of the pose, there should be no change to residue index mappings in ReferencePose objects.
 }
 
 void
@@ -425,6 +432,7 @@ Pose::append_residue_by_bond(
 	//PyAssert( (anchor_residue>0) && (anchor_residue<=total_residue()), "Pose::append_residue_by_bond( ...Size const anchor_residue... ): variable anchor_residue is out of range!" );    // check later: may be fixed in conformation
 	energies_->clear(); // TEMPORARY
 	conformation_->append_residue_by_bond( new_rsd, build_ideal_geometry, connection, anchor_residue, anchor_connection, start_new_chain, lookup_bond_length);
+	//Since the new residue's index is at the end of the pose, there should be no change to residue mappings in ReferencePose objects.
 }
 
 void
@@ -440,6 +448,7 @@ Pose::insert_residue_by_jump(
 	PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_jump( new_rsd_in, seqpos, anchor_pos, anchor_atomno, root_atomno );
+	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
 }
 
 void
@@ -458,6 +467,7 @@ Pose::insert_residue_by_bond(
     PyAssert( (anchor_pos<=total_residue()), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
     energies_->clear(); // TEMPORARY
     conformation_->insert_residue_by_bond( new_rsd_in, seqpos, anchor_pos, build_ideal_geometry, anchor_atom, root_atom, new_chain, lookup_bond_length );
+		increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
 }
 
 void
@@ -469,6 +479,7 @@ Pose::replace_residue(
 {
 	PyAssert( (seqpos<=total_residue()), "Pose::replace_residue( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
 	conformation_->replace_residue( seqpos, new_rsd_in, orient_backbone );
+	//No change to residue mappings in any ReferencePoses that might exist, since we assume that the replaced residue corresponds to whatever existed previously.
 }
 
 void
@@ -481,6 +492,7 @@ Pose::replace_residue(
 	PyAssert( (seqpos<=static_cast<int>(total_residue())), "Pose::replace_residue( ...Size const seqpos... ): "
 			"variable seqpos is out of range!" );    // check later: may become unnecessary
 	conformation_->replace_residue( seqpos, new_rsd_in, atom_pairs );
+	//No change to residue mappings in any ReferencePoses that might exist, since we assume that the replaced residue corresponds to whatever existed previously.
 }
 
 void
@@ -493,6 +505,7 @@ Pose::append_polymer_residue_after_seqpos(
 	PyAssert( (seqpos<=total_residue()), "Pose::append_polymer_residue_after_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later: may become unecessary
 	energies_->clear(); // TEMPORARY
 	conformation_->append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
 }
 
 void
@@ -505,6 +518,7 @@ Pose::prepend_polymer_residue_before_seqpos(
 	PyAssert( (seqpos<=total_residue()), "Pose::prepend_polymer_residue_before_seqpos( ...Size const seqpos... ): variable seqpos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->prepend_polymer_residue_before_seqpos( new_rsd, seqpos, build_ideal_geometry );
+	increment_reference_pose_mapping_after_seqpos( seqpos-1 ); //All mappings in the new pose after seqpos-1 must be incremented by 1 in all ReferencePose objects.
 }
 
 void
@@ -532,6 +546,8 @@ Pose::append_pose_by_jump(
 				src.pdb_info()->nres(),
 				old_n_residue + 1);
 	}
+	
+	//No change to residue mappings in ReferencePose objects.
 }
 
 void
@@ -540,8 +556,22 @@ Pose::delete_polymer_residue( Size const seqpos )
 	PyAssert( (seqpos<=total_residue()), "Pose::delete_polymer_residue( Size const seqpos ): variable seqpos is out of range!" );
 	energies_->clear(); // TEMPORARY
 	conformation_->delete_polymer_residue( seqpos );
+	zero_reference_pose_mapping_at_seqpos( seqpos ); //All mappings in the new pose pointing to seqpose must now point to 0 in all ReferencePose objects.
+	decrement_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be decremented by 1 in all ReferencePose objects.
 }
 
+/// @brief Delete a range of residues in the pose.
+/// @details Calls confromation::delete_residue_range_slow().  Also, updates
+/// reference poses, if present.
+void Pose::delete_residue_range_slow( Size const start, Size const end) {
+	runtime_assert_string_msg( start <= end, "Error in core::pose::Pose::delete_residue_range_slow(): start must be less than or equal to end." );
+	conformation_->delete_residue_range_slow( start, end );
+	//Update reference poses, if present:
+	for(core::Size ir=end; ir>=start; --ir) {
+		decrement_reference_pose_mapping_after_seqpos( ir );
+	}
+	return;
+}
 
 void
 Pose::copy_segment(
@@ -1547,6 +1577,77 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 	else constraint_set_ = pose.constraint_set_;
 }
 
+//////////////////////////////// ReferencePose and ReferencePoseSet methods /////////////////////////////////////
+
+/// @brief Create a new reference pose from the current state of the pose.
+/// @details If a ReferencePoseSet object does not exist, this function will create it.
+void Pose::reference_pose_from_current( std::string const &ref_pose_name ) {
+	if(!reference_pose_set_) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
+	reference_pose_set_->add_and_initialize_reference_pose( ref_pose_name, *this );
+	return;
+}
+
+/// @brief Access the ReferencePoseSet object (non-const).
+/// @details If a ReferencePoseSet object does not exist, this function will create it.
+core::pose::reference_pose::ReferencePoseSetOP Pose::reference_pose_set()
+{
+	if(!reference_pose_set_) reference_pose_set_= core::pose::reference_pose::ReferencePoseSetOP(new core::pose::reference_pose::ReferencePoseSet); //Create a ReferencePoseSet if it doesn't already exist.
+	return reference_pose_set_;	
+}
+
+/// @brief Const-access the ReferencePoseSet object.
+/// @details If a ReferencePoseSet object does not exist, this function will throw an error.
+core::pose::reference_pose::ReferencePoseSetCOP Pose::reference_pose_set_cop() const
+{
+	runtime_assert_string_msg(reference_pose_set_,
+		"Programming error in core::pose::Pose::reference_pose_set_cop(): No ReferencePoseSet object has been created, so it's not possible to request a pointer to the object."
+	);
+	return core::pose::reference_pose::ReferencePoseSetCOP( reference_pose_set_ );
+}
+
+/// @brief Returns the index of a residue in this pose corresponding to a residue in a reference pose.
+/// @details Throws an error if the reference pose with the given name doesn't exist, or the residue number
+/// doesn't exist in that reference pose.  Returns zero if no corresponding residue exists in this pose (e.g.
+/// if the residue in question has been deleted.
+core::Size Pose::corresponding_residue_in_current( core::Size const ref_residue_index, std::string const &ref_pose_name ) const
+{
+	return reference_pose_set_cop()->corresponding_residue_in_current(ref_residue_index, ref_pose_name);
+}
+
+/// @brief Find all mappings in the new pose after seqpos in all ReferencePose objects, and increment them by 1.
+/// @details If there is no ReferencePose object, do nothing.
+void Pose::increment_reference_pose_mapping_after_seqpos( core::Size const seqpos )
+{
+	if( !reference_pose_set_ ) return; //Do nothing if there is no ReferencePoseSet object.
+	reference_pose_set_->increment_reference_pose_mapping_after_seqpos( seqpos );
+	return;
+}
+
+/// @brief Find all mappings in the new pose after seqpos in all ReferencePose objects, and decrement them by 1.
+/// @details If there is no ReferencePose object, do nothing.
+void Pose::decrement_reference_pose_mapping_after_seqpos( core::Size const seqpos )
+{
+	if( !reference_pose_set_ ) return; //Do nothing if there is no ReferencePoseSet object.
+	reference_pose_set_->decrement_reference_pose_mapping_after_seqpos( seqpos );
+	return;
+} 
+
+/// @brief Find all mappings in the new pose to seqpos in all ReferencePose objects, and set them to point to residue 0 (deletion signal).
+/// @details If there is no ReferencePose object, do nothing.
+void Pose::zero_reference_pose_mapping_at_seqpos( core::Size const seqpos )
+{
+	if( !reference_pose_set_ ) return; //Do nothing if there is no ReferencePoseSet object.
+	reference_pose_set_->zero_reference_pose_mapping_at_seqpos( seqpos );
+	return;
+}
+
+/// @brief Returns true if a pose has at least one reference pose, false otherwise.
+///
+bool Pose::has_reference_pose() const
+{
+	if( !reference_pose_set_ ) return false;
+	return ( !reference_pose_set_->empty() );
+}
 
 //////////////////////////////// PDBInfo methods /////////////////////////////////////
 

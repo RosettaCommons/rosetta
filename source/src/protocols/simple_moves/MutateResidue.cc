@@ -75,7 +75,7 @@ MutateResidueCreator::mover_name()
 /// @brief default ctor
 MutateResidue::MutateResidue() :
 	parent(),
-	target_(0),
+	target_(""),
 	res_name_(""),
 	preserve_atom_coords_(false)
 {}
@@ -92,45 +92,57 @@ MutateResidue::MutateResidue(MutateResidue const& dm) :
 /// @brief Mutate a single residue to a new amino acid
 /// @param target The residue index to mutate
 /// @param new_res The name of the replacement residue
-MutateResidue::MutateResidue( Size const target, string const new_res ) :
+MutateResidue::MutateResidue( core::Size const target, string const new_res ) :
 	parent(),
-	target_(target),
+	target_(""),
 	res_name_(new_res),
 	preserve_atom_coords_(false)
-{}
+{
+	std::stringstream target_in;
+	target_in << target;
+	target_ = target_in.str();
+}
 
-MutateResidue::MutateResidue( Size const target, int const new_res ) :
+MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	parent(),
-	target_(target),
+	target_(""),
 	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
 	preserve_atom_coords_(false)
-{}
+{
+	std::stringstream target_in;
+	target_in << target;
+	target_ = target_in.str();
+}
 
 
 void MutateResidue::apply( Pose & pose ) {
 
-	if( target_ < 1 ) {
+	// Converting the target string to target residue index must be done at apply time,
+	// since the string might refer to a residue in a reference pose.
+	core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
+
+	if( rosetta_target < 1 ) {
 		// Do nothing for 0
 		return;
 	}
-	if( target_ > pose.total_residue() ) {
-		TR.Error << "Error: Residue "<<target_<<" is out of bounds." << std::endl;
+	if( rosetta_target > pose.total_residue() ) {
+		TR.Error << "Error: Residue "<< rosetta_target <<" is out of bounds." << std::endl;
 		utility_exit();
 	}
 
-	TR.Debug << "Mutating residue " << target_ << " from "
-		<< pose.residue(target_).name3() << " to " << res_name_ <<" ." << std::endl;
+	if(TR.Debug.visible()) TR.Debug << "Mutating residue " << rosetta_target << " from "
+		<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
 
-	chemical::ResidueTypeSet const& restype_set( pose.residue(target_).residue_type_set() );
+	chemical::ResidueTypeSet const& restype_set( pose.residue( rosetta_target ).residue_type_set() );
 
 	// Create the new residue and replace it
 	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-		restype_set.name_map(res_name_), pose.residue(target_),
+		restype_set.name_map(res_name_), pose.residue( rosetta_target ),
 		pose.conformation());
 	// Make sure we retain as much info from the previous res as possible
-	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue(target_),
+	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
 		*new_res, pose.conformation(), !preserve_atom_coords() );
-	pose.replace_residue(target_, *new_res, false );
+	pose.replace_residue( rosetta_target, *new_res, false );
 
 }
 
@@ -150,7 +162,7 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
-		Pose const & pose)
+		Pose const & /*pose*/)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":
@@ -158,7 +170,8 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 		TR.Error << "Error: no 'target' parameter specified." << std::endl;
 		throw utility::excn::EXCN_RosettaScriptsOption("");
 	}
-	set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
+	set_target( tag->getOption<string>("target") );
+	//set_target( core::pose::parse_resnum( tag->getOption<string>("target"), pose ) );
 
 	//Set the identity of the new residue:
 	if( !tag->hasOption("new_res") ){
@@ -173,24 +186,14 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	return;
 }
 
-///VKM 26 Feb 2015: Can we get rid of this, now?  These LUA hooks are really the ultimate in
-///code dupication...
-void MutateResidue::parse_def( utility::lua::LuaObject const & def,
-				utility::lua::LuaObject const & /*score_fxns*/,
-				utility::lua::LuaObject const & /*tasks*/,
-				protocols::moves::MoverCacheSP /*cache*/ ) {
-	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
-	if( !def["target"] ) {
-		TR.Error << "Error: no 'target' parameter specified." << std::endl;
-		utility_exit();
-	}
-	set_target( def["target"].to<core::Size>() );
-
-	if( !def["target"] ) {
-		TR.Error << "Error: no 'new_res' parameter specified." << std::endl;
-		utility_exit();
-	}
-	set_res_name( def["new_res"].to<std::string>() ); //God I feel like a chump, updating this ridiculous code -- VKM.
+/// @brief Set this mover's target residue index, based on the Rosetta indexing.
+///
+void MutateResidue::set_target(core::Size const target_in)
+{
+	std::stringstream target_in_string;
+	target_in_string << target_in;
+	target_ = target_in_string.str();
+	return;
 }
 
 } // moves

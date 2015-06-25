@@ -31,6 +31,7 @@ CMakeFiles
 !/cmake/build/build.post.cmake
 !/cmake/build/finders
 !/cmake/build/modules
+!/cmake/build_*/buildme.sh
 /xcode/build
 /xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata
