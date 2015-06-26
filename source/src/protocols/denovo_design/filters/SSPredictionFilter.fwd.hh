@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/filters/PsiPredInterface.fwd.hh
-/// @brief header file for class which interfaces with psipred
+/// @file src/protocols/denovo_design/filters/SSPredictionFilter.fwd.hh
+/// @brief header file for filter to determine agreement with psipred for secondary structure prediction
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_filters_psipredinterface_fwd_hh
-#define INCLUDED_devel_denovo_design_filters_psipredinterface_fwd_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_sspredictionfilter_fwd_hh
+#define INCLUDED_protocols_denovo_design_filters_sspredictionfilter_fwd_hh
 
 // Unit Headers
 
@@ -22,16 +22,16 @@
 // Project headers
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
 // Forward
-class PsiPredInterface;
+class SSPredictionFilter;
 
 // Types
-typedef utility::pointer::shared_ptr< PsiPredInterface > PsiPredInterfaceOP;
-typedef utility::pointer::shared_ptr< PsiPredInterface const > PsiPredInterfaceCOP;
+typedef utility::pointer::shared_ptr< SSPredictionFilter > SSPredictionFilterOP;
+typedef utility::pointer::shared_ptr< SSPredictionFilter const > SSPredictionFilterCOP;
 
 }
 }

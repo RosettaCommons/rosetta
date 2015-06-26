@@ -21,6 +21,8 @@ sources = {
 	],
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
+		"PsiPredInterface",
+		"SSPredictionFilter",
 	],
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesign",

@@ -59,6 +59,7 @@ static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureHasResid
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
+static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 
 static FilterRegistrator< protocols::indexed_structure_store::filters::FragmentLookupFilterCreator > reg_FragmentLookupFilterCreator;
 

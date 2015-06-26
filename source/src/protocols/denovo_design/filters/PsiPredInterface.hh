@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/filters/PsiPredInterface.hh
+/// @file src/protocols/denovo_design/filters/PsiPredInterface.hh
 /// @brief Class that interfaces with psipred for secondary structure prediction
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_filters_psipredinterface_hh
-#define INCLUDED_devel_denovo_design_filters_psipredinterface_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_psipredinterface_hh
+#define INCLUDED_protocols_denovo_design_filters_psipredinterface_hh
 
 // Unit Headers
 
@@ -30,7 +30,7 @@
 #include <map>
 #include <string>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
@@ -100,5 +100,5 @@ private:
 
 } //filters
 } //denovo_design
-} //devel
+} //protocols
 #endif

@@ -66,8 +66,6 @@ sources = {
 	"devel/denovo_design/filters": [
 		"CavityVolumeFilter",
 		"FoldabilityFilter",
-		"PsiPredInterface",
-		"SSPredictionFilter",
 		"SSShapeComplementarityFilter",
 	],
 	"devel/denovo_design/task_operations": [

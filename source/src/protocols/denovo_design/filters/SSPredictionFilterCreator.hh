@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/filters/SSPredictionFilterCreator.hh
+/// @file src/protocols/denovo_design/filters/SSPredictionFilterCreator.hh
 /// @brief header file for filter creator to determine agreement with psipred for secondary structure prediction
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_filters_sspredictionfiltercreator_hh
-#define INCLUDED_devel_denovo_design_filters_sspredictionfiltercreator_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_sspredictionfiltercreator_hh
+#define INCLUDED_protocols_denovo_design_filters_sspredictionfiltercreator_hh
 
 // Unit Headers
-#include <devel/denovo_design/filters/SSPredictionFilter.fwd.hh>
+#include <protocols/denovo_design/filters/SSPredictionFilter.fwd.hh>
 
 // Project headers
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/filters/FilterCreator.hh>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 

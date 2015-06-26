@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/filters/SSPredictionFilter.cc
+/// @file src/protocols/denovo_design/filters/SSPredictionFilter.cc
 /// @brief Filter to determine agreement with SSPrediction for secondary structure prediction
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // unit headers
-#include <devel/denovo_design/filters/SSPredictionFilter.hh>
-#include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
+#include <protocols/denovo_design/filters/SSPredictionFilter.hh>
+#include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>
 
 // package headers
-#include <devel/denovo_design/filters/PsiPredInterface.hh>
+#include <protocols/denovo_design/filters/PsiPredInterface.hh>
 
 // project headers
 #include <core/pose/PDBInfo.hh>
@@ -34,9 +34,9 @@
 #include <fstream>
 #include <cstdlib>
 
-static thread_local basic::Tracer TR( "devel.denovo_design.filters.SSPredictionfilter" );
+static thread_local basic::Tracer TR( "protocols.denovo_design.filters.SSPredictionfilter" );
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 

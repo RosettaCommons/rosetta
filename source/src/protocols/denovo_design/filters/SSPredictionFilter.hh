@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/filters/SSPredictionFilter.hh
+/// @file src/protocols/denovo_design/filters/SSPredictionFilter.hh
 /// @brief header file for filter to determine agreement with psipred for secondary structure prediction
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_filters_sspredictionfilter_hh
-#define INCLUDED_devel_denovo_design_filters_sspredictionfilter_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_sspredictionfilter_hh
+#define INCLUDED_protocols_denovo_design_filters_sspredictionfilter_hh
 
 // Unit Headers
-#include <devel/denovo_design/filters/SSPredictionFilter.fwd.hh>
+#include <protocols/denovo_design/filters/SSPredictionFilter.fwd.hh>
 
 // Package headers
-#include <devel/denovo_design/filters/PsiPredInterface.fwd.hh>
+#include <protocols/denovo_design/filters/PsiPredInterface.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -28,7 +28,7 @@
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
 #include <protocols/ss_prediction/SS_predictor.fwd.hh>
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 

@@ -16,7 +16,7 @@
 #include <devel/denovo_design/task_operations/DesignBySecondaryStructureCreator.hh>
 
 // package headers
-#include <devel/denovo_design/filters/PsiPredInterface.hh>
+#include <protocols/denovo_design/filters/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
 #include <protocols/moves/DsspMover.hh>
 
@@ -112,7 +112,7 @@ DesignBySecondaryStructureOperation::DesignBySecondaryStructureOperation( std::s
 	  psipred_interface_( /* NULL */ )
 {
 	if ( cmd != "" ) {
-		psipred_interface_ = denovo_design::filters::PsiPredInterfaceOP( new denovo_design::filters::PsiPredInterface( cmd ) );
+		psipred_interface_ = protocols::denovo_design::filters::PsiPredInterfaceOP( new protocols::denovo_design::filters::PsiPredInterface( cmd ) );
 	} else {
 		ss_predictor_ = protocols::ss_prediction::SS_predictorOP( new protocols::ss_prediction::SS_predictor( "HLE" ) );
 	}
@@ -175,7 +175,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 			pred_ss += protocols::ss_prediction::get_label( svm_pred[i] );
 		}
 	} else {
-		denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
+		protocols::denovo_design::filters::PsiPredResult const & psipred_result( psipred_interface_->run_psipred( pose, wanted_ss ) );
 		psipred_prob = psipred_result.psipred_prob;
 		pred_ss = psipred_result.pred_ss;
 	}
@@ -185,7 +185,7 @@ DesignBySecondaryStructureOperation::get_residues_to_design( core::pose::Pose co
 		//pred_ss = secstruct_with_ligand( pred_ss, ligands );
 		TR << "Blueprint SS = " << bp_ss << std::endl;
 		TR << "Predicted SS = " << pred_ss << std::endl;
-		residues_to_design = denovo_design::filters::nonmatching_residues( bp_ss, pred_ss );
+		residues_to_design = protocols::denovo_design::filters::nonmatching_residues( bp_ss, pred_ss );
 	} else {
 		TR << "Going to design the worst " << regions_to_design() << " residues." << std::endl;
 		// create a map and insert pairs for residue and probabilities
@@ -308,7 +308,7 @@ DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagCOP tag, basic:
 		utility_exit_with_message( "cmd must be set in DesignBySecondaryStructure." );
 	}
 	// now that we have a command, we can create the psipred interface object
-	psipred_interface_ = denovo_design::filters::PsiPredInterfaceOP( new denovo_design::filters::PsiPredInterface( cmd ) );
+	psipred_interface_ = protocols::denovo_design::filters::PsiPredInterfaceOP( new protocols::denovo_design::filters::PsiPredInterface( cmd ) );
 	prevent_bad_point_mutants_ = tag->getOption< bool >( "prevent_bad_point_mutations", prevent_bad_point_mutants_ );
 }
 
