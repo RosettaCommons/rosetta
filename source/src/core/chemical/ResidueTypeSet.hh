@@ -233,7 +233,7 @@ public:
 	ResidueTypeCOPs const &
 	residue_types() const
 	{
-		return residue_types_const_;
+		return residue_types_;
 	}
 
 	/// @brief accessor for database_directory
@@ -256,10 +256,10 @@ private:
 	update_residue_maps();
 
 	void
-	add_residue_type_to_maps( ResidueTypeOP rsd );
+	add_residue_type_to_maps( ResidueTypeCOP rsd );
 
 	void
-	remove_residue_type_from_maps(ResidueTypeOP rsd);
+	remove_residue_type_from_maps(ResidueTypeCOP rsd);
 
 	//////////////////
 	// data
@@ -277,15 +277,11 @@ private:
 	orbitals::OrbitalTypeSetCOP orbital_types_;
 
 	/// @brief the residues
-	ResidueTypeOPs residue_types_;
-
-	/// for handing out
-	ResidueTypeCOPs residue_types_const_;
+	ResidueTypeCOPs residue_types_;
 
 	/// @brief null list of residues when query fails
 	//should make this static or something
 	ResidueTypeCOPs empty_residue_list_;
-
 
 	/// @brief map to ResidueType pointers by AA enum
 	std::map< AA, ResidueTypeCOPs > aa_map_;
@@ -298,9 +294,6 @@ private:
 
 	/// @brief map to ResidueType pointers by unique residue id
 	std::map< std::string, ResidueTypeCOP > name_map_;
-
-	/// @brief map to ResidueType pointers by unique residue id, for nonconst access
-	std::map< std::string, ResidueTypeOP > nonconst_name_map_;
 
 	/// @brief list of AA types defined
 	std::list< AA > aas_defined_;

@@ -24,6 +24,7 @@
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
+/// Rhiju Das - removing unnecessary nonconst lists, 'on-the-fly'.
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -273,9 +274,12 @@ void ResidueTypeSet::init(
 
 	if(option[ OptionKeys::in::add_orbitals]){
 		for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
-			orbitals::AssignOrbitals add_orbitals_to_residue(residue_types_[ii]);
+			ResidueTypeOP rsd_type_clone = residue_types_[ii]->clone();
+			orbitals::AssignOrbitals add_orbitals_to_residue( rsd_type_clone );
 			add_orbitals_to_residue.assign_orbitals();
+			residue_types_[ ii ] = rsd_type_clone;
 		}
+		update_residue_maps();
 	}
 
 	tr << "Finished initializing " << name_ << " residue type set.  ";
@@ -330,7 +334,7 @@ ResidueTypeSet::read_files(
 )
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
+		ResidueTypeCOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, get_self_weak_ptr() ) );
 		residue_types_.push_back( rsd_type );
 	}
 
@@ -353,7 +357,7 @@ ResidueTypeSet::apply_patches(
 				if ( p.replaces( rsd_type ) ) {
 					residue_types_[ i ] = p.apply( rsd_type );
 				} else {
-					ResidueTypeOP new_rsd_type( p.apply( rsd_type ) );
+					ResidueTypeCOP new_rsd_type( p.apply( rsd_type ) );
 					if ( new_rsd_type ) {
 						residue_types_.push_back( new_rsd_type );
 					}
@@ -405,20 +409,6 @@ ResidueTypeSet::name_map( std::string const & name_in ) const
 	return *( name_map_.find( name )->second );
 }
 
-// IF YOU COMMENT THIS BACK IN, TELL ME WHY BY EMAIL:
-// aleaverfay@gmail.com
-///// @details since residue id is unique, it only returns
-///// one residue type or exit without match.
-//ResidueType &
-//ResidueTypeSet::nonconst_name_map( std::string const & name )
-//{
-//	std::cerr << "WARNING WARNING WARNING: Invoking ResidueTypeSet::nonconst_name_map violates a core principle of the ResidueTypeSet!" << std::endl;
-//	if ( nonconst_name_map_.find( name ) == nonconst_name_map_.end() ) {
-//		utility_exit_with_message( "unrecognized residue name" );
-//	}
-//	return *( nonconst_name_map_.find( name )->second );
-//}
-
 bool
 ResidueTypeSet::has_name( std::string const & name ) const
 {
@@ -452,26 +442,22 @@ ResidueTypeSet::clear_residue_maps()
 	aa_map_.clear();
 	name3_map_.clear();
 	name_map_.clear();
-	nonconst_name_map_.clear();
 	aas_defined_.clear();
-	residue_types_const_.clear();
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 //private
 /// @details check that residue id map should be unique,
-/// sort the aas_defined list and make its membe unique
+/// sort the aas_defined list and make its members unique
 void
 ResidueTypeSet::update_residue_maps()
 {
 	clear_residue_maps();
 
-debug_assert( residue_types_const_.empty() );
-
-	for ( ResidueTypeOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
+	for ( ResidueTypeCOPs::iterator rsdtype_it(residue_types_.begin() ), rsdtype_end( residue_types_.end() );
 			rsdtype_it != rsdtype_end; ++rsdtype_it ) {
-		ResidueTypeOP rsd( *rsdtype_it );
+		ResidueTypeCOP rsd( *rsdtype_it );
 		add_residue_type_to_maps( rsd );
 	}
 	aas_defined_.sort();
@@ -479,10 +465,8 @@ debug_assert( residue_types_const_.empty() );
 }
 
 void
-ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
+ResidueTypeSet::add_residue_type_to_maps( ResidueTypeCOP rsd_ptr )
 {
-
-	residue_types_const_.push_back( rsd_ptr );
 
 	// name should be unique!
 	if ( name_map_.count( rsd_ptr->name() ) ) {
@@ -493,7 +477,6 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 		utility_exit_with_message(err_msg.str());
 	}
 	name_map_[ rsd_ptr->name() ] = rsd_ptr;
-	nonconst_name_map_[ rsd_ptr->name() ] = rsd_ptr;
 
 	// map by AA
 	if ( rsd_ptr->aa() != aa_unk ) {
@@ -519,15 +502,15 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 }
 
 void
-ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeOP rsd )
+ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeCOP rsd )
 {
 	//Assert rather than utility exit, because this should have been called by remove residue, which utility exits
-debug_assert(has_name(rsd->name()));
-	ResidueTypeCOPs::iterator const_res_it(std::find(residue_types_const_.begin(),residue_types_const_.end(),rsd));
-	residue_types_const_.erase(const_res_it);
+	debug_assert(has_name(rsd->name()));
+
+	ResidueTypeCOPs::iterator const_res_it(std::find(residue_types_.begin(),residue_types_.end(),rsd));
+	residue_types_.erase(const_res_it);
 
 	name_map_.erase(rsd->name());
-	nonconst_name_map_.erase(rsd->name());
 
 	// clear this residue type from the aa_map_
 	if(rsd->aa() != aa_unk) {
@@ -546,7 +529,7 @@ debug_assert(has_name(rsd->name()));
 		// if this was the only residue type in the ResidueTypeSet with an aa() of aa_unk, then
 		// remove aa_unk from the aas_defined_ list.
 		bool only_aa_unk = true;
-		for ( ResidueTypeOPs::const_iterator iter = residue_types_.begin(); iter != residue_types_.end(); ++iter ) {
+		for ( ResidueTypeCOPs::const_iterator iter = residue_types_.begin(); iter != residue_types_.end(); ++iter ) {
 			if ( (*iter)->aa() == aa_unk ) {
 				only_aa_unk = false;
 				break;
@@ -609,7 +592,7 @@ ResidueTypeSet::select_residues(
 	ResidueTypeCOPs & matches
 ) const
 {
-	for ( ResidueTypeOPs::const_iterator iter=residue_types_.begin(), iter_end = residue_types_.end(); iter!= iter_end; ++iter ) {
+	for ( ResidueTypeCOPs::const_iterator iter=residue_types_.begin(), iter_end = residue_types_.end(); iter!= iter_end; ++iter ) {
 		if ( selector[ **iter ] ) {
 			matches.push_back( *iter );
 		}
@@ -640,7 +623,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	Size const nvar( target_variants.size() );
 
 	// Now look for residue_type with same base_name and the desired set of variants
-	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
+	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
 		if ( residue_type_base_name( rsd ) == base_name && rsd.properties().get_list_of_variants().size() == nvar ) {
@@ -684,7 +667,7 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 	Size const nvar( target_variants.size() );
 
 	// now look for residue_type with same base_name and the desired set of variants
-	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
+	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
 		if ( residue_type_base_name( rsd ) == base_name && rsd.properties().get_list_of_variants().size() == nvar ) {
@@ -741,7 +724,7 @@ ResidueTypeSet::place_adducts()
 		}
 
 	// Process the residues in turn
-	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
+	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
 		AdductMap count_map( blank_map );
@@ -784,12 +767,8 @@ ResidueTypeSet::remove_residue_type(std::string const & name)
 		utility_exit_with_message("ResidueTypeSet does not have a residue called "+name+ " so it cannot be deleted.");
 	}
 
-	//See, this is why using vectors everywhere is annoying.
-	// What annoying thing am I looking for here?
-	ResidueTypeOP type_to_remove( nonconst_name_map_[ name ] );
+	ResidueTypeCOP type_to_remove( name_map_[ name ] );
 
-	ResidueTypeOPs::iterator res_it(std::find(residue_types_.begin(),residue_types_.end(),type_to_remove));
-	residue_types_.erase(res_it);
 	remove_residue_type_from_maps(type_to_remove);
 }
 
@@ -811,7 +790,7 @@ ResidueTypeSet:: create_adduct_combinations(
 			return;
 		}
 		// Make this combo and return;
-//		std::cout << "Making an adduct" << std::endl;
+		//		std::cout << "Making an adduct" << std::endl;
 
 		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
 		BOOST_FOREACH(bool make, add_mask){
