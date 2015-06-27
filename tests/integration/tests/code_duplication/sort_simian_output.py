@@ -13,10 +13,22 @@
 import re
 
 with file('log') as f:
-    _ = f.read()
+    _ = 'ATTENTION: For raw Simian output containing line numbers and block lengths please see raw_simian_log.ignore\n\n' + f.read()
     blocks = re.split('Found \d+ duplicate lines in the following files:\n', _)
 
 blocks = [b for b in blocks if b]
+
+
+def replace_line_numbers(line):
+    ''' Expecting: Between lines 120 and 134 in ROSETTA_MAIN/source/src/utility/string_util.cc
+        Output:    Between lines XXXX and XXXX in ROSETTA_MAIN/source/src/utility/string_util.cc
+    '''
+    a = line.split(' ')
+    if len(a) > 5:
+        a[3] = 'XXXX'
+        a[5] = 'XXXX'
+    return ' '.join(a)
+
 
 def sort_block(text):
     ''' Sort block of text and return sorting (key, new-text) for this block '''
@@ -27,7 +39,7 @@ def sort_block(text):
         if lines:
             lines.sort(key=lambda l: l.split()[-1])
             block_key =  ' '.join( [l.split()[-1] for l in lines] ) + '\n'.join(lines)
-        return block_key, '\n'.join(lines)
+        return block_key, '\n'.join( [ replace_line_numbers(l) for l in lines] )
 
     else: return '', text  # This is probably Simian header, we ignore it
 

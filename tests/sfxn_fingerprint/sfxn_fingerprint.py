@@ -246,7 +246,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
 
                 flags = ["-rq"]
                 if options.fulldiff: flags = ["-r"]
-                flags += ["--exclude=command.sh"]
+                flags += ['--exclude=command.sh', '--exclude=*.ignore']
 
                 proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
 

@@ -46,7 +46,9 @@ then
 	"%(minidir)s/src/protocols/*.cc"   "%(minidir)s/src/protocols/**/*.cc" \
 	"%(minidir)s/src/utility/*.cc"   "%(minidir)s/src/utility/**/*.cc" \
 	-language=c++ -threshold=10 2>&1 \
-	| egrep -vf ../../ignore_list >> log
+	| egrep -vf ../../ignore_list >> raw_simian_log.ignore
+
+	cp raw_simian_log.ignore log
 
 	python sort_simian_output.py
 	#exit 0

@@ -299,7 +299,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         for test in tests:
             queue.put(test)
             #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
-                      
+
             if ( ( not Options.mpi_tests )
                  or
                  ( Options.mpi_tests
@@ -711,7 +711,7 @@ def analyze_integration_test( test, outdir, results, full_log ):
 
     flags = ["-rq"]
     if Options.fulldiff: flags = ["-r"]
-    flags += ["--exclude=command.sh"]
+    flags += ['--exclude=command.sh', '--exclude=*.ignore']
 
     proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
 
@@ -860,7 +860,7 @@ def simple_job_running( GenerateJob, queue, outdir, runtimes, options ):
         if test is None: break
 
         cmd_line_sh, workdir = GenerateJob(test, outdir, options);
-        
+
         if ( ( cmd_line_sh is None ) or (workdir is None) ) :
             print "No command file found for %s.  Skipping." % test
             continue
@@ -961,7 +961,7 @@ class Worker:
                     start = time.time() # initial guess at start time, in case of exception
                     try: # Make sure job is marked done even if we throw an exception
                         cmd_line_sh, workdir = self.GenerateJob(test, self.outdir, options=self.opts, host=self.host)
-                        
+
                         if ( ( cmd_line_sh is None ) or ( workdir is None ) ) :
                             print "No command file found for %s.  Skipping." % test
                             continue
