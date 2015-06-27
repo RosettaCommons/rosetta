@@ -232,7 +232,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	//create mover instance
-	HbsDockDesignMinimizeMoverOP HDDM_mover;
+	HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover );
 
 	protocols::ncbb::setup_filter_stats();
 
