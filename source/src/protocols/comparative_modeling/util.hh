@@ -17,6 +17,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
+#include <core/id/SequenceMapping.hh>
 
 #include <protocols/comparative_modeling/AlignmentSet.fwd.hh>
 
@@ -29,6 +30,14 @@
 namespace protocols {
 namespace comparative_modeling {
 
+core::id::SequenceMapping get_qt_mapping_general(
+	core::pose::Pose const & query_pose,
+	core::sequence::SequenceAlignment const & align,
+	core::pose::Pose const & template_pose,
+	core::Size const query_index,
+	core::Size const template_index
+);
+	
 protocols::loops::LoopsOP loops_from_alignment(
   core::Size nres,
 	core::sequence::SequenceAlignment const & aln,

@@ -41,14 +41,6 @@ void input_sasa_dats();
 
 void get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz, int & degree_of_overlap );
 void get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_index, int & theta_index, Real distance_ijxyz );
-void get_2way_orientation(
-	Vector const & a_xyz,
-	Vector const & b_xyz,
-	int & phi_a2b_index,
-	int & theta_a2b_index,
-	int & phi_b2a_index,
-	int & theta_b2a_index,
-	Real distance_ijxyz );
 
 /// @brief Return total SASA
 Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,

@@ -244,36 +244,19 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
     				//derivatives
 				if (fabs(fabs(compDC) - it->DCval()) <= it->DCerr()) {
 					devDC=0.0;
-		      dc.f1ij_[0] = 0;
-      		dc.f1ij_[1] = 0;
-      		dc.f1ij_[2] = 0;
-		      dc.f2ij_[0] = 0;
-      		dc.f2ij_[1] = 0;
-      		dc.f2ij_[2] = 0;
-				} else if ( fabs(compDC) - it->DCval()>it->DCerr() ) {
-					devDC=fabs(compDC) - it->DCval() - it->DCerr();
-					dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzA= ( -memnorm.z()/v1.length()+dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dxB= ( memnorm.x()/v1.length()-dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-
-					dv_xA=6*it->Dconst()*costheta*dcos_dxA;
-					dv_yA=6*it->Dconst()*costheta*dcos_dyA;
-					dv_zA=6*it->Dconst()*costheta*dcos_dzA;
-					dv_xB=6*it->Dconst()*costheta*dcos_dxB;
-					dv_yB=6*it->Dconst()*costheta*dcos_dyB;
-					dv_zB=6*it->Dconst()*costheta*dcos_dzB;
-
-		      dc.f1ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xA;
-		      dc.f1ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yA;
-		      dc.f1ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zA;
-		      dc.f2ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xB;
-		      dc.f2ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yB;
-		      dc.f2ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zB;
+					dc.f1ij_[0] = 0;
+					dc.f1ij_[1] = 0;
+					dc.f1ij_[2] = 0;
+					dc.f2ij_[0] = 0;
+					dc.f2ij_[1] = 0;
+					dc.f2ij_[2] = 0;
 				} else {
-					devDC=fabs(compDC) - it->DCval() + it->DCerr();
+					
+					if ( fabs(compDC) - it->DCval()>it->DCerr() ) {
+						devDC=fabs(compDC) - it->DCval() - it->DCerr();
+					} else {
+						devDC=fabs(compDC) - it->DCval() + it->DCerr();
+					}
 					dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 					dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
 					dcos_dzA= ( -memnorm.z()/v1.length()+dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
@@ -288,85 +271,66 @@ Real DipolarCoupling::compute_dcscore(core::pose::Pose & pose) {
 					dv_yB=6*it->Dconst()*costheta*dcos_dyB;
 					dv_zB=6*it->Dconst()*costheta*dcos_dzB;
 
-		      dc.f1ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xA;
-		      dc.f1ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yA;
-		      dc.f1ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zA;
-		      dc.f2ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xB;
-		      dc.f2ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yB;
-		      dc.f2ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zB;
+					dc.f1ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xA;
+					dc.f1ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yA;
+					dc.f1ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zA;
+					dc.f2ij_[0] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_xB;
+					dc.f2ij_[1] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_yB;
+					dc.f2ij_[2] = it->weight()*numeric::sign(3*costheta*costheta-1)*2*devDC*dv_zB;
 				}
-
 			}
 			else if ( it->DCval()>it->Dconst() && it->DCval()<=2*it->Dconst() ) {
 				if (fabs(compDC- it->DCval()) <= it->DCerr()) {
 					devDC=0.0;
-		      			dc.f1ij_[0] = 0;
-      					dc.f1ij_[1] = 0;
-      					dc.f1ij_[2] = 0;
-		      			dc.f2ij_[0] = 0;
-      					dc.f2ij_[1] = 0;
-      					dc.f2ij_[2] = 0;
-				} else if ( compDC- it->DCval()>it->DCerr() ) {
+					dc.f1ij_[0] = 0;
+					dc.f1ij_[1] = 0;
+					dc.f1ij_[2] = 0;
+					dc.f2ij_[0] = 0;
+					dc.f2ij_[1] = 0;
+					dc.f2ij_[2] = 0;
+				} else {
+
+				if ( compDC- it->DCval()>it->DCerr() ) {
 					devDC=compDC- it->DCval() - it->DCerr();
-					dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzA= ( -memnorm.z()/v1.length()+dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dxB= ( memnorm.x()/v1.length()-dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-
-					dv_xA=6*it->Dconst()*costheta*dcos_dxA;
-					dv_yA=6*it->Dconst()*costheta*dcos_dyA;
-					dv_zA=6*it->Dconst()*costheta*dcos_dzA;
-					dv_xB=6*it->Dconst()*costheta*dcos_dxB;
-					dv_yB=6*it->Dconst()*costheta*dcos_dyB;
-					dv_zB=6*it->Dconst()*costheta*dcos_dzB;
-
-		      dc.f1ij_[0] = it->weight()*2*devDC*dv_xA;
-		      dc.f1ij_[1] = it->weight()*2*devDC*dv_yA;
-		      dc.f1ij_[2] = it->weight()*2*devDC*dv_zA;
-		      dc.f2ij_[0] = it->weight()*2*devDC*dv_xB;
-		      dc.f2ij_[1] = it->weight()*2*devDC*dv_yB;
-		      dc.f2ij_[2] = it->weight()*2*devDC*dv_zB;
 				} else {
 					devDC=compDC- it->DCval() + it->DCerr();
-					dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzA= ( -memnorm.z()/v1.length()+dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dxB= ( memnorm.x()/v1.length()-dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-					dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
-
-					dv_xA=6*it->Dconst()*costheta*dcos_dxA;
-					dv_yA=6*it->Dconst()*costheta*dcos_dyA;
-					dv_zA=6*it->Dconst()*costheta*dcos_dzA;
-					dv_xB=6*it->Dconst()*costheta*dcos_dxB;
-					dv_yB=6*it->Dconst()*costheta*dcos_dyB;
-					dv_zB=6*it->Dconst()*costheta*dcos_dzB;
-
-		      dc.f1ij_[0] = it->weight()*2*devDC*dv_xA;
-		      dc.f1ij_[1] = it->weight()*2*devDC*dv_yA;
-		      dc.f1ij_[2] = it->weight()*2*devDC*dv_zA;
-		      dc.f2ij_[0] = it->weight()*2*devDC*dv_xB;
-		      dc.f2ij_[1] = it->weight()*2*devDC*dv_yB;
-		      dc.f2ij_[2] = it->weight()*2*devDC*dv_zB;
 				}
+
+				dcos_dxA= ( -memnorm.x()/v1.length()+dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+				dcos_dyA= ( -memnorm.y()/v1.length()+dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+				dcos_dzA= ( -memnorm.z()/v1.length()+dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+				dcos_dxB= ( memnorm.x()/v1.length()-dot_product(v1,memnorm)*v1.x()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+				dcos_dyB= ( memnorm.y()/v1.length()-dot_product(v1,memnorm)*v1.y()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+				dcos_dzB= ( memnorm.z()/v1.length()-dot_product(v1,memnorm)*v1.z()/(v1.length()*v1.length()*v1.length()) ) / memnorm.length();
+
+				dv_xA=6*it->Dconst()*costheta*dcos_dxA;
+				dv_yA=6*it->Dconst()*costheta*dcos_dyA;
+				dv_zA=6*it->Dconst()*costheta*dcos_dzA;
+				dv_xB=6*it->Dconst()*costheta*dcos_dxB;
+				dv_yB=6*it->Dconst()*costheta*dcos_dyB;
+				dv_zB=6*it->Dconst()*costheta*dcos_dzB;
+
+				dc.f1ij_[0] = it->weight()*2*devDC*dv_xA;
+				dc.f1ij_[1] = it->weight()*2*devDC*dv_yA;
+				dc.f1ij_[2] = it->weight()*2*devDC*dv_zA;
+				dc.f2ij_[0] = it->weight()*2*devDC*dv_xB;
+				dc.f2ij_[1] = it->weight()*2*devDC*dv_yB;
+				dc.f2ij_[2] = it->weight()*2*devDC*dv_zB;
 			}
-                	else
-				throw(utility::excn::EXCN_BadInput( "DC value not in resonable range"));
+		} else
+			throw(utility::excn::EXCN_BadInput( "DC value not in resonable range"));
 
-		 //Add weight to energy
-			  total_dev+=it->weight()*devDC*devDC;	
+		//Add weight to energy
+			total_dev+=it->weight()*devDC*devDC;
 
-				if ( tr.Trace.visible() ) {
-			  		tr.Trace << "resi: " << it->res1() << " compDC: " << compDC << " expDC: " << it->DCval() << " expErr " << it->DCerr() << " devDC: " << devDC << " total_dev "<< total_dev << std::endl;
-				}
-
+			if ( tr.Trace.visible() ) {
+			tr.Trace << "resi: " << it->res1() << " compDC: " << compDC << " expDC: " << it->DCval() << " expErr " << it->DCerr() << " devDC: " << devDC << " total_dev "<< total_dev << std::endl;
 		}
+	}
 
-			//return energy
-			return  total_dev;
-			//return  total_dev/All_DC_lines_.size();
+	//return energy
+	return  total_dev;
+	//return  total_dev/All_DC_lines_.size();
 
 }//end of compute_dcscore
 

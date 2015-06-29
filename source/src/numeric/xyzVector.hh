@@ -1221,8 +1221,7 @@ public: // Methods
 			( x_ * v.y_ ) - ( y_ * v.x_ )
 		);
 	}
-
-
+	
 	/// @brief Cross product
 	friend
 	inline
@@ -1448,6 +1447,80 @@ public: // Methods
 		return sin_of( a - b, c - b );
 	}
 
+	// AMW: for md code
+	// TODO: figure out what this is in fundamental vector operations
+	friend
+	inline
+	xyzVector
+	update_operation( xyzVector const & a, xyzVector const & b )
+	{
+		return xyzVector(
+						   a.y_ * a.y_ * b.x_
+						 + a.z_ * a.z_ * b.x_
+						 - a.x_ * a.y_ * b.y_
+						 - a.x_ * a.z_ * b.z_,
+						 
+						   a.z_ * a.z_ * b.y_
+						 + a.x_ * a.x_ * b.y_
+						 - a.y_ * a.z_ * b.z_
+						 - a.y_ * a.x_ * b.x_,
+						 
+						   a.x_ * a.x_ * b.z_
+						 + a.y_ * a.y_ * b.z_
+						 - a.z_ * a.x_ * b.x_
+						 - a.z_ * a.y_ * b.y_
+						 
+						 );
+	}
+	
+	// AMW: for md code
+	// TODO: figure out what this is in fundamental vector operations
+	friend
+	inline
+	xyzVector
+	update_5way_operation(
+		xyzVector const & a,
+		xyzVector const & b,
+		xyzVector const & c,
+		xyzVector const & d,
+		xyzVector const & e
+	) {
+		return xyzVector(
+						 - a.y_ * b.y_ * c.x_
+						 - a.z_ * b.z_ * c.x_
+						 + a.x_ * b.y_ * c.y_
+						 + a.x_ * b.y_ * c.y_
+						 - b.x_ * a.y_ * c.y_
+						 + a.x_ * b.z_ * c.z_
+						 + a.x_ * b.z_ * c.z_
+						 - b.x_ * a.z_ * c.z_
+						 + d.z_ * e.y_
+						 - d.y_ * e.z_,
+						 
+						 - a.z_ * b.z_ * c.y_
+						 - a.x_ * b.x_ * c.y_
+						 + a.y_ * b.z_ * c.z_
+						 + a.y_ * b.z_ * c.z_
+						 - b.y_ * a.z_ * c.z_
+						 + a.y_ * b.x_ * c.x_
+						 + a.y_ * b.x_ * c.x_
+						 - b.y_ * a.x_ * c.x_
+						 + d.x_ * e.z_
+						 - d.z_ * e.x_,
+						 
+						 - a.x_ * b.x_ * c.z_
+						 - a.y_ * b.y_ * c.z_
+						 + a.z_ * b.x_ * c.x_
+						 + a.z_ * b.x_ * c.x_
+						 - b.z_ * a.x_ * c.x_
+						 + a.z_ * b.x_ * c.y_
+						 + a.z_ * b.x_ * c.y_
+						 - b.z_ * a.y_ * c.y_
+						 + d.y_ * e.x_
+						 - d.x_ * e.y_
+						 
+						 );
+	}
 
 public: // Properties: predicates
 

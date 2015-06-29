@@ -163,12 +163,12 @@ LigandMotifSearch::run(
 	if( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
 			Pose & pose2 = const_cast< Pose & >( pose );
-			Size const ligand_marker = 0;
+			//Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
 			for( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 					 ir != end_ir; ++ir ) {
-				load_build_position_data( **ir, output_filename_, pose2, ligand_marker );
+				load_build_position_data( **ir, output_filename_, pose2, LIGAND );
 				if( clear_bprots_ ) {
 					// I could avoid adding them in the first place, but that loading function is more complicated than just clearing and I might want them later
 					(*ir)->clear_rots();
@@ -220,12 +220,12 @@ LigandMotifSearch::run(
 	if( output_ ) {
 		if ( file_exists( output_filename_  ) ) {
 			Pose & pose2 = const_cast< Pose & >( pose );
-			Size const ligand_marker = 0;
+			//Size const ligand_marker = 0;
 			ms_tr << "Motif search has already run, we will get rotamers from output file" << std::endl;
 			//We already have the output file, let's just take the rotamers from there rather than searching again.
 			for( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 					 ir != end_ir; ++ir ) {
-				load_build_position_data( **ir, output_filename_, pose2, ligand_marker );
+				load_build_position_data( **ir, output_filename_, pose2, LIGAND );
 				if( clear_bprots_ ) {
 					// I could avoid adding them in the first place, but that loading function is more complicated than just clearing and I might want them later
 					(*ir)->clear_rots();

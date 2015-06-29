@@ -21,7 +21,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/canonical_sampling/DbTrajectoryReader.hh>
+#include <protocols/trajectory/DbTrajectoryReader.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -47,7 +47,7 @@ using core::pose::Pose;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
 using protocols::loops::loop_rmsd;
-using protocols::canonical_sampling::DbTrajectoryReader;
+using protocols::trajectory::DbTrajectoryReader;
 using utility::vector1;
 
 // Options {{{1

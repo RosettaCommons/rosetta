@@ -2054,7 +2054,71 @@ find_sheet(
 
 	return 0; // these strands cannot be in one sheet
 } //find_sheet
+	
+std::pair< vector<Size >, vector<Size > >
+query_begin_end(
+	StructureID struct_id,
+	sessionOP db_session,
+	Size sheet_id
+) {
 
+	string select_string =
+	"SELECT\n"
+	"	residue_begin \n"
+	"FROM\n"
+	"	sheet AS sh, \n"
+	"	secondary_structure_segments AS sss \n"
+	"WHERE\n"
+	"	(sh.struct_id = ?) \n"
+	"	AND (sh.struct_id	=	sss.struct_id) \n"
+	"	AND (sh.segment_id	=	sss.segment_id) \n"
+	"	AND (sh.sheet_id = ?) ;";
+	
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	select_statement.bind(2,sheet_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+	
+	vector<Size> vector_of_residue_begin;
+	vector_of_residue_begin.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+	while(res.next())
+	{
+		Size residue_begin;
+		res >> residue_begin;
+		vector_of_residue_begin.push_back(residue_begin);
+	}
+	
+	string select_string_2 =
+	"SELECT\n"
+	"	residue_end \n"
+	"FROM\n"
+	"	sheet AS sh, \n"
+	"	secondary_structure_segments AS sss \n"
+	"WHERE\n"
+	"	(sh.struct_id = ?) \n"
+	"	AND (sh.struct_id	=	sss.struct_id) \n"
+	"	AND (sh.segment_id	=	sss.segment_id) \n"
+	"	AND (sh.sheet_id = ?) ;";
+	
+	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2,	db_session));
+	select_statement_2.bind(1,struct_id);
+	select_statement_2.bind(2,sheet_id);
+	result result_end(basic::database::safely_read_from_database(select_statement_2));
+	
+	vector<Size> vector_of_residue_end;
+	vector_of_residue_end.clear();	//	Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+	while(result_end.next())
+	{
+		Size residue_end;
+		result_end >> residue_end;
+		vector_of_residue_end.push_back(residue_end);
+	}
+	
+	std::pair< vector<Size>, vector<Size > > ret;
+	ret.first  = vector_of_residue_begin;
+	ret.second = vector_of_residue_end;
+	return ret;//std::make_pair( vector_of_residue_begin, vector_of_residue_end );
+}
 
 //get_all_residues_in_this_sheet
 vector<Size>
@@ -2063,7 +2127,7 @@ get_all_residues_in_this_sheet(
 	sessionOP db_session,
 	Size sheet_id)
 {
-	string select_string =
+	/*string select_string =
 	"SELECT\n"
 	"	residue_begin \n"
 	"FROM\n"
@@ -2114,6 +2178,11 @@ get_all_residues_in_this_sheet(
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
 	}
+	*/
+	
+	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
+	vector<Size> vector_of_residue_begin = pair.first;
+	vector<Size> vector_of_residue_end = pair.second;
 
 	vector<Size> vector_of_all_residues;
 	for(Size i=0; i<vector_of_residue_begin.size(); i++ )
@@ -2125,7 +2194,6 @@ get_all_residues_in_this_sheet(
 	}
 	return vector_of_all_residues;
 } //get_all_residues_in_this_sheet
-
 
 //get_all_strands_in_sheet_i
 //Select all strand segments reported by the secondary_structure_segments and save them in a vector
@@ -2433,7 +2501,7 @@ get_central_residues_in_this_sheet(
 	sessionOP db_session,
 	Size sheet_id)
 {
-	
+	/*
 	
 	string select_string =
 	"SELECT\n"
@@ -2486,6 +2554,10 @@ get_central_residues_in_this_sheet(
 		result_end >> residue_end;
 		vector_of_residue_end.push_back(residue_end);
 	}
+	 */
+	std::pair< vector<Size>, vector<Size> > pair = query_begin_end( struct_id, db_session, sheet_id );
+	vector< Size > vector_of_residue_begin = pair.first;
+	vector< Size > vector_of_residue_end = pair.second;
 
 	vector<Size> vector_of_cen_residues;
 	for(Size i=0; i<vector_of_residue_begin.size(); i++ )

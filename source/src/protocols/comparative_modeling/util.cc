@@ -36,7 +36,8 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/ScoringSchemeFactory.hh>
+#include <core/id/SequenceMapping.hh>
+#include <core/sequence/SequenceAlignment.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -59,7 +60,10 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/sequence/Aligner.hh>
+#include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.hh>
+#include <core/sequence/SimpleScoringScheme.hh>
+#include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <numeric/random/random.hh>
 
@@ -76,6 +80,79 @@ using std::string;
 
 static thread_local basic::Tracer tr( "protocols.comparative_modeling.util" );
 
+core::id::SequenceMapping get_qt_mapping_general(
+	core::pose::Pose const & query_pose,
+	core::sequence::SequenceAlignment const & align,
+	core::pose::Pose const & template_pose,
+	core::Size const query_index,
+	core::Size const template_index
+) {
+	// put checks here to make sure that the template pose and the template
+	// pose in the alignment file match up!
+	using namespace core::id;
+	using namespace core::sequence;
+	
+	SequenceOP query_sequence( new Sequence(
+		align.sequence( 1 )->ungapped_sequence(),
+		align.sequence( 1 )->id(),
+		align.sequence( 1 )->start()
+	) );
+	
+	SequenceOP aligned_template(
+								align.sequence(template_index)->clone()
+								);
+	
+	SequenceOP t_align_seq( new Sequence(
+										 aligned_template->ungapped_sequence(),
+										 aligned_template->id() + "_align_seq",
+										 aligned_template->start()
+										 ) );
+	
+	SequenceOP t_pdb_seq( new Sequence (
+										template_pose.sequence(),
+										aligned_template->id() + "_pdb_seq",
+										1
+										) );
+	
+	// construct an intermediate alignment of the sequence from the alignment
+	// to the sequence in the PDB file.
+	SWAligner sw_align;
+	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -100, 0 ) );
+	
+	tr.Debug << "query sequence         : " << query_pose.sequence() << std::endl;
+	tr.Debug << "query sequence         : " << (*query_sequence) << std::endl;
+	tr.Debug << "aligned_template       : " << (*aligned_template) << std::endl;
+	tr.Debug << "template_sequence (aln): " << (*t_align_seq) << std::endl;
+	tr.Debug << "template_sequence (pdb): " << (*t_pdb_seq) << std::endl;
+	
+	SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
+	
+	if ( intermediate.identities() != intermediate.length() ) {
+		tr.Warning << "Error: potential mismatch between sequence from alignment ";
+		tr.Warning << " and sequence from PDB!" << std::endl;
+		tr.Warning << "alignment: " << std::endl << intermediate
+		<< std::endl;
+	}
+	
+	SequenceMapping query_to_fullseq = align.sequence_mapping( query_index, template_index );
+	tr.Debug << "Query:    " << *align.sequence( query_index ) << std::endl;
+	tr.Debug << "Template: " << *align.sequence( template_index ) << std::endl;
+	tr.Debug << "Original Mapping:" <<  query_index << "-->" << template_index
+	<<  std::endl;
+	query_to_fullseq.show( tr.Debug );
+	
+	SequenceMapping intermed_map = intermediate.sequence_mapping( 1, 2 );
+	
+	// final mapping is the mapping from query to the template PDB sequence,
+	// rather then the direct template sequence.
+	SequenceMapping query_to_pdbseq = core::sequence::transitive_map( query_to_fullseq, intermed_map );
+	tr.Debug << "Transitive Map" << std::endl;
+	query_to_pdbseq.show( tr.Debug );
+	
+	return query_to_pdbseq;
+
+}
+	
 /// @detail The premise underlying this tortuous method is simple--
 /// identify aligned/unaligned regions in a sequence alignment with
 /// the constraint that each region has a certain minimum length.

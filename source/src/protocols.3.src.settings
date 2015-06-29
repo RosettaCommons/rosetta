@@ -31,7 +31,6 @@ sources = {
 		"BranchAngleOptimizer",
 	],
 	"protocols/canonical_sampling": [
-		"DbTrajectoryReader",
 		"DbTrajectoryRecorder",
 		"AsyncMPITemperingBase",
 		"BiasEnergy",
@@ -81,7 +80,6 @@ sources = {
 	],
 	"protocols/design_opt": [
 		"GreedyOptMutationMover",
-		"ParetoOptMutationMover",
 		"PointMutationCalculator",
 	],
 	"protocols/electron_density": [
@@ -451,7 +449,6 @@ sources = {
 		"PseudocontactShiftEnergy",
 	],
 	"protocols/scoring/methods/pcs2": [
-		"GridSearchIterator",
 		"GridSearchIteratorCA",
 		"PcsDataCenter",
 		"PcsDataCenterManager",

@@ -12,6 +12,7 @@
 /// @author James Thompson
 
 #include <protocols/comparative_modeling/ExtraThreadingMover.hh>
+#include <protocols/comparative_modeling/util.hh>
 
 #include <core/types.hh>
 
@@ -89,73 +90,7 @@ core::sequence::SequenceAlignment ExtraThreadingMover::alignment() {
 core::id::SequenceMapping ExtraThreadingMover::get_qt_mapping(
 	core::pose::Pose const & query_pose
 ) const {
-	// put checks here to make sure that the template pose and the template
-	// pose in the alignment file match up!
-	using namespace core::id;
-	using namespace core::sequence;
-
-	SequenceOP query_sequence( new Sequence(
-			align_.sequence( 1 )->ungapped_sequence(),
-			align_.sequence( 1 )->id(),
-			align_.sequence( 1 )->start()
-		) );
-
-	SequenceOP aligned_template(
-		align_.sequence(template_index_)->clone()
-	);
-
-	SequenceOP t_align_seq( new Sequence(
-			aligned_template->ungapped_sequence(),
-			aligned_template->id() + "_align_seq",
-			aligned_template->start()
-		) );
-
-	SequenceOP t_pdb_seq( new Sequence (
-			template_pose_.sequence(),
-			aligned_template->id() + "_pdb_seq",
-			1
-		) );
-
-	// construct an intermediate alignment of the sequence from the alignment
-	// to the sequence in the PDB file.
-	SWAligner sw_align;
-	ScoringSchemeOP ss( new SimpleScoringScheme( 120, 0, -100, 0 ) );
-
-	tr.Debug << "query sequence         : " << query_pose.sequence() << std::endl;
-	tr.Debug << "query sequence         : " << (*query_sequence) << std::endl;
-	tr.Debug << "aligned_template       : " << (*aligned_template) << std::endl;
-	tr.Debug << "template_sequence (aln): " << (*t_align_seq) << std::endl;
-	tr.Debug << "template_sequence (pdb): " << (*t_pdb_seq) << std::endl;
-
-	SequenceAlignment intermediate = sw_align.align( t_align_seq, t_pdb_seq, ss );
-
-	if ( intermediate.identities() != intermediate.length() ) {
-		tr.Warning << "Error: potential mismatch between sequence from alignment ";
-		tr.Warning << " and sequence from PDB!" << std::endl;
-		tr.Warning << "alignment: " << std::endl << intermediate
-			<< std::endl;
-	}
-
-	SequenceMapping query_to_fullseq = align_.sequence_mapping(
-		query_index_, template_index_
-	);
-	tr.Debug << "Query:    " << *align_.sequence( query_index_ ) << std::endl;
-	tr.Debug << "Template: " << *align_.sequence( template_index_ ) << std::endl;
-	tr.Debug << "Original Mapping:" <<  query_index_ << "-->" << template_index_
-		<<  std::endl;
-	query_to_fullseq.show( tr.Debug );
-
-	SequenceMapping intermed_map = intermediate.sequence_mapping( 1, 2 );
-
-	// final mapping is the mapping from query to the template PDB sequence,
-	// rather then the direct template sequence.
-	SequenceMapping query_to_pdbseq = core::sequence::transitive_map(
-		query_to_fullseq, intermed_map
-	);
-	tr.Debug << "Transitive Map" << std::endl;
-	query_to_pdbseq.show( tr.Debug );
-
-	return query_to_pdbseq;
+	return get_qt_mapping_general( query_pose, align_, template_pose_, query_index_, template_index_ );
 }
 
 void ExtraThreadingMover::apply(

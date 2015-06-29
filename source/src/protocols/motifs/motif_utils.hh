@@ -49,6 +49,11 @@
 namespace protocols {
 namespace motifs {
 
+// If ever there are more than two states, use enum
+core::Size const NO_LIGAND = 0;
+core::Size const LIGAND = 1;
+
+	
 // This group of functions loads the motifs from external files
 SingleMotifOP
 single_motif_from_filename(
@@ -192,15 +197,8 @@ void
 load_build_position_data(
 	BuildPosition & bp,
 	std::string const & filename,
-	core::pose::Pose & pose
-);
-
-void
-load_build_position_data(
-	BuildPosition & bp,
-	std::string const & filename,
 	core::pose::Pose & pose,
-	core::Size const ligand_marker
+	core::Size const ligand_marker = NO_LIGAND
 );
 
 utility::vector1< utility::file::FileName >

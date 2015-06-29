@@ -1320,7 +1320,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 		}
 	}
 
-	TR << "Making hotspot constraints... "<< std::endl;
+	TR << "Making hotspot constraints..." << std::endl;
   //TR << pose.total_residue() << " residues" << std::endl;
 	//Size scaffold_seqpos(0);  // unused ~Labonte
 	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {
@@ -1493,7 +1493,7 @@ HotspotStubSet::add_hotspot_constraints_to_wholepose(
 		}
 	}
 
-	TR << "Making hotspot constraints" << std::endl;
+	TR << "Making hotspot constraints..." << std::endl;
   //TR<< pose.total_residue() << " residues" << std::endl;
 	utility::vector1< core::scoring::constraints::ConstraintCOP > ambig_csts;
 	//Size scaffold_seqpos(0);

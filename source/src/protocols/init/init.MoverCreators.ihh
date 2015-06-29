@@ -67,7 +67,6 @@
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
-#include <protocols/design_opt/ParetoOptMutationMoverCreator.hh>
 
 #include <protocols/dna/DesignProteinBackboneAroundDNACreator.hh>
 #include <protocols/dna/DnaInterfaceMinMoverCreator.hh>

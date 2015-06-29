@@ -302,13 +302,13 @@ xyzStripeHash::clash_amount( Vec const & v_in ) const {
 				if( d2 < grid_size2_ ) {
 					cout << grid_size_-sqrt(d2) << " " << grid_size2_ << " " << a2.resi() << " " << a2.atomno() << " " <<  endl;
 					clash_amount = numeric::min(d2,clash_amount);
+				}
 			}
 		}
 	}
- }
 	clash_amount = grid_size_ - sqrt(clash_amount);
 	return clash_amount;
- }
+}
 
 bool
 xyzStripeHash::clash_not_resid( Vec const & v_in, int const & resid, int const & resid2 ) const {

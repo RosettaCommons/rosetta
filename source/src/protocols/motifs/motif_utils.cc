@@ -309,21 +309,21 @@ add_motif_bb_constraints(
 
 	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
-																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( "CA" ),
-																											fx1 ) ) ) );
+		core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( "CA" ),
+		fx1 ) ) ) );
 
 	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
-																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( "C" ),
-																											fx2 ) ) ) );
+		core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( "C" ),
+		fx2 ) ) ) );
 
 	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
-																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( "N" ),
-																											fx3 ) ) ) );
+		core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( "N" ),
+		fx3 ) ) ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
 	if( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
@@ -334,15 +334,15 @@ add_motif_bb_constraints(
 
 		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
-																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( index2 ),
-																											fx ) ) ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			inv_rotamer.xyz( index2 ),
+			fx ) ) ) );
 	} else {
 		FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 		cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
-																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( "CB" ),
-																											fx ) ) ) );
+			core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
+			inv_rotamer.xyz( "CB" ),
+			fx ) ) ) );
 	}
 
 	return;
@@ -385,21 +385,21 @@ add_motif_sc_constraints(
 
 	FuncOP fx1( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
-																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( index1 ),
-																											fx1 ) ) ) );
+		core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( index1 ),
+		fx1 ) ) ) );
 
 	FuncOP fx2( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
-																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( index2 ),
-																											fx2 ) ) ) );
+		core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( index2 ),
+		fx2 ) ) ) );
 
 	FuncOP fx3( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 	cst_set->add_constraint( ConstraintCOP( ConstraintOP( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
-																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
-																											inv_rotamer.xyz( index3 ),
-																											fx3 ) ) ) );
+		core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
+		inv_rotamer.xyz( index3 ),
+		fx3 ) ) ) );
 
 	return;
 }
@@ -915,14 +915,12 @@ get_motif_build_position_defs_user()
 	return motif_build_positions;
 }
 
-//Ligand motif load_build_position_data
-//This is a pretty stupid, hacky way to fix the problem.  I should just fix the other load_build_position_data with an _optional_ ligand_marker which allows me to divert ligand motifs into conditional statements.
 void
 load_build_position_data(
 	BuildPosition & bp,
 	std::string const & filename,
 	core::pose::Pose & pose,
-	core::Size const
+	core::Size const ligand_marker
 )
 {
 	bool keep_one_motif( true );
@@ -942,14 +940,17 @@ load_build_position_data(
 						data_file >> key3_in;
 						break;
 					} else if( key2_in == "SINGLE" ) {
-						SingleMotifOP new_motif = single_ligand_motif_from_stream( data_file );
+						
+						SingleMotifOP new_motif = ( ligand_marker == LIGAND ) ?
+								single_ligand_motif_from_stream( data_file ) :
+								single_motif_from_stream( data_file );
+						
 						if( ! keep_one_motif ) {
-							bp.keep_motif( *new_motif );//best_motifs()->add_to_library( new_motif );
+							bp.keep_motif( *new_motif );
 						} else {
 							single_motifs[ new_motif->remark() ] = new_motif;
 						}
 					} else if( key2_in == "RESIDUE" ) {
-					//	std::cout << "Pos2 id: " << key_in << std::endl;
 						core::conformation::ResidueOP rsd;
 						rsd = ( single_residue_from_stream( data_file )->clone() );
 						rsd->seqpos( bp.seqpos() );
@@ -966,75 +967,7 @@ load_build_position_data(
 			}
 		}
 			if( keep_one_motif ) {
-				for( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ),
-						end( single_motifs.end()); mot != end; ++mot ) {
-					bp.keep_motif( *(mot->second) );
-				}
-			}
-		} else {
-			mu_tr << "This file doesn't have any positions in it" << std::endl;
-		}
-}
-
-void
-load_build_position_data(
-	BuildPosition & bp,
-	std::string const & filename,
-	core::pose::Pose & pose
-)
-{
-	bool keep_one_motif( true );
-	std::map< std::string, SingleMotifOP > single_motifs;
-	utility::io::izstream data_file( filename.c_str() );
-	std::string key_in;
-	data_file >> key_in;
-	//std::cout << "Pos id: " << key_in << std::endl;
-	if( key_in == "POSITION" ) {
-		while( data_file >> key_in ) {
-		//		std::string seqpos = key_in;
-			//data_file >> seqpos;
-		//		std::cout << "ASeqpos: " << seqpos << std::endl;
-			std::stringstream bpseqpos;
-			bpseqpos << bp.seqpos();
-			if( key_in == bpseqpos.str() ) {
-				//std::cout << "SEQPOS: " << bpseqpos.str() << std::endl;
-				//std::cout << "SEQPOS: " << key_in << std::endl;
-				std::string key2_in;
-				while( data_file >> key2_in ) {
-					//std::cout << "Pos2 id: " << key_in << std::endl;
-					if( key2_in == "POSITION" ) {
-						std::string key3_in;
-						data_file >> key3_in;
-				//		std::cout << "READY TO BREAK ON: " << key2_in << " " << key3_in << std::endl;
-						break;
-					} else if( key2_in == "SINGLE" ) {
-						SingleMotifOP new_motif = single_motif_from_stream( data_file );
-						if( ! keep_one_motif ) {
-							bp.keep_motif( *new_motif );//best_motifs()->add_to_library( new_motif );
-						} else {
-							single_motifs[ new_motif->remark() ] = new_motif;
-						}
-					} else if( key2_in == "RESIDUE" ) {
-					//	std::cout << "Pos2 id: " << key_in << std::endl;
-						core::conformation::ResidueOP rsd;
-						rsd = ( single_residue_from_stream( data_file )->clone() );
-						rsd->seqpos( bp.seqpos() );
-						//core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd->type(), *rsd, pose.conformation() ) );
-						utility::vector1<core::Real> mainchains( pose.residue(bp.seqpos()).mainchain_torsions() );
-						rsd->mainchain_torsions( mainchains );
-						set_chi_according_to_coordinates( *rsd );
-						rsd->copy_residue_connections( pose.residue(bp.seqpos()) );
-						bp.keep_rotamer( *rsd );
-					}
-			}
-			break;
-			} else {
-					continue;
-			}
-		}
-			if( keep_one_motif ) {
-				for( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ),
-						end( single_motifs.end()); mot != end; ++mot ) {
+				for( std::map< std::string, SingleMotifOP >::iterator mot( single_motifs.begin() ), end( single_motifs.end()); mot != end; ++mot ) {
 					bp.keep_motif( *(mot->second) );
 				}
 			}

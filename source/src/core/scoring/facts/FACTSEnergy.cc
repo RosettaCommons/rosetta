@@ -290,16 +290,16 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 
 						Real E_elec, E_solv_pair, E_solv_self;
 						potential_.evaluate_polar_otf_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
-																									*set2.rotamer( ll_rot_id ), facts_info2.residue_info( ll_rot_id ),
-																									E_elec, E_solv_self, E_solv_pair
-																									);
+							*set2.rotamer( ll_rot_id ), facts_info2.residue_info( ll_rot_id ),
+							E_elec, E_solv_self, E_solv_pair
+						);
 						Real const E_sasa
 							( potential_.evaluate_nonpolar_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
-																										 *set2.rotamer( ll_rot_id ) ) );
+								*set2.rotamer( ll_rot_id ) ) );
 
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ facts_elec ] * E_elec
-																																											 + weights[ facts_solv ] * (E_solv_self + E_solv_pair)
-																																											 + weights[ facts_sasa ] * E_sasa );
+								+ weights[ facts_solv ] * (E_solv_self + E_solv_pair)
+								+ weights[ facts_sasa ] * E_sasa );
 					}
 				}
 			}
