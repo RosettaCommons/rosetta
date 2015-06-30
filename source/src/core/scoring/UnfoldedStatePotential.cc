@@ -141,7 +141,6 @@ UnfoldedStatePotential::read_database_file( std::string const & filename ) {
 		// add tlc/emap pair to map
 		unfolded_energy_[ tlc ] = emap;
 	}
-
 }
 
 scoring::EnergyMap
@@ -154,8 +153,9 @@ void
 UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_name3, scoring::EnergyMap & e ) const {
 
 	// the energies stored in the database file aren't probabilities; don't take the log of them, that doesn't make sense!
-	e = ( unfolded_energy_.find( aa_name3 ) )->second;
-
+	std::map< std::string, core::scoring::EnergyMap >::const_iterator i( unfolded_energy_.find( aa_name3 ) );
+	e = i->second;
+	debug_assert(i->first == aa_name3) // assert that the name3 is in the map, if this fails, you are missing params for that residue type
 }
 
 
@@ -179,4 +179,3 @@ UnfoldedStatePotential::pose_raw_unfolded_state_energymap( pose::Pose const & po
 
 } // namespace scoring
 } // namespace core
-

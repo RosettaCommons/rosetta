@@ -169,4 +169,3 @@ UnfoldedStateEnergy::version() const
 } // methods
 } // scoring
 } // core
-
