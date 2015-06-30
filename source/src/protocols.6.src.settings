@@ -119,6 +119,9 @@ sources = {
 		"PlaceProbeMover",
 		"PlaceSurfaceProbe",
 	],
+	"protocols/indel": [
+		"IndelOptimizationMover",
+	],
 	"protocols/match": [
 		"BumpGrid",
 		"Hit",
