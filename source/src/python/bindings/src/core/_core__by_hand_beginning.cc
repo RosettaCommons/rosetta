@@ -23,6 +23,7 @@
 //#include "core/coarse/CoarseEtable.hh"
 
 // for AP wrapping
+#include <core/kinematics/Edge.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
