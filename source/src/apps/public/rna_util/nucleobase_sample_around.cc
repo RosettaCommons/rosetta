@@ -87,6 +87,7 @@ OPT_KEY( Boolean, sample_water )
 OPT_KEY( Boolean, sample_phosphate )
 OPT_KEY( Boolean, center_on_OP2 )
 OPT_KEY( Boolean, sample_another_adenosine )
+OPT_KEY( Boolean, just_z )
 OPT_KEY( Boolean, just_xy )
 OPT_KEY( Boolean, quick_score )
 OPT_KEY( String, copy_adenosine_adenosine_file )
@@ -173,7 +174,7 @@ nucleobase_probe_score_test()
 	if ( sample_another_adenosine_ || sample_phosphate_ ) add_another_virtual_res(pose); // this is the coordinate system for the next base.
 
 	if ( sample_water_ ) {
-		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "TP3" ) );
+		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "HOH" ) );
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *(rsd_type_list[1]) ) );
 	} else if ( sample_another_adenosine_ ){
 		new_res = pose.residue(1).clone();
@@ -291,10 +292,12 @@ nucleobase_probe_score_test()
 	SilentFileData silent_file_data;
 	utility::io::ozstream out;
 
-	if ( !option[ just_xy ]() ){
+	if ( !option[ just_xy ]() || option[ just_z ]() ){
 		//////////////////////////////////////////////
 		std::cout << "Doing Z scan..." << std::endl;
 		out.open( "score_z.table" );
+		Size count( 0 );
+		std::string const silent_file( option[ out::file::silent ]() );
 		for (int i = -box_bins; i <= box_bins; ++i) {
 			Real const x = 0.0;
 			Real const y = 0.0;
@@ -302,9 +305,15 @@ nucleobase_probe_score_test()
 			jump.set_translation( Vector( x, y, z ) ) ;
 			pose.set_jump( probe_jump_num, jump );
 			out << z << ' ' << centroid_dist( pose, option[ sample_another_adenosine ] )  << ' ' << do_scoring( pose, scorefxn, sample_rotations, probe_jump_num ) << std::endl;
+
+			std::string const out_file_tag = "S_"+ObjexxFCL::lead_zero_string_of( 6, count );
+			BinarySilentStruct s( pose, out_file_tag );
+			s.add_energy( "z", z );
+			silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 		}
 		out.close();
 	}
+	if ( option[ just_z ]() ) return;
 
 
 	//////////////////////////////////////////////
@@ -436,6 +445,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( sample_phosphate, "use a phosphate (mimicking an RNA terminal phosphate) as the 'probe'", false );
 		NEW_OPT( center_on_OP2, "Define coordinate frame on phosphate to be centered on OP2, not on P", false );
 		NEW_OPT( just_xy, "Just scan x, y at z=0", false );
+		NEW_OPT( just_z, "Just scan z at x,y=0", false );
 		NEW_OPT( quick_score, "alternative mode for checking geom_sol, etc.", false );
 		NEW_OPT( copy_adenosine_adenosine_file, "get rigid body relation between two adenosines from file", "" );
 		NEW_OPT( xyz_increment, "input parameter", 0.2 );
@@ -451,8 +461,8 @@ main( int argc, char * argv [] )
 		core::init::init(argc, argv);
 
 		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_RIBOSE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
-		option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
+		//option[ OptionKeys::chemical::patch_selectors ].push_back( "VIRTUAL_BASE" );
+		//option[ OptionKeys::chemical::patch_selectors ].push_back( "TERMINAL_PHOSPHATE" );
 
 		protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {

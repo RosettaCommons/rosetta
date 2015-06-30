@@ -76,10 +76,22 @@
 //
 //    -- rhiju, 2014
 //
+// Extension to penalize desolvation of waters stacked on nucleobase ('sol_stack') and
+//  longer-range water-mediated stacking ('lr_stack') added in may 2015.
+//
+// Parameters set to match water potential-of-mean-force around adenosine, estimated from MD (TIP3P) simulations and
+//  compared to rosetta calculations with 'nucleobase_sample_around', available at:
+//
+//  https://drive.google.com/file/d/0By0BpYZBGuK-R2dhcEpKN0E4d28/view
+//
+//    -- rhiju, 2015
+//
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 static thread_local basic::Tracer TR( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
 using namespace core::chemical::rna;
+using namespace basic::options;
+using namespace basic::options::OptionKeys::score;
 
 namespace core {
 namespace scoring {
@@ -101,6 +113,10 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 	sts.push_back( fa_stack_lower ); // just lower residue, used by free_base entropy estimator
 	sts.push_back( fa_stack_upper ); // just upper residue, used by free_base entropy estimator
 	sts.push_back( fa_stack_aro  );  // just component where occluding atom is aromatic.
+
+	sts.push_back( fa_stack_ext );
+	sts.push_back( fa_stack_sol );
+	sts.push_back( fa_stack_lr  );
 	return sts;
 }
 
@@ -109,11 +125,18 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 RNA_FullAtomStackingEnergy::RNA_FullAtomStackingEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new RNA_FullAtomStackingEnergyCreator ) ),
 	//Parameters are totally arbitrary and made up!
-	prefactor_ ( 0.2 ),
-	full_stack_cutoff_ ( 4.0 ), //Encompass next base stack
-	dist_cutoff_ ( 6.0 ),       // Do not go to next-nearest base stack!
-	dist_cutoff2_( dist_cutoff_ * dist_cutoff_ ),
-	base_base_only_(	basic::options::option[ basic::options::OptionKeys::score::fa_stack_base_base_only ]() /* true */ )
+	prefactor_    ( -0.2 ),
+	stack_cutoff_ ( 4.0 ), //Encompass next base stack
+	dist_cutoff_  ( 6.0 ), //  (Do not go to next-nearest base stack!)
+	/////////////////////////////////////////////////
+	sol_prefactor_      ( option[ fa_stack_sol_prefactor ]()    /*+0.1*/ ), // Penalize displacement of water that was stacked
+	sol_stack_cutoff_   ( option[ fa_stack_sol_stack_cutoff ]() /* 5.5*/ ), //
+	sol_dist_cutoff_    ( option[ fa_stack_sol_dist_cutoff ]()  /* 6.5*/ ), // how far to penalize displacement
+	/////////////////////////////////////////////////
+	lr_prefactor_       ( option[ fa_stack_lr_prefactor ]()    /*-0.05*/ ), // water-mediated stacking
+	lr_stack_cutoff_    ( option[ fa_stack_lr_stack_cutoff ]() /*6.5*/   ), //
+	lr_dist_cutoff_     ( option[ fa_stack_lr_dist_cutoff ]()  /*7.5*/  ),//
+	base_base_only_(	option[ fa_stack_base_base_only ]() /* true */ )
 {}
 
 //clone
@@ -193,10 +216,11 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 ) const
 {
 	Real score_aro1( 0.0 ), score_aro2( 0.0 );
-	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1 );
-	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
+	Real const score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, prefactor_, stack_cutoff_, dist_cutoff_ );
+	Real const score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, prefactor_, stack_cutoff_, dist_cutoff_ ) ;
 
   emap[ fa_stack ]       += score1 + score2;
+  emap[ fa_stack_ext ]   += score1 + score2;
   emap[ fa_stack_aro ]   += score_aro1 + score_aro2;
 
 	if( rsd1.seqpos() <= rsd2.seqpos() ) {
@@ -206,6 +230,16 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		emap[ fa_stack_lower ]  += score2;
 		emap[ fa_stack_upper ]  += score1;
 	}
+
+	Real const sol_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_);
+	Real const sol_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, sol_prefactor_, sol_stack_cutoff_, sol_dist_cutoff_ ) ;
+	emap[ fa_stack_sol ] += sol_score1 + sol_score2;
+	emap[ fa_stack_ext ] += sol_score1 + sol_score2;
+
+	Real const lr_score1 = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_);
+	Real const lr_score2 = residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2, lr_prefactor_, lr_stack_cutoff_, lr_dist_cutoff_ ) ;
+	emap[ fa_stack_lr  ] += lr_score1 + lr_score2;
+	emap[ fa_stack_ext ] += lr_score1 + lr_score2;
 
 	//	TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
@@ -217,7 +251,10 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
   conformation::Residue const & rsd1, // residue with nucleobase
 	conformation::Residue const & rsd2, // occluding residue
 	pose::Pose const & pose,
-	Real & score_aro
+	Real & score_aro,
+	Real     const & prefactor,
+	Distance const & stack_cutoff,
+	Distance const & dist_cutoff
 ) const
 {
 
@@ -237,6 +274,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
   // Loop over base heavy atoms.
   // If I want to generalize this to proteins, maybe could loop over "aromatic" atoms.
+	Real const dist_cutoff2( dist_cutoff * dist_cutoff );
   for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
 	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
@@ -259,15 +297,15 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
       Vector r = heavy_atom_j - heavy_atom_i;
       Real const dist2 = r.length_squared();
 
-      if ( dist2 < dist_cutoff2_ ) {
+      if ( dist2 < dist_cutoff2 ) {
 
-				//				Distance const dist = sqrt( dist2 );
-				Real const fa_stack_score = get_fa_stack_score( r, M_i );
+				Real const fa_stack_score = get_fa_stack_score( r, M_i, prefactor, stack_cutoff, dist_cutoff );
 				score += fa_stack_score;
 
 				if ( rsd1.atom_type( m ).is_aromatic() && rsd2.atom_type( n ).is_aromatic() ) score_aro += fa_stack_score;
 
       }
+
     }
   }
 
@@ -335,6 +373,8 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	// the neighbor/energy links
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 
+	Real const dist_cutoff2( dist_cutoff_ * dist_cutoff_ );
+
 	for ( graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
 			itere = energy_graph.get_node( i )->const_edge_list_end();
@@ -360,11 +400,17 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 			Vector r = heavy_atom_j - heavy_atom_i;
 			Real const dist2 = r.length_squared();
 
-			if ( dist2 < dist_cutoff2_ ) { //dist_cutoff2=dist_cutoff*dist_cutoff. Energy fade from max to 0 between full_stack_cutoff_ and dist_cutoff_
+			///////////////////////////////////////////////////////////////////////////////////
+			///////////////////////////////////////////////////////////////////////////////////
+			// Must update following to handle fa_stack_sol & fa_stack_ext derivatives
+			///////////////////////////////////////////////////////////////////////////////////
+			///////////////////////////////////////////////////////////////////////////////////
+
+			if ( dist2 < dist_cutoff2 ) { //dist_cutoff2=dist_cutoff*dist_cutoff. Energy fade from max to 0 between stack_cutoff_ and dist_cutoff_
 
 				if ( check_base_base_OK( rsd1, rsd2, m, n ) ) {
 
-					Vector const deriv = get_fa_stack_deriv( r, M_i );
+					Vector const deriv = get_fa_stack_deriv( r, M_i /* must update to take in cutoffs */ );
 
 					Vector force_vector_i = weights[ fa_stack ] * deriv;
 					force_vector_i += weights[ fa_stack_lower ] * deriv;
@@ -401,7 +447,9 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 //get_fa_stack_deriv evaluates the fa_stack_score between a pair of atoms. (r_vec is the vector between them, M_i is the coordinate matrix of one of the base)
 //This function is called by residue_pair_energy_one_way
 Real
-RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const M_i ) const
+RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const M_i,
+																								Real const prefactor,
+																								Distance const stack_cutoff, Distance const dist_cutoff) const
 {
 
   Vector const z_i = M_i.col_z();
@@ -410,17 +458,17 @@ RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
 
-  Real score  = -1.0 * prefactor_;
+  Real score  = prefactor;
 
   //Orientation dependence
   score *= cos_kappa * cos_kappa ;
 
-  Distance b = r - full_stack_cutoff_;
+  Distance b = r - stack_cutoff;
 
   //Just use a simple cubic spline to fade from 1 to 0,
   // and to force derivatives to be continuous.
   if ( b > 0.0 ) {
-    b /= ( dist_cutoff_ - full_stack_cutoff_ );
+    b /= ( dist_cutoff - stack_cutoff );
     Real const b2 = b*b;
     Real const b3 = b2*b;
     score *= ( 2 * b3 - 3 * b2 + 1 );
@@ -445,7 +493,6 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	//      dE/dy = dE/dr (y/r)   +   ( - y * z / r^3 ) ( dE/dcos(theta) )
 	//      dE/dz = dE/dr (z/r)   +   ( (r^2 - z^2) / r^3 ) ( dE/dcos(theta) )
 
-
   Vector const x_i = M_i.col_x();
   Vector const y_i = M_i.col_y();
   Vector const z_i = M_i.col_z();
@@ -459,13 +506,13 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	/////////////////////////////////
 	//dE_dcoskappa
 	/////////////////////////////////
-  Real dE_dcoskappa  = -1.0 * prefactor_;
+  Real dE_dcoskappa  = prefactor_;
 
   //Orientation dependence
   dE_dcoskappa *= 2 * cos_kappa ;
 
-  Distance b = r - full_stack_cutoff_;
-	Distance distance_scale = ( dist_cutoff_ - full_stack_cutoff_ );
+  Distance b = r - stack_cutoff_;
+	Distance distance_scale = ( dist_cutoff_ - stack_cutoff_ );
 	b /= distance_scale;
 
 	Real b2( 0.0 ), b3( 0.0 );
@@ -480,7 +527,7 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 	/////////////////////////////////
 	//dE_dr
 	/////////////////////////////////
-  Real dE_dr  = -1.0 * prefactor_;
+  Real dE_dr  = prefactor_;
 
   //Orientation dependence
   dE_dr *= cos_kappa * cos_kappa ;
@@ -522,7 +569,8 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
 Distance
 RNA_FullAtomStackingEnergy::atomic_interaction_cutoff() const
 {
-  return dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
+	//  return dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
+  return lr_dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
 }
 
 core::Size

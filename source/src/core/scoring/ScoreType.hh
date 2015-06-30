@@ -192,6 +192,9 @@ enum ScoreType {
 	fa_stack_lower,    // just lower residue, used by free_base entropy estimator
 	fa_stack_upper,    // just upper residue, used by free_base entropy estimator
 	fa_stack_aro,      // just component where occluding atom is aromatic.
+	fa_stack_ext,      // extended nucleobase stacking interaction = fa_stack + fa_stack_sol + fa_stack_lr
+	fa_stack_sol,      // penalty for displacing first layer of water stacked on nucleobase
+	fa_stack_lr,       // 'water-mediated' stacking
 
 	stack_elec,        // distance dependent dielectric between base atoms (attenuated parallel to plane)
 	stack_elec_base_base,

@@ -43,9 +43,7 @@ public:
 
 public:
 
-
 	RNA_FullAtomStackingEnergy();
-
 
 	/// clone
 	virtual
@@ -155,7 +153,9 @@ private:
 	//	get_fa_stack_score( Distance const dist, Real const cos_kappa ) const;
 
 	Real
-	get_fa_stack_score( Vector const r_vec, Matrix const M_i ) const;
+	get_fa_stack_score( Vector const r_vec, Matrix const M_i,
+											Real const prefactor,
+											Distance const stack_cutoff, Distance const dist_cutoff) const;
 
 	Vector
 	get_fa_stack_deriv( Vector const r_vec, Matrix const M_i ) const;
@@ -165,7 +165,10 @@ private:
 															conformation::Residue const & rsd1,
 															conformation::Residue const & rsd2,
 															pose::Pose const & pose,
-															Real & score_aro
+															Real & score_aro,
+															Real     const & prefactor,
+															Distance const & stack_cutoff,
+															Distance const & dist_cutoff
 															) const;
 
 	bool
@@ -178,11 +181,18 @@ private:
 	core::Size version() const;
 
   Real const prefactor_;
-  Distance const full_stack_cutoff_;
+  Distance const stack_cutoff_;
   Distance const dist_cutoff_;
-  Real const dist_cutoff2_;
+
+  Real const sol_prefactor_;
+  Distance const sol_stack_cutoff_;
+  Distance const sol_dist_cutoff_;
+
+  Real const lr_prefactor_;
+  Distance const lr_stack_cutoff_;
+  Distance const lr_dist_cutoff_;
+
 	bool const base_base_only_;
-	//mutable boost::unordered_map< core::Size, core::Size> num_stacks_;
 
 };
 

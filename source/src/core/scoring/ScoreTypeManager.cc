@@ -390,6 +390,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_stack_lower"] = fa_stack_lower;
 	name2score_type_[ "fa_stack_upper"] = fa_stack_upper;
 	name2score_type_[ "fa_stack_aro"]   = fa_stack_aro;
+	name2score_type_[ "fa_stack_ext"]   = fa_stack_ext;
+	name2score_type_[ "fa_stack_sol"]   = fa_stack_sol;
+	name2score_type_[ "fa_stack_lr"]    = fa_stack_lr;
 
 	name2score_type_[ "stack_elec"] = stack_elec;
 	name2score_type_[ "stack_elec_base_base"] = stack_elec_base_base;
