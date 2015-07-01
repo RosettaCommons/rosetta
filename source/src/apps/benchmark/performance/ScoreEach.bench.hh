@@ -289,108 +289,108 @@ using namespace core::scoring;
 
 // So fast is it really worth benchmarking them?
 
-ScoreEachBenchmark Score_ref_("core.scoring.Score_1000000x_ref",ref,1000000);
-ScoreEachBenchmark Score_yhh_planarity_("core.scoring.Score_1000000x_yhh_planarity",yhh_planarity,1000000);
+ScoreEachBenchmark Score_ref_("core.scoring.Score_100000x_ref",ref,100000);
+ScoreEachBenchmark Score_yhh_planarity_("core.scoring.Score_10000x_yhh_planarity",yhh_planarity,10000);
 //centroid
-ScoreEachBenchmark Score_cbeta_("core.scoring.Score_100000x_cbeta",cbeta,100000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_env_("core.scoring.Score_5000000x_env",env,5000000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cbeta_("core.scoring.Score_10000x_cbeta",cbeta,10000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_env_("core.scoring.Score_5000x_env",env,5000,"test_in_cen.pdb",true);
 
 // really fast
-ScoreEachBenchmark Score_fa_pair_("core.scoring.Score_100000x_fa_pair",fa_pair,100000);
-ScoreEachBenchmark Score_fa_pair_aro_aro_("core.scoring.Score_100000x_fa_pair_aro_aro",fa_pair_aro_aro,100000);
-ScoreEachBenchmark Score_fa_pair_aro_pol_("core.scoring.Score_100000x_fa_pair_aro_pol",fa_pair_aro_pol,100000);
-ScoreEachBenchmark Score_fa_pair_pol_pol_("core.scoring.Score_100000x_fa_pair_pol_pol",fa_pair_pol_pol,100000);
-ScoreEachBenchmark Score_omega_("core.scoring.Score_100000x_omega",omega,100000);
-ScoreEachBenchmark Score_rama_("core.scoring.Score_100000x_rama",rama,100000);
-ScoreEachBenchmark Score_rama2b_("core.scoring.Score_100000x_rama2b",rama2b,100000);
+ScoreEachBenchmark Score_fa_pair_("core.scoring.Score_100x_fa_pair",fa_pair,100);
+ScoreEachBenchmark Score_fa_pair_aro_aro_("core.scoring.Score_100x_fa_pair_aro_aro",fa_pair_aro_aro,100);
+ScoreEachBenchmark Score_fa_pair_aro_pol_("core.scoring.Score_100x_fa_pair_aro_pol",fa_pair_aro_pol,100);
+ScoreEachBenchmark Score_fa_pair_pol_pol_("core.scoring.Score_100x_fa_pair_pol_pol",fa_pair_pol_pol,100);
+ScoreEachBenchmark Score_omega_("core.scoring.Score_10000x_omega",omega,10000);
+ScoreEachBenchmark Score_rama_("core.scoring.Score_10000x_rama",rama,10000);
+ScoreEachBenchmark Score_rama2b_("core.scoring.Score_10000x_rama2b",rama2b,10000);
 // not reduced
-ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_1000000x_p_aa_pp",p_aa_pp,1000000);
+ScoreEachBenchmark Score_p_aa_pp_("core.scoring.Score_1000x_p_aa_pp",p_aa_pp,1000);
 // readjusted
-ScoreEachBenchmark Score_p_aa_("core.scoring.Score_400000x_p_aa",p_aa,400000);
-ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_100000x_mm_lj_intra_rep",mm_lj_intra_rep,100000);
-ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_100000x_mm_lj_intra_atr",mm_lj_intra_atr,100000);
-ScoreEachBenchmark Score_unfolded_("core.scoring.Score_1000000x_unfolded",unfolded,1000000);
-ScoreEachBenchmark Score_e_pH_("core.scoring.Score_10000x_e_pH",e_pH,10000);
+ScoreEachBenchmark Score_p_aa_("core.scoring.Score_40000x_p_aa",p_aa,40000);
+ScoreEachBenchmark Score_mm_lj_intra_rep_("core.scoring.Score_1000x_mm_lj_intra_rep",mm_lj_intra_rep,1000);
+ScoreEachBenchmark Score_mm_lj_intra_atr_("core.scoring.Score_1000x_mm_lj_intra_atr",mm_lj_intra_atr,1000);
+ScoreEachBenchmark Score_unfolded_("core.scoring.Score_1000x_unfolded",unfolded,1000);
+ScoreEachBenchmark Score_e_pH_("core.scoring.Score_1000x_e_pH",e_pH,1000);
 //disulfides
-ScoreEachBenchmark Score_dslf_ss_dst_("core.scoring.Score_10000x_dslf_ss_dst",dslf_ss_dst,10000,"1bbi_disulf.pdb");
-ScoreEachBenchmark Score_dslf_cs_ang_("core.scoring.Score_10000x_dslf_cs_ang",dslf_cs_ang,10000,"1bbi_disulf.pdb");
-ScoreEachBenchmark Score_dslf_ss_dih_("core.scoring.Score_10000x_dslf_ss_dih",dslf_ss_dih,10000,"1bbi_disulf.pdb");
-ScoreEachBenchmark Score_dslf_ca_dih_("core.scoring.Score_10000x_dslf_ca_dih",dslf_ca_dih,10000,"1bbi_disulf.pdb");
-ScoreEachBenchmark Score_dslf_cbs_ds_("core.scoring.Score_10000x_dslf_cbs_ds",dslf_cbs_ds,10000,"1bbi_disulf.pdb");
-ScoreEachBenchmark Score_dslf_fa13_("core.scoring.Score_100000x_dslf_fa13",dslf_fa13,100000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_ss_dst_("core.scoring.Score_1000x_dslf_ss_dst",dslf_ss_dst,1000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_cs_ang_("core.scoring.Score_1000x_dslf_cs_ang",dslf_cs_ang,1000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_ss_dih_("core.scoring.Score_1000x_dslf_ss_dih",dslf_ss_dih,1000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_ca_dih_("core.scoring.Score_1000x_dslf_ca_dih",dslf_ca_dih,1000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_cbs_ds_("core.scoring.Score_1000x_dslf_cbs_ds",dslf_cbs_ds,1000,"1bbi_disulf.pdb");
+ScoreEachBenchmark Score_dslf_fa13_("core.scoring.Score_10000x_dslf_fa13",dslf_fa13,10000,"1bbi_disulf.pdb");
 //centroid
-ScoreEachBenchmark Score_cen_env_smooth_("core.scoring.Score_100000x_cen_env_smooth",cen_env_smooth,100000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_cbeta_smooth_("core.scoring.Score_100000x_cbeta_smooth",cbeta_smooth,100000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cen_env_smooth_("core.scoring.Score_10000x_cen_env_smooth",cen_env_smooth,10000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cbeta_smooth_("core.scoring.Score_10000x_cbeta_smooth",cbeta_smooth,10000,"test_in_cen.pdb",true);
 
 // fast
-ScoreEachBenchmark Score_pro_close_("core.scoring.Score_100000x_pro_close",pro_close,100000);
-ScoreEachBenchmark Score_fa_dun_("core.scoring.Score_10000x_fa_dun",fa_dun,10000);
-ScoreEachBenchmark Score_fa_dun_dev_("core.scoring.Score_10000x_fa_dun_dev",fa_dun_dev,10000);
-ScoreEachBenchmark Score_fa_dun_rot_("core.scoring.Score_10000x_fa_dun_rot",fa_dun_rot,10000);
-ScoreEachBenchmark Score_fa_dun_semi_("core.scoring.Score_10000x_fa_dun_semi",fa_dun_semi,10000);
+ScoreEachBenchmark Score_pro_close_("core.scoring.Score_1000x_pro_close",pro_close,1000);
+ScoreEachBenchmark Score_fa_dun_("core.scoring.Score_100x_fa_dun",fa_dun,100);
+ScoreEachBenchmark Score_fa_dun_dev_("core.scoring.Score_100x_fa_dun_dev",fa_dun_dev,100);
+ScoreEachBenchmark Score_fa_dun_rot_("core.scoring.Score_100x_fa_dun_rot",fa_dun_rot,100);
+ScoreEachBenchmark Score_fa_dun_semi_("core.scoring.Score_100x_fa_dun_semi",fa_dun_semi,100);
 //ref_nc currently gives zero energies, though it takes a while to do so
-ScoreEachBenchmark Score_ref_nc_("core.scoring.Score_1000x_ref_nc",ref_nc,1000);
-ScoreEachBenchmark Score_co_("core.scoring.Score_10000x_co",co,10000);
+ScoreEachBenchmark Score_ref_nc_("core.scoring.Score_100x_ref_nc",ref_nc,100);
+ScoreEachBenchmark Score_co_("core.scoring.Score_100x_co",co,100);
 //chainbreak terms currently give zero energies, though it takes quite a while to do so
-ScoreEachBenchmark Score_chainbreak_("core.scoring.Score_100000x_chainbreak",chainbreak,100000);
+ScoreEachBenchmark Score_chainbreak_("core.scoring.Score_100x_chainbreak",chainbreak,100);
 // not reduced
-ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_100000x_linear_chainbreak",linear_chainbreak,100000);
-ScoreEachBenchmark Score_overlap_chainbreak_("core.scoring.Score_10000x_overlap_chainbreak",overlap_chainbreak,10000);
-ScoreEachBenchmark Score_distance_chainbreak_("core.scoring.Score_10000x_distance_chainbreak",distance_chainbreak,10000);
-ScoreEachBenchmark Score_cart_bonded_("core.scoring.Score_10000x_cart_bonded",cart_bonded,10000);
-ScoreEachBenchmark Score_mm_stretch_("core.scoring.Score_10000x_mm_stretch",mm_stretch,10000);
-ScoreEachBenchmark Score_ch_bond_("core.scoring.Score_10000x_ch_bond",ch_bond,10000);
-ScoreEachBenchmark Score_neigh_vect_("core.scoring.Score_10000x_neigh_vect",neigh_vect,10000);
-ScoreEachBenchmark Score_hbond_sr_bb_("core.scoring.Score_10000x_hbond_sr_bb",hbond_sr_bb,10000);
-ScoreEachBenchmark Score_hbond_lr_bb_("core.scoring.Score_10000x_hbond_lr_bb",hbond_lr_bb,10000);
-ScoreEachBenchmark Score_hbond_bb_sc_("core.scoring.Score_10000x_hbond_bb_sc",hbond_bb_sc,10000);
+ScoreEachBenchmark Score_linear_chainbreak_("core.scoring.Score_100x_linear_chainbreak",linear_chainbreak,100);
+ScoreEachBenchmark Score_overlap_chainbreak_("core.scoring.Score_100x_overlap_chainbreak",overlap_chainbreak,100);
+ScoreEachBenchmark Score_distance_chainbreak_("core.scoring.Score_100x_distance_chainbreak",distance_chainbreak,100);
+ScoreEachBenchmark Score_cart_bonded_("core.scoring.Score_100x_cart_bonded",cart_bonded,100);
+ScoreEachBenchmark Score_mm_stretch_("core.scoring.Score_1000x_mm_stretch",mm_stretch,1000);
+ScoreEachBenchmark Score_ch_bond_("core.scoring.Score_100x_ch_bond",ch_bond,100);
+ScoreEachBenchmark Score_neigh_vect_("core.scoring.Score_100x_neigh_vect",neigh_vect,100);
+ScoreEachBenchmark Score_hbond_sr_bb_("core.scoring.Score_100x_hbond_sr_bb",hbond_sr_bb,100);
+ScoreEachBenchmark Score_hbond_lr_bb_("core.scoring.Score_100x_hbond_lr_bb",hbond_lr_bb,100);
+ScoreEachBenchmark Score_hbond_bb_sc_("core.scoring.Score_100x_hbond_bb_sc",hbond_bb_sc,100);
 //hbond_sr_bb_sc currently gives zero energies, though it takes a while to do so
-ScoreEachBenchmark Score_hbond_sr_bb_sc_("core.scoring.Score_10000x_hbond_sr_bb_sc",hbond_sr_bb_sc,10000);
-ScoreEachBenchmark Score_hbond_lr_bb_sc_("core.scoring.Score_10000x_hbond_lr_bb_sc",hbond_lr_bb_sc,10000);
-ScoreEachBenchmark Score_hbond_sc_("core.scoring.Score_10000x_hbond_sc",hbond_sc,10000);
-ScoreEachBenchmark Score_envsmooth_("core.scoring.Score_10000x_envsmooth",envsmooth,10000);
-ScoreEachBenchmark Score_fa_cust_pair_dist_("core.scoring.Score_10000x_fa_cust_pair_dist",fa_cust_pair_dist,10000);
+ScoreEachBenchmark Score_hbond_sr_bb_sc_("core.scoring.Score_100x_hbond_sr_bb_sc",hbond_sr_bb_sc,100);
+ScoreEachBenchmark Score_hbond_lr_bb_sc_("core.scoring.Score_100x_hbond_lr_bb_sc",hbond_lr_bb_sc,100);
+ScoreEachBenchmark Score_hbond_sc_("core.scoring.Score_100x_hbond_sc",hbond_sc,100);
+ScoreEachBenchmark Score_envsmooth_("core.scoring.Score_100x_envsmooth",envsmooth,100);
+ScoreEachBenchmark Score_fa_cust_pair_dist_("core.scoring.Score_100x_fa_cust_pair_dist",fa_cust_pair_dist,100);
 //fast centroid terms
-ScoreEachBenchmark Score_rg_("core.scoring.Score_10000x_rg",rg,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_hs_pair_("core.scoring.Score_10000x_hs_pair",hs_pair,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_ss_pair_("core.scoring.Score_10000x_ss_pair",ss_pair,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_rsigma_("core.scoring.Score_10000x_rsigma",rsigma,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_sheet_("core.scoring.Score_10000x_sheet",sheet,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_vdw_("core.scoring.Score_1000x_vdw",vdw,1000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_cen_pair_smooth_("core.scoring.Score_10000x_cen_pair_smooth",cen_pair_smooth,10000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_cenpack_smooth_("core.scoring.Score_1000x_cenpack_smooth",cenpack_smooth,1000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_cenpack_("core.scoring.Score_1000x_cenpack",cenpack,1000,"test_in_cen.pdb",true);
-ScoreEachBenchmark Score_pair_("core.scoring.Score_10000x_pair",pair,10000,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_rg_("core.scoring.Score_100x_rg",rg,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_hs_pair_("core.scoring.Score_100x_hs_pair",hs_pair,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_ss_pair_("core.scoring.Score_100x_ss_pair",ss_pair,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_rsigma_("core.scoring.Score_100x_rsigma",rsigma,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_sheet_("core.scoring.Score_100x_sheet",sheet,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_vdw_("core.scoring.Score_100x_vdw",vdw,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cen_pair_smooth_("core.scoring.Score_100x_cen_pair_smooth",cen_pair_smooth,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cenpack_smooth_("core.scoring.Score_100x_cenpack_smooth",cenpack_smooth,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_cenpack_("core.scoring.Score_100x_cenpack",cenpack,100,"test_in_cen.pdb",true);
+ScoreEachBenchmark Score_pair_("core.scoring.Score_100x_pair",pair,100,"test_in_cen.pdb",true);
 
 // average
-ScoreEachBenchmark Score_fa_atr_("core.scoring.Score_1000x_fa_atr",fa_atr,1000);
-ScoreEachBenchmark Score_fa_rep_("core.scoring.Score_1000x_fa_rep",fa_rep,1000);
-ScoreEachBenchmark Score_fa_sol_("core.scoring.Score_1000x_fa_sol",fa_sol,1000);
-ScoreEachBenchmark Score_fa_intra_atr_("core.scoring.Score_10000x_fa_intra_atr",fa_intra_atr,10000);
-ScoreEachBenchmark Score_fa_intra_rep_("core.scoring.Score_10000x_fa_intra_rep",fa_intra_rep,10000);
-ScoreEachBenchmark Score_fa_intra_sol_("core.scoring.Score_10000x_fa_intra_sol",fa_intra_sol,10000);
+ScoreEachBenchmark Score_fa_atr_("core.scoring.Score_10x_fa_atr",fa_atr,10);
+ScoreEachBenchmark Score_fa_rep_("core.scoring.Score_10x_fa_rep",fa_rep,10);
+ScoreEachBenchmark Score_fa_sol_("core.scoring.Score_10x_fa_sol",fa_sol,10);
+ScoreEachBenchmark Score_fa_intra_atr_("core.scoring.Score_1000x_fa_intra_atr",fa_intra_atr,1000);
+ScoreEachBenchmark Score_fa_intra_rep_("core.scoring.Score_1000x_fa_intra_rep",fa_intra_rep,1000);
+ScoreEachBenchmark Score_fa_intra_sol_("core.scoring.Score_1000x_fa_intra_sol",fa_intra_sol,1000);
 // temp until lk hack works with analytic etable ScoreEachBenchmark Score_lk_hack_("core.scoring.Score_100x_lk_hack",lk_hack,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_("core.scoring.Score_100x_lk_ball",lk_ball,100);
 // temp until lk ball works with analytic etable ScoreEachBenchmark Score_lk_ball_iso_("core.scoring.Score_100x_lk_ball_iso)",lk_ball_iso,100);
-ScoreEachBenchmark Score_mm_bend_("core.scoring.Score_2000x_mm_bend",mm_bend,2000);
-ScoreEachBenchmark Score_mm_twist_("core.scoring.Score_2000x_mm_twist",mm_twist,2000);
-ScoreEachBenchmark Score_lk_costheta_("core.scoring.Score_1000x_lk_costheta",lk_costheta,1000);
-ScoreEachBenchmark Score_lk_polar_("core.scoring.Score_1000x_lk_polar",lk_polar,1000);
-ScoreEachBenchmark Score_lk_nonpolar_("core.scoring.Score_1000x_lk_nonpolar",lk_nonpolar,1000);
+ScoreEachBenchmark Score_mm_bend_("core.scoring.Score_200x_mm_bend",mm_bend,200);
+ScoreEachBenchmark Score_mm_twist_("core.scoring.Score_200x_mm_twist",mm_twist,200);
+ScoreEachBenchmark Score_lk_costheta_("core.scoring.Score_10x_lk_costheta",lk_costheta,10);
+ScoreEachBenchmark Score_lk_polar_("core.scoring.Score_10x_lk_polar",lk_polar,10);
+ScoreEachBenchmark Score_lk_nonpolar_("core.scoring.Score_10x_lk_nonpolar",lk_nonpolar,10);
 //h2o_hbond currently gives zero energies, though it takes a while to do so
-ScoreEachBenchmark Score_h2o_hbond_("core.scoring.Score_10000x_h2o_hbond",h2o_hbond,10000);
-ScoreEachBenchmark Score_gauss_("core.scoring.Score_100x_gauss",gauss,100);
+ScoreEachBenchmark Score_h2o_hbond_("core.scoring.Score_100x_h2o_hbond",h2o_hbond,100);
+ScoreEachBenchmark Score_gauss_("core.scoring.Score_10x_gauss",gauss,10);
 // Seg-faulting in debug mode ScoreEachBenchmark Score_geom_sol_("core.scoring.Score_100x_geom_sol",geom_sol,100);
-ScoreEachBenchmark Score_occ_sol_fitted_("core.scoring.Score_1000x_occ_sol_fitted",occ_sol_fitted,1000);
-ScoreEachBenchmark Score_occ_sol_fitted_onebody_("core.scoring.Score_500x_occ_sol_fitted_onebody",occ_sol_fitted_onebody,500);
-ScoreEachBenchmark Score_fa_elec_("core.scoring.Score_100x_fa_elec",fa_elec,100);
+ScoreEachBenchmark Score_occ_sol_fitted_("core.scoring.Score_10x_occ_sol_fitted",occ_sol_fitted,10);
+ScoreEachBenchmark Score_occ_sol_fitted_onebody_("core.scoring.Score_5x_occ_sol_fitted_onebody",occ_sol_fitted_onebody,5);
+ScoreEachBenchmark Score_fa_elec_("core.scoring.Score_10x_fa_elec",fa_elec,10);
 
 // slow 100x
-ScoreEachBenchmark Score_sa_("core.scoring.Score_100x_sa",sa,100);
+ScoreEachBenchmark Score_sa_("core.scoring.Score_1x_sa",sa,1);
 
 // very slow 10x
 ScoreEachBenchmark Score_gb_elec_("core.scoring.Score_1x_gb_elec",gb_elec,1);
-ScoreEachBenchmark Score_pack_stat_("core.scoring.Score_10x_pack_stat",pack_stat,10);
+ScoreEachBenchmark Score_pack_stat_("core.scoring.Score_1x_pack_stat",pack_stat,1);
 //occ_sol_exact currently gives zero energies, though it takes quite a while to do so
 ScoreEachBenchmark Score_occ_sol_exact_("core.scoring.Score_1x_occ_sol_exact",occ_sol_exact,1);
 

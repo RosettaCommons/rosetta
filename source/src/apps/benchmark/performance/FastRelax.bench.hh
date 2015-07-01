@@ -63,7 +63,8 @@ public:
 
 	virtual void setUp() {
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*pose_, "test_in.pdb");
+		// Use smaller pdb to test relax
+		core::import_pose::pose_from_pdb(*pose_, "test_in2.pdb");
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		switch ( benchtype_ ) {
 			case fast_relax_perfbench_score12 :

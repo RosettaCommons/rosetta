@@ -76,8 +76,10 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 #include <apps/benchmark/performance/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-#include <apps/benchmark/performance/LigandDockScript.bench.hh>
-LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
+// AMW: there is a problem in SlideTogether as of 6/29/15
+// that kills the performance benchmarks if this is allowed to run
+//#include <apps/benchmark/performance/LigandDockScript.bench.hh>
+//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
@@ -124,7 +126,7 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	TR << "Setting up "<< name() << "..." << std::endl;
 	setUp();
 
-	double t;
+	/*double t;
 
 	#if  !defined(WINDOWS) && !defined(WIN32)
 		TR << "Running(U) " << name() << "..." << std::endl;
@@ -152,10 +154,50 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	TR << "Tear down "<< name() << "... Done." << std::endl << std::endl;
 
 	result_ += t;
-	return t;
+	return t;*/
+	double t = 0;
+	int n = 0;
+	double init = scaleFactor;
+	
+#if  !defined(WINDOWS) && !defined(WIN32)
+	TR << "Running(U) " << name() << "..." << std::endl;
+	while ( scaleFactor > 0 ) {
+		struct rusage R0, R1;
+		
+		getrusage(RUSAGE_SELF, &R0);
+		run(1);
+	
+		getrusage(RUSAGE_SELF, &R1);
+		n++;
+		t = R1.ru_utime.tv_sec + R1.ru_utime.tv_usec*1e-6 - R0.ru_utime.tv_sec - R0.ru_utime.tv_usec*1e-6;
+		scaleFactor -= t;
+	}
+	TR << "Running(U) " << name() << "... Done. Time: " << ( init - scaleFactor ) << ". Times executed:" << n << std::endl;
+
+#else
+	TR << "Running(W) " << name() << "..." << std::endl;
+	while ( scaleFactor > 0 ) {
+		t = clock();
+		run(1);
+		t = clock() - t;
+		t = t / CLOCKS_PER_SEC;
+		scaleFactor -= t;
+		n++;
+	}
+	TR << "Running(W) " << name() << "... Done. Time: " << ( init - scaleFactor ) << ". Times executed:" << n << std::endl;
+#endif
+	
+	
+	TR << "Tear down "<< name() << "..." << std::endl;
+	tearDown();
+	TR << "Tear down "<< name() << "... Done." << std::endl << std::endl;
+	
+	result_ += n;
+	time_ += ( init - scaleFactor );
+	return n;
 }
 
-void PerformanceBenchmark::perform_until_set_found (
+/*void PerformanceBenchmark::perform_until_set_found (
 	PerformanceBenchmark * B,
 	Real scaleFactor
 ) {
@@ -169,7 +211,7 @@ void PerformanceBenchmark::perform_until_set_found (
 	while ( ! average_found ) {
 		
 		TR << "Running test again " << std::endl;
-		B->execute( 1 );
+		B->execute( scaleFactor );
 
 		results.insert( B->result_ );
 		
@@ -222,7 +264,7 @@ void PerformanceBenchmark::perform_until_set_found (
 	// done, so set result to average of the tight results
 	// amw: no, set it to the minimum because we are trying this out.
 	B->result_ = *results.begin();
-}
+}*/
 
 void PerformanceBenchmark::executeOneBenchmark(
 	std::string const & name,
@@ -239,23 +281,9 @@ void PerformanceBenchmark::executeOneBenchmark(
 		PerformanceBenchmark * B = all[i];
 		if ( B->name() == name ) {
 			
-			// right now, take the minimum of 3 trials...
-			//for ( Size j = 0; j < 3; ++j ) {
-			//	double prev_result = B->result_;
-				perform_until_set_found( B, scaleFactor );
-			//	if ( prev_result == 0 ) {
-			//		// definitely overwrite
-			//		prev_result = B->result_;
-			//	} else {
-					// it ran once before
-			//		if ( B->result_ > prev_result ) {
-			//			B->result_ = prev_result;
-			//		} else {
-			//			// necessary for more than two trials>
-			//			prev_result = B->result_;
-			//		}
-			//	}
-			//}
+			B->execute( scaleFactor );
+			//	perform_until_set_found( B, scaleFactor );
+			
 			found_benchmark = true;
 			break;
 		}
@@ -286,19 +314,8 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 	//for ( Size j = 0; j < 3; ++j ) {
 		for ( Size i = 0; i < all.size(); ++i ) {
 			PerformanceBenchmark * B = all[ i ];
-			perform_until_set_found( B, scaleFactor );
-			//if ( prev_results[ i ] == 0 ) {
-			//	// definitely overwrite
-			//	prev_results[ i ] = B->result_;
-			//} else {
-			//	// it ran once before
-			//	if ( B->result_ > prev_results[ i ] ) {
-			//		B->result_ = prev_results[ i ];
-			//	} else {
-			//		// necessary for more than two trials>
-			//		prev_results[ i ] = B->result_;
-			//	}
-			//}
+			//perform_until_set_found( B, scaleFactor );
+			B->execute( scaleFactor );
 		}
 	//}
 	TR << std::endl << "Executing all benchmarks... Done." << std::endl;
@@ -317,7 +334,7 @@ std::string PerformanceBenchmark::getReport()
 	for (Size i = 0; i < all.size(); i++ ) {
 		if( i != 0 ) res += ",\n"; // special first case
 		PerformanceBenchmark * B = all[i];
-		sprintf(buf, "%f", B->result_);
+		sprintf(buf, "[%i, %f]", B->result_, B->time_ );
 		res += "    \"" + B->name_ + "\":" + std::string(buf);
 	}
 	res += "\n}\n";
@@ -338,7 +355,7 @@ std::string PerformanceBenchmark::getOneReport(std::string const & name)
 	for(Size i=0; i<all.size(); i++) {
 		PerformanceBenchmark * B = all[i];
 		if(B->name() == name){
-			sprintf(buf, "%f", B->result_);
+			sprintf(buf, "[%i, %f]", B->result_, B->time_ );
 			res += "    \"" + B->name_ + "\":" + std::string(buf);
 		}
 	}
@@ -361,7 +378,8 @@ int main( int argc, char *argv[])
 		using namespace basic::options::OptionKeys;
 
 
-		NEW_OPT(run::benchmark_scale, "Amount to scale number of cycles to repeate each test", 1 );
+		//NEW_OPT(run::benchmark_scale, "Amount to scale number of cycles to repeate each test", 1 );
+		NEW_OPT(run::benchmark_scale, "Amount of time to test for", 120 );
 		NEW_OPT(run::run_one_benchmark, "Run just a single performance benchmark", "" );
 		basic::options::option.add_relevant(run::benchmark_scale);
 		basic::options::option.add_relevant(run::run_one_benchmark);

@@ -68,7 +68,7 @@ public:
 
 	virtual void setUp() {
 		pose_ = core::pose::PoseOP( new core::pose::Pose );
-		core::import_pose::pose_from_pdb(*pose_, "test_in.pdb");
+		core::import_pose::pose_from_pdb(*pose_, "test_in2.pdb");
 		scorefxn_ = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction );
 		switch ( benchtype_ ) {
 			case interaction_graph_perfbench_linmemig_score12 :
@@ -393,11 +393,11 @@ private:
 	core::Size base_scale_;
 };
 
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12( "core.pack.linmem_ig_score12", interaction_graph_perfbench_linmemig_score12, 5 );
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12sp2( "core.pack.linmem_ig_sc12sp2", interaction_graph_perfbench_linmemig_sc12sp2, 5 );
-InteractionGraphPerformanceBenchmark igpb_lmig_sc12he( "core.pack.linmem_ig_sc12he", interaction_graph_perfbench_linmemig_sc12he, 5 );
-InteractionGraphPerformanceBenchmark igpb_lmig_mmstd( "core.pack.linmem_ig_mmstd", interaction_graph_perfbench_linmemig_mmstd, 5 );
-InteractionGraphPerformanceBenchmark igpb_pdig_sc12( "core.pack.pdig_score12", interaction_graph_perfbench_pdig_score12, 20 );
-InteractionGraphPerformanceBenchmark igpb_denseig_sc12( "core.pack.denseig_score12", interaction_graph_perfbench_denseig_score12, 700000 );
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12( "core.pack.linmem_ig_score12", interaction_graph_perfbench_linmemig_score12, 1 );
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12sp2( "core.pack.linmem_ig_sc12sp2", interaction_graph_perfbench_linmemig_sc12sp2, 1 );
+InteractionGraphPerformanceBenchmark igpb_lmig_sc12he( "core.pack.linmem_ig_sc12he", interaction_graph_perfbench_linmemig_sc12he, 1 );
+InteractionGraphPerformanceBenchmark igpb_lmig_mmstd( "core.pack.linmem_ig_mmstd", interaction_graph_perfbench_linmemig_mmstd, 1 );
+InteractionGraphPerformanceBenchmark igpb_pdig_sc12( "core.pack.pdig_score12", interaction_graph_perfbench_pdig_score12, 4 );
+InteractionGraphPerformanceBenchmark igpb_denseig_sc12( "core.pack.denseig_score12", interaction_graph_perfbench_denseig_score12, 7000 );
 
 #endif

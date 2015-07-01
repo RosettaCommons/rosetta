@@ -44,7 +44,7 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		core::Size reps( (core::Size)(100*scaleFactor) );
+		core::Size reps( (core::Size)(10*scaleFactor) ); // /10
 		if( reps == 0 ) { reps = 1; } // do at least one rep, regardless of scale factor
 		for(core::Size i=0; i<reps; i++) {
 			core::import_pose::pose_from_pdbstring(pose, pdb_string_);

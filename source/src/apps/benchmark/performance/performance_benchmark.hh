@@ -26,7 +26,7 @@ static thread_local basic::Tracer TR( "benchmark" );
 class PerformanceBenchmark
 {
 public:
-	PerformanceBenchmark(std::string name) : result_(0.0), name_(name) {
+	PerformanceBenchmark(std::string name) : result_(0), time_(0.0), name_(name) {
 		allBenchmarks().push_back(this);
 		for(unsigned int i=0; i<name_.size(); i++) {
 			if( name_[i]=='.' || name_[i]==' ' ) name_[i]='_';
@@ -48,12 +48,13 @@ public:
 		std::string const & name,
 		core::Real scaleFactor=1);
 	static void executeAllBenchmarks(core::Real scaleFactor=1);
-	static void perform_until_set_found ( PerformanceBenchmark * B, core::Real scaleFactor );
+	//static void perform_until_set_found ( PerformanceBenchmark * B, core::Real scaleFactor );
 	static std::string getReport();
 	static std::string getOneReport(std::string const & name);
 
 private:
-	double result_;
+	int result_;
+	double time_;
 	std::string name_; ///< name of the benchmark, must corelate to namespace ie: core.pose
 
 	/// function for keepig record of all created benchmark classes.

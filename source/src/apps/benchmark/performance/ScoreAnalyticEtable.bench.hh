@@ -41,9 +41,9 @@ public:
 	}
 };
 
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_atr_("core.scoring.Score_analytic_etable_1000x_fa_atr",fa_atr,1000);
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_rep_("core.scoring.Score_analytic_etable_1000x_fa_rep",fa_rep,1000);
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_sol_("core.scoring.Score_analytic_etable_1000x_fa_sol",fa_sol,1000);
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_atr_("core.scoring.Score_analytic_etable_1000x_fa_intra_atr",fa_intra_atr,1000);
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_rep_("core.scoring.Score_analytic_etable_1000x_fa_intra_rep",fa_intra_rep,1000);
-ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_sol_("core.scoring.Score_analytic_etable_1000x_fa_intra_sol",fa_intra_sol,1000);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_atr_("core.scoring.Score_analytic_etable_100x_fa_atr",fa_atr,100);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_rep_("core.scoring.Score_analytic_etable_100x_fa_rep",fa_rep,100);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_sol_("core.scoring.Score_analytic_etable_100x_fa_sol",fa_sol,100);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_atr_("core.scoring.Score_analytic_etable_100x_fa_intra_atr",fa_intra_atr,100);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_rep_("core.scoring.Score_analytic_etable_100x_fa_intra_rep",fa_intra_rep,100);
+ScoreAnalyticEtableBenchmark Score_analytic_etable_fa_intra_sol_("core.scoring.Score_analytic_etable_100x_fa_intra_sol",fa_intra_sol,100);
