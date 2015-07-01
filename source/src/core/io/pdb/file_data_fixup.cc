@@ -485,10 +485,13 @@ bonding_distance_threshold( std::string element1, std::string element2 ) {
 
 core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & rinfo, chemical::ResidueType const & rsd_type ) {
 	// Scoring:
-	// 1 point for each chirality match
+	// -5 point for each chirality mis-match
+	// -2 points for each bond that shouldn't be made
 	// 1/natoms point for each atom present
 	// 1/natoms^2 point for each name match
-	// -2 points for each bond that shouldn't be made
+	//
+	// This scoring scheme is set up such that we sort primarily on certain features,
+	// and tie-break on the next feature.
 
 	core::Size const natoms = rsd_type.natoms();
 	core::Size const natoms2 = natoms*natoms;
@@ -537,9 +540,9 @@ core::Real score_mapping( NameBimap const & mapping, ResidueInformation const & 
 						rinfo.xyz.find( inverse.find(type_nbrs[3])->second )->second,
 						rinfo.xyz.find( inverse.find(type_nbrs[4])->second )->second );
 			//TR << "Dihedral difference: " << rsd_dhd - rinfo_dhd << std::endl;
-			if( numeric::abs_difference( rsd_dhd, rinfo_dhd ) < 10.0 || // The atoms are near each other in dihedral (will also catch planar)
-					numeric::sign( rsd_dhd ) == numeric::sign( rinfo_dhd ) ) { // or they're in the same chiral orientation.
-				score += 1.0; // 1 point for each chirality match.
+			if( numeric::sign( rsd_dhd ) != numeric::sign( rinfo_dhd ) && // The chiral orientation is different,
+					numeric::abs_difference( rsd_dhd, rinfo_dhd ) > 10.0 ) { // and they aren't insignificantly close to each other (e.g. planar).
+				score -= 5.0; // -5.0 point for each chirality mis-match.
 			}
 		} // else too few bonded neighbors to do chirality checks.
 	}
@@ -647,7 +650,7 @@ public:
 		utility::uppercase( pdb_elem );
 		std::string rsdtype_elem( rsdtype_[vd2].element_type()->get_chemical_symbol() );
 		utility::strip_whitespace( rsdtype_elem );
-		utility::uppercase( pdb_elem );
+		utility::uppercase( rsdtype_elem );
 		//TR << "Element match '" << pdb_elem << "' '" << rsdtype_elem << "'" << std::endl;
 		return pdb_elem == rsdtype_elem;
 	}
@@ -706,14 +709,15 @@ remap_names_on_geometry( NameBimap & mapping,
 	TR.Debug << " Number of edges: Ainfo " << boost::num_edges(aigraph)
 			<< " ResidueType " <<  boost::num_edges(rsd_type.graph()) << std::endl;
 
-	core::Real best_score(-999999);
+	core::Real const no_match_found_score( -999999 );
+	core::Real best_score( no_match_found_score );
 	GeometricRenameIsomorphismCallback callback( aigraph, rinfo, rsd_type, mapping, best_score );
 	GeometricRenameVerticiesEquivalent vertices_equivalent( aigraph, rsd_type.graph() );
 
 	boost::vf2_subgraph_mono( aigraph, rsd_type.graph(), callback, small_order,
 			boost::vertices_equivalent( vertices_equivalent ) );
 
-	if( best_score == -999999 ) {
+	if( best_score == no_match_found_score ) {
 		// The McGregor approach takes longer, but picks up additional mapping correspondences.
 		// (In particular, it allows for ignoring extraneous atoms on the PDB side.)
 		// It also tends to output a *lot* more mappings. In fact, we're only considering connected
@@ -724,7 +728,7 @@ remap_names_on_geometry( NameBimap & mapping,
 				callback, boost::vertices_equivalent( vertices_equivalent ) );
 	}
 
-	if( best_score == -999999 ) {
+	if( best_score == no_match_found_score ) {
 		TR.Error << "ERROR: Difficulties mapping atom names from geometry for " << rinfo.resName << " " << rinfo.chainID << rinfo.resSeq
 				<< rinfo.iCode << " onto " << rsd_type.name() << std::endl;
 		utility_exit_with_message("Can't find good mapping between input residue and residue type.");

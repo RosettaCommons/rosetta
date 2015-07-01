@@ -83,7 +83,7 @@ public:
 		gly_ = glycines[1];
 
 		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
-		
+
 		std::string filename("core/chemical/params/1aq1.mol2.params");
 		rsd_ = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
 
@@ -172,8 +172,8 @@ public:
 		map.insert( NameBimap::value_type(" C22", " C22") );
 		map.insert( NameBimap::value_type(" C24", " C24") );
 		map.insert( NameBimap::value_type(" H10", " H10") );
-		// Four atoms present, four name matches, one three-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 1.0 + 4.0/natoms + 4.0/natoms2, score_delta );
+		// Four atoms present, four name matches, one matching three-member chirality
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 4.0/natoms + 4.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C21", " C21") );
@@ -181,10 +181,10 @@ public:
 		map.insert( NameBimap::value_type(" C24", " C24") );
 		map.insert( NameBimap::value_type(" H10", " H11") );
 		// Four atoms present, three name matches, mismatched three-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 4.0/natoms + 3.0/natoms2, score_delta );
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), -5.0 + 4.0/natoms + 3.0/natoms2, score_delta );
 		map.insert( NameBimap::value_type(" H11", " H10") );
 		// Five atoms present, three name matches, mismatched four-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 5.0/natoms + 3.0/natoms2, score_delta );
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), -5.0 + 5.0/natoms + 3.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C21", " C21") );
@@ -192,8 +192,8 @@ public:
 		map.insert( NameBimap::value_type(" C24", " C24") );
 		map.insert( NameBimap::value_type(" H10", " H10") );
 		map.insert( NameBimap::value_type(" H11", " H11") );
-		// Five atoms present, five name matches, one four-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 1.0 + 5.0/natoms + 5.0/natoms2, score_delta );
+		// Five atoms present, five name matches, one matching four-member chirality
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 5.0/natoms + 5.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C26", " C27") );
@@ -201,8 +201,8 @@ public:
 		map.insert( NameBimap::value_type(" H15", " H18") );
 		map.insert( NameBimap::value_type(" H16", " H19") );
 		map.insert( NameBimap::value_type(" H17", " H20") );
-		// Five atoms present, no name matches, one four-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 1.0 + 5.0/natoms + 0.0/natoms2, score_delta );
+		// Five atoms present, no name matches, one matching four-member chirality
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 5.0/natoms + 0.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C26", " C27") );
@@ -211,7 +211,7 @@ public:
 		map.insert( NameBimap::value_type(" H16", " H20") );
 		map.insert( NameBimap::value_type(" H17", " H19") );
 		// Five atoms present, no name matches, mismatched four-member chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 5.0/natoms + 0.0/natoms2, score_delta );
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), -5.0 + 5.0/natoms + 0.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C11", " C12") );
@@ -219,7 +219,7 @@ public:
 		map.insert( NameBimap::value_type(" C14", " C10") );
 		map.insert( NameBimap::value_type(" C9 ", " C13") );
 		// Four atoms present, no name matches, matched planar chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 1.0 + 4.0/natoms + 0.0/natoms2, score_delta );
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 4.0/natoms + 0.0/natoms2, score_delta );
 
 		map.clear();
 		map.insert( NameBimap::value_type(" C11", " C12") );
@@ -227,7 +227,7 @@ public:
 		map.insert( NameBimap::value_type(" C14", " C13") );
 		map.insert( NameBimap::value_type(" C9 ", " C10") );
 		// Four atoms present, no name matches, matched planar chirality
-		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 1.0 + 4.0/natoms + 0.0/natoms2, score_delta );
+		TS_ASSERT_DELTA( score_mapping( map, main_rinfo_, *rsd_ ), 0.0 + 4.0/natoms + 0.0/natoms2, score_delta );
 
 		map.clear();
 
@@ -587,6 +587,56 @@ public:
 		TS_ASSERT_EQUALS(name_map.left.find(" C23")->second," C26");
 		//TS_ASSERT_EQUALS(name_map.left.find(" H13")->second," H16"); //Actually could any to any of the three hydrogens
 		TS_ASSERT_EQUALS(name_map.left.find(" H16")->second," H13");
+	}
+
+	/// @brief Test if we can handle two-letter atoms.
+	void test_two_letter_atoms() {
+		using namespace core::chemical;
+
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		std::string const tag(FA_STANDARD);
+		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
+		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		orbitals::OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+
+		ResidueTypeSetOP rsd_types( new ResidueTypeSet );
+
+		std::string filename("core/chemical/params/1pq6.mol2.params");
+		ResidueTypeCOP rsd = read_topology_file(filename, atom_types, element_types, mm_atom_types, orbital_types, ResidueTypeSetCAP(rsd_types));
+
+		ResidueInformation rinfo = create_ResidueInfo( // Just need the area around the Chlorine
+"HETATM    1 Cl1  965 B2500      19.150  -8.190  58.729  1.00  0.00          Cl\n"
+"HETATM    2  N2  965 B2500      16.988  -5.079  60.713  1.00  0.00           N\n"
+"HETATM    3  C3  965 B2500      17.042  -5.980  59.567  1.00  0.00           C\n"
+"HETATM    4  C4  965 B2500      17.898  -5.643  58.368  1.00  0.00           C\n"
+"HETATM    5  C5  965 B2500      18.894  -6.616  57.880  1.00  0.00           C\n"
+"HETATM    6  C6  965 B2500      19.688  -6.273  56.678  1.00  0.00           C\n"
+"HETATM    7  C7  965 B2500      19.460  -5.057  56.039  1.00  0.00           C\n"
+"HETATM    8  C8  965 B2500      18.495  -4.181  56.512  1.00  0.00           C\n"
+"HETATM    9  C9  965 B2500      17.728  -4.467  57.648  1.00  0.00           C\n"
+"HETATM   10  C10 965 B2500      20.729  -7.242  56.180  1.00  0.00           C\n"
+"HETATM   11  F11 965 B2500      21.077  -6.967  54.925  1.00  0.00           F\n"
+"HETATM   12  F12 965 B2500      21.793  -7.133  56.983  1.00  0.00           F\n"
+"HETATM   13  F13 965 B2500      20.222  -8.479  56.232  1.00  0.00           F\n"
+);
+
+		core::Size natoms = rsd->natoms();
+		core::Size natoms2 = natoms*natoms;
+		core::Real score_delta = 0.1 * 1.0/ natoms2;
+
+		NameBimap map;
+		map.insert( NameBimap::value_type("Cl1 ", "CL1 ") );
+		map.insert( NameBimap::value_type(" C5 ", " C24") );
+		map.insert( NameBimap::value_type(" C6 ", " C22") );
+		map.insert( NameBimap::value_type(" C10", " C33") );
+		map.insert( NameBimap::value_type(" F12", " F1 ") );
+		map.insert( NameBimap::value_type(" C4 ", " C21") );
+		map.insert( NameBimap::value_type(" C3 ", " C27") );
+		map.insert( NameBimap::value_type(" N2 ", " N1 ") );
+		// Four atoms present, no name matches, no chirality
+		TR << " 1.0/natoms " << 1.0/natoms << " 1.0/natoms2 " << 1.0/natoms2 << std::endl;
+		TS_ASSERT_DELTA( score_mapping( map, rinfo, *rsd ), 8.0/natoms + 0.0/natoms2, score_delta );
 	}
 };
 
