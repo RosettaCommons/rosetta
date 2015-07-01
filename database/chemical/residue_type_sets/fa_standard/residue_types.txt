@@ -90,6 +90,7 @@ residue_types/rosetta_specific/GB_AA_PLACEHOLDER.params
 residue_types/rosetta_specific/SUCK.params
 residue_types/rosetta_specific/VRT.params
 residue_types/rosetta_specific/VRT1.params
+residue_types/rosetta_specific/VRTBB.params
 
 ## Staple Types
 residue_types/staple/08A.params

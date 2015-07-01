@@ -657,6 +657,7 @@ sources = {
 	# P ######################################################################
 	"pilot/phil" : [
 		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
+	        "repeat_demo", # app to demo setting up a tandem repeat pose for connected chain folding
 		#"dna_spec_test", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dimer_relax", # /* Phil Bradley,Documentation Location,Demo Location */
