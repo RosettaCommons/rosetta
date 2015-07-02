@@ -52,7 +52,8 @@ namespace magnesium {
 		mg_res_list_( mg_res_list ),
 		excise_mini_pose_( true ),
 		use_fast_frame_heuristic_( true ),
-		mg_water_hydrogen_packer_( new MgWaterHydrogenPacker )
+		mg_water_hydrogen_packer_( new MgWaterHydrogenPacker ),
+		verbose_( false )
 	{
 		mg_water_hydrogen_packer_->set_excise_mini_pose( false );
 	}
