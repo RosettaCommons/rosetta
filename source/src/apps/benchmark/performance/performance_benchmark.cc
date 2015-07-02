@@ -73,11 +73,15 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
+
+
 #include <apps/benchmark/performance/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-#include <apps/benchmark/performance/LigandDockScript.bench.hh>
-LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
+// AMW: there is a problem in SlideTogether as of 6/29/15
+// that kills the performance benchmarks if this is allowed to run
+//#include <apps/benchmark/performance/LigandDockScript.bench.hh>
+//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
@@ -92,7 +96,6 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 #include <apps/benchmark/performance/FastRelax.bench.hh>
 #include <apps/benchmark/performance/InteractionGraph.bench.hh>
-
 
 
 // option key includes
