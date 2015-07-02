@@ -274,9 +274,15 @@ class Tester:
 
         for lib in UnitTestExecutable:
             tests = set()
-            for test in commands.getoutput(self.testpath + '/' + lib + ' _ListAllTests_').split():
-                tests.add( (lib, test.split(':')[0]) )
-                self.all_tests.append(test)
+            status, command_output = commands.getstatusoutput(self.testpath + '/' + lib + ' _ListAllTests_')
+            if status != 0:
+                # The output doesn't contain a test list, only an error message
+                print "Error running unit test executable for", lib, "- not all tests may be availible."
+                print '\t', '\n\t'.join(command_output.split('\n'))
+            else:
+                for test in command_output.split():
+                    tests.add( (lib, test.split(':')[0]) )
+                    self.all_tests.append(test)
 
             self.all_test_suites.extend( tests )
             self.all_test_suites_by_lib[lib] = tests
@@ -286,11 +292,13 @@ class Tester:
 
         if Options.one:  # or Options.jobs < 5:
             if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
-                print 'Test suite %s not found!' % Options.one
-                print "Available test suites are"
+                print '\nTest suite %s not found!' % Options.one
+                print "Available test suites are:"
                 tests = [s for (l,s) in self.all_test_suites]
-                for test in sorted(tests):
+                for test in sorted(tests,key=str.lower):
                     print "\t%s" % test
+                if len(tests) == 0:
+                    print "\t(No Tests Found!)"
                 sys.exit(1)
 
             for lib in UnitTestExecutable:
@@ -440,7 +448,10 @@ class Tester:
             print "  failed tests:"
             for t in failedTestsList:
                 print "   ", t
-        print "Success rate: %s%%" % ((total-failed)*100/total)
+        if total == 0:
+            print "Success rate: 0%"
+        else:
+            print "Success rate: %s%%" % ((total-failed)*100/total)
         print "---------- End of Unit test summary"
 
 
