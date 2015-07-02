@@ -76,10 +76,8 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 #include <apps/benchmark/performance/LigandDock.bench.hh>
 LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-// AMW: there is a problem in SlideTogether as of 6/29/15
-// that kills the performance benchmarks if this is allowed to run
-//#include <apps/benchmark/performance/LigandDockScript.bench.hh>
-//LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
+#include <apps/benchmark/performance/LigandDockScript.bench.hh>
+LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/performance/pdb_io.bench.hh>
 PDB_IOBenchmark PDB_IO_("core.import_pose.pose_from_pdbstring");
@@ -93,8 +91,8 @@ XMLParseBenchmark XMLParseBenchmark_("utility_tag_Tag_Create");
 
 
 #include <apps/benchmark/performance/FastRelax.bench.hh>
-
 #include <apps/benchmark/performance/InteractionGraph.bench.hh>
+
 
 
 // option key includes
@@ -158,15 +156,15 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	double t = 0;
 	int n = 0;
 	double init = scaleFactor;
-	
+
 #if  !defined(WINDOWS) && !defined(WIN32)
 	TR << "Running(U) " << name() << "..." << std::endl;
 	while ( scaleFactor > 0 ) {
 		struct rusage R0, R1;
-		
+
 		getrusage(RUSAGE_SELF, &R0);
 		run(1);
-	
+
 		getrusage(RUSAGE_SELF, &R1);
 		n++;
 		t = R1.ru_utime.tv_sec + R1.ru_utime.tv_usec*1e-6 - R0.ru_utime.tv_sec - R0.ru_utime.tv_usec*1e-6;
@@ -186,12 +184,12 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	}
 	TR << "Running(W) " << name() << "... Done. Time: " << ( init - scaleFactor ) << ". Times executed:" << n << std::endl;
 #endif
-	
-	
+
+
 	TR << "Tear down "<< name() << "..." << std::endl;
 	tearDown();
 	TR << "Tear down "<< name() << "... Done." << std::endl << std::endl;
-	
+
 	result_ += n;
 	time_ += ( init - scaleFactor );
 	return n;
@@ -207,14 +205,14 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 	std::multiset< Real > results;
 	Real average = 0;
 	bool average_found = false;
-	
+
 	while ( ! average_found ) {
-		
+
 		TR << "Running test again " << std::endl;
 		B->execute( scaleFactor );
 
 		results.insert( B->result_ );
-		
+
 		// we have "found our average" if we have scaleFactor of values
 		// within 5% of their mutual mean
 		// clearly need only consider adjacent values in the set
@@ -223,21 +221,21 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 			B->result_ = 0;
 			continue;
 		}
-		
+
 		Size counter = 0;
 		for ( std::multiset< Real >::iterator it( results.begin() ),
 			 end( results.end() );
 			 it != end;
 			 ++it, ++counter ) {
-			
+
 			TR << "Evaluating elements " << counter << " to " << (counter + scaleFactor-1) << std::endl;
 			if ( counter == size - scaleFactor+1 ) break;
-			
+
 			std::multiset< Real >::iterator avg_iter = it;
-			
+
 			average = 0;
 			TR << "Values are ";
-			
+
 			Real final_value = 0;
 			for ( Size i = 1; i <= scaleFactor; ++i, ++avg_iter ) {
 				final_value = (*avg_iter);
@@ -246,21 +244,21 @@ double PerformanceBenchmark::execute(Real scaleFactor)
 			}
 			TR << std::endl;
 			average /= scaleFactor;
-			
+
 			Real spread = final_value - *it;
 			TR << " spread is " << spread << " and average is " << average << std::endl;
-			
+
 			if ( spread < 0.1 * average ) {
 				//TR << "Acceptable; we're done!" << std::endl;
 				average_found = true;
 				break;
 			}
 		}
-		
+
 		// not done, so it's safe to zero out the result
 		B->result_ = 0;
 	}
-	
+
 	// done, so set result to average of the tight results
 	// amw: no, set it to the minimum because we are trying this out.
 	B->result_ = *results.begin();
@@ -272,7 +270,7 @@ void PerformanceBenchmark::executeOneBenchmark(
 ) {
 	// Before, scaleFactor would just be how many times B is executed
 	// Now we search for scaleFactor tightly spaced tests.
-	
+
 	TR << std::endl << "Executing benchmark '" << name << "'" << std::endl << std::endl;
 
 	std::vector<PerformanceBenchmark * > & all( allBenchmarks() );
@@ -280,10 +278,10 @@ void PerformanceBenchmark::executeOneBenchmark(
 	for ( Size i = 0; i < all.size(); i++ ) {
 		PerformanceBenchmark * B = all[i];
 		if ( B->name() == name ) {
-			
+
 			B->execute( scaleFactor );
 			//	perform_until_set_found( B, scaleFactor );
-			
+
 			found_benchmark = true;
 			break;
 		}
@@ -304,12 +302,12 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 {
 	// Before, scaleFactor would just be how many times B is executed
 	// Now we search for scaleFactor tightly spaced tests.
-	
+
 	TR << std::endl << "Executing all benchmarks..." << std::endl << std::endl;
 
 	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
 	// right now, take the minimum of 3 trials...
-	
+
 	std::vector< double > prev_results( all.size(), 0 );
 	//for ( Size j = 0; j < 3; ++j ) {
 		for ( Size i = 0; i < all.size(); ++i ) {
@@ -334,7 +332,7 @@ std::string PerformanceBenchmark::getReport()
 	for (Size i = 0; i < all.size(); i++ ) {
 		if( i != 0 ) res += ",\n"; // special first case
 		PerformanceBenchmark * B = all[i];
-		sprintf(buf, "[%i, %f]", B->result_, B->time_ );
+		sprintf(buf, "{\"run_time\":%f, \"cycles\":%i}", B->time_, B->result_ );
 		res += "    \"" + B->name_ + "\":" + std::string(buf);
 	}
 	res += "\n}\n";

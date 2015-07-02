@@ -94,8 +94,8 @@ def main(args):
     # def compare(fun):
     #     working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
     #     working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
-    #     res_1 = json.load( file(working_dir_1 + '/.results.json') )
-    #     res_2 = json.load( file(working_dir_1 + '/.results.json') )
+    #     res_1 = json.load( file(working_dir_1 + '/output.results.json') )
+    #     res_2 = json.load( file(working_dir_1 + '/output.results.json') )
     #     res = fun(res_1, working_dir_1, res_2, working_dir_2)
     #     print json.dumps(res, sort_keys=True, indent=2)
     #     sys.exit(0)
@@ -123,17 +123,21 @@ def main(args):
 
         if Options.compare:
             working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
-            working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
-            res_1 = json.load( file(working_dir_1 + '/.results.json') )
-            res_2 = json.load( file(working_dir_2 + '/.results.json') )
+            res_1 = json.load( file(working_dir_1 + '/output.results.json') )["results"]
+
+            if Options.compare[1] == 'None': res_2, working_dir_2 = None, None
+            else:
+                working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
+                res_2 = json.load( file(working_dir_2 + '/output.results.json') )["results"]
+
             res = test_suite.compare(test, res_1, working_dir_1, res_2, working_dir_2)
 
-            with file(working_dir_1+'/.compare.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+            with file(working_dir_1+'/output.compare.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
 
             print('Comparison finished with results:\n{}'.format( json.dumps(res, sort_keys=True, indent=2) ) )
 
             if 'summary' in res: print('Summary section:\n{}'.format( json.dumps(res['summary'], sort_keys=True, indent=2) ) )
-            print 'Output this comparison saved to {0}/.compare.json'.format(working_dir_1)
+            print 'Output this comparison saved to {0}/output.compare.json'.format(working_dir_1)
 
 
         else:
@@ -153,10 +157,10 @@ def main(args):
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
 
-            print 'Output and log of this test saved to {0}/.results.json and {0}/.output.log'.format(working_dir)
+            print 'Output and log of this test saved to {0}/output.results.json and {0}/output.output.log'.format(working_dir)
 
-            with file(working_dir+'/.output.log', 'w') as f: f.write(res[_LogKey_])
-            with file(working_dir+'/.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+            with file(working_dir+'/output.output.log', 'w') as f: f.write(res[_LogKey_])
+            with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
 
 
         # if not test.startswith('tests/')  and  test.count('.'):  # regular Test or a TestSuite?

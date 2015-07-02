@@ -54,7 +54,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
         json_results_file = '{rosetta_dir}/source/_performance_'.format(**vars())
         output_log_file = '{working_dir}/_performance_.log'.format(**vars())
-        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -benchmark_scale 120 -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
+        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -benchmark_scale 64 -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
 
         #performance_benchmark_sh = os.path.abspath(working_dir + '/performance_benchmark.sh')
         #with file(performance_benchmark_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
@@ -70,9 +70,12 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
         try:
             json_results = json.load( file(json_results_file) )
             results[_ResultsKey_] = { _TestsKey_:{} }
-            for t in json_results: results[_ResultsKey_][_TestsKey_][t] = {_StateKey_: _S_queued_for_comparison_, _LogKey_: '', 'num_executions': json_results[t][0], 'run_time': json_results[t][1] }
 
-            results[_ResultsKey_][_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='num_executions', legend='num_executions, s', color='#66f') ] ) ]
+            for t in json_results:
+                results[_ResultsKey_][_TestsKey_][t] = dict( json_results[t] )
+                results[_ResultsKey_][_TestsKey_][t].update( {_StateKey_: _S_queued_for_comparison_, _LogKey_: ''} )
+
+            results[_ResultsKey_][_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='run_time', legend='runtime, s', color='#66f') ] ) ]
 
             results[_StateKey_] = _S_queued_for_comparison_
 
@@ -99,29 +102,35 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose=Fa
 def compare(test, results, files_path, previous_results, previous_files_path):
     cr = {_TestsKey_:{}, _SummaryKey_:{_TotalKey_:0, _FailedKey_:0, _FailedTestsKey_:[]} }
 
-    if previous_results[_ResultsKey_]  and  _TestsKey_ in previous_results[_ResultsKey_]:
-        for test in results[_ResultsKey_][_TestsKey_]:
-            num_executions = results[_ResultsKey_][_TestsKey_][test]['num_executions']
+    if previous_results  and  _TestsKey_ in previous_results:
+        for test in results[_TestsKey_]:
+            cycles = results[_TestsKey_][test]['cycles']
 
-            if test in previous_results[_ResultsKey_][_TestsKey_]  and  'num_executions' in previous_results[_ResultsKey_][_TestsKey_][test]: previous_num_executions = previous_results[_ResultsKey_][_TestsKey_][test]['num_executions']
-            else: previous_num_executions = None
+            if test in previous_results[_TestsKey_]: previous_values = { k:previous_results[_TestsKey_][test][k] for k in previous_results[_TestsKey_][test] if k not in [_StateKey_, _LogKey_] }
+            else: previous_values = None
+
+            if previous_values  and  'cycles' in previous_values: previous_cycles = previous_values['cycles']
+            else: previous_cycles = None
 
             cr[_SummaryKey_][_TotalKey_] += 1
-            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'num_executions':num_executions, 'previous_num_executions':previous_num_executions,
-                                    _LogKey_: 'previous_num_executions={}\nnum_executions={}\n'.format(previous_num_executions, num_executions) }
 
-            if previous_num_executions  and  2.0 * abs(previous_num_executions - num_executions) / abs(previous_num_executions + num_executions + 1.0e-200) > _failure_threshold_pct_/100.0:  # mark test as failed if there is more then 5% difference in number of executions
+            cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
+            cr[_TestsKey_][test].update( {_StateKey_: _S_finished_, 'previous_values': previous_values,
+                                          _LogKey_: 'previous_cycles={}\ncycles={}\n'.format(previous_cycles, cycles) } )
+
+            if previous_cycles  and  2.0 * abs(previous_cycles - cycles) / abs(previous_cycles + cycles + 1.0e-200) > _failure_threshold_pct_/100.0:  # mark test as failed if there is more then 5% difference in run time
                 cr[_TestsKey_][test][_StateKey_] = _S_failed_
                 cr[_SummaryKey_][_FailedKey_] += 1
                 cr[_SummaryKey_][_FailedTestsKey_].append(test)
 
     else: # no previous tests case, returning 'finished' for all sub_tests
-        for test in results[_ResultsKey_][_TestsKey_]:
-            cr[_TestsKey_][test] = {_StateKey_: _S_finished_, 'run_time':results[_ResultsKey_][_TestsKey_][test]['num_executions'], 'previous_num_executions':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
+        for test in results[_TestsKey_]:
+            cr[_TestsKey_][test] = dict(results[_TestsKey_][test])
+            cr[_TestsKey_][test].update( {_StateKey_: _S_finished_, 'previous_values':None, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'} )
             cr[_SummaryKey_][_TotalKey_] += 1
 
     state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
 
-    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='num_executions', legend='num_executions, s', color='#66f') ] ) ]
+    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='run_time', legend='runtime, s', color='#66f') ] ) ]
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: cr}
