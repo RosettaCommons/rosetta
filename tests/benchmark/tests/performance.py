@@ -131,6 +131,6 @@ def compare(test, results, files_path, previous_results, previous_files_path):
 
     state = _S_failed_ if cr[_SummaryKey_][_FailedKey_] else _S_finished_
 
-    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='run_time', legend='runtime, s', color='#66f') ] ) ]
+    cr[_PlotsKey_] = [ dict(type='sub_test:revision_value', data=[ dict(y='cycles', legend='cycles', color='#66f') ] ) ]
 
     return {_StateKey_: state, _LogKey_: '', _ResultsKey_: cr}
