@@ -97,6 +97,8 @@ residue_types/staple/08A.params
 residue_types/staple/08B.params
 
 ## Artificial Crosslinker Types
+#residue_types/crosslinker/1.3.5_trisbromomethylbenzene.params
+#residue_types/crosslinker/1.3.5_trisbromomethylbenzene_symm.params
 #residue_types/crosslinker/1.2_bisbromomethylbenzene.params
 #residue_types/crosslinker/1.3_bisbromomethylbenzene.params
 #residue_types/crosslinker/1.4_bisbromomethylbenzene.params

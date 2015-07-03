@@ -98,7 +98,7 @@ public:
 
 	/// @brief Returns a bool indicating whether the input pose will be reset prior to
 	/// building a helix.
-	bool reset_pose() const { return reset_pose_; }
+	inline bool reset_pose() const { return reset_pose_; }
 
 	/// @brief Set whether the helix direction should be inverted.
 	///
@@ -106,7 +106,7 @@ public:
 
 	/// @brief Return whether the helix direction will be inverted.
 	///
-	bool invert_helix() const { return bundle_parameters_->invert_helix(); }
+	inline bool invert_helix() const { return bundle_parameters_->invert_helix(); }
 
 	/// @brief Set the length of the helix, in residues.
 	///
@@ -117,15 +117,24 @@ public:
 
 	/// @brief Returns a bool indicating whether the input pose will be reset prior to
 	/// building a helix.
-	core::Size helix_length() const { return helix_length_; }
+	inline core::Size helix_length() const { return helix_length_; }
 
-	/// @brief Set the residue type (full name, not 3-letter code) that will make up the helix.
-	///
-	void set_residue_name(std::string const &name) { residue_name_=name; }
+	/// @brief Set the residue type(s) (full name, not 3-letter code) that will make up the helix.
+	/// @details If there is more than one residue per repeating unit in the minor helix, one residue
+	/// name must be provided for each residue in the repeating unit.  Note that there is no check that
+	/// the size of the residue_name_ vector matches the number of residues in the repeating unit until
+	/// apply time.
+	void set_residue_name(utility::vector1< std::string > const &names) { residue_name_=names; return; }
 
-	/// @brief Get the name of the residue type (full name, not 3-letter code) that will make up the helix.
-	///
-	std::string residue_name() const { return residue_name_; }
+	/// @brief Get the name (full name, not 3-letter code) of one of the residue types in the repeating
+	/// unit that will make up the helix.
+	std::string residue_name( core::Size const repeat_index ) const {
+		runtime_assert_string_msg(
+			repeat_index > 0 && repeat_index <= residue_name_.size(),
+			"Error in protocols::helical_bundle::MakeBundleHelix::residue_name(): The index is out of range."
+		);
+		return residue_name_[repeat_index];
+	}
 
 	/// @brief Set the residue type (full name, not 3-letter code) that will cap the helix.
 	/// @details Set this to "" for no cap.
@@ -261,7 +270,26 @@ public:
 	/// @brief Get global omega1 offset
 	/// @detail The overall omega1 offset is the sum of this global value and the per-atom
 	/// delta_omega1 values.
-	core::Real delta_omega1_all () const { return bundle_parameters_->delta_omega1_all(); }
+	inline core::Real delta_omega1_all () const { return bundle_parameters_->delta_omega1_all(); }
+
+	/// @brief Get the residues per repeat.
+	///
+	inline core::Size residues_per_repeat() const { return bundle_parameters_->residues_per_repeat(); }
+	
+	/// @brief Get the atoms per residue vector (const-access).
+	///
+	inline utility::vector1 < core::Size > const & atoms_per_residue() const { return bundle_parameters_->atoms_per_residue(); }
+
+	/// @brief Set the repeating unit offset.
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the SECOND residue of the repeating unit, etc.
+	void set_repeating_unit_offset( core::Size const val ) { bundle_parameters_->set_repeating_unit_offset(val); return; }
+	
+	/// @brief Get the repeating unit offset.
+	/// @details An offset of 0 means that the first residue in the helix is the first
+	/// residue of the repeating unit.  An offset of 1 means that the first residue in
+	/// the helix is the second residue in the repeating unit, etc.
+	inline core::Size repeating_unit_offset() const { return bundle_parameters_->repeating_unit_offset(); }
 
 	/// @brief Set the minor helix parameters by reading them in from a file.
 	///
@@ -272,12 +300,16 @@ public:
 		core::Real z1(0.0);
 		utility::vector1 <core::Real> delta_omega1;
 		utility::vector1 <core::Real> delta_z1;
-		read_minor_helix_params ( filename, r1, omega1, z1, delta_omega1, delta_z1 );
+		core::Size residues_per_repeat(1);
+		utility::vector1 <core::Size> atoms_per_residue;
+		read_minor_helix_params ( filename, r1, omega1, z1, delta_omega1, delta_z1, residues_per_repeat, atoms_per_residue );
 		bundle_parameters_->set_r1(r1);
 		bundle_parameters_->set_omega1(omega1);
 		bundle_parameters_->set_z1(z1);
 		bundle_parameters_->set_delta_omega1(delta_omega1);
 		bundle_parameters_->set_delta_z1(delta_z1);
+		bundle_parameters_->set_residues_per_repeat( residues_per_repeat );
+		bundle_parameters_->set_atoms_per_residue( atoms_per_residue );
 		return;
 	}
 
@@ -339,9 +371,9 @@ private:
 	///
 	core::Size helix_length_;
 
-	/// @brief Name (full-length, not 3-letter code) of the residue type that the helix will be made of.
-	/// @details Defaults to "ALA".
-	std::string residue_name_;
+	/// @brief Name (full-length, not 3-letter code) of the residue type(s) that the helix will be made of.
+	/// @details Defaults to "ALA".  One residue must be specified for each in the repeating unit.
+	utility::vector1< std::string > residue_name_;
 
 	/// @brief Name (full-length, not 3-letter code) of the residue type that will cap the helix.
 	/// @details If blank, there will be no cap.  Defaults to blank.

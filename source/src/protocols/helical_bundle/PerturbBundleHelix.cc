@@ -138,6 +138,9 @@ void PerturbBundleHelix::apply (core::pose::Pose & pose)
 		params->delta_omega1_vect(),
 		params->delta_omega1_all(),
 		params->delta_z1_vect(),
+		params->residues_per_repeat(),
+		params->atoms_per_residue(),
+		params->repeating_unit_offset(),
 		failed
 	);
 

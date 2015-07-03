@@ -264,15 +264,34 @@ public:
 
 	/// @brief Set the default residue name
 	///
-	void set_default_residue_name(std::string const &name) { default_residue_name_=name; default_residue_name_set_=true; }
-
+	void set_default_residue_name(utility::vector1< std::string > const &names) { default_residue_name_=names; default_residue_name_set_=true; }
+	
 	/// @brief Returns true if and only if the default residue name has been set
 	///
 	bool default_residue_name_set() const { return default_residue_name_set_; }
 
-	/// @brief Returns the default residue name.
+	/// @brief Returns the default residue name for a particular position in the repeating unit.
 	///
-	std::string default_residue_name() const;
+	std::string default_residue_name( core::Size const index_in_repeating_unit ) const;
+
+	/// @brief Set the default repeating unit offset
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+	void set_default_repeating_unit_offset( core::Size const offset ) { default_repeating_unit_offset_=offset; default_repeating_unit_offset_set_=true; }
+
+	/// @brief Returns true if and only if the default repeating unit offset has been set.
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+	bool default_repeating_unit_offset_set() const { return default_repeating_unit_offset_set_; }
+
+	/// @brief Returns the default repeating unit offset value.
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+	core::Size default_repeating_unit_offset() const;
+	
+	/// @brief Returns the default residue name vector.
+	///
+	utility::vector1 < std::string > default_residue_name() const;
 
 	/// @brief Set the default delta_t value (residue offset).
 	///
@@ -471,11 +490,21 @@ private:
 
 	/// @brief Default residue name
 	///
-	std::string default_residue_name_;
+	utility::vector1< std::string > default_residue_name_;
 
 	/// @brief Has the default residue name been specified?
 	///
 	bool default_residue_name_set_;
+
+	/// @brief Default repeating unit offset
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+	core::Size default_repeating_unit_offset_;
+	
+	/// @brief Has the default repeating unit offset been specified?
+	/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+	/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+	bool default_repeating_unit_offset_set_;
 
 	/// @brief Default delta_t value (residue offset)
 	///

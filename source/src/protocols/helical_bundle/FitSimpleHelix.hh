@@ -103,6 +103,32 @@ public:
 		return;
 	}
 
+	/// @brief Set the residue in the repeating unit (1, 2, 3, etc.) that contains the reference atom.
+	/// @details If not set, this defaults to 1.
+	void set_reference_residue (core::Size const ref_res_in)
+	{
+		runtime_assert_string_msg( ref_res_in > 0, "Error in protocols::helical_bundle::FitSimpleHelix::set_reference_residue: The reference residue's index must be greater than zero." );
+		reference_residue_ = ref_res_in;
+		return;
+	}
+
+	/// @brief Get the reference residue index in the repeating unit.
+	///
+	inline core::Size reference_residue() const { return reference_residue_; }
+
+	/// @brief Set the number of residues per repeating unit in the helix.
+	/// @details If not set, this defaults to 1.
+	void set_residues_per_repeat (core::Size const count_in)
+	{
+		runtime_assert_string_msg( count_in > 0, "Error in protocols::helical_bundle::FitSimpleHelix::set_residues_per_repeat: The number of residues per repeat must be greater than zero." );
+		residues_per_repeat_ = count_in;
+		return;
+	}
+	
+	/// @brief Get the number of residues per repeating unit in the helix.
+	///
+	inline core::Size residues_per_repeat() const { return residues_per_repeat_; }
+
 	/// @brief Function to retrieve the final values of the helical parameters, post-fit.
 	/// @details Call this function after the "apply" function, and pass it containers for
 	/// the data to be retrieved.
@@ -113,6 +139,27 @@ public:
 		utility::vector1 < core::Real > &delta_omega1_out,
 		utility::vector1 < core::Real > &delta_z1_out		
 	) const;
+	
+	/// @brief Load in guesses for the radii (optional during fitter setup).
+	///
+	void set_r1_guesses( utility::vector1<core::Real> const &r1_guesses_in ) {
+		r1_guesses_=r1_guesses_in;
+		return;
+	}
+
+	/// @brief Load in guesses for the delta_omega1 values (optional during fitter setup).
+	///
+	void set_delta_omega1_guesses( utility::vector1<core::Real> const &delta_omega1_guesses_in ) {
+		delta_omega1_guesses_=delta_omega1_guesses_in;
+		return;
+	}
+	
+	/// @brief Load in guesses for the delta_z1 values (optional during fitter setup).
+	///
+	void set_delta_z1_guesses( utility::vector1<core::Real> const &delta_z1_guesses_in ) {
+		delta_z1_guesses_=delta_z1_guesses_in;
+		return;
+	}
 
 private:
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +201,15 @@ private:
 	/// omega and dz1 constant across all mainchain atoms.
 	std::string reference_atom_;
 
+	/// @brief If the number of residues in the repeating unit is greater than one, which residue is the
+	/// one that contains the reference atom?
+	/// @details Defaults to 1.
+	core::Size reference_residue_;
+
+	/// @brief How many residues are there in the repeating unit?
+	/// @details Defaults to 1.
+	core::Size residues_per_repeat_;
+
 	/// @brief Output radii values (one for each atom fitted by the fitter).
 	///
 	utility::vector1 < core::Real > r1_vals_output_;
@@ -173,7 +229,15 @@ private:
 	/// @brief Output delta_z1 values (z offset, one for each atom fitted by the fitter).
 	///
 	utility::vector1 < core::Real > delta_z1_vals_output_;
+	
+	/// @brief Vector of guesses for radii.
+	utility::vector1 < core::Real > r1_guesses_;
 
+	/// @brief Vector of guesses for offset around z-axis.
+	utility::vector1 < core::Real > delta_omega1_guesses_;
+	
+	/// @brief Vector of guesses for offset along z-axis.
+	utility::vector1 < core::Real > delta_z1_guesses_;
 
 ////////////////////////////////////////////////////////////////////////////////
 //          PRIVATE FUNCTIONS                                                 //

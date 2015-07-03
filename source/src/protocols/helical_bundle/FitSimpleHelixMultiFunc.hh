@@ -47,6 +47,8 @@ public: // Creation
 	FitSimpleHelixMultiFunc(
 		core::pose::Pose const &pose,
 		std::string const &atom_name,
+		core::Size const first_res_index,
+		core::Size const res_per_repeat,
 		core::Size const start_index,
 		core::Size const end_index,
 		core::Size const minimization_mode
@@ -85,6 +87,14 @@ private:
 	/// @brief The atoms that trace out the helix (e.g. "CA" or "N" or whatever)
 	///
 	std::string atom_name_;
+
+	/// @brief The Rosetta-numbering index of the first residue in the helix that will be fit.
+	///
+	core::Size first_res_index_;
+	
+	/// @brief The number of residues per repeating unit in the helix.
+	///
+	core::Size residues_per_repeat_;
 
 	/// @brief The first residue of the helix
 	///

@@ -15,6 +15,8 @@
 #include <stdio.h>
 
 // Unit Headers
+#include <protocols/helical_bundle/util.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -22,8 +24,6 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <utility/exit.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -61,8 +61,12 @@ namespace helical_bundle {
 
 	static thread_local basic::Tracer TR("protocols.helical_bundle.util");
 
-	void write_minor_helix_params (
-		std::string const &filename,
+	/// @brief Actual write of the crick_params file data.
+	/// @details Called by both write_minor_helix_params variants.
+	/// The outfile ozstream must already be opened, and will not be closed
+	/// by this function.
+	void write_crick_params_file_data (
+		utility::io::ozstream &outfile,
 		utility::vector1 < core::Real > const &r1,
 		core::Real const &omega1,
 		core::Real const &z1,
@@ -70,11 +74,6 @@ namespace helical_bundle {
 		utility::vector1 < core::Real > const &delta_z1
 	) {
 		using namespace utility::io;
-
-		ozstream outfile;
-		outfile.open( filename );
-
-		runtime_assert_string_msg( outfile.good(), "In protocols::helical_bundle::write_minor_helix_params: Unable to open file for write!" );
 
 		char linebuffer[256];
 		std::string line_out;
@@ -100,25 +99,91 @@ namespace helical_bundle {
 			line_out=linebuffer;
 			outfile.write( line_out, line_out.length() );
 		}
+	}
+
+	/// @brief Write out a crick_params file.
+	/// @details Variant for case of a single-residue repeating unit.
+	void write_minor_helix_params (
+		std::string const &filename,
+		utility::vector1 < core::Real > const &r1,
+		core::Real const &omega1,
+		core::Real const &z1,
+		utility::vector1 < core::Real > const &delta_omega1,
+		utility::vector1 < core::Real > const &delta_z1
+	) {
+		using namespace utility::io;
+
+		ozstream outfile;
+		outfile.open( filename );
+
+		runtime_assert_string_msg( outfile.good(), "In protocols::helical_bundle::write_minor_helix_params: Unable to open file for write!" );
+
+		write_crick_params_file_data( outfile, r1, omega1, z1, delta_omega1, delta_z1 );
 
 		outfile.close();
 
 		return;
 	}
 
+	/// @brief Write out a crick_params file.
+	/// @details Variant for case of a multi-residue repeating unit.
+	void write_minor_helix_params (
+		std::string const &filename,
+		core::Size const &residues_per_repeat,
+		utility::vector1 <core::Size> const &atoms_per_residue,
+		utility::vector1 < core::Real > const &r1,
+		core::Real const &omega1,
+		core::Real const &z1,
+		utility::vector1 < core::Real > const &delta_omega1,
+		utility::vector1 < core::Real > const &delta_z1
+	) {
+		using namespace utility::io;
+
+		ozstream outfile;
+		outfile.open( filename );
+
+		runtime_assert_string_msg( outfile.good(), "In protocols::helical_bundle::write_minor_helix_params: Unable to open file for write!" );
+
+		char linebuffer[1024];
+		std::string line_out;
+
+		if(residues_per_repeat > 1) {
+			sprintf(linebuffer, "residues_per_repeat\t%lu\n", static_cast<unsigned long>( residues_per_repeat ) );
+			line_out=linebuffer;
+			outfile.write( line_out, line_out.length() );
+			runtime_assert_string_msg( atoms_per_residue.size() > 0, "In protocols::helical_bundle::write_minor_helix_params: got an empty vector of residue mainchain atom counts.  This should not happen.  Consult a developer -- it's a programming error, not a user error." );
+			for(core::Size i=1, imax=atoms_per_residue.size(); i<=imax; ++i) {
+				sprintf( linebuffer, "atoms_per_residue\t%lu\t%lu\n", static_cast<unsigned long>( i ), static_cast<unsigned long>( atoms_per_residue[i] ) );
+				line_out=linebuffer;
+				outfile.write( line_out, line_out.length() );
+			}
+		}
+
+		write_crick_params_file_data( outfile, r1, omega1, z1, delta_omega1, delta_z1 );
+
+		outfile.close();
+
+		return;
+	}
+
+	/// @brief Read minor helix parameters from a crick_params file.
+	///
 	void read_minor_helix_params (
 		std::string const &filename,
 		utility::vector1 < core::Real > &r1,
 		core::Real &omega1,
 		core::Real &z1,
 		utility::vector1 < core::Real > &delta_omega1,
-		utility::vector1 < core::Real > &delta_z1
+		utility::vector1 < core::Real > &delta_z1,
+		core::Size &residues_per_repeat,
+		utility::vector1 <core::Size> &atoms_per_residue
 	) {
 		using namespace utility::io;
 
 		r1.clear();
 		delta_omega1.clear();
 		delta_z1.clear();
+		atoms_per_residue.clear();
 		omega1 = 0.0;
 		z1 = 0.0;
 
@@ -135,6 +200,8 @@ namespace helical_bundle {
 
 		if(TR.Debug.visible()) TR.Debug << "Reading " << filename_formatted << std::endl;
 
+		bool residues_per_repeat_specified(false);
+
 		while(true) {
 			std::string current_line = "";
 			infile.getline(current_line);//Get the current line and store it in current_line.
@@ -147,28 +214,64 @@ namespace helical_bundle {
 			std::stringstream ss(current_line);
 			char buffer [25];
 			ss.getline(buffer, 25, '\t');
-			std::string strbuffer=buffer;
+			std::string strbuffer(buffer);
 			//TR.Debug << strbuffer << "." << std::endl; //DELETE ME
 			if(strbuffer=="r1") {
 				ss.getline(buffer, 25);
-				r1.push_back( atof(buffer) );
+				r1.push_back( static_cast<core::Real>( atof(buffer) ) );
 			} else if (strbuffer=="delta_omega1") {
 				ss.getline(buffer, 25);
-				delta_omega1.push_back( atof(buffer) );
+				delta_omega1.push_back( static_cast<core::Real>( atof(buffer) ) );
 			} else if (strbuffer=="delta_z1") {
 				ss.getline(buffer, 25);
-				delta_z1.push_back( atof(buffer) );
+				delta_z1.push_back( static_cast<core::Real>( atof(buffer) ) );
 			} else if (strbuffer=="omega1") {
 				ss.getline(buffer, 25);
-				omega1=atof(buffer);
+				omega1=static_cast<core::Real>( atof(buffer) );
 			} else if (strbuffer=="z1") {
 				ss.getline(buffer, 25);
-				z1=atof(buffer);
+				z1=static_cast<core::Real>( atof(buffer) );
+			} else if (strbuffer=="residues_per_repeat") {
+				runtime_assert_string_msg( !residues_per_repeat_specified, "Error in protocols::helical_bundle::read_minor_helix_params(): Only one \"residues_per_repeat\" line should be present in a crick_params file." );
+				residues_per_repeat_specified=true;
+				ss.getline(buffer, 25);
+				residues_per_repeat=static_cast<core::Size>( atoi(buffer) );
+				atoms_per_residue.resize( residues_per_repeat, 0 );
+			} else if (strbuffer=="atoms_per_residue") {
+				runtime_assert_string_msg( residues_per_repeat_specified, "Error in protocols::helical_bundle::read_minor_helix_params():  The \"atoms_per_residue\" lines can only be after a \"residues_per_repeat\" line.  (This is a problem with the crick_params file.)" );
+				ss.getline(buffer, 25, '\t');
+				core::Size const curres( static_cast<core::Size>( atoi( buffer ) ) );
+				runtime_assert_string_msg( curres > 0 && curres <=residues_per_repeat, "Error in protocols::helical_bundle::read_minor_helix_params():  An \"atoms_per_residue\" line specifies a residue index that's not in the repeating unit.  (This is a problem with the crick_params file.)" );
+				ss.getline(buffer, 25);
+				core::Size const curres_atomcount( static_cast<core::Size>( atoi( buffer ) ) );
+				runtime_assert_string_msg( curres_atomcount > 0, "Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in the current residue must be greater than zero.  (This is a problem with the crick_params file.)" );
+				runtime_assert_string_msg( atoms_per_residue[curres] == 0, "Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in a residue was specified more than once in the crick_params file.");
+				atoms_per_residue[curres] = curres_atomcount;
 			} else continue;
 
 		}
 
 		infile.close();
+		
+		if(!residues_per_repeat_specified) {
+			residues_per_repeat=1; //Default to 1 if not specified in the file.
+			atoms_per_residue.clear();
+			atoms_per_residue.push_back( r1.size() );
+			runtime_assert_string_msg( delta_omega1.size() == atoms_per_residue[1] && delta_z1.size() == atoms_per_residue[1],
+				"Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in the residue is inconsistent, based on the number of r1, delta_omega1, and delta_z1 values provided in the crick_params file." );
+		} else {
+			core::Size counter(0);
+			for(core::Size i=1, imax=atoms_per_residue.size(); i<=imax; ++i) {
+				runtime_assert_string_msg( atoms_per_residue[i] != 0, "Error in protocols::helical_bundle::read_minor_helix_params():  The number of atoms in at least one of the residues in the repeating unit was not specified in the crick_params file." );
+				counter += atoms_per_residue[i];
+			}
+			runtime_assert_string_msg(
+				r1.size() == counter &&
+				delta_omega1.size() == counter &&
+				delta_z1.size() == counter,
+				"Error in protocols::helical_bundle::read_minor_helix_params():  Parameters were not specified for all atoms in all residues in the repeating unit.  Please check the crick_params file provided."
+			);
+		}
 
 		if(TR.Debug.visible()) {
 			TR.Debug << "Finished reading " << filename_formatted << std::endl;
@@ -183,9 +286,11 @@ namespace helical_bundle {
 			for(core::Size i=1, imax=delta_z1.size(); i<=imax; ++i) {
 				TR.Debug << "delta_z1[" << i << "]\t" << delta_z1[i] << std::endl;
 			}
+			TR.Debug << "residues_per_repeat\t" << residues_per_repeat << std::endl;
+			for(core::Size i=1; i<=residues_per_repeat; ++i) {
+				TR.Debug << "atoms in residue " << i << "\t" << atoms_per_residue[i] << std::endl;
+			}
 		}
-
-		runtime_assert_string_msg( (r1.size() == delta_omega1.size()) && ( r1.size() == delta_z1.size() ), "In protocols::helical_bundle::read_minor_helix_params: the r1, delta_omega1, and delta_z1 lists are of different lengths.  Check the .crick_params file, since something is clearly wonky." );
 
 		return;
 	}
@@ -212,6 +317,9 @@ namespace helical_bundle {
 		utility::vector1 < core::Real > const &delta_omega1,
 		core::Real const &delta_omega1_all,
 		utility::vector1 < core::Real > const &delta_z1,
+		core::Size const residues_per_repeat,
+		utility::vector1 <core::Size> const &atoms_per_residue,
+		core::Size const repeating_unit_offset, //0 if the first residue is the first residue in the repeating unit; 1 if we're off by 1, etc.
 		bool &failed
 	) {
 	
@@ -232,18 +340,42 @@ namespace helical_bundle {
 		core::Real const delta_omega1_all_prime ( delta_omega1_all - (z1_offset_prime / z1) * omega1 );
 
 		core::Real t = -1.0 * static_cast<core::Real>(helix_length + 2) / 2.0 + delta_t_prime;
+		
+		core::Size residue_in_repeating_unit(repeating_unit_offset); //What's the index of the current residue in the repeating unit?
+		core::Size curatom_in_repeating_unit(0); //What's the current mainchain atom index in the repeating unit?
 
 		for(core::Size ir2=helix_start-1; ir2<=helix_end+1; ++ir2) { //Loop through all residues in the helix, padded by one on either side
-			core::Size ir = ir2;
+			core::Size ir( ir2 );
 			//Repeat start and end residues to pad by one:
-			if(ir2==helix_start-1) ir=helix_start;
-			if(ir2==helix_end+1) ir=helix_end;
+			if( ir2 == helix_start-1 ) ir = helix_start;
+			if( ir2 == helix_end+1 ) ir = helix_end;
+
+			//Figure out which residue we are in the repeating unit:
+			++residue_in_repeating_unit;
+			if(ir2==helix_start-1) {
+				residue_in_repeating_unit=repeating_unit_offset+1;
+				curatom_in_repeating_unit=0;
+			}
+			if(residue_in_repeating_unit > residues_per_repeat) {
+				residue_in_repeating_unit=1; //Reset if we're on to the next repeating unit.
+				curatom_in_repeating_unit=0;
+			}
+
 			utility::vector1 < numeric::xyzVector <core::Real> > innervector;
 			for(core::Size ia=1, iamax=helixpose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) { //Loop through all mainchain atoms in the current helix residue
+				runtime_assert_string_msg(
+					iamax = atoms_per_residue[ residue_in_repeating_unit ],
+					"Error in protocols::helical_bundle::generate_atom_positions():  The number of atoms per residue for one or more residues does not match the expected number given the Crick parameters file."
+				);
+
+				//Increment the current atom in the repeating unit:
+				++curatom_in_repeating_unit;
+				
+				//Actually call the generator function:				
 				innervector.push_back( numeric::crick_equations::XYZ_BUNDLE(
 					t, r0, omega0,
 					( invert_helix ? numeric::constants::d::pi - delta_omega0 : delta_omega0 ),
-					r1[ia], omega1-omega0, z1, delta_omega1[ia]+delta_omega1_all_prime, delta_z1[ia],
+					r1[curatom_in_repeating_unit], omega1-omega0, z1, delta_omega1[curatom_in_repeating_unit]+delta_omega1_all_prime, delta_z1[curatom_in_repeating_unit],
 					failed )
 				);
 				if(invert_helix) {
@@ -253,6 +385,7 @@ namespace helical_bundle {
 				}
 				innervector[ia].z( innervector[ia].z() + (invert_helix ? -1.0 : 1.0 ) * z0_offset ); //Offset by z0_offset in direction of helix (inverted for inverted helix)
 				if(failed) break;
+				
 			}
 			if(failed) break;
 			outvector.push_back(innervector);
@@ -411,6 +544,36 @@ namespace helical_bundle {
 			pose.update_residue_neighbors();
 
 			return;
+	}
+	
+	/// @brief Given a comma-separated list of residue names, separate these out into a vector of
+	/// residue names.
+	/// @details The string_in string is the input; the vect_out vector is the output (which will
+	/// be reset by this operation).
+	void parse_resnames (
+		std::string const &string_in,
+		utility::vector1< std::string > &vect_out 
+	) {
+		vect_out.clear();
+		
+		//Strip whitespace from the string:
+		std::string nowhitespace(string_in);
+		for(signed long /*must be signed*/ i=0; i < static_cast< signed long >(nowhitespace.length()); ++i) {
+			if(nowhitespace[i]=='\t' || nowhitespace[i]==' ') {
+				nowhitespace.erase(i,1);
+				--i;
+			}
+		}
+		
+		//Split the comma-separated list into the vector:
+		std::stringstream ss(nowhitespace);
+		while(ss.good()) {
+			std::string aa_name;
+			getline(ss, aa_name, ',');
+			vect_out.push_back(aa_name);
+		}
+		
+		return;
 	}
 
 } //helical_bundle

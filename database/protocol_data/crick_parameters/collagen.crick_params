@@ -1,0 +1,38 @@
+# Crick params file for the collagen helix.
+# Created with fit_helixparams.default.linuxgccrelease with the following command-line options:
+# -residue_type GLY PRO PRO -repeats 11 -dump_connect_info -connect_info_cutoff 0 -mainchain_torsions -70.95 173.29 180.0 -71.54 161.02 180.0 -55.59 144.16 180.0 -reference_atom CA -reference_residue 2 -min_tolerance 0.0000000000000001 -min_type dfpmin_strong_wolfe -dz1_guess 2.7365 -r1_guess 4.56 -omega1_guess 0.3322 -r1_guesses 2.05 2.2 3.05 3.75 4.62 3.7473 4.37 3.75 3.21 -delta_z1_guesses -0.75 -0.18 1.04 -1.15 0 1.2444 -0.44 0.81 1.35 -delta_omega1_guesses -0.42 0.21 0.12 0.071 0 -0.0224 -0.484 -0.559 -0.25
+# File created 26 June 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+residues_per_repeat	3
+atoms_per_residue	1	3
+atoms_per_residue	2	3
+atoms_per_residue	3	3
+r1	2.049999922286
+r1	2.199999990075
+r1	3.050000040098
+r1	3.792979592779
+r1	4.559928973182
+r1	3.747302410134
+r1	4.370000360746
+r1	3.749999916355
+r1	3.206841067326
+omega1	0.331983454849
+z1	2.736524267669
+delta_omega1	-0.420000245296
+delta_omega1	0.210000002665
+delta_omega1	0.119999732719
+delta_omega1	0.068299393330
+delta_omega1	0.000000000000
+delta_omega1	-0.022406959114
+delta_omega1	-0.484004386318
+delta_omega1	-0.559000362544
+delta_omega1	-0.188017474657
+delta_z1	-0.749999934398
+delta_z1	-0.179999979587
+delta_z1	1.040000038606
+delta_z1	-1.176946776397
+delta_z1	0.000000000000
+delta_z1	1.244402169663
+delta_z1	-0.439999890649
+delta_z1	0.810000073827
+delta_z1	1.351765039044

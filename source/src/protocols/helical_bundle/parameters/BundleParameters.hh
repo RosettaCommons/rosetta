@@ -94,6 +94,30 @@ namespace protocols {
 						delta_omega0_ = val;
 						return;
 					}
+					
+					/// @brief Sets the number of residues per repeating unit in the minor helix.
+					///
+					void set_residues_per_repeat( core::Size const val ) {
+						runtime_assert_string_msg( val > 0, "In protocols::helical_bundle::parameters::BundleParameters::set_residues_per_repeat(): The number of residues per repeat must be greater than 0." );
+						residues_per_repeat_ = val;
+						return;
+					}
+					
+					/// @brief Sets the residue offset in the repeating unit in the minor helix.
+					/// @details An offset of 0 means that the first residue in the helix is the first
+					/// residue of the repeating unit.  An offset of 1 means that the first residue in
+					/// the helix is the second residue in the repeating unit, etc.
+					void set_repeating_unit_offset( core::Size const val ) {
+						repeating_unit_offset_ = val;
+						return;
+					}
+
+					/// @brief Set the number of residues in the repeating unit in the helix.
+					/// @details Note that there is no check that the size of the atoms_per_residue_ vector matches residues_per_repeat_.
+					void set_atoms_per_residue( utility::vector1 <core::Size> const &atoms_per_residue_in ) {
+						atoms_per_residue_ = atoms_per_residue_in;
+						return;
+					}
 
 					/// @brief Resets the minor helix radius list.
 					///
@@ -217,19 +241,41 @@ namespace protocols {
 
 					/// @brief Returns the major helix radius.
 					/// @details In Angstroms.
-					core::Real r0() const { return r0_; }
+					inline core::Real r0() const { return r0_; }
 
 					/// @brief Returns the major helix twist per residue.
 					/// @details In radians.
-					core::Real omega0() const { return omega0_; }
+					inline core::Real omega0() const { return omega0_; }
 
 					/// @brief Returns the major helix angular offset about the major helix (bundle) axis.
 					/// @details In radians.
-					core::Real delta_omega0() const { return delta_omega0_; }
+					inline core::Real delta_omega0() const { return delta_omega0_; }
+					
+					/// @brief Returns the number of residues per repeating unit in the minor helix.
+					///
+					inline core::Size residues_per_repeat() const { return residues_per_repeat_; }
+					
+					/// @brief Returns the residue offset in the repeating unit in the minor helix.
+					/// @details An offset of 0 means that the first residue in the helix is the first
+					/// residue of the repeating unit.  An offset of 1 means that the first residue in
+					/// the helix is the second residue in the repeating unit, etc.
+					inline core::Size repeating_unit_offset() const { return repeating_unit_offset_; }
+					
+					/// @brief Return the number of atoms in one of the residues in the repeating unit of the minor helix.
+					///
+					inline core::Size atoms_per_residue( core::Size const index_in_repeating_unit ) const {
+						runtime_assert_string_msg( index_in_repeating_unit <= atoms_per_residue_.size() && index_in_repeating_unit > 0,
+							"Error in protocols::helical_bundle::parameters::BundleParameters::atoms_per_residue():  The index provided to atoms_per_residue() is out of range." );
+						return atoms_per_residue_[index_in_repeating_unit];
+					}
+					
+					/// @brief Return the atoms_per_residue vector (const-access).
+					///
+					inline utility::vector1 < core::Size > const & atoms_per_residue() const { return atoms_per_residue_; }
 
 					/// @brief Returns the minor helix r1 value for the atom with the index value, in Angstroms.
 					/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
-					core::Real r1( core::Size const index ) const {
+					inline core::Real r1( core::Size const index ) const {
 						assert( index<=r1_.size() && index>0 );
 						return r1_[index];
 					}
@@ -239,19 +285,19 @@ namespace protocols {
 
 					/// @brief Returns the minor helix turn per residue, defined for all atoms.
 					/// @details In radians.
-					core::Real omega1() const { return omega1_; }
+					inline core::Real omega1() const { return omega1_; }
 
 					/// @brief Returns the minor helix angular offset around the minor helix axis, defined for all atoms (to "roll" the minor helix).
 					/// @details In radians.
-					core::Real delta_omega1_all() const { return delta_omega1_all_; }
+					inline core::Real delta_omega1_all() const { return delta_omega1_all_; }
 
 					/// @brief Returns the minor helix rise per residue, defined for all atoms.
 					/// @details In Angstroms.
-					core::Real z1() const { return z1_; }
+					inline core::Real z1() const { return z1_; }
 
 					/// @brief Returns the minor helix angular offset around the minor helix axis, defined on a per-atom basis, in radians, for the atom with the index value.
 					/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
-					core::Real delta_omega1( core::Size const index ) const {
+					inline core::Real delta_omega1( core::Size const index ) const {
 						assert( index<=delta_omega1_.size() && index>0 );
 						return delta_omega1_[index];
 					}
@@ -261,41 +307,41 @@ namespace protocols {
 
 					/// @brief Returns the minor helix offset along the minor helix axis, defined on a per-atom basis, in Angstroms, for the atom with the index value.
 					/// @details The index value is checked to see whether it is in range ONLY in debug-mode compiliation.
-					core::Real delta_z1( core::Size const index ) const {
+					inline core::Real delta_z1( core::Size const index ) const {
 						assert( index<=delta_z1_.size() && index>0 );
 						return delta_z1_[index];
 					}
 					
 					/// @brief Returns the minor helix offset along the minor helix axis, defined on a per-helix basis, in Angstroms.
 					///
-					core::Real z1_offset() const { return z1_offset_; }
+					inline core::Real z1_offset() const { return z1_offset_; }
 
 					/// @brief Returns the minor helix offset along the major helix axis, defined on a per-helix basis, in Angstroms.
 					///
-					core::Real z0_offset() const { return z0_offset_; }
+					inline core::Real z0_offset() const { return z0_offset_; }
 
 					/// @brief Const-access to the whole delta_z1 vector.
 					utility::vector1 < core::Real > const & delta_z1_vect() const { return delta_z1_; }
 
 					/// @brief Should the helix direction be reversed?
 					///
-					bool invert_helix() const { return invert_helix_; }
+					inline bool invert_helix() const { return invert_helix_; }
 
 					/// @brief Residue offset, to "slide" the helix along its path.
 					/// @details In residues (i.e. a value of 0.5 is a half-residue offset).
-					core::Real delta_t() const { return delta_t_; }
+					inline core::Real delta_t() const { return delta_t_; }
 
 					/// @brief Should the generator set mainchain dihedral values?
 					///
-					bool allow_dihedrals() const { return allow_dihedrals_; }
+					inline bool allow_dihedrals() const { return allow_dihedrals_; }
 
 					/// @brief Should the generator set mainchain bond angle values?
 					///
-					bool allow_bondangles() const { return allow_bondangles_; }
+					inline bool allow_bondangles() const { return allow_bondangles_; }
 
 					/// @brief Should the generator set mainchain bond length values?
 					///
-					bool allow_bondlengths() const { return allow_bondlengths_; }
+					inline bool allow_bondlengths() const { return allow_bondlengths_; }
 					
 					///////////////////
 					//Output:
@@ -330,6 +376,18 @@ namespace protocols {
 					///////////////////
 					//Minor helix data:
 					///////////////////
+					
+					/// @brief The number of residues in the repeating unit in the helix.
+					/// @details Defaults to 1.
+					core::Size residues_per_repeat_;
+					
+					/// @brief The reside offset in the repeating unit.
+					/// @details Defaults to 0.
+					core::Size repeating_unit_offset_;
+					
+					/// @brief The number of atoms in each residue in the repeating unit in the helix.
+					///
+					utility::vector1 < core::Size > atoms_per_residue_;
 
 					/// @brief Minor helix radius, defined on a per-atom basis.
 					/// @details In Angstroms.

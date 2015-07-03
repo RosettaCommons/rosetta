@@ -10,6 +10,7 @@
 /// @file fit_helixparams.cc
 /// @brief Constructs a piece of secondary structure with repeating mainchain torsion values,
 /// and fits the Crick parameters for a helix to the structure.
+/// @details Updated 29 May 2015 to permit the repeating unit to be more than one residue.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 //General includes
@@ -41,8 +42,8 @@
 static basic::Tracer TR( "apps.pilot.vmullig.fit_helixparams" );
 
 //Options (ugh -- global variables):
-OPT_KEY (String, residue_type)
-OPT_KEY (Integer, residue_repeats)
+OPT_KEY (StringVector, residue_type)
+OPT_KEY (Integer, repeats)
 OPT_KEY (RealVector, mainchain_torsions)
 OPT_KEY (String, min_type)
 OPT_KEY (Real, min_tolerance)
@@ -50,7 +51,11 @@ OPT_KEY (Real, r1_guess)
 OPT_KEY (Real, omega1_guess)
 OPT_KEY (Real, dz1_guess)
 OPT_KEY (String, reference_atom)
+OPT_KEY (Integer, reference_residue)
 
+OPT_KEY (RealVector, r1_guesses)
+OPT_KEY (RealVector, delta_omega1_guesses)
+OPT_KEY (RealVector, delta_z1_guesses)
 
 /// @brief Set up the options for this pilot app.
 void register_options()
@@ -63,45 +68,60 @@ void register_options()
 	helix_phipsiomega.push_back(-64.8); //phi
 	helix_phipsiomega.push_back(-41.0); //psi
 	helix_phipsiomega.push_back(180.0); //omega
+	
+	//An empty real vector.
+	utility::vector1 <core::Real> emptyreal;
 
-	NEW_OPT( residue_type, "What type of residue (full name) should the polymer be made of?  Default ALA.", "ALA");
-	NEW_OPT( residue_repeats, "How many subunits long should the polymer used for fitting be?  Default 21.  Note that two additional residues will be added at the start and end, which will not be used in the fit.", 21);
+	//The default vector of residue types
+	utility::vector1<std::string> alavect;
+	alavect.push_back("ALA");
+
+	NEW_OPT( residue_type, "What type of residue (full name) should the polymer be made of?  Default ALA.  Multiple residues can be specified if the repeating unit in this helix is more than one residue.", alavect);
+	NEW_OPT( repeats, "How many repeating units long should the polymer used for fitting be?  Default 21.  Note that two additional residues will be added at the start and end, which will not be used in the fit.  Note also that this is the number of repeat units.  That is, if there is more than one residue in the repeating unit, the number of residues in total will be the number of residues per repeating unit times this number (plus two at the end).", 21);
 	NEW_OPT( mainchain_torsions, "A list of mainchian dihedral values that will repeat for every residue in the polymer.  Default (-64.8, -41.0, 180.0), corresponding to phi, psi, and omega of an ideal left-handed alpha helix.  If specified, a value must be specified for every mainchain dihedral angle in the residue type from which the polymer will be built.", helix_phipsiomega);
 	NEW_OPT( min_type, "The minimization type that will be used (default \"dfpmin\").", "dfpmin");
 	NEW_OPT( min_tolerance, "The minimization tolerance that will be used (the default value, 1E-7, is a good place to start).", 0.0000001);
-	NEW_OPT( r1_guess, "Initial guess for the value of r1 (the helix radius, in Angstroms).  Default 1.5.", 1.5);
+	NEW_OPT( r1_guess, "Initial guess for the value of r1 of the reference atom (the helix radius, in Angstroms).  Default 1.5.", 1.5);
 	NEW_OPT( omega1_guess, "Initial guess for the value of omega1 (the turn per residue, in radians).  Default 1.7.", 1.7);
 	NEW_OPT( dz1_guess, "Initial guess for the value of dz1 (the rise per residue, in Angstroms).  Default 1.5.", 1.5);
 	NEW_OPT( reference_atom, "The mainchain atom that will be fit first, and used as the reference against wish delta-z and delta-omega are computed.  (Default \"CA\").", "CA");
+	NEW_OPT( reference_residue, "If there is more than one residue per repeat unit in the helix, this is the residue containing the mainchain atom that will be fit first, and used as the reference against wish delta-z and delta-omega are computed.  (Default 1).", 1);
 
+	NEW_OPT( r1_guesses, "Initial guesses for the value of r1 of all atoms (the helix radius, in Angstroms).  The guess for the reference atom will be disregarded (r1_guess is used instead).  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
+	NEW_OPT( delta_omega1_guesses, "Initial guesses for the value of delta_omega1 of all atoms (the rotational offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_omega1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
+	NEW_OPT( delta_z1_guesses, "Initial guesses for the value of delta_z1 of all atoms (the axial offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_z1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
 	return;
 }
 
 
 /// @brief Actually build the geometry that we'll be working with.
-void build_polymer( core::pose::Pose &pose )
+///
+void build_polymer(
+	core::pose::Pose &pose,
+	utility::vector1<std::string> const &restypes,
+	core::Size const residues_per_repeat,
+	core::Size const repeats
+)
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 	using namespace protocols::cyclic_peptide;
 
-	TR << "Building " << option[residue_repeats]() << " residue polymer from " << option[residue_type]() << " building blocks." << std::endl; 
+	TR << "Building " << repeats << " repeat polymer (" << residues_per_repeat*repeats << " residues) from ";
+	for(core::Size i=1; i<=residues_per_repeat; ++i) {
+		TR << restypes[i] << (i<residues_per_repeat ? ", " : " ");
+	}
+	TR << "building blocks." << std::endl; 
 
 	PeptideStubMover stubmover;
 
 	stubmover.set_reset_mode(true);
 	stubmover.reset_mover_data();
 	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, "");
-	stubmover.add_residue (
-		"Append",
-		option[residue_type](),
-		0,
-		false,
-		"",
-		static_cast<core::Size>( option[residue_repeats]() ),
-		0,
-		""		
-	);
+	for(core::Size i=1; i<=repeats; ++i) {
+		for(core::Size j=1; j<=residues_per_repeat; ++j) {
+			stubmover.add_residue( "Append", restypes[j], 0, false, "", 1, 0, "" );
+		}
+	}
+
 	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, "");
 
 	stubmover.apply(pose);
@@ -112,25 +132,49 @@ void build_polymer( core::pose::Pose &pose )
 
 /// @brief Sets the polymer conformation to the repeating conformation (helix) specified with
 /// the option[mainchain_torsions]() vector.
-void set_pose_conformation( core::pose::Pose &pose)
+void set_pose_conformation(
+	core::pose::Pose &pose,
+	core::Size const total_repeats,
+	core::Size const residues_per_repeat,
+	utility::vector1 <core::Real> const &mainchain_torsions
+)
 {
 	using namespace core;
 	using namespace core::id;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
 
-	core::Size const itorsmax=option[mainchain_torsions]().size();
+	core::Size const itorsmax=mainchain_torsions.size();
+	core::Size ir(1); //Current residue.  Start on residue 1, because we've got an extra residue at each terminus.
 
-	for(core::Size ir=2,irmax=pose.n_residue()-1; ir<=irmax; ++ir) { //Loop through all pose residues
-		runtime_assert_string_msg( itorsmax == pose.residue(ir).mainchain_torsions().size(), "In set_pose_conformation: the number of mainchain torsions must match the number of values provided with the -mainchain_torsions flag." );
-
-		for(core::Size itors=1; itors<=itorsmax; ++itors) {
-			pose.set_torsion( TorsionID( ir, id::BB, itors ), static_cast<core::Real>( option[mainchain_torsions]()[itors] ) );
+	{ //Scope 1: Check that the right number of mainchain torsions have been specified.
+		core::Size counter(0);
+		for(core::Size i=1; i<=residues_per_repeat; ++i) {
+			++ir;
+			counter += pose.residue(ir).mainchain_torsions().size();
 		}
-
+		runtime_assert_string_msg( counter==itorsmax, "User input error: the number of mainchain torsions specified does not equal the number in the repeating unit." );
 	}
 
+	ir=1;
+
+	for(core::Size irepeat=1; irepeat<=total_repeats; ++irepeat) {
+		++ir;
+		core::Size itors_list(0); //Index of the current torsion in the torsion list.
+		core::Size itors_pose(0); //Index of the current torsion in the pose.
+		while(itors_list < itorsmax) {
+			++itors_list;
+			++itors_pose;
+			if(itors_pose > pose.residue(ir).mainchain_torsions().size()) { //We've set all mainchain torsions in the current resiude, so go on to next.
+				++ir;
+				itors_pose=0;
+				--itors_list; //Because this will be incremented twice, otherwise.
+				continue;
+			}
+			pose.set_torsion( TorsionID( ir, id::BB, itors_pose ), mainchain_torsions[ itors_list ] );
+		}
+	}
 	pose.update_residue_neighbors();
+	
+	//pose.dump_pdb( "temp.pdb" ); //DELETE ME
 
 	return;
 }
@@ -145,13 +189,20 @@ void add_Cu_chains(
 	core::Real const &z1_val,
 	utility::vector1 < core::Real > const &delta_omega1_vals,
 	utility::vector1 < core::Real > const &delta_z1_vals,
-	std::string const &/*ref_atom*/,
-	core::Size const rescount
+	core::Size const rescount, //Actually the repeat count.
+	core::Size const res_per_repeat
 ) {
 	using namespace protocols::cyclic_peptide;
 
 	//A pose that will just be a bunch of Cu residues
 	core::pose::Pose cupose;
+	
+	//Count the number of mainchain atoms that we'll be placing coppers over:
+	core::Size nres(pose.n_residue() - 2);
+	core::Size natoms(0);
+	for(core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir) {
+		natoms += pose.residue(ir).n_mainchain_atoms();
+	}
 
 	//Add the Cu residues:
 	PeptideStubMover stubmover;
@@ -171,13 +222,17 @@ void add_Cu_chains(
 	}
 	stubmover.apply(cupose);
 	
-	for(core::Size ia=1, iamax=pose.residue(2).n_mainchain_atoms(); ia<=iamax; ++ia) {
-		core::Real t = -1.0*static_cast<core::Real>(rescount)/2.0;
-		for(core::Size ir=1; ir<=rescount; ++ir) {
-			cupose.set_xyz( core::id::AtomID( 1, ir), numeric::crick_equations::xyz( r1_vals[ia], omega1_val, t, z1_val, delta_omega1_vals[ia], delta_z1_vals[ia] ) );
-			t+=1.0;
+	core::Size atomno(0);
+	for(core::Size ir=2, irmax=res_per_repeat+1; ir<=irmax; ++ir) {
+		for(core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+			++atomno;
+			core::Real t = -1.0*static_cast<core::Real>(nres)/2.0 + ir-2;
+			for(core::Size irepeat=1; irepeat<=rescount; ++irepeat) {
+				cupose.set_xyz( core::id::AtomID( 1, irepeat), numeric::crick_equations::xyz( r1_vals[atomno], omega1_val, t, z1_val, delta_omega1_vals[atomno], delta_z1_vals[atomno] ) );
+				t+=res_per_repeat;
+			}
+			pose.append_pose_by_jump(cupose, 1);
 		}
-		pose.append_pose_by_jump(cupose, 1);
 	}
 
 	return;
@@ -196,20 +251,48 @@ main( int argc, char * argv [] )
 		if(TR.visible()) {
 			TR << "Starting fit_helixparams.cc" << std::endl;
 			TR << "Pilot app created 23 October 2014 by Vikram K. Mulligan, Ph.D., Baker laboratory." << std::endl;
+			TR << "App updated 29 May 2015 to support multiple residues per repeating unit." << std::endl;
 			TR << "For questions, contact vmullig@uw.edu." << std::endl << std::endl;
 		}
 
-		core::pose::Pose pose; //Make the empty pose
+		//Copy user inputs from the options system:
+		utility::vector1<std::string> const restypes( option[residue_type]() );
+		core::Size const residues_per_repeat( restypes.size() ); //How many residues are there per repeating unit?
+		runtime_assert_string_msg( option[repeats]()>0, "Error in user input from command-line flags.  The number of repeats must be greater than zero." );
+		core::Size const nrepeats( static_cast<core::Size>(option[repeats]()) );
+		utility::vector1<core::Real> const mainchaintorsions( option[mainchain_torsions]() );
 
-		build_polymer(pose); //Build the repeating secondary structure element
-		set_pose_conformation(pose); //Set the pose conformation.
+		utility::vector1<core::Real> const r1guesses( option[r1_guesses]() );
+		utility::vector1<core::Real> const deltaomega1_guesses( option[delta_omega1_guesses]() );
+		utility::vector1<core::Real> const deltaz1_guesses( option[delta_z1_guesses]() );
+
+		core::pose::Pose pose; //Make the empty pose
+		
+		build_polymer(pose, restypes, residues_per_repeat, nrepeats); //Build the repeating secondary structure element
+		set_pose_conformation(pose, nrepeats, residues_per_repeat, mainchaintorsions); //Set the pose conformation.
+
+		//Count atoms:
+		core::Size atomcount(0);
+		for(core::Size ir=2, irmax=residues_per_repeat+1; ir<=irmax; ++ir) {
+			atomcount += pose.residue(ir).n_mainchain_atoms();
+		}
+		runtime_assert_string_msg( r1guesses.size()==0 || r1guesses.size()==atomcount, "Error in user input from command-line flags.  If specified, the number of r1 guesses must equal the number of atoms." );
+		runtime_assert_string_msg( deltaomega1_guesses.size()==0 || deltaomega1_guesses.size()==atomcount, "Error in user input from command-line flags.  If specified, the number of delta_omega1 guesses must equal the number of atoms." );
+		runtime_assert_string_msg( deltaz1_guesses.size()==0 || deltaz1_guesses.size()==atomcount, "Error in user input from command-line flags.  If specified, the number of delta_z1 guesses must equal the number of atoms." );
 
 		protocols::helical_bundle::FitSimpleHelix fitter;
-		fitter.set_range(2,  static_cast<core::Size>(option[residue_repeats]())+1);
+		fitter.set_range(2,  pose.n_residue() - 1);
 		fitter.set_min_type( option[min_type]() );
 		fitter.set_min_tolerance( option[min_tolerance]());
 		fitter.set_initial_guesses( option[r1_guess](), option[omega1_guess](), option[dz1_guess]() );
 		fitter.set_reference_atom( option[reference_atom]() );
+		fitter.set_residues_per_repeat( residues_per_repeat );
+		fitter.set_reference_residue( static_cast<core::Size>(option[reference_residue]()) );
+		
+		if(r1guesses.size() > 0) fitter.set_r1_guesses( r1guesses );
+		if(deltaomega1_guesses.size() > 0) fitter.set_delta_omega1_guesses( deltaomega1_guesses );
+		if(deltaz1_guesses.size() > 0) fitter.set_delta_z1_guesses( deltaz1_guesses );
+
 		fitter.apply(pose); //Will shift the pose to match the ideal helix
 
 		//Storage spots for the results of the fit:
@@ -223,13 +306,22 @@ main( int argc, char * argv [] )
 		fitter.get_crick_parameters( r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals );
 
 		//Add chains B, C, D, etc. -- chains of Cu (a convenient single-atom residue) overlaying on each of the mainchain atoms.
-		add_Cu_chains(pose, r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals, option[reference_atom](), static_cast<core::Size>(option[residue_repeats]()) );
+		add_Cu_chains(pose, r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals, nrepeats, residues_per_repeat );
 
 		if(TR.visible()) TR << "Writing result.pdb." << std::endl;
 		pose.dump_pdb("result.pdb"); //dump out a pose.
 
 		if(TR.visible()) TR << "Writing result.crick_params" << std::endl;
-		protocols::helical_bundle::write_minor_helix_params("result.crick_params", r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals);
+		if(residues_per_repeat==1) protocols::helical_bundle::write_minor_helix_params("result.crick_params", r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals);
+		else {
+			utility::vector1 <core::Size> atoms_per_residue;
+			core::Size ir=1;
+			for(core::Size irepeat=1; irepeat<=residues_per_repeat; ++irepeat) {
+				++ir;
+				atoms_per_residue.push_back( pose.residue(ir).n_mainchain_atoms() );
+			}
+			protocols::helical_bundle::write_minor_helix_params("result.crick_params", residues_per_repeat, atoms_per_residue, r1_vals, omega1_val, z1_val, delta_omega1_vals, delta_z1_vals);
+		}
 
 		//Write out the Crick parameters
 		if(TR.visible()) {
@@ -237,11 +329,17 @@ main( int argc, char * argv [] )
 			TR << "Results from the fitter:" << std::endl;
 			TR.width(20);
 			TR.precision(8);
-			TR << "ID\tAtom\tr1\tomega1\tz1\tdelta_omega1\tdelta_z1\t" << std::endl;
-			for(core::Size ia=1, iamax=pose.residue(2).n_mainchain_atoms(); ia<=iamax; ++ia) {
-				TR << ia << "\t" << pose.residue(2).atom_name(ia);
-				if( ia==pose.residue(2).atom_index(option[reference_atom]()) ) TR << "*";
-				TR << "\t" << r1_vals[ia] << "\t" << omega1_val << "\t" << z1_val << "\t" << delta_omega1_vals[ia] << "\t" << delta_z1_vals[ia] << std::endl;
+			TR << "Res\tID\tAtom\tr1\tomega1\tz1\tdelta_omega1\tdelta_z1\t" << std::endl;
+			core::Size completed_residues(0);
+			core::Size counter(0);
+			for(core::Size ir=2; completed_residues<residues_per_repeat; ++ir) {
+				for(core::Size ia=1, iamax=pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
+					++counter;
+					TR << ir-1 << "\t" << ia << "\t" << pose.residue(ir).atom_name(ia);
+					if( (ir-1)==static_cast<core::Size>(option[reference_residue]()) && ia==pose.residue(ir).atom_index(option[reference_atom]()) ) TR << "*";
+					TR << "\t" << r1_vals[counter] << "\t" << omega1_val << "\t" << z1_val << "\t" << delta_omega1_vals[counter] << "\t" << delta_z1_vals[counter] << std::endl;
+				}
+				++completed_residues;
 			}
 			TR <<"(*Reference atom.)" << std::endl;
 			TR << std::endl;

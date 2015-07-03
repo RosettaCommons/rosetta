@@ -47,6 +47,9 @@ namespace protocols {
 				r0_(0.0),
 				omega0_(0.0),
 				delta_omega0_(0.0),
+				residues_per_repeat_(1),
+				repeating_unit_offset_(0),
+				atoms_per_residue_(),
 				r1_(),
 				omega1_(0.0),
 				delta_omega1_all_(0.0),
@@ -68,6 +71,9 @@ namespace protocols {
 				r0_(src.r0()),
 				omega0_(src.omega0()),
 				delta_omega0_(src.delta_omega0()),
+				residues_per_repeat_(src.residues_per_repeat()),
+				repeating_unit_offset_( src.repeating_unit_offset() ),
+				atoms_per_residue_(src.atoms_per_residue_),
 				r1_(src.r1_),
 				omega1_(src.omega1()),
 				delta_omega1_all_(src.delta_omega1_all()),
@@ -115,6 +121,11 @@ namespace protocols {
 				remark << "   Registry shift (delta_t,residues): " << delta_t() << std::endl;
 				
 				remark << " OTHER MINOR HELIX PARAMETERS (fixed):" << std::endl;
+				remark << "   Residues/repeat: " << residues_per_repeat() << std::endl;
+				for(core::Size i=1, imax=residues_per_repeat(); i<=imax; ++i) {
+					remark << "   Atoms/residue" << i << ": " << atoms_per_residue(i) << std::endl;
+				}
+				remark << "   Repeat unit offset: " << repeating_unit_offset() << std::endl;
 				remark << "   Twist (omega1,radians/residue): " << omega1() << std::endl;
 				remark << "   Rise (z1,Angstroms/residue): " << z1() << std::endl;
 				for(core::Size i=1, imax=r1_.size(); i<=imax; ++i) {

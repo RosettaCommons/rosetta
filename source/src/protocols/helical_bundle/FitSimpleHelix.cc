@@ -24,6 +24,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random.hh>
+#include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/NamedAtomID.hh>
@@ -75,11 +76,16 @@ FitSimpleHelix::FitSimpleHelix():
 		min_type_("dfpmin"),
 		min_tolerance_(0.00000001),
 		reference_atom_("CA"),
+		reference_residue_(1),
+		residues_per_repeat_(1),
 		r1_vals_output_(),
 		omega1_val_output_(0.0),
 		z1_val_output_(0.0),
 		delta_omega1_vals_output_(),
-		delta_z1_vals_output_()
+		delta_z1_vals_output_(),
+		r1_guesses_(),
+		delta_omega1_guesses_(),
+		delta_z1_guesses_()
 {}
 
 
@@ -106,26 +112,51 @@ protocols::moves::MoverOP FitSimpleHelix::fresh_instance() const {
 /// @brief Actually apply the mover to the pose.
 /// @details At the end of this function, two things will have happened:
 /// --The pose will be realigned to the ideal helix.
-/// --The fitted helical parameters will have been stored in internal variables for the mover, and can be retrieved
-/// using a to-be-written function.  TODO
+/// --The fitted helical parameters will have been stored in internal variables for the mover, and can be retrieved with a
+/// call to get_crick_parameters().
 void FitSimpleHelix::apply (core::pose::Pose & pose)
 {
 	runtime_assert_string_msg( start_index_ > 1 && start_index_ < pose.n_residue() && end_index_ > 1 && end_index_ < pose.n_residue(), "In FitSimpleHelix::apply(): The start and end residues must be within the pose's residue range, and cannot be the end residues." );
-	runtime_assert_string_msg( start_index_ + 1 < end_index_, "In FitSimpleHelix::apply(): The end residue must be at least two residues past the start residue." );
+	runtime_assert_string_msg( (end_index_ - start_index_ + 1) % residues_per_repeat() == 0, "In FitSimpleHelix::apply(): The range of residues must represent an integer number of repeats." );
+	runtime_assert_string_msg( (end_index_ - start_index_ + 1) / residues_per_repeat() > 2, "In FitSimpleHelix::apply(): At least three repeats must be fitted." );
 
-	r1_vals_output_.resize( pose.residue(start_index_).n_mainchain_atoms(), 0.0 );
-	delta_omega1_vals_output_.resize( pose.residue(start_index_).n_mainchain_atoms(), 0.0 );
-	delta_z1_vals_output_.resize( pose.residue(start_index_).n_mainchain_atoms(), 0.0 );
+	//Add arbitrary offset to the pose to make the superimposition work better:
+	numeric::xyzVector <core::Real> offsetvect;
+	offsetvect.x() = 5;
+	offsetvect.y() = 6;
+	offsetvect.z() = 7;
+	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
+		for(core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia) {
+			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) + offsetvect );
+		}
+	}
+	
+	//Count mainchain atoms in the residues making up the repeating unit:
+	core::Size natoms(0);
+	core::Size natoms_before_refres(0);
+	for(core::Size i=0, imax=residues_per_repeat(); i<imax; ++i) {
+		if(i+1 < reference_residue()) natoms_before_refres += pose.residue(start_index_+i).n_mainchain_atoms();
+		natoms += pose.residue(start_index_+i).n_mainchain_atoms();
+	}
 
-	{ //Scope 1: fiting the reference atom.
+	r1_vals_output_.resize( natoms, 0.0 );
+	delta_omega1_vals_output_.resize( natoms, 0.0 );
+	delta_z1_vals_output_.resize( natoms, 0.0 );
 
-		core::Size const reference_atom_index = pose.residue(start_index_).atom_index( reference_atom_ );
+	//The indices of the reference residue and the reference atom:
+	core::Size const reference_res_index( start_index_ + reference_residue() - 1 );
+	core::Size const reference_atom_index( pose.residue( reference_res_index ).atom_index( reference_atom_ ) ); //Index in its residue.
+	core::Size const absolute_reference_atom_index( reference_atom_index + natoms_before_refres ); //Index in the vector of all atoms to be fitted.
 
-		runtime_assert_string_msg( reference_atom_index <= pose.residue(start_index_).n_mainchain_atoms(), "In FitSimpleHelix::apply(): The reference atom is not a mainchain atom." );
+	{ //Scope 1: fitting the reference atom in the reference residue.
 
-		if(TR.visible()) TR << "Fitting reference atom " << reference_atom_ << "." << std::endl;
+		runtime_assert_string_msg( reference_residue() <= residues_per_repeat(), "In FitSimpleHelix::apply(): The reference residue's index in the repeating unit is greater than the number of residues per repeating unit." );
+		runtime_assert_string_msg( reference_res_index >= start_index_ && reference_res_index <= end_index_, "In FitSimpleHelix::apply(): The reference residue does not fall within the range of residues to be fitted." );
+		runtime_assert_string_msg( reference_atom_index <= pose.residue( reference_res_index ).n_mainchain_atoms(), "In FitSimpleHelix::apply(): The reference atom is not a mainchain atom in the reference residue." );
 
-		FitSimpleHelixMultiFunc multfunc(pose, reference_atom_, start_index_, end_index_, 0); //Make the multifunc that will be used to fit the reference atom.
+		if(TR.visible()) TR << "Fitting reference atom " << reference_atom_ << " in reference residue (residue " << reference_res_index << ")." << std::endl;
+
+		FitSimpleHelixMultiFunc multfunc(pose, reference_atom_, reference_res_index, residues_per_repeat(), start_index_, end_index_, 0); //Make the multifunc that will be used to fit the reference atom.
 
 		Multivec vars(5); //Change the number of DOFs appropriately and initialize.
 		vars[1] = r1_initial_;
@@ -141,11 +172,11 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		//(The multifunc is set up to trick the minimizer into acting as a nonlinear least-squares fitter for the Crick equations.  Clever, I know.)
 		minimizer.run( vars );
 
-		r1_vals_output_[reference_atom_index] = vars[1];
+		r1_vals_output_[absolute_reference_atom_index] = vars[1];
 		omega1_val_output_ = vars[2];
 		z1_val_output_ = vars[3];
-		delta_omega1_vals_output_[reference_atom_index] = vars[4];
-		delta_z1_vals_output_[reference_atom_index] = vars[5];
+		delta_omega1_vals_output_[absolute_reference_atom_index] = vars[4];
+		delta_z1_vals_output_[absolute_reference_atom_index] = vars[5];
 
 		if(TR.visible()) {
 			TR << "Reference atom r1 = " << vars[1] << std::endl; //Delete me
@@ -163,11 +194,12 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 		core::pose::initialize_atomid_map(amap, pose, core::id::BOGUS_ATOM_ID);
 
 		core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
+		t += static_cast<core::Real>( reference_res_index-start_index_ );
 
-		for(core::Size ir=start_index_; ir<=end_index_; ++ir) {
-			pose_copy.set_xyz( core::id::NamedAtomID(reference_atom_,ir), numeric::crick_equations::xyz( vars[1], vars[2] , t, vars[3], 0.0, 0.0 ) );
+		for(core::Size ir = reference_res_index; ir <= end_index_; ir += residues_per_repeat()) {
+			pose_copy.set_xyz( core::id::NamedAtomID(reference_atom_,ir), numeric::crick_equations::xyz( vars[1], vars[2] , t, vars[3], 0.0, 0.0 ) + offsetvect );
 			amap[core::id::AtomID(pose.residue(ir).atom_index(reference_atom_),ir)] = core::id::AtomID(pose_copy.residue(ir).atom_index(reference_atom_),ir);
-			t+=1.0;
+			t += static_cast<core::Real>( residues_per_repeat() );
 		}
 
 		//Superimpose the original helix on the ideal helix:
@@ -179,21 +211,31 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 	} //End of Scope 1
 
 	//Scope 2 (within this for loop): repeat for all mainchain atoms
-	for(core::Size ia=1, iamax=pose.residue(start_index_).n_mainchain_atoms(); ia<=iamax; ++ia) {
-		if(pose.residue(start_index_).atom_index(reference_atom_) == ia) continue; //Skip the reference atom -- we've already done it.
+	core::Size cur_res(start_index_);
+	core::Size cur_atom(0);
+	for(core::Size ia=1; ia<=natoms; ++ia) {
 
-		std::string const cur_atom_name = pose.residue(start_index_).atom_name(ia);
+		++cur_atom; //Increment the current atom.
+		if( cur_atom > pose.residue(cur_res).n_mainchain_atoms() ) { //If we've gone through all of the atoms defining mainchain torsions in the current residue.
+			++cur_res; //Increment the current residue
+			cur_atom=1; //Start with the first atom of the next residue.
+		}
+		if( cur_res==reference_res_index && cur_atom==reference_atom_index ) {
+			runtime_assert_string_msg( ia == absolute_reference_atom_index, "Programming error in protocols::helical_bundle::FitSimpleHelix::apply() function.  This shouldn't ever happen.  Please consult a developer." ); //This should be true.
+			continue; //Skip the reference atom -- we've already done it.
+		}
 
+		std::string const cur_atom_name = pose.residue(start_index_).atom_name( cur_atom );
 		if(TR.visible()) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
 
-		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, start_index_, end_index_, 1); //Make the multifunc that will be used to fit the current atom.
+		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1); //Make the multifunc that will be used to fit the current atom.
 
 		Multivec vars(5); //Change the number of DOFs appropriately and initialize.
-		vars[1] = r1_vals_output_[pose.residue(start_index_).atom_index( reference_atom_ )];
+		vars[1] = (r1_guesses_.size()==0 ? r1_vals_output_[absolute_reference_atom_index] : r1_guesses_[ia]);
 		vars[2] = omega1_val_output_;
 		vars[3] = z1_val_output_;
-		vars[4] = 0.001;
-		vars[5] = 0.001;
+		vars[4] = (delta_omega1_guesses_.size()==0 ? (ia > 1 ? delta_omega1_vals_output_[ia-1] : 0.001) : delta_omega1_guesses_[ia] );
+		vars[5] = (delta_z1_guesses_.size()==0 ? (ia > 1 ? delta_z1_vals_output_[ia-1] : 0.001) : delta_z1_guesses_[ia] );
 
 		core::optimization::MinimizerOptions minoptions( min_type_, min_tolerance_, false, false, false );
 		core::optimization::Minimizer minimizer( multfunc, minoptions );
@@ -213,7 +255,13 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 			TR << "Atom " << cur_atom_name << " delta_omega1 = " << vars[4] << std::endl; //Delete me
 			TR << "Atom " << cur_atom_name << " delta_z1 = " << vars[5] << std::endl; //Delete me
 		}
-
+	}
+	
+	//Subtract the arbitrary offset from the pose to shift it back:
+	for(core::Size ir=1, irmax=pose.n_residue(); ir<=irmax; ++ir) {
+		for(core::Size ia=1, iamax=pose.residue(ir).natoms(); ia<=iamax; ++ia) {
+			pose.set_xyz( core::id::AtomID(ia,ir), pose.xyz( core::id::AtomID(ia,ir) ) - offsetvect );
+		}
 	}
 
 	if(TR.visible()) TR << "Fit complete." << std::endl;

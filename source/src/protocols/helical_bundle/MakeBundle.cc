@@ -45,8 +45,6 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static numeric::random::RandomGenerator RG(855461);  // <- Magic number, do not change it!
-
 namespace protocols {
 namespace helical_bundle {
 
@@ -69,7 +67,6 @@ MakeBundleCreator::mover_name()
 	return "MakeBundle";
 }
 
-
 /// @brief Creator for MakeBundle mover.
 MakeBundle::MakeBundle():
 		Mover("MakeBundle"),
@@ -91,8 +88,10 @@ MakeBundle::MakeBundle():
 		default_z1_set_(false),
 		default_delta_omega1_all_(0),
 		default_delta_omega1_all_set_(false),
-		default_residue_name_(""),
+		default_residue_name_(),
 		default_residue_name_set_(false),
+		default_repeating_unit_offset_(0),
+		default_repeating_unit_offset_set_(false),
 		default_delta_t_(0),
 		default_delta_t_set_(false),
 		default_z1_offset_(0),
@@ -139,6 +138,8 @@ MakeBundle::MakeBundle( MakeBundle const & src ):
 		default_delta_omega1_all_set_(src.default_delta_omega1_all_set_),
 		default_residue_name_(src.default_residue_name_),
 		default_residue_name_set_(src.default_residue_name_set_),
+		default_repeating_unit_offset_(src.default_repeating_unit_offset_),
+		default_repeating_unit_offset_set_(src.default_repeating_unit_offset_set_),
 		default_delta_t_(src.default_delta_t_),
 		default_delta_t_set_(src.default_delta_t_set_),
 		default_z1_offset_(src.default_z1_offset_),
@@ -458,8 +459,26 @@ void MakeBundle::set_other_helix_params_from_tag( core::Size const helix_index, 
 {
 			if( tag->hasOption( "residue_name" ) ) {
 				std::string const resname( tag->getOption<std::string>("residue_name", "ALA") );
-				helix(helix_index)->set_residue_name(resname);
-				if(TR.visible()) TR << "\tSet the residue type for the helix to " << resname << "." << std::endl;
+				utility::vector1< std::string > resnames;
+				parse_resnames(resname, resnames);
+				helix(helix_index)->set_residue_name(resnames);
+				if(TR.visible()) {
+					if(resnames.size()==1) {
+						TR << "\tSet the residue type for the helix to " << resnames[1] << "." << std::endl;
+					} else {
+						TR << "\tSet the following residue types for the repeating unit in this helix: ";
+						for(core::Size i=1, imax=resnames.size(); i<=imax; ++i) {
+							TR << resnames[i];
+							if(i<imax) TR << ", ";
+						}
+						TR << "." << std::endl;
+					}
+				}
+			}
+			if( tag->hasOption( "repeating_unit_offset" ) ) {
+				core::Size const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
+				helix(helix_index)->set_repeating_unit_offset(repeat_offset);
+				if(TR.visible()) TR << "\tSet repeat unit offset for this helix to " << repeat_offset << "." << std::endl;
 			}
 			if( tag->hasOption( "invert" ) ) {
 				bool const invertval( tag->getOption<bool>("invert", false) );
@@ -552,9 +571,27 @@ void MakeBundle::set_minorhelix_defaults_from_tag( utility::tag::TagCOP tag )
 void MakeBundle::set_other_defaults_from_tag( utility::tag::TagCOP tag )
 {
 	if (tag->hasOption("residue_name")) {
-		set_default_residue_name( tag->getOption<std::string>("residue_name", "") );
-		if(TR.visible()) TR << "Default residue name set to " << default_residue_name() << "." << std::endl;
-	}	
+		std::string resname_string( tag->getOption<std::string>("residue_name", "") );
+		utility::vector1 < std::string > resname_vect;
+		parse_resnames( resname_string, resname_vect );
+		set_default_residue_name( resname_vect );
+		if(TR.visible()) {
+			if(resname_vect.size()==1) TR << "Default residue name set to " << default_residue_name(1) << "." << std::endl;
+			else {
+				TR << "Default residue names set to ";
+				for (core::Size i=1, imax=resname_vect.size(); i<=imax; ++i) {
+					TR << default_residue_name(i);
+					if(i<imax) TR << ", ";
+				}
+				TR << "." << std::endl;
+			}
+		}
+	}
+	if( tag->hasOption( "repeating_unit_offset" ) ) {
+		core::Size const repeat_offset( tag->getOption<core::Size>("repeating_unit_offset", 0 ) );
+		set_default_repeating_unit_offset(repeat_offset);
+		if(TR.visible()) TR << "Default repeat unit offset set to " << repeat_offset << "." << std::endl;
+	}
 	if (tag->hasOption("invert")) {
 		set_default_invert( tag->getOption<bool>("invert", false) );
 		if(TR.visible()) TR << "Default invert (should the helix be flipped?) set to " << (default_invert() ? "true" : "false") << "." << std::endl;
@@ -586,6 +623,7 @@ void MakeBundle::add_helix() {
 	if(default_z1_set()) helix(newindex)->set_z1( default_z1() );
 	if(default_delta_omega1_all_set()) helix(newindex)->set_delta_omega1_all( default_delta_omega1_all() );
 	if(default_residue_name_set()) helix(newindex)->set_residue_name( default_residue_name() );
+	if(default_repeating_unit_offset_set()) helix(newindex)->set_repeating_unit_offset( default_repeating_unit_offset() );
 	if(default_delta_t_set()) helix(newindex)->set_delta_t( default_delta_t() );
 	if(default_z1_offset_set()) helix(newindex)->set_z1_offset( default_z1_offset() );
 	if(default_z0_offset_set()) helix(newindex)->set_z0_offset( default_z0_offset() );
@@ -643,9 +681,25 @@ core::Real MakeBundle::default_delta_omega1_all() const {
 	return default_delta_omega1_all_;
 }
 
-/// @brief Returns the default residue name.
+/// @brief Returns the default residue name for a particular index in the repeating unit.
 ///
-std::string MakeBundle::default_residue_name() const {
+std::string MakeBundle::default_residue_name( core::Size const index_in_repeating_unit ) const {
+	runtime_assert_string_msg( default_residue_name_set(), "In protocols::helical_bundle::MakeBundle::default_residue_name(): The default residue_name value has not been set!" );
+	runtime_assert_string_msg( index_in_repeating_unit <= default_residue_name_.size() && index_in_repeating_unit > 0, "In protocols::helical_bundle::MakeBundle::default_residue_name(): The index provided to this function is out of range." );
+	return default_residue_name_[index_in_repeating_unit];
+}
+
+/// @brief Returns the default repeating unit offset value.
+/// @details An offset of 0 means that the first residue of the helix is the first residue of the repeating unit.  An offset
+/// of 1 means that the first residue of the helix is the second residue of the repeating unit, etc.
+core::Size MakeBundle::default_repeating_unit_offset() const {
+	runtime_assert_string_msg( default_repeating_unit_offset_set(), "In protocols::helical_bundle::MakeBundle::default_repeating_unit_offset():  The default repeating unit offset value has not been set!" );
+	return default_repeating_unit_offset_;
+}
+
+/// @brief Returns the default residue name vector.
+///
+utility::vector1 < std::string > MakeBundle::default_residue_name() const {
 	runtime_assert_string_msg( default_residue_name_set(), "In protocols::helical_bundle::MakeBundle::default_residue_name(): The default residue_name value has not been set!" );
 	return default_residue_name_;
 }

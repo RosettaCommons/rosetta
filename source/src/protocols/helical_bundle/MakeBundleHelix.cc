@@ -42,7 +42,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static numeric::random::RandomGenerator RG(741701);  // <- Magic number, do not change it!
+
 
 namespace protocols {
 namespace helical_bundle {
@@ -73,11 +73,12 @@ MakeBundleHelix::MakeBundleHelix():
 		reset_pose_(true),
 		bundle_parameters_( BundleParametersOP( new BundleParameters ) ),
 		helix_length_(10),
-		residue_name_("ALA"),
+		residue_name_(),
 		tail_residue_name_(""),
 		last_apply_failed_(false)
 {
 	set_minor_helix_params_from_file("alpha_helix"); //By default, set the minor helix parameters to those of an alpha helix (read in from the database).
+	residue_name_.push_back("ALA");
 }
 
 
@@ -101,9 +102,6 @@ MakeBundleHelix::~MakeBundleHelix() {}
 /// @brief Clone operator to create a pointer to a fresh MakeBundleHelix object that copies this one.
 protocols::moves::MoverOP MakeBundleHelix::clone() const {
 	return protocols::moves::MoverOP( new MakeBundleHelix ( *this ) );
-	/*MakeBundleHelixOP newmover(new MakeBundleHelix( *this ));
-	newmover->set_bundle_parameters( utility::pointer::dynamic_pointer_cast< BundleParameters >(bundle_parameters()->clone()) );
-	return utility::pointer::dynamic_pointer_cast<protocols::moves::Mover>( newmover );*/
 }
 
 
@@ -122,6 +120,12 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 {
 	if(TR.visible()) TR << "Building a helix in a helical bundle using the Crick equations." << std::endl;
 
+	//Initial checks:
+	runtime_assert_string_msg(
+		residues_per_repeat() == residue_name_.size(),
+		"In protocols::helical_bundle::MakeBundleHelix::apply(): The number of residues per repeat does not match the size of the list of residue types."
+	);
+
 	//Should tail residues be added:
 	bool const tail_residues_exist = ( tail_residue_name()!="" );
 
@@ -134,7 +138,13 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	stubmover.set_reset_mode( true );
 	stubmover.reset_mover_data();
 	if(tail_residues_exist) stubmover.add_residue ("Append", tail_residue_name(), 0, true, "", 1, 0, "");
-	stubmover.add_residue ("Append", residue_name(), 0, (tail_residues_exist ? false : true), "", helix_length(), 0, "");
+	core::Size repeat_index( repeating_unit_offset() ); //Index in the repeating unit making up the minor helix
+	for(core::Size i=1, imax=helix_length(); i<=imax; ++i) {
+		++repeat_index;
+		if(repeat_index > residues_per_repeat()) repeat_index=1;
+		stubmover.add_residue ("Append", residue_name(repeat_index), 0, (i==1 && !tail_residues_exist ? true : false), "", 1, 0, "");
+	}
+	//stubmover.add_residue ("Append", residue_name(), 0, (tail_residues_exist ? false : true), "", helix_length(), 0, "");
 	if(tail_residues_exist) stubmover.add_residue ("Append", tail_residue_name(), 0, false, "", 1, 0, "");
 	stubmover.apply(helixpose);
 
@@ -155,7 +165,8 @@ void MakeBundleHelix::apply (core::pose::Pose & pose)
 	bool failed=false;
 	generate_atom_positions(atom_positions, helixpose, helix_start, helix_end, r0(),
 		omega0(), delta_omega0(), delta_t(), z1_offset(), z0_offset(), invert_helix(), r1_vect(), omega1(), z1(),
-		delta_omega1_vect(), delta_omega1_all(), delta_z1_vect(), failed );
+		delta_omega1_vect(), delta_omega1_all(), delta_z1_vect(), residues_per_repeat(), atoms_per_residue(), repeating_unit_offset(),
+		failed );
 
 	set_last_apply_failed(failed);
 	if(failed) {

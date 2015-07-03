@@ -1,0 +1,28 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<tala weights="talaris2014.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<BundleGridSampler name=bundle1 set_bondlengths=true set_bondangles=true use_degrees=true residue_name=PRO,PRO,GLY crick_params_file=collagen r0=8.5 omega0_min=-10 omega0_max=10 omega0_samples=41 helix_length=20 repeating_unit_offset=1 nstruct_mode=true scorefxn=tala>
+			<Helix delta_omega1=0 repeating_unit_offset=1 />
+			<Helix delta_omega1=120 repeating_unit_offset=2 omega0_copies_helix=1 />
+			<Helix delta_omega1=240 repeating_unit_offset=0 omega0_copies_helix=1 />
+			<Helix delta_omega1=0 repeating_unit_offset=1 omega0_copies_helix=1 delta_omega0=120 />
+			<Helix delta_omega1=120 repeating_unit_offset=2 omega0_copies_helix=1  delta_omega0=120 />
+			<Helix delta_omega1=240 repeating_unit_offset=0 omega0_copies_helix=1  delta_omega0=120 />
+			<Helix delta_omega1=0 repeating_unit_offset=1 omega0_copies_helix=1 delta_omega0=240 />
+			<Helix delta_omega1=120 repeating_unit_offset=2 omega0_copies_helix=1  delta_omega0=240 />
+			<Helix delta_omega1=240 repeating_unit_offset=0 omega0_copies_helix=1  delta_omega0=240 />
+		</BundleGridSampler>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover=bundle1 />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

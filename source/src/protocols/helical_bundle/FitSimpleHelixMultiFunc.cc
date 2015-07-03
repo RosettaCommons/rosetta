@@ -50,23 +50,29 @@ FitSimpleHelixMultiFunc::~FitSimpleHelixMultiFunc() {}
 FitSimpleHelixMultiFunc::FitSimpleHelixMultiFunc(
 	core::pose::Pose const &pose,
 	std::string const &atom_name,
+	core::Size const first_res_index,
+	core::Size const res_per_repeat,
 	core::Size const start_index,
 	core::Size const end_index,
 	core::Size const minimization_mode
 ) :
 		pose_( pose ),
 		atom_name_( atom_name ),
+		first_res_index_( first_res_index ),
+		residues_per_repeat_( res_per_repeat ),
 		start_index_(start_index),
 		end_index_(end_index),
 		minimization_mode_(minimization_mode)
 {
 	runtime_assert_string_msg( start_index_ > 0, "In FitSimpleHelixMultiFunc constructor function: the starting index is out of range." );
+	runtime_assert_string_msg( first_res_index_ >= start_index_ && first_res_index_ <= end_index_, "In FitSimpleHelixMultiFunc constructor function: the first residue index is not in the residue range specified." );
 	runtime_assert_string_msg( end_index_ <= pose_.n_residue(), "In FitSimpleHelixMultiFunc constructor function: the ending index is past the end of the pose." );
 	runtime_assert_string_msg( start_index_ + 1 < end_index_, "In FitSimpleHelixMultiFunc constructor function: the starting index must be less than the ending index, and they must define at least three residues." );
-	runtime_assert_string_msg(minimization_mode_==0 || minimization_mode_==1, "In FitSimpleHelixMultiFunc constructor function: invalid value for minimization_mode_.");
+	runtime_assert_string_msg( minimization_mode_==0 || minimization_mode_==1, "In FitSimpleHelixMultiFunc constructor function: invalid value for minimization_mode_.");
+	runtime_assert_string_msg( residues_per_repeat_ > 0, "In FitSimpleHelixMultiFunc constructor function: there must be at least one residue per repeating unit." );
 
-	for(core::Size ir=start_index_; ir<=end_index_; ++ir){
-		runtime_assert_string_msg(pose.residue(ir).has(atom_name_), "In FitSimpleHelixMultiFunc constructor function: all helix residues must have the named atom.");
+	for(core::Size ir=first_res_index_; ir<=end_index_; ir += residues_per_repeat_){
+		runtime_assert_string_msg(pose.residue(ir).has(atom_name_), "In FitSimpleHelixMultiFunc constructor function: all helix residues must have the named atom (\"" + atom_name_ + "\")." );
 	}
 
 }
@@ -87,14 +93,25 @@ FitSimpleHelixMultiFunc::operator ()( Multivec const & vars ) const
 	core::Real rms = 0.0;
 
 	core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1) / 2.0;
+	t += static_cast<core::Real>(first_res_index_-start_index_);
 
 	//Set the helix conformation and store x,y,z coordinates of appropriate atoms from the pose:
 	utility::vector1< Vector > p1_coords, p2_coords;
-	for(core::Size ir=start_index_; ir<=end_index_; ++ir) //Loop through all residue indices
+	for(core::Size ir = first_res_index_; ir <= end_index_; ir += residues_per_repeat_) //Loop through all residue indices
 	{
 		p1_coords.push_back( numeric::crick_equations::xyz( r1, omega1, t, dz1, (minimization_mode_==1 ? delta_omega1 : 0.0  ), (minimization_mode_==1 ? delta_z1 : 0.0) ) );
 		p2_coords.push_back( pose_.residue(ir).xyz(atom_name_) );
-		t+=1.0;
+		t += static_cast<core::Real>( residues_per_repeat_ );
+	}
+	
+	//Add an arbitrary offset to make alignment work better:
+	for(core::Size i=1, imax=p1_coords.size(); i<=imax; ++i) {
+		p1_coords[i].x() += 5;
+		p1_coords[i].y() += 6;
+		p1_coords[i].z() += 7;
+	//	p2_coords[i].x() += 5;
+	//	p2_coords[i].y() += 6;
+	//	p2_coords[i].z() += 7;
 	}
 
 	//This function needs to be super-efficient, since it will be evaluated over and over during a line search.
@@ -135,11 +152,16 @@ FitSimpleHelixMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) con
 	core::pose::initialize_atomid_map(amap, pose_copy, core::id::BOGUS_ATOM_ID);
 
 	core::Real t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
+	t += static_cast<core::Real>(first_res_index_-start_index_);
 
-	for(core::Size ir=start_index_; ir<=end_index_; ++ir) {
-		pose_copy.set_xyz( core::id::NamedAtomID(atom_name_,ir), numeric::crick_equations::xyz( r1, omega1 , t, dz1, (minimization_mode_==1 ? delta_omega1 : 0.0 ), (minimization_mode_==1 ? delta_z1 : 0.0) ) );
+	numeric::xyzVector <core::Real> offsetvect;
+	offsetvect.x() = 5;
+	offsetvect.y() = 6;
+	offsetvect.z() = 7;
+	for(core::Size ir = first_res_index_; ir <= end_index_; ir += residues_per_repeat_ ) {
+		pose_copy.set_xyz( core::id::NamedAtomID(atom_name_,ir), numeric::crick_equations::xyz( r1, omega1 , t, dz1, (minimization_mode_==1 ? delta_omega1 : 0.0 ), (minimization_mode_==1 ? delta_z1 : 0.0) ) + offsetvect);
 		amap[core::id::AtomID(pose_copy.residue(ir).atom_index(atom_name_),ir)] = core::id::AtomID(pose_.residue(ir).atom_index(atom_name_),ir);
-		t+=1.0;
+		t += static_cast<core::Real>( residues_per_repeat_ );
 	}
 
 	//Superimpose the ideal helix on the original helix:
@@ -154,9 +176,10 @@ FitSimpleHelixMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) con
 
 	//Reset t to the first index
 	t = -1.0*static_cast<core::Real>(end_index_ - start_index_ + 1)/2.0;
+	t += static_cast<core::Real>(first_res_index_-start_index_);
 
 	//Calculate the derivatives:
-	for(core::Size ir=start_index_; ir<=end_index_; ++ir) {
+	for(core::Size ir = first_res_index_; ir <= end_index_; ir += residues_per_repeat_ ) {
 		core::Real const x = pose_copy.residue(ir).xyz(atom_name_).x();
 		core::Real const y = pose_copy.residue(ir).xyz(atom_name_).y();
 		core::Real const z = pose_copy.residue(ir).xyz(atom_name_).z();
@@ -184,15 +207,15 @@ FitSimpleHelixMultiFunc::dfunc( Multivec const & vars, Multivec & dE_dvars ) con
 			dE_ddelta_z1 += ydiff*numeric::crick_equations::dy_ddelta_z1(r1,omega1,t, dz1, delta_omega1, delta_z1);
 			dE_ddelta_z1 += zdiff*numeric::crick_equations::dz_ddelta_z1(r1,omega1,t, dz1, delta_omega1, delta_z1);
 		}
-		t+=1.0;
+		t += static_cast<core::Real>( residues_per_repeat_ );
 	}
 
 	//Scale the derivatives down:
-	dE_dr1 *= 0.01;
-	dE_domega1 *= 0.01;
-	dE_ddz1 *= 0.01;
-	dE_ddelta_omega1 *=0.01;
-	dE_ddelta_z1 *=0.01;
+	//dE_dr1 *= 0.01;
+	//dE_domega1 *= 0.01;
+	//dE_ddz1 *= 0.01;
+	//dE_ddelta_omega1 *=0.01;
+	//dE_ddelta_z1 *=0.01;
 
 	if(TR.Debug.visible()) TR.Debug << "dE_dr1=" << dE_dr1 << "   dE_domega1=" << dE_domega1 << "    dE_ddz1=" << dE_ddz1 << "    dE_ddelta_omega1=" << dE_ddelta_omega1 << "    dE_ddelta_z1=" << dE_ddelta_z1 << std::endl;
 	//pose_copy.dump_pdb("temp2.pdb"); //DELETE ME!
