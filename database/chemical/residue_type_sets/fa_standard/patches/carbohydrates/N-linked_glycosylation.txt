@@ -12,11 +12,11 @@ END_SELECTOR
 
 BEGIN_CASE
 
-SET_ATOM_TYPE 2HD2 VIRT  # It may actually be 1HD2 that needs to be replaced....
+SET_ATOM_TYPE 1HD2 VIRT
 SET_MM_ATOM_TYPE 2HD2 VIRT
 SET_ATOMIC_CHARGE 2HD2 0.00
 
-ADD_CONNECT ND2 ICOOR 179.979721   59.986145    1.499799   ND2   CG   1HD2  # making up the bond distance for now...
+ADD_CONNECT ND2 ICOOR 179.979721   59.986145    1.499799   ND2   CG   2HD2  # making up the bond distance for now...
 
 ADD_PROPERTY BRANCH_POINT
 
