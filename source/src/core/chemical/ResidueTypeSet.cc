@@ -166,11 +166,6 @@ void ResidueTypeSet::init(
 		BOOST_FOREACH(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, get_self_weak_ptr() ) );
-
-			if (option[ OptionKeys::in::add_orbitals]) {
-				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
-				add_orbitals_to_residue.assign_orbitals();
-			}
 			residue_types_.push_back( rsd_type );
 		}
 
