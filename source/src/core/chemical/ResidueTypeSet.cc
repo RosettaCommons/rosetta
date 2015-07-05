@@ -36,6 +36,8 @@
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/adduct_util.hh>
 #include <core/chemical/util.hh>
+#include <core/chemical/Orbital.hh> /* for copying ResidueType */
+#include <core/chemical/ResidueConnection.hh> /* for copying ResidueType */
 
 // Basic headers
 #include <basic/database/open.hh>
@@ -90,6 +92,14 @@ void ResidueTypeSet::init(
 )
 {
 	using namespace basic::options;
+
+	clock_t const time_start( clock() );
+
+	on_the_fly_ = option[ OptionKeys::chemical::on_the_fly ]();
+	if ( option[ OptionKeys::packing::adducts ].user() && on_the_fly_ ) {
+		tr << tr.Red << "WARNING! Adducts are not compatible with on_the_fly residue_type_set. Setting on_the_fly to be false. You may have a long load-up time for this ResidueTypeSet. See notes on fixing this in place_adducts() in ResidueTypeSet.cc." << tr.Reset << std::endl;
+		on_the_fly_ = false;
+	}
 
 	//XRW_B_T1
 	//coarse::RuleSetOP coarsify_rule_set;
@@ -269,16 +279,18 @@ void ResidueTypeSet::init(
 
 	if(option[ OptionKeys::in::add_orbitals]){
 		for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
-			ResidueTypeOP rsd_type_clone = residue_types_[ii]->clone();
-			orbitals::AssignOrbitals add_orbitals_to_residue( rsd_type_clone );
-			add_orbitals_to_residue.assign_orbitals();
-			residue_types_[ ii ] = rsd_type_clone;
+			if ( residue_types_[ii]->finalized() ) {
+				ResidueTypeOP rsd_type_clone = residue_types_[ii]->clone();
+				orbitals::AssignOrbitals( rsd_type_clone ).assign_orbitals();
+				residue_types_[ ii ] = rsd_type_clone;
+			}
 		}
 		update_residue_maps();
 	}
 
 	tr << "Finished initializing " << name_ << " residue type set.  ";
 	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
+	tr << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
 	// Sanity check. Might be good to tighten this limit -- fa_standard appears under 1500 residue types in most use cases.
 	Size const MAX_RESIDUE_TYPES = 3000;
@@ -343,20 +355,58 @@ ResidueTypeSet::apply_patches(
 )
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		Patch p;
-		p.read_file( filenames[ii] );
-		Size const current_n_residue( residue_types_.size() );
-		for ( Size i=1; i<= current_n_residue; ++i ) {
+		PatchOP p( new Patch );
+		p->read_file( filenames[ii] );
+		patches_.push_back( p );
+		patch_map_[ p->name() ].push_back( p );
+	}
+
+	// These "replace_residue" patches are a special case, and barely in use anymore.
+	// In their current implementation, they actually do *not* change the name of the ResidueType.
+	// But we probably should keep track of their application
+	//  by updating name() of residue; and hold copies of the replaced residues without patch applied in, e.g., replaced_name_map_.
+	// That's going to require a careful refactoring of how residue types are accessed (e.g., can't just use name3_map() anymore),
+	//  which I might do later. For example, there's code in SwitchResidueTypeSet that will look for "MET" when it really should
+	//  look for "MET:protein_centroid_with_HA" and know about this patch.
+	// For now, apply them first, and force application/instantiation later.
+	//	-- rhiju
+	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
+		PatchCOP p( patches_[ ii ] );
+		Size current_n_residue_types( residue_types_.size() );
+		for ( Size i=1; i<= current_n_residue_types; ++i ) {
 			ResidueType const & rsd_type( *residue_types_[ i ] );
-			if ( p.applies_to( rsd_type ) ) {
-				if ( p.replaces( rsd_type ) ) {
-					residue_types_[ i ] = p.apply( rsd_type );
+			if ( p->applies_to( rsd_type ) && p->replaces( rsd_type ) ) {
+				runtime_assert( rsd_type.finalized() );
+				residue_types_[ i ] = p->apply( rsd_type );
+			}
+		}
+	}
+
+	// This is the main loop.
+	// Note that this spawns a number of residue types that is exponentially large in the number of patches!
+	// Use of placeholder residue types (-on_the_fly) significantly decreases the memory & time footprint of this operation,
+	//  but still this probably should not happen -- rhiju.
+	for ( Size ii=1; ii<= patches_.size(); ++ii ) {
+		PatchCOP p( patches_[ ii ] );
+		Size current_n_residue_types( residue_types_.size() );
+		for ( Size i=1; i<= current_n_residue_types; ++i ) {
+			ResidueType const & rsd_type( *residue_types_[ i ] );
+			if ( p->applies_to( rsd_type ) ) {
+				if ( p->replaces( rsd_type ) ) continue; // Now replace_residue patches are applied in a 'first pass' above.
+				bool const instantiate = (!on_the_fly_) || rsd_type.is_carbohydrate() /*hack for now -- carbohydrate info is complicated.*/;
+				if ( instantiate ) runtime_assert( rsd_type.finalized() );
+				ResidueTypeCOP new_rsd_type( p->apply( rsd_type, instantiate ) );
+				if ( new_rsd_type != 0 ) {
+					residue_types_.push_back( new_rsd_type );
 				} else {
-					ResidueTypeCOP new_rsd_type( p.apply( rsd_type ) );
-					if ( new_rsd_type ) {
-						residue_types_.push_back( new_rsd_type );
-					}
+					utility_exit_with_message( "Could not apply patch " + p->name() + " to " + rsd_type.name() );
+					//					tr << tr.Red <<  "Could not apply patch " + p->name() + " to " + rsd_type.name() << tr.Reset << std::endl;
 				}
+				// Previous code block for replacing residue_type while holding onto a copy. Do not delete until this is setup properly.
+				// if ( p->replaces( rsd_type ) ) {
+				//	replaced_name_map_[ rsd_type.name() ] = rsd_type.get_self_ptr(); // don't lose this replaced version.
+				// 	residue_types_[ i ] = new_rsd_type;
+				// } else { ...
 			}
 		}
 	}
@@ -371,6 +421,7 @@ ResidueTypeSet::interchangeability_group_map( std::string const & name ) const
 	if ( iter == interchangeability_group_map_.end() ) {
 		return empty_residue_list_;
 	}
+	make_sure_instantiated( iter->second );
 	return iter->second;
 }
 
@@ -386,6 +437,7 @@ debug_assert( name.size() == 3 );
 	if ( iter == name3_map_.end() ) {
 		return empty_residue_list_;
 	}
+	make_sure_instantiated( iter->second );
 	return iter->second;
 }
 
@@ -395,13 +447,89 @@ ResidueType const &
 ResidueTypeSet::name_map( std::string const & name_in ) const
 {
 	std::string const name = fixup_patches( name_in );
-	if ( name_map_.find( name ) == name_map_.end() ) {
+	ResidueTypeCOP rsd_type( 0 );
+	if ( name_map_.find( name ) != name_map_.end() ) {
+		rsd_type = name_map_.find( name )->second;
+		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
+		//	} else if ( replaced_name_map_.find( name ) != replaced_name_map_.end() ) {
+		//		rsd_type = replaced_name_map_.find( name )->second;
+	} else {
 		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = name_map_.begin();
 					it != name_map_.end(); ++it ) tr << it->first << std::endl;
-
+		//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
+		//		for ( std::map< std::string, ResidueTypeCOP >::const_iterator it = replaced_name_map_.begin();
+		//					it != replaced_name_map_.end(); ++it ) tr << it->first << std::endl;
 		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
 	}
-	return *( name_map_.find( name )->second );
+	make_sure_instantiated( rsd_type );
+	return *( rsd_type );
+}
+
+void
+figure_out_last_patch_from_name( std::string const rsd_name,
+																 std::string & rsd_name_base,
+																 std::string & patch_name )
+{
+	Size pos = rsd_name.find_last_of( PATCH_LINKER );
+	runtime_assert( pos != std::string::npos );
+	rsd_name_base = rsd_name.substr( 0, pos );
+	patch_name    = rsd_name.substr( pos + 1 );
+}
+
+/// @details Instantiates ResidueType on-the-fly if it isn't finalized.
+///  Watch out: Does not obey constness! Not thread-safe if on_the_fly_ is on!
+void
+ResidueTypeSet::make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const
+{
+	if ( rsd_type->finalized() ) return;
+
+	runtime_assert( on_the_fly_ )
+	// get name (which holds patch information)
+	std::string rsd_name_base, patch_name;
+	figure_out_last_patch_from_name( rsd_type->name(), rsd_name_base, patch_name );
+	if ( patch_name.size() == 0 ) utility_exit_with_message( "Problem: " + rsd_type->name() + " not instantiated." );
+
+	// now apply patch.
+	ResidueType const & rsd_base = name_map( rsd_name_base );
+	runtime_assert( rsd_base.finalized() );
+
+	runtime_assert( patch_map_.find( patch_name ) != patch_map_.end() );
+	utility::vector1< PatchCOP > const & patches = patch_map_.find( patch_name )->second;
+	bool patch_applied( false );
+
+	// sometimes patch cases are split between several patches -- look through all:
+	for ( Size n = 1; n <= patches.size(); n++ ) {
+		PatchCOP p = patches[ n ];
+
+		if ( !p->applies_to( rsd_base ) ) continue;
+		runtime_assert( !patch_applied ); // patch cannot be applied twice.
+
+		ResidueTypeOP rsd_instantiated = p->apply( rsd_base );
+
+		if ( rsd_instantiated == 0 ) {
+			utility_exit_with_message(  "Failed to apply: " + p->name() + " to " + rsd_base.name() );
+		} else {
+
+			if (option[ OptionKeys::in::add_orbitals]) orbitals::AssignOrbitals( rsd_instantiated ).assign_orbitals();
+
+			// OH MY GAWRSH! oh my gosh oh my gosh oh my gosh. Gasp!
+			const_cast< ResidueType & >( *rsd_type ) = *rsd_instantiated;
+		}
+		patch_applied = true;
+	}
+
+	if ( !patch_applied ) {
+		utility_exit_with_message( "What? Patch " + patch_name + " does not apply to " + rsd_base.name() + "  but user is asking for " + rsd_type->name() );
+	}
+
+}
+
+void
+ResidueTypeSet::make_sure_instantiated( utility::vector1< ResidueTypeCOP > const & rsd_types ) const
+{
+	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
+		make_sure_instantiated( rsd_types[ n ] );
+	}
 }
 
 bool
@@ -421,9 +549,11 @@ ResidueTypeSet::has_name3( std::string const & name3 ) const
 ResidueTypeCOPs const &
 ResidueTypeSet::aa_map( AA const & aa ) const
 {
-	if ( aa_map_.find( aa ) == aa_map_.end() ) {
+	std::map< AA, ResidueTypeCOPs >::const_iterator iter =	aa_map_.find( aa );
+	if ( iter == aa_map_.end() ) {
 		return empty_residue_list_;
 	}
+	make_sure_instantiated( iter->second );
 	return aa_map_.find( aa )->second;
 }
 
@@ -630,6 +760,7 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 				}
 			}
 			if ( match == true ) {
+				make_sure_instantiated( rsd.get_self_ptr() );
 				return rsd;
 			}
 		}
@@ -674,6 +805,7 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 				}
 			}
 			if ( match == true ) {
+				make_sure_instantiated( rsd.get_self_ptr() );
 				return rsd;
 			}
 		}
@@ -686,6 +818,10 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details Generation of new residue types augmented by adduct atoms
+/// @note    This is almost perfectly consistent with on_the_fly residue type sets.
+///            Why not just make adducts a patch? Then it will all work together nicely.
+///            Just need to have the -adduct string (add_map) turned into a PatchSelector
+///                 -- rhiju
 void
 ResidueTypeSet::place_adducts()
 {
@@ -722,6 +858,7 @@ ResidueTypeSet::place_adducts()
 	for ( ResidueTypeCOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
+		if ( !rsd.finalized() ) continue;
 		AdductMap count_map( blank_map );
 		utility::vector1< bool > add_mask( rsd.defined_adducts().size(), false  );
 		create_adduct_combinations( rsd, add_map, count_map, add_mask, rsd.defined_adducts().begin() );

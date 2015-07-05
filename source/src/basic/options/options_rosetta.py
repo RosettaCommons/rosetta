@@ -1863,6 +1863,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'set_atomic_charge', 'StringVector', desc="Modify atomic charge from the command line. Happens at time of params file reading, so changes will propagate to patched versions of the residue type. Format is: -chemical:set_atomic_charge <rsd-type-set1-name>:<rsd-type1-name>:<atom1-name>:<new-charge> <rsd-type-set2-name>:<rsd-type2-name>:<atom2-name>:<new-charge>  ... For example: '-chemical:set_atomic_charge fa_standard:ARG:NE:-1' " ),
 		Option( 'enlarge_H_lj', 'Boolean', desc="Use larger LJ_WDEPTH for Hs to avoid RNA clashes", default='false'),
 		Option( 'no_hbonds_to_ester_oxygens', 'Boolean', desc="no H-bonds to nucleic acid ester oxygens O3', O4', O5'", default='false'),
+    Option( 'on_the_fly','Boolean',desc='Generate residue types on the fly -- should be much faster', default='true'),
 	), #-chemical
 
 	# Coarse options

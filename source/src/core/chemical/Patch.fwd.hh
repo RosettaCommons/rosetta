@@ -25,6 +25,7 @@ typedef utility::pointer::shared_ptr< PatchCase > PatchCaseOP;
 
 class Patch;
 typedef utility::pointer::shared_ptr< Patch > PatchOP;
+typedef utility::pointer::shared_ptr< Patch const > PatchCOP;
 
 } // chemical
 } // core

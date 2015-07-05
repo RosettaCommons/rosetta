@@ -180,7 +180,7 @@ DISULFIDE
 
 ADDUCT_VARIANT
 
-CENTROID_HA
+CENTROID_WITH_HA # used in NOE apps.
 
 SPECIAL_ROT  # generic VariantType that allows for differential scoring of a set of residues/rotamers
 

@@ -158,6 +158,13 @@ public:
 	/// @brief make a copy
 	ResidueTypeOP clone() const;
 
+	/// @brief make a copy
+	ResidueTypeOP placeholder_clone() const;
+
+	/// @brief Copies  <src>  into the ResidueType
+	ResidueType &
+	operator=( ResidueType const & src );
+
 	/// self pointers
 	inline ResidueTypeCOP get_self_ptr() const      { return shared_from_this(); }
 	inline ResidueTypeOP  get_self_ptr()            { return shared_from_this(); }
@@ -177,11 +184,18 @@ public:
 		return *atom_types_;
 	}
 
-	/// @brief access by reference the atomset for which this residue is constructed
+	/// @brief access by reference the element set for which this residue is constructed
 	ElementSet const &
 	element_set() const
 	{
 		return *elements_;
+	}
+
+	/// @brief access by const pointer the element set for which this residue is constructed
+	ElementSetCOP
+	element_set_ptr() const
+	{
+		return elements_;
 	}
 
 	/// @brief access by const pointer the atomset for which this residue is constructed
@@ -420,15 +434,15 @@ public:
 
 		return;
 	}
-	
+
 	/// @brief Gets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	std::string
 	get_disulfide_atom_name() const {
 		return disulfide_atom_name_;
 	}
-	
-	
+
+
 	/// @brief Sets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	void
@@ -709,6 +723,11 @@ public:
 	MMAtomType const &
 	mm_atom_type( Size const atomno ) const;
 
+	/// @brief Get the MM atom_type for this atom by its index number in this residue
+	MMAtomTypeSetCOP
+	mm_atom_types_ptr() const {
+		return mm_atom_types_;
+	}
 
 	/// @brief Get the MM atom_type index number for this atom by its index number in this residue
 
@@ -767,6 +786,12 @@ public:
 	core::Size
 	orbital_index( std::string const & name ) const;
 
+
+	/// @brief Get the MM atom_type for this atom by its index number in this residue
+	orbitals::OrbitalTypeSetCOP
+	orbital_types_ptr() const {
+		return orbital_types_;
+	}
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1028,7 +1053,7 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void
 	add_metalbinding_atom( std::string const atom_name );
-	
+
 	/// @brief Remove an atom from the list of atoms that can potentially form a bond to a metal ion
 	/// (used in patching when it kills the valence that is thus used)
 	/// @author Andrew Watkins (amw579@nyu.edu)
@@ -1214,6 +1239,10 @@ public:
 	/////////////////////////orbitals/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
+	/// @brief clear orbitals
+	void
+	clear_orbitals();
+
 	/// @brief add an orbital onto a residue based upon atom
 	void
 	add_orbital(
@@ -1342,7 +1371,7 @@ public:
 	/// @brief delete terminal chi angle
 	void
 	delete_terminal_chi();
-	
+
 	/// @brief Annotate a given chi as a proton chi, and set the sampling behavior
 	/// If the chi is already listed as a proton chi, change the sampling behavior
 	void
@@ -1375,6 +1404,13 @@ public:
 	void
 	finalize();
 
+	/// @brief finalized? should always be true, except in very special case early in on-the-fly ResidueTypeSet.
+	bool
+	finalized() const
+	{
+		return finalized_;
+	}
+
 	/// @brief an assertion function to ensure an ResidueType has been finalized
 	inline
 	void
@@ -1402,6 +1438,10 @@ public:
 
 	/// @brief Access the collection of properties for this ResidueType.
 	ResidueProperties const & properties() const;
+
+	/// @brief Set the collection of properties for this ResidueType.
+	void
+	set_properties( ResiduePropertiesOP properties );
 
 	/// @brief Add a property to this ResidueType.
 	void add_property( std::string const & property );
@@ -1440,7 +1480,7 @@ public:
 	/// @brief Is this one of SRI's special heteropolymer building blocks?
 	///
 	bool is_sri() const;
-	
+
 	/// @brief Is this a triazolemer?
 	///
 	bool is_triazolemer() const;
@@ -2181,7 +2221,7 @@ private:
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
-	
+
 	/// @brief Name of the disulfide-forming atom, if any
 	std::string disulfide_atom_name_;
 

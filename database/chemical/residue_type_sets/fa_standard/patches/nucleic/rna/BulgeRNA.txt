@@ -5,6 +5,8 @@ TYPES BULGE
 
 BEGIN_SELECTOR
 PROPERTY RNA
+# Just standard types:
+AA RAD RCY RGU URA
 END_SELECTOR
 
 ###############
@@ -110,8 +112,4 @@ SET_ATOM_TYPE   H3 VIRT
 SET_ATOM_TYPE   H5 VIRT
 SET_ATOM_TYPE   H6 VIRT
 
-END_CASE
-
-# General case -- do nothing, everything covered above
-BEGIN_CASE
 END_CASE

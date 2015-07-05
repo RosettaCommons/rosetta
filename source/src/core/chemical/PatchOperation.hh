@@ -41,6 +41,12 @@ public:
 	virtual
 	bool
 	apply( ResidueType & rsd ) const = 0;
+
+	/// @brief Special -- does this apply to 'minimal', placeholder types? Generally true, unless updating aa or name3.
+	virtual
+	bool
+	applies_to_placeholder() const { return false; }
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,15 +271,15 @@ class DeleteMetalbindingAtom : public PatchOperation {
 public:
 	/// constructor
 	DeleteMetalbindingAtom( std::string const & atom_name );
-		
+
 	/// redefine a chi angle
 	bool
 	apply( ResidueType & rsd ) const;
 private:
 	std::string atom_name_;
-	
+
 };
-	
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief   Add a rotamer sample to a chi angle of the ResidueType.
 /// @author  Added by Andy M. Chen in June 2009
@@ -468,6 +474,10 @@ public:
 	/// set atom's chemical type
 	bool
 	apply( ResidueType & rsd ) const;
+
+	virtual
+	bool
+	applies_to_placeholder() const { return true; }
 
 private:
 	std::string const name3_;

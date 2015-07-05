@@ -55,6 +55,7 @@ void AssignOrbitals::assign_orbitals( )
 {
 	core::chemical::ChemicalManager* chemical_manager = core::chemical::ChemicalManager::get_instance();
 	core::chemical::AtomTypeSetCOP atom_type_set = chemical_manager->atom_type_set("fa_standard");
+	restype_->clear_orbitals(); // just in case.
 	if(restype_->aa() == aa_tyr || restype_->aa() == aa_phe || restype_->aa() == aa_trp){
 		if(restype_->actcoord_atoms().size() != 0){
 

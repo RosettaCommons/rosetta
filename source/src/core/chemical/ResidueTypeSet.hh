@@ -30,6 +30,7 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/Patch.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -124,7 +125,6 @@ public:
 		utility::vector1< std::string > const & filenames
 	);
 
-
 	void
 	apply_patches(
 		utility::vector1< std::string > const & filenames
@@ -166,6 +166,7 @@ public:
 	///
 	/// @details since residue id is unique, it only returns
 	/// one residue type or exit without match.
+	virtual
 	ResidueType const &
 	name_map( std::string const & name ) const;
 
@@ -261,6 +262,12 @@ private:
 	void
 	remove_residue_type_from_maps(ResidueTypeCOP rsd);
 
+	void
+	make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const;
+
+	void
+	make_sure_instantiated( ResidueTypeCOPs const & rsd_types ) const;
+
 	//////////////////
 	// data
 private:
@@ -295,11 +302,21 @@ private:
 	/// @brief map to ResidueType pointers by unique residue id
 	std::map< std::string, ResidueTypeCOP > name_map_;
 
+	/// @brief map to ResidueType pointers that were replaced during application
+	//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
+	//	std::map< std::string, ResidueTypeCOP > replaced_name_map_;
+
 	/// @brief list of AA types defined
 	std::list< AA > aas_defined_;
 
 	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
 	const std::string database_directory_;
+
+	/// @brief the patches
+	utility::vector1< PatchCOP > patches_;
+	std::map< std::string, utility::vector1< PatchCOP > > patch_map_;
+
+	bool on_the_fly_;
 
 private:
 	// uncopyable

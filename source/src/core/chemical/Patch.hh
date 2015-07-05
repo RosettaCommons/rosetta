@@ -56,7 +56,7 @@ public:
 	/// @brief returns patched residue, 0 if patch failed
 	virtual
 	ResidueTypeOP
-	apply( ResidueType const & rsd_in ) const;
+	apply( ResidueType const & rsd_in, bool const instantiate = true ) const;
 
 	/// @brief add one more operation in this PatchCase
 	void
@@ -111,7 +111,7 @@ public:
 	/// @brief returns patched residue, 0 if patch failed
 	virtual
 	ResidueTypeOP
-	apply( ResidueType const & rsd_type ) const;
+	apply( ResidueType const & rsd_type, bool const instantiate = true ) const;
 
 
 	/// @brief unique name of this patch, eg Nter-simple, Cter-full, Phospho, ... ?
