@@ -39,6 +39,8 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 #include <ObjexxFCL/format.hh>
 
 static basic::Tracer TR( "apps.pilot.phil.repeat_demo" );
@@ -261,11 +263,17 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
-	add_my_options();
+	try {
+		add_my_options();
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	rebuild_test();
-	exit(0);
+		rebuild_test();
 
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+		return -1;
+	}
+
+	return 0;
 }
