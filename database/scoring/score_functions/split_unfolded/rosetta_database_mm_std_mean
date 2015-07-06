@@ -1,7 +1,7 @@
 #Split unfolded energy two body component using mean values
 #Author: Riley Simmons-Edler (rse231@nyu.edu)
 ATOM fa_atr fa_rep fa_sol fa_elec hbond_sc dslf_fa13
-WEIGHT 0.8 0.44 0.65 1.0 1.15 1.0
+WEIGHT 0.8 0.634454 1.16497 0.73 1.199257 1.0
 HNbb 0.0 0.0857832037468 0.0 -0.036804585035 -0.2173882848 0.0
 Ntrp -0.694289616369 0.0635364789714 0.965874333103 0.0415991581019 0.0 0.0
 aroC -0.669103598216 0.0994961408329 0.146263086356 -0.023771356214 0.0 0.0

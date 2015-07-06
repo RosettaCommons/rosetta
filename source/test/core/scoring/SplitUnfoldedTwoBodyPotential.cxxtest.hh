@@ -78,7 +78,7 @@ class SplitUnfoldedTwoBodyPotentialTests : public CxxTest::TestSuite {
 		core::chemical::ResidueTypeSetCOP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		core::pose::make_pose_from_sequence( *pose, "DFGLK", *rsd_set );
 
-		tcre_potential = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( "scoring/score_functions/split_unfolded/mm_database_median" ) ) );
+		tcre_potential = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( "scoring/score_functions/split_unfolded/mm_database_mm_std_median" ) ) );
 
 	}
 
@@ -92,25 +92,19 @@ class SplitUnfoldedTwoBodyPotentialTests : public CxxTest::TestSuite {
 	// --------------- Test Cases --------------- //
 	void test_get_restype_emap() {
 
-		// atr  rep  sol  intra_rep  pro_close  pair  hb_sr_bb  hb_lr_bb  hb_bb_sc  hb_sc  rama  omega  dun  paapp
-		// GLY 1.6906 -0.4879 -1.2009 -0.0181 -0.0033 0.0000 0.3093 0.0139 0.0093 0.0000 -0.6594 -0.1474 0.0000 1.0637
-		// LEU 3.2405 -0.6543 -1.7746 -2.0520 -0.0049 0.0000 0.5425 0.0343 0.0046 0.0000 0.1254 -0.1717 -0.6123 0.1728
-		
 		EnergyMap emap;
 		emap.zero();
 		tcre_potential->get_restype_emap( (pose->residue(3)).type(), emap );
-		TS_ASSERT_DELTA( emap[ fa_atr ], -2.8032, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( emap[ fa_sol ], 1.8494, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ fa_atr ], -3.3666, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ fa_sol ], 2.1604, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( emap[ mm_lj_intra_rep ], 0.0, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( emap[ mm_lj_intra_atr ], 0.0, TOLERATED_ERROR );
 
 		emap.zero();
 		tcre_potential->get_restype_emap( (pose->residue(4)).type(), emap );
-		TS_ASSERT_DELTA( emap[ fa_rep ], 0.3885, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ fa_rep ], 1.6507, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( emap[ fa_elec ], -0.2660, TOLERATED_ERROR );
 
 	}
 
 };
-
-

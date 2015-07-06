@@ -34,35 +34,36 @@
 namespace core {
 namespace scoring {
 namespace methods {
-  
-  
-  class SplitUnfoldedTwoBodyEnergy : public ContextIndependentOneBodyEnergy 
+
+
+  class SplitUnfoldedTwoBodyEnergy : public ContextIndependentOneBodyEnergy
   {
-    
+
   public:
     typedef ContextIndependentOneBodyEnergy parent;
-    
+
     //instantiate using the weights from the data file
-    SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type);
+    SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type);
     //instantiate using given weight emap
-    SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type,const EnergyMap & emap_in);
+    SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type, const EnergyMap & emap_in);
 		~SplitUnfoldedTwoBodyEnergy();
-    
+
     virtual EnergyMethodOP clone() const;
-    
+
     virtual void residue_energy(conformation::Residue const & rsd,pose::Pose const &,EnergyMap & emap) const;
-		
+
 		virtual	void indicate_required_context_graphs(utility::vector1<bool> &) const;
 
   private:
-    std::string label_type_;
-		std::string value_type_;
+    std::string label_type_; //the atom type set for this two body energy, e.g. rosetta types, mm types, elemental types, etc.
+		std::string value_type_; //the statistical value that is recorded for each energy for each atom type in the above set, e.g. mean, median, mode, boltzmann weighted average.
+		std::string score_func_type_; //the base score function in use, specifies the internal two body weights that will be used.
     SplitUnfoldedTwoBodyPotential const & sutbp_;
     EnergyMap score_type_weights_;
     virtual core::Size version() const;
-    
+
   };
-  
+
 } // methods
 } // scoring
 } // core

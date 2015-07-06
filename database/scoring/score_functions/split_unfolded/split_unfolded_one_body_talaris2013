@@ -1,7 +1,7 @@
 #Split unfolded energy one body component. Used in Rosetta as an alternate database file for the UnfoldedStateEnergy energy method.
 #Author: Riley Simmons-Edler (rse231@nyu.edu)
 AA fa_intra_atr fa_intra_rep fa_intra_sol pro_close fa_dun fa_dun_dev fa_dun_rot fa_dun_semi rama omega p_aa_pp
-WEIGHT 0.8 0.44 0.65 1.0 1.0 1.0 1.0 1.0 0.2 0.5 0.32
+WEIGHT 0.0 0.004 0.0 1.0 0.56 0.0 0.0 0.0 0.2 0.5 0.32
 ALA -0.0728998 0.191492 0.0966407 0.0 0.0 0.0 0.0 0.0 -1.51402 0.0 -0.351262
 ARG -0.78526 1.92278 0.778292 0.0 1.93628 2.87881e-30 1.93628 0.0 -1.25631 0.0 -0.250141
 ASN -0.767511 1.2105 0.722264 0.0 2.40877 4.22881e-30 0.0 2.40877 -1.65638 0.0 -1.72184

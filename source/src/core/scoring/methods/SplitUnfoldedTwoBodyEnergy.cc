@@ -30,21 +30,23 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type ):
+SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, std::string const & score_func_type ):
 	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
     label_type_( label_type ),
-	value_type_( value_type ),
-    sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type ) ),
+		value_type_( value_type ),
+		score_func_type_( score_func_type ),
+    sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
     score_type_weights_( sutbp_.get_weights() )
 {
 }
 
-SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, const EnergyMap & emap_in ):
+SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type,  std::string const & score_func_type, const EnergyMap & emap_in ):
 	parent( methods::EnergyMethodCreatorOP( new SplitUnfoldedTwoBodyEnergyCreator ) ),
 	label_type_( label_type ),
 	value_type_( value_type ),
-    sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type ) ),
-    score_type_weights_( emap_in )
+	score_func_type_(score_func_type ),
+	sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
+	score_type_weights_( emap_in )
 {
 }
 
@@ -54,7 +56,7 @@ SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy()
 
 EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
 {
-    return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( label_type_, value_type_, score_type_weights_ ) );
+    return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( label_type_, value_type_, score_func_type_, score_type_weights_ ) );
 }
 
 void SplitUnfoldedTwoBodyEnergy::residue_energy(conformation::Residue const & rsd,pose::Pose const &,EnergyMap & emap) const

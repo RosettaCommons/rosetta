@@ -88,18 +88,18 @@ class SplitUnfoldedReferenceEnergyTests : public CxxTest::TestSuite {
 		// WEIGHT 0.8 0.44 0.65 0.004 1.0 0.49  0.585 1.17 1.17 1.1 0.2 0.5 0.56 0.32
 		// PHE 3.6792 -0.7291 -1.7340 -6.6803 -0.0053 0.0000 0.4257 0.0216 0.0055 0.0000 0.1227 -0.2181 -1.0325 0.1014
 		// GLY 1.6906 -0.4879 -1.2009 -0.0181 -0.0033 0.0000 0.3093 0.0139 0.0093 0.0000 -0.6594 -0.1474 0.0000 1.0637
-		
-		SplitUnfoldedTwoBodyEnergyOP unweighted_unf_energy( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN ) );
+
+		SplitUnfoldedTwoBodyEnergyOP unweighted_unf_energy( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN, scoring::UNFOLDED_SPLIT_MM_STD ) );
 
 		EnergyMap emap;
 		emap.zero();
 
 		unweighted_unf_energy->residue_energy( the_pose->residue(2), *the_pose, emap );
-		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -4.5174, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -2.4221, TOLERATED_ERROR );
 
 		emap.zero();
 		unweighted_unf_energy->residue_energy( the_pose->residue(3), *the_pose, emap );
-		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -1.5184, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], 0.0733, TOLERATED_ERROR );
 
 		unweighted_unf_energy = 0;
 
@@ -110,7 +110,7 @@ class SplitUnfoldedReferenceEnergyTests : public CxxTest::TestSuite {
 		EnergyMap emap; // same emap used for initalization and holding scores
 		emap.zero();
 
-		SplitUnfoldedTwoBodyEnergyOP unweighted_unf_energy( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN, emap ) );
+		SplitUnfoldedTwoBodyEnergyOP unweighted_unf_energy( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN, scoring::UNFOLDED_SPLIT_MM_STD, emap ) );
 
 		unweighted_unf_energy->residue_energy( the_pose->residue(2), *the_pose, emap );
 		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], 0.0, TOLERATED_ERROR );
@@ -125,7 +125,7 @@ class SplitUnfoldedReferenceEnergyTests : public CxxTest::TestSuite {
 	void test_residue_energy_emap_weights() {
 
 		EnergyMap emap;
-		
+
 		emap[ fa_atr ] = 0.8;
 		emap[ fa_rep ] = 0.634454;
 		emap[ fa_sol ] = 1.16497;
@@ -142,23 +142,21 @@ class SplitUnfoldedReferenceEnergyTests : public CxxTest::TestSuite {
 		emap[ unfolded ] = -0.4;
 		emap[ split_unfolded_two_body ] = 0.6;
 
-		SplitUnfoldedTwoBodyEnergyOP weighted_unf_energy_emap( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN, emap ) );
+		SplitUnfoldedTwoBodyEnergyOP weighted_unf_energy_emap( new SplitUnfoldedTwoBodyEnergy( scoring::SPLIT_UNFOLDED_MM, scoring::SPLIT_UNFOLDED_MEDIAN, scoring::UNFOLDED_SPLIT_MM_STD, emap ) );
 
 		emap.zero();
 		weighted_unf_energy_emap->residue_energy( the_pose->residue(4), *the_pose, emap );
-		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -2.0380, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -1.4525, TOLERATED_ERROR );
 
 		emap.zero();
 		weighted_unf_energy_emap->residue_energy( the_pose->residue(5), *the_pose, emap );
-		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], -0.0349, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], 0.2137, TOLERATED_ERROR );
 
 		emap.zero();
 		weighted_unf_energy_emap->residue_energy( the_pose->residue(1), *the_pose, emap );
-		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], 0.4191, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( emap[ split_unfolded_two_body ], 0.7131, TOLERATED_ERROR );
 
 		weighted_unf_energy_emap = 0;
 	}
 
 };
-
-

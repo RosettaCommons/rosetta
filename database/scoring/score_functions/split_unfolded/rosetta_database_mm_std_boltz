@@ -1,7 +1,7 @@
 #Split unfolded energy two body component using boltzmann weighted mean values
 #Author: Riley Simmons-Edler (rse231@nyu.edu)
 ATOM fa_atr fa_rep fa_sol fa_elec hbond_sc dslf_fa13
-WEIGHT 0.8 0.44 0.65 1.0 1.15 1.0
+WEIGHT 0.8 0.634454 1.16497 0.73 1.199257 1.0
 HNbb 0.0 0.0742078135476 0.0 -0.0816484956966 -0.242882708358 0.0
 Ntrp -0.807511124649 0.0534560409627 0.767892634842 0.0091900348006 0.0 0.0
 aroC -0.727078564536 0.0854968099536 0.135391265966 -0.0323562014596 0.0 0.0

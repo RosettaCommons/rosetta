@@ -775,7 +775,7 @@ using namespace basic::options::OptionKeys;
 
 ///////////////////////////////////////////////////////////////////////////////
 SplitUnfoldedTwoBodyPotential const &
-ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type) const
+ScoringManager::get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type, std::string const & score_func_type) const
 {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -807,7 +807,17 @@ using namespace basic::options::OptionKeys;
 			atom_label_type = "unique";
 			database_path = "scoring/score_functions/split_unfolded/unique_database_";
 		} else {
-			database_path="scoring/score_functions/split_unfolded/split_unfolded_two_body_default";
+			database_path="scoring/score_functions/split_unfolded/unique_database_"; //default to unique types, since canonical design is the most common use-case(probably).
+		}
+
+		//Also need to account for the energy function being used so as to use the correct weights for the two body internal energy values, which are specified in the database files. This is specified here via the UNFOLDED_ENERGIES_TYPE weight file tag.
+		//talaris2013 and mm_std are currently supported, but adding more score functions just requires replacing the weights at the top of the database files with the weights for each energy type in the new score function and defining a new option here(assuming all energies in the new score function are accounted for in the existing file).
+		if ( score_func_type == UNFOLDED_SPLIT_TALARIS2013 ) {
+			database_path += "talaris2013_";
+		} else if ( score_func_type == UNFOLDED_SPLIT_MM_STD ) {
+			database_path += "mm_std_";
+		} else {
+			database_path += "talaris2013_"; //default to talaris if we have no idea which to use
 		}
 
 		if ( value_type == SPLIT_UNFOLDED_MEAN ) {
@@ -819,12 +829,14 @@ using namespace basic::options::OptionKeys;
 		} else if ( value_type == SPLIT_UNFOLDED_BOLTZ ) {
 			database_path += "boltz";
 		} else {
-			database_path += "boltz";
+			database_path += "median"; //median seems to work best, so default to that.
 		}
 
 		if ( atom_label_type != "" ) {
+			std::cout << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ), atom_label_type ) );
 		} else {
+			std::cout << "Creating split unfolded state potential using file: " << basic::database::full_name( database_path ) << std::endl;
 			sutbp_ = SplitUnfoldedTwoBodyPotentialOP( new SplitUnfoldedTwoBodyPotential( basic::database::full_name( database_path ) ) );
 		}
 	}

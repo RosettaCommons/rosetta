@@ -39,9 +39,9 @@ methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(
 					e[(ScoreType)ii]=v[ii];
 				}
 			//using the same type option as unfolded state energy since those two need to match when using the split unfolded energy(since unfolded state holds the one body component).
-			return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type(),e) );
+				return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( options.split_unfolded_label_type(), options.split_unfolded_value_type(), options.unfolded_energies_type(), e ) );
 	}
-	return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy(options.split_unfolded_label_type(),options.split_unfolded_value_type()) );
+	return SplitUnfoldedTwoBodyEnergyOP( new SplitUnfoldedTwoBodyEnergy( options.split_unfolded_label_type(), options.split_unfolded_value_type(), options.unfolded_energies_type() ) );
 }
 
 ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const

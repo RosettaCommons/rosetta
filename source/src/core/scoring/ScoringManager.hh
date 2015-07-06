@@ -210,7 +210,7 @@ public:
 
 	PoissonBoltzmannPotential const & get_PoissonBoltzmannPotential() const;
 
-	SplitUnfoldedTwoBodyPotential const & get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type) const;
+	SplitUnfoldedTwoBodyPotential const & get_SplitUnfoldedTwoBodyPotential(std::string const & label_type,std::string const & value_type, std::string const & score_func_type ) const;
 
 	disulfides::FullatomDisulfidePotential &
 	get_FullatomDisulfidePotential() const;
