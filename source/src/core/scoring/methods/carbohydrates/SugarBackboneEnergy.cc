@@ -118,8 +118,10 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	using namespace id;
 	using namespace pose::carbohydrates;
 	using namespace scoring::carbohydrates;
-
-	std::cout << "Evaluating torsion: " << torsion_id << std::endl;
+	
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Evaluating torsion: " << torsion_id << std::endl;
+	}
 
 	Real deriv( 0.0 );
 
@@ -131,7 +133,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 	// This scoring method only considers glycosidic torsions, which may have either BB, CHI, or BRANCH TorsionIDs.
 	if ( ! torsion_id.valid() ) {
-		std::cout << "Torsion not valid: " << torsion_id << std::endl;
+		if ( TR.Debug.visible() ) {
+      			TR.Debug << "Torsion not valid: " << torsion_id << std::endl;
+    		}
 		return deriv;
 	}
 
@@ -155,7 +159,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// Now, get the next residue's phi and its info.
 		chemical::carbohydrates::CarbohydrateInfoCOP info( pose.residue( next_rsd ).carbohydrate_info() );
 		Angle phi( pose.phi( next_rsd ) );
-		std::cout << "Phi: " << phi << std::endl;
+		if ( TR.Debug.visible() ) {
+      			TR.Debug << "Phi: " << phi << std::endl;
+    		}
 		if ( info->is_L_sugar() ) {
 			// L-Sugars use the mirror image of the score functions. The phi functions run from -180 to 180.
 			//phi = numeric::principal_angle_degrees( 360 - phi );
