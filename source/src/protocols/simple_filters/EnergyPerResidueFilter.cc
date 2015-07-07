@@ -297,7 +297,9 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 		if ( !pose.residue(resid).is_protein() ) continue;
 		if (use_all_residues[resid]) {
 			energy= compute( pose, resid ) ;
-			energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resid)<<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
+			core::Size resnum(resid);
+			if(pose.pdb_info()) resnum=pose.pdb_info()->number(resid);
+			energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << resnum <<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
 
 			if ( energy > threshold_ ) {
 				pass=false;
@@ -324,7 +326,9 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 		if ( !pose.residue( resid ).is_protein() ) continue;
 		if ( use_all_residues[ resid ] ) {
 			energy = compute( pose, resid ) ;
-			out << "Scoretype " << name_from_score_type( score_type_ ) << " for residue: " << pose.pdb_info()->number( resid ) << " " << pose.residue( resid ).name3() << " is " << energy << std::endl;
+			core::Size resnum(resid);
+                        if(pose.pdb_info()) resnum=pose.pdb_info()->number(resid);
+			out << "Scoretype " << name_from_score_type( score_type_ ) << " for residue: " << resnum << " " << pose.residue( resid ).name3() << " is " << energy << std::endl;
 		}
 	}
 }
