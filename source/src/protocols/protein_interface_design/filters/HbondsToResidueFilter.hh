@@ -10,6 +10,7 @@
 /// @file protocols/protein_interface_design/filters/HbondsToResidueFilter.hh
 /// @brief definition of filter classes for iterations of docking/design.
 /// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu)
+/// @author Refactored considerably by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
 
 #ifndef INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilter_hh
 #define INCLUDED_protocols_protein_interface_design_filters_HbondsToResidueFilter_hh
@@ -50,15 +51,29 @@ public:
 	typedef core::Real Real;
 	typedef core::Size Size;
 public :
-	HbondsToResidueFilter() : Filter( "HbondsToResidue" ) {}
-	HbondsToResidueFilter( Size const resnum, Size const partners, Real const energy_cutoff=-0.5,
-						   bool const backbone=false, bool const sidechain=true ) : Filter( "HbondsToResidue" ) {
-		resnum_ = resnum; partners_ = partners; energy_cutoff_ = energy_cutoff; backbone_ = backbone;
-		sidechain_ = sidechain;
-		runtime_assert( backbone_ || sidechain_ );
-		runtime_assert( partners_ );
-		runtime_assert( energy_cutoff_ <= 0 );
-	}
+
+	/// @brief Default constructor.
+	///
+	HbondsToResidueFilter();
+
+	/// @brief Constructor
+	///
+	HbondsToResidueFilter(
+		Size const resnum,
+		Size const partners,
+		Real const &energy_cutoff=-0.5,
+		bool const backbone=false,
+		bool const sidechain=true,
+		bool const bb_bb=true,
+		bool const from_other_chains=true,
+		bool const from_same_chain=true
+	);
+
+	/// @brief Copy constructor
+	///
+	HbondsToResidueFilter( HbondsToResidueFilter const &src );
+
+	
 	bool apply( core::pose::Pose const & pose ) const;
 	FilterOP clone() const {
 		return FilterOP( new HbondsToResidueFilter( *this ) );
@@ -69,13 +84,119 @@ public :
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
-	core::Size compute( core::pose::Pose const & pose ) const;
+	
+	/// @brief Actually compute the number of hydrogen bonds to the target residue.
+	///
+	core::Size compute( core::pose::Pose const & pose, core::Size const resnum_rosetta ) const;
 	virtual ~HbondsToResidueFilter();
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	
+	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.
+	///
+	void set_partners( core::Size const val) {
+		partners_=val;
+		return;
+	}
+	
+	/// @brief Get the minimum number of H-bond partners that this residue must have for the filter to pass.
+	///
+	inline core::Size partners() const { return partners_; }
+	
+	/// @brief Set the threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	///
+	void set_energy_cutoff( core::Real const val) {
+		runtime_assert_string_msg( val<=0, "Error in HbondsToResidueFilter::set_energy_cutoff(): The energy cutoff must be less than or equal to zero." );
+		energy_cutoff_=val;
+		return;
+	}
+	
+	/// @brief Get the threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	///
+	inline core::Real energy_cutoff() const { return energy_cutoff_; }
+	
+	/// @brief Set whether to include backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	void set_backbone( bool const val ) { backbone_ = val; return; }	
+
+	/// @brief Set whether to include backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	void set_sidechain( bool const val ) { sidechain_ = val; return; }	
+
+	/// @brief Set whether to include backbone-backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	void set_bb_bb( bool const val ) { bb_bb_ = val; return; }
+	
+	/// @brief Get whether to include backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	inline bool backbone( ) const { return backbone_; }	
+
+	/// @brief Get whether to include backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	inline bool sidechain( ) const { return sidechain_; }	
+
+	/// @brief Get whether to include backbone-backbone hydrogen bonds.
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	inline bool bb_bb( ) const { return bb_bb_; }
+	
+	/// @brief Set the residue number (as a string to be parsed at apply time).
+	///
+	void set_resnum( std::string const &input ) { resnum_=input; return; }
+
+	/// @brief Get the residue number (a string to be parsed at apply time).
+	///
+	inline std::string resnum() const { return resnum_; }
+
+	/// @brief Set whether hydrogen bonds from other chains should be counted.
+	///
+	void set_from_other_chains( bool const val ) { from_other_chains_=val; return; }
+
+	/// @brief Get whether hydrogen bonds from other chains should be counted.
+	///
+	inline bool from_other_chains() const { return from_other_chains_; }
+
+	/// @brief Set whether hydrogen bonds from the same chain should be counted.
+	///
+	void set_from_same_chain( bool const val ) { from_same_chain_=val; return; }
+
+	/// @brief Get whether hydrogen bonds from the same chain should be counted.
+	///
+	inline bool from_same_chain() const { return from_same_chain_; }
+	
 private:
-	Size resnum_, partners_;
+
+	/// @brief The current residue, stored as a string to be parsed at apply time.
+	/// @details This could be a PDB number (e.g. 32A), a Rosetta number (e.g. 32), or a reference pose number (e.g. refpose(snapshot1,34).
+	std::string resnum_;
+	
+	/// @brief The minimum number of H-bond partners that this residue must have for the filter to pass.
+	///
+	Size partners_;
+	
+	/// @brief The threshhold for the hbond score term at which two residues are counted as being hydrogen bonded.
+	///
 	Real energy_cutoff_;
-	bool backbone_, sidechain_, bb_bb_;
+	
+	/// @brief Include backbone hydrogen bonds?
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	bool backbone_;
+	
+	/// @brief Include sidechain hydrogen bonds?
+	/// @details I'm not sure that this is implemented properly.  (VKM -- 6 July 2015).
+	bool sidechain_;
+	
+	/// @brief Include backbone-backbone hydrogen bonds?
+	/// @details I'm pretty sure that this is not implemented properly.  (VKM -- 6 July 2015).
+	bool bb_bb_;
+	
+	/// @brief If true, hydrogen bonds from other chains will be counted.  True by default.
+	///
+	bool from_other_chains_;
+
+	/// @brief If true, hydrogen bonds from the same chain will be counted.  True by default.
+	///
+	bool from_same_chain_;
+
+	
 };
 
 }
