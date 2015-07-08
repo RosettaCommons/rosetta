@@ -1331,7 +1331,7 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 		//Rebuild the N-terminal proton.  This has to be done in a slightly irritating way because Rosetta doesn't really like the fact
 		//that the last residue is connected to the first:
 		{
-			core::chemical::ResidueTypeSetCOP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
+			core::chemical::ResidueTypeSetCOP standard_residues( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
 			core::pose::Pose dialanine;
 			core::pose::make_pose_from_sequence(dialanine, "AA", *standard_residues, true); //The termini are OPEN.
 			core::Real omegaval = numeric::dihedral_degrees(
@@ -1358,67 +1358,67 @@ void addcyclicconstraints (core::pose::Pose &mypose) {
 	mypose.conformation().declare_chemical_bond(1, "N", mypose.n_residue(), "C"); //Declare a chemical bond between the N and C termini.
 
 	{//Peptide bond length constraint:
-		FuncOP harmfunc1 = new HarmonicFunc( 1.3288, 0.02);
-		ConstraintCOP distconst1 = new AtomPairConstraint (
+		FuncOP harmfunc1 ( new HarmonicFunc( 1.3288, 0.02) );
+		ConstraintCOP distconst1 ( new AtomPairConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ) ,
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				harmfunc1
-			);
+			) );
 		mypose.add_constraint (distconst1);
 	}
 
 	{	//Peptide dihedral angle constraints:
 		// (TODO -- change these if we sample a trans-proline.)
-		FuncOP circharmfunc1 = new CircularHarmonicFunc( PI, 0.02);
-		ConstraintCOP dihedconst1 = new DihedralConstraint (
+		FuncOP circharmfunc1 ( new CircularHarmonicFunc( PI, 0.02) );
+		ConstraintCOP dihedconst1 ( new DihedralConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc1
-			);
-		ConstraintCOP dihedconst2 = new DihedralConstraint (
+			) );
+		ConstraintCOP dihedconst2 ( new DihedralConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc1
-			);
+			) );
 
 		mypose.add_constraint (dihedconst1);
 		mypose.add_constraint (dihedconst2);
 	}
 
 	{	//Peptide bond angle constraints:
-		FuncOP circharmfunc2a = new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2b = new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2c = new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02);
-		FuncOP circharmfunc2d = new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02);
+		FuncOP circharmfunc2a ( new CircularHarmonicFunc( CNCa_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2b ( new CircularHarmonicFunc( CNH_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2c ( new CircularHarmonicFunc( CaCN_ANGLE/180.0*PI, 0.02) );
+		FuncOP circharmfunc2d ( new CircularHarmonicFunc( OCN_ANGLE/180.0*PI, 0.02) );
 
-		ConstraintCOP angleconst1 = new AngleConstraint (
+		ConstraintCOP angleconst1 ( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index("CA") , 1) ,
 				circharmfunc2a
-			);
-		ConstraintCOP angleconst2 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst2 ( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				AtomID( mypose.residue(1).atom_index(hstring) , 1) ,
 				circharmfunc2b
-			);
-		ConstraintCOP angleconst3 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst3 ( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index( (mypose.residue(mypose.n_residue()).has("CM")?"CM":"CA") ) , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2c
-			);
-		ConstraintCOP angleconst4 = new AngleConstraint (
+			) );
+		ConstraintCOP angleconst4 ( new AngleConstraint (
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("O") , mypose.n_residue() ),
 				AtomID( mypose.residue(mypose.n_residue()).atom_index("C") , mypose.n_residue() ),
 				AtomID( mypose.residue(1).atom_index("N") , 1) ,
 				circharmfunc2d
-			);
+			) );
 
 		mypose.add_constraint (angleconst1);
 		mypose.add_constraint (angleconst2);
@@ -1500,7 +1500,7 @@ void add_user_constraints (
 
 	if(!option[v_cst_file].user()) return; //Do nothing if no constraint file is specified.
 
-	ConstraintSetMoverOP cst_maker = new ConstraintSetMover();
+	ConstraintSetMoverOP cst_maker ( new ConstraintSetMover() );
 	std::string cstfile = option[v_cst_file]();
 
 	cst_maker->constraint_file(cstfile);
@@ -1816,7 +1816,7 @@ int main( int argc, char * argv [] ) {
 				char curstructtag[128];
 				sprintf(curstructtag, "c.%lu.%lu", i, j);
 				io::silent::SilentFileData outsilentfiledata;
-				io::silent::SilentStructOP outsilentstruct = io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
+				io::silent::SilentStructOP outsilentstruct ( io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") );
 				outsilentstruct->fill_struct(temppose, curstructtag);
 				if(j==1) {
 					sprintf(outfile, "clusters_firstmember.out");
