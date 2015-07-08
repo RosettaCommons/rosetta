@@ -57,7 +57,7 @@ static thread_local basic::Tracer tr( "protocols.match.MatchPositionModifiers" )
 /// @brief "factory" function to create the match position modifiers
 MatchPositionModifierCOP
 create_match_position_modifier(
-	std::string const mpm_name,
+	std::string const & mpm_name,
 	core::Size geom_cst,
 	utility::vector1< std::string > const & input_tokens )
 {

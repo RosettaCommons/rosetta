@@ -187,7 +187,7 @@ maxsub(
 	double distance_increment = distance_tolerance / 7.0; // maintain same number of cycles
 
 	double znew;
-	double t,  am,as;
+	double am,as;
 
 	FArray1D_double xp0( 3*nsup );
 	FArray1D_double xe0( 3*nsup );
@@ -277,7 +277,7 @@ maxsub(
 		//  3) aling using the current set, then reorient all atoms.
 		//  4) increment t by a small amount.
 		//  5) repeat this until theshold = 7 angstroms.
-		t = 0.0;
+		double t = 0.0;
 		int const last = lmax;
 		double min_d2 = square ( distance_tolerance + 1.0 );
 		//		std::cout << min_d2 << std::endl;

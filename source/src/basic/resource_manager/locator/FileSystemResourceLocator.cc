@@ -150,12 +150,12 @@ FileSystemResourceLocator::show(
 	out
 		<< "FileSystemResourceLocator:" << endl
 		<< "  open_mode:"
-		<< (std::ios_base::app & open_mode_ ? " append" : "")
-		<< (std::ios_base::ate & open_mode_ ? " at_end" : "")
-		<< (std::ios_base::binary & open_mode_ ? " binary" : "")
-		<< (std::ios_base::in & open_mode_ ? " input" : "")
-		<< (std::ios_base::out & open_mode_ ? " output" : "")
-		<< (std::ios_base::trunc & open_mode_ ? " truncate" : "")
+		<< (std::ios_base::app && open_mode_ ? " append" : "")
+		<< (std::ios_base::ate && open_mode_ ? " at_end" : "")
+		<< (std::ios_base::binary && open_mode_ ? " binary" : "")
+		<< (std::ios_base::in && open_mode_ ? " input" : "")
+		<< (std::ios_base::out && open_mode_ ? " output" : "")
+		<< (std::ios_base::trunc && open_mode_ ? " truncate" : "")
 		<< "  base search path for resources: "
 		<< (base_path_ == "" ? "none" : base_path_)
 		<< std::endl;

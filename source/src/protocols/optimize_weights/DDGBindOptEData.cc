@@ -552,8 +552,8 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 		}
 		wt_complexes_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
-	delete [] free_data; free_data = 0; free_data_v.resize(0);
-	delete [] fixed_data; fixed_data = 0; fixed_data_v.resize(0);
+	delete [] free_data; /*free_data = 0; */free_data_v.resize(0);
+	delete [] fixed_data; /*fixed_data = 0; */fixed_data_v.resize(0);
 
 	/// --------- mut complexes ---------
 	free_data = new Real[ n_free * n_mut_complexes ];
@@ -576,8 +576,8 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 		}
 		mutant_complexes_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
-	delete [] free_data; free_data = 0; free_data_v.resize(0);
-	delete [] fixed_data; fixed_data = 0; fixed_data_v.resize(0);
+	delete [] free_data; /*free_data = 0; */free_data_v.resize(0);
+	delete [] fixed_data; /*fixed_data = 0; */fixed_data_v.resize(0);
 
 	/// --------- wt unbounds ---------
 	free_data = new Real[ n_free * n_wt_unbounds ];
@@ -600,8 +600,8 @@ DDGBindOptEData::receive_from_node( int const source_node, int const tag )
 		}
 		wt_unbounds_.push_back( SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) ) );
 	}
-	delete [] free_data; free_data = 0; free_data_v.resize(0);
-	delete [] fixed_data; fixed_data = 0; fixed_data_v.resize(0);
+	delete [] free_data; /*free_data = 0; */free_data_v.resize(0);
+	delete [] fixed_data; /*fixed_data = 0; */fixed_data_v.resize(0);
 
 	/// --------- mut unbounds ---------
 	free_data = new Real[ n_free * n_mut_unbounds ];

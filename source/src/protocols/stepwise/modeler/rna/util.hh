@@ -98,9 +98,9 @@ setup_suite_atom_id_map( pose::Pose const & pose_1,  ////Dec 23, 2011.
 // may be deprecatable soon -- in use by superimpose_pose, which may be replaced by StepWisePoseAligner,
 void
 align_poses( pose::Pose & moving_pose,
-					  std::string const moving_tag,
+					  std::string const & moving_tag,
 						pose::Pose const & static_pose,
-						std::string const static_tag,
+						std::string const & static_tag,
 						utility::vector1< Size > const & working_best_alignment,
 						bool const base_only = true );
 
@@ -126,10 +126,10 @@ std::map< Size, Size >
 create_full_to_input_res_map( utility::vector1< Size > const & input_res_vector );
 
 Size
-string_to_int( std::string const input_string );
+string_to_int( std::string const & input_string );
 
 Real
-string_to_real( std::string const input_string );
+string_to_real( std::string const & input_string );
 
 utility::vector1< std::string >
 tokenize( std::string const str, std::string delimiters );
@@ -139,7 +139,7 @@ is_virtual_base( conformation::Residue const & rsd );
 
 void sort_seq_num_list( utility::vector1< Size > & seq_num_list );
 
-void output_seq_num_list( std::string const tag, utility::vector1< Size > const & seq_num_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+void output_seq_num_list( std::string const & tag, utility::vector1< Size > const & seq_num_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
 bool
 file_exists( std::string const & file_name );
@@ -197,7 +197,7 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 
 
 void
-output_title_text( std::string const title, std::ostream & outstream = std::cout );
+output_title_text( std::string const & title, std::ostream & outstream = std::cout );
 
 void
 freeze_sugar_torsions( kinematics::MoveMap & mm, Size const total_residue );
@@ -251,10 +251,10 @@ set_CCD_torsions_to_zero(
     Size const five_prime_res );
 
 void
-print_base_state( std::string const tag, Size const base_state, std::ostream & outstream = std::cout );
+print_base_state( std::string const & tag, Size const base_state, std::ostream & outstream = std::cout );
 
 void
-print_sugar_pucker_state( std::string const tag, Size const pucker_state, std::ostream & outstream = std::cout );
+print_sugar_pucker_state( std::string const & tag, Size const pucker_state, std::ostream & outstream = std::cout );
 
 scoring::ScoreFunctionOP
 get_modeler_scorefxn( scoring::ScoreFunctionCOP scorefxn_ );
@@ -266,7 +266,7 @@ scoring::ScoreFunctionOP
 rescale_scorefxn( scoring::ScoreFunctionOP const & starting_scorefxn, Real const scaling_factor );
 
 void
-show_scorefxn_weight_lines( scoring::ScoreFunctionOP const & scorefxn, std::string const title );
+show_scorefxn_weight_lines( scoring::ScoreFunctionOP const & scorefxn, std::string const & title );
 
 void
 choose_random_if_unspecified_nucleotide( char & newrestype );

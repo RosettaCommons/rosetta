@@ -219,12 +219,12 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 	Size neighbors = option[frags::contacts::neighbors]();
 
 	// output all contacts?
-	std::set<ContactType>::iterator it;
+	std::set<ContactType>::iterator it, ctend = contact_types_.end();
 	utility::io::ozstream output_all_contacts;
 	bool output_all = option[frags::contacts::output_all]();
 	if (output_all) {
 		std::string scale_factor = "0";
-		for (it=contact_types_.begin(); it!=contact_types_.end(); it++)
+		for (it=contact_types_.begin(); it != ctend; ++it )
 			if (*it == CEN) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 		replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
 		const std::string out_file_name_all_contacts = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
@@ -234,7 +234,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 
 	// initialize contact counts
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts;
-	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+	for (it=contact_types_.begin(); it != ctend; ++it ) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
 			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
@@ -271,7 +271,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 					// skip local contacts relative to fragments
 					if (std::abs(int(ri->resi() - outi[fi].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_) continue;
 
-					for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+					for (it=contact_types_.begin(); it != ctend; ++it ) {
 
 						// pair distance
 						Real distance_squared = ri->distance_squared(outi[fi].first->get_residue(j), *it);
@@ -436,8 +436,8 @@ void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<Size> const &
 							if (std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_) continue;
 							// skip local contacts relative to fragments
 							if (std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_) continue;
-							std::set<ContactType>::iterator it;
-							for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+							std::set<ContactType>::iterator it, ctend;
+							for (it=contact_types_.begin(); it != ctend; ++it ) {
 								// contact distance cutoff
 								Real cutoff_dist_squared = (*it == CEN) ?
 										sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outj[fj].first->get_residue(j)->aa() ) :
@@ -570,8 +570,8 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 	// initialize contact counts
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts;
-	std::set<ContactType>::iterator it;
-	for (it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+	std::set<ContactType>::iterator it, end ;
+	for (it=contact_types_.begin(), end =contact_types_.end(); it != end; ++it ) {
 		if (*it == CEN) {
 			std::pair<Real,ContactType> p(0,*it);
 			contact_counts[p] = protocols::frag_picker::ContactCountsOP( new ContactCounts() );
@@ -651,7 +651,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 
 	// silent output
 	std::string scale_factor = "0";
-	for (it=contact_types_.begin(); it!=contact_types_.end(); it++)
+	for (it=contact_types_.begin(), end=contact_types_.end(); it != end; ++it )
 	    if (*it == CEN) scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 	replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
 	const std::string silent_out_file_name = prefix_ + "." + string_of(contacts_min_seq_sep_) + "." + string_of(sqrt(contacts_dist_cutoff_squared_)) + "." + scale_factor +
@@ -692,12 +692,12 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 			if (option[frags::nonlocal::output_silent]()) {
 				// check if enough contacts exist to output fragment pair
 				std::map<ContactType, Size> contact_type_cnt;
-				std::map<ContactType, Size>::iterator iter;
+				std::map<ContactType, Size>::iterator iter, ctend2;
 				bool output_pair = false;
-				for (it=contact_types_.begin(); it!=contact_types_.end(); it++)
+				for (it=contact_types_.begin(), end = contact_types_.end(); it != end; ++it )
 					contact_type_cnt[*it] = 0;
 				for (Size i=1; i<=contacts.size(); ++i) contact_type_cnt[contacts[i]->type()]++;
-				for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ ) {
+				for ( iter = contact_type_cnt.begin(), ctend2 = contact_type_cnt.end(); iter != ctend2; ++iter ) {
 					if ((Real)iter->second >= min_contacts) {
 						output_pair = true;
 						break;
@@ -769,7 +769,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 					core::pose::setPoseExtraScore( pose, "fscore", ms->total_score(thread_pairs[j][k]->get_candidate_i().second) + ms->total_score(thread_pairs[j][k]->get_candidate_j().second)); // frag i+j score
 
 					// save contact counts
-					for ( iter = contact_type_cnt.begin(); iter != contact_type_cnt.end(); iter++ )
+					for ( iter = contact_type_cnt.begin(), ctend2 = contact_type_cnt.end(); iter != ctend2; ++iter )
 						core::pose::add_score_line_string( pose, contact_name(iter->first), string_of(iter->second) );
 					core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose );
 					ss->fill_struct( pose, tag.str() );
@@ -902,7 +902,7 @@ FragmentPicker::output_pair_counts(
 	std::map<std::pair<Real,ContactType>, ContactCountsOP> contact_counts
 ) {
 	using namespace ObjexxFCL;
-	for (std::set<ContactType>::iterator it=contact_types_.begin(); it!=contact_types_.end(); it++) {
+	for (std::set<ContactType>::iterator it=contact_types_.begin(), end =contact_types_.end(); it != end; ++it ) {
 		if (*it == CEN) {
 			std::string scale_factor = string_of(sidechain_contact_dist_cutoff_->scale_factor());
 			replace( scale_factor.begin(), scale_factor.end(), '.', '_' );
@@ -914,14 +914,14 @@ FragmentPicker::output_pair_counts(
 			output_contacts << std::endl;
 			std::pair<Real,ContactType> p(0,*it);
 			std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-			std::map<std::pair<Size,Size>, Size>::iterator iter;
-			for ( iter = query_counts.begin(); iter != query_counts.end(); iter++ ) {
+			std::map<std::pair<Size,Size>, Size>::iterator iter, end;
+			for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
 				std::pair<Size,Size> query_pair = iter->first;
 				output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
 				if (neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair)) {
 					std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-					std::map<std::pair<Size,Size>, Size>::iterator neigh_iter;
-					for ( neigh_iter = neighbor_counts.begin(); neigh_iter != neighbor_counts.end(); neigh_iter++ ) {
+					std::map<std::pair<Size,Size>, Size>::iterator neigh_iter, nend;
+					for ( neigh_iter = neighbor_counts.begin(), nend = neighbor_counts.end(); neigh_iter != nend; ++neigh_iter ) {
 						std::pair<Size,Size> neighbor_pair = neigh_iter->first;
 						output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
 					}
@@ -939,14 +939,14 @@ FragmentPicker::output_pair_counts(
 				output_contacts << std::endl;
 				std::pair<Real,ContactType> p(contacts_dist_cutoffs_squared_[i],*it);
 				std::map<std::pair<Size,Size>, Size> query_counts = contact_counts[p]->counts();
-				std::map<std::pair<Size,Size>, Size>::iterator iter;
-				for ( iter = query_counts.begin(); iter != query_counts.end(); iter++ ) {
+				std::map<std::pair<Size,Size>, Size>::iterator iter, end ;
+				for ( iter = query_counts.begin(), end = query_counts.end(); iter != end; ++iter ) {
 					std::pair<Size,Size> query_pair = iter->first;
 					output_contacts << query_pair.first << " " << query_pair.second << " " << iter->second;
 					if (neighbors > 0 && contact_counts[p]->neighbor_counts_exist(query_pair)) {
 						std::map<std::pair<Size,Size>, Size> neighbor_counts = contact_counts[p]->neighbor_counts(query_pair);
-						std::map<std::pair<Size,Size>, Size>::iterator neigh_iter;
-						for ( neigh_iter = neighbor_counts.begin(); neigh_iter != neighbor_counts.end(); neigh_iter++ ) {
+						std::map<std::pair<Size,Size>, Size>::iterator neigh_iter, nend;
+						for ( neigh_iter = neighbor_counts.begin(), nend = neighbor_counts.end(); neigh_iter != nend; ++neigh_iter ) {
 							std::pair<Size,Size> neighbor_pair = neigh_iter->first;
 							output_contacts << " " << neighbor_pair.first << " " << neighbor_pair.second << " " << neigh_iter->second;
 						}
@@ -1725,9 +1725,9 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 
 	utility::vector1<core::fragment::SecondaryStructureOP> predictions;
 	utility::vector1<Real> ss_weights;
-	std::map<std::string, core::fragment::SecondaryStructureOP>::iterator it;
+	std::map<std::string, core::fragment::SecondaryStructureOP>::iterator it, end = query_ss_profile_.end();
 	Real weight = 1.0 / ((Real) query_ss_profile_.size());
-	for ( it=query_ss_profile_.begin() ; it != query_ss_profile_.end(); it++ ) {
+	for ( it=query_ss_profile_.begin() ; it != end; ++it ) {
 			predictions.push_back((*it).second);
 			ss_weights.push_back(weight);
 	}

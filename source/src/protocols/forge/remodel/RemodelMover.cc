@@ -386,8 +386,8 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 	if (disulfides_formed.size() < max_disulfides) {
 
 		//select one primary new disulfide to be added
-		for (utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin();
-																   new_disulfide != disulfides_possible.end();
+		for (utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin(), end = disulfides_possible.end();
+																   new_disulfide != end;
 																   ++new_disulfide) {
 
 			//add the configuration with the new disulfide
@@ -400,7 +400,7 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 
 			//identify new secondary disulfides which do not clash with the primary
 			utility::vector1< std::pair< Size, Size > >::iterator potential_further_disulfide = new_disulfide;
-			for (potential_further_disulfide++; potential_further_disulfide != disulfides_possible.end();
+			for (++potential_further_disulfide; potential_further_disulfide != end;
 				 ++potential_further_disulfide) {
 
 				if ((*potential_further_disulfide).first != (*new_disulfide).first &&
@@ -418,8 +418,8 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 				utility::vector1< utility::vector1< std::pair<Size,Size> > > new_disulfide_configurations =
 					recursive_multiple_disulfide_former(new_disulfides_formed, disulfides_to_be_added, max_disulfides);
 
-				for (utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator new_configuration = new_disulfide_configurations.begin();
-																				 			new_configuration != new_disulfide_configurations.end();
+				for (utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator new_configuration = new_disulfide_configurations.begin(), ndcend = new_disulfide_configurations.end();
+																				 			new_configuration != ndcend;
 																				 			++new_configuration) {
 					final_configurations.push_back(*new_configuration);
 
@@ -1142,7 +1142,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 		TR << "clustered poses count: " << results.size() << std::endl;
 
-		for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; it++ ) {
+		for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; ++it ) {
 
 			bool bypass_refinement = option[OptionKeys::remodel::quick_and_dirty].user();
 			if (rosetta_scripts_quick_and_dirty_ || rosetta_scripts_fast_disulfide_) {
@@ -2073,7 +2073,7 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	Real sum_sd_archive2native=0;
 	Size atom_count = 0;
 
-	for ( loops::Loops::iterator it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; it++) {
+	for ( loops::Loops::iterator it = confirmation_loops->v_begin(), end = confirmation_loops->v_end(); it!=end; ++it ) {
 		for ( Size i = it->start(); i <= it->stop(); ++i ) {
 			Real dist_squared = ( pose.residue(i).xyz( "CA" ) - archive_pose.residue(i).xyz( "CA" ) ).length_squared();
 			Real dist_squared_native = ( pose.residue(i).xyz( "CA" ) - native_pose_.residue(i).xyz( "CA" ) ).length_squared();

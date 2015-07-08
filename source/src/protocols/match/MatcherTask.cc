@@ -1060,7 +1060,7 @@ MatcherTask::set_active_site_residue_list_to_preexisting_partial_match()
 	Size n_geometric_constraints( enz_input_data_->mcfi_lists_size() );
 
 	// Loop over all the remarks in pdb file
-	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(); remark_it != pose_remarks.end(); remark_it++){
+	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ){
 
 		std::string resA_type(""), resB_type("");
 		int resA_num(0), resB_num(0);
@@ -1159,11 +1159,11 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 
 	for( core::Size i = 1; i <= enz_input_data_->num_mcfi_lists(); ++i ){
 
-		//make sure this is not upstream matching
-		bool upstream_matching( false);
 		std::map< std::string, utility::vector1< std::string > > const &
 					alg_info(  enz_input_data_->mcfi_list( i )->mcfi( 1 )->algorithm_inputs() );
 		if ( alg_info.find( "match" ) != alg_info.end() ) {
+			//make sure this is not upstream matching
+			bool upstream_matching( false);
 			utility::vector1< std::string > const & info( alg_info.find( "match" )->second );
 			for ( Size ll = 1; ll <= info.size(); ++ll ) {
 				std::string llstr = info[ ll ];

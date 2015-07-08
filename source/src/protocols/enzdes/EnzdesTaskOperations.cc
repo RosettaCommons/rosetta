@@ -303,15 +303,15 @@ PackerTask & task) const
 		std::set< core::Size > interface_target_res = design_target_res_;
 
 		// if picking neighbors of particular cstids only
-		if ( ( interface_target_res.size() == 0 ) && use_cstid_list_ ){
+		if ( ( interface_target_res.empty() /*size() == 0 */) && use_cstid_list_ ){
 			utility::vector1< core::Size > trg_res;
 			protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, pose, trg_res );
-			std::unique( trg_res.begin(), trg_res.end() );
-			std::set< core::Size > trg_set( trg_res.begin(), trg_res.end() );
+			utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
+			std::set< core::Size > trg_set( trg_res.begin(), last ); //trg_res.end() );
 			interface_target_res = trg_set;
 		}
 
-		if( ( interface_target_res.size() == 0 ) && (catalytic_res_part_of_interface_ || catres_only_) ){
+		if( ( interface_target_res.empty() /*size() == 0 */ ) && (catalytic_res_part_of_interface_ || catres_only_) ){
 			for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i){
 				if( enzutil::is_catalytic_seqpos( pose, i ) ) {
 					if (pose.residue_type( i ).is_ligand() && !catres_only_) interface_target_res.insert( i );
@@ -322,7 +322,7 @@ PackerTask & task) const
 
 		if( add_observer_cache_segs_to_interface_ ) add_observer_cache_segments_to_set( pose, interface_target_res );
 
-		if( interface_target_res.size() ==0 && !catres_only_ ){
+		if( interface_target_res.empty() /*size() == 0 */&& !catres_only_ ){
 			if( core::pose::symmetry::is_symmetric(pose) ){
 				core::kinematics::FoldTree asymm_ft( core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() ) );
 				interface_target_res.insert( asymm_ft.downstream_jump_residue( asymm_ft.num_jump() ) );

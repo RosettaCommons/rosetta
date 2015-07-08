@@ -257,8 +257,7 @@ std::cout << "CENTROID mode" << std::endl;
 		assert(chain_boundaries_map[ symm_p.from_pdb_chain ].valid);
 		src_unit_first_res = chain_boundaries_map[ symm_p.from_pdb_chain ].first;
 		src_unit_last_res = chain_boundaries_map[ symm_p.from_pdb_chain ].last;
-		for(std::set<char>::const_iterator it = clones_pdb_chains.begin();
-		it != clones_pdb_chains.end(); it++)
+		for(std::set<char>::const_iterator it = clones_pdb_chains.begin(), it = clones_pdb_chains.end(); it != end; ++it )
 		{
 			assert(chain_boundaries_map.find(*it) != chain_boundaries_map.end()); // valid chain
 			assert(chain_boundaries_map[ *it ].valid);
@@ -267,9 +266,7 @@ std::cout << "CENTROID mode" << std::endl;
 	}
 
 	// add DOFs to params handler
-	{ for(std::set<DOF_param>::const_iterator it = param_h.dofs.begin();
-	it != param_h.dofs.end();
-	it++)
+	{ for(std::set<DOF_param>::const_iterator it = param_h.dofs.begin(), end = param_h.dofs.end(); it != end; ++it )
 	{
 		if(it->s_dof_type == "PHI")
 			_dofs_manager.set_phi_dof(it->pdb_res, it->std_dev, it->uni_dev);
@@ -286,8 +283,7 @@ std::cout << "CENTROID mode" << std::endl;
 
 	// add DOF residues range to params handler
 	{
-	  for(std::set<DOF_range_param>::const_iterator it = param_h.dof_ranges.begin();
-	      it != param_h.dof_ranges.end(); it++)
+	  for(std::set<DOF_range_param>::const_iterator it = param_h.dof_ranges.begin(), end = param_h.dof_ranges.end(); it != end; ++it )
 	    {
 	      if(it->s_dof_type == "PHI")
 		for(int k = it->from_pdb_res; k <= it->to_pdb_res; k++)
@@ -325,16 +321,14 @@ std::cout << "CENTROID mode" << std::endl;
   // add cuts for chain boundaries
   {
     vertices.insert(1); // first residue in pose
-    for(Chain_boundaries_map::const_iterator it = chain_boundaries_map.begin();
-	it != chain_boundaries_map.end(); it++)
+    for(Chain_boundaries_map::const_iterator it = chain_boundaries_map.begin(), end = chain_boundaries_map.end(); it != end; ++it )
       {
 	cuts.insert(it->second.last);
       }
   }
   // add cuts from params file to list
   {
-    for(std::set<Pdbres_param>::const_iterator it = param_h.cuts.begin();
-	it != param_h.cuts.end(); it++)
+    for(std::set<Pdbres_param>::const_iterator it = param_h.cuts.begin(), end = param_h.cuts.end(); it != end; ++it )
       {
 	int cut_pose_res = _dofs_manager.pdbres_to_poseres(it->pdbres);
 	assert(cut_pose_res != -1);
@@ -345,8 +339,7 @@ std::cout << "CENTROID mode" << std::endl;
   }
   // add all cuts as vertices (i, i+1)
   {
-    for(Int_set::const_iterator it = cuts.begin();
-	it != cuts.end(); it++)
+    for(Int_set::const_iterator it = cuts.begin(), end = cuts.end(); it != end; ++it )
       {
 	vertices.insert(*it);
 	vertices.insert(*it + 1);
@@ -354,8 +347,7 @@ std::cout << "CENTROID mode" << std::endl;
   }
   // add jumps vertices
   {
-    for(std::set<Jump_param>::const_iterator it = param_h.jumps.begin();
-	it != param_h.jumps.end();	it++)
+    for(std::set<Jump_param>::const_iterator it = param_h.jumps.begin(), end = param_h.jumps.end(); it != end; ++it )
       {
 	int from_pose_res = _dofs_manager.pdbres_to_poseres(it->from_pdbres);
 	int to_pose_res = _dofs_manager.pdbres_to_poseres(it->to_pdbres);
@@ -372,7 +364,7 @@ std::cout << "CENTROID mode" << std::endl;
     {
       Int_set::const_iterator it_v;
       for(it_v = ++vertices.lower_bound(src_unit_first_res); // this is first iter s.t. *it >= src_unit_first_res
-	  *it_v <= src_unit_last_res ; it_v++)
+	  *it_v <= src_unit_last_res ; ++it_v ) 
 	{
 	  if(local_debug)
 	    std::cout << "duplicating " << *it_v << std::endl;
@@ -396,7 +388,7 @@ std::cout << "CENTROID mode" << std::endl;
   if(local_debug)
     {
       std::cout << "Vertices for fold-tree: " << std::endl;
-      for(Int_set::const_iterator it = vertices.begin(); it != vertices.end(); it++)
+      for(Int_set::const_iterator it = vertices.begin(), end = vertices.end(); it != end; ++it)
 	std::cout << *it << "; ";
       std::cout << std::endl;
     }
@@ -407,7 +399,7 @@ std::cout << "CENTROID mode" << std::endl;
     Int_set::const_iterator	cur_it = vertices.begin();
     for(Int_set::const_iterator	prev_it = cur_it++;
 	cur_it != vertices.end();
-	prev_it++, cur_it++)
+	++prev_it, ++cur_it )
 
       {
 	if(cuts.find(*prev_it) == cuts.end()) // add only if not a cut after prev_it
@@ -422,8 +414,7 @@ std::cout << "CENTROID mode" << std::endl;
   {
     int num_jumps = 0;
     clones_jumps.resize(n_clones);
-    for(std::set<Jump_param>::const_iterator it = param_h.jumps.begin();
-	it != param_h.jumps.end();	it++)
+    for(std::set<Jump_param>::const_iterator it = param_h.jumps.begin(), end = param_h.jumps.end(); it != end; ++it)
       {
 	int from_pose_res = _dofs_manager.pdbres_to_poseres(it->from_pdbres);
 	int to_pose_res = _dofs_manager.pdbres_to_poseres(it->to_pdbres);

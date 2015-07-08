@@ -224,7 +224,8 @@ FastDesign::parse_my_tag(
 	utility::vector1< utility::tag::TagCOP > const & filter_tags( tag->getTags() );
 	for ( core::Size i=1; i<=filter_tags.size(); ++i ) {
 		utility::tag::TagCOP const layer_tag( filter_tags[i] );
-		std::string op = layer_tag->getName(); // Should be "AND" just like in Generic MC
+		// AMW: cppcheck notes this is never used
+		//std::string op = layer_tag->getName(); // Should be "AND" just like in Generic MC
 		std::string const filter_name( layer_tag->getOption< std::string >( "filter", "" ) );
 		// tolerance means if the current value is within X of the starting value, it's OK
 		// default = not used

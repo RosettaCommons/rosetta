@@ -3378,11 +3378,11 @@ setup_default_scorefxn( bool & output_fa )
 {
 	using namespace scorefxns;
 
-//car local
-	int value;
 
 //car set default scorefxns
 	if ( truefalseoption("scorefxn") ) {
+		//car local
+		int value;
 		intafteroption("scorefxn",score_undef,value);
 
 //car set the default_scorefxn

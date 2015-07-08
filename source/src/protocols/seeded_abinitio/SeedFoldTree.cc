@@ -175,12 +175,12 @@ Size define_cut_point_stochasticly (
 													   ){
 	TR <<"defining cut points stochasticly between the given two residues: "<<start_resi<<" and "<<stop_resi <<std::endl;
 	utility::vector1<Size> loopy_regions;
-	char ss;
+	//char ss;
 
 	TR<<"start and stop: " << start_resi << " " << stop_resi << "\nsecondary structure string between seeds: \n";
 	//going through the regions beteween the seeds, to identify loops and assign a cut point at random
 	for (Size resi = start_resi + 1 /*+1 since strings count from 0 */ ; resi < stop_resi - 1/*as long as it is a set*/; ++resi) {
-		ss = secondarystruct_seq[ resi - 1 ];
+		char ss = secondarystruct_seq[ resi - 1 ];
 		TR << ss ;
 		if (ss == 'L')
 			loopy_regions.push_back( resi );//to adjust for string counting

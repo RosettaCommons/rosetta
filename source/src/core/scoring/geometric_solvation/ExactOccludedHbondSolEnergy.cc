@@ -583,17 +583,17 @@ core::Real ExactOccludedHbondSolEnergy::compute_acceptor_atom_energy(
 	core::Size const polar_atom,
 	pose::Pose const & pose) const {
 
-	Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
+	//Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
 	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
 	hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 	// Figure out max LK energy
-	std::string const base_atom_name = polar_rsd.atom_name( base_atom );
-	core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
+	//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+	//core::Real max_possible_LK = (*atom_type_set_ptr)[ polar_rsd.atom_type_index( polar_atom ) ].lk_dgfree();
 		//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 
 	// jk INSTEAD OF USING LK dG FREE, SET THEM ALL TO -5.0. THIS IS ALMOST TRUE ANYWAY, AND THE ONES THAT AREN'T SHOULD PROBABLY BE...
-	max_possible_LK = -5.;
+	core::Real max_possible_LK = -5.;
 
 	// Compute Ebulk (using the LK energy)
 	core::Real const Emax_weight = exp( max_possible_LK / geosol_kT );

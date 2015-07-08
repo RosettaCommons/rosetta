@@ -330,8 +330,8 @@ DisulfidizeMover::recursive_multiple_disulfide_former(
 			DisulfideList disulfides_to_be_added;
 
 			//identify new secondary disulfides which do not clash with the primary
-			DisulfideList::const_iterator potential_further_disulfide = new_disulfide;
-			for ( potential_further_disulfide++; potential_further_disulfide != disulfides_possible.end();
+			DisulfideList::const_iterator potential_further_disulfide = new_disulfide, end = disulfides_possible.end();
+			for ( ++potential_further_disulfide; potential_further_disulfide != end;
 					++potential_further_disulfide ) {
 
 				if ((*potential_further_disulfide).first != (*new_disulfide).first &&
@@ -424,12 +424,12 @@ DisulfidizeMover::find_possible_disulfides(
 	core::scoring::ScoreFunctionOP sfxn_disulfide_only = core::scoring::ScoreFunctionOP(new core::scoring::ScoreFunction());
 	sfxn_disulfide_only->set_weight(core::scoring::dslf_fa13, 1.0);
 
-	for ( std::set< core::Size >::const_iterator itr=set1.begin(), end=set1.end(); itr!=end; itr++ ) {
+	for ( std::set< core::Size >::const_iterator itr=set1.begin(), end=set1.end(); itr!=end; ++itr ) {
 		//gly/non-protein check
 		if ( !check_residue_type( pose, *itr ) ) {
 			continue;
 		}
-		for ( std::set< core::Size >::const_iterator itr2=set2.begin(), end2=set2.end(); itr2!=end2 ; itr2++ ) {
+		for ( std::set< core::Size >::const_iterator itr2=set2.begin(), end2=set2.end(); itr2!=end2; ++itr2 ) {
 			if ( *itr == *itr2 ) {
 				continue;
 			}

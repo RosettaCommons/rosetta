@@ -294,12 +294,11 @@ void HDdesignMover::task_constraint_setup( pose::Pose & pose ){
 void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	//need to setup the movemap her to correspond to what is at the interface currently
 	//calc interface for
-	std::set< Size > interface_set;
 	basic::MetricValue< std::set< Size > > interface_mv;
 	pose.metric( InterfaceNeighborDefinition_,  "interface_residues", interface_mv);
-	interface_set = ( interface_mv.value() );
 
 #ifndef NDEBUG
+	std::set< Size > interface_set = ( interface_mv.value() );
 	TR<< "Interface residues are: \n";
 	for( std::set< core::Size >::const_iterator it(interface_set.begin()), end(interface_set.end());
 			 it != end; ++it){
@@ -309,6 +308,7 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 	TR<< "Fold tree for pose: \n" << pose.fold_tree() << std::endl;
 #endif
 
+	//std::set< Size > interface_set = ( interface_mv.value() );
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
  	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 // 	make_symmetric_movemap( pose, *mm );

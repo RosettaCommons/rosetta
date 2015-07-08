@@ -37,7 +37,7 @@ namespace viewer {
 
 void
 dump_pose_kinemage(
-	std::string const filename,
+	std::string const & filename,
 	core::pose::Pose const & pose
 );
 

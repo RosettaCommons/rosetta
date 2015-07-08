@@ -107,10 +107,10 @@ void MPI_EndPoint::act_on_status_response( function<bool ( StatusResponse & r )>
 				open_status_.erase( itr->get<1>().rank ) ;
         itr = inbound_statusresponse_.erase( itr );
 			} else {
-				itr++;
+				++itr;
 			}
     } else {
-			itr++;
+			++itr;
 		}
   }
 }
@@ -151,7 +151,7 @@ void MPI_EndPoint::cleanup_reqs() {
   // buffer reqs
   outbuf_.cleanup_reqs();
   std::vector< WorkUnitSP > tmp = inbuf_.cleanup_reqs();
-  for( std::vector< WorkUnitSP >::iterator itr = tmp.begin(); itr != tmp.end(); itr++ ) {
+  for( std::vector< WorkUnitSP >::iterator itr = tmp.begin(), end = tmp.end(); itr != end; ++itr ) {
     if( (*itr)->prioritize() ) {
       inq_.push_front( *itr );
     } else {
@@ -165,7 +165,7 @@ void MPI_EndPoint::cleanup_reqs() {
       // outbound statusresponse was sent successfully
       itr = outbound_statusresponse_.erase( itr );
 		} else {
-			itr++;
+			++itr;
 		}
   }
 	// outbound statusrequest reqs
@@ -175,7 +175,7 @@ void MPI_EndPoint::cleanup_reqs() {
       // outbound statusresponse was sent successfully
       jtr = outbound_statusrequest_.erase( jtr );
 		} else {
-			jtr++;
+			++jtr;
 		}
 	}
 }

@@ -613,6 +613,8 @@ void compare_mingraph_and_energy_graph(
 	using namespace graph;
 
 	bool discrepancy( false );
+	// AMW: cppcheck flags this as being reducible in scope, but since it's static
+	// I think it should stay as is
 	static int n_discreps( 0 );
 
 	EnergyMap const & one_body_emap( pose.energies().onebody_energies( resid ));
@@ -1060,6 +1062,8 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 	using namespace interaction_graph;
 
 	bool discrepancy( false );
+	// AMW: cppcheck flags this as being reducible in scope, but since it's static
+	// I think it should stay as-is
 	static int n_discreps( 0 );
 
 	EnergyMap const & one_body_emap( pose.energies().onebody_energies( resid ));

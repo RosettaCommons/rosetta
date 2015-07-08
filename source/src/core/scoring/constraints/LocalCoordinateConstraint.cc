@@ -115,7 +115,6 @@ LocalCoordinateConstraint::dist( pose::Pose const & pose ) const {
   Vector const & xyz( conformation.xyz( atom_ ) );
 	kinematics::Stub my_stub( conformation.stub_from_id( fixed_stub_ ) );
 	return func( xyz_target_.distance( my_stub.global2local( xyz ) ) );
-  return xyz.distance( xyz_target_ );
 }
 
 void
@@ -152,7 +151,6 @@ LocalCoordinateConstraint::read_def(
 	std::string tempres1, tempres2;
 	std::string name1, name2, name3, name4;
 	std::string func_type;
-	std::string type;
 
 	data
 		>> name1 >> tempres1

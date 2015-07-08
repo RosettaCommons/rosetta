@@ -2295,7 +2295,7 @@ public:
 			// TR << j << std::endl;
 			pose.set_jump(i->first,j);
 		}
-		if(dofs_.size()) slide_->apply(pose);
+		if(!dofs_.empty()/*size()*/) slide_->apply(pose);
 	}
 	std::string get_name() const { return "MySlideMover"; }
 };

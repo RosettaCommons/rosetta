@@ -304,7 +304,7 @@ void  Single_tree_RRT::run()
 	using namespace std;
 	bool local_debug = false;//true;
 	_score_weight_map = _owner->get_score_weight_map();
-	char resultFileName[100];
+	//char resultFileName[100];
 	double score_src = _owner->get_src_pose().score(_score_weight_map );
 	if(local_debug)
 		cout << "Score src = " << score_src << endl;
@@ -337,7 +337,7 @@ void  Single_tree_RRT::run()
 	{
 		RRT_node* target = optional_targets[i];
 		std::vector<RRT_node* > path;
-		if(i == 0 & target != best_target && local_debug)
+		if(i == 0 && target != best_target && local_debug)
 			cout << "DEBUG: target != best_target" << endl;
 		findPath(root, target,path); // from root to target
 		if(local_debug)
@@ -408,24 +408,24 @@ std::vector<RRT_node *> Single_tree_RRT::find_nearest_nodes_CA_RMSD(RRT_node* n,
 	int local_debug = 0;//2;
 	if(local_debug >= 1) cout << "::find_nearest_nodes" << endl;
 	vector<RRT_node *> results;
-	RRT_node* result = NULL;
+	//RRT_node* result = NULL;
 	dist = 10000;
-	double curr_dist=0;
+	//double curr_dist=0;
 	vector<double> distances;
 	vector<RRT_node *>::iterator it;
 	vector<RRT_node *>& node_list = _conf_DAG.get_active_nodes();
-	for(it = node_list.begin(); it != node_list.end();it++){
-		curr_dist = n->compute_dist_CA_rmsd(*it);
+	for(it = node_list.begin(), end = node_list.end();++it){
+		double curr_dist = n->compute_dist_CA_rmsd(*it);
 		if(local_debug >= 3) cout << "Curr CA_RMSD = " << curr_dist << endl;
 		distances.push_back(curr_dist);
 		if(curr_dist < dist){
-			result = *it;
+			//result = *it;
 			dist = curr_dist;
 		}
 	}
 	// save close nodes
 	it = node_list.begin();
-	for(unsigned int i = 0; i < distances.size(); i++, it++ )
+	for(unsigned int i = 0; i < distances.size(); i++, ++it )
 	{
 		if(distances[i] <= dist + _distance_offset_nearest_neighbours_CA_RMSD)
 			results.push_back(*it);
@@ -435,7 +435,7 @@ std::vector<RRT_node *> Single_tree_RRT::find_nearest_nodes_CA_RMSD(RRT_node* n,
 	{
 		unsigned del_index = (unsigned)(ran3() * results.size());
 		it = results.begin();
-		for(unsigned i = 0; i < del_index; i++, it++); // get iterator to results[del_index]
+		for(unsigned i = 0; i < del_index; i++, ++it ); // get iterator to results[del_index]
 		// TODO: primitive, switch to set...?
 		results.erase(it);
 	}
@@ -459,19 +459,19 @@ Single_tree_RRT::find_nearest_nodes_by_DOFs_vector(
 	if(local_debug >= 1)
 		cout << "Single_tree_RRT::find_nearest_nodes_by_DOFs_vector" << endl;
 	std::vector<RRT_node *> results;
-	RRT_node* result = NULL;
+	//RRT_node* result = NULL;
 	dist = 10000;
-	double curr_dist=0;
+	//double curr_dist=0;
 	std::vector<double> distances;
-	std::vector<RRT_node *>::iterator it;
+	std::vector<RRT_node *>::iterator it, end;
 	std::vector<RRT_node *>& node_list = _conf_DAG.get_active_nodes();
-	for(it = node_list.begin(); it != node_list.end();it++){
-		curr_dist = n->compute_dist_dofs_vector(*it); // functor according to L2 norm on internal coordinates vector
+	for(it = node_list.begin(), end = node_list.end(); it!= end; ++it ) {
+		double curr_dist = n->compute_dist_dofs_vector(*it); // functor according to L2 norm on internal coordinates vector
 		if(local_debug >= 3)
 			cout << "Curr L2_DOFs_vector = " << curr_dist << endl;
 		distances.push_back(curr_dist);
 		if(curr_dist < dist){
-			result = *it;
+			RRT_node* result = *it;
 			dist = curr_dist;
 		}
 	}
@@ -485,14 +485,14 @@ Single_tree_RRT::find_nearest_nodes_by_DOFs_vector(
 				cout << "Found near neighbour (dist = " << dist << ")" << endl;
 			}
 		}
-		it++;
+		++it;
 	}
 	// now stay with maximum 2 // TODO: parametrize this number
 	while( results.size() > 2 )
 	{
 		unsigned del_index = (unsigned)(ran3() * results.size());
 		it = results.begin();
-		for(unsigned i = 0; i < del_index; i++, it++); // get iterator to results[del_index]
+		for(unsigned i = 0; i < del_index; i++, ++it); // get iterator to results[del_index]
 		// TODO: primitive, switch to set...?
 		results.erase(it);
 	}
@@ -542,7 +542,7 @@ int Single_tree_RRT::add_nodes_with_local_planner(RRT_node* from,RRT_node* to,
 	}
 
 
-	char resultFileName[100];
+	//char resultFileName[100];
 	if (fulfilled_stop_condition_local_planner(linplanner_dofs_iter, from, to) )
 	{	  return 0;} // stop local planner}
 
@@ -682,7 +682,7 @@ void Single_tree_RRT::grow_DAG()
 	bool local_debug = true;
 	if(local_debug) cout << "*** Single_tree_RRT::grow_DAG() - start ***" << endl;
 	//assert(_owner);
-	RRT_node* n=NULL;//,*neighbour;
+	//RRT_node* n=NULL;//,*neighbour;
 	int num_added_nodes;
 	int num_conseq_fails =0,num_generated_nodes=1;
 	std::vector<RRT_node *> generated_nodes;
@@ -691,7 +691,7 @@ void Single_tree_RRT::grow_DAG()
 
 	while(!fulfilled_stop_condition(num_generated_nodes, num_conseq_fails)){
 
-		n = generate_random_conformation();
+		RRT_node* n = generate_random_conformation();
 		//n->get_pose().dump_pdb("./output/last_rand_conf.pdb");
 		neighboring_nodes.clear();
 		neighboring_nodes = find_nearest_nodes_by_DOFs_vector(n, dist); // return to general nearest nodes stuff
@@ -849,13 +849,13 @@ int Single_tree_RRT::findPath(RRT_node* ancestor, RRT_node* descendant, std::vec
 RRT_node * Single_tree_RRT::find_best_conformation(std::vector<RRT_node *>& v_res_nodes){
 
 	v_res_nodes.clear();
-	std::vector<RRT_node*>::iterator it;
+	std::vector<RRT_node*>::iterator it, end;
 	std::vector<RRT_node*>& node_list = _conf_DAG.get_active_nodes();
 	RRT_node* min_energy_node= NULL;
 
-	int level =0;
+	//int level =0;
 	double energy, min_energy = 1000000;
-	for(it = node_list.begin()+1; it != node_list.end();it++){ // TODO: indeed begin + 1?
+	for(it = node_list.begin()+1, end = node_list.end(); it != end; ++it ) { // TODO: indeed begin + 1?
 		if (!(meet_goal_criterions(*it)))
 			continue;
 		v_res_nodes.push_back(*it);
@@ -930,10 +930,10 @@ double
 Single_tree_RRT::compute_energy_of_path(
 		std::vector<RRT_node* >& path)
 {
-	double max_energy =  path[0]->get_score(),energy=0;
+	double max_energy =  path[0]->get_score();//,energy=0;
 
 	for(unsigned int i = 1; i < path.size()-1;i++){
-		energy = path[i]->get_score();
+		double energy = path[i]->get_score();
 		if(energy > max_energy)
 			max_energy = energy;
 	}
@@ -974,7 +974,7 @@ void biRRT::run()
 	pose_ns::Pose& template_pose_S = _owner->get_src_pose();
 	pose_ns::Pose& template_pose_T = _owner->get_trg_pose();
 
-	char resultFileName[100];
+	//char resultFileName[100];
 	// initialize source & target
 	float score_S =
 		template_pose_S.score(_score_weight_map);
@@ -1143,7 +1143,7 @@ void biRRT::grow_DAG(std::vector<RRT_node*>& connecting_nodes)
 	int num_added_nodes;
 	int num_conseq_fails = 0,
 	num_generated_nodes = 2;
-	std::vector<RRT_node *> generated_nodes;
+	//std::vector<RRT_node *> generated_nodes;
 	std::vector<std::vector<RRT_node *> > generated_nodes_from_all_trees;
 	std::vector<RRT_node *> neighboring_nodes;
 	double dist=0;
@@ -1217,7 +1217,7 @@ void biRRT::find_nearest_nodes_between_trees(
 	t_map_node_pairs_by_dist map_dist2pairs_CA;
 	t_map_node_pairs_by_dist map_dist2pairs_DOFs_vec;
 	vector<RRT_node *> neighboring_nodes_CA;
-	vector<RRT_node *> neighboring_nodes_DOFs_vector;
+	//vector<RRT_node *> neighboring_nodes_DOFs_vector;
 	RRT_node *n=NULL;
 	double dist=0;
 	int local_debug=1;
@@ -1250,13 +1250,12 @@ void biRRT::find_nearest_nodes_between_trees(
 					_conf_DAG.print();
 				// calc by the two criteria: CA & DOFs_vector
 				_conf_DAG.set_active(i_tree); // (test tree #i_tree against n)
-				vector< RRT_node* >::iterator it_neighb;
+				vector< RRT_node* >::iterator it_neighb, end;
 				neighboring_nodes_CA = find_nearest_nodes_CA_RMSD(n, dist); // TODO: currenly works on active tree, perhaps this should be a function parameter
 				if(local_debug >= 2)
 					cout << "Nearest dist RMSD CA = " << dist << endl;
-				for(it_neighb = neighboring_nodes_CA.begin();
-				it_neighb != neighboring_nodes_CA.end();
-				it_neighb++)
+				for(it_neighb = neighboring_nodes_CA.begin(), end = neighboring_nodes_CA.end();
+				it_neighb != end; ++it_neighb )
 				{
 					double dist_CA = n->compute_dist_CA_rmsd(*it_neighb);
 					map_dist2pairs_CA.insert(
@@ -1297,7 +1296,7 @@ void biRRT::find_nearest_nodes_between_trees(
 	it_last = map_dist2pairs_CA.upper_bound(thresh_CA);
 	for(it_pairs = map_dist2pairs_CA.begin();
 	it_pairs != it_last ; // TODO: more efficient
-	it_pairs++)
+	++it_pairs )
 	{
 		output_pairs.push_back(it_pairs->second);
 	}
@@ -1316,7 +1315,7 @@ void biRRT::find_nearest_nodes_between_trees(
 		if(del_index == 0) continue; // always skip best
 		std::vector<Node_pair>::iterator it;
 		it = output_pairs.begin();
-		for(unsigned i = 0; i < del_index; i++, it++); // get iterator to results[del_index]
+		for(unsigned i = 0; i < del_index; i++, ++it); // get iterator to results[del_index]
 		// TODO: primitive, switch to set...?
 		output_pairs.erase(it);
 	}
@@ -1383,9 +1382,9 @@ void biRRT::try_to_connect_trees(
 		RRT_node* closest_node = cur_pair.n1; // a-priori
 		double min_dist_CA = cur_pair.n2->compute_dist_CA_rmsd( cur_pair.n1 );
 		cout << "start with <cur_pair.n1> - dist_CA = " << min_dist_CA << endl;
-		vector<RRT_node *>::const_iterator node_it;
+		vector<RRT_node *>::const_iterator node_it, end;
 		static bool did_it = false; static int fname_i = 0; // DEBUG
-		for(node_it = cycle_new_nodes.begin(); node_it != cycle_new_nodes.end(); node_it++)
+		for(node_it = cycle_new_nodes.begin(); end = cycle_new_nodes.end(); node_it != end; ++node_it)
 		{
 			double dist_CA =
 				cur_pair.n2->compute_dist_CA_rmsd( *node_it );
@@ -1625,8 +1624,8 @@ void Towards_partial_data_RRT::run()
 {
   using namespace std;
   bool local_debug = true;
-  char resultFileName[100];
-  double score_src = _owner->get_src_pose().score(_score_weight_map );
+  //char resultFileName[100];
+  //double score_src = _owner->get_src_pose().score(_score_weight_map );
   if(local_debug)
     cout << "Towards_partial_data_RRT::Score src = " << score_src << endl;
 
@@ -1684,8 +1683,8 @@ void Towards_partial_data_RRT::run()
 // find the optional targets sorted by their closenest to the partial data
 void Towards_partial_data_RRT::find_close_to_partial_data_conformations(std::vector<RRT_node*>& optional_targets)
 {
-	double curr_dist;
-	std::vector<RRT_node *>::iterator it;
+	//double curr_dist;
+	//std::vector<RRT_node *>::iterator it;
 	//std::cout<<"find_close_to_partial_data_conformations..."<<std::endl;
 	std::vector<RRT_node *>& node_list = _conf_DAG.get_active_nodes();
 	std::vector<Partial_data_node_dist> node_dist_list;
@@ -1737,9 +1736,8 @@ Towards_partial_data_RRT::find_nearest_nodes_by_DOFs_vector(
 	if(local_debug >= 1)
 		cout << "Single_tree_RRT::find_nearest_nodes_by_DOFs_vector" << endl;
 	std::vector<RRT_node *> results;
-	RRT_node* result = NULL;
+	//RRT_node* result = NULL;
 	dist = 10000;
-	double curr_dist=0;
 	std::vector<double> distances;
 	std::vector<RRT_node *>::iterator it;
 	std::vector<RRT_node *>& node_list = _conf_DAG.get_active_nodes();
@@ -1750,8 +1748,8 @@ Towards_partial_data_RRT::find_nearest_nodes_by_DOFs_vector(
 	double partial_target_dist_tmp;
 	static RRT_node* result_partial_data = NULL;
 
-	for(it = node_list.begin(); it != node_list.end();it++,curr_index++){
-	  curr_dist = n->compute_dist_dofs_vector(*it); // functor according to L2 norm on internal coordinates vector
+	for(it = node_list.begin(), end = node_list.end(); it != end; ++it, ++curr_index ){
+	  double curr_dist = n->compute_dist_dofs_vector(*it); // functor according to L2 norm on internal coordinates vector
 	  if (curr_index >= from_index_to_check){
 	    partial_target_dist_tmp = measure_distance_from_partial_data(*it);
 	    if(partial_target_dist_tmp < partial_target_dist){
@@ -1764,7 +1762,7 @@ Towards_partial_data_RRT::find_nearest_nodes_by_DOFs_vector(
 	    cout << "Curr L2_DOFs_vector = " << curr_dist << endl;
 	  distances.push_back(curr_dist);
 	  if(curr_dist < dist){
-	    result = *it;
+	    //result = *it;
 	    dist = curr_dist;
 	  }
 	}
@@ -1784,14 +1782,14 @@ Towards_partial_data_RRT::find_nearest_nodes_by_DOFs_vector(
 		cout << "Found near neighbour (dist = " << dist << ")" << endl;
 	      }
 		}
-	  it++;
+	  ++it;
 	}
 	// now stay with maximum 2 // TODO: parametrize this number
 	while( results.size() > 2 )
 	  {
 	    unsigned del_index = (unsigned)(ran3() * results.size());
 	    it = results.begin();
-	    for(unsigned i = 0; i < del_index; i++, it++); // get iterator to results[del_index]
+	    for(unsigned i = 0; i < del_index; i++, ++it ); // get iterator to results[del_index]
 	    // TODO: primitive, switch to set...?
 	    results.erase(it);
 	  }

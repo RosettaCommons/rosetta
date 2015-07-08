@@ -2790,9 +2790,9 @@ PNatStructureOptEData::receive_from_node( int const source_node, int const tag )
 		//std::cout << "recieved native with rms: " << rms[ (ii-1) ] << std::endl;
 	}
 
-	delete [] rms; rms = 0;
-	delete [] free_data; free_data = 0;
-	delete [] fixed_data; fixed_data = 0;
+	delete [] rms;// rms = 0;
+	delete [] free_data;// free_data = 0;
+	delete [] fixed_data;// fixed_data = 0;
 
 	//// Now receive decoy data
 	rms = new Real[ ndecoys ];
@@ -3850,8 +3850,8 @@ DDGMutationOptEData::receive_from_node( int const source_node, int const tag )
 	}
 
 
-	delete [] free_data; free_data = 0;
-	delete [] fixed_data; fixed_data = 0;
+	delete [] free_data;// free_data = 0;
+	delete [] fixed_data;// fixed_data = 0;
 
 	//// Now receive decoy data
 	free_data = new Real[ n_free * nmuts ];

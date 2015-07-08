@@ -73,7 +73,7 @@ RamaScore::SetupRamaTables()
 	utility::vector1< utility::vector1< utility::vector1< float > > > temp( query_.size(), utility::vector1< utility::vector1< float > > ( 37, utility::vector1< float > ( 37, 0 ) ) );
 
 	for( Size i = 2; i <= query_.size() -1; ++i ) {
-		std::string curr_aa, next_aa, aa_type, ss_type;
+		std::string curr_aa, next_aa, aa_type;//, ss_type;
 		utility::vector1< core::Real > ss_weight( 3, 0 );
 		utility::vector1< std::string > ss_types( 3, "" );
 

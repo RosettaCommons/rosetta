@@ -207,7 +207,7 @@ SymmetricMotifFilter::report( std::ostream & /*out*/, core::pose::Pose const & p
 core::Real
 SymmetricMotifFilter::report_sm( core::pose::Pose const & /*pose*/ ) const {
 	core::Real bestscore = 0.0;  // arbitrarily set to zero to silence compiler warning ~Labonte
-	std::string hitLocation;
+	//std::string hitLocation;
 	//bool found_motif = compute( pose, bestscore, hitLocation );
 	return bestscore;
 }

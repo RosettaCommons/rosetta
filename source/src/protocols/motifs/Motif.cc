@@ -647,7 +647,7 @@ Motif::place_residue(
 //restype_name2_ is ligand
 //fixed should be amino acid
 //mobile should be ligand (are there counterexamples?)
-std::string ligand_name( "LG1" );
+//std::string ligand_name( "LG1" );
 	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) ) {
 			return Motif::place_residue_( fixed, mobile, true,res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three );
 

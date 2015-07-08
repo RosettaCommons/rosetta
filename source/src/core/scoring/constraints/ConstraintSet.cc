@@ -501,10 +501,9 @@ ConstraintSet::add_residue_pair_constraint( Size const pos1, Size const pos2, Co
 
 void
 ConstraintSet::add_constraints( ConstraintCOPs cst_list ) {
-	for( ConstraintCOPs::iterator it = cst_list.begin();
-	     it != cst_list.end();
-			 it++) {
-		add_constraint(*it);
+	for ( ConstraintCOPs::iterator it = cst_list.begin(), end = cst_list.end();
+	     it != end; ++it ) {
+		add_constraint( *it );
 	}
 }
 
@@ -602,11 +601,10 @@ ConstraintSet::remove_constraints(
 {
 
 	bool success = false;
-	for( ConstraintCOPs::iterator it = cst_list.begin();
-	     it != cst_list.end();
-			 it++) {
-		success = remove_constraint(*it, object_comparison);
-		if( success == false ) return false;
+	for ( ConstraintCOPs::iterator it = cst_list.begin(), end = cst_list.end();
+	     it != end; ++it ) {
+		success = remove_constraint( *it, object_comparison );
+		if ( success == false ) return false;
 	}
 
 	return success;

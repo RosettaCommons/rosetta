@@ -222,8 +222,8 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 			pose.update_residue_neighbors();
 			core::scoring::dssp::Dssp dssp( pose );
 			dssp.insert_ss_into_pose( pose );
-			std::string const full_ss = pose.secstruct();
-			std::string const full_sequence = pose.sequence();
+			//std::string const full_ss = pose.secstruct();
+			//std::string const full_sequence = pose.sequence();
 			utility::vector1< core::fragment::FragSetOP > frag_libs;
 			protocols::loops::read_loop_fragments( frag_libs );
 				if( perturb_ ) {

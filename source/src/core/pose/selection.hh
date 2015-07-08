@@ -58,11 +58,11 @@ get_resnum_list(utility::tag::TagCOP tag_ptr, std::string const& tag, core::pose
 
 /// @brief returns a resnum list directly from a string
 std::set< core::Size >
-get_resnum_list( std::string const &str, core::pose::Pose const & pose );
+get_resnum_list( std::string const & str, core::pose::Pose const & pose );
 
 /// @brief returns a resnum list directly from a string, preserving order
 utility::vector1<core::Size>
-get_resnum_list_ordered( std::string const &str, core::pose::Pose const & pose );
+get_resnum_list_ordered( std::string const & str, core::pose::Pose const & pose );
 
 /// @brief Is a string of the format "refpose(<refposename>,<refposenumber>)" or "refpose(<refposename>,<refposenumber>)+/-<number>"?
 /// @details  If this successfully determines that this is a string of this format, it populates the refpose_string, refpose_resnumber,

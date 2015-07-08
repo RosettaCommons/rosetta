@@ -222,7 +222,7 @@ void
 constrain_residue( core::pose::Pose &pose,
 		   core::Size const resno, 
 		   utility::vector1< core::Size > exclres,
-		   std::string const cst_type,
+		   std::string const & cst_type,
 		   core::Real const stdev)
 {
   using namespace core::scoring::constraints;
@@ -479,7 +479,7 @@ void ramp_minpack_pose( core::pose::Pose &pose,
 
 void add_poseinfo_to_ss( core::io::silent::SilentStruct &ss,
 			 core::pose::Pose const &ref_pose,
-			 std::string const suffix )
+			 std::string const & suffix )
 {
   core::pose::Pose pose;
   ss.fill_pose( pose );
@@ -529,7 +529,7 @@ core::Real Zscore_to_library( core::Real const score,
 }
 
 utility::vector1< core::Size > 
-loopstring_to_loopvector( std::string const loopstr,
+loopstring_to_loopvector( std::string const & loopstr,
 			  core::Size const ext )
 {
 
@@ -557,7 +557,7 @@ loopstring_to_loopvector( std::string const loopstr,
 }
 
 utility::vector1< utility::vector1< core::Size > >
-loopstring_to_loopregions( std::string const loopstr )
+loopstring_to_loopregions( std::string const & loopstr )
 {
 
   utility::vector1< std::string > const str_residues( utility::string_split( loopstr , ',' ) );

@@ -108,12 +108,12 @@ Filter::parse_my_tag(
 
 // start mpr support
 void Filter::apply( core::io::serialization::PipeMap & pmap ) {
-	core::io::serialization::Pipe::iterator itr = pmap["input"]->begin();
-	while( itr != pmap["input"]->end() ) {
+	core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end();
+	while( itr != end ) {
 		if( !apply ( **itr ) ) {
 			itr = pmap["input"]->erase( itr );	
 		} else {
-			itr++;
+			++itr;
 		}
 		clear();
 	}
@@ -124,7 +124,7 @@ core::Real Filter::score( core::pose::Pose & pose ) {
 	return score;
 }
 void Filter::score( core::io::serialization::PipeMap & pmap ) {
-	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
+	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
 		score( **itr );
 		clear();
 	}

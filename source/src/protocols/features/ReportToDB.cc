@@ -814,7 +814,7 @@ ReportToDB::report_structure_features() const {
 		if(use_transactions_){
 			db_session_->commit_transaction();
 		}
-	} catch (cppdb_error error){
+	} catch (cppdb_error & error){
 		db_session_->rollback();
 		stringstream err_msg;
 		err_msg
@@ -865,7 +865,7 @@ ReportToDB::report_features(
 				features_reporters_[i]->report_features(
 					pose, relevant_residues, struct_id, db_session_);
 			}
-		} catch (cppdb_error error){
+		} catch (cppdb_error & error){
 			stringstream err_msg;
 			err_msg
 				<< "Failed to report features for the "

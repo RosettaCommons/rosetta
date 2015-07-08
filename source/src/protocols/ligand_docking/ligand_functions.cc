@@ -138,8 +138,9 @@ get_ligand_torsion_constraints(
 
 	ResidueType const & rsdtype = pose.residue_type(rsd_no);
 	for(Size i = 1; i <= rsdtype.nchi(); ++i) {
-		bool has_diversity(false);
+		//bool has_diversity(false);
 		if( rsdtype.chi_rotamers(i).size() == 0 ) {
+				bool has_diversity(false);
 				utility::vector1< core::conformation::ResidueOP > rotamers;
 				rotamers_for_trials(pose, rsd_no, rotamers);
 				if( rotamers.empty() || option[ OptionKeys::packing::use_input_sc ]() ) {

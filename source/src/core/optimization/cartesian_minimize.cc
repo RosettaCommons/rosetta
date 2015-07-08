@@ -198,10 +198,8 @@ void cartesian_collect_torsional_deriv(
 		id::DOF_ID const & dof_id( min_map.get_dof_id(i) );
 		id::TorsionID const & TorsionID( min_map.get_TorsionID(i) );
 
-		Real deriv = 0.0;
-
 		// eg rama,Paa,dunbrack,and torsional constraints
-		deriv = scorefxn.eval_dof_derivative( dof_id, TorsionID, pose );
+		Real deriv = scorefxn.eval_dof_derivative( dof_id, TorsionID, pose );
 
 		if( deriv == 0 ) continue;
 

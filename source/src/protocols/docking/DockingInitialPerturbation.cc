@@ -689,7 +689,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),
 				end = rb_jumps_.end();
 				jump_idx != end;
-				jump_idx++
+				++jump_idx
 		){
 			trans_movers.push_back( rigid::RigidBodyTransMover(pose, *jump_idx));
 		}
@@ -704,7 +704,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 		for(
 				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 				trans_mover != end;
-				trans_mover++
+				++trans_mover
 		){
 			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move together
 			trans_mover->step_size(stepsize);
@@ -716,7 +716,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 			for(
 					utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 					trans_mover != end;
-					trans_mover++
+					++trans_mover
 			){
 				trans_mover->apply( pose );
 			}
@@ -737,7 +737,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 		for(
 				utility::vector1< rigid::RigidBodyTransMover >::iterator trans_mover(trans_movers.begin());
 				trans_mover != end;
-				trans_mover++
+				++trans_mover
 		){
 			trans_mover->trans_axis( trans_mover->trans_axis().negate() ); // now move apart
 			trans_mover->apply( pose );

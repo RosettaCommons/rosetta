@@ -537,7 +537,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 	long starttime = time(NULL);
 	bool all_loops_closed = true;
-	bool tmp_all_loops_closed = false;
+	//bool tmp_all_loops_closed = false;
 	if ( remodel() != "no" ) {
 		TR << "====================================================================================" << std::endl;
 		TR << "===" << std::endl;
@@ -545,6 +545,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 		TR << "===" << std::endl;
 		all_loops_closed = false;
 		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "remodel", false, true) ) {
+			bool tmp_all_loops_closed = false;
 
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_rebuild.pdb");
 

@@ -109,7 +109,9 @@ closest_larger_peptide_vertex(
 	// run through in sorted order
 	Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
-	std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	std::vector< Size >::iterator last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	peptide_vertices.erase( last, peptide_vertices.end() );
+	
 	for ( std::vector< Size >::const_iterator i = peptide_vertices.begin(), ie = peptide_vertices.end(); i != ie; ++i ) {
 		if ( *i > v ) {
 			++count;
@@ -153,7 +155,8 @@ closest_smaller_peptide_vertex(
 	// run through in backwards sorted order
 	Size count = 0;
 	std::sort( peptide_vertices.begin(), peptide_vertices.end() );
-	std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	std::vector< Size >::iterator last = std::unique( peptide_vertices.begin(), peptide_vertices.end() );
+	peptide_vertices.erase( last, peptide_vertices.end() );
 	for ( std::vector< Size >::const_reverse_iterator i = peptide_vertices.rbegin(), ie = peptide_vertices.rend(); i != ie; ++i ) {
 		if ( *i < v ) {
 			++count;

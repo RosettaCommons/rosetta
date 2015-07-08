@@ -115,7 +115,7 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 	core::pack::task::residue_selector::ResidueSelectorCOP selector;
 	try {
 		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", name );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";
 			error_msg << e.msg();

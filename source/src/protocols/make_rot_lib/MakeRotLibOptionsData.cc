@@ -55,7 +55,7 @@ MakeRotLibOptionsData::MakeRotLibOptionsData( std::string filename ) :
 
 	// read in each line, ignore comments
 	while ( getline( options, line ) ) {
-		std::istringstream l( line );
+		//std::istringstream l( line );
 		if ( line.size() < 1 || line[0] == '#' ) continue;
 		lines.push_back( line );
 	}

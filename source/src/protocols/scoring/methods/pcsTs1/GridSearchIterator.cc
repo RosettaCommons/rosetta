@@ -163,9 +163,9 @@ GridSearchIterator_Ts1::next_center(core::Real &x,
 																core::Real &y,
 																core::Real &z){
 
-	double r2;
+	//double r2;
 	while(next(x, y, z) == true){
-		r2 = (x-x_center_)*(x-x_center_) + (y-y_center_)* (y-y_center_) + (z-z_center_)*(z-z_center_);
+		double r2 = (x-x_center_)*(x-x_center_) + (y-y_center_)* (y-y_center_) + (z-z_center_)*(z-z_center_);
 		if((r2 <= large_cutoff_square_) && (r2 >= small_cutoff_square_ )){ //we test small and large cutoff
 			core::Real cos_angle = ((x-x_center_)*x_vector_ + (y-y_center_)*y_vector_ + (z-z_center_)*z_vector_ );
 			if((r2 == 0 ) || (norme_vector_ == 0)){

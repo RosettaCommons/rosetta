@@ -216,7 +216,7 @@ int ShapeComplementarityCalculator::Calc()
 
 	return 1;
 
-	} catch(ShapeComplementarityCalculatorException e) {
+	} catch(ShapeComplementarityCalculatorException & e) {
 		TR.Error << "Failed: " << e.error << std::endl;
 	}
 

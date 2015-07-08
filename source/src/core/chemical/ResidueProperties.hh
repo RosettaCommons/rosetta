@@ -135,7 +135,7 @@ public:  // Accessors/Mutators ////////////////////////////////////////////////
 	void add_numeric_property( std::string const & tag, core::Real const value );
 
 	/// @brief  Add a string property.
-	void add_string_property( std::string const & tag, std::string const value );
+	void add_string_property( std::string const & tag, std::string const & value );
 
 	std::map< std::string, core::Real > const &
 	numeric_properties() const

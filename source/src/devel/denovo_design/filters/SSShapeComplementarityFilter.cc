@@ -188,8 +188,12 @@ SSShapeComplementarityFilter::compute( core::pose::Pose const & pose ) const
 				secstruct += dssp_ss[i-1];
 			}
 		}
-
-		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
+		
+		// AMW: cppcheck noticed that secstruct wasn't being used. I think it should be used here!
+		// Note that this would be compatible with the SS_Info2 constructor's interpretation of the dssp string
+		// i.e. that it should skip non protein residues, and only be THAT long.
+		//ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, dssp.get_dssp_secstruct() ) );
+		ss_info = protocols::fldsgn::topology::SS_Info2_OP( new protocols::fldsgn::topology::SS_Info2( pose, secstruct ) );
 	}
 
 	// we will average out the shape complementarity from HSS triplets and Helix-Helix pairings

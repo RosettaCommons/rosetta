@@ -193,14 +193,15 @@ get_resnum_list(
 	resnums.clear();
 	resnums.insert( resnums.begin(), resnums_set.begin(), resnums_set.end() );
 	sort( resnums.begin(), resnums.end() );
-	unique( resnums.begin(), resnums.end() );
+	vector1<Size>::iterator last = unique( resnums.begin(), resnums.end() );
+	resnums.erase(last, resnums.end() );
 
 	return resnums;
 }
 
 set<Size>
 get_resnum_list(
-	std::string const &str,
+	std::string const & str,
 	core::pose::Pose const & pose
 ){
 	using namespace std;
@@ -239,7 +240,7 @@ get_resnum_list(
 // fpd same as 'get_resnum_list', but preserve ordering from input list
 utility::vector1<Size>
 get_resnum_list_ordered(
-	std::string const &str,
+	std::string const & str,
 	core::pose::Pose const & pose
 ){
 	using namespace std;

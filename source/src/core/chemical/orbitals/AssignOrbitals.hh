@@ -46,8 +46,8 @@ public:
 			core::Size const atm_index3,
 			//OrbInfo const & orbital_info,
 			core::chemical::AtomType const & atmtype,
-			std::string const atom_hybridization,
-			utility::vector1< numeric::xyzVector<core::Real> > const orbital_xyz_vectors
+			std::string const & atom_hybridization,
+			utility::vector1< numeric::xyzVector<core::Real> > const & orbital_xyz_vectors
 	);
 
 	void assign_sp2_orbitals_to_one_bonded_atom(/*OrbInfo const & orbital_info,*/ core::chemical::AtomType const & atmtype);
@@ -61,11 +61,11 @@ public:
 	);
 
 	void calculate_orbital_icoor(
-			numeric::xyzVector<core::Real> const orbital_xyz,
+			numeric::xyzVector<core::Real> const & orbital_xyz,
 			core::Size const atm_index1,
 			core::Size const atm_index2,
 			core::Size const atm_index3,
-			std::string const orbital_element_name
+			std::string const & orbital_element_name
 	);
 
 	utility::vector1< numeric::xyzVector<core::Real> >  Coordinates_TriganolPlanar_bondedto1atom_helper(
@@ -99,7 +99,7 @@ private:
 	std::string make_orbital_type_name
 	(
 		AtomType const & atmtype,
-		std::string const orbitaltype,
+		std::string const & orbitaltype,
 		core::Size const hybridization
 	);
 

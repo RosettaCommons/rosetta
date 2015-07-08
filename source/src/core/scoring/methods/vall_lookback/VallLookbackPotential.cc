@@ -59,13 +59,12 @@ VallLookbackPotential::VallLookbackPotential(){
 	#else
 		utility_exit_with_message("StructureStoreManager::load_fragment_store without HDF5 support, unable to load store");
 	#endif
-	std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter;
 	//add distance to all fragments
 	Real thresholdDistance = option[fragment_threshold_distance]();
 	TR << "setting fragment threshold distance to" << thresholdDistance;
 	abegoHashedFragmentStore_=StructureStoreManager::get_instance()->group_fragment_store_int("abego_bin",target_store);
-	for(fragStoreMap_iter = abegoHashedFragmentStore_.begin(); fragStoreMap_iter != abegoHashedFragmentStore_.end(); fragStoreMap_iter++ ){
-		fragStoreMap_iter->second->add_threshold_distance_allFrag(thresholdDistance);
+	for (std::map<Size, core::indexed_structure_store::FragmentStoreOP>::iterator fragStoreMap_iter = abegoHashedFragmentStore_.begin(), end = abegoHashedFragmentStore_.end(); fragStoreMap_iter != end; ++fragStoreMap_iter ){
+		fragStoreMap_iter->second->add_threshold_distance_allFrag( thresholdDistance );
 	}
 }
 

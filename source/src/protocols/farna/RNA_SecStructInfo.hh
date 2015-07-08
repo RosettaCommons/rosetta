@@ -97,7 +97,7 @@ std::string const &
 get_rna_secstruct( core::pose::Pose & pose );
 
 void
-set_rna_secstruct( core::pose::Pose & pose, std::string const rna_secstruct_string ); //By default, unknown, actually.
+set_rna_secstruct( core::pose::Pose & pose, std::string const & rna_secstruct_string ); //By default, unknown, actually.
 
 
 } //farna

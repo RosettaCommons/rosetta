@@ -196,15 +196,15 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		}
 
 		// Prevent repacking at resis that do match the user-specified parameters.
-		bool prevent_repacking;
+		//bool prevent_repacking;
 		for( Size iaa=1; iaa<=sasa_pose.n_residue(); iaa++ ) {
-			prevent_repacking = 1;
 			if (core::pose::symmetry::is_symmetric(sasa_pose)) {
 				if (!indy_resi[iaa]) {
 					continue;
 				}
 			}
 			if (sasa_pose.residue( iaa ).is_protein()) {
+				bool prevent_repacking = 1;
 				res_count++;
 				core::Size output_resi = res_count;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {

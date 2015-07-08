@@ -377,7 +377,7 @@ vary_bond_geometry (
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 	pose.constraint_set ( cst_set );
 	Size const nres ( pose.total_residue() );
-	std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
+	//std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
 	std::cout << "Enter the vary_bond_geometry....." << std::endl;
 
 	for ( Size i = 1; i <= nres; i++ )  {

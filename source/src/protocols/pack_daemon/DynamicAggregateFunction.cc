@@ -1406,7 +1406,7 @@ DynamicAggregateFunction::process_SCALAR_EXPRESSION_line(
 	std::map< std::string, ArithmeticASTExpressionOP > & scalar_expression_asts
 )
 {
-	std::string vname, equals_sign, restofline;
+	std::string vname, equals_sign;//, restofline;
 	if ( ! input_line ) {
 		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
 			" input file after reading SCALAR_EXPRESSION command on line " + utility::to_string( line_number ) + "\n" + line );
@@ -2189,7 +2189,7 @@ void DynamicAggregateFunctionDriver::initialize_from_input_file(
 		send_error_message_to_remote_daemon_sets();
 		TR << "Initialization from input file failed with exception: " << e.msg() << std::endl;
 		TR << "Remote daemon sets are spinning down" << std::endl;
-		throw e;
+		throw;// e;
 	}
 	initialize_pack_daemons( daemon_set );
 }
@@ -2402,7 +2402,7 @@ DynamicAggregateFunctionDriver::initialize_daemon_with_all_states(
 		TR << "Error from daemon-set initialization \n";
 		TR <<  e.msg();
 		TR << std::endl;
-		throw e;
+		throw;// e;
 	}
 }
 

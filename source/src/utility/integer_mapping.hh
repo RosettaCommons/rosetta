@@ -39,7 +39,7 @@ public:
 	subset_mapping();
 	subset_mapping( platform::Size source_enumeration_size );
 	subset_mapping( subset_mapping const & src );
-	subset_mapping const & operator = ( subset_mapping const & rhs );
+	subset_mapping & operator = ( subset_mapping const & rhs );
 
 	virtual ~subset_mapping();
 

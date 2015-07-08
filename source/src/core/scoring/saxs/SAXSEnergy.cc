@@ -281,11 +281,10 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
     }
 
     // ---------- Repack the set of unique FFs to a vactor and hash their indexes in with a map
-    std::set<FormFactorOP>::iterator it;
-    ff_ops_.clear();
+	ff_ops_.clear();
     ff_map_.clear();
     Size i = 1;
-    for (it=ff_set.begin(); it!=ff_set.end(); it++) {
+    for (std::set<FormFactorOP>::iterator it=ff_set.begin(), end=ff_set.end(); it!=end; ++it ) {
       ff_map_.insert( std::pair<FormFactorOP,Size>(*it,i) );
       ff_ops_.push_back( *it );
       i++;

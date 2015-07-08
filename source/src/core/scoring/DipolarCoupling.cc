@@ -87,26 +87,26 @@ extern DipolarCouplingOP retrieve_DC_from_pose(core::pose::Pose& pose) {
 }
 
 void DipolarCoupling::show(std::ostream& out) const {
-  Size ct=0;
-  for (DC_lines::const_iterator it=All_DC_lines_.begin();it!=All_DC_lines_.end();it++){
-        out << "DC "<<++ct << "     ";
-    out << (*it) << std::endl;
-  }
+	Size ct=0;
+	for (DC_lines::const_iterator it = All_DC_lines_.begin(), end = All_DC_lines_.end(); it != end; ++it ){
+		out << "DC " << ++ct << "     ";
+		out << (*it) << std::endl;
+	}
 }
 
 void DC::show(std::ostream& out) const {
-  using namespace ObjexxFCL::format;
-  out << RJ(4, res1_) << RJ(5, DCval_);
+	using namespace ObjexxFCL::format;
+	out << RJ(4, res1_) << RJ(5, DCval_);
 }
 
 std::ostream& operator<<(std::ostream& out, DC const& dc) {
-  dc.show(out);
-  return out;
+	dc.show(out);
+	return out;
 }
 
 std::ostream& operator<<(std::ostream& out, DipolarCoupling const& dc) {
-  dc.show(out);
-  return out;
+	dc.show(out);
+	return out;
 }
 
 DipolarCoupling::DipolarCoupling(DipolarCoupling const& other) :

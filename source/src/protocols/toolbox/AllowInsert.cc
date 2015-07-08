@@ -287,8 +287,8 @@ namespace toolbox{
 	//////////////////////////////////////////////////////////////////
 	void
 	AllowInsert::set_domain( Size const & setting  ){
-		for( std::map< AtomID, Size >::iterator it = allow_insert_.begin();
-				 it != allow_insert_.end(); it++ ){
+		for( std::map< AtomID, Size >::iterator it = allow_insert_.begin(),
+				 end = allow_insert_.end(); it != end; ++it ){
 			it->second = setting;
 		}
 	}
@@ -384,8 +384,8 @@ namespace toolbox{
 	void
 	AllowInsert::and_allow_insert(AllowInsertOP allow_insert_in ){
 
-		for( std::map< AtomID, Size >::iterator it = allow_insert_.begin();
-				 it != allow_insert_.end(); it++ ){
+		for( std::map< AtomID, Size >::iterator it = allow_insert_.begin(),
+				 end = allow_insert_.end(); it != end; ++it ){
 
 			Size const & current_setting = it->second;
 			Size const & other_setting = allow_insert_in->get_domain( it->first );
@@ -412,13 +412,13 @@ namespace toolbox{
 		atom_id_map.clear();
 
 		std::map< core::Size, core::Size > in_source_res; //basically reverse of res_map.
-		for( std::map< Size, Size >::const_iterator  it  = res_map.begin(); it != res_map.end(); it++ ){
+		for( std::map< Size, Size >::const_iterator  it  = res_map.begin(), end = res_map.end(); it != end; ++it ){
 			Size const & insert_pos = it->first;
 			Size const & source_pos = it->second;
 			in_source_res[ source_pos ] = insert_pos;
 		}
 
-		for( std::map< Size, Size >::const_iterator  it  = res_map.begin(); it != res_map.end(); it++ ){
+		for( std::map< Size, Size >::const_iterator  it  = res_map.begin(), end = res_map.end(); it != end; ++it ){
 
 			Size const & insert_pos = it->first;
 			Size const & source_pos = it->second;

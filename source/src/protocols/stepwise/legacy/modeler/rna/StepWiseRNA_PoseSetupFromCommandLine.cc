@@ -256,7 +256,7 @@ get_fixed_res( core::Size const nres ){
 
 //////////////////////////////////////////////////////////////////////////////////////
 bool
-is_nonempty_input_silent_file( std::string const input_silent_file, std::string const exit_key_string ){
+is_nonempty_input_silent_file( std::string const & input_silent_file, std::string const & exit_key_string ){
 
 	TR << "Checking that input_silent_file " << input_silent_file << " contain actual silent_structs or the correct exit_key_string" << std::endl;
 
@@ -295,7 +295,7 @@ is_nonempty_input_silent_file( std::string const input_silent_file, std::string 
 //////////////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< core::Size >
-get_input_res( core::Size const nres, std::string const pose_num ){
+get_input_res( core::Size const nres, std::string const & pose_num ){
 
 
 	using namespace basic::options;
@@ -954,11 +954,11 @@ ensure_directory_for_out_silent_file_exists(){
 		if ( outstream.fail() ){
 			// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
 			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
-			char * outfile_char = strdup( outfile.c_str() );
 			#ifdef WIN32
 				//char * outdir; memory leak if we're just gonna exit right after?
 			 	utility_exit_with_message( "protocols/stepwise/legacy/modeler/rna/StepWiseRNA_PoseSetupFromCommandLine.cc dirname is not implemented under Windows!" );
 			#else
+				char * outfile_char = strdup( outfile.c_str() );
 				char * outdir =  dirname( outfile_char );
 
 				std::stringstream mkdir_command;

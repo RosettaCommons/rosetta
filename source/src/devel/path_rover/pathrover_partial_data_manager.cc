@@ -393,9 +393,9 @@ double Partial_Data::compute_match(pose_ns::Pose const& p)
 {
   //std::cout<<"computing distance with respect to partial data"<<std::endl;
 	double measure = 0, tmp_measure = 0;
-	unsigned int i,j;
-    double MAX_HH = 100,//_owner->get_src_pose().get_0D_score(pose_ns::HB_SRBB)*1000,
-    MAX_SHEET = 10;
+	//unsigned int i,j;
+    //double MAX_HH = 100,//_owner->get_src_pose().get_0D_score(pose_ns::HB_SRBB)*1000,
+    //MAX_SHEET = 10;
 
     if (false){//_helix_flag){
 	  pose_ns::Pose trg;
@@ -1048,17 +1048,17 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
     // suppose we have the following line (cesT)
     //MATCH target:[A,3-12;A,95-111] source:[A,5-14;A,110-126]
 
-    char chain_s = 'A';
-    char chain_t = 'A';
-    int start_res_source1 = 5;
-    int end_res_source1 = 14;
-    int start_res_target1 = 3;
-    int end_res_target1 = 12;
+    //char chain_s = 'A';
+    //char chain_t = 'A';
+    //int start_res_source1 = 5;
+    //int end_res_source1 = 14;
+    //int start_res_target1 = 3;
+    //int end_res_target1 = 12;
 
-    int start_res_source2 = 110;
-    int end_res_source2 = 126;
-    int start_res_target2 = 95;
-    int end_res_target2 = 111;
+    //int start_res_source2 = 110;
+    //int end_res_source2 = 126;
+    //int start_res_target2 = 95;
+    //int end_res_target2 = 111;
     /*
     int i;
     Pdbres_id pdbres;
@@ -1108,12 +1108,12 @@ void Partial_Data::set_match_rmsd_recs(std::vector<PD_match_rmsd> match_rmsd_rec
 	  }
 
 	  Vec3d Line::project_point(Vec3d& p){
-		  double t;
+		  //double t;
 
 		  double directionNorm2 = _direction.norm2();
 
 		  if(directionNorm2 != 0.0 ) {
-			  t = ( _direction[0] * (p[0] - _point[0]) +
+			 double  t = ( _direction[0] * (p[0] - _point[0]) +
 				    _direction[1] * (p[1] - _point[1]) +
 				    _direction[2] * (p[2] - _point[2]) ) / directionNorm2;
 

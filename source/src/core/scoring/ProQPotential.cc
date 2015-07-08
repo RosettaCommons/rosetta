@@ -86,7 +86,7 @@ ProQPotential::ProQPotential()
 
 
 	std::string tag,line;
-	std::string aa;
+	//std::string aa;
 	Size pos;
 //	chemical::AA aa;
 //

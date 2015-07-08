@@ -1331,8 +1331,7 @@ RNA_StructureParameters::get_base_pair_steps() const {
 
 	utility::vector1< BasePairStep > base_pair_steps;
 
-	for ( std::map< Size, Size >::const_iterator iter = stem_partner.begin();
-				iter != stem_partner.end(); iter++ ){
+	for ( std::map< Size, Size >::const_iterator iter = stem_partner.begin(), end = stem_partner.end(); iter != end; ++iter ){
 		Size const i = iter->first;
 		if ( stem_partner.find( i+1 ) != stem_partner.end() &&
 				 stem_partner[ i+1 ] == stem_partner[i] - 1 &&

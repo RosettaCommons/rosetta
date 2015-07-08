@@ -89,7 +89,6 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 	core::pose::Pose template_pose;
 	utility::vector1< char > nucleated_sequence_v;
 	utility::vector1< char > hydrophobic_polar_sequence_v;
-	std::string hydrophobic_polar_sequence;
 	core::pose::Pose nucleated_pose;
 	utility::vector1< char > secstructs;
 	utility::vector1< bool > KeepNativeTorsions;

@@ -73,7 +73,6 @@ UnfoldedStatePotential::read_database_file( std::string const & filename ) {
 	utility::vector1< std::string > lines;
 	std::string line;
 	while ( getline( data, line ) ) {
-		std::istringstream l( line );
 		if ( line.size() < 1 || line[0] == '#' ) continue; // skip comment lines
 		lines.push_back( line );
 	}

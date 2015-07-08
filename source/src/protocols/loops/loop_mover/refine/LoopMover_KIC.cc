@@ -167,6 +167,7 @@ bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory != 0; }
 void LoopMover_Refine_KIC::apply(
 	core::pose::Pose & pose
 ){
+	// AMW: cppcheck flags, but I'm not changing this scope because it's static
 	static int cur_struct=0; // for movie output
 
 	/// must be called once the Pose has become available.
@@ -363,7 +364,7 @@ void LoopMover_Refine_KIC::apply(
 			if ( ! user_torbin_string.empty() ) {
 				core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
 			}
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}

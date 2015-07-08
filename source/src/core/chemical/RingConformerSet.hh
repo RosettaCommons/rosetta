@@ -83,9 +83,11 @@ public:
 
 
 	/// @brief  Return the conformer corresponding to the requested name.
+	// AMW: cppcheck wants you to change to pass by reference; DO NOT
 	RingConformer const & get_ideal_conformer_by_name( std::string const name ) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
+	// AMW: cppcheck wants you to change to pass by reference; DO NOT
 	RingConformer const & get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const parameters ) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.

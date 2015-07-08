@@ -415,7 +415,7 @@ StandardDisulfPairingLibrary *
 StandardDisulfPairingLibrary::create_singleton_instance()
 {
 	StandardDisulfPairingLibrary * instance = new StandardDisulfPairingLibrary;
-	instance = new StandardDisulfPairingLibrary();
+	//instance = new StandardDisulfPairingLibrary();
 	std::cout << "READING START" << std::endl;
 	instance->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
 	std::cout << "READING END" << std::endl;

@@ -57,7 +57,7 @@ public:
 	PseudoBond();
 	virtual ~PseudoBond();
 	PseudoBond( PseudoBond const &);
-	PseudoBond const & operator = ( PseudoBond const & rhs );
+	PseudoBond & operator = ( PseudoBond const & rhs );
 
 	bool operator == ( PseudoBond const & rhs ) const;
 

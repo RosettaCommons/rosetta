@@ -149,7 +149,8 @@ public:
 		for (size_t i = 0; i < n; ++i) {
 			m_arr.push_back(Triple(m_arr[i].b, m_arr[i].a, m_arr[i].c));
 		}
-		n *= 2;
+		// This adjustment is not made because the variable is not used again in this function 
+		//n *= 2;
 	}
 	size_t Number() const {
 		return m_arr.size();

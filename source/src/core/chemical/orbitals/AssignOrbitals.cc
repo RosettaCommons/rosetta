@@ -462,8 +462,8 @@ void AssignOrbitals::add_orbitals_to_restype(
 		core::Size const atm_index3,
 		//OrbInfo const & orbital_info,
 		core::chemical::AtomType const & atmtype,
-		std::string const atom_hybridization,
-		utility::vector1< numeric::xyzVector<core::Real> > const orbital_xyz_vectors
+		std::string const & atom_hybridization,
+		utility::vector1< numeric::xyzVector<core::Real> > const & orbital_xyz_vectors
 ){
 	for(core::Size vector_index = 1; vector_index <= orbital_xyz_vectors.size(); ++vector_index){
 		std::string p_orbital_type_full_name(make_orbital_type_name(atmtype, atom_hybridization, AOhybridization_) );
@@ -476,7 +476,7 @@ void AssignOrbitals::add_orbitals_to_restype(
 std::string AssignOrbitals::make_orbital_type_name
 (
 		AtomType const & atmtype,
-		std::string const orbitaltype,
+		std::string const & orbitaltype,
 		core::Size const hybridization
 )
 {
@@ -523,11 +523,11 @@ void AssignOrbitals::set_orbital_type_and_bond(
 
 
 void AssignOrbitals::calculate_orbital_icoor(
-		numeric::xyzVector<core::Real> const orbital_xyz,
+		numeric::xyzVector<core::Real> const & orbital_xyz,
 		core::Size const atm_index1,
 		core::Size const atm_index2,
 		core::Size const atm_index3,
-		std::string const orbital_element_name
+		std::string const & orbital_element_name
 )
 {
 	Vector const stub1_xyz = restype_->atom(atm_index1).ideal_xyz();

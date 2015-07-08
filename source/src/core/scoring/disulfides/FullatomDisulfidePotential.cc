@@ -428,13 +428,10 @@ FullatomDisulfidePotential::score_this_disulfide(
 	}
 
 	{ // angles
-		Real ang_d = csang_1;
-		Real score_a = -params_.a_logA - params_.a_kappa*cos( pi/180 * (ang_d-params_.a_mu) );
-		score += wt_ang_*score_a;
+		// add scores for csang_1 and csang_2
+		score += wt_ang_ * ( -params_.a_logA - params_.a_kappa*cos( pi/180 * (csang_1-params_.a_mu) ) );
 
-		ang_d = csang_2;
-		score_a = -params_.a_logA - params_.a_kappa*cos( pi/180 * (ang_d-params_.a_mu) );
-		score += wt_ang_*score_a;
+		score += wt_ang_*( -params_.a_logA - params_.a_kappa*cos( pi/180 * (csang_2-params_.a_mu) ) );
 	}
 
 	{ // SS dih
@@ -446,19 +443,16 @@ FullatomDisulfidePotential::score_this_disulfide(
 	}
 
 	{ // CB-S dihedrals
-		Real ang_cs = disulf_ca_dihedral_angle_1;
-		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
-		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
-		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
-		Real score_cs = -log (exp_score1 + exp_score2 + exp_score3 + mest_);
-		score += wt_dihCS_*score_cs;
+		// score disulf_ca_dihedral_angle_1 and disulf_ca_dihedral_angle_2
+		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu1) ));
+		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu2) ));
+		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (disulf_ca_dihedral_angle_1-params_.dcs_mu3) ));
+		score += wt_dihCS_* ( -log (exp_score1 + exp_score2 + exp_score3 + mest_) );
 
-		ang_cs = disulf_ca_dihedral_angle_2;
-		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
-		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
-		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
-		score_cs = -log (exp_score1 + exp_score2 + exp_score3 + mest_);
-		score += wt_dihCS_*score_cs;
+		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu1) ));
+		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu2) ));
+		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (disulf_ca_dihedral_angle_2-params_.dcs_mu3) ));
+		score += wt_dihCS_* ( -log (exp_score1 + exp_score2 + exp_score3 + mest_) );
 	}
 }
 

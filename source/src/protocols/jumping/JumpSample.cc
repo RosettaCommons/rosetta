@@ -102,7 +102,7 @@ JumpSample::JumpSample( JumpSetup const& def ) :
 {
   resize( def.size() );
   int ct = 1;
-  for ( JumpSetup::const_iterator it=def.begin(), eit=def.end(); it!=eit; it++, ct++ ) {
+  for ( JumpSetup::const_iterator it=def.begin(), eit=def.end(); it!=eit; ++it, ++ct ) {
     jumps_( 1, ct ) = it->jump_.start_;
     jumps_( 2, ct ) = it->jump_.end_;
 		jump_atoms_( 1, ct ) = "";

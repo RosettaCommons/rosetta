@@ -89,7 +89,7 @@ unvirtualize_phosphates( pose::Pose & pose, utility::vector1< Size > const & unv
 
 ////////////////////////////////////////////////////////////////////////////
 void
-get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::vector1< Size > & resnum )
+get_pose_and_numbering( std::string const & pdb_file, pose::Pose & pose, utility::vector1< Size > & resnum )
 {
 
 	using namespace core::chemical;
@@ -347,8 +347,8 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	resnum_seq_list.sort();
 
 	std::string sequence_target;
-	for ( std::list< std::pair< Size, char > >::const_iterator iter = resnum_seq_list.begin();
-					iter != resnum_seq_list.end(); iter++ ){
+	for ( std::list< std::pair< Size, char > >::const_iterator iter = resnum_seq_list.begin(),
+					end = resnum_seq_list.end(); iter != end; ++iter ){
 		resnum_target.push_back( iter->first );
 		sequence_target += iter->second;
 	}

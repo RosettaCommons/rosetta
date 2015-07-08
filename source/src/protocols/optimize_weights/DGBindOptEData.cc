@@ -218,8 +218,8 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 	bound_ = SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) );
 
 
-	delete [] free_data; free_data = 0;
-	delete [] fixed_data; fixed_data = 0;
+	delete [] free_data;// free_data = 0;
+	delete [] fixed_data;// fixed_data = 0;
 
 	//// Now receive decoy data
 	free_data = new Real[ n_free ];
@@ -238,7 +238,6 @@ DGBindOptEData::receive_from_node( int const source_node, int const tag )
 		fixed_data_v[ jj ] = fixed_data[ ( jj - 1 ) ];
 	}
 	unbound_ = SingleStructureDataOP( new SingleStructureData( free_data_v, fixed_data_v ) );
-
 
 	delete [] free_data;
 	delete [] fixed_data;

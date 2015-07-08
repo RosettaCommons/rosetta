@@ -284,7 +284,7 @@ calculate_statistics( protocols::jd2::JobOP curr_job, core::pose::Pose pose, cor
 	Real  hbond_ener_sum_seperated;
 
 	// calc energy
-	energy_complex = (*score_fxn)(pose);
+	//energy_complex = (*score_fxn)(pose);
 
 	// make copy of pose to calc stats
 	Pose stats_pose( pose );

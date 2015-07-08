@@ -171,11 +171,11 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 	FragSetOP frags_to_use;
 	{
 		if( trimmed_cdr_h3.size() > cutoff_9_ ) {
-			frags_to_use = cdr_h3_frags_[1]->empty_clone();
+			//frags_to_use = cdr_h3_frags_[1]->empty_clone();
 			frags_to_use = cdr_h3_frags_[1];
 			frag_size = 9;
 		} else {
-			frags_to_use = cdr_h3_frags_[2]->empty_clone();
+			//frags_to_use = cdr_h3_frags_[2]->empty_clone();
 			frags_to_use = cdr_h3_frags_[2];
 			frag_size = 3;
 		}
@@ -249,9 +249,9 @@ void H3PerturbCCD::apply( pose::Pose & pose_in ) {
 			cfm->enable_end_bias_check( false );
 			cfm->apply( pose_in );
 
-			bool H3_found_current(false);
+			//bool H3_found_current(false);
 			if( current_loop_is_H3_ && H3_filter_ && ( local_h3_attempts++ < (50 * num_cycles2) ) ) {
-				H3_found_current = CDR_H3_cter_filter(pose_in, ab_info_);
+				bool H3_found_current = CDR_H3_cter_filter(pose_in, ab_info_);
 				if( !H3_found_ever && !H3_found_current) {
 					--c2;
 					mc_->boltzmann( pose_in );

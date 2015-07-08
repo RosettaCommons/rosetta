@@ -323,7 +323,6 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 	Jobs & jobs
 )
 {
-  JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
 
 	//InnerJobOP inner_job = new InnerJob;
 	std::string jobname;
@@ -359,6 +358,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 	}
 
 	if ( jobname.size() == 0 ) {
+  		JD2ResourceManager * jd2rm( JD2ResourceManager::get_jd2_resource_manager_instance());
 		if ( jd2rm->has_resource_configuration( input_tag ) ) {
 			std::ostringstream err;
 			err << "Repeat input startstruct for a job which has not been given a name. Ordinarily, if a job is\n";

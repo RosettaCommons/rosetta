@@ -286,7 +286,6 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 
 	// Loop through sequence one character at a time, form affixes and 3-letter codes, and assign ResidueTypes.
 	uint const sequence_end( sequence_with_hyphen.length() );
-	char character;
 	string morpheme( "" );
 	string residue_type_name( "" );
 	utility::vector1< uint > branch_points;
@@ -294,7 +293,7 @@ residue_types_from_saccharide_sequence( std::string const & sequence, chemical::
 	bool anomer_assigned( false );
 	bool L_or_D_assigned( false );
 	for ( uint chr_num( 0 ); chr_num < sequence_end; ++chr_num ) {
-		character = sequence_with_hyphen[ chr_num ];
+		char character = sequence_with_hyphen[ chr_num ];
 
 		if ( character == '[' ) {  // Branch: Stop what we are doing, recursively call self with whatever's between the brackets.
 			string branch_sequence( "" );

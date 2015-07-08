@@ -253,7 +253,7 @@ SpecialSegmentsObserver::on_length_change( conformation::signals::LengthEvent co
 	//std::cerr << std::endl;
 
 	//in case complete segments have been deleted, we need to restructure the vector
-	if( deleted_segments.size() > 0 ){
+	if( !deleted_segments.empty() ) { //size() > 0 ){
 		utility::vector1< Segment > new_segments;
 		for( Size i = 1; i <= segments_.size(); ++i){
 			if( deleted_segments.find( i ) != deleted_segments.end() ) new_segments.push_back( segments_[i] );

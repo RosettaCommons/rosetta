@@ -409,14 +409,14 @@ double
 SVD_Solver::run_score_svd_on_matrix(utility::vector1< utility::vector1<double> > const & cppstyle_A) const{
 
 	platform::Size i, j;
-	double score, temp;
+	double score;
 
 	if(!x_is_solved_){
 		utility_exit_with_message("SVD_solver object is not in a state to score ||Ax = b||^2");
 	}
 	score = 0;
 	for(i = 1; i <= M_; ++i){
-		temp = 0;
+		double temp = 0;
 		for(j = 1; j <= N_; ++j){
 			temp += cppstyle_A[i][j] * cstyle_x_[j];
 		}
@@ -435,14 +435,14 @@ double
 SVD_Solver::run_score_svd_on_matrix(FArray2D< double > const & A) const{
 
 	platform::Size i, j;
-	double score, temp;
+	double score;
 
 	if(!x_is_solved_){
 		utility_exit_with_message("SVD_solver object is not in a state to score ||Ax = b||^2");
 	}
 	score = 0;
 	for(i = 1; i <= M_; ++i){
-		temp = 0;
+		double temp = 0;
 		for(j = 1; j <= N_; ++j){
 			temp += A(i, j) * cstyle_x_[j];
 		}
@@ -461,8 +461,7 @@ double
 SVD_Solver::run_score_svd_without_solving(){
 
 	platform::Size i, j;
-	double score, temp;
-
+	
 	if((!A_is_decomp_) || (!b_is_set_)){
 		utility_exit_with_message("SVD_Solver object not in state to call run_score_svd_without_solving");
 	}
@@ -474,9 +473,9 @@ SVD_Solver::run_score_svd_without_solving(){
 		}
 	}
 
-	score = 0;
+	double score = 0;
 	for(i = 1; i <= M_; ++i){
-		temp = 0;
+		double temp = 0;
 		for(j = 1; j <= N_; ++j){
 			temp += cstyle_A_decomp_[i][j] * cstyle_tmp_[j];
 		}

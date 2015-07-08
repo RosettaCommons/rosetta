@@ -91,7 +91,7 @@ OPT_KEY( Boolean, dump )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vector1< pose::PoseOP > const & pose_list, std::string const sequence_recovery_file )
+rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vector1< pose::PoseOP > const & pose_list, std::string const & sequence_recovery_file )
 {
 
 	// make a local copy

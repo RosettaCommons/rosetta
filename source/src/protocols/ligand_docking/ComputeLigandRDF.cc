@@ -342,7 +342,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 			continue;
 		}
 
-		std::map<std::string,core::Real> rdf_energies;
+		//std::map<std::string,core::Real> rdf_energies;
 
 		atom_data.protein_atom = pose.conformation().residue(atom_data.protein_atom_id.rsd()).atom(atom_data.protein_atom_id.atomno());
 

@@ -63,9 +63,14 @@ public:
 	///
 	/// @details All its properties are unset by default.
 	///
-	AtomType( std::string const & name_in, std::string const element_in ):
+	AtomType( std::string const & name_in, std::string const & element_in ):
 		name_( name_in ),
 		element_( element_in ),
+		lj_radius_( 0 ),
+		lj_wdepth_( 0 ),
+		lk_lambda_( 0 ),
+		lk_volume_( 0 ),
+		lk_dgfree_( 0 ),
 		is_acceptor_( false ),
 		is_donor_( false ),
 		is_polar_hydrogen_( false ),

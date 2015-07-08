@@ -97,6 +97,7 @@ std::vector<std::string> const & GasteigerAtomTypeData::AtomicOrbitalTypes_strin
     //! @brief default constructor
     GasteigerAtomTypeData::GasteigerAtomTypeData() :
       name_("UNKNOW_GASTEIGER_ATOM_TYPE"),
+	  hybridization_(Unhybridized), // amw cppcheck initialize this!
       number_hybrid_orbitals_sigma_binding_( 0),
       number_hybrid_orbitals_nonbinding_( 0),
       number_electrons_in_bonds_( 0),

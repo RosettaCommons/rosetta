@@ -923,12 +923,12 @@ load_build_position_data(
 	core::Size const ligand_marker
 )
 {
-	bool keep_one_motif( true );
 	std::map< std::string, SingleMotifOP > single_motifs;
 	utility::io::izstream data_file( filename.c_str() );
 	std::string key_in;
 	data_file >> key_in;
 	if( key_in == "POSITION" ) {
+		bool keep_one_motif( true );
 		while( data_file >> key_in ) {
 			std::stringstream bpseqpos;
 			bpseqpos << bp.seqpos();

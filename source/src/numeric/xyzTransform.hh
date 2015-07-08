@@ -528,7 +528,7 @@ expand_xforms(
 	xyzTransform<T> const & /*G3*/,
 	int N=5,
 	Real r=9e9,
-	xyzVector<T> const test_point=xyzVector<T>(Real(1.0),Real(3.0),Real(10.0))
+	xyzVector<T> const & test_point=xyzVector<T>(Real(1.0),Real(3.0),Real(10.0))
 ){
 	xyzTransform<T> I;
 	utility::vector1<xyzVector<T> > seenit;
@@ -591,7 +591,7 @@ expand_xforms(
 	xyzTransform<T> const & G2,
 	int N=5,
 	Real r=9e9,
-	xyzVector<T> const test_point=xyzVector<T>(Real(1.0),Real(3.0),Real(10.0))
+	xyzVector<T> const & test_point=xyzVector<T>(Real(1.0),Real(3.0),Real(10.0))
 ){
 	expand_xforms(container,G1,G2,xyzTransform<T>(),N,r,test_point);
 }

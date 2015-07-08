@@ -312,11 +312,10 @@ PoseConformationFeatures::report_features_implementation(
 	//I currently have absolutely no idea why this is, but this fixes it.
 	//It is worth noting that the current implementation of Binary protein silent files does the same thing
 	bool ideal = true;
-	bool residue_status;
 	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]()) {
 		core::conformation::Conformation const & conformation(pose.conformation());
 		for(core::Size resn=1; resn <= pose.n_residue();++resn){
-			residue_status = core::conformation::is_ideal_position(resn,conformation);
+			bool residue_status = core::conformation::is_ideal_position(resn,conformation);
 			if(!residue_status){
 				ideal = false;
 				break;

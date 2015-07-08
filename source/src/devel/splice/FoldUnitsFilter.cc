@@ -123,8 +123,8 @@ FoldUnitsFilter::write_to_file( std::string const pdb, core::Size const from_res
 }
 
 core::Real
-atom_distance( core::pose::Pose const & p1, core::Size const r1, std::string const a1,
-               core::pose::Pose const & p2, core::Size const r2, std::string const a2 ){
+atom_distance( core::pose::Pose const & p1, core::Size const r1, std::string const & a1,
+               core::pose::Pose const & p2, core::Size const r2, std::string const & a2 ){
 	  return( p1.conformation().residue( r1 ).xyz( a1 ).distance( p2.conformation().residue( r2 ).xyz( a2 ) ) );
 }
 

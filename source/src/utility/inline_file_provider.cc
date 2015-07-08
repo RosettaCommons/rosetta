@@ -209,7 +209,7 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 
 bool Inline_File_Provider::find_sstream( std::vector < std::pair < std::string, std::stringstream* > > &file_catalog, const std::string& filename, std::stringstream **the_stream ){
 	std::vector < std::pair < std::string, std::stringstream* > >::iterator it = file_catalog.begin();
-	for( ; it != file_catalog.end(); it++ ){
+	for( ; it != file_catalog.end(); ++it ){
 		if( it->first == filename ){
 			break;
 		}

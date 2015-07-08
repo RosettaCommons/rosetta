@@ -46,7 +46,7 @@ SimplePDB::get_spheres(
       errors.insert( pair<string,string>(atom.type,atom.res) );
     }
   }
-  if( errors.size() ) {
+  if( !errors.empty() ) {
     TR << "ignoring unknown atom types:" << std::endl;
     for(set<pair<string,string> >::iterator i = errors.begin(); i != errors.end(); ++i) {
 			TR << "(" << i->first << "," << i->second << "), ";

@@ -498,7 +498,6 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	}
 
 	return pCoords;  // calling function must dereference this!
-	return NULL;
 }
 #endif
 
@@ -1041,6 +1040,10 @@ void PhenixInterface::initialize_target_evaluator(
 
 	{ // grab stdout from the python script
 		const int MAXLEN=16000;
+		// AMW cppcheck is flagging this as being reducible into the scope of
+		// if (!target_evaluator_)
+		// which looks right to me... is there some WEIRD way that the next couple
+		// statements are writing to buffer?
 		char buffer[MAXLEN+1] = {0};
 		//int out_pipe[2], saved_stdout;
 

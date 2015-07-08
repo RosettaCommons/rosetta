@@ -374,16 +374,15 @@ std::istream& operator >>(std::istream &is,Symmetric_param &p)
 std::istream& operator >>(std::istream &is,PD_line_angle &p){
 	std::string eq;
 	is >> p.chain1 >> p.from1 >> p.to1 >> p.chain2 >>  p.from2 >> p.to2 >> eq >> p.angle;
-	int tmp;
 	if (p.from1 > p.to1){
-		tmp = p.from1;
+		int tmp = p.from1;
 		p.from1 = p.to1;
-		p.to1 = p.from1;
+		p.to1 = tmp;//p.from1;
 	}
 	if (p.from2 > p.to2){
-		tmp = p.from2;
+		int tmp = p.from2;
 		p.from2 = p.to2;
-		p.to2 = p.from2;
+		p.to2 = tmp;//p.from2;
 	}
 
 	if (eq != "="){
@@ -398,16 +397,16 @@ std::istream& operator >>(std::istream &is,PD_line_angle &p){
 std::istream& operator >>(std::istream &is,PD_line_distance &p){
 	std::string eq;
 	is >> p.chain1 >> p.from1 >> p.to1 >> p.chain2 >>  p.from2 >> p.to2 >> eq >> p.distance;
-	int tmp;
+	//int tmp;
 	if (p.from1 > p.to1){
-		tmp = p.from1;
+		int tmp = p.from1;
 		p.from1 = p.to1;
-		p.to1 = p.from1;
+		p.to1 = tmp;//p.from1;
 	}
 	if (p.from2 > p.to2){
-		tmp = p.from2;
+		int tmp = p.from2;
 		p.from2 = p.to2;
-		p.to2 = p.from2;
+		p.to2 = tmp;//p.from2;
 	}
 
 	if (eq != "="){
@@ -421,16 +420,15 @@ std::istream& operator >>(std::istream &is,PD_line_distance &p){
 std::istream& operator >>(std::istream &is,PD_centroid_distance &p){
 	std::string eq;
 	is >> p.chain1 >> p.from1 >> p.to1 >> p.chain2 >>  p.from2 >> p.to2 >> eq >> p.distance;
-	int tmp;
 	if (p.from1 > p.to1){
-		tmp = p.from1;
+		int tmp = p.from1;
 		p.from1 = p.to1;
-		p.to1 = p.from1;
+		p.to1 = tmp;//p.from1;
 	}
 	if (p.from2 > p.to2){
-		tmp = p.from2;
+		int tmp = p.from2;
 		p.from2 = p.to2;
-		p.to2 = p.from2;
+		p.to2 = tmp;//p.from2;
 	}
 
 	if (eq != "="){
@@ -445,11 +443,10 @@ std::istream& operator >>(std::istream &is,PD_centroid_distance &p){
 std::istream& operator >>(std::istream &is,PD_form_alpha &p){
 
 	is >> p.chain >> p.from >> p.to;
-	int tmp;
 	if (p.from > p.to){
-		tmp = p.from;
+		int tmp = p.from;
 		p.from = p.to;
-		p.to = p.from;
+		p.to = tmp;//p.from;
 	}
 
 	return is;
@@ -461,16 +458,15 @@ std::istream& operator >>(std::istream &is,PD_match &p){
 	char chain1,chain2;
 	int from1,from2,to1,to2;
 	is >> p.id >> s1 >> chain1 >> from1 >> to1 >> s2 >> chain2 >>  from2 >> to2;
-	int tmp;
 	if (from1 > to1){
-		tmp = from1;
+		int tmp = from1;
 		from1 = to1;
-		to1 = from1;
+		to1 = tmp;//from1;
 	}
 	if (from2 > to2){
-		tmp = from2;
+		int tmp = from2;
 		from2 = to2;
-		to2 = from2;
+		to2 = tmp;//from2;
 	}
 	s1 = str2upper(s1);
 	s2 = str2upper(s2);
@@ -507,16 +503,15 @@ std::istream& operator >>(std::istream &is,PD_match_rmsd &p){
 	char chain1,chain2;
 	int from1,from2,to1,to2;
 	is >> s1 >> chain1 >> from1 >> to1 >> s2 >> chain2 >>  from2 >> to2;
-	int tmp;
 	if (from1 > to1){
-		tmp = from1;
+		int tmp = from1;
 		from1 = to1;
-		to1 = from1;
+		to1 = tmp;//from1;
 	}
 	if (from2 > to2){
-		tmp = from2;
+		int tmp = from2;
 		from2 = to2;
-		to2 = from2;
+		to2 = tmp;//from2;
 	}
 	s1 = str2upper(s1);
 	s2 = str2upper(s2);

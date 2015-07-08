@@ -1701,7 +1701,7 @@ RunPepSpec()
 		prot_anchor =prot_begin;
 
 		Real cutoff( option[ pepspec::interface_cutoff ] );
-		std::string output_seq;
+		//std::string output_seq;
 
 		//gen fold tree//
 		FoldTree f( pose.total_residue() );

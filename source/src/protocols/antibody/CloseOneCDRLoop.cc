@@ -83,9 +83,11 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
 	// Coordinates of the C and N atoms at stem
 	numeric::xyzVector_float peptide_C, peptide_N;
 
+	// AMW: originally both of these assignments were in the code
+	// I do not understand why and neither did cppcheck
 	// N-terminal
-	peptide_C = pose_in.residue( cdr_loop_start_ - 1 ).xyz( C );
-	peptide_N = pose_in.residue( cdr_loop_start_ ).xyz( N );
+	//peptide_C = pose_in.residue( cdr_loop_start_ - 1 ).xyz( C );
+	//peptide_N = pose_in.residue( cdr_loop_start_ ).xyz( N );
 
 	// C-terminal
 	peptide_C = pose_in.residue( cdr_loop_end_ ).xyz( C );

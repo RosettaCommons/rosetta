@@ -1087,8 +1087,8 @@ BaseTabooPerturber::refill_torsion_string_vector()
 		torsion_bins_for_pos.reserve( num_strings_ );
 		// then iterate over the map and fill the torsion_bins_for_pos vector accordingly
 		Size entries_for_X = entries_per_torsion_bin[ ppo_torbin_X ];
-		for (std::map< ppo_torsion_bin, core::Size >::const_iterator mcs_i = entries_per_torsion_bin.begin();
-				mcs_i != entries_per_torsion_bin.end(); mcs_i++) {
+		for (std::map< ppo_torsion_bin, core::Size >::const_iterator mcs_i = entries_per_torsion_bin.begin(),
+				end = entries_per_torsion_bin.end(); mcs_i != end; ++mcs_i ) {
 			// we only keep X in here for the totals
 			if ( mcs_i->first == ppo_torbin_X )	continue;
 

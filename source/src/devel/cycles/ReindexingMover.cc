@@ -39,7 +39,7 @@ void ReindexingMover::apply(pose::Pose &source_pose) {
 	// type, which is unsigned.
 
 	pose::Pose target_pose;
-	int index, residues = source_pose.total_residue();
+	int residues = source_pose.total_residue();
 
 	for (int i = 0; i < residues; i++) {
 
@@ -50,7 +50,7 @@ void ReindexingMover::apply(pose::Pose &source_pose) {
 		// resulting index is less than one, it is modified again to move it back 
 		// into the range (1, residues).
 		
-		index = 1 + (i - offset_) % residues;
+		int index = 1 + (i - offset_) % residues;
 		if (index < 1) index += residues;
 
 		conformation::Residue residue = source_pose.residue(index);

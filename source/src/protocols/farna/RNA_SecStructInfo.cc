@@ -62,7 +62,7 @@ get_rna_secstruct( core::pose::Pose & pose )
 /// in the pose, or creates a new rna scoring info object, places it in the pose, and returns
 /// a non-const reference to it.
 void
-set_rna_secstruct(  core::pose::Pose & pose, std::string const rna_secstruct_string )
+set_rna_secstruct(  core::pose::Pose & pose, std::string const & rna_secstruct_string )
 {
 	//using core::pose::datacache::CacheableDataType::RNA_SECSTRUCT_INFO;
 

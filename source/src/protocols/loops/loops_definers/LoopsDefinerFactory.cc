@@ -116,10 +116,10 @@ vector1< string >
 LoopsDefinerFactory::get_all_loops_definer_names(
 ) const {
 	vector1< string > collection;
-	LoopsDefinerCreatorMap::const_iterator iter = types_.begin();
-	while ( iter != types_.end() ) {
+	LoopsDefinerCreatorMap::const_iterator iter = types_.begin(), end = types_.end();
+	while ( iter != end ) {
 		collection.push_back(iter->first);
-		iter++;
+		++iter;
 	}
 	return collection;
 }

@@ -76,7 +76,7 @@ Record PDB_DReader::mapStringToRecord(const String & _s)
 	if( pdb_records.count(T.value) ) {	R = pdb_records[ T.value ]; }
 	else { R = pdb_records["UNKNOW"]; }
 
-	for(Record::iterator p=R.begin(); p!=R.end(); p++) (*p).second.getValueFrom(s);
+	for(Record::iterator p=R.begin(), end=R.end(); p!=end; ++p ) (*p).second.getValueFrom(s);
 
 	return R;
 }

@@ -24,7 +24,7 @@ ResConnID::ResConnID( ResConnID const & rhs ) : res_id_( rhs.res_id_ ), conn_id_
 
 ResConnID::ResConnID( Size resid, Size connid ) : res_id_( resid ), conn_id_( connid ) {}
 
-ResConnID const & ResConnID::operator = ( ResConnID const & rhs )
+ResConnID & ResConnID::operator = ( ResConnID const & rhs )
 {
 	res_id_ = rhs.res_id_;
 	conn_id_ = rhs.conn_id_;

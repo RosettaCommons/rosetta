@@ -123,8 +123,7 @@ EnzdesConstraintReporter::add_constrained_atoms_from_multiconstraint(
 	multi_constraint_members=real_multi_constraint->member_constraints();
 	
 	for (core::scoring::constraints::ConstraintCOPs::const_iterator
-			MC_it=multi_constraint_members.begin();
-			MC_it!=multi_constraint_members.end(); MC_it++) {
+			MC_it=multi_constraint_members.begin(), end = multi_constraint_members.end(); MC_it != end; ++MC_it ) {
 		if ( ((*MC_it)->type()) == "AtomPair") {
 			assert( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
 			add_constrained_atoms_from_atom_pair_constraint( utility::pointer::dynamic_pointer_cast <core::scoring::constraints::AtomPairConstraint const > ((*MC_it)) );
@@ -158,8 +157,7 @@ EnzdesConstraintReporter::add_constrained_lig_atom(
 )
 {
 	for(utility::vector1< core::Size >::const_iterator
-			it  = constrained_lig_atoms_.begin();
-			it != constrained_lig_atoms_.end(); it++){
+			it  = constrained_lig_atoms_.begin(), end = constrained_lig_atoms_.end(); it != end; ++it ) {
 		if ( (*it) == atom_no) return;
 	}
 	constrained_lig_atoms_.push_back(atom_no);
@@ -175,8 +173,7 @@ EnzdesConstraintReporter::add_constrained_nonligand_atom(
 )
 {
 	for(utility::vector1< core::id::AtomID > ::const_iterator
-			it  = constrained_nonligand_atoms_.begin();
-			it != constrained_nonligand_atoms_.end(); it++){
+			it  = constrained_nonligand_atoms_.begin(), end = constrained_nonligand_atoms_.end(); it != end; ++it ) {
 		if ( (*it) == atid ) return;
 	}
 	constrained_nonligand_atoms_.push_back( atid );

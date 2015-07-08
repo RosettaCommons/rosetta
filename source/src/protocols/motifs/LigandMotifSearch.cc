@@ -392,7 +392,7 @@ LigandMotifSearch::incorporate_motifs(
 		for(core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i) {
 
 			//std::cout << "in atom iterate block, atom num is" << atom_i <<   std::endl;
-			std::string const atom_name = ligres->atom_name(atom_i);
+			//std::string const atom_name = ligres->atom_name(atom_i);
 			if( ligres->atom_is_hydrogen(atom_i) ) { continue; }
 			//std::cout << "atom name is " << atom_name <<  std::endl;
 
@@ -409,7 +409,7 @@ LigandMotifSearch::incorporate_motifs(
 					//std::cout << "ATOM k: " << atom_j_connects[atom_k] << " Name: " << ligres.atom_name(atom_j_connects[atom_k]) << std::endl;
 
 					chemical::AtomType atom_i_type(ligres->atom_type(atom_i));
-					std::string atom_i_name = atom_i_type.atom_type_name();
+					//std::string atom_i_name = atom_i_type.atom_type_name();
 					//Size atom_i_int = atset->atom_type_index(atom_i_name);
 				// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
 
@@ -478,8 +478,8 @@ LigandMotifSearch::incorporate_motifs(
 			if( pose.residue( prot_pos ).name3() == "GLY" ) continue;
 
 			// map will automatically sort the "contacts" with the lowest total_score at the front of map
-			std::map< Real, Size > contacts;
-			std::map< Real, Size  > distance_sorter;
+			//std::map< Real, Size > contacts;
+			//std::map< Real, Size  > distance_sorter;
 
 			// Loop over positions, skipping non-ligand
 			for( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {

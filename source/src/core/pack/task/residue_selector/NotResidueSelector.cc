@@ -70,7 +70,7 @@ void NotResidueSelector::parse_my_tag(
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access required option 'selector' from NotResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -80,7 +80,7 @@ void NotResidueSelector::parse_my_tag(
 		try {
 			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_residue_selector(selector);
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from NotResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();

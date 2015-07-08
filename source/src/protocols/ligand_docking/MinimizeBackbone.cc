@@ -398,7 +398,7 @@ std::map<core::Size, core::Size> MinimizeBackbone::find_attach_pts(
 core::Size find_peptide_attach_pt (
 		int const & start,
 		int const & stop,
-		std::map<core::Size, core::Size> const jump_to_attach
+		std::map<core::Size, core::Size> const & jump_to_attach
 ){
 	std::map<core::Size, core::Size>::const_iterator index =
 			jump_to_attach.begin();

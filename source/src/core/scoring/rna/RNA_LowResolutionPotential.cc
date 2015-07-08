@@ -164,12 +164,12 @@ void
 RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 
 	std::string const filename( "scoring/rna/rna_base_pair_xy.dat" );
-  utility::io::izstream data_stream(  basic::database::full_name( filename )  );
+	utility::io::izstream data_stream(  basic::database::full_name( filename )  );
 
 	if ( !data_stream ) {
 		std::cerr << "Can't find specified basepair potential file: " << filename << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
-		return;
+		//return;
 	}
 
 	tr << "Reading basepair x - y potential file: " << filename << std::endl; ;
@@ -256,7 +256,7 @@ RNA_LowResolutionPotential::initialize_rna_base_backbone_xy(){
 	if ( !data_stream ) {
 		std::cerr << "Can't find specified non - base - base potential file: " << filename << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
-		return;
+		//return;
 	}
 
 	tr << "Reading non - base - base x - y potential file: " << filename << std::endl; ;
@@ -297,7 +297,7 @@ RNA_LowResolutionPotential::initialize_rna_backbone_backbone()
 	if ( !data_stream ) {
 		std::cerr << "Can't find specified RNA backbone - backbone potential file: " << filename << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
-		return;
+		//return;
 	}
 
 	tr << "Reading RNA backbone backbone potential file: " << filename << std::endl; ;
@@ -1715,7 +1715,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 		rna_backbone_backbone_score += score_contribution;
 
 		if ( rna_verbose_ && score_contribution < -0.01 ){
-			std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
+			//std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
 			tr <<
 				"BACKBONE_BACKBONE " <<
 				rsd1.name1() <<

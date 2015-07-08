@@ -150,7 +150,9 @@ namespace pathways {
 
 
           double& operator[](unsigned int coord) {return _point_3d[coord];}
-	  Vec3d(const std::vector<double>& point_3d){_point_3d = point_3d;}
+	  Vec3d(const std::vector<double>& point_3d):
+	  _point_3d( point_3d )
+	  {}
 
     friend std::ostream& operator<<(std::ostream& s,Vec3d& v){
       return s << "(" << v._point_3d[0] << " , " << v._point_3d[1] << " , " <<v._point_3d[2]<<") ";

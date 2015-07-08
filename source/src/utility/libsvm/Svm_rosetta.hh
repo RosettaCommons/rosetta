@@ -60,8 +60,8 @@ class Svm_rosetta: public utility::pointer::ReferenceCount {
   Svm_rosetta(string model_filename);
   ~Svm_rosetta();
   platform::Size get_nr_class();
-	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > features);
-  platform::Real predict( const vector1< Svm_node_rosettaOP > features);     
+	vector1< platform::Real > predict_probability(vector1< Svm_node_rosettaOP > & features);
+  platform::Real predict( const vector1< Svm_node_rosettaOP > & features);     
  private:
 	svm_model *svm_model_;
 };

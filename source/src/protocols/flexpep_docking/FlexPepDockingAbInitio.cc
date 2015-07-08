@@ -415,9 +415,8 @@ FlexPepDockingAbInitio::restorePSER(core::pose::Pose& pose, std::set<int> const&
   using namespace core::chemical;
   using namespace core::conformation;
   ResidueTypeSetCOP centroid_set( ChemicalManager::get_instance()->residue_type_set( CENTROID ) );
-  std::set<int>::const_iterator iter;
-  for(iter = pSer_positions.begin();
-      iter != pSer_positions.end(); iter++)
+  std::set<int>::const_iterator iter, end;
+  for(iter = pSer_positions.begin(), end = pSer_positions.end(); iter != end; ++iter )
     {
       int resid = *iter;
       // Residue const & asp( pose.residue( resid ) ); // Unused variable causes warning.

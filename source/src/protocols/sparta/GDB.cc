@@ -160,20 +160,20 @@ void GDB::showGDB( std::ostream & out ) {
 		}
 		out << endl;
 
-		VarList::iterator iterR;
+		VarList::iterator iterR, end;
 		out << "VARS   ";
-		for ( iterR = VARS.begin(); iterR != VARS.end(); iterR++ )
+		for ( iterR = VARS.begin(), end = VARS.end(); iterR != end; ++iterR )
 			out << iterR->second.c_str() << " ";
 		out << endl;
 
 		out << "FORMAT ";
-		for ( iterR = FORMAT.begin(); iterR != FORMAT.end(); iterR++ )
+		for ( iterR = FORMAT.begin(), end = FORMAT.end(); iterR != end; ++iterR )
 			out << iterR->second.c_str();
 		out << endl << endl;
 	}
 
   // write the entries
-  for ( EntryList::iterator it = Entries.begin(); it != Entries.end(); it++ ) {
+  for ( EntryList::iterator it = Entries.begin(), end2 = Entries.end(); it != end2; ++it ) {
 		GDB_Entry ent = it->second;
 
 		for(int i = 0; i < (int) VARS.size(); i++) {
@@ -206,8 +206,8 @@ GDB::GDB_Entry GDB::getEntry(const string &VName, const string &VVal, int index)
   GDB_Entry ent;
 
   int count = 0;
-	EntryList::iterator it;
-  for ( it = Entries.begin(); it != Entries.end(); it++ )
+	EntryList::iterator it, end;
+  for ( it = Entries.begin(), end = Entries.end(); it != end; ++it )
     {
       ent = it->second;
       if ( ent[VName] == VVal ) count++;
@@ -226,8 +226,8 @@ GDB::GDB_Entry GDB::getEntry(const string &VName1, const string &VVal1, const st
 {
   GDB_Entry ent;
   int count = 0;
-  EntryList::iterator it;
-  for ( it = Entries.begin(); it != Entries.end(); it++ ) {
+  EntryList::iterator it, end;
+  for ( it = Entries.begin(), end = Entries.end(); it != end; ++it ) {
 		ent = it->second;
 		if ( ent[VName1] == VVal1 && ent[VName2] == VVal2 ) count++;
 		if ( count == index && index > 0 ) return ent;
@@ -255,11 +255,11 @@ void GDB::setEntry(
 	const string & VarName,
 	const string & VarVal
 ) {
-	VarList::const_iterator it_V;
-	for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ ) {
+	VarList::const_iterator it_V, end;
+	for( it_V = VARS.begin(), end = VARS.end(); it_V != end; ++it_V ) {
 		if ( it_V->second == VarName ) break;
 	}
-	if ( it_V != VARS.end() ) {
+	if ( it_V != end ) {
 		Entries[ index ][VarName.c_str()] = VarVal.c_str();
 	} else {
 		string const msg( "\tInvalid variable name '" + VarName + "'\n" );
@@ -355,8 +355,8 @@ bool GDB::isVarFloat(int index) {
 
 
 bool GDB::isVarFloat(const string &VarName) {
-  VarList::const_iterator it_V;
-  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ ) {
+  VarList::const_iterator it_V, end;
+  for( it_V = VARS.begin(), end = VARS.end(); it_V != end; ++it_V ) {
 		if ( it_V->second == VarName ) return isVarFloat(it_V->first);
 	}
   return false;
@@ -370,8 +370,8 @@ bool GDB::isVarInt(int index) {
 
 
 bool GDB::isVarInt(const string &VarName) {
-  VarList::const_iterator it_V;
-  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )  {
+  VarList::const_iterator it_V, end;
+  for( it_V = VARS.begin(), end = VARS.end(); it_V != end; ++it_V )  {
 		if ( it_V->second == VarName ) return isVarInt(it_V->first);
 	}
   return false;
@@ -385,9 +385,8 @@ bool GDB::isVarString(int index) {
 
 
 bool GDB::isVarString(const string &VarName) {
-  VarList::const_iterator it_V;
-
-  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )
+  VarList::const_iterator it_V, end;
+  for( it_V = VARS.begin(), end = VARS.end(); it_V != end; ++it_V )
     {
       if ( it_V->second == VarName ) return isVarString(it_V->first);
     }

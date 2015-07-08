@@ -533,7 +533,7 @@ struct ConstraintConfig {
 				}
 			} else if("SEQUENCE"==op) {
 				TR << "SEQUENCE BEGIN" << endl;
-				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before SEQUENCE");
+				if(ssmap.empty()/*size()==0*/) utility_exit_with_message("SECSTRUCT must come before SEQUENCE");
 				while(true) {
 					string buf;
 					while(peek(in).size() && peek(in)[0]=='#') std::getline(in,buf);
@@ -577,7 +577,7 @@ struct ConstraintConfig {
 				// utility_exit_with_message("orasit");
 			} else
 			if("CONSTRAINT"==op) {
-				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
+				if(ssmap.empty()/*size()==0*/) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
 				string atm1,rsd1,atm2,rsd2;
 				Real d,sd;
 				in >> atm1 >> rsd1 >> atm2 >> rsd2 >> d >> sd;

@@ -29,6 +29,7 @@
 
 //// C++ headers
 #include <cstdlib>
+#include <cmath>
 #include <string>
 
 #include <core/id/AtomID.hh>
@@ -134,10 +135,10 @@ Real GunnCost::score_tuple( GunnTuple const& g1, GunnTuple const& g2 ) {
 	if ( d5 > pi_over_2 ) d5 = pi - d5;
 
 	Real cost = 2.92 +
-		c3 * std::log( 1.0 + ( std::abs( g1.q1 - g2.q1 ) + std::abs( g1.q2 - g2.q2 ) ) ) +
-		c2 * std::log( 1.0 + std::abs( g1.q6 - g2.q6 ) ) +
-		c1 * std::log( 1.0 + d3 ) +
-		c4 * std::log( 1.0 + d4 + d5 );
+		c3 * log( 1.0 + ( std::abs( g1.q1 - g2.q1 ) + std::abs( g1.q2 - g2.q2 ) ) ) +
+		c2 * log( 1.0 + std::abs( g1.q6 - g2.q6 ) ) +
+		c1 * log( 1.0 + d3 ) +
+		c4 * log( 1.0 + d4 + d5 );
 	if ( cost < 2.95 ) cost = 100; // too similar
 	return cost;
 }

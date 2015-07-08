@@ -123,7 +123,7 @@ CrystalContactsOperation::is_crystal_contact( core::conformation::Residue const 
 	// is CBeta to CBeta distance less than sum of nbr_radii plus gaps?
 	if (nbr_radius_to_nbr_radius_) {	
 					contact_distance = asymm_residue.nbr_radius() + symm_residue.nbr_radius() + all_gap_;
-					if (asymm_residue.is_polar() && asymm_residue.is_polar()) 
+					if (asymm_residue.is_polar() /*&& asymm_residue.is_polar()*/) 
 						contact_distance += polar_gap_;
 					if (asymm_residue.xyz(atom_asymm).distance_squared(symm_residue.xyz(atom_symm)) <= contact_distance*contact_distance) {
 						is_contact = true;

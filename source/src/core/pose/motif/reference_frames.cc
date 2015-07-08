@@ -166,7 +166,6 @@ Xform get_sidechain_reference_frame(Pose const & p, numeric::Size const & i){
 			//utility_exit_with_message("don't know what to do with unknown AA");
 	}
 	return Xform::BAD_XFORM();
-	utility_exit_with_message("don't know what to do with unknown AA");
  }
 
 Xform get_frame_ala(PoseCR p, SizeCR i){ runtime_assert( p.residue(i).aa() == aa_ala); return Xform().from_four_points(a(p,i,"CB" ),a(p,i,"CB" ),a(p,i,"CA" ),a(p,i,"N"  )); }

@@ -187,7 +187,7 @@ void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packet
 		memcpy(&buf[i], &globalPacketID, 2);  i+=2;
 		memcpy(&buf[i], &packetI, 2);  i+=2;
 		memcpy(&buf[i], &packetCount, 2);  i+=2;
-		memcpy(&buf[i], msg_begin, msg_end-msg_begin);  i+=msg_end-msg_begin;
+		memcpy(&buf[i], msg_begin, msg_end-msg_begin); // i+=msg_end-msg_begin; //THIS VALUE IS NEVER USED. if more after msg added, uncomment!
 		//#ifndef WIN_PYROSETTA
 		sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
 		//#endif

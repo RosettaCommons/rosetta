@@ -41,7 +41,7 @@ WUQueueBuffer::cleanup_reqs() {
        vec.insert( vec.end(), itr->get<2>()->begin(), itr->get<2>()->end() );
        itr = buffer_.erase(itr);
      } else {
-			 itr++;
+			 ++itr;
 		 }
   }
   return vec;

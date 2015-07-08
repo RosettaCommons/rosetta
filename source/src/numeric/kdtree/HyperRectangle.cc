@@ -29,11 +29,12 @@ HyperRectangle::HyperRectangle() {}
 
 HyperRectangle::HyperRectangle(
 	utility::vector1< utility::vector1< Real > > const & pts
-) {
+) :
+	upper_( pts.front() ),
+	lower_( pts.front() )
+{
 	using utility::vector1;
 	typedef vector1< vector1< Real > >::const_iterator iter;
-	upper_ = pts.front();
-	lower_ = pts.front();
 	for ( iter it = pts.begin(), end = pts.end(); it != end; ++it ) {
 		extend( *it );
 	}

@@ -293,7 +293,8 @@ BackrubDDMover::apply( Pose & pose )
 	if( residues_.size() ){// add user-defined residues to the list of backrubbable residues
 		resnums.insert( resnums.begin(), residues_.begin(), residues_.end() );
 		std::sort( resnums.begin(), resnums.end() );
-		std::unique( resnums.begin(), resnums.end() );
+		utility::vector1<Size>::iterator last = std::unique( resnums.begin(), resnums.end() );
+		resnums.erase( last, resnums.end() );
 	}
 
 /// movemap is used by smallmoves

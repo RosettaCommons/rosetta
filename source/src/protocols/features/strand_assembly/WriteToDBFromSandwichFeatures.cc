@@ -804,7 +804,7 @@ WriteToDB_number_of_AAs_in_a_pair_of_edge_strands (
 			break;
 		}
 			//	get_sheet_antiparallel_info is refactored
-		string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
+		//string sheet_antiparallel = get_sheet_antiparallel_info(struct_id, db_session, bs_of_sw_can_by_sh[ii].get_sheet_id());
 		string strand_is_at_edge = is_this_strand_at_edge	(
 									pose,
 									struct_id,

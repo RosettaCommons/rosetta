@@ -46,7 +46,7 @@ WorkUnitSP WUQueue::pop_front() {
 // so much unnecessary copying
 std::vector<WorkUnitSP> WUQueue::pop_all() {
 	std::vector<WorkUnitSP> tmp;
-	for( std::deque<wu_mem_pair>::iterator itr=deque_.begin(); itr != deque_.end(); itr++) {
+	for( std::deque<wu_mem_pair>::iterator itr=deque_.begin(), end = deque_.end(); itr != end; ++itr ) {
 		tmp.push_back( itr->second );
 	}
 	deque_.clear();
@@ -54,7 +54,7 @@ std::vector<WorkUnitSP> WUQueue::pop_all() {
 }
 
 void WUQueue::push_back( std::vector<WorkUnitSP> wulist ) {
-	for( std::vector<WorkUnitSP>::iterator itr=wulist.begin(); itr != wulist.end(); itr++) {
+	for( std::vector<WorkUnitSP>::iterator itr=wulist.begin(), end = wulist.end(); itr != end; ++itr ) {
 		push_back( *itr );
 	}
 }

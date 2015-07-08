@@ -48,9 +48,9 @@ PipeSP at( PipeMapSP p, std::string const & pipename ) {
 // this is a deep copy, every PoseSP is dereferenced and copied
 PipeMapSP clone( PipeMapSP p ) {
 	PipeMapSP newpipemap = PipeMapSP( new PipeMap);
-	for( PipeMap::iterator itr = p->begin(); itr != p->end(); itr ++ ) {
+	for( PipeMap::iterator itr = p->begin(), end=p->end(); itr != end; ++itr ) {
 		(*newpipemap)[itr->first] = PipeSP( new Pipe );
-		for( Pipe::iterator jtr = (*itr->second).begin(); jtr != (*itr->second).end(); jtr++ ){
+		for( Pipe::iterator jtr = (*itr->second).begin(), jend=(*itr->second).end(); jtr != jend; ++jtr ){
 			(*(*newpipemap)[itr->first]).push_back( core::pose::PoseSP( new core::pose::Pose( **jtr ) ) );
 		}
 	}

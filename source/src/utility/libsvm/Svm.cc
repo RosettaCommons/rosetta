@@ -1282,11 +1282,10 @@ public:
 	Qfloat *get_Q(int i, int len) const
 	{
 		Qfloat *data;
-		int start, j;
-		if((start = cache->get_data(i,&data,len)) < len)
-		{
-			for(j=start;j<len;j++)
-				data[j] = (Qfloat)(y[i]*y[j]*(this->*kernel_function)(i,j));
+		int start;
+		if (  (start = cache->get_data( i, &data, len ) ) < len ) {
+			for ( int j = start; j < len; j++ )
+				data[ j ] = ( Qfloat )( y[ i ] * y[ j ] * ( this->*kernel_function )( i, j ) );
 		}
 		return data;
 	}
@@ -1331,10 +1330,10 @@ public:
 	Qfloat *get_Q(int i, int len) const
 	{
 		Qfloat *data;
-		int start, j;
-		if((start = cache->get_data(i,&data,len)) < len)
+		int start;
+		if ( ( start = cache->get_data(i,&data,len)) < len)
 		{
-			for(j=start;j<len;j++)
+			for(int j=start;j<len;j++)
 				data[j] = (Qfloat)(this->*kernel_function)(i,j);
 		}
 		return data;
@@ -1723,7 +1722,7 @@ static void sigmoid_train(
 	double hiTarget=(prior1+1.0)/(prior1+2.0);
 	double loTarget=1/(prior0+2.0);
 	double *t=Malloc(double,l);
-	double fApB,p,q,h11,h22,h21,g1,g2,det,dA,dB,gd,stepsize;
+	double fApB,p,q;
 	double newA,newB,newf,d1,d2;
 	int iter;
 
@@ -1744,9 +1743,9 @@ static void sigmoid_train(
 	for (iter=0;iter<max_iter;iter++)
 	{
 		// Update Gradient and Hessian (use H' = H + sigma I)
-		h11=sigma; // numerically ensures strict PD
-		h22=sigma;
-		h21=0.0;g1=0.0;g2=0.0;
+		double h11=sigma; // numerically ensures strict PD
+		double h22=sigma;
+		double h21=0.0,g1=0.0,g2=0.0;
 		for (i=0;i<l;i++)
 		{
 			fApB = dec_values[i]*A+B;
@@ -1774,13 +1773,13 @@ static void sigmoid_train(
 			break;
 
 		// Finding Newton direction: -inv(H') * g
-		det=h11*h22-h21*h21;
-		dA=-(h22*g1 - h21 * g2) / det;
-		dB=-(-h21*g1+ h11 * g2) / det;
-		gd=g1*dA+g2*dB;
+		double det=h11*h22-h21*h21;
+		double dA=-(h22*g1 - h21 * g2) / det;
+		double dB=-(-h21*g1+ h11 * g2) / det;
+		double gd=g1*dA+g2*dB;
 
 
-		stepsize = 1;		// Line Search
+		double stepsize = 1;		// Line Search
 		while (stepsize >= min_step)
 		{
 			newA = A + stepsize * dA;
@@ -1835,7 +1834,7 @@ static void multiclass_probability(int k, double **r, double *p)
 	int iter = 0, max_iter=max(100,k);
 	double **Q=Malloc(double *,k);
 	double *Qp=Malloc(double,k);
-	double pQp, eps=0.005/k;
+	double eps=0.005/k;
 
 	for (t=0;t<k;t++)
 	{
@@ -1856,7 +1855,7 @@ static void multiclass_probability(int k, double **r, double *p)
 	for (iter=0;iter<max_iter;iter++)
 	{
 		// stopping condition, recalculate QP,pQP for numerical accuracy
-		pQp=0;
+		double pQp=0;
 		for (t=0;t<k;t++)
 		{
 			Qp[t]=0;
@@ -2723,8 +2722,6 @@ static int max_line_len;
 
 static char* readline(FILE *input)
 {
-	int len;
-
 	if(fgets(line,max_line_len,input) == NULL)
 		return NULL;
 
@@ -2734,7 +2731,7 @@ static char* readline(FILE *input)
 		char * newline = (char *) realloc(line,max_line_len);
 		assert( newline ); // realloc returns a null pointer and doesn't free the memory on failure.
 		line = newline;
-		len = (int) strlen(line);
+		int len = (int) strlen(line);
 		if(fgets(line+len,max_line_len-len,input) == NULL)
 			break;
 	}

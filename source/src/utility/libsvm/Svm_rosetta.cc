@@ -49,7 +49,7 @@ platform::Size Svm_rosetta::get_nr_class(){
 	return((platform::Size)svm_get_nr_class(svm_model_));
 }
 
-vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_rosettaOP> features){
+vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_rosettaOP> & features){
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));
 	struct svm_node *x = new svm_node[features.size()+1];
@@ -71,7 +71,7 @@ vector1 < platform::Real > Svm_rosetta::predict_probability(vector1 <Svm_node_ro
 	return(probs_to_return);
 }
 
-platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> features) 
+platform::Real Svm_rosetta::predict( const vector1 <Svm_node_rosettaOP> & features) 
 {
 	// TL 5/2013: Changed to use new and delete[] to avoid problems
 	//struct svm_node *x = (struct svm_node *) malloc((features.size()+1)*sizeof(struct svm_node));

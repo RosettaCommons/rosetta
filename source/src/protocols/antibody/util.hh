@@ -151,7 +151,7 @@ CDR_H3_cter_filter(
 /// This is in the North/Dunbrack CDR definition.
 /// Avoid this definition if you can and talk to brain.  This is currently used for a quick filtering for design. 
 bool
-is_H3_rama_kinked(std::string const rama);
+is_H3_rama_kinked(std::string const & rama);
 
 
 

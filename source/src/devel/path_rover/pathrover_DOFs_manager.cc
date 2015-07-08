@@ -200,8 +200,7 @@ void DOFs_manager::apply_uniform_sample_all(core::pose::Pose& pose) // apply uni
   bool local_debug = false;//true;
   assert(_is_initialized);
   // iteratoe over phi dofs:
-  std::set<DOF_info>::const_iterator iter;
-  for(iter = _free_phi_list.begin();	iter != _free_phi_list.end(); iter++)
+  for( std::set<DOF_info>::const_iterator iter = _free_phi_list.begin(), end = _free_phi_list.end(); iter != end; ++iter)
     {
     double new_val = numeric::nonnegative_principal_angle_degrees(
 	iter->uniform_sample(pose.phi(iter->poseres_id)) );
@@ -212,7 +211,7 @@ void DOFs_manager::apply_uniform_sample_all(core::pose::Pose& pose) // apply uni
       pose.set_phi(iter->poseres_id, new_val);
     }
   // iterate over psi dofs:
-  for(iter = _free_psi_list.begin(); iter != _free_psi_list.end(); iter++)
+  for( std::set<DOF_info>::const_iterator iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter )
     {
       if(local_debug)
 	cout << "applying psi sampling to psi(" << iter->poseres_id << ")" << endl;
@@ -237,7 +236,7 @@ void DOFs_manager::apply_uniform_sample_random_DOF(core::pose::Pose& pose)
     // very naive finding of Kth-element // TODO: better be changed - inefficient
     iter = _free_phi_list.begin();
     for( unsigned int i=1; i < dof_index; i++)
-      iter++;
+      ++iter;
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->uniform_sample(pose.phi(iter->poseres_id)) );
     pose.set_phi(iter->poseres_id, new_val);
@@ -246,7 +245,7 @@ void DOFs_manager::apply_uniform_sample_random_DOF(core::pose::Pose& pose)
     // very naive finding of Kth-element // TODO: better be changed - inefficient
     iter = _free_psi_list.begin();
     for(unsigned int i=1; i < dof_index; i++)
-      iter++;
+      ++iter;
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->uniform_sample(pose.psi(iter->poseres_id)) );
     pose.set_psi(iter->poseres_id, new_val);
@@ -260,14 +259,13 @@ void DOFs_manager::apply_gaussian_sample_all(core::pose::Pose& pose)
 {
   assert(_is_initialized);
   // iteratoe over phi dofs:
-  std::set<DOF_info>::const_iterator iter;
-  for(iter = _free_phi_list.begin(); iter != _free_phi_list.end(); iter++) {
+  for ( std::set<DOF_info>::const_iterator iter = _free_phi_list.begin(), end = _free_phi_list.end(); iter != end; ++iter ) {
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->gaussian_sample(pose.phi(iter->poseres_id)) );
     pose.set_phi(iter->poseres_id, new_val);
   }
   // iterate over psi dofs:
-  for(iter = _free_psi_list.begin(); iter != _free_psi_list.end(); iter++) {
+  for( std::set<DOF_info>::const_iterator iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter ) {
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->gaussian_sample(pose.psi(iter->poseres_id)) );
     pose.set_psi(iter->poseres_id, new_val);
@@ -288,7 +286,7 @@ void DOFs_manager::apply_gaussian_sample_random_DOF(core::pose::Pose& pose)
     // very naive finding of Kth-element // TODO: better be changed - inefficient
     iter = _free_phi_list.begin();
     for(unsigned int i=1; i < dof_index; i++)
-      iter++;
+      ++iter;
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->uniform_sample(pose.phi(iter->poseres_id)) );
     pose.set_phi(iter->poseres_id, new_val);
@@ -297,7 +295,7 @@ void DOFs_manager::apply_gaussian_sample_random_DOF(core::pose::Pose& pose)
     // very naive finding of Kth-element // TODO: better be changed - inefficient
     iter = _free_psi_list.begin();
     for(unsigned int i=1; i < dof_index; i++)
-      iter++;
+      ++iter;
     double new_val = numeric::nonnegative_principal_angle_degrees(
       iter->uniform_sample(pose.psi(iter->poseres_id)) );
     pose.set_psi(iter->poseres_id, new_val);
@@ -316,12 +314,12 @@ DOFs_manager::get_dofs_values_vector(core::pose::Pose const& pose) const
   assert(_is_initialized);
   std::vector<double> return_vector(this->_n_free_dofs);
   int k = 0;
-  std::set<DOF_info>::const_iterator iter;
+  std::set<DOF_info>::const_iterator iter, end;
   // iterate over phi dofs:
-  for(iter = _free_phi_list.begin(); iter != _free_phi_list.end(); iter++) {
+  for (iter = _free_phi_list.begin(), end = _free_phi_list.end(); iter != end; ++iter ) {
     return_vector[k++] = pose.phi(iter->poseres_id);
   }
-  for(iter = _free_psi_list.begin(); iter != _free_psi_list.end(); iter++) {
+  for(iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter ) {
     return_vector[k++] = pose.psi(iter->poseres_id);
   }
   return return_vector; // TODO: efficiency? copies the vectror... can use an output byref parameter instead
@@ -336,12 +334,12 @@ DOFs_manager::apply_dofs_values_vector(core::pose::Pose& pose, std::vector<doubl
 {
   assert(_is_initialized);
   int k = 0;
-  std::set<DOF_info>::const_iterator iter;
+  std::set<DOF_info>::const_iterator iter, end;
   // iterate over phi dofs:
-  for(iter = _free_phi_list.begin(); iter != _free_phi_list.end(); iter++) {
+  for(iter = _free_phi_list.begin(), end =  _free_phi_list.end(); iter != end; ++iter ) {
     pose.set_phi(iter->poseres_id, values_vector[k++]);
   }
-  for(iter = _free_psi_list.begin(); iter != _free_psi_list.end(); iter++) {
+  for(iter = _free_psi_list.begin(), end = _free_psi_list.end(); iter != end; ++iter ) {
     pose.set_psi(iter->poseres_id, values_vector[k++]);
   }
 } // TODO: not implemented!!! TODO: Is this still true?

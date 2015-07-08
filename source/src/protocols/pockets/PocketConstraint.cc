@@ -80,7 +80,7 @@ void PocketConstraint::read_def(
   core::scoring::func::FuncFactory const & /* func_factory */)
 {
 	init(pose);
-	std::string tmp;
+	//std::string tmp;
 	std::string resid("");
 	if ((line_stream >> weight_>>resid )){
 		residues_ = protocols::pockets::PocketGrid::getRelaxResidues(pose, resid);

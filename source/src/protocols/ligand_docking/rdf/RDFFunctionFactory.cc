@@ -106,10 +106,10 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 utility::vector1<std::string> RDFFunctionFactory::get_all_function_names()
 {
 	utility::vector1<std::string> collection;
-	RDFFunctionCreatorMap::const_iterator iter = types_.begin();
-	while ( iter != types_.end() ) {
+	RDFFunctionCreatorMap::const_iterator iter = types_.begin(), end = types_.end();
+	while ( iter != end ) {
 		collection.push_back(iter->first);
-		iter++;
+		++iter;
 	}
 	return collection;
 

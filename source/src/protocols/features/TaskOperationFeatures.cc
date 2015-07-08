@@ -264,7 +264,7 @@ TaskOperationFeatures::report_features(
 		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 
 		for(std::map<core::Size, PackerTaskCOP>::iterator task = tasks.begin(),
-				task_end = tasks.end(); task != task_end; task++) {
+				task_end = tasks.end(); task != task_end; ++task) {
 			bool const pack = (task->second)->pack_residue(resNum);
 			bool const design = (task->second)->design_residue(resNum);
 			Size taskop_id = task->first;

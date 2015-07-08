@@ -298,7 +298,7 @@ CDRSetOptionsParser::set_cdr_set_include_options(std::string const type, vector1
 			item[1] = tolower(item[1]);
 			cdr_options_->include_only_species_add(item);
 		}
-		else if(type == "GERMLINE" || "GERMLINES") {
+		else if(type == "GERMLINE" || type == "GERMLINES") {
 			cdr_options_->include_only_germlines_add(item);
 		}
 		else{utility_exit_with_message("Unrecognized cluster option");}
@@ -323,7 +323,7 @@ CDRSetOptionsParser::clear_cdr_set_include_options(const std::string type) {
 	else if(type == "SPECIES"){
 		cdr_options_->include_only_species_clear();
 	}
-	else if(type == "GERMLINE" || "GERMLINES") {
+	else if(type == "GERMLINE" || type == "GERMLINES") {
 		cdr_options_->include_only_germlines_clear();
 	}
 }
@@ -353,7 +353,7 @@ CDRSetOptionsParser::set_cdr_set_exclude_options(const std::string type, vector1
 			item[1] = tolower(item[1]);
 			cdr_options_->exclude_species_add(item);
 		}
-		else if(type == "GERMLINE" || "GERMLINES") {
+		else if(type == "GERMLINE" || type == "GERMLINES") {
 			cdr_options_->exclude_germlines_add(item);
 		}
 		else{
@@ -374,7 +374,7 @@ CDRSetOptionsParser::clear_cdr_set_exclude_options(const std::string type) {
 	else if(type == "SPECIES"){
 		cdr_options_->exclude_species_clear();
 	}
-	else if(type == "GERMLINE" || "GERMLINES") {
+	else if(type == "GERMLINE" || type == "GERMLINES") {
 		cdr_options_->exclude_germlines_clear();
 	}
 }

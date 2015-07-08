@@ -1169,12 +1169,12 @@ namespace motif {
 			resscores [jr+1000000] += score;
 			count += 1.0;
 			     if( (sm.dssp1()=='P' && sm.dssp2()=='P') ) pp += 1.0;
-			else if( (sm.ss1()=='H' && sm.ss2()=='H') || (sm.ss1()=='H' && sm.ss2()=='H') ) hh += 1.0;
+			else if( (sm.ss1()=='H' && sm.ss2()=='H') /*|| (sm.ss1()=='H' && sm.ss2()=='H')*/ ) hh += 1.0;
 			else if( (sm.ss1()=='H' && sm.ss2()=='E') || (sm.ss1()=='E' && sm.ss2()=='H') ) he += 1.0;
 			else if( (sm.ss1()=='H' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='H') ) hl += 1.0;
-			else if( (sm.ss1()=='E' && sm.ss2()=='E') || (sm.ss1()=='E' && sm.ss2()=='E') ) ee += 1.0;
+			else if( (sm.ss1()=='E' && sm.ss2()=='E') /*|| (sm.ss1()=='E' && sm.ss2()=='E')*/ ) ee += 1.0;
 			else if( (sm.ss1()=='E' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='E') ) el += 1.0;
-			else if( (sm.ss1()=='L' && sm.ss2()=='L') || (sm.ss1()=='L' && sm.ss2()=='L') ) ll += 1.0;
+			else if( (sm.ss1()=='L' && sm.ss2()=='L') /*|| (sm.ss1()=='L' && sm.ss2()=='L')*/ ) ll += 1.0;
 			else std::cerr << "BAD SS IN MOTIF " << sm.ss1() << " " << sm.ss2() << endl;
 		 }
 
@@ -1397,8 +1397,9 @@ namespace motif {
 		rt6[6] = rt6[6]<0.0 ? rt6[6]+360.0 : rt6[6];
 		if(!hasher_.contains(rt6)){
 			return std::numeric_limits<Key>::max();
-			cout << rt6 << endl;
-			utility_exit_with_message("out of bounds");
+			// AMW: cppcheck flags these statements as following a return
+			/*cout << rt6 << endl;
+			utility_exit_with_message("out of bounds");*/
 		}
 		return hasher_.bin_index(rt6);
 	 }
@@ -2625,10 +2626,13 @@ namespace motif {
 			int n = mh->get_matching_motifs(opt,hits,newhits);
 			// cout << "MotifHashManager::get_matching_motifs " << hits.size() << " " << newhits.size() << endl;
 			count += n;
-			if( opt.pose1()!=opt.pose2() && mh->type1()!=mh->type2() ){
+			// AMW: if you want to re-enable the below tracer, reenable this conditional!
+			// but as it was, the inside was actually doing nothing because n
+			// would be reassigned after being increased
+			//if( opt.pose1()!=opt.pose2() && mh->type1()!=mh->type2() ){
 				// cout << "==================== swapping motif pose order ==================" << endl;
-				n += mh->get_matching_motifs(*optswap,hits,newhits);
-			}
+				//n += mh->get_matching_motifs(*optswap,hits,newhits);
+			//}
 			// TR << n << " new hits from mset: " << mset << endl;
 			// newhits.dump_motifs_pdb(utility::file_basename(fname)+"_motifs"+string_of(++count)+".pdb.gz");
 		}

@@ -192,6 +192,7 @@ void kiss_fftnd_state::resize(std::vector<int> const &n, int inv) {
 kiss_fftndr_state::kiss_fftndr_state() { }
 
 kiss_fftndr_state::kiss_fftndr_state(std::vector<int> const &n, int inv) {
+	inverse_ = inv;
 	resize(n,inv);
 }
 

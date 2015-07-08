@@ -393,7 +393,7 @@ bool CoordConstraintClaimer::read_tag( std::string tag, std::istream& is ) {
 		is >> root_;
 	} else if ( tag == "ASK_FOR_ROOT" ) {
 		bLocal_ = true;
-		std::string label;
+		//std::string label;
 		is >> root_from_label_;
 	} else if ( tag == "CST_FROM_INPUT_POSE" ) {
 		bRegenerateFromInputPose_ = true;

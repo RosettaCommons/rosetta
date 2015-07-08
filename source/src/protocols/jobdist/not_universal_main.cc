@@ -74,8 +74,8 @@ bool pose_matches_user_tag(
 	) {
 		if ( this_id.find( *it ) != std::string::npos ) {
 			break;
-			valid_tag = true;
-			tr.Debug << "processing Pose with user_tag " << this_id << std::endl;
+			//valid_tag = true;
+			//tr.Debug << "processing Pose with user_tag " << this_id << std::endl;
 		}
 	} // for user_tags
 

@@ -170,6 +170,7 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 		utility::io::izstream result_file( result_file_name );
 		result_file >> result;
 	}
+	// AMW: cppcheck does not see that delete_result_cmd is used in the next line?
 	std::string const delete_result_cmd( "rm -f "+work_dir_+"/__RESULT" );
 	ret = system( delete_result_cmd.c_str() );
 	if(ret){
@@ -182,6 +183,7 @@ core::Real ExternalEvaluator::apply( core::pose::Pose& pose ) const {
 
 ExternalEvaluator::~ExternalEvaluator() {
 	std::string command = "rm -Rf "+work_dir_;
+	// AMW: cppcheck does not see that command is used in the next line?
 	int const ret(system(command.c_str()));
 	if(ret){
 		tr.Warning << "Deleting work directory '" << work_dir_ << "' failed!" << endl;

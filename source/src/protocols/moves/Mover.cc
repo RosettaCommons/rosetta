@@ -147,7 +147,7 @@ MoverSP Mover::create() {
 }
 // elscripts functions
 void Mover::apply( core::io::serialization::PipeMap & pmap ) {
-	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(); itr != pmap["input"]->end(); itr++ ) {
+	for( core::io::serialization::Pipe::iterator itr = pmap["input"]->begin(), end = pmap["input"]->end(); itr != end; ++itr ) {
 		apply( **itr );
 	}
 }

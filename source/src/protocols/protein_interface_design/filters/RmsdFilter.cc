@@ -490,7 +490,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 }
 
-core::Real atom_distance( core::conformation::Residue const & r1, std::string const a1, core::conformation::Residue const & r2, std::string const a2 ){
+core::Real atom_distance( core::conformation::Residue const & r1, std::string const & a1, core::conformation::Residue const & r2, std::string const & a2 ){
 return( r1.xyz( a1 ).distance( r2.xyz( a2 ) ) );
 }
             

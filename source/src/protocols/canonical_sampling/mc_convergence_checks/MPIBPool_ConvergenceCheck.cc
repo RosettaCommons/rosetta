@@ -783,7 +783,7 @@ void MPIBPool_RMSD::master_go(){
     core::Size num_poses_added = 0;
     for ( core::Size index_new_pose = 0; index_new_pose < transfer_buf_.size_; index_new_pose++) {
       if ( num_poses_added == 0 ){ //first will always go in!
-	std::string new_tag;
+	//std::string new_tag;
 	//put coordinates in temp Farray
 	array_to_farray( 0 );
 	add_pose_to_pool();

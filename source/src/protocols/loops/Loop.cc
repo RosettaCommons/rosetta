@@ -81,7 +81,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 	cut_ = 0;
 
 	if ( start_ > 1 && stop_ < nres ){
-		char ss;
+		//char ss;
 		Size nfail( 0 );
 		do {
 			nfail++;
@@ -92,7 +92,7 @@ Loop::choose_cutpoint( core::pose::Pose const & pose ) {
 					break;
 				}
 			}
-			ss = pose.secstruct( cut_ );
+			char ss = pose.secstruct( cut_ );
 
 			// First try to put cutpoint outside of secondary structure
 			if( nfail < 20 ) if( ( ss == 'H' || ss == 'E' ) ) continue;

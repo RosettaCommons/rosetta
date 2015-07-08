@@ -111,7 +111,7 @@ void SilentFileInputter::parse_def( utility::lua::LuaObject const & def,
 		sfd_.read_file( (*i).to<std::string>() );
 	}
 	utility::vector1< std::string > tags = sfd_.tags();
-	for( utility::vector1< std::string >::iterator itr = tags.begin(); itr != tags.end(); itr++ ) {
+	for( utility::vector1< std::string >::iterator itr = tags.begin(), end = tags.end(); itr != end; ++itr ) {
 		tags_.push_back( std::pair<int, std::string> ( 0, *itr) );
 	}
 }

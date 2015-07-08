@@ -407,7 +407,6 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 	F1 = atom1.xyz().cross( atom2.xyz() );
 	F2 = atom1.xyz() - atom2.xyz();
 	Real d2,frac;
-	int disbin;
 
 	d2 = atom1.xyz().distance_squared( atom2.xyz() );
 
@@ -415,10 +414,8 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 
 		// bin by distance:
 		Real const d2_bin = d2 * get_bins_per_A2_;
-		disbin = static_cast< int >( d2_bin ) + 1;
+		int disbin = static_cast< int >( d2_bin ) + 1;
 		frac = d2_bin - ( disbin - 1 );
-
-		Real deriv = 0.0;
 
 		int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
 		l2 = l1 + 1;
@@ -430,7 +427,7 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 		Real e1 = e11 + e21;
 		Real e2 = e12 + e22;
 
-		deriv = fa_weight_ * ( e1 + frac * ( e2 - e1 ) );
+		Real deriv = fa_weight_ * ( e1 + frac * ( e2 - e1 ) );
 
 		return deriv / std::sqrt( d2 );
 

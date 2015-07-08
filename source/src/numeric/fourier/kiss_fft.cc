@@ -35,7 +35,8 @@ kiss_fft_cpx* get_scratch_buff( size_t nbuf ) {
 		nscratchbuf = nbuf;
 	}
 	// free memory
-	if (nbuf <= 0) {
+	// amw: do not check <= 0 as it is a size_t, eq is sufficient
+	if ( nbuf == 0 ) {
 		delete [] scratchbuf;
 		scratchbuf = NULL;
 		nscratchbuf = 0;
@@ -51,7 +52,7 @@ kiss_fft_cpx* get_tmp_buff( size_t nbuf ) {
 		ntmpbuf = nbuf;
 	}
 	// free memory
-	if (nbuf <= 0) {
+	if (nbuf == 0) {
 		delete [] tmpbuf;
 		tmpbuf = NULL;
 		ntmpbuf = 0;
@@ -215,14 +216,13 @@ void kf_bfly5(
 
 // perform the butterfly for one stage of a mixed radix FFT
 void kf_bfly_generic(
-		kiss_fft_cpx * Fout,
-		const size_t fstride,
-		const kiss_fft_cfg st,
-		int m,
-		int p
-		)
-{
-	int u,k,q1,q;
+	kiss_fft_cpx * Fout,
+	const size_t fstride,
+	const kiss_fft_cfg st,
+	int m,
+	int p
+) {
+	int u, q1, q;
 	kiss_fft_cpx * twiddles = st->twiddles();
 	kiss_fft_cpx t;
 	int Norig = st->nfft();
@@ -230,21 +230,21 @@ void kf_bfly_generic(
 	//CHECKBUF(scratchbuf,nscratchbuf,p);
 	kiss_fft_cpx *scratchbuf = get_scratch_buff(p);
 
-	for ( u=0; u<m; ++u ) {
-		k=u;
-		for ( q1=0 ; q1<p ; ++q1 ) {
-			scratchbuf[q1] = Fout[ k  ];
+	for ( u = 0; u < m; ++u ) {
+		int k = u;
+		for ( q1 = 0 ; q1 < p; ++q1 ) {
+			scratchbuf[ q1 ] = Fout[ k ];
 			k += m;
 		}
 
-		k=u;
-		for ( q1=0 ; q1<p ; ++q1 ) {
-			int twidx=0;
-			Fout[ k ] = scratchbuf[0];
-			for (q=1;q<p;++q ) {
+		k = u;
+		for ( q1 = 0 ; q1 < p ; ++q1 ) {
+			int twidx = 0;
+			Fout[ k ] = scratchbuf[ 0 ];
+			for ( q = 1; q < p; ++q ) {
 				twidx += fstride * k;
-				if (twidx>=Norig) twidx-=Norig;
-				t = scratchbuf[q] * twiddles[twidx];
+				if ( twidx >= Norig ) twidx -= Norig;
+				t = scratchbuf[ q ] * twiddles[ twidx ];
 				Fout[ k ] += t;
 			}
 			k += m;
@@ -253,16 +253,16 @@ void kf_bfly_generic(
 }
 
 void kf_work(
-		kiss_fft_cpx * Fout,
-		const kiss_fft_cpx * f,
-		const size_t fstride,
-		int in_stride,
-		int * factors,
-		const kiss_fft_cfg st
-		) {
+	kiss_fft_cpx * Fout,
+	const kiss_fft_cpx * f,
+	const size_t fstride,
+	int in_stride,
+	int * factors,
+	const kiss_fft_cfg st
+) {
 	kiss_fft_cpx * Fout_beg=Fout;
-	const int p=*factors++; /* the radix  */
-	const int m=*factors++; /* stage's fft length/p */
+	const int p = *factors++; /* the radix  */
+	const int m = *factors++; /* stage's fft length/p */
 	const kiss_fft_cpx * Fout_end = Fout + p*m;
 
 	if (m==1) {

@@ -1329,9 +1329,9 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
-		int jump_nbr ( (*it).first );
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
+			int jump_nbr ( (*it).first );
 			trans_jumps.push_back( jump_nbr );
 		}
 	}
@@ -1432,9 +1432,9 @@ RigidBodyMover()
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
-		int jump_nbr ( (*it).first );
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
+			int jump_nbr ( (*it).first );
 			trans_jumps.push_back( jump_nbr );
 		}
 	}
@@ -1518,9 +1518,9 @@ RigidBodyDofRandomTransMover::RigidBodyDofRandomTransMover(
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
 	for ( it = it_begin; it != it_end; ++it ) {
-		int jump_nbr ( (*it).first );
 		core::conformation::symmetry::SymDof dof ( (*it).second );
 		if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
+			int jump_nbr ( (*it).first );
 			trans_jumps.push_back( jump_nbr );
 		}
 	}

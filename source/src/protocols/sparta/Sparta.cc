@@ -89,7 +89,7 @@ Sparta::SpartaLib* Sparta::lib_instance_;
 using namespace core;
 using namespace std;
 Sparta::SpartaLib::SpartaLib() {
-	string libvar;
+	//string libvar;
 	if( getenv( "SPARTA_DIR" ) == NULL )	{
 		SPARTA_DIR = ".";
 	} else{
@@ -265,14 +265,14 @@ void Sparta::SpartaLib::init() {
 	string B62_fname = TAB_DIR + slash_char+ "BLOSUM62.tab";
 	tr.Info << "Reading BLOSUM62 Table from " << B62_fname << endl;
 	B62.loadGDB( B62_fname );
-	for ( GDB::EntryList::iterator it = B62.Entries.begin(); it != B62.Entries.end(); it++ ) {
+	for ( GDB::EntryList::iterator it = B62.Entries.begin(), end = B62.Entries.end(); it != end; ++it ) {
 		string aa = (it->second)["RESNAME"];
 		BLOSUM_62[aa]=BlosumMatrix::mapped_type( AAlist.size(), 0 );
 	}
-	for ( GDB::EntryList::iterator it = B62.Entries.begin(); it != B62.Entries.end(); it++ ) {
+	for ( GDB::EntryList::iterator it = B62.Entries.begin(), end = B62.Entries.end(); it != end; ++it ) {
 		//int index=it->first;
 		string aa = (it->second)["RESNAME"];
-		for ( GDB::GDB_Entry::iterator itS = (it->second).begin(); itS != (it->second).end(); itS++ ) {
+		for ( GDB::GDB_Entry::iterator itS = (it->second).begin(), endS = (it->second).end(); itS != endS; ++itS ) {
 			if ( itS->first == "RESNAME" ) continue;
 			size_t index( AAlist.find( itS->first ) );
 			runtime_assert( index  != string::npos);
@@ -281,7 +281,7 @@ void Sparta::SpartaLib::init() {
 	} // end of assigning sequence homology vector (using blosum62 matrix)
 
 	tr.Info << "Load ANN parameters ... ";
-	for ( AtomNameList::iterator itN = aN.begin(); itN != aN.end(); itN++ ) {
+	for ( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 		string atomName = itN->second;
 		if ( atomName == "H" ) atomName="HN";
 		SPARTA_ANN[atomName].init(113,30,1,9,6,3,TAB_DIR,atomName);
@@ -331,11 +331,11 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
   int cnt = 0;
   // format the sequence read from PDB coordinates
   sequence="";
-  for ( ResidList::iterator itN = residList.begin(); itN != residList.end(); itN++ ) {
+  for ( ResidList::iterator itN = residList.begin(), end = residList.end(); itN != end; ++itN ) {
     sequence += itN->second;
     cnt++;
     if( cnt%10 == 0 ) sequence += " "; //separator for each 10 residues
-		itN++;
+		++itN;
     if(itN != residList.end()) {//add "?" if sequence numbers are not consecutive
 			int j = itN->first;
 			--itN;
@@ -406,7 +406,7 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 		inTab.Entries[index]["SOURCE"] = inName.substr(pos0,pos1-pos0);
 
 		//Ring current shifts
-		for( AtomNameList::iterator itN_unordered = aN.begin(); itN_unordered != aN.end(); itN_unordered++)	{
+		for( AtomNameList::iterator itN_unordered = aN.begin(), end = aN.end(); itN_unordered != end; ++itN_unordered )	{
 			string name = itN_unordered->second;
 			if( name == "H" ) {
 				name = "HN";
@@ -611,8 +611,8 @@ void Sparta::SpartaLib::getResInfo( bool create_output )
 	if ( create_output ) inTab.saveGDB(PRED_DIR+slash_char+inName.substr(pos0,pos1-pos0) + "_in.tab");
 
   if ( tr.Trace.visible() ) {
-		ANN::ANN_Matrix::iterator itX;
-		for(itX = ANN_IN_MTX.begin(); itX != ANN_IN_MTX.end(); itX++) {
+		ANN::ANN_Matrix::iterator itX, end;
+		for(itX = ANN_IN_MTX.begin(), end = ANN_IN_MTX.end(); itX != end; ++itX) {
 			for(int i=0; i< (int)(itX->second).size();i++)
 				tr.Trace << (itX->first) << " " << (itX->second)[i] << std::endl;
 		}
@@ -704,7 +704,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	//start = clock();
 	tr.Info << "ANN prediction ..." << endl;
-	for( AtomNameList::iterator itN = aN.begin(); itN != aN.end(); itN++ ) {
+	for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 		string atomName = itN->second;
 		if( atomName == "H" ) atomName="HN";
 
@@ -726,7 +726,7 @@ GDB Sparta::SpartaLib::get_ANN_data( bool create_output ) {
 
 	float RC, RCadj, pred_2nd_shift, pred_shift/*, HB*/;
 	for ( int i = r1+1; i <= rN-1; i++ ) { //olange: we have not loaded the ANN with stuff for residue 1 or rN as it would be the 0,1,2 triplett.. ignore here TOO!
-		for( AtomNameList::iterator itN = aN.begin(); itN != aN.end(); itN++)	{
+		for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN)	{
 			string atomName = itN->second;
 			if( atomName == "H" ) atomName="HN";
 			int index = PRED_SUM.Entries.size()+1;
@@ -902,7 +902,7 @@ void Sparta::SpartaLib::init_PredErrorSurface()
 {
   int step = 5;
 
-  for( AtomNameList::iterator itN = aN.begin(); itN != aN.end(); itN++ ) {
+  for( AtomNameList::iterator itN = aN.begin(), end = aN.end(); itN != end; ++itN ) {
 		string atomName = itN->second;
 		if( atomName == "H" ) atomName="HN";
 

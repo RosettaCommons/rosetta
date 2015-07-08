@@ -64,8 +64,8 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 		side2_chains.insert(pose::get_chain_id_from_chain(sides[2][i], pose));
 	}
 	
-	debug_assert (side1_chains.size() >= 1);
-	debug_assert (side2_chains.size() >= 1);
+	debug_assert (!side1_chains.empty()/*size() >= 1*/);
+	debug_assert (!side2_chains.empty()/*size() >= 1*/);
 	
 	std::set<Size> side1_residues, side2_residues;
 	
@@ -98,8 +98,8 @@ select_interface_residues(core::pose::Pose const & pose, std::string interface, 
 	std::set<Size> interface_residues =  mv_interface_set.value();
 	
 	vector1<bool> residues(pose.total_residue(), false);
-	std::set<Size>::const_iterator it;
-	for (it = interface_residues.begin(); it != interface_residues.end(); it++) {
+	std::set<Size>::const_iterator it, end ;
+	for (it = interface_residues.begin(), end = interface_residues.end(); it != end; ++it ) {
 		residues[*it] = true;
 	}
 	

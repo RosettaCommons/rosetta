@@ -134,11 +134,10 @@ ChainbreakEnergy::eval_atom_derivative(
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
 
-		Size max_res = pose.n_residue();
 		SymmetricConformation const & symm_conf(
 				dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		max_res = symm_info->num_independent_residues() - 1;
+		Size max_res = symm_info->num_independent_residues() - 1;
 		if( id.rsd() > max_res ) return;
 	}
 

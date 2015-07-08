@@ -238,11 +238,9 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 		mm.set( TorsionID(seqpos  , BB, 3), true );
 		mm.set( TorsionID(seqpos  , BB, 4), true );
 
-		utility::vector1< DihedralSet* >::const_iterator lib_iter = library.begin();
-		for ( ; lib_iter!=library.end(); lib_iter++ ) {
+		for ( utility::vector1< DihedralSet* >::const_iterator lib_iter = library.begin(), end = library.end(); lib_iter != end; ++lib_iter ) {
 
 			DihedralSet const *dihedrals(*lib_iter);
-			bool accept_rotamer( true ) ;
 
 			// Set mainchain dihedral angles (zeta, alpha - epsilon)
 			Size const nbb( rsd.n_mainchain_atoms() );
@@ -259,7 +257,7 @@ debug_assert( existing_residue.is_NA() && concrete_residue->is_NA() );
 			// consider rotamers only if P-O3' distance is "similar" to that in the original structure.
 			if ( fabs( target_distance - rot_P_O3.length() ) <  distance_cutoff ) {
 
-				accept_rotamer = true;
+				bool accept_rotamer = true;
 
 				if ( minimize_rotamers ) {
 // 					mini_pose.dump_pdb( "before_"+string_of(rotamers.size())+".pdb" );
@@ -592,8 +590,7 @@ build_dna_rotamers(
 
 			// Close stream and free library memory
 			lib_stream.close();
-			utility::vector1< DihedralSet* >::iterator lib_iter = library.begin();
-			for ( ; lib_iter!=library.end(); lib_iter++ )
+			for ( utility::vector1< DihedralSet* >::iterator lib_iter = library.begin(), end = library.end(); lib_iter!=end; ++lib_iter )
 				delete( *lib_iter );
 
 	} else {

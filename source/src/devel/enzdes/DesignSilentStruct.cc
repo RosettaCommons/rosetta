@@ -228,7 +228,7 @@ DesignSilentStruct::calculate_additional_info(
 
   //then write out the relevant scoreterms (and potentially pose metrics) for each of the special residues
 	Size spec_res_counter(0);
-  for( utility::vector1<Size>::const_iterator res_it = special_res.begin(); res_it != special_res.end(); res_it++ ){
+  for( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ){
 
     spec_res_counter++;
     //for convenience, the sequence number of the residue will be written out
@@ -267,8 +267,8 @@ DesignSilentStruct::calculate_additional_info(
     if( res_calc_it != calculators.end() ){
 
       utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-      for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin();
-					 calc_it != calculators_this_res.end(); calc_it++ ){
+      for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end();
+					 calc_it != end; ++calc_it ) {
 
 				std::string res_calc_name = spec_res_name + "_" + calc_it->first;
 				int width = std::max( 10, (int) res_calc_name.length() + 3 );

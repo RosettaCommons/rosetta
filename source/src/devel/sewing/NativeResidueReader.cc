@@ -55,7 +55,7 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 
 	//Read all residue lines here
 	int res_num = 0;
-	std::string res_name;
+	//std::string res_name;
 	core::conformation::ResidueOP new_rsd;
 	while ( input_stream.good() ){
 		std::string line;

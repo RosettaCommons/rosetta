@@ -339,16 +339,16 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
         dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
-	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
+	//std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 
 	// Save jumps that are allowed to move and have a translation dof
   std::map< Size, core::conformation::symmetry::SymDof >::iterator it;
   std::map< Size, core::conformation::symmetry::SymDof >::iterator it_begin = dofs.begin();
   std::map< Size, core::conformation::symmetry::SymDof >::iterator it_end = dofs.end();
   for ( it = it_begin; it != it_end; ++it ) {
-    int jump_nbr ( (*it).first );
     core::conformation::symmetry::SymDof dof ( (*it).second );
     if ( dof.allow_dof(1) || dof.allow_dof(2) || dof.allow_dof(3) ) {
+    		int jump_nbr ( (*it).first );
 			AllowSlideJumpMap_[jump_nbr] = true;
     }
   }

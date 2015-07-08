@@ -354,7 +354,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 	runtime_assert( input_tags_.size() >= 1 );
 	runtime_assert( copy_DOF_ );
 
-	std::string const working_sequence = working_parameters_->working_sequence();
+	//std::string const working_sequence = working_parameters_->working_sequence();
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = working_parameters_->input_res_vectors();
 	std::map< core::Size, core::Size > & full_to_sub( working_parameters_->full_to_sub() );
 	utility::vector1< pose::Pose > start_pose_list;
@@ -856,9 +856,9 @@ StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 	std::map< Size, Size > const reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  working_parameters_->working_moving_suite() );
 
 	TR.Debug << "BEFORE VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
-	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin();
-				it != reference_res_for_each_virtual_sugar.end();
-				it++ ){
+	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin(),
+				end = reference_res_for_each_virtual_sugar.end();
+				it != end; ++it ){
 		Size const & virtual_sugar_res = it->first;
 		Size const & reference_res = it->second;
 

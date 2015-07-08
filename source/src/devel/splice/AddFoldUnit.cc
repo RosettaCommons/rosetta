@@ -82,7 +82,8 @@ FoldUnitUtils::entry_subset() const{
 		for( UM::const_iterator it = entry_pairs_quick_access_N_C_.cbegin(); it != entry_pairs_quick_access_N_C_.cend(); ++it )
 			bb_dof_entries.push_back( it->first );
 		sort( bb_dof_entries.begin(), bb_dof_entries.end() );
-		unique( bb_dof_entries.begin(), bb_dof_entries.end() );
+		vector1< Size >::iterator last = unique( bb_dof_entries.begin(), bb_dof_entries.end() );
+		bb_dof_entries.erase( last, bb_dof_entries.end());
 		TR<<"Found "<<bb_dof_entries.size()<<" entries that meet restrictions."<<std::endl;
 		return bb_dof_entries;
 	}

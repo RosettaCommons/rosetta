@@ -137,7 +137,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 		bool is_peptoid( RT.is_peptoid() );
 
 		// create filenames
-		std::stringstream start_name;
+		/*std::stringstream start_name;
 		if( is_peptoid ) {
 			start_name << "tripeptide_" << rotamers[i].get_omg() << "_" << rotamers[i].get_phi() << "_" << rotamers[i].get_psi() << "_";
 		} else {
@@ -147,7 +147,7 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 			start_name << rotamers[i].get_inp_chi( j ) << "_";
 		}
 		start_name << "start.pdb";
-		std::string start_filename( start_name.str() );
+		//std::string start_filename( start_name.str() );
 
 		std::stringstream end_name;
 		if( is_peptoid ) {
@@ -159,7 +159,8 @@ min_rotamers( RotVec & rotamers, 	core::scoring::ScoreFunctionOP scrfxn, std::st
 			end_name << rotamers[i].get_inp_chi( j ) << "_";
 		}
 		end_name << "end.pdb";
-		std::string end_filename( end_name.str() );
+		*/
+		//std::string end_filename( end_name.str() );
 
 		// score the pose
 		//Real debug_ener( (*scrfxn)( pose ) );
@@ -264,7 +265,7 @@ init_rotamers_centroids
 
 	// read in each line
 	while ( getline( options, line ) ) {
-		std::istringstream l( line );
+		//std::istringstream l( line );
 		if ( line.size() < 1 || line[0] == '#' ) continue;
 		lines.push_back( line );
 	}
@@ -678,7 +679,7 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 		}
 
 		// dump coords to a file
-		std::stringstream final_name;
+		/*std::stringstream final_name;
 		if( is_peptoid ) {
 			final_name << pose.residue(1).type().name3() << "_" <<  final_rotamers[i].get_omg() << "_" << final_rotamers[i].get_phi() << "_" << final_rotamers[i].get_psi() << "_";
 		} else {
@@ -693,7 +694,8 @@ calc_std_dev (RotVec & final_rotamers, core::scoring::ScoreFunctionOP scrfxn, st
 			final_name << final_rotamers[i].get_min_chi( j ) << "_";
 		}
 		final_name << "final.pdb";
-		std::string final_filename( final_name.str() );
+		*/
+		//std::string final_filename( final_name.str() );
 
 		// Dump a pdb
 		//core::io::pdb::dump_pdb( pose, final_filename );

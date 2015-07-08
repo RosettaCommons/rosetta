@@ -101,8 +101,8 @@ extern ResidualDipolarCouplingOP retrieve_RDC_from_pose(core::pose::Pose& pose) 
 
 void ResidualDipolarCoupling::show(std::ostream& out) const {
 	Size ct=0;
-	for (RDC_lines::const_iterator it=All_RDC_lines_.begin();it!=All_RDC_lines_.end();it++){
-				out << "RDC "<<++ct << "     ";
+	for ( RDC_lines::const_iterator it = All_RDC_lines_.begin(), end = All_RDC_lines_.end(); it!= end; ++it ) {
+		out << "RDC "<<++ct << "     ";
 		out << (*it) << std::endl;
 	}
 }
@@ -425,7 +425,7 @@ Real ResidualDipolarCoupling::iterate_tensor_weights(
 			tr.Warning << "no convergence in wRDC aka iterate_tensor_weights"
 					<< std::endl;
 			return score;
-			break;
+			//break;
 		}
 	}
 	return score;
@@ -536,7 +536,8 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 			if (tr.Debug) {
 				pose.dump_pdb("failed_jacobi.pdb");
 			}
-			throw excn;
+			// changed from throw excn--you do not want to copy the exception you catch
+			throw;
 		}
 
 		/* Calculate the orientation tensor S for this experiment */
@@ -589,7 +590,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		if ( tr.Debug.visible() ) {
 			pose.dump_pdb("failed_jacobi.pdb");
 		}
-		throw excn;
+		throw;
 	}
 
   //Compute the fitting stats
@@ -725,7 +726,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		//Size const width_large(6);
 		// mjo comment out precision because it is not used and causes a warning.
 		//Size const precision( 2 );
-		std::string tag( core::pose::tag_from_pose(pose) );
+		//std::string tag( core::pose::tag_from_pose(pose) );
 		for (Size ex = 0; ex < nex_; ex++) {
 			//Real Smax = sqrt(sqr(S_[ex][0][0]) + sqr(S_[ex][0][1]) + sqr(S_[ex][0][2]) + sqr(S_[ex][1][1]) + sqr(S_[ex][1][2]));
 			//out << A( width_large, "TAG ")   << A( width, tag ) << A( width, "EXP       ")   << I( width, ex ) << I( width, Smax )
@@ -753,10 +754,9 @@ double frdc( double r0, double r1, double r2, double rdcconst, const double *par
         double a=par[2];
         double b=par[3];
         double c=par[4];
-        double rdcx=0.0,rdcy=0.0,rdcz=0.0;
-        rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
         return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdc
 
@@ -769,10 +769,9 @@ double frdcDa( double r0, double r1, double r2, double rdcconst, double const te
         double a=par[1];
         double b=par[2];
         double c=par[3];
-        double rdcx=0.0,rdcy=0.0,rdcz=0.0;
-        rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
         return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDa
 
@@ -785,10 +784,9 @@ double frdcR( double r0, double r1, double r2, double rdcconst, double const ten
         double a=par[1];
         double b=par[2];
         double c=par[3];
-        double rdcx=0.0,rdcy=0.0,rdcz=0.0;
-        rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
         return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcR
 
@@ -801,10 +799,9 @@ double frdcDaR( double r0, double r1, double r2, double rdcconst, double const t
         double a=par[0];
         double b=par[1];
         double c=par[2];
-        double rdcx=0.0,rdcy=0.0,rdcz=0.0;
-        rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
-        rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
-        rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
+        double rdcx = cos(b)*cos(c)*r0+(-cos(a)*sin(c)+sin(a)*sin(b)*cos(c))*r1+(sin(a)*sin(c)+cos(a)*sin(b)*cos(c))*r2;
+        double rdcy = cos(b)*sin(c)*r0+(cos(a)*cos(c)+sin(a)*sin(b)*sin(c))*r1+(-sin(a)*cos(c)+cos(a)*sin(b)*sin(c))*r2;
+        double rdcz = -sin(b)*r0+sin(a)*cos(b)*r1+cos(a)*cos(b)*r2;
         return rdcconst*(rdcx*rdcx*Ax+rdcy*rdcy*Ay+rdcz*rdcz*Az);
 }//frdcDaR
 
@@ -838,7 +835,7 @@ void evaluaterdc(const double *par, int m_dat, const void *data, double *fvec, i
 	// amw: we could make this more concise but we are being very careful to be super explicit
 	// that we are not using tensorR in cases where it is its default for example
 	data_struct *mydata;
-	mydata= (data_struct*)data;
+	mydata = const_cast< data_struct*>(static_cast< const data_struct*>( data ) );
 	int i;
 	for ( i = 0; i < m_dat; i++ ) {
 		fvec[i] = mydata->rdc[i];
@@ -971,7 +968,6 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	std::vector<double> par(n_par*nex_);
 	
 	int i,j;
-	double bestnorm;
 	Size prelen=0;
 	
 	//optional weighting provided by user
@@ -980,6 +976,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 	
 	//experimental data array
 	for (Size ex = 0; ex < nex_; ex++) {
+
 		//compute the length of previous exps
 		prelen=0;
 		for (Size cnt=0; cnt<=ex; cnt++) {
@@ -1015,7 +1012,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 			}
 		}
 		
-		bestnorm=1e12;
+		double bestnorm = 1e12;
 		
 		for (j = 0; j < nrepeat; j++) {
 			//random starting value
@@ -1280,7 +1277,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(
 		using namespace core::pose::datacache;
 		//Size const width( 8 );
 		//Size const width_large(6);
-		std::string tag( core::pose::tag_from_pose(pose) );
+		//std::string tag( core::pose::tag_from_pose(pose) );
 		for (Size ex = 0; ex < nex_; ex++) {
 			show_rdc_values( out, ex );
 		}

@@ -142,7 +142,7 @@ vector1< SequenceOP > read_fasta_file( std::string const & filename ) {
 	vector1< SequenceOP > sequences;
 
 	utility::io::izstream input( filename.c_str() );
-	std::string line, current_sequence = "", current_id = "empty";
+	std::string line, current_sequence, current_id = "empty";
 
 	if ( !input ) {
 		utility_exit_with_message( "Warning: can't open file " + filename + "!" );
@@ -209,7 +209,7 @@ std::string read_fasta_file_return_str( std::string const & filename ) {
 core::sequence::DerivedSequenceMapping simple_mapping_from_file( std::string const & filename ) {
 	// file I/O stuff
 	utility::io::izstream input( filename.c_str() );
-	std::string line, current_sequence = "";
+	std::string line;
 
 	if ( !input ) {
 		utility_exit_with_message( "Warning: can't open file " + filename + "!" );
@@ -384,7 +384,7 @@ utility::vector1< SequenceAlignment > read_grishin_aln_file(
 		utility_exit_with_message( "Warning: can't open file " + filename + "!" );
 	}
 
-	std::string line, id1, id2, method, dummy;
+	std::string line, id1, id2, dummy;
 	SequenceAlignmentOP current( new SequenceAlignment );
 	while( getline( input, line ) ) {
 		if ( line.substr(0,2) == "--" ) {
@@ -491,7 +491,6 @@ SequenceAlignment steal_alignment(
 		for ( Size jj = 1; jj <= aln_to_steal.size(); ++jj ) {
 			if ( aln_to_steal.sequence(jj)->is_gap(ii) ) {
 				seqs[jj]->insert_gap( insertion_positions[jj] );
-				std::string debug_s( seqs[jj]->sequence() );
 			}
 			++insertion_positions[jj];
 		}

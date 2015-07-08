@@ -447,7 +447,7 @@ namespace mover {
 				Size const i_full = res_list[ i ] ;
 
 
-				if ( !is_cutpoint_in_full_pose[ i_full ] && i_full < nres_full ){ // good, there's still a gap!
+				if ( i_full < nres_full && !is_cutpoint_in_full_pose[ i_full ] ){ // good, there's still a gap!
 
 					// direct addition of single residue (or potentially, a block of residues starting with this residue)
 					if ( is_addable_res( i_full + 1, pose ) ) {
@@ -777,10 +777,10 @@ namespace mover {
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 			if ( dock_domain_map[ res_list[ i ] ] > 0 ) dock_domains.insert( dock_domain_map[ res_list[ i ] ] );
 		}
-		for ( std::set< Size >::const_iterator it1 = dock_domains.begin();
-					it1 != dock_domains.end(); it1++ ) {
-			for ( std::set< Size >::const_iterator it2 = it1;
-						it2 != dock_domains.end(); it2++ ) {
+		for ( std::set< Size >::const_iterator it1 = dock_domains.begin(),
+					end1 = dock_domains.end(); it1 != end1; ++it1 ) {
+			for ( std::set< Size >::const_iterator it2 = it1,
+						end2 = dock_domains.end(); it2 != end2; ++it2 ) {
 				if ( it1 == it2 ) continue;
 				already_docked[ std::make_pair( *it1, *it2 ) ] = true;
 				already_docked[ std::make_pair( *it2, *it1 ) ] = true;
@@ -1383,9 +1383,9 @@ namespace mover {
 		} else if ( moving_res == attached_res + 2 &&
 								chains_full[ moving_res ] == chains_full[ attached_res ] ) {
 			attachment = Attachment( attached_res, JUMP_TO_PREV_IN_CHAIN );
-		} else if ( moving_res == attached_res + 2 &&
-								chains_full[ moving_res ] == chains_full[ attached_res ] ) {
-			attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
+		//} else if ( moving_res == attached_res + 2 &&
+		//						chains_full[ moving_res ] == chains_full[ attached_res ] ) {
+		//	attachment = Attachment( attached_res, JUMP_TO_NEXT_IN_CHAIN );
 		} else {
 			runtime_assert( dock_domain_map[ moving_res ] != dock_domain_map[ attached_res ] );
 			attachment = Attachment( attached_res, JUMP_DOCK );

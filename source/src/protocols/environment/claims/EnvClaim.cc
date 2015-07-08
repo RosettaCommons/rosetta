@@ -134,7 +134,7 @@ void EnvClaim::annotate( core::pose::Pose const& pose, core::environment::Sequen
       ss << "While " << *this << " was annotating the pose for broking, the " << selector->get_name()
          << "Selector produced a conflicting residue selection.";
       e.add_msg( ss.str() );
-      throw e;
+      throw;// e;
     }
   }
 }

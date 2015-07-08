@@ -225,7 +225,7 @@ RotamerSets::build_rotamers(
 
 				RotamerSetOP smallset( rsf.create_rotamer_set( pose.residue( 1 ) )) ;
 
-				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; itr++){
+				for (Rotamers::const_iterator itr = bufferset->begin(), ite = bufferset->end(); itr!=ite; ++itr ){
 
 					conformation::ResidueOP cloneRes( new conformation::Residue(*(*itr)->clone()) );
 

@@ -126,7 +126,6 @@ std::vector<Size> define_cut_points (
 
 
 		//getting the secondary structure
-		char ss;
 		char ss_up;
 		char ss_down;
 
@@ -134,7 +133,7 @@ std::vector<Size> define_cut_points (
 		std::vector<Size> cut_points;
 		for (Size i=0; i < loop_dividers.size(); ++i ){
 			int cutpoint = loop_dividers[i];
-			ss = nat_pose.secstruct( cutpoint );
+			char ss = nat_pose.secstruct( cutpoint );
 
 			if (ss == 'L'){
 				cut_points.push_back(cutpoint);

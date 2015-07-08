@@ -241,7 +241,7 @@ findUU(
 	FArray2D< numeric::Real > rr_moment( 3, 3 );
 	numeric::Real temp1;
 	numeric::Real temp2;
-	numeric::Real temp3;
+	//numeric::Real temp3;
 	FArray1D< numeric::Real > Ra( 3 );
 
 	if ( Npoints < 1 ) {
@@ -261,7 +261,7 @@ findUU(
 	for ( int k = 1; k <= 3; ++k ) {
 		temp1 = 0.0;
 		temp2 = 0.0;
-		temp3 = 0.0;
+		numeric::Real temp3 = 0.0;
 		for ( int j = 1; j <= Npoints; ++j ) {
 			temp1 += XX(k,j) * WW(j);
 			temp2 += YY(k,j) * WW(j);

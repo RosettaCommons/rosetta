@@ -517,32 +517,10 @@ Ramachandran::eval_rama_score_residue(
 {
 	using namespace numeric;
 
-//db
-//db secondary structure dependent tables favor helix slightly.
-//db only use if have predicted all alpha protein
-//db
-// rhiju and db: no longer use alpha-specific rama, after
-//  tests on 1yrf and other all alpha proteins. 2-8-07
-
-// apl -- removing ss dependence on rama in first implementation of mini
-// after reading rhiju and david's comment above.  We will need a structural annotation
-// obect (structure.cc, maybe a class SecStruct) at some point.  The question
-// remains whether a pose should hold that object and be responsible for its upkeep,
-// or whether such an object could be created as needed to sit alongside a pose.
-//
-//	std::string protein_sstype = get_protein_sstype();
-//	int ss_type;
-//	if ( use_alpha_rama_flag() && get_protein_sstype() == "a" ) {
-//		ss_type = ( ( ss == 'H' ) ? 1 : ( ( ss == 'E' ) ? 2 : 3 ) );
-//	} else {
-	int ss_type = 3;
-//	}
-
-//     do I (?cems/cj/cdb?) want to interpolate probabilities or log probs???
-//     currently am interpolating  probs then logging.
-
-	//int const res_aa( rsd.aa() );
-	// 	int const res_aa( pose.residue( res ).aa() );
+	// AMW: formerly we assigned an "ss_type" based on secondary structure annotation
+	// and scored rama accordingly
+	// this is 8 years old and involves some commented out code and a poorly scoped "ss_type"
+	// so I am fixing this. (cppcheck)
 
 	core::chemical::AA res_aa2 = res_aa;
 	core::Real phi2 = phi;
@@ -578,10 +556,10 @@ Ramachandran::eval_rama_score_residue(
 
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
-		//printf("drama_dphi=%.8f\tdrama_dpsi=%.8f\n", drama_dphi, drama_dpsi); //DELETE ME!
-		//if(is_canonical_d_aminoacid(res_aa)) { printf("rama = %.4f\n", rama); fflush(stdout); } //DELETE ME!
 		return; // temp -- just stop right here
 	} else {
+
+		int ss_type = 3;
 
 		FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
 		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa2), zero_index, zero_index );

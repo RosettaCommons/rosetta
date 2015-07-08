@@ -1573,12 +1573,12 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L'){
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-		break;
+		//break;
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
 			if(pdb_info->chain(i+1) != second_chain){
 				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
+		//		break;
 			}
 		}
 		if( (pdb_info->chain(i) == second_chain) && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
@@ -1650,12 +1650,12 @@ AntibodyInfo::get_FoldTree_L_HA( pose::Pose const & pose ) const {
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L') {
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-			break;
+			//break;
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
 			if(pdb_info->chain(i+1) != second_chain) {
 				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
+			//	break;
 			}
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {
@@ -1719,12 +1719,12 @@ AntibodyInfo::get_FoldTree_LA_H( pose::Pose const & pose ) const {
 	for ( Size i = 1; i <= nres; ++i ) {
 		if(pdb_info->chain(1) != 'L') {
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-			break;
+			//break;
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
 			if(pdb_info->chain(i+1) != second_chain) {
 				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-				break;
+			//	break;
 			}
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i+1) == second_chain)) {

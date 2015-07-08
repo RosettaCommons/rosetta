@@ -149,7 +149,10 @@ void SequenceCoupling::read_from_file(
 	if ( line_stream.fail() ) {
 	  utility_exit_with_message( "ERROR: failed while reading numEdges!" );
   }
-	std::string aa_seq;
+  // AMW: cppcheck correctly notices that aa_seq is actually never used anywhere
+  // but here, where it is gradually built up
+  // if you would like to do something with it, uncomment here and on the line below
+	//std::string aa_seq;
   core::Size lineCount=0;
 	utility::vector1< utility::vector1< Real > > vertexPots;
   while(lineCount<numVerts_ && getline(input,line)){
@@ -172,7 +175,7 @@ void SequenceCoupling::read_from_file(
 			std::cout << " minpotAA" << minPotAA << "count " << count << std::endl;
 			utility_exit_with_message("minPotAA was of wrong size. quitting");
 		}
-    aa_seq +=core::chemical::oneletter_code_from_aa(order[minPotAA]);//dummy sequence set to most favored aa according to vertexPot
+    //aa_seq +=core::chemical::oneletter_code_from_aa(order[minPotAA]);//dummy sequence set to most favored aa according to vertexPot
     vertexPots.push_back(vertPot);
     lineCount++;
   }

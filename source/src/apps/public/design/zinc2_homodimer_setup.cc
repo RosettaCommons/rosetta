@@ -291,7 +291,7 @@ public:
       Size angle = core::Size(i*grid_angle);
       std::stringstream ss_angle;
       ss_angle << angle;
-      std::string name = "homodimer_" + ss_angle.str() + ".pdb";
+      //std::string name = "homodimer_" + ss_angle.str() + ".pdb";
       //homodimer.dump_pdb( name );
 
 			//FILTER GEOMETRY

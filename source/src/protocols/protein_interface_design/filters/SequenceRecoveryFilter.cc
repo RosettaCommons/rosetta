@@ -229,6 +229,8 @@ SequenceRecoveryFilter::compute( core::pose::Pose const & pose, bool const & wri
   std::map< core::Size, std::string > const res_names1( rsd.res_name1() );
   std::map< core::Size, std::string > const res_names2( rsd.res_name2() );
   core::Size const mutated( res_names1.size() );
+  // AMW: cppcheck notices that if there are packable residues but no designable residues
+  // we divide by zero here.
   core::Real const rate( 1.0 - (core::Real) mutated / designable_count );
   TR<<"Your design mover mutated "<<mutated<<" positions out of "<<designable_count<<" designable positions. Sequence recovery is: "<<rate<<std::endl;
 	if ( verbose_ ) {

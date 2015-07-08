@@ -660,7 +660,8 @@ get_resnum_from_cstid_list( std::string const& cstidlist, core::pose::Pose const
                 runtime_assert( resnum>0 && resnum <=pose.total_residue() );
                 resnums.push_back( resnum );
         }
-			std::unique(resnums.begin(), resnums.end());
+			utility::vector1<core::Size>::iterator last = std::unique(resnums.begin(), resnums.end());
+			resnums.erase( last, resnums.end() );
 			//tr <<" In util function size of resnums is "<< resnums.size() << std::endl;
 }
 /// @brief Extracts residue number from cstid string

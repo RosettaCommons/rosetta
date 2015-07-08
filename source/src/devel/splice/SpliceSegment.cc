@@ -62,9 +62,9 @@ SpliceSegment::read_many( string const Protein_family_path , string const segmen
 
 
 	DIR *dir;
-	struct dirent *ent;
 	const char * c =target_path.c_str();
 	if ((dir = opendir (c))!= NULL) {
+		struct dirent *ent;
 		while ((ent = readdir (dir)) != NULL) {
 			//TR<<"Loading PSSM from file "<<target_path+ent->d_name<<std::endl;
 			utility::io::izstream data( target_path+ent->d_name);
@@ -258,7 +258,7 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 
 /// @brief Reads from given file the H3 sequences from all PDBs in the db
 std::map< std::string, std::string>
-read_H3_seq( std::string const Protein_family_path){
+read_H3_seq( std::string const & Protein_family_path){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	std::map< std::string, std::string>pdb_to_H3_seq_map_;

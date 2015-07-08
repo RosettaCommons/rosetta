@@ -25,7 +25,6 @@ namespace utility {
 void encode6bit(const unsigned char* memory, unsigned int length, std::string &jar){
 	jar = "";
 	unsigned int i;
-	unsigned int allfourcount=0;
 	unsigned int fourcount=0;
 	unsigned int linewidth=15;
 	for(i=0;i<length;){
@@ -43,7 +42,6 @@ void encode6bit(const unsigned char* memory, unsigned int length, std::string &j
 		jar += outbuffer[2];
 		jar += outbuffer[3];
 		fourcount +=1;
-		allfourcount +=1;
 		if(fourcount > linewidth){
 			fourcount = 0;
 			//jar += '\n';

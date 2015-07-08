@@ -180,7 +180,7 @@ merge_vectors( utility::vector1< Size > const & vec1,
 	for ( Size n = 1; n <= vec2.size(); n++ ) silly_map[ vec2[n] ] = true;
 
 	utility::vector1< Size > merged_vec;
-	for ( std::map<Size,bool>::iterator it = silly_map.begin(); it != silly_map.end(); it++ ){
+	for ( std::map<Size,bool>::iterator it = silly_map.begin(), end = silly_map.end(); it != end; ++it ){
 		merged_vec.push_back( it->first );
 	}
 	return merged_vec;
@@ -1151,7 +1151,7 @@ fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix ) {
 /////////////////////////////////////////////////////////////////////////////////////////
 // trying to track down a discrepancy in pose scores after switching pose focus...
 void
-check_scores_from_parts( std::string const tag,
+check_scores_from_parts( std::string const & tag,
 												 Real const original_score,
 												 pose::Pose & pose,
 												 pose::PoseOP original_pose_clone,
@@ -1722,7 +1722,7 @@ split_pose( pose::Pose & pose, utility::vector1< Size > const & moving_res_list 
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const atom_name ){
+fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const & atom_name ){
 	using namespace core::kinematics;
 	if ( !pose.residue_type( res ).is_protein() ) return;
 	FoldTree f = pose.fold_tree();
@@ -1740,7 +1740,7 @@ fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const atom
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) {
+add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const & pose_tag ) {
 	core::pose::PoseOP pose_op = pose.clone();
 	tag_into_pose( *pose_op, pose_tag );
 	pose_list.push_back( pose_op );

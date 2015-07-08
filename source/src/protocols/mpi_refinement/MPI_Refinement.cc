@@ -370,8 +370,8 @@ MPI_Refinement::add_structure_to_library_add_n_replace( core::io::silent::Silent
 
   //for( core::Size i = 0; i < library_central_.size(); ++i ){
 	//core::io::silent::SilentStructOP ss = library_central_.get_struct( i );
-	for( SilentStructStore::iterator jt =  library_central_.begin();
-			 jt != library_central_.end(); jt ++ ){
+	for( SilentStructStore::iterator jt =  library_central_.begin(),
+			 end = library_central_.end(); jt != end; ++jt ){
 
 		core::Real the_dist( 0.0 );
 		core::Real dumm;

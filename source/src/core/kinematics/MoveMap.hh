@@ -331,7 +331,7 @@ public:
 
 	/// @brief Set which NU torsions are movable based on input array.
 	inline void
-	set_nus( utility::vector1< bool > const settings )
+	set_nus( utility::vector1< bool > const & settings )
 	{
 		Size const n_settings( settings.size() );
 		for ( uint i( 1 ); i <= n_settings; ++i ) {
@@ -411,7 +411,7 @@ public:
 
 	/// @brief Set which BRANCH torsions are movable based on input array.
 	inline void
-	set_branches( utility::vector1< bool > const settings )
+	set_branches( utility::vector1< bool > const & settings )
 	{
 		Size const n_settings( settings.size() );
 		for ( uint i( 1 ); i <= n_settings; ++i ) {

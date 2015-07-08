@@ -107,7 +107,7 @@ bool SilentFileData::setup_include_patches(
 		);
 	}
 
-	std::string line,sequence;
+	std::string line;
 	getline( data, line ); // sequence line
 	getline( data, line ); // score line
 
@@ -212,7 +212,7 @@ bool SilentFileData::read_tags_fast(
 		);
 	}
 
-	std::string line,tag;
+	std::string line;
 	getline( data, line ); // sequence line
 	getline( data, line ); // score line
 
@@ -737,12 +737,12 @@ SilentFileData::read_stream(
 	mylines.push_back( score_line    );
 
 	if ( verbose_ ) {
-		if ( tagset.size() )  tr.Info << "Reading " << tagset.size()
+		if ( !tagset.empty()/*size()*/ )  tr.Info << "Reading " << tagset.size()
 																	<< " structures from " << filename
 																	<< std::endl;
 		else  tr.Info << "Reading all structures from " << filename << std::endl;
 	}
-	bool all_tags = tagset.size() == 0; //if no tags selected we read all decoys
+	bool all_tags = tagset.empty();//tagset.size() == 0; //if no tags selected we read all decoys
 
 	// start looping over the structures
 	bool line_ok( true );

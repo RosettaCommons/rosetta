@@ -72,7 +72,7 @@ namespace rigid_body {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 core::Real
-get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const atom_name ){
+get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const & atom_name ){
 
 	using namespace core::conformation;
 
@@ -196,17 +196,17 @@ DOF_bin_size( std::string const & DOF ){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername ){
+analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const & foldername ){
 
 	std::map< std::pair < int, int >, int, compare_int_pair > count_density_map;
-	std::map< std::pair < int, int >, int, compare_int_pair > ::iterator count_density_it;
+	std::map< std::pair < int, int >, int, compare_int_pair > ::iterator count_density_it, cdend;
 
-	std::map< BaseBin, int, compare_base_bin > ::const_iterator base_bin_it;
+	std::map< BaseBin, int, compare_base_bin > ::const_iterator base_bin_it, end;
 
 	int total_count = 0;
 	int total_occupied_bin = 0;
 
-	for ( base_bin_it = base_bin_map.begin(); base_bin_it != base_bin_map.end(); base_bin_it++ ){
+	for ( base_bin_it = base_bin_map.begin(), end = base_bin_map.end(); base_bin_it != end; ++base_bin_it ){
 
 		total_occupied_bin++;
 		total_count = total_count + base_bin_it->second;
@@ -238,7 +238,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 	int DOF_two_bin_max = 0;
 	int DOF_two_bin_min = 0;
 
-	for ( count_density_it = count_density_map.begin(); count_density_it != count_density_map.end(); count_density_it++ ){
+	for ( count_density_it = count_density_map.begin(), cdend = count_density_map.end(); count_density_it != cdend; ++count_density_it ){
 		int const & DOF_one_bin_value = count_density_it->first.first;
 		int const & DOF_two_bin_value = count_density_it->first.second;
 
@@ -282,7 +282,7 @@ analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bi
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const foldername ){
+analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & foldername ){
 
 	if ( system( std::string( "rm -r " + foldername ).c_str() ) == -1 ) {
 		TR.Error << "Shell process failed!" << std::endl;

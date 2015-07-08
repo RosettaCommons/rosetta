@@ -57,6 +57,9 @@ void pr_def(FILE *fp,int ftp)
       s[0] = '\0';
       s++;
       snew(flst,strlen(s)+6);
+	  // AMW: cppcheck notes that this should be accessing flst out of range
+	  // I am not sure why, but I am also not sure what the need of this 
+	  // formalism is at all.
       strcpy(flst, " \\tt ");
       strcat(flst, s);
     }
@@ -251,7 +254,7 @@ static void add_filenm(t_filenm *fnm, char *filenm)
 
 static void set_grpfnm(t_filenm *fnm,char *name,bool bCanNotOverride)
 {
-  char buf[256],buf2[256];
+  char buf[256];//,buf2[256];
   int  i,type;
   bool bValidExt;
   int  nopts;
@@ -278,6 +281,7 @@ static void set_grpfnm(t_filenm *fnm,char *name,bool bCanNotOverride)
     /* for input-files only: search for filenames in the directory */
     for(i=0; (i<nopts) && !bValidExt; i++) {
       type = ftps[i];
+	  char buf2[256];
       strcpy(buf2,buf);
       set_extension(buf2,type);
       if (fexist(buf2)) {
@@ -300,16 +304,16 @@ static void set_filenm(t_filenm *fnm,char *name,bool bCanNotOverride)
    * are not already set. An extension is added if not present, if fn = NULL
    * or empty, the default filename is given.
    */
-  char buf[256];
-  int  i,len,extlen;
+  //char buf[256];
 
   if ((fnm->ftp < 0) || (fnm->ftp >= efNR))
     gmx_fatal(FARGS,"file type out of range (%d)",fnm->ftp);
 
   if ((fnm->flag & ffREAD) && name && fexist(name)) {
     /* check if filename ends in .gz or .Z, if so remove that: */
-    len    = strlen(name);
-    for (i=0; i<NZEXT; i++) {
+    int len    = strlen(name);
+	int extlen;
+    for (int i=0; i<NZEXT; i++) {
       extlen = strlen(z_ext[i]);
       if (len > extlen)
 	if (strcasecmp(name+len-extlen,z_ext[i]) == 0) {
@@ -322,6 +326,7 @@ static void set_filenm(t_filenm *fnm,char *name,bool bCanNotOverride)
   if (deffile[fnm->ftp].ntps)
     set_grpfnm(fnm,name,bCanNotOverride);
   else {
+	char buf[256];
     if ((name != NULL) && (bCanNotOverride || (default_file_name == NULL)))
       strcpy(buf,name);
     else
@@ -375,7 +380,7 @@ void write_man(FILE *out,char *mantp,
 	       int nbug,char **bugs,bool bHidden)
 {
   char    *pr;
-  int     i,npar;
+  int     npar;
   t_pargs *par;
 
   /* Don't write hidden options to completions, it just
@@ -389,7 +394,7 @@ void write_man(FILE *out,char *mantp,
   else {
     snew(par,npargs);
     npar=0;
-    for(i=0;i<npargs;i++)
+    for(int i=0;i<npargs;i++)
       if (!is_hidden(&pa[i])) {
 	par[npar]=pa[i];
 	npar++;
@@ -432,12 +437,13 @@ void write_ttyman(FILE *out,
 			 int npargs,t_pargs *pa,
 			 int nbug,char **bugs,bool bHeader)
 {
-  int i;
-  char buf[256];
-  char *tmp;
+  //int i;
+  //char buf[256];
+  //char *tmp;
 
   if (bHeader) {
     fprintf(out,"%s\n\n",check_tty(program));
+	char buf[256]
     fprintf(out,"%s\n%s\n",GromacsVersion(),mydate(buf,255));
   }
   if (nldesc > 0) {
@@ -447,7 +453,8 @@ void write_ttyman(FILE *out,
   if (nbug > 0) {
     fprintf(out,"\n");
     fprintf(out,"KNOWN BUGS\n----------\n");
-    for(i=0; i<nbug; i++) {
+    for(int i=0; i<nbug; i++) {
+	  char *tmp;
       snew(tmp,strlen(bugs[i])+3);
       strcpy(tmp,"* ");
       strcpy(tmp+2,check_tty(bugs[i]));
@@ -468,19 +475,20 @@ void write_ttyman(FILE *out,
 void parse_file_args(int *argc,char *argv[],int nf,t_filenm fnm[],
 		     bool bKeep)
 {
-  int  i,j;
-  bool *bRemove;
+  //int  i,j;
+  //bool *bRemove;
 
   check_opts(nf,fnm);
 
-  for(i=0; (i<nf); i++)
+  for(int i=0; (i<nf); i++)
     UN_SET(fnm[i]);
 
   if (*argc > 1) {
+	  bool *bRemove;
     snew(bRemove,(*argc)+1);
     i=1;
     do {
-      for(j=0; (j<nf); j++) {
+      for(int j=0; (j<nf); j++) {
 	if (strcmp(argv[i],fnm[j].opt) == 0) {
 	  DO_SET(fnm[j]);
 	  bRemove[i]=TRUE;

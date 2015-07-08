@@ -351,10 +351,10 @@ check_and_correct_sister_atoms( core::conformation::ResidueOP & rsd ){
 // sisters sprout off the same parent, and outer_ref is something else bonded to the parent. a cousin, i guess.
 void
 check_and_correct_sister_atom_based_on_chirality( core::conformation::ResidueOP & rsd,
-																									std::string const sister1_name,
-																									std::string const sister2_name,
-																									std::string const parent_name,
-																									std::string const cousin_name ){
+	std::string const & sister1_name,
+	std::string const & sister2_name,
+	std::string const & parent_name,
+	std::string const & cousin_name ){
 
 	if ( !rsd->has( sister1_name ) ) return;
 	if ( !rsd->has( sister2_name ) ) return;
@@ -381,9 +381,9 @@ check_and_correct_sister_atom_based_on_chirality( core::conformation::ResidueOP 
 //////////////////////////////////////////////////////////////////////////////////
 void
 check_and_correct_sister_atom_based_on_outgroup( core::conformation::ResidueOP & rsd,
-																								 std::string const sister1_name,
-																								 std::string const sister2_name,
-																								 std::string const outgroup_name ){
+	std::string const & sister1_name,
+	std::string const & sister2_name,
+	std::string const & outgroup_name ){
 
 	if ( !rsd->has( sister1_name ) ) return;
 	if ( !rsd->has( sister2_name ) ) return;

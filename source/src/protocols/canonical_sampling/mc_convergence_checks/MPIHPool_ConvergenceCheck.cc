@@ -246,7 +246,7 @@ namespace mc_convergence_checks{
 
       PROF_STOP( basic::MPIH_EVAL_COMMUNICATE_NEW );
 
-      bool i_am_a_winning_rank = false;
+      //bool i_am_a_winning_rank = false;
       buf_.candidate_nbr_index_ = 0;
       utility::vector1< Address > prev_added_addresses;
       utility::vector1< core::Size > prev_added_start_indices;
@@ -254,6 +254,7 @@ namespace mc_convergence_checks{
       num_structures_added_ = 0;
 
       if( buf_.num_new_neighbors_ > 0 ) {
+        bool i_am_a_winning_rank = false;
 	std::string new_candidate_tag;
 	PROF_START( basic::MPIH_ADD_FIRST_STRUCTURE );
 	bool has_new_structure = get_next_candidate(); //find next neighbor and copies into appropriate buffs
@@ -778,7 +779,7 @@ namespace mc_convergence_checks{
     std::ostringstream os;
     send_ss._write_silent_struct( *ss, os );
     int* output_info = new int[ 2 + ss_addr.size() ];
-    std::string decoy_tag = ss->decoy_tag();
+    //std::string decoy_tag = ss->decoy_tag();
     int string_size =  (os.str()).size();
     output_info[ 0 ] = string_size;
     for( core::Size ii = 1; ii <= ss_addr.size(); ii++ ) {
@@ -1080,8 +1081,8 @@ namespace mc_convergence_checks{
 	    if ( successfully_read_file ) {
 	      utility::vector1< std::string > tags = sfd.tags();
 	      for( core::Size ii = 1; ii <= tags.size(); ii++ ) {
-		core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in();
-		ss = sfd[ tags[ ii ] ];
+		//core::io::silent::SilentStructOP ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_in();
+		core::io::silent::SilentStructOP ss = sfd[ tags[ ii ] ];
 		std::string best_decoy;
 		utility::vector1< core::Real > best_rms;
 		Address best_addr;

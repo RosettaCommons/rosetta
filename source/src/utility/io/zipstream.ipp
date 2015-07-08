@@ -172,7 +172,7 @@ namespace detail {
 		std::streamsize buffer_size_
 	)
 	{
-		std::streamsize written_byte_size = 0, total_written_byte_size = 0;
+		std::streamsize written_byte_size = 0/*, total_written_byte_size = 0*/;
 
 		m_zip_stream.next_in = (byte_buffer_type)buffer_;
 		m_zip_stream.avail_in = static_cast< uInt >( buffer_size_ * sizeof(char_type) );
@@ -194,7 +194,7 @@ namespace detail {
 				written_byte_size =
 					static_cast< std::streamsize >( m_output_buffer.size() )
 					- m_zip_stream.avail_out;
-				total_written_byte_size += written_byte_size;
+				//total_written_byte_size += written_byte_size;
 				// ouput buffer is full, dumping to ostream
 				//				std::cerr << "dump to m_ostream " << std::endl;
 				m_ostream.write(

@@ -239,7 +239,6 @@ BrentLineMinimization::operator()(
 
 		FV = FX;
 		FW = FX;
-		bool skipnow(false); //To replace a goto statement that was being used to skip a few lines of code.
 		for ( int iter = 1; iter <= ITMAX; ++iter ) {
 			XM = 0.5*(A+B);
 			TOL1 = TOL*std::abs(X)+ZEPS;
@@ -257,7 +256,7 @@ BrentLineMinimization::operator()(
 			//     small change in X
 			if ( std::abs(X-XM) <= (TOL2-.5*(B-A)) ) break;
 
-			skipnow = false;
+			bool skipnow = false; //To replace a goto statement that was being used to skip a few lines of code.
 			if ( std::abs(E) > TOL1 ) {
 				R = (X-W)*(FX-FV);
 				Q = (X-V)*(FX-FW);

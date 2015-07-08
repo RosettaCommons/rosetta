@@ -180,8 +180,8 @@ namespace full_model_info {
 	utility::vector1< Size >
 	FullModelParameters::convert_to_parameter_values_at_res( std::map< Size, utility::vector1< Size > > const & res_lists ){
 		utility::vector1< Size > parameter_values_at_res( size(), 0 );
-		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin();
-					it != res_lists.end(); it++ ){
+		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
+					it != end; ++it ){
 			fill_parameter_values( parameter_values_at_res, it->first, it->second );
 		}
 		return parameter_values_at_res;
@@ -202,8 +202,8 @@ namespace full_model_info {
 	FullModelParameters::get_res_list_as_pairs( FullModelParameterType const type ) const {
 		utility::vector1< std::pair< Size, Size > > res_list_as_pairs;
 		std::map< Size, utility::vector1< Size > > const & res_lists =	get_parameter_as_res_lists( type );
-		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin();
-					it != res_lists.end(); it++ ){
+		for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
+					it != end; ++it ) {
 			if ( it->first == 0 ) continue;
 			if ( it->second.size() == 0 ) continue;
 			runtime_assert( it->second.size() == 2 );
@@ -471,14 +471,14 @@ namespace full_model_info {
 			runtime_assert( res_lists.size() > 0 );
 
 			bool has_domain_higher_than_one( false );
-			for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin();
-						it != res_lists.end(); it++ ){
+			for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
+						it != end; ++it ){
 				if ( it->first > 1 ) has_domain_higher_than_one = true;
 			}
 
 			std::ostringstream os_local;
-			for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin();
-						it != res_lists.end(); it++ ){
+			for ( std::map< Size, utility::vector1< Size > >::const_iterator it = res_lists.begin(), end = res_lists.end();
+						it != end; ++it ){
 				if ( it->first == 0 )         continue; // don't bother with 0.
 				if ( it->second.size() == 0 ) continue;
 				os_local << ' ';

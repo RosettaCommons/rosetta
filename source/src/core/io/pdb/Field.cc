@@ -231,7 +231,7 @@ RecordRef & Field::getRecordCollection()
 /// @details Debug printing, serializing to Tracer like object.
 std::ostream&
 operator <<(std::ostream &os,Record const & R) {
-  for(Record::const_iterator p=R.begin(); p!=R.end(); p++ ) {
+  for(Record::const_iterator p=R.begin(), end=R.end(); p!=end; ++p ) {
     os << "<Record>{" << p->first << ":" << p->second
     << "}\n";
   }

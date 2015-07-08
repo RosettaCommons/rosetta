@@ -269,7 +269,7 @@ ddGMover::store_energies(
 	}
 	int current_score_component=0;
 	int j =1;
-	for( EnergyMap::const_iterator i = (s.weights()).begin(); i != s.weights().end();i++){
+	for( EnergyMap::const_iterator i = (s.weights()).begin(), end = s.weights().end(); i != end; ++i ) {
 		//get score component of pose, then store in next slot of two_d_e_arrays
 		current_score_component++;
 		if(*i != 0){
@@ -483,7 +483,7 @@ ddGMover::minimize_with_constraints(
 
 	if(basic::options::option[OptionKeys::ddg::sc_min_only]()){
 		mm.set_bb(false);
-		minimizer_tol = 0.0001;
+		//minimizer_tol = 0.0001;
 	}
 
 
@@ -831,11 +831,10 @@ ddGMover::get_scorefunction_header(
 )
 {
 	//utility::vector1<std::string> components;
-	int score_component=0;
 	core::scoring::ScoreType const atom_pair_cst = score_type_from_name("atom_pair_constraint"); //atom-pair-csts not considered in ddg score
 	if(sfxn != 0){
-		for( EnergyMap::const_iterator i = (sfxn->weights()).begin();
-				 i != sfxn->weights().end(); i++){
+		int score_component=0;
+		for( EnergyMap::const_iterator i = (sfxn->weights()).begin(), end = sfxn->weights().end(); i != end; ++i ) {
 			score_component++;
 			if(*i != 0 && ScoreType(score_component) != atom_pair_cst ){
 				components.push_back(name_from_score_type(ScoreType(score_component)));
@@ -1174,7 +1173,7 @@ ddGMover::relax_wildtype_structure(
 	}
 
 
-	std::string mutation_label= this->mutation_label(pose);
+	//std::string mutation_label= this->mutation_label(pose);
 
 }
 

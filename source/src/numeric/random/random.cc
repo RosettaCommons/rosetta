@@ -98,10 +98,9 @@ RandomGenerator::uniform() {
 /// @author JJG 4/01
 double RandomGenerator::gaussian()
 {
-	double v1, v2, rsq, fac;
-
 	double rgaussian; // Return value
 	if ( gaussian_iset_ ) {
+		double v1, v2, rsq, fac;
 		do {
 			v1 = 2.0f * uniform() - 1.0f;
 			v2 = 2.0f * uniform() - 1.0f;

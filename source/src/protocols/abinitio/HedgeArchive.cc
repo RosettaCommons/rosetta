@@ -158,8 +158,8 @@ void HedgeArchive::restore_status( std::istream& is ) {
     Size batch_id = ObjexxFCL::int_of( tag );
     std::string const& dirname( name() );
     std::string const ffilename ( dirname + "/" + filename( batch_id ) );
-    std::string const backup_filename ( ffilename+".backup" );
-    std::string const tmp_filename ( ffilename+".tmp" );
+    //std::string const backup_filename ( ffilename+".backup" );
+    //std::string const tmp_filename ( ffilename+".tmp" );
     if ( utility::file::file_exists( ffilename ) ) {
       using namespace core::io::silent;
       SilentFileData sfd;

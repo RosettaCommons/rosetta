@@ -414,6 +414,7 @@ NormalModeMultifunc::get_dofs_map()
 /// variables at the top of this function.
 void
 NormalModeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
+	// AMW: cppcheck doesn't like this, but keep stuff here for convenience
 	bool debug_inaccurateG = false; // disables everything below
 	bool check_score_components = true;
 	bool check_score_components_verbose = false;

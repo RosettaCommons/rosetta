@@ -206,13 +206,13 @@ void MolecularDynamics::getCartesianDerivatives(
 		// RB1-3 -- angstroms
 		// RB4-6 -- degrees    (!)
 
-		Real deriv = 0.0;
+		//Real deriv = 0.0;
 
 		/*kinematics::tree::Atom const & atom
 		  ( pose->atom_tree().atom( dof_node.atom_id() ) );*/
 
 		// eg rama,Paa,dunbrack,and torsional constraints
-		deriv = scorefxn.eval_dof_derivative
+		Real deriv = scorefxn.eval_dof_derivative
 			( dof_node.dof_id(), dof_node.torsion_id(), *pose );
 		// deriv /= min_map.torsion_scale_factor( dof_node );
 
@@ -1088,12 +1088,12 @@ void MolecularDynamics::createCartesianDerivatives( core::scoring::ScoreFunction
 void MolecularDynamics::setInitialSpeeds(double tgtTemp )
 {
  	using namespace core;
-	double sigma;
+	//double sigma;
 	//int natom = cartom.size();
 
 	for ( Size i = 1; i <= cartom.size(); i ++ )
 	{
-		sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
+		double sigma = sqrt( 1.38065E-23 * tgtTemp / (cartom[i].mass * 1.66053878E-27) );
 		cartom[i].velocity.x() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.y() = numeric::random::gaussian() * sigma;
 		cartom[i].velocity.z() = numeric::random::gaussian() * sigma;
@@ -1205,17 +1205,17 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	double c1;
 	double c2;
 
-	double egammat;
+	//double egammat;
 	double varv;
 	double varr;
 	double crv;
 
-	double kTdivm;
-	double sigmav;
-	double sigmar;
-	double n1x, n2x;
-	double n1y, n2y;
-	double n1z, n2z;
+	//double kTdivm;
+	//double sigmav;
+	//double sigmar;
+	//double n1x, n2x;
+	//double n1y, n2y;
+	//double n1z, n2z;
 	core::Vector deltav;
 	core::Vector deltar;
 
@@ -1226,7 +1226,7 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 		c1 = (1 - c0) / gammat;
 		c2 = (1 - c1) / gammat;
 
-		egammat = exp(-gammat);
+		double egammat = exp(-gammat);
 		varv = (1.0 - sqr(egammat));
 		varr = (2.0 * gammat - 3.0 + (4.0 - egammat) * egammat);
 		crv = sqr(1.0 - egammat) / (sqrt(varv * varr));
@@ -1275,16 +1275,16 @@ void MolecularDynamics::applyForces_LangevinIntegration(
 	{
 		tinvmass = t / (cartom[i].mass  *  1.66053878E-27); // t div m
 
-		kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
-		sigmav = sqrt(kTdivm * varv);
-		sigmar = sqrt(kTdivm * varr) / gamma;
+		double kTdivm =  1.38065E-23 * T / (cartom[i].mass  * 1.66053878E-27);
+		double sigmav = sqrt(kTdivm * varv);
+		double sigmar = sqrt(kTdivm * varr) / gamma;
 
-		n1x = numeric::random::gaussian();
-		n2y = numeric::random::gaussian();
-		n2x = numeric::random::gaussian();
-		n1z = numeric::random::gaussian();
-		n1y = numeric::random::gaussian();
-		n2z = numeric::random::gaussian();
+		double n1x = numeric::random::gaussian();
+		double n2y = numeric::random::gaussian();
+		double n2x = numeric::random::gaussian();
+		double n1z = numeric::random::gaussian();
+		double n1y = numeric::random::gaussian();
+		double n2z = numeric::random::gaussian();
 
 		deltav = core::Vector(sigmav * (crv * n1x + sqrt(1.0 - sqr(crv)) * n2x),
 			sigmav * (crv * n1y + sqrt(1.0 - sqr(crv)) * n2y),
@@ -1409,25 +1409,25 @@ void MolecularDynamics::doMinimising(
 	int Step = 0;
 	float kin = 0;
 	//float temp = 0;
-	float pot = 0;
+	//float pot = 0;
 	int mcount = 1;
 
 	std::ofstream pdbfile;
 	std::string filename ( "min.pdb" );
 	pdbfile.open( filename.c_str() , std::ios::out );
 
-	float cov_epot=0;
+	//float cov_epot=0;
 	//float startTemp = 100;
 	//float TargetTemp=startTemp;
 
-	float current_energy;
+	//float current_energy;
 	float m_OldEnergy(0.0);
 
 	for( Step = 0; Step < Steps; Step ++ ){
 		pose::Pose pose2( *pose);
-		current_energy =  scorefxn( pose2 );
-		pot = current_energy;
-		cov_epot = 0;
+		float current_energy =  scorefxn( pose2 );
+		float pot = current_energy;
+		float cov_epot = 0;
 
 		zeroForces( );
 		getCartesianDerivatives( scorefxn );

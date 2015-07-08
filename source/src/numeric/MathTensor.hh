@@ -81,7 +81,7 @@ public:
 		std::copy( src.data_, src.data_ + size_, data_ ); //for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = src.data_[ ii ]; }
 	}
 
-	MathTensor const &
+	MathTensor &
 	operator = ( MathTensor const & rhs ) {
 		if ( this != & rhs ) {
 			if ( size_ != rhs.size_ ) {

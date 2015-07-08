@@ -166,7 +166,7 @@ void adjust_single_residues(
 
 void add_coordinate_constraints(
 	pose::Pose & pose,
-	std::set < core::Size > const constrain_residues,
+	std::set < core::Size > const & constrain_residues,
 	core::Size const anchor_resnum,
 	core::Real const coord_sdev,
 	std::string anchor_atom_name, // if this is the empty string, use the same string as "atom_name"
@@ -261,7 +261,7 @@ CoordinateCst::apply( pose::Pose & pose )
 			TR<<"no jump detected, defaulting anchor to 1" << std::endl;
 			anchor_res = 1;
 		}
-		if( constrain_residues_set.size() == 0 ) {
+		if ( constrain_residues_set.empty() ) { //size() == 0 ) {
 			constrain_residues_set.insert( pose.fold_tree().jump_edge( jump_ ).stop() );
 			TR<< "adding constraints to the downstream jump atom" << std::endl;
 		}

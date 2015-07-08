@@ -28,7 +28,7 @@ platform::Size const subset_mapping::UNMAPPED = 0;
 subset_mapping::subset_mapping() {}
 subset_mapping::subset_mapping( platform::Size source_enumeration_size ) : src_2_dst_( source_enumeration_size, UNMAPPED ) {}
 subset_mapping::subset_mapping( subset_mapping const & src ) : ReferenceCount(), src_2_dst_( src.src_2_dst_ ), dst_2_src_( src.dst_2_src_ ) {}
-subset_mapping const & subset_mapping::operator = ( subset_mapping const & rhs )
+subset_mapping & subset_mapping::operator = ( subset_mapping const & rhs )
 {
 	if ( this != &rhs ) {
 		src_2_dst_ = rhs.src_2_dst_;

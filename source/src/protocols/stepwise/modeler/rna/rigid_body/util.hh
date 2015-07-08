@@ -39,7 +39,7 @@ namespace rigid_body {
 
 // following is rather RNA specific -- hope to deprecate/generalize soon
 core::Real
-get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const atom_name );
+get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const & atom_name );
 
 void
 initialize_xyz_parameters( core::Distance & max_distance,
@@ -64,10 +64,10 @@ DOF_bin_size( std::string const & DOF );
 
 // Base bin map was parin's way to assess rigid body sampling, but no longer really in use. Deprecate?
 void
-analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const foldername );
+analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & foldername );
 
 void
-analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername );
+analyze_base_bin_map( std::map< BaseBin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const & foldername );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

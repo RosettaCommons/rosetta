@@ -171,7 +171,7 @@ public:
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
 private:
-	utility::vector1<bool> get_restrictions(std::string const & layer, std::string const & default_layer, std::string const &  ss_type) const;
+	utility::vector1<bool> get_restrictions(std::string const & layer, std::string const & /*default_layer*/, std::string const &  ss_type) const;
 	void set_default_layer_residues();
 
 	/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given

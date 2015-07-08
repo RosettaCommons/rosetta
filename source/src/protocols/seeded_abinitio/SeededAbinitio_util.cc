@@ -129,7 +129,8 @@ adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP 
 		TR.Debug<<"previous position "<<previous_pos <<", current residue: " << resi << std::endl;
 		
 		//if the residue didnt exist before
-		if( previous_pos == 0 || !previous_pos) continue;
+		// AMW: cppcheck flags the redundancy here
+		if(/* previous_pos == 0 || */!previous_pos) continue;
 		
 		//if the residue was set to NOT move, update the position
 		TR.Debug<<"mm set to: "<< mm->get_bb( previous_pos) << std::endl;

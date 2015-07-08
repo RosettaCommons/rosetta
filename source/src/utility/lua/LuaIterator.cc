@@ -84,7 +84,7 @@ LuaObject LuaIterator::operator * () {
 LuaIterator LuaIterator::operator++(int) {
 #ifdef USELUA
 		LuaIterator tmp( iterator_ );
-		iterator_++;
+		++iterator_;
 		return tmp;
 #else
 		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );
@@ -94,7 +94,7 @@ LuaIterator LuaIterator::operator++(int) {
 
 LuaIterator & LuaIterator::operator++() {
 #ifdef USELUA
-		iterator_++;
+		++iterator_;
 		return *this;
 #else
 		utility_exit_with_message("Can't use LuaIterator without compiling with USELUA flag" );

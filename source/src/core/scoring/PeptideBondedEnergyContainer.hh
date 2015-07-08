@@ -39,7 +39,7 @@ public:
 	PeptideBondedNeighborIterator(
 		Size const base_in,
 		Size const pos_in,
-		utility::vector1< ScoreType > const st,
+		utility::vector1< ScoreType > const & st,
 		utility::vector1< utility::vector1< Real > > * table_in,
 		utility::vector1< bool > * computed_in
 	);
@@ -91,7 +91,7 @@ public:
 	PeptideBondedNeighborConstIterator(
 		Size const base_in,
 		Size const pos_in,
-		utility::vector1< ScoreType > const st,
+		utility::vector1< ScoreType > const & st,
 		utility::vector1< utility::vector1< Real > > const * table_in,
 		utility::vector1< bool > const * computed_in
 	);
@@ -136,7 +136,7 @@ public:
 	virtual
 	LREnergyContainerOP clone() const;
 
-	PeptideBondedEnergyContainer( Size const size_in, utility::vector1< ScoreType > const score_type_in, Size offset_in=0 );
+	PeptideBondedEnergyContainer( Size const size_in, utility::vector1< ScoreType > const & score_type_in, Size offset_in=0 );
 
 	virtual
 	bool empty() const;

@@ -85,16 +85,16 @@ void convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info );
 void check_and_correct_sister_atoms( core::conformation::ResidueOP & rsd );
 
 void check_and_correct_sister_atom_based_on_chirality( core::conformation::ResidueOP & rsd,
-																											 std::string const sister1_name,
-																											 std::string const sister2_name,
-																											 std::string const parent_name,
-																											 std::string const outer_ref_name );
+	std::string const & sister1_name,
+	std::string const & sister2_name,
+	std::string const & parent_name,
+	std::string const & outer_ref_name );
 
 void
 check_and_correct_sister_atom_based_on_outgroup( core::conformation::ResidueOP & rsd,
-																								 std::string const sister1_name,
-																								 std::string const sister2_name,
-																								 std::string const outgroup_name );
+	std::string const & sister1_name,
+	std::string const & sister2_name,
+	std::string const & outgroup_name );
 
 
 void flip_atom_xyz( core::conformation::ResidueOP & rsd,

@@ -929,8 +929,8 @@ void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed
 Real
 InterfaceAnalyzerMover::calc_per_residue_dSASA_general( const core::Size i, const core::pose::Pose & complexed_pose, const Real separated_sasa, const Real complexed_sasa, vector1<Real>& regional ) {
 
-	Real dSASA = 0.0;
-	dSASA  = separated_sasa - complexed_sasa;
+	//Real dSASA = 0.0;
+	Real dSASA  = separated_sasa - complexed_sasa;
 	regional[ total ] += dSASA;
 		
 	if ( per_residue_data_.interface_residues[ i ] ) {
@@ -1717,12 +1717,12 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_interface_residues( core::
 	//itterate through the interface set and build the selection syntaxt
 	bool first_sel_complete( false );
 	core::Size resnum;
-	char chain_char, chain_char_last( 'z' );
+	char /*chain_char, */chain_char_last( 'z' );
 	for ( std::set< core::Size >::const_iterator it( interface_set.begin()), end(interface_set.end() );
 			 it != end; ++it ) {
 		//sets the current values
 		resnum = pose.pdb_info()->number( *it );
-		chain_char = pose.pdb_info()->chain( *it );
+		char chain_char = pose.pdb_info()->chain( *it );
 		//special print if the first time through
 		if ( !first_sel_complete ) {
 			interface_sele << "cmd.select(\"/" << pymol_obj_for_interface_sel << "//" << chain_char << "/"
@@ -1773,12 +1773,12 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 	<< "select " << posename_base_ << "_unsat, ";
 	//setup for looping over all unstat hbonds
 	core::Size resnum;
-	char chain_char, chain_char_last ('z');
+	char /*chain_char, */chain_char_last ('z');
 	std::string atomname ;
 	for ( core::Size i( 1 ); i <= delta_unsat_hbond_atid_vector.size(); i++ ) {
 		core::id::AtomID const id ( delta_unsat_hbond_atid_vector[ i ] );
 		resnum = pose.pdb_info()->number( id.rsd() );
-		chain_char = pose.pdb_info()->chain( id.rsd() );
+		char chain_char = pose.pdb_info()->chain( id.rsd() );
 		atomname = pose.residue(id.rsd()).atom_name(id.atomno());
 		//get rid of whitespace in the atomname
 		std::string temp;

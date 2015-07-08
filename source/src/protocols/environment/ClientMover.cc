@@ -89,7 +89,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
     } catch ( environment::EXCN_Env_Security_Exception const& e ){
       tr.Error << "[ERROR] Unauthorized changes occurred during loop closure by mover '" << this->get_name()
       << "': (attempt to write to resid " << i << ")." << std::endl;
-      throw e;
+      throw;// e;
     }
   }
 
@@ -106,7 +106,7 @@ void ClientMover::sandboxed_copy( core::pose::Pose const& sandbox_pose,
            << "Jump Translation difference: " << delta_trans << "; Rotation Difference: " << ( delta_rot.trace() - 3 )
            << ".";
         e.add_msg( ss.str() );
-        throw e;
+        throw;// e;
       }
     }
   }

@@ -128,7 +128,7 @@ void
 save_feature( 	vector1< std::string > & feature_names,
 								vector1< core::Real > & feature_vals,
 								Size & feature_counter,
-								std::string const feature_name,
+								std::string const & feature_name,
 								core::Real const feature_val ){
 
 	feature_counter++;
@@ -376,7 +376,7 @@ rhiju_pdbstats()
 		if (!instream){
 			std::cerr  << "Can't find list file " << pdb_list << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
-			return;
+			//return;
 		}
 
 		pdb_files.clear();

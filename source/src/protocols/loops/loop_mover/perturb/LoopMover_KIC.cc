@@ -170,6 +170,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 	core::pose::Pose & pose,
   protocols::loops::Loop const & loop
 ){
+	// AMW: cppcheck flags this for scope reduction, but since it's static I'm leaving as is
 	static int cur_struct=0; // for movie output
 	// Dont allow loops < 3 residues.
 	if( (loop.stop() - loop.start() < 2 )){
@@ -313,7 +314,7 @@ loop_mover::LoopResult LoopMover_Perturb_KIC::model_loop(
 		try {
 			std::string user_torbin_string = basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ]();
 			core::conformation::map_string_to_torsion_bin_string( user_torbin_string );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			throw utility::excn::EXCN_Msg_Exception( "Error in converting the string given in the option loops::restrict_kic_sampling_to_torsion_string\n"
 				"into a valid torsion set of torsion bins.  Check your inputs\n" + e.msg() );
 		}

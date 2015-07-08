@@ -126,10 +126,10 @@ FeaturesReporterFactory::get_features_reporter(
 utility::vector1<std::string> FeaturesReporterFactory::get_all_features_names()
 {
 	utility::vector1<std::string> collection;
-	FeaturesReporterCreatorMap::const_iterator iter = types_.begin();
-	while ( iter != types_.end() ) {
+	FeaturesReporterCreatorMap::const_iterator iter = types_.begin(), end = types_.end();
+	while ( iter != end ) {
 		collection.push_back(iter->first);
-		iter++;
+		++iter;
 	}
 	return collection;
 

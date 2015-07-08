@@ -170,7 +170,7 @@ DNA_BasePotential::load_score_tables()
 	bool fail( false );
 	while ( getline( data,line ) ) {
 		std::istringstream l( line );
-		std::string tag, step;
+		std::string tag;
 
 		l >> tag;
 		if ( l.fail() ) continue;

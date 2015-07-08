@@ -134,8 +134,8 @@ MPI_Refine_Master::init(){
 	// be aware of it when using multiple inputs (which haven't been tried anyway)
 
 	// Assign loop info 
-	for( SilentStructStore::iterator it = library_ref().begin(); it !=  library_ref().end();
-			 it++ ){
+	for( SilentStructStore::iterator it = library_ref().begin(), end =  library_ref().end();
+			 it != end; ++it ){
 		assign_loop_info( *it );
 	}
 
@@ -656,8 +656,8 @@ MPI_Refine_Master::process_outbound_wus(){
 			// iterate over whole ref structures given...
 			// make sure each createWU is not loading too heavy queues...
 			core::Size i( 0 );
-			for( SilentStructStore::iterator it = library_ref().begin(); 
-					 it !=  library_ref().end(); it++, i++ ){
+			for( SilentStructStore::iterator it = library_ref().begin(), 
+					 end =  library_ref().end(); it != end; ++it, i++ ){
 
 				TR << "Create on structure: " << (*it)->decoy_tag() << std::endl;
 				create_WUs( *it, i );
@@ -999,7 +999,7 @@ MPI_Refine_Master::feedback_structures_to_emperor( bool get_feedback,
 	}
 
 	core::Size i( 0 );
-	for( SilentStructStore::iterator it = library_central().begin(); it !=  library_central().end(); it++, i++ ){
+	for( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it, i++ ){
 		// Add only if used at lease once for sampling
 		//if( (*it)->get_energy( "nuse" ) > 0 ){
 		resultfeedback->decoys().add( *it );
@@ -1198,8 +1198,8 @@ MPI_Refine_Master::check_library_expiry_dates(){
 
 	SilentStructStore::iterator jt_last = library_central().begin();
 
-	for( SilentStructStore::iterator jt =  library_central().begin();
-			 jt != library_central().end(); jt ++ )
+	for( SilentStructStore::iterator jt =  library_central().begin(),
+			 end = library_central().end(); jt != end; ++jt )
 	{
 		TR.Debug << "Checking structure.." << std::endl;
 		//core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");

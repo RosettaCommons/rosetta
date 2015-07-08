@@ -139,7 +139,6 @@ DihedralPairConstraint::read_def(
 	std::string tempres1, tempres2, tempres3, tempres4, tempres5, tempres6, tempres7, tempres8;
 	std::string name1, name2, name3, name4, name5, name6, name7, name8;
 	std::string func_type;
-	std::string type;
 
 	in
 		>> name1 >> tempres1

@@ -161,7 +161,8 @@ void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifu
 
 				core::Real curr_max_psi( 999 );
 				core::Real curr_min_psi( -999 );
-				if ( ( std::abs(tmp_atomx) > 0.00001 ) || ( std::abs(tmp_atomx) > 0.00001 ) ) {
+				// AMW: cppcheck notes that repeating the condition is useless
+				if ( ( std::abs(tmp_atomx) > 0.00001 ) ) {//|| ( std::abs(tmp_atomx) > 0.00001 ) ) {
 					core::Real const inside_psi_asin = this_atom_radius / sqrt( (tmp_atomx*tmp_atomx) + (tmp_atomy*tmp_atomy) );
 					if ( std::abs(inside_psi_asin) < 1. ) {
 						core::Real const max_angular_displacement_psi = std::abs( asin( inside_psi_asin ) );

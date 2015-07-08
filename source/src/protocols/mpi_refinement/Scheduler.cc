@@ -55,7 +55,7 @@ void
 Scheduler::prepare_enrich_stage( protocols::wum::SilentStructStore const &decoys,
 				 std::string const scorename )
 {
-  std::string roundtype( "enrich" );
+  //std::string roundtype( "enrich" );
 
   TR << "==================================================================" << std::endl;
   TR << "Pick enrich methods" << std::endl;

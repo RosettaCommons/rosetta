@@ -494,44 +494,44 @@ int main( int argc, char * argv [] ){
 			basic::MetricValue<Size> tot_unsat_mval;
 
 			// calculate and store total metrics for bound and unbound poses
-			core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-			core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
-			core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
-			core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
-			core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
+			//core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
+			//core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
+			//core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
+			core::Real /*bound_packstat = 0.0, */unbound_packstat = 0.0/*, Total_packstats = 0.0*/;
+			//core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
 
 			//calculate interface Energy
-			bound_energy = bound_pose.energies().total_energies()[ total_score ];
-			unbound_energy = unbound_pose.energies().total_energy();
-			Interface_Energy = bound_energy - unbound_energy;
+			core::Real bound_energy = bound_pose.energies().total_energies()[ total_score ];
+			core::Real unbound_energy = unbound_pose.energies().total_energy();
+			core::Real Interface_Energy = bound_energy - unbound_energy;
 
 			//delta sasa calculation
 			bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-			bound_sasa = tot_sasa_mval.value();
+			core::Real bound_sasa = tot_sasa_mval.value();
 			unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-			unbound_sasa = tot_sasa_mval.value();
-			Total_BSA = unbound_sasa - bound_sasa;
+			core::Real unbound_sasa = tot_sasa_mval.value();
+			core::Real Total_BSA = unbound_sasa - bound_sasa;
 
 			//interface hb calculation
 			bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-			bound_hb = tot_hb_mval.value();
+			core::Size bound_hb = tot_hb_mval.value();
 			unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-			unbound_hb = tot_hb_mval.value();
-			Interface_HB = bound_hb - unbound_hb;
+			core::Size unbound_hb = tot_hb_mval.value();
+			core::Size Interface_HB = bound_hb - unbound_hb;
 
 			//packstat calculation
 			bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-			bound_packstat = tot_packstat_mval.value();
+			core::Real bound_packstat = tot_packstat_mval.value();
 			//unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
 			//unbound_packstat = tot_packstat_mval.value();
-			Total_packstats = bound_packstat - unbound_packstat;
+			core::Real Total_packstats = bound_packstat - unbound_packstat;
 
 			//unsat polar calculation
 			bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-			bound_unsat = tot_unsat_mval.value();
+			core::Size bound_unsat = tot_unsat_mval.value();
 			unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-			unbound_unsat = tot_unsat_mval.value();
-			Interface_unsat = bound_unsat - unbound_unsat;
+			core::Size unbound_unsat = tot_unsat_mval.value();
+			core::Size Interface_unsat = bound_unsat - unbound_unsat;
 
 			//print RMSD between input and minimized ligands (only after superposition)
 			if (option[print_complex]){
@@ -541,8 +541,8 @@ int main( int argc, char * argv [] ){
 
 			std::cout << "Interface_Scores:"<< tag <<"	"<< input_pdb_name <<"	" << bound_energy <<"	" << Interface_Energy <<"	"<< Total_BSA <<"	"<< Interface_HB <<"	"<< Total_packstats <<"	"<< Interface_unsat << std::endl;
 			if (option[ iface_rmsd ]){
-				core::Real CA_rms = calpha_pdb_superimpose_pose( unbound_pose, ref_pose);
-				CA_rms = core::scoring::CA_rmsd( unbound_pose, ref_pose );
+				/*core::Real CA_rms = */calpha_pdb_superimpose_pose( unbound_pose, ref_pose);
+				core::Real CA_rms = core::scoring::CA_rmsd( unbound_pose, ref_pose );
 				std::cout << "superimpose to native. Rms to native: " << CA_rms << std::endl;
 				core::Real heavyatom_rms = interface_rmsd( ref_pose, unbound_pose );
 				std::cout << "Interface rmsd: " << heavyatom_rms << std::endl;

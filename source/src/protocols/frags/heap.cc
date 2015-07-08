@@ -279,8 +279,8 @@ heap_down(
 {
 	heap.dimension( SRange( -2, star ) );
 	coheap.dimension( SRange( 0, star ) );
-	float coiv,cocv,cocv2;
-	int indx,child,iv,cv,cv2,last;
+	float coiv,/*cocv,*/cocv2;
+	int indx,/*child,*/iv,/*cv,*/cv2,last;
 	indx = index_in-1; // convert to zero offset matrix
 	last = heap(-1)-1; // convert to zero offset matrix
 
@@ -291,12 +291,12 @@ heap_down(
 	coiv = coheap(indx);
 
 	while ( indx < last ) {
-		child = 2*indx+1;
+		int child = 2*indx+1;
 
 		if ( child > last ) break;
 
-		cv  = heap(child);
-		cocv = coheap(child);
+		int cv  = heap(child);
+		float cocv = coheap(child);
 
 		if ( child < last ) {
 			cv2 = heap (child+1);
@@ -351,9 +351,9 @@ heap_up(
 {
 	heap.dimension( SRange( -2, star ) );
 	coheap.dimension( SRange( 0, star ) );
-	float covalue,copv;
+	float covalue;//,copv;
 
-	int indx,parent,value,pv;
+	int indx,/*parent,*/value;//,pv;
 	indx = index_in-1; // convert to zero offset matrix
 
 
@@ -361,9 +361,9 @@ heap_up(
 	covalue = coheap(indx);
 
 	while ( indx != 0 ) {
-		parent = static_cast< int >((indx-1)/2);
-		pv = heap(parent);
-		copv = coheap(parent);
+		int parent = static_cast< int >((indx-1)/2);
+		int pv = heap(parent);
+		float copv = coheap(parent);
 		if ( copv < covalue ) break;
 		coheap(indx) = copv;
 		heap(indx) = pv;

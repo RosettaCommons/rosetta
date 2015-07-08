@@ -270,7 +270,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Size
-	string_to_int( std::string const input_string ){
+	string_to_int( std::string const & input_string ){
 
 		Size int_of_string; //misnomer
 		std::stringstream ss ( std::stringstream::in | std::stringstream::out );
@@ -288,7 +288,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Real
-	string_to_real( std::string const input_string ){
+	string_to_real( std::string const & input_string ){
 
 		Real real_of_string;
 		std::stringstream ss ( std::stringstream::in | std::stringstream::out );
@@ -306,6 +306,7 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// AMW: cppcheck wants you to pass delimiters by reference, but don't try--it'll cause more problems than it's worth
 	utility::vector1< std::string >
 	tokenize( std::string const str, std::string delimiters ){
 	  using namespace std;
@@ -468,7 +469,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	align_poses( core::pose::Pose & moving_pose, std::string const moving_tag, core::pose::Pose const & static_pose, std::string const static_tag, utility::vector1< core::Size > const & working_best_alignment, bool const base_only ){
+	align_poses( core::pose::Pose & moving_pose, std::string const & moving_tag, core::pose::Pose const & static_pose, std::string const & static_tag, utility::vector1< core::Size > const & working_best_alignment, bool const base_only ){
 
 		bool found_non_virtual_base = false;
 		for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
@@ -517,7 +518,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_seq_num_list( std::string const tag, utility::vector1< core::Size > const & seq_num_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+	output_seq_num_list( std::string const & tag, utility::vector1< core::Size > const & seq_num_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
@@ -544,7 +545,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_title_text( std::string const title, std::ostream & outstream /* = std::cout */ ){
+	output_title_text( std::string const & title, std::ostream & outstream /* = std::cout */ ){
 
 		outstream << std::endl;
 
@@ -674,6 +675,7 @@ namespace rna {
 		sum_sd = sum_sd/( atom_count );
 		Real rmsd = sqrt( sum_sd );
 
+		// AMW: we just divided by atom_count, so it shouldn't be 0!
 		if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on June_11, 2010, took me a whole day to debug this since buggy only on Biox compiler!
 
 		return ( std::max( 0.01, rmsd ) );
@@ -727,6 +729,7 @@ namespace rna {
 		sum_sd = sum_sd/( atom_count );
 		Real rmsd = sqrt( sum_sd );
 
+		// AMW: we just divided by atom_count, so it shouldn't be 0!
 		if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on May 5, 2010
 
 		if ( verbose ){
@@ -919,6 +922,7 @@ namespace rna {
 		sum_sd = sum_sd/( atom_count );
 		Real rmsd = sqrt( sum_sd );
 
+		// AMW: we just divided by atom_count, so it shouldn't be 0!
 		if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on June_11, 2010, took me a whole day to debug this since buggy only on Biox compiler!
 
 		return ( std::max( 0.01, rmsd ) );
@@ -1437,7 +1441,7 @@ namespace rna {
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	print_atom_info( pose::Pose const & pose, Size const seq_num, std::string const pose_name ){
+	print_atom_info( pose::Pose const & pose, Size const seq_num, std::string const & pose_name ){
 		TR << "print_atom_info for pose: " << pose_name << " seq_num = " << seq_num << std::endl;
 
 		conformation::Residue const & rsd = pose.residue( seq_num ); //static_pose
@@ -1452,7 +1456,7 @@ namespace rna {
 	}
 /////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	print_individual_atom_info( core::conformation::Residue const & rsd, Size const atomno, std::string const rsd_name ){
+	print_individual_atom_info( core::conformation::Residue const & rsd, Size const atomno, std::string const & rsd_name ){
 		TR << "individual_atom_info: rsd_name " << rsd_name;
 
 		TR << " atom = " << atomno  << "|name = " << rsd.type().atom_name( atomno ) << "|type = " << rsd.atom_type( atomno ).name();
@@ -1463,7 +1467,7 @@ namespace rna {
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 	void
-	print_base_state( std::string const tag, core::Size const base_state, std::ostream & outstream /* = std::cout */ ){
+	print_base_state( std::string const & tag, core::Size const base_state, std::ostream & outstream /* = std::cout */ ){
 
 		std::string base_state_string = "";
 
@@ -1486,7 +1490,7 @@ namespace rna {
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 	void
-	print_sugar_pucker_state( std::string const tag, core::Size const pucker_state, std::ostream & outstream /* = std::cout */ ){
+	print_sugar_pucker_state( std::string const & tag, core::Size const pucker_state, std::ostream & outstream /* = std::cout */ ){
 
 		std::string pucker_state_string = "";
 
@@ -1583,7 +1587,7 @@ rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, Real
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std::string const title ){
+show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std::string const & title ){
 
 	using namespace core::scoring;
 	using namespace ObjexxFCL::format;

@@ -212,6 +212,7 @@ LocalRelax::optimization_loop(
 	core::pack::pack_rotamers( pose, *local_pack_sf, ptask );
 	minimizer.run( pose, *mm, *local_min_sf, options );
 
+	// AMW: cppcheck flags this but unnecessarily so
 	static int dump_idx=1;
 	if (verbose_) {
 		std::string name = "opt_"+utility::to_string( dump_idx++ )+".pdb";

@@ -270,9 +270,9 @@ plot_2D(
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
-		float maxdatax =log(1+xmax-xmin);
+		float maxdatax =log(1.0+xmax-xmin);
 		float mindatax =log(1.0);
-		float maxdatay = log(1+ymax-ymin);
+		float maxdatay = log(1.0+ymax-ymin);
 		float mindatay = log(1.0);
 
 		gluOrtho2D( mindatax, maxdatax, mindatay, maxdatay );
@@ -287,10 +287,10 @@ plot_2D(
 			float x = xdata[step];
 			float y = ydata[step];
 			x -= xmin;
-			if( x > 0 ) x = log(x+1.0);
+			if( x > 0 ) x = log(1.0+x);
 			else continue;
 			y -= ymin;
-			if( y > 0 ) y = log(y+1.0);
+			if( y > 0 ) y = log(1.0+y);
 			else continue;
 			glVertex2f( x, y ) ;
 		}
@@ -306,10 +306,10 @@ plot_2D(
 				float y = model_energy_vector[step];
 				if (x && y){
 					x -= xmin;
-					if( x > 0 ) x = log(x+1.0);
+					if( x > 0 ) x = log(1.0+x);
 					else continue;
 					y -= ymin;
-					if( y > 0 ) y = log(y+1.0);
+					if( y > 0 ) y = log(1.0+y);
 					else continue;
 
 					glVertex2f( x, y );
@@ -810,13 +810,13 @@ void plot_timeseries(
 		glLoadIdentity();
 		if (vertical) {
 			//gluOrtho2D( min, max, 0, total_steps-1  );
-			maxdata =log(1+max-min);
+			maxdata =log(1.0+max-min);
 			mindata =log(1.0);
 			gluOrtho2D( mindata, maxdata, 0, total_steps-1  );
 
 		} else {
 			//gluOrtho2D( 0, total_steps-1, min, max );
-			maxdata = log(1+max-min);
+			maxdata = log(1.0+max-min);
 			mindata = log(1.0);
 			//maxdata = max; //log(1+max-min);
 			//mindata = min; //log(1.0);
@@ -840,7 +840,7 @@ void plot_timeseries(
 			if (vertical) {
 				x = point;
 				x -= min;
-				if( x > 0 ) x = log(x+1.0);
+				if( x > 0 ) x = log(1.0+x);
 				y = (total_steps-1) - step+start_step;
 				caged_data = std::min(maxdata, std::max( (float)mindata, (float)x ) ) / (maxdata+0.001);
 				glColor3f(1.0-caged_data,1.0-caged_data,caged_data); // yellow
@@ -848,7 +848,7 @@ void plot_timeseries(
 				x = step-start_step;
 				y = point;
 				y -= min;
-				if( y > 0 ) y = log(y+1.0);
+				if( y > 0 ) y = log(1.0+y);
 
 				caged_data = std::min(maxdata, std::max( (float)mindata, (float)y ) ) / (maxdata+0.001);
 				glColor3f(1.0-caged_data,1.0-caged_data,caged_data); // yellow

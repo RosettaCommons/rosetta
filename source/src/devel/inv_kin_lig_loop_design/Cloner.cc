@@ -507,14 +507,12 @@ namespace devel {
 
       // Step 2 - determine the total size of the new pose
 
-      int total_size = 0;
 
       utility::vector1< core::chemical::ResidueTypeCOP > seq;
 
       for( Size k = 0; k < segments.size(); ++k ) {
-				int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
+				//int size = segments[k].hi_res->seqpos() - segments[k].lo_res->seqpos() + 1;
 				//cout << segments[k].lo_res->seqpos() << ":" << segments[k].hi_res->seqpos() << " " << size << endl;
-				total_size += size;
 
 				append_seq(*segments[k].pose,segments[k].lo_res->seqpos(),segments[k].hi_res->seqpos(),seq);
       }

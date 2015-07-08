@@ -523,7 +523,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	std::vector< FragmentMoverOP > fragmover;
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs_.begin(), it_end = frag_libs_.end();
-				it != it_end; it++ ) {
+				it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -534,7 +534,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
 		for ( int i = loop_begin; i <= loop_end; ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );
 			}
 		}
@@ -646,7 +646,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 				temperature *= gamma;
 				mc_->set_temperature( temperature );
 				for ( std::vector< FragmentMoverOP >::const_iterator
-							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 					(*it)->apply( pose );
 					if( chainbreak_present ) fast_ccd_close_loops( pose, loop_begin, loop_end, cutpoint, mm_one_loop );
 					mzr.run( pose, mm_one_loop, *scorefxn_, options );
@@ -710,7 +710,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 
 					if( !option[OptionKeys::loops::refine_only ]() ){
 						for ( std::vector< FragmentMoverOP >::const_iterator
-									it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+									it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 
 							if( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;
@@ -1121,6 +1121,7 @@ void LoopRebuild::extend_barcode_regions_if_chain_break(
 	int & barcst_extend_begin, // output
 	int & barcst_extend_end
 ) {
+	// AMW: despite cppcheck objection keeping static variables at top scope
 	static int n_small_chain_break_fail = { 1 };
 	static bool barcst_flip_flop = { true };
 	static bool barcst_small_flip_flop = { true };

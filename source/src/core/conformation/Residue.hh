@@ -1246,7 +1246,7 @@ public:
 	connection_distance(
 			conformation::Conformation const & conf,
 			Size const resconn_index,
-			Vector const matchpoint
+			Vector const & matchpoint
 	) const;
 
 	/// @brief Am I bonded to other?

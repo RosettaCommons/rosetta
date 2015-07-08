@@ -100,7 +100,6 @@ void triaxialCoefficients(
 		int& f) {
 
   utility::vector1<Real> ctheta (4), calpha (4), salpha (4), cxi (3), sxi (3), ceta (4), seta (4), cdelta (3), sdelta (3), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
-  Real am, ap, cdsx, sdsx, b, bm, bp, d, dp, dm;
   utility::vector1<utility::vector1<Real> > L, M, N;
   utility::vector1<utility::vector1<utility::vector1<Real> > > p (4);
 
@@ -159,6 +158,7 @@ void triaxialCoefficients(
       sameta[i] = saceta[i] - caseta[i];
     }
     for (int i=2; i<=4; i++) {
+  		Real am, ap, cdsx, sdsx, b, bm, bp, d, dp, dm;
       am    = cxi[i-1]*cameta[i] + ctheta[i];
       ap    = cxi[i-1]*capeta[i] + ctheta[i];
       cdsx  = cdelta[i-1]*sxi[i-1];
@@ -287,7 +287,7 @@ Real bondangle(const utility::vector1<Real>& a, const utility::vector1<Real>& b,
 }
 
 Real torsion(const utility::vector1<Real>& a, const utility::vector1<Real>& b, const utility::vector1<Real>& c, const utility::vector1<Real>& d) {
-	Real f, y, z, chi;
+	Real chi;
 	utility::vector1<Real> r (3), sc1 (3), sc2 (3), sc3 (3), cs12, cs31;
 	utility::vector1<utility::vector1<Real> > s (3);
 	for (int i=1; i<=3; i++) { // init s
@@ -314,13 +314,13 @@ Real torsion(const utility::vector1<Real>& a, const utility::vector1<Real>& b, c
 			s[i][2] = cs31[i];
 		}
 		for (int i=2; i<=3; i++) {
-			f = std::sqrt( pow(s[1][i],2) + pow(s[2][i],2) + pow(s[3][i],2));
+			Real f = std::sqrt( pow(s[1][i],2) + pow(s[2][i],2) + pow(s[3][i],2));
 			s[1][i] /= f;
 			s[2][i] /= f;
 			s[3][i] /= f;
 		}
-		y = r[1]*s[1][2] + r[2]*s[2][2] + r[3]*s[3][2];
-		z = r[1]*s[1][3] + r[2]*s[2][3] + r[3]*s[3][3];
+		Real y = r[1]*s[1][2] + r[2]*s[2][2] + r[3]*s[3][2];
+		Real z = r[1]*s[1][3] + r[2]*s[2][3] + r[3]*s[3][3];
 		chi = atan2(z,y) * rad2deg;
 		if (chi < 0) {
 			chi += 360.0;

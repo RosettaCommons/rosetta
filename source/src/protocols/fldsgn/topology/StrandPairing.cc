@@ -603,7 +603,7 @@ String
 StrandPairingSet::name_wo_rgstr() const
 {
 	String spairs = "";
-	std::ostringstream name;
+	//std::ostringstream name;
 	for ( StrandPairings::const_iterator it=strand_pairings_.begin(),
 						ite=strand_pairings_.end(); it != ite; ++it ) {
 		StrandPairing const & spair( **it );

@@ -485,7 +485,7 @@ GeneticAlgorithmBase::read_entities_checkpoint( bool overwrite /* = false */ )
 	if ( !file ) return false;
 	TR(basic::t_info) << "Reading cached entities from file " << filename << '\n';
 
-	std::string line;
+	//std::string line;
 	core::Size counter(0);
 	EntityOP entity = new_entity();
 	while ( entity->read_checkpoint(file) ) {

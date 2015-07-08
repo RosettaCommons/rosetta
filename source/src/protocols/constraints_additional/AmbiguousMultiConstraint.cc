@@ -76,8 +76,7 @@ AmbiguousMultiConstraint::score(
 
 	// first, we score every constraint and save the result in a list
 	for( ConstraintCOPs::const_iterator
-			member_it = member_constraints().begin();
-			member_it != member_constraints().end(); member_it++){
+			member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
 		EnergyMap cur_emap;
 		(*member_it)->score(xyz_func, weights, cur_emap);
 		core::Real cur_score = calculate_total_cst_score( weights, cur_emap);
@@ -158,7 +157,7 @@ AmbiguousMultiConstraint::show( std::ostream& out) const
 {
 	using namespace core::scoring::constraints;
   out << "AmbiguousMultiConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
     (*cst_it)->show(out);
   }
 
@@ -173,7 +172,7 @@ AmbiguousMultiConstraint::show_violations( std::ostream& out, core::pose::Pose c
 	if ( verbose_level >= 70 ) {
 	Size total_viol( 0 );
 	if ( verbose_level >=80 )	out << type() << " " << member_constraints().size() << " ";
-	for( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(); cst_it != active_constraints_.end(); cst_it++){
+	for( ConstraintCOPs::const_iterator cst_it = active_constraints_.begin(), end = active_constraints_.end(); cst_it != end; ++cst_it ) {
 
 		//out << "active ";
 		total_viol += (*cst_it)->show_violations( out, pose, verbose_level,   threshold );

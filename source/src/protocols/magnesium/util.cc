@@ -500,7 +500,7 @@ void
 get_hydration_stats( pose::Pose const & pose,
 										 pose::Pose const & reference_pose,
 										 utility::vector1< Size > const & pdb_mg_res_list_in,
-										 std::string const outfile ){
+										 std::string const & outfile ){
 
 	using namespace protocols::magnesium;
 

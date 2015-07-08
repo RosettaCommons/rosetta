@@ -1328,7 +1328,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( core::conformation::ResidueCOP( core::conformation::ResidueOP( new core::conformation::Residue( pose.residue( seqpos ) ) ) ) );
 							invrots_build = true;
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, pose.residue( other_seqpos ).get_self_ptr() ) );
-							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
+							if ( !cur_inv_rots.empty() /*size() != 0*/ ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
 						}
 						else{
 							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, but we're not building inverse rotamers because the same residue is also specified in block " << corresponding_res_block << " of the cstfile. Inverse rotamers will be built according to the geometry specified in that block." << std::endl;

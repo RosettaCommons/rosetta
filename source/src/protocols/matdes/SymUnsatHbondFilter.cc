@@ -399,7 +399,7 @@ SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::D
 		    utility_exit_with_message("Native PDB not specified on command line.");
 		  }
 		} else if ( tag->hasOption("reference_name") ){
-		  std::string reference_pose_name = tag->getOption< std::string >( "reference_name", "" );
+		  //std::string reference_pose_name = tag->getOption< std::string >( "reference_name", "" );
 		  reference_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag,data );
 		} else if( tag->hasOption("reference_pdb") ){
 		  std::string reference_pdb_filename( tag->getOption< std::string >( "reference_pdb", "" ) );

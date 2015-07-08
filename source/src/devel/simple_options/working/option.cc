@@ -97,10 +97,10 @@ void OptionFile::read_options() {
 	FILE *infile=NULL;
 	infile=fopen(in_file.c_str(),"r");
 
-	bool bEOF=false;
+	//bool bEOF=false;
 	string block_name="test_options";
 	//get first block_name in file:
-	bEOF=OptionFileBlock("").read_entries(infile,block_name);//get first block name
+	bool bEOF=OptionFileBlock("").read_entries(infile,block_name);//get first block name
 	while(!bEOF) {
 		if (blocks.find(block_name)==blocks.end()) {
 			//block_name did not exist in list, create new block
@@ -255,8 +255,8 @@ void OptionBlock::write_lines(FILE *out) {
 			if(line.name[0]==';' || (line.name.length()>2 && line.name[1]==';'))
 	fprintf(out,"%-24s\n",line.name.c_str());
 			else {
+	//int bla=1;
 	int bla=1;
-	bla=1;
 	//fprintf(out,"%-24s = %s\n",line.name.c_str(),line.value.c_str());
 			}
 		} else {
@@ -358,19 +358,20 @@ void trim (char *str);
 */
 bool OptionFileBlock::read_entries(FILE *in,string &next_block) {
 	char      buf[STRLEN],lbuf[STRLEN],rbuf[STRLEN];
-	char      *ptr,*cptr;
-	int       nin,lc,i,j,k;
+	char      *ptr;//,*cptr;
+	int       /*nin,*/lc,i,j,k;
 
 	/* leftovers from the GROMACS code */
 	char *fn="option_file"; //used in fprintf(debug,...
 	FILE *debug = NULL;
 
-	nin = lc  = 0;
+	/*nin = */lc  = 0;
 	do {
 		ptr=fgets2(buf,STRLEN-1,in);
 		lc++;
 		if (ptr) {
 			/* Strip comment */
+			char *cptr;
 			if ((cptr=strchr(buf,COMMENTSIGN)) != NULL)
 	*cptr='\0';
 			/* Strip spaces */

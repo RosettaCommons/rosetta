@@ -173,7 +173,7 @@ FragSet::generate_insert_map( MoveMap const& mm, InsertMap &insert_map, InsertSi
 
 	insert_map.clear();
 	insert_size.clear();
-	if( insert_set.size() != 0){
+	if ( !insert_set.empty()/*size() != 0*/){
 		insert_size.resize( insert_set.rbegin()->first ); //the largest residue in insert_map
 	}
 	// now copy it into a simple vector of numbers

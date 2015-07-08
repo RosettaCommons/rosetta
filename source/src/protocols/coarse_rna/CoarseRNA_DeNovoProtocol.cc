@@ -287,7 +287,7 @@ CoarseRNA_DeNovoProtocol::initialize_tag_is_done()
 	SilentFileData silent_file_data;
 	if ( utility::file::file_exists( silent_file_ ) ) {
 		tags_done = silent_file_data.read_tags_fast( silent_file_ );
-		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(); iter != tags_done.end(); iter++ ) {
+		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(), end = tags_done.end(); iter != end; ++iter ) {
 			std::cout << "Already done: " << *iter << std::endl;
 			tag_is_done_[ *iter ] = true;
 		}
@@ -314,7 +314,7 @@ CoarseRNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::s
 
 		std::list< Size > stem_residues( rna_structure_parameters_->get_stem_residues( pose ) );
 		Real rmsd_stems( 0.0 );
-		if ( stem_residues.size() > 0 ) {
+		if ( !stem_residues.empty() ) { //size() > 0 ) {
 			rmsd_stems = all_atom_rmsd( *get_native_pose(), pose, stem_residues );
 			TR << "All atom rmsd over stems: " << rmsd_stems << " for " << out_file_tag << std::endl;
 		}
@@ -348,8 +348,8 @@ CoarseRNA_DeNovoProtocol::fill_pairing_dists( pose::Pose & pose ) {
 	pairing_dists_.clear();
 	std::map< Size, Size>  const & pairs = rna_structure_parameters_->connections();
 
-	for ( 	std::map< Size, Size >::const_iterator it = pairs.begin();
-					it != pairs.end(); it ++ ) {
+	for ( std::map< Size, Size >::const_iterator it = pairs.begin(), end = pairs.end();
+					it != end; ++it ) {
 		Size const i = it->first;
 		Size const j = it->second;
 		pairing_dists_.push_back( ( pose.xyz( NamedAtomID( " CEN", i ) ) -
@@ -369,8 +369,8 @@ CoarseRNA_DeNovoProtocol::check_new_pairing_dists( pose::Pose & pose, Size const
 
 	std::map< Size, Size>  const & pairs = rna_structure_parameters_->connections();
 
-	for ( 	std::map< Size, Size >::const_iterator it = pairs.begin();
-					it != pairs.end(); it ++ ) {
+	for ( std::map< Size, Size >::const_iterator it = pairs.begin(), end = pairs.end();
+					it != end; ++it ) {
 		Size const i = it->first;
 		Size const j = it->second;
 		Real const dist_new = ( pose.xyz( NamedAtomID( " CEN", i ) ) -

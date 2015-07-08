@@ -655,7 +655,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 				core::Size j = i;
 
 
-				while( flex_res[j] && (j <= pose.total_residue()) ) j++;
+				while( (j <= pose.total_residue()) && flex_res[j] ) j++;
 
 				no_flex_regions++;
 				flex_regions_.push_back( protocols::enzdes::EnzdesFlexibleRegionOP( new EnzdesFlexibleRegion( no_flex_regions, i, j - 1, (j - i), pose,

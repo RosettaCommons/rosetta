@@ -66,7 +66,7 @@ public:
 	Orbital(
 			std::string const & name_in,
 			Size const orbital_type_index,
-			Vector const xyz
+			Vector const & xyz
 	):
 		name_( name_in ),
 		orbital_type_index_(orbital_type_index),

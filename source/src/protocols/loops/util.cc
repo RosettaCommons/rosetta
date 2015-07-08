@@ -387,7 +387,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 }
 
 LoopsOP
-loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
+loops_from_string( std::string const & loop_str, core::pose::Pose const & pose ){
   utility::vector1< std::string > const loops_vec( utility::string_split( loop_str, ',' ) );
 
 // each loop should have the format loop_start:loop_end:cut

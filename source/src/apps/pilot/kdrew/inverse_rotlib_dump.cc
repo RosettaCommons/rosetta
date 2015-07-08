@@ -160,7 +160,7 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 	while( rot_iterator != primary_rots.end()){
         	file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
                 core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
-               	rot_iterator++;
+               	++rot_iterator;
 		file_out << "ENDMDL \n";
         } // while( !all_res_iterators_at_end )
 	file_out.close();
@@ -186,7 +186,7 @@ InverseRotlibDumpMover::apply(core::pose::Pose& pose)
 		while( rot_iterator != secondary_rots.end()){
         		file_out << "MODEL   "+utility::to_string(modelcount++)+"\n";
 	                core::io::pdb::dump_pdb_residue( **(rot_iterator), atomcounter, file_out );
-	               	rot_iterator++;
+	               	++rot_iterator;
 			file_out << "ENDMDL \n";
 	        } // while( !all_res_iterators_at_end )
 		file_out.close();

@@ -56,7 +56,7 @@ core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
 
 core::pack::task::TaskFactoryOP
-parse_task_operations( std::string const task_list, basic::datacache::DataMap const & data );
+parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
 ///through the given option. Default to 'talaris2013' by default.
@@ -65,7 +65,7 @@ parse_score_function(
 	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
-	std::string const dflt_key="talaris2013" );
+	std::string const & dflt_key="talaris2013" );
 
 /// @brief Look up the score function defined in the <SCOREFXNS/>
 ///through the option 'scorefxn='. Default to 'talaris2013' by default.
@@ -73,7 +73,7 @@ core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
-	std::string const dflt_key="talaris2013" );
+	std::string const & dflt_key="talaris2013" );
 
 /// @brief Look up the name of assigned score function to the given
 ///option. Use this to prevent hard coding default score functions into
@@ -97,7 +97,7 @@ core::pose::PoseOP
 saved_reference_pose(
 	utility::tag::TagCOP in_tag,
 	basic::datacache::DataMap & data_map,
-	std::string const tag_str="reference_name" );
+	std::string const & tag_str="reference_name" );
 
 /// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
 /// Still resets movemap if MoveMap branch not found!
@@ -131,13 +131,13 @@ add_movemaps_to_datamap(
 
 /// @brief Does the tag have a branch of the given name
 bool
-has_branch(utility::tag::TagCOP in_tag, std::string const branch_name);
+has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name);
 
 protocols::filters::FilterOP
-parse_filter( std::string const filter_name, protocols::filters::Filters_map const & d );
+parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & d );
 
 protocols::moves::MoverOP
-parse_mover( std::string const mover_name, protocols::moves::Movers_map const & d );
+parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & d );
 
 numeric::xyzVector< core::Real >
 parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
@@ -164,7 +164,7 @@ residue_packer_states( core::pose::Pose const & pose, core::pack::task::TaskFact
 /// This allows one to use SavePoseMovers within a protocol with the correct residue from pdb_num.
 /// This function is to prevent unused variable crash.
 void
-parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix);
+parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const & prefix);
 
 } // RosettaScripts
 } // protocols

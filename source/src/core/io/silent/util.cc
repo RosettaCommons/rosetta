@@ -73,7 +73,7 @@ initialize_tag_is_done( std::string const & silent_file ){
 	SilentFileData silent_file_data;
 	if ( utility::file::file_exists( silent_file ) ) {
 		tags_done = silent_file_data.read_tags_fast( silent_file );
-		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(); iter != tags_done.end(); iter++ ) {
+		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(), end = tags_done.end(); iter != end; ++iter ) {
 			std::cout << "Already done: " << *iter << std::endl;
 			tag_is_done[ *iter ] = true;
 		}

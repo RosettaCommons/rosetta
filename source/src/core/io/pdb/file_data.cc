@@ -1248,11 +1248,11 @@ build_pose_as_is1(
 				// :->2-branch ResidueType will be checked as a possible match before an :->2-branch:->6-branch
 				// ResidueType.  If this were not the case, Rosetta could misassign an :->2-branch:->6-branch
 				// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
-				char branch_point;
+				//char branch_point;
 				bool branch_point_is_missing( false );
 				Size const n_branch_points( branch_points_on_this_residue.size() );
 				for ( core::uint k( 1 ); k <= n_branch_points; ++k ) {
-					branch_point = branch_points_on_this_residue[ k ][ 2 ];  // 3rd column (index 2) is the atom number.
+					char branch_point = branch_points_on_this_residue[ k ][ 2 ];  // 3rd column (index 2) is the atom number.
 					if ( TR.Debug.visible() ) {
 						TR.Debug << "Checking '" << rsd_type.name() <<
 								"' for branch at position " << branch_point << std::endl;
@@ -1759,8 +1759,6 @@ build_pose_as_is1(
 			getline( data, line );
 			while (line != "##End comments##") {
 				//TR<<"Testing read comments! :"<<line<<std::endl;
-				std::string const key;
-				std::string const value;
 				utility::vector1<std::string> comment_line(utility::string_split(line,' '));
 				if (comment_line.size()<2) {
 					getline( data, line );
@@ -1928,7 +1926,6 @@ pose_from_pose(
 	FileDataOptions const & options
 ){
 	FileData fd;
-	std::string data;
 	fd.init_from_pose( old_pose, residue_indices );
 	id::AtomID_Mask missing( false );
 	build_pose_as_is1( fd, new_pose, residue_set, missing, options );

@@ -420,7 +420,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 
 
 void
-remove_constraints_of_type(core::pose::Pose & pose, std::string const type) {
+remove_constraints_of_type(core::pose::Pose & pose, std::string const & type) {
 	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
 	for (core::Size i=1; i<=all_csts.size(); ++i){
 		if (all_csts[i]->type() == type){
@@ -430,7 +430,7 @@ remove_constraints_of_type(core::pose::Pose & pose, std::string const type) {
 }
 
 void
-remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core::Size const start_res, core::Size const end_res){
+remove_constraints_of_type(core::pose::Pose & pose, std::string const & type, core::Size const start_res, core::Size const end_res){
 	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
 	for (core::Size i=1; i<=all_csts.size(); ++i){
 		if (all_csts[i]->type() == type){

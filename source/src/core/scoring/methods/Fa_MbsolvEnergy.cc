@@ -193,8 +193,8 @@ endl;*/
 /////////////////////////////////////////////////////////////////////////////
 void
 Fa_MbsolvEnergy::setup_for_derivatives(
-																				 pose::Pose & pose,
-																				 ScoreFunction const & scfxn
+	pose::Pose & pose,
+	ScoreFunction const & scfxn
 ) const
 {
   potential_.compute_fa_projection( pose );
@@ -291,22 +291,21 @@ Fa_MbsolvEnergy::eval_dE_dR_over_r(
   F1 = atom1.xyz().cross( atom2.xyz() );
   F2 = atom1.xyz() - atom2.xyz();
   Real d2,frac;
-  int disbin;
-
+	
   d2 = atom1.xyz().distance_squared( atom2.xyz() );
 
   if ( ( d2 < safe_max_dis2_ ) && ( d2 != Real(0.0) ) ) {
 
      // bin by distance:
      Real const d2_bin = d2 * get_bins_per_A2_;
-     disbin = static_cast< int >( d2_bin ) + 1;
+     int disbin = static_cast< int >( d2_bin ) + 1;
      frac = d2_bin - ( disbin - 1 );
 
     // l1 and l2 are FArray LINEAR INDICES for fast lookup:
     // [ l1 ] == (disbin  ,attype2,attype1)
     // [ l2 ] == (disbin+1,attype2,attype1)
 
-    Real deriv = 0.0;
+    //Real deriv = 0.0;
 
     int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
       l2 = l1 + 1;
@@ -318,7 +317,7 @@ Fa_MbsolvEnergy::eval_dE_dR_over_r(
     Real e1 = e11 + e21;
     Real e2 = e12 + e22;
 
-    deriv = fa_mbsolv_weight_ * ( e1 + frac * ( e2 - e1 ) );
+    Real deriv = fa_mbsolv_weight_ * ( e1 + frac * ( e2 - e1 ) );
 
     return deriv / std::sqrt( d2 );
   } else {

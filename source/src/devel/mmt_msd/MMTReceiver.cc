@@ -248,7 +248,7 @@ bool MMTReceiver::recreate_previously_generated_result_pose()
 
 	try {
 		job->update_pose( *sd.pose );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		utility::send_integer_to_node( 0, error );
 		std::string emessage = "Could not recover previously generated pose. Node " + utility::to_string( utility::mpi_rank() ) + "\n";
 		utility::send_string_to_node( 0, emessage + e.msg() );

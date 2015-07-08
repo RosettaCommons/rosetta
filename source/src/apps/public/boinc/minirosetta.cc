@@ -290,14 +290,15 @@ main( int argc, char * argv [] )
 		return 0; // makes compiler happy
 		}
 	//---code to do a in spot score cut necessary for running centroid abinitio through boinc
-	double runtime = -1; //-1 does not do filtering
-	double minTimePerModel = 61;  //seconds per model min time for boinc.
 #ifdef BOINC
-		runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
+	double runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
+#else
+	double runtime = -1; //-1 does not do filtering
 #endif
-	if(option[boinc::score_cut_pct].user())
+	if(option[boinc::score_cut_pct].user()) {
+		double minTimePerModel = 61;  //seconds per model min time for boinc.
 		protocols::boinc::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
-
+	}
 #ifdef BOINC
 
 	// gzip the output silent files.

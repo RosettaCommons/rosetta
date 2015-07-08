@@ -364,7 +364,7 @@ SymDofMover::apply(Pose & pose) {
 // Read in user info //
 
 		std::string symm_file = symm_file_;
-		std::string symm_name = utility::file_basename(symm_file);
+		//std::string symm_name = utility::file_basename(symm_file);
 
 	// Read in symmetry info from symmetry definition file //
 

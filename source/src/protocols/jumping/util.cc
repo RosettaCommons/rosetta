@@ -145,7 +145,7 @@ close_chainbreaks(
 	tr.Debug << "cut " << it->second << " max_loop_size " << it->first << std::endl;
       }
     }
-    if ( cuts.size() == 0 ) {
+    if ( cuts.empty() ) { //size() == 0 ) {
       throw( loops::EXCN_Loop_not_closed( "no moveable piece to close loop" ) );
     }
 

@@ -336,7 +336,12 @@ ParametricSheet::test_matrix( utility::vector1< utility::vector1< core::Vector >
 			if ( vec[i][j].x() > -999 && vec[i][j-1].x() > -999 ) {
 				core::Real const dist( vec[i][j].distance( vec[i][j-1] ) );
 				//TR << i << "," << j << " dist = " << dist << std::endl;
-				if ( ( dist < 3.81 ) || ( dist > 3.79 ) ) dump_ca_coords( "ca_coords_failed.pdb" );
+				// AMW: cppcheck flagged the original conditional:
+				//if ( ( dist < 3.81 ) || ( dist > 3.79 ) ) dump_ca_coords( "ca_coords_failed.pdb" );
+				// as always evaluating to true
+				// judging by the runtime asserts, the good range is between 3.79 and 3.81
+				// and failure is outside
+				if ( ( dist > 3.81 ) || ( dist < 3.79 ) ) dump_ca_coords( "ca_coords_failed.pdb" );
 				runtime_assert( dist < 3.81 );
 				runtime_assert( dist > 3.79 );
 			}

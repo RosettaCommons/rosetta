@@ -265,9 +265,9 @@ static thread_local basic::Tracer irt( "protocols.motifs.IRCollection", basic::t
 //		std::string unique_name( make_loop_pdb_name( setpos, unique_id() ) );
 		increment_unique_id();
 		std::string motif_filename( make_motif_filename( setpos, setpos_forward_info, start_pose ) );
-		std::string my_output_path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]() );
+		//std::string my_output_path( basic::options::option[ basic::options::OptionKeys::out::path::pdb ]() );
 		std::string filename( unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
-		std::string try_filename( my_output_path + "/" + unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
+		//std::string try_filename( my_output_path + "/" + unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 
 		//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
 		core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function_legacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );

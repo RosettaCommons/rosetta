@@ -50,7 +50,7 @@ OutputterSP FormatStringOutputter::create() {
 
 void FormatStringOutputter::write( PipeMap & p ){
 	TR << "-------Outputting PipeMap to File--------" << std::endl;
-	for( PipeMap::iterator itr = p.begin(); itr != p.end(); itr++ ) {
+	for( PipeMap::iterator itr = p.begin(), end = p.end(); itr != end; ++itr ) {
 		PipeSP current_pipe = itr->second;
 		filenameparts_["pipe_name"] = itr->first;
 		if( current_pipe ) {

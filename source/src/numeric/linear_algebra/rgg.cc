@@ -36,12 +36,12 @@ double epslon(
 		double const& x) {
 
 	double return_value = fem::double0;
-	double a = fem::double0;
-	double b = fem::double0;
-	double c = fem::double0;
-	double eps = fem::double0;
+	//double a = fem::double0;
+	double b;
+	double c;
+	double eps;
 
-	a = 4.0e0 / 3.0e0;
+	double a = 4.0e0 / 3.0e0;
 	statement_10:
 	b = a - 1.0e0;
 	c = b + b + b;
@@ -354,8 +354,8 @@ void qzit(
   a(dimension(nm, n));
   b(dimension(nm, n));
   z(dimension(nm, n));
-  double anorm = fem::double0;
-  double bnorm = fem::double0;
+  //double anorm = fem::double0;
+  //double bnorm = fem::double0;
   int i = fem::int0;
   double ani = fem::double0;
   double bni = fem::double0;
@@ -411,8 +411,8 @@ void qzit(
 
   ierr = 0;
   //C     .......... compute epsa,epsb ..........
-  anorm = 0.0e0;
-  bnorm = 0.0e0;
+  double anorm = 0.0e0;
+  double bnorm = 0.0e0;
 
   FEM_DO_SAFE(i, 1, n) {
     ani = 0.0e0;
@@ -857,8 +857,8 @@ void qzval(
   alfi(dimension(n));
   beta(dimension(n));
   z(dimension(nm, n));
-  double epsb = fem::double0;
-  int isw = fem::int0;
+  //double epsb = fem::double0;
+  //int isw = fem::int0;
   int nn = fem::int0;
   int en = fem::int0;
   int na = fem::int0;
@@ -907,8 +907,8 @@ void qzval(
   double dr = fem::double0;
   double di = fem::double0;
 
-  epsb = b(n, 1);
-  isw = 1;
+  double epsb = b(n, 1);
+  int isw = 1;
   //C     .......... find eigenvalues of quasi-triangular matrices.
   //C                for en=n step -1 until 1 do -- ..........
   FEM_DO_SAFE(nn, 1, n) {
@@ -1245,8 +1245,8 @@ void qzvec(
   alfi(dimension(n));
   beta(dimension(n));
   z(dimension(nm, n));
-  double epsb = fem::double0;
-  int isw = fem::int0;
+  //double epsb = fem::double0;
+  //int isw = fem::int0;
   int nn = fem::int0;
   int en = fem::int0;
   int na = fem::int0;
@@ -1283,8 +1283,8 @@ void qzvec(
   int jj = fem::int0;
   int k = fem::int0;
 
-  epsb = b(n, 1);
-  isw = 1;
+  double epsb = b(n, 1);
+  int isw = 1;
   //C     .......... for en=n step -1 until 1 do -- ..........
   FEM_DO_SAFE(nn, 1, n) {
     en = n + 1 - nn;

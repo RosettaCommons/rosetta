@@ -479,7 +479,7 @@ core::Size aa2idx( core::chemical::AA aa ) {
 	static std::map< core::chemical::AA, int > ff_mapping;
 
 	// key: BB ALA* ARG ASN ASP CYS GLN GLU GLY* HIS ILE LEU LYS MET PHE PRO SER THR TRP TYR VAL
-	if (ff_mapping.size() == 0) {
+	if (ff_mapping.empty() ) {
 		ff_mapping[ aa_ala ] = 2;
 		ff_mapping[ aa_arg ] = 3;
 		ff_mapping[ aa_asn ] = 4;

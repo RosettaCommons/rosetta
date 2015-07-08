@@ -41,7 +41,7 @@ SymDockBaseProtocol::SymDockBaseProtocol() :
 //	} else {
 //		utility_exit_with_message("Need to give symmetry definition file...")	;
 //	}
-	std::string symm_definition_file_ = "symm_def5.dat";
+	//std::string symm_definition_file_ = "symm_def5.dat";
   // Set up scoring functions
 //	symmetry::SymmetricScoreFunction scorefxn_sym_lowres ( ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
 //	symmetry::SymmetricScoreFunction scorefxn_sym_highres ( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );

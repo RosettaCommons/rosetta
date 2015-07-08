@@ -473,6 +473,7 @@ namespace checker {
 			sum_sd = sum_sd/( atom_count );
 			Real rmsd = sqrt( sum_sd );
 
+			// AMW: we just divided by atom_count; it really shouldn't be zero!!
 			if ( atom_count == 0 ) rmsd = 99.99; //This is different from suite_rmsd function..!!
 
 			if ( verbose ){

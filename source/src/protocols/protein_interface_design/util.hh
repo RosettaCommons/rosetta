@@ -55,11 +55,11 @@ core::Size best_cutpoint( core::pose::Pose & pose, core::Size const prev_u, core
 
 /// @brief find nearest residue on target_chain to res
 core::Size
-find_nearest_residue( core::pose::Pose const & pose, core::Size const target_chain, core::Size const res, std::string const atom="CA" );
+find_nearest_residue( core::pose::Pose const & pose, core::Size const target_chain, core::Size const res, std::string const & atom="CA" );
 
 /// @brief what is the optimal connection point for an atom tree, given a residue type (puts the connection point
 /// at the beginning of a functional group
-std::string optimal_connection_point( std::string const residue_type );
+std::string optimal_connection_point( std::string const & residue_type );
 
 core::kinematics::FoldTree
 make_hotspot_foldtree( core::pose::Pose const & pose );

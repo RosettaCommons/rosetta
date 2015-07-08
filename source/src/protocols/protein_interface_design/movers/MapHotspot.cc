@@ -130,7 +130,7 @@ MapHotspot::output_pose( core::pose::Pose const & pose ) const{
 		char const residue_type( pose.residue( residue_num ).name1() );
 		residues += residue_type;
 	}
-	std::string name( file_name_prefix_ );
+	//std::string name( file_name_prefix_ );
 	std::ostringstream strm;
 	strm<<file_name_prefix_<<"_"<<residues<<".pdb";
 	pose.dump_pdb( strm.str() );

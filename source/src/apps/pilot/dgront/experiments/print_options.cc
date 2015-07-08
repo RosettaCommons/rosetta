@@ -72,7 +72,7 @@ int main( int argc, char * argv [] ) {
 &(out::file::frag_prefix)
     };
 
-    for(int i=0;i<30;i++) {
+    for(int i=0;i<28;i++) {
           basic::options::Option *o = &option[*opts[i]];
 //	  std::cout << o->name() << " " << o->description() << std::endl;
 

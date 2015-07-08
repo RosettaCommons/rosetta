@@ -157,7 +157,7 @@ void add_claims_from_stream( TopologyBroker& broker, std::istream& is ,  CmdLine
 			std::string frags_label;
 
 			//short cut for the FragmentClaimers need for abinitio runs:
-			std::string file;
+			//std::string file;
 			while ( is >> tag && tag.substr(0,4) != "END_" ) {
 				if ( tag == "LARGE" ) {
 					FragmentIO frag_io(option[ OptionKeys::abinitio::number_9mer_frags ](),
@@ -282,7 +282,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	if ( !broker.has_sequence_claimer() ) {
 		using namespace basic::options::OptionKeys;
 
-		std::string label;
+		//std::string label;
         std::string sequence;
 		if ( option[ in::file::fasta ].user() ) {
             std::string filename = option[ in::file::fasta ]()[1];

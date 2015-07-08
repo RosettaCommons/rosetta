@@ -235,11 +235,11 @@ namespace mover {
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 	MoveType
-	move_type_from_string( std::string const name ){
+	move_type_from_string( std::string const & name ){
 		initialize_move_type_name();
 		MoveType move_type( NO_MOVE );
-		for ( std::map< MoveType, std::string>::const_iterator it = move_type_name.begin();
-					it != move_type_name.end(); it++ ){
+		for ( std::map< MoveType, std::string>::const_iterator it = move_type_name.begin(),
+					end = move_type_name.end(); it != end; ++it ){
 			if ( it->second == name ) {
 				move_type = it->first;
 			}
@@ -271,11 +271,11 @@ namespace mover {
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	AttachmentType
-	attachment_type_from_string( std::string const name ){
+	attachment_type_from_string( std::string const & name ){
 		initialize_attachment_type_name();
 		AttachmentType attachment_type( NO_ATTACHMENT );
-		for ( std::map< AttachmentType, std::string>::const_iterator it = attachment_type_name.begin();
-					it != attachment_type_name.end(); it++ ){
+		for ( std::map< AttachmentType, std::string>::const_iterator it = attachment_type_name.begin(),
+					end = attachment_type_name.end(); it != end; ++it ){
 			if ( it->second == name ) {
 				attachment_type = it->first;
 			}

@@ -460,7 +460,7 @@ ParsedProtocol::get_additional_output( )
 	for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 		core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
 		if (checkpoint) {
-			std::string const mover_name( rmover_it->first.first->get_name() );
+			//std::string const mover_name( rmover_it->first.first->get_name() );
 			pose = checkpoint;
 
 			if ( ! apply_filter( *pose, *rmover_it) ) {

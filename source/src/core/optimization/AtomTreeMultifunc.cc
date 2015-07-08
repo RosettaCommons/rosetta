@@ -75,6 +75,8 @@ core::pose::Pose & AtomTreeMultifunc::pose() const {
 /// variables at the top of this function.
 void
 AtomTreeMultifunc::dump( Multivec const & vars, Multivec const & vars2 ) const {
+	// AMW: cppcheck flags these bools as being inappropriately scoped for obvious reasons
+	// I don't suggest changing them, because the point is to have them at the top
 	bool debug_inaccurateG = false; // disables everything below
 	bool check_score_components = true;
 	bool check_score_components_verbose = false;

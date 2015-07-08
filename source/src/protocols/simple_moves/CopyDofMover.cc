@@ -79,7 +79,7 @@ namespace simple_moves {
 	CopyDofMover::check_for_precomputed_copy_dofs_info( pose::Pose const & pose ){
 
 		pose_string_ = "";
-		for ( std::map< Size, Size >::const_iterator it = res_map_.begin(); it != res_map_.end(); it++ ){
+		for ( std::map< Size, Size >::const_iterator it = res_map_.begin(), end = res_map_.end(); it != end; ++it ){
 			pose_string_ += pose.residue( it->first ).name();
 		}
 		pose_string_ += pose.fold_tree().to_string();

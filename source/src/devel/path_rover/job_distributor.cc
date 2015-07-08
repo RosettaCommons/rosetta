@@ -588,9 +588,10 @@ void job_distributor::call_abrelax() {
 /////////////////////////////////////////////////////////////////////////////////
 bool job_distributor::setup_job() {
 
-	using namespace files_paths;
-
+	// AMW: cppcheck thinks this is useless and I am very much in agreement
 	int prev_startnum(curr_startnum);
+
+	using namespace files_paths;
 
 	if ( get_next_job_num() ) {
 
@@ -1429,6 +1430,7 @@ void BOINC_job_distributor::read_BOINC_params() {
 	// allow upload of stdout.txt
 	char filename[256];
 	boinc_resolve_filename("stdout.txt", filename, 256);
+	// AMW: cppcheck flags this because it doesn't use the return value
 	freopen(filename, "a", stdout);
 	realafteroption( "cpu_frac", boinc_project_prefs::default_max_cpu , boinc_project_prefs::default_max_cpu );
 	realafteroption( "frame_rate", boinc_project_prefs::default_max_fps , boinc_project_prefs::default_max_fps );
@@ -1698,6 +1700,7 @@ void MPI_generic_job_distributor::initialize() {
 	// redirect output to a separate file for each process
 	char outFile[100];
 	sprintf(outFile, "rosetta.mpi.out%i",cpu_num);
+	// AMW: cppcheck flags this because it doesn't use the return value
 	freopen(outFile, "w",stdout);
 
 	// Reset namespace vars as appropriate for MPI

@@ -72,7 +72,7 @@ namespace setup {
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	core::pose::PoseOP
-	get_pdb_with_full_model_info( std::string const input_file,
+	get_pdb_with_full_model_info( std::string const & input_file,
 																core::chemical::ResidueTypeSetCAP rsd_set ) {
 
 		core::pose::PoseOP pose = get_pdb_and_cleanup( input_file, rsd_set );
@@ -87,7 +87,7 @@ namespace setup {
 	// might be better to move these into core (e.g., core::pose::full_model_info ),
 	// or into a new protocols/full_model_setup/ directory.
 	core::pose::PoseOP
-	get_pdb_and_cleanup( std::string const input_file,
+	get_pdb_and_cleanup( std::string const & input_file,
 											 core::chemical::ResidueTypeSetCAP rsd_set )
 	{
 		using namespace core::pose;
@@ -339,8 +339,8 @@ namespace setup {
 			std::map< Size, std::string > non_standard_residues_local =	parse_out_non_standard_residues( sequence );
 
 			fasta_sequences_new.push_back( SequenceOP( new Sequence( sequence, fasta_sequences[n]->id()) ) );
-			for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin();
-						it != non_standard_residues_local.end(); it++ ) {
+			for ( std::map< Size, std::string >::iterator it = non_standard_residues_local.begin(),
+						end = non_standard_residues_local.end(); it != end; ++it ) {
 				non_standard_residues[ it->first + offset ] = it->second;
 			}
 
@@ -383,7 +383,7 @@ namespace setup {
 
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
 		vector1< core::sequence::SequenceOP > fasta_sequences = core::sequence::read_fasta_file( fasta_file );
-		std::map< Size, std::string > non_standard_residues  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
+		//std::map< Size, std::string > non_standard_residues  = parse_out_non_standard_residues( fasta_sequences /*will reduce to one-letter*/ );
 
 		std::string const desired_sequence           = get_concatenated_sequence( fasta_sequences );
 
@@ -1077,8 +1077,8 @@ namespace setup {
 				if ( !working_res.has_value( res_list[ k ] ) ) continue;
 				chains_in_pose.insert( chains[ res_list[ k ] ] );
 			}
-			for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(); it1 != chains_in_pose.end(); it1++ ) {
-				for ( std::set< Size >::const_iterator it2 = it1; it2 != chains_in_pose.end(); it2++ ) {
+			for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
+				for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
 					if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
 				}
 			}

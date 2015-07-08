@@ -70,7 +70,6 @@ MMTorsionLibrary::MMTorsionLibrary(
 	std::ifstream data( filename.c_str() );
 
 	while( getline( data, line ) ) {
-		std::istringstream l( line );
 		if( line.size() < 1 || line[0] == '#' ) continue; // comment or blank lines
 		lines.push_back( line );
 	}

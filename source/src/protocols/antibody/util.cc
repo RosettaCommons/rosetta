@@ -228,8 +228,8 @@ bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_in
 	        it_end=antibody_info->get_AllCDRs_in_loopsop()->end(),
 	        it_next; it != it_end; ++it ) {
 		Size cutpoint   = it->cut();
-		Real separation = 10.00; // an unlikely high number
-		separation = cutpoint_separation( pose, cutpoint );
+		//Real separation = 10.00; // an unlikely high number
+		Real separation = cutpoint_separation( pose, cutpoint );
 
 		if( separation > 1.9 ) {
 			closed_cutpoints = false;
@@ -794,7 +794,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 }
 
 bool
-is_H3_rama_kinked(std::string const rama){
+is_H3_rama_kinked(std::string const & rama){
 	//TR <<"Rama: "<< rama << std::endl;
 	std::string last_two = rama.substr(rama.length() - 2);
 

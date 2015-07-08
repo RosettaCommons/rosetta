@@ -125,9 +125,9 @@ void LoopMover::apply(Pose & pose) { // {{{1
 
 bool LoopMover::do_apply(Pose & pose) { // {{{1
 	LoopsCOP loops = get_loops();
-	Loops::const_iterator loop;
+	Loops::const_iterator loop, end;
 
-	for (loop = loops->begin(); loop != loops->end(); loop++) {
+	for (loop = loops->begin(), end = loops->end(); loop != end; ++loop) {
 		bool was_successful = do_apply(pose, *loop);
 		if (! was_successful) return false;
 	}

@@ -151,7 +151,7 @@ std::string Schema::table_schema_statements( sessionOP db_session ) const
 	stringstream schema_string;
 	schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 
-	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
+	for (Columns::const_iterator it=columns_.begin(), end = columns_.end(); it != end; ++it ) {
 		if(it!=columns_.begin()){
 			schema_string << ",\n\t";
 		}
@@ -200,7 +200,7 @@ std::string Schema::table_schema_statements( sessionOP db_session ) const
 std::string Schema::table_init_statements( sessionOP db_session ) const
 {
   stringstream init_string;
-	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
+	for (Columns::const_iterator it=columns_.begin(), end = columns_.end(); it != end; ++it ) {
 		if(it->auto_increment() && it->auto_increment_base() != 0){
       switch(db_session->get_db_mode()){
       case utility::sql_database::DatabaseMode::postgres:

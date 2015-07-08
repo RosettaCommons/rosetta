@@ -155,12 +155,12 @@ DefineMovableLoops::find_loops( 		pose::Pose & pose,
 	protocols::loops::Loops found_loops;
 	
 	TR.Debug <<"sec. strc: "<< secstruct <<std::endl;
-	char ss;
+	//char ss;
 	utility::vector1 < Size > individual_loop;
 	Size cut = 0;
 
 	for( Size ss_i = 0; ss_i < secstruct.length() ; ++ss_i ){  
-		ss = secstruct[ss_i];
+		char ss = secstruct[ss_i];
 		
 		if ( ss == 'L' ){
 

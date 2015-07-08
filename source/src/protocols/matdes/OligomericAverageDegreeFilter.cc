@@ -133,7 +133,7 @@ core::Real OligomericAverageDegreeFilter::compute( Pose const & pose, bool const
 
 	runtime_assert( task_factory() != 0 );
 	utility::vector1<std::string> sym_dof_name_list;
-	std::string sym_dof_name;
+	//std::string sym_dof_name;
   core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 
   // Partition pose according to specified jump and symmetry information

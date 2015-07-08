@@ -182,11 +182,11 @@ void FindConsensusSequence::apply( core::pose::Pose & /*pose*/ ) {
 	packer->task_factory( task_factory_ );
 	parse_resfiles();
 	simple_moves::MutateResidueOP mutation_mover;
-	bool diff;
+	//bool diff;
 	for (core::Size i = 1; i <= res_links_[ 1 ].size(); ++i ) {
 		core::Size seqpos1 = res_links_[ 1 ][ i ];
 		//check to see if they are all the same
-		diff = false;
+		bool diff = false;
 		for (core::Size j = 2; j <= poses_.size(); ++j ) {
 			core::Size seqpos2 = res_links_[ j ][ i ];
 			if ( poses_[ j ]->residue( seqpos2 ).aa() != poses_[ 1 ]->residue( seqpos1 ).aa() ) {

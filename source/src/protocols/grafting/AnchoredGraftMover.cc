@@ -223,7 +223,8 @@ AnchoredGraftMover::parse_my_tag(
 		protocols::rosetta_scripts::add_movemaps_to_datamap(tag, pose, data, false);
 
 	}
-	if (data.has("movemaps", "scaffold_movemap") && data.has("movemaps", "scaffold_movemap")){
+	// AMW: cppcheck notes that this was the same condition on both sides of an &&
+	if (data.has("movemaps", "scaffold_movemap") ) {//&& data.has("movemaps", "scaffold_movemap")){
 		scaffold_movemap_ = data.get_ptr<MoveMap>("movemaps", "scaffold_movemap");
 		insert_movemap_ = data.get_ptr<MoveMap>("movemaps", "insert_movemap");
 	}

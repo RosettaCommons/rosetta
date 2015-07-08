@@ -330,7 +330,7 @@ AlignmentClustering::AlignmentClustering(){
     stop_mergeMap = mergeMap.end();
     while(start_mergeMap != stop_mergeMap){
       cluster_v[start_mergeMap->first]->merge(cluster_v[start_mergeMap->second]);
-      start_mergeMap++;
+      ++start_mergeMap;
     }
     //---end merge
     std::cout << "cluster_v.size"  << cluster_v.size() << "merged clusters" << mergeSet.size() << std::endl;
@@ -489,7 +489,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
       stop_template = template_map.end();
       while(start_template!=stop_template){
 	rankedTemplate_map.insert(std::pair<Real,string>(start_template->second,start_template->first));
-	start_template++;
+	++start_template;
       }
       if(low_e_val <= THRESHOLD_FOR_E_VAL){
 	start_rankedTemplate = rankedTemplate_map.begin();
@@ -503,9 +503,9 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
 	    if(template_id == start_rankedTemplate->second){
 	      rankedAlignments.push_back(start_alns->second);
 	    }
-	    start_alns++;
+	    ++start_alns;
 	  }
-	  start_rankedTemplate++;
+	  ++start_rankedTemplate;
 	}
       }
     }
@@ -541,9 +541,9 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
 	  if(template_id == start_rankedTemplate->second){
 	    rankedAlignments.push_back(start_alns->second);
 	  }
-	  start_alns++;
+	  ++start_alns;
 	}
-	start_rankedTemplate++;
+	++start_rankedTemplate;
       }
     }
   }
@@ -554,7 +554,7 @@ map< string, Pose > AlignmentClustering::poses_from_cmd_line(utility::vector1< s
     stop_alns = alns.end();
     while (start_alns != stop_alns){
       rankedAlignments.push_back(start_alns->second);
-      start_alns++;
+      ++start_alns;
     }
   }
   return rankedAlignments;

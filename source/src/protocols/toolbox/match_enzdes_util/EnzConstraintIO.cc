@@ -187,17 +187,17 @@ EnzConstraintIO::process_pdb_header(
 
 	std::set< Size > found_cst_blocks;
 
-	std::istringstream line_stream;
-	std::map< Size, std::pair< utility::vector1<Size >, utility::vector1< Size > > > cst_block_to_residues;
+	//std::istringstream line_stream;
+	//std::map< Size, std::pair< utility::vector1<Size >, utility::vector1< Size > > > cst_block_to_residues;
 
 	//basic::datacache::BasicDataCache const & pose_cache = pose.data();
 	core::pose::PDBInfoCOP pose_pdbinfo = pose.pdb_info();
 	core::pose::Remarks const & pose_remarks = pose_pdbinfo->remarks();
-	std::string line, buffer(""), tag("");
+	std::string /*line, */buffer(""), tag("");
 	Size cst_block(0), counted_blocks(0);
 
 	//std::cerr << "There are " << pose_remarks->size() << " remark lines." << std::endl;
-	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(); remark_it != pose_remarks.end(); remark_it++) {
+	for( std::vector< core::pose::RemarkInfo >::const_iterator remark_it = pose_remarks.begin(), end = pose_remarks.end(); remark_it != end; ++remark_it ) {
 
 		//line_stream.clear();
 		//line_stream.str( remark_it->value );
@@ -632,12 +632,12 @@ EnzConstraintIO::allowed_res_name3_at_position(
 	for (utility::vector1< EnzConstraintParametersOP >::const_iterator it = cst_pairs_.begin(); it != cst_pairs_.end(); ++it) {
 
 		std::set< std::string > res_this_param = (*it)->allowed_res_name3_at_position( pose, seqpos );
-		if( res_this_param.size() == 0 ) continue;
+		if ( res_this_param.empty()/*size() == 0*/ ) continue;
 		//we need to make two checks:
 		//1. are there already residues in the found set? if so, dont include anything,
 		//but remove all that are not part of the second set
 		//2. if not, the found set will become res_this_param
-		if( found.size() == 0 ) found = res_this_param;
+		if( found.empty()/*size() == 0*/ ) found = res_this_param;
 		else{
 			for( std::set< std::string >::iterator set_it = found.begin(); set_it != found.end();  ){
 				if( res_this_param.find( *set_it ) == res_this_param.end() ){

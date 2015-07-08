@@ -110,7 +110,7 @@ void get_poseToRelax(core::pose::PoseOP & toRelax_poseOP, core::pose::PoseOP & i
 	toRelax_poseOP = input_poseOP;
 	string const pose_tag( file_basename( core::pose::tag_from_pose( *input_poseOP ) ) );
 	string pdbid = pose_tag.substr(0,pose_tag.length()-4);
-	if (alns.size() == 0){//the case where there is no alignment file
+	if (alns.empty() )// {size() == 0){//the case where there is no alignment file
 		offset = 0;
 	}
 	else{

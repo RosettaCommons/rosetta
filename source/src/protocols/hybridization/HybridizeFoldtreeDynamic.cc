@@ -454,7 +454,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 	// add root jumps and cuts for chunks that should be rooted to the star fold tree
 	//   these should be chunks from a template or if none exist, the first strand pair chunk
 	std::set<core::Size> root_chunk_indices = template_core_chunk_indices_;
-	if (!root_chunk_indices.size()) {
+	if ( root_chunk_indices.empty() ) { //size()) {
 		TR << "Template core chunks do not exist so using first chunk" << std::endl;
 		root_chunk_indices.insert(1);
 	}
@@ -479,7 +479,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 	// strand pairings
 
-	if (strand_pairs_.size()) {
+	if ( !strand_pairs_.empty() ) { //size()) {
 		// add jumps and cuts to strand pair chunks that are from a rooted branch
 		std::set<core::Size> rooted_chunk_indices; // keep track of all rooted branch chunks
 		for (set_iter = rooted_chunk_indices_.begin(); set_iter != rooted_chunk_indices_.end(); ++set_iter)
@@ -541,7 +541,7 @@ void HybridizeFoldtreeDynamic::update(core::pose::Pose & pose) {
 
 		// second check if adjacent chunks are from a built up rooted branch chunk and if they are add them to the rooted branch
 		// i.e. check if adjacent chunks are from a rooted branch and then add the floating chunk and overlapping floating chunks
-		while (floating_pair_chunks.size()) {
+		while ( !floating_pair_chunks.empty() ) { //size()) {
 			for (set_iter = rooted_chunk_indices.begin(); set_iter != rooted_chunk_indices.end(); ++set_iter) {
 				// check upstream
 				core::Size up_index = *set_iter+1;

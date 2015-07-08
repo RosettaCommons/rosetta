@@ -229,9 +229,10 @@ RestrictDesignToProteinDNAInterface::apply(
 					    allowed_type( toptask.allowed_residue_types_begin() ),
 					    end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 					if ( std::find( name3map.begin(), name3map.end(), *allowed_type ) != name3map.end() ) {
-						toptask.target_type( *allowed_type ); break;
-						TR(t_info) << "Setting target type " << (*def)->name3
-						   << " at position " << pos.top() << std::endl;
+						toptask.target_type( *allowed_type );
+						break;
+						//TR(t_info) << "Setting target type " << (*def)->name3
+						//   << " at position " << pos.top() << std::endl;
 					}
 				}
 				if ( ! toptask.target_type() ) {
@@ -248,9 +249,10 @@ RestrictDesignToProteinDNAInterface::apply(
 						    end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
 						if ( std::find( name3map_comp.begin(), name3map_comp.end(), *allowed_type ) !=
 							   name3map_comp.end() ) {
-							bottask.target_type( *allowed_type ); break;
-							TR(t_info) << "Setting target type " << comp_name3 << " at position " << pos.bottom()
-							   << std::endl;
+							bottask.target_type( *allowed_type );
+							break;
+							//TR(t_info) << "Setting target type " << comp_name3 << " at position " << pos.bottom()
+							//   << std::endl;
 						}
 					}
 					if ( ! bottask.target_type() ) {

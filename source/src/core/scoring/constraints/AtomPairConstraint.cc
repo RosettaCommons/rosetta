@@ -254,7 +254,6 @@ AtomPairConstraint::read_def(
 	std::string tempres1, tempres2;
 	std::string name1, name2;
 	std::string func_type;
-	std::string type;
 
 	data
 		>> name1 >> tempres1

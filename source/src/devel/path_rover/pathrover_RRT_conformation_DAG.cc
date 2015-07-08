@@ -42,8 +42,8 @@ RRT_node::~RRT_node()
     using namespace pose_ns;
     using namespace std;
 
-    Node_custom_info* p = NULL;
-    Node_rmsd_info* q = dynamic_cast< Node_rmsd_info* >(p);
+    //Node_custom_info* p = NULL;
+    //Node_rmsd_info* q = dynamic_cast< Node_rmsd_info* >(p);
     double sum_square_dev = 0.0;
     int n_res;
     Node_rmsd_info const* rmsd_info1 =
@@ -93,7 +93,6 @@ double Dofs_vector_L2_norm_functor::operator()(RRT_node const* node1, RRT_node c
   std::vector<double> const& v1 = node1->get_dofs_vector();
   std::vector<double> const& v2 = node2->get_dofs_vector();
   assert(v1.size() = v2.size());
-  std::vector<double> v_diff;
   double sum_sqr_dev = 0.0;
   for(unsigned int i = 0; i < v1.size();i++)
     {

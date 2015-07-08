@@ -73,8 +73,8 @@ AtomBasedConstraintsScore::AtomBasedConstraintsScore(Size priority,
 
 std::string AtomBasedConstraintsScore::get_constrained_atom_name(Size atom_id) {
 
-  std::map<std::string, Size>::iterator it;
-  for ( it=constrainable_atoms_.begin() ; it != constrainable_atoms_.end(); it++ )
+  std::map<std::string, Size>::iterator it, end ;
+  for ( it=constrainable_atoms_.begin(), end = constrainable_atoms_.end(); it != end; ++it )
     if( (it)->second == atom_id )
 	return (it)->first;
 

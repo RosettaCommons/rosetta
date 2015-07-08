@@ -114,7 +114,7 @@ int main( int argc, char * argv [] ) {
   devel::init(argc, argv);
 
   std::string const input_protein = option[ protein ];
-  std::string const input_ligand = "temp";//change this
+  //std::string const input_ligand = "temp";//change this
   std::string const input_eggshell_triplet = option[ ray_file ];
   int particle_size = option[ num_particles ];
   int run_size = option[ num_runs ];
@@ -571,13 +571,13 @@ int main( int argc, char * argv [] ) {
 		basic::MetricValue<Size> tot_unsat_mval;
 
 		// calculate and store total metrics for bound and unbound poses
-		core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-		core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
-		core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
-		core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
+		core::Real bound_energy = 0.0, unbound_energy = 0.0;//, Interface_Energy = 0.0;
+		//core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
+		//core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
+		//core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
 
 		//calculate interface Energy
-		Interface_Energy = bound_energy - unbound_energy;
+		core::Real Interface_Energy = bound_energy - unbound_energy;
 
 		//delta sasa calculation
 		bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
@@ -585,24 +585,24 @@ int main( int argc, char * argv [] ) {
 
 		//interface hb calculation
 		bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		bound_hb = tot_hb_mval.value();
+		core::Size bound_hb = tot_hb_mval.value();
 		unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		unbound_hb = tot_hb_mval.value();
-		Interface_HB = bound_hb - unbound_hb;
+		core::Size unbound_hb = tot_hb_mval.value();
+		core::Size Interface_HB = bound_hb - unbound_hb;
 
 		//packstat calculation
 		bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		bound_packstat = tot_packstat_mval.value();
+		core::Real bound_packstat = tot_packstat_mval.value();
 		unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		unbound_packstat = tot_packstat_mval.value();
-		Total_packstats = bound_packstat - unbound_packstat;
+		core::Real unbound_packstat = tot_packstat_mval.value();
+		core::Real Total_packstats = bound_packstat - unbound_packstat;
 
 		//unsat polar calculation
 		bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		bound_unsat = tot_unsat_mval.value();
+		core::Size bound_unsat = tot_unsat_mval.value();
 		unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		unbound_unsat = tot_unsat_mval.value();
-		Interface_unsat = bound_unsat - unbound_unsat;
+		core::Size unbound_unsat = tot_unsat_mval.value();
+		core::Size Interface_unsat = bound_unsat - unbound_unsat;
 
 		//calculate theta_lig (ligand sasa)
 		core::Real Total_pose_exposed_SASA = 0.0;
@@ -612,13 +612,13 @@ int main( int argc, char * argv [] ) {
 			unbound_protein_pose = protein_pose_without_ligand;
 			ligand_pose = minimized_lig_pose;
 			basic::MetricValue<Real> total_sasa_mval;
-			core::Real ligand_pose_sasa = 0.0, bound_pose_sasa = 0.0, unbound_pose_sasa = 0.0;
+			//core::Real ligand_pose_sasa = 0.0, bound_pose_sasa = 0.0, unbound_pose_sasa = 0.0;
 			ligand_pose.metric(sasa_calc_name,"total_sasa",total_sasa_mval);
-			ligand_pose_sasa = total_sasa_mval.value();
+			core::Real ligand_pose_sasa = total_sasa_mval.value();
 			bound_protein_pose.metric(sasa_calc_name,"total_sasa",total_sasa_mval);
-			bound_pose_sasa = total_sasa_mval.value();
+			core::Real bound_pose_sasa = total_sasa_mval.value();
 			unbound_protein_pose.metric(sasa_calc_name,"total_sasa",total_sasa_mval);
-			unbound_pose_sasa = total_sasa_mval.value();
+			core::Real unbound_pose_sasa = total_sasa_mval.value();
 			Total_pose_exposed_SASA = 1 - ((((unbound_pose_sasa + ligand_pose_sasa) - bound_pose_sasa)/2)/ligand_pose_sasa);
 			std::cout << "Total_pose_exposed_SASA" << Total_pose_exposed_SASA << std::endl;
 		}

@@ -53,8 +53,8 @@ SiteConstraintResidues::show( std::ostream& out) const
 	//out << "AmbiguousConstraint Active constraint:" << std::endl;
 	//active_constraint()->show(out);
 	out << "SiteConstraintResidues is an AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
-		(*cst_it)->show(out);
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
+		( *cst_it )->show( out );
 	}
 
 	out << " ...all member constraints of this SiteConstraintResidues shown." << std::endl;
@@ -68,13 +68,11 @@ SiteConstraintResidues::read_def(
    func::FuncFactory const & func_factory
 ) {
     TR.Debug << "read_site_cst" << std::endl;
-    std::string tempres;
     Size res1;
     std::string name;
     Size res2;
     Size res3;
     std::string func_type;
-    std::string type;
     data >> res1 >> name >> res2 >> res3 >> func_type;
     TR.Info << "read: " << res1 << " "<< name << " constrain to residues " << res2 << ":" << res3  << " func: " << func_type << std::endl;
     func::FuncOP aFunc = func_factory.new_func( func_type );

@@ -265,10 +265,10 @@ BetaAlphaBetaMotif::calc_helix_cycle( SS_Info2_COP const ssinfo )
 	}
 
 	utility::vector1< std::map< Size, Real >::iterator > vec_ite;
-	std::map< Size, Real >::iterator it = pos_dist.begin();
-	while( it != pos_dist.end() ) {
+	std::map< Size, Real >::iterator it = pos_dist.begin(), end = pos_dist.end();
+	while( it != end ) {
 		vec_ite.push_back( it );
-		it++;
+		++it;
 	}
 
 	helix_cycle_.clear();

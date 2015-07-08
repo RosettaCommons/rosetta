@@ -53,10 +53,10 @@ rna_residue_name_to_num( char const c )
 
 //Why doesn't this helper function already exist in vector class?
 Size
-get_position_in_vector( utility::vector1< std::string > & vec, std::string const element )
+get_position_in_vector( utility::vector1< std::string > & vec, std::string const & element )
 {
 	Size count( 1 );
-	for ( utility::vector1< std::string > ::iterator iter = vec.begin(); iter < vec.end(); iter++ )	{
+	for ( utility::vector1< std::string > ::iterator iter = vec.begin(), end = vec.end(); iter < end; ++iter ) {
 		if ( *iter == element ) return count;
 		count++;
 	}

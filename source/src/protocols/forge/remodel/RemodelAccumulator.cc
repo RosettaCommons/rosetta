@@ -195,7 +195,7 @@ void RemodelAccumulator::keep_top_pose( core::Size num_to_keep)
 
 std::vector<core::pose::PoseOP> RemodelAccumulator::contents_in_pose_store(){
 	std::vector<core::pose::PoseOP> dummy_return;
-	for (std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; it++){
+	for (std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; ++it ) {
 		dummy_return.push_back(it->second);
 	}
 	return dummy_return;
@@ -212,7 +212,7 @@ void RemodelAccumulator::write_checkpoint(core::Size progress_point){
 		core::Size num_report =option[OptionKeys::remodel::save_top];
 
 		core::Size filecount = 1;
-	  for (std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; it++){
+	  for (std::multimap<core::Real, core::pose::PoseOP>::iterator it= pose_store_.begin(), end = pose_store_.end(); it != end; ++it ) {
 			if (filecount <= num_report){
 							std::stringstream sstream;
 							std::string num(ObjexxFCL::lead_zero_string_of(filecount,3));
@@ -338,7 +338,7 @@ void RemodelAccumulator::run_cluster(){
 	cluster_->set_score_function( sfxn_ );
 	cluster_->set_cluster_radius( radius );
 
-	for ( std::multimap<core::Real, core::pose::PoseOP>::iterator it = pose_store_.begin(), end = pose_store_.end(); it != end ; it++){
+	for ( std::multimap<core::Real, core::pose::PoseOP>::iterator it = pose_store_.begin(), end = pose_store_.end(); it != end ; ++it ) {
 		cluster_->apply((*(*it).second));
 	}
 

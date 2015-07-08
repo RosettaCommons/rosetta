@@ -253,7 +253,7 @@ LoopHashLibrary::merge(
 		std::vector < BackboneSegment > bs_vec_;
 		std::vector < LeapIndex > leap_vec_;
 		boost::uint64_t key = 0;
-		for( BackboneIndexMap::iterator it = range.first; it != range.second; it++ ) {
+		for( BackboneIndexMap::iterator it = range.first; it != range.second; ++it ) {
 			bool same_as_last = false;
 			bool add_this_ = true;
 
@@ -460,7 +460,7 @@ LoopHashLibrary::apply( core::pose::Pose& pose )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::string prefix = option[ out::prefix ]();
+	///std::string prefix = option[ out::prefix ]();
 	core::Size skim_size = option[ lh::skim_size ]();
 
 	for(int round = 0; round < 100; round ++ ){

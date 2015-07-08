@@ -172,7 +172,7 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 
 /// @note  This function was copied from its old location in ResidueType.
 void
-ResidueProperties::add_numeric_property( std::string const & tag, core::Real value )
+ResidueProperties::add_numeric_property( std::string const & tag, core::Real const value )
 {
 	using namespace std;
 
@@ -181,7 +181,7 @@ ResidueProperties::add_numeric_property( std::string const & tag, core::Real val
 
 /// @note  This function was copied from its old location in ResidueType.
 void
-ResidueProperties::add_string_property( std::string const & tag, std::string value )
+ResidueProperties::add_string_property( std::string const & tag, std::string const & value )
 {
 	using namespace std;
 

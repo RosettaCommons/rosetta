@@ -443,7 +443,6 @@ ProQ_Energy::read_zpred(std::string zpredfile) {
 	std::string line;
 	//Real buff_float;
 	//int buff_int;
-	std::string buff_str;
 	z_pred_.dimension(nres_);
 	stream.open(zpredfile);
 	if(stream.fail()) {

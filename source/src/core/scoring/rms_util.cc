@@ -807,17 +807,14 @@ CA_maxsub(
 {
 	const int nres1( pose1.total_residue() );
 
-	static std::string atom_name = "CA";
 	int natoms(0);
 	FArray2D< double > p1a( 3, nres1 );
 	FArray2D< double > p2a( 3, nres1 );
-	// fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, "CA" );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
 	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rms );
-	//logeval = std::log(mxeval);
 	return nali;
 }
 
@@ -867,17 +864,14 @@ CA_maxsub_by_subset(
 {
 	const int nres1( pose1.total_residue() );
 
-	static std::string atom_name = "CA";
 	int natoms(0);
 	FArray2D< double > p1a( 3, nres1 );
 	FArray2D< double > p2a( 3, nres1 );
-	// fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, "CA" );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 
 	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore );
-	//logeval = std::log(mxeval);
 	return nali;
 } // CA_maxsub_by_subset
 
@@ -1335,8 +1329,7 @@ rms_at_corresponding_atoms(
 
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
-				iter != atom_id_map.end(); iter++ ) {
+	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
@@ -1368,8 +1361,7 @@ rms_at_all_corresponding_atoms(
 {
 	utility::vector1< Vector > p1_coords, p2_coords;
 
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
-				iter != atom_id_map.end(); iter++ ) {
+	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
@@ -1414,8 +1406,7 @@ rms_at_corresponding_atoms_no_super(
 
 	Size natoms( 0 );
 	Real sum( 0.0 );
-	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
-				iter != atom_id_map.end(); iter++ ) {
+	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin(), end = atom_id_map.end(); iter != end; ++iter ) {
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.

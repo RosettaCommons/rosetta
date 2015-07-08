@@ -372,8 +372,6 @@ void AbrelaxApplication::setup() {
 		);
 	}
 
-	std::string native_tag = "";
-
 	// run with homolog info? -- needed for setup_fragments, and rerun keep it upfront
 	setup_templates();
 

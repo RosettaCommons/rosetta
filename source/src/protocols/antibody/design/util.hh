@@ -158,7 +158,7 @@ get_all_graft_permutations(
 	core::Size const cdr_num);
 
 AntibodyDesignProtocolEnum
-design_protocol_to_enum(std::string const design_type);
+design_protocol_to_enum(std::string const & design_type);
 
 std::string 
 design_protocol_to_string(AntibodyDesignProtocolEnum const design_type);

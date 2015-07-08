@@ -60,7 +60,7 @@ public:
 
 	//! construct Tensor from vector of dims and single element
 	MathNTensor(
-        utility::vector1< Size > const n_dimensions,
+        utility::vector1< Size > const & n_dimensions,
 		T    const & value = T()
 	) :
 	  n_dimensions_( n_dimensions )
@@ -84,7 +84,7 @@ public:
 		std::copy( src.data_, src.data_ + size_, data_ ); //for ( Size ii = 0; ii < size_; ++ii ) { data_[ ii ] = src.data_[ ii ]; }
 	}
 
-	MathNTensor const &
+	MathNTensor &
 	operator = ( MathNTensor const & rhs ) {
 		if ( this != & rhs ) {
 			if ( size_ != rhs.size_ ) {
@@ -115,7 +115,7 @@ public:
 
   // Raw pointer constructor.  Avoid this.
   MathNTensor(
-             utility::vector1< Size > const dims,
+             utility::vector1< Size > const & dims,
              T const * data
 	) :
 	  n_dimensions_( dims )

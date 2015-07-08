@@ -154,7 +154,7 @@ public:
 	/// hadn't been present, ("spam", "bacon") wouldn't have been found and the 
 	/// search would have continued.
 	template< typename ValueOP >
-	ValueOP get(std::string const type, std::string const name) const {
+	ValueOP get(std::string const & type, std::string const & name) const {
 		ValueOP value = get<ValueOP>(type, name, ValueOP());
 		if (! value) {
 			std::stringstream message;
@@ -179,7 +179,7 @@ public:
 	/// hadn't been present, ("spam", "bacon") wouldn't have been found and the 
 	/// search would have continued.
 	template< typename ValueOP >
-	ValueOP get(std::string const type, std::string const name, ValueOP fallback) const {
+	ValueOP get(std::string const & type, std::string const & name, ValueOP fallback) const {
 
 		// If the requested key is present in this data map, return it.
 
@@ -217,14 +217,14 @@ public:
 	/// hadn't been present, ("spam", "bacon") wouldn't have been found and the 
 	/// search would have continued.
 	template< typename ValueOP >
-	ValueOP get_or_null(std::string const type, std::string const name) const {
+	ValueOP get_or_null(std::string const & type, std::string const & name) const {
 		return get<ValueOP>(type, name, ValueOP());
 	}
 
 	/// @brief Set the value of the given key in this map.  This value may also 
 	/// be accessed by children maps.
 	template< typename ValueOP >
-	ValueOP set( std::string const type, std::string const name, ValueOP value ) {
+	ValueOP set( std::string const & type, std::string const & name, ValueOP value ) {
 		data_map_[type][name] = value;
 		return value;
 	}

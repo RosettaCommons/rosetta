@@ -448,7 +448,7 @@ core::Size MPIPool_RMSD::evaluate_and_add(
 
   tr.Debug << "node is rank " << rank_ << " out of " << npes_ << std::endl;
   tr.Debug << " using MPIPool_RMSD::evaluate_and_add" << std::endl;
-  core::Size best_index = -1;
+  //core::Size best_index = -1;
 
   PROF_START( basic::MPICANONICALSAMPLING );
 
@@ -461,7 +461,7 @@ core::Size MPIPool_RMSD::evaluate_and_add(
 
   PROF_STOP( basic::MPICANONICALSAMPLING );
 
-  best_index = Pool_RMSD::evaluate( pose, best_decoy, best_rmsd );
+  core::Size best_index = Pool_RMSD::evaluate( pose, best_decoy, best_rmsd );
   tr.Debug << "best rmsd after evaluation is " << best_rmsd << " threadhol " << transition_threshold << std::endl;
   if(best_rmsd > transition_threshold){
     tr.Debug << "best_rmsd is " << best_rmsd << " which is greater than transition_threshold, adding pose to pool " << std::endl;

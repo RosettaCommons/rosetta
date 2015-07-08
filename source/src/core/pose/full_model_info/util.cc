@@ -467,8 +467,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 			}
 		}
 
-		for( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin();
-				 iter != move_element_map.end(); iter++ ){
+		for( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin(), end = move_element_map.end();
+				 iter != end; ++iter ){
 			move_elements.push_back( iter->second );
 		}
 
@@ -848,8 +848,8 @@ check_full_model_info_OK( pose::Pose const & pose ){
 			for ( Size k = 1; k <= pose_domain_map.size(); k++ ) {
 				if ( pose_domain_map[ k ] == n ) chains_in_pose.insert( chains_full[ k ] );
 			}
-			for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(); it1 != chains_in_pose.end(); it1++ ) {
-				for ( std::set< Size >::const_iterator it2 = it1; it2 != chains_in_pose.end(); it2++ ) {
+			for ( std::set< Size >::const_iterator it1 = chains_in_pose.begin(), end = chains_in_pose.end(); it1 != end; ++it1 ) {
+				for ( std::set< Size >::const_iterator it2 = it1; it2 != end; ++it2 ) {
 					if ( it1 != it2 ) chain_connections.push_back( std::make_pair( *it1, *it2 ) );
 				}
 			}
@@ -881,7 +881,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		Size count( 0 );
 		std::set< Size > unique_domains( connection_domains.begin(), connection_domains.end() );
 		utility::vector1< Size > connection_domains_relabel = connection_domains;
-		for ( std::set< Size >::const_iterator it = unique_domains.begin(); it != unique_domains.end(); it++ ) {
+		for ( std::set< Size >::const_iterator it = unique_domains.begin(), end = unique_domains.end(); it != end; ++it ) {
 			count++;
 			Size const & domain_number( *it );
 			for ( Size k = 1; k <= nchains; k++ ) {

@@ -421,7 +421,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 				Ktheta << " " << 0.5*Ktheta*(angle-theta0) * (angle-theta0) << std::endl;*/
 			}
 
-			const std::string tmp = boost::lexical_cast<std::string>(struct_id);
+			//const std::string tmp = boost::lexical_cast<std::string>(struct_id);
 
 			//report results here
 			stmt.bind(1,struct_id);

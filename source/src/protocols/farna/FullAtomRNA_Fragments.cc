@@ -424,12 +424,12 @@ FragmentLibrary::~FragmentLibrary() {}
 			utility_exit_with_message(  "Bad vall torsions file? " + filename );
 		}
 
-		std::string line, tag;
+		std::string line;//, tag;
 
 		char dummy_char;
 		bool dummy_bool;
 		Real dummy_real;
-		std::string dummy_string;
+		//std::string dummy_string;
 
 		Size count( 0 );
 		while (  getline( vall_in, line) ){

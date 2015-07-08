@@ -615,8 +615,8 @@ bool CDRH3Modeler::cutpoints_separation() {
 	        it_end=antibody_in_.all_cdr_loops.end(),
 	        it_next; it != it_end; ++it ) {
 		Size cutpoint   = it->cut();
-		Real separation = 10.00; // an unlikely high number
-		separation = cutpoint_separation( antibody_in_.Fv, cutpoint );
+		//Real separation = 10.00; // an unlikely high number
+		Real separation = cutpoint_separation( antibody_in_.Fv, cutpoint );
 
 		if( separation > 1.9 ) {
 			closed_cutpoints = false;
@@ -720,11 +720,11 @@ void CDRH3Modeler::scored_frag_close (
 	FragSetOP frags_to_use;
 	{
 		if( trimmed_cdr_h3.size() > cutoff_9_ ) {
-			frags_to_use = cdr_h3_frags_[1]->empty_clone();
+			//frags_to_use = cdr_h3_frags_[1]->empty_clone();
 			frags_to_use = cdr_h3_frags_[1];
 			frag_size = 9;
 		} else {
-			frags_to_use = cdr_h3_frags_[2]->empty_clone();
+			//frags_to_use = cdr_h3_frags_[2]->empty_clone();
 			frags_to_use = cdr_h3_frags_[2];
 			frag_size = 3;
 		}
@@ -776,10 +776,10 @@ void CDRH3Modeler::scored_frag_close (
 			cfm->enable_end_bias_check( false );
 			cfm->apply( pose_in );
 
-			bool H3_found_current(false);
+			//bool H3_found_current(false);
 			if( current_loop_is_H3_ && H3_filter_ &&
 			        ( local_h3_attempts++ < (50 * cycles2) ) ) {
-				H3_found_current = CDR_H3_filter(pose_in,antibody_in_.cdrh_[3][1],
+				bool H3_found_current = CDR_H3_filter(pose_in,antibody_in_.cdrh_[3][1],
 				                                 ( antibody_in_.cdrh_[3][2] - antibody_in_.cdrh_[3][1] ) + 1 );
 				if( !H3_found_ever && !H3_found_current) {
 					--c2;
@@ -1273,11 +1273,11 @@ void CDRH3Modeler::loop_fa_relax( pose::Pose & pose_in, Size const loop_begin, S
 			    highres_scorefxn_, tf_ ) );
 			pack_rottrial->apply( pose_in );
 
-			bool relaxed_H3_found_current(false);
+			//bool relaxed_H3_found_current(false);
 			// H3 filter check
 			if(H3_filter_ && (h3_attempts <= inner_cycles)) {
 				h3_attempts++;
-				relaxed_H3_found_current = CDR_H3_filter(pose_in,
+				bool relaxed_H3_found_current = CDR_H3_filter(pose_in,
 				                           antibody_in_.cdrh_[3][1], ( antibody_in_.cdrh_[3][2] -
 				                                   antibody_in_.cdrh_[3][1]) + 1 );
 

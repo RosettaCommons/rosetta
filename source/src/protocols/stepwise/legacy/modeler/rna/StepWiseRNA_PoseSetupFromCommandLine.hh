@@ -34,9 +34,9 @@ namespace rna {
 
 	utility::vector1< core::Size >	get_fixed_res( core::Size const nres );
 
-	bool is_nonempty_input_silent_file( std::string const input_silent_file, std::string const exit_key_string );
+	bool is_nonempty_input_silent_file( std::string const & input_silent_file, std::string const & exit_key_string );
 
-	utility::vector1< core::Size > get_input_res( core::Size const nres, std::string const pose_num );
+	utility::vector1< core::Size > get_input_res( core::Size const nres, std::string const & pose_num );
 
 	utility::vector1< std::string >	get_silent_file_tags();
 

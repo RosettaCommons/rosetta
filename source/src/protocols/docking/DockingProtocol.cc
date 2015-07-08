@@ -1018,7 +1018,7 @@ DockingProtocol::apply( pose::Pose & pose )
 			if ( get_native_pose() ) job->add_string_real_pair("rms", calc_Lrmsd( pose, *get_native_pose(), movable_jumps_ ) );
 
 			// output low res scores if low res was run
-			if ( lowres_scores.size() > 0 ) {
+			if ( !lowres_scores.empty() ) { //size() > 0 ) {
 				for ( std::map< std::string, core::Real >::const_iterator pair=lowres_scores.begin(); pair!=lowres_scores.end(); ++pair ) {
 					if ( pair->first == "dock_ens_conf" ) job->add_string_real_pair( "cen_dock_ens_conf", pair->second );
 					else if ( pair->first != "total_score" ) job->add_string_real_pair( pair->first, pair->second );

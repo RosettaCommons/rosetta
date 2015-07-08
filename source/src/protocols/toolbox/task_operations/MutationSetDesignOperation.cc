@@ -190,13 +190,13 @@ MutationSetDesignOperation::apply(const core::pose::Pose& pose, core::pack::task
 		}
 
 		//Iterate through the map, setting positions.
-		std::string mutant;
+		//std::string mutant;
 		utility::vector1<core::Size> positions;
 		
 		for (std::map< core::Size, core::chemical::AA>::const_iterator ele = current_set.begin(), ele_end = current_set.end(); ele != ele_end; ++ele ){
 			core::Size resnum = ele->first;
 			core::chemical::AA allowed_mutation = ele->second;
-			mutant = mutant + oneletter_code_from_aa(allowed_mutation);
+			//mutant = mutant + oneletter_code_from_aa(allowed_mutation);
 			pose_allowed_aminos[ resnum ][ core::Size(allowed_mutation)] = true;
 			sampled_resnums[ resnum ] = true;
 			positions.push_back(resnum);

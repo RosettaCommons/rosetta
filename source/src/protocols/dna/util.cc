@@ -311,7 +311,7 @@ find_basepairs(
 	hbond_atom[ na_rgu ] = "N1";
 	hbond_atom[ na_rcy ] = "N3";
 
-	std::map< Size, Size > partner; // temporary
+	//std::map< Size, Size > partner; // temporary
 
 	for ( Size i(1); i <= nres; ++i ) {
 		Residue const & i_rsd( pose.residue(i) );
@@ -667,7 +667,7 @@ load_checkpoint( pose::Pose & pose, Size & iter )
 
 	TR << "Reading DNA design checkpoint info from " << filename << '\n';
 
-	std::string line, word, pdbfile;
+	std::string /*line, */word, pdbfile;
 	// get iteration
 	Size last_iter;
 	file >> word >> last_iter >> skip; // first line

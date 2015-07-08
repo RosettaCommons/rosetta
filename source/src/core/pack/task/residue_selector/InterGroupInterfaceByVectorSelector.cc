@@ -129,7 +129,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 		if ( ! grp1_selector_name.empty() ) {
 			try {
 				grp1_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp1_selector_name );
-			} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp1_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
 				throw utility::excn::EXCN_Msg_Exception( error_message );
 			}
@@ -138,7 +138,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 		if ( ! grp2_selector_name.empty() ) {
 			try {
 				grp2_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp2_selector_name );
-			} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp2_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
 				throw utility::excn::EXCN_Msg_Exception( error_message );
 			}

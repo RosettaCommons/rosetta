@@ -963,7 +963,7 @@ IdealParametersDatabase::lookup_torsion_legacy(
 	}
 
 	// use 'annotated sequence' to id this restype
-	std::string restag = get_restag( restype );
+	//std::string restag = get_restag( restype );
 
 	// Create mini-conformation for idealized residue
 	core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
@@ -1065,7 +1065,7 @@ IdealParametersDatabase::lookup_angle_legacy(
 
 	Ktheta=k_angle_;
 	ResidueType const & restype = res.type();
-	std::string restag = get_restag( restype );
+	//std::string restag = get_restag( restype );
 
 	// Create mini-conformation for idealized residue
 	conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );
@@ -1140,7 +1140,7 @@ IdealParametersDatabase::lookup_length_legacy(
 
 	Kd=k_length_;
 	ResidueType const & restype = res.type();
-	std::string restag = get_restag( restype );
+	//std::string restag = get_restag( restype );
 
 	// Create mini-conformation for idealized residue
 	core::conformation::ResidueOP newres = conformation::ResidueFactory::create_residue( restype );

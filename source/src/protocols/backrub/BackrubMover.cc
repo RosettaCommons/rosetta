@@ -542,7 +542,8 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 	std::set<id::AtomID> atomid_set(atomids.begin(), atomids.end());
 	Size nsegments(0);
 
-	while (atomid_set.size()) {
+	// AMW: cppcheck flags this as possibly inefficient
+	while ( !atomid_set.empty() ) {// size()) {
 
 		// get a list of contiguous mainchain atoms connected to the first atomid in the set
 		utility::vector1<core::id::AtomID> mainchain_atomids;

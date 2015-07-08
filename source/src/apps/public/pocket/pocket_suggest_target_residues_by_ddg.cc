@@ -138,7 +138,7 @@ main( int argc, char * argv [] )
     chains.insert(token[0]);
     token = strtok (NULL, ",");
   }
-  if (chains.size() == 0){
+  if (chains.empty()/*size() == 0*/){
     std::cout << "No target chains specified. use -target_chain_list A[,B,C...]"<<std::endl;
     return -1;
   }
@@ -275,12 +275,14 @@ main( int argc, char * argv [] )
 					if ( cmaxX < tx2) cmaxX = tx2;
 					if ( cmaxY < ty2) cmaxY = ty2;
 					if ( cmaxZ < tz2) cmaxZ = tz2;
-					core::Real dimX = dim - (cmaxX-cminX);
-					core::Real dimY = dim - (cmaxY-cminY);
-					core::Real dimZ = dim - (cmaxZ-cminZ);
-					dimX = dim;
-					dimY = dim;
-					dimZ = dim;
+					// AMW: cppcheck notes the immediate reassignment...
+					// Commenting out the meaningless statements and moving declaration down to make the relationship more clear.
+					//core::Real dimX = dim - (cmaxX-cminX);
+					//core::Real dimY = dim - (cmaxY-cminY);
+					//core::Real dimZ = dim - (cmaxZ-cminZ);
+					core::Real dimX = dim;
+					core::Real dimY = dim;
+					core::Real dimZ = dim;
 					//if (dimX<4.) dimX=4.;
 					//if (dimY<4.) dimY=4.;
 					//if (dimZ<4.) dimZ=4.;

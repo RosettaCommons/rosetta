@@ -716,7 +716,6 @@ debug_assert( get_token( which_token, tokens ) == name() );
 		else if ( *letter == 'G' || *letter == 'g' ) na = na_gua;
 		else if ( *letter == 'T' || *letter == 't' ) na = na_thy;
 		else {
-			std::stringstream err_msg;
 			TR << "Ignoring unknown one-letter nucleic acid code. " << *letter <<" while parsing PIKNA option for residue " << resid << ".";
 			//onError(err_msg.str());
 		}
@@ -813,7 +812,6 @@ debug_assert( get_token( which_token, tokens ) == name() );
 				 aa_from_oneletter_code(aas_to_exclude[ii]) <= chemical::num_canonical_aas  ) {
 			keep_aas_[ aa_from_oneletter_code( aas_to_exclude[ ii ] ) ] = false;
 		} else {
-			std::stringstream err_msg;
 			TR << "Ignoring Unknown one-letter amino acid code "<< aas_to_exclude[ ii ] << " while parsing NOTAA option for residue " << resid << ".";
 			//onError(err_msg.str());  // keep parsing on error
 		}

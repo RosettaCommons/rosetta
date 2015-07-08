@@ -121,7 +121,7 @@ AddCDRProfileSetsOperation::set_defaults(){
 
 	AntibodyEnumManager manager = AntibodyEnumManager();
 	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
-	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
+	//std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
 	numbering_scheme_ = manager.numbering_scheme_string_to_enum(numbering_scheme);
 	
 }

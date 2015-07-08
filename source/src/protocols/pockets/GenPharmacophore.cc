@@ -756,8 +756,8 @@ namespace protocols {
 								}
 						}
 
-						map<mID, SmallMol>::iterator it;
-						for (it = moieties.begin(); it != moieties.end(); it++) {
+						map<mID, SmallMol>::iterator it, end ;
+						for (it = moieties.begin(), end = moieties.end(); it != end; ++it) {
 								rings.push_back(it->second);
 						}
 
@@ -765,9 +765,9 @@ namespace protocols {
 
 						// build ring - Dnr_Acp pairs
 						// double max_dist = 5.0;
-						vector<SmallMol>::iterator it1, it2;
-						for (it1 = dnrAcp.begin(); it1 != dnrAcp.end(); it1++) {
-								for (it2 = rings.begin(); it2 != rings.end(); it2++) {
+						vector<SmallMol>::iterator it1, it2, end1, end2;
+						for (it1 = dnrAcp.begin(), end1 = dnrAcp.end(); it1 != end1; ++it1 ) {
+								for (it2 = rings.begin(), end2 = rings.end(); it2 != end2; ++it2 ) {
 										double dist = it1->cal_min_dist(&(*it2));
 										if (dist <= ring_atm_dist * ring_atm_dist) {
 												UnionEdge newEdge(&(*it1), &(*it2));
@@ -794,8 +794,8 @@ namespace protocols {
 						edges.clear();
 
 						// max_dist = 5.0;
-						for (it1 = rings.begin(); it1 != rings.end(); it1++) {
-								for (it2 = it1 + 1; it2 != rings.end(); it2++) {
+						for (it1 = rings.begin(); it1 != end2; ++it1 ) {
+								for (it2 = it1 + 1; it2 != end2; ++it2 ) {
 										double dist = it1->cal_min_dist(&(*it2));
 										if (dist <= ring_ring_dist * ring_ring_dist) {
 												UnionEdge newEdge(&(*it1), &(*it2));
@@ -818,20 +818,20 @@ namespace protocols {
 
 						// use UnionFind information to print out clusters
 						map<SmallMol *, vector<SmallMol *> > clusters;
-						for (it1 = rings.begin(); it1 != rings.end(); it1++) {
+						for (it1 = rings.begin(); it1 != end2; ++it1 ) {
 								SmallMol *r = it1->get_root();
 								vector<SmallMol *> &c = clusters[r];
 								c.push_back(&(*it1));
 						}
-						for (it2 = dnrAcp.begin(); it2 != dnrAcp.end(); it2++) {
+						for (it2 = dnrAcp.begin(); it2 != end1; ++it2 ) {
 								SmallMol *r = it2->get_root();
 								vector<SmallMol *> &c = clusters[r];
 								c.push_back(&(*it2));
 						}
 
-						map<SmallMol *, vector<SmallMol *> >::iterator it3;
+						map<SmallMol *, vector<SmallMol *> >::iterator it3, end3;
 						int counter = 0;
-						for (it3 = clusters.begin(); it3 != clusters.end(); it3++) {
+						for (it3 = clusters.begin(), end3 = clusters.end(); it3 != end3; ++it3 ) {
 								vector<SmallMol *> &current = it3->second;
 								Size numRng = 0;
 								vector<SmallMol *>::size_type s;

@@ -179,13 +179,15 @@ PackRotamersMoverPartGreedy::apply( Pose & pose )
 	utility::vector1< core::Size > trg_res;
 	protocols::enzdes::enzutil::get_resnum_from_cstid_list( cstid_list_, greedy_pose, trg_res );
 	target_residues_.insert( target_residues_.begin(), trg_res.begin(), trg_res.end() );
-        std::unique( target_residues_.begin(), target_residues_.end() );
+        utility::vector1< core::Size >::iterator last = std::unique( target_residues_.begin(), target_residues_.end() );
+		target_residues_.erase( last, target_residues_.end() );
 
    }
   if (n_best_>0){
 	utility::vector1< core::Size > n_best_res = choose_n_best( greedy_pose, n_best_ );
 	target_residues_.insert( target_residues_.begin(), n_best_res.begin(), n_best_res.end() );
-        std::unique( target_residues_.begin(), target_residues_.end() );
+        utility::vector1< core::Size >::iterator last = std::unique( target_residues_.begin(), target_residues_.end() );
+		target_residues_.erase( last, target_residues_.end() );
   }
   runtime_assert(target_residues_.size()>0);
   //randomly shuffle targets

@@ -68,7 +68,7 @@ BridgeFragmentMover::~BridgeFragmentMover(){}
 void BridgeFragmentMover::apply(core::pose::Pose & pose){
 
 	using namespace std;
-	bool reverse=false; //bool to determine whether the helix was built off of the n or c terminus (reverse true means it was built from the N)
+	//bool reverse=false; //bool to determine whether the helix was built off of the n or c terminus (reverse true means it was built from the N)
 
 	core::Size num_jumps(pose.fold_tree().num_jump());
 	TR << "There are " << num_jumps << " jumps" << endl;
@@ -107,7 +107,7 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 					core::fragment::AnnotatedFragData cur_frag =
 						dynamic_cast< const core::fragment::AnnotatedFragData & > (it->fragment(i));
 
-					std::string p2a_test("");
+					//std::string p2a_test("");
 					ObjexxFCL::FArray2D< core::Real > pose_helical_coords( 3, size_helical_window_*2 );
 
 					//get coordinates for the helical residues before the jump
@@ -118,10 +118,10 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 						pose_helical_coords(2,j+1)=res_xyz.y();
 						pose_helical_coords(3,j+1)=res_xyz.z();
 
-						p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
-								utility::to_string(res_xyz.x()) + " " +
-								utility::to_string(res_xyz.y()) + " " +
-								utility::to_string(res_xyz.z()) + "\n";
+						//p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
+						//		utility::to_string(res_xyz.x()) + " " +
+						//		utility::to_string(res_xyz.y()) + " " +
+						//		utility::to_string(res_xyz.z()) + "\n";
 					}
 
 					//get coordinates for the helical residues after the jump
@@ -132,10 +132,10 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 						pose_helical_coords(2,size_helical_window_*2-j)=res_xyz.y();
 						pose_helical_coords(3,size_helical_window_*2-j)=res_xyz.z();
 
-						p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
-								utility::to_string(res_xyz.x()) + " " +
-								utility::to_string(res_xyz.y()) + " " +
-								utility::to_string(res_xyz.z()) + "\n";
+						//p2a_test += utility::to_string(pose.residue(pose_frag_start+j).name1()) + " " +
+						//		utility::to_string(res_xyz.x()) + " " +
+						//		utility::to_string(res_xyz.y()) + " " +
+						//		utility::to_string(res_xyz.z()) + "\n";
 					}
 
 					//Check every 'size_helical_window' number of helical residues at the beginning and end of the bridge fragment.
@@ -146,7 +146,7 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 							++start_window_offset){
 
 						ObjexxFCL::FArray2D< core::Real > frag_helical_coords( 3, size_helical_window_*2 );
-						std::string p1a_test("");
+						//std::string p1a_test("");
 
 						//get coordinates for the helical residues on the beginning of the bridge fragment
 						for(core::Size j=1; j<=size_helical_window_; j++){
@@ -158,10 +158,10 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 							frag_helical_coords(2,j)=fragment_residue->y();
 							frag_helical_coords(3,j)=fragment_residue->z();
 
-							p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
-									utility::to_string(fragment_residue->x()) + " " +
-									utility::to_string(fragment_residue->y()) + " " +
-									utility::to_string(fragment_residue->z()) + "\n";
+							//p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
+							//		utility::to_string(fragment_residue->x()) + " " +
+							//		utility::to_string(fragment_residue->y()) + " " +
+							//		utility::to_string(fragment_residue->z()) + "\n";
 						}
 
 						for(core::Size end_window_offset=0; end_window_offset<num_helical_residues_-size_helical_window_+1;
@@ -177,10 +177,10 @@ void BridgeFragmentMover::apply(core::pose::Pose & pose){
 								frag_helical_coords(2,size_helical_window_+j+1)=fragment_residue->y();
 								frag_helical_coords(3,size_helical_window_+j+1)=fragment_residue->z();
 
-								p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
-										utility::to_string(fragment_residue->x()) + " " +
-										utility::to_string(fragment_residue->y()) + " " +
-										utility::to_string(fragment_residue->z()) + "\n";
+								//p1a_test += utility::to_string(fragment_residue->sequence()) + " " +
+								//		utility::to_string(fragment_residue->x()) + " " +
+								//		utility::to_string(fragment_residue->y()) + " " +
+								//		utility::to_string(fragment_residue->z()) + "\n";
 							}
 
 							core::Real rms(numeric::model_quality::rms_wrapper( size_helical_window_*2, frag_helical_coords, pose_helical_coords ));

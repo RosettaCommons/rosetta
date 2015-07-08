@@ -108,7 +108,7 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
 
 	vector1< std::string > energy_names_;
 	vector1< std::string >::const_iterator iter = lines.begin();
-	if ( iter->substr(0,9) == "SEQUENCE:" ) iter++; // ignore sequence for now
+	if ( iter->substr(0,9) == "SEQUENCE:" ) ++iter; // ignore sequence for now
 	if ( iter->substr(0,6) != "SCORE:" ) {
 		// get sequence and scorename data from the silent-file data object, because I don't have it!
 		EnergyNamesOP enames = EnergyNamesOP(
@@ -126,7 +126,6 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
 	} // get header information
 
   for ( utility::vector1< std::string >::const_iterator end = lines.end(); iter != end; ++iter ) {
-		std::string tag;
     std::istringstream line_stream( *iter );
 
 	if ( iter->substr(0,6) == "REMARK" ) {

@@ -90,7 +90,7 @@ DisulfideMatchingPotential::score_disulfide(
 		db_disulfides( matching_database_.get_all_disulfides() );
 
 	float mt_dist, mr_dist, mrt_dist; //best distance observed
-	float t_dist, r_dist, rt_dist; //current distance being compared
+	float r_dist, rt_dist; //current distance being compared
 
 	mr_dist  = 3.0;//2.8; // maybe max should be pi?
 	mrt_dist = 3.0+probe_radius;//3.75;
@@ -109,7 +109,7 @@ DisulfideMatchingPotential::score_disulfide(
 
 	for ( Size d = 2; d <= db_disulfides.size(); ++d ) {
 
-		t_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[1].get_translation() ));
+		float t_dist = std::sqrt( scoring_RT.get_translation().distance_squared( db_disulfides[1].get_translation() ));
 		r_dist = std::sqrt( scoring_RT.get_rotation().col(1).distance_squared( db_disulfides[1].get_rotation().col(1) ) +
 			                  scoring_RT.get_rotation().col(2).distance_squared( db_disulfides[1].get_rotation().col(2) ) +
 											  scoring_RT.get_rotation().col(3).distance_squared( db_disulfides[1].get_rotation().col(3) ) );

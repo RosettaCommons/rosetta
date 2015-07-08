@@ -98,7 +98,7 @@ EnsembleEnergy::finalize_total_energy(
 				= utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableStringFloatMap >
 				( pose.data().get_ptr(core::pose::datacache::CacheableDataType::ARBITRARY_FLOAT_DATA ) );
 		for ( std::map< std::string, float >::const_iterator iter = data->map().begin(),
-						end = data->map().end(); iter != end; iter++
+						end = data->map().end(); iter != end; ++iter
 				)	{
 					// skip score entry, as it gets confusing
 					if ( iter->first == "dock_ens_conf1" || iter->first == "dock_ens_conf2" ) {

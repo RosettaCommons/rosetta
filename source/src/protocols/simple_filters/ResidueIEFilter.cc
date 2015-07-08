@@ -174,7 +174,7 @@ ResidueIEFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 		std::string const selector_name = tag->getOption< std::string >( "selector" );
 		try {
 			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();
@@ -275,7 +275,8 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 		}
 	}
 
-  std::unique( resnums_.begin(), resnums_.end() );
+  utility::vector1<Size>::iterator last = std::unique( resnums_.begin(), resnums_.end() );
+  resnums_.erase( last, resnums_.end() );
   tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
   BOOST_FOREACH(core::Size const res, resnums_){
     tr << pose.residue_type( res ).name3() << res <<" + ";

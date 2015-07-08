@@ -221,7 +221,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs().begin(), it_end = frag_libs().end();
-				it != it_end; it++ ) {
+				it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -236,7 +236,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 		// the exact same as the old code)
 		for ( Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( utility::vector1< FragmentMoverOP >::const_iterator
-					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++
+					it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it
 			) {
 				(*it)->apply( pose );
 			}
@@ -306,7 +306,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 			mc_->set_temperature( temperature );
 			for ( utility::vector1< FragmentMoverOP >::const_iterator
 					it = fragmover.begin(),it_end = fragmover.end();
-					it != it_end; it++
+					it != it_end; ++it
 			) {
 				(*it)->apply( pose );
 				if ( chainbreak_present ) {

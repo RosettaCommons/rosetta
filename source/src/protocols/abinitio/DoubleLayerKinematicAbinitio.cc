@@ -157,7 +157,7 @@ KinematicControlOP DoubleLayerKinematicAbinitio::new_kinematics( pose::Pose &pos
   set_extended_torsions_and_idealize_loops( pose, extended_loops_ );
 
   if ( rigid_core.size() &&  coordinate_constraint_weight_ != 0.0 ) {
-      success = add_coord_cst( rigid_core, pose );
+      /*success = */add_coord_cst( rigid_core, pose );
   }
   return current_kinematics;
 }

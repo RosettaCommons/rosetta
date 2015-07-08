@@ -42,7 +42,7 @@ void
 update_mg_hoh_fold_tree( core::pose::Pose & pose );
 
 core::id::AtomID
-get_closest_non_hoh_contact( core::pose::Pose const & pose, core::Size const i, std::string const exclude_rsd = "" );
+get_closest_non_hoh_contact( core::pose::Pose const & pose, core::Size const i, std::string const & exclude_rsd = "" );
 
 } //magnesium
 } //protocols

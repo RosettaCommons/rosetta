@@ -78,18 +78,19 @@ calc_per_residue_scores(
 	//std::cout << "begin_scoring: scores.size() = " << per_residue_scores.size() << std::endl;
 
 	utility::vector0< float > OBS_V, PRED_V, DIFF_V, OBS_V_CORRECTED;
-	for ( Sparta::SpartaLib::AtomNameList::iterator itN = atom_names.begin(); itN != atom_names.end(); itN++ ) {
+	for ( Sparta::SpartaLib::AtomNameList::iterator itN = atom_names.begin(), end = atom_names.end(); itN != end; ++itN ) {
 		string aName = itN->second;
 		if ( aName == "H" ) aName="HN";
 		bool floating_sign( REF_CS_Tab.isVarFloat("SHIFT2") );
 		if ( floating_sign ) tr.Info << " use floating sign1 " << std::endl;
 		else tr.Info << " no floating sign " << std::endl;
-		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(); it != REF_CS_Tab.Entries.end(); it++ )	{
+		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(), end2 = REF_CS_Tab.Entries.end(); it != end2; ++it )	{
 			float obs_shift, pred_shift, obs_shift2( 0.0 );
 			string aName_ref = it->second["ATOMNAME"];
 			if ( aName_ref == "H" ) aName_ref = "HN";
 
 			if ( aName == "HA" && aName_ref == "G")	{
+				// AMW: cppcheck claims that compare would be faster than find here
 				if ( aName_ref.find("HA") != 0 ) continue;
 			}	else if ( aName_ref != aName ) continue;
 

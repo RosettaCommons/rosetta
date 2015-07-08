@@ -241,7 +241,7 @@ ProteinAssemblyGraph::print_tree(
 	std::string output_name = "tree_" + utility::to_string(tree_id) + "_";
 	core::pose::Pose master_pose;
 	utility::vector1<core::pose::Pose> master_poses;
-	core::Size repeat_counter=1;
+	//core::Size repeat_counter=1;
 
 	Size starttime = time( NULL );
 
@@ -652,7 +652,7 @@ ProteinAssemblyGraph::print_tree(
 	}
 //	master_pose.dump_pdb(output_name + ".pdb");
 	master_pose.dump_pdb("tree_" + utility::to_string(tree_id) + ".pdb");
-	std::string repeat_name = "tree_" + utility::to_string(tree_id) + "_repeat_" + utility::to_string(repeat_counter);
+	//std::string repeat_name = "tree_" + utility::to_string(tree_id) + "_repeat_" + utility::to_string(repeat_counter);
 
 	dump_resfile(sequence_map, output_name + ".res");
 	devel::sewing::dump_native_residue_file(native_residue_map, output_name + ".rots");

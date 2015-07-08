@@ -208,8 +208,8 @@ void FullatomRelaxMover::output_solution_state( core::pose::Pose & pose )
 		// Creating a job compatible with JD2
 		protocols::jd2::JobOP job2
 		=jd2::JobDistributor::get_instance()->current_job();
-		std::string job_name (JobDistributor::get_instance()->
-									 job_outputter()->output_name( job2 ) );
+		//std::string job_name (JobDistributor::get_instance()->
+		//							 job_outputter()->output_name( job2 ) );
 		job2->add_string_real_pair("Total weighted score: ", pose.energies().total_energy());
 		job2->add_string_string_pair("SolState_SecondaryStructure:",sec_struct_);
 		JobDistributor::get_instance()->job_outputter()->

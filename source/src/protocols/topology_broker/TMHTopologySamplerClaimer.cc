@@ -646,7 +646,7 @@ TMHTopologySamplerClaimer::pre_compute_grid_points(core::pose::Pose& pose)
 				break;
 		}
 		bool gp_exists(false);
-		for(utility::vector1<core::Vector>::iterator used_gp_it=used_grid_points.begin(); used_gp_it!=used_grid_points.end(); used_gp_it++)
+		for(utility::vector1<core::Vector>::iterator used_gp_it=used_grid_points.begin(), end =used_grid_points.end(); used_gp_it != end; ++used_gp_it )
 		{
 			if(*used_gp_it == origin+add_vector)
 			{

@@ -1809,7 +1809,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	Residue const & res( conf.residue( index ) );
 	// amw: can't use name3 here because of overlaps between e.g. CYS/CYD name3
 	// but conveniently the first three characters of name are always correct
-	std::string rn = res.type().name();
+	//std::string rn = res.type().name();
 	//TR << "residue current name is |" << rn << "|" << std::endl;
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
@@ -1959,8 +1959,8 @@ form_disulfide(
 	chemical::ResidueTypeSetCOP restype_set =
 	chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
-	std::string lcname = conformation.residue_type(lower_res).name3();
-	std::string ucname = conformation.residue_type(upper_res).name3();
+	//std::string lcname = conformation.residue_type(lower_res).name3();
+	//std::string ucname = conformation.residue_type(upper_res).name3();
 	
 	// Break existing disulfide bonds to lower
 	if ( /*conformation.residue(lower_res).type().is_disulfide_bonded()
@@ -2121,18 +2121,12 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 	if(! A.type().forms_disulfide_bond() && ! A.type().is_disulfide_bonded() )
 		return false;
 
-	std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
+	//std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
 	
 	//bonded
-	Size a_connect_atom;
-	if ( A.type().has( "SG" ) )
-		a_connect_atom = A.atom_index( "SG" );
-	else if ( A.type().has( "SD" ) )
-		a_connect_atom = A.atom_index( "SD" );
-	else {
-		runtime_assert( A.type().has( "CEN" ) ); //should be fa or centroid
-		a_connect_atom = A.atom_index( "CEN" );
-	}
+	runtime_assert( A.type().has( A.type().get_disulfide_atom_name() ) ); //should be fa or centroid
+	Size a_connect_atom = A.atom_index( A.type().get_disulfide_atom_name() );
+
 	for ( Size connection = A.type().n_residue_connections(); connection >= 1; --connection ) {
 		//check if A bonded to B
 		if ( (Size) A.type().residue_connection( connection ).atomno() == a_connect_atom && //bond to sg, not the backbone

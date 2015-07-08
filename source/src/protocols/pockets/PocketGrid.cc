@@ -219,7 +219,7 @@ void PClusterSet::findClusters(){
       if (j->isClose(*i)) {
         if (j->testNeighbor(*i)) {
           std::list<PCluster>::iterator oldI = i;
-          i--;
+          --i;
           clusters_.erase(oldI);
           break;
         }
@@ -373,7 +373,7 @@ core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Re
 //				if (j->isClose(*i)) {
 					if (j->testNeighbor(*i)) {
 						std::list<CCluster>::iterator oldI = i;
-						i--;
+						--i;
 						clusters_.erase(oldI);
 						break;
 					}
@@ -1165,10 +1165,11 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size thr3, co
   for (core::Size cx=0; cx<xdim_;cx++){
     for (core::Size cy=0; cy<ydim_;cy++){
       for (core::Size cz=0; cz<zdim_;cz++){
-        bool tar_surf=false;
+        //bool tar_surf=false;
 
         //if a point is a surface, or pocket and doind psp searching, or solvent and doing a sps search, search in all directions from that point.
         if ((!sps&&(isSurfacePoint(cx, cy, cz)||(grid_[cx][cy][cz]==POCKET&&psp)||(grid_[cx][cy][cz]==TP_POCKET&&psp)||(grid_[cx][cy][cz]==POCKET&&sps)))||(grid_[cx][cy][cz]==EMPTY&&sps)){
+          bool tar_surf=false;
           if (grid_[cx][cy][cz]==T_SURFACE||grid_[cx][cy][cz]==ST_SURFACE||(grid_[cx][cy][cz]==TP_POCKET&&psp)) tar_surf=true;
           //iterate over the searching directions, get the index associated with x
           for (int i=0;i<dirs*3;i+=3){
@@ -2114,7 +2115,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
         bool surf=markOneEdgeDepth(pit->x,pit->y,pit->z, surf_d, bur_d, cit->isTarget(numTargets_));
         if (surf){
           std::list<PCluster::Cxyz>::iterator tmp = pit;
-          pit--;
+          --pit;
           cit->points_.erase(tmp);
         }
       }

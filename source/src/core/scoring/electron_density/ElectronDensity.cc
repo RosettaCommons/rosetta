@@ -139,6 +139,9 @@ static void swap4_aligned(void *v, long ndata) {
 	int *data = (int *) v;
 	long i;
 	int *N;
+	// AMW cppcheck says that we can reduce the scope of N here
+	// but this is a technical enough function that I want to
+	// confirm that this is the case!
 	for (i=0; i<ndata; i++) {
 		N = data + i;
 		*N=(((*N>>24)&0xff) | ((*N&0xff)<<24) | ((*N>>8)&0xff00) | ((*N&0xff00)<<8));
@@ -1124,7 +1127,7 @@ core::Real ElectronDensity::matchCentroidPose(
 	///////////////////////////
 	/// 4  CALCULATE PER-CA DERIVATIVES
 	if (cacheCCs) {
-		std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
+		//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
 		for (int i=1 ; i<=nres; ++i) {
 			if (isSymm && !symmInfo->bb_is_independent(i) && !remapSymm) {  // should this be fa_...??
 				continue; // only score the monomer
@@ -1374,7 +1377,7 @@ core::Real ElectronDensity::matchPose(
 	///////////////////////////
 	/// 4  CALCULATE PER-ATOM DERIVATIVES
 	if (cacheCCs) {
-		std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
+		//std::map< core::Size , numeric::xyzMatrix< core::Real > > symmRots;
 		for (int i=1 ; i<=nres; ++i) {
 			if (isSymm && !symmInfo->bb_is_independent(i) && !remapSymm) {  // should this be fa_...??
 				continue; // only score the monomer
@@ -1394,8 +1397,8 @@ core::Real ElectronDensity::matchPose(
 				conformation::Atom const &atm_i( rsd_i.atom(j) );
 		 		if ( is_missing_density( atm_i.xyz() ) ) continue;
 
-				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
-				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+				//chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+				//std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 
 				utility::vector1< int > const &rho_dx_pt_ij   = rho_dx_pt[i][j];
 				utility::vector1< numeric::xyzVector<core::Real> > const &rho_dx_mask_ij = rho_dx_mask[i][j];
@@ -1472,13 +1475,13 @@ ElectronDensity::getResolutionBins(
 	}
 
 	// get bin counts
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				int L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
@@ -1521,13 +1524,13 @@ ElectronDensity::getIntensities(
 	utility::vector1< core::Real > sum_I2(nbuckets, 0.0);
 	utility::vector1< core::Size > counts(nbuckets, 0);
 
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				int L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
@@ -1597,13 +1600,13 @@ ElectronDensity::getFSC(
 	}
 
 	// PASS 1: FSC, phase error
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1()/2; ++x) {
-				L = x-1;
+				int L = x-1;
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
@@ -1661,13 +1664,13 @@ ElectronDensity::getPhaseError(
 	}
 
 	// PASS 1: FSC, phase error
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1()/2; ++x) {
-				L = x-1;
+				int L = x-1;
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
@@ -1725,13 +1728,13 @@ ElectronDensity::scaleIntensities(
 	}
 	Real step = (minreso-maxreso)/nbuckets;
 
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				int L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
@@ -1765,13 +1768,13 @@ void
 ElectronDensity::reciprocalSpaceFilter( core::Real maxreso, core::Real minreso, core::Real fadewidth ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		int H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			int K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				int L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 
 				Real r_i = 1.0 / sqrt(S2(H,K,L));
 
@@ -1942,13 +1945,13 @@ ElectronDensity::calcRhoC(
 	// bandlimit mask at 'radius'
 	ObjexxFCL::FArray3D< std::complex<double> > Fmask;
 	numeric::fourier::fft3(mask, Fmask);
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)grid[2]; ++z) {
-		H = (z < (int)grid[2]/2) ? z-1 : z-grid[2] - 1;
+		int H = (z < (int)grid[2]/2) ? z-1 : z-grid[2] - 1;
 		for (int y=1; y<=(int)grid[1]; ++y) {
-			K = (y < (int)grid[1]/2) ? y-1 : y-grid[1]-1;
+			int K = (y < (int)grid[1]/2) ? y-1 : y-grid[1]-1;
 			for (int x=1; x<=(int)grid[0]; ++x) {
-				L = (x < (int)grid[0]/2) ? x-1 : x-grid[0]-1;
+				int L = (x < (int)grid[0]/2) ? x-1 : x-grid[0]-1;
 				core::Real S2c =  S2(H,K,L);
 
 				// exp fade
@@ -2415,21 +2418,21 @@ void ElectronDensity::setup_patterson_first_time(core::pose::Pose const &pose) {
 	F_s2.dimension(p_grid[0], p_grid[1], p_grid[2]);
 	core::Real eps_sum = 0;
 	core::Real minS=999.0, maxS=0.0;
-	int H,K,L;
+	//int H,K,L;
 	for (int z=1; z<=(int)p_grid[2]; ++z) {
-		H = (z < (int)p_grid[2]/2) ? z-1 : z-p_grid[2] - 1;
+		int H = (z < (int)p_grid[2]/2) ? z-1 : z-p_grid[2] - 1;
 		if (z < (int)p_grid[2]/2)
 			del_ij[2] = ((core::Real)z - 1.0) / grid[2];
 		else
 			del_ij[2] = (((core::Real)z - p_grid[2] - 1.0)) / grid[2];
 		for (int y=1; y<=(int)p_grid[1]; ++y) {
-			K = (y < (int)p_grid[1]/2) ? y-1 : y-p_grid[1]-1;
+			int K = (y < (int)p_grid[1]/2) ? y-1 : y-p_grid[1]-1;
 			if (y < (int)p_grid[1]/2)
 				del_ij[1] = ((core::Real)y - 1.0) / grid[1] ;
 			else
 				del_ij[1] = (((core::Real)y - p_grid[1] - 1.0)) / grid[1];
 			for (int x=1; x<=(int)p_grid[0]; ++x) {
-				L = (x < (int)p_grid[0]/2) ? x-1 : x-p_grid[0]-1;
+				int L = (x < (int)p_grid[0]/2) ? x-1 : x-p_grid[0]-1;
 				if (x < (int)p_grid[0]/2)
 					del_ij[0] = ((core::Real)x - 1.0) / grid[0];
 				else
@@ -2806,8 +2809,8 @@ core::Real ElectronDensity::matchPoseToPatterson(
 	// correlate
 	core::Real sumC=0.0, sumC2=0.0, sumO=0.0, sumO2=0.0, sumCO=0.0, vol=0.0;
 
-	sumC=0.0;
-	sumC2=0.0;
+	//sumC=0.0;
+	//sumC2=0.0;
 	for (int z=1; z<=(int)p_grid[2]; ++z) {
 		for (int y=1; y<=(int)p_grid[1]; ++y) {
 			for (int x=1; x<=(int)p_grid[0]; ++x) {
@@ -3123,8 +3126,8 @@ core::Real ElectronDensity::rematchResToPatterson( core::conformation::Residue c
 	// correlate
 	core::Real sumC=0.0, sumC2=0.0, sumO=0.0, sumO2=0.0, sumCO=0.0, vol=0.0;
 
-	sumC=0.0;
-	sumC2=0.0;
+	//sumC=0.0;
+	//sumC2=0.0;
 	for (int z=1; z<=(int)p_grid[2]; ++z) {
 		for (int y=1; y<=(int)p_grid[1]; ++y) {
 			for (int x=1; x<=(int)p_grid[0]; ++x) {
@@ -3754,7 +3757,7 @@ core::Real ElectronDensity::matchRes(
 
 	// 2: grab neighbor atom ids
 	// all atoms from neighborgraph
-	for (std::set< core::Size >::iterator it=neighborResids.begin(); it!=neighborResids.end(); it++) {
+	for (std::set< core::Size >::iterator it=neighborResids.begin(), end=neighborResids.end(); it!=end; ++it) {
 		core::conformation::Residue const &rsd_i( pose.residue(*it) );
 		if (!rsd_i.is_polymer()) continue;
 		chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
@@ -4462,8 +4465,9 @@ void ElectronDensity::dCCdx_res(
 		exit(1);
 	}
 
-	static bool warned=false;
+	//static bool warned=false;
 	if (!DensScoreInMinimizer) {
+		static bool warned=false;
 		if (!warned)
 			TR << "[ WARNING ] dCCdx_res called but DensityScoreInMinimizer = false ... returning 0" << std::endl;
 		//warned = true;
@@ -4540,8 +4544,9 @@ void ElectronDensity::dCCdx_cen( int resid,
 		exit(1);
 	}
 
-	static bool warned=false;
+	//static bool warned=false;
 	if (!DensScoreInMinimizer) {
+		static bool warned=false;
 		if (!warned)
 			TR << "[ WARNING ] dCCdx_cen called but DensityScoreInMinimizer = false ... returning 0" << std::endl;
 		//warned = true;
@@ -4601,8 +4606,9 @@ void ElectronDensity::dCCdx_aacen( int atmid, int resid,
 		exit(1);
 	}
 
-	static bool warned=false;
+	//static bool warned=false;
 	if (!DensScoreInMinimizer) {
+		static bool warned=false;
 		if (!warned)
 			TR << "[ WARNING ] dCCdx_aacen called but DensityScoreInMinimizer = false ... returning 0" << std::endl;
 		//warned = true;
@@ -4669,8 +4675,9 @@ void ElectronDensity::dCCdx_pat( int atmid, int resid,
 		exit(1);
 	}
 
-	static bool warned=false;
+	//static bool warned=false;
 	if (!DensScoreInMinimizer) {
+		static bool warned=false;
 		if (!warned)
 			TR << "[ WARNING ] dCCdx_pat called but DensityScoreInMinimizer = false ... returning 0" << std::endl;
 		//warned = true;
@@ -4975,7 +4982,7 @@ ElectronDensity::readMRCandResize(
 	TR << " voxel vol.: " << voxel_volume() << std::endl;
 
 	// mrc format maps occasionally specify a real-valued origin in a different spot in the header
- 	if (  altorigin[0]!=0 &&  altorigin[0]!=0 &&  altorigin[0]!=0 &&
+ 	if (  altorigin[0]!=0 &&  altorigin[1]!=0 &&  altorigin[2]!=0 &&
  	     ( altorigin[0] > -10000 && altorigin[0] < 10000) &&
  	     ( altorigin[1] > -10000 && altorigin[1] < 10000) &&
  	     ( altorigin[2] > -10000 && altorigin[2] < 10000)
@@ -5102,9 +5109,9 @@ void ElectronDensity::initializeSymmOps( utility::vector1< std::string > const &
 		// _REALLY_ simple parser
 		numeric::xyzMatrix< core::Real > rot(0);
 		numeric::xyzVector< core::Real > trans(0,0,0);
-		int k;
+		//int k;
 		for (int j=1; j<=3; ++j) {
-			k = rows[j].find('/');
+			int k = rows[j].find('/');
 			if (k != (int)std::string::npos) {
 				// numerator
 				int startNum = rows[j].find_last_not_of("0123456789",k-1) + 1;

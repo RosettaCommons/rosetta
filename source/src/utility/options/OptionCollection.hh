@@ -2340,7 +2340,7 @@ public: // Static functions
 		std::string const & s, // String to wrap
 		std::string::size_type const indent = 10, // Width to indent continuation lines
 		std::string::size_type const width = 80, // Column width to wrap at [80]
-		std::string const header_for_extra_lines = ""
+		std::string const & header_for_extra_lines = ""
 	);
 
 

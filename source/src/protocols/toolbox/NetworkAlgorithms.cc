@@ -103,7 +103,7 @@ ResidueNetwork::dijkstras( core::Size const resi ) const
 
 	// copy the node list so that the original doesn't get modified
 	std::list< NodeOP > nodes( nodes_ );
-	while ( nodes.size() > 0 ) {
+	while ( !nodes.empty() ) {//size() > 0 ) {
 		NodeOP smallest = ExtractSmallest( nodes );
 		TR.Debug << "smallest has distance=" << smallest->distanceFromStart << " and neighbors=" << smallest->neighbors.size() << std::endl;
 		if ( smallest->distanceFromStart > 10000 ) {
@@ -152,7 +152,8 @@ ResidueNetwork::create_from_pose( core::pose::Pose const & pose )
 NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
-	if ( nodes.size() == 0 ) return NULL;
+	// AMW: cppcheck thinks this conditional might be inefficient
+	if ( nodes.empty() /*size() == 0 */) return NULL;
 	std::list< NodeOP >::iterator smallest( nodes.begin() );
 	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {

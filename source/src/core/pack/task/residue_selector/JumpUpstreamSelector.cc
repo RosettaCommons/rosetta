@@ -70,7 +70,7 @@ JumpUpstreamSelector::parse_my_tag(
 {
 	try {
 		set_jump( tag->getOption< int >( "jump" ) );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream err_msg;
 		err_msg << "Failed to access required option 'jump' from JumpUpstreamSelector::parse_my_tag.\n";
 		err_msg << e.msg();

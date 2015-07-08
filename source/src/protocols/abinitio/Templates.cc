@@ -317,8 +317,8 @@ void Templates::_get_scored_list( TemplateList& cst_list, Size topN, Real wTopol
 	weight_list.sort();
 	weight_list.reverse();
 	cst_list.clear();
-	std::list< std::pair< core::Real, TemplateCOP > >::const_iterator iter = weight_list.begin();
-	for ( Size i = 1; i <= topN && iter != weight_list.end(); i++, iter++ ) {
+	std::list< std::pair< core::Real, TemplateCOP > >::const_iterator iter = weight_list.begin(), end = weight_list.end();
+	for ( Size i = 1; i <= topN && iter != end; ++i, ++iter ) {
 		cst_list.push_back( iter->second );
 	}
 }

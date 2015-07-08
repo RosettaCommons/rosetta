@@ -317,7 +317,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			bool found_rotamer = false;
 			Size num_linked_res =0;
-			for (utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; itr++ ){
+			for (utility::vector1<int>::iterator itr = linked_residues.begin(), ite = linked_residues.end(); itr != ite; ++itr ){
 				num_linked_res++;
 				if ( (*itr != 0) && (*itr != moltenres_id )){
 					TR.Trace << "moltenres_id " << moltenres_id << " coupled to moltenres_id " << *itr << std::endl;
@@ -384,7 +384,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			if (!found_rotamer){ // any of the linked position without the same rotamer should be passed
 				//invalidate all the linked positions
 				//std::cout << "invalidate " ;
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; it++){
+				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ){
 					rot_valid[ rotamer_sets()->moltenres_rotid_2_rotid( (*it).first, (*it).second ) ] = false;
 					//	std::cout << (*it).first << "(" << (*it).second << ")"  ;
 				}
@@ -396,7 +396,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 			//score the good rotamers and pass through metropolis
 			//std::cout << "summing energies: " ;
 
-			for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; it++){
+			for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it ){
 
 			//std::cout << (*it).first << "(" << (*it).second << ")"  ;
 
@@ -442,7 +442,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 
 			//std::cout << "ACCEPT: substitution on ";
 			//set state
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; it++){
+				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it){
 	/*				core::PackerEnergy dE, oldE;
 					ig_->consider_substitution( (*it).first,  (*it).second,
 																			dE, oldE );
@@ -490,7 +490,7 @@ void FixbbLinkingRotamerSimAnnealer::run()
 				TR.Trace << "rejecting multiple rotamer substitution" << std::endl;
 				//revert changes:
 
-				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; it++){
+				for (std::map<Size, Size>::iterator it = resid_states.begin(), ite = resid_states.end(); it != ite; ++it){
 
 					core::PackerEnergy dE, oldE;
 					ig_->consider_substitution( (*it).first,  state_on_node((*it).first),

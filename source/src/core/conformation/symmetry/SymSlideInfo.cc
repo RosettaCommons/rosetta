@@ -24,22 +24,22 @@ namespace conformation {
 namespace symmetry {
 
 SymSlideInfo::SymSlideInfo()
+:	slide_type_( RANDOM ),
+	score_criteria_( CEN_DOCK_SCORE ),
+	SlideCriteriaVal_( "AUTOMATIC" )
 {
-	slide_type_ = RANDOM;
-	score_criteria_ = CEN_DOCK_SCORE;
-	SlideCriteriaVal_ = "AUTOMATIC";
 }
 
 SymSlideInfo::SymSlideInfo( SymSlideInfo const & src )
+:	slide_type_( src.slide_type_ ),
+ 	score_criteria_(  src.score_criteria_ ),
+	SlideCriteriaVal_(  src.SlideCriteriaVal_ ),
+	slide_order_( src.slide_order_ )
 {
-	slide_type_ = src.slide_type_;
-  score_criteria_ = src.score_criteria_;
-  SlideCriteriaVal_ = src.SlideCriteriaVal_;
-	slide_order_ = src.slide_order_;
 }
 
-	SymSlideInfo &
-  SymSlideInfo::operator=( SymSlideInfo const & src ) {
+SymSlideInfo &
+SymSlideInfo::operator=( SymSlideInfo const & src ) {
 		slide_type_ = src.slide_type_;
 		score_criteria_ = src.score_criteria_;
 		SlideCriteriaVal_ = src.SlideCriteriaVal_;

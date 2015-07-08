@@ -77,7 +77,7 @@ private:
     utility::vector1<std::string> query_names_;
 
 };
-core::Real atom_distance( core::conformation::Residue const & r1, std::string const a1, core::conformation::Residue const & r2, std::string const a2 );
+core::Real atom_distance( core::conformation::Residue const & r1, std::string const & a1, core::conformation::Residue const & r2, std::string const & a2 );
 core::Real res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vector1< core::Size > const template_res_for_rmsd, core::pose::Pose const & copy_pose, core::pose::Pose const &template_pose );
 utility::vector1< numeric::xyzVector< core::Real > > Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const positions );
 

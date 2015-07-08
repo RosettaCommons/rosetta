@@ -79,7 +79,7 @@ inline
 void
 add_conformation_viewer(
 	core::conformation::Conformation &,
-	std::string const = empty_string,
+	std::string const & = empty_string,
 	int const = 900,
 	int const = 900,
 	bool const  = false,
@@ -91,7 +91,7 @@ inline
 void
 add_monte_carlo_viewer(
 	moves::MonteCarlo &,
-	std::string const = empty_string,
+	std::string const & = empty_string,
 	int const = 900,
 	int const = 900,
 	bool = false
@@ -110,7 +110,7 @@ void set_bg_color( core::Vector new_bg_color );
 void
 add_conformation_viewer(
 	core::conformation::Conformation & conformation,
-	std::string const = empty_string,
+	std::string const & = empty_string,
 	int const length = 900,
 	int const width = 900,
 	bool const debug_pause = false,
@@ -120,7 +120,7 @@ add_conformation_viewer(
 void
 add_monte_carlo_viewer(
 	moves::MonteCarlo & mc,
-	std::string const name_in = empty_string,
+	std::string const & name_in = empty_string,
 	int const length = 900,
 	int const width  = 900,
 	bool debug_pause=false

@@ -72,7 +72,7 @@ ResidueIndexSelector::parse_my_tag(
 {
 	try {
 		set_index( tag->getOption< std::string >( "resnums" ) );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream err_msg;
 		err_msg << "Failed to access required option 'resnums' from ResidueIndexSelector::parse_my_tag.\n";
 		err_msg << e.msg();

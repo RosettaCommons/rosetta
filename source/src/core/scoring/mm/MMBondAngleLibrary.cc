@@ -78,7 +78,6 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 
 	bool in_bonds_section = false;
 	while( getline( data, line ) ) {
-		std::istringstream l( line );
 		if( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
 		if (line == "DIHEDRALS") in_bonds_section = false;
 		if (in_bonds_section) lines.push_back( line );

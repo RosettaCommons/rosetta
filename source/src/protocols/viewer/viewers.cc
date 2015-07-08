@@ -431,7 +431,7 @@ check_for_new_conformation_viewers()
 void
 add_conformation_viewer(
 	conformation::Conformation & conformation,
-	std::string const name_in, // = ""
+	std::string const & name_in, // = ""
 	int const length /* = 900 */,
 	int const width /* = 900 */,
 	bool const debug_pause /* = false */,
@@ -469,7 +469,7 @@ add_conformation_viewer(
 void
 add_monte_carlo_viewer(
 	moves::MonteCarlo & mc,
-	std::string const name_in, //= ""
+	std::string const & name_in, //= ""
 	int const length,
 	int const width,
 	bool debug_pause
@@ -615,7 +615,7 @@ glColor3fxyz( Vector const & coord )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Vector
-atom_color_by_element( std::string const element )
+atom_color_by_element( std::string const & element )
 {
 
 	if ( element == "N" ) {
@@ -662,13 +662,14 @@ residue_color_by_group( core::conformation::Residue const & res, int total_resid
 
 // from rosetta++ protein_graphics.cc
 void rainbow_color( float frac , float & red, float & green, float & blue , bool mute_color ) {
-	float muting = .7;
+	//float muting = .7;
 	float my_color = frac;
 	red = my_color;
 	blue = 1.0 - my_color ;
 	green = (my_color < .5) ? 2.0*my_color : 2.0-2.0*my_color;
 	if (mute_color) {
 		float saturation = sqrt(red*red + green*green + blue*blue);
+		float muting = .7;
 			red = muting*red/saturation;
 			green = muting*green/saturation;
 			blue = muting*blue/saturation;
@@ -1167,8 +1168,8 @@ void draw_helix(
 	const int total_residue = residues.size();
 
 	//Starting point.
-	int prior_res( start-1 );
-	if (prior_res < 1) prior_res = 1;
+	//int prior_res( start-1 );
+	//if (prior_res < 1) prior_res = 1;
 	Vector direction, normal, tangent, axis, current_CA;
 	Vector prev_CA, prev_tangent, prev_axis;
 
@@ -1393,7 +1394,7 @@ void draw_secstruct(
 	char prev_secstruct = ss[ begin ];
 
 	int start_segment( begin );
-	bool is_chainbreak = false;
+	//bool is_chainbreak = false;
 
 	int protein_end = 0;
 	for (int i = begin+1; i<= end; i++) {
@@ -1729,10 +1730,10 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 				glEndList();
 			}
 			if( graphics::sphereDisplayList != 0) {
-				float sphereRadius, sphereScale(1.0);
+				//float sphereRadius, sphereScale(1.0);
 				const float scale_for_display_list(1.0);
-				sphereScale = 1.0 * scale_for_display_list ;
-				sphereRadius = sphereScale * 	rsd.atom_type_set()[ atom.type() ].lj_radius();
+				float sphereScale = 1.0 * scale_for_display_list ;
+				float sphereRadius = sphereScale * 	rsd.atom_type_set()[ atom.type() ].lj_radius();
 				glScalef(sphereRadius, sphereRadius, sphereRadius);
 			}
 			glCallList(graphics::sphereDisplayList);
@@ -1921,7 +1922,7 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 			                  Vector const & center) {
 
 	using namespace graphics;
-	const int total_residue = residues.size();
+	//const int total_residue = residues.size();
 
 #ifndef BOINC_GRAPHICS
 
@@ -2022,7 +2023,7 @@ utility::vector1< SilentObserverOP > silent_observers; // quick hack to eliminat
 void
 add_monte_carlo_silent_viewer(
 	moves::MonteCarlo & mc,
-	std::string const name_in,
+	std::string const & name_in,
 	bool fullatom = false
 )
 {

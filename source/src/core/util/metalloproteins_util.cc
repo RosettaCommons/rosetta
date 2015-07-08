@@ -339,8 +339,6 @@ add_covalent_linkage(
 	TR << "Adding covalent linkage between residue " << resA_pos << "'s " << pose.residue(resA_pos).atom_name(resA_At).c_str() <<
 			" atom and residue " << resB_pos << "'s " << pose.residue(resB_pos).atom_name(resB_At).c_str() << " atom." << std::endl;
 
-	std::string resA_base = residue_type_base_name( pose.residue_type(resA_pos) );
-	std::string resB_base = residue_type_base_name( pose.residue_type(resB_pos) );
 	//std::string resA_var, resB_var;  // set but unused
 
 	//std::string resA_type_set = pose.residue(resA_pos).residue_type_set().name();

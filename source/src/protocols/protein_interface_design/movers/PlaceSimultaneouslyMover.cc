@@ -348,7 +348,8 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	utility::vector1< core::Size > prev_pack( prevent_repacking() );
 	prev_pack.insert( prev_pack.begin(), targets.begin(), targets.end() );
 	std::sort( prev_pack.begin(), prev_pack.end() );
-	std::unique( prev_pack.begin(), prev_pack.end() );
+	utility::vector1< core::Size >::iterator last = std::unique( prev_pack.begin(), prev_pack.end() );
+	prev_pack.erase( last, prev_pack.end() );
 	prevent_repacking( prev_pack );
 	//end add to prevent repacking
 	ScoreFunctionCOP scorefxn = get_score_function();
@@ -437,7 +438,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 
          //decide whether to keep it or not
          //complexity for the unknown number of hotspot
-         if (new_auction.size()==0) {
+         if ( new_auction.empty() ) { //size()==0) {
              new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
          } else {
              Size status=0;
@@ -625,7 +626,8 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 	if( !prevent_repacking().empty() ) no_repack = prevent_repacking();
 	if( !no_repack.empty() ){
 		std::sort( no_repack.begin(), no_repack.end() );
-		std::unique( no_repack.begin(), no_repack.end() );
+		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+		no_repack.erase( last, no_repack.end() );
 		toAla.prevent_repacking( no_repack );
 	}
 	toAla.task_factory( residue_level_tasks_for_placed_hotspots_ );
@@ -687,11 +689,11 @@ PlaceSimultaneouslyMover::apply( core::pose::Pose & pose )
 	// rescore the pose to ensure that backbone stub cst's are populated
 	core::scoring::ScoreFunctionOP bbcst_scorefxn( new core::scoring::ScoreFunction );
 	bbcst_scorefxn->reset();
-  if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
+	if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
 			bbcst_scorefxn->set_weight( core::scoring::backbone_stub_constraint, 1.0 );
-  } else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
-			bbcst_scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, 1.0 );
-	}
+	}// else if ( auction_->get_stub_scorefxn() == "backbone_stub_linear_constraint" ) {
+	//		bbcst_scorefxn->set_weight( core::scoring::backbone_stub_linear_constraint, 1.0 );
+	//}
 	(*bbcst_scorefxn)( pose );
 
 	rbstub_minimization_->apply( pose );

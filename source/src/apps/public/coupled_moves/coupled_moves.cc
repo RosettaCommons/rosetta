@@ -346,7 +346,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	
 	core::Size ntrials = option[ coupled_moves::ntrials ];
 	
-	std::string resfile_name = option[packing::resfile]()[1];
+	//std::string resfile_name = option[packing::resfile]()[1];
 	
 	(*score_fxn_)(*pose_copy);
 	core::Real current_score = pose_copy->energies().total_energy();
@@ -449,7 +449,7 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 	if (option[coupled_moves::save_sequences]) {
 		std::ofstream out_fasta( (output_tag + ".fasta").c_str() );
 		core::Size count = 1;
-		for(std::map<std::string,core::Real>::iterator it = unique_sequences.begin(); it != unique_sequences.end(); it++) {
+		for(std::map<std::string,core::Real>::iterator it = unique_sequences.begin(), end = unique_sequences.end(); it != end; ++it ) {
 			out_fasta << ">Sequence" << count << " " << it->second << std::endl;
 			out_fasta << it->first << std::endl;
 			count++;
@@ -458,14 +458,14 @@ void CoupledMovesProtocol::apply( core::pose::Pose& pose ){
 			
 		std::ofstream out_stats( (output_tag + ".stats").c_str() );
 		count = 1;
-		for(std::map<std::string,core::Real>::iterator it = unique_sequences.begin(); it != unique_sequences.end(); it++) {
+		for(std::map<std::string,core::Real>::iterator it = unique_sequences.begin(), end = unique_sequences.end(); it != end; ++it ) {
 			out_stats << "Sequence" << count << "\t" << it->second << "\tsequence:\t" << it->first << "\t" << unique_scores[it->first].weighted_string_of(score_fxn_->weights()) << std::endl;
 			count++;
 		}
 		out_stats.close();
 		
 		if (option[coupled_moves::save_structures]) {
-			for(std::map<std::string,core::pose::Pose>::iterator it = unique_structures.begin(); it != unique_structures.end(); it++) {
+			for(std::map<std::string,core::pose::Pose>::iterator it = unique_structures.begin(), end = unique_structures.end(); it != end; ++it ) {
 				if (option[out::pdb_gz]) {
 					it->second.dump_pdb(output_tag + "_" + it->first + "_low.pdb.gz");
 				} else {

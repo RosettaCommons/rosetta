@@ -207,8 +207,8 @@ heap::heap_down(
 	int index_in
 )
 {
-	float coiv,cocv,cocv2;
-	int indx,child,iv,cv,cv2,last;
+	float coiv,cocv2;
+	int indx,iv,/*cv,*/cv2,last;
 	indx = index_in-1; // convert to zero offset matrix
 	last = heap_size() - 1; // convert to zero offset matrix
 
@@ -219,12 +219,12 @@ heap::heap_down(
 	coiv = coheap_[indx];
 
 	while ( indx < last ) {
-		child = 2*indx+1;
+		int child = 2*indx+1;
 
 		if ( child > last ) break; // GHAA goto L20; // loop escape
 
-		cv  = heap_[child];
-		cocv = coheap_[child];
+		int cv  = heap_[child];
+		float cocv = coheap_[child];
 
 		if ( child < last ) {
 			cv2 = heap_[child+1];
@@ -257,9 +257,9 @@ heap::heap_up(
 	int index_in
 )
 {
-	float covalue,copv;
+	float covalue;//,copv;
 
-	int indx,parent,value,pv;
+	int indx,value;
 	indx = index_in-1; // convert to zero offset matrix
 
 
@@ -267,9 +267,9 @@ heap::heap_up(
 	covalue = coheap_[indx];
 
 	while ( indx != 0 ) {
-		parent = static_cast< int >((indx-1)/2);
-		pv = heap_[parent];
-		copv = coheap_[parent];
+		int parent = static_cast< int >((indx-1)/2);
+		int pv = heap_[parent];
+		float copv = coheap_[parent];
 		if ( copv < covalue ) break; // GHAA goto L20; // loop escape
 		coheap_[indx] = copv;
 		heap_[indx] = pv;

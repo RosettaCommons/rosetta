@@ -430,15 +430,15 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 
 	// calc order of strands
 	std::map< Size, VecSize > sset =  sheet_set.sets();
-	std::map< Size, VecSize >::iterator it = sset.begin();
-	while( it != sset.end() ) {
+	std::map< Size, VecSize >::iterator it = sset.begin(), end = sset.end();
+	while( it != end ) {
 
 		bool ibarrel (true);
 		VecSize order_strands;
 
 		VecSize list_strands = (*it).second;
 		if( list_strands.size() <= 1 ) {
-			it++;
+			++it;
 			continue;
 		}
 

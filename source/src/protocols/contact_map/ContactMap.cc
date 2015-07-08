@@ -352,7 +352,7 @@ void ContactMap::apply(Pose & pose) {
 	n_poses_++;
 
 	// Iterate over contacts
-	for (utility::vector1<Contact>::iterator it = contacts_.begin(); it != contacts_.end(); it++){
+	for (utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
 		ContactPartner * p1(it->partner1());
 		ContactPartner * p2(it->partner2());
 		// Get coordinates of both contact partners and calculate distance
@@ -396,7 +396,7 @@ void ContactMap::apply(Pose & pose) {
 /// @brief Resets the movers n_poses_ variable and the counts of all contacts to 0
 void ContactMap::reset(){
 	n_poses_ = 0;
-	for (utility::vector1<Contact>::iterator it = contacts_.begin(); it != contacts_.end(); it++){
+	for (utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
 		it->reset_count();
 	}
 }
@@ -423,7 +423,7 @@ ContactMap::write_to_stream(std::ostream & output_stream) {
 	output_stream << "# Number of Models:	" << n_poses_ <<"	Distance Cutoff:	"<< distance_cutoff_<< std::endl
 			<< std::endl;
 	if (row_format_) {
-		for (utility::vector1<Contact>::iterator it = contacts_.begin(); it != contacts_.end(); it++){
+		for (utility::vector1<Contact>::iterator it = contacts_.begin(), end = contacts_.end(); it != end; ++it ) {
 			output_stream << it->long_string_rep() << std::endl;
 		}
 	} else {
@@ -458,7 +458,7 @@ ContactMap::get_contact( core::Size row, core::Size col) {
 std::string ContactPartner::string_rep() const {
 	std::ostringstream oss;
 	oss << resname_ << seqpos_;
-	std::string test;
+	//std::string test;
 	// Append atomname if it's not the default
 	if (atomname_ != "CA" && atomname_ != "CB")
 			oss<< "-"<<atomname_;

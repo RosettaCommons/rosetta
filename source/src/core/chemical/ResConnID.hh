@@ -37,7 +37,7 @@ public:
 	ResConnID( ResConnID const & );
 	ResConnID( Size resid, Size connid );
 
-	ResConnID const & operator = ( ResConnID const & );
+	ResConnID & operator = ( ResConnID const & );
 	friend bool operator < ( ResConnID const & lhs, ResConnID const & rhs );
 	friend bool operator == ( ResConnID const & lhs, ResConnID const & rhs );
 	friend bool operator != ( ResConnID const & lhs, ResConnID const & rhs );

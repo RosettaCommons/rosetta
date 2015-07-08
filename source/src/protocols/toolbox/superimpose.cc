@@ -575,7 +575,7 @@ void jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
 {
   int j,i;
   int iq,ip;
-  double tresh,theta,tau,t,sm,s,h,g,c;
+  double tresh,theta,tau,t,/*sm,*/s,h,g,c;
   double b[DIM6];
   double z[DIM6];
   int const n( DIM6 );
@@ -589,7 +589,7 @@ void jacobi(double a[6][6],double d[],double v[6][6],int *nrot)
   }
   *nrot=0;
   for (i=1; i<=50; i++) {
-    sm=0.0;
+    double sm=0.0;
     for (ip=0; ip<n-1; ip++) {
       for (iq=ip+1; iq<n; iq++)
 	sm += fabs(a[ip][iq]);

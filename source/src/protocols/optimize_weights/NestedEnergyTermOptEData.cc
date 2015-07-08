@@ -1179,8 +1179,8 @@ NestedEnergyTermDDGMutationOptEData::receive_from_node( int const source_node, i
 	}
 
 
-	delete [] free_data; free_data = 0;
-	delete [] fixed_data; fixed_data = 0;
+	delete [] free_data;// free_data = 0;
+	delete [] fixed_data;// fixed_data = 0;
 
 	//// Now receive decoy data
 	free_data = new Real[ n_free * nmuts ];

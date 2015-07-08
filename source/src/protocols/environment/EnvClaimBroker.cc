@@ -431,7 +431,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
         // reported to info stream because (hopefully) the exception will print as error. The role of the info trace is
         // in case the exception is expected and handled successfully.
         tr.Info << ss.str() << std::endl;
-        throw e;
+        throw;// e;
       }
     }
 
@@ -458,7 +458,7 @@ EnvClaimBroker::render_fold_tree( FoldTreeSketch& fts,
     ss << "A problem was encountered rendering fold tree choices in " << __FILE__ << ":"
        << __LINE__ - 4 << ". Turn on debug output with '-out:levels' to investigate.";
     e.add_msg( ss.str() );
-    throw e;
+    throw;// e;
   }
 }
 
@@ -521,7 +521,7 @@ ControlStrength const& ctrl_str_selector( std::pair< claims::DOFElement, ClientM
 
 void EnvClaimBroker::broker_dofs( core::pose::Pose& pose ){
 
-  std::set< ClientMoverOP > initializers;
+  //std::set< ClientMoverOP > initializers;
 
   //Broker Arbitrary DOFs ---------------------------------------------------------------------------
   DOFElemVect d_elems = collect_elements< DOFElement >( pose );
@@ -847,7 +847,7 @@ void EnvClaimBroker::process_elements( CutElemVect const& elems,
       ss << "The Environment '" << (env ? env->name() : "(Unknown)" ) << "' had more than one"
          << " cut placed at absolute position " << abs_p << "." << std::endl;
       excn.add_msg( ss.str() );
-      throw excn;
+      throw;// excn;
     }
   }
 }

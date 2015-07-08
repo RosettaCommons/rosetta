@@ -62,7 +62,7 @@ std::string lib_full_path(std::string tag_orign)
     static string libdir_suffix("_lib");
     static string s("/");
     static int nofsubdir = option[cluster::K_n_sub];
-    static string rootpath = utility::file::FileName(option[mc::known_structures]()).path();
+    //static string rootpath = utility::file::FileName(option[mc::known_structures]()).path();
     static string defaultpath = utility::file::FileName(option[mc::known_structures]()).base() + libdir_suffix + s;
 
     string tag = tag_orign + ".0000";

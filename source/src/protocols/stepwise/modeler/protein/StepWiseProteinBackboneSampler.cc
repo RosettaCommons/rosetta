@@ -722,7 +722,7 @@ namespace protein {
 
 		template_pose.residue( 1 ); // force a refold.
 
-		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
+		for ( ResMap::const_iterator it=ghost_map.begin(), end = ghost_map.end(); it != end; ++it ) {
 			Size const & res( it->first );
 			Size const & template_res( it->second );
 
@@ -751,7 +751,7 @@ namespace protein {
 		Size prev_res( 0 ), total_res( 0 );
 		utility::vector1< Size > cutpoints;
 
-		for ( ResMap::const_iterator it=ghost_map.begin(); it != ghost_map.end(); it++ ) {
+		for ( ResMap::const_iterator it=ghost_map.begin(), end = ghost_map.end(); it != end; ++it ) {
 			Size const & res( it->first );
 			Size const & template_res( it->second );
 

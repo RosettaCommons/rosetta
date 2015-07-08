@@ -172,9 +172,8 @@ GPU::~GPU()
 	if(!initialized_)
 		return;
 
-	for(vector<cl_mem>::iterator i = privateMemoryObjects_.begin();
-		i != privateMemoryObjects_.end();
-		i++)
+	for(vector<cl_mem>::iterator i = privateMemoryObjects_.begin(), end = privateMemoryObjects_.end();
+		i != end; ++i )
 		clReleaseMemObject(*i);
 
 	privateMemoryObjects_.clear();
@@ -241,7 +240,9 @@ int GPU::Init()
 
 		// Find the requested device
 		cl_device_id *devices;
-		size_t deviceBufferSize = -1;
+		// AMW: cppcheck noticed that this was initialized to -1
+		// and that the subsequent comparison to <= 0 was danger zone
+		size_t deviceBufferSize = 0;
 
 		errNum_ = clGetContextInfo(context_, CL_CONTEXT_DEVICES, 0, NULL, &deviceBufferSize);
 		if(errNum_ != CL_SUCCESS) {
@@ -249,7 +250,8 @@ int GPU::Init()
 			return 0;
 		}
 
-		if(deviceBufferSize <= 0) {
+		// AMW: cppcheck: won't be <0
+		if(deviceBufferSize == 0) {
 			TR.Error << "No CL devices found." << endl;
 			return 0;
 		}
@@ -355,23 +357,20 @@ int GPU::Free()
 	/// BELOW objects are GPU-independent (kernel, program, context, memory)
 
 	// Release all shared memory objects
-	for(map<string,cl_mem>::iterator i = sharedMemoryObjects_.begin();
-		i != sharedMemoryObjects_.end();
-		i++)
+	for(map<string,cl_mem>::iterator i = sharedMemoryObjects_.begin(), end = sharedMemoryObjects_.end();
+		i != end; ++i )
 		clReleaseMemObject(i->second);
 	sharedMemoryObjects_.clear();
 
 	// Release all kernels memory objects
-	for(map<string,cl_kernel>::iterator i = kernels_.begin();
-		i != kernels_.end();
-		i++)
+	for(map<string,cl_kernel>::iterator i = kernels_.begin(), end = kernels_.end();
+		i != end; ++i )
 		clReleaseKernel(i->second);
 	kernels_.clear();
 
 	// Release all programs
-	for(map<string,cl_program>::iterator i = programs_.begin();
-		i != programs_.end();
-		i++)
+	for(map<string,cl_program>::iterator i = programs_.begin(), end = programs_.end();
+		i != end; ++i )
 		clReleaseProgram(i->second);
 	programs_.clear();
 
@@ -480,9 +479,8 @@ cl_kernel GPU::BuildKernel(const char *kernel_name)
 		return kernel;
 
 	// Build it from available programs
-	for(map<string,cl_program>::const_iterator i = programs_.begin();
-		i != programs_.end();
-		i++) {
+	for(map<string,cl_program>::const_iterator i = programs_.begin(), end = programs_.end();
+		i != end; ++i ) {
 		kernel = clCreateKernel(i->second, kernel_name, NULL);
 		if(kernel)
 			break;
@@ -556,10 +554,9 @@ void GPU::Free(cl_mem h)
 {
 	{
 	int found = 0;
-	vector<cl_mem>::iterator i;
-	for(i = privateMemoryObjects_.begin();
-		i != privateMemoryObjects_.end();
-		i++) {
+	vector<cl_mem>::iterator i, end;
+	for(i = privateMemoryObjects_.begin(), end = privateMemoryObjects_.end();
+		i != end; ++i ) {
 		if(*i == h) {
 			found = 1;
 			break;
@@ -571,10 +568,9 @@ void GPU::Free(cl_mem h)
 
 	{
 	int found = 0;
-	map<string,cl_mem>::iterator i;
-	for(i = sharedMemoryObjects_.begin();
-		i != sharedMemoryObjects_.end();
-		i++) {
+	map<string,cl_mem>::iterator i, end2;
+	for(i = sharedMemoryObjects_.begin(), end2 = sharedMemoryObjects_.end();
+		i != end2; ++i ) {
 		if(i->second == h) {
 			found = 1;
 			break;

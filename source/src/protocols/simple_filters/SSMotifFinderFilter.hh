@@ -77,8 +77,8 @@ class SSMotifFinder : public filters::Filter
 
 /// @brief compute the atomic distance between two atoms on two residues
 core::Real
-atom_distance( core::conformation::Residue const & r1, std::string const a1,
-               core::conformation::Residue const & r2, std::string const a2 );
+atom_distance( core::conformation::Residue const & r1, std::string const & a1,
+               core::conformation::Residue const & r2, std::string const & a2 );
 
 }
 }

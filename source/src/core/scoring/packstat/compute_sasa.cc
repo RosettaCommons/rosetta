@@ -647,9 +647,8 @@ debug_assert( opts.prune_cavity_burial_probe_radii.size() >= 1 );
 		TRcs << "prune raduis " << largest_probe_radius << " ";
 		int num_prune_steps(0);
 		size_t last_num = 0;
-		size_t num_exposed;
 		while( true ) {
-		 	num_exposed = prune_1pass( spheres, cavballs, largest_probe_radius );
+		 	size_t num_exposed = prune_1pass( spheres, cavballs, largest_probe_radius );
 			++num_prune_steps;
 			TRcs << cavballs.size() - num_exposed << " ";
 			if ( num_prune_steps >= iter_th || (num_exposed-last_num) <= delta_th ) break;
@@ -674,9 +673,8 @@ debug_assert( opts.prune_cavity_burial_probe_radii.size() >= 1 );
 		TRcs << "prune raduis " << pr << " ";
 		int num_prune_steps(0);
 		size_t last_num = 0;
-		size_t num_exposed;
 		while( true ) {
-		 	num_exposed = prune_1pass( spheres, buried_cav_balls, pr );
+		 	size_t num_exposed = prune_1pass( spheres, buried_cav_balls, pr );
 			++num_prune_steps;
 			TRcs << buried_cav_balls.size() - num_exposed << " ";
 			if ( num_prune_steps >= iter_th || (num_exposed-last_num) <= delta_th ) break;

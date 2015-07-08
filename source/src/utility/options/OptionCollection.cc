@@ -1513,7 +1513,7 @@ void OptionCollection::load_option_from_file(
 		std::string const & s, // String to wrap
 		std::string::size_type const indent, // Width to indent continuation lines
 		std::string::size_type const width, // Column width to wrap at [80]
-		std::string const header_for_extra_lines // put this before each new line (default is empty)
+		std::string const & header_for_extra_lines // put this before each new line (default is empty)
 	)
 	{
 		using std::string;

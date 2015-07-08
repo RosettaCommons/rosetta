@@ -185,7 +185,7 @@ void replace_in( std::string & s, const char from, const char *to )
 
 /// @brief find/replace strings within input string.
 std::string
-replace_in( std::string const name_in, std::string const find_string, std::string const replace_string );
+replace_in( std::string const & name_in, std::string const & find_string, std::string const & replace_string );
 
 
 template <class T>

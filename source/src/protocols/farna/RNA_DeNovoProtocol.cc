@@ -664,7 +664,7 @@ RNA_DeNovoProtocol::calc_rmsds( core::io::silent::SilentStruct & s, core::pose::
 	Real rmsd_stems = 0.0;
 	std::list< Size > stem_residues( rna_structure_parameters_->get_stem_residues( pose ) );
 
-	if ( stem_residues.size() > 0 ) {
+	if ( !stem_residues.empty() ) { //size() > 0 ) {
 		rmsd_stems = all_atom_rmsd( *get_native_pose(), pose, stem_residues );
 		TR << "All atom rmsd over stems: " << rmsd_stems << " for " << out_file_tag << std::endl;
 	}
@@ -1282,7 +1282,7 @@ RNA_DeNovoProtocol::check_score_filter( Real const lores_score, std::list< Real 
 	// the one pain with lists -- need to iterate through to find the element corresponding to the quantile score.
 	Real all_lores_score_cutoff = all_lores_score.front();
 	Size i( 1 );
-	for ( std::list< Real >::const_iterator iter = all_lores_score.begin();	iter != all_lores_score.end(); iter++, i++ ){
+	for ( std::list< Real >::const_iterator iter = all_lores_score.begin(), end = all_lores_score.end(); iter != end; ++iter, i++ ){
 		if ( i == cutoff_index ) all_lores_score_cutoff = *iter;
 	}
 

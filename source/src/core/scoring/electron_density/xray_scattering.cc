@@ -57,7 +57,7 @@ OneGaussianScattering get_A( std::string elt ) {
 	// fit to parameters from Doyle and Turner, Acta Cryst A, 1968
 	//   --> single gaussians fit in reciprocal space fom 20A-2A resolution
 	//   --> TODO .. move to database, make parameters selectable
-	if (elt_db.size() == 0) {
+	if (elt_db.empty() ) { //size() == 0) {
 		if (basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]()) {
 			// [1] electron scattering
 		  elt_db["C"]  = OneGaussianScattering(  6.00000, 7.10668);
@@ -109,7 +109,7 @@ OneGaussianScattering get_A( std::string elt ) {
 KromerMann get_km( std::string elt ) {
 	static std::map< std::string, KromerMann > elt_db;
 
-	if (elt_db.size() == 0) {
+	if (elt_db.empty() ) {//size() == 0) {
 		elt_db["C"]  = KromerMann(  0.215600,  2.310000, 1.020000, 1.588600, 0.865000, 20.843899, 10.207500,  0.568700,  51.651199);
 		elt_db["N"]  = KromerMann(-11.528999, 12.212600, 3.132200, 2.012500, 1.166300,  0.005700,  9.893300, 28.997499,   0.582600);
 		elt_db["O"]  = KromerMann(  0.250800,  3.048500, 2.286800, 1.546300, 0.867000, 13.277100,  5.701100,  0.323900,  32.908897);

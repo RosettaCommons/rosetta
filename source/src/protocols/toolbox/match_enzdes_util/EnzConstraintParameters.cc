@@ -781,7 +781,7 @@ EnzConstraintParameters::update_pdb_remarks(
 	Remarks & rems(pose.pdb_info()->remarks() );
 	EnzdesCstParamCacheOP param_cache( get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
 
-	for( std::vector< core::pose::RemarkInfo >::iterator remark_it = rems.begin(); remark_it != rems.end(); remark_it++) {
+	for( std::vector< core::pose::RemarkInfo >::iterator remark_it = rems.begin(), end = rems.end(); remark_it != end; ++remark_it ) {
 
 		bool remark_changed(false);
 		std::string chainA(""), chainB(""), resA(""), resB("");

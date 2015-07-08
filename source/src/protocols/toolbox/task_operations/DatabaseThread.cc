@@ -116,7 +116,7 @@ DatabaseThread::find_length(const core::pose::Pose &pose) const // find the leng
 std::string
 DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) const{
 	core::Size const segment_length(find_length( pose ));
-	std::string line;
+	//std::string line;
 	utility::vector1< std::string > sized_database;
 	BOOST_FOREACH( std::string const line, full_database_ ) {
 		if (line.length()==segment_length){ // if length of line is the same as segment length, incorporate into vector of strings.

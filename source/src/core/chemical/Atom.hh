@@ -66,13 +66,14 @@ public:
 
 
 	/// @brief Construct a new atom with the name, mm type, element, charge and position.
+	// AMW: cppcheck tells you to, but Do NOT change to pass by reference
 	Atom(
-			std::string const & name_in,
+			std::string const name_in,
 			std::string const mm_name,
 			Size const mm_atom_type_index,
 			ElementCOP element,
 			Real const charge,
-			Vector const ideal_xyz
+			Vector const & ideal_xyz
 	);
 
 

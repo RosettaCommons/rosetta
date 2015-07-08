@@ -75,7 +75,7 @@ void OrResidueSelector::parse_my_tag(
 		std::string selectors_str;
 		try {
 			selectors_str = tag->getOption< std::string >( "selectors" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selectors' from OrResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -88,7 +88,7 @@ void OrResidueSelector::parse_my_tag(
 			try {
 				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_names[ ii ] );
 				local_selectors.push_back( selector );
-			} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 				std::stringstream error_msg;
 				error_msg << "Failed to find ResidueSelector named '" << selector_names[ ii ] << "' from the Datamap from OrResidueSelector::parse_my_tag.\n";
 				error_msg << e.msg();
@@ -107,8 +107,7 @@ void OrResidueSelector::parse_my_tag(
 		local_selectors.push_back( rs );	
 	}
 
-
-	if ( local_selectors.size() == 0 ) {
+	if ( local_selectors.empty() ) { //size() == 0 ) {
 		std::stringstream error_msg;
 		error_msg << "No ResidueSelectors given to the OrResidueSelector; OrResidueSelector requires at least one ResidueSelector as input\n";
 		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );

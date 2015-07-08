@@ -329,8 +329,8 @@ char *pa_val(t_pargs *pa, char buf[], int sz)
 void print_pargs(FILE *fp, int npargs,t_pargs pa[])
 {
   bool bShowHidden;
-  char buf[32],buf2[256],tmp[256];
-  char *wdesc;
+  //char buf[32],buf2[256],tmp[256];
+  //char *wdesc;
   int  i;
 
   /* Cannot call opt2parg_bSet here, because it crashes when the option
@@ -348,10 +348,12 @@ void print_pargs(FILE *fp, int npargs,t_pargs pa[])
     fprintf(fp,"------------------------------------------------------\n");
     for(i=0; (i<npargs); i++) {
       if (bShowHidden || !is_hidden(&pa[i])) {
+	char buf[32];
 	if (pa[i].type == etBOOL)
 	  sprintf(buf,"-[no]%s",pa[i].option+1);
 	else
 	  strcpy(buf,pa[i].option);
+	  char buf2[256], tmp[256];
 	if (strlen(buf)>((OPTLEN+TYPELEN)-max(strlen(argtp[pa[i].type]),4))) {
 	  fprintf(fp,"%12s\n",buf);
 	  sprintf(buf2,"%12s %6s %6s  %s\n",
@@ -363,7 +365,7 @@ void print_pargs(FILE *fp, int npargs,t_pargs pa[])
 	} else
 	  sprintf(buf2,"%12s %6s %6s  %s\n",
 		buf,argtp[pa[i].type],pa_val(&(pa[i]),tmp,255),check_tty(pa[i].desc));
-	wdesc=wrap_lines(buf2,78,28,FALSE);
+	char *wdesc=wrap_lines(buf2,78,28,FALSE);
 	fprintf(fp,wdesc);
 	sfree(wdesc);
       }

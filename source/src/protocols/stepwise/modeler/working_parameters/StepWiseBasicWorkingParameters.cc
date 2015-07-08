@@ -56,7 +56,7 @@ namespace working_parameters {
 	StepWiseBasicWorkingParameters::working_res_list() const{
 		if ( sub_to_full_.size() == 0 ) utility_exit_with_message( "sub_to_full_.size() == 0. Cannot output working_res_list" );
 		utility::vector1< Size > working_res_list;
-		for ( std::map< core::Size, core::Size > ::const_iterator it = sub_to_full_.begin(); it != sub_to_full_.end(); it++ ){
+		for ( std::map< core::Size, core::Size > ::const_iterator it = sub_to_full_.begin(), end = sub_to_full_.end(); it != end; ++it ){
 			working_res_list.push_back( it->second );
 		}
 		return working_res_list;
@@ -144,10 +144,10 @@ namespace working_parameters {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	std::map< core::Size, core::Size >  //Parin Jan 18, 2009
 	StepWiseBasicWorkingParameters::create_sub_to_full_map( std::map< core::Size, core::Size > const & full_to_sub ) const{
-		std::map< core::Size, core::Size > ::const_iterator it;
+		std::map< core::Size, core::Size > ::const_iterator it, end ;
 		std::map< core::Size, core::Size > sub_to_full;
 		sub_to_full.clear();
-		for ( it = full_to_sub.begin(); it != full_to_sub.end(); it++ ){
+		for ( it = full_to_sub.begin(), end = full_to_sub.end(); it != end; ++it ){
 			sub_to_full[it->second] = it->first;
 		}
 		return sub_to_full;

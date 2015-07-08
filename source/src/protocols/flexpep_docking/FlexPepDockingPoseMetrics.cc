@@ -335,10 +335,10 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 		basic::MetricValue< utility::vector1< core::Size > >unbound_unsat_per_res_mval;
 
 		// calculate and store total metrics for bound and unbound poses
-		float bound_sasa = 0.0, unbound_sasa = 0.0;
-		Size  bound_hb = 0,   unbound_hb = 0;
+		float bound_sasa/* = 0.0*/, unbound_sasa;// = 0.0;
+		Size  bound_hb/* = 0*/,   unbound_hb;// = 0;
 		float bound_packstat = 0.0, unbound_packstat = 0.0;
-		Size  bound_unsat = 0, unbound_unsat = 0;
+		Size  bound_unsat/* = 0*/, unbound_unsat;// = 0;
 
 		//delta sasa calculation
 		pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);

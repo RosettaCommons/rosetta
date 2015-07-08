@@ -3,7 +3,7 @@
 # Assumes you're running it from within the Rosetta/main/source/src directory
 # Need to set JOBS, and COMPILETYPE
 
-JOBS=1
+JOBS=16
 COMPILETYPE=default
 
 while getopts "j:e:" opt; do
@@ -44,7 +44,8 @@ CPPCHECK_DIR=../../tests/benchmark/util/
 CACHEDIR=../build/cppcheck/src/${COMPILETYPE}/
 mkdir -p ${CACHEDIR}
 
-find ./ -name '*.cc' -printf "${CPPCHECK_DIR}/cppcheck_single.py ${COMPILETYPE} %p\n" > ${CACHEDIR}/commands.txt
+#find ./ -name '*.cc' 
+find ./ -name '*.cc' | sed s'/^/\$\{CPPCHECK_DIR\}\/cppcheck_single.py \$\{COMPILETYPE\}/'g > ${CACHEDIR}/commands.txt
 
 ../../tests/benchmark/util/parallel.py -q -j ${JOBS} ${CACHEDIR}/commands.txt 
 

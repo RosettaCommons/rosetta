@@ -40,7 +40,7 @@ namespace raw_data {
 			return tags_in_file;
 		}
 
-		std::string line,tag;
+		std::string line;
 		getline( data, line ); // sequence line
 		getline( data, line ); // score line
 

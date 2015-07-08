@@ -294,9 +294,9 @@ int universal_main(
 		sfd.read_file( infile );
 
 		// Grab a prefix if it exists
-		std::string outfile = option[ out::prefix ]();
+		//std::string outfile = option[ out::prefix ]();
 
-		if( input_silent_files.size() > 1 ) outfile = outfile + infile;
+		//if( input_silent_files.size() > 1 ) outfile = outfile + infile;
 
 		utility::vector1< BasicJobOP > input_jobs;
 		BaseJobDistributorOP jobdist;
@@ -366,7 +366,7 @@ int universal_main(
 		evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 
 		BasicJobOP curr_job, prev_job;
-		int curr_nstruct, num_structures_processed = 0;
+		int curr_nstruct;//, num_structures_processed = 0;
 		#ifdef BOINC
 		std::cerr << "Jobdist startup.." << std::endl;
 		#endif
@@ -490,7 +490,7 @@ int universal_main(
 				}
 
 				prev_job = curr_job; // pointer assignment, not a copy op
-				num_structures_processed += 1;
+				//num_structures_processed += 1;
 				time_t pdb_end_time = time(NULL);
 				TR << "Finished " << curr_job_tag << " in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 

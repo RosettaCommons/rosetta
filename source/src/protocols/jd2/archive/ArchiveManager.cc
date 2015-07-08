@@ -334,6 +334,8 @@ ArchiveManager::go( ArchiveBaseOP archive )
 			print_status = false;
 		}
 		//is there a message ?
+		// AMW: cppcheck flags this as being reducible in scope
+		// but MPI needs it to be here
 		int flag( -1 );
 #ifdef USEMPI
 		//no idea why... but 4 request seems to be the magical number... to receive the correct answer ... WEIRD
@@ -828,14 +830,13 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 									 << "-- control directly via class Batch" << std::endl;
 		}
 
-		bool has_silent( batch_opts[ in::file::silent ].user() );
 		core::Size nstruct( batch_opts[ out::nstruct ]() );
 		//bool intermeds( batch_opts[ run::intermediate_structures ]() );
 		std::string silent_out( batch_opts[ out::file::silent ]() );
 		utility::vector1< std::string > broker( batch_opts[ broker::setup ]() );
 		std::ostringstream broker_files;
 		std::copy( broker.begin(), broker.end(), std::ostream_iterator<std::string>( broker_files, " "));
-		std::string score_file( batch_opts[ out::file::scorefile ]() );
+		//std::string score_file( batch_opts[ out::file::scorefile ]() );
 
 		// now the other options are "inaccessed options" and can be dumped to a stream
 		std::stringstream user_flags;
@@ -845,6 +846,7 @@ BaseArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 		// and can be added to the batch-options
 		new_batch.user_options().load_options_from_stream( user_flags, "USER_FLAGS" );
 		if ( reread ) {
+			bool has_silent( batch_opts[ in::file::silent ].user() );
 			new_batch.read_info_file();
 			//new_batch.set_intermediate_structs( intermeds ); //this is not read from BATCH_INFO
 

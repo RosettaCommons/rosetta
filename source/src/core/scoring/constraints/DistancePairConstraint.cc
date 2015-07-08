@@ -116,7 +116,6 @@ DistancePairConstraint::read_def(
 	std::string tempres1, tempres2, tempres3, tempres4;
 	std::string name1, name2, name3, name4;
 	std::string func_type;
-	std::string type;
 
 	in
 		>> name1 >> tempres1

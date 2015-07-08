@@ -59,10 +59,10 @@ namespace mover {
 	std::string to_string( MoveType const & move_type_name );
 
 	MoveType
-	move_type_from_string( std::string const name );
+	move_type_from_string( std::string const & name );
 
 	AttachmentType
-	attachment_type_from_string( std::string const name );
+	attachment_type_from_string( std::string const & name );
 
 	/////////////////////////////////////////////////////////////////////
 	class Attachment: public utility::pointer::ReferenceCount {

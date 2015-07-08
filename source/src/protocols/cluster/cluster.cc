@@ -70,7 +70,7 @@ using namespace evaluation;
 static thread_local basic::Tracer tr( "protocols.cluster" );
 
 
-std::map< std::string, core::Real > read_template_scores( const std::string filename ){
+std::map< std::string, core::Real > read_template_scores( const std::string & filename ){
 
 	utility::io::izstream data( filename.c_str() );
 	if ( !data.good() ) {
@@ -80,7 +80,7 @@ std::map< std::string, core::Real > read_template_scores( const std::string file
 	}
 
 	std::map< std::string, core::Real > score_data;
-	std::string line,tag;
+	std::string line;//,tag;
 	while( getline(data,line) ) {
 			std::istringstream l( line );
 			std::string template_name;
@@ -485,7 +485,7 @@ void ClusterBase::remove_singletons() {
 	std::vector < Cluster >   clusterlist_copy = clusterlist;
 	clusterlist.clear();
 
-	std::vector< std::pair< int, Real > > cluster_energies;
+	//std::vector< std::pair< int, Real > > cluster_energies;
 	for (i=0;i<(int)clusterlist_copy.size();i++ ) {
 		if ( clusterlist_copy[i].group_size() > 1 ) {
 			clusterlist.push_back( clusterlist_copy[i] );
@@ -516,12 +516,12 @@ void ClusterBase::limit_groupsize( int limit ) {
 
 // take first 'limit'%  from each cluster
 void ClusterBase::limit_groupsize( core::Real percent_limit ) {
-	int i,j, limit;
+	int i,j;//, limit;
 	if ( percent_limit > 1.0 ) return;
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
-		limit = static_cast<core::Size>( std::floor(percent_limit*temp.size()) );
+		int limit = static_cast<core::Size>( std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		for (j=0;j<limit;j++ ) {
 			clusterlist[i].push_back( temp[j] );
@@ -531,12 +531,12 @@ void ClusterBase::limit_groupsize( core::Real percent_limit ) {
 
 // take random 'limit'% from each cluster
 void ClusterBase::random_limit_groupsize( core::Real percent_limit ) {
-	int i,j,limit;
+	int i,j;//,limit;
 	if ( percent_limit >= 1.0 ) return;
 	for (i=0;i<(int)clusterlist.size();i++ ) {
 		Cluster temp = clusterlist[i];
 		clusterlist[i].clear();
-		limit = static_cast<core::Size> (std::floor(percent_limit*temp.size()) );
+		int limit = static_cast<core::Size> (std::floor(percent_limit*temp.size()) );
 		tr << "truncating from " << temp.size() << " to " << limit << std::endl;
 		temp.shuffle();
 		for (j=0;j<limit;j++ ) {
@@ -671,7 +671,7 @@ void ClusterBase::print_cluster_PDBs( std::string prefix ) {
 	bool idealize_final = option[ OptionKeys::cluster::idealize_final_structures ]();
 	int i,j;
 	for ( i=0;i<(int)clusterlist.size();i++ ) {
-		std::vector< int > new_cluster;
+		//std::vector< int > new_cluster;
 		for ( j=0;j<(int)clusterlist[i].size();j++ ) {
 			if (export_only_low_){
 				if( clusterlist[i].size() >= 1 && j!=0 ) continue; // print only clustercenter
@@ -769,7 +769,7 @@ void ClusterBase::print_clusters_silentfile( std::string prefix ) {
 	std::string silent_file_ = option[ OptionKeys::out::file::silent ]();
 
 	for ( i=0;i<(int)clusterlist.size();i++ ) {
-		std::vector< int > new_cluster;
+		//std::vector< int > new_cluster;
 		for ( j=0;j<(int)clusterlist[i].size();j++ ) {
 
 			if (export_only_low_){
@@ -843,7 +843,7 @@ void ClusterPhilStyle::do_clustering( Size max_total_cluster ) {
 	int i,j;
 	std::vector < int > neighbors ( poselist.size(), 0 );
 	std::vector < int > clusternr ( poselist.size(), -1 );
-	std::vector < int > clustercenter;
+	//std::vector < int > clustercenter;
 	int    mostneighbors;
 	Size    nclusters=0;
 

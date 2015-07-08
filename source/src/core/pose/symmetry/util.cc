@@ -1529,7 +1529,7 @@ get_sym_aware_jump_num ( core::pose::Pose const & pose, core::Size jump_num ) {
 		sym_jump = 0;
 		Size jump_counter = 0;
 
-		for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+		for(std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
 			//fpd  if slide moves are not allowed on this jump, then skip it
 			if (!i->second.allow_dof(1) && !i->second.allow_dof(2) && !i->second.allow_dof(3)) continue;
 			if (++jump_counter == (Size)jump_num) {
@@ -1552,7 +1552,7 @@ sym_dof_names(core::pose::Pose const & pose) {
 	utility::vector1<std::string> names;
 	SymmetryInfoCOP syminfo = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = syminfo->get_dofs();
-	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+	for(std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
 		names.push_back(syminfo->get_jump_name(i->first));
 	}
 	return names;

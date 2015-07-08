@@ -168,11 +168,11 @@ add_coordinate_constraints( core::pose::Pose & pose, core::Size const start_res,
 
 /// @brief Remove all constraints of a given type from a pose.
 void
-remove_constraints_of_type(core::pose::Pose & pose, std::string const type);
+remove_constraints_of_type(core::pose::Pose & pose, std::string const & type);
 
 /// @brief Remove all constraints of a given type from a pose that involve start_res to end_res.  Useful for coordinate/dihedral constraints
 void
-remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core::Size const start_res, core::Size const end_res);
+remove_constraints_of_type(core::pose::Pose & pose, std::string const & type, core::Size const start_res, core::Size const end_res);
 
 void
 remove_nonbb_constraints( pose::Pose & pose) ;

@@ -107,7 +107,7 @@ void EnvMover::apply( Pose& pose ) {
 
     e.add_msg( ss.str() );
 
-    throw e;
+    throw;// e;
   }
 
   set_last_move_status( movers_->get_last_move_status() );
@@ -181,7 +181,7 @@ void EnvMover::parse_subtag( utility::tag::TagCOP tag,
       err << "The Environment cannot be used with the tag '" << *tag << "'.";
       throw utility::excn::EXCN_RosettaScriptsOption( err.str() );
     }
-  } catch ( utility::excn::EXCN_Msg_Exception e ) {
+  } catch ( utility::excn::EXCN_Msg_Exception & e ) {
     throw utility::excn::EXCN_RosettaScriptsOption( "In Environment '" + get_name() + "': " + e.msg() );
   }
 }

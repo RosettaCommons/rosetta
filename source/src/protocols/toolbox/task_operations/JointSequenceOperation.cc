@@ -108,7 +108,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 
   // Iter through native sequence
-	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
+	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()), end = sequences_.end(); iter != end; ++iter ) {
 		//TR << "it " << **iter << " " << (*iter)->length() << " vs " << seq_length << std::endl;
 		if( (*iter)->length() != seq_length ) {
 				std::string name("current pdb");
@@ -134,7 +134,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 		if(use_current_pose_) {
 			if( pose.aa(ii) <= static_cast<int>(allowed.size()) ) allowed[ pose.aa(ii) ] = true;
 		}
-		for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
+		for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()), end = sequences_.end(); iter != end; ++iter ) {
 			//if ( ii > (*iter)->length() ) continue; // ignore short references
 			char aa( (*(*iter))[ na_ii ] );
 			if( core::chemical::oneletter_code_specifies_aa(aa) ) {

@@ -95,7 +95,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 		std::string selector_str;
 		try {
 			selector_str = tag->getOption< std::string >( "selector" );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to access option 'selector' from NeighborhoodResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -105,7 +105,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 		try {
 			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
 			set_focus_selector( selector );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from NeighborhoodResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
@@ -130,7 +130,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 	} else { // do not get focus from ResidueSelectors but load resnums string instead
 		try {
 			set_focus ( tag->getOption< std::string >( "resnums" ) );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream err_msg;
 			err_msg << "Failed to access option 'resnums' from NeighborhoodResidueSelector::parse_my_tag.\n";
 			err_msg << e.msg();
@@ -141,7 +141,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 	// finally grab distance
 	try {
 		set_distance( tag->getOption< Real >( "distance", 10.0 ) );
-	}  catch ( utility::excn::EXCN_Msg_Exception e ) {
+	}  catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to access option 'distance' from NeighborhoodResidueSelector::parse_my_tag.\n";
 		error_msg << e.msg();

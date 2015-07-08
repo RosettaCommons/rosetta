@@ -52,10 +52,9 @@ static thread_local basic::Tracer tr( "core.chemical" );
 
 ////////////////////////////////////////////////////////////////////////////////
 
-AtomTypeSet::AtomTypeSet( std::string const & directory )
+AtomTypeSet::AtomTypeSet( std::string const & directory ):
+directory_( directory)
 {
-	directory_ = directory;
-
 	read_file( directory + "/atom_properties.txt" );
 
 	utility::io::izstream data( ( directory+"/extras.txt" ).c_str() );

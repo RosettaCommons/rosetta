@@ -179,9 +179,9 @@ core::Size read_input_weights( FArray1D_double& weights, Size natoms) {
 }
 
 Size superimpose( DecoySetEvaluation& eval, utility::vector1< Real >& rmsf_result, FArray1D_double& weights ) {
-	Size icenter = 1;
+	//Size icenter = 1;
 	eval.superimpose();
-	icenter = eval.wRMSD( option[ wRMSD ], option[ tolerance ](), weights );
+	Size icenter = eval.wRMSD( option[ wRMSD ], option[ tolerance ](), weights );
 	eval.rmsf( rmsf_result );
 	return icenter;
 }

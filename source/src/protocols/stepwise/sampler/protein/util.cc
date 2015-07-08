@@ -307,7 +307,7 @@ namespace protein {
 		using namespace protocols::stepwise::modeler;
 		PoseList const & pose_list = stepwise_clusterer.clustered_pose_list();
 
-		for ( PoseList::const_iterator it = pose_list.begin(); it != pose_list.end(); it++ ){
+		for ( PoseList::const_iterator it = pose_list.begin(), end = pose_list.end(); it != end; ++it ){
 			pose = *(it->second);
 			Stub stub1_forward( pose.xyz( NamedAtomID( " N  ", 1) ),pose.xyz( NamedAtomID( " CA ", 1) ),pose.xyz( NamedAtomID( " C  ", 1) ));
 			Stub stub1_reverse( pose.xyz( NamedAtomID( " C  ", 1) ),pose.xyz( NamedAtomID( " CA ", 1) ),pose.xyz( NamedAtomID( " N  ", 1) ));

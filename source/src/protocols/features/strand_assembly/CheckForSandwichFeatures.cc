@@ -226,14 +226,14 @@ cal_min_avg_dis_between_two_sheets_by_cen_res (
 
 	float min_dis = 9999;
 	float second_min_dis = 9999;
-	float sum_dis = 0.0;
-	float cal_num	=	0.0;
+	//float sum_dis = 0.0;
+	//float cal_num	=	0.0;
 
 	for (Size ii=0;	ii<vector_of_cen_residues_in_sheet_1.size();	ii++){
 		for (Size	jj=0;	jj<vector_of_cen_residues_in_sheet_2.size();	jj++){
 			Real distance = dssp_pose.residue(vector_of_cen_residues_in_sheet_1[ii]).atom("CA").xyz().distance(dssp_pose.residue(vector_of_cen_residues_in_sheet_2[jj]).atom("CA").xyz());
-			sum_dis	=	sum_dis	+	distance;
-			cal_num	=	cal_num	+	1.0;
+			//sum_dis	=	sum_dis	+	distance;
+			//cal_num	=	cal_num	+	1.0;
 			if (distance < min_dis)
 			{
 				min_dis = distance;

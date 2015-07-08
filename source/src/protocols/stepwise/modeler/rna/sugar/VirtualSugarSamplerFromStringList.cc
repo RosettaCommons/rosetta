@@ -173,8 +173,8 @@ namespace sugar {
 					runtime_assert(
 							pose.residue( working_bulge_res ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) );
 
-					SugarModeling curr_modeling = SugarModeling();
-					curr_modeling = SugarModeling( working_sugar_res, working_ref_res );
+					//SugarModeling curr_modeling = SugarModeling();
+					SugarModeling curr_modeling = SugarModeling( working_sugar_res, working_ref_res );
 					sugar_modeling_list.push_back( curr_modeling );
 				}
 

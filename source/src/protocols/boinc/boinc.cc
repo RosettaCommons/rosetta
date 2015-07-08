@@ -423,7 +423,7 @@ void Boinc::set_wu_desc() {
   static bool init = false;
   if (!init){
 		// read description file if one exists and keep row format
-		std::string description_file;
+		//std::string description_file;
 		if ( option[ OptionKeys::boinc::description_file ].user() ) {
 			std::string description_file = option[ OptionKeys::boinc::description_file ]();
 			utility::io::izstream desc_stream( description_file );
@@ -836,6 +836,7 @@ Cleanup:
 	{
 		int val;
 		struct semid_ds *buf;
+		// AMW: cppcheck observes that the following member is never used
 		unsigned short *array;
 	} arg;
 	arg.val = 1;

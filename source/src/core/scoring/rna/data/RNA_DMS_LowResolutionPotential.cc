@@ -222,9 +222,9 @@ namespace data {
 // following could move to protocols/, along with rna_base_pair classification code?
 void
 RNA_DMS_LowResolutionPotential::update_edge_paired(  Size const i, Size const k,
-																										 vector1< bool > & wc_edge_paired,
-																										 vector1< bool > & hoogsteen_edge_paired,
-																										 vector1< bool > & sugar_edge_paired ) {
+	vector1< bool > & wc_edge_paired,
+	vector1< bool > & hoogsteen_edge_paired,
+	vector1< bool > & sugar_edge_paired ) {
 
 	if (k == chemical::rna::WATSON_CRICK ) wc_edge_paired[i] = true;
 	else if (k == chemical::rna::HOOGSTEEN ) hoogsteen_edge_paired[i] = true;
@@ -238,11 +238,11 @@ RNA_DMS_LowResolutionPotential::update_edge_paired(  Size const i, Size const k,
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & pose,
-																														 vector1< bool > & wc_edge_paired,
-																														 vector1< bool > & hoogsteen_edge_paired,
-																														 vector1< bool > & sugar_edge_paired,
-																														 vector1< bool > & is_bulged,
-																														 bool const already_scored ){
+	vector1< bool > & wc_edge_paired,
+	vector1< bool > & hoogsteen_edge_paired,
+	vector1< bool > & sugar_edge_paired,
+	vector1< bool > & is_bulged,
+	bool const already_scored ){
 
 	using namespace core::scoring;
 
@@ -282,8 +282,7 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 		rna::RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() ); // assume this has been filled.
 
 		pose::rna::EnergyBasePairList const & scored_base_pair_list = rna_filtered_base_base_info.scored_base_pair_list();
-		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list.begin();
-					it != scored_base_pair_list.end(); it ++ ){
+		for ( pose::rna::EnergyBasePairList::const_iterator it = scored_base_pair_list.begin(), end = scored_base_pair_list.end(); it != end; ++it ){
 			pose::rna::BasePair const base_pair = it->second;
 			update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 			update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
@@ -291,8 +290,7 @@ RNA_DMS_LowResolutionPotential::get_rna_base_pairing_status( core::pose::Pose & 
 
 		pose::rna::EnergyBaseStackList const & scored_base_stack_list = rna_filtered_base_base_info.scored_base_stack_list();
 		vector1< bool > is_stacked( pose.total_residue(), false );
-		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin();
-					it != scored_base_stack_list.end(); it ++ ){
+		for ( pose::rna::EnergyBaseStackList::const_iterator it = scored_base_stack_list.begin(), end = scored_base_stack_list.end(); it != end; ++it ){
 			pose::rna::BaseStack const base_stack = it->second;
 			is_stacked[ base_stack.res1 ] = true;
 			is_stacked[ base_stack.res2 ] = true;

@@ -206,8 +206,8 @@ namespace magnesium {
 
 		Real const CLUSTER_DISTANCE_CUTOFF( 2.0 );
 		// iterate...
-		for ( std::list< std::pair< Real, pose::PoseOP > >::const_iterator iter = mg_energy_pose_list.begin();
-					iter != mg_energy_pose_list.end(); iter++ ){
+		for ( std::list< std::pair< Real, pose::PoseOP > >::const_iterator iter = mg_energy_pose_list.begin(),
+					end = mg_energy_pose_list.end(); iter != end; ++iter ){
 
 			pose::PoseOP   mg_pose     = iter->second;
 			Vector const   mg_position = mg_pose->xyz( AtomID( 1, mg_res ) );

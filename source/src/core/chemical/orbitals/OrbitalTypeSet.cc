@@ -48,8 +48,8 @@ OrbitalTypeSet::~OrbitalTypeSet() {}
 static thread_local basic::Tracer TR( "core.chemical.orbitals" );
 
 OrbitalTypeSet::OrbitalTypeSet(std::string const & directory)
+: directory_( directory )
 {
-	directory_ = directory;
 	read_file( directory + "/orbital_properties.txt" );
 
 	//currently commented out. This is if someone down the line wants to add extras, like

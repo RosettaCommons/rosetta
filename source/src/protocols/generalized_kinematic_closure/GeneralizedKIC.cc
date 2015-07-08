@@ -1263,10 +1263,9 @@ void GeneralizedKIC::addtailgeometry(
 	utility::vector1 <bool> tail_residue_added;
 	tail_residue_added.resize( tailsize , false ); //A vector of bools for whether residues have already been added to the pose or not.
 	core::Size residues_to_add = tailsize; //The number of residues we still have to add.
-	bool added_a_residue_this_round=false; //Keeps track of whether residues were added.  If a residue isn't added in a given round, it means that there exist residues in the list that aren't connected to the loop in any way.
 
 	while(residues_to_add>0) {
-		added_a_residue_this_round=false;
+		bool added_a_residue_this_round=false; //Keeps track of whether residues were added.  If a residue isn't added in a given round, it means that there exist residues in the list that aren't connected to the loop in any way.
 
 		bool breaknow=false;
 		for(core::Size ir=1; ir<=tailsize; ++ir) { //Loop through the list of tail residues.

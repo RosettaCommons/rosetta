@@ -156,7 +156,7 @@ AllowedSeqposForGeomCst::initialize_from_command_line( core::pose::PoseCOP pose 
 
 	  std::string filename = option[ scaffold_active_site_residues_for_geomcsts ]();
 	  utility::io::izstream istr( filename.c_str() );
-	  std::list< Size > upstream_build_resids;
+	  //std::list< Size > upstream_build_resids;
 	  TR << "Reading match::scaffold_active_site_residues_for_geomcsts " << filename << std::endl;
 	  std::string ncsts_string; Size ncsts;
 	  if ( ! istr.good() ) {

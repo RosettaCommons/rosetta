@@ -58,7 +58,7 @@ OneGaussianScattering get_A( std::string elt ) {
 
 	//fpd these parameters were tuned by fitting a single gaussian
 	//    to the 4-gaussian parameters in R^-1 space from 2-20A res
-	if (elt_db.size() == 0) {
+	if (elt_db.empty() ) {
 		elt_db["C"]  = OneGaussianScattering( 6, 4.88284);
 		elt_db["N"]  = OneGaussianScattering( 7, 5.08287);
 		elt_db["O"]  = OneGaussianScattering( 8, 4.92989);
@@ -87,8 +87,7 @@ OneGaussianScattering get_A( std::string elt ) {
 // weight from scattering factors
 KromerMann get_km( std::string elt ) {
 	static std::map< std::string, KromerMann > elt_db;
-
-	if (elt_db.size() == 0) {
+	if (elt_db.empty() ) {
 		//elt_db["C"]  = KromerMann(  0.215600,  2.310000, 1.020000, 1.588600, 0.865000, 20.843899, 10.207500,  0.568700,  51.651199);
 		elt_db["C"]  = KromerMann(  0.286977, 2.26069, 1.05075, 1.56165, 0.839259, 22.6907, 9.75618, 0.656665, 55.5949);
 		elt_db["N"]  = KromerMann(-11.528999, 12.212600, 3.132200, 2.012500, 1.166300,  0.005700,  9.893300, 28.997499,   0.582600);

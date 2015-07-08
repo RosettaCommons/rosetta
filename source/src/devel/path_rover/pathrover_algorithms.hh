@@ -46,11 +46,12 @@ class Pathways;
 
 class Path_energy{
 public:
-  std::vector<RRT_node* > _path;
   double _max_energy;
-  Path_energy(std::vector<RRT_node* >& path,double max_energy){
-    _max_energy = max_energy;
-    _path = path;
+  std::vector<RRT_node* > _path;
+  Path_energy(std::vector<RRT_node* >& path,double max_energy):
+  _max_energy( max_energy ),
+  _path( path )
+  {
   }
 };
 

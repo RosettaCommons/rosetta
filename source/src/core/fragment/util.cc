@@ -310,7 +310,7 @@ apply_best_scoring_fragdata(
 void dump_frames_as_pdb(
 	pose::Pose const & pose,
 	utility::vector1< FrameOP > const & frames,
- 	std::string const filename,
+ 	std::string const & filename,
 	Size const start_frag
 )
 {
@@ -358,7 +358,7 @@ void dump_frames_as_pdb(
 bool fill_template_frames_from_pdb(
 	pose::Pose const & pose,
 	utility::vector1< FrameOP > const & template_frames,
-	std::string const filename
+	std::string const & filename
 )
 {
 

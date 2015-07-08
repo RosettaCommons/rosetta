@@ -33,7 +33,7 @@ PseudoBond::PseudoBond( PseudoBond const & src ) :
 	nbonds_( src.nbonds_ )
 {}
 
-PseudoBond const & PseudoBond::operator = ( PseudoBond const & rhs )
+PseudoBond & PseudoBond::operator = ( PseudoBond const & rhs )
 {
 	lr_conn_ = rhs.lr_conn_;
 	ur_conn_ = rhs.ur_conn_;

@@ -203,7 +203,7 @@ create_scorefxn(){ //Copy from rna_swa_test.cc on Oct 11, 2011
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Jan 01, 2012: SHOULD INTEGRATE THIS WITH THE VERSION in protocols/stepwise/modeler/rna/util.hh
 void
-align_pose_general( core::pose::Pose const & static_pose, std::string const static_tag, core::pose::Pose & moving_pose, std::string const moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only ){
+align_pose_general( core::pose::Pose const & static_pose, std::string const & static_tag, core::pose::Pose & moving_pose, std::string const & moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only ){
 
 
 	bool found_non_virtual_base = false;
@@ -270,7 +270,7 @@ align_pose_general( core::pose::Pose const & static_pose, std::string const stat
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 core::Real
-check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string const static_tag, core::pose::Pose & moving_pose, std::string const moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only, core::Real const alignment_RMSD_cutoff ){
+check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string const & static_tag, core::pose::Pose & moving_pose, std::string const & moving_tag, utility::vector1< std::pair< Size, Size > > const & alignment_res_pair_list, bool const base_only, core::Real const alignment_RMSD_cutoff ){
 
 
 	Size total_atom_count = 0;
@@ -790,7 +790,7 @@ o2prime_packer(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-mutate_residue( pose::Pose & pose, Size const seq_num, std::string const res_name )
+mutate_residue( pose::Pose & pose, Size const seq_num, std::string const & res_name )
 {
 	using namespace core::id;
 	using namespace core::chemical;

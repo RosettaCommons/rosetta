@@ -304,8 +304,8 @@ MPI_LoopHashRefine::add_structure_to_library_add_n_replace( core::io::silent::Si
 	core::Real closest_rms = 1000000;
 	SilentStructStore::iterator closest_struct;
 
-	for( SilentStructStore::iterator jt =  library_central_.begin();
-									jt != library_central_.end(); jt ++ )
+	for( SilentStructStore::iterator jt =  library_central_.begin(),
+									end = library_central_.end(); jt != end; ++jt )
 	{
 			core::Real the_rms;
 		// downcast

@@ -254,7 +254,7 @@ void CheckPointer::checkpoint(
 //  ozs.close();
 
 
-	std::string notag="";
+	//std::string notag="";
   if ( mc != 0 ) {
 		{
 			FileBuffer new_file(  checkpoint_id + "mc_last.out"  );

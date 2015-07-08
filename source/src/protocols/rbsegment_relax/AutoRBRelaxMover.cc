@@ -173,7 +173,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		utility::vector1< protocols::simple_moves::FragmentMoverOP > fragmover;
 		for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 					it = frag_libs_.begin(), it_end = frag_libs_.end();
-					it != it_end; it++ ) {
+					it != it_end; ++it ) {
 			protocols::simple_moves::ClassicFragmentMoverOP cfm( new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ ) );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
@@ -197,7 +197,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 
 		// loop fragment insertion
 		for ( std::vector< protocols::simple_moves::FragmentMoverOP >::const_iterator
-				it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ )
+				it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it )
 			random_move.add_mover(*it, rb_chunks_.size());
 
 		// rigid-body move

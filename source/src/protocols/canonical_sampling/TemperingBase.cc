@@ -236,7 +236,7 @@ TemperingBase::finalize_simulation(
 	pose::Pose&,
 	protocols::canonical_sampling::MetropolisHastingsMover const & mhm
 ) {
-	std::string tag( "no_tag" );
+	//std::string tag( "no_tag" );
 	tr.Trace << "write statistics to " << stats_file_ << "..." << std::endl;
 	trial_counter_.write_to_file( stats_file_, mhm.output_name() );
 	tr.Trace << "done" << stats_file_ << std::endl;

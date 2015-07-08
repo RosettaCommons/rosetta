@@ -91,7 +91,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 	std::string line;
 
 	// extension management
-	std::string ext_ss_buffer;
+	//std::string ext_ss_buffer;
 
 	std::ostringstream oss; // for resfile parsing
 	//std::ostringstream oss_switch; // for detecting design info
@@ -169,7 +169,7 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 			}
 
 			// check for the presence of special tokens, like CST, DM_, DS_, in the blueprint file
-			for ( std::vector< std::string >::iterator it = split_info.begin(), end = split_info.end(); it != end; it++ ) {
+			for ( std::vector< std::string >::iterator it = split_info.begin(), end = split_info.end(); it != end; ++it ) {
 
 				TR_REMODEL << "Found token " << *it << " on blueprint line '" << line.index << "'" << std::endl;
 
@@ -329,8 +329,8 @@ void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
 	// process blueprint to initialize all the needed strings/vectors
 	// iterate over all the LineObject objects and save the sequence and ss.
 	bool hle_abego_mode = false;
-	std::vector< protocols::forge::remodel::LineObject >::iterator iter;
-	for ( iter = this->blueprint.begin(); iter != this->blueprint.end(); iter++ ) {
+	std::vector< protocols::forge::remodel::LineObject >::iterator iter, end;
+	for ( iter = this->blueprint.begin(), end = this->blueprint.end(); iter != end; ++iter ) {
 		// sequence and ss are class member variables
 		sequence.append( iter->resname );
 		if(iter->sstype.size()==1)
@@ -421,7 +421,7 @@ void RemodelData::translateDSSP_ABEGO( std::string & ss, std::string & abego ) {
 	std::string trans_ss;
 	
 	if (abego_switch){ //need to make a new string with DSSP assignment and swap
-		found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
+		//found_idx = ss.find_first_of("abegoABEGO"); // this substitution use all 5 regions
 		for (core::Size idx = 0; idx < ss.length(); idx++){
 			if (ss[idx] == 'A' || ss[idx] == 'a'){
 				trans_ss.push_back('D');

@@ -464,10 +464,10 @@ FlexPepDockingFlags::updateChainsAndAnchors_fromParamsFile
  	TR << "# finished reading params" << endl;
 
 	// offset peptide anchors / cuts residues, by peptide_first_res_
-	std::map<int,int>::iterator iter;
-	for(iter = peptide_anchors.begin(); iter != peptide_anchors.end(); iter++)
+	std::map<int,int>::iterator iter, end;
+	for(iter = peptide_anchors.begin(), end = peptide_anchors.end(); iter != end; ++iter )
 		iter->second += (peptide_first_res_ - 1);
-	for(iter = peptide_cuts.begin(); iter != peptide_cuts.end(); iter++)
+	for(iter = peptide_cuts.begin(), end = peptide_cuts.end(); iter != end; ++iter )
 		iter->second += (peptide_first_res_ - 1);
 
 	// check results validity

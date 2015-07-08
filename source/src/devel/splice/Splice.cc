@@ -687,7 +687,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 				TR<<"Residue diff is: "<<residue_diff<<std::endl;
 				for (core::Size i = nearest_to_from; i <= nearest_to_to; ++i) {
 					if (source_pose_->residue(i).has_variant_type(DISULFIDE)) { /// in future, using disulfides would be a great boon as it rigidifies loops.
-						std::ostringstream os;
+						//std::ostringstream os;
 						//temp removed following error to test large chunk splice
 						//os<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
 						//utility_exit_with_message(os.str());
@@ -1388,7 +1388,7 @@ static thread_local basic::Tracer TR_min( "devel.splice.Splice_min" );
 					//Add new dihedral and coordinate constraint to the tail segment
 					tsm.set_fa_scorefxn(scorefxn());
 					tsm.set_movemap(mm);
-					tf = TaskFactoryOP( new TaskFactory );
+					//tf = TaskFactoryOP( new TaskFactory );
 					tf = TaskFactoryOP( new TaskFactory(*design_task_factory()) );
 					if (restrict_to_repacking_chain2()) {
 						for (core::Size i = 2; i <= pose.conformation().num_chains(); ++i) {
@@ -2009,7 +2009,8 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 			else
 				delta_lengths_.push_back(0);
 			std::sort(delta_lengths_.begin(), delta_lengths_.end());
-			std::unique(delta_lengths_.begin(), delta_lengths_.end());
+			utility::vector1<int >::iterator last = std::unique(delta_lengths_.begin(), delta_lengths_.end());
+			delta_lengths_.erase(last, delta_lengths_.end());
 			//TR<<"Deltas from xml: ";
 			//BOOST_FOREACH( int const d, delta_lengths_ )
 			//    TR<<d<<',';
@@ -2529,7 +2530,7 @@ Splice::remove_hairpin( core::pose::Pose & pose ) const{
 		 std::ofstream out( pdb_dump_fname_.c_str() );
 		 pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
 			map<string, string> const comments = core::pose::get_all_comments(pose);
-			if (comments.size() < 1) { /// SJF changed from <3 22Jul14
+			if ( comments.empty() ) { //size() < 1) { /// SJF changed from <3 22Jul14
 				utility_exit_with_message(
 						"Please check comments field in the pdb file (header= ##Begin comments##), could not find any comments");
 			}

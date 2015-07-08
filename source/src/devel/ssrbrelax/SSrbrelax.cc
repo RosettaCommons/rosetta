@@ -142,7 +142,7 @@ namespace ssrbrelax {
 
 		//converting to centroid atom types
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
-		std::string rb_file;
+		//std::string rb_file;
 		rbsegments.read_segments_from_file();
 		rbsegments.read_param_file();
 		protocols::loops::set_secstruct_from_psipred_ss2( pose );
@@ -212,12 +212,11 @@ namespace ssrbrelax {
 
 		while( dof_vec.size() > 0 ){
 			int size( dof_vec.size() );
-			float stddev( 0.0 );
 			int this_dof( dof_vec.at( size - 1 ) ); //get the last element of the shuffled vector
 			std::cout << "dof_vec.size before " << dof_vec.size() << std::endl;
 			dof_vec.pop_back(); //remove the last element of the vector
 			std::cout << "dof_vec.size after " << dof_vec.size() << " " << this_dof <<  std::endl;
-			stddev = rbsegments.get_gaussian_parameters( index, this_dof );
+			float stddev = rbsegments.get_gaussian_parameters( index, this_dof );
 			std::cout << "stddev " << rbsegments.get_gaussian_parameters( index, this_dof ) << " " << stddev << std::endl;
 		debug_assert ( stddev > 0.0 );
 
@@ -400,7 +399,7 @@ namespace ssrbrelax {
 		Size prev_size(10000);
 		protocols::frags::TorsionFragmentLibraryOP prev_lib_op(0);
 		for ( std::map<Size, bool>::const_reverse_iterator it = frag_libs_init.rbegin(),
-						it_end = frag_libs_init.rend(); it != it_end; it++ ) {
+						it_end = frag_libs_init.rend(); it != it_end; ++it ) {
 			Size const frag_size( it->first );
 			bool const frag_lib_init( it->second );
 			assert( frag_size < prev_size );

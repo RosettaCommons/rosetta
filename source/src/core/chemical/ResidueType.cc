@@ -1217,7 +1217,7 @@ ResidueType::add_metalbinding_atom (
 /// @author Andrew Watkins (amw579@nyu.edu)
 void
 ResidueType::delete_metalbinding_atom (
-	std::string const atom_name
+	std::string const & atom_name
 ) {
 	if ( !has( atom_name ) ) {
 		std::string message = "Error in removing metal-binding atom from residue type " + name3() + ". Atom " + atom_name + " was not found.";

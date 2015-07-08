@@ -87,8 +87,8 @@ SSMotifFinder::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap
 }
 
 core::Real
-atom_distance( core::conformation::Residue const & r1, std::string const a1,
-               core::conformation::Residue const & r2, std::string const a2 ){
+atom_distance( core::conformation::Residue const & r1, std::string const & a1,
+               core::conformation::Residue const & r2, std::string const & a2 ){
 	  return( r1.xyz( a1 ).distance( r2.xyz( a2 ) ) );
 }
 
@@ -118,7 +118,7 @@ res_rmsd( utility::vector1< core::Size > const pose_res_for_rmsd, utility::vecto
 }
 
 void
-write_to_file( std::string const filename, core::Size const stem1, core::Size const stem2, core::Real const rmsd, std::string const pdbname, core::pose::Pose const & pose ){
+write_to_file( std::string const & filename, core::Size const stem1, core::Size const stem2, core::Real const rmsd, std::string const & pdbname, core::pose::Pose const & pose ){
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
 	char const chain1( pdb_info->chain( stem1 ) ), chain2( pdb_info->chain( stem2 ) );

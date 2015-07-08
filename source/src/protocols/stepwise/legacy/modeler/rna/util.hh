@@ -43,22 +43,22 @@ output_pair_size( std::pair < Size, Size > const & pair_size, std::ostream & out
 void
 output_pair_size( utility::vector1 < std::pair < Size, Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
-void output_is_prepend_map( std::string const tag, std::map< Size, bool > const & my_map, Size const max_seq_num, std::ostream & outstream = std::cout, Size const tag_spacing = 40 );
+void output_is_prepend_map( std::string const & tag, std::map< Size, bool > const & my_map, Size const max_seq_num, std::ostream & outstream = std::cout, Size const tag_spacing = 40 );
 
 void
-output_bool_list( std::string const tag, utility::vector1< bool > const & bool_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_bool_list( std::string const & tag, utility::vector1< bool > const & bool_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
 void
-output_bool_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_bool_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
 void
-output_size_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
+output_size_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
 void
 sort_pair_list( utility::vector1< std::pair < Size, Size > > pair_list );
 
 void
-output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const pose_name, std::ostream & outstream = std::cout );
+output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream = std::cout );
 
 void
 output_fold_tree_info( pose::Pose const & pose, std::string pose_name, std::ostream & outstream = std::cout );
@@ -100,7 +100,7 @@ import_pose_from_silent_file(
     std::string const & input_tag );
 
 std::string
-get_tag_from_pdb_filename( std::string const pdb_filename );
+get_tag_from_pdb_filename( std::string const & pdb_filename );
 
 void
 move_jump_atom_to_base(
@@ -108,16 +108,16 @@ move_jump_atom_to_base(
     std::string const & working_sequence );
 
 void
-print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersOP const & WP, std::string const WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );
+print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersOP const & WP, std::string const & WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );
 
 void
-print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );
+print_WorkingParameters_info( protocols::stepwise::modeler::working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const & WP_name, std::ostream & outstream = std::cout, bool const is_simple_full_length_WP = false );
 
 void
 set_nucleotide_to_A_form( pose::Pose & pose, Size const seq_num );
 
 std::string
-path_basename( std::string const full_path );
+path_basename( std::string const & full_path );
 
 } //rna
 } //modeler

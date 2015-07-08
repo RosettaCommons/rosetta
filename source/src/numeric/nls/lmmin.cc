@@ -125,9 +125,8 @@ void lmmin( int n_par, double *par, int m_dat, const void *data,
 		return;
 	}
 
-    int j;
     if( ! control->scale_diag )
-        for( j=0; j<n_par; ++j )
+        for( int j=0; j<n_par; ++j )
             diag[j] = 1;
 
     //perform fit.
@@ -341,7 +340,7 @@ void lm_lmdif( int m, int n, double *x, double *fvec, double ftol,
 //
 //
     int i, iter, j;
-    double actred, delta, dirder, eps, fnorm, fnorm1, gnorm, par, pnorm,
+    double actred, delta, dirder, eps, fnorm, fnorm1, par, pnorm,
         prered, ratio, step, sum, temp, temp1, temp2, temp3, xnorm;
     static double p1 = 0.1;
     static double p0001 = 1.0e-4;
@@ -473,7 +472,7 @@ void lm_lmdif( int m, int n, double *x, double *fvec, double ftol,
 
 // outer: compute norm of scaled gradient and test for convergence.
 
-	gnorm = 0;
+	double gnorm = 0;
         for (j = 0; j < n; j++) {
             if (wa2[ipvt[j]] == 0)
                 continue;
@@ -718,7 +717,7 @@ void lm_lmpar(int n, double *r, int ldr, int *ipvt, double *diag,
 //
 // 
     int i, iter, j, nsing;
-    double dxnorm, fp, fp_old, gnorm, parc, parl, paru;
+    double dxnorm, fp, gnorm, parl, paru;
     double sum, temp;
     static double p1 = 0.1;
 
@@ -827,7 +826,7 @@ void lm_lmpar(int n, double *r, int ldr, int *ipvt, double *diag,
 	for (j = 0; j < n; j++)
 	    xdi[j] = diag[j] * x[j]; // used as output
 	dxnorm = lm_enorm(n, xdi);
-	fp_old = fp;
+	double fp_old = fp;
 	fp = dxnorm - delta;
         
         //  if the function is small enough, accept the current value
@@ -850,7 +849,7 @@ void lm_lmpar(int n, double *r, int ldr, int *ipvt, double *diag,
 		aux[i] -= r[j * ldr + i] * aux[j];
 	}
 	temp = lm_enorm(n, aux);
-	parc = fp / delta / temp / temp;
+	double parc = fp / delta / temp / temp;
 
         //  depending on the sign of the function, update parl or paru.
 
@@ -1208,7 +1207,7 @@ double lm_enorm(int n, const double *x)
 //	x is an input array of length n.
 // 
     int i;
-    double agiant, s1, s2, s3, xabs, x1max, x3max, temp;
+    double agiant, s1, s2, s3, x1max, x3max, temp;
 
     s1 = 0;
     s2 = 0;
@@ -1220,7 +1219,7 @@ double lm_enorm(int n, const double *x)
     //  sum squares.
 
     for (i = 0; i < n; i++) {
-	xabs = fabs(x[i]);
+	double xabs = fabs(x[i]);
 	if (xabs > LM_SQRT_DWARF) {
             if ( xabs < agiant ) {
                 s2 += xabs * xabs;

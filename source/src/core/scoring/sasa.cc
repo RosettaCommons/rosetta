@@ -552,9 +552,7 @@ calc_per_atom_sasa(
 		}
 	}
 
-	core::Real cutoff_distance = 0.0;
-	cutoff_distance = 2 * ( max_radius + probe_radius );
-
+	core::Real cutoff_distance = 2 * ( max_radius + probe_radius );
 
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
 	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
@@ -635,6 +633,7 @@ calc_per_atom_sasa(
 #ifdef FILE_DEBUG
 		std::cout << "num_ones: " << num_ones << ", sasa: " << rsd_sasa[ ii ] << std::endl; // use std::cout NOT the TR
 #endif
+		// AMW: cppcheck falsely flags this; keep it
 		num_ones = 0;
 
 	} // ii
@@ -885,8 +884,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 		}
 	}
 
-	core::Real total_sasa = 0.0;
-	total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset, use_naccess_sasa_radii );
+	core::Real total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset, use_naccess_sasa_radii );
 	//#ifdef FILE_DEBUG
 	TR.Debug << "total_sasa: " << total_sasa << std::endl;
 	//#endif
@@ -942,12 +940,11 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 ///
 void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) {
 	for ( int bb = 1; bb <= num_bytes; ++bb ) {
-		int bit;
 //#ifdef FILE_DEBUG
 		if ( (bb-1)*8 % 16 == 0 ) std::cout << (bb-1) * 8 << ":";
 //#endif
 		for ( int index=7; index >= 0; index-- ) {
-			bit = ( ( (int)values[ bb ] >> index ) & 1 );
+			int bit = ( ( (int)values[ bb ] >> index ) & 1 );
 //#ifdef FILE_DEBUG
 			std::cout << bit;
 //#endif

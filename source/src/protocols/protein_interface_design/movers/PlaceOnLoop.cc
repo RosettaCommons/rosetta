@@ -310,7 +310,8 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 
 	sort( delta_length_.begin(), delta_length_.end() );
 	runtime_assert( loop_end_ - loop_begin_ + 1 + *delta_length_.begin() >= 3 );
-	unique( delta_length_.begin(), delta_length_.end() );
+	utility::vector1< int >::iterator last = unique( delta_length_.begin(), delta_length_.end() );
+	delta_length_.erase( last, delta_length_.end() );
 	TR<<"PlaceOnLoop mover defined with kinematic mover ";
 	TR<<" will change the loop by these values: ";
 	BOOST_FOREACH( int const i, delta_length_ ) TR<<i<<", ";

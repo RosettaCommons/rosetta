@@ -32,11 +32,11 @@ namespace stepwise {
 namespace setup {
 
 	core::pose::PoseOP
-	get_pdb_with_full_model_info( std::string const input_file,
+	get_pdb_with_full_model_info( std::string const & input_file,
 																core::chemical::ResidueTypeSetCAP rsd_set );
 
 	core::pose::PoseOP
-	get_pdb_and_cleanup( std::string const input_file,
+	get_pdb_and_cleanup( std::string const & input_file,
 											 core::chemical::ResidueTypeSetCAP rsd_set );
 
 	std::map< core::Size, std::string > /* info on any non-standard residue names */

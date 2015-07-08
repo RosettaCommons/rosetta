@@ -71,7 +71,7 @@ void
 constrain_residue( core::pose::Pose &pose,
 		   core::Size const resno, 
 		   utility::vector1< core::Size > const exclres,
-		   std::string const cst_type = "atompair",
+		   std::string const & cst_type = "atompair",
 		   core::Real const stdev = 0.5
 		   );
 
@@ -115,7 +115,7 @@ void ramp_minpack_pose( core::pose::Pose &pose,
 
 void add_poseinfo_to_ss( core::io::silent::SilentStruct &ss,
 			 core::pose::Pose const &ref_pose,
-			 std::string const suffix );
+			 std::string const & suffix );
 
 core::Real Zscore_to_library( core::Real const score,
 			      core::Real const mean,
@@ -125,11 +125,11 @@ core::Real Zscore_to_library( core::Real const score,
 			      );
 
 utility::vector1< core::Size > 
-loopstring_to_loopvector( std::string const loopstr,
+loopstring_to_loopvector( std::string const & loopstr,
 			  core::Size const ext = 0);
 
 utility::vector1< utility::vector1< core::Size > >
-loopstring_to_loopregions( std::string const loopstr );
+loopstring_to_loopregions( std::string const & loopstr );
 
 void
 copy_pose_crd( core::pose::Pose const pose_frame,

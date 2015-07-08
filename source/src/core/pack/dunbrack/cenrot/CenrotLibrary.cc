@@ -136,7 +136,7 @@ void CenrotLibrary::create_centroid_rotamer_libraries_from_ASCII()
         aan = chemical::aa_from_name( nextaa );
         SingleResidueCenrotLibraryOP newlib( new SingleResidueCenrotLibrary(aan) );
         /// read the rotlib for current aa and save the name of the next one
-        thisaa = nextaa;
+        //thisaa = nextaa;
         nextaa = newlib->read_from_file( libstream, true );
         ++count_libraries_read;
 

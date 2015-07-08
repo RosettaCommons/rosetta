@@ -419,7 +419,7 @@ SheetFilter::ingo_find_ord(
 	slct.dimension( hm );
 
 //---- local:
-	int cnt,cnt1,cnt2,i,j,proper,token;
+	int cnt,cnt1,cnt2,i,j,proper;//,token;
 	FArray1D_int nghbrs_cnt( max_nstr );
 	FArray1D_int taken( max_nstr );
 	FArray2D_float nghbrs( max_nstr, max_nstr );
@@ -463,7 +463,7 @@ SheetFilter::ingo_find_ord(
 
 	if ( cnt1 == 2 && cnt2 == hm-2 ) {
 		cnt = 0;
-		token = 0;
+		int token = 0;
 		proper = 1;
 		while ( token == 0 ) {
 			++cnt;
@@ -735,7 +735,7 @@ SheetFilter::ingo_ident_sheets(
 	strlbl.dimension( nstr );
 
 //---- local:
-	int cnt,lb1,lb2,lbmn,memo,strsm,smm;
+	int cnt,lb1,lb2,lbmn,memo,strsm;//,smm;
 	FArray1D_int fnlbl( max_nstr, 0 );
 	FArray1D_int fncnt( max_nstr, 0 );
 	FArray1D_int strlblord( nstr, 0 );
@@ -752,10 +752,10 @@ SheetFilter::ingo_ident_sheets(
 
 	rubbish = 0;
 	for ( int i = 1; i <= nstr; ++i ) {
-		smm = 0;
-		for ( int j = 1; j <= nstr; ++j ) {
-			smm += strprs(i,j);
-		}
+		//int smm = 0;
+		//for ( int j = 1; j <= nstr; ++j ) {
+		//	smm += strprs(i,j);
+		//}
 //js commenting out filter number 2.  It checks whether strands
 //js have more than 3 neighbors.  This should not be a filter,
 //js because native proteins can have strands with 3 neighbors.
@@ -1054,8 +1054,8 @@ SheetFilter::ingo_proper_sheets(
 	locdsm.dimension( nstr, nstr );
 	lctn.dimension( nres, 3 );
 
-	float dot_prod, ln1, ln2;
-	int pick1,pick2;
+	//float dot_prod, ln1, ln2;
+	//int pick1,pick2;
 	FArray1D_float dir1( 3 );
 	FArray1D_float dir2( 3 );
 
@@ -1086,12 +1086,12 @@ SheetFilter::ingo_proper_sheets(
 					if ( stpppt(k)-strtpt(k) < 6 ) continue;
 					if ( dstrmin(j,k) < ngbhct ) {
 						maxdist = std::max(dstrmin(j,k),maxdist);
-						dot_prod = 0.0;
+						float dot_prod = 0.0;
 						for ( int l = 1; l <= 3; ++l ) {
 //                 std::cout << SS( locdsm(j,k) ) << SS( nres ) << std::endl;
 //                 std::cout << SS( locdsm(k,j) ) << SS( nres ) << std::endl;
-							pick1 = locdsm(j,k);
-							pick2 = locdsm(k,j);
+							int pick1 = locdsm(j,k);
+							int pick2 = locdsm(k,j);
 							if ( locdsm(j,k) <= 3 ) pick1 = 4;
 							if ( locdsm(j,k) >= nres-3 ) pick1 = nres-4;
 							if ( locdsm(k,j) <= 3 ) pick2 = 4;
@@ -1100,11 +1100,11 @@ SheetFilter::ingo_proper_sheets(
 							dir2(l) = lctn(pick2+3,l)-lctn(pick2-3,l);
 						}
 						dot_prod = dir1(1)*dir2(1) + dir1(2)*dir2(2) + dir1(3)*dir2(3);
-						ln1 = std::sqrt(
+						float ln1 = std::sqrt(
 						 ( dir1(1) * dir1(1) ) +
 						 ( dir1(2) * dir1(2) ) +
 						 ( dir1(3) * dir1(3) ) );
-						ln2 = std::sqrt(
+						float ln2 = std::sqrt(
 						 ( dir2(1) * dir2(1) ) +
 						 ( dir2(2) * dir2(2) ) +
 						 ( dir2(3) * dir2(3) ) );

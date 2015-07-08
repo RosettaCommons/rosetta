@@ -706,7 +706,7 @@ LK_hack::eval_dE_dR_over_r(
 		int	disbin = static_cast< int >( d2_bin ) + 1;
 		Real	frac = d2_bin - ( disbin - 1 );
 
-		Real deriv = 0.0;
+		//Real deriv = 0.0;
 
 		// l1 and l2 are FArray LINEAR INDICES for fast lookup:
 		// [ l1 ] == (disbin  ,attype2,attype1)
@@ -716,7 +716,7 @@ LK_hack::eval_dE_dR_over_r(
 			l2 = l1 + 1;
 
 		Real e1 = dsolv1_[ l1 ];
-		deriv = lk_hack_weight_ * ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+		Real deriv = lk_hack_weight_ * ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
 
 		//std::cout << "dsolv1_ deriv: " << deriv << " numeric: " << ((solv1_[ l2 ] - solv1_[ l1 ] )*get_bins_per_A2_)*2*sqrt(d2) << std::endl;
 

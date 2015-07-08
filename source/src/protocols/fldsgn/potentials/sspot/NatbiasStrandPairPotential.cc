@@ -328,11 +328,15 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 						}
 
 						// pairing w/ register shift +/-1
+						// AMW: cppcheck notes that this condition is repetitive
+						// I note that it is impossible:
+						// when will spair->orient() be both 'P' and 'A'?
+						// consider: should these have ors?
 						if( (sign1 == 1 && sign2 == 1) || (sign1 == 2 && sign2 == 2) ) {
-							if( spair->orient() == 'P' && ss2 != pairres+1 &&
-							    spair->orient() == 'P' && ss2 != pairres-1 &&
-							    spair->orient() == 'A' && ss2 != pairres   &&
-							    spair->orient() == 'A' && ss2 != pairres-2 ) continue;
+							if( (spair->orient() == 'P' && ss2 != pairres+1) ||
+							    (spair->orient() == 'P' && ss2 != pairres-1) ||
+							    (spair->orient() == 'A' && ss2 != pairres  ) ||
+							    (spair->orient() == 'A' && ss2 != pairres-2) ) continue;
 						}
 					}
 

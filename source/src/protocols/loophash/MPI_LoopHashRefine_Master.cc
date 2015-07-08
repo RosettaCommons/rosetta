@@ -168,7 +168,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 			totaltime_loophash() += structure_wu->get_run_time();
 			TR << "LoopHash return: " << decoys.size() << " structs in " << structure_wu->get_run_time() << "s " << " frm " << structure_wu->last_received_from() << std::endl;
 			// Add the node that returned to the blacklist of all WUs with the same ssid and start_ir
-			for( WorkUnitQueue::iterator iter = outbound().begin(); iter != outbound().end(); iter++ ) {
+			for( WorkUnitQueue::iterator iter = outbound().begin(), end = outbound().end(); iter != end; ++iter ) {
 					if( (*iter)->get_wu_type() == "loophasher" ) {
 			/*			// Upcast to a StructureModifier WU
 						// Why use dynamic cast when we're sure of type? (copied from above)
@@ -232,7 +232,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 		// pick a random structure from the library
 
 		core::Size finished_structures=0;
-		for( SilentStructStore::iterator it = library_central().begin(); it !=  library_central().end(); it ++ ){
+		for( SilentStructStore::iterator it = library_central().begin(), end = library_central().end(); it != end; ++it ){
 			if( max_loophash_per_structure_ > (*it)->get_energy("lhcount"))
 			{
 					TRDEBUG << "Adding: " << (*it) << "  " << (*it)->get_energy("lhcount") << std::endl;
@@ -368,8 +368,8 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 
 	SilentStructStore::iterator jt_last = library_central().begin();
 
-	for( SilentStructStore::iterator jt =  library_central().begin();
-									jt != library_central().end(); jt ++ )
+	for( SilentStructStore::iterator jt =  library_central().begin(),
+									end = library_central().end(); jt != end; ++jt )
 	{
 		TR.Debug << "Checking structure.." << std::endl;
 		core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");

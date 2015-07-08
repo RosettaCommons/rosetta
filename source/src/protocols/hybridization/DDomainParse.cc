@@ -186,12 +186,12 @@ DDomainParse::small_big(
 	int const& ipdd,
 	utility::vector1<int> &ipdom)
 {
-	int imin = 0, ip = 0;
+	int /*imin = 0, */ip = 0;
 	utility::vector1<int> ifg_min(mdom, 0);
 	utility::vector1<int> itmp(mdom, 0);
 
 	for (int id=1; id<=ipdd; ++id) {
-		imin = 100000;
+		int imin = 100000;
 		for (int i=1; i<=ipdd; ++i) {
 			if (ifg_min[i] == 0) {
 				if (ipdom[i] < imin) {
@@ -233,7 +233,7 @@ DDomainParse::ddomain_pot(
 	resect.resize(mseq_);
 
 	core::Real ave = 0.0, rcut = 6.5, /*ect = 0,*/ dr = 0;
-	int ipt1 = 0, ipt2 = 0;
+	//int ipt1 = 0, ipt2 = 0;
 	for (int k=ist; k<=ilast - 1; ++k) {
 		core::Real ect = 0.0;
 		for (int i=ist; i<=k; ++i) {
@@ -243,8 +243,8 @@ DDomainParse::ddomain_pot(
 					ect -= 1.0;
 			}
 		}
-		ipt1 = k - ist + 1;
-		ipt2 = (ilast - 1) - k + 1;
+		int ipt1 = k - ist + 1;
+		int ipt2 = (ilast - 1) - k + 1;
 
 		ect /= std::pow((ipt1 * ipt2), pw);
 		resect[k] = ect;
@@ -262,7 +262,7 @@ DDomainParse::split( core::pose::Pose const &templ ) {
 
 	utility::vector1< loops::Loops > retval;
 
-	std::string fname;
+	//std::string fname;
 	mseq_ = templ.total_residue();
 	while (mseq_>0 && !templ.residue(mseq_).is_protein()) mseq_--;
 	nseq_ = mseq_;

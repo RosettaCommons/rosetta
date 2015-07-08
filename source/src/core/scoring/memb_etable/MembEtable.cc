@@ -206,7 +206,6 @@ MembEtable::make_pairenergy_table()
 
 	// Parameters to compute damping at max_dis range
 	Real damping_thresh_dis2;
-	int damping_disbins, normal_disbins;
 	Real dsolv1_damp, dsolv2_damp, intercept_solv1_damp, intercept_solv2_damp;
 	Real memb_dsolv1_damp, memb_dsolv2_damp, intercept_memb_solv1_damp, intercept_memb_solv2_damp;
 
@@ -216,12 +215,13 @@ MembEtable::make_pairenergy_table()
 
 	// calc distance**2 step per bin
 	dis2_step = 1.0 / bins_per_A2;
-
+	
+	int normal_disbins;
 	// get the number of damping disbins
 	if ( add_long_range_damping ) {
 		Real const dif = max_dis_ - long_range_damping_length;
 		damping_thresh_dis2 = max_dis2 - ( dif * dif );
-		damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2 );
+		int damping_disbins = static_cast< int >( damping_thresh_dis2*bins_per_A2 );
 		normal_disbins = etable_disbins-damping_disbins;
 	} else {
 		normal_disbins = etable_disbins;
@@ -327,7 +327,7 @@ MembEtable::make_pairenergy_table()
 	if ( option[ score::input_etables ].user() ) {
 		string tag = option[ score::input_etables ];
 		TR << "INPUT ETABLES " << tag << std::endl;
-		for (map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); i++) {
+		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(), end = etables.end(); i != end; ++i ) {
 			string ename = i->first;
 			string fname = tag+"."+ename+".etable";
 			std::ifstream input( fname.c_str() );
@@ -339,7 +339,7 @@ MembEtable::make_pairenergy_table()
 	if ( option[ score::output_etables ].user() ) {
 		string header = option[ score::output_etables ];
 		TR << "OUTPUT ETABLES " << header << std::endl;
-		for (map<string,FArray3D<Real>*>::iterator i = etables.begin(); i != etables.end(); i++) {
+		for ( map<string,FArray3D<Real>*>::iterator i = etables.begin(), end = etables.end(); i != end; ++i ) {
 			string ename = i->first;
 			string fname = header+"."+ename+".etable";
 			TR << "output_etable: writing etable: " << ename << " to " << fname << std::endl;

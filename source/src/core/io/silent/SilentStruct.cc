@@ -163,12 +163,12 @@ void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pos
     typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
     DataMap const& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
 
-    for( DataMap::const_iterator datamap_it = map.begin();
-        datamap_it != map.end(); datamap_it++ ){
+    for( DataMap::const_iterator datamap_it = map.begin(), end = map.end();
+        datamap_it != end; ++datamap_it ){
       std::set< WriteableCacheableDataOP > const& dataset = datamap_it->second;
 
-      for( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin();
-           set_it != dataset.end(); set_it++ ){
+      for( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin(), set_end = dataset.end();
+           set_it != set_end; ++set_it ){
         std::stringstream ss;
 
         ss << "CACHEABLE_DATA ";
@@ -672,7 +672,7 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 		using std::map;
 		using std::string;
 		for ( map< string, float >::const_iterator iter = data->map().begin(),
-				end = data->map().end(); iter != end; iter++
+				end = data->map().end(); iter != end; ++iter
 		)	{
 			// skip score entry, as it gets confusing
 			if ( iter->first == "score" ) continue;
@@ -751,7 +751,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 			it != end; ++it
 	) {
 		// only keep this score if we want it.
-		if ( wanted_scores.size() > 0 &&
+		if ( !wanted_scores.empty() && //size() > 0 &&
 			wanted_scores.find(it->name()) == wanted_scores.end()
 		) continue;
 
@@ -784,7 +784,7 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 				end = comments.end(); it != end; ++it
 	) {
 		// only keep this score if we want it.
-		if ( wanted_scores.size() > 0 &&
+		if ( !wanted_scores.empty() && //size() > 0 &&
 			wanted_scores.find(it->first) == wanted_scores.end()
 		) continue;
 		string const proper_name( input_score_prefix + it->first );
@@ -1149,8 +1149,9 @@ SilentStruct::add_other_struct( SilentStructOP silent_struct ){
 	// figure out the right order here.
 	Size const new_idx = ObjexxFCL::int_of( silent_struct->get_all_comments().find( "OTHER_POSE" )->second );
 
-	utility::vector1< SilentStructOP >::iterator it = other_struct_list_.begin();
-	for ( ; it != other_struct_list_.end(); it++ ) {
+	utility::vector1< SilentStructOP >::iterator it, end;
+	for ( it = other_struct_list_.begin(), end = other_struct_list_.end();
+		it != end; ++it ) {
 		Size const list_idx = ObjexxFCL::int_of( (*it)->get_all_comments().find( "OTHER_POSE" )->second );
 		if ( new_idx < list_idx ) break; // insert here.
 	}

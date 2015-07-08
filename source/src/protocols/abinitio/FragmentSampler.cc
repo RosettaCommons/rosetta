@@ -729,7 +729,7 @@ bool FragmentSampler::check_loops(core::pose::Pose& pose)
 
 	//To maintain conformational sampling, implement tunable fuzzy filter.  If not all loop sizes have loophash DB hits (radial counts), want to use fuzzy filter
 	bool use_fuzzy_filter(false);
-	for(utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(); it!=loop_size_hits.end(); it++ )
+	for(utility::vector1<std::pair<core::Size,core::Size> >::iterator it = loop_size_hits.begin(), end = loop_size_hits.end(); it != end; ++it )
 	{
 		tr.Info << "loop_size:  " << it->first << "  radial_counts:  " << it->second << std::endl;
 		//as long as, for this loop radial counts >= 0 (found hits in loophash DB), don't need the fuzzy filter

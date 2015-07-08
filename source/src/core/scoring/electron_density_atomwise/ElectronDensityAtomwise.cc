@@ -136,7 +136,8 @@ static void swap4_aligned ( void *v, long ndata ) {
 	int *data = ( int * ) v;
 	long i;
 	int *N;
-
+	// AMW: again cppcheck says scope of N can be reduced,
+	// but I want other eyes on this.
 	for ( i = 0; i < ndata; i++ ) {
 		N = data + i;
 		*N = ( ( ( *N >> 24 ) & 0xff ) | ( ( *N & 0xff ) << 24 ) | ( ( *N >> 8 ) & 0xff00 ) | ( ( *N & 0xff00 ) << 8 ) );
@@ -211,10 +212,10 @@ void ElectronDensityAtomwise::initializeSymmOps ( utility::vector1< std::string 
 		// _REALLY_ simple parser
 		numeric::xyzMatrix< core::Real > rot ( 0 );
 		numeric::xyzVector< core::Real > trans ( 0, 0, 0 );
-		int k;
+		//int k;
 
 		for ( int j = 0; j < 3; ++j ) {
-			k = rows[j+1].find ( '/' );
+			int k = rows[j+1].find ( '/' );
 
 			if ( k != ( int ) std::string::npos ) {
 				// numerator
@@ -626,7 +627,7 @@ ElectronDensityAtomwise::readMRCandResize() {
 	computeCrystParams();
 
 	//fpd  change this so if the alt origin is non-zero use it
-	if ( altorigin[0] != 0 &&  altorigin[0] != 0 &&  altorigin[0] != 0 &&
+	if ( altorigin[0] != 0 &&  altorigin[1] != 0 &&  altorigin[2] != 0 &&
 	     ( altorigin[0] > -10000 && altorigin[0] < 10000 ) &&
 	     ( altorigin[1] > -10000 && altorigin[1] < 10000 ) &&
 	     ( altorigin[2] > -10000 && altorigin[2] < 10000 )

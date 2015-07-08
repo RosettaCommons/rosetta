@@ -165,7 +165,7 @@ interface_energymap(
 	std::set<char> chains_intersect;
 	std::set_intersection(chain_set1.begin(), chain_set1.end(), chain_set2.begin(), chain_set2.end(),
 	                      std::insert_iterator<std::set<char> >(chains_intersect, chains_intersect.begin()));
-	assert(chains_intersect.size() == 0);
+	assert(chains_intersect.empty() );//size() == 0);
 
 	std::set<core::Size> res_set1;
 	std::set<core::Size> res_set2;

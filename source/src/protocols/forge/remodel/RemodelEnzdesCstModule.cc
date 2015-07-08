@@ -131,7 +131,7 @@ RemodelEnzdesCstModule::blueprint_cst_definition(core::pose::Pose & pose ){
 
 	for (core::Size i = 0, ie = remodel_data_.blueprint.size(); i < ie ; i++){
 		if (remodel_data_.blueprint[i].has_constraints){
-			for (std::vector<std::string>::iterator it = remodel_data_.blueprint[i].constraint_definition.begin(), end = remodel_data_.blueprint[i].constraint_definition.end(); it != end; it++){
+			for (std::vector<std::string>::iterator it = remodel_data_.blueprint[i].constraint_definition.begin(), end = remodel_data_.blueprint[i].constraint_definition.end(); it != end; ++it ) {
 			//casting, sort of....
 			core::Size found_start = (*it).find_first_of("0123456789");
 			core::Size found_end = (*it).find_last_of("0123456789");

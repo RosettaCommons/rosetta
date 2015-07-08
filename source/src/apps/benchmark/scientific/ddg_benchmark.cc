@@ -130,7 +130,7 @@ store_energies( ObjexxFCL::FArray2D< Real > &two_d_e_arrays,
 	Size num_score_components = 0;
 	EnergyMap::const_iterator it = s.weights().begin();
 	while(it != (s.weights()).end()){
-		it++;
+		++it;
 		if(*it != 0){
 			num_score_components++;
 		}
@@ -141,7 +141,7 @@ store_energies( ObjexxFCL::FArray2D< Real > &two_d_e_arrays,
 
 	Size current_score_component=0;
 	Size j =1;
-	for( EnergyMap::const_iterator i = (s.weights()).begin(); i != s.weights().end();i++){
+	for( EnergyMap::const_iterator i = (s.weights()).begin(); i != s.weights().end();++i){
 		//get score component of pose, then store in next slot of two_d_e_arrays
 
 		current_score_component++;
@@ -477,7 +477,7 @@ main( int argc, char * argv [] )
 		Size score_component =0;
 		std::string header="";
 		for( EnergyMap::const_iterator i = (score_structure_scorefxn->weights()).begin();
-				 i != score_structure_scorefxn->weights().end(); i++){
+				 i != score_structure_scorefxn->weights().end(); ++i){
 			score_component++;
 			if(*i != 0){
 				header = header + name_from_score_type(ScoreType(score_component)) +  " ";

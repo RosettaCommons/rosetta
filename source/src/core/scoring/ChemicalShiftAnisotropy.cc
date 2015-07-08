@@ -86,26 +86,26 @@ extern ChemicalShiftAnisotropyOP retrieve_CSA_from_pose(core::pose::Pose& pose) 
 }
 
 void ChemicalShiftAnisotropy::show(std::ostream& out) const {
-  Size ct=0;
-  for (CSA_lines::const_iterator it=All_CSA_lines_.begin();it!=All_CSA_lines_.end();it++){
-        out << "CSA "<<++ct << "     ";
-    out << (*it) << std::endl;
-  }
+	Size ct=0;
+	for ( CSA_lines::const_iterator it = All_CSA_lines_.begin(), end = All_CSA_lines_.end(); it != end; ++it ) {
+		out << "CSA "<<++ct << "     ";
+		out << (*it) << std::endl;
+	}
 }
 
 void CSA::show(std::ostream& out) const {
-  using namespace ObjexxFCL::format;
-  out << RJ(4, res1_) << RJ(5, CSAval_);
+	using namespace ObjexxFCL::format;
+	out << RJ(4, res1_) << RJ(5, CSAval_);
 }
 
 std::ostream& operator<<(std::ostream& out, CSA const& csa) {
-  csa.show(out);
-  return out;
+	csa.show(out);
+	return out;
 }
 
 std::ostream& operator<<(std::ostream& out, ChemicalShiftAnisotropy const& csa) {
-  csa.show(out);
-  return out;
+	csa.show(out);
+	return out;
 }
 
 ChemicalShiftAnisotropy::ChemicalShiftAnisotropy(ChemicalShiftAnisotropy const& other) :

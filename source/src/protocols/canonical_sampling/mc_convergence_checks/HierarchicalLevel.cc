@@ -86,9 +86,8 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   void
   HierarchicalLevel::get_addresses_at_level( utility::vector1< Address >& addresses_at_level ) {
     core::Size num_addresses_at_level = 0;
-    for( std::list< PoolData >::iterator itr = pool_cache_.begin();
-	 itr != pool_cache_.end();
-	 itr++ ) {
+    for( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end();
+	 itr != end; ++itr ) {
       Address addr = (*itr).address_;
       addresses_at_level.push_back( addr );
       num_addresses_at_level++;
@@ -245,10 +244,11 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
       if( equal_addresses( address, (*itr).address_ ) ) {
 	break;
       }
-      itr++;
+      ++itr;
     }
-    return itr;
+	// This PROF_STOP used to be following the return!
     PROF_STOP( basic::HIERARCHICAL_FIND );
+    return itr;
   }
 
   bool
@@ -559,8 +559,9 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
 	break;
       }
     }
-    return ii;
+	// AMW: this return used to be before PROF_STOP
     PROF_STOP( basic::HIERARCHICAL_FIND_ADDRESS );
+    return ii;
   }
 
   void
@@ -700,7 +701,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     if( !reset_all_levels && level_ < max_levels_ && best_indices[ level_ + 1 ] != 0 ) {
       return next_level_->evaluate( coords, best_decoy, best_rmsd, best_indices, reset_all_levels, load_if_missing_from_cache );
     }
-    std::string current_best_decoy="";
+    //std::string current_best_decoy="";
     std::list<PoolData>::iterator addr_itr  = find( best_indices );
     PoolData matching_pool;
     Pool_RMSD_OP matching_pool_ptr;
@@ -747,12 +748,13 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     core::Size level_address;
     runtime_assert( pool_cache_.begin() == find( best_indices ));
     level_address = ((*pool_cache_.begin()).pool_)->evaluate( coords, best_decoy, best_level_rmsd );
+	// AMW: cppcheck will flag this because they think it's cmath round
     round( best_level_rmsd ); //ek 8/3/2010
 
-    bool outside_known_structures = false;
     core::Size last_level_address = 0;
     //tolerance = 0.05;
     if( has_next_level() ) {
+      bool outside_known_structures = false;
       if( TR.visible() ) TR.Debug << "going down to next level" << std::endl;
       if( best_level_rmsd > radius_  ) {
       // if( best_level_rmsd > radius_ + tolerance ) { // 10/12/10 ek added in tolerance for very close cases
@@ -815,6 +817,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     TR.Debug << "testing ROUND:\n";
     for( core::Real t = 0; t <= 10.0; t += 0.0001) {
       core::Real rounded = t;
+	  // AMW: cppcheck will flag this because it will think this is cmath's round
       round(rounded);
       TR.Debug << t << " " << rounded << std::endl;
     }
@@ -955,8 +958,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
 
   void
   HierarchicalLevel::print_addresses_at_level(){
-    for( std::list< PoolData >::iterator it = pool_cache_.begin();
-	 it != pool_cache_.end(); it++ ) {
+    for( std::list< PoolData >::iterator it = pool_cache_.begin(), end = pool_cache_.end(); it != end; ++it ) {
       print_address( (*it).address_ );
     }
   }
@@ -964,7 +966,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   void
   HierarchicalLevel::debug_print_addresses() {
     if( TR.visible() ) TR.Debug << "level: " << level_ << " ";
-    for( std::list<PoolData>::iterator itr = pool_cache_.begin(); itr != pool_cache_.end(); itr++ ) {
+    for( std::list<PoolData>::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
       Address addr = (*itr).address_;
       if( TR.visible() ) {
 	for( core::Size ii = 1; ii <= addr.size(); ii++ ) {
@@ -983,8 +985,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   HierarchicalLevel::debug_print_hierarchy(){
     // runtime_assert( level_ == 1 );
     if( TR.visible() ) { TR.Debug << "level: " << level_ << " size of level: " << size() << std::endl; }
-    for( std::list< PoolData >::iterator itr = pool_cache_.begin();
-	 itr != pool_cache_.end(); itr++ ) {
+    for( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
       Pool_RMSD_OP poolop = (*itr).pool_;
       if( TR.visible() ) {
 	TR.Debug << "pool at address: "; print_address( (*itr).address_ );
@@ -1003,8 +1004,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
   void
   HierarchicalLevel::debug_print_size_per_level() {
     if( TR.visible() ) TR.Debug << "size per level: " << level_ << " " << this->size() << " ";
-    for( std::list< PoolData >::iterator itr = pool_cache_.begin();
-	 itr != pool_cache_.end(); itr++ ) {
+    for( std::list< PoolData >::iterator itr = pool_cache_.begin(), end = pool_cache_.end(); itr != end; ++itr ) {
       if( TR.visible() ) {
 	TR.Debug << "address: ";
 	for( core::Size ii = 1; ii <= (*itr).address_.size(); ii++ ) {
@@ -1117,7 +1117,7 @@ HierarchicalLevel::address( core::Size index ) {
   core::Size count = 0;
   std::list< PoolData >::iterator itr = pool_cache_.begin();
   while( count < index ) {
-    itr++;
+    ++itr;
   }
   return (*itr).address_;
 }
@@ -1149,7 +1149,7 @@ std::string HierarchicalLevel::lib_full_path( utility::vector1< core::Size > & a
   std::string rootpath_suffix("_dir");
   std::string s("/");
   int nofsubdir = option[cluster::K_n_sub];
-  std::string rootpath = utility::file::FileName(option[mc::hierarchical_pool]()).path();
+  //std::string rootpath = utility::file::FileName(option[mc::hierarchical_pool]()).path();
   std::string defaultpath = utility::file::FileName(option[mc::hierarchical_pool]()).base() + rootpath_suffix + s;
 
   //Size n = address.size();

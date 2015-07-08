@@ -644,7 +644,7 @@ void AbscriptMover::StageTracker::do_step( core::pose::Pose& pose,
                                            core::Real const& progress ){
   iterations_ += 1;
 
-  std::string checkpoint_id = "stage_"+stagename_+"_it_"+utility::to_string( iterations_ );
+  //std::string checkpoint_id = "stage_"+stagename_+"_it_"+utility::to_string( iterations_ );
 
   //  Checkpointing goes here, but doesn't work with ProtectedConformation yet, and so isn't implemented.
   //  if ( !checkpointer_.recover_checkpoint( pose, jd2::current_output_name(), checkpoint_id,

@@ -96,7 +96,7 @@ public:
 private:
 	// helper function computes fast approximation to besseli_0
 	inline Real BesselI0( Real X ) {
-		Real Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,AX,BX;
+		Real Y,P1,P2,P3,P4,P5,P6,P7,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9;
 		P1=1.0; P2=3.5156229; P3=3.0899424; P4=1.2067492;
 		P5=0.2659732; P6=0.360768e-1; P7=0.45813e-2;
 		Q1=0.39894228; Q2=0.1328592e-1; Q3=0.225319e-2;
@@ -106,9 +106,9 @@ private:
 			Y=(X/3.75)*(X/3.75);
 			return (P1+Y*(P2+Y*(P3+Y*(P4+Y*(P5+Y*(P6+Y*P7))))));
 		} else {
-			AX=fabs(X);
+			Real AX=fabs(X);
 			Y=3.75/AX;
-			BX=exp(AX)/sqrt(AX);
+			Real BX=exp(AX)/sqrt(AX);
 			AX=Q1+Y*(Q2+Y*(Q3+Y*(Q4+Y*(Q5+Y*(Q6+Y*(Q7+Y*(Q8+Y*Q9)))))));
 			return (AX*BX);
 		}

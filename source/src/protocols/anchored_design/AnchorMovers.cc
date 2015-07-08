@@ -1251,7 +1251,7 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 	core::pose::PoseOP posecopy( NULL );
 	if(debug_) posecopy = core::pose::PoseOP( new core::pose::Pose(pose) );
 	int counter(1);
-	std::stringstream outputfilename;
+	//std::stringstream outputfilename;
 
 	//score the protein
 	(*(interface_->get_fullatom_scorefunction()))(pose);

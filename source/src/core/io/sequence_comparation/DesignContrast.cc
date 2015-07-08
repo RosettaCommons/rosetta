@@ -91,12 +91,10 @@ static thread_local basic::Tracer TR( "core.io.sequence_comparation.DesignContra
   /// currently using tenA neighbor graph to # neighbors within 10 Angstroms
   void DesignContrast::setNeighbors(pose::Pose & pose) {
 		pose.update_residue_neighbors();
-    nneighbs_.clear();
-		int nneighb;
+   		nneighbs_.clear();
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
-			nneighb = pose.energies().tenA_neighbor_graph().get_node(i)->num_neighbors_counting_self();
-      nneighbs_.push_back(nneighb);
-    }
+			nneighbs_.push_back(pose.energies().tenA_neighbor_graph().get_node(i)->num_neighbors_counting_self());
+    	}
 	}
 
 	vector1<int> & DesignContrast::getNeighbors(){

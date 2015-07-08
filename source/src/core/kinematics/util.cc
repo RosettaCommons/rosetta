@@ -383,7 +383,7 @@ linearize_fold_tree( core::kinematics::FoldTree const & tree ) {
 
 ////////////////////////// sheffler visualize FT ////////////////////////////////////
 void
-replace_substr( std::string& str, const std::string from, const std::string to ) {
+replace_substr( std::string& str, const std::string & from, const std::string & to ) {
     size_t start_pos = 0;
     while ( ( start_pos = str.find( from, start_pos ) ) != std::string::npos ) {
         str.replace( start_pos, from.length(), to );
@@ -392,7 +392,7 @@ replace_substr( std::string& str, const std::string from, const std::string to )
 }
 
 std::string
-operator*( std::string const s, size_t n ) {
+operator*( std::string const & s, size_t n ) {
     std::string r; // empty string
     r.reserve( n * s.size() );
     for ( size_t i = 0; i < n; i++ ) r += s;

@@ -109,7 +109,7 @@ std::string join(std::vector<std::string> const & s, std::string const & connect
 }
 
 std::string join(std::string const & string_w_spaces, std::string const & connector){
-	std::string trimmed= trim(string_w_spaces);
+	//std::string trimmed= trim(string_w_spaces);
 	utility::vector1<std::string> pieces= split(string_w_spaces);
 	return join(pieces, connector);
 }
@@ -554,7 +554,6 @@ get_resnum_and_chain_from_one_tag( std::string const & tag,
 			std::vector< char > & chains ){
   bool string_is_ok( false );
   std::vector< int > resnum_from_tag;
-  std::vector< char > chains_from_tag;
   char chain( ' ' );
 	std::string const numerical("-0123456789");
 
@@ -586,7 +585,7 @@ get_num_digits( platform::Size value){
 }
 
 std::string
-replace_in( std::string const name_in, std::string const find_string, std::string const replace_string ){
+replace_in( std::string const & name_in, std::string const & find_string, std::string const & replace_string ){
 	std::string name = name_in;
 	// WARNING WARNING WARNING: Do not change pos back to platform::Size. In general platform::Size type
 	//                          is not the same as size_t and algorithm below is sensitive to this

@@ -24,7 +24,7 @@ PeptideBondedNeighborIterator::~PeptideBondedNeighborIterator(){}
 PeptideBondedNeighborIterator::PeptideBondedNeighborIterator(
 	Size const base_in,
 	Size const pos_in,
-	utility::vector1< ScoreType > const st,
+	utility::vector1< ScoreType > const & st,
 	utility::vector1< utility::vector1< Real > > * table_in,
 	utility::vector1< bool > * computed_in
 ):
@@ -116,7 +116,7 @@ PeptideBondedNeighborConstIterator::~PeptideBondedNeighborConstIterator(){}
 PeptideBondedNeighborConstIterator::PeptideBondedNeighborConstIterator(
 	Size const base_in,
 	Size const pos_in,
-	utility::vector1< ScoreType > const st,
+	utility::vector1< ScoreType > const & st,
 	utility::vector1< utility::vector1< Real > > const * table_in,
 	utility::vector1< bool > const * computed_in
 ):
@@ -191,7 +191,7 @@ LREnergyContainerOP PeptideBondedEnergyContainer::clone() const {
 
 PeptideBondedEnergyContainer::PeptideBondedEnergyContainer(
 	Size const size_in,
-	utility::vector1< ScoreType > const score_type_in,
+	utility::vector1< ScoreType > const & score_type_in,
 	Size offset_in
 ) :
 	size_( size_in ),

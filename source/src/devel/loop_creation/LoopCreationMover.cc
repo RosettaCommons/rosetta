@@ -344,7 +344,6 @@ LoopCreationMover::apply(
 		}
 		if(!loop_closed)
 		{
-			stringstream err;
 			TR << "Unable to create a closed loop between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< ", consider longer loop lengths or a different LoopInserter and/or LoopCloser." << endl;
@@ -354,7 +353,6 @@ LoopCreationMover::apply(
 		}
 		if(!loop_passed)
 		{
-			stringstream err;
 			TR << "No closed loops between residues "
 				<< loop_inserter_->loop_anchor() << " and " << loop_inserter_->loop_anchor()+1
 				<< " passed filters. Try relaxing filters." << endl;

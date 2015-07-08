@@ -96,7 +96,7 @@ ResidueCentralityCalculator::print( std::string const & key ) const
 
 void Dijkstras( std::list< NodeOP > & nodes )
 {
-	while ( nodes.size() > 0 ) {
+	while ( !nodes.empty() ) { //size() > 0 ) {
 		NodeOP smallest = ExtractSmallest( nodes );
 		TR.Debug << "smallest has distance=" << smallest->distanceFromStart << " and neighbors=" << smallest->neighbors.size() << std::endl;
 		if ( smallest->distanceFromStart > 10000 ) {
@@ -124,7 +124,7 @@ void Dijkstras( std::list< NodeOP > & nodes )
 NodeOP
 ExtractSmallest( std::list< NodeOP > & nodes )
 {
-	if ( nodes.size() == 0 ) return NULL;
+	if ( nodes.empty() /*size() == 0 */) return NULL;
 	std::list< NodeOP >::iterator smallest( nodes.begin() );
 	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
 		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {

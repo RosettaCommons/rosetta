@@ -73,7 +73,7 @@ parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const
 }
 
 core::pack::task::TaskFactoryOP
-parse_task_operations( std::string const task_list, basic::datacache::DataMap const & data )
+parse_task_operations( std::string const & task_list, basic::datacache::DataMap const & data )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -174,7 +174,7 @@ parse_score_function(
 	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
-	std::string const dflt_key/*="score12"*/ )
+	std::string const & dflt_key/*="score12"*/ )
 {
 	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
@@ -219,7 +219,7 @@ core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
-	std::string const dflt_key/*="score12"*/ )
+	std::string const & dflt_key/*="score12"*/ )
 {
 	return parse_score_function(tag, "scorefxn", data, dflt_key);
 }
@@ -241,7 +241,7 @@ get_score_function_name(
 
 
 core::pose::PoseOP
-saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const tag_name ){
+saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map, std::string const & tag_name ){
 
 	if( in_tag->hasOption(tag_name) ){
 		core::pose::PoseOP refpose(NULL);
@@ -435,7 +435,7 @@ add_movemaps_to_datamap(
 }
 
 bool
-has_branch(utility::tag::TagCOP in_tag, std::string const branch_name){
+has_branch(utility::tag::TagCOP in_tag, std::string const & branch_name){
 	using utility::tag::TagCOP;
 
 	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
@@ -449,7 +449,7 @@ has_branch(utility::tag::TagCOP in_tag, std::string const branch_name){
 }
 
 protocols::filters::FilterOP
-parse_filter( std::string const filter_name, protocols::filters::Filters_map const & filters ){
+parse_filter( std::string const & filter_name, protocols::filters::Filters_map const & filters ){
   protocols::filters::Filters_map::const_iterator filter_it( filters.find( filter_name ) );
   if( filter_it == filters.end() )
     throw utility::excn::EXCN_RosettaScriptsOption( "Filter "+filter_name+" not found" );
@@ -457,7 +457,7 @@ parse_filter( std::string const filter_name, protocols::filters::Filters_map con
 }
 
 protocols::moves::MoverOP
-parse_mover( std::string const mover_name, protocols::moves::Movers_map const & movers ){
+parse_mover( std::string const & mover_name, protocols::moves::Movers_map const & movers ){
   protocols::moves::Movers_map::const_iterator mover_it( movers.find( mover_name ) );
   if( mover_it == movers.end() )
     throw utility::excn::EXCN_RosettaScriptsOption("Mover "+mover_name+" not found" );
@@ -568,7 +568,10 @@ find_nearest_disulfide( core::pose::Pose const & pose, core::Size const res)
 }
 
 void
-parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix){
+parse_bogus_res_tag( utility::tag::TagCOP tag, std::string const & prefix ){
+	// AMW: cppcheck flags this becuase it does nothing! where does bogus go?!
+	// The answer, excruciatingly, is that this is a way to handle tags silently that just shouldn't be there, I guess?
+	// This function is passed a prefix before "pdb_num"
 	std::string bogus;
 	if (tag->hasOption(prefix+"pdb_num")){
 		bogus = tag->getOption<std::string>(prefix+"pdb_num");
@@ -576,7 +579,8 @@ parse_bogus_res_tag(utility::tag::TagCOP tag, std::string const prefix){
 	else if(tag->hasOption(prefix+"res_num")){
 		bogus = tag->getOption<std::string>(prefix+"res_num");
 	}
-
+	
 }
+
 } //RosettaScripts
 } //protocols

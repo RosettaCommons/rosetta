@@ -56,13 +56,14 @@ void
 Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
 	using namespace std;
 
-	bool compute_new_baseline( false );
+	//bool compute_new_baseline( false );
 	if( attempt_read_from_checkpoint )
 		TR<<"Reading baseline from checkpoint file, if one exists"<<std::endl;
 	else
 		TR<<"Not reading from checkpoint file"<<std::endl;
 	if( attempt_read_from_checkpoint && baseline_checkpointing_filename_ != "" ){
 	  ifstream f( baseline_checkpointing_filename_.c_str(), ios::in );
+	  bool compute_new_baseline( false );
 		if( !f.good() )
 			compute_new_baseline = true;
 		else{

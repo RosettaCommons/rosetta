@@ -376,7 +376,7 @@ StructAvrgMover::weighted_average( utility::vector1< pose::Pose > &poses,
     for( Size i_id = 1; i_id <= ids.size(); ++i_id ){
       id::AtomID const &id = ids[i_id];
       // H
-      std::string atmname = pose_tmp.residue( id.rsd() ).atom_name( id.atomno() );
+      //std::string atmname = pose_tmp.residue( id.rsd() ).atom_name( id.atomno() );
       Vector const &xyz = pose_tmp.xyz( id );
 
       avrg_crd[id] += weights[ipose] * xyz;

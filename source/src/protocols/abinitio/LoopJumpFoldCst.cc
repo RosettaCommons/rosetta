@@ -202,7 +202,7 @@ KinematicControlOP LoopJumpFoldCst::new_kinematics( pose::Pose &pose ) {
   pose.fold_tree( current_kinematics->sampling_fold_tree() );
   set_extended_torsions_and_idealize_loops( pose, loops );
   if ( rigid_core.size() ) {
-    success = add_coord_cst( rigid_core, pose );
+    /*success = */add_coord_cst( rigid_core, pose );
   }
   return current_kinematics;
 }

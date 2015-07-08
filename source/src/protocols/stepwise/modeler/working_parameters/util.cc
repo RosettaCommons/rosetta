@@ -94,13 +94,13 @@ setup_working_parameters_for_swa( utility::vector1< Size > const & moving_res_li
 	if ( bridge_res.size() == 0 ) bridge_res = protein::get_bridge_res( pose, moving_res_list );
 
 	utility::vector1< Size > is_working_res( full_sequence.size(), Size(0) );
-	std::string working_sequence;
+	//std::string working_sequence;
 	for ( Size n = 1; n <= res_list.size(); n++ ) {
 		is_working_res[ res_list[ n ] ] = 1;
 		// following magic numbers match what is in StepWiseProteinPoseSetup:
 		if ( moving_res_list.has_value( n ) )        is_working_res[ res_list[ n ] ] = MOVING_RES;
 		if ( bridge_res.has_value( res_list[ n ] ) ) is_working_res[ res_list[ n ] ] = BRIDGE_RES;
-		working_sequence += full_sequence[ n-1 ];
+		//working_sequence += full_sequence[ n-1 ];
 	}
 
 	utility::vector1< Size > calc_rms_res_ = full_model_info.full_model_parameters()->get_res_list( CALC_RMS );

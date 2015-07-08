@@ -166,7 +166,7 @@ void DihedralConstraintsScore::read_constraints(
 			Size res1, res2, res3, res4;
 			std::string name1, name2, name3, name4;
 			std::string func_type;
-			std::string type;
+			//std::string type;
 
 			data >> name1 >> res1 >> name2 >> res2 >> name3 >> res3 >> name4
 					>> res4 >> func_type;

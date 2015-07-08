@@ -579,7 +579,6 @@ void SHT::sph_standardize(
 	// don't care if init() has been called
 	int R = sigCoefR.u3(), B=sigCoefR.u2();
 
-	double thisRWt, sumCoef2;
 	double b_scaleFactor = sqrt(1.0/sqrt(0.015*B)); // this normalizes map s.t. correlation with itself ~ 1
 
 	double wt=0;
@@ -587,9 +586,9 @@ void SHT::sph_standardize(
 
 	for (int r_idx=1; r_idx<=R; ++r_idx) {
 		// standardize
-		thisRWt = numeric::constants::d::pi * ( 4.0 * square((double)r_idx) + 1.0/3.0 );
+		double thisRWt = numeric::constants::d::pi * ( 4.0 * square((double)r_idx) + 1.0/3.0 );
 
-		sumCoef2 = 0.0;
+		double sumCoef2 = 0.0;
 		for (int i=1; i<=B; ++i)
 		for (int j=1; j<=B; ++j)
 			if (i != 1 || j!= 1)
@@ -631,7 +630,7 @@ void SHT::so3_correlate(
 	int R = sigCoefR.u3(), B=sigCoefR.u2();
 	init (B,R);
 
-	double thisRWt, sumRWt = 0.0;
+	double sumRWt = 0.0;
 	for (int r_idx=1; r_idx<=nRsteps; ++r_idx)
 		sumRWt += numeric::constants::d::pi * ( 4.0 * square((double)r_idx) + 1.0/3.0 );
 
@@ -661,7 +660,7 @@ void SHT::so3_correlate(
 		// inverse so(3)
 		inverseSo3( so3Coef, so3Sig );
 
-		thisRWt = numeric::constants::d::pi * ( 4.0 * square((r_idx+1.0)) + 1.0/3.0 ) / sumRWt;
+		double thisRWt = numeric::constants::d::pi * ( 4.0 * square((r_idx+1.0)) + 1.0/3.0 ) / sumRWt;
 
 		for (int i=0; i<8*bw*bw*bw; ++i) {
 			so3_correlation[i] += thisRWt * so3Sig[i].real();
@@ -731,7 +730,6 @@ SHT::so3CombineCoef(
 	int currsign, index ;
 	double tmpSigCoefR, tmpSigCoefI ;
 	double tmpPatCoefR, tmpPatCoefI ;
-	double wigNorm ;
 
 	// set all so3coefs to 0
 	//int ncoeffs = (4*bw*bw*bw-bw)/3;
@@ -739,7 +737,7 @@ SHT::so3CombineCoef(
 	for (int i=0; i < 8*bw*bw*bw; ++i) so3Coef[i] = 0.0;
 
 	for( int l = 0 ; l < bw ; l ++ ) {
-		wigNorm = 2.*numeric::constants::d::pi*sqrt(2./(2.*l+1.)) ;
+		double wigNorm = 2.*numeric::constants::d::pi*sqrt(2./(2.*l+1.)) ;
 		for( int m1 = -l ; m1 <= l ; m1 ++ ) {
 			// grab signal coefficient, at this degree and order
 			index = so3_.lm_index(-m1, l) ;
@@ -1064,14 +1062,15 @@ SHT::setup_Pmls( ) {
 	for (int m=0; m<bw; m++) {
 		precompute_pml_trans_[m].resize( precompute_pml_[m].size() );
 
-		int trans_tableptr=0, tableptr=0;
-
 		if ( m == bw - 1 ) {
 			int ncoeffs = precompute_pml_[m].size();
 			for (int i=0; i<ncoeffs; ++i) {
 				precompute_pml_trans_[m][i]=precompute_pml_[m][i];
 			}
 		} else {
+			
+			int trans_tableptr=0, tableptr=0;
+			
 			for (int row = 0; row < bw; row++) {
 				//  if m odd, no need to do last row - all zeroes
 				if (row == (bw-1)) {

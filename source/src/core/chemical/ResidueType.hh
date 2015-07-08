@@ -1058,7 +1058,7 @@ public:
 	/// (used in patching when it kills the valence that is thus used)
 	/// @author Andrew Watkins (amw579@nyu.edu)
 	void
-	delete_metalbinding_atom( std::string const atom_name );
+	delete_metalbinding_atom( std::string const & atom_name );
 
 	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel = SingleBond);

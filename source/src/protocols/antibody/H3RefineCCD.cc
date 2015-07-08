@@ -360,11 +360,11 @@ void H3RefineCCD::apply( pose::Pose & pose ) {
 				pack_rottrial->task_factory(tf_);
 				pack_rottrial->apply( pose );
 
-				bool relaxed_H3_found_current(false);
+				//bool relaxed_H3_found_current(false);
 				// H3 filter check
 				if(H3_filter_ && (h3_attempts <= inner_cycles_)) {
 					h3_attempts++;
-					relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
+					bool relaxed_H3_found_current = CDR_H3_cter_filter( pose,ab_info_);
 
 					if( !relaxed_H3_found_ever && !relaxed_H3_found_current) {
 						mc_->boltzmann( pose );

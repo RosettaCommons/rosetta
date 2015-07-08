@@ -554,7 +554,7 @@ PoseNumberedLoopFileReader::read_pose_numbered_loops_file(
 				current_loop.stop = (core::Size) atoi(tokens[3].c_str());
 				current_loop.cut = 0;        // default - let LoopRebuild choose cutpoint
 				current_loop.skip_rate = 0.0;  // default - never skip
-				std::string extend_loop_str;
+				//std::string extend_loop_str;
 				bool extend_loop = false;
 
 				if (tokens.size() > 3)

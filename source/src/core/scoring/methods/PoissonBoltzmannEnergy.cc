@@ -191,7 +191,6 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	if( charged_residues_.size() == 0 ){
 		utility::vector1<int> charged_chains
 			= basic::options::option[basic::options::OptionKeys::pb_potential::charged_chains];
-		std::map<std::string, bool> charged_residues;
 		TR << "Charged residues: [ ";
 		for ( Size i=1; i<= pose.total_residue(); ++i ) {
 			core::conformation::Residue const & rsd( pose.residue(i) );

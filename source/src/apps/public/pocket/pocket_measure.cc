@@ -83,7 +83,7 @@ main( int argc, char * argv [] )
     return -1;
   }
 
-	std::string const output_tag = option[ OptionKeys::out::output_tag ]();
+	//std::string const output_tag = option[ OptionKeys::out::output_tag ]();
 	pose::Pose input_pose;
 
 	//read in pdb file from command line

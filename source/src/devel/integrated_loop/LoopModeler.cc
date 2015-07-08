@@ -301,7 +301,7 @@ void LoopRefiner::apply_mod( core::pose::Pose & pose )
 		TR << "LoopRefiner apply " << it->loop_begin() << " " << it->loop_end() << " " << it->cutpoint() << " " << it->skip_rate() << "\n";
 		set_one_loop_fold_tree( pose, *it );
 		//v		set_movemap( *it );
-		min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, "linmin", tolerance, nblist );
+		min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 		protocols::moves::SequenceMoverOP BBPerturb( new protocols::moves::SequenceMover() );
 		//		BBPerturb->add_mover( SmallMovesRotTrial );
 		//		BBPerturb->add_mover( ShearMovesRotTrial );
@@ -341,7 +341,7 @@ void LoopRefiner::apply( core::pose::Pose & pose )
 
 	movemap_ = new core::kinematics::MoveMap();
 	set_movemap( LoopList_, movemap_ );//all loops minimized
-	min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, "linmin", tolerance, nblist );
+	min_mover_ = new protocols::simple_moves::MinMover( movemap_, scorefxn_, min_type, tolerance, nblist );
 
 	if( !mc_created )
 		set_default_mc( pose );

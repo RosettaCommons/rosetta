@@ -63,7 +63,7 @@ DNABase::DNABase( conformation::Residue const & rsd )
 
 	Real pseudorotation( 0.0 );
 	Real amplitude( 0.0 );
-	std::pair< std::string, int > pucker;
+	//std::pair< std::string, int > pucker;
 
 	//scoring::dna::get_base_pucker( rsd, pucker, pseudorotation, amplitude );
 

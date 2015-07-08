@@ -246,15 +246,15 @@ WorkUnitQueue::mem_stats(
 	structs_memory=0;
 	WU_memory=0;
 
-	for( const_iterator it = begin(); it != end(); it++ ){
+	for( const_iterator it = begin(), itend = end(); it != itend; ++it ){
 		WU_memory += (*it)->mem_footprint();
 		WorkUnitBaseOP wu_op = *it;
 		WorkUnit_SilentStructStoreOP structure_wu = utility::pointer::dynamic_pointer_cast< protocols::wum::WorkUnit_SilentStructStore > ( wu_op );
 		if ( structure_wu.get() == NULL ) continue;
 		SilentStructStore &decoys = structure_wu->decoys();
 		n_structs += structure_wu->decoys().size();
-		for( SilentStructStore::iterator jt =  decoys.begin();
-				jt != decoys.end(); jt ++ )
+		for( SilentStructStore::iterator jt =  decoys.begin(),
+				end = decoys.end(); jt != end; ++jt )
 		{
 			structs_memory += (*jt)->mem_footprint();
 		}

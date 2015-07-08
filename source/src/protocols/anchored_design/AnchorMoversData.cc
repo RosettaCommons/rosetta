@@ -678,7 +678,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	list =  core::fragment::picking_old::vall::pick_fragments_by_ss( ss_string, 4000, false ); //magic number: 4000 fragments
 
 	core::Size const numloop = num_loops();
-	std::set< core::Size > loop_posns;
+	//std::set< core::Size > loop_posns;
 	for (core::Size i = 1; i <= numloop; ++i){
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
 		for (core::Size j = loopstart; j <= loopend - frags_length+1; ++j){
@@ -710,7 +710,7 @@ core::fragment::FragSetCOP protocols::anchored_design::AnchorMoversData::autogen
 	core::fragment::FragDataOPs list;
 
 	core::Size const numloop = num_loops();
-	std::set< core::Size > loop_posns;
+	//std::set< core::Size > loop_posns;
 	for (core::Size i = 1; i <= numloop; ++i){
 		core::Size loopstart(loop(i).start()), loopend(loop(i).stop());
 		for (core::Size j = loopstart; j <= loopend - frags_length+1; ++j){

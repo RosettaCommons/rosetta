@@ -167,7 +167,7 @@ ResiduePairJumpSetup::generate_jump_frags( JumpSample const& jumps, kinematics::
 	//runtime_assert( jumps.total_residue() == total_residue() );
 	ObjexxFCL::FArray2D_int const & in_jumps ( jumps.jumps() );
 	int ct = 1;
-  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; it++, ct++ ) {
+  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
 		Size jump_number = 0;
 		for ( Size i = 1; i <= jumps.size(); ++i ) {
 			if  ( ( in_jumps( 1, i ) == int( it->jump_.start_) ) && ( in_jumps( 2, i ) == int( it->jump_.end_ ) ) ){
@@ -206,7 +206,7 @@ ResiduePairJumpSetup::create_jump_sample() const
 
   int ct = 1;
 	Size total_residue = total_residue_;
-  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; it++, ct++ ) {
+  for ( ResiduePairJumpSetup::const_iterator it=begin(), eit=end(); it!=eit; ++it, ct++ ) {
     jumps( 1, ct ) = it->jump_.start_;
     jumps( 2, ct ) = it->jump_.end_;
     Size const crs ( it->cut_reg_.start_ );

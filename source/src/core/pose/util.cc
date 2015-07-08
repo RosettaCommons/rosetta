@@ -567,8 +567,6 @@ read_comment_pdb(
 			getline( data, line );
 		while (line != "##End comments##"){
 			//TR<<"Testing read comments! :"<<line<<std::endl;
-			std::string const key;
-			std::string const value;
 			utility::vector1<std::string> comment_line(utility::string_split(line,' '));
 			core::pose::add_comment(pose,comment_line[1],comment_line[2]);
 			getline( data, line );
@@ -1166,8 +1164,6 @@ bool renumber_pdbinfo_based_on_conf_chains(
 	for ( utility::vector1< Size >::const_iterator i = chain_endings.begin(), ie = chain_endings.end(); i != ie; ++i ) {
 		Size const chain_end = *i;
 		int pdb_res = 0; // new chain, so reset pdb_res counter
-		char chain;
-		char icode;
 		if ( start_from_existing_numbering && pdbinfo.chain( res ) != PDBInfo::empty_record() ) {
 			pdb_res = pdbinfo.number( res ) - 1;
 		}
@@ -1178,7 +1174,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 
 		for ( ; res <= chain_end; ++res ) {
 			// handle the pdb chain only if necessary
-			chain = pdbinfo.chain( res );
+			char chain = pdbinfo.chain( res );
 			if ( pdbinfo.chain( res ) == PDBInfo::empty_record() && fix_chains && c2p != conf2pdb.end() ) {
 				chain = c2p->second;
 			}
@@ -1186,7 +1182,7 @@ bool renumber_pdbinfo_based_on_conf_chains(
 			// If keeping insertion codes, increment pdb_res counter only if
 			// no insertion code or we're at position 1, in case there's an
 			// insertion code at 1.
-			icode = pdbinfo.icode( res );
+			char icode = pdbinfo.icode( res );
 			if ( keep_insertion_codes && ( pdbinfo.icode( res ) == ' ' || res == 1 ) ) {
 				++pdb_res;
 			} else if ( !keep_insertion_codes ) { // always increment and clear insertion code
@@ -1930,7 +1926,7 @@ has_chain(core::Size chain_id, core::pose::Pose const & pose){
 }
 
 std::set<core::Size>
-get_jump_ids_from_chain_ids(std::set<core::Size> const chain_ids, core::pose::Pose const & pose){
+get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::Pose const & pose){
 	std::set<core::Size> jump_ids;
 	std::set<core::Size>::const_iterator chain_id= chain_ids.begin();
 	for(; chain_id != chain_ids.end(); ++chain_id){
@@ -2484,7 +2480,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 											core::pose::Pose const & pose ){
 	id::AtomID_Map< id::AtomID > atom_ID_map;
 	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
-	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(); it != atom_map.end(); it++ ){
+	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(), end = atom_map.end(); it != end; ++it ){
 		atom_ID_map.set( it->first, it->second );
 	}
 	return atom_ID_map;

@@ -61,9 +61,9 @@ BiasedFragmentMover::BiasedFragmentMover(const PolicyOP& policy, const Probabili
 
 /// @detail Creates a position-indexable Frame lookup
 void BiasedFragmentMover::initialize_library() {
-  unsigned position;
+  //unsigned position;
   for (core::fragment::ConstFrameIterator i = fragments_->begin(); i != fragments_->end(); ++i) {
-    position = (*i)->start();
+    unsigned position = (*i)->start();
     frames_[position] = **i;
   }
 }

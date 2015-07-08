@@ -36,7 +36,7 @@ void t_option_file::get_options(t_option_module &opt_module) {
 };
 
 t_option_file::~t_option_file() {
-	int i;
+	//int i;
 	write_options();
 	/*for (i=0; (i<ninp); i++) {
 		sfree(inp[i].name);
@@ -53,9 +53,9 @@ void t_option_file::read_options() {
 	FILE *infile=NULL;
 	infile=fopen(in_file.c_str(),"r");
 	//read blocks
-	bool bEOF=false;
+	//bool bEOF=false;
 	string block_name="test_options";
-	bEOF=t_option_block("").read_lines(infile,block_name);//get first block name
+	bool bEOF=t_option_block("").read_lines(infile,block_name);//get first block name
 	while(!bEOF) {
 		if (blocks.find(block_name)==blocks.end()) {
 			//create new block
@@ -134,7 +134,7 @@ void t_option_block::write_lines(FILE *out) {
 void t_option_file::write_options() {
 	//  write_inpfile(const_cast<char*>(out_file.c_str()),ninp,inp,FALSE);
 	FILE *out;
-	int  i;
+	//int  i;
 
 	out=fopen(out_file.c_str(),"w");
 	nice_header(out,out_file.c_str());
@@ -204,20 +204,21 @@ void trim (char *str)
 
 bool t_option_block::read_lines(FILE *in,string &next_block) {
 	char      buf[STRLEN],lbuf[STRLEN],rbuf[STRLEN];
-	char      *ptr,*cptr;
-	t_inpfile *inp=NULL;
-	int       nin,lc,i,j,k;
+	char      *ptr;//,*cptr;
+	//t_inpfile *inp=NULL;
+	int       /*nin,*/lc,i,j,k;
 
 	/* leftovers from the GROMACS code */
 	char *fn="option_file"; //used in fprintf(debug,...
 	FILE *debug = NULL;
 
-	nin = lc  = 0;
+	/*nin = */lc  = 0;
 	do {
 		ptr=fgets2(buf,STRLEN-1,in);
 		lc++;
 		if (ptr) {
 			/* Strip comment */
+			char *cptr;
 			if ((cptr=strchr(buf,COMMENTSIGN)) != NULL)
 	*cptr='\0';
 			/* Strip spaces */

@@ -147,8 +147,8 @@ namespace submotif {
 
 		utility::vector1< StepWiseMove > submotif_moves;
 
-		for ( std::set< SubMotifSequenceSet >::const_iterator it = submotif_sequence_sets_.begin();
-					it != submotif_sequence_sets_.end(); it++ ){
+		for ( std::set< SubMotifSequenceSet >::const_iterator it = submotif_sequence_sets_.begin(),
+					end = submotif_sequence_sets_.end(); it != end; ++it ){
 
 			SubMotifSequenceSet const & submotif_sequence_set( *it );
 			utility::vector1< SequenceMapping > all_matches =
@@ -307,8 +307,8 @@ namespace submotif {
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SubMotifLibrary::output_tags() const {
-		for ( std::map< PoseTag, core::pose::PoseCOP >::const_iterator it = submotif_poses_by_tag_.begin();
-					it != submotif_poses_by_tag_.end(); it++ ) {
+		for ( std::map< PoseTag, core::pose::PoseCOP >::const_iterator it = submotif_poses_by_tag_.begin(),
+					end = submotif_poses_by_tag_.end(); it != end; ++it ) {
 			TR << TR.Green << it->first << " " << get_submotif_sequence_set( *(it->second), false /*sort_sequences*/ ) << TR.Reset << std::endl;
 		}
 	}

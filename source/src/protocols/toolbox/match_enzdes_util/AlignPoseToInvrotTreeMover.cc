@@ -107,7 +107,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
   //temp debug over
 
   std::list<core::conformation::ResidueCOP>::const_iterator list_it( all_invrots_[ picked_collector ]->invrots()[picked_geomcst].begin() );
-  for( Size i =1; i < picked_rotamer; ++i ) list_it++; //not ideal, but a list is what we have
+  for( Size i =1; i < picked_rotamer; ++i ) ++list_it; //not ideal, but a list is what we have
   core::conformation::ResidueCOP ranrot( *list_it );
 
   //1b. superimpose pose onto the ranrot,
@@ -145,7 +145,7 @@ AlignPoseToInvrotTreeMover::apply( core::pose::Pose & pose ){
     core::conformation::ResidueCOP ligres( this->switch_residue_type_set( *target_it,  pose.residue(1).residue_type_set().name()) );
 
     pose.append_residue_by_jump( *ligres, pose.total_residue() );
-    target_it++;
+    ++target_it;
     //Size jump_num = pose.num_jump();
 
     //below commented out for now. need to think about how to best approach a

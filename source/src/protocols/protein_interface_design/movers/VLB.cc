@@ -245,7 +245,7 @@ VLB::parse_my_tag(
 			Interval const ival( left, right );
 
 			string const ss( tag->getOption< std::string >( "ss", "L^L" ) );
-			string const aa( tag->getOption< std::string >( "aa", "" ) );
+			//string const aa( tag->getOption< std::string >( "aa", "" ) );
 			bool const keep_bb_torsions( tag->getOption< bool >( "keep_bb_torsions", "0" ));
 			string const pose_fname( tag->getOption< std::string >( "pdb", "" ) );
 

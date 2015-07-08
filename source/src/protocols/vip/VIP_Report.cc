@@ -128,8 +128,8 @@ VIP_Report::get_GOE_packstat_report(
   ){
 	std::fstream output;
         using namespace core::scoring::packstat;
-	std::string filename;
-	std::string filename0 = "Intermediate";
+	//std::string filename;
+	//std::string filename0 = "Intermediate";
 
         output << " GOE packstat report: " << std::endl;
 

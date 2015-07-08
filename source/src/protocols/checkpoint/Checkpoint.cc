@@ -52,10 +52,10 @@ namespace checkpoint {
 		if (!boinc_time_to_checkpoint() && !boinc_is_standalone()) return false;
 		boinc_end_critical_section(); // boinc_time_to_checkpoint sets is, and we dont need it yet.
 #endif
-		double time_diff(0.0);
+		//double time_diff(0.0);
 		time_t curr_time;
 		time(&curr_time);
-		time_diff = difftime( curr_time, time_ );
+		double time_diff = difftime( curr_time, time_ );
 		if ( time_diff > interval_ ) return true;
 
 		return false;

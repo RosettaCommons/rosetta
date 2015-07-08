@@ -99,7 +99,7 @@ namespace magnesium {
 	get_hydration_stats( core::pose::Pose const & pose,
 											 core::pose::Pose const & reference_pose,
 											 utility::vector1< core::Size > const & pdb_mg_res_list_in,
-											 std::string const outfile );
+											 std::string const & outfile );
 
 } //magnesium
 } //protocols

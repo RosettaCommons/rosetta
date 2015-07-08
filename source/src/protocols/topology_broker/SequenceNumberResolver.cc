@@ -117,7 +117,7 @@ std::map<core::Size, std::string>::const_iterator SequenceNumberResolver::search
 	std::map<core::Size, std::string>::const_iterator itlow = offset_map_reversed_.lower_bound( pose_number ) ;
 
 	//Decrement iterator to access element that is smaller than given pose number
-	if ( itlow != offset_map_reversed_.begin() ) itlow--;
+	if ( itlow != offset_map_reversed_.begin() ) --itlow;
 	else {
 		std::ostringstream msg;
 		msg << "Iterator of SequenceNumberResolver is out of range for pose number " << pose_number;

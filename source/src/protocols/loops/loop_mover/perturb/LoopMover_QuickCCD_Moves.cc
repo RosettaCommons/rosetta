@@ -162,7 +162,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	utility::vector1< FragmentMoverOP > fragmover;
 	for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs().begin(), it_end = frag_libs().end();
-				it != it_end; it++ ) {
+				it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, frag_mover_movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -176,7 +176,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 		// insert random fragment as many times as the loop is long (not quite the exact same as the old code)
 		for ( Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );
 			}
 		}
@@ -244,7 +244,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 			{
 				//do fragment moves here
 				for ( std::vector< FragmentMoverOP >::const_iterator
-							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+							it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 
 					if( ((*it)->fragments()->max_frag_length() == 1 ) && (uniform() < option[OptionKeys::loops::skip_1mers ]() ) ) continue;

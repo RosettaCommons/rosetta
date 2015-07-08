@@ -613,7 +613,7 @@ PeptideDeriverFilter::report(std::ostream & out, core::pose::Pose const & orig_p
 
 	std::string const pose_name = ( protocols::jd2::jd2_used()? protocols::jd2::JobDistributor::get_instance()->current_output_name() : "" );
 
-	std::string prefix;
+	//std::string prefix;
 	if ( is_dump_report_file_ ) {
 		std::string path = ( basic::options::option[ basic::options::OptionKeys::out::path::all ].user()? basic::options::option[ basic::options::OptionKeys::out::path::all ]().path() : "" );
 		std::string file_name = path + ( pose_name.length()? pose_name + "." : "" ) + "peptiderive.txt";

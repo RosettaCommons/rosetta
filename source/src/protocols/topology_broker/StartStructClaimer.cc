@@ -130,7 +130,7 @@ void StartStructClaimer::initialize_dofs(
 
 	try{
 		mover();
-	} catch( utility::excn::EXCN_NullPointer excn ) {
+	} catch( utility::excn::EXCN_NullPointer & excn ) {
 		throw( EXCN_Input( "StartStructureClaimer needs JobInputter or FILE <pdb-file> entry in broker-setup"));
 	}
 

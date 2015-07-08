@@ -276,7 +276,7 @@ namespace chemical_shift {
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 	chemical::AA
-	get_res_aa_from_BASE_name( std::string BASE_name, std::string const text_line )
+	get_res_aa_from_BASE_name( std::string BASE_name, std::string const & text_line )
 	{
 
 		chemical::AA res_aa = chemical::aa_unk;
@@ -307,7 +307,7 @@ namespace chemical_shift {
 
 	/////////////////////////////////////////////////////////////////////////////
 	std::string
-	remove_whitespaces( std::string const in_atom_name )
+	remove_whitespaces( std::string const & in_atom_name )
 	{
 
 		std::string out_atom_name = "";
@@ -322,7 +322,7 @@ namespace chemical_shift {
 	}
 
 	std::string
-	add_whitespaces( std::string const in_atom_name )
+	add_whitespaces( std::string const & in_atom_name )
 	{
     if ( in_atom_name.size() == 1 ) {
     	return " "+in_atom_name+"  ";
@@ -340,22 +340,22 @@ namespace chemical_shift {
 
 	/////////////////////////////////////////////////////////////////////////////
 	bool
-	is_polar_hydrogen( std::string const input_atom_name )
+	is_polar_hydrogen( std::string const & input_atom_name )
 	{
 
-		if ( input_atom_name == "HO2'" || input_atom_name == "HO2'" ) return true;
+		if ( input_atom_name == "HO2'" /*|| input_atom_name == "HO2'"*/ ) return true;
 
 		if ( input_atom_name == "H22"  || input_atom_name == "H21" ) return true;
 
-		if ( input_atom_name == "H21"  || input_atom_name == "H22" ) return true;
+		//if ( input_atom_name == "H21"  || input_atom_name == "H22" ) return true;
 
-		if ( input_atom_name == "H41"  || input_atom_name == "H41" ) return true;
+		if ( input_atom_name == "H41"  /*|| input_atom_name == "H41"*/ ) return true;
 
-		if ( input_atom_name == "H42"  || input_atom_name == "H42" ) return true;
+		if ( input_atom_name == "H42"  /*|| input_atom_name == "H42"*/ ) return true;
 
-		if ( input_atom_name == "H61"  || input_atom_name == "H61" ) return true;
+		if ( input_atom_name == "H61"  /*|| input_atom_name == "H61"*/ ) return true;
 
-		if ( input_atom_name == "H62"  || input_atom_name == "H62" ) return true;
+		if ( input_atom_name == "H62"  /*|| input_atom_name == "H62"*/ ) return true;
 
 		if ( input_atom_name == "H1" ) return true;
 
@@ -371,7 +371,7 @@ namespace chemical_shift {
 
 	/////////////////////////////////////////////////////////////////////////////
 	std::string
-	get_rosetta_hatom_name( std::string const input_atom_name, std::string const text_line, utility::vector1< std::string > const & flat_proton_entry_list )
+	get_rosetta_hatom_name( std::string const & input_atom_name, std::string const & text_line, utility::vector1< std::string > const & flat_proton_entry_list )
 	{
 
 		using namespace ObjexxFCL;
@@ -434,7 +434,7 @@ namespace chemical_shift {
 
 	////////////////////////////////copied from protocols/swa/rna/StepWiseRNA_Util.cc/////////////////////////////
 	core::Size
-	string_to_int( std::string const input_string )
+	string_to_int( std::string const & input_string )
 	{
 
 		Size int_of_string; //misnomer
@@ -453,7 +453,7 @@ namespace chemical_shift {
 
 	////////////////////////////////copied from protocols/swa/rna/StepWiseRNA_Util.cc/////////////////////////////
 	core::Real
-	string_to_real( std::string const input_string )
+	string_to_real( std::string const & input_string )
 	{
 
 		Real real_of_string;
@@ -1034,7 +1034,7 @@ namespace chemical_shift {
 		std::string const curr_nmr_rsd_name( ( chemical::name_from_aa( CS_data.res_aa ) ) );
 		core::conformation::Residue const & curr_nmr_rsd = pose.residue( CS_data.seq_num );
 		Vector const curr_nmr_atom_pos ( curr_nmr_rsd.xyz( curr_nmr_atom_name ) ); // (C) position
-		std::string const reference_key( curr_nmr_rsd_name + ":" + curr_nmr_atom_name ); // (D) reference chemical shifts
+		//std::string const reference_key( curr_nmr_rsd_name + ":" + curr_nmr_atom_name ); // (D) reference chemical shifts
 
 		Real calc_chem_shift = 0.0;
 
@@ -1767,7 +1767,7 @@ namespace chemical_shift {
 			Size atmn ( 1 );			
 			for ( Size seq_num_tmp = 1; seq_num_tmp <= pose.total_residue(); seq_num_tmp++ ){
 				core::conformation::Residue const & curr_rsd_tmp = pose.residue( seq_num_tmp );
-				std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
+				//std::string const curr_rsd_name_tmp( chemical::name_from_aa( curr_rsd_tmp.aa() ) );
 				//loop over atoms				
 				for ( Size atom_num_tmp = 1; atom_num_tmp <= curr_rsd_tmp.natoms(); atom_num_tmp++ ){
 				  //std::cout << "Checking for whitespace" << curr_rsd_tmp.atom_name( atom_num_tmp) << "here" << std::endl;

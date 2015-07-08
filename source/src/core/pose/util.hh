@@ -485,7 +485,7 @@ bool
 has_chain(core::Size chain_id, core::pose::Pose const & pose);
 
 std::set<core::Size>
-get_jump_ids_from_chain_ids(std::set<core::Size> const chain_ids, core::pose::Pose const & pose);
+get_jump_ids_from_chain_ids(std::set<core::Size> const & chain_ids, core::pose::Pose const & pose);
 
 core::Size
 get_jump_id_from_chain_id(core::Size const & chain_id, core::pose::Pose const & pose);

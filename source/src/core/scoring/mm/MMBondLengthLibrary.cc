@@ -68,7 +68,6 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 
 	bool in_bonds_section = false;
 	while( getline( data, line ) ) {
-		std::istringstream l( line );
 		if( line.size() < 1 || line[0] == '!' || line[0] == ' ' ) continue; // comment or blank lines
 		if (line == "ANGLES") in_bonds_section = false;
 		if (in_bonds_section) lines.push_back( line );
@@ -115,7 +114,6 @@ MMBondLengthLibrary::MMBondLengthLibrary(
 
 mm_bondlength_library_citer_pair
 MMBondLengthLibrary::lookup( int atom1, int atom2 ) const {
-	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
 
 	if( mm_bondlength_library_.count( mm_bondlength_atom_pair( atom1, atom2 ) ) ) {

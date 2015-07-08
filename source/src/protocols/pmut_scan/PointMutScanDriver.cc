@@ -909,8 +909,8 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	//TR << "Finished creating all TaskOperation's and TaskFactory's. Creating MoveMap." << std::endl;
 
 	kinematics::MoveMapOP movemap( new core::kinematics::MoveMap() );
-	std::set< core::Size >::const_iterator iter;
-	for ( iter = neighbor_set.begin(); iter != neighbor_set.end(); iter++ ) {
+	std::set< core::Size >::const_iterator iter, end;
+	for ( iter = neighbor_set.begin(), end = neighbor_set.end(); iter != end; ++iter ) {
 		//movemap_->set_bb(i, true); // don't do any backbone minimization
 		movemap->set_chi( *iter, true ); // but do minimize the side chains
 	}

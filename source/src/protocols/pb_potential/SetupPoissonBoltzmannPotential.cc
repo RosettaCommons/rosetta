@@ -170,9 +170,9 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 		basic::options::option[basic::options::OptionKeys::pb_potential::potential_cap]( potential_cap );
 	}
 
-	bool sidechain_only;
+	//bool sidechain_only;
 	if( tag->hasOption("sidechain_only") ) {
-		sidechain_only = tag->getOption<bool>( "sidechain_only" );
+		bool sidechain_only = tag->getOption<bool>( "sidechain_only" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only );
 	}
 
@@ -181,14 +181,14 @@ SetupPB::parse_my_tag( utility::tag::TagCOP tag,
 		epsilon = tag->getOption<core::Real>( "epsilon" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::epsilon]( epsilon );
 	}
-	bool calcenergy;
+	//bool calcenergy;
 	if( tag->hasOption("calcenergy") ) {
-		calcenergy = tag->getOption<bool>( "calcenergy" );
+		bool calcenergy = tag->getOption<bool>( "calcenergy" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::calcenergy]( calcenergy );
 	}
-	int apbs_debug;
+	//int apbs_debug;
 	if( tag->hasOption("apbs_debug") ) {
-		apbs_debug = tag->getOption<int>( "apbs_debug" );
+		int apbs_debug = tag->getOption<int>( "apbs_debug" );
 		basic::options::option[basic::options::OptionKeys::pb_potential::apbs_debug]( apbs_debug );
 	}
 	//-------------------------------------------------------------------------

@@ -53,7 +53,7 @@ do_scoring( core::pose::Pose & pose,
 void
 do_xy_scan( core::pose::Pose & pose,
 						core::scoring::ScoreFunctionOP scorefxn,
-						std::string const outfile,
+						std::string const & outfile,
 						core::Real const z,
 						core::Size const probe_jump_num,
 						core::Real const box_bins,

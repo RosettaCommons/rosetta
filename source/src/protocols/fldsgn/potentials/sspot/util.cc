@@ -82,6 +82,8 @@ spherical(
 
 	Real r1 = v2.length();
 	Real const v2z_r1 = v2z/r1;
+	// AMW: cppcheck correctly notes that either the first part of this check is useless
+	// or we might have just divided by zero
 	if ( r1 != 0.0 && std::abs( v2z_r1 ) <= 1.0 ) {
 		theta = degrees( numeric::arccos( v2z_r1 ) ); // std::acos( sin_cos_range( v2z_r1 ) ) );
 	} else if ( v2z_r1 > 1.0 ) {

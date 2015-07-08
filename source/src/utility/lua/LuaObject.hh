@@ -122,6 +122,8 @@ class LuaObject {
 						utility_exit_with_message("");
 #else
 						utility_exit_with_message("Can't use LuaObject without compiling with USELUA flag" );
+						// AMW: cppcheck will flag this extraneous return following a utility_exit
+						// The trouble is that acknowledging this will kill the windows.cl.PyRosetta build
 						T t;
 						return t;
 #endif

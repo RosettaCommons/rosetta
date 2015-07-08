@@ -214,7 +214,7 @@ predict_chem_map_test()
 	ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	Size count( 0 );
-	std::string outfile;
+	//std::string outfile;
 	pose::Pose pose;
 	//Size total_residues( 0 );
 

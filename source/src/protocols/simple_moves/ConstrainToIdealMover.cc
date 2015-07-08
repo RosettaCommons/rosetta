@@ -462,7 +462,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 	core::Size const nres( pose.total_residue() );
 
-	std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
+	//std::map< AtomID, utility::vector1< AtomID > > lists_of_angle_bonded_atoms;
 
 	for  ( core::Size i = 1; i <= nres; i++ )  {
 

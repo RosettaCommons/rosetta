@@ -192,8 +192,8 @@ Serial_Refine::apply( core::pose::Pose &pose,
 		for( core::Size irun = 1; irun <= params.nrun; ++irun ){
 			core::Size rerelax_type = params.rerelax_type;
 
-			for( SilentStructStore::iterator it = library_ref_.begin(); 
-					 it !=  library_ref_.end(); it ++ ){
+			for( SilentStructStore::iterator it = library_ref_.begin(), 
+					 end =  library_ref_.end(); it != end; ++it ){
 				TR << "Create on structure: " << (*it)->decoy_tag() << std::endl;
 
 				// perturb

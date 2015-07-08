@@ -87,9 +87,9 @@ PoseComment::compute(
 
 	if( comment_name() == "" ){
 		std::map< std::string, std::string > const comments = get_all_comments( pose );
-		if( comment_exists() && comments.size() > 0 )
+		if( comment_exists() && !comments.empty() ) //size() > 0 )
 			return 1.0;
-		if( comments.size() == 0 )
+		if( comments.empty() ) //size() == 0 )
 			return 0.0;
 		for( std::map< std::string, std::string >::const_iterator it = comments.begin(); it != comments.end(); ++it ){// iterate over all comments and find the one with the value
 			if( it->second == comment_value() )

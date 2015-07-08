@@ -195,11 +195,11 @@ void UnbiasedRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose ) {
   core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
   xyzMatrix< core::Real> const rot=flexible_jump.get_rotation();
   xyzVector< core::Real> const trans=flexible_jump.get_translation();
-	bool flag( true );
 	xyzVector<core::Real> delta_trans;
 	xyzMatrix<core::Real> delta_rot;
 	// 	tr.Debug << "pose.trans: " << trans << std::endl;
 	if ( !max_move_ ) {
+	bool flag( true );
 	while( flag ) {
 		delta_trans = random_translation( trans_mag_, numeric::random::rg() );
 		if ( restrict_ ) {

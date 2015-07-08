@@ -133,6 +133,7 @@ RingConformerSet::get_all_nondegenerate_conformers() const
 /// @return   matching RingConformer or exits, if no match is found
 /// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
 /// subsets.
+// AMW: cppcheck wants you to change to pass by reference; DO NOT
 RingConformer const &
 RingConformerSet::get_ideal_conformer_by_name( std::string const name ) const
 {
@@ -162,6 +163,7 @@ RingConformerSet::get_ideal_conformer_by_name( std::string const name ) const
 /// @return   matching RingConformer or exits, if no match is found
 /// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
 /// subsets.
+// AMW: cppcheck wants you to change to pass by reference; DO NOT
 RingConformer const &
 RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::Real > const parameters ) const
 {

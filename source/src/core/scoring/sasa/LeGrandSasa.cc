@@ -176,9 +176,7 @@ LeGrandSasa::calculate(
 		}
 	}
 
-	core::Real cutoff_distance = 0.0;
-	cutoff_distance = 2 * ( max_radius + probe_radius_ );
-
+	core::Real cutoff_distance = 2 * ( max_radius + probe_radius_ );
 
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
 	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
@@ -631,10 +629,9 @@ LeGrandSasa::get_masks() const {
 void
 LeGrandSasa::print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) const{
 	for ( int bb = 1; bb <= num_bytes_; ++bb ) {
-		int bit;
 		if ( (bb-1)*8 % 16 == 0 ) std::cout << (bb-1) * 8 << ":";
 		for ( int index=7; index >= 0; index-- ) {
-			bit = ( ( (int)values[ bb ] >> index ) & 1 );
+			int bit = ( ( (int)values[ bb ] >> index ) & 1 );
 			TR << bit;
 		}
 		TR << " ";

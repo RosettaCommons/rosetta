@@ -61,7 +61,7 @@ void O2M_MutateMover::apply( core::io::serialization::PipeMap & pmap)
 	for( core::Size resi = 1; resi <= starting_pose->total_residue(); ++resi ){
 		if( starting_task->residue_task( resi ).being_designed() && starting_pose->residue(resi).is_protein() ) {
 			std::list<ResidueTypeCOP> const & allowed( starting_task->residue_task( resi ).allowed_residue_types() );
-			for( std::list<ResidueTypeCOP>::const_iterator itr=allowed.begin(); itr != allowed.end(); itr++ ){
+			for( std::list<ResidueTypeCOP>::const_iterator itr=allowed.begin(), end= allowed.end(); itr != end; ++itr ){
 				if( (*itr)->aa() != starting_pose->residue( resi ).aa() ) {
 					PoseSP working_pose( new Pose( *starting_pose) );
 

@@ -86,7 +86,7 @@ namespace rna {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	void output_is_prepend_map( std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, std::ostream & outstream /* = std::cout */, core::Size const tag_spacing ){
+	void output_is_prepend_map( std::string const & tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, std::ostream & outstream /* = std::cout */, core::Size const tag_spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
@@ -110,7 +110,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_bool_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+	output_bool_list( std::string const & tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 		utility::vector1< bool > bool_list;
 
 		for ( Size n = 1; n <= size_list.size(); n++ ){
@@ -121,7 +121,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_bool_list( std::string const tag, utility::vector1< bool > const & bool_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+	output_bool_list( std::string const &tag, utility::vector1< bool > const & bool_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
@@ -136,7 +136,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_size_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
+	output_size_list( std::string const &tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
@@ -151,7 +151,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
-	output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const pose_name, std::ostream & outstream /* = std::cout */ ){
+	output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const & pose_name, std::ostream & outstream /* = std::cout */ ){
 
 		outstream << "fold tree of " << pose_name << ": " << std::endl;
 		for ( int i = 1; i <= fold_tree.num_cutpoint(); i++ ){
@@ -251,6 +251,7 @@ namespace rna {
 		sum_sd = sum_sd/( atom_count );
 		Real rmsd = sqrt( sum_sd );
 
+		// AMW: We just divided by atom_count so it shouldn't ever be zero now?!
 		if ( atom_count == 0 ) rmsd = 0.0; //special case...implement this on May 5, 2010
 
 		if ( verbose ){
@@ -412,7 +413,7 @@ namespace rna {
 
 	/////////////////New function on Nov 11, 2010///////////////
 	std::string
-	get_tag_from_pdb_filename( std::string const pdb_filename ){
+	get_tag_from_pdb_filename( std::string const & pdb_filename ){
 
 		std::string tag;
 
@@ -478,7 +479,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const WP_name, std::ostream & outstream /* = std::cout */, bool const is_simple_full_length_WP  ){
+	print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersCOP const & const_WP, std::string const & WP_name, std::ostream & outstream /* = std::cout */, bool const is_simple_full_length_WP  ){
 
 		working_parameters::StepWiseWorkingParametersOP WP( new working_parameters::StepWiseWorkingParameters );
 
@@ -490,7 +491,7 @@ namespace rna {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP const & WP, std::string const WP_name, std::ostream & outstream /* = std::cout */, bool const is_simple_full_length_WP ){
+	print_WorkingParameters_info( working_parameters::StepWiseWorkingParametersOP const & WP, std::string const & WP_name, std::ostream & outstream /* = std::cout */, bool const is_simple_full_length_WP ){
 
 		using namespace ObjexxFCL;
 
@@ -617,7 +618,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	std::string
-	path_basename( std::string const full_path ){
+	path_basename( std::string const & full_path ){
 
 		size_t found = full_path.rfind( '/' );
 

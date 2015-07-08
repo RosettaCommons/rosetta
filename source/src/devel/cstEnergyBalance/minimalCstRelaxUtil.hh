@@ -54,16 +54,16 @@ std::set< core::Size> get_residuesToConstrain(const core::Size coordinate_cst_ga
 std::set<core::Size> get_residuesToConstrain(core::pose::Pose& pose);
 
 /// @brief Outputs coordinate contraints
-void output_coordCsts(const std::set< core::Size > caAtomsToConstrain,std::ostream & out, core::pose::Pose& pose);
+void output_coordCsts(const std::set< core::Size > & caAtomsToConstrain,std::ostream & out, core::pose::Pose& pose);
 
 /// @brief Outputs coordinate contraints
-void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence, bool only_res_out);
+void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,string query_sequence, bool only_res_out);
 
 /// @brief input coordinate constraints from file in standard coordinate constraint format. I assume everything is CA constraints
 std::set< core::Size > input_coordCsts(const std::string inputFileName);
 
 /// @brief outputs Fasta with virtual atoms attached.
-void output_fastaWVirtual(const std::string fastaFileName, std::ostream & out);
+void output_fastaWVirtual(const std::string & fastaFileName, std::ostream & out);
 
 /// @brief inputs the sequence alignments and maps them to the appropriate
 /// pdbid

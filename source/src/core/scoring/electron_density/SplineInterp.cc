@@ -196,28 +196,27 @@ static double	InitialAntiCausalCoefficient (
 		double Tolerance, // admissible relative error
 		bool Mirrored     // mirror boundary?
 ) {
-	double Sum, zn;
-	int n, Horizon;
-
-	Horizon = DataLength;
-	if (Tolerance > 0.0) {
-		Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
-	}
-
 	if (!Mirrored) {
+		
+		int Horizon = DataLength;
+		
+		if (Tolerance > 0.0) {
+			Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
+		}
+		
 		if (Horizon < DataLength) {
-			zn = z;
-			Sum = c[DataLength-1];
-			for (n = 0L; n < Horizon; n++) {
+			double zn = z;
+			double Sum = c[DataLength-1];
+			for (int n = 0L; n < Horizon; n++) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
 			return(-z*Sum);
 		}
 		else {
-			zn = z;
-			Sum = c[DataLength-1];
-			for (n = 0L; n < DataLength-1; n++) {
+			double zn = z;
+			double Sum = c[DataLength-1];
+			for (int n = 0L; n < DataLength-1; n++) {
 				Sum += zn * c[n];
 				zn *= z;
 			}
@@ -382,19 +381,18 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
 double interp3(double *Bcoeff, int dims[3], double X[3]) {
 	double wt[3][4];
 	double value;
-	double w;
-	double sum_k, sum_jk;
+	double sum_k;
 	int idx[3][4];
-	int i,j,k, pt, dim;
+	int i,j,k, dim;
 
 	// interpolation indexes
 	for (dim=0; dim<3; dim++) {
-		pt = (int)floor(X[dim] - (3-1) / 2.0);
+		int pt = (int)floor(X[dim] - (3-1) / 2.0);
 		for (i = 0L; i <= 3; i++)
 			idx[dim][i] = pt++;
 
 		// interpolation weights
-		w = X[dim] - (double)idx[dim][1];
+		double w = X[dim] - (double)idx[dim][1];
 		wt[dim][3] = (1.0 / 6.0) * w * w * w;
 		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -413,7 +411,7 @@ double interp3(double *Bcoeff, int dims[3], double X[3]) {
 
 	value = 0.0;
 	for (i = 0; i <= 3; i++) {  // x
-		sum_jk = 0.0;
+		double sum_jk = 0.0;
 		for (j = 0; j <= 3; j++) {  // y
 			sum_k = 0.0;
 			for (k = 0; k <= 3; k++) {  // z
@@ -572,19 +570,17 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 double interp4(double *Bcoeff, int dims[4], double X[4]) {
 	double wt[4][4];
 	double value;
-	double w;
-	double sum_l, sum_kl, sum_jkl;
 	int idx[4][4];
-	int i,j,k,l, pt, dim;
+	int i,j,k,l, dim;
 
 	// interpolation indexes
 	for (dim=0; dim<4; dim++) {
-		pt = (int)floor(X[dim] - (3-1) / 2.0);
+		int pt = (int)floor(X[dim] - (3-1) / 2.0);
 		for (i = 0L; i <= 3; i++)
 			idx[dim][i] = pt++;
 
 		// interpolation weights
-		w = X[dim] - (double)idx[dim][1];
+		double w = X[dim] - (double)idx[dim][1];
 		wt[dim][3] = (1.0 / 6.0) * w * w * w;
 		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
 		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
@@ -612,11 +608,11 @@ double interp4(double *Bcoeff, int dims[4], double X[4]) {
 
 	value = 0.0;
 	for (i = 0; i <= 3; i++) {  // x
-		sum_jkl = 0.0;
+		double sum_jkl = 0.0;
 		for (j = 0; j <= 3; j++) {  // y
-			sum_kl = 0.0;
+			double sum_kl = 0.0;
 			for (k = 0; k <= 3; k++) {  // z
-				sum_l = 0;
+				double sum_l = 0;
 				for (l = 0; l <= 3; l++) {  // w
 					sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
 				}

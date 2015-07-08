@@ -166,7 +166,8 @@ PlacementMinimizationMover::apply( core::pose::Pose & pose )
 	if( !prevent_repacking().empty() ) no_repack = prevent_repacking();
 	if( !no_repack.empty() ){
 		std::sort( no_repack.begin(), no_repack.end() );
-		std::unique( no_repack.begin(), no_repack.end() );
+		utility::vector1< core::Size >::iterator last = std::unique( no_repack.begin(), no_repack.end() );
+		no_repack.erase( last, no_repack.end() );
 		toAla.prevent_repacking( no_repack );
 	}
 	toAla.task_factory( task_factory() );

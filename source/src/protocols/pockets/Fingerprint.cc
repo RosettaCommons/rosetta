@@ -1038,7 +1038,7 @@ void NonPlaidFingerprint::setup_from_eggshell_pdb_file(std::string const & input
 
   std::string line;
   std::string name;
-  std::string chainID;
+  //std::string chainID;
   std::string restype;
 
   numeric::xyzVector<core::Real> eggshell_CoM;
@@ -1047,7 +1047,7 @@ void NonPlaidFingerprint::setup_from_eggshell_pdb_file(std::string const & input
 
   while (std::getline(inFile, line)) {
     name = line.substr(0,6);
-    chainID = line.substr(21,1);
+    //chainID = line.substr(21,1);
     restype = line.substr(17,3);
 
     numeric::xyzVector<core::Real> pdb_coord;
@@ -1264,14 +1264,14 @@ void NonPlaidFingerprint::setup_from_eggshell_triplet_file(std::string const & i
 		}
 
 		std::string lineread;
-		std::string Line;
-		std::string Field;
+		//std::string Line;
+		//std::string Field;
 
 		triplet_fingerprint_data_.clear();
 		multi_origin_list_.clear();
 		while (std::getline(inFile, lineread)) {
 
-			std::stringstream sss(lineread);
+			//std::stringstream sss(lineread);
 			std::string Pock_string_phi, Pock_string_psi, Pock_string_rho, Pock_string_ori;
 			//core::Real Pock_real_phi, Pock_real_psi, Pock_real_rho;
 			//core::Size Pock_real_ori;
@@ -1849,7 +1849,7 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
     // project atom onto the x-y plane (ie. set the z coor to zero) to calculate this for psi
     core::Real curr_max_psi( 999 );
     core::Real curr_min_psi( -999 );
-    if ( ( std::abs(tmp_atomx) > 0.00001 ) || ( std::abs(tmp_atomx) > 0.00001 ) ) {
+    if ( ( std::abs(tmp_atomx) > 0.00001 ) ) { //|| ( std::abs(tmp_atomx) > 0.00001 ) ) {
       core::Real const inside_psi_asin = this_atom_radius / sqrt( (tmp_atomx*tmp_atomx) + (tmp_atomy*tmp_atomy) );
       if ( std::abs(inside_psi_asin) < 1. ) {
 	core::Real const max_angular_displacement_psi = std::abs( asin( inside_psi_asin ) );

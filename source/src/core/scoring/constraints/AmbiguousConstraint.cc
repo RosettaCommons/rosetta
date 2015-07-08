@@ -91,8 +91,8 @@ AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & w
 	bool first_pass = true;
 
 	for( ConstraintCOPs::const_iterator
-			member_it = member_constraints().begin();
-			member_it != member_constraints().end(); member_it++){
+			member_it = member_constraints().begin(), end = member_constraints().end();
+			member_it != end; ++member_it ){
 
 		temp_EMap_.zero(cst_score_types_ );
 
@@ -197,7 +197,7 @@ AmbiguousConstraint::show( std::ostream& out) const
 	//out << "AmbiguousConstraint Active constraint:" << std::endl;
 	//active_constraint()->show(out);
 	out << "AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ){
 		(*cst_it)->show(out);
 	}
 
@@ -242,8 +242,8 @@ AmbiguousConstraint::show_violations( std::ostream& out, pose::Pose const& pose,
 		Size total_viol( 0 );
 		if ( verbose_level >=80 ) { out << type() << " " << member_constraints().size() << " "; }
 		for( ConstraintCOPs::const_iterator
-				cst_it = member_constraints().begin();
-				cst_it != member_constraints().end(); cst_it++) {
+				cst_it = member_constraints().begin(), end = member_constraints().end();
+				cst_it != end; ++cst_it ) {
 			if ( active_constraint_ ) {
 				if ( (*cst_it).get() == active_constraint_.get() ) {
 					// figure out if it's inter-res, residue_pair, or 3+body

@@ -220,7 +220,7 @@ get_all_graft_permutations(
 }
 
 AntibodyDesignProtocolEnum
-design_protocol_to_enum(std::string const design_type){
+design_protocol_to_enum(std::string const & design_type){
 	std::string type = design_type;
 	boost::to_upper(type);
 

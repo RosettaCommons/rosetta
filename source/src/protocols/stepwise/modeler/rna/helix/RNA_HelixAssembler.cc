@@ -204,7 +204,7 @@ RNA_HelixAssembler::add_capping_base_pairs_to_full_sequence()
 
 	// full name info for isoguanosine, etc.
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues_.begin(); it != non_standard_residues_.end(); it++ ) {
+	for ( std::map< Size, std::string >::iterator it = non_standard_residues_.begin(), end = non_standard_residues_.end(); it != end; ++it ) {
 		Size res( it->first );
 		if ( res <= L/2 )	{
 			non_standard_residues_new[ res + 1 ] = it->second;
@@ -462,7 +462,7 @@ RNA_HelixAssembler::remove_first_base_pair( std::string & full_sequence,
 	sequence_helix2 = sequence_helix2.substr( 0,  L-1 );
 
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(); it != non_standard_residues.end(); it++ ) {
+	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(), end = non_standard_residues.end(); it != end; ++it ) {
 		Size res( it->first );
 		if ( res > 1 || res < full_sequence_.size() )	non_standard_residues_new[ res-1 ] = it->second;
 	}
@@ -488,7 +488,7 @@ RNA_HelixAssembler::remove_last_base_pair( std::string & full_sequence,
 	sequence_helix2 = sequence_helix2.substr( 1,  L-1 );
 
 	std::map< Size, std::string > non_standard_residues_new;
-	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(); it != non_standard_residues.end(); it++ ) {
+	for ( std::map< Size, std::string >::iterator it = non_standard_residues.begin(), end = non_standard_residues.end(); it != end; ++it ) {
 		Size res( it->first );
 		if ( res < L  )	{
 			non_standard_residues_new[ res ] = it->second;

@@ -375,9 +375,10 @@ void EvaluatedArchive::remove_evaluation( std::string const& name ) {
 
 	WeightMap::iterator iter2 = select_weights_.find( column );
 	if ( iter2 != select_weights_.end() ) {
-		// amw cppcheck rightly complains
-		select_weights_.erase( iter2 );
+		// AMW: cppcheck rightly complains!
+		// switching the order. (can't ask for iter2->second AFTER erasing it.
 		if ( iter2->second > 0.001 ) scores_are_clean_ = false;
+		select_weights_.erase( iter2 );
 	}
 }
 

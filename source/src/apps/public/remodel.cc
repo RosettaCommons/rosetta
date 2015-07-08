@@ -405,7 +405,7 @@ void* graphics_main( void* ) {
 	using protocols::jd2::JobDistributor;
 
 	// option transmute; just for safety
-	String aa_during_build;
+	/*String aa_during_build;
 	String aa_during_design_refine;
 
 	if ( option[ ufv::aa_during_build ].user() ) {
@@ -415,7 +415,7 @@ void* graphics_main( void* ) {
 	if ( option[ ufv::aa_during_design_refine ].user() ) {
 		aa_during_design_refine = option[ ufv::aa_during_design_refine ];
 	}
-
+	*/
 	// init BDR
 	RemodelMover_OP rmdl( new RemodelMover );
 

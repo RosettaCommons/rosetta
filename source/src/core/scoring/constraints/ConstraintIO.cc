@@ -99,7 +99,6 @@ ConstraintIO::read_cst_atom_pairs(
 		std::string tempres1, tempres2;
 		std::string name1, name2;
 		std::string func_type;
-		std::string type;
 		std::istringstream line_stream( line );
 		line_stream
 			>> name1 >> tempres1
@@ -153,7 +152,6 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	std::string tempres1, tempres2;
 	std::string name1, name2;
 	std::string func_type;
-	std::string type;
 
 	data
 		>> name1 >> tempres1
@@ -202,7 +200,6 @@ ConstraintIO::read_cst_coordinates(
 	Size res1, res2;
 	std::string name1, name2;
 	std::string func_type;
-	std::string type;
 
 	std::istringstream line_stream( line );
 
@@ -261,7 +258,6 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	std::string tempfixed_res, tempother_res;
 	std::string fixed_res_name, other_res_name;
 	std::string func_type;
-	std::string type;
 
 	data
 		>> fixed_res_name >> tempfixed_res
@@ -311,7 +307,6 @@ ConstraintIO::read_cst_angles(
 		std::string tempres1, tempres2, tempres3;
 		std::string name1, name2, name3;
 		std::string func_type;
-		std::string type;
 		std::istringstream line_stream( line );
 		line_stream
 			>> name1 >> tempres1
@@ -353,66 +348,23 @@ ConstraintIO::read_cst_angles(
 	next_section_name = "";
 }
 
-/*
-void
-ConstraintIO::read_cst_bindingsites(
-	std::istream & data,
-	std::string & next_section_name,
-	ConstraintSet & cst_set,
-	pose::Pose const & pose
-) {
-	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
-	std::string line;
-	while( getline( data, line ) ) {
-		Size res;
-		std::string tempres;
-		std::string name;
-		std::istringstream line_stream( line );
-
-		if ( line.find("[" )!=std::string::npos ) { //end of this section
-			tr.Debug << "section end detected in line " << line << std::endl;
-			next_section_name = line;
-			return;
-		}
-
-		// to do? atm name -> centroid conversion
-		utility::vector1< id::AtomID > atms;
-		tr.Debug << "read: ";
-		while ( line_stream >> name >> tempres ) {
-
-			parse_residue( pose, tempres, res );
-
-			tr.Debug << "   " << name << " " << res ;
-
-			atms.push_back( id::AtomID( pose.residue_type( res ).atom_index( name ), res ) );
-			if ( res > pose.total_residue() ) {
-				tr.Debug << "** ignored **";
-				continue;
-			}
-		}
-		tr.Debug << std::endl;
-
-		cst_set.add_constraint( new BindingSiteConstraint( atms , pose ) );
-	}// while getline
-	tr.Debug << "end of file reached" << std::endl;
-	next_section_name = "";
-}
-*/
-
 std::string
 get_section_name ( std::string line ) {
 	if ( line.size() == 0 ) return line;
 	std::istringstream line_stream( line );
 	std::string tok;
 	line_stream >> tok;
+	// AMW: cppcheck flags that start can be reduced in scope here; in fact, I think it can be
+	// commented out.
+	// It is redeclared (quite formally) in lower scope anyway...
+	// That might actually be the issue. Which start is being reassigned?
+	// the second conditional can only see the one that stays 0
 	int start = 0;
 	if ( tok == "[" ) { //
 		line_stream >> tok;
-		start = 0;
 	} else {
 		std::string::size_type start = tok.find("[");
 		if ( start != 0 ) return "NO_SECTION";
-		//utility_exit_with_message (" reading constraints file, expected: [ section ] ");
 		start = 1;
 	}
 
@@ -434,9 +386,6 @@ ConstraintIO::read_cst_bindingsites(
 	tr.Debug << "ConstraintIO::read_cst_angles" << std::endl;
 	std::string line;
 	while( getline( data, line ) ) {
-		//mjo commenting out 'res' because it is unused and causes a warning
-		//Size res;
-		std::string name;
 		std::istringstream line_stream( line );
 		if ( line.find("[" )!=std::string::npos ) { //end of this section
 			tr.Debug << "section end detected in line " << line << std::endl;
@@ -444,24 +393,10 @@ ConstraintIO::read_cst_bindingsites(
 			return;
 		}
 
-		// to do? atm name -> centroid conversion
-		/*utility::vector1< id::AtomID > atms;
-			tr.Debug << "read: ";
-			while ( line_stream >> name >> res ) {
-			tr.Debug << "   " << name << " " << res ;
-			atms.push_back( id::AtomID( pose.residue_type( res ).atom_index( name ), res ) );
-			if ( res > pose.total_residue() ) {
-			tr.Debug << "** ignored **";
-			continue;
-			}
-			}
-			tr.Debug << std::endl;
-			cst_set.add_constraint( new BindingSiteConstraint( atms , pose ) );*/
-
 		ConstraintOP bsc = ConstraintFactory::get_instance()->newConstraint( "BindingSite" );
 		bsc->read_def( line_stream, pose, get_func_factory() );
 		cst_set.add_constraint( bsc );
-	}// while getline
+	} // while getline
 	tr.Debug << "end of file reached" << std::endl;
 	next_section_name = "";
 }
@@ -641,7 +576,7 @@ ConstraintIO::read_individual_constraint_new(
 	func::FuncFactory const & func_factory
 )
 {
- 	std::string tag, dummy_line;
+ 	std::string tag;
 	// get the ConstraintType tag
 	while( true ) {
 		char c = data.peek(); // get first char of the line but not moving istream pointer

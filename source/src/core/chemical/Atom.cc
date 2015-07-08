@@ -54,13 +54,14 @@ Atom::Atom():
 {}
 
 /// @details Rosetta AtomTypes should be set through the ResidueType to ensure data consistency.
+// Do NOT change to pass by reference
 Atom::Atom(
-		std::string const & name_in,
+		std::string const name_in,
 		std::string const mm_name,
 		Size const mm_atom_type_index,
 		ElementCOP element,
 		Real const charge,
-		Vector const ideal_xyz
+		Vector const & ideal_xyz
 ):
 	name_( name_in ),
 	mm_name_(mm_name),

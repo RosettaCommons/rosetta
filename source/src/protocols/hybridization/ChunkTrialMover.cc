@@ -172,7 +172,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 
 		// make sure downstream residues are in templates (avoid symmetry problems)
 		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
-		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+		for (std::list<core::Size>::iterator it = downstream_residues.begin(), end = downstream_residues.end(); it != end; ++it ) {
 			if ( *it < highest_tmpl_resnum_ ) {
 				chosen_good_jump = true;
 				break;
@@ -185,7 +185,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 		if (sampling_chunk_.size() == 0) {
 				chosen_good_jump = true;
 		} else {
-			for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+			for (std::list<core::Size>::iterator it = downstream_residues.begin(), end = downstream_residues.end(); it != end; ++it ) {
 				if (*it > sampling_chunk_.size() ) continue;
 				if (sampling_chunk_[*it]==true) {
 					chosen_good_jump=true;
@@ -239,7 +239,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 			// make sure that the downstream residues of this jump is within the template residues
 			bool is_jump_affect_moveable_residue=false;
 			std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
-			for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+			for (std::list<core::Size>::iterator it = downstream_residues.begin(), end = downstream_residues.end(); it != end; ++it ) {
 				if ( *it <= residue_covered_by_template_.size() ) {
 					if (residue_covered_by_template_[*it] > 0) {
 						is_jump_affect_moveable_residue=true;

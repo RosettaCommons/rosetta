@@ -79,7 +79,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 	//deal with upstream-upstream matching when the
 	//target residue has explicit ambiguity
 	//we have to put in an early catch for this somewhere..
-	if( all_invrots.size() == 0 ){
+	if ( all_invrots.empty() ) { //size() == 0 ){
 		all_invrots =  enzcst_io->mcfi_list( invrot_geomcst)->inverse_rotamers_against_residue( enzcst_io->mcfi_list( invrot_geomcst )->mcfi( 1 )->downstream_res(), target_residue.get_self_ptr() );
 
 		//2. do clash check against all parent residues
@@ -89,7 +89,7 @@ InvrotTreeNode::initialize_from_enzcst_io(
 		this->remove_invrots_clashing_with_parent_res( all_invrots, enzcst_io->mcfi_list(invrot_geomcst)->mcfi(1)->is_covalent() );
 		Size num_invrots_clashing( num_rots_total - all_invrots.size() );
 		tr << "When initializing a node for geomcst " <<invrot_geomcst << ", " << num_invrots_clashing << " of a total of " << num_rots_total << " inverse rotamers were found to clash with something." << std::endl;
-		if( all_invrots.size() == 0 ){
+		if ( all_invrots.empty() ) { //size() == 0 ){
 			return false;
 		}
 	}
@@ -143,7 +143,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 	//check for redundancy to other invrots with respect to
 	//positioning of dependent inverse rotamer trees
 	std::list<core::conformation::ResidueCOP>::const_iterator invrot_it1 = all_invrots.begin();
-	invrot_it1++; //first one was already taken care of
+	++invrot_it1; //first one was already taken care of
 	while( invrot_it1 != all_invrots.end() ){
 		bool this_invrot_redundant(false);
 		for( core::Size i = 1; i <= invrots_and_next_nodes_.size(); ++i ){
@@ -174,7 +174,7 @@ InvrotTreeNode::initialize_from_enzcst_io_and_invrots(
 			invrots_and_next_nodes_.push_back( std::pair< std::list<core::conformation::ResidueCOP >, utility::vector1< InvrotTreeNodeOP > > () );
 			invrots_and_next_nodes_[invrots_and_next_nodes_.size() ].first.push_back( *invrot_it1 );
 		}
-		invrot_it1++;
+		++invrot_it1;
 	} //while loop over invrot_it1
 	tr << "Node initialization for geomcst " << geom_cst_ << ". After redundancy determination, " << invrots_and_next_nodes_.size() << " non-redundant sets of inverse rotamers exist." << std::endl;
 	//4.4 redundancy determined, almost done, now we need to

@@ -73,7 +73,7 @@ add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::P
 
 /// loop_str has the format: start:end:cut,start:end:cut and can use rosetta or pdb numbering. The return value is an owning pointer to a Loops object encoding that loop
 LoopsOP
-loops_from_string( std::string const loop_str, core::pose::Pose const & pose );
+loops_from_string( std::string const & loop_str, core::pose::Pose const & pose );
 
 // this function will return a bunch of "loops" that refer to residues that are considered part of the core:
 // not scored are loops with 4 or more residues, short helices (<=5) that terminate a loop are not scored, too

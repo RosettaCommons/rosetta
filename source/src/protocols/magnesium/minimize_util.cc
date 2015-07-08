@@ -183,7 +183,7 @@ update_mg_hoh_fold_tree( pose::Pose & pose ){
 ////////////////////////////////
 // @brief helper function for update_mg_hoh_fold_tree();
 core::id::AtomID
-get_closest_non_hoh_contact( pose::Pose const & pose, Size const i, std::string const exclude_rsd /* = "" */ ) {
+get_closest_non_hoh_contact( pose::Pose const & pose, Size const i, std::string const & exclude_rsd /* = "" */ ) {
 	using namespace core::id;
 	using namespace core::conformation;
 	Vector const & i_xyz( pose.residue( i ).xyz( 1 ) );

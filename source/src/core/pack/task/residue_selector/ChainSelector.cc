@@ -73,7 +73,7 @@ void ChainSelector::parse_my_tag(
 	std::string chain_string;
 	try {
 		chain_string = tag->getOption< std::string >( "chains" );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 		std::stringstream error_message;
 		error_message << "ChainSelector::parse_my_tag was not able to find the required option 'chains' in the input Tag\n";
 		error_message << e.msg();

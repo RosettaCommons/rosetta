@@ -752,11 +752,11 @@ ubi_e2c_modeler::setup_key_residues(
 	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	d77_end_ = pose_in.total_residue();
 
-	char chain = '_';
+	//char chain = '_';
 	char old_chain = '_';
 	Size next_chain( 0 );
 	for( Size i = 1; i <= d77_end_; i++ ) {
-		chain = pdb_info->chain( i );
+		char chain = pdb_info->chain( i );
 
 		// if initial condition
 		if( i == 1 )
@@ -2490,10 +2490,10 @@ ubi_e2c_modeler::monoub_setup_key_residues(
 	pose::PDBInfoCOP pdb_info = pose_in.pdb_info();
 	monoub_end_ = pose_in.total_residue();
 
-	char chain = '_';
+	//char chain = '_';
 	char old_chain = '_';
 	for( Size i = 1; i <= monoub_end_; i++ ) {
-		chain = pdb_info->chain( i );
+		char chain = pdb_info->chain( i );
 
 		// if initial condition
 		if( i == 1 )

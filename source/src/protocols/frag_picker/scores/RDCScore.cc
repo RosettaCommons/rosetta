@@ -135,8 +135,8 @@ bool RDCScore::score(
 	//
 	// scoring the frag_pose using RDC in range
 	//
-	Real rdc_score = 0.0;
-	rdc_score = rdc_data_given_fragment->compute_dipscore( frag_pose );
+	//Real rdc_score = 0.0;
+	Real rdc_score = rdc_data_given_fragment->compute_dipscore( frag_pose );
 
 	empty_map->set_score_component( rdc_score, id_ );
 	if (( rdc_score > lowest_acceptable_value_ ) && ( use_lowest_ == true ))

@@ -66,7 +66,7 @@ AmbiguousNMRConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const 
 
 	core::Real cum_invdist6 = 0;
 
-	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++){
+	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
 		AmbiguousNMRDistanceConstraintCOP cst_in_casted;
 		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRDistanceConstraint const >( *member_it );
 		if ( cst_in_casted ) cum_invdist6 += cst_in_casted->inv_dist6( xyz_func );
@@ -100,7 +100,7 @@ AmbiguousNMRConstraint::dist( func::XYZ_Func const & xyz ) const
 {
 	core::Real cum_invdist6 = 0;
 
-	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++){
+	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
 		AmbiguousNMRDistanceConstraintCOP cst_in_casted;
 		PROF_START( basic::NOESY_ASSIGN_DIST_CST_CAST );
 		cst_in_casted = utility::pointer::dynamic_pointer_cast< AmbiguousNMRDistanceConstraint const >( *member_it );
@@ -159,7 +159,7 @@ AmbiguousNMRConstraint::fill_f1_f2(
 
 	//	tr.Trace << "the_other_atoms: " << the_other_atoms.size() << " " << the_other_atoms.front() << std::endl;
 	//Vector f1(0.0), f2(0.0);
-	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++){
+	for ( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ){
               Vector f1(0.0), f2(0.0);
 
                //fpd hack to get at vector from atom i->j
@@ -222,10 +222,10 @@ void AmbiguousNMRConstraint::show_def( std::ostream& out, pose::Pose const& pose
 	out << type() << " ";
 	if ( func_ ) func_->show_definition( out );
 	else out << std::endl;
-  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
-    (*cst_it)->show_def( out, pose );
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
+		(*cst_it)->show_def( out, pose );
 		//		out<<std::endl;
-  }
+	}
 	out << "End_"<< type() << std::endl;
 }
 
@@ -234,7 +234,7 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 {
 	Size total_viol = 0;
 	bool passed( false );
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
 		Size viol = (*cst_it)->show_violations( out, pose, verbose_level, threshold);
 		if ( viol == 0 && verbose_level > 70 ) {
 			utility::vector1< int > pos_list( (*cst_it)->residues() );
@@ -244,7 +244,7 @@ AmbiguousNMRConstraint::show_violations( std::ostream& out, pose::Pose const& po
 		total_viol += viol;
 	}
 	if ( !passed && verbose_level > 70 ) {
-		for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+		for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
 			utility::vector1< int > pos_list( (*cst_it)->residues() );
 			out << "\nResiduePairConstraints (" <<  pos_list[1] << ", " << pos_list[pos_list.size()] << " ) + of total: 1  1 violated" << std::endl;
 		}

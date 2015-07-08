@@ -470,8 +470,8 @@ Interface::symmetric_protein_calculate( core::pose::Pose const & pose )
 				Size num_subs = basic::options::option[basic::options::OptionKeys::matdes::num_subs_building_block]();
 				symm_add = (symm_info->subunit_index(i) <= num_subs && symm_info->subunit_index(j) > num_subs) || (symm_info->subunit_index(j) <= num_subs && symm_info->subunit_index(i) > num_subs); // NK
 			} else {
-				symm_add = ( ( (symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ||
-												(symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );
+				symm_add = ( ( (symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );//||
+												//(symm_info->bb_is_independent(i) && !symm_info->bb_is_independent(j)) ) );
 			}
 			if ( !symm_add ) continue;
 			Size i_sym = i;

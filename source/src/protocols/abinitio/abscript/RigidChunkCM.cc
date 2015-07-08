@@ -421,7 +421,7 @@ claims::EnvClaims RigidChunkCM::yield_claims( core::pose::Pose const& in_p,
     ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".  ";
     ss << "Pose was length " << in_p.total_residue() << ": " << in_p.sequence();
     e.add_msg(ss.str());
-    throw e;
+    throw;
   }
   configure( in_p, selection );
 
@@ -747,7 +747,7 @@ void RigidChunkCM::initialize( Pose& pose ){
            << " because it does not have DoF access at that position (which is one outside the selected region). "
            << "Some other claimer must be claiming EXCLUSIVE at this position.";
         e.add_msg( ss.str() );
-        throw e;
+        throw;
       }
     }
     // If the residue after this is not in the region
@@ -780,7 +780,7 @@ void RigidChunkCM::initialize( Pose& pose ){
            << " because it does not have DoF access at that position (which is one outside the selected region). "
            << "Some other claimer must be claiming EXCLUSIVE at this position.";
         e.add_msg( ss.str() );
-        throw e;
+        throw;
       }
     }
   }

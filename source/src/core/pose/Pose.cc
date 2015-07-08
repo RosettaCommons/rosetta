@@ -380,17 +380,16 @@ Pose::update_pose_chains_from_pdb_chains()
 	utility::vector1<Size> new_endings;
 
 	char last_pdb_chain = pdb_info_->chain(1);
-	char current_pdb_chain;
 
 	for (Size i = 1; i <= conformation_->size(); ++i) {
-		current_pdb_chain = pdb_info_->chain(i);
+		char current_pdb_chain = pdb_info_->chain(i);
 		if (current_pdb_chain != last_pdb_chain) {
 			new_endings.push_back(i - 1);
 			last_pdb_chain = current_pdb_chain;
 		}
 
-	// (chain_endings() includes a call to Conformer.rederive_chain_IDs.)
-	conformation_->chain_endings(new_endings);
+		// (chain_endings() includes a call to Conformer.rederive_chain_IDs.)
+		conformation_->chain_endings(new_endings);
 	}
 }
 

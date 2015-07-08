@@ -36,7 +36,7 @@ namespace rna {
 	};
 
 	void
-	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type );
+	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type );
 
 	utility::vector1 < Residue_info >
 	Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
@@ -60,7 +60,7 @@ namespace rna {
 	output_copy_dofs( utility::vector1< Residue_info > copy_dofs );
 
 	utility::vector1< Residue_info >
-	get_copy_dofs_from_fasta( std::string const full_fasta_sequence );
+	get_copy_dofs_from_fasta( std::string const & full_fasta_sequence );
 
 	Residue_info
 	get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & copy_dofs );

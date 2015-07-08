@@ -427,7 +427,7 @@ protected:
 			uint64_t pcv[2] = {DSFMT_PCV1, DSFMT_PCV2};
 			uint64_t inner;
 			uint64_t new_lung[2];
-			uint64_t work;
+			//uint64_t work;
 			uint64_t fix[2];
 
 			fix[0] = (((DSFMT_HIGH_CONST >> DSFMT_SR1) & DSFMT_MSK2)
@@ -449,7 +449,7 @@ protected:
 			}
 			/* check NG, and modification */
 			for (i = 0; i < 2; i++) {
-		work = 1;
+		uint64_t work = 1;
 		for (j = 0; j < 52; j++) {
 				if ((work & pcv[i]) != 0) {
 			sformat[DSFMT_N].u[i] ^= work;

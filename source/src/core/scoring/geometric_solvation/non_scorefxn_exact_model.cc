@@ -67,18 +67,18 @@ core::Real const LK_MATCHING_WEIGHT_OLD_EXACT = { 0.23968 };
 
 
 void add_to_individual_sol_energies(
-																		pose::Pose & input_pose,
-																		core::Size const polar_resnum,
-																		core::Size const polar_atomno,
-																		core::scoring::etable::EtableOP etable_ptr,
-																		GridInfo const & grid_info,
-																		core::Real const & grid_constant,
-																		std::vector < std::vector < std::vector <core::Real> > > const & water_weights,
-																		std::vector < std::vector < std::vector <bool> > > & occluded_sites,
-																		bool const hydrogens_can_occlude,
-																		bool const pairwise_additive,
-																		bool const pairwise_additive_output,
-																		utility::vector1 <core::Real> & residue_energies ) {
+	pose::Pose & input_pose,
+	core::Size const polar_resnum,
+	core::Size const polar_atomno,
+	core::scoring::etable::EtableOP etable_ptr,
+	GridInfo const & grid_info,
+	core::Real const & grid_constant,
+	std::vector < std::vector < std::vector <core::Real> > > const & water_weights,
+	std::vector < std::vector < std::vector <bool> > > & occluded_sites,
+	bool const hydrogens_can_occlude,
+	bool const pairwise_additive,
+	bool const pairwise_additive_output,
+	utility::vector1 <core::Real> & residue_energies ) {
 
 	core::Real const water_radius = 1.4;
 
@@ -273,11 +273,11 @@ debug_assert( std::abs(new_base_atom_location.normalized().z() + 1.) < 0.001 );
 
 
 core::Real compute_exact_geosol(
-																pose::Pose & input_pose,
-																bool const hydrogens_can_occlude,
-																bool const pairwise_additive,
-																bool const pairwise_additive_output,
-																utility::vector1<core::Real> & residue_energies ) {
+	pose::Pose & input_pose,
+	bool const hydrogens_can_occlude,
+	bool const pairwise_additive,
+	bool const pairwise_additive_output,
+	utility::vector1<core::Real> & residue_energies ) {
 
 	TR << "jk geometric solvation exact scoring" << std::endl;
 
@@ -345,11 +345,11 @@ core::Real compute_exact_geosol(
 						anum  = polar_rsd.accpt_pos().begin(),
 						anume = polar_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const polar_atom( *anum );
-			Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
+			//Size const base_atom ( polar_rsd.atom_base( polar_atom ) );
 			hbonds::HBEvalType const curr_hbeval_type = hbonds::HBEval_lookup( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy
-			std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+			//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
 			core::Real max_possible_LK = etable_ptr->lk_dgfree( polar_rsd.atom_type_index( polar_atom ) );
 			//			TR << "jk max LK for acceptor " << polar_rsd.atom_name(polar_atom) << " is  " << max_possible_LK << std::endl;
 			// Compute Ebulk (using the LK energy)

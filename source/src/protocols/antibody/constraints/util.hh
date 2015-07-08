@@ -28,7 +28,7 @@ namespace antibody {
 namespace constraints {
 	
 	
-
+// AMW: do not pass constraint_type by reference; it'll break a unit test
 ///@brief Check if all residues already have a specific constraint type.  Useful for coordinate and dihedral constraints.
 bool
 cdr_has_res_constraints(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRNameEnum const cdr, std::string const constraint_type);

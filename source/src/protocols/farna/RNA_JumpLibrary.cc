@@ -79,7 +79,7 @@ RNA_JumpLibrary::read_jumps_from_file( std::string const & jump_library_filename
 	}
 
   std::string line;
-  std::string tag,filename;
+  std::string tag;//,filename;
   Size pos1,pos2;
   char reschar1,reschar2,edgechar1,edgechar2,orientation;
   core::kinematics::Jump jump1, jump2;

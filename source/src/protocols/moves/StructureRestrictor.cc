@@ -111,7 +111,7 @@ StructureRestrictor::setup_relevant_chains(
     TR_SR << "Reading in relevant chains from file '"<< relevant_chains_fname << "'" << endl;
   }
   string line;
-  string chains = "*";
+  //string chains = "*";
   vector<string> tokens;
   getline(relevant_chains_file,line); // header
   while( getline( relevant_chains_file, line ) ){

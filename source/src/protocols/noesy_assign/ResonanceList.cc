@@ -250,8 +250,8 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		} else {
 			save_resonance = ResonanceOP( new LabelResonance( label, freq, error,  core::id::NamedAtomID( name, resn ), aa, intensity ) );
 		}
-
-		if ( floats.size() ) {
+		
+		if ( !floats.empty() ) { //size() ) {
 			save_resonance = ResonanceOP( new FloatingResonance( *save_resonance, floats, this ) );
 		}
 

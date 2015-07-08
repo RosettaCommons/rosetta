@@ -1125,6 +1125,8 @@ hb_energy_deriv(
 		bool fail_on_bad_hbond = basic::options::option[ basic::options::OptionKeys::in::file::fail_on_bad_hbond ]();
 		if ( fail_on_bad_hbond ) {
 			throw( utility::excn::EXCN_Msg_Exception( warning ) );
+			// AMW: cppcheck flags this as unnecessary; I am keeping it just in case
+			// because BOINC is important
 			utility_exit();
 		}
 #endif

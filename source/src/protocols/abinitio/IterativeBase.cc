@@ -1218,7 +1218,7 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 	}
 	for ( const_decoy_iterator it = decoys().begin(); it != decoys().end() && ct <= max_frags; ++it, ++ct ) {
 		pose::Pose pose;
-		std::string tag;// = it->decoy_tag();
+		//std::string tag;// = it->decoy_tag();
 		(*it)->fill_pose( pose );
 		steal_constant_length_frag_set_from_pose( pose, frags_9mer );
 		steal_constant_length_frag_set_from_pose( pose, frags_3mer );
@@ -1435,7 +1435,7 @@ void IterativeBase::collect_hedgeing_decoys_from_batches(
 		tr.Debug << "read and score decoys in " << it->silent_out() << "..." << std::endl;
 		sfd.read_file( it->silent_out() );
 		for ( SilentFileData::iterator sit=sfd.begin(), esit=sfd.end(); sit!=esit; ++sit ) {
-			std::string tag = sit->decoy_tag();
+			//std::string tag = sit->decoy_tag();
 			sit->set_decoy_tag( "harvest_"+batch.batch()+"_"+ObjexxFCL::lead_zero_string_of( ++ct, 6 ) );
 
 			//note this does nothing but return *it, if b_evaluate_incoming_decoys_ is false

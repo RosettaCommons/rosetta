@@ -35,9 +35,9 @@ void parse_common_args(int *argc,char *argv[],unsigned long Flags,
 	static char *nicestr[]     = { NULL, "19", "10", "4", "0", NULL };
 	static char *not_npristr[] = { NULL, "0", "128", "100", "200", "250", NULL };
 	static char *npristr[]     = { NULL, "128", "250", "200", "100", "0", NULL };
-	static int  nicelevel=0,mantp=0,npri=0;
-	static bool bGUI=false,bDebug=false;
-	static char *deffnm=NULL;
+	static int  nicelevel=0;//,mantp=0,npri=0;
+	static bool /*bGUI=false,*/bDebug=false;
+	//static char *deffnm=NULL;
 
 
 	CmdLinePargs all_pa;
@@ -64,11 +64,11 @@ void parse_common_args(int *argc,char *argv[],unsigned long Flags,
 
 #define NPCA_PA asize(pca_pa)
 
-	FILE *fp;
-	bool bPrint,bExit,bXvgr;
-	int  i,j,k,npall,max_pa,cmdlength;
-	char *ptr,*newdesc;
-	char *envstr;
+	//FILE *fp;
+	bool bPrint,bExit;//,bXvgr;
+	int  i,j,/*k,npall,*/max_pa,cmdlength;
+	//char *ptr,*newdesc;
+	//char *envstr;
 
 	std::string program;
 #define FF(arg) ((Flags & arg)==arg)
@@ -106,7 +106,7 @@ void parse_common_args(int *argc,char *argv[],unsigned long Flags,
 	bPrint        = !FF(PCA_SILENT);
 
 	/* Check ALL the flags ... */
-	max_pa = NPCA_PA + EXTRA_PA + npargs;
+	//max_pa = NPCA_PA + EXTRA_PA + npargs;
 	all_pa.clear();
 	// add common flags
 	fill_cmd_vector( pca_pa, all_pa );
@@ -142,6 +142,7 @@ void parse_common_args(int *argc,char *argv[],unsigned long Flags,
 #endif
 
 	if (!(FF(PCA_QUIET) || bQuiet )) {
+		int npall;
 		if (bHelp)
 			write_man(stderr,"help",program,ndesc,desc,nfile,fnm,npall,all_pa,
 		nbugs,bugs,bHidden);

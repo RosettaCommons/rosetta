@@ -161,7 +161,7 @@ core::scoring::constraints::ConstraintSetOP convert_caAtomsToConstrain_to_coordC
 		tr.Debug << "constraining " << residue_id << std::endl;
 		Residue const & rsd( pose.residue(residue_id) );
 		cst_set->add_constraint(ConstraintCOP( ConstraintOP( new CoordinateConstraint(AtomID(rsd.atom_index("CA"),residue_id), AtomID(1,pose.total_residue()), rsd.xyz(atom_name),core::scoring::func::FuncOP(new core::scoring::func::HarmonicFunc(0.0,default_coord_sdev))) ) ));
-		caAtomsToConstrain_start++;
+		++caAtomsToConstrain_start;
 	}
 return(cst_set);
 }
@@ -184,7 +184,7 @@ std::set<Size> get_coreResiduesToConstrain(const Size numbResiduesToConstrain,co
 		residuesToConstrain.insert(start_massCenterCaPos->second);
 		tr.Debug << "mass center csts being added" << std::endl;
 		tr.Debug <<start_massCenterCaPos->first << "," << start_massCenterCaPos->second << std::endl;
-		start_massCenterCaPos++;
+		++start_massCenterCaPos;
 		added_numbCsts++;
 	}
 	return residuesToConstrain;
@@ -230,7 +230,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 		firstContigRes = *resSet_iter;
 		lastContigRes = *resSet_iter;
 		tmp_residuesToConstrain.insert(*resSet_iter);
-		resSet_iter++;
+		++resSet_iter;
 		while(resSet_iter != all_residuesToConstrain.end()){
 			if(*resSet_iter == lastContigRes+1){
 				lastContigRes = *resSet_iter;
@@ -245,7 +245,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 					tmp_resSet_iter = tmp_residuesToConstrain.begin();
 					while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
 						final_residuesToConstrain.insert(*tmp_resSet_iter+firstContigRes-1);
-						tmp_resSet_iter++;
+						++tmp_resSet_iter;
 					}
 				}
 				else{
@@ -253,7 +253,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 					tmp_resSet_iter = tmp_residuesToConstrain.begin();
 					while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
 						final_residuesToConstrain.insert(*tmp_resSet_iter);
-						tmp_resSet_iter++;
+						++tmp_resSet_iter;
 					}
 				}
 				//after contiguous? region reset the position index
@@ -262,7 +262,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 				tmp_residuesToConstrain.clear();
 				tmp_residuesToConstrain.insert(*resSet_iter);
 			}
-			resSet_iter++;
+			++resSet_iter;
 		}
 		//post loop wrap up the final two cases.
 		if(lastContigRes-firstContigRes >= 3){
@@ -273,7 +273,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 			tmp_resSet_iter = tmp_residuesToConstrain.begin();
 			while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
 				final_residuesToConstrain.insert(*tmp_resSet_iter+firstContigRes-1);
-				tmp_resSet_iter++;
+				++tmp_resSet_iter;
 			}
 		}
 		else{
@@ -281,7 +281,7 @@ std::set<Size> get_coreDistDeviationResiduesToConstrain(const Real distDeviation
 			tmp_resSet_iter = tmp_residuesToConstrain.begin();
 			while(tmp_resSet_iter != tmp_residuesToConstrain.end()){
 				final_residuesToConstrain.insert(*tmp_resSet_iter);
-				tmp_resSet_iter++;
+				++tmp_resSet_iter;
 			}
 		}
 		return(final_residuesToConstrain);
@@ -361,11 +361,11 @@ std::set<Size> get_residuesToConstrain(Pose& pose){
 		return get_residuesToConstrain(0,.99,pose);
 }
 /// @brief Outputs coordinate contraints in standard coordinate constraint format
-void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose){
+void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose){
 	using namespace protocols;
 	using namespace relax;
-	if(caAtomsToConstrain.size() != 0){//don't output coordinate constraints if no atoms to constrain
-		std::set< Size >::const_iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
+	if ( !caAtomsToConstrain.empty() ) { //size() != 0){//don't output coordinate constraints if no atoms to constrain
+		std::set< Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
 		int virtualRes_id = pose.total_residue();
 		numeric::xyzVector< core::Real > atomLocation(0.0,0.0,0.0);
 		caAtomsToConstrain_start = caAtomsToConstrain.begin();
@@ -373,7 +373,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 			Size residue_id = *caAtomsToConstrain_start;
 			atomLocation = pose.residue(residue_id).xyz("CA");
 			out << "CoordinateConstraint  CA " << residue_id <<" N " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
-			caAtomsToConstrain_start++;
+			++caAtomsToConstrain_start;
 		}
 		numeric::xyzVector< Real > virtualResLocation =  pose.residue(virtualRes_id).xyz("N");
 		out << "CoordinateConstraint N " << virtualRes_id << " N " << virtualRes_id << " " << virtualResLocation.x() << " " << virtualResLocation.y() << " " << virtualResLocation.z() << " HARMONIC 0 1" << std::endl;
@@ -383,12 +383,13 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 // @brief Outputs coordinate contraints in standard coordinate constraint
 // uses the partial thread and places the constraint in the center of mass
 // of mass of the partial thread.
-void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence, bool only_res_out){
+void output_coordCsts(const std::set< Size > & caAtomsToConstrain,std::ostream & out, Pose& pose, const SequenceAlignment aln,const string query_sequence, bool only_res_out){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	std::set< Size >::const_iterator caAtomsToConstrain_start,caAtomsToConstrain_stop;
-	if(caAtomsToConstrain.size() > 0){
+	std::set< Size >::const_iterator caAtomsToConstrain_start;//,caAtomsToConstrain_stop;
+	// AMW: cppcheck flags this check as being possibly inefficcient
+	if ( !caAtomsToConstrain.empty() ) { //size() > 0){
 		if(only_res_out){
 			caAtomsToConstrain_start = caAtomsToConstrain.begin();
 			while(caAtomsToConstrain_start != caAtomsToConstrain.end()){
@@ -396,7 +397,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 				if(templateResidue_id !=0){
 					out << templateResidue_id << std::endl;
 				}
-				caAtomsToConstrain_start++;
+				++caAtomsToConstrain_start;
 			}
 		}
 		else{
@@ -413,7 +414,7 @@ void output_coordCsts(const std::set< Size > caAtomsToConstrain,std::ostream & o
 					atomLocation = pose.residue(residue_id).xyz("CA");
 					out << "CoordinateConstraint  CA " << templateResidue_id <<" ORIG " << virtualRes_id  << " " << atomLocation.x() << " " << atomLocation.y() << " " << atomLocation.z() << " HARMONIC 0 1" << std::endl;
 				}
-				caAtomsToConstrain_start++;
+				++caAtomsToConstrain_start;
 			}
 		}
 	}
@@ -435,7 +436,6 @@ std::set< Size > input_coordCsts(const string inputFileName){
 		Size res1, res2;
 		std::string cstType, name1, name2;
 		std::string func_type;
-		std::string type;
 		numeric::xyzVector< Real > xyz_target(0.0,0.0,0.0);
 		std::istringstream line_stream( line );
 		line_stream >> cstType
@@ -456,7 +456,7 @@ std::set< Size > input_coordCsts(const string inputFileName){
 }
 
 /// @brief outputs Fasta with virtual atoms attached.
-void output_fastaWVirtual(const std::string fastaFileName, std::ostream & out){
+void output_fastaWVirtual(const std::string & fastaFileName, std::ostream & out){
 	using namespace core::sequence;
 	vector1< SequenceOP > fastaSequenceOP = read_fasta_file(fastaFileName);
 	out <<">" << fastaSequenceOP[1]->id() << std::endl;

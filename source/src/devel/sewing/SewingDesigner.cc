@@ -430,7 +430,7 @@ SewingDesigner::record_statistics(
 
 
 	protocols::jd2::JobOP const job_me ( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
+	//std::string const job_name ( protocols::jd2::JobDistributor::get_instance()->job_outputter()->output_name(job_me) );
 
 //	dump_native_residue_file(native_helix_residues, job_name+".rots");
 

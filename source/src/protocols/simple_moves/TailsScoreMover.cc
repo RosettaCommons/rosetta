@@ -184,8 +184,8 @@ double TailsScoreMover::visit(
 	else
 	{
 		return in_current_min;
-		out_min_ltail = in_current_min_ltail;
-		out_min_rtail = in_current_min_rtail;
+		//out_min_ltail = in_current_min_ltail;
+		//out_min_rtail = in_current_min_rtail;
 	}
 }
 void TailsScoreMover::make_tail(utility::vector1< core::Size > & tail,int in_ltaillength, int in_rtaillength, int in_sequence_length)

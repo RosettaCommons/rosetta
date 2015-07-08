@@ -256,7 +256,7 @@ CanonicalSamplingMover::periodic_range(
   std::string CanonicalSamplingMover::get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop ) {
 
   std::string ABGEO_assignment = "";
-  for( protocols::loops::Loops::const_iterator itr = loop.begin(); itr != loop.end(); itr++ ) {
+  for( protocols::loops::Loops::const_iterator itr = loop.begin(), end = loop.end(); itr != end; ++itr ) {
     for( core::Size ii = itr->start(); ii <= itr->stop(); ii++ ){
       core::Real phi = pose.phi(ii);
       core::Real psi = pose.psi(ii);
@@ -421,7 +421,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
       && loop_to_dump.num_loop() > 0 ) {
     // make pose with just loop coordinates
 
-    for( loops::Loops::const_iterator itr = loop_to_dump.begin(); itr != loop_to_dump.end(); itr++ ) {
+    for( loops::Loops::const_iterator itr = loop_to_dump.begin(), end = loop_to_dump.end(); itr != end; ++itr ) {
       core::pose::Pose looponly( pose, itr->start(), itr->stop() );
       ss->fill_struct(looponly, decoy_tag);
       //looponly.copy_segment(itr->size(),pose,looponly.total_residue()+1,itr->start());
@@ -713,7 +713,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	    utility::vector1< core::Size > address(hpool_ptr->nlevels(), 0 );
 	    utility::vector1< core::Real > rms_to_cluster(hpool_ptr->nlevels(), 0.0);
 	    if( save_loops_only_ && loops.num_loop() > 0 ) {
-	      for( loops::Loops::const_iterator itr = loops.begin(); itr != loops.end(); itr++ ) {
+	      for( loops::Loops::const_iterator itr = loops.begin(), end = loops.end(); itr != end; ++itr ) {
 		looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
 	      }
 	      hpool_ptr->evaluate( looponly, cluster_center, rms_to_cluster, address );
@@ -743,7 +743,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	    protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD_OP hpool_ptr = utility::pointer::dynamic_pointer_cast<protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD> ( pool_rms_ );
 	    runtime_assert( hpool_ptr != 0 );
 	    if( save_loops_only_ && loops.num_loop() > 0 ){
-	      for( loops::Loops::const_iterator itr = loops.begin(); itr != loops.end(); itr++ ) {
+	      for( loops::Loops::const_iterator itr = loops.begin(), end = loops.end(); itr != end; ++itr ) {
 		looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
 	      }
 	      hpool_ptr->evaluate_and_add( looponly, cluster_center, rms_to_cluster);
@@ -754,7 +754,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	  }
 	} else{ //use MPIPool
 	  if( save_loops_only_ && loops.num_loop() > 0 ){
-	    for( loops::Loops::const_iterator itr = loops.begin(); itr != loops.end(); itr++ ) {
+	    for( loops::Loops::const_iterator itr = loops.begin(), end = loops.end(); itr != end; ++itr ) {
 	      looponly = core::pose::Pose( pose, itr->start(), itr->stop() );
 	    }
 	    pool_rms_->evaluate_and_add( looponly, cluster_center, rms_to_cluster, transition_threshold_ );

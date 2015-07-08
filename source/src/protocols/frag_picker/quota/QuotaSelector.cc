@@ -94,7 +94,8 @@ void QuotaSelector::push_the_limits(utility::vector1<Size> & q_limits,Size targe
     std::sort(tmp.begin(),tmp.end(),mysorter_biggest_first);
     trQuotaSelector.Trace << "Pushing the quota limits from total "<<total<<" to "<<target_total
 	    <<", the first pool has size "<<tmp[1].second<<std::endl;
-    while(2==2) {
+	// AMW: cppcheck notes that this is just a while true, so let's make it a real one (from 2==2)
+    while(true) {
         for(Size i=1;i<=q_limits.size();i++) {
     	    if(diff==0)
     		return;

@@ -369,8 +369,8 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			//apply to pose and output
 			anti_roll_mover->apply( anti_pose );
 			parl_roll_mover->apply( parl_pose );
-			std::string anti_string = pdb_file_name.base() + "_anti_complex.pdb" ;
-			std::string parl_string = pdb_file_name.base() + "_parl_complex.pdb" ;
+			//std::string anti_string = pdb_file_name.base() + "_anti_complex.pdb" ;
+			//std::string parl_string = pdb_file_name.base() + "_parl_complex.pdb" ;
 
 			//now move chains apart
 			Real anti_dist (6.0); //distance to move 2 CA atoms apart (largest for antiparallel seen)

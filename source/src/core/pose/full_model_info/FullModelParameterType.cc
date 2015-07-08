@@ -74,11 +74,11 @@ namespace full_model_info {
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 	FullModelParameterType
-	full_model_parameter_type_from_string( std::string const name ){
+	full_model_parameter_type_from_string( std::string const & name ){
 		initialize_full_model_parameter_type_name();
 		FullModelParameterType full_model_parameter_type( NO_TYPE );
-		for ( std::map< FullModelParameterType, std::string>::const_iterator it = full_model_parameter_type_name.begin();
-					it != full_model_parameter_type_name.end(); it++ ){
+		for ( std::map< FullModelParameterType, std::string>::const_iterator it = full_model_parameter_type_name.begin(),
+					end = full_model_parameter_type_name.end(); it != end; ++it ){
 			if ( it->second == name ) {
 				full_model_parameter_type = it->first;
 			}

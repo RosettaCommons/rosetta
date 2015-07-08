@@ -185,7 +185,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 	std::vector< FragmentMoverOP > fragmover;
 	for ( std::vector< core::fragment::FragSetOP >::const_iterator
 				it = frag_libs_.begin(), it_end = frag_libs_.end();
-				it != it_end; it++ ) {
+				it != it_end; ++it ) {
 		ClassicFragmentMoverOP cfm( new ClassicFragmentMover( *it, movemap ) );
 		cfm->set_check_ss( false );
 		cfm->enable_end_bias_check( false );
@@ -302,7 +302,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 
 		for ( core::Size i = loop.start(); i <= loop.stop(); ++i ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 				(*it)->apply( pose );
 			}
 		}
@@ -375,7 +375,7 @@ loop_mover::LoopResult LoopMover_Perturb_CCD::model_loop(
 			//for ( std::map< Size, protocols::frags::TorsionFragmentLibraryOP >::const_reverse_iterator
 			//				it = frag_libs.rbegin(), it_end = frag_libs.rend(); it != it_end; ++it ) {
 			for ( std::vector< FragmentMoverOP >::const_iterator
-						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ ) {
+						it = fragmover.begin(),it_end = fragmover.end(); it != it_end; ++it ) {
 
 				// skip if the loop is too short
 				//Size const frag_size( it->first );

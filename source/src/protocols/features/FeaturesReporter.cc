@@ -83,7 +83,7 @@ FeaturesReporter::write_schema_to_db(
   string schema_str(schema());
 	try{
 		basic::database::write_schema_to_database(schema_str,db_session);
-	} catch (cppdb::cppdb_error error){
+	} catch (cppdb::cppdb_error & error){
 		stringstream err_msg;
 		err_msg
 			<< "Failed to write database schema for '" << type_name() << "'" << endl

@@ -57,8 +57,8 @@ void
 FabConstraint::show(std::ostream& out) const
 {
 	out << "FabConstraint is an AmbiguousConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
-		(*cst_it)->show(out);
+	for ( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ) {
+		( *cst_it )->show( out );
 	}
 
 	out << " ...all member constraints of this FabConstraint shown." << std::endl;
@@ -127,7 +127,6 @@ FabConstraint::pose_res_no(
 	Size pose_resnum;
 	Size resnum;
 	std::string residue;
-	char ins_code;
 	char chain = tempres[tempres.length()-1];
 
 	//check if the residue has an insertion code
@@ -137,7 +136,7 @@ FabConstraint::pose_res_no(
 		pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum);
 	}
 	else{
-		ins_code = tempres[tempres.length()-2];
+		char ins_code = tempres[tempres.length()-2];
 		residue = tempres.substr(0,tempres.length()-2);
 		resnum = atoi(residue.c_str());
 		pose_resnum = pose.pdb_info()->pdb2pose(chain,resnum, ins_code);

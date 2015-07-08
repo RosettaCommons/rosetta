@@ -67,7 +67,7 @@ segment_L2 1jxw
 */
 
 core::sequence::SequenceProfileOP concatenate_profiles( utility::vector1< core::sequence::SequenceProfileOP > const profiles, utility::vector1< std::string > segment_names_ordered,std::string  H3_seq ); // utility function to generate a single concatenated profile from a vector of profiles
-std::map< std::string, std::string> read_H3_seq( std::string const Protein_family_path);
+std::map< std::string, std::string> read_H3_seq( std::string const & Protein_family_path);
 
 } //splice
 } //devel

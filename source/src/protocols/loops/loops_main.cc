@@ -121,7 +121,7 @@ void read_loop_fragments(
 	for ( std::vector< FragSetOP >::const_iterator
 			it = frag_libs.begin(),
 			it_end = frag_libs.end();
-			it != it_end; it++
+			it != it_end; ++it
 	) {
 		Size const frag_size( (*it)->max_frag_length() );
 		Size const n_frags( (*it)->size() );
@@ -160,7 +160,7 @@ void read_loop_fragments(
 			for ( std::vector< FragSetOP >::const_reverse_iterator
 						it = frag_libs.rbegin(),
 						it_end = frag_libs.rend();
-						it != it_end; it++ ) {
+						it != it_end; ++it ) {
 				tt.Info << "Stealing fragments from " << infile	<< "  "
 								<< option[  OptionKeys::loops::stealfrags_times ]() << " times" << std::endl;
 
@@ -175,7 +175,7 @@ void read_loop_fragments(
 	for ( std::vector< FragSetOP >::const_reverse_iterator
 	      it = frag_libs.rbegin(),
         it_end = frag_libs.rend();
-				it != it_end; it++ ) {
+				it != it_end; ++it ) {
 
 		Size const frag_size( (*it)->max_frag_length() );
 		Size const n_frags( (*it)->size() );

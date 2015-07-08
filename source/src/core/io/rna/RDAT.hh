@@ -212,10 +212,10 @@ namespace rna {
 
 
 	std::string
-	get_tag( utility::vector1< Annotation > const & annotations, std::string const tag );
+	get_tag( utility::vector1< Annotation > const & annotations, std::string const & tag );
 
 	utility::vector1< std::string >
-	get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const tag );
+	get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const & tag );
 
 
 } //rna

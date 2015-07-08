@@ -182,6 +182,8 @@ ExposedStrandMover::ExposedStrandMover() {
   check_rmsd_ = option[ check_rmsd ];
   //strand_def_vector_ = option[ strand_span ];
   scorefxn_ = core::scoring::get_score_function();
+  // AMW: cppcheck wanted this to be initialized in the ctor
+  chain_char_ = 'A';
   //struct_filename_ = option[ struct_file ];
 }
 

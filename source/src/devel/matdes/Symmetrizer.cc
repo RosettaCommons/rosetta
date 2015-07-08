@@ -131,7 +131,7 @@ Symmetrizer::apply(Pose & pose) {
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	std::map<Size,SymDof> dofs = sym_info->get_dofs();
  	int sym_jump = 0;
- 	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+ 	for(std::map<Size,SymDof>::iterator i = dofs.begin(), end = dofs.end(); i != end; ++i ) {
    	Size jump_num = i->first;
    	if (sym_jump == 0) {
 	 		sym_jump = jump_num;

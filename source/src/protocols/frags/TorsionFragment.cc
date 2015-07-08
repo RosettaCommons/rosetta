@@ -314,7 +314,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 	}
 	runtime_assert( !seg_start );
 
-	if ( !seg_map.size() ) {
+	if ( seg_map.empty() ) {//size() ) {
 		std::cerr << "Warning: source fragment library does not have any data!" << std::endl;
 		return false;
 	}
@@ -327,7 +327,7 @@ TorsionFragmentLibrary::derive_from_src_lib(
 
 	// loop through each segment and derive fragments
 	for ( std::map<Size, Size>::const_iterator it = seg_map.begin(),
-					it_end = seg_map.end(); it != it_end; it++ ) {
+					it_end = seg_map.end(); it != it_end; ++it ) {
 		Size const seg_begin(it->first);
 		Size const seg_end(it->second);
 		Size lib_index, copy_start;

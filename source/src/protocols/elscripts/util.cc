@@ -36,7 +36,7 @@ parse_scoredef( LuaObject const & scoredef,
 	for (LuaIterator i=score_fxns.begin(), end; i != end; ++i) {
 		if( i.skey() == scorefxn_name ) {
 			return (*i).to<core::scoring::ScoreFunctionSP>()->clone();
-			break;
+			//break;
 		}
 	}
 	utility_exit_with_message("ScoreFunction " + scorefxn_name + " not found in score_fxns map.");

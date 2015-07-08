@@ -73,7 +73,6 @@ AngleConstraint::read_def(
 	std::string tempres1, tempres2, tempres3;
 	std::string name1, name2, name3;
 	std::string func_type;
-	std::string type;
 
 	data
 		>> name1 >> tempres1

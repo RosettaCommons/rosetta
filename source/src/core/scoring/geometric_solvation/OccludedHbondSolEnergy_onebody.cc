@@ -191,7 +191,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 			}
 		}
 		residue_geosol += polar_group_energy;
-		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+		//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
 		//		std::cout << "jk FITTED_ONEBODY Donor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	}
 
@@ -209,7 +209,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 			}
 		}
 		residue_geosol += polar_group_energy;
-		std::string const base_atom_name = polar_rsd.atom_name( base_atom );
+		//std::string const base_atom_name = polar_rsd.atom_name( base_atom );
 		//		std::cout << "jk FITTED_ONEBODY Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	}
 

@@ -367,7 +367,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 ///////////////////////////////////////////////////////////////////////////////
 void
 create_rna_vall_torsions( pose::Pose & pose,
-													std::string const outfile,
+													std::string const & outfile,
 													utility::vector1 <Size> const & exclude_res_list )
 {
 	utility::io::ozstream torsions_out ( outfile );
@@ -597,7 +597,7 @@ check_base_pair( pose::Pose & pose, FArray1D_int & struct_type )
 		if ( ( base_pair.edge1 == WATSON_CRICK && base_pair.edge2 == WATSON_CRICK
 					 && base_pair.orientation == 1 )  &&
 				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) 			{
-			std::string atom1, atom2;
+			//std::string atom1, atom2;
 			//		get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
 			//			if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() < 3.5 ) {
 			WC_base_pair = true;
@@ -836,7 +836,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 std::string const
-convert_based_on_match_type( std::string const RNA_string, Size const type ){
+convert_based_on_match_type( std::string const & RNA_string, Size const type ){
 
 		std::string RNA_string_local = RNA_string;
 

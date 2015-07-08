@@ -126,7 +126,7 @@ KofNConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weight
 	utility::vector1<EnergyMap> tmp_EMaps;
 
 	// step 1 score
-	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(); member_it != member_constraints().end(); member_it++) {
+	for( ConstraintCOPs::const_iterator member_it = member_constraints().begin(), end = member_constraints().end(); member_it != end; ++member_it ) {
     EnergyMap emap_i;
 		(*member_it)->score(xyz_func, weights, emap_i);
 
@@ -214,7 +214,7 @@ KofNConstraint::show( std::ostream& out) const
 		active_constraints_[i]->show(out);
 	}
   out << "KofNConstraint containing the following " << member_constraints().size() << " constraints: " << std::endl;
-  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
+  for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(), end = member_constraints().end(); cst_it != end; ++cst_it ){
     (*cst_it)->show(out);
   }
   out << " ...all member constraints of this KofNConstraint shown." << std::endl;

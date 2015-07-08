@@ -247,7 +247,7 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox
 	colors.push_back( "hotpink" );
 	colors.push_back( "olive" );
 	Size layer = 0;
-	for(LayerSpecification::const_iterator it = layer_specification.begin(); it != layer_specification.end(); it++){
+	for(LayerSpecification::const_iterator it = layer_specification.begin(), end = layer_specification.end(); it != end; ++it ) {
 		utility::vector1< Size > pos;
 		for(Size i = 1; i <= pose.total_residue(); i++)
 			if( it->second[ i ])
@@ -360,9 +360,10 @@ LayerDesignOperation::set_default_layer_residues() {
 }
 
 utility::vector1<bool>
-LayerDesignOperation::get_restrictions( std::string const & layer, std::string const & default_layer, std::string const & ss_type) const {
+LayerDesignOperation::get_restrictions( std::string const & layer, std::string const & /*default_layer*/, std::string const & ss_type) const {
 	// if the layer doesn't specify the required ss used the default layer one.
-  std::string used_layer = ( layer_residues_.find(layer)->second.count(ss_type) != 0 ) ? layer : default_layer;
+	// AMW: fixing this cppcheck error (used_layer is not used!) created an unused parameter
+ 	// std::string used_layer = ( layer_residues_.find(layer)->second.count(ss_type) != 0 ) ? layer : default_layer;
 	utility::vector1<bool>  restrict_to_aa( chemical::num_canonical_aas, false );
 	BOOST_FOREACH(char restype, layer_residues_.find(layer)->second.find(ss_type)->second) {
 		restrict_to_aa[chemical::aa_from_oneletter_code( restype )] = true;
@@ -723,7 +724,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			TR << "redefining default layer " << layer << std::endl;
 		} else if(layer == "CombinedTasks" ) {
 			std::string comb_name = layer_tag->getOption< std::string >("name");
-			layer = comb_name;
+			//layer = comb_name;
 			TR << "Making a combined task named "<< comb_name << std::endl;
             layer = comb_name;
 			utility::vector1< TaskOperationOP > task_ops;
@@ -775,7 +776,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("aa");
 					LayerResidues::iterator lrs =  layer_residues_.find( layer );
 					TR << "Assigning residues " << aas << " to layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						std::set<char> temp_def_res_set;
 						temp_def_res_set.insert( aas.begin(), aas.end() );
 						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
@@ -785,7 +786,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("ncaa");
 					LayerNCResidues::iterator lrs =  layer_nc_residues_.find( layer );
 					TR << "Assigning noncanonical residues " << aas << " to layer " << lrs->first << std::endl;
-					for(LayerNCDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerNCDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						layer_nc_residues_[ lrs->first ][ ld->first ].clear(); //Clear the list of NCAAS
 						parse_ncaa_list(aas, layer_nc_residues_[ lrs->first ][ ld->first ]); //Add these NCAAs.
 					}
@@ -794,7 +795,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("append");
 					LayerResidues::iterator lrs =  layer_residues_.find( layer );
 					TR << "Appending residues " << aas << " to layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
 						temp_def_res_set.insert( aas.begin(), aas.end() );
 						layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
@@ -804,7 +805,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("ncaa_append");
 					LayerResidues::iterator lrs =  layer_residues_.find( layer );
 					TR << "Appending noncanonical residues " << aas << " to layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						parse_ncaa_list(aas, layer_nc_residues_[ lrs->first ][ ld->first ]); //Add these NCAAs.
 					}
 				}
@@ -812,7 +813,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("exclude");
 					LayerResidues::iterator lrs =  layer_residues_.find( layer );
 					TR << "Excluding residues " << aas << " from layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
 						BOOST_FOREACH(char aa, aas)
 						temp_def_res_set.erase(aa);
@@ -823,7 +824,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 					const std::string aas = secstruct_tag->getOption< std::string >("ncaa_exclude");
 					LayerResidues::iterator lrs =  layer_residues_.find( layer );
 					TR << "Excluding noncanonical residues " << aas << " from layer " << lrs->first << std::endl;
-					for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					for(LayerDefinitions::iterator ld = lrs->second.begin(), end = lrs->second.end(); ld != end; ++ld ) {
 						utility::vector1<std::string> res_to_exclude;
 						parse_ncaa_list(aas, res_to_exclude);
 						exclude_ncaas(res_to_exclude, layer_nc_residues_[ lrs->first ][ ld->first ]);

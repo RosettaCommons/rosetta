@@ -460,7 +460,7 @@ ProtectedConformation::replace_residue_sandbox(
     Parent::replace_residue( seqpos, old_rsd, false );
 
     // re-throw the exception
-    throw e;
+    throw;// e;
   }
 }
 

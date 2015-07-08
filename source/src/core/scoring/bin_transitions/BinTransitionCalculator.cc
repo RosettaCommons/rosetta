@@ -375,7 +375,6 @@ namespace core {
 						//Storage slots for the index of the BinTransitionData object that we'll use, and for the bin index:
 						core::Size data_index(0);
 						core::Size bin_index(0);
-						bool use_iplus1(false); //Should we get the data from the data for residue i+1?
 
 						//Generate the mainchain_torsions vector:
 						mainchain_torsions.clear();
@@ -386,7 +385,7 @@ namespace core {
 							//Find the data index and bin index:
 							data_index=0;
 							bin_index=0;
-							use_iplus1=false;
+							bool use_iplus1=false;
 							find_data_and_bin( bin_name, conformation.residue(res_indices[ir]), data_index, bin_index, use_iplus1 );
 							if(data_index==0) {
 								use_iplus1=true;

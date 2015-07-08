@@ -387,7 +387,7 @@ Antibody::detect_regular_CDR_H3_stem_type() {
 	        ( (cdr_h3_sequence[1] == 'K') ||
 	          (cdr_h3_sequence[1] == 'R') ) && (is_H3 != true) ) {
 		extended_ = true;
-		is_H3 = true;
+		//is_H3 = true;
 	}
 
 	TR << "AC Finished Detecting Regular CDR H3 Stem Type: "

@@ -132,12 +132,12 @@ void spanfile_for_each_chain( Pose & pose, Real thickness, std::string spanfile)
 		SpanningTopologyOP topo_pose( new SpanningTopology( split_z_coord, split_chain_info, split_secstruct, thickness ) );
 		
 		// get filename for spanfile for each chain
-		char chain( split_poses[i]->pdb_info()->chain(i) );
 		std::string split_spanfile( spanfile );
 		utility::trim( split_spanfile, ".span" );
 		
 		// output filename depends on number of chains
 		if ( pose.chain( pose.total_residue() ) > 1 ){
+			char chain( split_poses[i]->pdb_info()->chain(i) );
 			split_spanfile = split_spanfile + chain + ".span";
 		}
 		else{

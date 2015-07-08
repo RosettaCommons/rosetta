@@ -563,7 +563,7 @@ GenericMonteCarloMover::accept( Pose & pose,
 			}
 			TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
 			if ( basic::options::option[basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
-				std::ofstream out( saved_accept_file_name_.c_str() );
+				//std::ofstream out( saved_accept_file_name_.c_str() );
 				pose.dump_pdb(saved_accept_file_name_);
 				/*						        out << "##Begin comments##" << std::endl;
 															using namespace std;
@@ -828,7 +828,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 	if( saved_accept_file_name_ != "" ){
 		TR<<"Saving initial pose entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<saved_accept_file_name_<<std::endl;
 		if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
-						std::ofstream out( saved_accept_file_name_.c_str() );
+						//std::ofstream out( saved_accept_file_name_.c_str() );
 						pose.dump_pdb(saved_accept_file_name_);
 /*						        out << "##Begin comments##" << std::endl;
 						        TR<<"SJF DEbug 1"<<std::endl;

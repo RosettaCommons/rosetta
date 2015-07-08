@@ -317,7 +317,7 @@ output_single_motif(
 
 	std::string const output_path( option[ out::path::pdb ]() );
 	std::string delimiter( "_" );
-	std::string extension( ".pdb" );
+	//std::string extension( ".pdb" );
 	std::string motif_file_name( output_path + src_pose.residue_type( prot_pos ).name3() +
 			string_of( src_pose.pdb_info()->number( prot_pos ) ) +
 			string_of( src_pose.pdb_info()->chain( prot_pos ) ) + delimiter );

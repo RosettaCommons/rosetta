@@ -826,17 +826,19 @@ void PeakAssignmentResidueMap::network_analysis( Size nr_assignments ) {
 				}
 // 				tr.Trace << "add covalent gammmas" << std::endl;
 				//iterate over missing covalent gammas
-				for ( std::map< core::id::NamedAtomID, bool >::const_iterator cgit = covalent_gammas.begin(); cgit != covalent_gammas.end(); cgit++ ) {
+				for ( std::map< core::id::NamedAtomID, bool >::const_iterator cgit = covalent_gammas.begin(), cgend = covalent_gammas.end(); cgit != cgend; ++cgit ) {
 					if ( cgit->second ) continue; // it has been visited
 					id::NamedAtomID const& gamma_atom( cgit->first );
 					int gamma_resid( gamma_atom.rsd() );
-					int res1( resi < resj ? resi : resj );
-					int res2( resi >= resj ? resi : resj );
+					//int res1( resi < resj ? resi : resj );
+					//int res2( resi >= resj ? resi : resj );
 					bool connect_in_i( true );
 					bool connect_in_j( true );
 					//					tr.Trace << "try gamma atom " << gamma_atom << std::endl;
 					//if i, i+2 gamma needs to be exactly between two residues to be effective
 					if ( seq_dist == 2 ) {
+						int res1( resi < resj ? resi : resj );
+						int res2( resi >= resj ? resi : resj );
 						if ( !( gamma_resid-res1 == 1 || res2 - gamma_resid == 1 ) ) continue;
 						//							connect_in_i = true;
 						//							connect_in_j = true;

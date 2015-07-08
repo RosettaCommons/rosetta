@@ -188,7 +188,6 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
 		*ss ) ) );
   }
 
-  int shift = 0;
   if( selector() ){
     utility::vector1< bool > torsion_mask;
     try {
@@ -197,9 +196,9 @@ claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,
       std::ostringstream ss;
       ss << this->get_name() << " failed to apply its ResidueSelector in " << __FUNCTION__ << ".";
       e.add_msg(ss.str());
-      throw e;
+      throw;
     }
-    shift = torsion_mask.index( true )-1;
+    int shift = torsion_mask.index( true )-1;
 
     if( shift == -1 ) { // verify that torsion_mask isn't all-false.
       std::ostringstream ss;

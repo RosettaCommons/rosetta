@@ -79,13 +79,12 @@ FiberDiffraction& getFiberDiffractionData_legacy(core::Real c, core::Real res_cu
 		if (!basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::layer_lines ].user() ) {
 			 utility_exit_with_message("[ ERROR ] No fiber diffraction layer lines specified!");
 		} else {
-			bool fiber_data_loaded=false;
 			bool bessel_initialized=false;
 			std::string layer_lines;
 			layer_lines = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::layer_lines ]();
 
 			TR << "Loading fiber diffraction layer lines" << std::endl;
-			fiber_data_loaded = theFiberDiffractionData.loadFiberDiffractionData( layer_lines, c, res_cutoff_high, res_cutoff_low );
+			bool fiber_data_loaded = theFiberDiffractionData.loadFiberDiffractionData( layer_lines, c, res_cutoff_high, res_cutoff_low );
 			if (!fiber_data_loaded) {
 				TR.Error << "[ ERROR ] Error loading layer_lines named: '" << layer_lines  << "'" << std::endl;
 				exit(1);

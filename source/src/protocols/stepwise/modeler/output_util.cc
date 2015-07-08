@@ -134,7 +134,7 @@ namespace modeler {
 		//From core/kinematic/MoveMap.hh
 		//typedef std::map< id::JumpID, bool > JumpID_Map
 		outstream << "print movemap jump_points [iterator method]: " << std::endl;
-	  for ( std::map< id::JumpID, bool > ::const_iterator it = mm.jump_id_begin(); it != mm.jump_id_end(); it++ ){
+	  for ( std::map< id::JumpID, bool > ::const_iterator it = mm.jump_id_begin(), end = mm.jump_id_end(); it != end; ++it ){
 	    outstream << "movemap jump == true for jump_pos1 = " << it->first << " | jump_pos2 = " << it->second << std::endl;
 		}
 		outstream << "--------------------------------------------------------------------------------------" << std::endl;

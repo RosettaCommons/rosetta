@@ -64,7 +64,7 @@ create_rna_vall_torsions( core::pose::Pose & pose,
 
 void
 create_rna_vall_torsions( core::pose::Pose & pose,
-													std::string const outfile,
+													std::string const & outfile,
 													utility::vector1 <core::Size> const & exclude_res_list );
 
 core::Real
@@ -103,7 +103,7 @@ void
 setup_coarse_chainbreak_constraints( core::pose::Pose & pose, core::Size const & n );
 
 std::string const
-convert_based_on_match_type( std::string const RNA_string, core::Size const type );
+convert_based_on_match_type( std::string const & RNA_string, core::Size const type );
 
 bool
 compare_RNA_char( char const char1, char const char2 );

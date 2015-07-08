@@ -566,8 +566,8 @@ namespace align {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map ) const {
-		for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin();
-					it != atom_id_map.end(); it++ ){
+		for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin(),
+					end = atom_id_map.end(); it != end; ++it ){
 			TR << it->first << " mapped to " << it->second << std::endl;
 		}
 		TR << std::endl;
@@ -578,8 +578,8 @@ namespace align {
 	StepWisePoseAligner::output_atom_id_map( std::map< id::AtomID, id::AtomID > const & atom_id_map,
 																					 pose::Pose const & pose1,
 																					 pose::Pose const & pose2 ) const {
-		for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin();
-					it != atom_id_map.end(); it++ ){
+		for ( std::map < id::AtomID, id::AtomID >::const_iterator it = atom_id_map.begin(),
+					end = atom_id_map.end(); it != end; ++it ){
 			TR << it->first << " " << pose1.residue( it->first.rsd() ).atom_name( it->first.atomno() ) <<
 				" mapped to " <<
 				it->second << " " << pose2.residue( it->second.rsd() ).atom_name( it->second.atomno() ) << std::endl;

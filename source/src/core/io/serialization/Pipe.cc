@@ -33,7 +33,7 @@ core::pose::PoseSP at( PipeSP p, int idx ){
 // this is a deep copy, every PoseSP is dereferenced and copied
 PipeSP clone( PipeSP p ) {
 	PipeSP newpipe = PipeSP( new Pipe);
-	for( Pipe::iterator jtr = p->begin(); jtr != p->end(); jtr++ ){
+	for( Pipe::iterator jtr = p->begin(), end = p->end(); jtr != end; ++jtr ){
 		newpipe->push_back( core::pose::PoseSP( new core::pose::Pose( **jtr ) ) );
 	}
 	return newpipe;

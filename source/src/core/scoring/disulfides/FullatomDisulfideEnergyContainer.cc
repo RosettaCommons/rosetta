@@ -393,7 +393,8 @@ debug_assert( !empty() );
 ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
-debug_assert( !empty() );
+	debug_assert( !empty() );
+	// cppcheck flags this but it is fine -- the limits check is happening in the right order!
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
@@ -430,9 +431,11 @@ debug_assert( !empty() );
 	return ResidueNeighborIteratorOP( new DisulfResNeighbIterator( this ) );
 }
 
-	ResidueNeighborIteratorOP
+ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
+	
+	// cppcheck flags this but it is fine -- the limits check is happening in the right order!
 	if ( resid <= (int)resid_2_disulfide_index_.size() &&
 			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {

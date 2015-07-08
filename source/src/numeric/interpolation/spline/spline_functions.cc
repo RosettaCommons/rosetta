@@ -39,7 +39,7 @@ spline_second_derivative(
 )
 {
 
-	Real p,qn,sig,un;
+	Real qn,un;
 
 	// using namespace std;
 	// cerr << "spline second derivative 1 yp1 " << yp1 << " ypn " << ypn<< endl;
@@ -71,8 +71,8 @@ spline_second_derivative(
 	//y2 and u are used for tem-porary storage of the decomposed factors.
 
 	for (int i=2; i<=n-1; i++) {
-		sig=(x[i]-x[i-1])/(x[i+1]-x[i-1]);
-		p=sig*y2[i-1]+2.0;
+		Real sig=(x[i]-x[i-1])/(x[i+1]-x[i-1]);
+		Real p=sig*y2[i-1]+2.0;
 		y2[i]=(sig-1.0)/p;
 		u[i]=(y[i+1]-y[i])/(x[i+1]-x[i]) - (y[i]-y[i-1])/(x[i]-x[i-1]);
 		u[i]=(6.0*u[i]/(x[i+1]-x[i-1])-sig*u[i-1])/p;
@@ -111,7 +111,7 @@ void spline_interpolate(
  Real x, Real & y, Real & dy
 )
 {
-	int klo,khi,k;
+	int klo,khi;
 	Real h,b,a;
 
 	//We will find the right place in the table by means of bisection.
@@ -123,7 +123,7 @@ void spline_interpolate(
 	klo=1;
 	khi=n;
 	while (khi-klo > 1) {
-		k=(khi+klo) >> 1;
+		int k=(khi+klo) >> 1;
 		if (xa[k] > x)
 			khi=k;
 		else

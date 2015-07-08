@@ -1038,7 +1038,7 @@ Distance
 Residue::connection_distance(
 	conformation::Conformation const & conf,
 	Size const resconn_index,
-	Vector const matchpoint
+	Vector const & matchpoint
 ) const
 {
 	Vector ipos = type().residue_connection( resconn_index ).icoor().build( *this, conf );

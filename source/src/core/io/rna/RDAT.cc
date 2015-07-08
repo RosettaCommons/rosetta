@@ -699,7 +699,7 @@ RDAT::check_annotation( Annotation const & annotation ) const {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	std::string
-	get_tag( utility::vector1< Annotation > const & annotations, std::string const tag ) {
+	get_tag( utility::vector1< Annotation > const & annotations, std::string const & tag ) {
 		for ( Size n = 1; n <= annotations.size(); n++ ){
 			if ( annotations[n].first == tag ) return annotations[n].second;
 		}
@@ -708,7 +708,7 @@ RDAT::check_annotation( Annotation const & annotation ) const {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< std::string >
-	get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const tag ) {
+	get_tags( utility::vector1< utility::vector1< Annotation > > const & data_annotations, std::string const & tag ) {
 		utility::vector1< std::string > tags;
 		for ( Size k = 1; k <= data_annotations.size(); k++ ){
 			tags.push_back( get_tag( data_annotations[k], tag ) );

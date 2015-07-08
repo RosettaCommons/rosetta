@@ -103,7 +103,7 @@ DsspDesignOperation::set_restrictions_aa( std::string const & sse, std::string c
 {
 	// handle all SSEs
 	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(); it != sse_residues_.end(); it++ ){
+		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
 			set_restrictions_aa( it->first, aas );
 		}
 	// check that SSE is valid
@@ -120,7 +120,7 @@ DsspDesignOperation::set_restrictions_append( std::string const & sse, std::stri
 {
 	// handle all SSEs
 	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(); it != sse_residues_.end(); it++ ){
+		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
 			set_restrictions_append( it->first, aas );
 		}
 	// check that SSE is valid
@@ -140,7 +140,7 @@ DsspDesignOperation::set_restrictions_exclude( std::string const & sse, std::str
 {
 	// handle all SSEs
 	if( sse == "all" ){
-		for( SecStructResidues::iterator it = sse_residues_.begin(); it != sse_residues_.end(); it++ ){
+		for( SecStructResidues::iterator it = sse_residues_.begin(), end = sse_residues_.end(); it != end; ++it ){
 			set_restrictions_exclude( it->first, aas );
 		}
 	// check that SSE is valid

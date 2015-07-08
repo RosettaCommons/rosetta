@@ -300,13 +300,13 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 			cuts( 1 ) = flags_.receptor_last_res();
 			receptor_ncuts++;
 		}
-		std::map<int,int>::const_iterator iter;
-		for(iter = peptide_cuts.begin(); iter != peptide_cuts.end(); iter++) {
+		std::map<int,int>::const_iterator iter, end;
+		for(iter = peptide_cuts.begin(), end = peptide_cuts.end(); iter != end; ++iter ) {
 			cuts( iter->first + receptor_ncuts ) = iter->second;
 		}
 		// add jump from each anchor to the following anchor (and from receptor, to first peptide anchor, if in docking mode)
 		int num_jumps = 0; int max_jump = 0;
-		for(iter = peptide_anchors.begin(); iter != peptide_anchors.end(); iter++) {
+		for(iter = peptide_anchors.begin(), end = peptide_anchors.end(); iter != end; ++iter ) {
 			int pep_anchor_num = iter->first;
 			int residue = iter->second;
 			int cur_jump = pep_anchor_num + receptor_ncuts - 1;
@@ -570,11 +570,11 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
       utility::vector1< Size > site_cst_residues;
       utility::vector1< Size > binding_site_residues;
 
-      for( utility::vector1< core::scoring::constraints::ConstraintCOP >::const_iterator i = site_cstset_list.begin(); i != site_cstset_list.end(); i++ ){
+      for( utility::vector1< core::scoring::constraints::ConstraintCOP >::const_iterator i = site_cstset_list.begin(), end = site_cstset_list.end(); i != end; ++i ){
          site_cst_residues = (*i)->residues();
          binding_site_residues.push_back(site_cst_residues[1]);
       }
-      for( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(); i != binding_site_residues.end(); i++ ){
+      for( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(), end = binding_site_residues.end(); i != end; ++i ){
           TR << "Binding site residues : " << *i << std::endl;
       }
 
@@ -602,7 +602,7 @@ FlexPepDockingProtocol::place_peptide_on_binding_site(
 
       // calculating binding site COM and principle components
     	utility::vector1< Vector > binding_site_c_alpha_coords;
-    	for ( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(); i != binding_site_residues.end(); i++ ) {
+    	for ( utility::vector1< Size >::const_iterator i = binding_site_residues.begin(), end = binding_site_residues.end(); i != end; ++i ) {
     		binding_site_c_alpha_coords.push_back( pose.residue( *i ).xyz( "CA" ) );
     	}
       Vector binding_site_c_alpha_centroid(0, 0, 0);

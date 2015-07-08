@@ -137,8 +137,8 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 		if (pose.residue_type( i ).is_ligand()) lig_chain = pose.chain( i );
 	}
   prot_chain = pose.chain( 1 );   //we're making the not so wild assumption that the the first residue in the pose belongs to the protein
-  std::string lig_ch_string = utility::to_string( lig_chain );
-  std::string prot_ch_string = utility::to_string( prot_chain );
+  //std::string lig_ch_string = utility::to_string( lig_chain );
+  //std::string prot_ch_string = utility::to_string( prot_chain );
   if( lig_chain == prot_chain ) { utility_exit_with_message( "WTF?!? ligand and residue 1 are on the same chain... " );}
 	else{
 	TR<<"Now calculating SaSa"<<std::endl;
@@ -677,7 +677,8 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		}
 
         trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
-        std::unique( trg_res.begin(), trg_res.end() );
+        utility::vector1< core::Size >::iterator last = std::unique( trg_res.begin(), trg_res.end() );
+		trg_res.erase( last, trg_res.end() );
 
 		TR<<"Calculating RMS for residues ";
 		for (core::Size i=1; i<=pose.total_residue(); ++i){
@@ -945,7 +946,7 @@ EnzdesScorefileFilter::examine_pose(
 	Size spec_res_counter(0);
 	utility::vector1< Size > special_res = enzutil::catalytic_res( pose );
 
-  for( utility::vector1<Size>::const_iterator res_it = special_res.begin(); res_it != special_res.end(); res_it++ ){
+  for( utility::vector1<Size>::const_iterator res_it = special_res.begin(), end = special_res.end(); res_it != end; ++res_it ){
 
     spec_res_counter++;
     //for convenience, the sequence number of the residue will be written out
@@ -1081,8 +1082,7 @@ EnzdesScorefileFilter::compute_metrics_for_residue_subset(
 	if( res_calc_it != residue_calculators_.end() ){
 
 		utility::vector1< std::pair< std::string, std::string > > calculators_this_res = res_calc_it->second;
-		for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin();
-				 calc_it != calculators_this_res.end(); calc_it++ ){
+		for( utility::vector1< std::pair< std::string, std::string > >::iterator calc_it = calculators_this_res.begin(), end = calculators_this_res.end(); calc_it != end; ++calc_it ){
 
 			std::string res_calc_name = sub_name + "_" + calc_it->first;
 			int width = std::max( 10, (int) res_calc_name.length() + 3 );

@@ -344,17 +344,14 @@ MembranePotential::evaluate_env(
 /// @brief Full Evaluate Membrane Env Method (given depth and const menv score)
 void
 MembranePotential::evaluate_env(
-								pose::Pose const & pose,
-								conformation::Residue const & rsd,
-								Real const MembraneDepth,
-								Real & membrane_env_score
-								) const
-{
+	pose::Pose const & pose,
+	conformation::Residue const & rsd,
+	Real const MembraneDepth,
+	Real & membrane_env_score
+) const {
 	Real t2 = 2.0;
 	Real t3 = 2.0;
-	int s2 = 14;
-	int s3 = 14;
-	int layer1, layer2, layer;
+	//int layer1, layer2, layer;
 	Real f, z, zn, low;
 
 	Real const env6_weight=1.0;
@@ -371,7 +368,7 @@ MembranePotential::evaluate_env(
 
 		if ( ( MembraneDepth < 11.0 ) || ( MembraneDepth > 49.0 ) ) {
 			//pure water layer
-			layer = 3;
+			int layer = 3;
 			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 (env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ));
 			Real score10 (env10_weight* mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
@@ -380,8 +377,8 @@ MembranePotential::evaluate_env(
 		}
 		else if ( ( MembraneDepth >= 11.0 && MembraneDepth <= 13.0 ) || ( MembraneDepth >= 47.0 && MembraneDepth <= 49.0 ) ) {
 			//interpolate between water and interface phases
-			layer1 = 2; //interface layer
-			layer2 = 3; //water layer
+			int layer1 = 2; //interface layer
+			int layer2 = 3; //water layer
 			//B_layer = 1;  // set but never used ~Labonte
 
 			if ( MembraneDepth <= 13.0 ) {
@@ -390,6 +387,7 @@ MembranePotential::evaluate_env(
 				low = 47.0;
 			}
 			z = 2*std::abs( (MembraneDepth - low) ) / t2;
+			int s2 = 14;
 			zn = std::pow( z, s2 );
 			f = zn/(1 + zn);
 
@@ -400,16 +398,14 @@ MembranePotential::evaluate_env(
 
 			membrane_env_score = f * ( score6_layer2 + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
 
-			if ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) {
-				layer = 2;
-			} else {
-				layer = 3;
-			}
+			// amw what's the point of this? it immediately leaves scope and wasn't being used
+			// in higher scope either.
+			//int layer = ( MembraneDepth <= 12.0 || MembraneDepth >= 48.0 ) ? 2 : 3;
 
 		}
 		else if ( ( MembraneDepth > 13.0 && MembraneDepth < 17.0 ) || ( MembraneDepth > 43.0 && MembraneDepth < 47.0 ) ) {
 			//pure interface phase
-			layer = 2; //interface layer
+			int layer = 2; //interface layer
 			//B_layer = 1;  // set but never used ~Labonte
 			Real score6 ( env6_weight*mem_env_log6_( rsd.aa(), layer, static_cast< int >( fcen6 ) ) );
 			Real score10 ( env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ) );
@@ -417,8 +413,8 @@ MembranePotential::evaluate_env(
 		}
 		else if ( ( MembraneDepth >= 17.0 && MembraneDepth <= 19.0 ) || ( MembraneDepth >= 41.0 && MembraneDepth <= 43.0 ) ) {
 			//interpolate between interface and hydrophobic phases
-			layer1 = 1; //hydrophobic layer
-			layer2 = 2; //interface layer
+			int layer1 = 1; //hydrophobic layer
+			int layer2 = 2; //interface layer
 
 			if ( MembraneDepth <= 19.0 ) {
 				low = 19.0;
@@ -426,6 +422,7 @@ MembranePotential::evaluate_env(
 				low = 41.0;
 			}
 			z = 2*std::abs( (MembraneDepth - low) ) / t3;
+			int s3 = 14;
 			zn = std::pow( z, s3 );
 			f = zn/(1 + zn);
 
@@ -436,16 +433,12 @@ MembranePotential::evaluate_env(
 
 			membrane_env_score = f * ( score6_layer2  + score10_layer2 ) + ( 1 - f ) * ( score6_layer1 + score10_layer1 );
 
-			if ( MembraneDepth <= 18.0 || MembraneDepth >= 42.0 ) {
-				layer = 2;
-			} else {
-				layer = 1;
-			}
+			//int layer = ( MembraneDepth <= 18.0 || MembraneDepth >= 42.0 ) ? 2 : 1;
 
 		}
 		else {
 			//pure hydrophobic phase
-			layer = 1;
+			int layer = 1;
 
 			Real score6  (env6_weight *mem_env_log6_(  rsd.aa(), layer, static_cast< int >( fcen6  ) ));
 			Real score10 (env10_weight*mem_env_log10_( rsd.aa(), layer, static_cast< int >( fcen10 ) ));

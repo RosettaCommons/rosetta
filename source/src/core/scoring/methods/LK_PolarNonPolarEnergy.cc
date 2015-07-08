@@ -1018,15 +1018,19 @@ LK_PolarNonPolarEnergy::indicate_required_context_graphs(
 ////////////////////////////////////////////////
 void
 LK_PolarNonPolarEnergy::finalize_total_energy(
-	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	pose::Pose & /*pose*/,
+	ScoreFunction const & /*scorefxn*/,
+	EnergyMap & /*totals*/
 ) const
 {
     //TR << "finalize_total_energy() was called..." << std::endl;
     //TR << pose.energies().use_nblist() << std::endl;
     return;
-    if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
+	// AMW cppcheck notes that these statements are not being executed
+	// so they will be commented out to make this fact explicit.
+	// These should not be removed; we do not yet know if they are dead code
+	/*
+	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
     NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
     nblist.check_domain_map( pose.energies().domain_map() );
@@ -1117,6 +1121,8 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
 	totals[ lk_costheta ] += lk_costheta_score;
 
     if (verbose_)	std::cout << "DONE SCORING" << std::endl;
+	*/
+	
 }
 
 /////////////////////////////////////////

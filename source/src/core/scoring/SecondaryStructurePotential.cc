@@ -455,9 +455,6 @@ SecondaryStructurePotential::sspair(
 
 			if ( ss2 == 0 ) continue; // skip if this position isnt 1st residue of a dimer
 
-//  IF TWO DIMERS HAVE A GOOD PHI/THETA AND DOT PRODUCT, ss_orient=1
-			int ss_orient( 0 );
-
 //car calculate the sequence separation between the two dimers
 //car note that this is not the strand separation that phitheta is
 //car  conditioned on;  the dimer separation is used to decide which
@@ -588,6 +585,9 @@ SecondaryStructurePotential::sspair(
 //car term to the total
 //     LOCAL STRANDS DON'T GET SO MUCH OF A SCORE BONUS
 						if ( dimer_seqsep >= cutoff ) dimer_pair_score += dotscore; // dimer_pair_score(ss1,ss2)
+
+						//  IF TWO DIMERS HAVE A GOOD PHI/THETA AND DOT PRODUCT, ss_orient=1
+						int ss_orient( 0 );
 
 //car note that ss_orient is 1 if phithetascore<0 and dotscore<0 and dist<6.5
 //car but these terms not in dimer_pair_score if dimer_seqsep < cutoff
@@ -794,10 +794,10 @@ SecondaryStructurePotential::sspair(
 							if ( symm_ss1_clone == 0 || symm_ss2_clone == 0 ) continue;
 							if ( clone_SS_resnum_ss1 > clone_SS_resnum_ss2 ) continue;
 
-							int & dimer_neighbor_1ss1_clone( strands.dimer_neighbor(1,symm_ss1_clone) );
-							int & dimer_neighbor_2ss1_clone( strands.dimer_neighbor(2,symm_ss1_clone) );
-
 							if ( dist <= 5.5 ) { // && ss_orient(i,j) == 1} ) {
+								int & dimer_neighbor_1ss1_clone( strands.dimer_neighbor(1,symm_ss1_clone) );
+								int & dimer_neighbor_2ss1_clone( strands.dimer_neighbor(2,symm_ss1_clone) );
+								
 								if ( dimer_neighbor_1ss1_clone == 0 ) {
 									dimer_neighbor_1ss1_clone = symm_ss2_clone;
 								} else if ( strands.SS_strand(dimer_neighbor_1ss1_clone) != strands.SS_strand(symm_ss2_clone) ) {
@@ -1528,6 +1528,8 @@ SecondaryStructurePotential::spherical(
 
 //car and length of v2
 	Real r1 = v2.length();
+	
+	runtime_assert( r1 != 0 );
 
 //car unit vector along v21
 	Vector const u21( v21.normalized_or_zero() );
@@ -1807,7 +1809,6 @@ SecondaryStructurePotential::rsigma_dot_initializer(
 	std::string line;
 	// read in each line, ignore comments
 	while ( getline( in, line ) ) {
-		std::istringstream l( line );
 		if ( line.size() < 1 || line[0] == '/' ) continue;
 		lines.push_back( line );
 	}

@@ -225,8 +225,8 @@ JumpSelector::create_jump_sample( ) const {
 
 	// detect loops that are too short for cut-points
 	for ( Size i = 1; i <= nres; i++ ) {
-		bool bShort = false;
 		if ( tags( i ) == -10 ) {
+			bool bShort = false;
 
 			// extend loops to each side
 			for ( Size j = i; j <= i+min_loop_length_ && j <= nres; j++ ) {
@@ -380,7 +380,7 @@ JumpSelector::select_random() const {
 	cumsum += it->weight_;
 	while ( cumsum < ran  ) {
 		runtime_assert ( it != eit );
-		it++; ct++;
+		++it; ct++;
 		cumsum += it->weight_;
 	}
 	// freq( ct ) += 1;

@@ -270,10 +270,10 @@ namespace modeler {
 	fix_up_jump_atoms_and_residue_type_variants( pose::Pose & pose_to_fix );
 
 	void
-	fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const atom_name );
+	fix_protein_jump_atom( pose::Pose & pose, Size const res, std::string const & atom_name );
 
 	void
-	add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag );
+	add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const & pose_tag );
 
 	// deprecate soon -- after protein/RNA unification
 	bool

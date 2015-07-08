@@ -134,7 +134,7 @@ void DockingPrepackProtocol::score_and_output(std::string outfilename,
 	core::Real score_pose  = ( *scorefxn() )( pose ); // scoring the pose
 
 	// Getting the name of current job
-	std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job ) );
+	//std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job ) );
 	job->add_string_real_pair("E"+outfilename, score_pose);
 	JobDistributor::get_instance()->job_outputter()->other_pose( job, pose, outfilename+"_");
 

@@ -355,7 +355,7 @@ rna_score_test()
 			// Stem RMSD
 			if ( option[params_file].user() ) {
 				std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
-				if ( stem_residues.size() > 0 ) {
+				if ( !stem_residues.empty()/*size() > 0*/ ) {
 					Real const rmsd_stems = all_atom_rmsd( *native_pose, pose, stem_residues );
 					s.add_energy( "rms_stem", rmsd_stems );
 					std::cout << "Stems rmsd: " << rmsd_stems << std::endl;

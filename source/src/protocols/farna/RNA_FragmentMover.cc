@@ -158,10 +158,10 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 		// This is different from the past. Now we have a atom-resolution
 		// allow_insert map, so when we do the insertion, we can
 		// avoid changing atom positions that should be fixed.
-		bool frame_ok = true;
+		//bool frame_ok = true;
 
 		//		if ( !rna_fragments_->is_fullatom() ){
-		frame_ok = false;
+		bool frame_ok = false;
 		for (Size offset = 1; offset <= frag_size_; offset++ ){
 			Size const n = i + offset - 1;
 			if ( allow_insert_->get( n ) ) { //sucka!

@@ -182,8 +182,8 @@ void PDB::loadPDB(istream &file) {
 	if(conformer.size() != 0) Conformers[conformer_count] = conformer;
 
   //correction of the name cys/CYS accoding to the status of the disulfide bond
-  std::map<int, string> ::iterator it;
-  for ( it=residListOne.begin(); it!=residListOne.end(); it++ ) {
+  std::map<int, string> ::iterator it, end;
+  for ( it=residListOne.begin(), end =residListOne.end(); it != end; ++it ) {
     if ( it->second == "C" ) {
       if ( isSSBonded(1, it->first) ) {
 				residListOne[it->first] = "c";
@@ -200,8 +200,8 @@ bool PDB::isSSBonded(int /*conformerID*/, int resNum)
 
   PDB_Entry CYS_SG = getEntry(1,resNum, "SG");
 
-  std::map<int, string>::iterator it;
-  for ( it = residListOne.begin(); it != residListOne.end(); it++ )
+  std::map<int, string>::iterator it, end;
+  for ( it = residListOne.begin(), end = residListOne.end(); it != end; ++it )
     {
       if( (it->second == "C" || it->second == "c") && std::abs(it->first - resNum) >= 4 )
 	if( getDist(CYS_SG.Coord, ATOMS[1][it->first]["SG"].Coord ) <= 2.5 )
@@ -442,13 +442,13 @@ void PDB::initOrbitalShift(){
   string H5Atoms[5] = {"CG", "ND1", "CE1", "NE2", "CD2" };
   string W5Atoms[5] = {"CG", "CD1", "NE1", "CE2", "CD2" };
 
-  std::map<int, string>::iterator it;
+  std::map<int, string>::iterator it, end;
   Mol::iterator itA;
 
   int i;
   RingNo = 0;
 
-  for ( it = residList.begin(); it != residList.end(); it++ )
+  for ( it = residList.begin(), end = residList.end(); it != end; ++it )
     {
       int resID = it->first; //.resNum;
       string resName = it->second;
@@ -658,14 +658,14 @@ float PDB::getDist(Vec3 A, Vec3 B)
 void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 {
   Mol conf = Conformers[1];
-  Mol::iterator it;
+  Mol::iterator it, end;
 
   acceptorList.clear();
   donorList.clear();
   HBDistList.clear();
 
   //retreive the donor and acceptor list from coordinates
-  for ( it = conf.begin(); it != conf.end(); it++ ) {
+  for ( it = conf.begin(), end = conf.end(); it != end; ++it ) {
 		PDB_Entry a = isAcceptor(it->second);
 
 		if( !(a.atomName.empty()) ) acceptorList[it->first] = a.atomNum;
@@ -677,10 +677,10 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 	}
 
 
-  for( PairList::const_iterator itA = acceptorList.begin(); itA != acceptorList.end(); itA++ ) {//loop over acceptor list
+  for( PairList::const_iterator itA = acceptorList.begin(), endA = acceptorList.end(); itA != endA; ++itA ) {//loop over acceptor list
 		PDB_Entry A = conf[ itA->first ], A_Heavy = conf[ itA->second ];;
 		//search for donors
-		for( PairList::const_iterator itD = donorList.begin(); itD != donorList.end(); itD++ ) {
+		for( PairList::const_iterator itD = donorList.begin(), endD = donorList.end(); itD != endD; ++itD ) {
 			PDB_Entry D = conf[ itD->first ], D_Heavy = conf[ itD->second ];
 			if( std::abs( A.resNum - D.resNum) < 2) continue; //minimal 2 residues apart
 
@@ -959,7 +959,7 @@ void PDB::calcSurface( float rad_sol )
 {
   const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
   Mol conf = Conformers[1];
-  Mol::iterator it;
+  Mol::iterator it, end;
 
   boost::unordered_map<string, float> STD_AREA;
   /*
@@ -976,7 +976,7 @@ void PDB::calcSurface( float rad_sol )
     STD_AREA["THR"] = 25; STD_AREA["TRP"] = 28; STD_AREA["TYR"] = 25; STD_AREA["VAL"] = 24;
   */
 
-  for( it = conf.begin(); it != conf.end(); it++ )
+  for( it = conf.begin(), end = conf.end(); it != end; ++it )
     {
       PDB_Entry b = it->second;
 
@@ -1058,8 +1058,8 @@ void PDB::calcSurface( float rad_sol )
     }
 
 
-  boost::unordered_map< int,float>::iterator itS;
-  for( itS = ResSurfaceFullList.begin(); itS != ResSurfaceFullList.end(); itS++ )
+  boost::unordered_map< int,float>::iterator itS, endS;
+  for( itS = ResSurfaceFullList.begin(), endS = ResSurfaceFullList.end(); itS != endS; ++itS )
     {
       string resName = residList[itS->first];
       //	SurfaceFullList[ itS->first ] *=  ( 4.0f * (float) SPARTA_PI / (SpherePointNo * STD_AREA[resName]) );
@@ -1073,10 +1073,10 @@ void PDB::calcSurface( float rad_sol )
 void PDB::findNeighors(float rad_sol)
 {
   Mol conf = Conformers[1];
-  Mol::iterator it, itA;
+  Mol::iterator it, itA, endA, end;
 
   //loop over all atoms
-  for( itA = conf.begin(); itA != conf.end(); itA++ )
+  for( itA = conf.begin(), endA = conf.end(); itA != endA; ++itA )
     {
       PDB_Entry a = itA->second;
 
@@ -1091,7 +1091,7 @@ void PDB::findNeighors(float rad_sol)
       float rad_a = VDW_RAD[ a_atomName ];
 
       //search for all other atoms
-      for( it = conf.begin(); it != conf.end(); it++ )
+      for( it = conf.begin(), end = conf.end(); it != end; ++it )
 	{
 	  PDB_Entry b = it->second;
 
@@ -1337,13 +1337,13 @@ void PDB::calcTriangles(
 void PDB::calc_HN_S2( )
 {
   Mol conf = Conformers[1];
-  Mol::iterator it;
+  Mol::iterator it, end;
 
   //loop over all atoms
-  std::map<int, string>::iterator itA;
+  std::map<int, string>::iterator itA, endA;
 
   float S2 = 0;
-  for ( itA = residList.begin(); itA != residList.end(); itA++ )
+  for ( itA = residList.begin(), endA = residList.end(); itA != endA; ++itA )
     {
       int resID = itA->first; //.resNum;
       string resName = itA->second;
@@ -1360,7 +1360,7 @@ void PDB::calc_HN_S2( )
 
       //search for all other heavy atoms
       S2 = 0;
-      for( it = conf.begin(); it != conf.end(); it++ )
+      for( it = conf.begin(), end = conf.end(); it != end; ++it )
 	{
 	  PDB_Entry b = it->second;
 
@@ -1395,10 +1395,10 @@ void PDB::calc_ElectricField()
 {
   const Real SPARTA_PI = numeric::NumericTraits<Real>::pi();
   Mol conf = Conformers[1];
-  Mol::iterator it;
+  Mol::iterator it, end;
 
   boost::unordered_map<string, string> targetAtomList;
-  boost::unordered_map<string, string>::iterator itT;
+  boost::unordered_map<string, string>::iterator itT, endT;
   targetAtomList["HN"]="N";
   targetAtomList["HA"]="CA";
   //targetAtomList["CA"]="N";
@@ -1409,15 +1409,15 @@ void PDB::calc_ElectricField()
   Qlist["N"] =  0.7209;
 
   //loop over all atoms
-  std::map<int, string>::iterator itA;
+  std::map<int, string>::iterator itA, endA;
   ElectricField.clear();
-  for ( itA = residList.begin(); itA != residList.end(); itA++ )
+  for ( itA = residList.begin(), endA = residList.end(); itA != endA; ++itA )
     {
       int resID = itA->first; //.resNum;
       string resName = itA->second;
 
       // tr.Info << resID << "\t" << resName << endl;
-      for(itT = targetAtomList.begin(); itT != targetAtomList.end(); itT++)
+      for(itT = targetAtomList.begin(), endT = targetAtomList.end(); itT != endT; ++itT )
 	{
 	  PDB_Entry target  = ATOMS[1][resID][itT->first];
 	  PDB_Entry partner = ATOMS[1][resID][itT->second];
@@ -1425,7 +1425,7 @@ void PDB::calc_ElectricField()
 	  if( (target.atomName).empty() ) continue;
 
 	  // tr.Info << resID << "\t" << resName << "\t" << target.atomName << "\t" << target.resNum << endl;
-	  for( it = conf.begin(); it != conf.end(); it++ )
+	  for( it = conf.begin(), end = conf.end(); it != end; ++it )
 	    {
 	      PDB_Entry b = it->second;
 
@@ -1455,7 +1455,7 @@ void PDB::calc_ElectricField()
 void PDB::collect_HN_S2_and_EF( )
 {
   Mol conf = Conformers[1];
-  Mol::iterator it;
+  Mol::iterator it, end;
 
   ElectricField.clear();
 
@@ -1474,10 +1474,10 @@ void PDB::collect_HN_S2_and_EF( )
   Qlist["N"] =  0.7209;
 
   //loop over all atoms
-  std::map<int, string>::iterator itA;
+  std::map<int, string>::iterator itA, endA;
 
   float S2 = 0;
-  for ( itA = residList.begin(); itA != residList.end(); itA++ )
+  for ( itA = residList.begin(), endA = residList.end(); itA != endA; ++itA )
     {
       int resID = itA->first; //.resNum;
       string resName = itA->second;
@@ -1500,7 +1500,7 @@ void PDB::collect_HN_S2_and_EF( )
 
       //search for all other heavy atoms
       S2 = 0;
-      for( it = conf.begin(); it != conf.end(); it++ )
+      for( it = conf.begin(), end = conf.end(); it != end; ++it )
 	{
 	  PDB_Entry b = it->second;
 

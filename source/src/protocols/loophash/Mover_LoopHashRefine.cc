@@ -105,7 +105,7 @@ Mover_LoopHashRefine::apply( core::pose::Pose& pose )
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
-  std::string prefix = option[ out::prefix ]();
+  //std::string prefix = option[ out::prefix ]();
   core::Size skim_size = option[ lh::skim_size ]();
 
 	LocalInserter_SimpleMinOP simple_inserter( new LocalInserter_SimpleMin() );

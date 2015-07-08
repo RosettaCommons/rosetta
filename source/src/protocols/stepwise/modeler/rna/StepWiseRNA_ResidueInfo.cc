@@ -48,7 +48,7 @@ namespace modeler {
 namespace rna {
 
 	void
-	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type ){
+	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const & type ){
 
 		using namespace core::id;
 		using namespace core::chemical;
@@ -155,7 +155,7 @@ namespace rna {
 	get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map ){
 
 		Size max_seq_num = 0;
-	  for ( std::map< Size, Size > ::const_iterator it = my_map.begin(); it != my_map.end(); it++ ){
+	  for ( std::map< Size, Size > ::const_iterator it = my_map.begin(), end = my_map.end(); it != end; ++it ){
 	    TR << it->first << " =  > " << it->second << std::endl;
 	    if ( it->first >= max_seq_num ) max_seq_num = it->first;
 		}
@@ -215,7 +215,7 @@ namespace rna {
 	}
 
 	utility::vector1< Residue_info >
-	get_copy_dofs_from_fasta( std::string const full_fasta_sequence ){
+	get_copy_dofs_from_fasta( std::string const & full_fasta_sequence ){
 
 		utility::vector1< Residue_info > full_copy_dofs;
 

@@ -479,12 +479,12 @@ HBondSet::HBondSet( HBondSet const & src, utility::vector1< core::Size > exclude
 	options_( HBondOptionsCOP( HBondOptionsOP( new HBondOptions( *src.options_ ) ) ))
 {
 
-	bool exclude=false;
+	//bool exclude=false;
 	for ( Size i=1; i<= src.nhbonds(); ++i ) {
 		HBond const & hbond(src.hbond(i));
 		int const dres = hbond.don_res();
 		int const ares = hbond.acc_res();
-		exclude = false;
+		bool exclude = false;
 		for ( Size k = 1; k <= exclude_list.size(); k ++ ){
 			if( exclude_list[k] == (core::Size)dres ){ exclude = true; break; };
 			if( exclude_list[k] == (core::Size)ares ){ exclude = true; break; };

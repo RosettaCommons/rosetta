@@ -173,7 +173,7 @@ void ANN::loadWeightBias3( string const& fName,
 
   int index = 0;
   int row = N_W_row, col = N_W_col;
-  for ( GDB::EntryList::iterator it = W_Tab.Entries.begin(); it != W_Tab.Entries.end(); it++ ) {//iterate rows
+  for ( GDB::EntryList::iterator it = W_Tab.Entries.begin(), end = W_Tab.Entries.end(); it != end; ++it ) {//iterate rows
 		int check = index/row; //cout << check << endl;
 		for( int  i = 0; i < col; i++ )	{
 			str = itoa(i+1,buf);
@@ -198,8 +198,8 @@ void ANN::loadWeightBias3( string const& fName,
 void ANN::calcLevel1()
 {
   //ANN_Matrix ANN_OUT_MTX;
-  ANN_Matrix::iterator itV;
-  for ( itV = ANN_IN_MTX_LEVEL1.begin(); itV != ANN_IN_MTX_LEVEL1.end(); itV++ ) //for each tripet input
+  ANN_Matrix::iterator itV, end;
+  for ( itV = ANN_IN_MTX_LEVEL1.begin(), end = ANN_IN_MTX_LEVEL1.end(); itV != end; ++itV ) //for each tripet input
     {
       //cout << itV->first << endl;
 
@@ -234,8 +234,8 @@ void ANN::calcLevel1()
 void ANN::calcLevel2()
 {
   //ANN_Matrix ANN_OUT_MTX;
-  ANN_Matrix::iterator itV;
-  for ( itV = ANN_IN_MTX_LEVEL2.begin(); itV != ANN_IN_MTX_LEVEL2.end(); itV++ ) //for each tripet input
+  ANN_Matrix::iterator itV, end;
+  for ( itV = ANN_IN_MTX_LEVEL2.begin(), end = ANN_IN_MTX_LEVEL2.end(); itV != end; ++itV ) //for each tripet input
     {
       //cout << itV->first << endl;
 

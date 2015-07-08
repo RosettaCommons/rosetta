@@ -128,15 +128,15 @@ Master::Master( int num_trajectories, boost::uint64_t mem_limit, boost::uint64_t
 void Master::interpreter() {
 	TR << "Switching to lua interpreter mode!" << std::endl;
 	std::string line = "";
-	int err = 0;
+	//int err = 0;
 	while( 1 ) {
 		std::cout << "> " << std::flush;
 		std::getline(std::cin, line);
 		if( line == "quit" ) break;
-    err = luaL_dostring ( lstate_, line.c_str() );
-    if( err == 1) {
+    	int err = luaL_dostring ( lstate_, line.c_str() );
+    	if( err == 1) {
 			std::cout << lua_tostring(lstate_, -1) << std::endl;
-    }
+	    }
 	}
 	TR << "Leaving to lua interpreter mode!" << std::endl;
 }

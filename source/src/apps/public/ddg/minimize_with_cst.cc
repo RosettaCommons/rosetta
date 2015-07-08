@@ -127,11 +127,8 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 	if(!basic::options::option[OptionKeys::ddg::sc_min_only]()){
 	int nres = pose.total_residue();
 	if(basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()){
-		core::scoring::constraints::ConstraintSetOP cstset( new
-																											 core::scoring::constraints::ConstraintSet() );
-		cstset = core::scoring::constraints::ConstraintIO::read_constraints(
-																																				option[basic::options::OptionKeys::constraints::cst_file][1],cstset,
-																																				pose);
+		core::scoring::constraints::ConstraintSetOP cstset( new core::scoring::constraints::ConstraintSet() );
+		cstset = core::scoring::constraints::ConstraintIO::read_constraints(option[basic::options::OptionKeys::constraints::cst_file][1],cstset,pose);
 		pose.constraint_set(cstset);
 	}else{
 		for(int i = 1; i <= nres; i++){
@@ -177,10 +174,6 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		core::optimization::AtomTreeMinimizer min_struc;
 		float minimizer_tol = 0.000001;
 
-		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
-																									false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
-		options.nblist_auto_update( true );
-		options.max_iter(5000); //otherwise, they don't seem to converge
 		core::kinematics::MoveMap mm;
 		mm.set_bb(true);
 		mm.set_chi(true);
@@ -189,6 +182,13 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 			mm.set_bb(false);
 		}
 		s.show(std::cout, p);
+		// This used to be higher, but then it couldn't respond to the adjustment
+		// for in case we are only doing sidechain minimization!
+		core::optimization::MinimizerOptions options( "dfpmin_armijo_nonmonotone", minimizer_tol, true /*use_nb_list*/,
+				false /*deriv_check_in*/, true /*deriv_check_verbose_in*/);
+		
+		options.nblist_auto_update( true );
+		options.max_iter(5000); //otherwise, they don't seem to converge
 
 
 		if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){

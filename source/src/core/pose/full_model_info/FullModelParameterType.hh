@@ -87,7 +87,7 @@ namespace full_model_info {
 	std::string to_string( FullModelParameterType const & type );
 
 	FullModelParameterType
-	full_model_parameter_type_from_string( std::string const name );
+	full_model_parameter_type_from_string( std::string const & name );
 
 } //full_model_info
 } //pose

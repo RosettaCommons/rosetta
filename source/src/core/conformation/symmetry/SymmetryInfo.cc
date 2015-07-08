@@ -843,7 +843,9 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 			if (!jump_clone_wts_set) {
 				if (warned) {
 					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
-					warned = true;
+					//AMW: cppcheck correctly flags this line as being unreachable
+					// every time around the loop warned starts as false and can never reach places where it is made true
+					//warned = true;
 				}
 				// set master jumps to 1; clones to 0
 				for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
@@ -878,7 +880,7 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 			if (!nnamed_jumps_set || !jnum2dofname_set || !dofname2jnum_set) {
 				if (warned) {
 					TR << "Warning: Symmetric silent file is missing fields; attempting automatic recovery." << std::endl;
-					warned = true;
+					//warned = true;
 				}
 
 				for (std::map<Size,SymmetryInfo::Clones>::const_iterator map_it=symminfo.jump_clones_.begin(),
@@ -1271,7 +1273,8 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 
 	// remember previous
 	std::map< Size, Clones > old_jump_clones = jump_clones_;
-	std::map< Size, Size > old_jump_follows = jump_follows_;
+	// AMW: cppcheck flags that this is never used
+	//std::map< Size, Size > old_jump_follows = jump_follows_;
 	std::map< Size, Real > old_jump_clone_weights = jump_clone_wts_;
 	Size old_njump_monomer = njump_monomer_;
 
@@ -1294,7 +1297,7 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	// N*njump_monomer+1 --> N*njump_monomer+N: the pseudo-rsd--monomer jumps
 	// last N-1 jumps                         : jumps between pseudo-rsds
 	for ( std::map<Size,Clones>::const_iterator it=old_jump_clones.begin(), it_end = old_jump_clones.end();
-	      it != it_end; it++) {
+	      it != it_end; ++it ) {
 		Size source = it->first;
 		Clones target = it->second;
 
@@ -1694,7 +1697,7 @@ SymmetryInfo::set_jump_name(Size jnum, std::string jname) {
 Size
 SymmetryInfo::num_slidablejumps() const {
 	Size retval = 0;
-	for(std::map<Size,SymDof>::const_iterator i = dofs_.begin(); i != dofs_.end(); i++) {
+	for(std::map<Size,SymDof>::const_iterator i = dofs_.begin(), end = dofs_.end(); i != end; ++i ) {
 		if (i->second.allow_dof(1) || i->second.allow_dof(2) || i->second.allow_dof(3)) retval++;
 	}
 	return retval;

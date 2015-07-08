@@ -168,7 +168,7 @@ FoldabilityFilter::parse_my_tag(
 		std::string const selectorname = tag->getOption< std::string >("selector");
 		try {
 			selector_ = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
-		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
 			error_msg << e.msg();
