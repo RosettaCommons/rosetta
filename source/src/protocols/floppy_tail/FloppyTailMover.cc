@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/floppy_tail/FloppyTailMover.cc
-/// @brief This app was initially intended for modeling the binding of a long unstructured C-terminal tail to some other part of a protein.  It now works for N-terminal, C-terminal, and internal flexible regions.  It works best as a method for sampling space to see what is possible, preferably in conjunction with extensive experimental constraints.  It is not meant to produce ab-initio style models of folded complexes.
+/// @brief This app was initially intended for modeling the binding of a long unstructured C-terminal tail to some other part of a protein.  It now works for N-terminal, C-terminal, and internal flexible regions.  It works best as a method for sampling space to see what is possible, preferably in conjunction with extensive experimental constraints.  It is not meant to produce ab-initio style models of folded complexes. It has now been expanded to work on symmetric proteins (tested on a homohexamer). Symmetry has not been tested with some flags. To run symmetry one needs a symm file and movemap. Symmetry has not been tested with fragments or constraints.
 /// @author Steven Lewis
+/// @author Jeliazko Jeliazkov (symmetry)
 
 // Unit Headers
 #include <protocols/floppy_tail/FloppyTailMover.hh>
@@ -40,17 +41,24 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 
+//Symmetry Headers
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh> //to access symmetric pose data
+#include <core/pose/symmetry/util.hh>
+
 //movers
-#include <protocols/simple_moves/BackboneMover.hh> //SmallMover
-#include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh> //SmallMover //Symmetry
+#include <protocols/simple_moves/FragmentMover.hh> //Symmtery
+#include <protocols/simple_moves/symmetry/SymMinMover.hh> //Symmetry
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh> //Symmetry
+#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh> //Symmetry
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/TaskAwareMinMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh> //Symmetry
+#include <protocols/simple_moves/TaskAwareMinMover.hh> //Symmetry
+#include <protocols/simple_moves/symmetry/TaskAwareSymMinMover.hh> //Symmetry
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
+#include <protocols/moves/PyMolMover.hh> 
 
 //calculators and neighbor detection machinery
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
@@ -71,6 +79,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/FloppyTail.OptionKeys.gen.hh>
 
 #include <protocols/moves/MoverStatistics.hh>
@@ -85,7 +94,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static thread_local basic::Tracer TR( "protocols.floppy_tail.FloppyTail" );
+static basic::Tracer TR("protocols.floppy_tail.FloppyTail");
 
 namespace protocols {
 namespace floppy_tail {
@@ -106,10 +115,11 @@ FloppyTailMover::FloppyTailMover() :
 
 	//this should be per-input, not in the ctor, if multiple frags files
 	if (basic::options::option[ basic::options::OptionKeys::in::file::frag3].user()){
-        fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
+		fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet( 3 ) );
 		fragset3mer_->read_fragment_file( basic::options::option[ basic::options::OptionKeys::in::file::frag3].value() );
 	}
 
+	//disable pairwise electrostatics
 	bool const pair_off(basic::options::option[ basic::options::OptionKeys::FloppyTail::pair_off ].value() );
 
 	//set up centroid scorefunction
@@ -118,15 +128,16 @@ FloppyTailMover::FloppyTailMover() :
         centroid_scorefunction_ = ScoreFunctionFactory::create_score_function(basic::options::option[ basic::options::OptionKeys::FloppyTail::cen_weights].value());
     }
     else{
-        centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new ScoreFunction );
-        centroid_scorefunction_->set_weight( env,         1.0 );
-        centroid_scorefunction_->set_weight( cbeta,       1.0 );
-        centroid_scorefunction_->set_weight( vdw,         1.0 );
-        centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for general use
-        centroid_scorefunction_->set_weight( cenpack,     1.0 );
-        centroid_scorefunction_->set_weight( rama,        1.0 );
-        centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
-        centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
+			//centroid_scorefunction_ = core::scoring::ScoreFunctionOP( new ScoreFunction ); (does not work with symmetry for some reason)
+			centroid_scorefunction_ = ScoreFunctionFactory::create_score_function( "cen_std" ); //shouldn't change functionality
+			centroid_scorefunction_->set_weight( env,         1.0 );
+			centroid_scorefunction_->set_weight( cbeta,       1.0 );
+			centroid_scorefunction_->set_weight( vdw,         1.0 );
+			centroid_scorefunction_->set_weight( pair, (pair_off ? 0.0 : 1.0) ); //no pair term experiment - not for general use
+			centroid_scorefunction_->set_weight( cenpack,     1.0 );
+			centroid_scorefunction_->set_weight( rama,        1.0 );
+			centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
+			centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
     }
 
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *centroid_scorefunction_ ); //protected if(option) internally
@@ -142,7 +153,7 @@ FloppyTailMover::FloppyTailMover() :
 
 FloppyTailMover::~FloppyTailMover(){}
 
-/// @brief copy ctor
+///@brief copy ctor
 FloppyTailMover::FloppyTailMover( FloppyTailMover const & rhs ) :
 	Mover(rhs)
 {
@@ -162,8 +173,8 @@ FloppyTailMover & FloppyTailMover::operator=( FloppyTailMover const & rhs ){
 	task_factory_						= rhs.task_factory_->clone();
 	movemap_								= rhs.movemap_->clone();
 	movemap_lesstail_				= rhs.movemap_lesstail_->clone();
-	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) ); //no clone operation, and no proper copy ctor
-	fragset3mer_ = core::fragment::ConstantLengthFragSetOP( new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_) );//clone useless
+	foldtree_								= core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(*rhs.foldtree_) );
+	fragset3mer_            = core::fragment::ConstantLengthFragSetOP(new core::fragment::ConstantLengthFragSet(*rhs.fragset3mer_));
 
 	return *this;
 }
@@ -180,7 +191,7 @@ void FloppyTailMover::set_cen_scorefxn(core::scoring::ScoreFunctionOP const cen_
     centroid_scorefunction_=cen_scorefxn->clone();
 }
 
-/// @brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
+///@brief init_on_new_input system allows for initializing these details the first time apply() is called.  the job distributor will reinitialize the whole mover when the input changes (a freshly constructed mover, which will re-run this on first apply().
 void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	init_for_input_yet_ = true;
 
@@ -198,13 +209,13 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 			stop_ = pose.total_residue();
 		TR << "Tail is from " << start_ << " to " << stop_ << std::endl;
 
-		//setup MoveMap
+		//setup MoveMap (if not input by user)
 		movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 		for(core::Size i(start_); i<=stop_; ++i) {
 			movemap_->set_bb(i, true); //backbone mobile
 			movemap_->set_chi(i, true); //chi of mobile residues
 		}
-
+		
 		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
 		if (stop_ == pose.total_residue()){
 			core::Size const taillength = stop_ - start_;
@@ -223,9 +234,12 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		utility_exit_with_message("option in::file::movemap not compatible with options flexible_chain, flexible_stop_resnum, flexible_chain, short_tail_fraction, or short_tail off.  This is because a manually-defined movemap overrides these options.");
 	} else {
 		//handle user-defined movemap from file or from function; reverse-convert into start_ and stop_
-		if (!movemap_){
+		if (!movemap_){ //setup MoveMap (input by user)
 			movemap_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap );
 			movemap_->init_from_file(option[in::file::movemap].value());
+            if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+				core::pose::symmetry::make_symmetric_movemap( pose, *movemap_ );
+			}
 		}
 		movemap_lesstail_ = core::kinematics::MoveMapOP( new core::kinematics::MoveMap(*movemap_) );
 
@@ -256,55 +270,26 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 
 	//We want to linearize the fold_tree so that internal linkers with noncovalent attachments on both sides will work properly; it will have no effect on terminal tails
 	foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(pose.fold_tree()) ); //store original fold tree; if we enter neither option below it stays valid
-	if( !((stop_ == pose.total_residue()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ){
-		TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
-		foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
-		TR << "new tree: " << *foldtree_ << std::endl;
-	}
-	if( basic::options::option[ FloppyTail::C_root].value() ) {
-		foldtree_->reorder(pose.total_residue());
-		TR << "C-rooted tree: " << *foldtree_ << std::endl;
-	}
 
-	//SPECIAL BEN STRANGES CODE
-	//useful for putting a dimerization domain at the C-term of two proteins
-	//!currently hardcoded for chains 7 and 8!!!!!!!!!!!!!!!
-	if(false){
-		//linearized fold tree for proper domain-moves-with-domain
-		foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
-		//std::cout << "linearized foldtree " << *foldtree_ << std::endl;
-
-		//re-root fold_tree in one dimerization domain
-		foldtree_->reorder(1); //reorder on N terminus
-		//std::cout << "post reordered foldtree " << *foldtree_ << std::endl;
-
-		//get chain endings and beginnings, check some assumptions
-		//A is the N-terminal part of the C-terminal-dimerization-domain-containing chain pair
-		//B is the C-terminal
-		core::Size const chainAend(pose.conformation().chain_end(7));
-		//core::Size const chainAbegin(pose.conformation().chain_begin(7));
-		core::Size const chainBend(pose.conformation().chain_end(8));
-		core::Size const chainBbegin(pose.conformation().chain_begin(8));
-		runtime_assert(chainBend == pose.total_residue());
-		runtime_assert(chainAend+1 == chainBbegin);
-
-		//re-order A to B chain jump to be cterm to cterm
-		core::Size const jump_replace_number(foldtree_->jump_nr(chainAend, chainBbegin));
-		runtime_assert(jump_replace_number); //if it's zero, bang we're dead edge not found
-		//delete the jump between Cterm of chain A to Nterm of B; replace with Cterm to Cterm
-		foldtree_->delete_unordered_edge(chainAend, chainBbegin, jump_replace_number); //delete edge
-		foldtree_->add_edge(core::kinematics::Edge(chainAend, chainBend, jump_replace_number)); //replace edge
-		//delete the chain B peptide edge, and re-add in reverse polarity (fold from C terminus
-		foldtree_->delete_unordered_edge(chainBbegin, chainBend, -1); //delete edge
-		foldtree_->add_edge(core::kinematics::Edge(chainBend, chainBbegin, -1)); //replace edge
-		//std::cout << "remade foldtree " << *foldtree_ << std::endl;
-		runtime_assert(foldtree_->check_fold_tree());
+	//Reordering the foldtree with symmetry does not work
+    if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) { } 
+    else {
+		if( !((stop_ == pose.total_residue()) || (start_ == 1)) || basic::options::option[ FloppyTail::force_linear_fold_tree].value() ){
+			TR << "non-terminal or N-terminal (C-rooted) floppy section, using a linear fold tree to try to ensure downstream residues follow \nOld tree: " << pose.fold_tree();
+			foldtree_ = core::kinematics::FoldTreeOP( new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_)) );
+			TR << "new tree: " << *foldtree_ << std::endl;
+			TR << "some values: " << stop_ << pose.total_residue() << start_ << std::endl;
+		}
+		if( basic::options::option[ FloppyTail::C_root].value() ) {
+			foldtree_->reorder(pose.total_residue());
+			TR << "C-rooted tree: " << *foldtree_ << std::endl;
+		}
 	}
 
 	//setup of TaskFactory
 	//command line and resfile options
 	using namespace core::pack::task;
-	task_factory_ = core::pack::task::TaskFactoryOP( new TaskFactory );
+	task_factory_ = TaskFactoryOP( new TaskFactory );
 	task_factory_->push_back( operation::TaskOperationOP( new operation::InitializeFromCommandline ) );
 	if ( option[ packing::resfile ].user() ) {
 		task_factory_->push_back( operation::TaskOperationOP( new operation::ReadResfile ) );
@@ -321,8 +306,18 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	core::Size current_group(1);
 	regions.push_back(empty);
 
-	//iterate through all residues in the pose/movemap
-	core::Size const nres(pose.total_residue());
+	//iterate through all residues in the pose/movemap (if symmetric iterate through a single subunit)
+	//get subunit size via if statement and set via ternary
+	core::Size temp_nres = pose.total_residue();
+	
+    if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+		core::conformation::symmetry::SymmetricConformation SymmConf ( dynamic_cast<core::conformation::symmetry::SymmetricConformation const &>( pose.conformation()) );
+		core::conformation::symmetry::SymmetryInfoCOP symm_info( SymmConf.Symmetry_Info() ); //should really be const
+		temp_nres = symm_info->get_nres_subunit();
+	}
+
+	core::Size const nres = temp_nres;
+
 	for(core::Size i(1); i<=nres; ++i) {
 		bool const this_state(movemap_->get_bb(i));
 		if(this_state != previous_state) { //if we are changing regions
@@ -336,7 +331,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 		if(this_state) regions[current_group-1].insert(i); //add this residue to the previous group, if flexible - this ensures flexible regions always can repack
 	}
 
-	//make all pairs of groups (without replacement
+	//make all pairs of groups (without replacement)
 	//if you have 1, 2, 3, 4; make 1-2, 1-3, 1-4, 2-3, 2-4, 3-4
 	core::Size const num_regions(regions.size());
 	utility::vector1< std::pair< std::set<core::Size>, std::set<core::Size> > > vector_of_pairs;
@@ -385,7 +380,7 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	task_factory_->push_back( operation::TaskOperationOP( new protocols::toolbox::task_operations::RestrictByCalculatorsOperation( calculators_used ) ) );
 
 	//debugging: print PackerTask
-	//TR << *(task_factory_->create_task_and_apply_taskoperations( pose )) << std::endl;
+	// TR << *(task_factory_->create_task_and_apply_taskoperations( pose )) << std::endl;
 
 	return;
 }
@@ -393,20 +388,31 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 void FloppyTailMover::apply( core::pose::Pose & pose ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	
+	//apply symmetric pose setup here, if the symmetry flag is passed
+	if ( option[ symmetry::symmetry_definition ].user() ) {
+		protocols::simple_moves::symmetry::SetupForSymmetryMoverOP setup_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
+		setup_mover->apply( pose );
+	}
 
 	if( !init_for_input_yet_ ) init_on_new_input(pose);
 
 	//apply fold tree (determined in init_on_new_input) and report
 	pose.fold_tree(*foldtree_);
+	
 	TR << "foldtree, movemap: " << std::endl;
 	core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, TR);
+	//verbose output for debugging
+	//foldtree_->show( std::cout );
+	//movemap_->show( std::cout );
+	
 	if( stop_ == pose.total_residue() ){
 		TR << "foldtree, movemap for first part of refine: " << std::endl;
 		core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_lesstail_, TR);
 	}
-
+	
 	core::scoring::constraints::add_constraints_from_cmdline_to_pose( pose ); //protected internally if no constraints
-
+	
 	//centroid
 	clock_t starttime = clock();
 	TR << "entering perturb steps" << std::endl;
@@ -425,6 +431,15 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 		minimize every once in a while
 		MC evaluate
 	*/
+	
+	/////////////////////////////////////pymol_mover/////////////////////////////////////
+	if (option[OptionKeys::run::show_simulation_in_pymol].user()
+			&& option[OptionKeys::run::show_simulation_in_pymol].value() > 0.0)
+	{
+		protocols::moves::AddPyMolObserver(pose,
+																			 option[OptionKeys::run::keep_pymol_simulation_history](),
+																			 option[OptionKeys::run::show_simulation_in_pymol].value());
+	}
 
 	////////////////////////////////////backbone_mover_cent/////////////////////////////////////
 	protocols::moves::RandomMoverOP backbone_mover_cen( new protocols::moves::RandomMover() );
@@ -451,14 +466,24 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	}
 
 	/////////////////////////minimizer mover/////////////////////////////////////////
-	using protocols::simple_moves::MinMoverOP;
-	using protocols::simple_moves::MinMover;
-	protocols::simple_moves::MinMoverOP min_mover_cen( new protocols::simple_moves::MinMover(
-		movemap_,
-		centroid_scorefunction_,
-		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-		0.01,
-		true /*use_nblist*/ ) );
+	//using protocols::simple_moves::symmetry::SymMinMoverOP;
+	//using protocols::simple_moves::symmetry::SymMinMover;
+	protocols::simple_moves::MinMoverOP min_mover_cen;
+	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() ) {
+		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+			movemap_,
+			centroid_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
+	} else {
+		min_mover_cen = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+			movemap_,
+			centroid_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
+	}
 
 	/////////////////////////Monte Carlo//////////////////////////////////////////////////////////
 	//make the monte carlo object
@@ -529,21 +554,45 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose); //protected internally if no csts
 
 	/////////////////////////////generate full repack&minimize mover//////////////////////////////
-	protocols::simple_moves::PackRotamersMoverOP pack_mover( new protocols::simple_moves::PackRotamersMover );
+	protocols::simple_moves::PackRotamersMoverOP pack_mover;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::symmetry::SymPackRotamersMover );
+	} else {
+		pack_mover = protocols::simple_moves::PackRotamersMoverOP( new protocols::simple_moves::PackRotamersMover );
+	}
+	
 	pack_mover->task_factory( task_factory_ );
 	pack_mover->score_function( fullatom_scorefunction_ );
-
-	protocols::simple_moves::MinMoverOP min_mover_fa( new protocols::simple_moves::MinMover(
-		movemap_,
-		fullatom_scorefunction_,
-		basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
-		0.01,
-		true /*use_nblist*/ ) );
+	
+	protocols::simple_moves::MinMoverOP min_mover_fa;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::symmetry::SymMinMover(
+			movemap_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
+	} else {
+		min_mover_fa = protocols::simple_moves::MinMoverOP( new protocols::simple_moves::MinMover(
+			movemap_,
+			fullatom_scorefunction_,
+			basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
+			0.01,
+			true /*use_nblist*/ ) );
+	}
+	
 
 	//definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
-	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_) );
+	protocols::simple_moves::TaskAwareMinMoverOP TAmin_mover_fa;
+	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() ) {
+		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::symmetry::TaskAwareSymMinMover(min_mover_fa, task_factory_) );
+	} else {
+		TAmin_mover_fa = protocols::simple_moves::TaskAwareMinMoverOP( new protocols::simple_moves::TaskAwareMinMover(min_mover_fa, task_factory_) );
+	}
+
+	//TR << TAmin_mover_fa->get_name() << std::endl;
 
 	/////////////////////////repack/minimize once to fix sidechains//////////////////////////////////
 	// TR << "packing" << std::endl;
@@ -574,12 +623,20 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	/////////////////////////////////rotamer trials mover///////////////////////////////////////////
 	using protocols::simple_moves::RotamerTrialsMoverOP;
 	using protocols::simple_moves::EnergyCutRotamerTrialsMover;
-	protocols::simple_moves::RotamerTrialsMoverOP rt_mover( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover;
+	if ( option[ symmetry::symmetry_definition ].user() ) {
+		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::symmetry::SymEnergyCutRotamerTrialsMover(
+					fullatom_scorefunction_,
+					task_factory_,
+					mc_fa,
+					0.01) );
+	} else {
+		rt_mover = protocols::simple_moves::RotamerTrialsMoverOP( new protocols::simple_moves::EnergyCutRotamerTrialsMover(
 			fullatom_scorefunction_,
 			task_factory_,
 			mc_fa,
 			0.01 /*energycut*/ ) );
-
+	}
 	/////////////////////////////////////////refine loop///////////////////////////////////////////
 	core::Size const refine_applies = option[ FloppyTail::refine_cycles ].value(); //default 5
 	core::Size const repack_cycles = option[ FloppyTail::refine_repack_cycles ].value();

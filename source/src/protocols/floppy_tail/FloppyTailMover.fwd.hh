@@ -10,6 +10,7 @@
 /// @file protocols/floppy_tail/FloppyTailMover.fwd.hh
 /// @brief FloppyTail forward declaration
 /// @author Steven Lewis smlewi@gmail.com
+/// @author Jeliazko Jeliazkov jeliazkov@jhu.edu (symmetry)
 
 #ifndef INCLUDED_protocols_floppy_tail_FloppyTailMover_fwd_hh
 #define INCLUDED_protocols_floppy_tail_FloppyTailMover_fwd_hh

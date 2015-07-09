@@ -17,19 +17,27 @@
 
 // project headers
 #include <core/kinematics/MoveMap.hh>
+
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+
 #include <core/chemical/ResidueConnection.hh>
+
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+
 #include <core/scoring/ScoreFunction.hh>
+
 #include <basic/datacache/DataMap.hh>
+
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
@@ -68,18 +76,39 @@ TaskAwareSymMinMover::TaskAwareSymMinMover() :
   min_rb_(false),
   min_type_("dfpmin_armijo_nonmonotone"),
   tolerance_(1e-5),
+	minmover_(/* 0 */),
+	factory_(/* 0 */),
 	designable_only_(true)
 { }
+	
+// constructor with TaskFactory
+TaskAwareSymMinMover::TaskAwareSymMinMover(
+	protocols::simple_moves::MinMoverOP minmover_in,
+	core::pack::task::TaskFactoryCOP factory_in
+) :
+	min_chi_(false),
+	min_bb_(false),
+	min_rb_(false),
+	min_type_("dfpmin_armijo_nonmonotone"),
+	tolerance_(1e-5),
+	minmover_(minmover_in),
+	factory_(factory_in),
+	designable_only_(true)
+	{}
+	//protocols::simple_moves::TaskAwareMinMover(
+	//	minmover_in, factory_in) {}
 
 TaskAwareSymMinMover::TaskAwareSymMinMover(const TaskAwareSymMinMover& rval) :
-	protocols::moves::Mover(),
+//	protocols::moves::Mover(),
+	protocols::simple_moves::TaskAwareMinMover(), //Jeliazkov experimenat
   scorefxn_( rval.scorefxn_ ),
   min_chi_( rval.min_chi_),
   min_bb_( rval.min_bb_),
   min_rb_( rval.min_rb_),
   min_type_( rval.min_type_),
   tolerance_( rval.tolerance_),
-  task_factory_( rval.task_factory_),
+	minmover_( rval.minmover_ ),
+  factory_( rval.factory_),
 	designable_only_( rval.designable_only_ )
 { }
 
@@ -97,7 +126,7 @@ TaskAwareSymMinMover::fresh_instance() const {
 void
 TaskAwareSymMinMover::apply(Pose & pose) {
 
-	runtime_assert( task_factory_ != 0 );
+	runtime_assert( factory_ != 0 );
 
 	// Initialize a MoveMap, set all moves to false
 	core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -109,8 +138,8 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 	core::Size nres_monomer = sym_info->num_independent_residues();
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
-  if ( task_factory_ != 0 ) {
-    task = task_factory_->create_task_and_apply_taskoperations( pose );
+  if ( factory_ != 0 ) {
+    task = factory_->create_task_and_apply_taskoperations( pose );
   } else {
 		TR.Warning << "Warning: You have not provided any TaskOperations. A default will be used." << std::endl;
 	}
@@ -159,7 +188,7 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
 	designable_only_ = tag->getOption< bool >( "designable_only", true );
 	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name_ );
-	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
 }
 
@@ -175,7 +204,7 @@ void TaskAwareSymMinMover::parse_def( utility::lua::LuaObject const & def,
 	tolerance_ = def["tolerance"] ? def["tolerance"].to<core::Real>() : 1e-5;
 	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
 	scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
-	task_factory_ = protocols::elscripts::parse_taskdef( def["tasks"], tasks );
+	factory_ = protocols::elscripts::parse_taskdef( def["tasks"], tasks );
 }
 
 
