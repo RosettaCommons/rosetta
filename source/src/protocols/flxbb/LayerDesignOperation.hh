@@ -38,13 +38,20 @@
 #ifndef INCLUDED_protocols_flxbb_LayerDesignOperation_hh
 #define INCLUDED_protocols_flxbb_LayerDesignOperation_hh
 
-#include <core/types.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+//unit headers
 #include <protocols/flxbb/LayerDesignOperation.fwd.hh>
-#include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
+
+//protocols headers
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/toolbox/SelectResiduesByLayer.fwd.hh>
+
+//core headers
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/types.hh>
+
+//utility headers
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <string>
@@ -87,7 +94,7 @@ public:
 	// Layer Residues is a map of maps, the first key is the layer(core, boundary, intermediate)
 	// and the second key is the secondary structure (L,E,H). The values are string of one letter
 	// code aminoacids to be used in each layer.
-	typedef std::map<  std::string, std::string > LayerDefinitions;
+	typedef std::map< std::string, std::string > LayerDefinitions;
 	typedef std::pair< std::string, std::string > LayerDefinition;
 	typedef std::map< std::string,  LayerDefinitions > LayerResidues;
 	typedef std::pair< std::string, LayerDefinitions > Layer;
@@ -102,8 +109,9 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	typedef std::map < std::string, LayerNCDefinitions > LayerNCResidues;
 
-public:
+	static utility::vector1< std::string > const SS_TYPES;
 
+public:
 
 	/// @brief default constructor
 	LayerDesignOperation();
@@ -119,11 +127,53 @@ public:
 	/// @brief make clone
 	virtual TaskOperationOP clone() const;
 
-
 public:
 
+	/// @brief add a new layer which will be created based on a task operation
+	void add_layer(
+			std::string const & layer_name,
+			core::pack::task::operation::TaskOperationOP task,
+			LayerOperationType const operation,
+			LayerSpecificationType const specification );
 
-	/// @brief layer to be designed
+	/// @brief gets the residues allowed for a given secondary structure in a given layer
+	std::string const & layer_residues(
+			std::string const & layer_name,
+			std::string const & ss_name ) const;
+
+	/// @brief gets the residues allowed for a given secondary structure in a given layer
+	utility::vector1< std::string > const & layer_nc_residues(
+			std::string const & layer_name,
+			std::string const & ss_name ) const;
+
+	/// @brief sets residues allowed for a particular secondary structure in the given layer
+	void set_layer_residues(
+			std::string const & layer_name,
+			std::string const & ss_name,
+			std::string const & residues );
+
+	/// @brief copies residues allowed from src to dest
+	void copy_layer_residues(
+			std::string const & src_layer,
+			std::string const & dest_layer );
+
+	/// @brief sets nc residues allowed for a particular secondary structure in the given layer
+	void set_nc_layer_residues(
+			std::string const & layer_name,
+			std::string const & ss_name,
+			std::string const & residues );
+	void set_nc_layer_residues(
+		std::string const & layer_name,
+		std::string const & ss_name,
+		utility::vector1< std::string > const & residues );
+
+	/// @brief sets layer operation
+	void set_layer_operation( std::string const & layer_name, LayerOperationType const operation );
+
+	/// @brief sets layer specification
+	void set_layer_specification( std::string const & layer_name, LayerSpecificationType const specification );
+
+	/// @brief layer to be designed in internal SRBL object
 	void design_layer( bool const dsgn_core, bool const dsgn_boundary, bool const dsgn_surface );
 
 	/// @brief accessible surface for evaluating residues are in surface or not
@@ -136,24 +186,33 @@ public:
 	void pore_radius( Real ps );
 
 	/// @brief set verbose
-	void set_verbose( bool const  b ) { verbose_ = b; }
+	void set_verbose( bool const b ) { verbose_ = b; }
 
 	/// @brief set restrict_restypes
-	void set_restrict_restypes( bool const  b ) { restrict_restypes_ = b; }
+	void set_restrict_restypes( bool const b ) { restrict_restypes_ = b; }
+
+	/// @brief set whether to use sidechain neighbors to determine core/boundary/surface (default=false)
+	void set_use_sidechain_neighbors( bool const value );
+
+	/// @brief sets names of layers to design
+	void set_design_layers( utility::vector1< std::string > const & layers );
 
 	/// @brief use original sequence for not designed layer
-	void use_original_seq()
-	{
-		use_original_ = true;
-	}
+	void use_original_seq() { use_original_ = true; }
 
 	/// @brief make pymol scripts showing the different layers
-	void  make_pymol_script(bool value) { make_pymol_script_ = value; }
+	void make_pymol_script( bool value ) { make_pymol_script_ = value; }
 
 public:
 
+	void parse_tag( TagCOP tag, DataMap & );
 
-	void parse_tag( TagCOP tag , DataMap & );
+	void parse_layer_tag( TagCOP layer_tag, DataMap & datamap );
+
+	void parse_layer_secstruct_tag(
+			TagCOP secstruct_tag,
+			DataMap & datamap,
+			std::string const & layer_name );
 
 	/// @brief Sets whether residues set with PIKAA and NATRO in previously-applied resfiles are ignored.
 	/// @brief Default behaviour is now FALSE to preserve commutativity.
@@ -161,44 +220,62 @@ public:
 
 	/// @brief Returns whether residues set with PIKAA and NATRO in previously-applied resfiles are ignored.
 	/// @brief Default behaviour is now FALSE to preserve commutativity.
-	bool ignore_pikaa_natro( ) const { return ignore_pikaa_natro_; }
-
+	bool ignore_pikaa_natro() const { return ignore_pikaa_natro_; }
 
 public:
-
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 
 private:
-	utility::vector1<bool> get_restrictions(std::string const & layer, std::string const & /*default_layer*/, std::string const &  ss_type) const;
+	///@brief gets a list of allowed amino acids, and includes the current amino acid in addition to those allowed by layer
+	utility::vector1< bool >
+		get_restrictions(
+				std::string const & layer,
+				std::string const & default_layer,
+				std::string const & ss_type,
+				char const current_aa ) const;
+
+	utility::vector1< bool >
+		get_restrictions(
+				std::string const & layer,
+				std::string const & /*default_layer*/,
+				std::string const & ss_type) const;
+
 	void set_default_layer_residues();
 
 	/// @brief Take a string consisting of comma-separated three-letter codes and parse it, storing separate three-letter codes in a given
 	/// utility::vector1 of strings.
-	void parse_ncaa_list( std::string const &str, utility::vector1<std::string> &storage_vect );
+	void parse_ncaa_list(
+			std::string const & str,
+			utility::vector1< std::string > & storage_vect );
 
 	/// @brief Remove a list of residue types from another list.
 	///
-	void exclude_ncaas( utility::vector1<std::string> const &aas_to_exclude, utility::vector1<std::string> &storage_vect );
+	void exclude_ncaas(
+			utility::vector1< std::string > const & aas_to_exclude,
+			utility::vector1< std::string > & storage_vect );
 
-	/// @brief Utility function to convert a string vector into a comma-separated list of strings.
-	///
-	std::string print_string_vector( utility::vector1<std::string> const &vect ) const {
-		std::string outstring("");
-		for(core::Size i=1, imax=vect.size(); i<=imax; ++i) {
-			if(i>1) outstring+=",";
-			outstring+=vect[i];
-		}
-		return outstring;
-	}
+	void set_layer_residues(
+			std::string const & layer_name,
+			std::string const & ss_name,
+			std::string const & residues,
+			LayerResidues & layer_residues );
+
+	void init_nc_layerdefinitions( std::string const & layer_name );
 
 private:
 
 	/// @brief utility function to transform a vector of position into a pymol selection command
-	std::string pos2select( utility::vector1< Size > const & pos) const;
+	std::string pos2select( utility::vector1< Size > const & pos ) const;
+
 	/// @brief write a pymol command with the different layers as selections
-	void write_pymol_script( Pose const & pos, toolbox::SelectResiduesByLayerOP srbl, std::map< std::string, utility::vector1<bool> > const & layer_specification,bool las_ligand, std::string const & filename ) const;
+	void write_pymol_script(
+			Pose const & pos,
+			toolbox::SelectResiduesByLayerOP srbl,
+			std::map< std::string, utility::vector1< bool > > const & layer_specification,
+			bool las_ligand,
+			std::string const & filename ) const;
 
 	/// @brief add helix capping ?
 	bool add_helix_capping_;
