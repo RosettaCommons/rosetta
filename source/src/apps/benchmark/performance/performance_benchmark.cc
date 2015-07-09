@@ -308,8 +308,12 @@ void PerformanceBenchmark::executeAllBenchmarks(Real scaleFactor)
 
 	TR << std::endl << "Executing all benchmarks..." << std::endl << std::endl;
 
-	std::vector<PerformanceBenchmark *> & all( allBenchmarks() );
-	// right now, take the minimum of 3 trials...
+	// We want to randomize the order in which the benchmarks run,
+	// to minimize any sort of coordination of timing from run-to-run
+	std::vector<PerformanceBenchmark *> all( allBenchmarks() ); // A *copy*
+	// Use the C++ random number generator to get randomization
+	// even when we use -constant_seed
+	std::random_shuffle(all.begin(),all.end());
 
 	std::vector< double > prev_results( all.size(), 0 );
 	//for ( Size j = 0; j < 3; ++j ) {
