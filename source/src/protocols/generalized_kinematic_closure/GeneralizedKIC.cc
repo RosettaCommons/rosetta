@@ -245,9 +245,9 @@ GeneralizedKIC::parse_my_tag(
 	using namespace core::id;
 	using namespace protocols::filters;
 
-	if ( tag->getName() != "GeneralizedKIC" ){
+	/*if ( tag->getName() != "GeneralizedKIC" ){
 		throw utility::excn::EXCN_RosettaScriptsOption("This should be impossible");
-	}
+	}*/
 
 	TR << "Parsing options for GeneralizedKIC (\"" << tag->getOption<std::string>("name" ,"") << "\") mover." << std::endl;
 
@@ -528,6 +528,28 @@ void GeneralizedKIC::check_tail_residues_sensible( core::pose::Pose const &pose 
 	}
 
 	return;
+}
+
+/// @brief Clears the list of loop residues
+void GeneralizedKIC::clear_loop_residues()
+{
+	loopresidues_.clear();
+}
+
+/// @brief Clears the list of perturber residues for perturber perturber_idx
+void
+GeneralizedKIC::clear_perturber_residue_list( core::Size const perturber_idx )
+{
+	perturberlist_[perturber_idx]->clear_residues();
+}
+
+/// @brief Clears the list of perturber residues
+void
+GeneralizedKIC::clear_perturber_residue_lists()
+{
+	for ( core::Size i=1; i<=perturberlist_.size(); ++i ) {
+		clear_perturber_residue_list( i );
+	}
 }
 
 // @brief Function to set the effect of this mover on parts of the pose that are covalently attached to

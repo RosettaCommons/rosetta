@@ -73,6 +73,15 @@ public:
 	/// @brief Add a residue (by index in the pose) to the list of residues making up the loop to be closed.
 	void add_loop_residue( core::Size const residue_index );
 
+	/// @brief Clears the list of loop residues
+	void clear_loop_residues();
+
+	/// @brief Clears the list of perturber residues
+	void clear_perturber_residue_lists();
+
+	/// @brief Clears the list of perturber residues for perturber perturber_idx
+	void clear_perturber_residue_list( core::Size const perturber_idx );
+
 	/// @brief Add a residue (by index in the pose) to the list of residues making up the tails attached to
 	/// the loop to be closed.
 	/// @details  "Tails" are residues that are not part of the loop to be closed, but which are attached to

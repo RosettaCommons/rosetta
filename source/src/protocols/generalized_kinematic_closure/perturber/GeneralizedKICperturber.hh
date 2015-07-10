@@ -55,7 +55,7 @@ namespace perturber {
 /// @details  Perturbation effects starting with "set" set parameters to defined values (e.g. set the third phi angle
 ///           to 45 degrees).  Perturbation effects starting with "randomize" set parameters based on random
 ///           distributions, with no consideration of the initial value.  Perturbation effects starting with "jitter"
-///           set parameters to some new value based on a random distribution about the initial value. 
+///           set parameters to some new value based on a random distribution about the initial value.
 enum perturber_effect {
 	//When adding an effect to this enum, add its name to the get_perturber_effect_name() function.
 
@@ -99,7 +99,7 @@ public:
 	std::string get_name() const;
 
 
-	/// @brief Returns the enum type for the effect of this perturber. 
+	/// @brief Returns the enum type for the effect of this perturber.
 	perturber_effect get_perturber_effect() const { return effect_; }
 
 
@@ -113,7 +113,7 @@ public:
 	std::string get_perturber_effect_name( core::Size &effect ) const;
 
 
-	/// @brief Sets the effect of this perturber. 
+	/// @brief Sets the effect of this perturber.
 	void set_perturber_effect( perturber_effect const &effect );
 
 
@@ -131,13 +131,16 @@ public:
 	/// others act on a list of AtomIDs.
 	void add_residue (core::Size const residue_index) { residues_.push_back(residue_index); return; }
 
+	/// @brief Clears the residue list for this perturber
+	void clear_residues() { residues_.clear(); }
+
 	/// @brief Adds a set of atoms defining a bond length, bond angle, or dihedral
 	/// angle to the list of sets of atoms on which this perturber should act.
 	/// @details These are indices based on the original structure, NOT based on
 	/// the loop to be closed.  Some effects act on a list of residues, while
 	/// others act on a list of atoms.
 	void add_atom_set ( utility::vector1< core::id::NamedAtomID > const &atomset ) { atoms_.push_back(atomset); return; }
-	
+
 	/// @brief Initializes the BinTransitionCalculator object and loads a bin_params file.
 	///
 	void load_bin_params( std::string const &bin_params_file );
@@ -145,23 +148,23 @@ public:
 	/// @brief Set the number of iterations for this perturber
 	///
 	void set_iterations( core::Size const val ) { iterations_=val; return; }
-	
+
 	/// @brief Return the number of iterations for this perturber
 	///
 	core::Size iterations() const { return iterations_; }
-	
+
 	/// @brief Set whether the perturb_backbone_by_bins perturber requires residues to change their torsion
 	/// bins every move, or whether they can stay within the same bin.
 	void set_must_switch_bins( bool const val ) { must_switch_bins_=val; return; }
-	
+
 	/// @brief Return whether the perturb_backbone_by_bins perturber requires residues to change their torsion
 	/// bins every move, or whether they can stay within the same bin.
 	bool must_switch_bins( ) const { return must_switch_bins_; }
-	
+
 	/// @brief Set the bin that the set_backbone_bin perturber will use.
 	///
 	void set_bin( std::string const &bin ) { bin_ = bin; return; }
-	
+
 	/// @brief Get the bin that the set_backbone_bin perturber will use.
 	///
 	std::string bin( ) const { return bin_; }
@@ -201,7 +204,7 @@ private:
 	/// @brief bbgmover
 	///
 	simple_moves::BBGaussianMoverOP bbgmover_;
-	
+
 	/// @brief A BinTransitionCalculatorOP.  This will be null by default,
 	/// and will only point to a BinTransitionCalculator object in the case
 	/// of those perturbers that use torsion bin transition probabilities.
@@ -229,17 +232,17 @@ private:
 	/// closed.  Some effects act on a list of residues, while others act on a
 	/// list of atoms.
 	utility::vector1 < utility::vector1 < core::id::NamedAtomID > > atoms_;
-	
+
 	/// @brief Number of iterations of perturbation for certain perturbers.
 	///
 	core::Size iterations_;
-	
+
 	/// @brief A parameter specifically for the perturb_backbone_by_bins perturber.  If true,
 	/// the perturber ALWAYS changes the torsion bin of the residue.  If false, it MAY change
 	/// the torsion bin of the residue, or it MAY keep it the same, based on the relative
 	/// bin probabilities.
 	bool must_switch_bins_;
-	
+
 	/// @brief A parameter specifically for the set_backbone_bin perturber.  The bin
 	/// that will be assigned.
 	std::string bin_;
@@ -314,7 +317,7 @@ private:
 		utility::vector1 < core::Real > const &inputvalues_real,
 		utility::vector1< core::Real > &bondlengths //desired bond lengths for each atom (input/output)
 	) const;
-	
+
 	/// @brief Applies a set_backbone_bin perturbation to the list of torsions.
 	/// @details  Sets the mainchain torsion bin for each of a list of residues, then picks random mainchain torsion
 	/// values from within the bin.
@@ -377,7 +380,7 @@ private:
 	/// @details Backbone Gaussian Perturbation
 	/// @param[in] original_pose - The input pose.
 	/// @param[in] loop_pose - A pose that is just the loop to be closed (possibly with other things hanging off of it).
-	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that 
+	/// @param[in] residues - A vector of the indices of residues affected by this perturber.  Note that
 	/// @param[in] atomlist - A vector of pairs of AtomID, xyz coordinate.  Residue indices are based on the loop pose, NOT the original pose.
 	/// @param[in] residue_map - A vector of pairs of (loop pose index, original pose index).
 	/// @param[in,out] torsions - A vector of desired torsions, some of which are randomized by this function.
