@@ -28,6 +28,7 @@
 #include <map>
 
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <utility/io/irstream.fwd.hh>
 #include <utility/vector1.hh>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,6 +123,9 @@ public: //
 
 	/// @brief reading blueprint files
 	bool read_blueprint( String const & );
+
+	/// @brief read blueprint file from stream
+	bool read_blueprint_stream( std::istream & data, std::string const & filename );
 
 	/// @brief set secondary structure into pose
 	void insert_ss_into_pose( Pose & pose );

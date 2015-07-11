@@ -194,7 +194,7 @@ BluePrint::extra( core::Size seqpos ) const
 {
 	if( seqpos >= 1 && seqpos <= extra_.size() )
 		return extra_[ seqpos ];
-	else 
+	else
 		return "";
 }
 
@@ -250,7 +250,13 @@ BluePrint::read_blueprint( std::string const & filename )
 		TR.Error << "can not open blueprint file " << filename << std::endl;
 		return false;
 	}
+	return read_blueprint_stream( data, filename );
+}
 
+/// @brief read blueprint file from stream
+bool
+BluePrint::read_blueprint_stream( std::istream & data, std::string const & filename = "" )
+{
 	// StranPairing info read from the line of SSPAIR
 	//StrandPairings spairs;
 	String spairs;
@@ -299,6 +305,7 @@ BluePrint::read_blueprint( std::string const & filename )
 					break;
 				}
 			}
+			TR.Debug << "line=" << line << " tokens=" << tokens << std::endl;
 			runtime_assert( tokens.size() == 3 || tokens.size() == 4 || tokens.size() == 5 );
 
 			count ++;
