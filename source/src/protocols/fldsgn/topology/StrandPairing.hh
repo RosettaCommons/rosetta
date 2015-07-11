@@ -125,6 +125,9 @@ public: //accessors
 	/// For example, 2-3.A.1 means 2nd and 3rd strands make anti-parallel strand_pairing with register shift 1
 	inline String name() const { return name_; }
 
+	/// @brief return residue pairing
+	bool has_paired_residue( Size const res ) const;
+	
 	/// @brief residue pair
 	Size residue_pair( Size const res );
 

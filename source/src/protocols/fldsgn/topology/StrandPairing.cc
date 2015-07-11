@@ -317,11 +317,21 @@ StrandPairing::is_member( Size const res ) {
 }
 
 /// @brief return residue pairing
+bool
+StrandPairing::has_paired_residue( Size const res ) const
+{
+	return ( residue_pair_.find( res ) != residue_pair_.end() );
+}
+
+/// @brief return residue pairing
 Size
 StrandPairing::residue_pair( Size const res )
 {
-	runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) );
-	return residue_pair_[ res ];
+	//runtime_assert( (begin1_ <= res && res <= end1_) || (begin2_ <= res && res <= end2_) ||
+	//	 (end1_ <= res && res <= begin1_) || (end2_ <= res && res <= begin2_)	);
+	std::map< core::Size, core::Size >::const_iterator it = residue_pair_.find( res );
+	runtime_assert( it != residue_pair_.end() );
+	return it->second;
 }
 
 /// @brief reset begin1_, end1_, begin2_, end2_ based on ssinfo
