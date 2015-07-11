@@ -119,7 +119,7 @@ void
 RemodelConstraintGenerator::add_constraints( core::scoring::constraints::ConstraintCOPs csts )
 {
 	for( core::scoring::constraints::ConstraintCOPs::const_iterator cst_it = csts.begin();
-			 cst_it != csts.end(); ++cst_it ){
+			cst_it != csts.end(); ++cst_it ){
 		add_constraint( (*cst_it) );
 	}
 }
@@ -129,6 +129,12 @@ RemodelConstraintGenerator::clear_constraints()
 {
 	csts_.clear();
 	clear_stored_constraints();
+}
+
+core::scoring::constraints::ConstraintCOPs const &
+RemodelConstraintGenerator::constraints() const
+{
+	return csts_;
 }
 
 RemodelConstraintGenerator::VarLengthBuildAP

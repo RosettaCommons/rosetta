@@ -106,7 +106,7 @@ public:
 	core::id::SequenceMappingCOP
 	seqmap() const;
 
-	// Undefined, commenting out to fix PyRosetta build  core::scoring::constraints::ConstraintCOPs constraints() const;
+	core::scoring::constraints::ConstraintCOPs const & constraints() const;
 
 	static core::scoring::constraints::ConstraintCOPs const
 	lookup_stored_constraints( std::string const & id );
@@ -138,7 +138,7 @@ private:
 
 	VarLengthBuildAP vlb_;
 
-	static std::map<std::string,core::scoring::constraints::ConstraintCOPs> cst_map_;
+	static std::map< std::string, core::scoring::constraints::ConstraintCOPs > cst_map_;
 
 }; //class RemodelConstraintGenerator
 
