@@ -151,6 +151,9 @@ public:
 	// @brief Fragment specification from underlying lookup, provides fragment length.
 	FragmentSpecification const & fragment_specification();
 
+	/// @brief sets chain
+	inline void set_chain( core::Size const chainid ) { target_chain_ = chainid; }
+
 protected:
 	// @brief Default constructor
 	FragmentLookupFilter();
