@@ -11,8 +11,8 @@
 /// @brief  Fold tree class
 /// @author Phil Bradley
 
-#ifndef INCLUDED_core_kinematics_FoldTree_hh
-#define INCLUDED_core_kinematics_FoldTree_hh
+#ifndef INCLUDED_core_kinematics_FoldTree_HH
+#define INCLUDED_core_kinematics_FoldTree_HH
 
 // Unit headers
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -20,33 +20,32 @@
 // Package Headers
 #include <core/kinematics/Edge.hh>
 
-// utility headers
+// Project Headers
 #include <core/types.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
-
-// ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-
-// Third-party Headers
-#include <boost/functional/hash.hpp>
-
-// // C++ Headers
-#include <string>
-#include <vector>
-#include <iostream>
-
 #ifdef PYROSETTA
 #include <core/id/SequenceMapping.hh>
 #endif
 
+// utility headers
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
+// External Headers
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <boost/functional/hash.hpp>
+
+// C++ Headers
+#include <string>
+#include <vector>
+#include <iostream>
+
+
 namespace core {
 namespace kinematics {
 
-
-/// @brief The FoldTree is a residue-based treelike representation of a molecule
+/// @brief The FoldTree is a residue-based tree-like representation of a molecule
 ///
 /// @note all the derived data is "mutable", so that we can
 /// update them as needed on the fly inside "const" member functions
@@ -66,7 +65,7 @@ class FoldTree : public utility::pointer::ReferenceCount
 {
 
 public:
-	//@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FoldTree();
 	// types
 	typedef std::vector< Edge > EdgeList;
@@ -96,7 +95,7 @@ public:
 	}
 
 	/// @brief operator=
-	/// @note this version doesnt copy any of the derived data!
+	/// @note this version doesn't copy any of the derived data!
 	/// will this be too slow? it will trigger re-calculating of everything
 	/// every time we reject a move....
 	FoldTree & operator =( FoldTree const & src )
@@ -115,17 +114,17 @@ public:
 
 	/// @brief Returns the starting residue of the kinematic chunk to which res belongs
 	Size boundary_left(Size res) const {
-	debug_assert(res > 0);
-	debug_assert(res <= nres());
-	debug_assert(!is_root( int(res) ) );
+		debug_assert(res > 0);
+		debug_assert(res <= nres());
+		debug_assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).start();
 	}
 
 	/// @brief Returns the ending residue of the kinematic chunk to which res belongs
 	Size boundary_right(Size res) const {
-	debug_assert(res > 0);
-	debug_assert(res <= nres());
-	debug_assert(!is_root( int(res) ) );
+		debug_assert(res > 0);
+		debug_assert(res <= nres());
+		debug_assert(!is_root( int(res) ) );
 		return get_residue_edge(int(res)).stop();
 	}
 
@@ -232,8 +231,8 @@ public:
 	void delete_unordered_edge( int const start, int const stop,int const label);
 
 	/// @brief Changes the label of an edge in fold tree
-	void update_edge_label( int const start, int const stop,
-			int const old_label, int const new_label );
+	void update_edge_label( int const start, int const stop, int const old_label, int const new_label );
+
 	/// @brief Returns the edge label of the edge from  <start>  to  <stop>
 	int edge_label( int const start, int const stop );
 
@@ -304,13 +303,13 @@ public:
 	);
 
 	/// @brief Inserts a bonded residue at position  <seqpos>
-    void
-    insert_residue_by_chemical_bond(
-          int const seqpos,
-          int const anchor_residue,
-          std::string const& anchor_atom,
-          std::string const& root_atom
-      );
+	void
+	insert_residue_by_chemical_bond(
+			int const seqpos,
+			int const anchor_residue,
+			std::string const& anchor_atom,
+			std::string const& root_atom
+	);
 
 	/// @brief Inserts a residue attached only by a jump. precondition is that seqpos-1 is a cutpoint
 	/// @note that anchor_pos is wrt the current numbering system (ie before insertion)
@@ -339,8 +338,7 @@ public:
 	apply_sequence_mapping( id::SequenceMapping const & old2new );
 
 	/// @brief Adds a new jump edge from  <pos1>  to  <pos2>  with cutpoint  <cutpoint>
-	int new_jump( int const jump_pos1, int const jump_pos2,
-			int const cutpoint );
+	int new_jump( int const jump_pos1, int const jump_pos2, int const cutpoint );
 
 	void
 	new_chemical_bond(
@@ -434,8 +432,6 @@ public:
 
 	/// @brief Reorders the FoldTree to start at residue  <start_residue>
 	bool reorder( int const start_residue, bool const verbose_if_fail = true );
-	//	void refold_reorder( int const begin_res, int const end_res,
-	//										 ObjexxFCL::FArray1D_bool const & jump_moved );
 
 
 	// check status ////////////////////////////////////////////////////////
@@ -456,14 +452,17 @@ public:
 
 	/// @brief Returns true if the FoldTree is connected
 	bool connected() const; // connected
+
 	/// @brief chemical edges should have atom info
 	bool check_edges_for_atom_info() const;
-	/// @brief the staring residue for this jump
+
+	/// @brief the starting residue for this jump
 	int upstream_jump_residue( int const jump_number ) const;
+
 	/// @brief the stopping residue for this jump
 	int downstream_jump_residue( int const jump_number ) const;
-	/// partition into two foldtrees by cutting at jump= jump_number
 
+	/// partition into two foldtrees by cutting at jump= jump_number
 	void
 	partition_by_jump(
 			int const jump_number,
@@ -473,16 +472,11 @@ public:
 
 	/// @brief partition the fold tree in two parts if the jump is disconnected.
 	void
-	partition_by_jump(
-			int const jump_number,
-			ObjexxFCL::FArray1D_bool & partner1
-	) const ;
+	partition_by_jump( int const jump_number, ObjexxFCL::FArray1D_bool & partner1 ) const ;
 
 	/// @brief partition the fold tree in two parts if the jump is disconnected.
 	utility::vector1< bool >
-	partition_by_jump(
-			Size const jump_nr
-	) const;
+	partition_by_jump( Size const jump_nr ) const;
 
 	/// @brief partition the fold tree into n parts based on specified jumps.
 	utility::vector1< Size >
@@ -500,9 +494,7 @@ public:
 	/// you will get most likely the same cutpoint for several different jump_numbers
 	/// however: the method cutpoint( nr ) will give you the number you are looking for
 	int
-	cutpoint_by_jump(
-			int const jump_number
-	) const;
+	cutpoint_by_jump( int const jump_number ) const;
 
 	// these routines are for storing extra information about the jumps
 	// you can specify which atoms should be the up/downstream atoms for
@@ -514,6 +506,7 @@ public:
 	/// @brief the jump atom on the staring side
 	std::string
 	upstream_atom( int const jump_number ) const;
+
 	/// @brief the jump atom on the stopping side
 	std::string
 	downstream_atom( int const jump_number ) const;
@@ -533,7 +526,7 @@ public:
 
 	/// @brief Returns all chemical edges from fold tree
 	utility::vector1< Edge >
-	get_chemical_edges( ) const;
+	get_chemical_edges() const;
 
 	/// @brief  Get the number of the jump that builds (connects to) a given residue
 	int
@@ -588,6 +581,7 @@ public:
 
 	/// @brief input operator
 	friend std::istream & operator >>(std::istream & is, FoldTree & t);
+
 	/// @brief output operator
 	friend std::ostream & operator <<(std::ostream & os, FoldTree const & t);
 
@@ -694,7 +688,7 @@ public:
 	Edge & jump_edge( int const jump_number );
 
 	/// @brief get the jump_nr connected to jump upstream->downstream, returns 0 if not found
-	inline core::Size jump_nr( core::Size upstream_res, core::Size downstream_res  ) const;
+	inline core::Size jump_nr( core::Size upstream_res, core::Size downstream_res ) const;
 
 
 	/// @brief Returns true if the FoldTree is empty
@@ -803,13 +797,10 @@ public:
 	/// @brief equal to operator
 	friend
 	bool
-	operator==(
-			FoldTree const & a,
-			FoldTree const & b
-	);
+	operator==( FoldTree const & a, FoldTree const & b );
 
 	/// @brief Not equal to operator
-	friend bool operator!=(const FoldTree& a, const FoldTree& b);
+	friend bool operator!=( FoldTree const & a, FoldTree const & b );
 
 	/// @brief  Slide a polymer cutpoint from one location to another
 	void
@@ -925,11 +916,12 @@ private:
 	// book-keeping, so we know when to update derived data
 	/// @brief edges in the edge_list_ have been changed.
 	mutable bool new_topology;
-	/// @brief edges in the edge_list_ have been reorderd.
+
+	/// @brief edges in the edge_list_ have been reordered.
 	mutable bool new_order;
 
 	// some derived data ////////////////////////////////////////
-	// you dont need to worry about setting any derived data, they are all
+	// you don't need to worry about setting any derived data, they are all
 	// calculated as needed from the fold_tree.
 	// accessed by get_XXX where XXX is the data name
 	// note that these are MUTABLE so they can be synced with the
