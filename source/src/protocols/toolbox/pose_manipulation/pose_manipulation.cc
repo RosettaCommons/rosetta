@@ -153,6 +153,22 @@ construct_poly_XXX_pose(
 
 	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
+	construct_poly_XXX_pose( aa, pose, positions, restype_set, keep_pro, keep_gly, keep_disulfide_cys );
+}
+
+void
+construct_poly_XXX_pose(
+	std::string const & aa,
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	core::chemical::ResidueTypeSetCOP restype_set,
+	bool keep_pro,
+	bool keep_gly,
+	bool keep_disulfide_cys
+)
+{
+	using namespace core;
+	
 	conformation::Residue const replace_res( restype_set->name_map( aa ), true );
 
 	for( utility::vector1< Size >::const_iterator pos_it = positions.begin();

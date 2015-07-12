@@ -24,6 +24,7 @@
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 //#include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
@@ -76,6 +77,19 @@ construct_poly_XXX_pose(
   std::string const & aa,
 	core::pose::Pose & pose,
 	utility::vector1< core::Size > const & positions,
+	bool keep_pro,
+	bool keep_gly,
+	bool keep_disulfide_cys
+);
+
+/// @author Nobuyasu Koga ( nobuyasu@uw.edu ), Oct 09; Tom Linsky (tlinsky@uw.edu), Nov 2014
+/// @brief puts in XXX residues at the positions from the given residue typeset specified in the 'positions' input array
+void
+construct_poly_XXX_pose(
+	std::string const & aa,
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > const & positions,
+	core::chemical::ResidueTypeSetCOP restype_set,
 	bool keep_pro,
 	bool keep_gly,
 	bool keep_disulfide_cys
