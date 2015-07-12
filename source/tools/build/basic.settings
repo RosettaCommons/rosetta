@@ -414,7 +414,10 @@ settings = {
             "flags" : {
                 # XXX: march=k8 is (?) the default.  There may be a speedup
                 # XXX: with =nocona on Intel EM64T or =opteron on Opteron.
-                # "compile" : [ "march=k8" ],
+                "compile" : [
+		    "march=core2",
+		    "mtune=generic",
+	        ],
             },
         },
     },
@@ -1892,6 +1895,8 @@ settings = {
                     "isystem external/dbio/"
                 ],
                 "compile" : [
+		    "march=core2",
+		    "mtune=generic",
                     "pipe",
                     "Qunused-arguments",
                     'DUNUSUAL_ALLOCATOR_DECLARATION',
@@ -1933,7 +1938,7 @@ settings = {
             "flags" : {
                 # Change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environ-
                 # ment variable.
-                "compile" : [ "march=native", "stdlib=libc++", ],
+                "compile" : [ "march=native", "mtune=native", "stdlib=libc++", ],
                 "shlink" : [ "install_name ${TARGET.abspath}", "stdlib=libc++", ],
                 "link"   : [ "stdlib=libc++"],
                 "cxx" : [ "std=c++11" ],
