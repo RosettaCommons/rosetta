@@ -2,6 +2,13 @@
 # Benchmark script configuration file. Some of the tests require some system specific options to run. Please see benchmark.ini.template for list of available options.
 #
 
+[DEFAULT]
+
+# how many jobs daemon can run on host machine (this is not related to HPC jobs)
+cpu_count = 24
+
+# how many memory in GB daemon can use on host machine (approximation, float)
+memory = 64
 
 [config]  # additional config-options for various tests. All this fields will be pass as keys in 'config' function argument
 

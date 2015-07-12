@@ -21,6 +21,5 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../../__init__
 
 _api_version_ = '1.0'  # api version
 
-
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     return {_StateKey_ : _S_failed_,  _ResultsKey_ : {},  _LogKey_ : 'Put test log here...'}

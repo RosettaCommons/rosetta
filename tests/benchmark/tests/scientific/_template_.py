@@ -32,8 +32,24 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     else:
         extension = calculate_extension(platform)
 
+        # runing test executable on benchmark machine itself
         res, output = execute('Scoring PDB...', 'cd  {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
+
+        # running executable on HPC cluster
+        hpc_driver.execute(executable='{rosetta_dir}/source/bin/score.{extension}'.format(**vars()),
+                           arguments='-s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile hpc_score.sc'.format(**vars()),
+                           working_dir=working_dir, name='scoring')
 
         state = _S_failed_ if res else _S_finished_
 
-        return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : output }
+        # Simple form when our test does not have any sub-tests:
+        # return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : output }
+
+        # More complex form when we have a sub-tests which we want Testing Server to track
+        # _SummaryKey_ is dict to provide optional information specific to this test
+        results = { _SummaryKey_ : { 'arbitrary_key_1' : 'arbitrary_info_1' },
+
+                    _TestsKey_ : {'sub-test-1' : dict(state=_S_finished_, log='sub-test-1 log...'),
+                                  'sub-test-2' : dict(state=_S_failed_, log='sub-test-2 log...') } }
+
+        return {_StateKey_ : state,  _ResultsKey_ : results,  _LogKey_ : output }

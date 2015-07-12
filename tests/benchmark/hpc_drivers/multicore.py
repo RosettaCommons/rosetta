@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 # :noTabs=true:
 
-import time
+import time as time_module
 
-import imp
+import sys, signal, imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) + '/base.py')  # A bit of Python magic here, what we trying to say is this: from base import *, but path to base is calculated from our source location  # from base import HPC_Driver, execute, NT
 
 
 class MultiCore_HPC_Driver(HPC_Driver):
-    def execute(self, command_line, initial_dir, target, memory=256, run_time=24):
-        self.cpu_usage -= time.time()/60./60.
-        log = execute('Executing {}'.format(target), 'cd {} && {}'.format(initial_dir, command_line), tracer=self.tracer, return_='output')
-        with file(self.working_dir+'/hpc.{target}.log'.format(target=target), 'w') as f: f.write(log)
-        self.cpu_usage += time.time()/60./60.
+    # def execute(self, command_line, working_dir, target, memory=256, run_time=24):
+    #     self.cpu_usage -= time.time()/60./60.
+    #     log = execute('Executing {}'.format(target), 'cd {} && {}'.format(working_dir, command_line), tracer=self.tracer, return_='output')
+    #     with file(self.working_dir+'/.hpc.{target}.log'.format(target=target), 'w') as f: f.write(log)
+    #     self.cpu_usage += time.time()/60./60.
 
 
-    def execute_hpc_jobs(self, hpc_jobs):
-        cpu_usage -= time.time()/60./60.
-        jobs = self.config['cpu_count']
+    def submit_hpc_job(self, name, executable, arguments, working_dir, jobs_to_queue, log_dir, memory=512, time=12, block=True):
+        cpu_usage = -time_module.time()/60./60.
 
         _jobs_ = []
         def mfork():
-            ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
+            ''' Check if number of child process is below cpu_count. And if it is - fork the new pocees and return its pid.
             '''
-            while len(_jobs_) >= jobs:
+            while len(_jobs_) >= self.cpu_count:
                 for p in _jobs_[:] :
                     r = os.waitpid(p, os.WNOHANG)
                     if r == (p, 0):  # process have ended without error
@@ -53,21 +52,21 @@ class MultiCore_HPC_Driver(HPC_Driver):
         signal.signal(signal.SIGINT, signal_handler)
 
         process = 0
-        for j in hpc_jobs:
+        for i in range(jobs_to_queue):
 
             pid = mfork()
             if not pid:  # we are child process
-                log = execute('Running job {}...'.format(j['target']), 'cd {} && {} {}'.format(j['initial_dir'], j['executable'], j['arguments'].format(process=process)),
-                              tracer=self.tracer, return_='output')
-                with file(self.working_dir+'.hpc.{target}.log'.format(target=j['target']), 'w') as f: f.write(log)
+                command_line = 'cd {} && {} {}'.format(working_dir, executable, arguments.format(process=process) )
+                log = execute('Running job {}.{}...'.format(name, i), command_line, tracer=self.tracer, return_='output')
+                with file(self.working_dir+'/hpc.{name}.{i}.log'.format(**vars()), 'w') as f: f.write(command_line+'\n'+log)
                 sys.exit(0)
 
             process += 1
 
         for p in _jobs_: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
-        cpu_usage += time.time()/60./60.
+        cpu_usage += time_module.time()/60./60.
 
-        self.cpu_usage += cpu_usage * jobs  # approximation...
+        self.cpu_usage += cpu_usage * jobs_to_queue  # approximation...
 
         signal.signal(signal.SIGINT, previous_handler)

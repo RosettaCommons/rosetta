@@ -81,9 +81,18 @@ def main(args):
     if os.path.isfile('benchmark.ini'):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
         Config.readfp( file(Options.config) )
-        config = Config.items('config')
-    else: config = dict(hpc_driver='MultiCore', branch='unknown', revision=42)
 
+    else:
+        Config = ConfigParser()
+        Config.set('DEFAULT', 'hpc_driver', 'MultiCore')
+        Config.set('DEFAULT', 'branch',     'unknown')
+        Config.set('DEFAULT', 'revision',   '42')
+        Config.add_section('config')
+
+    Config.set('DEFAULT', 'cpu_count', str(Options.jobs) )
+    Config.set('DEFAULT', 'memory',    str(memory) )
+
+    config = Config.items('config')
     config = dict(config, cpu_count=Options.jobs, memory=memory)
     print('Config:{}, Platform:{}'.format(json.dumps(config, sort_keys=True), Platform))
 
@@ -145,7 +154,7 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, config, tracer=lambda x: print_(x), set_daemon_message=lambda x:None)
+            hpc_driver = eval(config['hpc_driver'] + '_HPC_Driver')(working_dir, Config, tracer=lambda x: print_(x), set_daemon_message=lambda x:None)
 
             api_version = test_suite._api_version_ if hasattr(test_suite, '_api_version_') else ''
 

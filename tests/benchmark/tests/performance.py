@@ -62,7 +62,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
         if debug and False: res, output = 0, 'run_performance_tests: debug is enabled, skipping actual run...\n'
         else:
             if os.path.isfile(json_results_file): os.remove(json_results_file)
-            hpc_driver.execute(command_line, '{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), 'performance_benchmark')
+            hpc_driver.execute(executable=command_line, arguments='', working_dir='{rosetta_dir}/source/src/apps/benchmark/performance'.format(**vars()), name='performance_benchmark', shell_wrapper=True)  # we using Shell redirects so shell_wrapper=True
 
         output = file(output_log_file).read()
         results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output
