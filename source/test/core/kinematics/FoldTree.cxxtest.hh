@@ -223,4 +223,17 @@ public:
 		TS_ASSERT_EQUALS( UBQ_E2_fold_tree_10at300,
 				core::kinematics::remodel_fold_tree_to_account_for_insertion( UBQ_E2_fold_tree, 300, 10 ) );
 	}
+	
+	void test_delete_jump() {
+		core::kinematics::FoldTree ft;
+		ft.add_edge( 37, 1, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 37, 74, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 37, 84, 1 );
+		ft.add_edge( 84, 75, core::kinematics::Edge::PEPTIDE );
+		ft.add_edge( 84, 93, 2 );
+		ft.add_edge( 84, 92, core::kinematics::Edge::PEPTIDE );
+		TS_ASSERT( ft.check_fold_tree() );
+		ft.delete_jump_and_intervening_cutpoint( 1 );
+		TS_ASSERT( ft.check_fold_tree() );
+	}
 };

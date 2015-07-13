@@ -191,6 +191,7 @@ FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 	}
 
 	delete_extra_vertices();
+
 	reorder( old_root );
 	debug_assert( check_fold_tree() );
 }
@@ -1040,13 +1041,14 @@ FoldTree::delete_extra_vertices()
 // 							 << is_cutpoint_( it->start() ) << " " << is_cutpoint_( it->start()-1  ) << " "
 // 							 << is_cutpoint_( it->stop() ) << " " << is_cutpoint_( it->stop()-1 ) << std::endl;
 // 			TR.Trace << "isroot: " << ( _root == it->start() ) << " " << ( _root == it->stop() ) << std::endl;
-			if ( it->start() != _root &&
-					 !is_jump_point_[ it->start() ] &&
-					 !is_cutpoint_  ( it->start() ) &&
-					 !is_cutpoint_  ( it->start()-1 ) ) kill_vertex = it->start();
-			if ( !is_jump_point_[ it->stop() ] &&
-					 !is_cutpoint_  ( it->stop() ) &&
-					 !is_cutpoint_  ( it->stop()-1  ) ) kill_vertex = it->stop();
+			if ( ( it->start() != _root ) &&
+					!is_jump_point_[ it->start() ] &&
+					!is_cutpoint_  ( it->start() ) &&
+					!is_cutpoint_  ( it->start()-1 ) ) kill_vertex = it->start();
+			if ( ( it->stop() != _root ) &&
+					!is_jump_point_[ it->stop() ] &&
+					!is_cutpoint_  ( it->stop() ) &&
+					!is_cutpoint_  ( it->stop()-1  ) ) kill_vertex = it->stop();
 			if ( kill_vertex ) break;
 		}
 		if ( !kill_vertex ) break;
