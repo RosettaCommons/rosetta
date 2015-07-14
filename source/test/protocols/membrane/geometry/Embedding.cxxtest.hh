@@ -22,7 +22,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -44,7 +44,8 @@ using namespace core;
 using namespace core::pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-using namespace protocols::membrane::geometry;
+using namespace protocols::membrane;
+using namespace protocols::membrane::geometry; 
 
 class EmbeddingTest : public CxxTest::TestSuite {
 	

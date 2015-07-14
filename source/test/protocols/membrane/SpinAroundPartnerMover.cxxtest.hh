@@ -18,9 +18,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <protocols/membrane/util.hh> 
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/SpinAroundPartnerMover.hh>
 #include <core/pose/Pose.hh>

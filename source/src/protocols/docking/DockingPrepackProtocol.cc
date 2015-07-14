@@ -27,7 +27,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -62,6 +62,7 @@ using namespace protocols::moves;
 using namespace core;
 using namespace pack::task;
 using protocols::jd2::JobDistributor;
+using namespace protocols::membrane; 
 
 static thread_local basic::Tracer TR( "protocols.docking.DockingPrepackProtocol" );
 
@@ -199,7 +200,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		if ( membrane_ ) {
 
 			// get membrane axis
-			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( pose, *jump ) );
+			core::Vector trans_axis( membrane_axis( pose, *jump ) );
 
 			// create new translation mover
 			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(trans_axis, *jump) );
@@ -228,7 +229,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 		// for membrane protein, translate in membrane plane
 		if ( membrane_ ) {
 
-			core::Vector trans_axis( protocols::membrane::geometry::membrane_axis( pose, *jump ) );
+            core::Vector trans_axis( protocols::membrane::membrane_axis( pose, *jump ) );
 			rigid::RigidBodyTransMoverOP translate_back( new rigid::RigidBodyTransMover(trans_axis, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 

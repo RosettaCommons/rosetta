@@ -31,7 +31,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>

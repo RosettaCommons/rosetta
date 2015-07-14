@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 #include <core/pose/PDBInfo.hh>
 
@@ -342,32 +342,8 @@ AddMembraneMover::parse_my_tag(
         steepness_ = tag->getOption< core::Real >( "steepness" );
     }
     
-    // Read in membrane center & normal
-    if ( tag->hasOption( "center" ) ) {
-        std::string center = tag->getOption< std::string >( "center" );
-        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-        
-        if ( str_cen.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            center_.x() = std::atof( str_cen[1].c_str() );
-            center_.y() = std::atof( str_cen[2].c_str() );
-            center_.z() = std::atof( str_cen[3].c_str() );
-        }
-    }
-    
-    if ( tag->hasOption( "normal" ) ) {
-        std::string normal = tag->getOption< std::string >( "normal" );
-        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-        
-        if ( str_norm.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            normal_.x() = std::atof( str_norm[1].c_str() );
-            normal_.y() = std::atof( str_norm[2].c_str() );
-            normal_.z() = std::atof( str_norm[3].c_str() );
-        }
-    }
+    // Use general method to read in center / normal
+    read_center_normal_from_tag( center_, normal_, tag );
     
 }
 
@@ -488,10 +464,10 @@ AddMembraneMover::apply( Pose & pose ) {
 		}
 		else {
 			// get pose info to create topology from structure
-			std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( geometry::get_chain_and_z( pose ) );
+			std::pair< utility::vector1< Real >, utility::vector1< Size > > pose_info( get_chain_and_z( pose ) );
 			utility::vector1< Real > z_coord = pose_info.first;
 			utility::vector1< Size > chainID = pose_info.second;
-			utility::vector1< char > secstruct( protocols::membrane::geometry::get_secstruct( pose ) );
+			utility::vector1< char > secstruct( get_secstruct( pose ) );
 			Real thickness = mem_thickness;
 			
 			// set topology from structure
@@ -606,27 +582,9 @@ AddMembraneMover::init_from_cmd() {
         steepness_ = option[ OptionKeys::mp::steepness ]();
     }
     
-    // Read in Center Parameter
-    if ( option[ OptionKeys::mp::setup::center ].user() ) {
-        if ( option[ OptionKeys::mp::setup::center ]().size() == 3 ) {
-            center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
-            center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
-            center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
-        } else {
-            utility_exit_with_message( "Center xyz vector must have three components! Option has either too many or too few arguments!" );
-        }
-    }
+    // Use general method to read in center/normal from the command line
+    read_center_normal_from_cmd( center_, normal_ );
     
-    // Read in Normal Parameter
-    if ( option[ OptionKeys::mp::setup::normal ].user() ) {
-        if ( option[ OptionKeys::mp::setup::normal ]().size() == 3 ) {
-            normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
-            normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
-            normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
-        } else {
-            utility_exit_with_message( "Normal xyz vector must have three components! Option has either too many or too few arguments" );
-        }
-    }
 }
 
 /// @brief Helper Method - Setup Membrane Virtual
@@ -639,7 +597,7 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	
 	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
 	
-	using namespace protocols::membrane::geometry;
+	using namespace protocols::membrane;
 	using namespace core::conformation;
 	using namespace core::chemical;
 	

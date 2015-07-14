@@ -30,7 +30,7 @@
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/kinematics/Stub.hh>
@@ -759,6 +759,7 @@ TranslationRotationMover::init_from_cmd() {
 		new_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
 		new_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
 	}
+	
 }// init from cmd
 
 

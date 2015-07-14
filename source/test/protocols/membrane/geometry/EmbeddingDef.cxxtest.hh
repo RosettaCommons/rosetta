@@ -18,7 +18,7 @@
 // Unit Headers
 #include <core/conformation/Residue.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -41,6 +41,7 @@
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
+using namespace protocols::membrane; 
 using namespace protocols::membrane::geometry;
 
 class EmbeddingDefTest : public CxxTest::TestSuite {

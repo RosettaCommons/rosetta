@@ -27,7 +27,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/util.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/FlipMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
@@ -222,7 +222,8 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	add_membrane3->apply( pose1_cp );
 
 	// reorder foldtree
-	protocols::membrane::geometry::reorder_membrane_foldtree( pose1_cp );
+    using namespace protocols::membrane; 
+    reorder_membrane_foldtree( pose1_cp );
 
 	// get axis for sliding together the two poses
 	Vector slide_axis = center2 - center1;
@@ -286,7 +287,7 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	reorder_membrane_foldtree( pose );
 
 	// transform pose into membrane, false for viewing
-	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal, spanfile ) );
+	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
 	transform->apply( pose );
 	
 	// tilt pose slightly with random flip angle, default jump is membrane jump

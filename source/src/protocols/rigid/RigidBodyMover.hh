@@ -349,6 +349,7 @@ public:
 protected:
 	core::Vector spin_axis_;
 	bool update_spin_axis_;
+	
 };  // class RigidBodySpinMover
 
 

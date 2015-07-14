@@ -68,7 +68,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/membrane/util.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/util.hh>

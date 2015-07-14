@@ -19,7 +19,7 @@
 
 // Unit Headers
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Project Headers
 #include <protocols/membrane/geometry/EmbeddingDef.hh>

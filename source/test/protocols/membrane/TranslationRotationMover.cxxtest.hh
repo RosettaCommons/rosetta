@@ -23,7 +23,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>

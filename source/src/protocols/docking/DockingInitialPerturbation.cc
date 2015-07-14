@@ -60,7 +60,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh>
 
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 using basic::T;
 
@@ -491,8 +491,8 @@ DockingSlideIntoContact::~DockingSlideIntoContact() {}
 void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
-	using namespace protocols::membrane::geometry;
-
+    using namespace protocols::membrane;
+    
 	bool vary_stepsize( false );
 
 	// for a membrane pose the translation axis should be in the membrane

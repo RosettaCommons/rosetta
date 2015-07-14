@@ -30,7 +30,7 @@
 #include <core/conformation/membrane/Span.fwd.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/kinematics/Stub.fwd.hh>

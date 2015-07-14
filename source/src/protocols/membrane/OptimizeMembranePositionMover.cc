@@ -29,7 +29,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 

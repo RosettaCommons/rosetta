@@ -7,13 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file       protocols/membrane/TransformInfoMembraneMoverCreator.hh
-/// @brief      Transform pose into membrane coordinates (Rosetta Scripts Hook)
-/// @details	Requires a MembraneInfo object with all of its associated
-///				information. This can be done by calling AddMembraneMover
-///				beforehand. pose.conformation().is_membrane() should always
-///				return true.
+///	@file		protocols/membrane/TransformIntoMembraneMoverCreator.hh
+/// @brief		Transform a pose into a membrane coordinate frame
+/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
 /// @author     JKLeman (julia.koehler1982@gmail.com)
+/// Last Modified: 6/11/15
+/// #RosettaMPMover
 
 #ifndef INCLUDED_protocols_membrane_TransformIntoMembraneMoverCreator_hh
 #define INCLUDED_protocols_membrane_TransformIntoMembraneMoverCreator_hh

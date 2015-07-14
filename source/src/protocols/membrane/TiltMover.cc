@@ -30,7 +30,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>

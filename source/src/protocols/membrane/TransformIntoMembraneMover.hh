@@ -7,56 +7,32 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file       protocols/membrane/TransformInfoMembraneMoverCreator.hh
-/// @brief      Transform pose into membrane coordinates (Rosetta Scripts Hook)
-/// @details	Requires a MembraneInfo object with all of its associated
-///				information. This can be done by calling AddMembraneMover
-///				beforehand. pose.conformation().is_membrane() should always
-///				return true.
+///	@file		protocols/membrane/TransformIntoMembraneMover.hh
+/// @brief		Transform a pose into a membrane coordinate frame
+/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author     JKLeman (julia.koehler1982@gmail.com)
 ///				CAUTION: THIS MOVER ONLY WORKS FOR A FIXED MEMBRANE WHERE THE
 ///				MEMBRANE VIRTUAL RESIDUE IS AT THE ROOT OF THE FOLDTREE!!!
-/// @author     JKLeman (julia.koehler1982@gmail.com)
+/// Last Modified: 6/11/15
+/// #RosettaMPMover
 
 #ifndef INCLUDED_protocols_membrane_TransformIntoMembraneMover_hh
 #define INCLUDED_protocols_membrane_TransformIntoMembraneMover_hh
 
 // Unit Headers
 #include <protocols/membrane/TransformIntoMembraneMover.fwd.hh>
-#include <protocols/membrane/TransformIntoMembraneMoverCreator.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
-#include <protocols/membrane/TranslationRotationMover.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/membrane/MembraneInfo.fwd.hh>
-#include <core/conformation/membrane/SpanningTopology.fwd.hh>
-#include <core/conformation/membrane/Span.fwd.hh>
-#include <core/conformation/membrane/LipidAccInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
-#include <protocols/membrane/geometry/util.hh>
 
 // Package Headers
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh> 
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/file/file_sys_util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 
 namespace protocols {
@@ -64,14 +40,11 @@ namespace membrane {
 
 using namespace core;
 using namespace core::pose;
-using namespace core::conformation::membrane;
+using namespace protocols::membrane::geometry;
 using namespace protocols::moves;
 	  
-/// @brief	Takes a pose, calculates the best possible center and normal from
-///			the topology object (through spanfile from OCTOPUS) and the
-///			coordinates of the pose
-///			CAUTION: THIS MOVER ONLY WORKS FOR A FIXED MEMBRANE WHERE THE
-///			MEMBRANE VIRTUAL RESIDUE IS AT THE ROOT OF THE FOLDTREE!!!
+/// @brief	Transform a pose into membrane coordinates based on the current
+///			embedding of the protein
 class TransformIntoMembraneMover : public protocols::moves::Mover {
 
 public:
@@ -80,33 +53,31 @@ public:
 	/// Constructors  ///
 	/////////////////////
 
-	/// @brief Default Constructor
-	/// @details uses membrane coords: center(0,0,0), normal(0,0,15) and membrane jump
+	/// @brief Transform the protein into a defalt membrane
+	/// @details Transform the protein into default membrane, current protein
+    /// embedding computed from structure and spanfile
 	TransformIntoMembraneMover();
+    
+    /// @brief Use custom jump to transform protein into membrane
+    /// @details Using user-specified jump, transform the protein into default
+    /// membrane, current protein computed from structure & spanfile
+    TransformIntoMembraneMover( core::Size jump );
+	
+	/// @brief Transform the protein into a defalt membrane and user specified embedding
+	/// @details Transform the protein with a user-defined embedding (might have
+    /// been optimized before) into the default membrane
+	TransformIntoMembraneMover( EmbeddingDefOP embedding );
 
-	/// @brief Constructor that uses jump number for transformation
-	/// @details uses membrane coords: center(0,0,0), normal(0,0,15);
-	///				downstream jump will be transformed
-	TransformIntoMembraneMover( SSize jump );
-
-	/// @brief Custom Constructor - mainly for PyRosetta
-	/// @details user can specify membrane coords into which protein should be
-	///          transformed to; uses membrane jump
+	/// @brief Transform the protein into user-specified mmebrane coordinates
+    /// @details Transform the protein with a user-defined embedding (might have
+    /// been optimized before and is saved as MEM) into a user-defined membrane
+    /// which is ARGV for the constructor
 	TransformIntoMembraneMover(
-		Vector mem_center,
-		Vector mem_normal,
-		std::string spanfile = ""
-	);
-
-	/// @brief Custom Constructor using jumpnumber
-	/// @details user can specify membrane coords into which protein should be
-	///          transformed to; downstream partner will be transformed
-	TransformIntoMembraneMover( SSize jump,
-							   Vector mem_center,
-							   Vector mem_normal,
-							   std::string spanfile = ""
-							   );
-
+		Vector center,
+		Vector normal,
+		bool from_current=false
+		);
+	
 	/// @brief Copy Constructor
 	TransformIntoMembraneMover( TransformIntoMembraneMover const & src );
 	
@@ -161,22 +132,20 @@ private: // methods
 	
 	
 private: // data
+    
+    // Jump used for the move
+    Size jump_;
 
-	// Pose residue typeset, and visualization
-	bool fullatom_;
-
-	// jump number: downstream partner will be transformed
-	SSize jump_;
-	
 	// center and normal coordinates with respect to fixed membrane
 	Vector mem_center_;
 	Vector mem_normal_;
-
-	// spanfile name
-	std::string spanfile_;
-
-	// SpanningTopology
-	SpanningTopologyOP topology_;
+	
+	// Embedding of the protien prior to transformation
+	EmbeddingDefOP embedding_;
+	
+	// Extract current membrane coordinates (prior to transformation)
+	// from the membrane residue
+	bool keep_current_protein_embedding_; 
 	
 };
 

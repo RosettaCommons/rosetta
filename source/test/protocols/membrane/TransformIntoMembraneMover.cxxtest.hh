@@ -18,32 +18,39 @@
 #include <test/protocols/init_util.hh>
 
 // Project Headers
+#include <protocols/membrane/util.hh>
+#include <protocols/membrane/geometry/EmbeddingDef.hh>
+
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
+
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Span.hh>
+
+
+// Package Headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
-// Package Headers
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
+
 #include <core/conformation/membrane/types.hh>
 
 #include <basic/Tracer.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 // C++ Headers
 #include <cstdlib>
 
 using namespace core;
+using namespace core::conformation::membrane;
+using namespace protocols::membrane::geometry;
+using namespace protocols::membrane;
 
 /// @brief Test Suite for transformin a pose into membrane coordinates
 class TransformIntoMembraneMoverTest : public CxxTest::TestSuite {
@@ -53,7 +60,6 @@ public:
     /// @brief Setup
     void setUp()
     {
-		using namespace basic::options;
 		using namespace core::conformation::membrane;
 		using namespace protocols::membrane::geometry;
 		using namespace protocols::membrane;
@@ -61,19 +67,20 @@ public:
 		// Initialize Rosetta
         protocols_init();
 
-		// load pose
+		// Test coordinate transformation applied to individual residues is correct
+		// Case: Glycophorin A
 		std::string pdbfile = "protocols/membrane/1AFO_AB_before_out.pdb";
 		pose_ = core::import_pose::pose_from_pdb( pdbfile );
-
-		// Load span object from spanfile
-		spanfile_ = "protocols/membrane/1AFO_AB.span";
-
-		// Add Membrane to pose
-		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile_, 0 ) );
+		AddMembraneMoverOP add_memb( new AddMembraneMover( "protocols/membrane/1AFO_AB.span", 0 ) );
 		add_memb->apply( *pose_ );
+		
+		// Test angle between single helix and normal azis is 0 after transformation
+		// Case: TM domain of the M2 proton channel (single helix)
 
-		// reorder foldtree
-		reorder_membrane_foldtree( *pose_ );
+        m2_pose_ = PoseOP( new Pose() );
+        core::import_pose::pose_from_pdb( *m2_pose_, "protocols/membrane/1mp6.pdb" );
+        AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+        add_memb1->apply( *m2_pose_ );
 
     }
 
@@ -84,13 +91,9 @@ public:
 	/// @brief test transform into default membrane
 	void test_transform_into_default_membrane() {
 
-		TS_TRACE( "TESTING TRANSFORM INTO DEFAULT MEMBRANE" );
+		TS_TRACE( "Testing transform into membrane mover on default membrane coordinates" );
 
 		using namespace protocols::membrane;
-
-		// set new membrane to transform pose into
-		Vector new_center ( mem_center );
-		Vector new_normal ( mem_normal );
 
 		// membrane default that are not moved, output in PDB
 		Vector m_center ( mem_center );
@@ -98,7 +101,7 @@ public:
 		Vector m_thickness( mem_thickness, 0, 0 );
 
 		// Apply Rotation and translation move
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( new_center, new_normal, spanfile_ ) );
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
 		transform->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after rotation
@@ -123,7 +126,7 @@ public:
 	/// @brief test transform into user-defined membrane
 	void test_transform_into_userdefined_membrane() {
 
-		TS_TRACE( "TESTING TRANSFORM INTO USER-DEFINED MEMBRANE" );
+		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
 
 		using namespace protocols::membrane;
 
@@ -137,7 +140,7 @@ public:
 		Vector m_thickness( mem_thickness, 0, 0 );
 
 		// Apply Rotation and translation move
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( new_center, new_normal, spanfile_ ) );
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( new_center, new_normal ) );
 		transform->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after rotation
@@ -157,6 +160,35 @@ public:
 		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 	}
+	
+	/// @brief Check that when a protein is transformed, the angle between the protein "axis" and
+	/// membrane normal axis is 0 (the "definition" of correct transofmration)
+	void test_helix_to_normal_angle() {
+	
+		// Apply transformation to the protein
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
+		transform->apply( *m2_pose_ );
+
+	    // Get membrane normal from membrane info
+		Vector normal( m2_pose_->conformation().membrane_info()->membrane_normal() );
+	
+		// Calculate the "vector" representing the helix as the difference
+		// between start & end TM helices.
+		SpanOP helix_span( m2_pose_->conformation().membrane_info()->spanning_topology()->span( 1 ) );
+		EmbeddingDefOP span_embed = EmbeddingDefOP( new EmbeddingDef( *m2_pose_, helix_span->start(), helix_span->end() ) );
+		Vector helix_axis( span_embed->normal() );
+	    normal.normalize();
+		helix_axis.normalize();
+		
+		// Check that both vectors have a positive orientation
+		if ( normal.length() > 0 ) normal.negate();
+		if ( helix_axis.length() > 0 ) helix_axis.negate();
+		
+		// Check tilt angle is equal to zero
+		Real tilt_angle( angle_of( normal, helix_axis ) );
+		TS_ASSERT_DELTA( tilt_angle, 0.0, 0.005 );
+		
+	}
 
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
@@ -171,9 +203,11 @@ public:
 
 private: // data
 
-    // store data
+    // Per-residue testing
     core::pose::PoseOP pose_;
-	std::string spanfile_;
+	
+	// Helix angles testing
+	core::pose::PoseOP m2_pose_;
 
 }; // class TransformIntoMembraneMoverTest
 

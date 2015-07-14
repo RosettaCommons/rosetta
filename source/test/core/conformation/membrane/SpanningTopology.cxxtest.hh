@@ -21,7 +21,7 @@
 // Unit Headers
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
@@ -44,7 +44,7 @@
 using namespace core;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
-using namespace protocols::membrane::geometry;
+using namespace protocols::membrane;
 
 class SpanningTopologyTest : public CxxTest::TestSuite {
 	

@@ -40,7 +40,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 

@@ -20,7 +20,7 @@
 
 // Package Headers
 #include <core/conformation/membrane/SpanningTopology.hh> 
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh> 

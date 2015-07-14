@@ -27,7 +27,7 @@
 #include <protocols/relax/util.hh>
 
 #include <protocols/membrane/MembranePositionFromTopologyMover.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/scoring/ScoreFunction.hh> 
@@ -40,6 +40,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
@@ -62,6 +63,7 @@ namespace membrane {
 
 using namespace core::pose;
 using namespace protocols::membrane::geometry;
+using namespace protocols::membrane;
     
 // Note - precondition: add membrane mover has already been
 // called on this pose!

@@ -1,0 +1,331 @@
+HEADER    MEMBRANE PROTEIN                        11-SEP-02   1MP6              
+TITLE     STRUCTURE OF THE TRANSMEMBRANE REGION OF THE M2 PROTEIN H+            
+TITLE    2 CHANNEL BY SOLID STATE NMR SPECTROSCOPY                              
+COMPND    MOL_ID: 1;                                                            
+COMPND   2 MOLECULE: MATRIX PROTEIN M2;                                         
+COMPND   3 CHAIN: A;                                                            
+COMPND   4 FRAGMENT: TRANSMEMBRANE PEPTIDE (RESIDUES 22-46);                    
+COMPND   5 SYNONYM: M2 PROTEIN;                                                 
+COMPND   6 ENGINEERED: YES                                                      
+SOURCE    MOL_ID: 1;                                                            
+SOURCE   2 SYNTHETIC: YES;                                                      
+SOURCE   3 OTHER_DETAILS: THIS SEQUENCE OCCURS NATURALLY IN THE                 
+SOURCE   4 INFLUENZA A VIRUS (UDORN/72 STRAIN). THE M2 TRANSMEMBRANE            
+SOURCE   5 PEPTIDE WAS SYNTHESIZED USING SOLID PHASE PEPTIDE                    
+SOURCE   6 SYNTHESIS.                                                           
+KEYWDS    INFLUENZA A VIRUS, MEMBRANE PROTEIN STRUCTURE, M2 PROTON              
+KEYWDS   2 CHANNEL, SOLID STATE NMR                                             
+EXPDTA    SOLID-STATE NMR                                                       
+AUTHOR    J.WANG,S.KIM,F.KOVACS,T.A.CROSS                                       
+REVDAT   2   24-FEB-09 1MP6    1       VERSN                                    
+REVDAT   1   25-SEP-02 1MP6    0                                                
+JRNL        AUTH   J.WANG,S.KIM,F.KOVACS,T.A.CROSS                              
+JRNL        TITL   STRUCTURE OF THE TRANSMEMBRANE REGION OF THE M2              
+JRNL        TITL 2 PROTEIN H(+) CHANNEL.                                        
+JRNL        REF    PROTEIN SCI.                  V.  10  2241 2001              
+JRNL        REFN                   ISSN 0961-8368                               
+JRNL        PMID   11604531                                                     
+JRNL        DOI    10.1110/PS.17901                                             
+REMARK   1                                                                      
+REMARK   1 REFERENCE 1                                                          
+REMARK   1  AUTH   F.KOVACS,J.K.DENNY,Z.SONG,J.R.QUINE,T.A.CROSS                
+REMARK   1  TITL   HELIX TILT OF THE M2 TRANSMEMBRANE PEPTIDE FROM              
+REMARK   1  TITL 2 INFLUENZA A VIRUS: AN INTRINSIC PROPERTY.                    
+REMARK   1  REF    J.MOL.BIOL.                   V. 295   117 2000              
+REMARK   1  REFN                   ISSN 0022-2836                               
+REMARK   1  DOI    10.1006/JMBI.1999.3322                                       
+REMARK   2                                                                      
+REMARK   2 RESOLUTION. NOT APPLICABLE.                                          
+REMARK   3                                                                      
+REMARK   3 REFINEMENT.                                                          
+REMARK   3   PROGRAM     : TORC V5.4                                            
+REMARK   3   AUTHORS     : KETCHEM,ROUX,CROSS                                   
+REMARK   3                                                                      
+REMARK   3  OTHER REFINEMENT REMARKS: THE REFINED M2-TMP MONOMER STRUCTURE      
+REMARK   3  WAS OBTAINED BY A GEOMETRICAL SEARCH USING A SEARCH ALGORITHM       
+REMARK   3  TO OBTAIN A MINIMUM OF THE GLOBAL PENALTY FUNCTION THAT             
+REMARK   3  INCORPORATES ALL THE ORIENTATIONAL RESTRAINTS AND THE CHARMM        
+REMARK   3  EMPIRICAL FUNCTION. THE ORIENTATIONAL RESTRAINTS IMPOSED ON         
+REMARK   3  THE STRUCTURE DURING REFINEMENT ARE 15 15N CHEMICAL SHIFTS AND      
+REMARK   3  15 15N-1H DIPOLAR COUPLINGS FROM PISEMA EXPERIMENTS. THE            
+REMARK   3  OBSERVED CHEMICAL SHIFTS ARE COMPARED TO CALCULATED VALUES          
+REMARK   3  FROM THE MOLECULAR COORDINATES AND THE KNOWN TENSOR ELEMENT         
+REMARK   3  MAGNITUDES AND ASSUMED TENSOR ORIENTATIONS. THE REFINEMENT WAS      
+REMARK   3  CARRIED OUT IN VACUO WITH THE INITIAL COORDINATES OF AN IDEAL       
+REMARK   3  A-HELIX STRUCTURE (3.6 RESIDUES PER TURN) HAVING A RANGE OF         
+REMARK   3  TILT AND ROTATIONAL ORIENTATIONS WITH RESPECT TO THE BILAYER        
+REMARK   3  SPANNING THE VALUES OBTAINED FROM THE PISA WHEELS.                  
+REMARK   4                                                                      
+REMARK   4 1MP6 COMPLIES WITH FORMAT V. 3.15, 01-DEC-08                         
+REMARK 100                                                                      
+REMARK 100 THIS ENTRY HAS BEEN PROCESSED BY RCSB ON 12-SEP-02.                  
+REMARK 100 THE RCSB ID CODE IS RCSB017074.                                      
+REMARK 210                                                                      
+REMARK 210 EXPERIMENTAL DETAILS                                                 
+REMARK 210  EXPERIMENT TYPE                : NMR                                
+REMARK 210  TEMPERATURE           (KELVIN) : 303.00                             
+REMARK 210  PH                             : 7.0                                
+REMARK 210  IONIC STRENGTH                 : NONE                               
+REMARK 210  PRESSURE                       : AMBIENT                            
+REMARK 210  SAMPLE CONTENTS                : ORIENTED SAMPLES OF THE            
+REMARK 210                                   PEPTIDE IN HYDRATED LIPID          
+REMARK 210                                   BILAYERS WERE PREPARED BY          
+REMARK 210                                   FIRST CO-DISSOLVING M2-TMP AND     
+REMARK 210                                   DIMYRISTOYLPHOSPHATIDYLCHOLINE     
+REMARK 210                                   (DMPC) IN TRIFLUOROETHANOL         
+REMARK 210                                   (TFE). THE SOLUTION WAS THEN       
+REMARK 210                                   SPREAD ONTO APPROXIMATELY 60       
+REMARK 210                                   GLASS PLATES. AFTER VACUUM         
+REMARK 210                                   DRYING TO REMOVE TFE, 2            
+REMARK 210                                   MICROLITERS OF STERILE-            
+REMARK 210                                   FILTERED WATER WAS ADDED TO        
+REMARK 210                                   EACH PLATE, AND THE PLATES         
+REMARK 210                                   WERE THEN STACKED INTO A GLASS     
+REMARK 210                                   TUBE AND PLACED IN A CHAMBER       
+REMARK 210                                   CONTAINING A SATURATED             
+REMARK 210                                   SOLUTION OF K2SO4 FOR              
+REMARK 210                                   HYDRATION.                         
+REMARK 210                                                                      
+REMARK 210  NMR EXPERIMENTS CONDUCTED      : SOLID STATE NMR PISEMA             
+REMARK 210  SPECTROMETER FIELD STRENGTH    : 400 MHZ                            
+REMARK 210  SPECTROMETER MODEL             : CHEMAGNETICS                       
+REMARK 210  SPECTROMETER MANUFACTURER      : HOME BUILT                         
+REMARK 210                                                                      
+REMARK 210  STRUCTURE DETERMINATION.                                            
+REMARK 210   SOFTWARE USED                 : NULL                               
+REMARK 210   METHOD USED                   : SIMULATED ANNEALING                
+REMARK 210                                                                      
+REMARK 210 CONFORMERS, NUMBER CALCULATED   : 30                                 
+REMARK 210 CONFORMERS, NUMBER SUBMITTED    : 1                                  
+REMARK 210 CONFORMERS, SELECTION CRITERIA  : THE LOWEST ENERGY CONFORMER        
+REMARK 210                                   WITH BACKBONE AND C BETA ATOMS     
+REMARK 210                                   IS DEPOSITED, PREFERRED            
+REMARK 210                                   ROTAMERIC STATES OF SIDE           
+REMARK 210                                   CHAINS WERE USED DURING THE        
+REMARK 210                                   BACKBONE STRUCTURE REFINEMENT      
+REMARK 210                                   BUT THE SIDE CHAIN ATOMS WERE      
+REMARK 210                                   NOT INCLUDED IN THE PDB FILE.      
+REMARK 210                                                                      
+REMARK 210 BEST REPRESENTATIVE CONFORMER IN THIS ENSEMBLE : 1                   
+REMARK 210                                                                      
+REMARK 210 REMARK: 15N CHEMICAL SHIFT, 1H-15N DIPOLAR COUPLING FREQUENCIES      
+REMARK 210  WERE MEASURED FROM SOLID STATE NMR PISEMA EXPERIMENT                
+REMARK 217                                                                      
+REMARK 217 SOLID STATE NMR STUDY                                                
+REMARK 217 THE COORDINATES IN THIS ENTRY WERE GENERATED FROM SOLID              
+REMARK 217 STATE NMR DATA. PROTEIN DATA BANK CONVENTIONS REQUIRE THAT           
+REMARK 217 CRYST1 AND SCALE RECORDS BE INCLUDED, BUT THE VALUES ON              
+REMARK 217 THESE RECORDS ARE MEANINGLESS.                                       
+REMARK 470                                                                      
+REMARK 470 MISSING ATOM                                                         
+REMARK 470 THE FOLLOWING RESIDUES HAVE MISSING ATOMS(RES=RESIDUE NAME;          
+REMARK 470 C=CHAIN IDENTIFIER; SSEQ=SEQUENCE NUMBER; I=INSERTION CODE):         
+REMARK 470     RES CSSEQI  ATOMS                                                
+REMARK 470     SER A  22    OG                                                  
+REMARK 470     SER A  23    OG                                                  
+REMARK 470     ASP A  24    CG   OD1  OD2                                       
+REMARK 470     PRO A  25    CG   CD                                             
+REMARK 470     LEU A  26    CG   CD1  CD2                                       
+REMARK 470     VAL A  27    CG1  CG2                                            
+REMARK 470     VAL A  28    CG1  CG2                                            
+REMARK 470     SER A  31    OG                                                  
+REMARK 470     ILE A  32    CG1  CG2  CD1                                       
+REMARK 470     ILE A  33    CG1  CG2  CD1                                       
+REMARK 470     ILE A  35    CG1  CG2  CD1                                       
+REMARK 470     LEU A  36    CG   CD1  CD2                                       
+REMARK 470     HIS A  37    CG   ND1  CD2  CE1  NE2                             
+REMARK 470     LEU A  38    CG   CD1  CD2                                       
+REMARK 470     ILE A  39    CG1  CG2  CD1                                       
+REMARK 470     LEU A  40    CG   CD1  CD2                                       
+REMARK 470     TRP A  41    CG   CD1  CD2  NE1  CE2  CE3  CZ2                   
+REMARK 470     TRP A  41    CZ3  CH2                                            
+REMARK 470     ILE A  42    CG1  CG2  CD1                                       
+REMARK 470     LEU A  43    CG   CD1  CD2                                       
+REMARK 470     ASP A  44    CG   OD1  OD2                                       
+REMARK 470     ARG A  45    CG   CD   NE   CZ   NH1  NH2                        
+REMARK 470     LEU A  46    CG   CD1  CD2                                       
+DBREF  1MP6 A   22    46  UNP    P03490   VMT2_IAUDO      22     46             
+SEQRES   1 A   25  SER SER ASP PRO LEU VAL VAL ALA ALA SER ILE ILE GLY          
+SEQRES   2 A   25  ILE LEU HIS LEU ILE LEU TRP ILE LEU ASP ARG LEU              
+HELIX    1   1 SER A   22  LEU A   46  1                                  25    
+CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P 1           1          
+ORIGX1      1.000000  0.000000  0.000000        0.00000                         
+ORIGX2      0.000000  1.000000  0.000000        0.00000                         
+ORIGX3      0.000000  0.000000  1.000000        0.00000                         
+SCALE1      1.000000  0.000000  0.000000        0.00000                         
+SCALE2      0.000000  1.000000  0.000000        0.00000                         
+SCALE3      0.000000  0.000000  1.000000        0.00000                         
+ATOM      1  N   SER A  22      14.173  -2.599 -18.189  1.00  0.00           N  
+ATOM      2  CA  SER A  22      14.220  -1.411 -19.139  1.00  0.00           C  
+ATOM      3  C   SER A  22      13.334  -0.242 -18.721  1.00  0.00           C  
+ATOM      4  O   SER A  22      12.640  -0.276 -17.708  1.00  0.00           O  
+ATOM      5  CB  SER A  22      13.867  -1.898 -20.575  1.00  0.00           C  
+ATOM      6  HA  SER A  22      15.236  -1.041 -19.133  1.00  0.00           H  
+ATOM      7  N   SER A  23      13.303   0.863 -19.493  1.00  0.00           N  
+ATOM      8  CA  SER A  23      12.584   2.078 -19.096  1.00  0.00           C  
+ATOM      9  C   SER A  23      11.081   1.905 -19.027  1.00  0.00           C  
+ATOM     10  O   SER A  23      10.402   2.475 -18.177  1.00  0.00           O  
+ATOM     11  CB  SER A  23      12.894   3.266 -20.046  1.00  0.00           C  
+ATOM     12  H   SER A  23      13.822   0.908 -20.339  1.00  0.00           H  
+ATOM     13  HA  SER A  23      12.897   2.345 -18.093  1.00  0.00           H  
+ATOM     14  N   ASP A  24      10.517   1.074 -19.927  1.00  0.00           N  
+ATOM     15  CA  ASP A  24       9.122   0.693 -19.927  1.00  0.00           C  
+ATOM     16  C   ASP A  24       8.797  -0.284 -18.769  1.00  0.00           C  
+ATOM     17  O   ASP A  24       7.878   0.016 -18.007  1.00  0.00           O  
+ATOM     18  CB  ASP A  24       8.748   0.263 -21.377  1.00  0.00           C  
+ATOM     19  H   ASP A  24      11.099   0.637 -20.599  1.00  0.00           H  
+ATOM     20  HA  ASP A  24       8.542   1.586 -19.716  1.00  0.00           H  
+ATOM     21  N   PRO A  25       9.492  -1.397 -18.528  1.00  0.00           N  
+ATOM     22  CA  PRO A  25       9.231  -2.235 -17.358  1.00  0.00           C  
+ATOM     23  C   PRO A  25       9.429  -1.603 -15.986  1.00  0.00           C  
+ATOM     24  O   PRO A  25       8.707  -1.976 -15.062  1.00  0.00           O  
+ATOM     25  CB  PRO A  25      10.211  -3.393 -17.553  1.00  0.00           C  
+ATOM     26  HA  PRO A  25       8.196  -2.532 -17.404  1.00  0.00           H  
+ATOM     27  N   LEU A  26      10.374  -0.658 -15.800  1.00  0.00           N  
+ATOM     28  CA  LEU A  26      10.615  -0.022 -14.509  1.00  0.00           C  
+ATOM     29  C   LEU A  26       9.457   0.862 -14.083  1.00  0.00           C  
+ATOM     30  O   LEU A  26       8.983   0.777 -12.954  1.00  0.00           O  
+ATOM     31  CB  LEU A  26      11.927   0.816 -14.483  1.00  0.00           C  
+ATOM     32  H   LEU A  26      10.986  -0.476 -16.574  1.00  0.00           H  
+ATOM     33  HA  LEU A  26      10.689  -0.802 -13.765  1.00  0.00           H  
+ATOM     34  N   VAL A  27       8.953   1.723 -15.001  1.00  0.00           N  
+ATOM     35  CA  VAL A  27       7.827   2.599 -14.708  1.00  0.00           C  
+ATOM     36  C   VAL A  27       6.540   1.806 -14.394  1.00  0.00           C  
+ATOM     37  O   VAL A  27       5.811   2.105 -13.444  1.00  0.00           O  
+ATOM     38  CB  VAL A  27       7.649   3.672 -15.801  1.00  0.00           C  
+ATOM     39  H   VAL A  27       9.400   1.843 -15.885  1.00  0.00           H  
+ATOM     40  HA  VAL A  27       8.088   3.120 -13.801  1.00  0.00           H  
+ATOM     41  N   VAL A  28       6.288   0.703 -15.140  1.00  0.00           N  
+ATOM     42  CA  VAL A  28       5.187  -0.222 -14.867  1.00  0.00           C  
+ATOM     43  C   VAL A  28       5.290  -0.869 -13.484  1.00  0.00           C  
+ATOM     44  O   VAL A  28       4.337  -0.831 -12.699  1.00  0.00           O  
+ATOM     45  CB  VAL A  28       5.085  -1.276 -15.972  1.00  0.00           C  
+ATOM     46  H   VAL A  28       6.886   0.442 -15.892  1.00  0.00           H  
+ATOM     47  HA  VAL A  28       4.268   0.351 -14.842  1.00  0.00           H  
+ATOM     48  N   ALA A  29       6.478  -1.409 -13.110  1.00  0.00           N  
+ATOM     49  CA  ALA A  29       6.732  -1.986 -11.806  1.00  0.00           C  
+ATOM     50  C   ALA A  29       6.484  -1.025 -10.652  1.00  0.00           C  
+ATOM     51  O   ALA A  29       5.800  -1.353  -9.688  1.00  0.00           O  
+ATOM     52  CB  ALA A  29       8.189  -2.503 -11.746  1.00  0.00           C  
+ATOM     53  H   ALA A  29       7.277  -1.422 -13.712  1.00  0.00           H  
+ATOM     54  HA  ALA A  29       6.047  -2.810 -11.676  1.00  0.00           H  
+ATOM     55  N   ALA A  30       7.010   0.211 -10.758  1.00  0.00           N  
+ATOM     56  CA  ALA A  30       6.819   1.286  -9.801  1.00  0.00           C  
+ATOM     57  C   ALA A  30       5.351   1.647  -9.606  1.00  0.00           C  
+ATOM     58  O   ALA A  30       4.871   1.826  -8.484  1.00  0.00           O  
+ATOM     59  CB  ALA A  30       7.612   2.521 -10.267  1.00  0.00           C  
+ATOM     60  H   ALA A  30       7.522   0.418 -11.591  1.00  0.00           H  
+ATOM     61  HA  ALA A  30       7.182   0.960  -8.837  1.00  0.00           H  
+ATOM     62  N   SER A  31       4.589   1.700 -10.717  1.00  0.00           N  
+ATOM     63  CA  SER A  31       3.160   1.973 -10.714  1.00  0.00           C  
+ATOM     64  C   SER A  31       2.355   0.917  -9.962  1.00  0.00           C  
+ATOM     65  O   SER A  31       1.521   1.245  -9.117  1.00  0.00           O  
+ATOM     66  CB  SER A  31       2.588   2.095 -12.146  1.00  0.00           C  
+ATOM     67  H   SER A  31       5.025   1.556 -11.610  1.00  0.00           H  
+ATOM     68  HA  SER A  31       3.012   2.915 -10.201  1.00  0.00           H  
+ATOM     69  N   ILE A  32       2.624  -0.382 -10.216  1.00  0.00           N  
+ATOM     70  CA  ILE A  32       2.009  -1.516  -9.510  1.00  0.00           C  
+ATOM     71  C   ILE A  32       2.306  -1.493  -7.992  1.00  0.00           C  
+ATOM     72  O   ILE A  32       1.436  -1.681  -7.149  1.00  0.00           O  
+ATOM     73  CB  ILE A  32       2.486  -2.819 -10.169  1.00  0.00           C  
+ATOM     74  H   ILE A  32       3.313  -0.621 -10.901  1.00  0.00           H  
+ATOM     75  HA  ILE A  32       0.938  -1.427  -9.606  1.00  0.00           H  
+ATOM     76  N   ILE A  33       3.587  -1.194  -7.691  1.00  0.00           N  
+ATOM     77  CA  ILE A  33       3.986  -1.055  -6.269  1.00  0.00           C  
+ATOM     78  C   ILE A  33       3.202   0.036  -5.520  1.00  0.00           C  
+ATOM     79  O   ILE A  33       2.627  -0.207  -4.454  1.00  0.00           O  
+ATOM     80  CB  ILE A  33       5.501  -0.907  -6.088  1.00  0.00           C  
+ATOM     81  H   ILE A  33       4.241  -1.046  -8.431  1.00  0.00           H  
+ATOM     82  HA  ILE A  33       3.708  -1.975  -5.765  1.00  0.00           H  
+ATOM     83  N   GLY A  34       3.111   1.251  -6.106  1.00  0.00           N  
+ATOM     84  CA  GLY A  34       2.302   2.357  -5.576  1.00  0.00           C  
+ATOM     85  C   GLY A  34       0.834   2.045  -5.380  1.00  0.00           C  
+ATOM     86  O   GLY A  34       0.251   2.342  -4.336  1.00  0.00           O  
+ATOM     87  H   GLY A  34       3.593   1.412  -6.968  1.00  0.00           H  
+ATOM     88  N   ILE A  35       0.217   1.402  -6.393  1.00  0.00           N  
+ATOM     89  CA  ILE A  35      -1.177   0.962  -6.319  1.00  0.00           C  
+ATOM     90  C   ILE A  35      -1.433  -0.019  -5.172  1.00  0.00           C  
+ATOM     91  O   ILE A  35      -2.350   0.175  -4.378  1.00  0.00           O  
+ATOM     92  CB  ILE A  35      -1.646   0.415  -7.674  1.00  0.00           C  
+ATOM     93  H   ILE A  35       0.727   1.109  -7.209  1.00  0.00           H  
+ATOM     94  HA  ILE A  35      -1.782   1.822  -6.089  1.00  0.00           H  
+ATOM     95  N   LEU A  36      -0.594  -1.072  -5.016  1.00  0.00           N  
+ATOM     96  CA  LEU A  36      -0.660  -2.025  -3.914  1.00  0.00           C  
+ATOM     97  C   LEU A  36      -0.553  -1.374  -2.538  1.00  0.00           C  
+ATOM     98  O   LEU A  36      -1.360  -1.642  -1.646  1.00  0.00           O  
+ATOM     99  CB  LEU A  36       0.463  -3.095  -4.021  1.00  0.00           C  
+ATOM    100  H   LEU A  36       0.138  -1.198  -5.681  1.00  0.00           H  
+ATOM    101  HA  LEU A  36      -1.626  -2.501  -3.947  1.00  0.00           H  
+ATOM    102  N   HIS A  37       0.425  -0.462  -2.346  1.00  0.00           N  
+ATOM    103  CA  HIS A  37       0.561   0.304  -1.115  1.00  0.00           C  
+ATOM    104  C   HIS A  37      -0.679   1.131  -0.763  1.00  0.00           C  
+ATOM    105  O   HIS A  37      -1.155   1.106   0.372  1.00  0.00           O  
+ATOM    106  CB  HIS A  37       1.793   1.241  -1.190  1.00  0.00           C  
+ATOM    107  H   HIS A  37       1.069  -0.264  -3.088  1.00  0.00           H  
+ATOM    108  HA  HIS A  37       0.693  -0.391  -0.302  1.00  0.00           H  
+ATOM    109  N   LEU A  38      -1.245   1.877  -1.732  1.00  0.00           N  
+ATOM    110  CA  LEU A  38      -2.481   2.630  -1.563  1.00  0.00           C  
+ATOM    111  C   LEU A  38      -3.677   1.770  -1.145  1.00  0.00           C  
+ATOM    112  O   LEU A  38      -4.383   2.099  -0.194  1.00  0.00           O  
+ATOM    113  CB  LEU A  38      -2.786   3.385  -2.881  1.00  0.00           C  
+ATOM    114  H   LEU A  38      -0.793   1.938  -2.624  1.00  0.00           H  
+ATOM    115  HA  LEU A  38      -2.323   3.336  -0.757  1.00  0.00           H  
+ATOM    116  N   ILE A  39      -3.900   0.620  -1.819  1.00  0.00           N  
+ATOM    117  CA  ILE A  39      -4.934  -0.355  -1.470  1.00  0.00           C  
+ATOM    118  C   ILE A  39      -4.801  -0.870  -0.038  1.00  0.00           C  
+ATOM    119  O   ILE A  39      -5.771  -0.877   0.725  1.00  0.00           O  
+ATOM    120  CB  ILE A  39      -4.967  -1.498  -2.494  1.00  0.00           C  
+ATOM    121  H   ILE A  39      -3.314   0.385  -2.594  1.00  0.00           H  
+ATOM    122  HA  ILE A  39      -5.893   0.148  -1.500  1.00  0.00           H  
+ATOM    123  N   LEU A  40      -3.578  -1.267   0.368  1.00  0.00           N  
+ATOM    124  CA  LEU A  40      -3.295  -1.678   1.747  1.00  0.00           C  
+ATOM    125  C   LEU A  40      -3.640  -0.596   2.777  1.00  0.00           C  
+ATOM    126  O   LEU A  40      -4.332  -0.855   3.759  1.00  0.00           O  
+ATOM    127  CB  LEU A  40      -1.806  -2.086   1.920  1.00  0.00           C  
+ATOM    128  H   LEU A  40      -2.812  -1.340  -0.273  1.00  0.00           H  
+ATOM    129  HA  LEU A  40      -3.927  -2.518   1.984  1.00  0.00           H  
+ATOM    130  N   TRP A  41      -3.220   0.662   2.532  1.00  0.00           N  
+ATOM    131  CA  TRP A  41      -3.524   1.806   3.382  1.00  0.00           C  
+ATOM    132  C   TRP A  41      -5.033   2.057   3.559  1.00  0.00           C  
+ATOM    133  O   TRP A  41      -5.527   2.217   4.671  1.00  0.00           O  
+ATOM    134  CB  TRP A  41      -2.796   3.047   2.804  1.00  0.00           C  
+ATOM    135  H   TRP A  41      -2.745   0.873   1.681  1.00  0.00           H  
+ATOM    136  HA  TRP A  41      -3.140   1.577   4.369  1.00  0.00           H  
+ATOM    137  N   ILE A  42      -5.818   2.029   2.462  1.00  0.00           N  
+ATOM    138  CA  ILE A  42      -7.281   2.144   2.454  1.00  0.00           C  
+ATOM    139  C   ILE A  42      -7.948   1.037   3.261  1.00  0.00           C  
+ATOM    140  O   ILE A  42      -8.870   1.276   4.048  1.00  0.00           O  
+ATOM    141  CB  ILE A  42      -7.803   2.177   1.010  1.00  0.00           C  
+ATOM    142  H   ILE A  42      -5.349   1.874   1.596  1.00  0.00           H  
+ATOM    143  HA  ILE A  42      -7.527   3.066   2.953  1.00  0.00           H  
+ATOM    144  N   LEU A  43      -7.465  -0.217   3.137  1.00  0.00           N  
+ATOM    145  CA  LEU A  43      -7.937  -1.350   3.916  1.00  0.00           C  
+ATOM    146  C   LEU A  43      -7.688  -1.189   5.413  1.00  0.00           C  
+ATOM    147  O   LEU A  43      -8.541  -1.512   6.236  1.00  0.00           O  
+ATOM    148  CB  LEU A  43      -7.265  -2.638   3.376  1.00  0.00           C  
+ATOM    149  H   LEU A  43      -6.745  -0.438   2.475  1.00  0.00           H  
+ATOM    150  HA  LEU A  43      -9.006  -1.406   3.778  1.00  0.00           H  
+ATOM    151  N   ASP A  44      -6.519  -0.642   5.807  1.00  0.00           N  
+ATOM    152  CA  ASP A  44      -6.231  -0.290   7.195  1.00  0.00           C  
+ATOM    153  C   ASP A  44      -7.122   0.817   7.761  1.00  0.00           C  
+ATOM    154  O   ASP A  44      -7.556   0.738   8.903  1.00  0.00           O  
+ATOM    155  CB  ASP A  44      -4.763   0.179   7.370  1.00  0.00           C  
+ATOM    156  H   ASP A  44      -5.830  -0.407   5.116  1.00  0.00           H  
+ATOM    157  HA  ASP A  44      -6.446  -1.156   7.805  1.00  0.00           H  
+ATOM    158  N   ARG A  45      -7.412   1.876   6.981  1.00  0.00           N  
+ATOM    159  CA  ARG A  45      -8.308   2.944   7.392  1.00  0.00           C  
+ATOM    160  C   ARG A  45      -9.751   2.487   7.590  1.00  0.00           C  
+ATOM    161  O   ARG A  45     -10.450   2.957   8.482  1.00  0.00           O  
+ATOM    162  CB  ARG A  45      -8.279   4.093   6.354  1.00  0.00           C  
+ATOM    163  H   ARG A  45      -7.007   1.950   6.066  1.00  0.00           H  
+ATOM    164  HA  ARG A  45      -7.992   3.314   8.358  1.00  0.00           H  
+ATOM    165  N   LEU A  46     -10.239   1.548   6.757  1.00  0.00           N  
+ATOM    166  CA  LEU A  46     -11.564   0.972   6.866  1.00  0.00           C  
+ATOM    167  C   LEU A  46     -11.714   0.086   8.100  1.00  0.00           C  
+ATOM    168  O   LEU A  46     -12.742   0.113   8.784  1.00  0.00           O  
+ATOM    169  CB  LEU A  46     -11.832   0.136   5.597  1.00  0.00           C  
+ATOM    170  H   LEU A  46      -9.666   1.223   6.002  1.00  0.00           H  
+ATOM    171  HA  LEU A  46     -12.282   1.774   6.962  1.00  0.00           H  
+TER     172      LEU A  46                                                      
+MASTER      118    0    0    1    0    0    0    6  171    1    0    2          
+END                                                                             

@@ -32,7 +32,7 @@
 #include <protocols/membrane/TiltMover.hh>
 #include <protocols/membrane/TranslationRotationMover.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/rigid/RigidBodyMover.hh>

@@ -37,7 +37,7 @@
 
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>

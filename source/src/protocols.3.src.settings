@@ -309,7 +309,7 @@ sources = {
 		"TiltMover",
 		"TransformIntoMembraneMover",
 		"TranslationRotationMover",
-		"metrics",
+		"util",
     ],
     "protocols/membrane/io": [
          "SpanFileOptions",
@@ -318,7 +318,6 @@ sources = {
          "LipoFileLoader",
      ],
     "protocols/membrane/geometry" :[
-		"util",
 		"EmbeddingDef",
 		"Embedding",
     ],

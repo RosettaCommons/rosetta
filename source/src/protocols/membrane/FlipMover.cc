@@ -29,7 +29,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>

@@ -782,7 +782,7 @@ Options = Option_Group( '',
 			default='false',
 			),
 		Option( 'max_retry_job', 'Integer',
-			desc='If a job fails with FAIL_RETRY retry this many times at most',
+						desc='If a job fails with FAIL_RETRY retry this many times at most',
 			default='10'
 			),
 #		Option( 'verbosity', 'Integer',
@@ -2650,6 +2650,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 			Option( 'transform_into_membrane', 'Boolean', desc="score_jd2: transform protein into fixed membrane before scoring; spanfile required" ),
 			Option( 'position_from_topo', 'Boolean', desc="determine a membrane position from the transmembrane spans of the protein" ),
+		),
+
+		# For transforming proteins between different membranes
+		Option_Group( "transform", 
+			Option( "keep_current_protein_embedding", 'Boolean', desc="Use the current membrane position as the starting embedding for transformation" ), 
 		),
 
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)

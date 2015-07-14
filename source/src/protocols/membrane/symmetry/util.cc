@@ -25,7 +25,7 @@
 
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>

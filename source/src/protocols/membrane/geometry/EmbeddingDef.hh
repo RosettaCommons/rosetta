@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		protocols/membrane/geometry/EmbeddingDef.fwd.hh
-///
+/// @file 		protocols/membrane/geometry/EmbeddingDef.hh
 /// @brief      Basic Embedding Definitions for Membrane Embedding
 /// @details    Class contains a normal and center
-///
-/// @note       Last Modified: 6/17/14
 /// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
+///	Last Modified: 6/11/15
+/// #RosettaMPData
 
 #ifndef INCLUDED_protocols_membrane_geometry_EmbeddingDef_hh
 #define INCLUDED_protocols_membrane_geometry_EmbeddingDef_hh
@@ -54,7 +54,7 @@ public:
 	
 	/// @brief Copy Constructor
 	EmbeddingDef( EmbeddingDef const & src );
-	
+
 	/// @brief Assignment Operator
 	EmbeddingDef & operator = ( EmbeddingDef const & src );
 

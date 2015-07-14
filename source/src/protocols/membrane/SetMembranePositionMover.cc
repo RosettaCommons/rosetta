@@ -10,9 +10,7 @@
 /// @file		protocols/membrane/SetMembranePositionMover.cc
 ///
 /// @brief		Sets the membrane position normal and center
-///	@details	Sets the membrane position normal and center
-///				CAUTION: ONLY FOR FLEXIBLE MEMBRANE AND FIXED PROTEIN!!!
-///				Last Modified: 6/28/14
+///				Last Modified: 7/4/15
 ///
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
@@ -21,6 +19,7 @@
 #include <protocols/membrane/SetMembranePositionMoverCreator.hh>
 
 // Project Headers
+#include <protocols/membrane/util.hh> 
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/simple_moves/UniformPositionMover.hh>
@@ -162,33 +161,8 @@ SetMembranePositionMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 	) {
-	
-    // Read in membrane center & normal
-    if ( tag->hasOption( "center" ) ) {
-        std::string center = tag->getOption< std::string >( "center" );
-        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-        
-        if ( str_cen.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            center_.x() = std::atof( str_cen[1].c_str() );
-            center_.y() = std::atof( str_cen[2].c_str() );
-            center_.z() = std::atof( str_cen[3].c_str() );
-        }
-    }
-    
-    if ( tag->hasOption( "normal" ) ) {
-        std::string normal = tag->getOption< std::string >( "normal" );
-        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-        
-        if ( str_norm.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            normal_.x() = std::atof( str_norm[1].c_str() );
-            normal_.y() = std::atof( str_norm[2].c_str() );
-            normal_.z() = std::atof( str_norm[3].c_str() );
-        }
-    }
+
+    read_center_normal_from_tag( center_, normal_, tag );
 }
 
 /// @brief Create a new copy of this mover
@@ -313,18 +287,8 @@ SetMembraneNormalMover::parse_my_tag(
 	core::pose::Pose const &
 	) {
     
-    if ( tag->hasOption( "normal" ) ) {
-        std::string normal = tag->getOption< std::string >( "normal" );
-        utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-        
-        if ( str_norm.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            normal_.x() = std::atof( str_norm[1].c_str() );
-            normal_.y() = std::atof( str_norm[2].c_str() );
-            normal_.z() = std::atof( str_norm[3].c_str() );
-        }
-    }
+    Vector center_dummy(0,0,0);
+    read_center_normal_from_tag( center_dummy, normal_, tag );
 	
 }
 
@@ -450,19 +414,9 @@ SetMembraneCenterMover::parse_my_tag(
    core::pose::Pose const &
    ) {
 	
-    // Read in membrane center & normal
-    if ( tag->hasOption( "center" ) ) {
-        std::string center = tag->getOption< std::string >( "center" );
-        utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-        
-        if ( str_cen.size() != 3 ) {
-            utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-        } else {
-            center_.x() = std::atof( str_cen[1].c_str() );
-            center_.y() = std::atof( str_cen[2].c_str() );
-            center_.z() = std::atof( str_cen[3].c_str() );
-        }
-    }
+    Vector normal_dummy(0,0,0);
+    read_center_normal_from_tag( center_, normal_dummy, tag );
+    
 }
 
 /// @brief Create a new copy of this mover

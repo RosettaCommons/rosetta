@@ -23,7 +23,7 @@
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MPQuickRelaxMover.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
@@ -47,7 +47,7 @@
 
 // Utility Headers
 #include <protocols/docking/metrics.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 #include <numeric/random/random.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>

@@ -8,16 +8,16 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file 		protocols/membrane/geometry/EmbeddingDef.cc
-///
 /// @brief      Basic Embedding Definitions for Membrane Embedding
 /// @details    Class contains a normal and center
-///
-/// @note       Last Modified: 6/17/14
 /// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
+///	Last Modified: 6/11/15
+/// #RosettaMPData
 
 // Unit headers
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
-#include <protocols/membrane/geometry/util.hh>
+#include <protocols/membrane/util.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -41,6 +41,7 @@ namespace geometry {
 
 using namespace core;
 using namespace core::conformation::membrane;
+using namespace protocols::membrane; 
 
 /// @brief Default Constructor
 EmbeddingDef::EmbeddingDef() :
