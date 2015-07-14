@@ -120,16 +120,13 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		interaction_energy += ( bound_energy - unbound_energy );
 
 		TR << "unbound pose: " << std::endl;
-		docking_scorefxn->show( unbound_pose );
+		docking_scorefxn->show( TR, unbound_pose );
 		TR << "bound pose: " << std::endl;
-		docking_scorefxn->show( complex_pose );
+		docking_scorefxn->show( TR, complex_pose );
 		TR << "unbound energy: " << unbound_energy << std::endl;
 		TR << "bound energy: " << bound_energy << std::endl;
 		TR << "interaction energy: " << interaction_energy << std::endl;
 		TR << "rb_jump: " << rb_jump << std::endl;
-//		TR << "" <<  << std::endl;
-//		TR << "" <<  << std::endl;
-//		TR << "" <<  << std::endl;
 	}
 
 	return interaction_energy;

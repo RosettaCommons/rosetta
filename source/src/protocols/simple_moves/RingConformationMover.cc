@@ -107,6 +107,7 @@ RingConformationMover::register_options()
 {
 	using namespace basic::options;
 
+	option.add_relevant( OptionKeys::rings::lock_rings );
 	option.add_relevant( OptionKeys::rings::sample_high_energy_conformers );
 
 	// Call register_options() on all other Movers used by this class.

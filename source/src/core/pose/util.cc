@@ -1840,7 +1840,11 @@ setup_dof_mask_from_move_map(
 			if ( mm_setting == PHI_default ) { continue; }
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id( torsion ) );
 			if ( id.valid() ) {
-				dof_mask[ id ] = mm_setting;
+				if ( rsd.is_carbohydrate() && rsd.is_virtual( id.atomno() ) ) {
+					dof_mask[ id ] = false;  // Do not move virtual atoms that are simply placeholders.
+				} else {
+					dof_mask[ id ] = mm_setting;
+				}
 			} else {
 				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
 						"Rosetta chi angle: residue " << i << " CHI " << j << std::endl;

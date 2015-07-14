@@ -21,6 +21,8 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/RingConformationMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/util.hh>
@@ -30,6 +32,7 @@
 
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -48,9 +51,13 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
+// Numeric headers
+#include <numeric/random/random.hh>
+
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/rings.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
@@ -101,7 +108,26 @@ public:  // Standard methods
 public:  // Standard Rosetta methods
 	// General methods
 	/// @brief  Register options with the option system.
-	static void register_options();
+	static void
+	register_options()
+	{
+		using namespace basic::options;
+		using namespace protocols;
+
+		option.add_relevant( OptionKeys::rings::idealize_rings );
+		option.add_relevant( OptionKeys::rings::lock_rings );
+
+		// Call register_options() on all other Movers used by this class.
+		rigid::RigidBodyRandomizeMover::register_options();
+		rigid::RigidBodyRandomizeMover::register_options();
+		docking::FaDockingSlideIntoContact::register_options();
+		rigid::RigidBodyPerturbMover::register_options();
+		simple_moves::MinMover::register_options();
+		simple_moves::RingConformationMover::register_options();
+		simple_moves::SmallMover::register_options();
+		simple_moves::ShearMover::register_options();
+		simple_moves::MinMover::register_options();
+	}
 
 	/// @brief  Generate string representation of DockGlycansProtocol for debugging purposes.
 	virtual
@@ -156,7 +182,7 @@ public:  // Standard Rosetta methods
 		vector1< int > movable_jumps( 1, JUMP_NUM );
 		setup_foldtree( pose, partners, movable_jumps );
 
-		// Prepare the ligand constraint.
+		// Prepare the ligand constraint, which holds it locally in the active site.
 		kinematics::Edge const & jump_edge( pose.fold_tree().jump_edge( JUMP_NUM ) );
 		core::uint const start_resnum( jump_edge.start() );
 		core::uint const stop_resnum( jump_edge.stop() );
@@ -181,10 +207,6 @@ public:  // Standard Rosetta methods
 		cout << distance;
 		cout << " angstroms from protein center [chain(s) " << upstream_chains_ << "]." << endl;
 
-		//sf_ = get_score_function();
-		vector1< string > const patches( 1, "docking" );
-		sf_ = scoring::ScoreFunctionFactory::create_score_function( "talaris2013", patches );
-		//sf_ = scoring::get_score_function();
 		prepare_scoring_function();
 
 		cout << " Starting Score:" << endl;
@@ -192,14 +214,40 @@ public:  // Standard Rosetta methods
 		cout << " Interface score:                          ";
 		cout << calc_interaction_energy( pose, sf_, movable_jumps ) << endl;
 
-		// Prepare Movers that require Pose information.
+		// Prepare MoveMaps and Movers that require Pose information.
+		Size const n_residues( pose.total_residue() );
+		jump_mm_->set_jump( JUMP_NUM, true );
+		ring_mm_->set_nu_true_range( first_ligand_residue_, n_residues );
+		torsion_mm_->set_jump( JUMP_NUM, true );
+		torsion_mm_->set_bb_true_range( first_ligand_residue_ + 1, n_residues );
+		torsion_mm_->set_chi_true_range( first_ligand_residue_, n_residues );
+		torsion_mm_->set_nu( false );  // TEMP... until rings are treated properly by the MinMover
+
 		randomizerA_ = RigidBodyRandomizeMoverOP(
 				new RigidBodyRandomizeMover( pose, 1, partner_downstream, 360, 360, false ) );
 		randomizerB_ = RigidBodyRandomizeMoverOP(
 				new RigidBodyRandomizeMover( pose, 1, partner_upstream, 360, 360, false ) );
 
+
+		cout << "Randomizing ligand conformation..." << endl;
+		for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
+			pose.set_phi( residue, numeric::random::rg().uniform() * 360 );
+			pose.set_psi( residue, numeric::random::rg().uniform() * 360 );
+			pose.set_ring_conformation(
+					residue, pose.residue( residue ).type().ring_conformer_set()->get_random_conformer() );
+		}
+
+
 		// Begin docking protocol.
 		cout << endl << "Docking..." << endl;
+		if ( idealize_rings_ ) {
+			cout << " Idealizing rings..." << endl;
+			for ( core::uint residue( first_ligand_residue_ ); residue <= n_residues; ++residue ) {
+				pose.set_ring_conformation(
+						residue, pose.residue( residue ).type().ring_conformer_set()->get_lowest_energy_conformer() );
+			}
+		}
+
 		cout << " Randomizing positions..." << endl;
 		randomizerA_->apply( pose );
 		slider_->apply( pose );
@@ -216,7 +264,6 @@ public:  // Standard Rosetta methods
 
 		mc_ = moves::MonteCarloOP( new moves::MonteCarlo( pose, *sf_, kt_ ) );
 
-		//n_cycles_ = 10;  // TEMP
 		for ( core::uint cycle( 1 ); cycle <= n_cycles_; ++cycle ) {
 			if ( cycle % ( n_cycles_ / 10 ) == 0) {  // Ramp every ~10% of n_cycles.
 				Real fraction = Real( cycle ) / n_cycles_;
@@ -225,8 +272,17 @@ public:  // Standard Rosetta methods
 				mc_->reset( pose );
 			}
 
-			perturber_->apply(pose);
-			jump_minimizer_->apply(pose);
+			// Rigid-body moves
+			perturber_->apply( pose );
+			slider_->apply( pose );
+			jump_minimizer_->apply( pose );
+
+			// Ligand torsion moves
+			ring_mover_->apply( pose );
+			small_mover_->apply( pose );
+			shear_mover_->apply( pose );
+			slider_->apply( pose );
+			torsion_minimizer_->apply( pose );
 
 			// Metropolis criterion.
 			mc_->boltzmann( pose );
@@ -260,10 +316,23 @@ public:  // Standard Rosetta methods
 
 
 private:  // Private methods
+	// Set command-line options.  (Called by init())
+	void
+	set_commandline_options()
+	{
+		using namespace basic::options;
+
+		idealize_rings_ = option[ OptionKeys::rings::idealize_rings ].user();
+		lock_rings_ = option[ OptionKeys::rings::lock_rings ].user();
+	}
+
+
 	// Initialize data members from arguments.
 	void
 	init()
 	{
+		using namespace simple_moves;
+
 		type( "DockGlycansProtocol" );
 
 		//sf_ = get_score_function();
@@ -279,20 +348,32 @@ private:  // Private methods
 		rot_ = 2.0;
 		trans_ = 0.5;
 
+		idealize_rings_ = true;
+		lock_rings_ = true;
+
 		// Instantiate the Movers.
 		// Note: The randomizer objects require a Pose and so cannot be initialized here.
 
 		slider_ = docking::FaDockingSlideIntoContactOP ( new docking::FaDockingSlideIntoContact( JUMP_NUM ) );
 		perturber_ = rigid::RigidBodyPerturbMoverOP ( new rigid::RigidBodyPerturbMover( JUMP_NUM, rot_, trans_ ) );
 
-		kinematics::MoveMapOP mm( new kinematics::MoveMap );
-		mm->set_jump( JUMP_NUM, true );
+		jump_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
+		ring_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
+		torsion_mm_ = kinematics::MoveMapOP( new kinematics::MoveMap );
 
-		jump_minimizer_ = simple_moves::MinMoverOP( new simple_moves::MinMover( mm, sf_, "dfpmin", 0.01, true ) );
+		jump_minimizer_ = MinMoverOP( new MinMover( jump_mm_, sf_, "dfpmin", 0.01, true ) );
+
+		ring_mover_ = RingConformationMoverOP( new RingConformationMover( ring_mm_ ) );
+		small_mover_ = SmallMoverOP( new SmallMover( torsion_mm_, kt_, 3 ) );
+		shear_mover_ = ShearMoverOP( new ShearMover( torsion_mm_, kt_, 3 ) );
+
+		torsion_minimizer_ = MinMoverOP( new MinMover( torsion_mm_, sf_, "dfpmin", 0.01, true ) );
 
 		n_cycles_ = 100;
 
 		kt_ = 0.8;
+
+		set_commandline_options();
 	}
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
@@ -301,6 +382,7 @@ private:  // Private methods
 	{
 		object_to_copy_to.upstream_chains_ = object_to_copy_from.upstream_chains_;
 		object_to_copy_to.downstream_chains_ = object_to_copy_from.downstream_chains_;
+		object_to_copy_to.first_ligand_residue_ = object_to_copy_from.first_ligand_residue_;
 
 		object_to_copy_to.sf_ = object_to_copy_from.sf_;
 		object_to_copy_to.ref_pose_ = object_to_copy_from.ref_pose_;
@@ -317,12 +399,24 @@ private:  // Private methods
 		object_to_copy_to.rot_ = object_to_copy_from.rot_;
 		object_to_copy_to.trans_ = object_to_copy_from.trans_;
 
+		object_to_copy_to.idealize_rings_ = object_to_copy_from.idealize_rings_;
+		object_to_copy_to.lock_rings_ = object_to_copy_from.lock_rings_;
+
+		// MoveMaps
+		object_to_copy_to.jump_mm_ = object_to_copy_from.jump_mm_;
+		object_to_copy_to.ring_mm_ = object_to_copy_from.ring_mm_;
+		object_to_copy_to.torsion_mm_ = object_to_copy_from.torsion_mm_;
+
 		// Movers
 		object_to_copy_to.randomizerA_ = object_to_copy_from.randomizerA_;
 		object_to_copy_to.randomizerB_ = object_to_copy_from.randomizerB_;
 		object_to_copy_to.slider_ = object_to_copy_from.slider_;
 		object_to_copy_to.perturber_ = object_to_copy_from.perturber_;
 		object_to_copy_to.jump_minimizer_ = object_to_copy_from.jump_minimizer_;
+		object_to_copy_to.ring_mover_ = object_to_copy_from.ring_mover_;
+		object_to_copy_to.small_mover_ = object_to_copy_from.small_mover_;
+		object_to_copy_to.shear_mover_ = object_to_copy_from.shear_mover_;
+		object_to_copy_to.torsion_minimizer_ = object_to_copy_from.torsion_minimizer_;
 
 		object_to_copy_to.n_cycles_ = object_to_copy_from.n_cycles_;
 
@@ -331,9 +425,10 @@ private:  // Private methods
 	}
 
 
-	// Return strings designating the upstream and downstream docking partners for this pose.
-	// The strings returned are of the pdb file chain designations.
+	// Set the strings designating the upstream and downstream docking partners for this pose.
+	// The strings determined are of the pdb file chain designations.
 	// Currently, this assumes that the ligand is the final chain(s).
+	// In addition, this subroutine sets the variable storing the first residue of the ligand.
 	void
 	determine_docking_partners( core::pose::Pose const & pose )
 	{
@@ -370,6 +465,8 @@ private:  // Private methods
 				downstream_chains_ += pdb_info->chain( cut_point + 1 );
 			}
 		}
+
+		first_ligand_residue_ = last_cut_point + 1;
 	}
 
 	// Adjust the scoring function weights according to supplied multipliers and prepare for ramping.
@@ -445,6 +542,7 @@ private:  // Private methods
 private:  // Private data
 	std::string upstream_chains_;  // e.g., "AB"
 	std::string downstream_chains_; // e.g., "XY"
+	core::uint first_ligand_residue_;
 
 	core::scoring::ScoreFunctionOP sf_;
 	core::pose::PoseOP ref_pose_;
@@ -461,12 +559,25 @@ private:  // Private data
 	core::Angle rot_;
 	core::Distance trans_;
 
+	bool idealize_rings_;
+	bool lock_rings_;
+
+
+	// MoveMaps
+	core::kinematics::MoveMapOP jump_mm_;
+	core::kinematics::MoveMapOP ring_mm_;
+	core::kinematics::MoveMapOP torsion_mm_;
+
 	// Movers
 	protocols::rigid::RigidBodyRandomizeMoverOP randomizerA_;
 	protocols::rigid::RigidBodyRandomizeMoverOP randomizerB_;
 	protocols::docking::FaDockingSlideIntoContactOP slider_;
 	protocols::rigid::RigidBodyPerturbMoverOP perturber_;
 	protocols::simple_moves::MinMoverOP jump_minimizer_;
+	protocols::simple_moves::RingConformationMoverOP ring_mover_;
+	protocols::simple_moves::SmallMoverOP small_mover_;
+	protocols::simple_moves::ShearMoverOP shear_mover_;
+	protocols::simple_moves::MinMoverOP torsion_minimizer_;
 
 	core::Size n_cycles_;
 
@@ -514,7 +625,7 @@ main( int argc, char *argv[] )
 		}
 
 		// Distribute the mover.
-		jd2::JobDistributor::get_instance()->go( protocol );
+		protocols::jd2::JobDistributor::get_instance()->go( protocol );
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		cerr << "Caught exception: " << e.msg() << endl;
 		return FAILURE;

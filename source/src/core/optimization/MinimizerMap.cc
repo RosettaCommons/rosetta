@@ -302,7 +302,7 @@ MinimizerMap::setup(
 	// sort DOFs for proper linking later on
 	dof_nodes_.sort( DOF_Node_sorter );
 
-	// identify phi/psi/omega...
+	// identify phi/psi/omega/chis/nus...
 	this->assign_rosetta_torsions( pose );
 
 
@@ -326,9 +326,8 @@ MinimizerMap::setup(
 void
 MinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
 {
-	// mapping from AtomTree DOF ID's to bb/chi torsion angle ids
-	id::DOF_ID_Map< id::TorsionID > dof_map
-		( id::BOGUS_TORSION_ID);
+	// mapping from AtomTree DOF ID's to bb/chi/nu/branch torsion angle ids
+	id::DOF_ID_Map< id::TorsionID > dof_map( id::BOGUS_TORSION_ID);
 
 	pose::setup_dof_to_torsion_map( pose, dof_map );
 
