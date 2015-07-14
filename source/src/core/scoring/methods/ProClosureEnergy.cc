@@ -31,6 +31,7 @@
 
 // STL Headers
 #include <string>
+#include <math.h>
 
 // options
 #include <basic/options/option.hh>
@@ -68,7 +69,8 @@ using namespace numeric::constants::d;
 /// ctor
 ProClosureEnergy::ProClosureEnergy() :
 	parent( methods::EnergyMethodCreatorOP( new ProClosureEnergyCreator ) ),
-	n_nv_dist_sd_( basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ] ), // totally fictional
+	skip_ring_closure_(false),
+	n_nv_dist_sd_( pow(basic::options::option[ basic::options::OptionKeys::score::pro_close_planar_constraint ], 2) ), // Totally fictional value.  Everywhere this is used, it's actually the square that's used.  Let's calculate the square once and only once.
 
 	/// measured from 4745 prolines from 1.25 A and higher resolution protein structures
 	trans_chi4_mean_( 176.3 * numeric::constants::d::degrees_to_radians ),
@@ -81,7 +83,9 @@ ProClosureEnergy::ProClosureEnergy() :
 	scCD_( "CD" ),
 	bbC_( "C" ),
 	bbO_( "O")
-{}
+{
+	set_skip_ring_closure_from_flags();
+}
 
 ProClosureEnergy::~ProClosureEnergy()
 {}
@@ -287,10 +291,12 @@ ProClosureEnergy::eval_intrares_energy(
 ) const
 {
 
+	if(skip_ring_closure()) return; //Do nothing here if we're skipping the ring closure energy calculation.
+
 	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
 		if ( rsd.is_virtual_residue() )return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
-		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ * n_nv_dist_sd_ );
+		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ ); //Note that n_nv_dist_sd_ is actually the SQUARE of the standard deviation, now.
 	}
 
 }
@@ -313,6 +319,9 @@ ProClosureEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
+
+	if(skip_ring_closure()) return; //Do nothing here if we're skipping the ring closure energy calculation.
+
 debug_assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
 
 	//const core::Real d_multiplier = ( (rsd.aa() == chemical::aa_dpr) ? -1.0 : 1.0 ); //Multiplier for derivatives
@@ -330,7 +339,7 @@ debug_assert( rsd.has( bbN_ ) );
 	Vector f1( 0.0 ), f2( 0.0 );
 	Distance dist( 0.0 );
 	numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist, f1, f2 );
-	Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ * n_nv_dist_sd_ ));
+	Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ )); //Note that n_nv_dist_sd_ is actually the SQUARE of the standard deviation, now.
 	f1 *= deriv; f2 *= deriv;
 
 	atom_derivs[ NV_ind ].f1() += f1;
@@ -339,47 +348,6 @@ debug_assert( rsd.has( bbN_ ) );
 	atom_derivs[ N_ind  ].f2() -= f2;
 
 }
-
-
-/*void
-ProClosureEnergy::eval_intrares_atom_derivative2(
-	Size const atom_index,
-	conformation::Residue const & rsd,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
-) const
-{
-debug_assert ( rsd.aa() == chemical::aa_pro );
-
-	if ( rsd.atom_index( scNV_ ) ==  atom_index ) {
-
-		Vector const & nv_pos( rsd.xyz( atom_index ));
-		Vector const & n_pos(  rsd.xyz( bbN_ ));
-		/// Numeric deriv version to consolidate code.
-		Vector f1( 0.0 ), f2( 0.0 );
-		Distance dist( 0.0 );
-		numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist, f1, f2 );
-		Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ * n_nv_dist_sd_ ));
-		F1 += deriv * f1;
-		F2 += deriv * f2;
-
-	} else if ( rsd.atom_index( bbN_ ) == atom_index ) {
-		//std::cout << "evaluating N pro-closure energy derivative" << std::endl;
-		Vector const & n_pos(  rsd.xyz( atom_index ));
-		Vector const & nv_pos( rsd.xyz( scNV_ ));
-
-		{ /// Scope: Distance derivative.
-		Vector f1( 0.0 ), f2( 0.0 );
-		Distance dist( 0.0 );
-		numeric::deriv::distance_f1_f2_deriv( n_pos, nv_pos, dist, f1, f2 );
-		Real deriv( weights[ pro_close ] * 2 * dist / ( n_nv_dist_sd_ * n_nv_dist_sd_ ));
-		F1 += deriv * f1;
-		F2 += deriv * f2;
-		}
-
-	}
-}*/
 
 /// @brief ProClosureEnergy Energy is context independent and thus
 /// indicates that no context graphs need to
@@ -390,6 +358,13 @@ ProClosureEnergy::indicate_required_context_graphs(
 )
 const
 {}
+
+/// @brief Queries whether the user has set the -score::no_pro_close_ring_closure flag.
+/// If he/she has, this sets skip_ring_closure_ to 'true'.
+void ProClosureEnergy::set_skip_ring_closure_from_flags() {
+	skip_ring_closure_ = basic::options::option[ basic::options::OptionKeys::score::no_pro_close_ring_closure ].user();
+	return;
+}
 
 Real
 ProClosureEnergy::measure_chi4(

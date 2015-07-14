@@ -521,6 +521,7 @@ sources = {
 		"MMLJEnergyInter",
 		"MMLJEnergyIntra",
 		"MMTorsionEnergy",
+		"RingClosureEnergy",
 		"NMerRefEnergy",
 		"NMerPSSMEnergy",
 		"NMerSVMEnergy",

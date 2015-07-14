@@ -37,7 +37,7 @@ private:
 public:
 
 	void setUp() {
-		core_init_with_additional_options( "-extra_res_fa protocols/generalized_kinematic_closure/DALA.params" );
+		core_init_with_additional_options( "-extra_res_fa d-caa/DALA.params" );
 
 		scorefxn_ = core::scoring::get_score_function();
 		testpose_ = pdb1ubq5to13_poseop();

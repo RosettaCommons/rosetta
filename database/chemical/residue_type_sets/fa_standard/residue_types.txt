@@ -566,7 +566,6 @@ residue_types/peptoids/601.params
 #residue_types/beta-peptide/B3Y.params
 #residue_types/beta-peptide/cisACHC.params
 #residue_types/beta-peptide/cisACPC.params
-#residue_types/beta-peptide/cisACPrC.params
 
 ## Polysaccharide Types (require -include_sugars flag to be loaded in)
 ### Aldohexoses

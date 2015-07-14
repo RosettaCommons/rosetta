@@ -530,7 +530,9 @@ read_topology_file(
 /// VIRTUAL_SHADOW:
 /// Declares the first atom as a shadower of the second atom, implying
 /// that the atoms ought to be restrained to lie directly on top of each
-/// other. E.g. "VIRTUAL_SHADOW NV N" from PRO.params.
+/// other. E.g. "VIRTUAL_SHADOW NV N" from PRO.params.  Currently, the
+/// cart_bonded and ring_close energy terms are the only energy terms
+/// that enforce this.
 ResidueTypeOP
 read_topology_file(
 		utility::io::izstream & data,

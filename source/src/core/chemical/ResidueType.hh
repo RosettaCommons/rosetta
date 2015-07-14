@@ -434,7 +434,7 @@ public:
 
 		return;
 	}
-
+	
 	/// @brief Gets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	std::string
@@ -1524,7 +1524,7 @@ public:
 
 	/// @brief is membrane?
 	bool is_membrane() const;
-
+	
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const;
 
@@ -1848,6 +1848,10 @@ public:
 	{
 		return bondangle_atom_sets_.size();
 	}
+	
+	/// @brief Returns true if this residue has shadow atoms, false otherwise.
+	///
+	inline bool has_shadow_atoms() const { return !atom_shadowed_.empty(); }
 
 	/// @brief Return the index of the atom that the "atom_shadowing"
 	/// atom is shadowing; returns zero if the "atom_shadowing" atom is
@@ -2221,7 +2225,7 @@ private:
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
-
+	
 	/// @brief Name of the disulfide-forming atom, if any
 	std::string disulfide_atom_name_;
 
@@ -2441,8 +2445,6 @@ private:
 
 	/// @brief Adducts defined for this residue -- Primary
 	utility::vector1< Adduct > defined_adducts_;
-
-
 
 	bool nondefault_;
 	std::string base_restype_name_;

@@ -1835,6 +1835,9 @@ public:
 		}
 	}
 
+	/// @brief Return true if and only if this residue's type has shadow atoms.
+	///
+	inline bool has_shadow_atoms() const { return rsd_type_.has_shadow_atoms(); }
 
 	/// @brief Return true if the residue has <property>.
 	bool

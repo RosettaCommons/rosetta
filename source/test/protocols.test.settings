@@ -504,7 +504,6 @@ testinputfiles = [
 	"frag_picker/t286_.6.csts",
 	"frag_picker/1a32A-H1.vall",
 	"frag_picker/1a32A-H1.9mers",
-	"generalized_kinematic_closure/DALA.params",
 	"grafting/2j88_NoL1.pdb",
 	"grafting/2j88_L1_overhang3_rotated.pdb",
         "grafting/2aabL_L1.pdb",

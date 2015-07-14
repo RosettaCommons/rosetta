@@ -76,6 +76,7 @@
 #include <core/scoring/methods/vall_lookback/VallLookbackEnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/scoring/methods/GoapEnergyCreator.hh>
+#include <core/scoring/methods/RingClosureEnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
@@ -386,6 +387,7 @@ static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > D
 static EnergyMethodRegistrator< scoring::methods::VallLookbackEnergyCreator > VallLookbackEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::RingClosureEnergyCreator > RingClosureEnergyCreator_registrator;
 static EnergyMethodRegistrator< carbohydrates::SugarBackboneEnergyCreator > SugarBackboneEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;

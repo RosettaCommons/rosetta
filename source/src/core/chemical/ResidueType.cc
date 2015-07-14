@@ -2376,6 +2376,7 @@ ResidueType::generate_atom_indices()
 
 
 	atom_base_indices_.clear();
+	atom_shadowed_indices_.clear();
 	for ( Size atomno=1; atomno<= natoms(); ++atomno ) {
 		{
 			if(atom_base_.find(ordered_atoms_[atomno]) == atom_base_.end() ){

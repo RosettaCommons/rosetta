@@ -199,6 +199,19 @@ public:
 	Distance
 	atomic_interaction_cutoff() const
 	{ return 4.0; }
+	
+	/// @brief Queries whether the user has set the -score::no_pro_close_ring_closure flag.
+	/// If he/she has, this sets skip_ring_closure_ to 'true'.
+	void set_skip_ring_closure_from_flags();
+
+	/// @brief Sets skip_ring_closure.
+	///
+	void set_skip_ring_closure( bool const val=true ) { skip_ring_closure_=val; return; };
+
+	/// @brief Gets skip_ring_closure.
+	///
+	inline bool skip_ring_closure() const { return skip_ring_closure_; };
+
 
 private:
 
@@ -223,7 +236,17 @@ private:
 
 	// data
 private:
-	Real const n_nv_dist_sd_; // coorinate variation stdev
+
+	/// @brief The pro_close term does two things: it holds the proline ring closed, and it also
+	/// has some logic based on the psi value of the previous residue.  If this flag is set to
+	/// 'true', the term only does the torsional stuff, allowing the ring closure to be handled
+	/// by other terms (e.g. cart_bonded or ring_close).  Set to 'false' by default.
+	/// @details The -score::no_pro_close_ring_closure flag can be used to set this to true.
+	bool skip_ring_closure_;
+
+	/// @brief The SQUARE of the coordinate variation standard deviation.
+	///
+	Real const n_nv_dist_sd_;
 
 	Real const trans_chi4_mean_;
 	Real const trans_chi4_sd_;

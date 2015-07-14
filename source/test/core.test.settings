@@ -283,6 +283,7 @@ sources = {
 		"ProClosureEnergy",
 		"RamachandranEnergy",
 		"RG_Energy",
+		"RingClosureEnergy",
 		"SplitUnfoldedTwoBodyEnergy",
 		"UnfoldedStateEnergy",
 		"YHHPlanarityEnergy",
