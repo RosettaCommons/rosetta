@@ -73,9 +73,19 @@ using namespace protocols::membrane::geometry;
 /// @brief Default membrane fast relax constructor
 /// @details Do normal fast relax protocol with the
 /// membrane energy function and custom foldtree
-MPFastRelaxMover::MPFastRelaxMover() : Mover() {
-    relax_protocol_ = generate_relax_from_cmd();
-}
+MPFastRelaxMover::MPFastRelaxMover() :
+	Mover(),
+	relax_protocol_( generate_relax_from_cmd() ),
+	sfxn_( 0 )
+{}
+
+/// @brief Allow the user to set a custom sfxn from
+/// the PyRosetta Interface
+MPFastRelaxMover::MPFastRelaxMover( ScoreFunctionOP sfxn ) :
+	Mover(),
+	relax_protocol_( generate_relax_from_cmd() ),
+	sfxn_( sfxn )
+{}
 
 /// @brief Destructor
 MPFastRelaxMover::~MPFastRelaxMover() {}
@@ -90,7 +100,6 @@ MPFastRelaxMover::show_protocol( Pose & pose ) {
     
     TR << "Membrane Relax protocol + MEM Optimization" << std::endl;
     TR << "Relax Type: " << relax_protocol_->get_name() << std::endl;
-    TR << "Sfxn type: mpframework_fa_smooth_2012" << std::endl;
     TR << "Movemap: " << std::endl;
 	relax_protocol_->get_movemap()->show();
     TR << "FoldTree: " << pose.fold_tree() << std::endl;
@@ -171,8 +180,10 @@ MPFastRelaxMover::apply( Pose & pose ) {
     relax_protocol_->set_movemap( movemap );
     
     // Setup membrane fullatom smooth energy function
-    ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
-    relax_protocol_->set_scorefxn( sfxn );
+	if ( sfxn_ == 0 ) {
+		sfxn_ = ScoreFunctionFactory::create_score_function( "mpframework_smooth_fa_2012" );
+	}
+    relax_protocol_->set_scorefxn( sfxn_ );
 
     // Setup custom foldtree where the membrane jump is attached at the
     // center of mass of the chain but other existing jumps are preserved

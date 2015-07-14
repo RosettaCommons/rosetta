@@ -24,6 +24,8 @@
 #include <protocols/relax/membrane/MPFastRelaxMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <core/scoring/ScoreFunction.hh>
+
 // Project Headers
 #include <protocols/relax/RelaxProtocolBase.hh> 
 
@@ -35,6 +37,7 @@ namespace relax {
 namespace membrane {
     
 using namespace core::pose;
+using namespace core::scoring;
 
 class MPFastRelaxMover : public protocols::moves::Mover {
     
@@ -48,6 +51,10 @@ public:
     /// @details Do normal fast relax protocol with the
     /// membrane energy function and custom foldtree
     MPFastRelaxMover();
+	
+	/// @brief Allow the user to set a custom sfxn from
+	/// the PyRosetta Interface
+	MPFastRelaxMover( ScoreFunctionOP sfxn );
     
     /// @brief Destructor
     virtual ~MPFastRelaxMover();
@@ -97,6 +104,9 @@ private: // data
     
     // Keep a local copy of the relax protocol
     RelaxProtocolBaseOP relax_protocol_;
+	
+	// Set custon sfxn
+	ScoreFunctionOP sfxn_;
     
 }; // class MPFastRelaxMover
     
