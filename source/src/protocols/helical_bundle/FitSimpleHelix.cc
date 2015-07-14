@@ -225,7 +225,7 @@ void FitSimpleHelix::apply (core::pose::Pose & pose)
 			continue; //Skip the reference atom -- we've already done it.
 		}
 
-		std::string const cur_atom_name = pose.residue(start_index_).atom_name( cur_atom );
+		std::string const cur_atom_name = pose.residue(cur_res).atom_name( cur_atom );
 		if(TR.visible()) TR << "Fitting " << cur_atom_name << " atom." << std::endl;
 
 		FitSimpleHelixMultiFunc multfunc(pose, cur_atom_name, cur_res, residues_per_repeat(), start_index_, end_index_, 1); //Make the multifunc that will be used to fit the current atom.
