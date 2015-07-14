@@ -74,15 +74,11 @@ using namespace core;
 /// @brief a ConstraintsSet whose constraints can be switched off, according to sequence separation in residues
 /// between residue pair constraints.
 MaxSeqSepConstraintSet::~MaxSeqSepConstraintSet() {}
-MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const&f ) :
-  ConstraintSet( other )
+MaxSeqSepConstraintSet::MaxSeqSepConstraintSet( ConstraintSet const & other, core::kinematics::FoldTree const & f ) :
+		ConstraintSet( other )
 {
-  tr.Trace << f ;
-	// if ( f.size() > 2 ) { //assuming simple fold-tree has eges 1 1 -1 and 1 nres -1
+	tr.Trace << f << std::endl;
 	shortest_path_ = core::kinematics::ShortestPathInFoldTreeOP( new ShortestPathInFoldTree( f ) );
-		//} else {
-    //shortest_path_ = NULL;
-		//  }
 }
 
 /// @copy constructor. Does nothing.
@@ -106,30 +102,6 @@ ConstraintSetOP MaxSeqSepConstraintSet::remapped_clone(
 	clone_ptr->set_max_seq_sep( max_seq_sep() );
 	return clone_ptr;
 }
-
-/*void
-MaxSeqSepConstraintSet::eval_atom_derivative_for_residue_pairs (
-  id::AtomID const & atom_id,
-  pose::Pose const & pose,
-  scoring::ScoreFunction const &,
-  scoring::EnergyMap const & weights,
-  Vector & F1,
-  Vector & F2
-) const
-{
-	using scoring::constraints::ResidueConstraints;
-	// residue pair constraints:
-	Size const seqpos( atom_id.rsd() );
-	for ( ResidueConstraints::const_iterator
-			it= residue_pair_constraints_begin( seqpos ), ite = residue_pair_constraints_end( seqpos );
-			it != ite; ++it ) {
-		Size const seqpos2( it->first );
-		if ( !too_far( seqpos2, seqpos ) ) {
-			//				trDebug << "evaluate " << seqpos << " " << seqpos2;  it->second->show(trDebug); trDebug << "\n";
-			it->second->eval_atom_derivative( atom_id, pose.conformation(), weights, F1, F2 );
-		}
-	}
-}*/
 
 
 void
@@ -204,7 +176,6 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 		if ( cst.effective_sequence_separation( shortest_path() ) < max_seq_sep() ) cst.score( xyz_func, sfxn.weights(), emap );
 	}
 }
-
 
 } //abinitio
 } //protocols

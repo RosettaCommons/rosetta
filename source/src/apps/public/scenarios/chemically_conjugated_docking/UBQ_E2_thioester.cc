@@ -556,7 +556,7 @@ public:
 		//TR << "foldtree, movemap: " << std::endl;
 		//core::kinematics::simple_visualize_fold_tree_and_movemap( pose.fold_tree(), *movemap_, TR);
 
-		TR << "foldtree, " << pose.fold_tree() << std::flush;
+		TR << "foldtree, " << pose.fold_tree() << std::endl;
 
 		/////////////////fullatom Monte Carlo//////////////////////////////////////////////////////////
 		//make the monte carlo object

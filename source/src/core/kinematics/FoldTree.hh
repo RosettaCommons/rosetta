@@ -63,7 +63,6 @@ namespace kinematics {
 ///     Foldtree.size
 class FoldTree : public utility::pointer::ReferenceCount
 {
-
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FoldTree();
@@ -112,20 +111,16 @@ public:
 
 	// non-modifying access /////////////////////////////////////////////////////
 
-	/// @brief Returns the starting residue of the kinematic chunk to which res belongs
-	Size boundary_left(Size res) const {
-		debug_assert(res > 0);
-		debug_assert(res <= nres());
-		debug_assert(!is_root( int(res) ) );
-		return get_residue_edge(int(res)).start();
+	/// @brief Return the starting residue of the first kinematic Edge to which res belongs.
+	Size boundary_left( Size res ) const
+	{
+		return get_residue_edge( int( res ) ).start();
 	}
 
-	/// @brief Returns the ending residue of the kinematic chunk to which res belongs
-	Size boundary_right(Size res) const {
-		debug_assert(res > 0);
-		debug_assert(res <= nres());
-		debug_assert(!is_root( int(res) ) );
-		return get_residue_edge(int(res)).stop();
+	/// @brief Return the ending residue of the first kinematic Edge to which res belongs.
+	Size boundary_right( Size res ) const
+	{
+		return get_residue_edge( int( res ) ).stop();
 	}
 
 

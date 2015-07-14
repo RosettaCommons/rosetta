@@ -150,7 +150,7 @@ void swap_transform(Size jump_num, const kinematics::RT& xform, Pose* pose) {
  debug_assert(pose);
  debug_assert(jump_num <= pose->num_jump());
 
-  const kinematics::FoldTree& tree = pose->fold_tree();
+  const kinematics::FoldTree & tree = pose->fold_tree();
 
   int upstream = tree.upstream_jump_residue(jump_num);
   int downstream = tree.downstream_jump_residue(jump_num);
@@ -212,7 +212,7 @@ create_subpose(
 )
 {
 	Size const nres( f.nres() );
-debug_assert( nres == positions.size() );
+	debug_assert( nres == positions.size() );
 
 	pose.clear();
 
@@ -331,10 +331,10 @@ partition_pose_by_jump(
 	Size const nres( src.total_residue() );
 
 	// split src pose's foldtree
-	kinematics::FoldTree f1,f2;
+	kinematics::FoldTree f1, f2;
 	src.fold_tree().partition_by_jump( jump_number, f1, f2 );
 
-	TR << src.fold_tree() << '\n' << f1 << '\n' << f2 << '\n';
+	TR << src.fold_tree() << '\n' << f1 << '\n' << f2 << std::endl;
 
 	// identify residues in the two partners
 	ObjexxFCL::FArray1D_bool partner1_pos( nres, false ); // FARRAY! DOH!!
@@ -349,11 +349,6 @@ partition_pose_by_jump(
 	create_subpose( src, partner1_pos_list, f1, partner1 );
 
 	create_subpose( src, partner2_pos_list, f2, partner2 );
-
-/// SJF 11Sep13 why dump the poses?
-//	src.dump_pdb( "complex.pdb" );
-//	partner1.dump_pdb( "partner1.pdb" );
-//	partner2.dump_pdb( "partner2.pdb" );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2493,7 +2488,7 @@ convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
 /// @brief Add cutpoint variants to all residues annotated as cutpoints in the pose.
 void
 correctly_add_cutpoint_variants( core::pose::Pose & pose ) {
-	const core::kinematics::FoldTree& tree(pose.fold_tree());
+	const core::kinematics::FoldTree & tree(pose.fold_tree());
 	for (core::Size i = 1; i < pose.total_residue(); ++i) { // Less than because cutpoints are between i and i+1
 		if ( tree.is_cutpoint(i) ) {
 			correctly_add_cutpoint_variants( pose, i, false );

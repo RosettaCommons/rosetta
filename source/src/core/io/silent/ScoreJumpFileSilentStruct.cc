@@ -86,10 +86,8 @@ if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) {
         it = fold_tree().begin(), it_end = fold_tree().end();
         it != it_end; ++it
     ) {
-      output << *it;
+      output << *it << std::endl;
     }
-    //    output << fold_tree(); this produces a new-line --- wrong behaviour
-    //    of fold_tree but I don't want to fix 1000 u-tracer unit-tests!
     output << ' ' << decoy_tag() << "\n";
   }
   for ( Size i = 1; i <= fold_tree().num_jump(); i++ ) {
@@ -154,7 +152,7 @@ bool ScoreJumpFileSilentStruct::init_from_lines(
         kinematics::FoldTree f;
         line_stream >> f;
         fold_tree( f ); // add fold-tree to this SilentStruct
-        tr.Debug << "read fold-tree " << f; //"\n" is in fold-tree output
+        tr.Debug << "read fold-tree " << f << std::endl;
         tr.Debug << "reading " << f.num_jump() << " jumps " << std::endl;
         continue;
       } else if ( iter->substr(0,2) == "RT" ) {

@@ -223,7 +223,7 @@ main( int argc, char* argv[] )
 
 	tree.reorder(p2_res);
 	partner2.fold_tree(tree);
-	TR << "partner2 fold tree isolating " << p2_res << ": " << partner2.fold_tree() << std::flush;
+	TR << "partner2 fold tree isolating " << p2_res << ": " << partner2.fold_tree() << std::std;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	//align partner2 onto match

@@ -749,7 +749,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	core::kinematics::FoldTree foldtree(nres);
 	foldtree.tree_from_jumps_and_cuts(nres, num_jumps, Fjumps, Fcuts, 1, true);
 	//foldtree.reorder(1);
-	T_design << "anchored_design_fold_tree: " << foldtree << std::flush;
+	T_design << "anchored_design_fold_tree: " << foldtree << std::endl;
 
 	//do it harder, better, faster, stronger
 	core::kinematics::Edge const & anchoredge(foldtree.jump_edge(ANCHOR_TARGET));
@@ -757,7 +757,7 @@ void AnchoredDesignMover::set_fold_tree_and_cutpoints( core::pose::Pose & pose )
 	foldtree.delete_edge(anchoredge);
 	foldtree.add_edge(new_anchoredge);
 	foldtree.reorder(1);
-	T_design << "anchored_design_fold_tree: " << foldtree << std::flush;
+	T_design << "anchored_design_fold_tree: " << foldtree << std::endl;
 
 	pose.fold_tree(foldtree);
 	dump_cutpoint_info(pose);

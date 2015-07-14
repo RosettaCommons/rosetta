@@ -104,9 +104,9 @@ append_fold_tree_to_file(
 	std::string file_path
 )
 {
-	std::ofstream filestream(file_path.c_str(), std::ios::out|std::ios::app);
-	if (filestream.good()) {
-		filestream << foldtree;
+	std::ofstream filestream( file_path.c_str(), std::ios::out|std::ios::app );
+	if ( filestream.good() ) {
+		filestream << foldtree << std::endl;
 		filestream.close();
 	} else {
 		TR << "couldn't open file to append FoldTree" << std::endl;

@@ -258,7 +258,7 @@ void dump_reference_pose(
 	core::kinematics::FoldTree const & foldtree = pose.fold_tree();
 
 	//basic::OWrapperStream ws(out);
-	out << foldtree; // writes FOLD_TREE ... and its own newline.
+	out << foldtree << std::endl; // writes FOLD_TREE
 
 	out << "END_POSE_TAG " << pose_tag << '\n';
 }
@@ -315,7 +315,7 @@ void dump_atom_tree_diff(
 
 	// Needed for custom foldtrees in docking.  Hasn't been tested yet...
 	// Probably want to set the fold tree before setting any DOFs, so we put it near the top.
-	out << foldtree; // writes FOLD_TREE ... and its own newline.
+	out << foldtree << std::endl; // writes FOLD_TREE
 
 	// Save stream state
 	// We use fixed # of digits after the decimal because phi and theta

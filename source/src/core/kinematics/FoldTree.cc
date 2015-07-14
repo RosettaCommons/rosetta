@@ -643,7 +643,8 @@ FoldTree::insert_fold_tree_by_jump(
 	if ( !is_cutpoint( anchor_pos -1 ) && !is_cutpoint( anchor_pos ) ) {
 		TR.Warning << "insert_fold_tree_by_jump: anchor_pos is not a vertex of the tree!! anchor_pos= " << anchor_pos <<
 			std::endl;
-		TR.Warning << "*this= " << *this << "Adding anchor_pos as a new vertex!" << std::endl;
+		TR.Warning << "*this= " << *this << std::endl;
+		TR.Warning << "Adding anchor_pos as a new vertex!" << std::endl;
 		add_vertex( anchor_pos );
 	}
 
@@ -659,8 +660,8 @@ FoldTree::insert_fold_tree_by_jump(
 			" old_nres= " << old_nres << " old_njump= " << old_njump <<
 			" insert_nres= " << insert_nres << " insert_njump= " << insert_njump << std::endl;
 
-	TR.Trace << "insert_fold_tree_by_jump: old_fold_tree: " << *this;
-	TR.Trace << "insert_fold_tree_by_jump: subtree: " << subtree;
+	TR.Trace << "insert_fold_tree_by_jump: old_fold_tree: " << *this << std::endl;
+	TR.Trace << "insert_fold_tree_by_jump: subtree: " << subtree <<std::endl;
 
 	utility::vector1< int > old2new_res ( old_nres , 0 );
 	utility::vector1< int > old2new_jump( old_njump, 0 );
@@ -718,7 +719,7 @@ FoldTree::insert_fold_tree_by_jump(
 		set_jump_atoms( anchor_jump_number, anchor_atom, root_atom );
 	}
 
-	TR.Trace << "insert_fold_tree_by_jump: new fold_tree: " << *this;
+	TR.Trace << "insert_fold_tree_by_jump: new fold_tree: " << *this << std::endl;
 	debug_assert( check_fold_tree() );
 }
 
@@ -1166,7 +1167,7 @@ FoldTree::reorder( int const start_residue, bool const verbose_if_fail /* = true
 		if ( verbose_if_fail && nres() > 1 /* nres = 1 is innocuous edge case*/ ) {
 			TR.Error << "FoldTree::reorder( " << start_residue << " ) failed, new/old edge_list_ size mismatch" << std::endl;
 			TR.Error << "old_edge_list.size() " << edge_list_.size() << "  new_edge_list.size()" << new_edge_list_.size() << std::endl;
-			TR.Error << *this;
+			TR.Error << *this << std::endl;
 
 			// TR.Error << "show old edge list " << std::endl;
 			// for( FoldTree::const_iterator it(edge_list_.begin()), end(edge_list_.end()); it!=end; ++it){
@@ -2411,7 +2412,6 @@ FoldTree::show(std::ostream & out) const
 }
 
 
-// TODO: 03/23/05 -- make single-line I/O
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Foldtree output to stream
 std::ostream &
@@ -2422,12 +2422,6 @@ operator <<( std::ostream & os, FoldTree const & t )
 				it != it_end; ++it ) {
 		os << *it;
 	}
-	os << std::endl;
-	// OL: this is not only super counter-intuitive but also makes silent-io impossible where one wants to end each
-	// line with the tag
-	//  the usual behaviour of objects is not to line-feed
-	//  standard call: std::cout << f << std::endl;   --- would produce two endlines!
-	// JRP: I agree with this. Super lame.
 	return os;
 }
 
