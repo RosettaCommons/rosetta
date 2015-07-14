@@ -17,7 +17,8 @@
 import os, json
 
 import imp
-imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init is calculated from file location
+imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/../__init__.py')  # A bit of Python magic here, what we trying to say is this: from ../__init__ import *, but init path is calculated relatively to this location
+
 
 _api_version_ = '1.0'  # api version
 
@@ -28,17 +29,21 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
     # Building Rosetta binaries
     res, output, build_command_line = build_rosetta(rosetta_dir, platform, jobs, debug=debug)
-    if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},  _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
+    if res: return { _StateKey_ : _S_build_failed_,  _ResultsKey_ : {},
+                     _LogKey_ : 'Building rosetta failed!\n{}\n{}\n'.format(build_command_line, output) }
     else:
         extension = calculate_extension(platform)
 
         # runing test executable on benchmark machine itself
-        res, output = execute('Scoring PDB...', 'cd  {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
+        res, output = execute('Scoring PDB...',
+                              'cd  {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
 
         # running executable on HPC cluster
         hpc_driver.execute(executable='{rosetta_dir}/source/bin/score.{extension}'.format(**vars()),
                            arguments='-s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile hpc_score.sc'.format(**vars()),
                            working_dir=working_dir, name='scoring')
+
+        # insert result analyzing code here
 
         state = _S_failed_ if res else _S_finished_
 
