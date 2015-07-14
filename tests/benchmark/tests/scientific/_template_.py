@@ -44,6 +44,8 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
                            working_dir=working_dir, name='scoring')
 
         # insert result analyzing code here
+        if not ( os.path.isfile(working_dir+'/default.sc') and
+                 os.path.isfile(working_dir+'/hpc_score.sc') ): res = 1 # No score files found - something is wrong, terminating with error!!!
 
         state = _S_failed_ if res else _S_finished_
 
