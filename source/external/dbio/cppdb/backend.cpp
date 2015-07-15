@@ -245,7 +245,8 @@ namespace cppdb {
 		connection_specific_data *connection::connection_specific_get(std::type_info const &type) const
 		{
 			for(data::conn_specific_type::const_iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
-				if(typeid(**p) == type)
+				const connection_specific_data& p_ref = **p;
+				if(typeid(p_ref) == type)
 					return *p;
 			}
 			return 0;
@@ -253,7 +254,8 @@ namespace cppdb {
 		connection_specific_data *connection::connection_specific_release(std::type_info const &type)
 		{
 			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
-				if(typeid(**p) == type) {
+				const connection_specific_data& p_ref = **p;
+				if(typeid(p_ref) == type) {
 					connection_specific_data *ptr = *p;
 					d->conn_specific.erase(p);
 					return ptr;
@@ -273,7 +275,8 @@ namespace cppdb {
 				);
 			}
 			for(data::conn_specific_type::iterator p=d->conn_specific.begin();p!=d->conn_specific.end();++p) {
-				if(typeid(**p) == type) {
+				const connection_specific_data& p_ref = **p;
+				if(typeid(p_ref) == type) {
 					delete *p;
 					if(ptr)
 						*p = tmp.release();

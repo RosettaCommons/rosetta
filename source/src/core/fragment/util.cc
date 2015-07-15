@@ -490,13 +490,20 @@ void make_simple_fold_tree_from_jump_frame( Frame const& frame, Size total_resid
 	runtime_assert( frame.nr_frags() >= 1 );
 	FragData const& fragdata( frame.fragment( 1 ) );
 	for ( Size i=1; i<=frame.length(); ++i ) {
-		if ( typeid( *fragdata.get_residue( i ) ) == typeid( UpJumpSRFD ) ) {
-			runtime_assert( i + 1 <= frame.length() && typeid( *fragdata.get_residue( i + 1 ) ) == typeid( DownJumpSRFD ) );
+		// KAB 2015-06-10: Fixing warnings:
+		// error: expression with side effects will be evaluated despite being used as an operand to 'typeid' [-Werror,-Wpotentially-evaluated-expression]
+		// typeid() doesn't seem to like owning pointers (because they are a class),
+		//   so creating a reference
+		const SingleResidueFragData& fragdata_residue_i = *fragdata.get_residue( i );
+
+		if ( typeid( fragdata_residue_i ) == typeid( UpJumpSRFD ) ) {
+			const SingleResidueFragData& fragdata_residue_iplus1 = *fragdata.get_residue( i + 1 );
+			runtime_assert( i + 1 <= frame.length() && typeid( fragdata_residue_iplus1 ) == typeid( DownJumpSRFD ) );
 			ups.push_back( frame.seqpos( i ) );
 			downs.push_back( frame.seqpos( i+1 ) );
 
 			//the following configuration is not impossible, but if it should be allowed we need to change our heuristic to find cut-points
-			runtime_assert( i >= 2 && typeid( *fragdata.get_residue( i ) ) != typeid( DownJumpSRFD ) );
+			runtime_assert( i >= 2 && typeid( fragdata_residue_i ) != typeid( DownJumpSRFD ) );
 			cuts.push_back( frame.seqpos( i-1 ) );
 
 			// we have used up two positions...
@@ -693,4 +700,3 @@ debug_assert(pose.fold_tree().check_fold_tree());
 
 } //fragment
 } //core
-
