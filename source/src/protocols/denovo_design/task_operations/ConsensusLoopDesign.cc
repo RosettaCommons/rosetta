@@ -116,9 +116,8 @@ ConsensusLoopDesignOperation::allowed_aas(
 
 	ConsensusSequenceTable::const_iterator ss_data = seqtable_.find( surrounding );
 	if ( ss_data == seqtable_.end() ) {
-		std::stringstream err;
-		err << "ConsensusLoopDesign: no data found for loops between " << surrounding.before << " and " << surrounding.after << std::endl;
-		throw utility::excn::EXCN_Msg_Exception( err.str() );
+		TR << "ConsensusLoopDesign: no data found for loops between " << surrounding.before << " and " << surrounding.after << std::endl;
+		return emptylist;
 	}
 	debug_assert( ss_data != seqtable_.end() );
 
