@@ -10,11 +10,26 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/denovo_design" : [
+	"protocols/cyclic_peptide": [
+		"CreateAngleConstraint",
+		"CreateDistanceConstraint",
+		"CreateTorsionConstraint",
+        	"DeclareBond",
+        	"PeptideStubMover",
+	],
+		"protocols/denovo_design" : [
 		"util",
+	],
+	"protocols/denovo_design/components" : [
+		"FoldGraph",
+		"NamedMover",
+		"Picker",
+		"StructureData",
+		"Segment",
 	],
 	"protocols/denovo_design/connection" : [
 		"BridgeChains",
+		"Connection",
 	],
 	"protocols/denovo_design/movers" : [
 		"DisulfidizeMover",
@@ -26,6 +41,31 @@ sources = {
 	],
 	"protocols/denovo_design/task_operations": [
 		"ConsensusLoopDesign",
+	],
+	"protocols/generalized_kinematic_closure": [
+		"GeneralizedKIC",
+		"perturber/GeneralizedKICperturber",
+		"filter/GeneralizedKICfilter",
+		"selector/GeneralizedKICselector",
+		"util",
+	],
+	"protocols/helical_bundle": [
+		"BackboneGridSampler",
+		"BackboneGridSamplerHelper",
+		"BundleGridSampler",
+		"BundleGridSamplerHelper",
+		"FitSimpleHelix",
+		"FitSimpleHelixMultiFunc",
+		"MakeBundle",
+		"MakeBundleHelix",
+		"PerturbBundle",
+		"PerturbBundleHelix",
+		"PerturbBundleOptions",
+		"util",
+	],
+	"protocols/helical_bundle/parameters": [
+		"BundleParameters",
+		"BundleParametersSet",
 	],
 }
 include_path = [

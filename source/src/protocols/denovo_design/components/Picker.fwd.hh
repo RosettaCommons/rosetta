@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/denovo_design/connection/BridgeChains.fwd.hh
-/// @brief  BridgeChains forward header
+/// @file   src/protocols/denovo_design/components/Picker.fwd.hh
+/// @brief  Picker forward header
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
-#define INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
+#ifndef INCLUDED_protocols_denovo_design_components_Picker_fwd_hh
+#define INCLUDED_protocols_denovo_design_components_Picker_fwd_hh
 
 
 // Utility headers
@@ -23,20 +23,19 @@
 
 namespace protocols {
 namespace denovo_design {
-namespace connection {
+namespace components {
 
 // Forward
-class BridgeChains;
+class Picker;
 
 // Types
-typedef  utility::pointer::shared_ptr< BridgeChains >  BridgeChainsOP;
-typedef  utility::pointer::shared_ptr< BridgeChains const >  BridgeChainsCOP;
+typedef utility::pointer::shared_ptr< Picker > PickerOP;
+typedef utility::pointer::shared_ptr< Picker const > PickerCOP;
 
-typedef  utility::pointer::weak_ptr< BridgeChains >  BridgeChainsAP;
-typedef  utility::pointer::weak_ptr< BridgeChains const >  BridgeChainsCAP;
+typedef utility::pointer::weak_ptr< Picker > PickerAP;
+typedef utility::pointer::weak_ptr< Picker const > PickerCAP;
 
-
-} // namespace connection
+} // namespace components
 } // namespace denovo_design
 } // namespace protocols
 

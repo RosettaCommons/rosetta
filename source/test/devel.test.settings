@@ -18,6 +18,7 @@ sources = {
 	"denovo_design" : [
 		"BuildSheet",
 		"FoldabilityFilter",
+		"GenericSimulatedAnnealer",
 	],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",

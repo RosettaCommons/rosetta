@@ -9,7 +9,7 @@
 
 /// @file src/protocols/denovo_design/connection/BridgeChains.hh
 /// @brief The BridgeChains Protocol, for connecting oligomeric structures
-/// @detailed
+/// @details
 /// @author Tom Linsky
 
 

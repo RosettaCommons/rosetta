@@ -19,12 +19,16 @@
 // Unit headers
 
 // Protocol headers
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
 
 // Package headers
 
 // Core headers
+#include <core/kinematics/Edge.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/Remarks.hh>
 #include <core/types.hh>
 
 // Basic/Numeric/Utility Headers
@@ -57,9 +61,59 @@ void construct_poly_ala_pose(
 core::pack::task::residue_selector::ResidueSelectorCOP
 get_residue_selector( basic::datacache::DataMap const & data, std::string const & name );
 
+std::string
+abego_str( utility::vector1< std::string > const & abego );
+
+utility::vector1< std::string >
+abego_vector( std::string const & ab );
+
+// gets a remark line, pasting multiple lines together if necessary
+std::string get_remark_line( core::pose::Remarks::const_iterator & it_rem, core::pose::Remarks::const_iterator const & end );
+
+/// @brief adds a remark to a Remarks object, splitting it into multiple remarks if it is too long
+void add_remark( core::pose::Remarks & remarks, core::Size const num, std::string const & str_val );
+
+// helper function to calculate stop of loop without overlap
+core::Size
+loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, core::Size const overlap );
+
+// helper function to calculate stop residue of loop without overlap
+core::Size
+loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap );
+
+/// @brief given a residue, rebuilds all missing atoms
+void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi );
+
+/// @brief helper function that looks for the given residue in a fold tree and returns the jump that controls its 6D-DoFs
+int find_jump_rec(
+		core::kinematics::FoldTree const & ft,
+		int const residue );
+
+/// @brief inserts the peptide edges to accomodate the new jump edge given
+void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge );
+
+// @brief parses a string containing single integers and ranges. Returns a vector of all possible values.
+utility::vector1< core::Size >
+parse_length_string( std::string const & len_str );
+
+/// @brief given a number 0 <= x < 1, calculate an integer M <= x <= N
+/// NOTE THAT THIS FUNCTION MODIFIES THE PARAMETER
+core::Size
+extract_int( core::Real & num, core::Size const m, core::Size const n );
+
+/// @brief copies rotamers from the pose "src" into the permutation "dest"
+/// no backbone changes are made
+/// if detect_disulf flag is on, disulfides will be re-detected
+void
+copy_rotamers( components::StructureData & dest, core::pose::Pose const & src );
+
+} // denovo_design
+} // protocols
+
 //////////////////////////////////////////////////////////////////////////
 /// Output operators for std template classes                          ///
 //////////////////////////////////////////////////////////////////////////
+namespace std {
 
 /// @brief outputs a set
 std::ostream & operator<<( std::ostream & os, std::set< core::Size > const & set );
@@ -67,11 +121,17 @@ std::ostream & operator<<( std::ostream & os, std::set< core::Size > const & set
 /// @brief outputs a set
 std::ostream & operator<<( std::ostream & os, std::set< std::string > const & set );
 
+/// @brief outputs a list of sizes
+std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list );
+
 /// @brief outputs a list of strings
 std::ostream & operator<<( std::ostream & os, std::list< std::string > const & list );
 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map );
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const & map );
 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Size > const & map );
@@ -82,7 +142,8 @@ std::ostream & operator<<( std::ostream & os, std::map< std::pair< std::string, 
 /// @brief outputs a map
 std::ostream & operator<<( std::ostream & os, std::map< std::string, core::Real > const & map );
 
-} // denovo_design
-} // protocols
+/// @brief outputs a vector
+std::ostream & operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec );
 
+} // std
 #endif

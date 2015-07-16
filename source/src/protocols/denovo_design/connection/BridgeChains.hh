@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/denovo_design/BridgeChains.hh
+/// @file src/protocols/denovo_design/connection/BridgeChains.hh
 /// @brief The BridgeChains Protocol
-/// @details
+/// @detailed
 /// @author Tom Linsky
 
 
@@ -18,34 +18,29 @@
 
 // Unit headers
 #include <protocols/denovo_design/connection/BridgeChains.fwd.hh>
-#include <protocols/moves/Mover.hh>
-
-// Protocol headers
+#include <protocols/denovo_design/connection/Connection.hh>
 
 // Package headers
-#include <protocols/forge/components/VarLengthBuild.fwd.hh>
+#include <protocols/denovo_design/components/Picker.fwd.hh>
+#include <protocols/denovo_design/components/StructureData.fwd.hh>
+
+// Protocol headers
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+
+// Core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <protocols/filters/Filter.hh>
 
-//// C++ headers
+// C++ headers
 #include <string>
-
-#include <core/io/silent/silent.fwd.hh>
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace denovo_design {
 namespace connection {
 
-class BridgeChains : public protocols::moves::Mover {
+class BridgeChains : public Connection {
 public:
-
 	/// @brief default constructor
 	BridgeChains();
 
@@ -53,43 +48,90 @@ public:
 	virtual ~BridgeChains();
 
 	/// @brief Parses the BridgeChainsTags
-	void parse_my_tag(
+	virtual void parse_my_tag(
 			utility::tag::TagCOP tag,
 			basic::datacache::DataMap & data,
 			protocols::filters::Filters_map const &,
 			protocols::moves::Movers_map const &,
 			core::pose::Pose const & );
 
-	/// @brief Return the name of this mover.
+	/// @brief Mover virtuals
 	virtual std::string get_name() const;
-
-	/// @brief return a fresh instance of this class in an owning pointer
+	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual protocols::moves::MoverOP clone() const;
 
-	/// @brief Apply the BridgeChains. Overloaded apply function from mover base class.
-	virtual void apply( core::pose::Pose & pose );
+	/// @brief Performs chain connections and assumes all connection setup has been performed
+	virtual void apply_connection( components::StructureData & perm );
 
-	/// @brief creates a Ca coordinate constraint for residue resi
-	core::scoring::constraints::ConstraintOP
-	create_coordinate_cst( core::pose::Pose const & pose,
-			core::Size const resi ) const;
+	/// @brief this mover creates a polymer bond, so this is true
+	virtual bool polymer_connection() const { return true; }
+
+	/// @brief configures based on a permutation and saves info for building
+	virtual protocols::moves::MoverStatus
+		setup_permutation( components::StructureData & perm ) const;
+
+	// accessor/mutator
+public:
+	/// @brief sets the scorefunction
+	inline void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn_val ) { scorefxn_ = scorefxn_val; }
+
+	// member functions
+public:
+
+	/// @brief creates mover that does remodeling of loop residues
+	/// @details result is a ready-to-call mover
+	virtual protocols::moves::MoverOP
+	create_remodel_mover(
+			core::pose::Pose const & pose,
+			protocols::loops::LoopsOP loops,
+			bool const const_fold_tree,
+			std::string const & complete_ss,
+			StringVec const & complete_abego,
+			core::Size const left,
+			core::Size const right );
+
+	/// @brief checks to ensure that both pieces being connected are fixed relative to one another
+	bool segments_fixed( components::StructureData const & perm ) const;
+
+	/// @brief using the motif list, find the desired abego for each position in the connection
+	utility::vector1< std::string > abego_insert(
+			StringVec const & complete_abego,
+			std::string const & connection_abego,
+			core::Size const left,
+			core::Size const right,
+			core::Size const end1,
+			core::Size const start2 ) const;
+
+	/// @brief using the motif list and input pose, find the desired aa sequence for each position in the connection. default="V"
+	std::string aa_insert(
+			core::pose::Pose const & pose,
+			core::Size const connection_len,
+			core::Size const left,
+			core::Size const right,
+			core::Size const end1,
+			core::Size const start2 ) const;
+
+	/// @brief using the motif list and input pose, find the desired secondary structure for each position in the connection
+	std::string ss_insert(
+			core::pose::Pose const & pose,
+			std::string const & connection_ss,
+			core::Size const left,
+			core::Size const right,
+			core::Size const end1,
+			core::Size const start2 ) const;
+
+	/// @brief builds the loop
+	void build_loop( components::StructureData & perm );
+
+	/// @brief get score function
+	core::scoring::ScoreFunctionCOP scorefxn();
 
 private: // options
-	std::string motif_;
-	core::Size chain1_;
-	core::Size chain2_;
-	/// @brief the number of residues to be rebuilt before and after the jump -- coordinate constraints will be applied to these.
-	core::Size overlap_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 
 private:   // other data
-	/// @brief the vlb (so that fragments can be cached)
-	protocols::forge::components::VarLengthBuildOP vlb_;
-	/// @brief cached data to alert the VLB is something has changed... this will allow it to cache fragments
-	std::string cached_ss_;
-	std::string cached_aa_;
-	core::Size cached_start_;
-	core::Size cached_end_;
+	/// @brief fragment picker/cache
+	components::PickerOP frag_picker_;
 };
 
 } // connection

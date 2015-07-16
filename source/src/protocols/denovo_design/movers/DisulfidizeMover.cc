@@ -13,7 +13,6 @@
 /// @author Tom Linsky (tlinsky@uw.edu) -- Adapting code from remodelmover into a mover
 /// @author Gabe Rocklin (grocklin@uw.edu) -- Disulfide code
 
-
 //Unit Headers
 #include <protocols/denovo_design/movers/DisulfidizeMover.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>

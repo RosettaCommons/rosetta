@@ -210,6 +210,7 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 					runtime_assert( wanted_ss.size() == psipred_result.psipred2_confidence.size() );
 					return compute_mismatch_prob( psipred_result.psipred_prob );
 				} else {
+					TR.Debug << "Wanted SS: " << wanted_ss.size() << " Result SS: " << psipred_result.psipred_prob.size() << std::endl;
 					runtime_assert( wanted_ss.size() == psipred_result.psipred_prob.size() );
 					return compute_boltz_sum( psipred_result.psipred_prob );
 				}

@@ -17,6 +17,7 @@
 #include <protocols/denovo_design/util.hh>
 
 //Project Headers
+#include <protocols/denovo_design/components/StructureData.hh>
 
 //Protocol Headers
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -25,12 +26,16 @@
 //Core Headers
 #include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
-// Boost/ObjexxFCL Headers
+//Boost/ObjexxFCL Headers
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 //C++ Headers
 
@@ -125,66 +130,358 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 	return selector;
 }
 
+std::string
+abego_str( utility::vector1< std::string > const & abego )
+{
+	std::string ab = "";
+	for ( utility::vector1< std::string >::const_iterator a=abego.begin(), enda=abego.end(); a!=enda; ++a ) {
+		assert( a->size() == 1 );
+		ab += *a;
+	}
+	assert( ab.size() == abego.size() );
+	return ab;
+}
+
+utility::vector1< std::string >
+abego_vector( std::string const & ab )
+{
+	utility::vector1< std::string > abego;
+	for ( std::string::const_iterator c=ab.begin(), endc=ab.end(); c!=endc; ++c ) {
+		std::string res_abego = "";
+		res_abego += *c;
+		abego.push_back( res_abego );
+	}
+	assert( abego.size() == ab.size() );
+	return abego;
+}
+
+// gets a remark line, pasting multiple lines together if necessary
+std::string get_remark_line( core::pose::Remarks::const_iterator & it_rem, core::pose::Remarks::const_iterator const & end )
+{
+	std::string line = it_rem->value;
+	int num = it_rem->num;
+	while ( ( it_rem != end ) && ( line.substr( line.size()-1, 1 ) == "#" ) ) {
+		++it_rem;
+		debug_assert( num == it_rem->num );
+		line = line.substr(0, line.size()-1) + it_rem->value;
+	}
+	boost::algorithm::trim( line );
+	return line;
+}
+
+/// @brief adds a remark to a Remarks object, splitting it into multiple remarks if it is too long
+void add_remark( core::pose::Remarks & remarks, core::Size const num, std::string const & str_val )
+{
+	core::Size i = 0;
+	while ( i < str_val.size() ) {
+		core::pose::RemarkInfo remark;
+		remark.num = num;
+		int chunksize = str_val.size() - i;
+		bool add_pound = false;
+		if ( chunksize >= 59 ) {
+			chunksize = 58;
+			add_pound = true;
+		}
+		remark.value = str_val.substr( i, chunksize );
+		if ( add_pound ) {
+			remark.value += "#";
+		}
+		remarks.push_back( remark );
+		i += chunksize;
+	}
+}
+
+// helper function to calculate stop of loop without overlap
+core::Size
+loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, core::Size const overlap )
+{
+	// calculate start component without overlap
+	for ( core::Size i=1; i<=overlap; ++i ) {
+		// see if this loop is lower-terminal
+		if ( ( stopres == 1 ) || //loop starts at first residue
+				( ! pose.residue( stopres-1 ).is_protein() ) || //residue before start is not protein
+				( pose.chain( stopres-1 ) != pose.chain( stopres ) ) || // residues before start are on another chain
+				( pose.residue( stopres ).is_lower_terminus() ) ) { // start of residue is lower terminus
+			break;
+		}
+		--stopres;
+	}
+	return stopres;
+}
+
+// helper function to calculate stop residue of loop without overlap
+core::Size
+loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap )
+{
+	// calculate start component without overlap
+	for ( core::Size i=1; i<=overlap; ++i ) {
+		// see if this loop is upper-terminal
+		if ( ( startres == pose.total_residue() ) || // loop end at last residue
+				( !pose.residue( startres+1 ).is_protein() ) || // residue after end is not protein
+				( pose.chain( startres+1 ) != pose.chain( startres ) ) || // residues before start is other chain
+				( pose.residue( startres ).is_upper_terminus() ) ) { // explicit terminus variant @ end of loop
+			break;
+		}
+		++startres;
+	}
+	return startres;
+}
+
+/// @brief given a residue, rebuilds all missing atoms
+void rebuild_missing_atoms( core::pose::Pose & pose, core::Size const resi )
+{
+	core::conformation::Residue const & res = pose.residue( resi );
+	bool any_missing = false;
+	utility::vector1< bool > missing;
+	for ( core::Size i=1; i<=res.type().natoms(); ++i ) {
+		if ( res.has( res.type().atom_name(i) ) ) {
+			missing.push_back( false );
+		} else {
+			missing.push_back( true );
+			any_missing = true;
+		}
+	}
+
+	if ( any_missing ) {
+		TR << "Rebuilding residue " << resi << std::endl;
+		core::conformation::Residue newres = 	pose.residue(resi);
+		newres.fill_missing_atoms( missing, pose.conformation() );
+		pose.conformation().replace_residue( resi, newres, false );
+	} else {
+		TR << "All atoms present" << std::endl;
+	}
+}
+
+/// @brief helper function that looks for the given residue in a fold tree and returns the jump that controls its 6D-DoFs
+int find_jump_rec(
+		core::kinematics::FoldTree const & ft,
+		int const residue )
+{
+	assert( residue > 0 );
+	assert( residue <= static_cast<int>(ft.nres()) );
+
+	// if this residue is root, jump is 0
+	if ( ft.root() == residue ) {
+		return 0;
+	}
+
+	// search for jump edges that contains this residue
+	for ( core::kinematics::FoldTree::const_iterator e=ft.begin(), ende=ft.end(); e!=ende; ++e ) {
+		if ( ( e->label() > 0 ) && ( e->stop() == residue ) ) {
+				return e->label();
+		}
+	}
+
+	// search upstream for peptide edges containing this residue
+	for ( core::kinematics::FoldTree::const_iterator e=ft.begin(), ende=ft.end(); e!=ende; ++e ) {
+		if ( e->label() < 0 ) {
+			if ( ( ( e->start() < residue ) && ( residue <= e->stop() ) ) ||
+					( ( e->stop() <= residue ) && ( residue < e->start() ) ) ) {
+				return find_jump_rec( ft, e->start() );
+			}
+		}
+	}
+	return -1;
+}
+
+/// @brief inserts the peptide edges to accomodate the new jump edge given
+void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge )
+{
+	assert( jedge.label() > 0 );
+	int pos1 = jedge.start();
+	int pos2 = jedge.stop();
+	utility::vector1< core::kinematics::Edge > new_edges;
+	utility::vector1< core::kinematics::Edge > remove_edges;
+	core::kinematics::FoldTree const & ft_const = ft; // ugly hack needed to prevent gcc from trying to use the protected non-const FoldTree::begin() method...
+	for ( core::kinematics::FoldTree::const_iterator it=ft_const.begin(); it != ft_const.end(); ++it ) {
+		if ( it->label() != core::kinematics::Edge::PEPTIDE ) continue;
+		if ( it->start() <= pos1 && it->stop() >= pos1 ) {
+			//disallow edges to self
+			if ( it->start() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( it->start(), pos1, core::kinematics::Edge::PEPTIDE ) );
+			}
+			if ( it->stop() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( pos1, it->stop(), core::kinematics::Edge::PEPTIDE ) );
+			}
+			remove_edges.push_back( *it );
+		} else if ( it->stop() <= pos1 && it->start() >= pos1 ) { // edges not always in sequential order (eg - jump in middle of chain)
+			//disallow edges to self
+			if ( it->start() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( pos1, it->start(), core::kinematics::Edge::PEPTIDE ) );
+			}
+			if ( it->stop() != pos1 ) {
+				new_edges.push_back( core::kinematics::Edge( it->stop(), pos1, core::kinematics::Edge::PEPTIDE ) );
+			}
+			remove_edges.push_back( *it );
+		}
+		if ( it->start() <= pos2 && it->stop() >= pos2 ) {
+			if ( it->start() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( it->start(), pos2, core::kinematics::Edge::PEPTIDE ) );
+			}
+			if ( it->stop() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( pos2, it->stop(), core::kinematics::Edge::PEPTIDE ) );
+			}
+			remove_edges.push_back( *it );
+		} else if ( it->stop() <= pos2 && it->start() >= pos2 ) { // the backwards version of the above
+			//TR.Debug << "start-pos2-stop " << start <<" " << pos2 << " " << stop << std::endl;
+			if ( it->start() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( pos2, it->start(), core::kinematics::Edge::PEPTIDE ) );
+			}
+			if ( it->stop() != pos2 ) {
+				new_edges.push_back( core::kinematics::Edge( it->stop(), pos2, core::kinematics::Edge::PEPTIDE ) );
+			}
+			remove_edges.push_back( *it );
+		}
+	}
+	for( utility::vector1< core::kinematics::Edge >::iterator it=remove_edges.begin(); it!=remove_edges.end(); ++it ) {
+		TR.Debug << "Removing edge " << *it << std::endl;
+		ft.delete_edge( *it );
+	}
+	for( utility::vector1< core::kinematics::Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
+		TR.Debug << "Adding edge " << *it << std::endl;
+		ft.add_edge( *it );
+	}
+	TR.Debug << "FT after peptide edge redo: " << ft << std::endl;
+}
+
+// @brief parses a string containing single integers and ranges. Returns a vector of all possible values.
+utility::vector1< core::Size >
+parse_length_string( std::string const & len_str )
+{
+	utility::vector1< core::Size > retval;
+	utility::vector1< std::string > const str_residues( utility::string_split( len_str , ',' ) );
+	for ( core::Size i=1; i<=str_residues.size(); ++i ) {
+		if ( str_residues[i] == "" ) continue;
+		utility::vector1< std::string > const ranges( utility::string_split( str_residues[i], ':' ) );
+		if ( ranges.size() == 1 ) {
+			retval.push_back( boost::lexical_cast< core::Size >( ranges[1] ) );
+		} else if ( ranges.size() == 2 ) {
+			core::Size const start( boost::lexical_cast< core::Size >( ranges[1] ) );
+			core::Size const end( boost::lexical_cast< core::Size >( ranges[2] ) );
+			for ( core::Size i=start; i<=end; ++i ) {
+				retval.push_back( i );
+			}
+		} else {
+			throw utility::excn::EXCN_Msg_Exception( "Invalid length input: " + len_str );
+		}
+	}
+	return retval;
+}
+
+/// @brief given a number 0 <= x < 1, calculate an integer M <= x <= N
+/// NOTE THAT THIS FUNCTION MODIFIES THE PARAMETER
+core::Size
+extract_int( core::Real & num, core::Size const m, core::Size const n )
+{
+	debug_assert( num < 1 );
+	debug_assert( num >= 0 );
+	if ( n == m ) {
+		return m;
+	}
+	assert( n > m );
+	TR.Debug << "num: " << num << " m: " << m << " n: " << n << std::endl;
+	core::Size const len( n-m+1 );
+	num *= len;
+	int const val( static_cast< int >(num) );
+	num -= val;
+	TR.Debug << "num: " << num << " len: " << len << " val: " << val << std::endl;
+	assert( val >= 0 );
+	assert( val < static_cast< int >(n) );
+	return val + m;
+}
+
+/// @brief copies rotamers from the pose "src" into the permutation "dest"
+/// no backbone changes are made
+/// if detect_disulf flag is on, disulfides will be re-detected
+void
+copy_rotamers( components::StructureData & dest, core::pose::Pose const & src )
+{
+	assert( dest.pose_length() == src.total_residue() );
+
+	for ( core::Size r=1, endr=src.total_residue(); r<=endr; ++r ) {
+		dest.replace_residue( r, src.residue(r), true );
+	}
+	// re-detect disulfides
+	core::scoring::ScoreFunctionOP sfx = core::scoring::get_score_function();
+	dest.detect_disulfides( sfx );
+}
+
+} // protocols
+} // denovo_design
+
 //////////////////////////////////////////////////////////////////////////
 /// Output operators for std classes                                   ///
 //////////////////////////////////////////////////////////////////////////
 
-/// @brief outputs a matrix
-std::ostream &
-operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
-	os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
-	os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
-	os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
-	return os;
-}
+namespace std {
 
-/// @brief outputs a set
-std::ostream &
-operator<<( std::ostream & os, std::set< core::Size > const & set ) {
-	os << "[ ";
-	for ( std::set< core::Size >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-		os << *it << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a list of strings
-std::ostream &
-operator<<( std::ostream & os, std::list< std::string > const & list ) {
-	os << "[ ";
-	for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
-		os << *c << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a set
-std::ostream &
-operator<<( std::ostream & os, std::set< std::string > const & set ) {
-	os << "[ ";
-	for ( std::set< std::string >::const_iterator it=set.begin(); it != set.end(); ++it ) {
-		os << *it << " ";
-	}
-	os << "]";
-	return os;
-}
-
-/// @brief outputs a map
-std::ostream &
-operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map ) {
-	os << "{";
-	std::map< core::Size, core::Size >::const_iterator it;
-	for ( it = map.begin(); it != map.end(); ++it ) {
-		if ( it != map.begin() ) {
-			os << ", ";
+	/// @brief outputs a matrix
+	std::ostream &
+		operator<<( std::ostream & os, numeric::xyzMatrix< core::Real > const & mat ) {
+			os << "[ [" << mat.xx() << ", " << mat.xy() << ", " << mat.xz() << "]" << std::endl;
+			os << "  [" << mat.yx() << ", " << mat.yy() << ", " << mat.yz() << "]" << std::endl;
+			os << "  [" << mat.zx() << ", " << mat.zy() << ", " << mat.zz() << "] ]";
+			return os;
 		}
-		os << " " << it->first << ":" << it->second;
+
+	/// @brief outputs a set
+	std::ostream &
+		operator<<( std::ostream & os, std::set< core::Size > const & set ) {
+			os << "[ ";
+			for ( std::set< core::Size >::const_iterator it=set.begin(); it != set.end(); ++it ) {
+				os << *it << " ";
+			}
+			os << "]";
+			return os;
+		}
+
+	/// @brief outputs a list of sizes
+	std::ostream & operator<<( std::ostream & os, std::list< core::Size > const & list )
+	{
+		os << "[ ";
+		for ( std::list< core::Size >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
+			os << *c << " ";
+		}
+		os << "]";
+		return os;
 	}
-	os << " }";
-	return os;
-}
+
+	/// @brief outputs a list of strings
+	std::ostream &
+		operator<<( std::ostream & os, std::list< std::string > const & list ) {
+			os << "[ ";
+			for ( std::list< std::string >::const_iterator c=list.begin(), end=list.end(); c != end; ++c ) {
+				os << *c << " ";
+			}
+			os << "]";
+			return os;
+		}
+
+	/// @brief outputs a set
+	std::ostream &
+		operator<<( std::ostream & os, std::set< std::string > const & set ) {
+			os << "[ ";
+			for ( std::set< std::string >::const_iterator it=set.begin(); it != set.end(); ++it ) {
+				os << *it << " ";
+			}
+			os << "]";
+			return os;
+		}
+
+	/// @brief outputs a map
+	std::ostream &
+		operator<<( std::ostream & os, std::map< core::Size, core::Size > const & map ) {
+			os << "{";
+			std::map< core::Size, core::Size >::const_iterator it;
+			for ( it = map.begin(); it != map.end(); ++it ) {
+				if ( it != map.begin() ) {
+					os << ", ";
+				}
+				os << " " << it->first << ":" << it->second;
+			}
+			os << " }";
+			return os;
+		}
 
 /// @brief outputs a map
 std::ostream &
@@ -231,5 +528,26 @@ operator<<( std::ostream & os, std::map< std::string, core::Real > const & map )
 	return os;
 }
 
-} // namespace denovo_design
-} // namespace protocols
+/// @brief outputs a vector
+std::ostream &
+operator<<( std::ostream & os, numeric::xyzVector< core::Real > const & vec )
+{
+	os << "{ " << vec.x() << ", " << vec.y() << ", " << vec.z() << " }";
+	return os;
+}
+
+/// @brief outputs a map
+std::ostream & operator<<( std::ostream & os, std::map< char, core::Size > const & map )
+{
+	os << "{";
+	std::map< char, core::Size >::const_iterator it;
+	for ( it = map.begin(); it != map.end(); ++it ) {
+		if ( it != map.begin() )
+			os << ", ";
+		os << " " << it->first << ":" << it->second;
+	}
+	os << "}";
+	return os;
+}
+
+} // std

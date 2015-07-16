@@ -129,6 +129,12 @@ sources = {
 	"denovo_design" :[
 		"ConsensusLoopDesign",
 		"DisulfidizeMover",
+		"StructureData",
+		"Segment",
+	],
+
+	"denovo_design/connection" :[
+		"Connection",
 	],
 
 	"generalized_kinematic_closure" : [
@@ -481,6 +487,7 @@ testinputfiles = [
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",
 	"denovo_design/disulf_test.pdb",
+	"denovo_design/test_pdbcomp.pdb",
 	"docking/DockingTest.pdb",
 	"docking/DockingDecoy.pdb",
 	"docking/DockingMultiChain.pdb",

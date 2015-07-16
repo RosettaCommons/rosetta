@@ -11,15 +11,12 @@
 /// @brief  BridgeChains forward header
 /// @author Tom Linsky
 
-
 #ifndef INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
 #define INCLUDED_protocols_denovo_design_connection_BridgeChains_fwd_hh
-
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
-
 
 namespace protocols {
 namespace denovo_design {
@@ -34,7 +31,6 @@ typedef  utility::pointer::shared_ptr< BridgeChains const >  BridgeChainsCOP;
 
 typedef  utility::pointer::weak_ptr< BridgeChains >  BridgeChainsAP;
 typedef  utility::pointer::weak_ptr< BridgeChains const >  BridgeChainsCAP;
-
 
 } // namespace connection
 } // namespace denovo_design
