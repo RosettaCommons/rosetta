@@ -59,7 +59,7 @@ patches/branching/C-terminal_conjugation.txt
 #################################################################################################
 
 ## protein
-patches/Cterm_amidation.txt
+#patches/Cterm_amidation.txt
 #patches/VirtualProteinResidue.txt
 #patches/VirtualNterm.txt
 
@@ -146,8 +146,8 @@ patches/carbohydrates/N-acetyl-2-amination.txt
 #patches/carbohydrates/5-acetylation.txt
 
 ## alternative backbones
-patches/hbs_pre.txt
-patches/hbs_post.txt
+#patches/hbs_pre.txt
+#patches/hbs_post.txt
 
 #patches/a3b_hbs_pre.txt
 #patches/a3b_hbs_post.txt
