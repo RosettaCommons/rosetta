@@ -61,6 +61,8 @@ static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
 static FilterRegistrator< protocols::denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 
+static FilterRegistrator< protocols::helical_bundle::BundleReporterFilterCreator > reg_BundleReporterFilterCreator;
+
 static FilterRegistrator< protocols::indexed_structure_store::filters::FragmentLookupFilterCreator > reg_FragmentLookupFilterCreator;
 
 static FilterRegistrator< protocols::ligand_docking::AtomCountFilterCreator > reg_AtomCountFilterCreator;

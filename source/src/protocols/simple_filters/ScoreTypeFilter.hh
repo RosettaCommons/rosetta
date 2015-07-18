@@ -27,7 +27,6 @@
 #include <core/scoring/ScoreType.hh>
 
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
 
 
 namespace protocols {
@@ -36,9 +35,20 @@ namespace simple_filters {
 class ScoreTypeFilter : public filters::Filter
 {
 public:
-	ScoreTypeFilter() : Filter( "ScoreType" ) {}
+	/// @brief Constructor
+	///
+	ScoreTypeFilter();
+	
+	/// @brief Copy constructor
+	///
+	ScoreTypeFilter( ScoreTypeFilter const &src );
+
+	/// @brief Constructor with parameters
+	///
 	ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold );
+
 	bool apply( core::pose::Pose const & pose ) const;
+
 	filters::FilterOP clone() const {
 		return filters::FilterOP( new ScoreTypeFilter( *this ) );
 	}

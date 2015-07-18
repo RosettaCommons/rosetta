@@ -34,7 +34,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 //Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/elscripts/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -61,9 +60,29 @@ ScoreTypeFilterCreator::create_filter() const { return protocols::filters::Filte
 std::string
 ScoreTypeFilterCreator::keyname() const { return "ScoreType"; }
 
+/// @brief Constructor
+///
+ScoreTypeFilter::ScoreTypeFilter() :
+	Filter( "ScoreType" ),
+	score_type_threshold_(0.0),
+	score_type_( core::scoring::score_type_from_name( "total_score" ) ),
+	scorefxn_() //Null pointer by default.
+{}
+
+/// @brief Copy constructor
+///
+ScoreTypeFilter::ScoreTypeFilter( ScoreTypeFilter const &src ) :
+	Filter( "ScoreType" ),
+	score_type_threshold_(src.score_type_threshold_),
+	score_type_( src.score_type_ ),
+	scorefxn_( src.scorefxn_->clone() ) //CLONE the scorefunction, don't copy it.
+{}
+
+/// @brief Constructor with parameters
+///
 ScoreTypeFilter::ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold ) : Filter( "ScoreType" ) {
-	score_type_ = score_type;
 	score_type_threshold_ = score_type_threshold;
+	score_type_ = score_type;
 	scorefxn_ = scorefxn->clone();
 }
 

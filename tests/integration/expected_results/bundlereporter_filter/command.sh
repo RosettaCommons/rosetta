@@ -1,3 +1,4 @@
+
 #
 # This is a command file.
 #
@@ -26,21 +27,29 @@
 # All command files should start with this line:
 #
 
-cd %(workdir)s
+cd /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/tests/integration/new/bundlereporter_filter
 
-[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+[ -x /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug ] || exit 1
+/scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug  @flags -database /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/database -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags2 -database %(database)s -run:constant_seed -nodelay  2>&1 \
+[ -x /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug ] || exit 1
+/scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug  @flags2 -database /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/database -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log2
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the second executable in pipe line return error and exit with error code if so
+
+[ -x /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug ] || exit 1
+/scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/rosetta_scripts.default.linuxgccdebug  @flags3 -database /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/database -run:constant_seed -nodelay  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log3
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the third executable in pipe line return error and exit with error code if so
+
 
 
 #
@@ -52,13 +61,13 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the second executab
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccdebug  @flags -database /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/database -run:constant_seed -nodelay  2>&1 \
 ##     | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##     | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##     > log
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/source/bin/MY_MINI_PROGRAM.default.linuxgccdebug  @flags -database /scratch/USERS/vmullig/rosetta_devcopy_scratch2/Rosetta/main/database -run:constant_seed -nodelay  2>&1 \
 ##     > /dev/null
 #

@@ -54,6 +54,7 @@ sources = {
 		"BackboneGridSamplerHelper",
 		"BundleGridSampler",
 		"BundleGridSamplerHelper",
+		"BundleReporterFilter",
 		"FitSimpleHelix",
 		"FitSimpleHelixMultiFunc",
 		"MakeBundle",

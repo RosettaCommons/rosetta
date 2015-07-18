@@ -1,0 +1,210 @@
+protocols.helical_bundle.BundleReporterFilter: Set scorefunction for the BundleReporter filter to tala.
+protocols.helical_bundle.BundleReporterFilter: Set BundleReporter filter scoretype to total_score.
+protocols.helical_bundle.BundleReporterFilter: Set BundleReporter filter behaviour to FILTER.
+protocols.helical_bundle.BundleReporterFilter: Energy threshold for filtering set to 1e+06.  (Energies above this will result in the filter returning FALSE).
+protocols.helical_bundle.BundleReporterFilter: Sequences will be reported by the BundleReporterFilter as one-letter codes.
+protocols.helical_bundle.BundleReporterFilter: Set scorefunction for the BundleReporter filter to tala.
+protocols.helical_bundle.BundleReporterFilter: Set BundleReporter filter scoretype to total_score.
+protocols.helical_bundle.BundleReporterFilter: Set BundleReporter filter behaviour to FILTER.
+protocols.helical_bundle.BundleReporterFilter: Energy threshold for filtering set to 100.  (Energies above this will result in the filter returning FALSE).
+protocols.helical_bundle.BundleReporterFilter: Sequences will be reported by the BundleReporterFilter as three-letter codes.
+protocols.helical_bundle.BundleReporterFilter.REPORT: 
+********** BUNDLEREPORTER FILTER REPORT FOR JOB 1 **********
+Score:	34819.4
+Sequence:	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+----------------------------------------
+CRICK PARAMETER INFORMATION
+Bundle symmetry: 16
+Bundle symmetry copies: 3
+Number of helices per copy: 3
+---HELIX 1 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 29.00000000
+   Twist (omega0,radians/residue): 0.07500000
+   Rotational offset (delta_omega0,radians): 0.00000000
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: false
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 0.00000000
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.00000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 3.17992971
+   Rise (z1,Angstroms/residue): 3.45156959
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 0.38799966
+   Axial offset (delta_z1,Angstroms): -1.22979830
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 0.79741416
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 0.49516092
+   Axial offset (delta_z1,Angstroms): 1.22636900
+---HELIX 2 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 29.00000000
+   Twist (omega0,radians/residue): 0.07500000
+   Rotational offset (delta_omega0,radians): 0.19634954
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: true
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 1.57079630
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.25000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 3.17992971
+   Rise (z1,Angstroms/residue): 3.45156959
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 0.38799966
+   Axial offset (delta_z1,Angstroms): -1.22979830
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 0.79741416
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 0.49516092
+   Axial offset (delta_z1,Angstroms): 1.22636900
+---HELIX 3 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 21.00000000
+   Twist (omega0,radians/residue): 0.05000000
+   Rotational offset (delta_omega0,radians): 0.00000000
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: false
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 0.00000000
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.00000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 1.72180480
+   Rise (z1,Angstroms/residue): 1.53104401
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 1.53673520
+   Axial offset (delta_z1,Angstroms): -0.90470326
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 2.29431130
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 1.73316244
+   Axial offset (delta_z1,Angstroms): 1.05169636
+----------------------------------------
+******** END BUNDLEREPORTER FILTER REPORT FOR JOB 1 ********
+
+protocols.helical_bundle.BundleReporterFilter: Energy is less than threshold.  Passing.
+protocols.helical_bundle.BundleReporterFilter.REPORT: 
+********** BUNDLEREPORTER FILTER REPORT FOR JOB 1 **********
+Score:	34819.4
+Sequence:	ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA ALA
+----------------------------------------
+CRICK PARAMETER INFORMATION
+Bundle symmetry: 16
+Bundle symmetry copies: 3
+Number of helices per copy: 3
+---HELIX 1 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 29.00000000
+   Twist (omega0,radians/residue): 0.07500000
+   Rotational offset (delta_omega0,radians): 0.00000000
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: false
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 0.00000000
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.00000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 3.17992971
+   Rise (z1,Angstroms/residue): 3.45156959
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 0.38799966
+   Axial offset (delta_z1,Angstroms): -1.22979830
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 0.79741416
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 0.49516092
+   Axial offset (delta_z1,Angstroms): 1.22636900
+---HELIX 2 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 29.00000000
+   Twist (omega0,radians/residue): 0.07500000
+   Rotational offset (delta_omega0,radians): 0.19634954
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: true
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 1.57079630
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.25000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 3.17992971
+   Rise (z1,Angstroms/residue): 3.45156959
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 0.38799966
+   Axial offset (delta_z1,Angstroms): -1.22979830
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 0.79741416
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 0.49516092
+   Axial offset (delta_z1,Angstroms): 1.22636900
+---HELIX 3 PARAMETERS:---
+ MAJOR HELIX PARAMETERS:
+   Radius (r0,Angstroms): 21.00000000
+   Twist (omega0,radians/residue): 0.05000000
+   Rotational offset (delta_omega0,radians): 0.00000000
+   Axial offset (z0_offset,Angstroms): 0.00000000
+   Invert helix: false
+   Dihedrals set by generator: true
+   Bond angles set by generator: true
+   Bond lengths set by generator: true
+ MINOR HELIX PARAMETERS (that are typically sampled):
+   Roll about axis (delta_omega1,radians): 0.00000000
+   Axial offset (z1_offset,vert. Angstroms): 0.00000000
+   Registry shift (delta_t,residues): 0.00000000
+ OTHER MINOR HELIX PARAMETERS (fixed):
+   Residues/repeat: 1
+   Atoms/residue1: 3
+   Repeat unit offset: 0
+   Twist (omega1,radians/residue): 1.72180480
+   Rise (z1,Angstroms/residue): 1.53104401
+   MAINCHAIN ATOM #1:
+   Radius (r1,Angstroms): 1.53673520
+   Axial offset (delta_z1,Angstroms): -0.90470326
+   MAINCHAIN ATOM #2:
+   Radius (r1,Angstroms): 2.29431130
+   Axial offset (delta_z1,Angstroms): 0.00000000
+   MAINCHAIN ATOM #3:
+   Radius (r1,Angstroms): 1.73316244
+   Axial offset (delta_z1,Angstroms): 1.05169636
+----------------------------------------
+******** END BUNDLEREPORTER FILTER REPORT FOR JOB 1 ********
+
+protocols.helical_bundle.BundleReporterFilter: Energy is greater than threshold.  Failing.

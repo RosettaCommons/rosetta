@@ -40,7 +40,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
     | egrep -vf ../../ignore_list \
     > log2
 
-test "${PIPESTATUS[1]}" != '0' && exit 1 || true  # Check if the second executable in pipe line return error and exit with error code if so
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the second executable in pipe line return error and exit with error code if so
 
 #
 # After that, do whatever you want.
