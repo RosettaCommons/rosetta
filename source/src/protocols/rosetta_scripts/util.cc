@@ -28,6 +28,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
@@ -163,6 +164,35 @@ get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const &
 		}
 	}
 	return task_operations;
+}
+
+
+core::pack::task::residue_selector::ResidueSelectorCOP
+parse_residue_selector( utility::tag::TagCOP tag, basic::datacache::DataMap const & data )
+{
+	if ( tag->hasOption( "residue_selector" ) ) {
+		std::string const selectorname = tag->getOption< std::string >( "residue_selector" );
+		return get_residue_selector( selectorname, data );
+	} else {
+		return core::pack::task::residue_selector::ResidueSelectorCOP();
+	}
+}
+
+core::pack::task::residue_selector::ResidueSelectorCOP
+get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
+{
+	core::pack::task::residue_selector::ResidueSelectorCOP selector;
+	try {
+		selector = data.get_ptr< core::pack::task::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		std::stringstream error_msg;
+		error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
+		error_msg << e.msg();
+		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+	}
+	debug_assert( selector );
+	TR << "Using residue selector " << selector_name << std::endl;
+	return selector;
 }
 
 
@@ -579,7 +609,7 @@ parse_bogus_res_tag( utility::tag::TagCOP tag, std::string const & prefix ){
 	else if(tag->hasOption(prefix+"res_num")){
 		bogus = tag->getOption<std::string>(prefix+"res_num");
 	}
-	
+
 }
 
 } //RosettaScripts

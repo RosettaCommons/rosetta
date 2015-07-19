@@ -36,6 +36,7 @@ sources = {
 	],
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
+		"PreProlineFilter",
 		"PsiPredInterface",
 		"SSPredictionFilter",
 	],

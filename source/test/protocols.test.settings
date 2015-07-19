@@ -133,6 +133,10 @@ sources = {
 		"Segment",
 	],
 
+	"denovo_design/filters" :[
+		"PreProlineFilter",
+	],
+
 	"denovo_design/connection" :[
 		"Connection",
 	],
