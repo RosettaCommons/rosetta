@@ -137,7 +137,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	core::Size slave_data( 0 );
 	MPI_Status status;
-	bool dummy(false); //A dummy variable for when I need to send an acknowledgement signal.
+	char dummy('A'); //A dummy variable for when I need to send an acknowledgement signal.  Using a char because it's guaranteed to be 1 byte, while other data types might be wider, wasting bandwidth.
 	core::Size completed_job_id(0); //A storage spot for keeping track of what job has just been named as completed by the slave.
 
 	// set first job to assign
@@ -177,7 +177,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 				}
 				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
 				//Master needs to acknowledge the failure before the slave requests a new job.  Otherwise, master might see the slave's NEW_JOB_ID_TAG request before seeing the JOB_FAILURE_TAG.
-				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
+				MPI_Send( &dummy, 1, MPI_CHAR, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
@@ -260,10 +260,10 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			case JOB_FAILURE_TAG:
 				if(TR.visible()) TR << "Master node: Received job failure message for job id " << slave_data << " from node " << status.MPI_SOURCE << "." << std::endl;
 				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
-				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
+				MPI_Send( &dummy, 1, MPI_CHAR, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
 				master_mark_job_as_failed( slave_data ); //This will mark the job as deletable.
 				//Master needs to acknowledge the failure before the slave requests a new job.  Otherwise, master might see the slave's NEW_JOB_ID_TAG request before seeing the JOB_FAILURE_TAG.
-				MPI_Send( &dummy, 1, MPI_C_BOOL, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
+				MPI_Send( &dummy, 1, MPI_CHAR, status.MPI_SOURCE, JOB_FAILURE_TAG, MPI_COMM_WORLD ); //Acknowledgement.
 				break;
 			case REQUEST_MESSAGE_TAG:
 			{
@@ -507,11 +507,11 @@ void MPIWorkPoolJobDistributor::job_failed(
 	} else {
 		MPI_Status status;
 		increment_failed_jobs();
-		bool dummy_val(false);
+		char dummy_val('D');
 		if(TR.visible()) TR << "Job " << current_job_id_ << " failed!  Slave process " << rank_ << " transmitting failure to master." << std::endl;
 		MPI_Send( &current_job_id_, 1, MPI_UNSIGNED_LONG, 0, JOB_FAILURE_TAG, MPI_COMM_WORLD );
 		//We need to wait for acknowledgement, lest this process request a new job id (and be given one) before Master has seen the failure message and cleaned up the job list.
-		MPI_Recv( &dummy_val, 1, MPI_C_BOOL, 0, JOB_FAILURE_TAG, MPI_COMM_WORLD, &status);
+		MPI_Recv( &dummy_val, 1, MPI_CHAR, 0, JOB_FAILURE_TAG, MPI_COMM_WORLD, &status);
 	}
 	return;
 #endif
@@ -608,9 +608,9 @@ MPIWorkPoolJobDistributor::master_mark_job_as_failed(
 void MPIWorkPoolJobDistributor::wait_for_go_signal() const {
 #ifdef USEMPI
 	core::Size const prev_proc ( rank_ - 1 > 0 ? rank_ - 1 : npes_ - 1 );
-	bool dummy_signal(true);
+	char dummy_signal('B');
 	MPI_Status status;
-	MPI_Recv( &dummy_signal, 1, MPI_C_BOOL, prev_proc, JOB_GO_TAG, MPI_COMM_WORLD, &status);
+	MPI_Recv( &dummy_signal, 1, MPI_CHAR, prev_proc, JOB_GO_TAG, MPI_COMM_WORLD, &status);
 #endif
 	return;
 }
@@ -621,8 +621,8 @@ void MPIWorkPoolJobDistributor::wait_for_go_signal() const {
 void MPIWorkPoolJobDistributor::send_go_signal() {
 #ifdef USEMPI
 	core::Size const next_proc ( rank_ + 1 >= npes_ ? 1 : rank_ + 1 );
-	bool dummy_signal(true);
-	MPI_Send( &dummy_signal, 1, MPI_C_BOOL, next_proc, JOB_GO_TAG, MPI_COMM_WORLD);
+	char dummy_signal('C');
+	MPI_Send( &dummy_signal, 1, MPI_CHAR, next_proc, JOB_GO_TAG, MPI_COMM_WORLD);
 	set_starter_for_sequential_distribution(false);
 #endif
 	return;
