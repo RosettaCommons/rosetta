@@ -67,7 +67,8 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 		utility::vector1< utility::vector1< Size > > equiv_pos;
 		//all positions are equivalent to themselves
 		for (Size ii = 1; ii<= nres ; ++ii){
-				utility::vector1< Size> list;
+				utility::vector1<Size> list;
+				list.push_back(ii);
 				equiv_pos.push_back(list);
 		}
 		//add the groups in. Each group contains multiple sets of residues.
