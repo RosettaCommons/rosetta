@@ -1,0 +1,5 @@
+# The series of numbers below indicates the penalty for having 1, 2, 3, etc. of the same residue in a row.
+# Zero residues (empty poses) are not penalized.  More than the number of residues listed results in the 
+# last penalty being imposed.  (For example, in this file, a repeat stretch of more than five residues will
+# be given a penalty of 100).
+0.0 0.0 1.0 10.0 100.0

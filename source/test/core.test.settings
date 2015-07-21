@@ -269,6 +269,7 @@ sources = {
 		"polynomial",
 	],
 	"scoring/methods" : [
+		"AARepeatEnergy",
 		"CartesianBondedEnergy",
 		"CartesianBondedEnergyBBDep",
 		"ChainbreakEnergy",

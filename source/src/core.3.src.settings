@@ -470,6 +470,7 @@ sources = {
 		"FaMPEnvSmoothEnergy",
 	],
 	"core/scoring/methods": [
+		"AARepeatEnergy",
 		"BurialEnergy",
 		"CartesianBondedEnergy",
 		"CenHBEnergy",

@@ -39,6 +39,7 @@
 #include <core/scoring/etable/EtableEnergyCreator.hh>
 
 #include <core/scoring/hbonds/HBondEnergyCreator.hh>
+#include <core/scoring/methods/AARepeatEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodRegistrator.hh>
 #include <core/scoring/methods/CenPairEnergyCreator.hh>
 #include <core/scoring/methods/ChainbreakEnergyCreator.hh>
@@ -352,6 +353,7 @@ static EnergyMethodRegistrator< scoring::disulfides::FullatomDisulfideEnergyCrea
 static EnergyMethodRegistrator< scoring::etable::EtableEnergyCreator > EtableEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::etable::EtableClassicIntraEnergyCreator > EtableClassicIntraEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::AARepeatEnergyCreator > AARepeatEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ContactOrderEnergyCreator > ContactOrderEnergyCreator_registrator;
