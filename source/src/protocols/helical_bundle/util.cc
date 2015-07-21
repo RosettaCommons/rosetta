@@ -356,7 +356,7 @@ namespace helical_bundle {
 				residue_in_repeating_unit=repeating_unit_offset+1;
 				curatom_in_repeating_unit=0;
 			}
-			if(residue_in_repeating_unit > residues_per_repeat) {
+			if(residue_in_repeating_unit > residues_per_repeat || ir2 == helix_start ) {
 				residue_in_repeating_unit=1; //Reset if we're on to the next repeating unit.
 				curatom_in_repeating_unit=0;
 			}
@@ -364,7 +364,7 @@ namespace helical_bundle {
 			utility::vector1 < numeric::xyzVector <core::Real> > innervector;
 			for(core::Size ia=1, iamax=helixpose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) { //Loop through all mainchain atoms in the current helix residue
 				runtime_assert_string_msg(
-					iamax = atoms_per_residue[ residue_in_repeating_unit ],
+					iamax == atoms_per_residue[ residue_in_repeating_unit ],
 					"Error in protocols::helical_bundle::generate_atom_positions():  The number of atoms per residue for one or more residues does not match the expected number given the Crick parameters file."
 				);
 
