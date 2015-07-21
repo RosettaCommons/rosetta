@@ -208,7 +208,9 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 				res_count++;
 				core::Size output_resi = res_count;
 				if ( !basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ]() ) {
-					output_resi = pose.pdb_info()->number( res_count );
+				  if ( pose.pdb_info() ) {
+						output_resi = pose.pdb_info()->number( res_count );
+				  }
 				}
 				TR.Debug << iaa << " res_count = " << res_count << " sasa = " << final_sasas[iaa] << std::endl;
 				if (final_sasas[ iaa ] <= core_asa_) {
