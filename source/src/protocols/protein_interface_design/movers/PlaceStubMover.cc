@@ -100,6 +100,28 @@ namespace movers {
 using namespace protocols::moves;
 using namespace core;
 
+CoordinateConstraintStack::CoordinateConstraintStack() {}
+
+CoordinateConstraintStack::CoordinateConstraintStack(
+	utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts,
+	CoordinateConstraintStackOP parent
+) :
+	coord_csts_( coord_csts ),
+	parent_( parent )
+{}
+
+CoordinateConstraintStack::~CoordinateConstraintStack() {}
+
+utility::vector1< core::scoring::constraints::ConstraintCOP > const &
+CoordinateConstraintStack::coord_csts() const
+{ return coord_csts_; }
+
+void
+CoordinateConstraintStack::coord_csts( utility::vector1< core::scoring::constraints::ConstraintCOP > const & setting )
+{ coord_csts_ = setting; }
+
+CoordinateConstraintStackOP CoordinateConstraintStack::parent() const { return parent_; }
+
 std::string
 PlaceStubMoverCreator::keyname() const
 {
@@ -125,7 +147,7 @@ PlaceStubMover::PlaceStubMover() :
 	add_constraints_( false ),
 	after_placement_filter_( /* NULL */ ),
 	final_filter_( /* NULL */ ),
-	coord_cst_func_( /* NULL */ ),
+	//coord_cst_func_( /* NULL */ ),
 	default_fold_tree_( /* NULL */ ),
 	leave_coord_csts_after_placement_( false ),
 	place_scaffold_( false ),
@@ -142,7 +164,7 @@ PlaceStubMover::PlaceStubMover() :
 	design_movers_.clear();
 	placed_stubs_.clear();
 	curr_coordinate_constraints_.clear();
-	previous_coordinate_constraints_.clear();
+	//previous_coordinate_constraints_.clear();
 	saved_bb_constraints_.clear();
 	saved_placed_stubs_.clear();
 }
@@ -182,15 +204,15 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 	runtime_assert( res_num <= pose.total_residue() );
 	core::Size const chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 	core::Size const chain_end  ( pose.conformation().chain_end  ( host_chain_ ) );
-/// Using a default fold tree, rather than the existing atom tree, b/c the atom
-/// tree might assume the existence of sidechain atoms that will no longer be available
-/// after the residue replacement.
+	// Using a default fold tree, rather than the existing atom tree, b/c the atom
+	// tree might assume the existence of sidechain atoms that will no longer be available
+	// after the residue replacement.
 	pose.fold_tree( *default_fold_tree_ );
 	std::pair< core::Size, bool > const res_cst( std::make_pair( res_num, add_constraints_ ) );
 	placed_stubs_.push_back( res_cst );
 	pose.replace_residue( res_num, res_stub, true );
 	using namespace core::chemical;
-//removing variant types can only be done if the residue would still be connected to the chain
+	//removing variant types can only be done if the residue would still be connected to the chain
 	if( res_num < chain_end )
 		core::pose::remove_upper_terminus_type_from_pose_residue( pose, res_num );
 	if( res_num > chain_begin )
@@ -198,7 +220,7 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 	pose.conformation().update_polymeric_connection( res_num , true); // o/w residues connections mess up
 	if( res_num > chain_begin )
 		pose.conformation().update_polymeric_connection( res_num - 1 , true);
-/// return to stub_based atom tree
+	// return to stub_based atom tree
 	if( place_scaffold_ ){
 	// currently only supports host being on chain2
 	// we append the stub residue to the target by jump and then impose that jump
@@ -516,13 +538,40 @@ PlaceStubMover::SelectStubIteratively( protocols::hotspot_hashing::HotspotStubSe
 /// the HarmonicFunc's sdev to a new value
 /// Nov09 Changing of previous logic. Now, only changing the sdev associated with the
 /// coordinate constraints.
+/// Jul15 NO! Constraints need to be constant after they are added to a Pose.
 void
-PlaceStubMover::refresh_coordinate_constraints( core::pose::Pose &, core::Real const sdev )
+PlaceStubMover::refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const cst_sdev )
 {
-//	remove_coordinate_constraints_from_pose( pose );
-	coord_cst_func_->sd( sdev );
-//	previous_coordinate_constraints_ = pose.add_constraints( previous_coordinate_constraints_ );
-//	curr_coordinate_constraints_ = pose.add_constraints( curr_coordinate_constraints_ );
+	TR_debug << "Refreshing coordinate constraints with new cst_sdev of " << cst_sdev << std::endl;
+	pose.remove_constraints( curr_coordinate_constraints_ );
+	core::scoring::func::HarmonicFuncOP new_harmonic_func( new core::scoring::func::HarmonicFunc( 0, cst_sdev ) );
+	refresh_coordinate_constraints( pose, curr_coordinate_constraints_, new_harmonic_func );
+	refresh_coordinate_constraints( pose, coor_constraint_stack_, new_harmonic_func );
+	refresh_coordinate_constraints( pose, residual_coordinate_constraints_, new_harmonic_func );
+}
+
+void
+PlaceStubMover::refresh_coordinate_constraints( core::pose::Pose & pose, CoordinateConstraintStackOP csts, core::scoring::func::FuncOP newfunc )
+{
+	if ( ! csts ) return;
+	utility::vector1< core::scoring::constraints::ConstraintCOP > cst_vect( csts->coord_csts() );
+	refresh_coordinate_constraints( pose, cst_vect, newfunc );
+	csts->coord_csts( cst_vect );
+	refresh_coordinate_constraints( pose, csts->parent(), newfunc );
+}
+
+void
+PlaceStubMover::refresh_coordinate_constraints(
+	core::pose::Pose & pose,
+	utility::vector1< core::scoring::constraints::ConstraintCOP > & cst_vector,
+	core::scoring::func::FuncOP newfunc
+)
+{
+	pose.remove_constraints( cst_vector );
+	for ( core::Size ii = 1; ii <= cst_vector.size(); ++ii ) {
+		cst_vector[ ii ] = cst_vector[ ii ]->clone( newfunc );
+	}
+	cst_vector = pose.add_constraints( cst_vector );
 }
 
 /// @details Placing a stub in the context of a complex by putting a stub on top of
@@ -792,6 +841,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						it->first->prevent_repacking( prevent_repacking() );
 						it->first->optimize_foldtree( false );
 						if( it->first->get_name() == "PlaceStub" ){ //special treatment to place stub movers
+							TR_debug << "Descending into submover" << std::endl;
 							// We want the child place stub movers to contain all the information
 							// obtained up to now, including, which residues harbour stubs, where
 							// repacking is disallowed, the ft and what were the native sidechains. In some
@@ -806,9 +856,18 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 							modified_place_stub->prevent_repacking( new_prev_repack );
 							modified_place_stub->default_fold_tree_ = default_fold_tree_;
-							modified_place_stub->previous_coordinate_constraints_ = curr_coordinate_constraints_;
-							modified_place_stub->coord_cst_func_ = coord_cst_func_;
+							//modified_place_stub->previous_coordinate_constraints_ = curr_coordinate_constraints_;
+							//modified_place_stub->coord_cst_func_ = coord_cst_func_;
+
+							CoordinateConstraintStackOP stack( new CoordinateConstraintStack( curr_coordinate_constraints_, coor_constraint_stack_ ) );
+							modified_place_stub->coor_constraint_stack_ = stack;
+							if ( ! residual_coordinate_constraints_ ) {
+								residual_coordinate_constraints_ = CoordinateConstraintStackOP( new CoordinateConstraintStack );
+							}
+							modified_place_stub->residual_coordinate_constraints_ = residual_coordinate_constraints_;
+
 							modified_place_stub->apply( pose );
+							curr_coordinate_constraints_ = stack->coord_csts(); // the daughter PSM has possibly changed the mother's coordinate csts.
 							if( modified_place_stub->get_last_move_status() == protocols::moves::FAIL_RETRY ){
 								stats_TR<<"Subsequent stub placement failed. Trying another stub placement"<<std::endl;
 								subsequent_stub_placement_failure = true;
@@ -936,9 +995,19 @@ PlaceStubMover::final_cleanup( core::pose::Pose & pose )
 		runtime_assert( post_placement_sdev_ >= 0.0 );
 		TR<<"Cleaning up after successful stubplacement, but NOT removing coordinate constraints\n";
 		refresh_coordinate_constraints( pose, post_placement_sdev_ );
-	}
-	else
+
+		// add these constraints to the list of "residual" constraints so that the parent
+		// and grand parent etc can go and update their strenghts.
+		if ( residual_coordinate_constraints_ ) {
+			utility::vector1< core::scoring::constraints::ConstraintCOP > csts_to_keep =
+				residual_coordinate_constraints_->coord_csts();
+			csts_to_keep.insert( csts_to_keep.end(), curr_coordinate_constraints_.begin(),
+				curr_coordinate_constraints_.end() );
+			residual_coordinate_constraints_->coord_csts( csts_to_keep );
+		}
+	}	else {
 		cst_cleanup( pose );
+	}
 	if( !saved_bb_constraints_.empty() ){
 		core::Size const bb_constraints_size( saved_bb_constraints_.size() );
 		if( bb_constraints_size > 0 ){
@@ -951,7 +1020,7 @@ PlaceStubMover::final_cleanup( core::pose::Pose & pose )
 	placed_stubs_.clear();
 	prevent_repacking_.clear();
 	restrict_to_repacking_.clear();
-	previous_coordinate_constraints_.clear();
+	//previous_coordinate_constraints_.clear();
 	curr_coordinate_constraints_.clear();
 // commenting out fold tree reseting b/c downstream movers would want to use it
 //	pose.fold_tree( *default_fold_tree_ );//this is important for allowing further centroid-based moves/filters on the pose
@@ -967,7 +1036,7 @@ PlaceStubMover::final_cleanup( core::pose::Pose & pose )
 /// Alternatively, if the current stub is to be added via a constraint, then a coordinate
 /// constraint is set up for this stub
 void
-PlaceStubMover::stub_based_atom_tree( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Real const cst_sdev )
+PlaceStubMover::stub_based_atom_tree( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Real const cst_sdev )
 {
 //	protocols::loops::remove_cutpoint_variants( pose, true/*force*/ );
 //	core::Size const before_removing_coord_cst( pose.constraint_set()->get_all_constraints().size() );
@@ -975,16 +1044,27 @@ PlaceStubMover::stub_based_atom_tree( core::pose::Pose & pose, core::conformatio
 //	core::Size const after_removing_coord_cst( pose.constraint_set()->get_all_constraints().size() );
 //	TR_debug<<"before removing coordinate cst "<<before_removing_coord_cst<<" constraints. after "<<after_removing_coord_cst<<std::endl;
 
-/// Add constraints pertaining to the last placed stub
-	core::Size const curr_stub_resnum( placed_stubs_[ placed_stubs_.size() ].first );
+	// Add constraints pertaining to the last placed stub
 	bool const add_constraints( placed_stubs_[ placed_stubs_.size() ].second );
-	if( add_constraints )
-		curr_coordinate_constraints_ = add_coordinate_constraints( pose, res_stub, host_chain_, curr_stub_resnum, cst_sdev, coord_cst_func_ );
-/// Set atom tree according to the first placed stub.
+	if( add_constraints ) {
+		add_coordinate_constraints_for_res_stub( pose, res_stub, cst_sdev );
+	}
+
+	// Set atom tree according to the first placed stub.
 	protocols::protein_interface_design::movers::SetAtomTree sat;
 	core::Size const host_residue_num( placed_stubs_.begin()->first );
 	pose.fold_tree( *sat.create_atom_tree( pose, host_chain_, host_residue_num ) );
 	TR<<"Stub based atom tree: "<<pose.fold_tree()<<std::endl;
+}
+
+/// @brief add new coordinate constraints to the Pose based on the conformation of res_stub
+void
+PlaceStubMover::add_coordinate_constraints_for_res_stub( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Real const cst_sdev )
+{
+	TR_debug << "Adding coordinate constraints for res stub; cst_sdev = " << cst_sdev << std::endl;
+	core::Size const curr_stub_resnum( placed_stubs_[ placed_stubs_.size() ].first );
+	core::scoring::func::HarmonicFuncOP harmonic_func( new core::scoring::func::HarmonicFunc( 0, cst_sdev ) );
+	curr_coordinate_constraints_ = add_coordinate_constraints( pose, res_stub, host_chain_, curr_stub_resnum, cst_sdev, harmonic_func );
 }
 
 void

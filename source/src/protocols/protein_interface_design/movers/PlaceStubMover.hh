@@ -23,6 +23,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 // C++ headers
@@ -40,6 +41,29 @@
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
+
+class CoordinateConstraintStack;
+typedef utility::pointer::shared_ptr< CoordinateConstraintStack > CoordinateConstraintStackOP;
+
+class CoordinateConstraintStack : public utility::pointer::ReferenceCount {
+public:
+	CoordinateConstraintStack();
+	CoordinateConstraintStack(
+		utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts_,
+		CoordinateConstraintStackOP parent );
+	~CoordinateConstraintStack();
+
+	utility::vector1< core::scoring::constraints::ConstraintCOP > const & coord_csts() const;
+	void coord_csts( utility::vector1< core::scoring::constraints::ConstraintCOP > const & setting );
+
+	CoordinateConstraintStackOP parent() const;
+
+private:
+
+	utility::vector1< core::scoring::constraints::ConstraintCOP > coord_csts_;
+	CoordinateConstraintStackOP parent_;
+};
+
 
 /// @brief choose a stub based on mc sampling, and place it on the pose.
 /// Iterates over stubs until one matches criteria.
@@ -90,7 +114,10 @@ private: // member functions
 	void
 	place_stub( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Size const res_num );
 
-	void stub_based_atom_tree( core::pose::Pose & pose, core::conformation::Residue const res_stub, core::Real const cst_sdev );
+	void stub_based_atom_tree( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Real const cst_sdev );
+
+	void
+	add_coordinate_constraints_for_res_stub( core::pose::Pose & pose, core::conformation::Residue const & res_stub, core::Real const cst_sdev );
 
 	bool SelectStubIteratively( protocols::hotspot_hashing::HotspotStubSet::Hs_vec::const_iterator stub_it );
 
@@ -98,13 +125,26 @@ private: // member functions
 		protocols::hotspot_hashing::HotspotStubCOP = NULL,
 		core::Size const host_res = 0,
 		bool const hurry = false );
+
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const sdev );
+
+	/// @brief recursively remove the constraints in csts from the input pose, and then reclone them as new constraints with
+	/// a new func object.
+	void refresh_coordinate_constraints( core::pose::Pose & pose, CoordinateConstraintStackOP csts, core::scoring::func::FuncOP newfunc );
+
+	void
+	refresh_coordinate_constraints(
+		core::pose::Pose & pose,
+		utility::vector1< core::scoring::constraints::ConstraintCOP > & cst_vector,
+		core::scoring::func::FuncOP newfunc
+	);
 
 	/// @brief resets pose's constraints upon stub failure
 	/// remove constraints if they exist. To be used on failure
 	void cst_cleanup( core::pose::Pose & pose );
 	/// clean everything before exiting
 	void final_cleanup( core::pose::Pose & pose );
+
 
 private: // data members
 	/// maximum bonus_value for accepting a stub
@@ -130,7 +170,7 @@ private: // data members
 	protocols::filters::FilterOP after_placement_filter_;
 	/// a filter at the last stage of placement. Defaults to TrueFilter
 	protocols::filters::FilterOP final_filter_;
-	core::scoring::func::HarmonicFuncOP coord_cst_func_;
+	// core::scoring::func::HarmonicFuncOP coord_cst_func_;
 	/// where stubs were placed and whether they use constraints. vector is
 	/// necessary to maintain the order of the placed stubs
 	utility::vector1< std::pair< core::Size, bool > > placed_stubs_;
@@ -141,10 +181,17 @@ private: // data members
 	/// saves the coordinate constraints that this mover has associated with the
 	/// pose. At the end of the run, they should be removed
 	core::scoring::constraints::ConstraintCOPs curr_coordinate_constraints_;
+	CoordinateConstraintStackOP coor_constraint_stack_;
+	/// @brief store for the sake of updating the coordinate constraints of all the
+	/// descendant PlaceStubMovers that successfully placed their Stubs and left
+	/// their coordinate constraints in place; this object will not be a stack,
+	/// but merely a vector of ConstraintOPs that are shared between mother
+	/// and daughter PlaceStubMovers.
+	CoordinateConstraintStackOP residual_coordinate_constraints_;
+
 	bool leave_coord_csts_after_placement_;//defaults to false
 	core::Real post_placement_sdev_;//If coord_csts are left on, what should the sdev be? defaults to 1.0
 
-	core::scoring::constraints::ConstraintCOPs previous_coordinate_constraints_;
 	core::scoring::constraints::ConstraintCOPs saved_bb_constraints_;
 	utility::vector1< core::Size > saved_prevent_repacking_;
 	utility::vector1< std::pair< core::Size, bool > > saved_placed_stubs_;
