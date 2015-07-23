@@ -27,9 +27,11 @@
 #include <core/sequence/ABEGOManager.hh>
 
 // Basic Headers
+#include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
+#include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 
 // ObjexxFCL Headers
@@ -67,8 +69,12 @@ PreProlineFilterCreator::filter_name()
 PreProlineFilter::PreProlineFilter() :
 	Filter( "PreProlineFilter" ),
 	threshold_( 0.0 ),
-	selector_()
-{}
+	use_statistical_potential_( false ),
+	selector_(),
+	spline_()
+{
+	setup_spline();
+}
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
@@ -98,6 +104,10 @@ PreProlineFilter::parse_my_tag(
 	core::pose::Pose const & )
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
+
+	if ( tag->hasOption( "use_statistical_potential" ) )
+		use_statistical_potential_ = tag->getOption< bool >( "use_statistical_potential" );
+
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 }
 
@@ -134,8 +144,45 @@ PreProlineFilter::compute( core::pose::Pose const & pose ) const
 		selection = selector_->apply( pose );
 	}
 
-	// as a simple first trial, only "B" torsion spaces should be allowed
-	// TODO: Use statistical potentials to evaluate specific phi/psi combinations
+	if ( use_statistical_potential_ ) {
+		return compute_spline( pose, selection );
+	} else {
+		return compute_simple( pose, selection );
+	}
+}
+
+core::Real
+PreProlineFilter::compute_spline(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & selection ) const
+{
+	core::Size pro_count = 0;
+	core::Real potential_sum = 0.0;
+	for ( core::Size i = 1; i < pose.total_residue(); ++i ) {
+		if ( ! selection[ i + 1 ] )
+			continue;
+
+		if ( core::pose::is_upper_terminus( pose, i ) )
+			continue;
+
+		if ( pose.residue( i + 1 ).name1() != 'P' )
+			continue;
+
+		++pro_count;
+		core::Real const splinescore = spline_.F( pose.phi( i ), pose.psi( i ) );
+		TR << "Phi = " << pose.phi( i ) << " Psi = " << pose.psi( i )
+			<< " spline score = " << splinescore << std::endl;
+		potential_sum += splinescore;
+	}
+	return potential_sum;
+}
+
+core::Real
+PreProlineFilter::compute_simple(
+		core::pose::Pose const & pose,
+		utility::vector1< bool > const & selection ) const
+{
+	// as a simple first trial, only "B" and "E" torsion spaces should be allowed
 	core::Size bad_count = core::Size( 0.0 );
 	core::Size pro_count = core::Size( 0 );
 	std::string const & sequence = pose.sequence();
@@ -155,7 +202,7 @@ PreProlineFilter::compute( core::pose::Pose const & pose ) const
 		if ( *s == 'P' ) {
 			++pro_count;
 			TR.Debug << "Res " << resi << " " << pose.residue( resi ).name() << " " << pose.residue( resi + 1 ).name() << " " << *a << std::endl;
-			if ( *a != 'B' ) {
+			if ( ( *a != 'B' ) && ( *a != 'E' ) ) {
 				++bad_count;
 			}
 		}
@@ -176,6 +223,86 @@ PreProlineFilter::apply( core::pose::Pose const & pose ) const
 	}
 }
 
+numeric::MathMatrix< core::Real >
+parse_matrix(
+		std::istream & instream,
+		core::Size const npoints_x,
+		core::Size const npoints_y )
+{
+	numeric::MathMatrix< core::Real > matrix( npoints_y, npoints_x, core::Real( 0.0 ) );
+	for ( core::Size i = 1; i <= npoints_y; ++i ) {
+		if ( !instream.good() ) {
+			std::stringstream err;
+			err << "Error parsing matrix stream before y =" << i << std::endl;
+			throw utility::excn::EXCN_Msg_Exception( err.str() );
+		}
+		for ( core::Size ii = 1; ii <= npoints_x; ++ii ) {
+			// matrix is 0-indexed
+			instream >> matrix[ matrix.get_number_rows() - i  ][ ii - 1 ];
+		}
+	}
+	if ( !instream.good() ) {
+		std::stringstream err;
+		err << "Error parsing matrix stream in preproline filter!" << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
+	return matrix;
+}
+
+void
+PreProlineFilter::setup_spline()
+{
+	// read in training data if necessary
+	static std::string const dbfile = "protocol_data/denovo_design/preproline_normalized.gz";
+	utility::io::izstream infile( dbfile );
+	if ( ! basic::database::open( infile, dbfile ) ) {
+		std::stringstream err;
+		err << "Pre-proline filter could not open database file " << dbfile << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
+
+	core::Size npoints_phi, npoints_psi;
+	infile >> npoints_phi >> npoints_psi;
+
+	numeric::MathMatrix< core::Real > const data = parse_matrix( infile, npoints_phi, npoints_psi );
+
+	// line after v matrix is start values for each dimension
+	core::Real const start[2] = {
+		core::Real( -180.0 ),
+		core::Real( -180.0 )
+	};
+
+	// third line is delta values for each dimension
+	core::Real const delta[2] = {
+		core::Real( 360.0 ) / core::Real( npoints_phi ),
+		core::Real( 360.0 ) / core::Real( npoints_psi )
+	};
+
+	TR << "X start: " << start[0] << " delta: " << delta[0] << std::endl;
+	TR << "Y start: " << start[1] << " delta: " << delta[1] << std::endl;
+
+	numeric::interpolation::spline::BorderFlag boundary[2] = {
+		numeric::interpolation::spline::e_FirstDer,
+		numeric::interpolation::spline::e_FirstDer
+	};
+
+	std::pair< core::Real, core::Real > firstbe[2] = {
+		std::make_pair( 0.0, 0.0 ),
+		std::make_pair( 0.0, 0.0 )
+	};
+
+	bool lincont[2] = { true, true };
+
+	spline_.train( boundary, start, delta, data, lincont, firstbe );
+
+	TR << "Spline for preproline residues has been trained from " << dbfile << "." << std::endl;
+}
+
+void
+PreProlineFilter::set_use_statistical_potential( bool const use_stat )
+{
+	use_statistical_potential_ = use_stat;
+}
 
 } // namespace filters
 } // namespace denovo_design

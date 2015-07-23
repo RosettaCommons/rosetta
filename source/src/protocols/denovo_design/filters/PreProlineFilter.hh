@@ -25,6 +25,9 @@
 // Core headers
 #include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 
+// Numeric headers
+#include <numeric/interpolation/spline/Bicubic_spline.hh>
+
 // C++ headers
 
 namespace protocols {
@@ -61,14 +64,29 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual bool apply( core::pose::Pose const & pose ) const;
 
+	void set_use_statistical_potential( bool const use_stat );
 	void set_selector( core::pack::task::residue_selector::ResidueSelectorCOP selector );
+
+	void setup_spline();
+
+	core::Real compute_simple(
+			core::pose::Pose const & pose,
+			utility::vector1< bool > const & selection ) const;
+
+	core::Real compute_spline(
+			core::pose::Pose const & pose,
+			utility::vector1< bool > const & selection ) const;
+
 private:   // options
 	/// @brief If total calculated filter score is <= theshold_, the filter passes, otherwise it fails.
 	core::Real threshold_;
+	/// @brief If set, spline based on statistical potential will be used,
+	/// otherwise only preproline residues not in beta conformation will be counted (default = True)
+	bool use_statistical_potential_;
 
 private:   // other data
 	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
-
+	numeric::interpolation::spline::BicubicSpline spline_;
 };
 
 

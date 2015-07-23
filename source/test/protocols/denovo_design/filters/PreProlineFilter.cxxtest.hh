@@ -69,6 +69,8 @@ public:
 		input_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( input_pose ) ) );
 
 		PreProlineFilter prepro;
+		prepro.set_use_statistical_potential( false );
+
 		core::Real const bad_residues = prepro.compute( input_pose );
 		// should be one violation -- a CIS-peptide between SER and PRO
 		TS_ASSERT_DELTA( bad_residues, 1.0, 1e-3 );
@@ -98,5 +100,28 @@ public:
 		core::Real const sel_bad = prepro.compute( input_pose );
 		// should be one bad residue again
 		TS_ASSERT_DELTA( sel_bad, 1.0, 1e-3 );
+	}
+
+	void test_spline() {
+		using namespace protocols::denovo_design;
+		using namespace protocols::denovo_design::filters;
+
+		core::pose::Pose input_pose;
+		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/optimize_weights/1UAD.wt_complex.pdb" );
+		// obliterate pdb info so that residues are numbered sanely
+		input_pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( input_pose ) ) );
+
+		PreProlineFilter prepro;
+		prepro.set_use_statistical_potential( true );
+		core::Real const prepro_score = prepro.compute( input_pose );
+		// score should be somewhere around 0
+		TS_ASSERT_DELTA( prepro_score, -3.0, 1.0 );
+
+		// mutate residue 91 to a pro, and we should get bad score
+		protocols::simple_moves::MutateResidue mut2( 91, "PRO" );
+		mut2.apply( input_pose );
+		core::Real const prohelix_bad = prepro.compute( input_pose );
+		TR << "before = " << prepro_score << " now score is " << prohelix_bad << std::endl;
+		TS_ASSERT_DELTA( prohelix_bad, 1.0, 1.0 );
 	}
 };
