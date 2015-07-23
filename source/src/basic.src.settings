@@ -14,6 +14,7 @@ sources = {
 		"basic",
 		"ComparingTracer",
 		"Emitter",
+		"execute",
 		"interpolate",
 		'init',
 		"MemTracer",

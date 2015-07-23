@@ -38,20 +38,18 @@ int
 main( int argc, char * argv [] )
 {
 	try {
-
 		using namespace basic::options;
 		using namespace protocols::antibody;
 		using namespace protocols::jd2;
 
 		GraftCDRLoopsProtocol::register_options();
 		protocols::jd2::register_options();
-		// initialize core
+
 		devel::init(argc, argv);
 
-
 		GraftCDRLoopsProtocolOP abm( new GraftCDRLoopsProtocol() );
-    TR<<*abm<<std::endl;
-		//    exit(-1);
+
+		TR<< *abm << std::endl;  // exit(-1);
 
 		JobDistributor::get_instance()->go(abm);
 
@@ -60,5 +58,3 @@ main( int argc, char * argv [] )
 		return -1;
 	}
 }
-
-
