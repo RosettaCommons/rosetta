@@ -1578,6 +1578,13 @@ public:
 		return properties_->has_property( property );
 	}
 
+	/// @brief  Generic property access, by ResidueProperty.
+	///
+	inline bool
+	has_property( ResidueProperty const property ) const
+	{
+		return properties_->has_property( property );
+	}
 
 	/// @brief Get a numeric property, if it exists.
 	core::Real get_numeric_property(std::string const & tag) const;

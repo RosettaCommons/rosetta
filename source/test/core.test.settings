@@ -269,6 +269,7 @@ sources = {
 		"polynomial",
 	],
 	"scoring/methods" : [
+		"AACompositionEnergy",
 		"AARepeatEnergy",
 		"CartesianBondedEnergy",
 		"CartesianBondedEnergyBBDep",
@@ -620,6 +621,7 @@ testinputfiles = [
 	"scoring/membrane/4O79_A.pdb",
 	"scoring/membrane/4O79_A.span",
 	"scoring/membrane/4O79_A.embed",
+	"scoring/methods/exactly_three_transACPC.comp",
 	"scoring/methods/MMBondAngleEnergyTests.u",
 	"scoring/methods/score3_in.silent_out",
 	"scoring/methods/test_in.pdb",

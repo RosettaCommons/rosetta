@@ -553,6 +553,7 @@ enum ScoreType {
 	
 	ring_close, //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	aa_repeat_energy, //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
+	aa_composition, //A wholebody score term for penalizing deviation from a desired amino acid composition.
 
 	#ifdef PYROSETTA
 		PyRosettaEnergy_first,

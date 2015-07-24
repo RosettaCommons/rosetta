@@ -1,0 +1,12 @@
+# This is a .comp file for requiring that a structure have one and only one tryptophan residue. 
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+# This penalty definition block specifies that, for tryptophan, there will be a 100-point penalty for
+# having ANY fewer or ANY more than the desired number of tryptophan residues.
+PENALTY_DEFINITION
+TYPE TRP
+DELTA_START -1
+DELTA_END 1
+PENALTIES 100 0 100
+ABSOLUTE 1
+END_PENALTY_DEFINITION

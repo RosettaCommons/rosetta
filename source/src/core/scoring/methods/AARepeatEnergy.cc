@@ -90,7 +90,7 @@ AARepeatEnergy::~AARepeatEnergy() {}
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
 EnergyMethodOP AARepeatEnergy::clone() const {
-	return EnergyMethodOP( new AARepeatEnergy );
+	return EnergyMethodOP( new AARepeatEnergy(*this) );
 }
 
 /// @brief AARepeatEnergy is context-independent and thus indicates that no context graphs need to be maintained by

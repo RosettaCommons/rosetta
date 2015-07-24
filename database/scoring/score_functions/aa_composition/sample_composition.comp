@@ -1,0 +1,64 @@
+# This is a .comp file, which defines the behaviour of the aa_composition energy term.
+# This file is a sample .comp file demonstrating all of the features of .comp files.  It is not intended for
+# actual production runs.
+# File created 21 July 2015 by Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory.
+
+# Penalty definition blocks define what the energetic penalty is for having N residues too few,
+# N+1 residues too few, N+2 residues too few... the right number of residues, the right number+1,
+# ... M-1 residues too many, M residues too many.
+PENALTY_DEFINITION
+# The TYPE lines determine what residues this penalty definition applies to.
+TYPE ALA
+# DELTA_START determines the start of the score range.  In this case, we're providing scores up to
+# five residues fewer than the desired number.  If there are six, seven, etc. residues fewer, they
+# get the -5 value.
+DELTA_START -5
+# DELTA_END determines the end of the score range.  In this case, we're providing scores for up to
+# five residues more than the desired number.
+DELTA_END 5
+# PENALTIES lines determine the penalty values.  In this case, we must provide values for delta = -5,
+# -4, -3, -2, -1, 0, 1, 2, 3, 4, and 5, where delta is the difference between the actual and desired
+# number of residues.  (Negative means that we have too few, positive means we have too many).  Here,
+# we are specifying small penalties for too few alanines, and big penalties for too many.
+PENALTIES 2.0 1.0 0.5 0.25 0 2.0 5.0 20.0 30.0
+# FRACTION lines indicate that we ideally expect this residue type to be this fraction of the total
+# residues.  Here, we are saying that ideally, the pose should be 5% alanine.  Alternatively, we can
+# specify an absolute number with ABSOLUTE
+FRACTION 0.05
+# END_PENALTY_DEFINITION ends the penalty definition block.
+END_PENALTY_DEFINITION
+
+# This is a penalty definition block for glycine, indicating that we want 2% glycine, with no
+# penalty for fewer glycines and a big penalty for more.
+PENALTY_DEFINITION
+TYPE GLY
+DELTA_START 0
+DELTA_END 3
+PENALTIES 0 2.0 8.0 20.0
+FRACTION 0.02
+END_PENALTY_DEFINITION
+
+
+# This penalty definition block specifies that, for tryptophan, there will be a 50-point penalty for
+# having ANY fewer or ANY more than the desired number of tryptophan residues.
+PENALTY_DEFINITION
+TYPE TRP
+DELTA_START -1
+DELTA_END 1
+PENALTIES 50 0 50
+ABSOLUTE 1
+END_PENALTY_DEFINITION
+
+# Penalties can also be applied to residues with particular sets of properties, too.  ALL properties
+# defined in the PROPERTY line, and NONE of the properties defined in the NOT_PROPERTY line, must be
+# present for a residue to be counted.  Here we're saying that 8% of residues should be aromatic and
+# not polar and not charged.  One can EITHER specify a single residue type, by three-letter code, with
+# a TYPE line, or specify one or more properties with PROPERTY and NOT_PROPERTY, but not both.
+PENALTY_DEFINITION
+PROPERTY AROMATIC
+NOT_PROPERTY POLAR CHARGED
+DELTA_START -5
+DELTA_END 5
+PENALTIES 10 5 1 0.5 0.25 0 0.25 0.5 1 5 10
+FRACTION 0.08
+END_PENALTY_DEFINITION
