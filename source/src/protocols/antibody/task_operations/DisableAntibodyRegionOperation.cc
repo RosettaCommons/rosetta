@@ -76,7 +76,7 @@ DisableAntibodyRegionOperation::clone() const {
 }
 
 DisableAntibodyRegionOperation::DisableAntibodyRegionOperation(DisableAntibodyRegionOperation const & src):
-		//TaskOperation(src),
+		TaskOperation(src),
 		ab_info_(src.ab_info_),
 		region_(src.region_),
 		disable_packing_and_design_(src.disable_packing_and_design_),

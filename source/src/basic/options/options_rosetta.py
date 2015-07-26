@@ -1917,7 +1917,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
-		Option( 'beta', 'Boolean', desc='use beta score function', default='false'),
+		Option( 'beta_july15', 'Boolean', desc='use beta score function', default='false'),
+		Option( 'beta_july15_cart', 'Boolean', desc='use beta score function for nonideal optimization', default='false'),
 		Option( 'newdna', 'Boolean', desc='Apply some dna-specific mods to chemical/scoring (for testing)',
 						default='false'),
 		Option( 'correct', 'Boolean',
@@ -2655,8 +2656,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		),
 
 		# For transforming proteins between different membranes
-		Option_Group( "transform", 
-			Option( "keep_current_protein_embedding", 'Boolean', desc="Use the current membrane position as the starting embedding for transformation" ), 
+		Option_Group( "transform",
+			Option( "keep_current_protein_embedding", 'Boolean', desc="Use the current membrane position as the starting embedding for transformation" ),
 		),
 
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)

@@ -1,0 +1,22 @@
+METHOD_WEIGHTS ref 1.66209 3.70349 -2.00354 -2.38137 0.65595 0.81210 -0.42905 2.27849 -0.47142 1.68043 2.59866 -1.09912 -0.97642 -1.60738 -0.76238 0.23890 0.72083 2.28760 1.86226 0.41729
+fa_atr 1
+fa_rep 0.55
+fa_sol 1.0
+fa_intra_sol_xover4 1.0
+lk_ball_wtd 1.0
+fa_intra_rep 0.005
+fa_elec 1.0
+pro_close 1.25
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.25
+rama 0.25
+omega 0.625
+fa_dun 0.7
+p_aa_pp 0.4
+yhh_planarity 0.625
+ref 1
+INCLUDE_INTRA_RES_PROTEIN
+NO_HB_ENV_DEP

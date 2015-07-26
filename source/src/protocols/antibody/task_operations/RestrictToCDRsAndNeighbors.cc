@@ -89,7 +89,7 @@ RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(
 }
 
 RestrictToCDRsAndNeighbors::RestrictToCDRsAndNeighbors(RestrictToCDRsAndNeighbors const & src):
-	//TaskOperation(src),
+	TaskOperation(src),
 	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	neighbor_dis_(src.neighbor_dis_),

@@ -77,7 +77,7 @@ AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AntibodyInfoCOP ab_info, 
 }
 
 AddCDRProfileSetsOperation::AddCDRProfileSetsOperation(AddCDRProfileSetsOperation const & src):
-	//TaskOperation(src),
+	TaskOperation(src),
 	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	limit_only_to_length_(src.limit_only_to_length_),

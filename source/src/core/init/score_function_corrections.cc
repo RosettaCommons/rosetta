@@ -510,12 +510,6 @@ void
 init_crystal_refinement_correction() {
 	//fpd  crystal-refinement specific changes
 	if( option[cryst::crystal_refine]) {
-		// use -correct icoor
-		//fpd talaris now has these corrections
-		//if ( ! option[ corrections::chemical::icoor_05_2009 ].user() ) {
-		//	option[corrections::chemical::icoor_05_2009].value( true );
-		//}
-
 		// use -correct rama fixes
 		if ( ! option[ corrections::score::rama_not_squared ].user() ) {
 			option[corrections::score::rama_not_squared].value( true );
@@ -523,16 +517,6 @@ init_crystal_refinement_correction() {
 		if ( ! option[ corrections::score::rama_map ].user() ) {
 			option[ corrections::score::rama_map ].value("scoring/score_functions/rama/Rama09_noEH_kernel25_it08.dat");
 		}
-
-		// use dun10
-		//fpd talaris now has these corrections
-		//if ( ! option[ corrections::score::dun10 ].user() ) {
-		//	option[corrections::score::dun10].value( true );
-		//}
-		// use bicubic interpolation
-		//if ( ! option[ corrections::score::use_bicubic_interpolation ].user() ) {
-		//	option[corrections::score::use_bicubic_interpolation].value( true );
-		//}
 
 		// read pdbs properly
 		if ( ! option[ in::missing_density_to_jump ].user() ) {
@@ -558,43 +542,258 @@ init_crystal_refinement_correction() {
 
 void
 init_beta_correction() {
-	// beta score function - experimental energy function changes are accumulated here until made default
-	// please share issues/feedback with Patrick Conway - ptconway@gmail.com
-  if( option[corrections::beta]) {
-		//nonideal
-		if ( ! option[ optimization::nonideal ].user() ) {
-      option[ optimization::nonideal ].value( true );
-    }
-		//optimized cart_bonded parameters - currently same as default
-		if ( option[ optimization::nonideal ] ) {
-			option[ score::bonded_params_dir ].value( "scoring/score_functions/bondlength_bondangle_beta" );
+  if( option[corrections::beta_july15]() || option[corrections::beta_july15_cart]() ) {
+		// atom clone
+		if( ! option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back( "fa_standard:CH1:CH0" );
+			params.push_back( "fa_standard:CH1:CH0R" );
+			params.push_back( "fa_standard:Hpol:HS" );
+			params.push_back( "fa_standard:NH2O:NHOQ" );
+			params.push_back( "fa_standard:Ntrp:NtrH" );
+			params.push_back( "fa_standard:Ntrp:NtrR" );
+			params.push_back( "fa_standard:OH:OHT" );
+			params.push_back( "fa_standard:OH:OHY" );
+			params.push_back( "fa_standard:ONH2:ONHQ" );
+			params.push_back( "fa_standard:OOC:OOCE" );
+			params.push_back( "fa_standard:S:SH1" );
+			option[ basic::options::OptionKeys::chemical::clone_atom_types ].value(params);
+		} else {
+			TR.Warning << "Flag -beta_july15 is set but -clone_atom_types are also specified.  Not changing atom properties!" << std::endl;
 		}
-		/*	--coming soon--
-		//length dependent hbond_sr_bb to model helix cooperativity
-		if ( ! option[ corrections::nonideal ].user() ) {
-      option[ corrections::nonideal ].value( true );
-    }
-		//arovirt - aromatic cation-pi interaction modeling via virtual atoms
-		if ( ! option[ corrections::nonideal ].user() ) {
-      option[ corrections::nonideal ].value( true );
-    }
-		//dunbrack hbond exclusion - downweight rotamers that hbond with self/neighbor (don't double count hbond terms)
-		if ( ! option[ corrections::nonideal ].user() ) {
-      option[ corrections::nonideal ].value( true );
-    }
-		//upweight serine/threonine H-HG/H-HH intra_rep so they don't clash
-		if ( ! option[ corrections::nonideal ].user() ) {
-      option[ corrections::nonideal ].value( true );
-    }
-		*/
 
-		// talaris2013_beta.wts - currently same as talaris2013_cart.wts
-		// overrides weight files set in the other options - make sure all of these previous options are happy!
+		// atom reassign
+		if( ! option[ basic::options::OptionKeys::chemical::reassign_atom_types ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back( "fa_standard:ARG:CZ:CH0R" );
+			params.push_back( "fa_standard:ARG:NE:NtrR" );
+			params.push_back( "fa_standard:CYS:HG:HS" );
+			params.push_back( "fa_standard:CYS:SG:SH1" );
+			params.push_back( "fa_standard:GLN:NE2:NHOQ" );
+			params.push_back( "fa_standard:GLN:OE1:ONHQ" );
+			params.push_back( "fa_standard:GLU:OE1:OOCE" );
+			params.push_back( "fa_standard:GLU:OE2:OOCE" );
+			params.push_back( "fa_standard:HIS_D:ND1:NtrH" );
+			params.push_back( "fa_standard:HIS:CG:CH0" );
+			params.push_back( "fa_standard:HIS:NE2:NtrH" );
+			params.push_back( "fa_standard:MET:HG:HS" );
+			params.push_back( "fa_standard:PHE:CG:CH0" );
+			params.push_back( "fa_standard:THR:OG1:OHT" );
+			params.push_back( "fa_standard:TRP:CD2:CH0" );
+			params.push_back( "fa_standard:TRP:CE2:CH0" );
+			params.push_back( "fa_standard:TRP:CG:CH0" );
+			params.push_back( "fa_standard:TYR:CG:CH0" );
+			params.push_back( "fa_standard:TYR:CZ:CH0" );
+			params.push_back( "fa_standard:TYR:OH:OHY" );
+			option[ basic::options::OptionKeys::chemical::reassign_atom_types ].value(params);
+		} else {
+			TR.Warning << "Flag -beta_july15 is set but -reassign_atom_types are also specified.  Not changing atom properties!" << std::endl;
+		}
+
+		// atom properties
+		if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back( "fa_standard:aroC:LJ_RADIUS:1.99917604399492");
+			params.push_back( "fa_standard:aroC:LJ_WDEPTH:0.119406055088945");
+			params.push_back( "fa_standard:aroC:LK_DGFREE:1.33045639161877");
+			params.push_back( "fa_standard:aroC:LK_VOLUME:16.704");
+			params.push_back( "fa_standard:CAbb:LJ_RADIUS:2.02180593808171");
+			params.push_back( "fa_standard:CAbb:LJ_WDEPTH:0.055337476050435");
+			params.push_back( "fa_standard:CAbb:LK_DGFREE:1.67297469277228");
+			params.push_back( "fa_standard:CAbb:LK_VOLUME:12.137");
+			params.push_back( "fa_standard:CH0:LJ_RADIUS:2.02180593808171");
+			params.push_back( "fa_standard:CH0:LJ_WDEPTH:0.055337476050435");
+			params.push_back( "fa_standard:CH0:LK_DGFREE:0.278285165627887");
+			params.push_back( "fa_standard:CH0:LK_VOLUME:8.9980");
+			params.push_back( "fa_standard:CH0R:LJ_RADIUS:2.02180593808171");
+			params.push_back( "fa_standard:CH0R:LJ_WDEPTH:0.055337476050435");
+			params.push_back( "fa_standard:CH0R:LK_DGFREE:-0.00121092877425643");
+			params.push_back( "fa_standard:CH0R:LK_VOLUME:8.9980");
+			params.push_back( "fa_standard:CH1:LJ_RADIUS:2.02180593808171");
+			params.push_back( "fa_standard:CH1:LJ_WDEPTH:0.055337476050435");
+			params.push_back( "fa_standard:CH1:LK_DGFREE:-1.30308454629699");
+			params.push_back( "fa_standard:CH1:LK_VOLUME:10.686");
+			params.push_back( "fa_standard:CH2:LJ_RADIUS:2.07118221995967");
+			params.push_back( "fa_standard:CH2:LJ_WDEPTH:0.143813358773253");
+			params.push_back( "fa_standard:CH2:LK_DGFREE:-0.280286405370075");
+			params.push_back( "fa_standard:CH2:LK_VOLUME:18.331");
+			params.push_back( "fa_standard:CH3:LJ_RADIUS:2.02346742314654");
+			params.push_back( "fa_standard:CH3:LJ_WDEPTH:0.240860458620729");
+			params.push_back( "fa_standard:CH3:LK_DGFREE:6.11867159786138");
+			params.push_back( "fa_standard:CH3:LK_VOLUME:25.855");
+			params.push_back( "fa_standard:CNH2:LJ_RADIUS:2.01580593808171");
+			params.push_back( "fa_standard:CNH2:LJ_WDEPTH:0.0802014845204291");
+			params.push_back( "fa_standard:CNH2:LK_DGFREE:1.46174215885178");
+			params.push_back( "fa_standard:CNH2:LK_VOLUME:13.500");
+			params.push_back( "fa_standard:CObb:LJ_RADIUS:1.92513578221377");
+			params.push_back( "fa_standard:CObb:LJ_WDEPTH:0.117295282631773");
+			params.push_back( "fa_standard:CObb:LK_DGFREE:1.99927073996285");
+			params.push_back( "fa_standard:CObb:LK_VOLUME:13.221");
+			params.push_back( "fa_standard:COO:LJ_RADIUS:1.92513578221377");
+			params.push_back( "fa_standard:COO:LJ_WDEPTH:0.117295282631773");
+			params.push_back( "fa_standard:COO:LK_DGFREE:-3.34461092877425");
+			params.push_back( "fa_standard:COO:LK_VOLUME:14.653");
+			params.push_back( "fa_standard:Hapo:LJ_RADIUS:1.26522545740706");
+			params.push_back( "fa_standard:Hapo:LJ_WDEPTH:0.0404580528958375");
+			params.push_back( "fa_standard:Haro:LJ_RADIUS:1.26522545740706");
+			params.push_back( "fa_standard:Haro:LJ_WDEPTH:0.0404580528958375");
+			params.push_back( "fa_standard:HNbb:LJ_RADIUS:0.946805938081717");
+			params.push_back( "fa_standard:HNbb:LJ_WDEPTH:0.0199253639540697");
+			params.push_back( "fa_standard:Hpol:LJ_RADIUS:0.946805938081717");
+			params.push_back( "fa_standard:Hpol:LJ_WDEPTH:0.0199253639540697");
+			params.push_back( "fa_standard:HS:LJ_RADIUS:0.630805938081717");
+			params.push_back( "fa_standard:HS:LJ_WDEPTH:0.0492014845204291");
+			params.push_back( "fa_standard:Narg:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Narg:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Narg:LK_DGFREE:-6.50568602515778");
+			params.push_back( "fa_standard:Narg:LK_LAMBDA:3.500");
+			params.push_back( "fa_standard:Narg:LK_VOLUME:15.717");
+			params.push_back( "fa_standard:Nbb:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Nbb:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Nbb:LK_DGFREE:-7.29136191571457");
+			params.push_back( "fa_standard:Nbb:LK_VOLUME:15.992");
+			params.push_back( "fa_standard:NH2O:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:NH2O:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:NH2O:LK_DGFREE:-5.36711092877426");
+			params.push_back( "fa_standard:NH2O:LK_VOLUME:15.689");
+			params.push_back( "fa_standard:Nhis:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Nhis:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Nhis:LK_DGFREE:-10.2857109287743");
+			params.push_back( "fa_standard:Nhis:LK_VOLUME:9.3177");
+			params.push_back( "fa_standard:NHOQ:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:NHOQ:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:NHOQ:LK_DGFREE:-5.20281092877426");
+			params.push_back( "fa_standard:Nlys:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Nlys:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Nlys:LK_DGFREE:-16.2981109287742");
+			params.push_back( "fa_standard:Nlys:LK_LAMBDA:3.500");
+			params.push_back( "fa_standard:Nlys:LK_VOLUME:16.514");
+			params.push_back( "fa_standard:Npro:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Npro:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Npro:LK_DGFREE:-3.71951092877425");
+			params.push_back( "fa_standard:Npro:LK_VOLUME:3.7181");
+			params.push_back( "fa_standard:NtrH:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:NtrH:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:NtrH:LK_DGFREE:-6.35271092877426");
+			params.push_back( "fa_standard:NtrH:LK_VOLUME:9.2829");
+			params.push_back( "fa_standard:Ntrp:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:Ntrp:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:Ntrp:LK_DGFREE:-5.95091092877426");
+			params.push_back( "fa_standard:Ntrp:LK_VOLUME:9.5221");
+			params.push_back( "fa_standard:NtrR:LJ_RADIUS:1.75348059380817");
+			params.push_back( "fa_standard:NtrR:LJ_WDEPTH:0.170120148452043");
+			params.push_back( "fa_standard:NtrR:LK_DGFREE:-9.77811092877423");
+			params.push_back( "fa_standard:NtrR:LK_VOLUME:9.7792");
+			params.push_back( "fa_standard:OCbb:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:OCbb:LJ_WDEPTH:0.161120148452043");
+			params.push_back( "fa_standard:OCbb:LK_DGFREE:-5.20513751964092");
+			params.push_back( "fa_standard:OCbb:LK_VOLUME:12.196");
+			params.push_back( "fa_standard:OH:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:OH:LJ_WDEPTH:0.160120148452043");
+			params.push_back( "fa_standard:OH:LK_DGFREE:-6.38881994292366");
+			params.push_back( "fa_standard:OH:LK_VOLUME:10.722");
+			params.push_back( "fa_standard:OHT:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:OHT:LJ_WDEPTH:0.160120148452043");
+			params.push_back( "fa_standard:OHT:LK_DGFREE:-8.67363943218534");
+			params.push_back( "fa_standard:OHT:LK_VOLUME:10.843");
+			params.push_back( "fa_standard:OHY:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:OHY:LJ_WDEPTH:0.160120148452043");
+			params.push_back( "fa_standard:OHY:LK_DGFREE:-4.16723176579274");
+			params.push_back( "fa_standard:OHY:LK_VOLUME:10.628");
+			params.push_back( "fa_standard:ONH2:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:ONH2:LJ_WDEPTH:0.161120148452043");
+			params.push_back( "fa_standard:ONH2:LK_DGFREE:-5.87105842194542");
+			params.push_back( "fa_standard:ONH2:LK_VOLUME:10.102");
+			params.push_back( "fa_standard:ONHQ:LJ_RADIUS:1.55048059380817");
+			params.push_back( "fa_standard:ONHQ:LJ_WDEPTH:0.161120148452043");
+			params.push_back( "fa_standard:ONHQ:LK_DGFREE:-7.09171092877425");
+			params.push_back( "fa_standard:OOC:LJ_RADIUS:1.49381727066464");
+			params.push_back( "fa_standard:OOC:LJ_WDEPTH:0.213201484520429");
+			params.push_back( "fa_standard:OOC:LK_DGFREE:-7.86291092877426");
+			params.push_back( "fa_standard:OOC:LK_LAMBDA:3.500");
+			params.push_back( "fa_standard:OOC:LK_VOLUME:9.9956");
+			params.push_back( "fa_standard:OOCE:LJ_RADIUS:1.49381727066464");
+			params.push_back( "fa_standard:OOCE:LJ_WDEPTH:0.213201484520429");
+			params.push_back( "fa_standard:OOCE:LK_DGFREE:-7.86281092877427");
+			params.push_back( "fa_standard:OOCE:LK_LAMBDA:3.500");
+			params.push_back( "fa_standard:OOCE:LK_VOLUME:9.9956");
+			params.push_back( "fa_standard:S:LJ_RADIUS:1.88248061423444");
+			params.push_back( "fa_standard:S:LJ_WDEPTH:0.433201484520429");
+			params.push_back( "fa_standard:S:LK_DGFREE:-0.791901963657784");
+			params.push_back( "fa_standard:S:LK_VOLUME:17.640");
+			params.push_back( "fa_standard:SH1:LJ_RADIUS:1.88248061423444");
+			params.push_back( "fa_standard:SH1:LJ_WDEPTH:0.433201484520429");
+			params.push_back( "fa_standard:SH1:LK_DGFREE:3.84568907122574");
+			params.push_back( "fa_standard:SH1:LK_VOLUME:23.240");
+			option[ basic::options::OptionKeys::chemical::set_atom_properties ].value(params);
+		} else {
+			TR.Warning << "Flag -beta_july15 is set but -set_atom_properties are also specified.  Not changing atom properties!" << std::endl;
+		}
+
+		// hbonds
+		if( ! option[ basic::options::OptionKeys::score::hb_acc_strength ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back( "hbacc_AHX:0.94");
+			params.push_back( "hbacc_CXA:1.08");
+			params.push_back( "hbacc_CXL:1.00");
+			params.push_back( "hbacc_HXL:1.00");
+			params.push_back( "hbacc_IMD:1.05");
+			params.push_back( "hbacc_IME:0.94");
+			params.push_back( "hbacc_PBA:0.94");
+			option[ basic::options::OptionKeys::score::hb_acc_strength ].value(params);
+		} else {
+			TR.Warning << "Flag -beta_july15 is set but -hb_acc_strength are also specified.  Not changing atom properties!" << std::endl;
+		}
+		if( ! option[ basic::options::OptionKeys::score::hb_don_strength ].user() ) {
+			utility::vector1< std::string > params;
+			params.push_back( "hbdon_AHX:0.92");
+			params.push_back( "hbdon_AMO:1.01");
+			params.push_back( "hbdon_CXA:1.08");
+			params.push_back( "hbdon_GDE:0.95");
+			params.push_back( "hbdon_GDH:0.96");
+			params.push_back( "hbdon_HXL:0.85");
+			params.push_back( "hbdon_IMD:1.08");
+			params.push_back( "hbdon_IME:1.31");
+			params.push_back( "hbdon_IND:1.14");
+			params.push_back( "hbdon_PBA:1.26");
+			option[ basic::options::OptionKeys::score::hb_don_strength ].value(params);
+		} else {
+			TR.Warning << "Flag -beta_july15 is set but -hb_don_strength are also specified.  Not changing atom properties!" << std::endl;
+		}
+
+		// unmodifypot
+		if( ! option[ basic::options::OptionKeys::score::unmodifypot ].user() ) {
+			option[ basic::options::OptionKeys::score::unmodifypot ].value(true);
+		}
+
+		// sigmoidal dielectric
+		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].user() ) {
+			option[ basic::options::OptionKeys::score::elec_sigmoidal_die ].value(true);
+		}
+		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].user() ) {
+			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D ].value(137.0);
+		}
+		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].user() ) {
+			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_D0 ].value(9.75);
+		}
+		if( ! option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].user() ) {
+			option[ basic::options::OptionKeys::score::elec_sigmoidal_die_S ].value(0.44);
+		}
+
+		// weights file
     if ( ! option[ score::weights ].user() ) {
-      option[ score::weights ].value( "talaris2013_beta.wts" );
-    }
+			if( option[corrections::beta_july15_cart]() || option[optimization::nonideal]() ) {
+				option[ score::weights ].value( "beta_july15_cart.wts" );
+			} else {
+				option[ score::weights ].value( "beta_july15.wts" );
+			}
+    } else {
+			TR.Warning << "Flag -beta_july15 is set but -weights are also specified.  Not changing input weights file!" << std::endl;
+		}
+
 	}
 }
+
 
 void
 init_nonideal_correction() {
@@ -692,7 +891,7 @@ init_score_function_corrections(){
 	init_correct_correction();
 	init_crystal_refinement_correction();
 	init_beta_correction();
-	init_nonideal_correction();
+	init_nonideal_correction(); // keep after beta
 	init_dna_correction();
 
 	init_shapovalov_lib_fixes_enable_correction();

@@ -93,7 +93,7 @@ DisableCDRsOperation::set_defaults() {
 DisableCDRsOperation::~DisableCDRsOperation() {}
 
 DisableCDRsOperation::DisableCDRsOperation(DisableCDRsOperation const & src):
-	//core::pack::task::operation::TaskOperation( src ),
+	core::pack::task::operation::TaskOperation( src ),
 	ab_info_(src.ab_info_),
 	cdrs_(src.cdrs_),
 	disable_packing_and_design_(src.disable_packing_and_design_),

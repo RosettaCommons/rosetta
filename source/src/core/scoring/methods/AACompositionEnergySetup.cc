@@ -77,6 +77,7 @@ AACompositionPropertiesSet::AACompositionPropertiesSet(
 /// @brief Copy constructor for AACompositionEnergySetupPropertiesSet.
 ///
 AACompositionPropertiesSet::AACompositionPropertiesSet( AACompositionPropertiesSet const &src ) :
+	utility::pointer::ReferenceCount(),
 	included_properties_( src.included_properties_ ),
 	excluded_properties_( src.included_properties_ )
 {}
@@ -177,6 +178,7 @@ AACompositionEnergySetup::AACompositionEnergySetup() :
 /// @brief Copy constructor for AACompositionEnergySetup.
 ///
 AACompositionEnergySetup::AACompositionEnergySetup( AACompositionEnergySetup const &src ) :
+        utility::pointer::ReferenceCount(),
 	res_type_index_mappings_( src.res_type_index_mappings_ ),
 	type_penalties_( src.type_penalties_ ),
 	type_deviation_ranges_( src.type_deviation_ranges_ ),

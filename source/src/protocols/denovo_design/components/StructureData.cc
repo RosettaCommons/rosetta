@@ -85,6 +85,7 @@ StructureData::StructureData( std::string const & id_val ) :
 
 /// @brief copy constructor -- poseOP is cloned
 StructureData::StructureData( StructureData const & perm ) :
+	utility::pointer::ReferenceCount(),
 	pose_(),
 	id_( perm.id_ ),
 	ss_( perm.ss_ ),

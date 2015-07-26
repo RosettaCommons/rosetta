@@ -107,7 +107,7 @@ AddCDRProfilesOperation::set_defaults(){
 
 
 AddCDRProfilesOperation::AddCDRProfilesOperation(AddCDRProfilesOperation const & src):
-	//TaskOperation(src),
+	TaskOperation(src),
 	ab_info_(src.ab_info_),
 	seq_design_options_(src.seq_design_options_),
 	cons_task_(src.cons_task_),

@@ -55,6 +55,7 @@ InnerJob::InnerJob( core::pose::PoseCOP pose, std::string const & input_tag, cor
 /// @brief Copy constructor.
 ///
 InnerJob::InnerJob( InnerJob const &src ) :
+	utility::pointer::ReferenceCount(),
 	input_tag_(src.input_tag_),
 	nstruct_max_(src.nstruct_max_),
 	pose_(src.pose_->clone()),
