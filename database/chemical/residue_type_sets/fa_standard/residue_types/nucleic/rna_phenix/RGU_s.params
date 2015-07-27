@@ -7,12 +7,12 @@ AA RGU
 ATOM  P   Phos H   1.5
 ATOM  OP2 OOC  H   -0.78
 ATOM  OP1 OOC  H   -0.78
-ATOM  O5' Oes2 H   -0.57
+ATOM  O5' Oet2 H   -0.57
 ATOM  C5' CH2  H   -0.08
 ATOM  C4' CH1  H   0.16
-ATOM  O4' Oes3 H   -0.5
+ATOM  O4' Oet3 H   -0.5
 ATOM  C3' CH1  H   0.01
-ATOM  O3' Oes2 H   -0.57
+ATOM  O3' Oet2 H   -0.57
 ATOM  C1' CH1  H   0.16
 ATOM  C2' CH2  H   -0.18
 ATOM  O2' OH   H   -0.5

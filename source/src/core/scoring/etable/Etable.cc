@@ -1456,8 +1456,8 @@ Etable::precalc_etable_coefficients(
 					// fpd this is bad ... can this be a property instead?
 					if ( ( atom_type(j).is_donor() && atom_type(j).name().substr(0,2) == "OH" ) ||
 					     ( atom_type(i).is_donor() && atom_type(i).name().substr(0,2) == "OH" ) ||
-							 ( atom_type(j).is_donor() && atom_type(j).name() == "Oes3" ) || // "Oes3" is ester atom (used for nucleic acid O4', used to be "OH")
-					     ( atom_type(i).is_donor() && atom_type(i).name() == "Oes3" ) ) {
+							 ( atom_type(j).is_donor() && atom_type(j).name() == "Oet3" ) || // "Oet3" is ester atom (used for nucleic acid O4', used to be "OH")
+					     ( atom_type(i).is_donor() && atom_type(i).name() == "Oet3" ) ) {
 						sigma = lj_hbond_OH_donor_dis;
 					} else {
 						sigma = lj_hbond_dis;

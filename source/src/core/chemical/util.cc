@@ -370,10 +370,10 @@ enlarge_h_lj_wdepth( AtomTypeSet & atom_type_set ) {
 void
 turn_off_hbonds_to_ester_oxygens( AtomTypeSet & atom_type_set ) {
 	utility::vector1< Real > lj_wdepth;
-	utility::vector1< std::string > const Oes_names = utility::tools::make_vector1( "Oes2", "Oes3" );
+	utility::vector1< std::string > const Oet_names = utility::tools::make_vector1( "Oet2", "Oet3" );
 	std::string property; // have to set through a string since set_property() accepts property by reference.
-	for (Size i = 1; i <= Oes_names.size(); ++i) {
-		Size const index = atom_type_set.atom_type_index( Oes_names[i] );
+	for (Size i = 1; i <= Oet_names.size(); ++i) {
+		Size const index = atom_type_set.atom_type_index( Oet_names[i] );
 		property = "ACCEPTOR";		atom_type_set[ index ].set_property( property, false );
 		property = "DONOR"   ;		atom_type_set[ index ].set_property( property, false );
 	}

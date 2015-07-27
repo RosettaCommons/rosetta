@@ -102,7 +102,7 @@ MgKnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformati
 		return gaussian_parameter_o2prime_;
 	} else if ( rsd.atom_name( j ) == " O  " ){
 		return gaussian_parameter_water_oxygen_;
-	} else if ( atom_type_name == "Oes3" || atom_type_name == "Oes2" ){
+	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ){
 		return gaussian_parameter_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
 	} else if ( rsd.atom_name( j ) == " P  " ){
 		return gaussian_parameter_phosphate_p_;
@@ -158,7 +158,7 @@ MgKnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( core::c
 		return gaussian_parameter_costheta_o2prime_;
 	} else if ( rsd.atom_name( j ) == " O  " ){
 		return gaussian_parameter_costheta_water_oxygen_;
-	} else if ( atom_type_name == "Oes3" || atom_type_name == "Oes2" ){
+	} else if ( atom_type_name == "Oet3" || atom_type_name == "Oet2" ){
 		return gaussian_parameter_costheta_o2prime_; // ether sp3 -- do not have good stats, so just use O2'
 	} else if ( atom_type_name == "Hpol" ){
 		return gaussian_parameter_costheta_polar_H_;
