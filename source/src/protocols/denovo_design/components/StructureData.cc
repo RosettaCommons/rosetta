@@ -210,7 +210,7 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 	if ( perms.size() > 1 ) {
 		read_perm = StructureDataOP( new MultiChainStructureData( id_val ) );
 		for ( core::Size i=1; i<=perms.size(); ++i ) {
-			TR << "ADDING SUBPERM length=" << read_perm->pose_length() << std::endl;
+			TR.Debug << "ADDING SUBPERM length=" << read_perm->pose_length() << std::endl;
 			read_perm->add_subperm( perms[i] );
 		}
 		read_perm->set_pose( pose );
@@ -233,13 +233,13 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 	if ( has_cached_string(pose) ) {
 		std::stringstream ss;
 		ss << cached_string( pose );
-		TR << "Found permutation information in datacache. Creating from that." << std::endl;
+		TR.Info << "Found permutation information in datacache. Creating from that." << std::endl;
 		newperm = create_from_xml( ss, id );
 		newperm->set_pose( pose );
 	} else {
 		core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
 		if ( !pdb_info )  {
-			TR << "No pdb info associated with the pose was found to obtain permutation information from. Trying to infer info" << std::endl;
+			TR << "No StructureData information was found in the pose -- Trying to infer info" << std::endl;
 			newperm = infer_from_pose( pose, id );
 		} else {
 			newperm = create_from_remarks( pdb_info->remarks(), id );
@@ -248,7 +248,7 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 			} else {
 				newperm = infer_from_pose( pose, id );
 			}
-			TR << "Saving remarks to datacache" << std::endl;
+			TR.Debug << "Saving remarks to datacache" << std::endl;
 			newperm->save_remarks_to_datacache( pdb_info->remarks() );
 		}
 	}
@@ -1609,7 +1609,7 @@ StructureData::delete_leading_residues( std::string const & seg )
 	debug_assert( r != segments_.end() );
 	core::Size const start = r->second.nterm_resi();
 	core::Size const stop = segment(seg).start() - 1;
-	TR << "Lead delete start=" << start << " stop=" << stop << std::endl;
+	TR.Debug << "Lead delete start=" << start << " stop=" << stop << std::endl;
 	if ( start == r->second.start() ) {
 		return;
 	}
@@ -1628,7 +1628,7 @@ StructureData::delete_trailing_residues( std::string const & seg )
 	debug_assert( r != segments_.end() );
 	core::Size const start = r->second.stop() + 1;
 	core::Size const stop = r->second.cterm_resi();
-	TR << "Trail delete start=" << start << " stop=" << stop << std::endl;
+	TR.Debug << "Trail delete start=" << start << " stop=" << stop << std::endl;
 	if ( start > stop ) {
 		return;
 	}
@@ -2505,7 +2505,6 @@ StructureData::segment_nonconst( std::string const & id_val )
 	}
 	if ( it == segments_.end() ) {
 		TR << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		assert( false );
 		throw utility::excn::EXCN_BadInput( "Segment " + id_val + " not found in residue lists!" );
 	}
 	return it->second;
@@ -2522,7 +2521,6 @@ StructureData::segment( std::string const & id_val ) const
 	}
 	if ( it == segments_.end() ) {
 		TR << "Search term is: " << id_val << "; Segment map is: " << segments_ << std::endl;
-		assert( false );
 		throw utility::excn::EXCN_BadInput( "Segment " + id_val + " not found in residue lists!" );
 	}
 	return it->second;
@@ -2577,12 +2575,12 @@ StructureData::get_data_int( std::string const & data_name ) const
 {
 	std::map< std::string, int >::const_iterator it = data_int_.find(data_name);
 	if ( it == data_int_.end() ) {
-		TR << id() << ": " << data_name << " not found in data map." << std::endl;
+		std::stringstream err( "In StructureData: " );
+		err << id() << ": " << data_name << " not found in data map." << std::endl;
 		for ( it=data_int_.begin(); it != data_int_.end(); ++it ) {
-			TR << it->first << " : " << it->second << std::endl;
+			err << it->first << " : " << it->second << std::endl;
 		}
-		assert(false);
-		utility_exit();
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
 }
@@ -2593,12 +2591,12 @@ StructureData::get_data_real( std::string const & data_name ) const
 {
 	std::map< std::string, core::Real >::const_iterator it = data_real_.find(data_name);
 	if ( it == data_real_.end() ) {
-		TR << id() << ": " << data_name << " not found in data map." << std::endl;
+		std::stringstream err( "In StructureData: " );
+		err << id() << ": " << data_name << " not found in data map." << std::endl;
 		for ( it=data_real_.begin(); it != data_real_.end(); ++it ) {
-			TR << it->first << " : " << it->second << std::endl;
+			err << it->first << " : " << it->second << std::endl;
 		}
-		assert(false);
-		utility_exit();
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
 }
@@ -2609,12 +2607,12 @@ StructureData::get_data_str( std::string const & data_name ) const
 {
 	std::map< std::string, std::string >::const_iterator it = data_str_.find(data_name);
 	if ( it == data_str_.end() ) {
-		TR << id() << ": " << data_name << " not found in data map." << std::endl;
+		std::stringstream err( "In StructureData: " );
+		err << id() << ": " << data_name << " not found in data map." << std::endl;
 		for ( it=data_str_.begin(); it != data_str_.end(); ++it ) {
-			TR << it->first << " : " << it->second << std::endl;
+			err << it->first << " : " << it->second << std::endl;
 		}
-		assert(false);
-		utility_exit();
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
 }

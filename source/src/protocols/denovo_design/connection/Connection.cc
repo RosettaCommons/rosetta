@@ -823,8 +823,8 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	assert( local_comp1_ids.size() > 0 );
 	assert( local_comp2_ids.size() > 0 );
-	TR << "Comp1_ids = " << local_comp1_ids << std::endl;
-	TR << "Comp2_ids = " << local_comp2_ids << std::endl;
+	TR.Debug << "Comp1_ids = " << local_comp1_ids << std::endl;
+	TR.Debug << "Comp2_ids = " << local_comp2_ids << std::endl;
 
 	std::set< core::Size > lenset;
 	if ( idealized_abego_ ) {
@@ -838,7 +838,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	for ( core::Size i=1; i<=local_comp1_ids.size(); ++i ) {
 		for ( core::Size j=1; j<=local_comp2_ids.size(); ++j ) {
 			if ( !pair_allowed( local_comp1_ids[i], local_comp2_ids[j] ) ) {
-				TR << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << " DISALLOWED by user setting." << std::endl;
+				TR.Debug << "c1, c2, len : connectable " << local_comp1_ids[i] << ", " << local_comp2_ids[j] << " DISALLOWED by user setting." << std::endl;
 				continue;
 			}
 
@@ -893,7 +893,6 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	// remove anchors
 	std::string const & c1 = local_comp1_ids[valid_idxs[combo_idx][1]];
 	std::string const & c2 = local_comp2_ids[valid_idxs[combo_idx][2]];
-	TR << "c1=" << c1 << " c2=" << c2 << std::endl;
 
 	core::Size motifidx = valid_idxs[combo_idx][3];
 	MotifList motifs;
@@ -926,7 +925,6 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	// find cutpoint (relative to built loop) if it's not set
 	if ( motif.len && ( cut_resis_.size() > 0 ) && (!performs_orientation()) ) {
-		TR << "Setting cut resi " << std::endl;
 		if ( cut_resis_.size() == 1 ) {
 			set_cut_resi( perm, cut_resis_[1] );
 		} else {
