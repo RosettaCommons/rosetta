@@ -1168,8 +1168,8 @@ void draw_helix(
 	const int total_residue = residues.size();
 
 	//Starting point.
-	//int prior_res( start-1 );
-	//if (prior_res < 1) prior_res = 1;
+	int prior_res( start-1 );
+	if (prior_res < 1) prior_res = 1;
 	Vector direction, normal, tangent, axis, current_CA;
 	Vector prev_CA, prev_tangent, prev_axis;
 
