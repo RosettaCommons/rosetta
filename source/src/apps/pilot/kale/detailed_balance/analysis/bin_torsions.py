@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# This code was well-written, but it's starting to break down.  It does so much 
-# more than it was designed to.  
+# This code was well-written, but it's starting to break down.  It does so much
+# more than it was designed to.
 
 from __future__ import division
 
@@ -15,10 +15,10 @@ def parse_arguments():
 
     parser = argparse.ArgumentParser(
             description="""\
-                    Display a histogram showing which torsion angles were 
-                    sampled during a particular kinematic closure trajectory.  
-                    Arguments are provided to control how much data is read off 
-                    of disk (the slowest step), how the data is analyzed, and 
+                    Display a histogram showing which torsion angles were
+                    sampled during a particular kinematic closure trajectory.
+                    Arguments are provided to control how much data is read off
+                    of disk (the slowest step), how the data is analyzed, and
                     how the analysis is displayed. """,
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -33,22 +33,22 @@ def parse_arguments():
 
     parser.add_argument('--force-refresh', '-f', action='store_true',
             help="Force the numpy torsion cache to be refreshed.")
-    
+
     parser.add_argument('--bins', '-b', type=int, default=360,
             help="Number of bins to histogram the data on.")
-    
+
     parser.add_argument('--normalize', '-n', action='store_true',
             help="Normalize the histograms before plotting.")
-    
+
     parser.add_argument('--limit', '-l', type=int,
             help="Maximum number of iterations to read off of disk.")
-    
+
     parser.add_argument('--title', '-t',
             help="Title to put on the resulting histogram.")
 
     parser.add_argument('--ylim', '-y', nargs=2,
             help="Minimum and maximum values of the vertical axis.")
-    
+
     parser.add_argument('--ks-test', '-ks', action='store_true',
             help="Show the KS statistic for each histogram.")
 
@@ -57,16 +57,16 @@ def parse_arguments():
 
     parser.add_argument('--style', '-s', nargs='+', default=['rainbow'],
             help="Specify the style that should be used for each histogram.")
-    
+
     parser.add_argument('--output', '-o',
             help="File path where the histogram should be saved.")
-    
+
     parser.add_argument('--dpi', type=int, default=300,
             help="Resolution to use for raster output formats.")
-    
+
     parser.add_argument('--no-gui', '-q', action='store_true',
             help="Indicate that a GUI histogram should not be displayed.")
-    
+
     arguments = parser.parse_args()
 
     if arguments.rama:
@@ -88,7 +88,7 @@ def parse_iterations(arguments):
                     return fields[1]
 
 def key_from_torsion(torsion, index):
-    """ Return a simple string representing the given torsion angle.  A handful 
+    """ Return a simple string representing the given torsion angle.  A handful
     of command line options expect arguments in this format. """
     return torsion + str(index)
 
@@ -99,8 +99,8 @@ def torsion_from_key(key):
 
 
 def load_histograms(arguments):
-    """ Return two dictionaries holding the bins and the counts, respectively, 
-    for each torsion.  Much effort has been made to optimize this function by 
+    """ Return two dictionaries holding the bins and the counts, respectively,
+    for each torsion.  Much effort has been made to optimize this function by
     caching intermediate results. """
 
     directory = os.path.join(arguments.job, 'histogram')
@@ -108,16 +108,16 @@ def load_histograms(arguments):
     except OSError:
         if os.path.isdir(directory): pass
         else: raise
-    
-    # The user can disable all caching by providing the '--force-refresh' flag.  
-    # If this flag has been given, just regenerate the histograms and don't 
+
+    # The user can disable all caching by providing the '--force-refresh' flag.
+    # If this flag has been given, just regenerate the histograms and don't
     # bother with all the logic below.
 
     if arguments.force_refresh:
         torsions = load_torsions_from_dat(arguments)
         return generate_histograms(arguments, torsions)
 
-    # First try to load the histograms themselves directly from disk.  This is 
+    # First try to load the histograms themselves directly from disk.  This is
     # extremely fast, because the histograms themselves are quite tiny.
 
     try:
@@ -125,8 +125,8 @@ def load_histograms(arguments):
     except IOError as error:
         pass
 
-    # If the histograms themselves are not present, try loading the compressed 
-    # data array before reading the data from a text file.  If the compressed 
+    # If the histograms themselves are not present, try loading the compressed
+    # data array before reading the data from a text file.  If the compressed
     # data is present, it will load much faster than the text file.
 
     try:
@@ -179,7 +179,7 @@ def load_torsions_from_dat(arguments):
                 # Use the phi, psi, omega, and chi fields to extract data.
                 elif field in ('phi', 'psi', 'omega', 'chi'):
                     torsions = [float(x) for x in data.split()]
-                    for index, value in sampling(torsions):
+                    for index, value in enumerate(torsions):
                         key = key_from_torsion(field, index)
                         all_torsions.setdefault(key, []).append(value)
     finally:
@@ -197,7 +197,7 @@ def load_torsions_from_dat(arguments):
     np.savez_compressed(output_path, **all_torsions)
 
     return all_torsions
-    
+
 def generate_histograms(arguments, all_torsions):
     import scipy.stats
 
@@ -212,22 +212,22 @@ def generate_histograms(arguments, all_torsions):
     for key in all_torsions:
         torsions = all_torsions[key]
 
-        # Calculate a histogram for each torsion angle.  Each histogram is 
-        # characterized by a bins (x-axis) and counts (y-axis) array.  720 bins 
+        # Calculate a histogram for each torsion angle.  Each histogram is
+        # characterized by a bins (x-axis) and counts (y-axis) array.  720 bins
         # are always generated, but the plotting code may display fewer.
 
         raw_bins = np.linspace(-180, 180, 721)
         counts[key] = np.histogram(torsions, bins=raw_bins)[0]
 
-        # The bins fed into histogram() delimit where each bin starts and 
-        # stops.  That's nice, but I need to know where the middle of each bin 
+        # The bins fed into histogram() delimit where each bin starts and
+        # stops.  That's nice, but I need to know where the middle of each bin
         # is.  These lines convert bin boundaries to bin centers.
 
         offset = (raw_bins[1] - raw_bins[0]) / 2
         bins[key] = raw_bins[:-1] + offset
 
-        # Calculate a uniformity statistic for each histogram.  A uniform 
-        # distribution is expected for linear peptides with the breadth move 
+        # Calculate a uniformity statistic for each histogram.  A uniform
+        # distribution is expected for linear peptides with the breadth move
         # enabled.  Use the '-ks' argument to see these results.
 
         expected = scipy.stats.uniform(loc=-180, scale=360).cdf
@@ -292,17 +292,17 @@ def find_pivots(arguments):
     return pivot_keys
 
 def bin_histograms(arguments, key, all_bins, all_counts, warning_messages):
-    """ Return bins and counts for the given key, where the number of bins is 
-    adjusted to best match the value specified by the '--bins' argument.  This 
-    is necessary because the same number of bins (720) are always cached, but 
+    """ Return bins and counts for the given key, where the number of bins is
+    adjusted to best match the value specified by the '--bins' argument.  This
+    is necessary because the same number of bins (720) are always cached, but
     the user may want a coarser view of the data. """
 
     fine_bins = all_bins[key]
     fine_counts = all_counts[key]
     fine_size = len(fine_bins)
 
-    # If more bins are requested than are available in the fine arrays, just 
-    # return the fine arrays and print a message explaining that higher 
+    # If more bins are requested than are available in the fine arrays, just
+    # return the fine arrays and print a message explaining that higher
     # resolution data is not available.
 
     if arguments.bins > fine_size:
@@ -310,8 +310,8 @@ def bin_histograms(arguments, key, all_bins, all_counts, warning_messages):
         warning_messages.add(warning_message % fine_size)
         return fine_bins, fine_counts
 
-    # The number of bins must divide evenly into the number of stored bins.  If 
-    # the requested number of bins is does not evenly divide the number of 
+    # The number of bins must divide evenly into the number of stored bins.  If
+    # the requested number of bins is does not evenly divide the number of
     # stored bins, find the closest number that does.
 
     best_divisor = None
@@ -453,8 +453,8 @@ def plot_score_function(arguments):
     psis = np.sort(data.values()[0].keys())
     scores = np.zeros((len(phis), len(psis)))
 
-    for i, phi in sampling(phis):
-        for j, psi in sampling(psis):
+    for i, phi in enumerate(phis):
+        for j, psi in enumerate(psis):
             scores[i,j] = data[phi][psi]
 
     phi_scores = np.exp(-scores).sum(1)
@@ -472,7 +472,7 @@ if __name__ == '__main__':
 
     plot_score_function(arguments)
 
-    for index, job in sampling(arguments.jobs):
+    for index, job in enumerate(arguments.jobs):
         arguments.job = job
         bins, counts, ks_test = load_histograms(arguments)
         plot_histograms(arguments, bins, counts, ks_test, index)

@@ -58,7 +58,7 @@ double rad2deg(double rad)
 }
 
 
-// sampling and print residue inter and intra bond angles
+// enumerate and print residue inter and intra bond angles
 void
 printBondAngles(core::Size const seqpos, core::pose::Pose & pose)
 {

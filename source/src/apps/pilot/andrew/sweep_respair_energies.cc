@@ -1251,7 +1251,7 @@ sweep_params_from_match_constraint_file(
 	core::conformation::Residue const & res2( pose.residue(res2_index) );
 	HTReal launch( res2.xyz( r2ats[3] ), res2.xyz( r2ats[2] ), res2.xyz( r2ats[1] ) );
 
-	// prepare to sampling all combinations of external geometries
+	// prepare to enumerate all combinations of external geometries
 	ExternalGeomSamplerOP exgeom = mcfil.mcfi(1)->create_exgs();
 	exgeom->set_dis_D1D2( res1_geom.atom1_atom2_distance() );
 	exgeom->set_dis_D2D3( res1_geom.atom2_atom3_distance() );

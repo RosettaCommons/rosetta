@@ -50,7 +50,7 @@ models = arange(count)
 error = zeros(count)
 reference = None
 
-for index, subpath in sampling(paths):
+for index, subpath in enumerate(paths):
     if not arguments.quiet:
         sys.stdout.write('\r[%d/%d]' % (index, count - 1))
         sys.stdout.flush()
@@ -83,6 +83,6 @@ if arguments.output:
     title("")
     savefig(arguments.output, dpi=arguments.dpi)
 
-if not arguments.quiet and not os.fork(): 
+if not arguments.quiet and not os.fork():
     title(arguments.job.replace('_', '-'))
     show()

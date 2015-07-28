@@ -14,7 +14,7 @@
 /// object assuming the use of residue type theta0 angles and dump that as well. This command only requres a single
 /// command line flag, -in:path:database. There are two optional flags, -use_residue_type_theta0 and
 /// -central_atoms_to_score, whose documentation can be viewed by specifying -help.
-/// This app will also sampling all branching atom combinations for N, CA, and C, and write them to the database.
+/// This app will also enumerate all branching atom combinations for N, CA, and C, and write them to the database.
 
 
 // Core Headers

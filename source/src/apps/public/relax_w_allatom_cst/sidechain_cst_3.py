@@ -74,7 +74,7 @@ def main(filename, width, stdev):
     chns.sort()
     num = 1
     for c in chns:
-        for i, r in sampling(chains[c]):
+        for i, r in enumerate(chains[c]):
             r.pose_num(num)
             num += 1
             

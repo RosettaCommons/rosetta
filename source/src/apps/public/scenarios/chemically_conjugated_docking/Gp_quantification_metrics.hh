@@ -72,7 +72,7 @@ void ubq_ras_distance(core::pose::Pose const & pose, basic::Tracer & /*TR*/, pro
 	core::Size const ubq_residues_num(sizeof(ubq_array)/sizeof(ubq_array[0]));
 	utility::vector1<core::Size> const ubq_residues(ubq_array, ubq_array+ubq_residues_num);
 
-	//set up iterator to sampling pairs
+	//set up iterator to enumerate pairs
 	utility::fixedsizearray1< core::Size, 2 > num_to_be_paired(ras_residues_num);
 	num_to_be_paired[2] = ubq_residues_num;
 	utility::FixedSizeLexicographicalIterator< 2 > lex( num_to_be_paired );

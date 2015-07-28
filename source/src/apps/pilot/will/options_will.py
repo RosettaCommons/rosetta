@@ -3866,7 +3866,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option ('loop_mov_nterm', 'Integer', desc ='Movable region inside the provided loop(nterm)', default='0' ),
 		Option ('loop_mov_cterm', 'Integer', desc ='Moveable region inside the provided loop(cterm)', default='0' ),
 		Option ('ca_rmsd_cutoff', 'Real', desc = 'Filter the decoys to pass the relax-design stage ', default='5.0'),
-		Option ('res_design_bs', 'IntegerVector', desc='sampling the residues to be designed within the fixed binding site' ),
+		Option ('res_design_bs', 'IntegerVector', desc='enumerate the residues to be designed within the fixed binding site' ),
 		Option ('clear_csts','File', desc='input loops file with ranges free of CA csts', default='--'),
 		Option ('output_centroid','Boolean',desc='output centroid structures befor the design stage', default = 'false'),
 		Option ('add_cst_loop','Boolean',desc='add CA csts of motif to constraint set', default = 'false'),
@@ -3944,7 +3944,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		Option( 'define_match_by_single_downstream_positioning', 'Boolean', desc="Enumerate combinations of matches where a \
 			single positioning of the downstream partner as well as the conformations of the upstream residues defines the \
-			match; it is significantly faster to sampling unique matches when they are defined this way instead of enumerating the \
+			match; it is significantly faster to enumerate unique matches when they are defined this way instead of enumerating the \
 			(combinatorially many) matches when a match is defined by n-geometric-constraint locations of the downstream partner. \
 			This faster technique for outputting matches is automatically chosen when the flag -match::output_format is PDB." ),
 		Option( 'ligand_rotamer_index', 'Integer', desc="Match with a particular conformation of the ligand; the index \
@@ -3952,11 +3952,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			PDB_ROTAMERS field.  The index of the first conformation in that file is 1; valid indices range from 1 to \
 			the number of entries in the multi-model .pdb file.  If this command-line flag is not used, then the conformation \
 			of the ligand described by the ICOOR_INTERNAL lines of the ligand's .params file is used instead." ),
-		Option( 'sampling_ligand_rotamers', 'Boolean', desc="Match with all ligand rotamers specified in the multi-model \
+		Option( 'enumerate_ligand_rotamers', 'Boolean', desc="Match with all ligand rotamers specified in the multi-model \
 			.pdb file specified in the ligand's .params file by the PDB_ROTAMERS field.  This flag may not be used in \
 			combination with the match::ligand_rotamer_index flag.  Geometry of the ligand rotamers in the .pdb file will \
 			be idealized to the .params file bond angles and lengths.", default = 'true' ),
-		Option( 'only_sampling_non_match_redundant_ligand_rotamers', 'Boolean', desc="Only defined if sampling_ligand_rotamers is true \
+		Option( 'only_enumerate_non_match_redundant_ligand_rotamers', 'Boolean', desc="Only defined if enumerate_ligand_rotamers is true \
              this option causes the matcher to determine which rotamers in the ligand rotamer library are redundant in terms of matching, \
              meaning the atoms they're matched through are superimposable. after having subdivided the ligand rotamer library into match-redundant \
              subgroups, the matcher will then only place the first nonclashing rotamer from each subgroup. ", default = 'true' ),
