@@ -41,20 +41,12 @@
 #include <utility/tag/Tag.hh>
 
 // C++ headers
+#include <test/protocols/denovo_design/test_utils.hh>
 static thread_local basic::Tracer TR("devel.denovo_design.FoldabilityFilter.cxxtest");
 
 // Dummy class so that I can access protected functions
 class ProtectedFoldabilityFilter : public devel::denovo_design::filters::FoldabilityFilter {
 public:
-	/// @brief determine start and end window, from selector if necessary
-	void Tchoose_start_and_end(
-			core::Size & start,
-			core::Size & end,
-			core::pose::Pose const & pose ) const
-	{
-		choose_start_and_end( start, end, pose );
-	}
-
 	/// @brief gets aa string, ss string, and abego vector for the area to rebuild
 	void Tget_aa_ss_abego(
 			std::string & aa,
@@ -73,13 +65,24 @@ public:
 	}
 
 	/// @brief deletes the segment from start to end (inclusive) from the pose
-	void Tdelete_segment(
+	void Tprepare_pose(
 			core::pose::Pose & pose,
 			core::Size const start,
 			core::Size const end ) const
 	{
-		delete_segment( pose, start, end );
+		prepare_pose( pose, start, end );
 	}
+
+	/// @brief abegod scores
+	core::Real Tabegodb_score(
+			core::pose::Pose const & pose,
+			utility::vector1< std::string > const & abego,
+			core::Size const start,
+			core::Size const stop ) const
+	{
+		return abegodb_score( pose, abego, start, stop );
+	}
+
 };
 
 // --------------- Test Class --------------- //
@@ -122,8 +125,7 @@ public:
 		TS_ASSERT( core::pose::symmetry::is_symmetric(input_pose) );
 
 		ProtectedFoldabilityFilter folder;
-		folder.set_start_res( 5 );
-		folder.set_end_res( 15 );
+		folder.add_segment( 5, 15 );
 
 		// test pose copy generation -- should no longer be symmetric
 		core::pose::PoseOP posecopy = folder.Tgenerate_pose( input_pose );
@@ -135,11 +137,8 @@ public:
 		}
 
 		// test generating start/end residues
-		core::Size start = 0;
-		core::Size end = 0;
-		folder.Tchoose_start_and_end( start, end, *posecopy );
-		TS_ASSERT_EQUALS( start, 5 );
-		TS_ASSERT_EQUALS( end, 15 );
+		core::Size start = 5;
+		core::Size end = 15;
 
 		// dssp the pose
 		protocols::moves::DsspMover dssp;
@@ -150,21 +149,22 @@ public:
 		std::string ss = "";
 		utility::vector1< std::string > abego;
 		folder.Tget_aa_ss_abego( aa, ss, abego, start, end, *posecopy );
-		TS_ASSERT_EQUALS( aa.size(), end - start + 1 );
-		TS_ASSERT_EQUALS( ss.size(), end - start + 1 );
-		TS_ASSERT_EQUALS( abego.size(), posecopy->total_residue() - 1 );
+		TS_ASSERT_EQUALS( aa.size(), posecopy->total_residue()-1 );
+		TS_ASSERT_EQUALS( ss.size(), posecopy->total_residue()-1 );
+		TS_ASSERT_EQUALS( abego.size(), posecopy->total_residue()-1 );
 		TR << "AA=" << aa << std::endl;
 		TR << "SS=" << ss << std::endl;
 
 		// test deleting the segment in question
-		folder.Tdelete_segment( *posecopy, start, end );
-		// should be smaller by end - start + 1, + 1 for the end+1 residue that should be cut
-		TS_ASSERT_EQUALS( posecopy->total_residue(), 359 );
+		folder.Tprepare_pose( *posecopy, start, end );
+		// should be smaller by 1 for the end+1 residue that should be cut
+		TS_ASSERT_EQUALS( posecopy->total_residue(), 370 );
 		// should be one jump
 		TS_ASSERT_EQUALS( posecopy->fold_tree().num_jump(), 1 );
 		// that jump should start at residue start-1
 		// it should end at residue start since the residues in the segment have been deleted
 		TS_ASSERT_EQUALS( posecopy->fold_tree().jump_edge(1).start(), start - 1 );
-		TS_ASSERT_EQUALS( posecopy->fold_tree().jump_edge(1).stop(), start );
+		TS_ASSERT_EQUALS( posecopy->fold_tree().jump_edge(1).stop(), end + 1 );
 	}
+
 };

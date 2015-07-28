@@ -16,6 +16,8 @@
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 
 // Project Headers
+#include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/Picker.hh>
 
 // Protocol Headers
 #include <protocols/fldsgn/topology/HelixPairing.hh>
@@ -26,22 +28,31 @@
 #include <protocols/forge/build/GrowLeft.hh>
 #include <protocols/forge/build/GrowRight.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
+#include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/moves/DsspMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
 
 // Core Headers
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
+#include <core/pack/task/residue_selector/SecondaryStructureSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/sequence/ABEGOManager.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
@@ -119,18 +130,16 @@ FoldabilityFilter::FoldabilityFilter() :
 	Filter( "FoldabilityFilter" ),
 	motif_( "" ),
 	tries_( 100 ),
-	start_res_( 1 ),
-	end_res_( 1 ),
 	distance_threshold_( 4.0 ),
 	ignore_pose_abego_( false ),
+	use_sequence_( false ),
 	output_poses_( false ),
+	scorefxn_(),
 	selector_(),
-	vlb_(	protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) ),
-	cached_aa_( "" ),
-	cached_ss_( "" ),
-	cached_start_( 0 ),
-	cached_end_( 0 )
+	picker_( PickerOP( new Picker() ) ),
+	vlb_(	protocols::forge::components::VarLengthBuildOP( new protocols::forge::components::VarLengthBuild() ) )
 {
+	segments_.clear();
 }
 
 /// @brief destructor - this class has no dynamic allocation, so
@@ -177,28 +186,28 @@ FoldabilityFilter::parse_my_tag(
 		assert( selector_ );
 		TR << "Using residue selector " << selectorname << std::endl;
 	} else {
-		set_start_res( tag->getOption< core::Size >( "start_res", start_res_ ) );
-		set_end_res( tag->getOption< core::Size >( "end_res", end_res_ ) );
+		segments_.clear();
+		add_segment( tag->getOption< core::Size >( "start_res", 1 ),
+				tag->getOption< core::Size >( "end_res", 1 ) );
 	}
 	motif_ = tag->getOption< std::string >( "motif", motif_ );
 	ignore_pose_abego_ = tag->getOption< bool >( "ignore_pose_abego", ignore_pose_abego_ );
+	use_sequence_ = tag->getOption< bool >( "use_sequence", use_sequence_ );
 	output_poses_ = tag->getOption< bool >( "output_poses", output_poses_ );
 	distance_threshold_ = tag->getOption< core::Real >( "distance_threshold", distance_threshold_ );
 	if ( ignore_pose_abego_ && ( motif_ == "" ) ) {
 		utility_exit_with_message( "You need to specify a motif if you are ignoring pose abego values." );
 	}
+	if ( tag->hasOption( "scorefxn" ) ) {
+		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
+		TR << "score function " << tag->getOption< std::string >( "scorefxn" ) << " is used. " << std::endl;
+	}
 }
 
 void
-FoldabilityFilter::set_start_res( core::Size const startval )
+FoldabilityFilter::add_segment( core::Size const startval, core::Size const endval )
 {
-	start_res_ = startval;
-}
-
-void
-FoldabilityFilter::set_end_res( core::Size const endval )
-{
-	end_res_ = endval;
+	segments_.push_back( std::make_pair( startval, endval ) );
 }
 
 std::string
@@ -222,19 +231,48 @@ FoldabilityFilter::report_sm( core::pose::Pose const & pose ) const
 core::Real
 FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 {
+	IntervalVec segments;
+	if ( selector_ ) {
+		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply( pose );
+		segments = core::pack::task::residue_selector::subset_to_intervals( subset );
+	} else {
+		segments = segments_;
+	}
+
+	core::Real score = 0.0;
+	for ( core::Size i=1, endi=segments.size(); i<=endi; ++i ) {
+		score += compute_segment( pose, segments, i );
+	}
+	return score / core::Real( segments.size() );
+}
+
+core::Real
+FoldabilityFilter::compute_segment(
+		core::pose::Pose const & pose,
+		IntervalVec const & segments,
+		core::Size const segment ) const
+{
 	// work on pose copy
 	core::pose::PoseOP posecopy = generate_pose( pose );
 
-	core::Size start( 0 );
-	core::Size end( 0 );
-	choose_start_and_end( start, end, *posecopy );
+	debug_assert( segment );
+	debug_assert( segment <= segments.size() );
+	core::Size start = segments[ segment ].first;
+	core::Size end = segments[ segment ].second;
 	runtime_assert( end >= start );
 
-	// if motif isn't specified, we will need dssp information
-	if ( motif_ == "" ) {
+	if ( StructureData::has_cached_string( *posecopy ) ) {
+		StructureDataOP perm = StructureData::create_from_pose( *posecopy, "foldability" );
+		std::string const ss = perm->ss();
+		core::Size res = 1;
+		for ( std::string::const_iterator c=ss.begin(), endc=ss.end(); c!=endc; ++c, ++res ) {
+			posecopy->set_secstruct( res, *c );
+		}
+		TR << "Pose SS set from permutation info: " << posecopy->secstruct() << std::endl;
+	} else {
 		protocols::moves::DsspMover dssp;
 		dssp.apply( *posecopy );
-		TR << "pose dssp is : " << pose.secstruct() << std::endl;
+		TR << "pose dssp is : " << posecopy->secstruct() << std::endl;
 	}
 
 	std::string ss( "" );
@@ -245,19 +283,26 @@ FoldabilityFilter::compute( core::pose::Pose const & pose ) const
 	// save end residue for later comparision
 	core::conformation::Residue const end_res( posecopy->residue( end ) );
 
-	// eliminate the segment to be tested.
-	delete_segment( *posecopy, start, end );
+	// get the pose ready for fragment insertion
+	prepare_pose( *posecopy, start, end );
 
 	// safety, clear the energies object
 	posecopy->energies().clear();
 
-	setup_vlb( aa, ss, abego, start, end );
-	runtime_assert( vlb_ );
+	TR << "ss to build starting with residue " << start << " is " << ss.substr(start-1,end-start+1) << " with aa " << aa.substr(start-1,end-start+1) << std::endl;
 
-	TR << "ss to build starting with residue " << start << " is " << ss << " with aa " << aa << std::endl;
-	core::Size const good_count = fragment_insertion( *posecopy, end, end_res );
+	protocols::moves::MoverOP insert_fragments;
+	if ( use_sequence_ ) {
+		insert_fragments = create_fragment_insertion_mover( aa, ss, abego, start, end );
+	} else {
+		insert_fragments = create_fragment_insertion_mover( "", ss, abego, start, end );
+	}
 
-	return (core::Real)good_count / (core::Real)tries_;
+	runtime_assert( insert_fragments );
+
+	core::Size const good_count = fragment_insertion( *posecopy, *insert_fragments, end, end_res );
+
+	return core::Real( good_count ) / core::Real( tries_ );
 }
 
 /// @brief Does the Foldability Filtering
@@ -288,40 +333,6 @@ FoldabilityFilter::generate_pose( core::pose::Pose const & pose ) const
 	return posecopy;
 }
 
-/// @brief determine start and end window, from selector if necessary
-void
-FoldabilityFilter::choose_start_and_end(
-		core::Size & start,
-		core::Size & end,
-		core::pose::Pose const & pose ) const
-{
-	start = 0;
-	end = 0;
-	if ( selector_ ) {
-		core::pack::task::residue_selector::ResidueSubset subset = selector_->apply(pose);
-		bool finished = false;
-		for ( core::Size i=1, endi=subset.size(); i<=endi; ++i ) {
-			if ( subset[i] ) {
-				if ( finished ) {
-					throw utility::excn::EXCN_BadInput( "ResidueSelector does not select one continuous set of residues. FoldabilityFilter requires a continuous segment to be specified." );
-				}
-				if ( !start )
-					start = i;
-				end = i;
-			} else {
-				if ( start && end ) {
-					finished = true;
-				}
-			}
-		}
-		TR << "Residue selector chose residues " << start << " --> " << end << std::endl;
-	} else {
-		start = start_res_;
-		end = end_res_;
-		TR << "Start and end residues are: " << start << " --> " << end << std::endl;
-	}
-}
-
 /// @brief gets aa string, ss string, and abego vector for the area to rebuild
 void
 FoldabilityFilter::get_aa_ss_abego(
@@ -335,13 +346,20 @@ FoldabilityFilter::get_aa_ss_abego(
 	utility::vector1< std::string > abego_insert;
 	// if a motif is not specified, determine it from the structure
 	if ( motif_ == "" ) {
-		for ( core::Size i=start; i<=end; ++i ) {
+		for ( core::Size i=1, endi=pose.total_residue(); i<=endi; ++i ) {
+			if ( i == end+1 ) {
+				continue;
+			}
 			ss += pose.secstruct(i);
 			aa += pose.residue(i).name1();
 		}
 	} else {
 		// parse motif string
 		core::Size insert_length( 0 );
+		for ( core::Size i=1, endi=start-1; i<=endi; ++i ) {
+			ss += pose.secstruct(i);
+			aa += pose.residue(i).name1();
+		}
 		utility::vector1< std::string > const & motifs( utility::string_split( motif_, '-' ) );
 		for ( core::Size i=1; i<=motifs.size(); ++i ) {
 			std::string const ss_type( motifs[i].substr( motifs[i].size()-2, 1 ) );
@@ -354,6 +372,10 @@ FoldabilityFilter::get_aa_ss_abego(
 				aa += "V";
 				abego_insert.push_back( abego_type );
 			}
+		}
+		for ( core::Size i=end+2, endi=pose.total_residue(); i<=endi; ++i ) {
+			ss += pose.secstruct(i);
+			aa += pose.residue(i).name1();
 		}
 		// there is a chance that the motif is a different length -- we need to update end
 		end = insert_length + start;
@@ -385,9 +407,9 @@ FoldabilityFilter::get_aa_ss_abego(
 	}
 }
 
-/// @brief deletes the segment from start to end (inclusive) from the pose
+/// @brief prepares the pose/segment from start to end for insertion
 void
-FoldabilityFilter::delete_segment(
+FoldabilityFilter::prepare_pose(
 		core::pose::Pose & pose,
 		core::Size const start,
 		core::Size const end ) const
@@ -411,59 +433,75 @@ FoldabilityFilter::delete_segment(
 		debug_assert( ft.check_fold_tree() );
 		pose.fold_tree(ft);
 	}
-	pose.conformation().delete_residue_range_slow( start, end );
+	core::pose::add_upper_terminus_type_to_pose_residue( pose, end );
+	core::pose::add_lower_terminus_type_to_pose_residue( pose, end+1 );
+
+	// switch to centroid
+	if ( !pose.is_centroid() ) {
+		core::util::switch_to_residue_type_set( pose, "centroid" );
+	}
 }
 
-/// @brief performs setup on the fragment insertion machinery
-void
-FoldabilityFilter::setup_vlb(
-		std::string const & aa,
-		std::string const & ss,
-		utility::vector1< std::string > const & abego,
+/// @brief performs fragment picking/other preparations for building
+protocols::moves::MoverOP
+FoldabilityFilter::create_fragment_insertion_mover(
+		std::string const & complete_aa,
+		std::string const & complete_ss,
+		utility::vector1< std::string > const & complete_abego,
 		core::Size const start,
 		core::Size const end ) const
 {
-	// only set the manager if something has changed... otherwise it will pick new fragments each time the mover is called
-	if ( ( ss != cached_ss_ ) || ( aa != cached_aa_ ) || ( start != cached_start_ ) || ( end != cached_end_ ) ) {
-		// the build manager
-		protocols::forge::build::BuildManager manager;
-		// add the instruction to rebuild this segment
-		if ( start == 1 ) {
-			manager.add( protocols::forge::build::BuildInstructionOP( new protocols::forge::build::GrowLeft( start, ss, aa ) ) );
-		} else {
-			manager.add( protocols::forge::build::BuildInstructionOP( new protocols::forge::build::GrowRight( start, ss, aa ) ) );
-		}
-		// clear fragment cache and set buildmanager
-		vlb_->manager( manager );
-		// set cache
-		cached_ss_ = ss;
-		cached_aa_ = aa;
-		cached_start_ = start;
-		cached_end_ = end;
+	debug_assert( picker_ );
+
+	// create loops
+	protocols::loops::LoopsOP loops( new protocols::loops::Loops() );
+	loops->push_back( protocols::loops::Loop( start, end, start ) );
+
+	core::fragment::FragSetOP frag9 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, start, end, 9 );
+	core::fragment::FragSetOP frag3 = picker_->pick_and_cache_fragments( complete_aa, complete_ss, complete_abego, start, end, 3 );
+
+	protocols::forge::remodel::RemodelLoopMoverOP remodel( new protocols::forge::remodel::RemodelLoopMover( loops ) );
+	assert( remodel );
+	remodel->add_fragments( frag9 );
+	remodel->add_fragments( frag3 );
+
+	// setup movemap for remodel so that only the target loops can move
+	core::kinematics::MoveMap mm;
+	// initialize explicitly to all false
+	for ( core::Size res=1, endr=complete_abego.size(); res<=endr; ++res ) {
+		mm.set_bb( res, false );
+		mm.set_chi( res, false );
 	}
-	//vlb_->scorefunction( scorefxn_->clone() );
-	vlb_->vall_memory_usage( protocols::forge::components::VLB_VallMemoryUsage::CLEAR_IF_CACHING_FRAGMENTS );
-	vlb_->loop_mover_str( "RemodelLoopMover" );
-	vlb_->set_abego( abego );
+	for ( core::Size l=start; l<=end; ++l ) {
+		mm.set_bb( l, true );
+		mm.set_chi( l, true );
+	}
+	remodel->false_movemap( mm );
+	remodel->set_keep_input_foldtree( true );
+	if ( scorefxn_ ) {
+		remodel->scorefunction( *scorefxn_ );
+	}
+
+	return remodel;
 }
 
 /// @brief performs fragment insertion and returns number of successful builds. Assumes setup_vlb() has already been called
 core::Size
 FoldabilityFilter::fragment_insertion(
 		core::pose::Pose const & pose,
+		protocols::moves::Mover & fragment_mover,
 		core::Size const end,
 		core::conformation::Residue const & end_res ) const
 {
-	debug_assert( vlb_ );
 	core::Size good_count = 0;
 	for ( core::Size i=1; i<=tries_; ++i ) {
 		core::pose::Pose posecopy( pose );
-		vlb_->apply( posecopy );
+		fragment_mover.apply( posecopy );
 		if ( output_poses_ ) {
 			posecopy.dump_pdb( "foldability" + boost::lexical_cast< std::string >( i ) + ".pdb" );
 		}
 		core::Real const distance = end_res.xyz( "N" ).distance( posecopy.residue( end ).xyz( "N" ) );
-		TR << "Distance is " << distance << ", success threshold=" << distance_threshold_ << std::endl;
+		TR << "Trial " << i << " : distance is " << distance << ", success threshold=" << distance_threshold_ << std::endl;
 		if ( distance < distance_threshold_ ) {
 			++good_count;
 		}

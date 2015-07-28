@@ -21,6 +21,9 @@
 
 // Project headers
 #include <devel/denovo_design/calculators/CavityCalculator.hh>
+#include <protocols/denovo_design/components/Picker.fwd.hh>
+
+// Protocol headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
@@ -47,6 +50,12 @@
 namespace devel {
 namespace denovo_design {
 namespace filters {
+
+using namespace protocols::denovo_design;
+using namespace protocols::denovo_design::components;
+
+typedef std::pair< core::Size, core::Size > Interval;
+typedef utility::vector1< Interval > IntervalVec;
 
 class FoldabilityFilter : public protocols::filters::Filter {
 public:
@@ -78,11 +87,15 @@ public:
 	virtual bool apply( core::pose::Pose const & pose ) const;
 
 	core::Real compute( core::pose::Pose const & pose ) const;
+	core::Real compute_segment(
+			core::pose::Pose const & pose,
+			IntervalVec const & segments,
+			core::Size const segment ) const;
 
 	// mutators
 public:
-	void set_start_res( core::Size const startval );
-	void set_end_res( core::Size const endval );
+	void clear_segments();
+	void add_segment( core::Size const startval, core::Size const endval );
 
 	// protected functions
 protected:
@@ -90,6 +103,7 @@ protected:
 	void choose_start_and_end(
 			core::Size & start,
 			core::Size & end,
+			core::Size const segment,
 			core::pose::Pose const & pose ) const;
 
 	/// @brief gets aa string, ss string, and abego vector for the area to rebuild
@@ -104,51 +118,60 @@ protected:
 	/// @brief gets non-const version the pose for the filter to work on
 	core::pose::PoseOP generate_pose( core::pose::Pose const & pose ) const;
 
-	/// @brief deletes the segment from start to end (inclusive) from the pose
-	void delete_segment(
+	/// @brief prepares the pose/segment from start to end for insertion
+	void prepare_pose(
 			core::pose::Pose & pose,
 			core::Size const start,
 			core::Size const end ) const;
 
-	/// @brief performs setup on the fragment insertion machinery
-	void setup_vlb(
-			std::string const & aa,
-			std::string const & ss,
-			utility::vector1< std::string > const & abego,
-			core::Size const start,
-			core::Size const end ) const;
+	/// @brief performs fragment picking/other preparations for building
+	protocols::moves::MoverOP
+		create_fragment_insertion_mover(
+				std::string const & complete_aa,
+				std::string const & complete_ss,
+				utility::vector1< std::string > const & complete_abego,
+				core::Size const start,
+				core::Size const end ) const;
 
 	/// @brief performs fragment insertion and returns number of successful builds. Assumes setup_vlb() has already been called
 	core::Size fragment_insertion(
 			core::pose::Pose const & pose,
+			protocols::moves::Mover & fragment_mover,
 			core::Size const end,
 			core::conformation::Residue const & end_res ) const;
+
+	/// @brief queries the abego db and calculates the best scoring loop
+	core::Real abegodb_score(
+			core::pose::Pose const & pose,
+			utility::vector1< std::string > const & abego,
+			core::Size const start,
+			core::Size const stop ) const;
 
 private:   // options
 	/// @brief the motif to try to build
 	std::string motif_;
 	/// @brief try this number of times to build the motif
 	core::Size tries_;
-	/// @brief residue number to start building
-	core::Size start_res_;
-	/// @brief residue number to stop building
-	core::Size end_res_;
+	/// @brief residue segments to rebuild
+	IntervalVec segments_;
 	/// @brief "success" is achieved when distance is below this threshold
 	core::Real distance_threshold_;
 	/// @brief if true, abego values in the input pose will be ignored for the segment we are rebuilding
 	bool ignore_pose_abego_;
+	/// @brief if true, amino acid identity in the input pose will be used to pick fragments
+	bool use_sequence_;
 	/// @brief if true, poses will be outputted for each foldability step (default=false)
 	bool output_poses_;
 
 private:   // other data
+	/// @brief scorefunction to use for folding
+	core::scoring::ScoreFunctionOP scorefxn_;
 	/// @brief residue selector to identify positions to rebuild
 	core::pack::task::residue_selector::ResidueSelectorCOP selector_;
+	/// @brief fragment picker
+	PickerOP picker_;
 	/// @brief the vlb object for testing foldability
 	protocols::forge::components::VarLengthBuildOP vlb_;
-	mutable std::string cached_aa_;
-	mutable std::string cached_ss_;
-	mutable core::Size cached_start_;
-	mutable core::Size cached_end_;
 };
 
 
