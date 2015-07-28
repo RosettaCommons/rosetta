@@ -945,7 +945,7 @@ SymmetricConformation::detect_disulfides()
 		utility::vector1< Size > resid_2_cysid( size(), 0 );
 		Size num_cys( 0 );
 		for ( Size ii = 1; ii <= size(); ++ii ) {
-			if ( residue(ii).type().forms_disulfide_bond() || residue(ii).type().is_disulfide_bonded() ) {
+			if ( residue(ii).type().is_sidechain_thiol() || residue(ii).type().is_disulfide_bonded() ) {
 				++num_cys;
 				resid_2_cysid[ ii ] = num_cys;
 			}

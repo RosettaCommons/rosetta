@@ -372,7 +372,7 @@ read_topology_file(
 /// that can form a direct bond to the metal.  For example, in ASP.params, it would read:
 /// "METAL_BINDING_ATOMS OD1 OD2"
 /// DISULFIDE_ATOM_NAME:
-/// For polymer residue types that can form disulfide bonds (FORMS_DISULFIDE_BOND property), this is the atom it does so with.  For example, in CYS.params, it would read:
+/// For polymer residue types that can form disulfide bonds (SIDECHAIN_THIOL property), this is the atom it does so with.  For example, in CYS.params, it would read:
 /// "DISULFIDE_ATOM_NAME SG"
 ///
 /// NAME:

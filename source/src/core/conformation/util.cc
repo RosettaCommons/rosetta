@@ -1814,7 +1814,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
-	if ( ( ! res.type().forms_disulfide_bond() ) && ( ! res.type().is_disulfide_bonded() ) ) {
+	if ( ( ! res.type().is_sidechain_thiol() ) && ( ! res.type().is_disulfide_bonded() ) ) {
 		TR.Warning << "WARNING: change_cys_state() was called on non-cys-like residue " << index << ", skipping!" << std::endl;
 		return false;
 	}
@@ -2052,7 +2052,7 @@ void form_disulfide_helper(
 	// If the residues aren't already a disulfide-forming type, we must make them one. Functions like
 	// disulfide insertion mover assume we do this.
 	if ( ! conformation.residue_type(res_index).is_disulfide_bonded() &&
-		 ! conformation.residue_type(res_index).forms_disulfide_bond() ) {
+		 ! conformation.residue_type(res_index).is_sidechain_thiol() ) {
 		query_name = "CYS";
 	}
 	
@@ -2118,7 +2118,7 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 
 	//both Cys or CysD
 	//if( A.type().name1() != 'C' || B.type().name1() != 'C' )
-	if(! A.type().forms_disulfide_bond() && ! A.type().is_disulfide_bonded() )
+	if(! A.type().is_sidechain_thiol() && ! A.type().is_disulfide_bonded() )
 		return false;
 
 	//std::string n1 = A.type().name3(); std::string n2 = B.type().name3();

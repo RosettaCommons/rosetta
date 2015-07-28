@@ -3986,6 +3986,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		#Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize", default="0" ),
 		Option( 'chains_to_cyclize', 'IntegerVector', desc="The chain number to cyclize" ),
 		Option( 'num_min_rebuild', 'Integer', desc="The number of time to iterate between minimization and rebuilding the connection dependant atom positions", default='3' ),
+		Option( 'add_constraints', 'Boolean', desc="The add constraints to maintain cycle geometry", default='true' ),
 	), # -cyclization
 
 	Option_Group('dc',

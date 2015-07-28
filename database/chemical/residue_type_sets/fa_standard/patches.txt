@@ -44,8 +44,15 @@ patches/SpecialRotamer.txt
 
 # Branching/Conjugation (requires -read_pdb_link_records flag to patch)
 patches/branching/O-linked_conjugation.txt
+patches/branching/N-linked_conjugation.txt
+patches/branching/aryl-O-conjugated.txt
+patches/branching/aryl-C-conjugated.txt
 patches/branching/S-linked_conjugation.txt
 patches/branching/C-terminal_conjugation.txt
+patches/branching/sidechain_carboxyl_conjugation.txt
+patches/branching/sidechain_electrophile_conjugation.txt
+patches/branching/phg_cd1_conjugation.txt
+patches/branching/phg_cd2_conjugation.txt
 
 #################################################################################################
 # Instead of just uncommenting below, consider setting up a CMDLINE_SELECTOR in the patch file,
@@ -64,8 +71,8 @@ patches/branching/C-terminal_conjugation.txt
 #patches/VirtualNterm.txt
 
 ## terminal connection patches
-#patches/CtermConnect.txt
-#patches/NtermConnect.txt
+patches/CtermConnect.txt
+patches/NtermConnect.txt
 
 ##fpd
 #patches/CtermTruncation.txt

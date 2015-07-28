@@ -1602,6 +1602,13 @@ HN7  CN7B NR1      30.0    106.3  ! k guessed, theta from ai (NF)
 !------------------------ added for araim ----------------------
 ON6  CN7B CN7     120.0     106.25   ! 
 CN7B CN7  CN8      58.35    113.6   11.16 2.561 ! 
+!----- added for N-term methylation 07/28/15, just hacky -----
+CT1	NH3	CT3		120			109.5	
+CT2	NH3	CT3		120			109.5	
+CP1	NP	CT3		120			109.5
+CP3	NP	CT3		120			109.5
+CT3	NP	HC		120			109.5
+NP	CT3	HA		120			109.5
 
 DIHEDRALS
 !

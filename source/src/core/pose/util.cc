@@ -2531,36 +2531,124 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 		pose.conformation().declare_chemical_bond( cutpoint_res, " C  ", cutpoint_res+1, " N  " );
 	}
 }
-	
+
 void
 get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd )
 {
 	using namespace scoring::func;
-	
+
 	/*HarmonicFuncOP amide_harm_func    ( new HarmonicFunc( 1.34, 0.05 ) );
 	HarmonicFuncOP thioester_harm_func( new HarmonicFunc( 1.83, 0.1 ) );
 	*/
 	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP ang90_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_2(), 0.02 ) );
 	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	
+
 	for ( std::map< std::string, utility::vector1<io::pdb::LinkInformation> >::iterator it = fd.link_map.begin(),
 			end = fd.link_map.end(); it != end; ++it ) {
 		for ( Size ii = 1; ii <= it->second.size(); ++ii ) {
+			TR << "|"<<it->second[ii].chainID1 << "| |" << it->second[ii].resSeq1 << "|" << std::endl;
+			TR << "|"<<it->second[ii].chainID2 << "| |" << it->second[ii].resSeq2 << "|" << std::endl;
+
 			Size id1 = pose.pdb_info()->pdb2pose( it->second[ii].chainID1, it->second[ii].resSeq1 );
 			Size id2 = pose.pdb_info()->pdb2pose( it->second[ii].chainID2, it->second[ii].resSeq2 );
 			conformation::Residue const & NUC = pose.residue( id1 );
 			conformation::Residue const & ELEC = pose.residue( id2 );
-			
+
 			id::AtomID aidNUC( NUC.atom_index( it->second[ii].name1 ), id1 );
 			id::AtomID aidC( ELEC.atom_index( it->second[ii].name2 ), id2 );
-			
+
 			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it->second[ii].length, 0.05 ) );
 			scoring::constraints::ConstraintCOP atompair(
 					new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
 			pose.add_constraint( atompair );
-			
+			TR << "Adding harmonic constraint between residue " << id1 << " atom " << it->second[ii].name1;
+			TR << "and residue " << id2 << " atom " << it->second[ii].name2 << " with length " << it->second[ii].length << std::endl;
+
+			// Cover cyclization case first
+			if ( it->second[ii].name1 == " N  " && it->second[ii].name2 == " C  " ) {
+
+				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
+				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
+				id::AtomID aidCA2( NUC.atom_index( "CA" ), id1 );
+
+				scoring::constraints::ConstraintCOP ang( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidCA, ang_func ) );
+				pose.add_constraint( ang );
+				scoring::constraints::ConstraintCOP ang2( new scoring::constraints::AngleConstraint( aidCA2, aidNUC, aidC, ang_func ) );
+				pose.add_constraint( ang2 );
+				scoring::constraints::ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
+				pose.add_constraint( dih );
+
+				// constrain omega unless N terminal residue is PRO or peptoid
+				// I think we should have a residue property that describes PRO-type residue types
+				if ( NUC.type().name3() == "PRO" || NUC.type().is_peptoid() ) {
+					// let god sort it out
+					// PERHAPS: constraints that mirror the MM torsions actually guiding this case!
+				} else {
+					id::AtomID aidH( NUC.atom_index( "H" ), id1 );
+
+					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
+					pose.add_constraint( omg );
+					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
+					pose.add_constraint( omgH );
+					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
+					pose.add_constraint( omgimp );
+				}
+
+				TR << "Adding harmonic constraints to the angle formed by atoms N, C, O ( 120 ) and ";
+				TR << "the improper torsion N, C, O, CA (180) and the dihedral CA, N, C, CA ( 180 ) " <<std::endl;
+
+			} else if ( it->second[ii].name1 == " C  " && it->second[ii].name2 == " N  " ) {
+				// swapped; nuc is actually elec and vice versa
+
+				id::AtomID aidCA2( ELEC.atom_index( "CA" ), id2 );
+				id::AtomID aidO( NUC.atom_index( "O" ), id1 );
+				id::AtomID aidCA( NUC.atom_index( "CA" ), id1 );
+
+				scoring::constraints::ConstraintCOP ang( new scoring::constraints::AngleConstraint( aidC, aidNUC, aidCA, ang_func ) );
+				pose.add_constraint( ang );
+				scoring::constraints::ConstraintCOP ang2( new scoring::constraints::AngleConstraint( aidCA2, aidC, aidNUC, ang_func ) );
+				pose.add_constraint( ang2 );
+				scoring::constraints::ConstraintCOP dih( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidO, aidCA, dih_func ) );
+				pose.add_constraint( dih );
+
+				// constrain omega unless N terminal residue is PRO or peptoid
+				// I think we should have a residue property that describes PRO-type residue types
+				if ( ELEC.type().name3() == "PRO" || ELEC.type().is_peptoid() ) {
+					// let god sort it out
+					// PERHAPS: constraints that mirror the MM torsions actually guiding this case!
+				} else {
+					id::AtomID aidH( ELEC.atom_index( "H" ), id1 );
+
+					scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidC, aidNUC, aidCA, dih_func ) );
+					pose.add_constraint( omg );
+					scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidNUC, aidC, aidH, dih_func ) );
+					pose.add_constraint( omgH );
+					scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidH, aidCA2, dih_func ) );
+					pose.add_constraint( omgimp );
+				}
+			}
+
 			// Now let's add constraints based on residue identities and atom names. For example, let's cover
-			if ( it->second[ii].name2 == "C" ) {
+			if ( it->second[ii].name2 == " CZ " && it->second[ii].resName2 == "VDP" ) {
+				// thiol-ene conjugation to acryl residue
+				// (don't check name1 because we don't care SG/SD/SG1)
+				// someday we will be fancy and check vs type.get_disulfide_atom_name()
+				id::AtomID aidCB( NUC.atom_index( "CB" ), id2 );
+				id::AtomID aidCE2( ELEC.atom_index( "CE2" ), id2 );
+				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
+				scoring::constraints::ConstraintCOP ang(
+						new scoring::constraints::AngleConstraint( aidCB, aidNUC, aidC, ang90_func ) );
+				pose.add_constraint( ang );
+				//scoring::constraints::ConstraintCOP dih(
+				//		new scoring::constraints::DihedralConstraint( aidCB, aidNUC, aidC, aidCE2, dih_func ) );
+				//pose.add_constraint( dih );
+
+				TR << "Assuming thiol-ene, adding harmonic constraints to the angle formed by CB, SG, CZ ( 90 )" << std::endl;// and ";
+				//TR << "the dihedral CB, SG, CZ, CE2 ( 180 ) " << std::endl;
+
+			}
+			else if ( it->second[ii].name2 == " C  " ) {
 				// the C-terminal conjugation case:
 				id::AtomID aidCA( ELEC.atom_index( "CA" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "O" ), id2 );
@@ -2570,7 +2658,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 				scoring::constraints::ConstraintCOP dih(
 						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it->second[ii].name2 == "CD" ) {
+			} else if ( it->second[ii].name2 == " CD " ) {
 				// The sidechain conjugation to glx case
 				id::AtomID aidCA( ELEC.atom_index( "CG" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OE1" ), id2 );
@@ -2580,7 +2668,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 				scoring::constraints::ConstraintCOP dih(
 						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
-			} else if ( it->second[ii].name2 == "CG" ) {
+			} else if ( it->second[ii].name2 == " CG " ) {
 				// The sidechain conjugation to asx case
 				id::AtomID aidCA( ELEC.atom_index( "CB" ), id2 );
 				id::AtomID aidO( ELEC.atom_index( "OD1" ), id2 );
@@ -2590,6 +2678,42 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 				scoring::constraints::ConstraintCOP dih(
 						new scoring::constraints::DihedralConstraint( aidNUC, aidC, aidO, aidCA, dih_func ) );
 				pose.add_constraint( dih );
+				if ( it->second[ii].name1 == " NE " ) {
+					// ornithine
+					id::AtomID aidH( NUC.atom_index( "1HE" ), id2 );
+					id::AtomID aidCG( NUC.atom_index( "CG" ), id2 );
+					
+					/*
+					 
+					 id::AtomID aidH( NUC.atom_index( "H" ), id1 );
+					 
+					 scoring::constraints::ConstraintCOP omg( new scoring::constraints::DihedralConstraint( aidCA2, aidNUC, aidC, aidCA, dih_func ) );
+					 pose.add_constraint( omg );
+					 scoring::constraints::ConstraintCOP omgH( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) );
+					 pose.add_constraint( omgH );
+					 scoring::constraints::ConstraintCOP omgimp( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCA2, dih_func ) );
+					 pose.add_constraint( omgimp );
+					 */
+
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCG, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
+
+				} else if ( it->second[ii].name1 == " NZ " ) {
+					// lysine
+					id::AtomID aidH( NUC.atom_index( "1HZ" ), id2 );
+					id::AtomID aidCD( NUC.atom_index( "CD" ), id2 );
+
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidCA, aidO, aidC, aidNUC, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidO, aidC, aidNUC, aidH, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::DihedralConstraint( aidC, aidNUC, aidH, aidCD, dih_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidH, aidNUC, aidC, ang_func ) ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( new scoring::constraints::AngleConstraint( aidNUC, aidC, aidO, ang_func ) ) );
+
+				}
+
 			}
 
 			//AtomID aidO( list[ ii ].second.id_O_, list[ ii ].second.resnum_ );

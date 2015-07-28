@@ -1843,7 +1843,7 @@ Conformation::detect_disulfides()
 	Size num_cys( 0 );
 	for ( Size ii = 1; ii <= size(); ++ii ) {
 		//TR << "residue name: " << residue(ii).type().name() << std::endl;
-		if ( residue(ii).type().forms_disulfide_bond() || residue(ii).type().is_disulfide_bonded() ) {
+		if ( residue(ii).type().is_sidechain_thiol() || residue(ii).type().is_disulfide_bonded() ) {
 			++num_cys;
 			resid_2_cysid[ ii ] = num_cys;
 			//TR << "Found cys: residue " << ii << std::endl;
@@ -3450,11 +3450,14 @@ Conformation::backbone_torsion_angle_atoms(
 		id1.rsd()	= seqpos;
 		id1.atomno() = mainchain[ torsion-1 ];
 	} else {
-		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && residues_[ chain_end( rsd.chain() ) ]->has_variant_type( chemical::CTERM_CONNECT ) ) {
+		// AMW: Remember: chain_end does not refer to the actual chain end if we're in a one chain pose
+		// also, num_chains is 2 if we are in a one chain pose because fuck my life
+		Residue const cterm_res = ( num_chains() == 1 || rsd.chain() == num_chains() - 1 ) ? *residues_[ size() ] : *residues_[ chain_end( rsd.chain() ) ];
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && cterm_res.has_variant_type( chemical::CTERM_CONNECT ) ) {
 			// assume that they are connected as a cyclic polymer. phi is defined even though it is first residue, only used for torsion 1
 			//TR << "HI MOM, NTERM_CONN 1" << std::endl;
-			AtomIndices const & cyclic_partner_mainchain( residue_( chain_end( rsd.chain() ) ).mainchain_atoms() );
-			id1.rsd() = chain_end( rsd.chain() ); // last residue in chain
+			AtomIndices const & cyclic_partner_mainchain( cterm_res.mainchain_atoms() );
+			id1.rsd() = cterm_res.seqpos(); // last residue in chain
 			id1.atomno() = cyclic_partner_mainchain[ cyclic_partner_mainchain.size() ]; // last mainchain atom in last residue in chain
 		} else if ( fold_tree_->is_cutpoint( seqpos-1 ) ) { // seems like this should be a bug if seqpos==1
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {

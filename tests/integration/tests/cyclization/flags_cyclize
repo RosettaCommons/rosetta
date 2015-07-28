@@ -1,0 +1,9 @@
+-s 1e68_link.pdb
+
+-cyclization::chains_to_cyclize 1
+-cyclization::num_min_rebuild 10
+-cyclization::add_constraints true
+
+-chemical:patch_selectors NTERM_CONNECT CTERM_CONNECT
+
+-out:suffix _cyclize

@@ -460,7 +460,7 @@ AtomTree::torsion_angle_dof_id(
 	using numeric::dihedral;
 	using numeric::dihedral_radians;
 
-    //TR << "Getting a torsion_angle_dof_id for " << atom1_in_id.atomno() << "-" << atom2_in_id.atomno() << "-" << atom3_in_id.atomno() << "-" << atom4_in_id.atomno() << std::endl;
+    //TR << "Getting a torsion_angle_dof_id for " << atom1_in_id << "-" << atom2_in_id << "-" << atom3_in_id << "-" << atom4_in_id << std::endl;
 	//bool const debug( false );
 
 	// We use the internal DoFs if necessary to calculate the offset.
@@ -483,7 +483,7 @@ AtomTree::torsion_angle_dof_id(
 	Atom const * atom2( atom2_in );
 	Atom const * atom3( atom3_in );
 	Atom const * atom4( atom4_in );
-
+	
 	// Reorder the atoms if necessary.
 	// We want it to be the case that atom4 has input_stub_atom1 == atom3 and input_stub_atom2 == atom2.
 
@@ -501,8 +501,40 @@ AtomTree::torsion_angle_dof_id(
 		atom2 = atom3_in;
 		atom3 = atom2_in;
 		atom4 = atom1_in;
+	} else if (atom1_in_id.rsd() == atom2_in_id.rsd() &&
+			   atom1_in_id.rsd() != atom3_in_id.rsd() &&
+			   atom3_in_id.rsd() == atom4_in_id.rsd() ) {
+		// BRANCH case: torsion includes 2 atoms from each of 2 residues
+		TR << "Noncanonical connection torsion does not have a corresponding DOF_ID" << std::endl;
+		return id::BOGUS_DOF_ID;
 	} else {
-		if ( !quiet ) TR.Error << "No proper DoF can be found for these four atoms!" << std::endl;
+	
+		// AMW: We should note that this is FINE. This doesn't mean that we cannot have a fine
+		// time with the data we need. If we return id:BOGUS_DOF_ID, then conformation will
+		// catch that and just calculate the torsion manually (in atom_tree_torsion) or return
+		// said BOGUS_DOF_ID (in dof_id_from_torsion_id)
+		// and that, on this level, is what's desired.
+		if ( !quiet ) {
+			TR.Error << "No proper DoF can be found for these four atoms: ";
+			TR.Error << atom1_in_id.rsd() << "-" << atom1_in_id.atomno() << ", ";
+			TR.Error << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << ", ";
+			TR.Error << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << ", ";
+			TR.Error << atom4_in_id.rsd() << "-" << atom4_in_id.atomno() << "!" << std::endl;
+			
+			/*
+			TR.Error << "What condition failed?" << std::endl;
+			TR.Error << "!atom4->is_jump() = " << !atom4->is_jump() << std::endl;
+			TR.Error << "!atom4->keep_dof_fixed( id::PHI ) = " << !atom4->keep_dof_fixed( id::PHI ) << std::endl;
+			TR.Error << "atom4->raw_input_stub_atom1() == ( atom3 = " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom1() == atom3 ) << std::endl;
+			TR.Error << "atom4->raw_input_stub_atom2() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom4->raw_input_stub_atom2() == atom2 ) << std::endl;
+			TR.Error << " or... " << std::endl;
+			
+			TR.Error << "!atom1->is_jump() = " << !atom1->is_jump() << std::endl;
+			TR.Error << "!atom1->keep_dof_fixed( id::PHI ) = " << !atom1->keep_dof_fixed( id::PHI ) << std::endl;
+			TR.Error << "atom1->raw_input_stub_atom1() == ( atom2 = " << atom2_in_id.rsd() << "-" << atom2_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom1() == atom2 ) << std::endl;
+			TR.Error << "atom1->raw_input_stub_atom2() == ( atom3 = " << atom3_in_id.rsd() << "-" << atom3_in_id.atomno() << " ) = " << ( atom1->raw_input_stub_atom2() == atom3 ) << std::endl;
+			*/
+		}
 		return id::BOGUS_DOF_ID;
 	}
 

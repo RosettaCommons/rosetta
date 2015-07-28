@@ -24,6 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/mm/MMTorsionLibrary.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
@@ -84,6 +85,9 @@ private:
 	//    need set at ctor
 	//    need default: all bb and chi free
 	core::kinematics::MoveMapOP move_map_;
+
+	/// MMTorsionLibrary for looking up torsion parameters
+	core::scoring::mm::MMTorsionLibrary const & mm_torsion_library_;
 };
 
 }//simple_moves

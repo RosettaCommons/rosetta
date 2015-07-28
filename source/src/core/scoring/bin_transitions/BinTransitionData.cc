@@ -512,8 +512,8 @@ namespace core {
 							case BT_DISULFIDE_BONDED:
 								returnstring="DISULFIDE_BONDED";
 								break;
-							case BT_FORMS_DISULFIDE_BOND:
-								returnstring="FORMS_DISULFIDE_BOND";
+							case BT_SIDECHAIN_THIOL:
+								returnstring="SIDECHAIN_THIOL";
 								break;
 							case BT_CYCLIC:
 								returnstring="CYCLIC";
@@ -570,8 +570,8 @@ namespace core {
 							case BT_DISULFIDE_BONDED:
 								return rsd.type().is_disulfide_bonded();
 								break;
-							case BT_FORMS_DISULFIDE_BOND:
-								return rsd.type().forms_disulfide_bond();
+							case BT_SIDECHAIN_THIOL:
+								return rsd.type().is_sidechain_thiol();
 								break;
 							case BT_CYCLIC:
 								return rsd.type().is_cyclic();

@@ -50,7 +50,7 @@ namespace core {
 				BT_CHARGED,
 				BT_AROMATIC,
 				BT_DISULFIDE_BONDED,
-				BT_FORMS_DISULFIDE_BOND,
+				BT_SIDECHAIN_THIOL,
 				BT_CYCLIC,
 				
 				BT_UNKNOWN_PROPERTY, //Keep this second-to-last

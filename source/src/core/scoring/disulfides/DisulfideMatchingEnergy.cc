@@ -120,7 +120,7 @@ void DisulfideMatchingEnergy::residue_pair_energy(
 
 	//Require cysteines
 	//Require Centroid (NOT NO MORE!)
-	if ( ( ! rsd1.type().forms_disulfide_bond() && ! rsd1.type().is_disulfide_bonded() ) || (! rsd2.type().forms_disulfide_bond() && ! rsd2.type().is_disulfide_bonded() ) ) return;
+	if ( ( ! rsd1.type().is_sidechain_thiol() && ! rsd1.type().is_disulfide_bonded() ) || (! rsd2.type().is_sidechain_thiol() && ! rsd2.type().is_disulfide_bonded() ) ) return;
 	
 	DisulfideMatchingEnergyContainerCOP dec = DisulfideMatchingEnergyContainerCOP (
 			utility::pointer::static_pointer_cast< core::scoring::disulfides::DisulfideMatchingEnergyContainer const > ( pose.energies().long_range_container( methods::disulfide_matching_energy ) ));

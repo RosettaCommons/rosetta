@@ -653,7 +653,7 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 					other_neighbor_id( resid_2_disulfide_index_[ ii ], ii ) ) {
 				return true;
 			}
-		} else if ( ( pose.residue( ii ).type().forms_disulfide_bond() || pose.residue( ii ).type().is_disulfide_bonded() ) &&
+		} else if ( ( pose.residue( ii ).type().is_sidechain_thiol() || pose.residue( ii ).type().is_disulfide_bonded() ) &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE )) {
 			return true;
 		}

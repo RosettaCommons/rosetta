@@ -279,11 +279,24 @@ DeleteMetalbindingAtom::DeleteMetalbindingAtom(
 ):
 	atom_name_( atom_name )
 {}
-	
+
 bool
 DeleteMetalbindingAtom::apply( ResidueType & rsd ) const
 {
 	rsd.delete_metalbinding_atom( atom_name_ );
+	return false;
+}
+
+DeleteActCoordAtom::DeleteActCoordAtom(
+	std::string const & atom_name
+):
+	atom_name_( atom_name )
+{}
+
+bool
+DeleteActCoordAtom::apply( ResidueType & rsd ) const
+{
+	rsd.delete_act_coord_atom( atom_name_ );
 	return false;
 }
 
@@ -724,6 +737,30 @@ NCAARotLibPath::apply( ResidueType & rsd ) const
 	return false;
 }
 
+/// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
+bool
+ConnectSulfurAndMakeVirtualProton::apply( ResidueType & rsd ) const {
+	std::string disulfide_atom_name = rsd.get_disulfide_atom_name();
+	std::string CB_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( disulfide_atom_name ) ) );
+	std::string CA_equivalent = rsd.atom_name( rsd.atom_base( rsd.atom_index( CB_equivalent ) ) );
+	AddConnect ad(
+			disulfide_atom_name,
+			180, 68.374, 1.439,
+			disulfide_atom_name,
+			CB_equivalent,
+			CA_equivalent
+	);
+	bool x = ad.apply( rsd );
+
+	// Now I need to grab the proton sitting on the disulfide atom
+	std::string HG_name = rsd.atom_name( rsd.attached_H_begin( rsd.atom_index( disulfide_atom_name ) ) );
+	rsd.set_atom_type( HG_name, "VIRT" );
+	rsd.set_mm_atom_type( HG_name, "VIRT" );
+	rsd.atom( HG_name ).charge( 0.0 );
+	rsd.atom( HG_name ).is_virtual( true );
+
+	return x;
+}
 
 PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line ) {
@@ -850,7 +887,13 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		if ( l.fail() ) return 0;
 
 		return PatchOperationOP( new DeleteMetalbindingAtom( atom_name ) );
-		
+	} else if ( tag == "DELETE_ACT_COORD_ATOM" ) {
+		std::string atom_name;
+		l >> atom_name;
+		if ( l.fail() ) return 0;
+
+		return PatchOperationOP( new DeleteActCoordAtom( atom_name ) );
+
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {
@@ -967,6 +1010,8 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			tr.Warning << "Unknown SET_ORIENT ATOM tag: " << tag << std::endl;
 			return 0;
 		}
+	} else if ( tag == "CONNECT_SULFUR_AND_MAKE_VIRTUAL_PROTON") {
+		return PatchOperationOP( new ConnectSulfurAndMakeVirtualProton() );
 	}
 	tr.Warning << "patch_operation_from_patch_file_line: bad line: " << line << std::endl;
 

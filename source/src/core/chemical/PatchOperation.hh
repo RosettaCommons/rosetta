@@ -272,7 +272,21 @@ public:
 	/// constructor
 	DeleteMetalbindingAtom( std::string const & atom_name );
 
-	/// redefine a chi angle
+	bool
+	apply( ResidueType & rsd ) const;
+private:
+	std::string atom_name_;
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Delete an act coord atom
+///    Added by Andrew M. Watkins in April 2015
+class DeleteActCoordAtom : public PatchOperation {
+public:
+	/// constructor
+	DeleteActCoordAtom( std::string const & atom_name );
+
 	bool
 	apply( ResidueType & rsd ) const;
 private:
@@ -655,6 +669,18 @@ public:
 
 private:
 	std::string path_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Add a connection to the residue's sulfur and make a virtual proton to track the position of the connection atom
+class ConnectSulfurAndMakeVirtualProton : public PatchOperation {
+public:
+	/// @brief constructor
+	ConnectSulfurAndMakeVirtualProton() {};
+
+	/// @brief set the NCAA rotamer library path in the residue type
+	bool
+	apply( ResidueType & rsd ) const;
 };
 
 /// @brief  Virtual constructor, returns 0 if no match

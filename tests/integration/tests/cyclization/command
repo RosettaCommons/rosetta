@@ -5,9 +5,27 @@ cd %(workdir)s
  [ -x %(bin)s/Cyclize.%(binext)s ] || exit 1
 
 # run executable
-%(bin)s/Cyclize.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/Cyclize.%(binext)s @flags_cyclize -database %(database)s -run:constant_seed -nodelay  2>&1 \
      | egrep -vf ../../ignore_list \
-     > log
+     > log_cyclize
+
+# run executable
+%(bin)s/Cyclize.%(binext)s @flags_cyclize_peptoid -database %(database)s -run:constant_seed -nodelay  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log_cyclize_peptoid
+
+# check to see if executable exits
+ [ -x %(bin)s/relax.%(binext)s ] || exit 1
+
+# run executable
+%(bin)s/relax.%(binext)s @flags_relax -database %(database)s -run:constant_seed -nodelay  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log_relax
+
+# run executable
+%(bin)s/relax.%(binext)s @flags_relax_peptoid -database %(database)s -run:constant_seed -nodelay  2>&1 \
+     | egrep -vf ../../ignore_list \
+     > log_relax_peptoid
 
 # test to see if exe terminated abnormaly
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true

@@ -263,14 +263,7 @@ HbsDockDesignMinimizeMover::apply(
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 
 	scoring::ScoreFunctionOP pert_score_fxn;
-	if( option[ hddm::use_soft_rep ].value() )
-	{
-    	pert_score_fxn = soft_score_fxn;
-	}
-	else
-	{
-    	pert_score_fxn = score_fxn;
-	}
+	pert_score_fxn = option[ hddm::use_soft_rep ].value() ? soft_score_fxn : score_fxn;
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 

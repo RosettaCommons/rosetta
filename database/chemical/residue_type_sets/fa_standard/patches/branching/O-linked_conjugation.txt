@@ -3,6 +3,7 @@
 
 NAME O-conjugated
 TYPES SC_BRANCH_POINT
+CMDLINE_SELECTOR O-conjugated
 
 BEGIN_SELECTOR
 PROPERTY PROTEIN
@@ -13,7 +14,6 @@ NOT VARIANT_TYPE SULFATION
 NOT VARIANT_TYPE DEPROTONATED
 AA SER THR
 END_SELECTOR
-
 
 BEGIN_CASE  ## Serine #########################################################
 

@@ -434,7 +434,7 @@ public:
 
 		return;
 	}
-	
+
 	/// @brief Gets disulfide atom name
 	/// @author Andrew M. Watkins (amw579@nyu.edu).
 	std::string
@@ -1060,6 +1060,12 @@ public:
 	void
 	delete_metalbinding_atom( std::string const & atom_name );
 
+	/// @brief Remove an atom from the list of act coord atoms
+	/// (used in patching when it kills the valence that is thus used)
+	/// @author Andrew Watkins (amw579@nyu.edu)
+	void
+	delete_act_coord_atom( std::string const & atom_name );
+
 	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
 	void add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel = SingleBond);
 
@@ -1463,10 +1469,13 @@ public:
 	bool is_polymer() const;
 
 	/// @brief is thiol?
-	bool forms_disulfide_bond() const;
+	bool is_sidechain_thiol() const;
 
 	/// @brief is disulfide?
 	bool is_disulfide_bonded() const;
+
+	/// @brief is sidechain amine?
+	bool is_sidechain_amine() const;
 
 	/// @brief is protein?
 	bool is_protein() const;
@@ -1524,7 +1533,7 @@ public:
 
 	/// @brief is membrane?
 	bool is_membrane() const;
-	
+
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const;
 
@@ -1855,7 +1864,7 @@ public:
 	{
 		return bondangle_atom_sets_.size();
 	}
-	
+
 	/// @brief Returns true if this residue has shadow atoms, false otherwise.
 	///
 	inline bool has_shadow_atoms() const { return !atom_shadowed_.empty(); }
@@ -2232,7 +2241,7 @@ private:
 	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1 < std::string > metal_binding_atoms_;
-	
+
 	/// @brief Name of the disulfide-forming atom, if any
 	std::string disulfide_atom_name_;
 

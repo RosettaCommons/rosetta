@@ -975,18 +975,29 @@ RotamericSingleResiduePeptoidLibrary< T, N >::get_omg_from_rsd(
 {
 debug_assert( rsd.is_peptoid() || rsd.is_protein() );
 
-	if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
-	debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
-		return pose.residue( pose.conformation().chain_end( rsd.chain() ) ).mainchain_torsion( RSD_OMG_INDEX );
+	if ( pose.conformation().num_chains() == 2 || rsd.chain() == pose.conformation().num_chains()-1 ) {
+		// chain_end won't be the last residue, because the last residue of a conformation isn't the chain ending for some reason...
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.total_residue() ).has_variant_type( chemical::CTERM_CONNECT ) ) {
+			debug_assert( pose.residue( pose.total_residue() ).is_protein() || pose.residue( pose.total_residue() ).is_peptoid() );
+			return pose.residue( pose.total_residue() ).mainchain_torsion( RSD_OMG_INDEX );
+		} else if ( rsd.is_lower_terminus() ) {
+			return parent::NEUTRAL_OMG;
+		}	else {
+			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
+			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
+		}
+	} else {
+		if ( rsd.has_variant_type( chemical::NTERM_CONNECT ) && pose.residue( pose.conformation().chain_end( rsd.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
+			debug_assert( pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_protein() || pose.residue( pose.conformation().chain_end( rsd.chain() ) ).is_peptoid() );
+			return pose.residue( pose.conformation().chain_end( rsd.chain() ) ).mainchain_torsion( RSD_OMG_INDEX );
 
-	} else if ( rsd.is_lower_terminus() ) {
-		return parent::NEUTRAL_OMG;
-
-	}	else {
-	debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
-		return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
+		} else if ( rsd.is_lower_terminus() ) {
+			return parent::NEUTRAL_OMG;
+		}	else {
+			debug_assert( pose.residue( rsd.seqpos() - 1 ).is_protein() || pose.residue( rsd.seqpos() - 1 ).is_peptoid() );
+			return pose.residue( rsd.seqpos() - 1 ).mainchain_torsion( RSD_OMG_INDEX );
+		}
 	}
-
 }
 
 /// @details Handle lower-term residues by returning a "neutral" phi value

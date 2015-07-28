@@ -213,8 +213,8 @@ update_disulfides_from_full_model_info( pose::Pose & pose ){
 			std::make_pair( full_model_info.full_to_sub( res1_full ),
 											full_model_info.full_to_sub( res2_full ) );
 		working_disulf_bonds.push_back( disulfide_pair );
-		runtime_assert( pose.residue_type( disulfide_pair.first  ).forms_disulfide_bond() || pose.residue_type( disulfide_pair.first  ).is_disulfide_bonded() );
-		runtime_assert( pose.residue_type( disulfide_pair.second ).forms_disulfide_bond() || pose.residue_type( disulfide_pair.second ).is_disulfide_bonded() );
+		runtime_assert( pose.residue_type( disulfide_pair.first  ).is_sidechain_thiol() || pose.residue_type( disulfide_pair.first  ).is_disulfide_bonded() );
+		runtime_assert( pose.residue_type( disulfide_pair.second ).is_sidechain_thiol() || pose.residue_type( disulfide_pair.second ).is_disulfide_bonded() );
 	}
 
 	pose.conformation().fix_disulfides( working_disulf_bonds );

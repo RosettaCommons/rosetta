@@ -622,11 +622,16 @@ Residue::orient_onto_residue_peptoid (
 	//          << ( src.has_variant_type( chemical::NTERM_CONNECT ) && conformation.residue( conformation.chain_end( src.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) )
 	//          << std::endl;
 
+	// AMW: I am recombining these conditionals in a relatively byzantine way to attempt to maintain their order
+	// I don't know the last time they should have worked, but various checks in here break in the current state
 	// first residue of chain
-	if ( src.type().is_lower_terminus() ) {
+	if ( src.type().is_lower_terminus() || src.has_variant_type( chemical::NTERM_CONNECT ) ) {
 		//std::cout << "DEBUG LT" << std::endl;
 		// NtermConnect (cyclic)
-		if ( src.has_variant_type( chemical::NTERM_CONNECT ) && conformation.residue( conformation.chain_end( src.chain() ) ).has_variant_type( chemical::CTERM_CONNECT ) ) {
+		Residue const cterm_residue = ( conformation.num_chains() == 2 || src.chain() == conformation.num_chains() - 1 ) ?
+				conformation.residue( conformation.size() ) :
+				conformation.residue( conformation.chain_end( src.chain() ) );
+		if ( /*!(*this).type().is_lower_terminus() && */src.has_variant_type( chemical::NTERM_CONNECT ) && cterm_residue.has_variant_type( chemical::CTERM_CONNECT ) ) {
 			//std::cout << "DEBUG LT CYCLIC" << std::endl;
 			// cent: peptoid N, src N
 			cent_xyz = atom( atom_index( bb_nx ) ).xyz();
@@ -637,12 +642,14 @@ Residue::orient_onto_residue_peptoid (
 			src_nbr2_xyz = src.atom( src.atom_index( bb_ca ) ).xyz();
 
 			// nbr1: peptoid lower connect, C of the cyclic paterner of src
-			Residue const cyclic_src( conformation.residue( conformation.chain_end( src.chain() ) ) );
-			src_nbr1_xyz = cyclic_src.atom( cyclic_src.atom_index( bb_co ) ).xyz();
+			//Residue const cyclic_src( conformation.residue( conformation.chain_end( src.chain() ) ) );
+			src_nbr1_xyz = cterm_residue.atom( cterm_residue.atom_index( bb_co ) ).xyz();
 
 			Stub stub( atom( atom_index( bb_nx ) ).xyz(), atom( atom_index( bb_ca ) ).xyz(), atom( atom_index( bb_co ) ).xyz() );
-			AtomICoor icoor ( (*this).type().lower_connect().icoor() );
-			nbr1_xyz = stub.spherical(icoor.phi(), icoor.theta(), icoor.d() );
+			//AtomICoor icoor ( (*this).type().lower_connect().icoor() );
+			// Put it where the lower connect WOULD be put...
+			// we can't actually summon lower connect because it's a lower terminal type!
+			nbr1_xyz = stub.spherical( 167.209, 52.954, 1.367000 );
 
 			// AcetylatedPeptoidNterm
 		} else if ( src.has_variant_type( chemical::ACETYLATED_NTERMINUS_VARIANT ) ) {

@@ -109,6 +109,11 @@ residue_types/staple/08B.params
 #residue_types/sidechain_conjugation/CYX.params
 #residue_types/sidechain_conjugation/LYX.params
 #residue_types/sidechain_conjugation/ASX.params
+#residue_types/sidechain_conjugation/VDP.params
+#residue_types/sidechain_conjugation/VSR.params
+#residue_types/sidechain_conjugation/VHA.params
+#residue_types/sidechain_conjugation/VOR.params
+#residue_types/sidechain_conjugation/VLS.params
 
 ## Water Types
 residue_types/water/TP3.params
@@ -139,6 +144,8 @@ residue_types/water/HOH.params
 #residue_types/d-caa/DVAL.params
 
 ## D-NCAA Types
+#residue_types/d-ncaa/V01.params
+#residue_types/d-ncaa/V02.params
 #residue_types/d-ncaa/DABA.params
 #residue_types/d-ncaa/DAPA.params
 #residue_types/d-ncaa/DHLU.params
@@ -263,6 +270,8 @@ residue_types/d-ncaa/d-homocysteine.params
 #residue_types/d-ncaa/d-trifluoro-leucine.params
 
 ## L-NCAA Types
+#residue_types/l-ncaa/V03.params
+#residue_types/l-ncaa/V04.params
 #residue_types/l-ncaa/ABA.params
 #residue_types/l-ncaa/APA.params
 residue_types/l-ncaa/HLU.params
@@ -423,7 +432,7 @@ residue_types/peptoids/001.params
 ##residue_types/peptoids/016.params	# MAJOR: Missing MM atom types for ring nitrogen, MINOR: chi2 is not really a proton chi
 #residue_types/peptoids/020.params
 #
-#residue_types/peptoids/101.params
+residue_types/peptoids/101.params
 #residue_types/peptoids/102.params
 #residue_types/peptoids/103.params
 #residue_types/peptoids/104.params
@@ -470,7 +479,7 @@ residue_types/peptoids/001.params
 ##residue_types/peptoids/302.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
 #residue_types/peptoids/303.params
 ##residue_types/peptoids/304.params	# MAJOR: No MM atom type for tertiary amine (but try toppar_amines.str)
-#residue_types/peptoids/305.params
+residue_types/peptoids/305.params
 #residue_types/peptoids/306.params
 #residue_types/peptoids/307.params
 ##residue_types/peptoids/308.params	# ERROR: dont add residue bonds more than once! Totally broken

@@ -1123,11 +1123,15 @@ build_pose_as_is1(
 		// Determine polymer information: termini, branch points, etc.
 		Strings branch_points_on_this_residue;
 		bool is_branch_point( false );
+		//TR << "Checking if resid " << resid << " is in the link map " << std::endl;
 		if ( fd.link_map.count( resid ) ) {  // if found in the linkage map
 			// Find and store to access later:
 			//     - associated 1st residue of all branches off this residue (determines branch lower termini)
 			//     - positions of branch points
+			//TR << "Found resid " << resid << " in link map " << std::endl;
 			for ( Size branch = 1, n_branches = fd.link_map[ resid ].size(); branch <= n_branches; ++branch ) {
+				
+				//TR << "Examining branch " << branch << std::endl;
 				LinkInformation const & link_info( fd.link_map[ resid ][ branch ] );
 				if ( link_info.chainID1 == link_info.chainID2 && link_info.resSeq1 == ( link_info.resSeq2 - 1 ) ) {
 					// If this occurs, the link is to the next residue on the same chain, so both residues are part of
@@ -1136,6 +1140,8 @@ build_pose_as_is1(
 					// makers did things reasonably.
 					continue;
 				}
+				//TR << "branch point is true for this residue" << std::endl;
+				//TR << "corresponding branch lower terminus is " <<  link_info.resID2 << std::endl;
 				is_branch_point = true;
 				branch_lower_termini.push_back( link_info.resID2 );
 				branch_points_on_this_residue.push_back( link_info.name1 );
@@ -1184,7 +1190,7 @@ build_pose_as_is1(
 			bool const is_polymer( rsd_type.is_polymer() ); // need an example residue type, though this will
 			// remain fixed for all residue_types with the same name3
 
-			// only take the desired variants
+			// only take the desired variants`
 			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS_VARIANT ) ||
 					rsd_type.has_variant_type( LOWERTERM_TRUNC_VARIANT );
 			bool upper_term_type = rsd_type.has_variant_type( UPPER_TERMINUS_VARIANT ) ||
@@ -1194,6 +1200,8 @@ build_pose_as_is1(
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					TR.Trace << "because of the terminus state" << std::endl;
+					//TR.Trace << "PDB has lower " << is_lower_terminus << " and type has " << lower_term_type << std::endl;
+					//TR.Trace << "PDB has upper " << is_upper_terminus << " and type has " << upper_term_type << std::endl;
 				}
 				continue;
 			}
@@ -1201,6 +1209,7 @@ build_pose_as_is1(
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					TR.Trace << "because of the branch state" << std::endl;
+					//TR.Trace << "PDB has branch " << is_branch_point << " and type has " << rsd_type.is_branch_point() << std::endl;
 				}
 				continue;
 			}
@@ -1208,6 +1217,7 @@ build_pose_as_is1(
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					TR.Trace << "because of the branch lower terminus state" << std::endl;
+					//TR.Trace << "PDB has branch " << is_branch_lower_terminus << " and type has " << rsd_type.is_branch_lower_terminus() << std::endl;
 				}
 				continue;
 			}
@@ -1222,6 +1232,14 @@ build_pose_as_is1(
 				if ( TR.Trace.visible() ) {
 					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					TR.Trace << "because of the disulfide state" << std::endl;
+				}
+				continue;
+			}
+			if ( ( rsd_type.aa() == aa_glu || rsd_type.aa() == aa_asp ) && rsd_type.has_variant_type( BRANCH_LOWER_TERMINUS_VARIANT ) && !is_branch_lower_terminus ) {
+				// Don't assign sidechain carboxyl conjugation upon read-in unless mentioned in a LINK record!
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+					TR.Trace << "because of the sidechain conjugation state" << std::endl;
 				}
 				continue;
 			}
@@ -1702,11 +1720,6 @@ build_pose_as_is1(
 		pose.conformation().detect_pseudobonds();
 	}
 	
-	// add contraints based on LINK records if desired
-	if ( basic::options::option[ basic::options::OptionKeys::in::constraints_from_link_records ].value() ) {
-		core::pose::get_constraints_from_link_records( pose, fd );
-	}
-	
 	// ensure enough space for atom level pdb information
 	pdb_info->resize_atom_records( pose );
 
@@ -1742,7 +1755,13 @@ build_pose_as_is1(
 	// mark PDBInfo as ok and store in Pose
 	pdb_info->obsolete( false );
 	pose.pdb_info( pdb_info );
-
+	
+	// Can't do this until we have a PDBInfo, duh!
+	// add contraints based on LINK records if desired
+	if ( basic::options::option[ basic::options::OptionKeys::in::constraints_from_link_records ].value() ) {
+		core::pose::get_constraints_from_link_records( pose, fd );
+	}
+	
 	//fpd fix bfactors of missing atoms using neighbors
 	//fpd set hydrogen Bfactors as 1.2x attached atom
 	if (options.preserve_crystinfo()) {

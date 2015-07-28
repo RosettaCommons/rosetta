@@ -438,8 +438,8 @@ FullatomDisulfideEnergy::residue_pair_energy(
 		return;
 	}
 
-	if ( ( !rsd1.type().is_disulfide_bonded() && !rsd1.type().forms_disulfide_bond() )
-      || ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().forms_disulfide_bond() ) ) return;
+	if ( ( !rsd1.type().is_disulfide_bonded() && !rsd1.type().is_sidechain_thiol() )
+      || ( !rsd2.type().is_disulfide_bonded() && !rsd2.type().is_sidechain_thiol() ) ) return;
 	
     FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		utility::pointer::static_pointer_cast< core::scoring::disulfides::FullatomDisulfideEnergyContainer const > ( pose.energies().long_range_container( methods::fa_disulfide_energy ) ));

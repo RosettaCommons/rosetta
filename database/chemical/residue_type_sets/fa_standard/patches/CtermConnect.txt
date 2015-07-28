@@ -1,7 +1,7 @@
 ## fullatom protein c-terminus patch to allow connection to C-term of protein
 
 NAME CtermConnect
-TYPES CTERM_CONNECT
+TYPES CTERM_CONNECT UPPER_TERMINUS_VARIANT
 
 ## general requirements for this patch
 
@@ -9,6 +9,7 @@ BEGIN_SELECTOR
 NOT PROPERTY DNA
 NOT PROPERTY PHOSPHONATE
 NOT VARIANT_TYPE UPPER_TERMINUS_VARIANT
+CMDLINE_SELECTOR CTERM_CONNECT
 END_SELECTOR
 
 ## now we search for a case that matches the residue, take the first one
@@ -26,5 +27,6 @@ ADD_CONNECT C ICOOR 180.0 60.0 1.2 C CA N
 SET_ICOOR O 180.0 60 1.2 C CA CONN%NCONN
 
 ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+ADD_PROPERTY BRANCH_LOWER_TERMINUS
 
 END_CASE

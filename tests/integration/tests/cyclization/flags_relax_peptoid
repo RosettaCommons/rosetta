@@ -1,0 +1,11 @@
+-s peptoid_link.pdb
+
+-read_pdb_link_records
+-write_pdb_link_records
+-constraints_from_link_records
+-cst_weight 1
+
+-score:weights mm_std
+-chemical:patch_selectors NTERM_CONNECT CTERM_CONNECT
+
+-out:suffix _relax_peptoid

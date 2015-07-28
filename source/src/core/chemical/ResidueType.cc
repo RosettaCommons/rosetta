@@ -1229,6 +1229,27 @@ ResidueType::delete_metalbinding_atom (
 	return;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Remove an atom from the list of act coord atoms
+/// (used in patching when it kills the valence that is thus used)
+/// @author Andrew Watkins (amw579@nyu.edu)
+void
+ResidueType::delete_act_coord_atom (
+	std::string const & atom_name
+) {
+	if ( !has( atom_name ) ) {
+		std::string message = "Error in removing act coord atom from residue type " + name3() + ". Atom " + atom_name + " was not found.";
+		utility_exit_with_message(message);
+	}
+
+	actcoord_atoms_.erase( std::remove( actcoord_atoms_.begin(), actcoord_atoms_.end(), atom_name_to_vd_[ atom_name ] ),
+									   actcoord_atoms_.end() );
+	actcoord_atoms_indices_.erase( std::remove( actcoord_atoms_indices_.begin(), actcoord_atoms_indices_.end(), atom_index( atom_name ) ),
+							    actcoord_atoms_indices_.end() );
+
+	return;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1823,15 +1844,21 @@ ResidueType::is_polymer() const
 }
 
 bool
-ResidueType::forms_disulfide_bond() const
+ResidueType::is_sidechain_thiol() const
 {
-	return properties_->has_property( FORMS_DISULFIDE_BOND );
+	return properties_->has_property( SIDECHAIN_THIOL );
 }
 
 bool
 ResidueType::is_disulfide_bonded() const
 {
 	return properties_->has_property( DISULFIDE_BONDED );
+}
+
+bool
+ResidueType::is_sidechain_amine() const
+{
+	return properties_->has_property( SIDECHAIN_AMINE );
 }
 
 bool
@@ -3003,7 +3030,8 @@ ResidueType::atom_index( std::string const & name ) const
 		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
-		utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
+		// AMW: this really should be the residue's name, so that people trying to debug can see what the issue is
+		utility_exit_with_message("unknown atom_name: " + this->name() + "  " + name );
 	}
 	VD const & vd = graph_iter->second;
 
@@ -3028,7 +3056,8 @@ ResidueType::atom_index( std::string const & name ) const
 			tr.Error << graph_[ordered_atoms_[index]].name() << " " << &graph_[ordered_atoms_[index]] << std::endl;
 		}
 		tr.Error << "vd memory address: " << &graph_[vd] << std::endl;
-		utility_exit_with_message("unknown atom_name: " + name3() + "  " + name );
+		// AMW: this really should be the residue's name, so that people trying to debug can see what the issue is
+		utility_exit_with_message("unknown atom_name: " + this->name() + "  " + name );
 	}
 
 	return ordered_index;
