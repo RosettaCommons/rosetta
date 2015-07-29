@@ -53,30 +53,32 @@ public:
 	/// Constructors  ///
 	/////////////////////
 
-	/// @brief Transform the protein into a defalt membrane
-	/// @details Transform the protein into default membrane, current protein
+	/// @brief Transform the protein into a default membrane
+	/// @details Transform the protein into default membrane, protein
     /// embedding computed from structure and spanfile
 	TransformIntoMembraneMover();
-    
-    /// @brief Use custom jump to transform protein into membrane
-    /// @details Using user-specified jump, transform the protein into default
-    /// membrane, current protein computed from structure & spanfile
+	
+	// TODO: use and test this constructor
+    // Use custom jump to transform protein into membrane
+    // Using user-specified jump, transform the downstream partner
+	// into default membrane, partner embedding computed from structure & spanfile
     TransformIntoMembraneMover( core::Size jump );
 	
-	/// @brief Transform the protein into a defalt membrane and user specified embedding
+	/// @brief Transform the protein with a user-specified protein embedding into
+	/// a default membrane
 	/// @details Transform the protein with a user-defined embedding (might have
     /// been optimized before) into the default membrane
-	TransformIntoMembraneMover( EmbeddingDefOP embedding );
+	TransformIntoMembraneMover( EmbeddingDefOP current_embedding );
 
-	/// @brief Transform the protein into user-specified mmebrane coordinates
-    /// @details Transform the protein with a user-defined embedding (might have
-    /// been optimized before and is saved as MEM) into a user-defined membrane
-    /// which is ARGV for the constructor
-	TransformIntoMembraneMover(
-		Vector center,
-		Vector normal,
-		bool from_current=false
-		);
+	/// @brief Transform the protein into user-specified membrane coordinates
+    /// @details Transform the protein into a user-defined membrane, protein
+    /// embedding is computed from structure and spanfile
+	TransformIntoMembraneMover( Vector new_mem_cntr, Vector new_mem_norm );
+
+	/// @brief Transform the protein into user-specified membrane coordinates
+	/// @details Transform the protein into a user-defined membrane, protein
+	/// embedding is computed from structure and spanfile
+	TransformIntoMembraneMover( EmbeddingDefOP current_embedding, Vector new_mem_cntr, Vector new_mem_norm );
 	
 	/// @brief Copy Constructor
 	TransformIntoMembraneMover( TransformIntoMembraneMover const & src );
@@ -107,9 +109,13 @@ public:
 	/// Mover Methods ///
 	/////////////////////
 	
+	/// @brief Use the default membrane (cntr 0,0,0 and normal 0,0,1) instead
+	///			of the membrane from the MEM coordinates stored in MembraneInfo
+	void use_default_membrane( bool truefalse );
+
 	/// @brief Get the name of this Mover (TransformIntoMembraneMover)
 	virtual std::string get_name() const;
-		
+
 	/// @brief Move the pose into membrane coordinate frame
 	virtual void apply( Pose & pose );
 	
@@ -136,16 +142,18 @@ private: // data
     // Jump used for the move
     Size jump_;
 
-	// center and normal coordinates with respect to fixed membrane
-	Vector mem_center_;
-	Vector mem_normal_;
+	// new membrane coordinates to transform into
+	Vector new_mem_cntr_;
+	Vector new_mem_norm_;
 	
-	// Embedding of the protien prior to transformation
-	EmbeddingDefOP embedding_;
+	// Embedding of the protein prior to transformation
+	EmbeddingDefOP current_embedding_;
 	
-	// Extract current membrane coordinates (prior to transformation)
-	// from the membrane residue
-	bool keep_current_protein_embedding_; 
+	// use default membrane of (center 0,0,0 and normal 0,0,1)
+	bool use_default_membrane_;
+	
+	// user-defined membrane
+	bool user_defined_membrane_;
 	
 };
 

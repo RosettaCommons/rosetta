@@ -88,6 +88,8 @@ public:
     void tearDown()
     {}
 
+	////////////////////////////////////////////////////////////////////////////
+
 	/// @brief test transform into default membrane
 	void test_transform_into_default_membrane() {
 
@@ -116,12 +118,59 @@ public:
 		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
 
-			// check positions of center and normal
+		// check positions of center and normal
 		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 
 	}
+
+	////////////////////////////////////////////////////////////////////////////
+
+	/// TODO: test constructor from jump
+
+	////////////////////////////////////////////////////////////////////////////
+
+	// test constructor from embedding
+	void test_constructor_from_embedding() {
+		
+		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
+		
+		using namespace protocols::membrane;
+		
+		// set the current embedding of the protein
+		Vector cur_emb_center (20.9885, -0.04375, 56.6125);
+		Vector cur_emb_normal (-8.6212, 0.83567, 17.05025);
+		EmbeddingDefOP current_emb( new EmbeddingDef( cur_emb_center, cur_emb_normal ) );
+		
+		// membrane default that are not moved, output in PDB
+		Vector m_center ( mem_center );
+		Vector m_normal ( mem_normal );
+		Vector m_thickness( mem_thickness, 0, 0 );
+	
+		// Apply Rotation and translation move
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb ) );
+		transform->apply( *pose_ );
+		
+		// check positions of CA atoms of first and last residue after rotation
+		Vector res1_after ( -8.317, 10.922, -16.568 );
+		Vector res40_after ( -22.831, -3.756, 11.196 );
+		Vector res41_after ( 11.119, -0.315, -7.461 );
+		Vector res80_after ( 0.795, -4.211, 20.987 );
+		
+		// Check the structure was moved to the correct position
+		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
+		
+		// check positions of center and normal
+		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+	}
+
+	////////////////////////////////////////////////////////////////////////////
 
 	/// @brief test transform into user-defined membrane
 	void test_transform_into_userdefined_membrane() {
@@ -131,23 +180,19 @@ public:
 		using namespace protocols::membrane;
 
 		// set new membrane to transform pose into
-		Vector new_center (20, 20, 20);
-		Vector new_normal (15, 0, 0);
-
-		// membrane default that are not moved, output in PDB
-		Vector m_center ( mem_center );
-		Vector m_normal ( mem_normal );
+		Vector m_center (20, 20, 20);
+		Vector m_normal (15, 0, 0);
 		Vector m_thickness( mem_thickness, 0, 0 );
 
 		// Apply Rotation and translation move
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( new_center, new_normal ) );
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( m_center, m_normal ) );
 		transform->apply( *pose_ );
 
 		// check positions of CA atoms of first and last residue after rotation
-		Vector res1_after ( 16.0428, 37.8056, 24.2101 );
-		Vector res40_after ( 44.6974, 21.6612, 34.9435 );
-		Vector res41_after ( 14.3469, 17.5878, 10.9690 );
-		Vector res80_after ( 43.5296, 8.8708, 12.8232 );
+		Vector res1_after ( 16.043, 37.806, 24.210 );
+		Vector res40_after ( 44.697, 21.661, 34.944 );
+		Vector res41_after ( 14.347, 17.588, 10.969 );
+		Vector res80_after ( 43.530, 8.871, 12.823 );
 
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
@@ -158,11 +203,54 @@ public:
 		// check positions of center and normal
 		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal+m_center, pose_->residue(81).atom(3).xyz(), 0.001 ) );
 	}
+
+	////////////////////////////////////////////////////////////////////////////
+
+	// test constructor form embedding and user-defined membrane
+	void test_constructor_from_embedding_and_membrane() {
+		
+		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
+		
+		using namespace protocols::membrane;
+
+		// set the current embedding of the protein
+		Vector cur_emb_center (20.9885, -0.04375, 56.6125);
+		Vector cur_emb_normal (-8.6212, 0.83567, 17.05025);
+		EmbeddingDefOP current_emb( new EmbeddingDef( cur_emb_center, cur_emb_normal ) );
+		
+		// set new membrane to transform pose into
+		Vector m_center (20, 20, 20);
+		Vector m_normal (15, 0, 0);
+		Vector m_thickness( mem_thickness, 0, 0 );
+		
+		// Apply Rotation and translation move
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb, m_center, m_normal ) );
+		transform->apply( *pose_ );
+		
+		// check positions of CA atoms of first and last residue after rotation
+		Vector res1_after ( 3.432, 31.406, 27.639 );
+		Vector res40_after ( 31.196, 17.635, 43.017 );
+		Vector res41_after ( 12.539, 19.011, 8.921 );
+		Vector res80_after ( 40.987, 15.749, 19.462 );
+		
+		// Check the structure was moved to the correct position
+		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
+		
+		// check positions of center and normal
+		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal+m_center, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+	}
+
+	////////////////////////////////////////////////////////////////////////////
 	
 	/// @brief Check that when a protein is transformed, the angle between the protein "axis" and
-	/// membrane normal axis is 0 (the "definition" of correct transofmration)
+	/// membrane normal axis is 0 (the "definition" of correct transformation)
 	void test_helix_to_normal_angle() {
 	
 		// Apply transformation to the protein

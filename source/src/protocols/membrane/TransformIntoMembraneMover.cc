@@ -26,6 +26,7 @@
 
 // Project Headers
 #include <protocols/membrane/TranslationRotationMover.hh>
+#include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/util.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -45,6 +46,8 @@
 
 // Utility Headers
 #include <core/conformation/membrane/types.hh>
+
+#include <numeric/xyzVector.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
@@ -74,69 +77,77 @@ using namespace protocols::moves;
 /// Constructors  ///
 /////////////////////
 
-/// @brief Transform the protein into a defalt membrane
-/// @details Transform the protein into default membrane, current protein
+/// @brief Transform the protein into a default membrane
+/// @details Transform the protein into default membrane, protein
 /// embedding computed from structure and spanfile
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
-    protocols::moves::Mover(),
-    jump_( 1 ),
-    mem_center_( mem_center ),
-    mem_normal_( mem_normal ),
-    embedding_( 0 ),
-    keep_current_protein_embedding_( false )
+	jump_( 0 ), 
+	new_mem_cntr_( mem_center ), 
+	new_mem_norm_( mem_normal ), 
+	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	use_default_membrane_( false ), 
+	user_defined_membrane_( false )
 {}
 
-/// @brief Use custom jump to transform protein into membrane
-/// @details Using user-specified jump, transform the protein into default
-/// membrane, current protein computed from structure & spanfile
+// TODO: use and test this constructor
+// Use custom jump to transform protein into membrane
+// Using user-specified jump, transform the downstream partner
+// into default membrane, partner embedding computed from structure & spanfile
 TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
-    protocols::moves::Mover(),
-    jump_( jump ),
-    mem_center_( mem_center ),
-    mem_normal_( mem_normal ),
-    embedding_( 0 ),
-    keep_current_protein_embedding_( false )
+	jump_( jump ), 
+	new_mem_cntr_( mem_center ), 
+	new_mem_norm_( mem_normal ), 
+	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	use_default_membrane_( false ), 
+	user_defined_membrane_( false )
 {}
-    
-/// @brief Transform the protein into a defalt membrane and user specified embedding
+
+/// @brief Transform the protein with a user-specified protein embedding into
+/// a default membrane
 /// @details Transform the protein with a user-defined embedding (might have
 /// been optimized before) into the default membrane
-TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP new_protein_embedding ) :
-	protocols::moves::Mover(),
-    jump_( 1 ),
-    mem_center_( mem_center ),
-    mem_normal_( mem_normal ),
-    embedding_( new_protein_embedding ),
-    keep_current_protein_embedding_( false )
+TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_embedding ) : 
+	jump_( 0 ), 
+	new_mem_cntr_( mem_center ), 
+	new_mem_norm_( mem_normal ), 
+	current_embedding_( current_embedding ), 
+	use_default_membrane_( false ), 
+	user_defined_membrane_( false )
 {}
 
-/// @brief Transform the protein into user-specified mmebrane coordinates
-/// @details Transform the protein with a user-defined embedding (might have
-/// been optimized before and is saved as MEM) into a user-defined membrane
-/// which is ARGV for the constructor
-TransformIntoMembraneMover::TransformIntoMembraneMover(
-		Vector center,
-		Vector normal,
-		bool keep_current_protein_embedding
-		) :
-    protocols::moves::Mover(),
-    jump_( 1 ),
-    mem_center_( center ),
-    mem_normal_( normal ),
-    embedding_( 0 ),
-    keep_current_protein_embedding_( keep_current_protein_embedding )
+/// @brief Transform the protein into user-specified membrane coordinates
+/// @details Transform the protein into a user-defined membrane, protein
+/// embedding is computed from structure and spanfile
+TransformIntoMembraneMover::TransformIntoMembraneMover( Vector new_mem_cntr, Vector new_mem_norm ) :
+	jump_( 0 ), 
+	new_mem_cntr_( new_mem_cntr ), 
+	new_mem_norm_( new_mem_norm ), 
+	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	use_default_membrane_( false ), 
+	user_defined_membrane_( true )
 {}
 
+/// @brief Transform the protein into user-specified membrane coordinates
+/// @details Transform the protein into a user-defined membrane, protein
+/// embedding is computed from structure and spanfile
+TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_embedding, Vector new_mem_cntr, Vector new_mem_norm ) :
+	jump_( 0 ), 
+	new_mem_cntr_( new_mem_cntr ), 
+	new_mem_norm_( new_mem_norm ), 
+	current_embedding_( current_embedding ), 
+	use_default_membrane_( false ), 
+	user_defined_membrane_( true )
+{}
 
 /// @brief Copy Constructor
 /// @details Create a deep copy of this mover
 TransformIntoMembraneMover::TransformIntoMembraneMover( TransformIntoMembraneMover const & src ) :
 	protocols::moves::Mover( src ),
-    jump_( src.jump_ ),
-    mem_center_( src.mem_center_ ),
-    mem_normal_( src.mem_normal_ ),
-    embedding_( src.embedding_ ),
-    keep_current_protein_embedding_( src.keep_current_protein_embedding_ )
+	jump_( src.jump_ ),
+	new_mem_cntr_( src.new_mem_cntr_ ),
+	new_mem_norm_( src.new_mem_norm_ ),
+	current_embedding_( src.current_embedding_ ),
+	use_default_membrane_( src.use_default_membrane_ )
 {}
 
 /// @brief Destructor
@@ -167,40 +178,26 @@ TransformIntoMembraneMover::parse_my_tag(
 	 protocols::moves::Movers_map const &,
 	 core::pose::Pose const &
 	 ) {
-	
-	// Read in membrane center & normal
-	if ( tag->hasOption( "center" ) ) {
-		std::string center = tag->getOption< std::string >( "center" );
-		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-		
-		if ( str_cen.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			mem_center_.x() = std::atof( str_cen[1].c_str() );
-			mem_center_.y() = std::atof( str_cen[2].c_str() );
-			mem_center_.z() = std::atof( str_cen[3].c_str() );
-		}
+
+	// Read in jump option
+	if ( tag->hasOption( "jump") ) {
+		jump_ = tag->getOption< core::Size >( "jump" ); 
 	}
 
-	if ( tag->hasOption( "normal" ) ) {
-		std::string normal = tag->getOption< std::string >( "normal" );
-		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-		
-		if ( str_norm.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			mem_normal_.x() = std::atof( str_norm[1].c_str() );
-			mem_normal_.y() = std::atof( str_norm[2].c_str() );
-			mem_normal_.z() = std::atof( str_norm[3].c_str() );
-		}
+	// Read in option use default membrane
+	if ( tag->hasOption( "use_default_membrane" ) ) {
+		use_default_membrane_ = tag->getOption< bool >( "use_default_membrane" ); 
+	}
+
+	// User defined membrane
+	if ( tag->hasOption( "user_defined_membrane" ) ) {
+		user_defined_membrane_ = tag->getOption< bool >( "user_defined_membrane" ); 
 	}
 	
-	// If option specified, use the current membrane coordinates
-	// instead of the current protein embedding
-	if ( tag->hasOption( "keep_current_protein_embedding" ) ) {
-		keep_current_protein_embedding_ = tag->getOption< bool >( "keep_current_protein_embedding" );
-	}
-}
+	// Reading in center/normal pair 
+	read_center_normal_from_tag( new_mem_cntr_, new_mem_norm_, tag ); 
+	
+} // parse my tag
 
 /// @brief Create a new copy of this mover
 protocols::moves::MoverOP
@@ -220,10 +217,15 @@ TransformIntoMembraneMoverCreator::mover_name() {
 	return "TransformIntoMembraneMover";
 }
 
-
 /////////////////////
 /// Mover Methods ///
 /////////////////////
+
+/// @brief Use the default membrane (cntr 0,0,0 and normal 0,0,1) instead
+///			of the membrane from the MEM coordinates stored in MembraneInfo
+void TransformIntoMembraneMover::use_default_membrane( bool truefalse ) {
+	use_default_membrane_ = truefalse;
+}
 
 /// @brief Get the name of this Mover (TransformIntoMembraneMover)
 std::string
@@ -235,12 +237,13 @@ TransformIntoMembraneMover::get_name() const {
 void
 TransformIntoMembraneMover::apply( Pose & pose ) {
 	
+	using namespace numeric;
 	using namespace core::kinematics;
 	using namespace core::conformation::membrane;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
     
-    TR << "Transforming the pose into a new set of membranr coordinates" << std::endl; 
+    TR << "Transforming the pose into new membrane coordinates" << std::endl;
 	
 	// Initialize options from JD2 and this mover via commandline
 	register_options();
@@ -248,18 +251,35 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	
 	// Initial checks
 	if ( !pose.conformation().is_membrane() ) {
-		utility_exit_with_message( "Cannot apply membrane protein transformation to a non membrane pose! Initialize the membrane framework using AddMembraneMover first" );
+		utility_exit_with_message( "Cannot apply membrane protein transformation to a non membrane pose! Initialize the membrane framework using AddMembraneMover first." );
+	}
+	
+	// starting point is default membrane, this is overwritten here with the MEM
+	// info from the pose
+	if ( use_default_membrane_ == false && user_defined_membrane_ == false ) {
+
+		new_mem_cntr_ = pose.conformation().membrane_info()->membrane_center();
+		new_mem_norm_ = pose.conformation().membrane_info()->membrane_normal();
+	}
+
+	// for user-defined membrane, set membrane position
+	if ( user_defined_membrane_ == true ){
+
+		SetMembranePositionMoverOP setmem( new SetMembranePositionMover( new_mem_cntr_, new_mem_norm_ ) );
+		setmem->apply( pose );
 	}
 	
 	// Initialize jump for transformation
-     if ( jump_ == 1 ) {
+	// initial jump should be zero so we now it's bogus; the user can use any
+	// other jump
+     if ( jump_ == 0 ) {
          jump_ = pose.conformation().membrane_info()->membrane_jump();
      }
          
-	// Making a copy of the foldtree just in case
-	FoldTreeOP ft_copy = FoldTreeOP( new FoldTree( pose.fold_tree() ) );
+	// Making a copy of the foldtree to reset it to after the mover
+	FoldTreeOP orig_ft = FoldTreeOP( new FoldTree( pose.fold_tree() ) );
 	
-	// Check the setup of the foldtree is as expected
+	// Check that the membrane is at the root of the foldtree
 	if ( !is_membrane_fixed( pose ) ) {
 		if ( is_membrane_moveable_by_itself( pose ) ) {
 			
@@ -275,44 +295,24 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 			pose.fold_tree().show( std::cout );
 			
 		} else {
-			utility_exit_with_message( "Membrane residue is not fixed and also not an independent branch of the foldtree, therefore a direct reorder is unsafe for reorder and to be used by this mover. Please make your foldtree smarter - see RosettaMP framework documentation" );
+			utility_exit_with_message( "Membrane residue is not fixed and also not an independent branch of the foldtree, therefore a direct reorder is unsafe to be used by this mover. Please make your foldtree smarter - see RosettaMP framework documentation" );
 		}
 	}
 	
-	// Declaring data for the previous old center / normal pair
-	Vector old_center, old_normal;
-	
-	if ( !keep_current_protein_embedding_ ) {
-	
-		TR << "Using the current structure based protein embedding for transformation" << std::endl;
-		// If user did not provide embedding, calculate directly from the pose
-		if ( embedding_ == 0 ) {
-			embedding_ = compute_structure_based_embedding( pose );
-		}
-	
-		// Grab the current position of the protein (normal/center) prior to
-		// transformation
-		old_center = embedding_->center();
-		old_normal = embedding_->normal();
-	
-	} else {
-		
-		TR << "Using the current membrane position for transformation" << std::endl;
-		// Otherwise, read in the preivous center/normal pair from the
-		// membrane residue
-		old_center = pose.conformation().membrane_info()->membrane_center();
-		old_normal = pose.conformation().membrane_info()->membrane_normal();
-	
+	// recompute embedding from pose and topology if it hasn't been set
+	if ( current_embedding_->normal().length() == 0 ){
+		current_embedding_ = compute_structure_based_embedding( pose );
 	}
 	
-	TR << "Transforming pose into a membrane coordinate frame" << std::endl;
+	TR.Debug << "...transforming..." << std::endl;
 		  
 	// translate and rotate pose into membrane
-	TranslationRotationMoverOP rt( new TranslationRotationMover( old_center, old_normal, mem_center_, mem_normal_, jump_ ) );
+	TranslationRotationMoverOP rt( new TranslationRotationMover( current_embedding_->center(), current_embedding_->normal(), new_mem_cntr_, new_mem_norm_, jump_ ) );
 	rt->apply( pose );
-
+	
+	// reset foldtree
 	TR << "Restoring the original foldtree" << std::endl;
-	pose.fold_tree( *ft_copy );
+	pose.fold_tree( *orig_ft );
 	
 } // apply
 
@@ -320,17 +320,16 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 /// Setup Methods ///
 /////////////////////
 
+
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
 /// mp, seutp options: center, normal, spanfile and
-void
-TransformIntoMembraneMover::register_options() {
+void TransformIntoMembraneMover::register_options() {
 	
 	using namespace basic::options;
 
 	option.add_relevant( OptionKeys::mp::setup::center );
 	option.add_relevant( OptionKeys::mp::setup::normal );
-	option.add_relevant( OptionKeys::mp::transform::keep_current_protein_embedding );
 	
 }
 
@@ -338,32 +337,13 @@ TransformIntoMembraneMover::register_options() {
 /// @details Initialize mover settings from the commandline
 /// mainly in the mp, setup group: center, normal,
 /// spanfile
-void
-TransformIntoMembraneMover::init_from_cmd() {
+void TransformIntoMembraneMover::init_from_cmd() {
 	
 	using namespace basic::options;
 	
-	// Read in Center Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::center ].user() ) {
-		mem_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
-		mem_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
-		mem_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
-	}
-	
-	// Read in Normal Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
-		mem_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
-		mem_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
-		mem_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
-	}
-	
-	// Should I use the current membrane coordinates as the initial criteria for transformation?
-	if ( option[ OptionKeys::mp::transform::keep_current_protein_embedding ].user() ) {
-		keep_current_protein_embedding_ = option[ OptionKeys::mp::transform::keep_current_protein_embedding ]();
-	}
-	
+	// Read center & normal options from the commnadline
+	read_center_normal_from_cmd( new_mem_cntr_, new_mem_norm_ ); 
+
 }// init from cmd
 
 
