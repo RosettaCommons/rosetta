@@ -1,5 +1,6 @@
 extras/soft_rep_params.txt
 extras/gen_born_params.txt
+extras/gen_kirkwood_params.txt
 extras/sasa_radii_legacy.txt
 extras/NACCESS_sasa_radii.txt
 extras/reduce_sasa_radii.txt
