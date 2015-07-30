@@ -23,6 +23,7 @@
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
+#include <core/scoring/MultipoleElecPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
 #include <core/scoring/OmegaTether.fwd.hh>
@@ -120,6 +121,8 @@ public:
 	PairEPotential const & get_PairEPotential() const;
 
 	GenBornPotential const & get_GenBornPotential() const;
+
+	MultipoleElecPotential const & get_MultipoleElecPotential() const;
 
 	FACTSPotential const & get_FACTSPotential() const;
 
@@ -307,6 +310,7 @@ private:
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;
+	mutable MultipoleElecPotentialOP multipole_elec_potential_;
 	mutable FACTSPotentialOP facts_potential_;
 	mutable disulfides::FullatomDisulfidePotentialOP fa_disulfide_potential_;
 	mutable disulfides::CentroidDisulfidePotentialOP cen_disulfide_potential_;

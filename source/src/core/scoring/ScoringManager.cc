@@ -38,6 +38,7 @@
 #include <core/scoring/Ramachandran2B.hh>
 #include <core/scoring/OmegaTether.hh>
 #include <core/scoring/GenBornPotential.hh>
+#include <core/scoring/MultipoleElecPotential.hh>
 #include <core/scoring/facts/FACTSPotential.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
@@ -329,6 +330,17 @@ ScoringManager::get_GenBornPotential() const
 		gen_born_potential_ = GenBornPotentialOP( new GenBornPotential() );
 	}
 	return *gen_born_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+MultipoleElecPotential const &
+ScoringManager::get_MultipoleElecPotential() const
+{
+	if (multipole_elec_potential_ == 0 )
+	{
+		multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
+	}
+	return *multipole_elec_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -960,7 +972,13 @@ ScoringManager::etable( etable::EtableOptions const & options_in ) const
 			options_local.lj_switch_dis2sigma = 0.91;
 			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 				options_local, "SOFT" ) );
-
+		} else if ( table_id == FA_STANDARD_MULTIPOLE ) {
+			// multipole etable: change to lj_switch_dis2sigma to make harder repulsion.
+			// Necessary to stop oppositely charged atoms from approaching each other.
+			EtableOptions options_local( options_in );
+			options_local.lj_switch_dis2sigma = 0.1;
+			etable_ptr = EtableOP( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+				options_in ) );
 		} else if ( utility::startswith( table_id, "FA_STANDARD_SOFT" ) ) {
 			// add more softies, radii and lj_switch_dis2sigma are linear-interpolated from standard to SOFT
 			// radii are given in database/chemical/atom_type_sets/fa_standard/extras/extra_soft_rep_params.txt
@@ -1125,6 +1143,7 @@ ScoringManager::energy_method(
 /// global etable_id
 std::string const FA_STANDARD_DEFAULT( "FA_STANDARD_DEFAULT" ); // keep this string the same as the etable_type in the default ctor in EtableOptions.cc
 std::string const FA_STANDARD_SOFT   ( "FA_STANDARD_SOFT" );
+std::string const FA_STANDARD_MULTIPOLE   ( "FA_STANDARD_MULTIPOLE" );
 
 std::string const UNFOLDED_SCORE12( "UNFOLDED_SCORE12" );
 std::string const UNFOLDED_MM_STD( "UNFOLDED_MM_STD" );

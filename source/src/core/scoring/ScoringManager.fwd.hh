@@ -24,6 +24,7 @@ class ScoringManager;
 
 extern std::string const FA_STANDARD_DEFAULT;
 extern std::string const FA_STANDARD_SOFT;
+extern std::string const FA_STANDARD_MULTIPOLE;
 
 extern std::string const UNFOLDED_SCORE12;
 extern std::string const UNFOLDED_MM_STD;

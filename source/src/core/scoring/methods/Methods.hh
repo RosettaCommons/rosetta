@@ -39,6 +39,7 @@ enum EnergyMethods
 enum LongRangeEnergyType {
 	constraints_lr = 1,
 	gen_born_lr,
+	multipole_elec_lr,
 	PB_elec_lr,
 	cart_bonded_lr,
 	rama2b_lr,

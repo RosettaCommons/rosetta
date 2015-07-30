@@ -19,11 +19,13 @@
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPair1B.hh>
+#include <core/scoring/etable/count_pair/CountPair2B.hh>
 #include <core/scoring/etable/count_pair/CountPairIntraRes.hh>
 #include <core/scoring/etable/count_pair/CountPairGeneric.hh>
 
 #include <core/scoring/etable/count_pair/CountPairCrossover3.hh>
 #include <core/scoring/etable/count_pair/CountPairCrossover4.hh>
+#include <core/scoring/etable/count_pair/CountPairCrossover34.hh>
 
 
 // Project Headers
@@ -71,16 +73,38 @@ CountPairFactory::create_count_pair_function(
 					case CP_CROSSOVER_4 :
 						cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover4 >( res1, res1connat, res2, res2connat ) );
 					break;
+					case CP_CROSSOVER_34 :
+						cpfxn = CountPairFunctionOP( new CountPair1B< CountPairCrossover34 >( res1, res1connat, res2, res2connat ) );
+					break;
 				}
 			}
 			break;
 			default: {
 				CountPairGenericOP gcpfxn( new CountPairGeneric( res1, res2 ) );
-				gcpfxn->set_crossover( crossover == CP_CROSSOVER_3 ? 3 : 4 );
+				switch ( crossover ) {
+					case CP_CROSSOVER_3 :
+						gcpfxn->set_crossover( 3 );
+					break;
+					case CP_CROSSOVER_4 :
+						gcpfxn->set_crossover( 4 );
+					break;
+					case CP_CROSSOVER_34 :
+						gcpfxn->set_crossover( 4 );
+					break;
+				}
 				cpfxn = gcpfxn;
 			}
 			break;
 		}
+	} else if( crossover == CP_CROSSOVER_34 && ( res1.polymeric_sequence_distance( res2 ) == 2 ) ) {
+		Size midway( res1.seqpos() > res2.seqpos() ? res2.seqpos() + 1 : res1.seqpos() + 1 );
+		// scope for res1connat, res2connat initializations
+		assert( res1.connections_to_residue( midway ).size() == 1 );
+		assert( res2.connections_to_residue( midway ).size() == 1 );
+
+		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
+		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
+		cpfxn = CountPairFunctionOP( new CountPair2B< CountPairCrossover34 >( res1, res1connat, res2, res2connat ) );
 	} else {
 		cpfxn = CountPairFunctionOP( new CountPairAll );
 	}
@@ -126,6 +150,11 @@ CountPairFactory::create_count_pair_function_and_invoke(
 						invoker.invoke( cpfxn );
 					}
 					break;
+					case CP_CROSSOVER_34 : {
+						CountPair1B< CountPairCrossover34 > cpfxn( res1, res1connat, res2, res2connat );
+						invoker.invoke( cpfxn );
+					}
+					break;
 				}
 			}
 			break;
@@ -136,6 +165,16 @@ CountPairFactory::create_count_pair_function_and_invoke(
 			}
 			break;
 		}
+	} else if( crossover == CP_CROSSOVER_34 && ( res1.polymeric_sequence_distance( res2 ) == 2 ) ) {
+		Size midway( res1.seqpos() > res2.seqpos() ? res2.seqpos() + 1 : res1.seqpos() + 1 );
+		// scope for res1connat, res2connat initializations
+		assert( res1.connections_to_residue( midway ).size() == 1 );
+		assert( res2.connections_to_residue( midway ).size() == 1 );
+
+		Size res1connat = res1.residue_connection( res1.connections_to_residue( midway )[ 1 ] ).atomno();
+		Size res2connat = res2.residue_connection( res2.connections_to_residue( midway )[ 1 ] ).atomno();
+		CountPair2B< CountPairCrossover34 > cpfxn( res1, res1connat, res2, res2connat );
+		invoker.invoke( cpfxn );
 	} else {
 		CountPairAll cpfxn;
 		invoker.invoke( cpfxn );
@@ -176,6 +215,9 @@ CountPairFactory::create_intrares_count_pair_function(
 		break;
 		case CP_CROSSOVER_4 :
 			cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover4 >( res ) );
+		break;
+		case CP_CROSSOVER_34 :
+			cpfxn = CountPairFunctionOP( new CountPairIntraRes< CountPairCrossover34 >( res ) );
 		break;
 	}
 

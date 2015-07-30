@@ -193,6 +193,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "occ_sol_exact"    ] = occ_sol_exact;
 
 	name2score_type_[ "gb_elec" ] = gb_elec;
+	name2score_type_[ "multipole_elec" ] = multipole_elec;
+
 	name2score_type_[ "facts_elec" ] = facts_elec;
 	name2score_type_[ "facts_solv" ] = facts_solv;
 	name2score_type_[ "facts_sasa" ] = facts_sasa;
@@ -481,7 +483,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "natbias_stwist" ] = natbias_stwist;
 
 	name2score_type_[ "aa_cmp" ] = aa_cmp;
-	
+
 	name2score_type_[ "ring_close" ] = ring_close; //General score term for enforcing ring closure in proline-like noncanonicals.  NOTE: EITHER ring_close, OR pro_close, OR cart_bonded should be used -- otherwise we'll double-count!
 	name2score_type_[ "aa_repeat_energy" ] = aa_repeat_energy; //A wholebody score term for penalizing long stretches of repeat sequence (e.g. poly-Q sequences).
 	name2score_type_[ "aa_composition" ] = aa_composition; //A wholebody score term for penalizing deviation from a desired amino acid composition.

@@ -1,0 +1,1054 @@
+biotype    N       GLY                           1
+biotype    CA      GLY                           2
+biotype    C       GLY                           3
+biotype    H       GLY                           4
+biotype    O       GLY                           5
+biotype   1HA      GLY                           6
+biotype   2HA      GLY                           6
+biotype    N       ALA                           7
+biotype    CA      ALA                           8
+biotype    C       ALA                           9
+biotype    H       ALA                          10
+biotype    O       ALA                          11
+biotype    HA      ALA                          12
+biotype    CB      ALA                          13
+biotype   1HB      ALA                          14
+biotype   2HB      ALA                          14
+biotype   3HB      ALA                          14
+biotype    N       VAL                            7
+biotype    CA      VAL                            8
+biotype    C       VAL                            9
+biotype    H       VAL                           10
+biotype    O       VAL                           11
+biotype    HA      VAL                           12
+biotype    CB      VAL                           15
+biotype    HB      VAL                           16
+biotype    CG1     VAL                           17
+biotype   1HG1     VAL                           18
+biotype   2HG1     VAL                           18
+biotype   3HG1     VAL                           18
+biotype    CG2     VAL                           17
+biotype   1HG2     VAL                           18
+biotype   2HG2     VAL                           18
+biotype   3HG2     VAL                           18
+biotype    N       LEU                           7
+biotype    CA      LEU                           8
+biotype    C       LEU                           9
+biotype    H       LEU                          10
+biotype    O       LEU                          11
+biotype    HA      LEU                          12
+biotype    CB      LEU                          19
+biotype   1HB      LEU                          20
+biotype   2HB      LEU                          20
+biotype    CG      LEU                          21
+biotype    HG      LEU                          22
+biotype    CD1     LEU                          23
+biotype   1HD1     LEU                          24
+biotype   2HD1     LEU                          24
+biotype   3HD1     LEU                          24
+biotype    CD2     LEU                          23
+biotype   1HD2     LEU                          24
+biotype   2HD2     LEU                          24
+biotype   3HD2     LEU                          24
+biotype    N       ILE                        7
+biotype    CA      ILE                        8
+biotype    C       ILE                        9
+biotype    H       ILE                       10
+biotype    O       ILE                       11
+biotype    HA      ILE                       12
+biotype    CB      ILE                       25
+biotype    HB      ILE                       26
+biotype    CG1     ILE                       29
+biotype   1HG1     ILE                       30
+biotype   2HG1     ILE                       30
+biotype    CG2     ILE                       27
+biotype   1HG2     ILE                       28
+biotype   2HG2     ILE                       28
+biotype   3HG2     ILE                       28
+biotype    CD1     ILE                       31
+biotype   1HD1     ILE                       32
+biotype   2HD1     ILE                       32
+biotype   3HD1     ILE                       32
+biotype    N       SER                            7
+biotype    CA      SER                           33
+biotype    C       SER                            9
+biotype    H       SER                           10
+biotype    O       SER                           11
+biotype    HA      SER                           12
+biotype    CB      SER                           34
+biotype   1HB      SER                           35
+biotype   2HB      SER                           35
+biotype    OG      SER                           36
+biotype    HG      SER                           37
+biotype    N       THR                         7
+biotype    CA      THR                        33
+biotype    C       THR                         9
+biotype    H       THR                        10
+biotype    O       THR                        11
+biotype    HA      THR                        12
+biotype    CB      THR                        38
+biotype    HB      THR                        39
+biotype    OG1     THR                        42
+biotype    HG1     THR                        43
+biotype    CG2     THR                        40
+biotype   1HG2     THR                        41
+biotype   2HG2     THR                        41
+biotype   3HG2     THR                        41
+biotype    N       CYS                     7
+biotype    CA      CYS                    44
+biotype    C       CYS                     9
+biotype    H       CYS                    10
+biotype    O       CYS                    11
+biotype    HA      CYS                    12
+biotype    CB      CYS                    45
+biotype   1HB      CYS                    46
+biotype   2HB      CYS                    46
+biotype    SG      CYS                    47
+biotype    HG      CYS                    48
+biotype    N       CYD   DISULFIDE                      7
+biotype    CA      CYD   DISULFIDE                     44
+biotype    C       CYD   DISULFIDE                      9
+biotype    H       CYD   DISULFIDE                     10
+biotype    O       CYD   DISULFIDE                     11
+biotype    HA      CYD   DISULFIDE                     12
+biotype    CB      CYD   DISULFIDE                     45
+biotype   1HB      CYD   DISULFIDE                     46
+biotype   2HB      CYD   DISULFIDE                     46
+biotype    SG      CYD   DISULFIDE                     49
+biotype    N       CYZ   DEPROTONATED                     7
+biotype    CA      CYZ   DEPROTONATED                    44
+biotype    C       CYZ   DEPROTONATED                     9
+biotype    H       CYZ   DEPROTONATED                    10
+biotype    O       CYZ   DEPROTONATED                    11
+biotype    HA      CYZ   DEPROTONATED                    12
+biotype    CB      CYZ   DEPROTONATED                    50
+biotype   1HB      CYZ   DEPROTONATED                    51
+biotype   2HB      CYZ   DEPROTONATED                    51
+biotype    SG      CYZ   DEPROTONATED                    52
+biotype    N       PRO                          53
+biotype    CA      PRO                          54
+biotype    C       PRO                          55
+biotype    O       PRO                          56
+biotype    HA      PRO                          57
+biotype    CB      PRO                          58
+biotype   1HB      PRO                          59
+biotype   2HB      PRO                          59
+biotype    CG      PRO                          60
+biotype   1HG      PRO                          61
+biotype   2HG      PRO                          61
+biotype    CD      PRO                          62
+biotype   1HD      PRO                          63
+biotype   2HD      PRO                          63
+biotype    NV      PRO                         414
+biotype    N       PHE                     7
+biotype    CA      PHE                     8
+biotype    C       PHE                     9
+biotype    H       PHE                    10
+biotype    O       PHE                    11
+biotype    HA      PHE                    12
+biotype    CB      PHE                    64
+biotype   1HB      PHE                    65
+biotype   2HB      PHE                    65
+biotype    CG      PHE                    66
+biotype    CD1     PHE                    67
+biotype    CD2     PHE                    67
+biotype    HD1     PHE                    68
+biotype    HD2     PHE                    68
+biotype    CE1     PHE                    69
+biotype    CE2     PHE                    69
+biotype    HE1     PHE                    70
+biotype    HE2     PHE                    70
+biotype    CZ      PHE                    71
+biotype    HZ      PHE                    72
+biotype    N       TYR                          7
+biotype    CA      TYR                          8
+biotype    C       TYR                          9
+biotype    H       TYR                         10
+biotype    O       TYR                         11
+biotype    HA      TYR                         12
+biotype    CB      TYR                         73
+biotype   1HB      TYR                         74
+biotype   2HB      TYR                         74
+biotype    CG      TYR                         75
+biotype    CD1     TYR                         76
+biotype    CD2     TYR                         76
+biotype    HD1     TYR                         77
+biotype    HD2     TYR                         77
+biotype    CE1     TYR                         78
+biotype    CE2     TYR                         78
+biotype    HE1     TYR                         79
+biotype    HE2     TYR                         79
+biotype    CZ      TYR                         80
+biotype    OH      TYR                         81
+biotype    HH      TYR                         82
+biotype    N       TYR   DEPROTONATED                     7
+biotype    CA      TYR   DEPROTONATED                     8
+biotype    C       TYR   DEPROTONATED                     9
+biotype    H       TYR   DEPROTONATED                    10
+biotype    O       TYR   DEPROTONATED                    11
+biotype    HA      TYR   DEPROTONATED                    12
+biotype    CB      TYR   DEPROTONATED                    83
+biotype   1HB      TYR   DEPROTONATED                    84
+biotype   2HB      TYR   DEPROTONATED                    84
+biotype    CG      TYR   DEPROTONATED                    85
+biotype    CD1     TYR   DEPROTONATED                    86
+biotype    CD2     TYR   DEPROTONATED                    86
+biotype    HD1     TYR   DEPROTONATED                    87
+biotype    HD2     TYR   DEPROTONATED                    87
+biotype    CE1     TYR   DEPROTONATED                    88
+biotype    CE2     TYR   DEPROTONATED                    88
+biotype    HE1     TYR   DEPROTONATED                    89
+biotype    HE2     TYR   DEPROTONATED                    89
+biotype    CZ      TYR   DEPROTONATED                    90
+biotype    OH      TYR   DEPROTONATED                    91
+biotype    N       TRP                        7
+biotype    CA      TRP                        8
+biotype    C       TRP                        9
+biotype    H       TRP                       10
+biotype    O       TRP                       11
+biotype    HA      TRP                       12
+biotype    CB      TRP                       92
+biotype   1HB      TRP                       93
+biotype   2HB      TRP                       93
+biotype    CG      TRP                       94
+biotype    CD1     TRP                       95
+biotype    HD1     TRP                       96
+biotype    CD2     TRP                       97
+biotype    NE1     TRP                       98
+biotype    HE1     TRP                       99
+biotype    CE2     TRP                      100
+biotype    CE3     TRP                      101
+biotype    HE3     TRP                      102
+biotype    CZ2     TRP                      103
+biotype    HZ2     TRP                      104
+biotype    CZ3     TRP                      105
+biotype    HZ3     TRP                      106
+biotype    CH2     TRP                      107
+biotype    HH2     TRP                      108
+biotype    N       HIS   PROTONATED                     7
+biotype    CA      HIS   PROTONATED                     8
+biotype    C       HIS   PROTONATED                     9
+biotype    H       HIS   PROTONATED                    10
+biotype    O       HIS   PROTONATED                    11
+biotype    HA      HIS   PROTONATED                    12
+biotype    CB      HIS   PROTONATED                   109
+biotype   1HB      HIS   PROTONATED                   110
+biotype   2HB      HIS   PROTONATED                   110
+biotype    CG      HIS   PROTONATED                   111
+biotype    ND1     HIS   PROTONATED                   112
+biotype    HD1     HIS   PROTONATED                   113
+biotype    CD2     HIS   PROTONATED                   114
+biotype    HD2     HIS   PROTONATED                   115
+biotype    CE1     HIS   PROTONATED                   116
+biotype    HE1     HIS   PROTONATED                   117
+biotype    NE2     HIS   PROTONATED                   118
+biotype    HE2     HIS   PROTONATED                   119
+biotype    N       HIS_D                    7
+biotype    CA      HIS_D                    8
+biotype    C       HIS_D                    9
+biotype    H       HIS_D                   10
+biotype    O       HIS_D                   11
+biotype    HA      HIS_D                   12
+biotype    CB      HIS_D                  120
+biotype   1HB      HIS_D                  121
+biotype   2HB      HIS_D                  121
+biotype    CG      HIS_D                  122
+biotype    ND1     HIS_D                  123
+biotype    HD1     HIS_D                  124
+biotype    CD2     HIS_D                  125
+biotype    HD2     HIS_D                  126
+biotype    CE1     HIS_D                  127
+biotype    HE1     HIS_D                  128
+biotype    NE2     HIS_D                  129
+biotype    N       HIS                    7
+biotype    CA      HIS                    8
+biotype    C       HIS                    9
+biotype    H       HIS                   10
+biotype    O       HIS                   11
+biotype    HA      HIS                   12
+biotype    CB      HIS                  130
+biotype   1HB      HIS                  131
+biotype   2HB      HIS                  131
+biotype    CG      HIS                  132
+biotype    ND1     HIS                  133
+biotype    CD2     HIS                  134
+biotype    HD2     HIS                  135
+biotype    CE1     HIS                  136
+biotype    HE1     HIS                  137
+biotype    NE2     HIS                  138
+biotype    HE2     HIS                  139
+biotype    N       ASP                     7
+biotype    CA      ASP                     8
+biotype    C       ASP                     9
+biotype    H       ASP                    10
+biotype    O       ASP                    11
+biotype    HA      ASP                    12
+biotype    CB      ASP                   140
+biotype   1HB      ASP                   141
+biotype   2HB      ASP                   141
+biotype    CG      ASP                   142
+biotype    OD1     ASP                   143
+biotype    OD2     ASP                   143
+biotype    N       ASP   PROTONATED              7
+biotype    CA      ASP   PROTONATED              8
+biotype    C       ASP   PROTONATED              9
+biotype    H       ASP   PROTONATED             10
+biotype    O       ASP   PROTONATED             11
+biotype    HA      ASP   PROTONATED             12
+biotype    CB      ASP   PROTONATED            144
+biotype   1HB      ASP   PROTONATED            145
+biotype   2HB      ASP   PROTONATED            145
+biotype    CG      ASP   PROTONATED            146
+biotype    OD1     ASP   PROTONATED            147
+biotype    OD2     ASP   PROTONATED            148
+biotype    HD2     ASP   PROTONATED            149
+biotype    N       ASN                        7
+biotype    CA      ASN                        8
+biotype    C       ASN                        9
+biotype    H       ASN                       10
+biotype    O       ASN                       11
+biotype    HA      ASN                       12
+biotype    CB      ASN                      150
+biotype   1HB      ASN                      151
+biotype   2HB      ASN                      151
+biotype    CG      ASN                      152
+biotype    OD1     ASN                      153
+biotype    ND2     ASN                      154
+biotype   1HD2     ASN                      155
+biotype   2HD2     ASN                      155
+biotype    N       GLU                     7
+biotype    CA      GLU                     8
+biotype    C       GLU                     9
+biotype    H       GLU                    10
+biotype    O       GLU                    11
+biotype    HA      GLU                    12
+biotype    CB      GLU                   156
+biotype   1HB      GLU                   157
+biotype   2HB      GLU                   157
+biotype    CG      GLU                   158
+biotype   1HG      GLU                   159
+biotype   2HG      GLU                   159
+biotype    CD      GLU                   160
+biotype    OE1     GLU                   161
+biotype    OE2     GLU                   161
+biotype    N       GLU PROTONATED              7
+biotype    CA      GLU PROTONATED              8
+biotype    C       GLU PROTONATED              9
+biotype    H       GLU PROTONATED             10
+biotype    O       GLU PROTONATED             11
+biotype    HA      GLU PROTONATED             12
+biotype    CB      GLU PROTONATED            162
+biotype   1HB      GLU PROTONATED            163
+biotype   2HB      GLU PROTONATED            163
+biotype    CG      GLU PROTONATED            164
+biotype   1HG      GLU PROTONATED            165
+biotype   2HG      GLU PROTONATED            165
+biotype    CD      GLU PROTONATED            166
+biotype    OE1     GLU PROTONATED            167
+biotype    OE2     GLU PROTONATED            168
+biotype    HE2     GLU PROTONATED            169
+biotype    N       GLN                         7
+biotype    CA      GLN                         8
+biotype    C       GLN                         9
+biotype    H       GLN                        10
+biotype    O       GLN                        11
+biotype    HA      GLN                        12
+biotype    CB      GLN                       170
+biotype   1HB      GLN                       171
+biotype   2HB      GLN                       171
+biotype    CG      GLN                       172
+biotype   1HG      GLN                       173
+biotype   2HG      GLN                       173
+biotype    CD      GLN                       174
+biotype    OE1     GLN                       175
+biotype    NE2     GLN                       176
+biotype   1HE2     GLN                       177
+biotype   2HE2     GLN                       177
+biotype    N       MET                        7
+biotype    CA      MET                        8
+biotype    C       MET                        9
+biotype    H       MET                       10
+biotype    O       MET                       11
+biotype    HA      MET                       12
+biotype    CB      MET                      178
+biotype   1HB      MET                      179
+biotype   2HB      MET                      179
+biotype    CG      MET                      180
+biotype   1HG      MET                      181
+biotype   2HG      MET                      181
+biotype    SD      MET                      182
+biotype    CE      MET                      183
+biotype   1HE      MET                      184
+biotype   2HE      MET                      184
+biotype   3HE      MET                      184
+biotype    N       LYS                            7
+biotype    CA      LYS                            8
+biotype    C       LYS                            9
+biotype    H       LYS                           10
+biotype    O       LYS                           11
+biotype    HA      LYS                           12
+biotype    CB      LYS                          185
+biotype   1HB      LYS                          186
+biotype   2HB      LYS                          186
+biotype    CG      LYS                          187
+biotype   1HG      LYS                          188
+biotype   2HG      LYS                          188
+biotype    CD      LYS                          189
+biotype   1HD      LYS                          190
+biotype   2HD      LYS                          190
+biotype    CE      LYS                          191
+biotype   1HE      LYS                          192
+biotype   2HE      LYS                          192
+biotype    NZ      LYS                          193
+biotype   1HZ      LYS                          194
+biotype   2HZ      LYS                          194
+biotype   3HZ      LYS                          194
+biotype    N       LYS   DEPROTONATED                      7
+biotype    CA      LYS   DEPROTONATED                      8
+biotype    C       LYS   DEPROTONATED                      9
+biotype    H       LYS   DEPROTONATED                     10
+biotype    O       LYS   DEPROTONATED                     11
+biotype    HA      LYS   DEPROTONATED                     12
+biotype    CB      LYS   DEPROTONATED                    195
+biotype   1HB      LYS   DEPROTONATED                    196
+biotype   2HB      LYS   DEPROTONATED                    196
+biotype    CG      LYS   DEPROTONATED                    197
+biotype   1HG      LYS   DEPROTONATED                    198
+biotype   2HG      LYS   DEPROTONATED                    198
+biotype    CD      LYS   DEPROTONATED                    199
+biotype   1HD      LYS   DEPROTONATED                    200
+biotype   2HD      LYS   DEPROTONATED                    200
+biotype    CE      LYS   DEPROTONATED                    201
+biotype   1HE      LYS   DEPROTONATED                    202
+biotype   2HE      LYS   DEPROTONATED                    202
+biotype    NZ      LYS   DEPROTONATED                    203
+biotype   1HZ      LYS   DEPROTONATED                    204
+biotype   2HZ      LYS   DEPROTONATED                    204
+biotype    N       ARG                          7
+biotype    CA      ARG                          8
+biotype    C       ARG                          9
+biotype    H       ARG                         10
+biotype    O       ARG                         11
+biotype    HA      ARG                         12
+biotype    CB      ARG                        205
+biotype   1HB      ARG                        206
+biotype   2HB      ARG                        206
+biotype    CG      ARG                        207
+biotype   1HG      ARG                        208
+biotype   2HG      ARG                        208
+biotype    CD      ARG                        209
+biotype   1HD      ARG                        210
+biotype   2HD      ARG                        210
+biotype    NE      ARG                        211
+biotype    HE      ARG                        212
+biotype    CZ      ARG                        213
+biotype    NH1     ARG                        214
+biotype    NH2     ARG                        214
+biotype   1HH1     ARG                        215
+biotype   2HH1     ARG                        215
+biotype   1HH2     ARG                        215
+biotype   2HH2     ARG                        215
+biotype    N       ORN                         7
+biotype    CA      ORN                         8
+biotype    C       ORN                         9
+biotype    H       ORN                        10
+biotype    O       ORN                        11
+biotype    HA      ORN                        12
+biotype    CB      ORN                       216
+biotype   1HB      ORN                       217
+biotype   2HB      ORN                       217
+biotype    CG      ORN                       218
+biotype   1HG      ORN                       219
+biotype   2HG      ORN                       219
+biotype    CD      ORN                       220
+biotype   1HD      ORN                       221
+biotype   2HD      ORN                       221
+biotype    NE      ORN                       222
+biotype   1HE      ORN                       223
+biotype   2HE      ORN                       223
+biotype   3HE      ORN                       223
+biotype    N       MAL             414
+biotype    CA      MAL             414
+biotype    C       MAL             414
+biotype    H       MAL             414
+biotype    O       MAL             414
+biotype    CB1     MAL             414
+biotype    CB2     MAL             414
+biotype   1HB1     MAL             414
+biotype   2HB1     MAL             414
+biotype   3HB1     MAL             414
+biotype   1HB2     MAL             414
+biotype   2HB2     MAL             414
+biotype   3HB2     MAL             414
+biotype    N       PYROGLUTAMIC_ACID               414
+biotype    CA      PYROGLUTAMIC_ACID               414
+biotype    C       PYROGLUTAMIC_ACID                414
+biotype    H       PYROGLUTAMIC_ACID                414
+biotype    O       PYROGLUTAMIC_ACID               414
+biotype    HA      PYROGLUTAMIC_ACID               414
+biotype    CB      PYROGLUTAMIC_ACID               414
+biotype    HB      PYROGLUTAMIC_ACID               414
+biotype    CG      PYROGLUTAMIC_ACID               414
+biotype    HG      PYROGLUTAMIC_ACID               414
+biotype    CD      PYROGLUTAMIC_ACID               414
+biotype    OE      PYROGLUTAMIC_ACID               414
+biotype    N       GLY   NtermProteinFull                  234
+biotype   1H       GLY   NtermProteinFull                  235
+biotype   2H       GLY   NtermProteinFull                  235
+biotype   3H       GLY   NtermProteinFull                  235
+biotype    N       ALA   NtermProteinFull                  234
+biotype   1H       ALA   NtermProteinFull                  235
+biotype   2H       ALA   NtermProteinFull                  235
+biotype   3H       ALA   NtermProteinFull                  235
+biotype    N       VAL   NtermProteinFull                  234
+biotype   1H       VAL   NtermProteinFull                  235
+biotype   2H       VAL   NtermProteinFull                  235
+biotype   3H       VAL   NtermProteinFull                  235
+biotype    N       LEU   NtermProteinFull                  234
+biotype   1H       LEU   NtermProteinFull                  235
+biotype   2H       LEU   NtermProteinFull                  235
+biotype   3H       LEU   NtermProteinFull                  235
+biotype    N       ILE   NtermProteinFull                  234
+biotype   1H       ILE   NtermProteinFull                  235
+biotype   2H       ILE   NtermProteinFull                  235
+biotype   3H       ILE   NtermProteinFull                  235
+biotype    N       SER   NtermProteinFull                  234
+biotype   1H       SER   NtermProteinFull                  235
+biotype   2H       SER   NtermProteinFull                  235
+biotype   3H       SER   NtermProteinFull                  235
+biotype    N       THR   NtermProteinFull                  234
+biotype   1H       THR   NtermProteinFull                  235
+biotype   2H       THR   NtermProteinFull                  235
+biotype   3H       THR   NtermProteinFull                  235
+biotype    N       CYS   NtermProteinFull             234
+biotype   1H       CYS   NtermProteinFull             235
+biotype   2H       CYS   NtermProteinFull             235
+biotype   3H       CYS   NtermProteinFull             235
+biotype    N       CYD   NtermProteinFull DISULFIDE            234
+biotype   1H       CYD   NtermProteinFull DISULFIDE            235
+biotype   2H       CYD   NtermProteinFull DISULFIDE            235
+biotype   3H       CYD   NtermProteinFull DISULFIDE            235
+biotype    N       CYZ   NtermProteinFull DEPROTONATED            234
+biotype   1H       CYZ   NtermProteinFull DEPROTONATED            235
+biotype   2H       CYZ   NtermProteinFull DEPROTONATED            235
+biotype   3H       CYZ   NtermProteinFull DEPROTONATED            235
+biotype    N       PRO   NtermProteinFull                  244
+biotype    CA      PRO   NtermProteinFull                  246
+biotype    C       PRO   NtermProteinFull                  247
+biotype   1H       PRO   NtermProteinFull                  245
+biotype   2H       PRO   NtermProteinFull                  245
+biotype    O       PRO   NtermProteinFull                  248
+biotype    HA      PRO   NtermProteinFull                  249
+biotype    CD      PRO   NtermProteinFull                  250
+biotype   1HD      PRO   NtermProteinFull                  251
+biotype   2HD      PRO   NtermProteinFull                  251
+biotype    N       PHE   NtermProteinFull                  234
+biotype   1H       PHE   NtermProteinFull                  235
+biotype   2H       PHE   NtermProteinFull                  235
+biotype   3H       PHE   NtermProteinFull                  235
+biotype    N       TYR   NtermProteinFull                  234
+biotype   1H       TYR   NtermProteinFull                  235
+biotype   2H       TYR   NtermProteinFull                  235
+biotype   3H       TYR   NtermProteinFull                  235
+biotype    N       TYR   NtermProteinFull DEPROTONATED            234
+biotype   1H       TYR   NtermProteinFull DEPROTONATED            235
+biotype   2H       TYR   NtermProteinFull DEPROTONATED            235
+biotype   3H       TYR   NtermProteinFull DEPROTONATED            235
+biotype    N       TRP   NtermProteinFull                  234
+biotype   1H       TRP   NtermProteinFull                  235
+biotype   2H       TRP   NtermProteinFull                  235
+biotype   3H       TRP   NtermProteinFull                  235
+biotype    N       HIS   NtermProteinFull PROTONATED            234
+biotype   1H       HIS   NtermProteinFull PROTONATED            235
+biotype   2H       HIS   NtermProteinFull PROTONATED            235
+biotype   3H       HIS   NtermProteinFull PROTONATED            235
+biotype    N       HIS_D    NtermProteinFull            234
+biotype   1H       HIS_D    NtermProteinFull            235
+biotype   2H       HIS_D    NtermProteinFull            235
+biotype   3H       HIS_D    NtermProteinFull            235
+biotype    N       HIS    NtermProteinFull            234
+biotype   1H       HIS    NtermProteinFull            235
+biotype   2H       HIS    NtermProteinFull            235
+biotype   3H       HIS    NtermProteinFull            235
+biotype    N       ASP   NtermProteinFull                 234
+biotype   1H       ASP   NtermProteinFull                 235
+biotype   2H       ASP   NtermProteinFull                 235
+biotype   3H       ASP   NtermProteinFull                 235
+biotype    N       ASP   NtermProteinFull PROTONATED         234
+biotype   1H       ASP   NtermProteinFull PROTONATED         235
+biotype   2H       ASP   NtermProteinFull PROTONATED         235
+biotype   3H       ASP   NtermProteinFull PROTONATED         235
+biotype    N       ASN   NtermProteinFull                 234
+biotype   1H       ASN   NtermProteinFull                 235
+biotype   2H       ASN   NtermProteinFull                 235
+biotype   3H       ASN   NtermProteinFull                 235
+biotype    N       GLU   NtermProteinFull                 234
+biotype   1H       GLU   NtermProteinFull                 235
+biotype   2H       GLU   NtermProteinFull                 235
+biotype   3H       GLU   NtermProteinFull                 235
+biotype    N       GLU   NtermProteinFull PROTONATED         234
+biotype   1H       GLU   NtermProteinFull PROTONATED         235
+biotype   2H       GLU   NtermProteinFull PROTONATED         235
+biotype   3H       GLU   NtermProteinFull PROTONATED         235
+biotype    N       GLN   NtermProteinFull                 234
+biotype   1H       GLN   NtermProteinFull                 235
+biotype   2H       GLN   NtermProteinFull                 235
+biotype   3H       GLN   NtermProteinFull                 235
+biotype    N       MET   NtermProteinFull                 234
+biotype   1H       MET   NtermProteinFull                 235
+biotype   2H       MET   NtermProteinFull                 235
+biotype   3H       MET   NtermProteinFull                 235
+biotype    N       LYS   NtermProteinFull                 234
+biotype   1H       LYS   NtermProteinFull                 235
+biotype   2H       LYS   NtermProteinFull                 235
+biotype   3H       LYS   NtermProteinFull                 235
+biotype    N       LYS   NtermProteinFull DEPROTONATED          234
+biotype   1H       LYS   NtermProteinFull DEPROTONATED          235
+biotype   2H       LYS   NtermProteinFull DEPROTONATED          235
+biotype   3H       LYS   NtermProteinFull DEPROTONATED          235
+biotype    N       ARG   NtermProteinFull                 234
+biotype   1H       ARG   NtermProteinFull                 235
+biotype   2H       ARG   NtermProteinFull                 235
+biotype   3H       ARG   NtermProteinFull                 235
+biotype    N       ORN   NtermProteinFull                 234
+biotype   1H       ORN   NtermProteinFull                 235
+biotype   2H       ORN   NtermProteinFull                 235
+biotype   3H       ORN   NtermProteinFull                 235
+biotype    N       MAL   NtermProteinFull                 414
+biotype   1H       MAL   NtermProteinFull                 414
+biotype   2H       MAL   NtermProteinFull                 414
+biotype   3H       MAL   NtermProteinFull                 414
+biotype    C       GLY   CtermProteinFull                 238
+biotype    OXT     GLY   CtermProteinFull                 239
+biotype    O       GLY   CtermProteinFull                 239
+biotype    C       ALA   CtermProteinFull                 238
+biotype    OXT     ALA   CtermProteinFull                 239
+biotype    O       ALA   CtermProteinFull                 239
+biotype    C       VAL   CtermProteinFull                 238
+biotype    OXT     VAL   CtermProteinFull                 239
+biotype    O       VAL   CtermProteinFull                 239
+biotype    C       LEU   CtermProteinFull                 238
+biotype    OXT     LEU   CtermProteinFull                 239
+biotype    O       LEU   CtermProteinFull                 239
+biotype    C       ILE   CtermProteinFull                 238
+biotype    OXT     ILE   CtermProteinFull                 239
+biotype    O       ILE   CtermProteinFull                 239
+biotype    C       SER    CtermProteinFull                 238
+biotype    OXT     SER    CtermProteinFull                 239
+biotype    O       SER    CtermProteinFull                 239
+biotype    C       THR    CtermProteinFull                 238
+biotype    OXT     THR    CtermProteinFull                 239
+biotype    O       THR    CtermProteinFull                 239
+biotype    C       CYS   CtermProteinFull            238
+biotype    OXT     CYS   CtermProteinFull            239
+biotype    O       CYS   CtermProteinFull            239
+biotype    C       CYD   CtermProteinFull DISULFIDE           238
+biotype    OXT     CYD   CtermProteinFull DISULFIDE           239
+biotype    O       CYD   CtermProteinFull DISULFIDE           239
+biotype    C       CYZ   CtermProteinFull DEPROTONATED           238
+biotype    OXT     CYZ   CtermProteinFull DEPROTONATED           239
+biotype    O       CYZ   CtermProteinFull DEPROTONATED           239
+biotype    C       PRO   CtermProteinFull                 238
+biotype    OXT     PRO   CtermProteinFull                 239
+biotype    O       PRO   CtermProteinFull                 239
+biotype    C       PHE   CtermProteinFull                 238
+biotype    OXT     PHE   CtermProteinFull                 239
+biotype    O       PHE   CtermProteinFull                 239
+biotype    C       TYR   CtermProteinFull                 238
+biotype    OXT     TYR   CtermProteinFull                 239
+biotype    O       TYR   CtermProteinFull                 239
+biotype    C       TYR   CtermProteinFull DEPROTONATED           238
+biotype    OXT     TYR   CtermProteinFull DEPROTONATED           239
+biotype    O       TYR   CtermProteinFull DEPROTONATED           239
+biotype    C       TRP   CtermProteinFull                 238
+biotype    OXT     TRP   CtermProteinFull                 239
+biotype    O       TRP   CtermProteinFull                 239
+biotype    C       HIS   CtermProteinFull PROTONATED             238
+biotype    OXT     HIS   CtermProteinFull PROTONATED             239
+biotype    O       HIS   CtermProteinFull PROTONATED             239
+biotype    C       HIS_D CtermProteinFull            238
+biotype    OXT     HIS_D CtermProteinFull            239
+biotype    O       HIS_D CtermProteinFull            239
+biotype    C       HIS   CtermProteinFull            238
+biotype    OXT     HIS   CtermProteinFull            239
+biotype    O       HIS   CtermProteinFull            239
+biotype    C       ASP   CtermProteinFull                 238
+biotype    OXT     ASP   CtermProteinFull                 239
+biotype    O       ASP   CtermProteinFull                 239
+biotype    C       ASP   CtermProteinFull PROTONATED         238
+biotype    OXT     ASP   CtermProteinFull PROTONATED         239
+biotype    O       ASP   CtermProteinFull PROTONATED         239
+biotype    C       ASN   CtermProteinFull                 238
+biotype    OXT     ASN   CtermProteinFull                 239
+biotype    O       ASN   CtermProteinFull                 239
+biotype    C       GLU   CtermProteinFull                 238
+biotype    OXT     GLU   CtermProteinFull                 239
+biotype    O       GLU   CtermProteinFull                 239
+biotype    C       GLU   CtermProteinFull PROTONATED         238
+biotype    OXT     GLU   CtermProteinFull PROTONATED         239
+biotype    O       GLU   CtermProteinFull PROTONATED         239
+biotype    C       GLN   CtermProteinFull                 238
+biotype    OXT     GLN   CtermProteinFull                 239
+biotype    O       GLN   CtermProteinFull                 239
+biotype    C       MET   CtermProteinFull                 238
+biotype    OXT     MET   CtermProteinFull                 239
+biotype    O       MET   CtermProteinFull                 239
+biotype    C       LYS   CtermProteinFull                 238
+biotype    OXT     LYS   CtermProteinFull                 239
+biotype    O       LYS   CtermProteinFull                 239
+biotype    C       LYS   CtermProteinFull DEPROTONATED          238
+biotype    OXT     LYS   CtermProteinFull DEPROTONATED          239
+biotype    O       LYS   CtermProteinFull DEPROTONATED          239
+biotype    C       ARG   CtermProteinFull                 238
+biotype    OXT     ARG   CtermProteinFull                 239
+biotype    O       ARG   CtermProteinFull                 239
+biotype    C       ORN   CtermProteinFull                 238
+biotype    OXT     ORN   CtermProteinFull                 239
+biotype    O       ORN   CtermProteinFull                 239
+biotype    C       MAL   CtermProteinFull                 414
+biotype    OXT     MAL   CtermProteinFull                 414
+biotype    O       MAL   CtermProteinFull                 414
+biotype    N       Deprotonated_N-Terminus         236
+biotype    H       Deprotonated_N-Terminus         237
+biotype    C       Formyl_N-Terminus               414
+biotype    H       Formyl_N-Terminus               414
+biotype    O       Formyl_N-Terminus               414
+biotype    CH3     Acetyl_N-Terminus               224
+biotype    H       Acetyl_N-Terminus               225
+biotype    C       Acetyl_N-Terminus               226
+biotype    O       Acetyl_N-Terminus               227
+biotype    C       Protonated_C-Terminus           240
+biotype    O       Protonated_C-Terminus           241
+biotype    OH      Protonated_C-Terminus           242
+biotype    HO      Protonated_C-Terminus           243
+biotype    N       Amide_C-Terminus                228
+biotype    HN      Amide_C-Terminus                229
+biotype    N       N-MeAmide_C-Terminus            230
+biotype    HN      N-MeAmide_C-Terminus            231
+biotype    CH3     N-MeAmide_C-Terminus            232
+biotype    H       N-MeAmide_C-Terminus            233
+biotype    P       RAD                        378
+biotype    OP1     RAD                        379
+biotype    OP2     RAD                        379
+biotype    O5'     RAD                       332
+biotype    C5'     RAD                       333
+biotype    H5'     RAD                       334
+biotype   H5''     RAD                       335
+biotype    C4'     RAD                       336
+biotype    H4'     RAD                       337
+biotype    O4'     RAD                       338
+biotype    C1'     RAD                       339
+biotype    H1'     RAD                       340
+biotype    C3'     RAD                       341
+biotype    H3'     RAD                       342
+biotype    C2'     RAD                       343
+biotype    H2'     RAD                       344
+biotype    O2'     RAD                       345
+biotype   HO2'     RAD                       346
+biotype    O3'     RAD                       347
+biotype    N9      RAD                       252
+biotype    C4      RAD                       253
+biotype    C5      RAD                       254
+biotype    N7      RAD                       255
+biotype    C8      RAD                       256
+biotype    N3      RAD                       257
+biotype    C2      RAD                       258
+biotype    N1      RAD                       259
+biotype    C6      RAD                       260
+biotype    H2      RAD                       261
+biotype    N6      RAD                       262
+biotype    H61     RAD                       263
+biotype    H62     RAD                       264
+biotype    H8      RAD                       265
+biotype    P       RGU                       378
+biotype    OP1     RGU                       379
+biotype    OP2     RGU                       379
+biotype    O5'     RGU                       332
+biotype    C5'     RGU                       333
+biotype    H5'     RGU                       334
+biotype   H5''     RGU                       335
+biotype    C4'     RGU                       336
+biotype    H4'     RGU                       337
+biotype    O4'     RGU                       338
+biotype    C1'     RGU                       339
+biotype    H1'     RGU                       340
+biotype    C3'     RGU                       341
+biotype    H3'     RGU                       342
+biotype    C2'     RGU                       343
+biotype    H2'     RGU                       344
+biotype    O2'     RGU                       345
+biotype   HO2'     RGU                       346
+biotype    O3'     RGU                       347
+biotype    N9      RGU                       278
+biotype    C4      RGU                       279
+biotype    C5      RGU                       280
+biotype    N7      RGU                       281
+biotype    C8      RGU                       282
+biotype    N3      RGU                       283
+biotype    C2      RGU                       284
+biotype    N1      RGU                       285
+biotype    C6      RGU                       286
+biotype    H1      RGU                       287
+biotype    N2      RGU                       288
+biotype    H21     RGU                       289
+biotype    H22     RGU                       290
+biotype    O6      RGU                       291
+biotype    H8      RGU                       292
+biotype    P       RCY                        378
+biotype    OP1     RCY                        379
+biotype    OP2     RCY                        379
+biotype    O5'     RCY                        316
+biotype    C5'     RCY                        317
+biotype    H5'     RCY                        318
+biotype   H5''     RCY                        319
+biotype    C4'     RCY                        320
+biotype    H4'     RCY                        321
+biotype    O4'     RCY                        322
+biotype    C1'     RCY                        323
+biotype    H1'     RCY                        324
+biotype    C3'     RCY                        325
+biotype    H3'     RCY                        326
+biotype    C2'     RCY                        327
+biotype    H2'     RCY                        328
+biotype    O2'     RCY                        329
+biotype   HO2'     RCY                        330
+biotype    O3'     RCY                        331
+biotype    N1      RCY                        266
+biotype    C2      RCY                        267
+biotype    N3      RCY                        268
+biotype    C4      RCY                        269
+biotype    C5      RCY                        270
+biotype    C6      RCY                        271
+biotype    O2      RCY                        272
+biotype    N4      RCY                        273
+biotype    H41     RCY                        274
+biotype    H42     RCY                        275
+biotype    H5      RCY                        276
+biotype    H6      RCY                        277
+biotype    P       URA                         378
+biotype    OP1     URA                         379
+biotype    OP2     URA                         379
+biotype    O5'     URA                         316
+biotype    C5'     URA                         317
+biotype    H5'     URA                         318
+biotype   H5''     URA                         319
+biotype    C4'     URA                         320
+biotype    H4'     URA                         321
+biotype    O4'     URA                         322
+biotype    C1'     URA                         323
+biotype    H1'     URA                         324
+biotype    C3'     URA                         325
+biotype    H3'     URA                         326
+biotype    C2'     URA                         327
+biotype    H2'     URA                         328
+biotype    O2'     URA                         329
+biotype   HO2'     URA                         330
+biotype    O3'     URA                         331
+biotype    N1      URA                         305
+biotype    C2      URA                         306
+biotype    N3      URA                         307
+biotype    C4      URA                         308
+biotype    C5      URA                         309
+biotype    C6      URA                         310
+biotype    O2      URA                         311
+biotype    H3      URA                         312
+biotype    O4      URA                         313
+biotype    H5      URA                         314
+biotype    H6      URA                         315
+biotype    P       ADE                  390
+biotype    OP1     ADE                  391
+biotype    OP2     ADE                  391
+biotype    O5'     ADE                  363
+biotype    C5'     ADE                  364
+biotype    H5'     ADE                  365
+biotype   H5''     ADE                  366
+biotype    C4'     ADE                  367
+biotype    H4'     ADE                  368
+biotype    O4'     ADE                  369
+biotype    C1'     ADE                  370
+biotype    H1'     ADE                  371
+biotype    C3'     ADE                  372
+biotype    H3'     ADE                  373
+biotype    C2'     ADE                  374
+biotype    H2'     ADE                  375
+biotype   H2''     ADE                  376
+biotype    O3'     ADE                  377
+biotype    N9      ADE                  252
+biotype    C4      ADE                  253
+biotype    C5      ADE                  254
+biotype    N7      ADE                  255
+biotype    C8      ADE                  256
+biotype    N3      ADE                  257
+biotype    C2      ADE                  258
+biotype    N1      ADE                  259
+biotype    C6      ADE                  260
+biotype    H2      ADE                  261
+biotype    N6      ADE                  262
+biotype    H61     ADE                  263
+biotype    H62     ADE                  264
+biotype    H8      ADE                  265
+biotype    P       GUA                  390
+biotype    OP1     GUA                  391
+biotype    OP2     GUA                  391
+biotype    O5'     GUA                  363
+biotype    C5'     GUA                  364
+biotype    H5'     GUA                  365
+biotype   H5''     GUA                  366
+biotype    C4'     GUA                  367
+biotype    H4'     GUA                  368
+biotype    O4'     GUA                  369
+biotype    C1'     GUA                  370
+biotype    H1'     GUA                  371
+biotype    C3'     GUA                  372
+biotype    H3'     GUA                  373
+biotype    C2'     GUA                  374
+biotype    H2'     GUA                  375
+biotype   H2''     GUA                  376
+biotype    O3'     GUA                  377
+biotype    N9      GUA                  278
+biotype    C4      GUA                  279
+biotype    C5      GUA                  280
+biotype    N7      GUA                  281
+biotype    C8      GUA                  282
+biotype    N3      GUA                  283
+biotype    C2      GUA                  284
+biotype    N1      GUA                  285
+biotype    C6      GUA                  286
+biotype    H1      GUA                  287
+biotype    N2      GUA                  288
+biotype    H21     GUA                  289
+biotype    H22     GUA                  290
+biotype    O6      GUA                  291
+biotype    H8      GUA                  292
+biotype    P       CYT                  390
+biotype    OP1     CYT                  391
+biotype    OP2     CYT                  391
+biotype    O5'     CYT                   348
+biotype    C5'     CYT                   349
+biotype    H5'     CYT                   350
+biotype   H5''     CYT                   351
+biotype    C4'     CYT                   352
+biotype    H4'     CYT                   353
+biotype    O4'     CYT                   354
+biotype    C1'     CYT                   355
+biotype    H1'     CYT                   356
+biotype    C3'     CYT                   357
+biotype    H3'     CYT                   358
+biotype    C2'     CYT                   359
+biotype    H2'     CYT                   360
+biotype   H2''     CYT                   361
+biotype    O3'     CYT                   362
+biotype    N1      CYT                   266
+biotype    C2      CYT                   267
+biotype    N3      CYT                   268
+biotype    C4      CYT                   269
+biotype    C5      CYT                   270
+biotype    C6      CYT                   271
+biotype    O2      CYT                   272
+biotype    N4      CYT                   273
+biotype    H41     CYT                   274
+biotype    H42     CYT                   275
+biotype    H5      CYT                   276
+biotype    H6      CYT                   277
+biotype    P       THY                  390
+biotype    OP1     THY                  391
+biotype    OP2     THY                  391
+biotype    O5'     THY                  348
+biotype    C5'     THY                  349
+biotype    H5'     THY                  350
+biotype   H5''     THY                  351
+biotype    C4'     THY                  352
+biotype    H4'     THY                  353
+biotype    O4'     THY                  354
+biotype    C1'     THY                  355
+biotype    H1'     THY                  356
+biotype    C3'     THY                  357
+biotype    H3'     THY                  358
+biotype    C2'     THY                  359
+biotype    H2'     THY                  360
+biotype   H2''     THY                  361
+biotype    O3'     THY                  362
+biotype    N1      THY                  293
+biotype    C2      THY                  294
+biotype    N3      THY                  295
+biotype    C4      THY                  296
+biotype    C5      THY                  297
+biotype    C6      THY                  298
+biotype    O2      THY                  299
+biotype    H3      THY                  300
+biotype    O4      THY                  301
+biotype    C7      THY                  302
+biotype    H71     THY                  303
+biotype    H72     THY                  303
+biotype    H73     THY                  303
+biotype    H6      THY                  304
+biotype    O5'     5'-Hydroxyl_RNA                 380
+biotype    H5T     5'-Hydroxyl_RNA                 381
+biotype    O5'     5'-Phosphate_OS_RNA             382
+biotype    P       5'-Phosphate_P_RNA              383
+biotype    OP      5'-Phosphate_OP_RNA             384
+biotype    O3'     3'-Hydroxyl_RNA                 385
+biotype    H3T     3'-Hydroxyl_RNA                 386
+biotype    O3'     3'-Phosphate_OS_RNA             387
+biotype    P       3'-Phosphate_P_RNA              388
+biotype    OP      3'-Phosphate_OP_RNA             389
+biotype    O5'     ADE 5prime_end_OH            392
+biotype    HO5'    ADE 5prime_end_OH            393
+biotype    O5'     CYT 5prime_end_OH            392
+biotype    HO5'    CYT 5prime_end_OH            393
+biotype    O5'     GUA 5prime_end_OH            392
+biotype    HO5'    GUA 5prime_end_OH            393
+biotype    O5'     THY 5prime_end_OH            392
+biotype    HO5'    THY 5prime_end_OH            393
+biotype    O5'     ADE LowerDNA                 392
+biotype    HO5'    ADE LowerDNA                 393
+biotype    O5'     CYT LowerDNA                 392
+biotype    HO5'    CYT LowerDNA                 393
+biotype    O5'     GUA LowerDNA                 392
+biotype    HO5'    GUA LowerDNA                 393
+biotype    O5'     THY LowerDNA                 392
+biotype    HO5'    THY LowerDNA                 393
+biotype    O5'     ADE LOWER_TERMINUS           392
+biotype    HO5'    ADE LOWER_TERMINUS           393
+biotype    O5'     CYT LOWER_TERMINUS           392
+biotype    HO5'    CYT LOWER_TERMINUS           393
+biotype    O5'     GUA LOWER_TERMINUS           392
+biotype    HO5'    GUA LOWER_TERMINUS           393
+biotype    O5'     THY LOWER_TERMINUS           392
+biotype    HO5'    THY LOWER_TERMINUS           393
+biotype    O5'     5'-Phosphate_OS_DNA             394
+biotype    P       5'-Phosphate_P_DNA              395
+biotype    OP      5'-Phosphate_OP_DNA             396
+biotype    O3'     ADE   UPPER_TERMINUS        397
+biotype    HO3'    ADE   UPPER_TERMINUS        398
+biotype    O3'     CYT   UPPER_TERMINUS        397
+biotype    HO3'    CYT   UPPER_TERMINUS        398
+biotype    O3'     GUA   UPPER_TERMINUS        397
+biotype    HO3'    GUA   UPPER_TERMINUS        398
+biotype    O3'     THY   UPPER_TERMINUS        397
+biotype    HO3'    THY   UPPER_TERMINUS        398
+biotype    O3'     ADE   3prime_end_OH         397
+biotype    HO3'    ADE   3prime_end_OH         398
+biotype    O3'     CYT   3prime_end_OH         397
+biotype    HO3'    CYT   3prime_end_OH         398
+biotype    O3'     GUA   3prime_end_OH         397
+biotype    HO3'    GUA   3prime_end_OH         398
+biotype    O3'     THY   3prime_end_OH         397
+biotype    HO3'    THY   3prime_end_OH         398
+biotype    O3'     3'-Phosphate_OS_DNA             399
+biotype    P       3'-Phosphate_P_DNA              400
+biotype    OP      3'-Phosphate_OP_DNA             401
+biotype    O       HOH                               402
+biotype    H1      HOH                               403
+biotype    H2      HOH                               403
+biotype    O       TP3                               402
+biotype    H1      TP3                               403
+biotype    H2      TP3                               403
+biotype    NA      NA                     405
+biotype    K       K                      406
+biotype    MG      MG                     410
+biotype    CA      CA                     411
+biotype    CL      CL                     412
+biotype    ORIG    VRT                    414
+biotype    X       VRT                    414
+biotype    Y       VRT                    414

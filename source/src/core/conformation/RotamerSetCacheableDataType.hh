@@ -28,11 +28,12 @@ enum Enum {
 	LK_BALL_ROTAMER_SET_INFO = 1,
 	FACTS_ROTAMER_SET_INFO,
 	GEN_BORN_ROTAMER_SET_INFO,
+	MULTIPOLE_ELEC_ROTAMER_SET_INFO,
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-	num_cacheable_data_types = GEN_BORN_ROTAMER_SET_INFO
+	num_cacheable_data_types = MULTIPOLE_ELEC_ROTAMER_SET_INFO
 };
 
 } // namespace RotamerSetCacheableDataType

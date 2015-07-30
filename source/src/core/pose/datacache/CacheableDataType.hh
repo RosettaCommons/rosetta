@@ -78,6 +78,7 @@ enum Enum {
 	PSEUDOCONTACT_SHIFT_MULTI_DATA,//NMR Psuedocontact Shift (PCS) data, multi paramgnetic center
 	CUSTOM_PAIR_DIST_SCORE_INFO,
 	GEN_BORN_POSE_INFO,
+	MULTIPOLE_POSE_INFO,
 	FACTS_POSE_INFO,
 	MEMBRANE_FAEMBED, //pba high reslution membrane embedding info
 	POSITION_CONSERVED_RESIDUES,

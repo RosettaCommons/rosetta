@@ -25,7 +25,8 @@ namespace count_pair {
 enum  CPCrossoverBehavior {
 	CP_CROSSOVER_3 = 1,
 	CP_CROSSOVER_4,
-	nCPCrossoverBehaviors = CP_CROSSOVER_4 //keep this guy last
+	CP_CROSSOVER_34,
+	nCPCrossoverBehaviors = CP_CROSSOVER_34 //keep this guy last
 };
 
 enum CPResidueConnectionType {
