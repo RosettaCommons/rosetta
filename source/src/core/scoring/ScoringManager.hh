@@ -122,7 +122,7 @@ public:
 
 	GenBornPotential const & get_GenBornPotential() const;
 
-	MultipoleElecPotential const & get_MultipoleElecPotential() const;
+	MultipoleElecPotential const & get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const;
 
 	FACTSPotential const & get_FACTSPotential() const;
 

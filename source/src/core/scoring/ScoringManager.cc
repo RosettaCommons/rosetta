@@ -334,11 +334,13 @@ ScoringManager::get_GenBornPotential() const
 
 ///////////////////////////////////////////////////////////////////////////////
 MultipoleElecPotential const &
-ScoringManager::get_MultipoleElecPotential() const
+ScoringManager::get_MultipoleElecPotential( methods::EnergyMethodOptions const & options ) const
 {
 	if (multipole_elec_potential_ == 0 )
 	{
 		multipole_elec_potential_ = MultipoleElecPotentialOP( new MultipoleElecPotential() );
+		multipole_elec_potential_->use_polarization = options.use_polarization();
+		multipole_elec_potential_->use_gen_kirkwood = options.use_gen_kirkwood();
 	}
 	return *multipole_elec_potential_;
 }

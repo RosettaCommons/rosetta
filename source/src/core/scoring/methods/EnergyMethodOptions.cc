@@ -72,7 +72,9 @@ EnergyMethodOptions::EnergyMethodOptions():
 	grp_cpfxn_( true ),
 	elec_group_file_( "" ),
 	grpelec_context_dependent_( false ),
-	exclude_DNA_DNA_(true), // rosetta++ default
+	use_polarization_(true),
+	use_gen_kirkwood_(true),
+	exclude_DNA_DNA_(true),
 	exclude_intra_res_protein_(true), // rosetta++ default
 	put_intra_into_total_(false ),
 	geom_sol_interres_path_distance_cutoff_( 0 ), // rosetta++ default -- should be 4.
@@ -115,6 +117,8 @@ void EnergyMethodOptions::initialize_from_options() {
 	grp_cpfxn_ = basic::options::option[ basic::options::OptionKeys::score::grp_cpfxn ]();
 	elec_group_file_ = basic::options::option[ basic::options::OptionKeys::score::elec_group_file ]();
 	grpelec_context_dependent_ = basic::options::option[ basic::options::OptionKeys::score::grpelec_context_dependent ]();
+	use_polarization_= basic::options::option[basic::options::OptionKeys::score::use_polarization]();
+	use_gen_kirkwood_= basic::options::option[basic::options::OptionKeys::score::use_gen_kirkwood]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna](); // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 	exclude_intra_res_protein_ = !basic::options::option[basic::options::OptionKeys::score::include_intra_res_protein]();
 	put_intra_into_total_ = basic::options::option[basic::options::OptionKeys::score::put_intra_into_total]();
@@ -175,6 +179,8 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		grp_cpfxn_  = src.grp_cpfxn_;
 		elec_group_file_ = src.elec_group_file_;
 		grpelec_context_dependent_ = src.grpelec_context_dependent_;
+		use_polarization_ = src.use_polarization_;
+		use_gen_kirkwood_ = src.use_gen_kirkwood_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		exclude_intra_res_protein_ = src.exclude_intra_res_protein_;
 		put_intra_into_total_ = src.put_intra_into_total_;
@@ -418,6 +424,26 @@ void
 EnergyMethodOptions::grpelec_context_dependent( bool setting )
 {
 	grpelec_context_dependent_ = setting;
+}
+
+bool
+EnergyMethodOptions::use_polarization() const {
+	return use_polarization_;
+}
+
+void
+EnergyMethodOptions::use_polarization( bool const setting ) {
+	use_polarization_ = setting;
+}
+
+bool
+EnergyMethodOptions::use_gen_kirkwood() const {
+	return use_gen_kirkwood_;
+}
+
+void
+EnergyMethodOptions::use_gen_kirkwood( bool const setting ) {
+	use_gen_kirkwood_ = setting;
 }
 
 bool
@@ -725,6 +751,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.grp_cpfxn_ == b.grp_cpfxn_ ) &&
 		( a.elec_group_file_ == b.elec_group_file_ ) &&
 		( a.grpelec_context_dependent_ == b.grpelec_context_dependent_ ) &&
+		( a.use_polarization_ == b.use_polarization_ ) &&
+		( a.use_gen_kirkwood_ == b.use_gen_kirkwood_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( a.exclude_intra_res_protein_ == b.exclude_intra_res_protein_ ) &&
 		( a.put_intra_into_total_ == b.put_intra_into_total_ ) &&
@@ -793,6 +821,10 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: grp_cpfxn: " << grp_cpfxn_ << std::endl;
 	out << "EnergyMethodOptions::show: elec_group_file: " << elec_group_file_ << std::endl;
 	out << "EnergyMethodOptions::show: grpelec_context_dependent: " << grpelec_context_dependent_ << std::endl;
+	out << "EnergyMethodOptions::show: use_polarization: "
+			<< (use_polarization_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: use_gen_kirkwood: "
+			<< (use_gen_kirkwood_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_intra_res_protein: "
@@ -928,6 +960,12 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("elec_no_dis_dep_die");
 	option_values.push_back(elec_no_dis_dep_die_ ? "1" : "0");
+
+	option_keys.push_back("use_polarization");
+	option_values.push_back(use_polarization_ ? "1" : "0");
+
+	option_keys.push_back("use_gen_kirkwood");
+	option_values.push_back(use_gen_kirkwood_ ? "1" : "0");
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");

@@ -230,7 +230,7 @@ MultipoleElecEnergy::MultipoleElecEnergy( MultipoleElecEnergy const & src ):
 
 MultipoleElecEnergy::MultipoleElecEnergy( EnergyMethodOptions const & options ):
 	parent( methods::EnergyMethodCreatorOP( new MultipoleElecEnergyCreator ) ),
-	potential_( ScoringManager::get_instance()->get_MultipoleElecPotential() ),
+	potential_( ScoringManager::get_instance()->get_MultipoleElecPotential( options ) ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
 

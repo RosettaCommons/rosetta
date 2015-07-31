@@ -78,8 +78,6 @@ typedef numeric::xyzMatrix< core::Real > Matrix;
 namespace core {
 namespace scoring {
 
-//bool const use_generalized_Kirkwood( true );
-
 MultipoleElecResidueInfo::~MultipoleElecResidueInfo() {}
 
 bool
@@ -1569,6 +1567,12 @@ MultipoleElecPotential::induce_polarizable_dipoles(
 
 	//TR << "In induce_polarize_dipoles()" << std::endl;
 
+	// Early exit if polarization not wanted
+	if( !use_polarization ) {
+		clear_induced_fields( pose );
+		return;
+	}
+
 	MultipoleElecPoseInfoOP multipole_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) {
@@ -2142,7 +2146,7 @@ MultipoleElecPotential::get_res_res_elecE(
 //				elecE += 332.063714 * ( weight * (q2*sc3 - q1*sc4)*rr3 );
 			}
 
-			if( use_generalized_Kirkwood ){
+			if( use_gen_kirkwood ){
 				if( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
 				Real const rs1_rs2( rkirk1 * rkirk2 );
 				Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
@@ -2402,7 +2406,7 @@ MultipoleElecPotential::calculate_res_res_fixed_fields_for_polarization(
 				}
 			}
 
-			if( use_generalized_Kirkwood ) {
+			if( use_gen_kirkwood ) {
 
 				if( rkirk1 == 0.0 || rkirk2 == 0.0 ) continue;
 
@@ -2630,7 +2634,7 @@ MultipoleElecPotential::calculate_res_res_induced_fields_for_polarization(
 				mp2.Efield_induced( atm2 ) += Efield_at_2_due_to_1;
 			}
 
-			if( use_generalized_Kirkwood ) {
+			if( use_gen_kirkwood ) {
 				// This is the reaction field due to permanent multipoles
 				Real const rs1_rs2( rkirk1 * rkirk2 );
 				Real const expterm( std::exp( -dist2/( gkc* rs1_rs2 ) ) );
@@ -3184,7 +3188,7 @@ MultipoleElecPotential::eval_residue_pair_derivatives(
 			// But I think I'll eventually have to do it anyway.
 			//
 
-			if( use_generalized_Kirkwood && (!same_res || (atomi != atomj) ) ) {
+			if( use_gen_kirkwood && (!same_res || (atomi != atomj) ) ) {
 				//Real const rf_scale( ( same_res and (atm1 == atm2 ) ? 0.5 : 1.0 ) );
 				Real const gkc( 2.455 );
 				Real const dwater( 78.3 );

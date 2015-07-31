@@ -635,7 +635,8 @@ public:
 		Ep( 4.0 ),
 		Ew( 80.0 ),
 		bohr( 0.52917721092 ),
-		use_generalized_Kirkwood( false ),
+		use_polarization( true ),
+		use_gen_kirkwood( true ),
 		default_variant_( "NONE" )
 	{ read_in_amoeba_parameters();
 		read_in_multipole_parameters();
@@ -831,7 +832,8 @@ public:
 	Real const Ew;
 	// Conversion from bohrs to angstroms
 	Real const bohr;
-	bool use_generalized_Kirkwood;
+	bool use_polarization;
+	bool use_gen_kirkwood;
 private:
 
 	std::map< std::string, Size > type_lookup_;
