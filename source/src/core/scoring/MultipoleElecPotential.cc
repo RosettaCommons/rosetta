@@ -1042,10 +1042,10 @@ MultipoleElecPotential::assign_residue_amoeba_type(
 		//TR << "Using variant specialization " << parsed_resname[2] << std::endl;
 			variantname = parsed_resname[2];
 		} else if ( parsed_resname.size() > 2 ) {
-			TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
-			TR << "Full resname is " << rsd.name() <<  std::endl;
-			TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
-			TR << "Using first variant name only!!!" << std::endl;
+//			TR << "MULTIPLE VARIANT SITUATION -> NOT YET CODED!!!" << std::endl;
+//			TR << "Full resname is " << rsd.name() <<  std::endl;
+//			TR << "Using parsed resname " << parsed_resname[2] <<  std::endl;
+//			TR << "Using first variant name only!!!" << std::endl;
 			variantname = parsed_resname[2];
 			//for( Size ivar = 1 ; ivar <= parsed_resname.size() ; ++ivar ) {
 			//TR << "Residue info " << parsed_resname[ ivar ] << std::endl;

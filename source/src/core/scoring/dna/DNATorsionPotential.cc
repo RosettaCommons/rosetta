@@ -147,7 +147,7 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 																															 dna_sugar_close ) ) );
 
 	cst_set.add_constraint( pair_constraint );
-	
+
 	constraints::ConstraintOP angle1( new constraints::AngleConstraint( id::AtomID( c4prime_index, i),
 																																			 id::AtomID( c3prime_index, i),
 																																			 id::AtomID( c2prime_index, i),
@@ -186,7 +186,7 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 		conformation::Residue const & next_rsd( pose.residue( i + 1 ) );
 		if( !rsd.is_DNA() || !next_rsd.is_DNA() || rsd.is_upper_terminus() ) continue; //job undone: need to add conditions when the rsd is not basepaired
 
-		Size const H2prime_index = pose.residue( i ).atom_index( "H21*" );
+		Size const H2prime_index = pose.residue( i ).atom_index( "H2''" );
 		Size const H1prime_index = pose.residue( i ).atom_index( " H2'" );
 		Size H68_index, next_H68_index;
 		if( rsd.type().aa() == na_ade || rsd.type().aa() == na_gua )

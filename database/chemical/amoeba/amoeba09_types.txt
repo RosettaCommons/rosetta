@@ -1035,6 +1035,14 @@ biotype    O3'     GUA   3prime_end_OH         397
 biotype    HO3'    GUA   3prime_end_OH         398
 biotype    O3'     THY   3prime_end_OH         397
 biotype    HO3'    THY   3prime_end_OH         398
+biotype    O3'     ADE   UpperDNA              397
+biotype    HO3'    ADE   UpperDNA              398
+biotype    O3'     CYT   UpperDNA              397
+biotype    HO3'    CYT   UpperDNA              398
+biotype    O3'     GUA   UpperDNA              397
+biotype    HO3'    GUA   UpperDNA              398
+biotype    O3'     THY   UpperDNA              397
+biotype    HO3'    THY   UpperDNA              398
 biotype    O3'     3'-Phosphate_OS_DNA             399
 biotype    P       3'-Phosphate_P_DNA              400
 biotype    OP      3'-Phosphate_OP_DNA             401
