@@ -34,15 +34,21 @@ rm -f output/*
 
 %(bin)s/fixbb.%(binext)s @flags_fullatom_dun08 -database %(database)s -run:constant_seed -nodelay  2>&1 \
     > output/log_fa_dun08
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 
 mv 1l2y_0001.pdb 1l2y_dun08_0001.pdb
 
+
 %(bin)s/fixbb.%(binext)s @flags_fullatom -database %(database)s -run:constant_seed -nodelay  2>&1 \
     > output/log_fa
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
 %(bin)s/fixbb.%(binext)s @flags_centroid -database %(database)s -run:constant_seed -nodelay  2>&1 \
     > output/log_cen
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 
 #
 # After that, do whatever you want.

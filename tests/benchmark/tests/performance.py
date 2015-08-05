@@ -19,8 +19,8 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.0'  # api version
 
-
-_failure_threshold_pct_ = 5  # specify how much execution time could deviate (percent) from previous value without raising the alarm
+_individual_test_run_time_ = 256  # time in seconds which individual tests allowed to run
+_failure_threshold_pct_    = 5    # specify how much execution time could deviate (percent) from previous value without raising the alarm
 
 
 def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose=False, debug=False):
@@ -54,7 +54,7 @@ def run_performance_tests(rosetta_dir, working_dir, platform, config, hpc_driver
 
         json_results_file = '{rosetta_dir}/source/_performance_'.format(**vars())
         output_log_file = '{working_dir}/_performance_.log'.format(**vars())
-        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -benchmark_scale 64 -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(**vars())
+        command_line = '{rosetta_dir}/source/bin/performance_benchmark.{ext} -database {rosetta_dir}/database -benchmark_scale {run_time} -mute core protocols -in:file:extra_res_path extra_params 2>&1 >{output_log_file}'.format(run_time=_individual_test_run_time_, **vars())
 
         #performance_benchmark_sh = os.path.abspath(working_dir + '/performance_benchmark.sh')
         #with file(performance_benchmark_sh, 'w') as f: f.write('#!/bin/bash\n{}\n'.format(command_line));  os.fchmod(f.fileno(), stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
@@ -106,7 +106,7 @@ def compare(test, results, files_path, previous_results, previous_files_path):
         for test in results[_TestsKey_]:
             cycles = results[_TestsKey_][test]['cycles']
 
-            if test in previous_results[_TestsKey_]: previous_values = { k:previous_results[_TestsKey_][test][k] for k in previous_results[_TestsKey_][test] if k not in [_StateKey_, _LogKey_] }
+            if test in previous_results[_TestsKey_]: previous_values = { k:previous_results[_TestsKey_][test][k] for k in previous_results[_TestsKey_][test] if k not in [_StateKey_, _LogKey_, 'previous_values'] }
             else: previous_values = None
 
             if previous_values  and  'cycles' in previous_values: previous_cycles = previous_values['cycles']

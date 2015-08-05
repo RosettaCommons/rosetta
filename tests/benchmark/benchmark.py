@@ -76,7 +76,7 @@ def main(args):
 
     if Options.memory: memory = Options.memory
     elif Platform['os'] == 'linux': memory = float(commands.getoutput('free -m').split('\n')[1].split()[1]) / 1024
-    elif Platform['os'] == 'mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[2]) / 1024 / 1024 / 1024
+    elif Platform['os'] == 'mac':   memory = float(commands.getoutput('sysctl -a | grep hw.memsize').split()[1]) / 1024 / 1024 / 1024
 
     if os.path.isfile('benchmark.ini'):
         Config = ConfigParser( dict(here=os.path.abspath('./') ) )
@@ -166,9 +166,9 @@ def main(args):
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
 
-            print 'Output and log of this test saved to {0}/output.results.json and {0}/output.output.log'.format(working_dir)
+            print 'Output and log of this test saved to {0}/output.results.json and {0}/output.log'.format(working_dir)
 
-            with file(working_dir+'/output.output.log', 'w') as f: f.write(res[_LogKey_])
+            with file(working_dir+'/output.log'.format(test), 'w') as f: f.write(res[_LogKey_])
             with file(working_dir+'/output.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
 
 

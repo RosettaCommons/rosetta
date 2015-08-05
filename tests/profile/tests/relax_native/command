@@ -46,6 +46,8 @@ do
     	@%(workdir)s/input/flags \
     	&> %(workdir)s/output/log_$target
 
+    test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
     res2=$(date +%%s.%%N)
     echo "$target" $(echo "$res2 - $res1" | bc) >> %(workdir)s/output/timing.csv
 done

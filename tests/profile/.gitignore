@@ -3,3 +3,4 @@ tests/*/output
 tests/*/command.sh
 .old_results.yaml
 .results.yaml
+.results.json

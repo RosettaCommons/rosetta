@@ -33,24 +33,22 @@ def getSubprocessMemoryInfo(parentPID):
 
 
 def run(test, options):
-    print 'Running test %s...' % test
-
     workdir = os.path.abspath( os.path.join("tests", test) )
-    print '  Test working dir is: %s' % workdir
 
     # Running tests
     platform = Platform
 
     minidir = os.path.join(options.main, "source")
-    print '  Rosetta home dir is: %s' % minidir
 
     bindir = os.path.join(options.main, "source", "bin")
     compiler = 'gcc'
     mode = 'release'
     binext = platform+compiler+mode
 
+    print 'Running test %s...' % test
+    print '  Test working dir is: %s' % workdir
+    print '  Rosetta home dir is: %s' % minidir
     print '  Rosetta bin dir is: %s' % bindir
-
     print '  Rosetta database dir is: %s' % options.database
 
     additional_flags = options.additional_flags
@@ -96,23 +94,31 @@ def run(test, options):
     max_memory_allocated = max( map(lambda x: x[1], memory) )
     execution_time = memory[-1][0]
 
-    filename=output_dir + '/.results.yaml'
-    if os.path.isfile(filename):
-        move(filename, output_dir+'/.old_results.yaml')
+    filename = output_dir + '/.results.yaml'
+    old_filename = output_dir+'/.old_results.yaml'
+    if os.path.isfile(filename): move(filename, output_dir+'/.old_results.yaml')
+    if options.daemon  and  os.path.isfile(old_filename): os.remove(old_filename)
+
     yaml_data = { 'execution_time_s' : execution_time, 'max_memory_allocated_MB': max_memory_allocated }
     f = file(filename, 'w');  json.dump( yaml_data, f );  f.close()
 
+
+    failed = False
 
     if retcode is None:
         import signal
         print "*** Test %s exceeded the timeout and will be killed!" % test
         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
-    if retcode != 0 and retcode is not None:
+        failed = True
+
+    if retcode != 0 and retcode is not None: failed = True
+
+    if failed:
         error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
         print error_string,
+        with file(os.path.join(workdir, ".test_did_not_run.log"), 'w') as f: f.write(error_string)  # Writing error_string to a file, so regression test should fail for sure
 
-        # Writing error_string to a file, so integration test should fail for sure
-        file(os.path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
+    return dict(state='failed' if failed else 'finished', max_memory_allocated=max_memory_allocated, execution_time=execution_time, memory_usage=[ dict(time=m[0], memory=m[1]) for m in memory])
 
 
 
@@ -121,11 +127,15 @@ def main(argv):
     '''A simple system for running protocol profile end-to-end tests in Mini.
     '''
 
+    json_results_file = '.profile_test_results.json'
+    if os.path.isfile(json_results_file): os.remove(json_results_file)
+
+
     # Attempt to resolve checkout root directory.
     try:
         main_dir = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip()
-    except subprocess.CalledProcessError:
-        main_dir = None
+    except (subprocess.CalledProcessError, OSError) as e:
+        main_dir = os.path.abspath('./../../')
 
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -151,6 +161,13 @@ def main(argv):
       metavar="MINUTES",
     )
 
+    parser.add_option("--daemon",
+      action="store_true",
+      dest="daemon",
+      help="Run tests in deamon mode. This will skip some steps and void generation of file with old results.",
+    )
+
+
     (options, args) = parser.parse_args(argv)
 
     if not options.main:
@@ -160,7 +177,7 @@ def main(argv):
     if not os.path.isdir(options.main):
         print "Invalid rosetta main repository root %s, run profile.py from within rosetta main checkout or specify root with --main." % options.main
         return 1
-    
+
     if not options.database:
         options.database = os.path.join(options.main, "database")
 
@@ -181,9 +198,13 @@ def main(argv):
     else:
         tests = [ d for d in os.listdir("tests") if not d.startswith(".") and os.path.isdir(os.path.join("tests", d)) ]
 
+
+    tests_results = {}
     # Now actually running the tests...
     for test in tests:
-        run(test, options)
+        tests_results[test] = run(test, options)
+
+    with file(json_results_file, 'w') as f: json.dump(tests_results, f, sort_keys=True, indent=2)
 
 
 if __name__ == "__main__":
