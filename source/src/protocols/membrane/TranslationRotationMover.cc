@@ -287,7 +287,7 @@ RotationMover::RotationMover() :
 	protocols::moves::Mover(),
 	fullatom_( true ),
 	old_normal_( mem_normal ),
-	new_normal_( 0, 15, 0 ),
+	new_normal_( 0, 1, 0 ),
 	rot_center_( mem_center ),
 	jumpnum_(0)
 {
@@ -531,8 +531,8 @@ TranslationRotationMover::TranslationRotationMover() :
 	fullatom_( true ),
 	old_center_( mem_center ),
 	old_normal_( mem_normal ),
-	new_center_( 15,  0, 0 ),
-	new_normal_(  0, 15, 0 ),
+	new_center_( 1,  0, 0 ),
+	new_normal_(  0, 1, 0 ),
 	jumpnum_( mem_jump )
 {
 	register_options();

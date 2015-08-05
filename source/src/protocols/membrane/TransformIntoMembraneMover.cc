@@ -82,9 +82,9 @@ using namespace protocols::moves;
 /// embedding computed from structure and spanfile
 TransformIntoMembraneMover::TransformIntoMembraneMover() :
 	jump_( 0 ), 
-	new_mem_cntr_( mem_center ), 
-	new_mem_norm_( mem_normal ), 
-	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	new_mem_cntr_( 0, 0, 0 ), 
+	new_mem_norm_( 0, 0, 1 ), 
+	current_embedding_( new EmbeddingDef( new_mem_norm_, new_mem_cntr_ ) ), 
 	use_default_membrane_( false ), 
 	user_defined_membrane_( false )
 {}
@@ -95,9 +95,9 @@ TransformIntoMembraneMover::TransformIntoMembraneMover() :
 // into default membrane, partner embedding computed from structure & spanfile
 TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
 	jump_( jump ), 
-	new_mem_cntr_( mem_center ), 
-	new_mem_norm_( mem_normal ), 
-	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	new_mem_cntr_( 0, 0, 0 ), 
+	new_mem_norm_( 0, 0, 1 ), 
+	current_embedding_( new EmbeddingDef( new_mem_norm_, new_mem_cntr_ ) ),  
 	use_default_membrane_( false ), 
 	user_defined_membrane_( false )
 {}
@@ -108,8 +108,8 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
 /// been optimized before) into the default membrane
 TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_embedding ) : 
 	jump_( 0 ), 
-	new_mem_cntr_( mem_center ), 
-	new_mem_norm_( mem_normal ), 
+	new_mem_cntr_( 0, 0, 0 ), 
+	new_mem_norm_( 0, 0, 1 ), 
 	current_embedding_( current_embedding ), 
 	use_default_membrane_( false ), 
 	user_defined_membrane_( false )

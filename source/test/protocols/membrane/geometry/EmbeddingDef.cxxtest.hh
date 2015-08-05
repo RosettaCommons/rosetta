@@ -10,6 +10,7 @@
 /// @file 	 protocols/membrane/geometry/EmbeddingDef.cxxtest.hh
 /// @brief 	 Unit test for EmbeddingDef class
 /// @author  JKLeman (julia.koehler1982@gmail.com)
+/// @author  Updated by Rebecca Alford (rfalford12@gmail.com)
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
@@ -70,8 +71,8 @@ public: // test functions
 		TS_TRACE("Test default constructor");
 				
 		// define vectors and object
-		Vector center( mem_center );
-		Vector normal( mem_normal );
+		Vector center( 0, 0, 0 );
+		Vector normal( 0, 0,1 );
 		EmbeddingDefOP embed( new EmbeddingDef() );
 
 		// check positions
@@ -112,8 +113,8 @@ public: // test functions
 		Vector start(-0.97, -1.864, -12.281);
 		Vector end(-1.246, -7.692, 13.217);
 		Vector center(-1.108, -4.778, 0.468);
-		Vector normal(-0.1582, -3.3421, 14.6220);
-		
+		Vector normal(-0.0105467, -0.222808, 0.974805);
+
 		// check positions
 		TS_ASSERT( position_equal_within_delta( pose.residue( res1 ).atom( 2 ).xyz(), start, 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( pose.residue( res2 ).atom( 2 ).xyz(), end, 0.001 ) );

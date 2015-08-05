@@ -112,7 +112,7 @@ public:
 		Vector current_normal( pose_->conformation().membrane_info()->membrane_normal() );
 
 		// Simple rotation 1
-		Vector rot_1( 0, 15, 0 );
+		Vector rot_1( 0, 1, 0 );
 		SetMembraneNormalMoverOP first_move( new SetMembraneNormalMover( rot_1 ) );
 		first_move->apply( *pose_ );
 		TS_ASSERT_DELTA( angle_of( current_normal, pose_->conformation().membrane_info()->membrane_normal() ), 1.57, 0.001);
@@ -129,7 +129,7 @@ public:
 
 		// Pick a new center/normal position
 		Vector new_center( 0, 5, 10 );
-		Vector new_normal( 0, 15, 0 );
+		Vector new_normal( 0, 1, 0 );
 
 		// Apply Rotation and translation move
 		SetMembranePositionMoverOP rt( new SetMembranePositionMover( new_center, new_normal ) );

@@ -301,7 +301,7 @@ public: // test functions
 
         // define vectors and object
         Vector center1(0.53225, 0.361, 0.095);
-        Vector normal1(-12.7367, -7.68036, 1.94611);
+        Vector normal1(-0.849116, -0.512025, 0.129741);
         
         // compute embedding
         EmbeddingDefOP embed1( compute_structure_based_embedding( pose1 ) );
@@ -329,7 +329,7 @@ public: // test functions
         AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
         addmem2->apply(pose2);
         Vector center2(73.9421, 26.7549, 24.4493);
-        Vector normal2(5.7604, -0.605734, 13.8366);
+        Vector normal2(0.384026, -0.0403822, 0.922439);
         EmbeddingDefOP embed2( compute_structure_based_embedding( pose2 ) );
         TS_ASSERT( position_equal_within_delta( embed2->center(), center2, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed2->normal(), normal2, 0.001 ) );
@@ -352,7 +352,7 @@ public: // test functions
         AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
         addmem3->apply(pose3);
         Vector center3(31.2161, 16.9685, 37.6119);
-        Vector normal3(13.1689, -7.07507, 1.23442);
+        Vector normal3(0.877926, -0.47167, 0.0822946);
         EmbeddingDefOP embed3( compute_structure_based_embedding( pose3 ) );
         TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
@@ -375,7 +375,7 @@ public: // test functions
         AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
         addmem4->apply(pose4);
         Vector center4(21.4326, 6.0464, -41.0573);
-        Vector normal4(0.0900585, 0.176022, 14.9987);
+        Vector normal4(0.0060, 0.0117348, 0.9999);
         EmbeddingDefOP embed4( compute_structure_based_embedding( pose4 ) );
         TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
@@ -398,7 +398,7 @@ public: // test functions
         AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
         addmem5->apply(pose5);
         Vector center5(0.3645, 3.66025, 41.345);
-        Vector normal5(0.104341, 14.9499, 1.221);
+        Vector normal5(0.006956, 0.996657, 0.0813998);
         EmbeddingDefOP embed5( compute_structure_based_embedding( pose5 ) );
         TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
@@ -421,7 +421,7 @@ public: // test functions
         AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
         addmem6->apply(pose6);
         Vector center6(18.8453, 122.117, 1.079);
-        Vector normal6(-11.3264, -9.83365, 0.106647);
+        Vector normal6(-0.755094, -0.655578, 0.00710981);
         EmbeddingDefOP embed6( compute_structure_based_embedding( pose6 ) );
         TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
@@ -444,7 +444,7 @@ public: // test functions
         AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
         addmem7->apply(pose7);
         Vector center7(-0.000166667, -0.000125, 0.295625);
-        Vector normal7(1.19923e-05, 2.70232e-05, 15);
+        Vector normal7(0, 0, 1);
         EmbeddingDefOP embed7( compute_structure_based_embedding( pose7 ) );
         TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
@@ -468,7 +468,7 @@ public: // test functions
         AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );
         addmem8->apply(pose8);
         Vector center8(-36.1201, -7.59636, 37.6713);
-        Vector normal8(-14.793, -2.47196, 0.237567);
+        Vector normal8(-0.9862, -0.164797, 0.0158378);
         EmbeddingDefOP embed8( compute_structure_based_embedding( pose8 ) );
         TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
@@ -504,7 +504,7 @@ public: // test functions
         Vector v3(7, 8, 9);
         Vector v4(7, 5, 3);
         Vector avg_center(4, 5, 6);
-        Vector avg_normal(8.66, 8.66, 8.66);
+        Vector avg_normal(0.57735, 0.57735, 0.57735);
         
         // create embedding objects
         EmbeddingDefOP emb1( new EmbeddingDef( v1, v2 ) );
@@ -536,7 +536,7 @@ public: // test functions
         Vector v3(1, 2, 9);
         Vector v4(3, 4, -8);
         Vector avg_center(2.5, 3.5, 4.5);
-        Vector avg_normal(-1.7407, -1.7407, 14.7966);
+        Vector avg_normal(-0.116047, -0.116047, 0.986441);
         
         // create embedding objects
         EmbeddingDefOP emb1( new EmbeddingDef( v1, v3 ) );

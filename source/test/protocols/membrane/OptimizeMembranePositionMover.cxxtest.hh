@@ -92,7 +92,7 @@ public: // test functions
 		core::Vector mem_cntr = pose_.conformation().membrane_info()->membrane_center();
 		core::Vector mem_norm = pose_.conformation().membrane_info()->membrane_normal();
 		Vector cntr_before(0.0, 0.0, 0.0);
-		Vector norm_before(0.0, 0.0, 15.0);
+		Vector norm_before(0.0, 0.0, 1.0);
 		
 		// compare before
 		TS_ASSERT( position_equal_within_delta( mem_cntr, cntr_before, 0.001 ) );
@@ -106,7 +106,7 @@ public: // test functions
 		core::Vector mem_cntr1 = pose_.conformation().membrane_info()->membrane_center();
 		core::Vector mem_norm1 = pose_.conformation().membrane_info()->membrane_normal();
 		Vector cntr_after(0.0, 0.0, 1.8);
-		Vector norm_after(3.41, -3.41, 14.2037);
+		Vector norm_after(0.2273, -0.2273, 0.9469);
 		
 		// compare after
 		TS_ASSERT( position_equal_within_delta( mem_cntr1, cntr_after, 0.001 ) );

@@ -103,9 +103,9 @@ public: // test functions
 
 		// define vectors
 		Vector cntr_before(18.6088, 11.9908, -0.248);
-		Vector norm_before(0.115179, 1.28822, 14.9441);
+		Vector norm_before(0.0076786, 0.0858815, 0.996276);
 		Vector cntr_after(10.0, 12.0, 0.0);
-		Vector norm_after(0.115179, 1.28822, 14.9441);
+		Vector norm_after(0.0076786, 0.0858815, 0.996276);
 
 		// compare before
 		TS_ASSERT( position_equal_within_delta( emb_down->center(), cntr_before, 0.001 ) );

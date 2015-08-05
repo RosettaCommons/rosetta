@@ -502,11 +502,11 @@ AddMembraneMover::apply( Pose & pose ) {
 		ft.slide_jump( memjump, anchor_rsd_, mem_rsd_in_pdb[1] );
 		pose.fold_tree( ft );
     }
-    
+
     // Use set membrane positon mover to set the center/normal pair
     SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
     set_position->apply( pose );
-    
+
     // Set membrane thickness & steepness (Added 3/9/15)
     pose.conformation().membrane_info()->set_membrane_thickness( thickness_ );
     pose.conformation().membrane_info()->set_membrane_steepness( steepness_ );

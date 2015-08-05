@@ -29,7 +29,7 @@ namespace membrane {
 
 // membrane center and normal
 static numeric::xyzVector< Real > const mem_center( 0, 0, 0 );
-static numeric::xyzVector< Real > const mem_normal( 0, 0, 15 );
+static numeric::xyzVector< Real > const mem_normal( 0, 0, 1 );
 
 // half of the membrane thickness: should match with normal.z
 static Real const mem_thickness( 15 );

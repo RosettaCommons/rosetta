@@ -181,7 +181,7 @@ void EmbeddingDef::from_span( core::pose::Pose const & pose, core::Size const st
 
 	// compute normal
 	core::Vector normal = pos2 - pos1;
-	normal.normalize( mem_thickness );
+	normal.normalize();
 	
 	center_.assign( center.x(), center.y(), center.z() );
 	normal_.assign( normal.x(), normal.y(), normal.z() );
@@ -223,7 +223,7 @@ void EmbeddingDef::from_span_positive_z( core::pose::Pose const & pose, core::Si
 		normal = pos2 - pos1;
 	}
 
-	normal.normalize( mem_thickness );
+	normal.normalize();
 
 	center_.assign( center.x(), center.y(), center.z() );
 	normal_.assign( normal.x(), normal.y(), normal.z() );

@@ -8,8 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file 	 protocols/membrane/geometry/Embedding.cxxtest.hh
-/// @brief 	 Unit test for SpanningTopology class
+/// @brief 	 Unit test for Embedding class
 /// @author  JKLeman (julia.koehler1982@gmail.com)
+/// @author	 Modified by Rebecca Alford (rfalford12@gmail.com)
 
 // Test Headers
 #include <cxxtest/TestSuite.h>
@@ -92,7 +93,7 @@ public: // test functions
 		Vector center4( 10, 0, 0);
 
 		Vector center(0, 0, 0);		// for overall embedding
-		Vector normal(0, 0, 15);
+		Vector normal(0, 0, 1);
 		
 		// check centers on y, -x, -y, x axis and normals at 0, 0, 1
 		TS_ASSERT( position_equal_within_delta( embed->embedding(1)->center(), center1, 0.001 ) );
@@ -130,12 +131,12 @@ public: // test functions
 
 		// create vectors for centers and normals
 		Vector center1(-1.9835, -3.184, -0.108);		// for spans
-		Vector normal1(-1.23736, -1.61156, 14.8618);
+		Vector normal1(-0.08249, -0.10743, 0.99078);
 		Vector center2(1.9495, 2.977, -0.6515);
-		Vector normal2(-0.495789, 7.59876, 12.9234);
+		Vector normal2(-0.03305, 0.50658, 0.861558);
 
 		Vector center(-0.017, -0.1035, -0.37975);		// for overall embedding
-		Vector normal(-0.912964, 3.15385, 14.6362);
+		Vector normal(-0.06086, 0.210257, 0.97575);
 		
 		// check positions of vectors
 		// also tests getter embedding(span) and total_embed()

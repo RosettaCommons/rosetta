@@ -215,7 +215,7 @@ MembraneInfo::membrane_normal() const {
 	Vector normal_tracked = conformation_.residue( membrane_rsd_num() ).xyz( membrane::normal );
 	Vector normal = normal_tracked - membrane_center();
 	
-	return normal.normalize( mem_thickness );
+	return normal.normalize();
 }
 
 /// @brief Compute Residue Z Position relative to mem

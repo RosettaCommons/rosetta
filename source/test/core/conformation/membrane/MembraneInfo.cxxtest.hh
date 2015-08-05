@@ -128,7 +128,7 @@ public: // test functions
 		TS_ASSERT( position_equal_within_delta( center, expected_center, 0.0001 ) );
 		
 		Vector normal = pose_->conformation().membrane_info()->membrane_normal();
-		Vector expected_normal( 0, 0, 15 );
+		Vector expected_normal( 0, 0, 1 );
 		TS_ASSERT( position_equal_within_delta( normal, expected_normal, 0.0001 ) );
 		
 	}

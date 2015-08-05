@@ -572,7 +572,7 @@ Conformation::update_membrane_position( Vector center, Vector normal ) {
 	using namespace core::conformation::membrane;
 
 	// normalize normal vector
-	normal.normalize( mem_thickness );
+	normal.normalize();
 
 	// Set membrane center
 	residues_[ membrane_info_->membrane_rsd_num() ]->set_xyz( membrane::center, center );

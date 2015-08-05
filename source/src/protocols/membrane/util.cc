@@ -564,7 +564,7 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const part
     }
     
     center /= parts.size();
-    normal.normalize( mem_thickness );
+    normal.normalize();
     
     // Create new embedding setup and return it
     EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
@@ -611,7 +611,7 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
     }
     
     center /= parts.size();
-    normal.normalize( mem_thickness );
+    normal.normalize();
     
     // Create new embedding setup and return it
     EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );

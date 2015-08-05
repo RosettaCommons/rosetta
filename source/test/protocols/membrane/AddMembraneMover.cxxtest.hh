@@ -156,7 +156,7 @@ public: // test functions
 
         // Define expected center/normal
         core::Vector expected_center(0,0,0);
-        core::Vector expected_normal(0,0,15);
+        core::Vector expected_normal(0,0,1);
 
         TS_ASSERT( position_equal_within_delta( current_center, expected_center, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( current_normal, expected_normal, 0.001 ) );
@@ -267,7 +267,7 @@ public: // test functions
 
         // Define expected center/normal
         core::Vector expected_center(10,10,10);
-        core::Vector expected_normal(0,15,0);
+        core::Vector expected_normal(0,1,0);
 
         TS_ASSERT( position_equal_within_delta( current_center, expected_center, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( current_normal, expected_normal, 0.001 ) );

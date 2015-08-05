@@ -71,9 +71,11 @@ public:
 		// Case: Glycophorin A
 		std::string pdbfile = "protocols/membrane/1AFO_AB_before_out.pdb";
 		pose_ = core::import_pose::pose_from_pdb( pdbfile );
-		AddMembraneMoverOP add_memb( new AddMembraneMover( "protocols/membrane/1AFO_AB.span", 0 ) );
+		Vector m_center( 0, 0, 0 ); 
+		Vector m_normal( 0, 0, 1 ); 
+		AddMembraneMoverOP add_memb( new AddMembraneMover( m_center, m_normal, "protocols/membrane/1AFO_AB.span", 0 ) );
 		add_memb->apply( *pose_ );
-		
+
 		// Test angle between single helix and normal azis is 0 after transformation
 		// Case: TM domain of the M2 proton channel (single helix)
 
@@ -98,9 +100,9 @@ public:
 		using namespace protocols::membrane;
 
 		// membrane default that are not moved, output in PDB
-		Vector m_center ( mem_center );
-		Vector m_normal ( mem_normal );
-		Vector m_thickness( mem_thickness, 0, 0 );
+		Vector m_center ( 0, 0, 0 );
+		Vector m_normal ( 0, 0, 1 );
+		Real m_thickness( 15 );
 
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
@@ -119,9 +121,9 @@ public:
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
 
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
 
 	}
 
@@ -144,9 +146,9 @@ public:
 		EmbeddingDefOP current_emb( new EmbeddingDef( cur_emb_center, cur_emb_normal ) );
 		
 		// membrane default that are not moved, output in PDB
-		Vector m_center ( mem_center );
-		Vector m_normal ( mem_normal );
-		Vector m_thickness( mem_thickness, 0, 0 );
+		Vector m_center ( 0, 0, 0 );
+		Vector m_normal ( 0, 0, 1 );
+		Real m_thickness( 15 );
 	
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb ) );
@@ -157,17 +159,17 @@ public:
 		Vector res40_after ( -22.831, -3.756, 11.196 );
 		Vector res41_after ( 11.119, -0.315, -7.461 );
 		Vector res80_after ( 0.795, -4.211, 20.987 );
-		
+
 		// Check the structure was moved to the correct position
 		TS_ASSERT( position_equal_within_delta( res1_after, pose_->residue(1).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
-		
+
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -181,9 +183,9 @@ public:
 
 		// set new membrane to transform pose into
 		Vector m_center (20, 20, 20);
-		Vector m_normal (15, 0, 0);
-		Vector m_thickness( mem_thickness, 0, 0 );
-
+		Vector m_normal (1, 0, 0);
+		Real m_thickness( 15 );
+		
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( m_center, m_normal ) );
 		transform->apply( *pose_ );
@@ -201,9 +203,9 @@ public:
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
 
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal+m_center, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -222,8 +224,8 @@ public:
 		
 		// set new membrane to transform pose into
 		Vector m_center (20, 20, 20);
-		Vector m_normal (15, 0, 0);
-		Vector m_thickness( mem_thickness, 0, 0 );
+		Vector m_normal (1, 0, 0);
+		Real m_thickness( 15 );
 		
 		// Apply Rotation and translation move
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb, m_center, m_normal ) );
@@ -240,11 +242,11 @@ public:
 		TS_ASSERT( position_equal_within_delta( res40_after, pose_->residue(40).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res41_after, pose_->residue(41).atom(2).xyz(), 0.001 ) );
 		TS_ASSERT( position_equal_within_delta( res80_after, pose_->residue(80).atom(2).xyz(), 0.001 ) );
-		
+
 		// check positions of center and normal
-		TS_ASSERT( position_equal_within_delta( m_thickness, pose_->residue(81).atom(1).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_center, pose_->residue(81).atom(2).xyz(), 0.001 ) );
-		TS_ASSERT( position_equal_within_delta( m_normal+m_center, pose_->residue(81).atom(3).xyz(), 0.001 ) );
+		TS_ASSERT_DELTA( m_thickness, pose_->conformation().membrane_info()->membrane_thickness(), 0.001 );
+		TS_ASSERT( position_equal_within_delta( m_center, pose_->conformation().membrane_info()->membrane_center(), 0.001 ) );
+		TS_ASSERT( position_equal_within_delta( m_normal, pose_->conformation().membrane_info()->membrane_normal(), 0.001 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////

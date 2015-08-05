@@ -66,6 +66,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
@@ -872,6 +873,26 @@ write_additional_pdb_data(
 {
 	using namespace basic::options;
     using namespace basic::options::OptionKeys;
+
+    // added by rebecca --> Normalized MEM lines. Useful for visualizing the boundaries of 
+    // the membrane by coupling the NORM and THK coordinates
+    if ( pose.conformation().is_membrane() &&
+    		option[ OptionKeys::mp::output::normalize_to_thk ]() ) {
+
+    	// Grab membrane residue & current data
+    	core::Size resid( pose.conformation().membrane_info()->membrane_rsd_num() );
+    	core::Real thkn( pose.conformation().membrane_info()->membrane_thickness() ); 
+    	core::Vector cntr( pose.conformation().membrane_info()->membrane_center() ); 
+    	core::Vector norm( pose.conformation().membrane_info()->membrane_normal() ); 
+
+    	// Actually normalize the membrane residue to thk
+    	norm.normalize( thkn ); 
+
+    	// Get rsdid, current chain, 
+    	out << "HETATM XXXX THKN MEM X " << resid << "      " << std::fixed << std::setprecision(3) << thkn << " 0.000  0.000 \n";
+		out << "HETATM XXXX CNTR MEM X " << resid << "      " << std::fixed << std::setprecision(3) << cntr.x() << " " << cntr.y() << " " << cntr.z() << "\n";
+		out << "HETATM XXXX NORM MEM X " << resid << "      " << std::fixed << std::setprecision(3) << norm.x() << " " << norm.y() << " " << norm.z() << "\n";
+    }
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.

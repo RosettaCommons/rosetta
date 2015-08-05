@@ -123,7 +123,7 @@ RandomPositionRotationMover::apply( Pose & pose ) {
 
 	// Compute random rotation
 	Vector current_normal( pose.conformation().membrane_info()->membrane_normal() );
-	current_normal.normalize( mem_thickness );
+	current_normal.normalize();
 	Real theta = 2*numeric::random::rg().uniform() * rot_mag_;
 
 	// Apply Uniform Rotation
