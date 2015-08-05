@@ -95,8 +95,8 @@ load_bb_torsions_into_vector(
 	core::pose::Pose & pose
 ) {
 	utility::vector1< Real > bb_vec;
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		for ( Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		for ( core::Size jj = 1; jj <= pose.residue( ii ).mainchain_torsions().size(); ++jj ) {
 			bb_vec.push_back( pose.residue( ii ).mainchain_torsions()[ jj ] );
 		}
 	}
@@ -111,7 +111,7 @@ compute_deficit(
 	runtime_assert( v1.size() == v2.size() );
 	
 	Real deficit = 0;
-	for ( Size ii = 1; ii <= v1.size(); ++ii ) {
+	for ( core::Size ii = 1; ii <= v1.size(); ++ii ) {
 		deficit += v2[ ii ] - v1[ ii ];
 	}
 	return deficit;
@@ -148,7 +148,7 @@ try {
 	// Because of gripes from the AtomTree, let's avoid the question
 	// of the un-settable BB torsions on resi 1 and npos
 	//mm->set_bb( true );
-	/*for ( Size  ii = 2; ii <= pose.total_residue() - 1; ++ii ) {
+	/*for ( core::Size  ii = 2; ii <= pose.total_residue() - 1; ++ii ) {
 		mm->set_bb( ii, true );
 	}
 	RandomTorsionMoverOP tor_mover( new RandomTorsionMover( mm, 90, 1 ) );
@@ -160,12 +160,12 @@ try {
 	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 3 ) );
 	
 	Real best_score = 100000;
-	for ( Size ii = 1; ii <= 1; ++ii ) {
+	for ( core::Size ii = 1; ii <= 1; ++ii ) {
 		init_torsions = load_bb_torsions_into_vector( pose );
 		tor_mover->apply( pose );
 		//final_torsions = load_bb_torsions_into_vector( pose );
 		Real deficit;
-		Size jj = 0;
+		core::Size jj = 0;
 		do {
 			small_tor_mover->apply( pose );
 			final_torsions = load_bb_torsions_into_vector( pose );
@@ -193,7 +193,7 @@ try {
 	
 	*/
 	
-	Size cutpoint = Size( ( 2 + pose.total_residue()-1 ) / 2 );
+	core::Size cutpoint = static_cast<core::Size>( ( 2 + pose.total_residue()-1 ) / 2 );
 	//protocols::loops::Loop loop( loop_start, loop_end, cutpoint );
 	//TR << "i.e. " << loop << std::endl;
 	loops::LoopsOP loops( new protocols::loops::Loops );
@@ -228,12 +228,12 @@ try {
 	
 	std::cout << "Beginning full-atom KIC sampling..." << endl;
 
-	Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
-	Size temp_cycles = 10 * loops->loop_size();
-	Size repack_period = 20;
+	core::Size sfxn_cycles = option[ OptionKeys::loops::refine_outer_cycles ]();
+	core::Size temp_cycles = 10 * loops->loop_size();
+	core::Size repack_period = 20;
 	
 	if (option[OptionKeys::loops::max_inner_cycles].user()) {
-		Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+		core::Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
 		temp_cycles = std::max(temp_cycles, max_cycles);
 	}
 	if (option[OptionKeys::loops::fast]) {
