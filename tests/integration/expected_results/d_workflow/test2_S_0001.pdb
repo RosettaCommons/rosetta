@@ -1,0 +1,950 @@
+REMARK   1 ----------------------------------------                             
+REMARK   1 CRICK PARAMETER INFORMATION                                          
+REMARK   1 Bundle symmetry: 0 (not symmetric)                                   
+REMARK   1 Bundle symmetry copies: 0                                            
+REMARK   1 Number of helices per copy: 2                                        
+REMARK   1 ---HELIX 1 PARAMETERS:---                                            
+REMARK   1  MAJOR HELIX PARAMETERS:                                             
+REMARK   1    Radius (r0,Angstroms): 4.50000000                                 
+REMARK   1    Twist (omega0,radians/residue): 0.08726646                        
+REMARK   1    Rotational offset (delta_omega0,radians): 0.00000000              
+REMARK   1    Axial offset (z0_offset,Angstroms): 0.00000000                    
+REMARK   1    Invert helix: false                                               
+REMARK   1    Dihedrals set by generator: true                                  
+REMARK   1    Bond angles set by generator: true                                
+REMARK   1    Bond lengths set by generator: true                               
+REMARK   1  MINOR HELIX PARAMETERS (that are typically sampled):                
+REMARK   1    Roll about axis (delta_omega1,radians): 0.00000000                
+REMARK   1    Axial offset (z1_offset,vert. Angstroms): 0.00000000              
+REMARK   1    Registry shift (delta_t,residues): 0.00000000                     
+REMARK   1  OTHER MINOR HELIX PARAMETERS (fixed):                               
+REMARK   1    Residues/repeat: 1                                                
+REMARK   1    Atoms/residue1: 3                                                 
+REMARK   1    Repeat unit offset: 0                                             
+REMARK   1    Twist (omega1,radians/residue): -1.72180480                       
+REMARK   1    Rise (z1,Angstroms/residue): 1.53104401                           
+REMARK   1    MAINCHAIN ATOM #1:                                                
+REMARK   1    Radius (r1,Angstroms): 1.53673520                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): -0.90470326                    
+REMARK   1    MAINCHAIN ATOM #2:                                                
+REMARK   1    Radius (r1,Angstroms): 2.29431130                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): 0.00000000                     
+REMARK   1    MAINCHAIN ATOM #3:                                                
+REMARK   1    Radius (r1,Angstroms): 1.73316244                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): 1.05169636                     
+REMARK   1 ---HELIX 2 PARAMETERS:---                                            
+REMARK   1  MAJOR HELIX PARAMETERS:                                             
+REMARK   1    Radius (r0,Angstroms): 4.50000000                                 
+REMARK   1    Twist (omega0,radians/residue): 0.08726646                        
+REMARK   1    Rotational offset (delta_omega0,radians): 3.14159265              
+REMARK   1    Axial offset (z0_offset,Angstroms): 0.00000000                    
+REMARK   1    Invert helix: true                                                
+REMARK   1    Dihedrals set by generator: true                                  
+REMARK   1    Bond angles set by generator: true                                
+REMARK   1    Bond lengths set by generator: true                               
+REMARK   1  MINOR HELIX PARAMETERS (that are typically sampled):                
+REMARK   1    Roll about axis (delta_omega1,radians): 0.00000000                
+REMARK   1    Axial offset (z1_offset,vert. Angstroms): 0.00000000              
+REMARK   1    Registry shift (delta_t,residues): 0.00000000                     
+REMARK   1  OTHER MINOR HELIX PARAMETERS (fixed):                               
+REMARK   1    Residues/repeat: 1                                                
+REMARK   1    Atoms/residue1: 3                                                 
+REMARK   1    Repeat unit offset: 0                                             
+REMARK   1    Twist (omega1,radians/residue): -1.72180480                       
+REMARK   1    Rise (z1,Angstroms/residue): 1.53104401                           
+REMARK   1    MAINCHAIN ATOM #1:                                                
+REMARK   1    Radius (r1,Angstroms): 1.53673520                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): -0.90470326                    
+REMARK   1    MAINCHAIN ATOM #2:                                                
+REMARK   1    Radius (r1,Angstroms): 2.29431130                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): 0.00000000                     
+REMARK   1    MAINCHAIN ATOM #3:                                                
+REMARK   1    Radius (r1,Angstroms): 1.73316244                                 
+REMARK   1    Axial offset (delta_z1,Angstroms): 1.05169636                     
+REMARK   1 ----------------------------------------                             
+ATOM      1  N   DPR A   1       1.531  -3.010 -23.319  1.00  0.00           N  
+ATOM      2  CA  DPR A   1       2.861  -2.897 -22.732  1.00  0.00           C  
+ATOM      3  C   DPR A   1       3.063  -3.923 -21.625  1.00  0.00           C  
+ATOM      4  O   DPR A   1       3.646  -3.621 -20.584  1.00  0.00           O  
+ATOM      5  CB  DPR A   1       3.787  -3.160 -23.923  1.00  0.00           C  
+ATOM      6  CG  DPR A   1       2.981  -4.026 -24.829  1.00  0.00           C  
+ATOM      7  CD  DPR A   1       1.577  -3.495 -24.703  1.00  0.00           C  
+ATOM      8 1H   DPR A   1       1.426  -2.326 -24.041  1.00  0.00           H  
+ATOM      9 2H   DPR A   1       1.414  -3.924 -23.707  1.00  0.00           H  
+ATOM     10  HA  DPR A   1       2.952  -1.905 -22.288  1.00  0.00           H  
+ATOM     11 1HB  DPR A   1       4.712  -3.646 -23.580  1.00  0.00           H  
+ATOM     12 2HB  DPR A   1       4.079  -2.208 -24.390  1.00  0.00           H  
+ATOM     13 1HG  DPR A   1       3.064  -5.079 -24.522  1.00  0.00           H  
+ATOM     14 2HG  DPR A   1       3.366  -3.964 -25.857  1.00  0.00           H  
+ATOM     15 1HD  DPR A   1       0.859  -4.312 -24.870  1.00  0.00           H  
+ATOM     16 2HD  DPR A   1       1.423  -2.688 -25.435  1.00  0.00           H  
+ATOM     17  N   DAN A   2       2.588  -5.145 -21.832  1.00  0.00           N  
+ATOM     18  CA  DAN A   2       2.711  -6.198 -20.831  1.00  0.00           C  
+ATOM     19  C   DAN A   2       1.917  -5.860 -19.576  1.00  0.00           C  
+ATOM     20  O   DAN A   2       2.378  -6.091 -18.458  1.00  0.00           O  
+ATOM     21  CB  DAN A   2       2.267  -7.532 -21.402  1.00  0.00           C  
+ATOM     22  CG  DAN A   2       3.253  -8.096 -22.386  1.00  0.00           C  
+ATOM     23  OD1 DAN A   2       4.430  -7.718 -22.391  1.00  0.00           O  
+ATOM     24  ND2 DAN A   2       2.796  -8.995 -23.220  1.00  0.00           N  
+ATOM     25  H   DAN A   2       2.127  -5.349 -22.707  1.00  0.00           H  
+ATOM     26  HA  DAN A   2       3.762  -6.277 -20.551  1.00  0.00           H  
+ATOM     27 1HB  DAN A   2       1.303  -7.412 -21.899  1.00  0.00           H  
+ATOM     28 2HB  DAN A   2       2.130  -8.247 -20.591  1.00  0.00           H  
+ATOM     29 1HD2 DAN A   2       3.407  -9.406 -23.898  1.00  0.00           H  
+ATOM     30 2HD2 DAN A   2       1.836  -9.272 -23.181  1.00  0.00           H  
+ATOM     31  N   DAN A   3       0.723  -5.314 -19.752  1.00  0.00           N  
+ATOM     32  CA  DAN A   3      -0.149  -4.923 -18.650  1.00  0.00           C  
+ATOM     33  C   DAN A   3       0.465  -3.791 -17.836  1.00  0.00           C  
+ATOM     34  O   DAN A   3       0.396  -3.789 -16.607  1.00  0.00           O  
+ATOM     35  CB  DAN A   3      -1.519  -4.526 -19.168  1.00  0.00           C  
+ATOM     36  CG  DAN A   3      -2.325  -5.707 -19.633  1.00  0.00           C  
+ATOM     37  OD1 DAN A   3      -2.057  -6.850 -19.243  1.00  0.00           O  
+ATOM     38  ND2 DAN A   3      -3.308  -5.454 -20.459  1.00  0.00           N  
+ATOM     39  H   DAN A   3       0.388  -5.154 -20.691  1.00  0.00           H  
+ATOM     40  HA  DAN A   3      -0.266  -5.783 -17.990  1.00  0.00           H  
+ATOM     41 1HB  DAN A   3      -1.406  -3.828 -19.998  1.00  0.00           H  
+ATOM     42 2HB  DAN A   3      -2.071  -4.012 -18.380  1.00  0.00           H  
+ATOM     43 1HD2 DAN A   3      -3.878  -6.202 -20.802  1.00  0.00           H  
+ATOM     44 2HD2 DAN A   3      -3.488  -4.515 -20.748  1.00  0.00           H  
+ATOM     45  N   DAL A   4       1.065  -2.835 -18.563  1.00  0.00           N  
+ATOM     46  CA  DAL A   4       1.683  -1.680 -17.922  1.00  0.00           C  
+ATOM     47  C   DAL A   4       2.859  -2.098 -17.048  1.00  0.00           C  
+ATOM     48  O   DAL A   4       3.043  -1.579 -15.948  1.00  0.00           O  
+ATOM     49  CB  DAL A   4       2.134  -0.672 -18.968  1.00  0.00           C  
+ATOM     50  H   DAL A   4       1.086  -2.921 -19.569  1.00  0.00           H  
+ATOM     51  HA  DAL A   4       0.939  -1.211 -17.278  1.00  0.00           H  
+ATOM     52 1HB  DAL A   4       2.594   0.185 -18.474  1.00  0.00           H  
+ATOM     53 2HB  DAL A   4       1.273  -0.338 -19.547  1.00  0.00           H  
+ATOM     54 3HB  DAL A   4       2.859  -1.138 -19.634  1.00  0.00           H  
+ATOM     55  N   DAN A   5       3.659  -3.045 -17.546  1.00  0.00           N  
+ATOM     56  CA  DAN A   5       4.812  -3.517 -16.789  1.00  0.00           C  
+ATOM     57  C   DAN A   5       4.380  -4.208 -15.501  1.00  0.00           C  
+ATOM     58  O   DAN A   5       4.997  -4.028 -14.452  1.00  0.00           O  
+ATOM     59  CB  DAN A   5       5.661  -4.448 -17.635  1.00  0.00           C  
+ATOM     60  CG  DAN A   5       6.436  -3.718 -18.696  1.00  0.00           C  
+ATOM     61  OD1 DAN A   5       6.651  -2.504 -18.601  1.00  0.00           O  
+ATOM     62  ND2 DAN A   5       6.858  -4.433 -19.707  1.00  0.00           N  
+ATOM     63  H   DAN A   5       3.456  -3.432 -18.457  1.00  0.00           H  
+ATOM     64  HA  DAN A   5       5.416  -2.652 -16.517  1.00  0.00           H  
+ATOM     65 1HB  DAN A   5       5.022  -5.190 -18.113  1.00  0.00           H  
+ATOM     66 2HB  DAN A   5       6.362  -4.984 -16.994  1.00  0.00           H  
+ATOM     67 1HD2 DAN A   5       7.379  -4.000 -20.444  1.00  0.00           H  
+ATOM     68 2HD2 DAN A   5       6.660  -5.412 -19.744  1.00  0.00           H  
+ATOM     69  N   DAN A   6       3.324  -5.002 -15.557  1.00  0.00           N  
+ATOM     70  CA  DAN A   6       2.794  -5.703 -14.393  1.00  0.00           C  
+ATOM     71  C   DAN A   6       2.249  -4.724 -13.361  1.00  0.00           C  
+ATOM     72  O   DAN A   6       2.448  -4.900 -12.159  1.00  0.00           O  
+ATOM     73  CB  DAN A   6       1.721  -6.693 -14.809  1.00  0.00           C  
+ATOM     74  CG  DAN A   6       2.287  -7.901 -15.504  1.00  0.00           C  
+ATOM     75  OD1 DAN A   6       3.476  -8.210 -15.367  1.00  0.00           O  
+ATOM     76  ND2 DAN A   6       1.458  -8.589 -16.246  1.00  0.00           N  
+ATOM     77  H   DAN A   6       2.855  -5.137 -16.441  1.00  0.00           H  
+ATOM     78  HA  DAN A   6       3.611  -6.257 -13.930  1.00  0.00           H  
+ATOM     79 1HB  DAN A   6       1.013  -6.202 -15.478  1.00  0.00           H  
+ATOM     80 2HB  DAN A   6       1.167  -7.021 -13.929  1.00  0.00           H  
+ATOM     81 1HD2 DAN A   6       1.779  -9.402 -16.732  1.00  0.00           H  
+ATOM     82 2HD2 DAN A   6       0.504  -8.302 -16.328  1.00  0.00           H  
+ATOM     83  N   DSE A   7       1.560  -3.693 -13.854  1.00  0.00           N  
+ATOM     84  CA  DSE A   7       0.968  -2.670 -12.999  1.00  0.00           C  
+ATOM     85  C   DSE A   7       2.042  -1.882 -12.260  1.00  0.00           C  
+ATOM     86  O   DSE A   7       1.894  -1.570 -11.079  1.00  0.00           O  
+ATOM     87  CB  DSE A   7       0.115  -1.728 -13.825  1.00  0.00           C  
+ATOM     88  OG  DSE A   7      -0.990  -2.397 -14.368  1.00  0.00           O  
+ATOM     89  H   DSE A   7       1.441  -3.613 -14.854  1.00  0.00           H  
+ATOM     90  HA  DSE A   7       0.348  -3.169 -12.254  1.00  0.00           H  
+ATOM     91 1HB  DSE A   7       0.716  -1.302 -14.628  1.00  0.00           H  
+ATOM     92 2HB  DSE A   7      -0.227  -0.904 -13.200  1.00  0.00           H  
+ATOM     93  HG  DSE A   7      -0.661  -2.873 -15.134  1.00  0.00           H  
+ATOM     94  N   DAL A   8       3.126  -1.568 -12.989  1.00  0.00           N  
+ATOM     95  CA  DAL A   8       4.215  -0.803 -12.394  1.00  0.00           C  
+ATOM     96  C   DAL A   8       4.878  -1.577 -11.262  1.00  0.00           C  
+ATOM     97  O   DAL A   8       5.216  -1.008 -10.224  1.00  0.00           O  
+ATOM     98  CB  DAL A   8       5.242  -0.432 -13.454  1.00  0.00           C  
+ATOM     99  H   DAL A   8       3.175  -1.870 -13.952  1.00  0.00           H  
+ATOM    100  HA  DAL A   8       3.796   0.111 -11.974  1.00  0.00           H  
+ATOM    101 1HB  DAL A   8       6.049   0.139 -12.995  1.00  0.00           H  
+ATOM    102 2HB  DAL A   8       4.766   0.170 -14.228  1.00  0.00           H  
+ATOM    103 3HB  DAL A   8       5.648  -1.339 -13.899  1.00  0.00           H  
+ATOM    104  N   DAN A   9       5.072  -2.876 -11.442  1.00  0.00           N  
+ATOM    105  CA  DAN A   9       5.680  -3.715 -10.416  1.00  0.00           C  
+ATOM    106  C   DAN A   9       4.799  -3.795  -9.176  1.00  0.00           C  
+ATOM    107  O   DAN A   9       5.291  -3.751  -8.049  1.00  0.00           O  
+ATOM    108  CB  DAN A   9       5.964  -5.103 -10.960  1.00  0.00           C  
+ATOM    109  CG  DAN A   9       7.124  -5.122 -11.917  1.00  0.00           C  
+ATOM    110  OD1 DAN A   9       7.963  -4.215 -11.913  1.00  0.00           O  
+ATOM    111  ND2 DAN A   9       7.187  -6.140 -12.737  1.00  0.00           N  
+ATOM    112  H   DAN A   9       4.791  -3.299 -12.315  1.00  0.00           H  
+ATOM    113  HA  DAN A   9       6.627  -3.260 -10.124  1.00  0.00           H  
+ATOM    114 1HB  DAN A   9       5.078  -5.481 -11.473  1.00  0.00           H  
+ATOM    115 2HB  DAN A   9       6.178  -5.781 -10.134  1.00  0.00           H  
+ATOM    116 1HD2 DAN A   9       7.937  -6.205 -13.396  1.00  0.00           H  
+ATOM    117 2HD2 DAN A   9       6.485  -6.851 -12.706  1.00  0.00           H  
+ATOM    118  N   DIL A  10       3.493  -3.913  -9.379  1.00  0.00           N  
+ATOM    119  CA  DIL A  10       2.520  -3.990  -8.296  1.00  0.00           C  
+ATOM    120  C   DIL A  10       2.477  -2.692  -7.501  1.00  0.00           C  
+ATOM    121  O   DIL A  10       2.390  -2.707  -6.273  1.00  0.00           O  
+ATOM    122  CB  DIL A  10       1.115  -4.305  -8.842  1.00  0.00           C  
+ATOM    123  CG1 DIL A  10       1.066  -5.730  -9.399  1.00  0.00           C  
+ATOM    124  CG2 DIL A  10       0.068  -4.118  -7.755  1.00  0.00           C  
+ATOM    125  CD1 DIL A  10      -0.174  -6.025 -10.212  1.00  0.00           C  
+ATOM    126  H   DIL A  10       3.144  -3.953 -10.326  1.00  0.00           H  
+ATOM    127  HA  DIL A  10       2.829  -4.787  -7.619  1.00  0.00           H  
+ATOM    128  HB  DIL A  10       0.888  -3.635  -9.671  1.00  0.00           H  
+ATOM    129 1HG1 DIL A  10       1.113  -6.443  -8.577  1.00  0.00           H  
+ATOM    130 2HG1 DIL A  10       1.936  -5.904 -10.032  1.00  0.00           H  
+ATOM    131 1HG2 DIL A  10      -0.919  -4.345  -8.157  1.00  0.00           H  
+ATOM    132 2HG2 DIL A  10       0.088  -3.087  -7.404  1.00  0.00           H  
+ATOM    133 3HG2 DIL A  10       0.284  -4.789  -6.923  1.00  0.00           H  
+ATOM    134 1HD1 DIL A  10      -0.136  -7.053 -10.573  1.00  0.00           H  
+ATOM    135 2HD1 DIL A  10      -0.223  -5.344 -11.062  1.00  0.00           H  
+ATOM    136 3HD1 DIL A  10      -1.058  -5.892  -9.589  1.00  0.00           H  
+ATOM    137  N   DLE A  11       2.542  -1.573  -8.242  1.00  0.00           N  
+ATOM    138  CA  DLE A  11       2.494  -0.257  -7.617  1.00  0.00           C  
+ATOM    139  C   DLE A  11       3.703  -0.029  -6.719  1.00  0.00           C  
+ATOM    140  O   DLE A  11       3.582   0.526  -5.627  1.00  0.00           O  
+ATOM    141  CB  DLE A  11       2.433   0.837  -8.690  1.00  0.00           C  
+ATOM    142  CG  DLE A  11       2.472   2.281  -8.172  1.00  0.00           C  
+ATOM    143  CD1 DLE A  11       1.254   2.538  -7.295  1.00  0.00           C  
+ATOM    144  CD2 DLE A  11       2.510   3.242  -9.350  1.00  0.00           C  
+ATOM    145  H   DLE A  11       2.624  -1.652  -9.245  1.00  0.00           H  
+ATOM    146  HA  DLE A  11       1.601  -0.210  -6.993  1.00  0.00           H  
+ATOM    147 1HB  DLE A  11       1.513   0.715  -9.260  1.00  0.00           H  
+ATOM    148 2HB  DLE A  11       3.276   0.706  -9.369  1.00  0.00           H  
+ATOM    149  HG  DLE A  11       3.362   2.423  -7.558  1.00  0.00           H  
+ATOM    150 1HD1 DLE A  11       1.282   3.564  -6.926  1.00  0.00           H  
+ATOM    151 2HD1 DLE A  11       1.263   1.850  -6.450  1.00  0.00           H  
+ATOM    152 3HD1 DLE A  11       0.347   2.387  -7.878  1.00  0.00           H  
+ATOM    153 1HD2 DLE A  11       2.539   4.268  -8.982  1.00  0.00           H  
+ATOM    154 2HD2 DLE A  11       1.620   3.102  -9.964  1.00  0.00           H  
+ATOM    155 3HD2 DLE A  11       3.399   3.048  -9.950  1.00  0.00           H  
+ATOM    156  N   DAN A  12       4.878  -0.461  -7.183  1.00  0.00           N  
+ATOM    157  CA  DAN A  12       6.096  -0.295  -6.399  1.00  0.00           C  
+ATOM    158  C   DAN A  12       6.032  -1.096  -5.105  1.00  0.00           C  
+ATOM    159  O   DAN A  12       6.455  -0.624  -4.050  1.00  0.00           O  
+ATOM    160  CB  DAN A  12       7.313  -0.691  -7.213  1.00  0.00           C  
+ATOM    161  CG  DAN A  12       7.651   0.317  -8.276  1.00  0.00           C  
+ATOM    162  OD1 DAN A  12       7.242   1.481  -8.197  1.00  0.00           O  
+ATOM    163  ND2 DAN A  12       8.390  -0.107  -9.270  1.00  0.00           N  
+ATOM    164  H   DAN A  12       4.915  -0.908  -8.088  1.00  0.00           H  
+ATOM    165  HA  DAN A  12       6.187   0.759  -6.135  1.00  0.00           H  
+ATOM    166 1HB  DAN A  12       7.135  -1.657  -7.689  1.00  0.00           H  
+ATOM    167 2HB  DAN A  12       8.172  -0.806  -6.552  1.00  0.00           H  
+ATOM    168 1HD2 DAN A  12       8.646   0.520 -10.006  1.00  0.00           H  
+ATOM    169 2HD2 DAN A  12       8.698  -1.057  -9.293  1.00  0.00           H  
+ATOM    170  N   DAL A  13       5.508  -2.309  -5.162  1.00  0.00           N  
+ATOM    171  CA  DAL A  13       5.366  -3.172  -3.995  1.00  0.00           C  
+ATOM    172  C   DAL A  13       4.384  -2.582  -2.991  1.00  0.00           C  
+ATOM    173  O   DAL A  13       4.615  -2.627  -1.782  1.00  0.00           O  
+ATOM    174  CB  DAL A  13       4.919  -4.564  -4.417  1.00  0.00           C  
+ATOM    175  H   DAL A  13       5.187  -2.666  -6.051  1.00  0.00           H  
+ATOM    176  HA  DAL A  13       6.338  -3.245  -3.508  1.00  0.00           H  
+ATOM    177 1HB  DAL A  13       4.818  -5.196  -3.534  1.00  0.00           H  
+ATOM    178 2HB  DAL A  13       5.660  -4.996  -5.089  1.00  0.00           H  
+ATOM    179 3HB  DAL A  13       3.960  -4.499  -4.928  1.00  0.00           H  
+ATOM    180  N   DIL A  14       3.287  -2.030  -3.517  1.00  0.00           N  
+ATOM    181  CA  DIL A  14       2.247  -1.429  -2.690  1.00  0.00           C  
+ATOM    182  C   DIL A  14       2.773  -0.209  -1.945  1.00  0.00           C  
+ATOM    183  O   DIL A  14       2.461  -0.004  -0.771  1.00  0.00           O  
+ATOM    184  CB  DIL A  14       1.031  -1.026  -3.543  1.00  0.00           C  
+ATOM    185  CG1 DIL A  14       0.667  -2.149  -4.518  1.00  0.00           C  
+ATOM    186  CG2 DIL A  14      -0.154  -0.685  -2.653  1.00  0.00           C  
+ATOM    187  CD1 DIL A  14      -0.527  -2.969  -4.087  1.00  0.00           C  
+ATOM    188  H   DIL A  14       3.170  -2.027  -4.520  1.00  0.00           H  
+ATOM    189  HA  DIL A  14       1.937  -2.165  -1.948  1.00  0.00           H  
+ATOM    190  HB  DIL A  14       1.283  -0.154  -4.147  1.00  0.00           H  
+ATOM    191 1HG1 DIL A  14       1.518  -2.820  -4.634  1.00  0.00           H  
+ATOM    192 2HG1 DIL A  14       0.452  -1.724  -5.499  1.00  0.00           H  
+ATOM    193 1HG2 DIL A  14      -1.005  -0.403  -3.273  1.00  0.00           H  
+ATOM    194 2HG2 DIL A  14       0.110   0.145  -1.999  1.00  0.00           H  
+ATOM    195 3HG2 DIL A  14      -0.417  -1.553  -2.049  1.00  0.00           H  
+ATOM    196 1HD1 DIL A  14      -0.723  -3.744  -4.829  1.00  0.00           H  
+ATOM    197 2HD1 DIL A  14      -1.400  -2.321  -3.999  1.00  0.00           H  
+ATOM    198 3HD1 DIL A  14      -0.321  -3.433  -3.124  1.00  0.00           H  
+ATOM    199  N   DAL A  15       3.577   0.596  -2.656  1.00  0.00           N  
+ATOM    200  CA  DAL A  15       4.131   1.802  -2.052  1.00  0.00           C  
+ATOM    201  C   DAL A  15       5.062   1.461  -0.895  1.00  0.00           C  
+ATOM    202  O   DAL A  15       5.050   2.126   0.141  1.00  0.00           O  
+ATOM    203  CB  DAL A  15       4.867   2.628  -3.096  1.00  0.00           C  
+ATOM    204  H   DAL A  15       3.793   0.355  -3.613  1.00  0.00           H  
+ATOM    205  HA  DAL A  15       3.305   2.391  -1.653  1.00  0.00           H  
+ATOM    206 1HB  DAL A  15       5.275   3.525  -2.630  1.00  0.00           H  
+ATOM    207 2HB  DAL A  15       4.175   2.914  -3.888  1.00  0.00           H  
+ATOM    208 3HB  DAL A  15       5.679   2.039  -3.520  1.00  0.00           H  
+ATOM    209  N   DAN A  16       5.877   0.428  -1.049  1.00  0.00           N  
+ATOM    210  CA  DAN A  16       6.794  -0.000  -0.000  1.00  0.00           C  
+ATOM    211  C   DAN A  16       6.037  -0.504   1.222  1.00  0.00           C  
+ATOM    212  O   DAN A  16       6.415  -0.221   2.359  1.00  0.00           O  
+ATOM    213  CB  DAN A  16       7.740  -1.067  -0.520  1.00  0.00           C  
+ATOM    214  CG  DAN A  16       8.777  -0.513  -1.457  1.00  0.00           C  
+ATOM    215  OD1 DAN A  16       9.061   0.690  -1.447  1.00  0.00           O  
+ATOM    216  ND2 DAN A  16       9.348  -1.367  -2.267  1.00  0.00           N  
+ATOM    217  H   DAN A  16       5.865  -0.082  -1.921  1.00  0.00           H  
+ATOM    218  HA  DAN A  16       7.385   0.864   0.306  1.00  0.00           H  
+ATOM    219 1HB  DAN A  16       7.170  -1.837  -1.041  1.00  0.00           H  
+ATOM    220 2HB  DAN A  16       8.245  -1.546   0.319  1.00  0.00           H  
+ATOM    221 1HD2 DAN A  16      10.046  -1.055  -2.913  1.00  0.00           H  
+ATOM    222 2HD2 DAN A  16       9.088  -2.332  -2.241  1.00  0.00           H  
+ATOM    223  N   DLE A  17       4.966  -1.253   0.990  1.00  0.00           N  
+ATOM    224  CA  DLE A  17       4.131  -1.802   2.052  1.00  0.00           C  
+ATOM    225  C   DLE A  17       3.433  -0.695   2.831  1.00  0.00           C  
+ATOM    226  O   DLE A  17       3.334  -0.753   4.057  1.00  0.00           O  
+ATOM    227  CB  DLE A  17       3.087  -2.759   1.463  1.00  0.00           C  
+ATOM    228  CG  DLE A  17       3.633  -4.079   0.907  1.00  0.00           C  
+ATOM    229  CD1 DLE A  17       2.528  -4.812   0.159  1.00  0.00           C  
+ATOM    230  CD2 DLE A  17       4.175  -4.926   2.049  1.00  0.00           C  
+ATOM    231  H   DLE A  17       4.707  -1.459   0.036  1.00  0.00           H  
+ATOM    232  HA  DLE A  17       4.776  -2.342   2.745  1.00  0.00           H  
+ATOM    233 1HB  DLE A  17       2.565  -2.249   0.655  1.00  0.00           H  
+ATOM    234 2HB  DLE A  17       2.361  -3.001   2.240  1.00  0.00           H  
+ATOM    235  HG  DLE A  17       4.435  -3.871   0.197  1.00  0.00           H  
+ATOM    236 1HD1 DLE A  17       2.916  -5.751  -0.237  1.00  0.00           H  
+ATOM    237 2HD1 DLE A  17       2.172  -4.192  -0.664  1.00  0.00           H  
+ATOM    238 3HD1 DLE A  17       1.704  -5.020   0.840  1.00  0.00           H  
+ATOM    239 1HD2 DLE A  17       4.565  -5.865   1.653  1.00  0.00           H  
+ATOM    240 2HD2 DLE A  17       3.375  -5.136   2.758  1.00  0.00           H  
+ATOM    241 3HD2 DLE A  17       4.976  -4.386   2.554  1.00  0.00           H  
+ATOM    242  N   DLE A  18       2.955   0.310   2.079  1.00  0.00           N  
+ATOM    243  CA  DLE A  18       2.247   1.429   2.690  1.00  0.00           C  
+ATOM    244  C   DLE A  18       3.164   2.222   3.613  1.00  0.00           C  
+ATOM    245  O   DLE A  18       2.757   2.642   4.696  1.00  0.00           O  
+ATOM    246  CB  DLE A  18       1.680   2.354   1.605  1.00  0.00           C  
+ATOM    247  CG  DLE A  18       0.857   3.545   2.110  1.00  0.00           C  
+ATOM    248  CD1 DLE A  18      -0.341   3.037   2.900  1.00  0.00           C  
+ATOM    249  CD2 DLE A  18       0.413   4.394   0.928  1.00  0.00           C  
+ATOM    250  H   DLE A  18       3.090   0.283   1.078  1.00  0.00           H  
+ATOM    251  HA  DLE A  18       1.433   1.027   3.292  1.00  0.00           H  
+ATOM    252 1HB  DLE A  18       1.042   1.766   0.947  1.00  0.00           H  
+ATOM    253 2HB  DLE A  18       2.508   2.748   1.017  1.00  0.00           H  
+ATOM    254  HG  DLE A  18       1.467   4.150   2.782  1.00  0.00           H  
+ATOM    255 1HD1 DLE A  18      -0.926   3.884   3.259  1.00  0.00           H  
+ATOM    256 2HD1 DLE A  18       0.006   2.450   3.751  1.00  0.00           H  
+ATOM    257 3HD1 DLE A  18      -0.963   2.414   2.258  1.00  0.00           H  
+ATOM    258 1HD2 DLE A  18      -0.171   5.241   1.287  1.00  0.00           H  
+ATOM    259 2HD2 DLE A  18      -0.198   3.790   0.256  1.00  0.00           H  
+ATOM    260 3HD2 DLE A  18       1.289   4.758   0.392  1.00  0.00           H  
+ATOM    261  N   DAN A  19       4.409   2.429   3.184  1.00  0.00           N  
+ATOM    262  CA  DAN A  19       5.366   3.172   3.995  1.00  0.00           C  
+ATOM    263  C   DAN A  19       5.675   2.436   5.293  1.00  0.00           C  
+ATOM    264  O   DAN A  19       5.783   3.050   6.354  1.00  0.00           O  
+ATOM    265  CB  DAN A  19       6.640   3.433   3.213  1.00  0.00           C  
+ATOM    266  CG  DAN A  19       6.461   4.481   2.150  1.00  0.00           C  
+ATOM    267  OD1 DAN A  19       5.525   5.287   2.208  1.00  0.00           O  
+ATOM    268  ND2 DAN A  19       7.340   4.486   1.181  1.00  0.00           N  
+ATOM    269  H   DAN A  19       4.686   2.064   2.284  1.00  0.00           H  
+ATOM    270  HA  DAN A  19       4.918   4.131   4.253  1.00  0.00           H  
+ATOM    271 1HB  DAN A  19       6.974   2.508   2.741  1.00  0.00           H  
+ATOM    272 2HB  DAN A  19       7.426   3.755   3.895  1.00  0.00           H  
+ATOM    273 1HD2 DAN A  19       7.270   5.162   0.446  1.00  0.00           H  
+ATOM    274 2HD2 DAN A  19       8.081   3.816   1.174  1.00  0.00           H  
+ATOM    275  N   DAN A  20       5.821   1.123   5.231  1.00  0.00           N  
+ATOM    276  CA  DAN A  20       6.096   0.295   6.399  1.00  0.00           C  
+ATOM    277  C   DAN A  20       4.927   0.315   7.376  1.00  0.00           C  
+ATOM    278  O   DAN A  20       5.122   0.381   8.590  1.00  0.00           O  
+ATOM    279  CB  DAN A  20       6.417  -1.128   5.980  1.00  0.00           C  
+ATOM    280  CG  DAN A  20       7.775  -1.250   5.346  1.00  0.00           C  
+ATOM    281  OD1 DAN A  20       8.642  -0.389   5.535  1.00  0.00           O  
+ATOM    282  ND2 DAN A  20       7.977  -2.304   4.597  1.00  0.00           N  
+ATOM    283  H   DAN A  20       5.739   0.661   4.337  1.00  0.00           H  
+ATOM    284  HA  DAN A  20       6.965   0.708   6.910  1.00  0.00           H  
+ATOM    285 1HB  DAN A  20       5.665  -1.478   5.272  1.00  0.00           H  
+ATOM    286 2HB  DAN A  20       6.376  -1.782   6.851  1.00  0.00           H  
+ATOM    287 1HD2 DAN A  20       8.861  -2.438   4.149  1.00  0.00           H  
+ATOM    288 2HD2 DAN A  20       7.247  -2.976   4.472  1.00  0.00           H  
+ATOM    289  N   DAL A  21       3.714   0.256   6.818  1.00  0.00           N  
+ATOM    290  CA  DAL A  21       2.494   0.257   7.617  1.00  0.00           C  
+ATOM    291  C   DAL A  21       2.330   1.570   8.371  1.00  0.00           C  
+ATOM    292  O   DAL A  21       1.931   1.583   9.535  1.00  0.00           O  
+ATOM    293  CB  DAL A  21       1.282  -0.001   6.734  1.00  0.00           C  
+ATOM    294  H   DAL A  21       3.636   0.209   5.812  1.00  0.00           H  
+ATOM    295  HA  DAL A  21       2.571  -0.544   8.353  1.00  0.00           H  
+ATOM    296 1HB  DAL A  21       0.379   0.003   7.345  1.00  0.00           H  
+ATOM    297 2HB  DAL A  21       1.386  -0.970   6.246  1.00  0.00           H  
+ATOM    298 3HB  DAL A  21       1.211   0.779   5.978  1.00  0.00           H  
+ATOM    299  N   DSE A  22       2.648   2.675   7.679  1.00  0.00           N  
+ATOM    300  CA  DSE A  22       2.520   3.990   8.296  1.00  0.00           C  
+ATOM    301  C   DSE A  22       3.471   4.140   9.476  1.00  0.00           C  
+ATOM    302  O   DSE A  22       3.109   4.700  10.511  1.00  0.00           O  
+ATOM    303  CB  DSE A  22       2.793   5.075   7.273  1.00  0.00           C  
+ATOM    304  OG  DSE A  22       1.818   5.075   6.268  1.00  0.00           O  
+ATOM    305  H   DSE A  22       2.976   2.583   6.729  1.00  0.00           H  
+ATOM    306  HA  DSE A  22       1.502   4.089   8.673  1.00  0.00           H  
+ATOM    307 1HB  DSE A  22       3.777   4.918   6.831  1.00  0.00           H  
+ATOM    308 2HB  DSE A  22       2.809   6.046   7.768  1.00  0.00           H  
+ATOM    309  HG  DSE A  22       2.061   4.369   5.664  1.00  0.00           H  
+ATOM    310  N   DAN A  23       4.694   3.647   9.344  1.00  0.00           N  
+ATOM    311  CA  DAN A  23       5.680   3.715  10.416  1.00  0.00           C  
+ATOM    312  C   DAN A  23       5.245   2.886  11.618  1.00  0.00           C  
+ATOM    313  O   DAN A  23       5.409   3.304  12.764  1.00  0.00           O  
+ATOM    314  CB  DAN A  23       7.040   3.262   9.919  1.00  0.00           C  
+ATOM    315  CG  DAN A  23       7.688   4.269   9.010  1.00  0.00           C  
+ATOM    316  OD1 DAN A  23       7.327   5.451   9.016  1.00  0.00           O  
+ATOM    317  ND2 DAN A  23       8.639   3.824   8.228  1.00  0.00           N  
+ATOM    318  H   DAN A  23       4.956   3.208   8.473  1.00  0.00           H  
+ATOM    319  HA  DAN A  23       5.760   4.753  10.737  1.00  0.00           H  
+ATOM    320 1HB  DAN A  23       6.936   2.318   9.381  1.00  0.00           H  
+ATOM    321 2HB  DAN A  23       7.698   3.082  10.770  1.00  0.00           H  
+ATOM    322 1HD2 DAN A  23       9.106   4.449   7.603  1.00  0.00           H  
+ATOM    323 2HD2 DAN A  23       8.899   2.859   8.257  1.00  0.00           H  
+ATOM    324  N   DAN A  24       4.690   1.709  11.355  1.00  0.00           N  
+ATOM    325  CA  DAN A  24       4.215   0.803  12.394  1.00  0.00           C  
+ATOM    326  C   DAN A  24       3.045   1.408  13.160  1.00  0.00           C  
+ATOM    327  O   DAN A  24       2.964   1.291  14.383  1.00  0.00           O  
+ATOM    328  CB  DAN A  24       3.826  -0.537  11.798  1.00  0.00           C  
+ATOM    329  CG  DAN A  24       5.019  -1.352  11.380  1.00  0.00           C  
+ATOM    330  OD1 DAN A  24       6.140  -1.117  11.846  1.00  0.00           O  
+ATOM    331  ND2 DAN A  24       4.800  -2.305  10.511  1.00  0.00           N  
+ATOM    332  H   DAN A  24       4.587   1.417  10.394  1.00  0.00           H  
+ATOM    333  HA  DAN A  24       5.029   0.641  13.101  1.00  0.00           H  
+ATOM    334 1HB  DAN A  24       3.188  -0.377  10.928  1.00  0.00           H  
+ATOM    335 2HB  DAN A  24       3.249  -1.106  12.527  1.00  0.00           H  
+ATOM    336 1HD2 DAN A  24       5.556  -2.879  10.197  1.00  0.00           H  
+ATOM    337 2HD2 DAN A  24       3.876  -2.460  10.161  1.00  0.00           H  
+ATOM    338  N   DAL A  25       2.147   2.057  12.399  1.00  0.00           N  
+ATOM    339  CA  DAL A  25       0.968   2.670  12.999  1.00  0.00           C  
+ATOM    340  C   DAL A  25       1.356   3.797  13.948  1.00  0.00           C  
+ATOM    341  O   DAL A  25       0.775   3.943  15.024  1.00  0.00           O  
+ATOM    342  CB  DAL A  25       0.033   3.189  11.917  1.00  0.00           C  
+ATOM    343  H   DAL A  25       2.298   2.116  11.402  1.00  0.00           H  
+ATOM    344  HA  DAL A  25       0.448   1.908  13.580  1.00  0.00           H  
+ATOM    345 1HB  DAL A  25      -0.843   3.644  12.380  1.00  0.00           H  
+ATOM    346 2HB  DAL A  25      -0.282   2.362  11.281  1.00  0.00           H  
+ATOM    347 3HB  DAL A  25       0.551   3.933  11.314  1.00  0.00           H  
+ATOM    348  N   DAN A  26       2.343   4.600  13.554  1.00  0.00           N  
+ATOM    349  CA  DAN A  26       2.794   5.703  14.393  1.00  0.00           C  
+ATOM    350  C   DAN A  26       3.404   5.193  15.692  1.00  0.00           C  
+ATOM    351  O   DAN A  26       3.177   5.761  16.761  1.00  0.00           O  
+ATOM    352  CB  DAN A  26       3.785   6.574  13.643  1.00  0.00           C  
+ATOM    353  CG  DAN A  26       3.129   7.415  12.584  1.00  0.00           C  
+ATOM    354  OD1 DAN A  26       1.916   7.650  12.623  1.00  0.00           O  
+ATOM    355  ND2 DAN A  26       3.908   7.873  11.637  1.00  0.00           N  
+ATOM    356  H   DAN A  26       2.781   4.437  12.659  1.00  0.00           H  
+ATOM    357  HA  DAN A  26       1.926   6.312  14.648  1.00  0.00           H  
+ATOM    358 1HB  DAN A  26       4.541   5.944  13.174  1.00  0.00           H  
+ATOM    359 2HB  DAN A  26       4.297   7.231  14.347  1.00  0.00           H  
+ATOM    360 1HD2 DAN A  26       3.526   8.439  10.905  1.00  0.00           H  
+ATOM    361 2HD2 DAN A  26       4.884   7.658  11.645  1.00  0.00           H  
+ATOM    362  N   DAN A  27       4.181   4.125  15.623  1.00  0.00           N  
+ATOM    363  CA  DAN A  27       4.812   3.517  16.789  1.00  0.00           C  
+ATOM    364  C   DAN A  27       3.771   2.938  17.739  1.00  0.00           C  
+ATOM    365  O   DAN A  27       3.889   3.068  18.957  1.00  0.00           O  
+ATOM    366  CB  DAN A  27       5.801   2.448  16.364  1.00  0.00           C  
+ATOM    367  CG  DAN A  27       7.052   3.025  15.762  1.00  0.00           C  
+ATOM    368  OD1 DAN A  27       7.375   4.199  15.977  1.00  0.00           O  
+ATOM    369  ND2 DAN A  27       7.763   2.222  15.011  1.00  0.00           N  
+ATOM    370  H   DAN A  27       4.353   3.700  14.723  1.00  0.00           H  
+ATOM    371  HA  DAN A  27       5.356   4.296  17.323  1.00  0.00           H  
+ATOM    372 1HB  DAN A  27       5.332   1.787  15.634  1.00  0.00           H  
+ATOM    373 2HB  DAN A  27       6.074   1.841  17.227  1.00  0.00           H  
+ATOM    374 1HD2 DAN A  27       8.605   2.552  14.584  1.00  0.00           H  
+ATOM    375 2HD2 DAN A  27       7.463   1.280  14.864  1.00  0.00           H  
+ATOM    376  N   DAL A  28       2.754   2.298  17.150  1.00  0.00           N  
+ATOM    377  CA  DAL A  28       1.683   1.680  17.922  1.00  0.00           C  
+ATOM    378  C   DAL A  28       0.882   2.725  18.687  1.00  0.00           C  
+ATOM    379  O   DAL A  28       0.513   2.515  19.842  1.00  0.00           O  
+ATOM    380  CB  DAL A  28       0.769   0.876  17.009  1.00  0.00           C  
+ATOM    381  H   DAL A  28       2.727   2.241  16.142  1.00  0.00           H  
+ATOM    382  HA  DAL A  28       2.136   1.007  18.650  1.00  0.00           H  
+ATOM    383 1HB  DAL A  28      -0.026   0.420  17.600  1.00  0.00           H  
+ATOM    384 2HB  DAL A  28       1.345   0.095  16.513  1.00  0.00           H  
+ATOM    385 3HB  DAL A  28       0.332   1.535  16.261  1.00  0.00           H  
+ATOM    386  N   DAL A  29       0.620   3.857  18.018  1.00  0.00           N  
+ATOM    387  CA  DAL A  29      -0.149   4.923  18.650  1.00  0.00           C  
+ATOM    388  C   DAL A  29       0.591   5.498  19.851  1.00  0.00           C  
+ATOM    389  O   DAL A  29      -0.013   5.783  20.885  1.00  0.00           O  
+ATOM    390  CB  DAL A  29      -0.457   6.022  17.643  1.00  0.00           C  
+ATOM    391  H   DAL A  29       0.961   3.961  17.073  1.00  0.00           H  
+ATOM    392  HA  DAL A  29      -1.087   4.498  19.007  1.00  0.00           H  
+ATOM    393 1HB  DAL A  29      -1.031   6.811  18.130  1.00  0.00           H  
+ATOM    394 2HB  DAL A  29      -1.036   5.608  16.818  1.00  0.00           H  
+ATOM    395 3HB  DAL A  29       0.475   6.436  17.260  1.00  0.00           H  
+ATOM    396  N   DAN A  30       1.898   5.676  19.740  1.00  0.00           N  
+ATOM    397  CA  DAN A  30       2.711   6.198  20.831  1.00  0.00           C  
+ATOM    398  C   DAN A  30       2.732   5.235  22.012  1.00  0.00           C  
+ATOM    399  O   DAN A  30       2.622   4.022  21.837  1.00  0.00           O  
+ATOM    400  OXT DAN A  30       2.855   5.658  23.128  1.00  0.00           O  
+ATOM    401  CB  DAN A  30       4.123   6.487  20.354  1.00  0.00           C  
+ATOM    402  CG  DAN A  30       4.183   7.647  19.400  1.00  0.00           C  
+ATOM    403  OD1 DAN A  30       3.343   8.553  19.450  1.00  0.00           O  
+ATOM    404  ND2 DAN A  30       5.161   7.638  18.530  1.00  0.00           N  
+ATOM    405  H   DAN A  30       2.353   5.444  18.868  1.00  0.00           H  
+ATOM    406  HA  DAN A  30       2.264   7.132  21.170  1.00  0.00           H  
+ATOM    407 1HB  DAN A  30       4.528   5.604  19.860  1.00  0.00           H  
+ATOM    408 2HB  DAN A  30       4.759   6.704  21.212  1.00  0.00           H  
+ATOM    409 1HD2 DAN A  30       5.251   8.385  17.870  1.00  0.00           H  
+ATOM    410 2HD2 DAN A  30       5.819   6.885  18.526  1.00  0.00           H  
+ATOM    411  N   DPR B  31      -1.531  -3.010  23.319  1.00  0.00           N  
+ATOM    412  CA  DPR B  31      -2.861  -2.897  22.732  1.00  0.00           C  
+ATOM    413  C   DPR B  31      -3.063  -3.923  21.625  1.00  0.00           C  
+ATOM    414  O   DPR B  31      -3.646  -3.621  20.584  1.00  0.00           O  
+ATOM    415  CB  DPR B  31      -3.787  -3.160  23.923  1.00  0.00           C  
+ATOM    416  CG  DPR B  31      -2.981  -4.026  24.829  1.00  0.00           C  
+ATOM    417  CD  DPR B  31      -1.577  -3.496  24.703  1.00  0.00           C  
+ATOM    418 1H   DPR B  31      -1.426  -2.326  24.041  1.00  0.00           H  
+ATOM    419 2H   DPR B  31      -1.414  -3.924  23.707  1.00  0.00           H  
+ATOM    420  HA  DPR B  31      -2.952  -1.905  22.288  1.00  0.00           H  
+ATOM    421 1HB  DPR B  31      -4.712  -3.646  23.580  1.00  0.00           H  
+ATOM    422 2HB  DPR B  31      -4.079  -2.208  24.390  1.00  0.00           H  
+ATOM    423 1HG  DPR B  31      -3.064  -5.079  24.522  1.00  0.00           H  
+ATOM    424 2HG  DPR B  31      -3.366  -3.964  25.857  1.00  0.00           H  
+ATOM    425 1HD  DPR B  31      -0.860  -4.312  24.869  1.00  0.00           H  
+ATOM    426 2HD  DPR B  31      -1.423  -2.688  25.435  1.00  0.00           H  
+ATOM    427  N   DAN B  32      -2.588  -5.145  21.832  1.00  0.00           N  
+ATOM    428  CA  DAN B  32      -2.711  -6.198  20.831  1.00  0.00           C  
+ATOM    429  C   DAN B  32      -1.917  -5.860  19.576  1.00  0.00           C  
+ATOM    430  O   DAN B  32      -2.378  -6.091  18.458  1.00  0.00           O  
+ATOM    431  CB  DAN B  32      -2.267  -7.532  21.402  1.00  0.00           C  
+ATOM    432  CG  DAN B  32      -3.253  -8.096  22.386  1.00  0.00           C  
+ATOM    433  OD1 DAN B  32      -4.430  -7.718  22.391  1.00  0.00           O  
+ATOM    434  ND2 DAN B  32      -2.796  -8.995  23.220  1.00  0.00           N  
+ATOM    435  H   DAN B  32      -2.127  -5.352  22.707  1.00  0.00           H  
+ATOM    436  HA  DAN B  32      -3.762  -6.277  20.551  1.00  0.00           H  
+ATOM    437 1HB  DAN B  32      -1.303  -7.412  21.899  1.00  0.00           H  
+ATOM    438 2HB  DAN B  32      -2.130  -8.247  20.591  1.00  0.00           H  
+ATOM    439 1HD2 DAN B  32      -3.407  -9.406  23.898  1.00  0.00           H  
+ATOM    440 2HD2 DAN B  32      -1.836  -9.272  23.181  1.00  0.00           H  
+ATOM    441  N   DAN B  33      -0.723  -5.314  19.752  1.00  0.00           N  
+ATOM    442  CA  DAN B  33       0.149  -4.923  18.650  1.00  0.00           C  
+ATOM    443  C   DAN B  33      -0.465  -3.791  17.836  1.00  0.00           C  
+ATOM    444  O   DAN B  33      -0.396  -3.789  16.607  1.00  0.00           O  
+ATOM    445  CB  DAN B  33       1.519  -4.526  19.168  1.00  0.00           C  
+ATOM    446  CG  DAN B  33       2.325  -5.707  19.633  1.00  0.00           C  
+ATOM    447  OD1 DAN B  33       2.057  -6.850  19.243  1.00  0.00           O  
+ATOM    448  ND2 DAN B  33       3.308  -5.454  20.459  1.00  0.00           N  
+ATOM    449  H   DAN B  33      -0.388  -5.154  20.691  1.00  0.00           H  
+ATOM    450  HA  DAN B  33       0.266  -5.783  17.990  1.00  0.00           H  
+ATOM    451 1HB  DAN B  33       1.406  -3.828  19.998  1.00  0.00           H  
+ATOM    452 2HB  DAN B  33       2.071  -4.012  18.380  1.00  0.00           H  
+ATOM    453 1HD2 DAN B  33       3.878  -6.202  20.802  1.00  0.00           H  
+ATOM    454 2HD2 DAN B  33       3.488  -4.515  20.748  1.00  0.00           H  
+ATOM    455  N   DAL B  34      -1.065  -2.835  18.563  1.00  0.00           N  
+ATOM    456  CA  DAL B  34      -1.683  -1.680  17.922  1.00  0.00           C  
+ATOM    457  C   DAL B  34      -2.859  -2.098  17.048  1.00  0.00           C  
+ATOM    458  O   DAL B  34      -3.043  -1.579  15.948  1.00  0.00           O  
+ATOM    459  CB  DAL B  34      -2.134  -0.672  18.968  1.00  0.00           C  
+ATOM    460  H   DAL B  34      -1.086  -2.921  19.569  1.00  0.00           H  
+ATOM    461  HA  DAL B  34      -0.939  -1.211  17.278  1.00  0.00           H  
+ATOM    462 1HB  DAL B  34      -2.594   0.185  18.474  1.00  0.00           H  
+ATOM    463 2HB  DAL B  34      -1.273  -0.338  19.547  1.00  0.00           H  
+ATOM    464 3HB  DAL B  34      -2.859  -1.138  19.634  1.00  0.00           H  
+ATOM    465  N   DAN B  35      -3.659  -3.045  17.546  1.00  0.00           N  
+ATOM    466  CA  DAN B  35      -4.812  -3.517  16.789  1.00  0.00           C  
+ATOM    467  C   DAN B  35      -4.380  -4.208  15.501  1.00  0.00           C  
+ATOM    468  O   DAN B  35      -4.997  -4.028  14.452  1.00  0.00           O  
+ATOM    469  CB  DAN B  35      -5.661  -4.448  17.635  1.00  0.00           C  
+ATOM    470  CG  DAN B  35      -6.434  -3.718  18.698  1.00  0.00           C  
+ATOM    471  OD1 DAN B  35      -6.650  -2.504  18.602  1.00  0.00           O  
+ATOM    472  ND2 DAN B  35      -6.855  -4.433  19.709  1.00  0.00           N  
+ATOM    473  H   DAN B  35      -3.456  -3.432  18.457  1.00  0.00           H  
+ATOM    474  HA  DAN B  35      -5.416  -2.652  16.517  1.00  0.00           H  
+ATOM    475 1HB  DAN B  35      -5.022  -5.191  18.113  1.00  0.00           H  
+ATOM    476 2HB  DAN B  35      -6.363  -4.983  16.994  1.00  0.00           H  
+ATOM    477 1HD2 DAN B  35      -7.375  -4.001  20.446  1.00  0.00           H  
+ATOM    478 2HD2 DAN B  35      -6.658  -5.413  19.745  1.00  0.00           H  
+ATOM    479  N   DAN B  36      -3.324  -5.002  15.557  1.00  0.00           N  
+ATOM    480  CA  DAN B  36      -2.794  -5.703  14.393  1.00  0.00           C  
+ATOM    481  C   DAN B  36      -2.249  -4.724  13.361  1.00  0.00           C  
+ATOM    482  O   DAN B  36      -2.448  -4.900  12.159  1.00  0.00           O  
+ATOM    483  CB  DAN B  36      -1.721  -6.693  14.809  1.00  0.00           C  
+ATOM    484  CG  DAN B  36      -2.287  -7.901  15.504  1.00  0.00           C  
+ATOM    485  OD1 DAN B  36      -3.476  -8.210  15.367  1.00  0.00           O  
+ATOM    486  ND2 DAN B  36      -1.458  -8.589  16.246  1.00  0.00           N  
+ATOM    487  H   DAN B  36      -2.855  -5.137  16.441  1.00  0.00           H  
+ATOM    488  HA  DAN B  36      -3.611  -6.257  13.930  1.00  0.00           H  
+ATOM    489 1HB  DAN B  36      -1.013  -6.202  15.478  1.00  0.00           H  
+ATOM    490 2HB  DAN B  36      -1.167  -7.021  13.929  1.00  0.00           H  
+ATOM    491 1HD2 DAN B  36      -1.779  -9.402  16.732  1.00  0.00           H  
+ATOM    492 2HD2 DAN B  36      -0.504  -8.302  16.328  1.00  0.00           H  
+ATOM    493  N   DSE B  37      -1.560  -3.693  13.854  1.00  0.00           N  
+ATOM    494  CA  DSE B  37      -0.968  -2.670  12.999  1.00  0.00           C  
+ATOM    495  C   DSE B  37      -2.042  -1.882  12.260  1.00  0.00           C  
+ATOM    496  O   DSE B  37      -1.894  -1.570  11.079  1.00  0.00           O  
+ATOM    497  CB  DSE B  37      -0.115  -1.728  13.825  1.00  0.00           C  
+ATOM    498  OG  DSE B  37       0.990  -2.397  14.368  1.00  0.00           O  
+ATOM    499  H   DSE B  37      -1.441  -3.613  14.854  1.00  0.00           H  
+ATOM    500  HA  DSE B  37      -0.348  -3.169  12.254  1.00  0.00           H  
+ATOM    501 1HB  DSE B  37      -0.716  -1.303  14.628  1.00  0.00           H  
+ATOM    502 2HB  DSE B  37       0.227  -0.904  13.200  1.00  0.00           H  
+ATOM    503  HG  DSE B  37       0.661  -2.873  15.134  1.00  0.00           H  
+ATOM    504  N   DAN B  38      -3.126  -1.568  12.989  1.00  0.00           N  
+ATOM    505  CA  DAN B  38      -4.215  -0.803  12.394  1.00  0.00           C  
+ATOM    506  C   DAN B  38      -4.878  -1.577  11.262  1.00  0.00           C  
+ATOM    507  O   DAN B  38      -5.216  -1.008  10.224  1.00  0.00           O  
+ATOM    508  CB  DAN B  38      -5.236  -0.420  13.449  1.00  0.00           C  
+ATOM    509  CG  DAN B  38      -4.741   0.663  14.367  1.00  0.00           C  
+ATOM    510  OD1 DAN B  38      -3.795   1.387  14.039  1.00  0.00           O  
+ATOM    511  ND2 DAN B  38      -5.362   0.786  15.513  1.00  0.00           N  
+ATOM    512  H   DAN B  38      -3.175  -1.870  13.952  1.00  0.00           H  
+ATOM    513  HA  DAN B  38      -3.796   0.111  11.974  1.00  0.00           H  
+ATOM    514 1HB  DAN B  38      -5.491  -1.298  14.045  1.00  0.00           H  
+ATOM    515 2HB  DAN B  38      -6.150  -0.078  12.963  1.00  0.00           H  
+ATOM    516 1HD2 DAN B  38      -5.075   1.490  16.163  1.00  0.00           H  
+ATOM    517 2HD2 DAN B  38      -6.123   0.178  15.737  1.00  0.00           H  
+ATOM    518  N   DAN B  39      -5.072  -2.876  11.442  1.00  0.00           N  
+ATOM    519  CA  DAN B  39      -5.680  -3.715  10.416  1.00  0.00           C  
+ATOM    520  C   DAN B  39      -4.799  -3.795   9.176  1.00  0.00           C  
+ATOM    521  O   DAN B  39      -5.291  -3.751   8.049  1.00  0.00           O  
+ATOM    522  CB  DAN B  39      -5.964  -5.103  10.960  1.00  0.00           C  
+ATOM    523  CG  DAN B  39      -7.123  -5.122  11.917  1.00  0.00           C  
+ATOM    524  OD1 DAN B  39      -7.961  -4.212  11.916  1.00  0.00           O  
+ATOM    525  ND2 DAN B  39      -7.189  -6.142  12.735  1.00  0.00           N  
+ATOM    526  H   DAN B  39      -4.791  -3.299  12.315  1.00  0.00           H  
+ATOM    527  HA  DAN B  39      -6.627  -3.260  10.124  1.00  0.00           H  
+ATOM    528 1HB  DAN B  39      -5.078  -5.481  11.473  1.00  0.00           H  
+ATOM    529 2HB  DAN B  39      -6.178  -5.781  10.134  1.00  0.00           H  
+ATOM    530 1HD2 DAN B  39      -7.939  -6.207  13.394  1.00  0.00           H  
+ATOM    531 2HD2 DAN B  39      -6.489  -6.855  12.701  1.00  0.00           H  
+ATOM    532  N   DIL B  40      -3.493  -3.913   9.379  1.00  0.00           N  
+ATOM    533  CA  DIL B  40      -2.520  -3.990   8.296  1.00  0.00           C  
+ATOM    534  C   DIL B  40      -2.477  -2.692   7.501  1.00  0.00           C  
+ATOM    535  O   DIL B  40      -2.390  -2.707   6.273  1.00  0.00           O  
+ATOM    536  CB  DIL B  40      -1.115  -4.305   8.842  1.00  0.00           C  
+ATOM    537  CG1 DIL B  40      -1.066  -5.730   9.399  1.00  0.00           C  
+ATOM    538  CG2 DIL B  40      -0.068  -4.118   7.755  1.00  0.00           C  
+ATOM    539  CD1 DIL B  40       0.174  -6.025  10.212  1.00  0.00           C  
+ATOM    540  H   DIL B  40      -3.144  -3.953  10.326  1.00  0.00           H  
+ATOM    541  HA  DIL B  40      -2.829  -4.787   7.619  1.00  0.00           H  
+ATOM    542  HB  DIL B  40      -0.888  -3.635   9.671  1.00  0.00           H  
+ATOM    543 1HG1 DIL B  40      -1.113  -6.443   8.577  1.00  0.00           H  
+ATOM    544 2HG1 DIL B  40      -1.936  -5.904  10.032  1.00  0.00           H  
+ATOM    545 1HG2 DIL B  40       0.919  -4.345   8.157  1.00  0.00           H  
+ATOM    546 2HG2 DIL B  40      -0.088  -3.087   7.404  1.00  0.00           H  
+ATOM    547 3HG2 DIL B  40      -0.284  -4.789   6.923  1.00  0.00           H  
+ATOM    548 1HD1 DIL B  40       0.136  -7.053  10.573  1.00  0.00           H  
+ATOM    549 2HD1 DIL B  40       0.223  -5.344  11.062  1.00  0.00           H  
+ATOM    550 3HD1 DIL B  40       1.058  -5.892   9.589  1.00  0.00           H  
+ATOM    551  N   DLE B  41      -2.542  -1.573   8.242  1.00  0.00           N  
+ATOM    552  CA  DLE B  41      -2.494  -0.257   7.617  1.00  0.00           C  
+ATOM    553  C   DLE B  41      -3.703  -0.029   6.719  1.00  0.00           C  
+ATOM    554  O   DLE B  41      -3.582   0.526   5.627  1.00  0.00           O  
+ATOM    555  CB  DLE B  41      -2.433   0.837   8.690  1.00  0.00           C  
+ATOM    556  CG  DLE B  41      -2.475   2.281   8.172  1.00  0.00           C  
+ATOM    557  CD1 DLE B  41      -1.263   2.538   7.287  1.00  0.00           C  
+ATOM    558  CD2 DLE B  41      -2.506   3.243   9.351  1.00  0.00           C  
+ATOM    559  H   DLE B  41      -2.624  -1.652   9.245  1.00  0.00           H  
+ATOM    560  HA  DLE B  41      -1.601  -0.210   6.993  1.00  0.00           H  
+ATOM    561 1HB  DLE B  41      -1.512   0.716   9.258  1.00  0.00           H  
+ATOM    562 2HB  DLE B  41      -3.275   0.705   9.370  1.00  0.00           H  
+ATOM    563  HG  DLE B  41      -3.368   2.423   7.564  1.00  0.00           H  
+ATOM    564 1HD1 DLE B  41      -1.293   3.564   6.919  1.00  0.00           H  
+ATOM    565 2HD1 DLE B  41      -1.276   1.850   6.442  1.00  0.00           H  
+ATOM    566 3HD1 DLE B  41      -0.352   2.387   7.865  1.00  0.00           H  
+ATOM    567 1HD2 DLE B  41      -2.536   4.268   8.982  1.00  0.00           H  
+ATOM    568 2HD2 DLE B  41      -1.612   3.102   9.959  1.00  0.00           H  
+ATOM    569 3HD2 DLE B  41      -3.391   3.048   9.956  1.00  0.00           H  
+ATOM    570  N   DAN B  42      -4.878  -0.461   7.183  1.00  0.00           N  
+ATOM    571  CA  DAN B  42      -6.096  -0.295   6.399  1.00  0.00           C  
+ATOM    572  C   DAN B  42      -6.032  -1.096   5.105  1.00  0.00           C  
+ATOM    573  O   DAN B  42      -6.455  -0.624   4.050  1.00  0.00           O  
+ATOM    574  CB  DAN B  42      -7.313  -0.691   7.213  1.00  0.00           C  
+ATOM    575  CG  DAN B  42      -7.651   0.317   8.276  1.00  0.00           C  
+ATOM    576  OD1 DAN B  42      -7.243   1.482   8.196  1.00  0.00           O  
+ATOM    577  ND2 DAN B  42      -8.389  -0.107   9.270  1.00  0.00           N  
+ATOM    578  H   DAN B  42      -4.915  -0.908   8.088  1.00  0.00           H  
+ATOM    579  HA  DAN B  42      -6.187   0.759   6.135  1.00  0.00           H  
+ATOM    580 1HB  DAN B  42      -7.135  -1.657   7.689  1.00  0.00           H  
+ATOM    581 2HB  DAN B  42      -8.172  -0.806   6.552  1.00  0.00           H  
+ATOM    582 1HD2 DAN B  42      -8.645   0.520  10.006  1.00  0.00           H  
+ATOM    583 2HD2 DAN B  42      -8.697  -1.058   9.294  1.00  0.00           H  
+ATOM    584  N   DAL B  43      -5.508  -2.309   5.162  1.00  0.00           N  
+ATOM    585  CA  DAL B  43      -5.366  -3.172   3.995  1.00  0.00           C  
+ATOM    586  C   DAL B  43      -4.384  -2.582   2.991  1.00  0.00           C  
+ATOM    587  O   DAL B  43      -4.615  -2.627   1.782  1.00  0.00           O  
+ATOM    588  CB  DAL B  43      -4.919  -4.564   4.417  1.00  0.00           C  
+ATOM    589  H   DAL B  43      -5.187  -2.666   6.051  1.00  0.00           H  
+ATOM    590  HA  DAL B  43      -6.338  -3.245   3.508  1.00  0.00           H  
+ATOM    591 1HB  DAL B  43      -4.818  -5.196   3.534  1.00  0.00           H  
+ATOM    592 2HB  DAL B  43      -5.660  -4.996   5.089  1.00  0.00           H  
+ATOM    593 3HB  DAL B  43      -3.960  -4.499   4.928  1.00  0.00           H  
+ATOM    594  N   DIL B  44      -3.287  -2.030   3.517  1.00  0.00           N  
+ATOM    595  CA  DIL B  44      -2.247  -1.429   2.690  1.00  0.00           C  
+ATOM    596  C   DIL B  44      -2.773  -0.209   1.945  1.00  0.00           C  
+ATOM    597  O   DIL B  44      -2.461  -0.004   0.771  1.00  0.00           O  
+ATOM    598  CB  DIL B  44      -1.031  -1.026   3.543  1.00  0.00           C  
+ATOM    599  CG1 DIL B  44      -0.667  -2.149   4.519  1.00  0.00           C  
+ATOM    600  CG2 DIL B  44       0.154  -0.685   2.653  1.00  0.00           C  
+ATOM    601  CD1 DIL B  44       0.527  -2.969   4.088  1.00  0.00           C  
+ATOM    602  H   DIL B  44      -3.170  -2.027   4.520  1.00  0.00           H  
+ATOM    603  HA  DIL B  44      -1.937  -2.165   1.948  1.00  0.00           H  
+ATOM    604  HB  DIL B  44      -1.283  -0.154   4.147  1.00  0.00           H  
+ATOM    605 1HG1 DIL B  44      -1.518  -2.819   4.634  1.00  0.00           H  
+ATOM    606 2HG1 DIL B  44      -0.452  -1.723   5.499  1.00  0.00           H  
+ATOM    607 1HG2 DIL B  44       1.005  -0.403   3.273  1.00  0.00           H  
+ATOM    608 2HG2 DIL B  44      -0.110   0.145   1.999  1.00  0.00           H  
+ATOM    609 3HG2 DIL B  44       0.417  -1.553   2.049  1.00  0.00           H  
+ATOM    610 1HD1 DIL B  44       0.723  -3.743   4.829  1.00  0.00           H  
+ATOM    611 2HD1 DIL B  44       1.400  -2.321   4.000  1.00  0.00           H  
+ATOM    612 3HD1 DIL B  44       0.321  -3.433   3.124  1.00  0.00           H  
+ATOM    613  N   DAL B  45      -3.577   0.596   2.656  1.00  0.00           N  
+ATOM    614  CA  DAL B  45      -4.131   1.802   2.052  1.00  0.00           C  
+ATOM    615  C   DAL B  45      -5.062   1.461   0.895  1.00  0.00           C  
+ATOM    616  O   DAL B  45      -5.050   2.126  -0.141  1.00  0.00           O  
+ATOM    617  CB  DAL B  45      -4.867   2.628   3.096  1.00  0.00           C  
+ATOM    618  H   DAL B  45      -3.793   0.355   3.613  1.00  0.00           H  
+ATOM    619  HA  DAL B  45      -3.305   2.391   1.653  1.00  0.00           H  
+ATOM    620 1HB  DAL B  45      -5.275   3.525   2.630  1.00  0.00           H  
+ATOM    621 2HB  DAL B  45      -4.175   2.914   3.888  1.00  0.00           H  
+ATOM    622 3HB  DAL B  45      -5.679   2.039   3.520  1.00  0.00           H  
+ATOM    623  N   DAN B  46      -5.877   0.428   1.049  1.00  0.00           N  
+ATOM    624  CA  DAN B  46      -6.794  -0.000   0.000  1.00  0.00           C  
+ATOM    625  C   DAN B  46      -6.037  -0.504  -1.222  1.00  0.00           C  
+ATOM    626  O   DAN B  46      -6.415  -0.221  -2.359  1.00  0.00           O  
+ATOM    627  CB  DAN B  46      -7.740  -1.067   0.520  1.00  0.00           C  
+ATOM    628  CG  DAN B  46      -8.777  -0.513   1.457  1.00  0.00           C  
+ATOM    629  OD1 DAN B  46      -9.061   0.690   1.447  1.00  0.00           O  
+ATOM    630  ND2 DAN B  46      -9.348  -1.367   2.267  1.00  0.00           N  
+ATOM    631  H   DAN B  46      -5.865  -0.082   1.921  1.00  0.00           H  
+ATOM    632  HA  DAN B  46      -7.385   0.864  -0.306  1.00  0.00           H  
+ATOM    633 1HB  DAN B  46      -7.170  -1.837   1.041  1.00  0.00           H  
+ATOM    634 2HB  DAN B  46      -8.245  -1.546  -0.319  1.00  0.00           H  
+ATOM    635 1HD2 DAN B  46     -10.046  -1.055   2.913  1.00  0.00           H  
+ATOM    636 2HD2 DAN B  46      -9.088  -2.332   2.241  1.00  0.00           H  
+ATOM    637  N   DLE B  47      -4.966  -1.253  -0.990  1.00  0.00           N  
+ATOM    638  CA  DLE B  47      -4.131  -1.802  -2.052  1.00  0.00           C  
+ATOM    639  C   DLE B  47      -3.433  -0.695  -2.831  1.00  0.00           C  
+ATOM    640  O   DLE B  47      -3.334  -0.753  -4.057  1.00  0.00           O  
+ATOM    641  CB  DLE B  47      -3.087  -2.759  -1.463  1.00  0.00           C  
+ATOM    642  CG  DLE B  47      -3.633  -4.080  -0.908  1.00  0.00           C  
+ATOM    643  CD1 DLE B  47      -2.528  -4.813  -0.159  1.00  0.00           C  
+ATOM    644  CD2 DLE B  47      -4.174  -4.926  -2.050  1.00  0.00           C  
+ATOM    645  H   DLE B  47      -4.707  -1.459  -0.036  1.00  0.00           H  
+ATOM    646  HA  DLE B  47      -4.776  -2.342  -2.745  1.00  0.00           H  
+ATOM    647 1HB  DLE B  47      -2.566  -2.249  -0.654  1.00  0.00           H  
+ATOM    648 2HB  DLE B  47      -2.361  -3.001  -2.240  1.00  0.00           H  
+ATOM    649  HG  DLE B  47      -4.435  -3.872  -0.199  1.00  0.00           H  
+ATOM    650 1HD1 DLE B  47      -2.916  -5.751   0.236  1.00  0.00           H  
+ATOM    651 2HD1 DLE B  47      -2.173  -4.193   0.664  1.00  0.00           H  
+ATOM    652 3HD1 DLE B  47      -1.703  -5.019  -0.840  1.00  0.00           H  
+ATOM    653 1HD2 DLE B  47      -4.563  -5.865  -1.655  1.00  0.00           H  
+ATOM    654 2HD2 DLE B  47      -3.373  -5.136  -2.759  1.00  0.00           H  
+ATOM    655 3HD2 DLE B  47      -4.974  -4.386  -2.556  1.00  0.00           H  
+ATOM    656  N   DSE B  48      -2.955   0.310  -2.079  1.00  0.00           N  
+ATOM    657  CA  DSE B  48      -2.247   1.429  -2.690  1.00  0.00           C  
+ATOM    658  C   DSE B  48      -3.164   2.222  -3.613  1.00  0.00           C  
+ATOM    659  O   DSE B  48      -2.757   2.642  -4.696  1.00  0.00           O  
+ATOM    660  CB  DSE B  48      -1.685   2.340  -1.616  1.00  0.00           C  
+ATOM    661  OG  DSE B  48      -1.005   3.426  -2.184  1.00  0.00           O  
+ATOM    662  H   DSE B  48      -3.090   0.283  -1.078  1.00  0.00           H  
+ATOM    663  HA  DSE B  48      -1.433   1.027  -3.292  1.00  0.00           H  
+ATOM    664 1HB  DSE B  48      -1.006   1.775  -0.978  1.00  0.00           H  
+ATOM    665 2HB  DSE B  48      -2.497   2.705  -0.988  1.00  0.00           H  
+ATOM    666  HG  DSE B  48      -1.612   4.169  -2.144  1.00  0.00           H  
+ATOM    667  N   DAN B  49      -4.409   2.429  -3.184  1.00  0.00           N  
+ATOM    668  CA  DAN B  49      -5.366   3.172  -3.995  1.00  0.00           C  
+ATOM    669  C   DAN B  49      -5.675   2.436  -5.293  1.00  0.00           C  
+ATOM    670  O   DAN B  49      -5.783   3.050  -6.354  1.00  0.00           O  
+ATOM    671  CB  DAN B  49      -6.640   3.433  -3.213  1.00  0.00           C  
+ATOM    672  CG  DAN B  49      -6.461   4.481  -2.150  1.00  0.00           C  
+ATOM    673  OD1 DAN B  49      -5.524   5.286  -2.206  1.00  0.00           O  
+ATOM    674  ND2 DAN B  49      -7.341   4.488  -1.182  1.00  0.00           N  
+ATOM    675  H   DAN B  49      -4.686   2.064  -2.284  1.00  0.00           H  
+ATOM    676  HA  DAN B  49      -4.918   4.131  -4.253  1.00  0.00           H  
+ATOM    677 1HB  DAN B  49      -6.974   2.508  -2.741  1.00  0.00           H  
+ATOM    678 2HB  DAN B  49      -7.426   3.755  -3.895  1.00  0.00           H  
+ATOM    679 1HD2 DAN B  49      -7.272   5.163  -0.447  1.00  0.00           H  
+ATOM    680 2HD2 DAN B  49      -8.083   3.818  -1.177  1.00  0.00           H  
+ATOM    681  N   DAN B  50      -5.821   1.123  -5.231  1.00  0.00           N  
+ATOM    682  CA  DAN B  50      -6.096   0.295  -6.399  1.00  0.00           C  
+ATOM    683  C   DAN B  50      -4.927   0.315  -7.376  1.00  0.00           C  
+ATOM    684  O   DAN B  50      -5.122   0.381  -8.590  1.00  0.00           O  
+ATOM    685  CB  DAN B  50      -6.417  -1.128  -5.980  1.00  0.00           C  
+ATOM    686  CG  DAN B  50      -7.775  -1.250  -5.346  1.00  0.00           C  
+ATOM    687  OD1 DAN B  50      -8.642  -0.389  -5.535  1.00  0.00           O  
+ATOM    688  ND2 DAN B  50      -7.977  -2.304  -4.597  1.00  0.00           N  
+ATOM    689  H   DAN B  50      -5.739   0.661  -4.337  1.00  0.00           H  
+ATOM    690  HA  DAN B  50      -6.965   0.708  -6.910  1.00  0.00           H  
+ATOM    691 1HB  DAN B  50      -5.665  -1.478  -5.272  1.00  0.00           H  
+ATOM    692 2HB  DAN B  50      -6.376  -1.782  -6.851  1.00  0.00           H  
+ATOM    693 1HD2 DAN B  50      -8.861  -2.438  -4.149  1.00  0.00           H  
+ATOM    694 2HD2 DAN B  50      -7.247  -2.976  -4.472  1.00  0.00           H  
+ATOM    695  N   DAL B  51      -3.714   0.256  -6.818  1.00  0.00           N  
+ATOM    696  CA  DAL B  51      -2.494   0.257  -7.617  1.00  0.00           C  
+ATOM    697  C   DAL B  51      -2.330   1.570  -8.371  1.00  0.00           C  
+ATOM    698  O   DAL B  51      -1.931   1.583  -9.535  1.00  0.00           O  
+ATOM    699  CB  DAL B  51      -1.282  -0.001  -6.734  1.00  0.00           C  
+ATOM    700  H   DAL B  51      -3.636   0.209  -5.812  1.00  0.00           H  
+ATOM    701  HA  DAL B  51      -2.571  -0.544  -8.353  1.00  0.00           H  
+ATOM    702 1HB  DAL B  51      -0.379   0.003  -7.345  1.00  0.00           H  
+ATOM    703 2HB  DAL B  51      -1.386  -0.970  -6.246  1.00  0.00           H  
+ATOM    704 3HB  DAL B  51      -1.211   0.779  -5.978  1.00  0.00           H  
+ATOM    705  N   DAL B  52      -2.648   2.675  -7.679  1.00  0.00           N  
+ATOM    706  CA  DAL B  52      -2.520   3.990  -8.296  1.00  0.00           C  
+ATOM    707  C   DAL B  52      -3.471   4.140  -9.476  1.00  0.00           C  
+ATOM    708  O   DAL B  52      -3.109   4.700 -10.511  1.00  0.00           O  
+ATOM    709  CB  DAL B  52      -2.774   5.084  -7.270  1.00  0.00           C  
+ATOM    710  H   DAL B  52      -2.976   2.583  -6.729  1.00  0.00           H  
+ATOM    711  HA  DAL B  52      -1.502   4.089  -8.673  1.00  0.00           H  
+ATOM    712 1HB  DAL B  52      -2.675   6.060  -7.745  1.00  0.00           H  
+ATOM    713 2HB  DAL B  52      -2.048   4.999  -6.460  1.00  0.00           H  
+ATOM    714 3HB  DAL B  52      -3.780   4.978  -6.867  1.00  0.00           H  
+ATOM    715  N   DAN B  53      -4.694   3.647  -9.344  1.00  0.00           N  
+ATOM    716  CA  DAN B  53      -5.680   3.715 -10.416  1.00  0.00           C  
+ATOM    717  C   DAN B  53      -5.245   2.886 -11.618  1.00  0.00           C  
+ATOM    718  O   DAN B  53      -5.409   3.304 -12.764  1.00  0.00           O  
+ATOM    719  CB  DAN B  53      -7.040   3.262  -9.919  1.00  0.00           C  
+ATOM    720  CG  DAN B  53      -7.690   4.271  -9.013  1.00  0.00           C  
+ATOM    721  OD1 DAN B  53      -7.340   5.456  -9.032  1.00  0.00           O  
+ATOM    722  ND2 DAN B  53      -8.631   3.824  -8.221  1.00  0.00           N  
+ATOM    723  H   DAN B  53      -4.956   3.208  -8.473  1.00  0.00           H  
+ATOM    724  HA  DAN B  53      -5.760   4.753 -10.737  1.00  0.00           H  
+ATOM    725 1HB  DAN B  53      -6.935   2.320  -9.378  1.00  0.00           H  
+ATOM    726 2HB  DAN B  53      -7.697   3.079 -10.770  1.00  0.00           H  
+ATOM    727 1HD2 DAN B  53      -9.099   4.451  -7.597  1.00  0.00           H  
+ATOM    728 2HD2 DAN B  53      -8.883   2.857  -8.240  1.00  0.00           H  
+ATOM    729  N   DAN B  54      -4.690   1.709 -11.355  1.00  0.00           N  
+ATOM    730  CA  DAN B  54      -4.215   0.803 -12.394  1.00  0.00           C  
+ATOM    731  C   DAN B  54      -3.045   1.408 -13.160  1.00  0.00           C  
+ATOM    732  O   DAN B  54      -2.964   1.291 -14.383  1.00  0.00           O  
+ATOM    733  CB  DAN B  54      -3.826  -0.537 -11.798  1.00  0.00           C  
+ATOM    734  CG  DAN B  54      -5.019  -1.352 -11.380  1.00  0.00           C  
+ATOM    735  OD1 DAN B  54      -6.140  -1.117 -11.846  1.00  0.00           O  
+ATOM    736  ND2 DAN B  54      -4.800  -2.305 -10.511  1.00  0.00           N  
+ATOM    737  H   DAN B  54      -4.587   1.417 -10.394  1.00  0.00           H  
+ATOM    738  HA  DAN B  54      -5.029   0.641 -13.101  1.00  0.00           H  
+ATOM    739 1HB  DAN B  54      -3.188  -0.377 -10.928  1.00  0.00           H  
+ATOM    740 2HB  DAN B  54      -3.249  -1.106 -12.527  1.00  0.00           H  
+ATOM    741 1HD2 DAN B  54      -5.556  -2.879 -10.197  1.00  0.00           H  
+ATOM    742 2HD2 DAN B  54      -3.876  -2.460 -10.161  1.00  0.00           H  
+ATOM    743  N   DAL B  55      -2.147   2.057 -12.399  1.00  0.00           N  
+ATOM    744  CA  DAL B  55      -0.968   2.670 -12.999  1.00  0.00           C  
+ATOM    745  C   DAL B  55      -1.356   3.797 -13.948  1.00  0.00           C  
+ATOM    746  O   DAL B  55      -0.775   3.943 -15.024  1.00  0.00           O  
+ATOM    747  CB  DAL B  55      -0.033   3.189 -11.917  1.00  0.00           C  
+ATOM    748  H   DAL B  55      -2.298   2.116 -11.402  1.00  0.00           H  
+ATOM    749  HA  DAL B  55      -0.448   1.908 -13.580  1.00  0.00           H  
+ATOM    750 1HB  DAL B  55       0.843   3.644 -12.380  1.00  0.00           H  
+ATOM    751 2HB  DAL B  55       0.282   2.362 -11.281  1.00  0.00           H  
+ATOM    752 3HB  DAL B  55      -0.551   3.933 -11.314  1.00  0.00           H  
+ATOM    753  N   DAN B  56      -2.343   4.600 -13.554  1.00  0.00           N  
+ATOM    754  CA  DAN B  56      -2.794   5.703 -14.393  1.00  0.00           C  
+ATOM    755  C   DAN B  56      -3.404   5.193 -15.692  1.00  0.00           C  
+ATOM    756  O   DAN B  56      -3.177   5.761 -16.761  1.00  0.00           O  
+ATOM    757  CB  DAN B  56      -3.785   6.574 -13.643  1.00  0.00           C  
+ATOM    758  CG  DAN B  56      -3.130   7.412 -12.581  1.00  0.00           C  
+ATOM    759  OD1 DAN B  56      -1.917   7.648 -12.619  1.00  0.00           O  
+ATOM    760  ND2 DAN B  56      -3.909   7.868 -11.633  1.00  0.00           N  
+ATOM    761  H   DAN B  56      -2.781   4.437 -12.659  1.00  0.00           H  
+ATOM    762  HA  DAN B  56      -1.926   6.312 -14.648  1.00  0.00           H  
+ATOM    763 1HB  DAN B  56      -4.543   5.944 -13.176  1.00  0.00           H  
+ATOM    764 2HB  DAN B  56      -4.295   7.233 -14.346  1.00  0.00           H  
+ATOM    765 1HD2 DAN B  56      -3.528   8.431 -10.900  1.00  0.00           H  
+ATOM    766 2HD2 DAN B  56      -4.885   7.652 -11.642  1.00  0.00           H  
+ATOM    767  N   DAN B  57      -4.181   4.125 -15.623  1.00  0.00           N  
+ATOM    768  CA  DAN B  57      -4.812   3.517 -16.789  1.00  0.00           C  
+ATOM    769  C   DAN B  57      -3.771   2.938 -17.739  1.00  0.00           C  
+ATOM    770  O   DAN B  57      -3.889   3.068 -18.957  1.00  0.00           O  
+ATOM    771  CB  DAN B  57      -5.801   2.448 -16.364  1.00  0.00           C  
+ATOM    772  CG  DAN B  57      -7.052   3.025 -15.762  1.00  0.00           C  
+ATOM    773  OD1 DAN B  57      -7.375   4.199 -15.977  1.00  0.00           O  
+ATOM    774  ND2 DAN B  57      -7.763   2.222 -15.011  1.00  0.00           N  
+ATOM    775  H   DAN B  57      -4.353   3.700 -14.723  1.00  0.00           H  
+ATOM    776  HA  DAN B  57      -5.356   4.296 -17.323  1.00  0.00           H  
+ATOM    777 1HB  DAN B  57      -5.332   1.787 -15.634  1.00  0.00           H  
+ATOM    778 2HB  DAN B  57      -6.074   1.841 -17.227  1.00  0.00           H  
+ATOM    779 1HD2 DAN B  57      -8.605   2.552 -14.584  1.00  0.00           H  
+ATOM    780 2HD2 DAN B  57      -7.463   1.280 -14.864  1.00  0.00           H  
+ATOM    781  N   DAL B  58      -2.754   2.298 -17.150  1.00  0.00           N  
+ATOM    782  CA  DAL B  58      -1.683   1.680 -17.922  1.00  0.00           C  
+ATOM    783  C   DAL B  58      -0.882   2.725 -18.687  1.00  0.00           C  
+ATOM    784  O   DAL B  58      -0.513   2.515 -19.842  1.00  0.00           O  
+ATOM    785  CB  DAL B  58      -0.769   0.876 -17.009  1.00  0.00           C  
+ATOM    786  H   DAL B  58      -2.727   2.241 -16.142  1.00  0.00           H  
+ATOM    787  HA  DAL B  58      -2.136   1.007 -18.650  1.00  0.00           H  
+ATOM    788 1HB  DAL B  58       0.026   0.420 -17.600  1.00  0.00           H  
+ATOM    789 2HB  DAL B  58      -1.345   0.095 -16.513  1.00  0.00           H  
+ATOM    790 3HB  DAL B  58      -0.332   1.535 -16.261  1.00  0.00           H  
+ATOM    791  N   DAN B  59      -0.620   3.857 -18.018  1.00  0.00           N  
+ATOM    792  CA  DAN B  59       0.149   4.923 -18.650  1.00  0.00           C  
+ATOM    793  C   DAN B  59      -0.591   5.498 -19.851  1.00  0.00           C  
+ATOM    794  O   DAN B  59       0.013   5.783 -20.885  1.00  0.00           O  
+ATOM    795  CB  DAN B  59       0.469   6.017 -17.647  1.00  0.00           C  
+ATOM    796  CG  DAN B  59       1.524   5.603 -16.659  1.00  0.00           C  
+ATOM    797  OD1 DAN B  59       2.288   4.662 -16.904  1.00  0.00           O  
+ATOM    798  ND2 DAN B  59       1.581   6.288 -15.545  1.00  0.00           N  
+ATOM    799  H   DAN B  59      -0.961   3.961 -17.073  1.00  0.00           H  
+ATOM    800  HA  DAN B  59       1.087   4.498 -19.007  1.00  0.00           H  
+ATOM    801 1HB  DAN B  59      -0.436   6.288 -17.103  1.00  0.00           H  
+ATOM    802 2HB  DAN B  59       0.812   6.906 -18.176  1.00  0.00           H  
+ATOM    803 1HD2 DAN B  59       2.263   6.057 -14.851  1.00  0.00           H  
+ATOM    804 2HD2 DAN B  59       0.944   7.041 -15.389  1.00  0.00           H  
+ATOM    805  N   DAN B  60      -1.898   5.676 -19.740  1.00  0.00           N  
+ATOM    806  CA  DAN B  60      -2.711   6.198 -20.831  1.00  0.00           C  
+ATOM    807  C   DAN B  60      -2.732   5.235 -22.012  1.00  0.00           C  
+ATOM    808  O   DAN B  60      -2.622   4.022 -21.837  1.00  0.00           O  
+ATOM    809  OXT DAN B  60      -2.855   5.658 -23.128  1.00  0.00           O  
+ATOM    810  CB  DAN B  60      -4.123   6.487 -20.354  1.00  0.00           C  
+ATOM    811  CG  DAN B  60      -4.183   7.647 -19.399  1.00  0.00           C  
+ATOM    812  OD1 DAN B  60      -3.339   8.550 -19.445  1.00  0.00           O  
+ATOM    813  ND2 DAN B  60      -5.165   7.641 -18.534  1.00  0.00           N  
+ATOM    814  H   DAN B  60      -2.353   5.444 -18.868  1.00  0.00           H  
+ATOM    815  HA  DAN B  60      -2.264   7.132 -21.170  1.00  0.00           H  
+ATOM    816 1HB  DAN B  60      -4.529   5.603 -19.860  1.00  0.00           H  
+ATOM    817 2HB  DAN B  60      -4.759   6.704 -21.212  1.00  0.00           H  
+ATOM    818 1HD2 DAN B  60      -5.255   8.387 -17.874  1.00  0.00           H  
+ATOM    819 2HD2 DAN B  60      -5.825   6.890 -18.532  1.00  0.00           H  
+TER                                                                             
+# All scores below are weighted scores, not raw scores.
+#BEGIN_POSE_ENERGIES_TABLE test2_S_0001.pdb
+label fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref total
+weights 0.8 0.44 0.75 0.004 0.7 1 1.17 1.17 1.17 1.1 1 0.2 0.5 0.56 0.32 1 NA
+pose -196.304 50.9893 119.004 0.34939 -8.67968 0.02786 -39.8488 0 0 0 0 -3.19299 0.14528 61.687 1.27265 -12.7587 -27.3087
+DPRO:NtermProteinFull_1 -1.87063 0.14478 1.43755 0.03172 0.23419 0.01388 0 0 0 0 0 0 0.00348 0.27883 0 -0.21929 0.05451
+DASN_2 -2.17371 0.16043 1.5614 0.00345 0.17874 0 0 0 0 0 0 0.01979 0.00207 1.05948 0.14531 -0.94198 0.01499
+DASN_3 -2.2651 0.15456 1.60422 0.00348 -0.14223 0 0 0 0 0 0 0.02312 0.00289 1.06156 0.14691 -0.94198 -0.35257
+DALA_4 -2.94906 0.43393 1.6341 0.00072 -0.03041 0 0 0 0 0 0 -0.17063 3e-05 0 -0.17224 0.59294 -0.66061
+DASN_5 -3.35475 0.16628 2.23419 0.00344 -0.22359 0 0 0 0 0 0 0.01785 0.00612 1.05725 0.14453 -0.94198 -0.89066
+DASN_6 -3.37902 0.20478 2.23748 0.00349 -0.15918 0 0 0 0 0 0 0.02256 0.00028 1.06013 0.14625 -0.94198 -0.80521
+DSER_7 -3.42826 0.16696 2.287 0.00083 -0.35985 0 0 0 0 0 0 -0.10002 0.00191 0.3651 0.12333 0.17658 -0.76641
+DALA_8 -3.01921 0.17059 1.87984 0.0007 -0.25158 0 0 0 0 0 0 -0.17326 0.00404 0 -0.17442 0.59294 -0.97036
+DASN_9 -3.08722 0.15466 2.00895 0.00346 -0.19257 0 0 0 0 0 0 0.0201 0.00157 1.05874 0.14542 -0.94198 -0.82887
+DILE_10 -3.69648 3.44342 1.83005 0.02098 -0.20502 0 0 0 0 0 0 -0.06028 0.00307 0.13945 -0.03593 0.8318 2.27105
+DLEU_11 -4.19976 0.51171 1.89486 0.00918 -0.33899 0 0 0 0 0 0 -0.1129 0.00014 0.81808 -0.11915 0.60233 -0.9345
+DASN_12 -3.33318 0.16463 2.24549 0.00345 -0.20147 0 0 0 0 0 0 0.01797 0.00589 1.05726 0.14458 -0.94198 -0.83737
+DALA_13 -3.02401 0.21448 1.71449 0.00078 -0.11688 0 0 0 0 0 0 -0.16353 0.0005 0 -0.16172 0.59294 -0.94295
+DILE_14 -5.29465 9.78984 2.06044 0.0428 -0.25661 0 0 0 0 0 0 -0.06009 0.00157 11.629 -0.03313 0.8318 18.711
+DALA_15 -3.05618 0.16956 1.88565 0.0007 -0.29216 0 0 0 0 0 0 -0.17333 0.00457 0 -0.17435 0.59294 -1.0426
+DASN_16 -3.33508 0.15534 2.22129 0.00345 -0.1783 0 0 0 0 0 0 0.02041 0.00112 1.06015 0.14552 -0.94198 -0.84806
+DLEU_17 -4.08801 0.84718 1.88779 0.00624 -0.18504 0 0 0 0 0 0 -0.11293 0.00319 0.27324 -0.11651 0.60233 -0.88253
+DLEU_18 -4.44184 5.87331 2.27958 0.00867 -0.46108 0 0 0 0 0 0 -0.1129 0.00035 0.63204 -0.11927 0.60233 4.26118
+DASN_19 -3.43695 0.16321 2.41264 0.00345 -0.30176 0 0 0 0 0 0 0.01812 0.00556 1.05739 0.14464 -0.94198 -0.87567
+DASN_20 -3.45989 0.16281 2.35946 0.00349 -0.18707 0 0 0 0 0 0 0.0229 0.00078 1.06066 0.14641 -0.94198 -0.83243
+DALA_21 -3.9818 0.36353 1.68717 0.00075 -0.12751 0 0 0 0 0 0 -0.16759 0.00123 0 -0.16848 0.59294 -1.79975
+DSER_22 -3.35939 0.16814 2.32612 0.00078 -0.40234 0 0 0 0 0 0 -0.10552 0.00505 0.36971 0.11915 0.17658 -0.70172
+DASN_23 -3.40221 0.15497 2.3352 0.00347 -0.29844 0 0 0 0 0 0 0.02073 0.00074 1.06005 0.14563 -0.94198 -0.92185
+DASN_24 -3.57812 0.16888 2.36418 0.00349 -0.2384 0 0 0 0 0 0 0.0228 0.00324 1.06031 0.14708 -0.94198 -0.98852
+DALA_25 -3.19232 0.40686 1.6809 0.00071 -0.21898 0 0 0 0 0 0 -0.17174 0.00063 0 -0.1734 0.59294 -1.07439
+DASN_26 -3.36443 0.16431 2.26102 0.00345 -0.20357 0 0 0 0 0 0 0.0183 0.00516 1.05763 0.14472 -0.94198 -0.85539
+DASN_27 -3.02344 0.15275 2.06649 0.0035 0.10224 0 0 0 0 0 0 0.02303 0.0011 1.06045 0.14648 -0.94198 -0.40938
+DALA_28 -2.60805 0.43199 1.36804 0.00074 0.1606 0 0 0 0 0 0 -0.16805 0.0009 0 -0.16909 0.59294 -0.38998
+DALA_29 -1.75125 0.11516 1.17934 0.0007 0.21951 0 0 0 0 0 0 -0.17334 0.00547 0 -0.17406 0.59294 0.01449
+DASN:CtermProteinFull_30 -2.14573 0.08384 1.80595 0.00349 0.41675 0 0 0 0 0 0 0 0 1.63817 0 -0.94198 0.86049
+DPRO:NtermProteinFull_31 -1.87132 0.14427 1.43822 0.03173 0.23353 0.01397 0 0 0 0 0 0 0.00348 0.27869 0 -0.21929 0.05328
+DASN_32 -2.17429 0.15983 1.56192 0.00345 0.17815 0 0 0 0 0 0 0.01979 0.00207 1.05948 0.14531 -0.94198 0.01374
+DASN_33 -2.26508 0.15456 1.6042 0.00348 -0.14214 0 0 0 0 0 0 0.02312 0.00289 1.06156 0.14691 -0.94198 -0.35249
+DALA_34 -3.26504 0.45222 1.94205 0.00072 -0.01638 0 0 0 0 0 0 -0.17063 3e-05 0 -0.17224 0.59294 -0.63632
+DASN_35 -3.49294 0.16637 2.39347 0.00344 -0.25046 0 0 0 0 0 0 0.01785 0.00612 1.05734 0.14453 -0.94198 -0.89627
+DASN_36 -3.37177 0.20479 2.23606 0.00349 -0.15862 0 0 0 0 0 0 0.02256 0.00028 1.06013 0.14625 -0.94198 -0.79882
+DSER_37 -3.55034 0.16696 2.3879 0.00083 -0.42671 0 0 0 0 0 0 -0.10002 0.00191 0.36507 0.12333 0.17658 -0.85447
+DASN_38 -3.63658 0.18887 2.53557 0.00345 -0.34925 0 0 0 0 0 0 0.01793 0.00404 1.05844 0.14484 -0.94198 -0.97467
+DASN_39 -3.09081 0.15466 2.02554 0.00347 -0.17219 0 0 0 0 0 0 0.0201 0.00157 1.05877 0.14542 -0.94198 -0.79546
+DILE_40 -3.69587 3.44608 1.82933 0.02098 -0.20443 0 0 0 0 0 0 -0.06028 0.00307 0.13944 -0.03593 0.8318 2.27418
+DLEU_41 -4.3204 0.51248 1.9803 0.00924 -0.35739 0 0 0 0 0 0 -0.1129 0.00014 0.81563 -0.11915 0.60233 -0.98972
+DASN_42 -3.33033 0.16462 2.24171 0.00345 -0.19953 0 0 0 0 0 0 0.01797 0.00589 1.05728 0.14458 -0.94198 -0.83635
+DALA_43 -3.02382 0.21367 1.71442 0.00078 -0.11684 0 0 0 0 0 0 -0.16353 0.0005 0 -0.16172 0.59294 -0.9436
+DILE_44 -5.53049 9.79195 1.9209 0.0428 -0.27216 0 0 0 0 0 0 -0.06009 0.00157 11.6349 -0.03313 0.8318 18.3281
+DALA_45 -3.22345 0.16957 1.88495 0.0007 -0.29949 0 0 0 0 0 0 -0.17333 0.00457 0 -0.17435 0.59294 -1.21789
+DASN_46 -3.33541 0.15535 2.22126 0.00345 -0.17691 0 0 0 0 0 0 0.02041 0.00112 1.06015 0.14552 -0.94198 -0.84703
+DLEU_47 -4.06851 0.84671 1.89383 0.00623 -0.18381 0 0 0 0 0 0 -0.11293 0.00319 0.27395 -0.11651 0.60233 -0.85553
+DSER_48 -3.66273 5.87359 2.18938 0.00141 -0.42997 0 0 0 0 0 0 -0.10346 0.00035 0.74017 0.12049 0.17658 4.90581
+DASN_49 -3.36079 0.16312 2.2973 0.00345 -0.35591 0 0 0 0 0 0 0.01812 0.00556 1.05745 0.14464 -0.94198 -0.96903
+DASN_50 -3.46485 0.16281 2.35892 0.00349 -0.17837 0 0 0 0 0 0 0.0229 0.00078 1.06066 0.14641 -0.94198 -0.82923
+DALA_51 -3.94189 0.36592 1.63301 0.00075 -0.18981 0 0 0 0 0 0 -0.16759 0.00123 0 -0.16848 0.59294 -1.87391
+DALA_52 -3.19196 0.16827 1.84528 0.0007 -0.22858 0 0 0 0 0 0 -0.17336 0.00505 0 -0.17423 0.59294 -1.15588
+DASN_53 -3.41076 0.15491 2.32895 0.00347 -0.26437 0 0 0 0 0 0 0.02073 0.00074 1.05911 0.14563 -0.94198 -0.90358
+DASN_54 -3.57863 0.16888 2.3647 0.00349 -0.24167 0 0 0 0 0 0 0.0228 0.00324 1.06031 0.14708 -0.94198 -0.99178
+DALA_55 -3.45741 0.41569 1.92037 0.00071 -0.20233 0 0 0 0 0 0 -0.17174 0.00063 0 -0.1734 0.59294 -1.07453
+DASN_56 -3.49698 0.16447 2.41575 0.00344 -0.23607 0 0 0 0 0 0 0.0183 0.00516 1.05794 0.14472 -0.94198 -0.86524
+DASN_57 -3.01612 0.15276 2.065 0.0035 0.10269 0 0 0 0 0 0 0.02303 0.0011 1.06046 0.14648 -0.94198 -0.40309
+DALA_58 -2.72988 0.43199 1.46569 0.00074 0.11741 0 0 0 0 0 0 -0.16805 0.0009 0 -0.16909 0.59294 -0.45735
+DASN_59 -2.29809 0.12714 1.73858 0.00344 0.16497 0 0 0 0 0 0 0.01769 0.00547 1.0572 0.14458 -0.94198 0.01902
+DASN:CtermProteinFull_60 -2.14789 0.08386 1.81874 0.0035 0.43793 0 0 0 0 0 0 0 0 1.63816 0 -0.94198 0.89232
+#END_POSE_ENERGIES_TABLE test2_S_0001.pdb

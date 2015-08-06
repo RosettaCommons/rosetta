@@ -1,0 +1,1405 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+protocols.jd2.JobDistributor: Parser is present.  Input mover will be overwritten with whatever the parser creates.
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=xml/D-aa_test.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<SFXN_STD weights=talaris2014.wts/>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<ReadResfile filename=xml/resfile.txt name=resfile/>
+		<OperateOnCertainResidues name=no_design_DPRO>
+			<RestrictToRepackingRLT/>
+			<ResidueName3Is name3=DPR/>
+		</OperateOnCertainResidues>
+		<LayerDesign layer=core_boundary_surface_Nterm_Cterm name=layer_all use_sidechain_neighbors=True verbose=True>
+			<core>
+				<all append=M/>
+			</core>
+			<boundary/>
+			<surface>
+				<all exclude=ACDEFGHIKLMNPQRSTVWY ncaa_append=DAN,DSE/>
+			</surface>
+		</LayerDesign>
+	</TASKOPERATIONS>
+	<FILTERS/>
+	<MOVERS>
+		<PeptideStubMover name=intial_stub reset=true>
+			<Append resname=ALA/>
+			<Append resname=VAL/>
+			<Append resname=GLY/>
+			<Append resname=VAL/>
+			<Append resname=GLY/>
+			<Append resname=PRO/>
+			<Append resname=VAL/>
+			<Append resname=GLY/>
+			<Append resname=DPRO/>
+			<Append resname=VAL/>
+		</PeptideStubMover>
+		<MutateResidue name=mutate_res5 new_res=DPRO target=5/>
+		<SetTorsion name=torsion1>
+			<Torsion angle=180.0 residue=ALL torsion_name=omega/>
+			<Torsion angle=rama_biased residue=ALL torsion_name=rama/>
+			<Torsion angle=60.0 residue=3,5,7,9 torsion_name=phi/>
+			<Torsion angle=30.0 residue=3,5,7,9 torsion_name=psi/>
+		</SetTorsion>
+		<FastDesign name=fdesign4 ramp_down_constraints=false repeats=4 scorefxn=SFXN_STD task_operations=layer_all,resfile,no_design_DPRO>
+			<MoveMap name=fdesign_mm>
+				<Chain bb=true chi=true number=1/>
+			</MoveMap>
+		</FastDesign>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover=intial_stub/>
+		<Add mover=mutate_res5/>
+		<Add mover=torsion1/>
+		<Add mover=fdesign4/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: talaris2013
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_pp
+basic.io.database: Database file opened: scoring/score_functions/PairEPotential/pdb_pair_stats_fine
+core.scoring.etable: Using alternate parameters: LJ_RADIUS_SOFT in Etable construction.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/InterchainPotential/interchain_pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+protocols.jd2.parser.ScoreFunctionLoader: defined score function "SFXN_STD" with weights "talaris2014.wts"
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "resfile" of type ReadResfile
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "no_design_DPRO" of type OperateOnCertainResidues
+protocols.flxbb.LayerDesignOperation: Initializing the layers with the default residues
+protocols.flxbb.LayerDesignOperation: redefining default layer core
+protocols.flxbb.LayerDesignOperation: Appending residues M to layer core
+protocols.flxbb.LayerDesignOperation: layer Cterm has no specification for residues in Helix.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Cterm has no specification for residues in HelixCapping.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Cterm has no specification for residues in HelixStart.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Cterm has no specification for residues in Loop.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Cterm has no specification for residues in Strand.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Nterm has no specification for residues in Helix.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Nterm has no specification for residues in HelixCapping.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Nterm has no specification for residues in HelixStart.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Nterm has no specification for residues in Loop.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: layer Nterm has no specification for residues in Strand.  The layer will be filled with the residues defined for all secondary structure types.
+protocols.flxbb.LayerDesignOperation: redefining default layer boundary
+protocols.flxbb.LayerDesignOperation: redefining default layer surface
+protocols.flxbb.LayerDesignOperation: Appending noncanonical residues DAN,DSE to layer surface
+protocols.flxbb.LayerDesignOperation: Excluding residues ACDEFGHIKLMNPQRSTVWY from layer surface secstruct all
+protocols.flxbb.LayerDesignOperation: Layers to be designed:	Cterm	Nterm	boundary	core	surface
+protocols.flxbb.LayerDesignOperation: Layer Cterm
+protocols.flxbb.LayerDesignOperation: 	Helix          aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixCapping   aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixStart     aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Loop           aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Strand         aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	all            aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 
+protocols.flxbb.LayerDesignOperation: Layer Nterm
+protocols.flxbb.LayerDesignOperation: 	Helix          aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixCapping   aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixStart     aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Loop           aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Strand         aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	all            aa = ACDEFGHIKLMNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 
+protocols.flxbb.LayerDesignOperation: Layer boundary
+protocols.flxbb.LayerDesignOperation: 	Helix          aa = ADEIKLNQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixCapping   aa = DNST	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixStart     aa = ADEIKLNQRSTVWYP	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Loop           aa = ADEFGIKLNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Strand         aa = DEFIKLNQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	all            aa = ADEFGIKLNPQRSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 
+protocols.flxbb.LayerDesignOperation: Layer core
+protocols.flxbb.LayerDesignOperation: 	Helix          aa = AFILMVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixCapping   aa = DMNST	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	HelixStart     aa = AFILMPVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Loop           aa = AFILMPVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	Strand         aa = FILMVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 	all            aa = ADFILMNPSTVWY	 ncaa = 
+protocols.flxbb.LayerDesignOperation: 
+protocols.flxbb.LayerDesignOperation: Layer surface
+protocols.flxbb.LayerDesignOperation: 	Helix          aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 	HelixCapping   aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 	HelixStart     aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 	Loop           aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 	Strand         aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 	all            aa = 	 ncaa = DAN,DSE
+protocols.flxbb.LayerDesignOperation: 
+protocols.jd2.parser.TaskOperationLoader: Defined TaskOperation named "layer_all" of type LayerDesign
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "intial_stub" of type PeptideStubMover
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "mutate_res5" of type MutateResidue
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "torsion1" of type SetTorsion
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.RosettaScripts.util: Object fdesign4 reading the following task_operations: Adding the following task operations
+layer_all resfile no_design_DPRO 
+protocols.RosettaScripts.util: Adding movemap fdesign_mm to datamap
+protocols.relax.FastRelax: ================== Using default script ==================
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "fdesign4" of type FastDesign
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following movers and filters
+protocols.rosetta_scripts.ParsedProtocol: added mover "intial_stub" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "mutate_res5" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "torsion1" with filter "true_filter"
+protocols.rosetta_scripts.ParsedProtocol: added mover "fdesign4" with filter "true_filter"
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER PeptideStubMover - intial_stub=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MutateResidue - mutate_res5=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SetTorsion - torsion1=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastDesign - fdesign4=======================
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.34
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.66
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.06
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.12
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 1.38
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.37
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+devel.denovo_design.FastDesign: #Packer_Task
+devel.denovo_design.FastDesign: 
+devel.denovo_design.FastDesign: resid	pack?	design?	allowed_aas
+devel.denovo_design.FastDesign: 1	TRUE	TRUE	DASN:protein_cutpoint_lower,DSER:protein_cutpoint_lower
+devel.denovo_design.FastDesign: 2	TRUE	TRUE	DASN,DSER
+devel.denovo_design.FastDesign: 3	TRUE	TRUE	DPRO
+devel.denovo_design.FastDesign: 4	TRUE	TRUE	DASN,DSER
+devel.denovo_design.FastDesign: 5	TRUE	FALSE	DPRO
+devel.denovo_design.FastDesign: 6	TRUE	TRUE	DASN,DSER
+devel.denovo_design.FastDesign: 7	TRUE	TRUE	DASN,DSER
+devel.denovo_design.FastDesign: 8	TRUE	TRUE	DASN,DSER
+devel.denovo_design.FastDesign: 9	TRUE	FALSE	DPRO
+devel.denovo_design.FastDesign: 10	TRUE	TRUE	DASN:protein_cutpoint_upper,DSER:protein_cutpoint_upper
+protocols.relax.FastRelax: CMD: repeat  1057.22  0  0  0.55
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.34
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.66
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.06
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.12
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 1.38
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.37
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 409 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 163404 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  10.3231  0.000364759  0.000364759  0.011
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.63
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.13
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 400 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 154504 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  15.1454  0.000235421  0.000235421  0.1375
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.17
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.63
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.13
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 384 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 143740 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  25.3077  0.000362416  0.000362416  0.3025
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.17
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.63
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.14
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.01
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 324 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 102100 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.20416  0.773134  0.773134  0.55
+protocols.relax.FastRelax: MRP: 0  9.20416  9.20416  0.773134  0.773134  
+protocols.relax.FastRelax: CMD: accept_to_best  9.20416  0.773134  0.773134  0.55
+protocols.relax.FastRelax: CMD: endrepeat  9.20416  0.773134  0.773134  0.55
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.26
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 404 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 185936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  -0.954695  0.77313  0.77313  0.011
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.26
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 387 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 172264 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3.62609  0.773144  0.773144  0.1375
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.26
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 379 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 166544 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.01035  0.773215  0.773215  0.3025
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.26
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 303 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 99368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.20293  0.768877  0.768877  0.55
+protocols.relax.FastRelax: MRP: 1  9.20293  9.20293  0.768877  0.768877  
+protocols.relax.FastRelax: CMD: accept_to_best  9.20293  0.768877  0.768877  0.55
+protocols.relax.FastRelax: CMD: endrepeat  9.20293  0.768877  0.768877  0.55
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 404 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 185936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  -0.938044  0.768873  0.768873  0.011
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 387 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 172264 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3.63713  0.768887  0.768887  0.1375
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 379 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 166544 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.01835  0.768958  0.768958  0.3025
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.45
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 303 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 99368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.21068  0.776696  0.776696  0.55
+protocols.relax.FastRelax: MRP: 2  9.21068  9.20293  0.768877  0.768877  
+protocols.relax.FastRelax: CMD: accept_to_best  9.21068  0.776696  0.776696  0.55
+protocols.relax.FastRelax: CMD: endrepeat  9.21068  0.776696  0.776696  0.55
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 404 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 185936 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  -0.948412  0.776691  0.776691  0.011
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 387 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 172264 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  3.63344  0.776704  0.776704  0.1375
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 379 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 166544 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.00406  0.776731  0.776731  0.3025
+protocols.flxbb.LayerDesignOperation: secstruct is:LLLLLLLLLL
+protocols.toolbox.SelectResiduesByLayer:  pore_radius : 2
+protocols.toolbox.SelectResiduesByLayer:  core ( E, L, H ): 5.2 5.2 5.2
+protocols.toolbox.SelectResiduesByLayer:  surface (E, L, H ): 2 2 2
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: Residue 1
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 1 done 
+protocols.flxbb.LayerDesignOperation: Residue 2
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.00
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 2 done 
+protocols.flxbb.LayerDesignOperation: Residue 3
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.19
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 3 done 
+protocols.flxbb.LayerDesignOperation: Residue 4
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.23
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 4 done 
+protocols.flxbb.LayerDesignOperation: Residue 5
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.10
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 5 done 
+protocols.flxbb.LayerDesignOperation: Residue 6
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.44
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 6 done 
+protocols.flxbb.LayerDesignOperation: Residue 7
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.11
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 7 done 
+protocols.flxbb.LayerDesignOperation: Residue 8
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.15
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 8 done 
+protocols.flxbb.LayerDesignOperation: Residue 9
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.02
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 9 done 
+protocols.flxbb.LayerDesignOperation: Residue 10
+protocols.flxbb.LayerDesignOperation:     ss=L Neighbors= 0.27
+protocols.flxbb.LayerDesignOperation:     basic layer = surface
+protocols.flxbb.LayerDesignOperation:     Active layers: surface    
+protocols.flxbb.LayerDesignOperation: ---------------------------------------
+protocols.flxbb.LayerDesignOperation: 10 done 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 303 rotamers at 10 positions.
+core.pack.pack_rotamers: IG: 99368 bytes
+protocols.relax.FastRelax: CMD: ramp_repack_min  9.21066  0.776985  0.776985  0.55
+protocols.relax.FastRelax: MRP: 3  9.21066  9.20293  0.768877  0.768877  
+protocols.relax.FastRelax: CMD: accept_to_best  9.21066  0.776985  0.776985  0.55
+protocols.relax.FastRelax: CMD: endrepeat  9.21066  0.776985  0.776985  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+devel.denovo_design.FastDesign: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       1.000     -15.341     -15.341
+ fa_rep                       0.550      14.411       7.926
+ fa_sol                       0.938      13.197      12.372
+ fa_intra_rep                 0.005     189.922       0.950
+ fa_elec                      0.875      -3.533      -3.092
+ pro_close                    1.250       0.027       0.034
+ hbond_sr_bb                  1.170      -0.540      -0.632
+ hbond_lr_bb                  1.170       0.000       0.000
+ hbond_bb_sc                  1.170      -0.086      -0.101
+ hbond_sc                     1.100       0.000       0.000
+ dslf_fa13                    1.250       0.000       0.000
+ rama                         0.250       8.405       2.101
+ omega                        0.625       0.106       0.066
+ fa_dun                       0.700      11.753       8.227
+ p_aa_pp                      0.400      -2.500      -1.000
+ yhh_planarity                0.625       0.000       0.000
+ ref                          1.000      -2.307      -2.307
+---------------------------------------------------
+ Total weighted score:                        9.203
+devel.denovo_design.FastDesign: [ 1057.22 ]
+devel.denovo_design.FastDesign: [ 9.20293 ]
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END FILTER =======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============Begin report for ==================
+protocols.rosetta_scripts.ParsedProtocol.REPORT: ============End report for ==================
+protocols.jd2.JobDistributor: no more batches to process... 
+protocols::checkpoint: Deleting checkpoints of FastRelax

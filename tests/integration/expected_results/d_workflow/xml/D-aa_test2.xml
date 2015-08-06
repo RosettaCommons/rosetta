@@ -1,0 +1,53 @@
+<ROSETTASCRIPTS>
+    
+<SCOREFXNS>
+     <SFXN_STD weights= "talaris2014.wts" />
+ </SCOREFXNS>
+
+<TASKOPERATIONS>
+    
+    <LayerDesign name="layer_all" layer="core_boundary_surface_Nterm_Cterm" verbose="True" use_sidechain_neighbors="True" >
+        <core>
+            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DLE,DIL" />
+        </core>
+        <boundary>
+            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE,DLE,DIL"/>
+        </boundary>
+        <surface>
+            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE"/>
+        </surface>
+	<Nterm>
+            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DPR"/>
+	</Nterm>
+	<Cterm>
+            <all exclude="ACDEFGHIKLMNPQRSTVWY" ncaa_append="DAN,DSE"/>
+	</Cterm>
+    </LayerDesign>
+    
+</TASKOPERATIONS>
+<FILTERS>
+</FILTERS>
+<MOVERS>
+    
+	<BundleGridSampler name=bgs1 crick_params_file="L_alpha_helix" use_degrees=1 residue_name="DALA" helix_length=30 scorefxn=SFXN_STD nstruct_mode=true>
+		<Helix r0_min=4.5 r0_max=6 r0_samples=5 omega0=5 />
+		<Helix r0_copies_helix=1 pitch_from_helix=1 delta_omega0=180 invert=true />
+	</BundleGridSampler>
+
+	<DeclareBond name=add_termini atom1=C atom2=N res1=1 res2=2 add_termini=true />
+
+    <FastDesign name=fdesign4 scorefxn=SFXN_STD repeats=1 task_operations=layer_all ramp_down_constraints=false>
+        <MoveMap name=fdesign4_mm>
+            <Span begin=1 end=60 chi=1 bb=0 />
+	    <Jump number=1 setting=0 />
+	    <Jump number=2 setting=0 />
+        </MoveMap>
+    </FastDesign>
+
+</MOVERS>
+<PROTOCOLS>
+    <Add mover=bgs1 />
+    <Add mover=add_termini />
+    <Add mover=fdesign4 />
+</PROTOCOLS>
+</ROSETTASCRIPTS>

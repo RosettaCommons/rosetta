@@ -1,0 +1,5 @@
+-in:file:fasta xml/start.fasta
+-nstruct 5
+-out:prefix test2_
+-parser:protocol xml/D-aa_test2.xml
+-extra_res_fa d-caa/DPRO.params d-caa/DALA.params d-caa/DILE.params d-caa/DLEU.params d-caa/DSER.params d-caa/DASN.params
