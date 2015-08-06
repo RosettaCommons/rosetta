@@ -39,7 +39,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <core/conformation/membrane/types.hh>
 #include <utility/vector1.hh>
 
 using namespace core;

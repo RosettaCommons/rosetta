@@ -39,7 +39,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <core/conformation/membrane/types.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>

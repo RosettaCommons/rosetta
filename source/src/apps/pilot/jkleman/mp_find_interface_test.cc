@@ -87,9 +87,6 @@
 #include <iostream>
 #include <cstdlib> 
 
-
-#include <core/conformation/membrane/types.hh>
-
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mp_find_interface_test" );
 
 using namespace core;
@@ -122,10 +119,10 @@ public:
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
-		TR << "center: " << mem_center.to_string() << std::endl;
-		TR << "normal: " << mem_normal.to_string() << std::endl;
-		TR << "thickness: " << mem_thickness << std::endl;
-		TR << "anchor: " << mem_anchor << std::endl;
+		TR << "center: " << pose.conformation().membrane_info()->membrane_center().to_string() << std::endl;
+		TR << "normal: " << pose.conformation().membrane_info()->membrane_normal().to_string()  << std::endl;
+		TR << "thickness: " << pose.conformation().membrane_info()->membrane_thickness()  << std::endl;
+		TR << "anchor: " << 1 << std::endl;
 
 		// show foldtree
 		pose.fold_tree().show(std::cout);

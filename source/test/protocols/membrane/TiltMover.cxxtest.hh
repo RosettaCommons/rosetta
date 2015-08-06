@@ -30,7 +30,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/conformation/membrane/Exceptions.hh>
-#include <core/conformation/membrane/types.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>

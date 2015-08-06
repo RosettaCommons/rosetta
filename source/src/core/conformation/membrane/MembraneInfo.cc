@@ -51,7 +51,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <core/conformation/membrane/types.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -79,10 +78,10 @@ using namespace core::kinematics;
 /// lips info defined
 MembraneInfo::MembraneInfo() :
 	conformation_( *(new Conformation()) ),
-	thickness_( mem_thickness ),
-	steepness_( mem_steepness ),
+	thickness_( 15 ),
+	steepness_( 10 ),
 	membrane_rsd_num_( 1 ),
-	membrane_jump_( mem_jump )
+	membrane_jump_( 2 )
 {}
 
 /// @brief Custom Constructor - Membrane pos & topology
@@ -97,8 +96,8 @@ MembraneInfo::MembraneInfo(
 	core::SSize membrane_jump
 	) :
 	conformation_( conformation ),
-	thickness_( mem_thickness ),
-	steepness_( mem_steepness ),
+	thickness_( 15 ),
+	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	spanning_topology_( topology )
@@ -118,8 +117,8 @@ MembraneInfo::MembraneInfo(
 	core::SSize membrane_jump
 	) :
 	conformation_( conformation ),
-	thickness_( mem_thickness ),
-	steepness_( mem_steepness ),
+	thickness_( 15 ),
+	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
 	lipid_acc_data_( lips ),

@@ -36,7 +36,6 @@
 #include <core/types.hh> 
 
 #include <core/conformation/membrane/Exceptions.hh>
-#include <core/conformation/membrane/types.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
@@ -322,8 +321,8 @@ public: // test functions
         
         // 1BL8
         TS_TRACE("1BL8");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose2;
         core::import_pose::pose_from_pdb( pose2, "protocols/membrane/geometry/1BL8_.pdb" );
         AddMembraneMoverOP addmem2( new AddMembraneMover( "protocols/membrane/geometry/1BL8__tr.span" ) );
@@ -345,8 +344,8 @@ public: // test functions
 
         // 1QJP - beta-barrel
         TS_TRACE("1QJP");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose3;
         core::import_pose::pose_from_pdb( pose3, "protocols/membrane/geometry/1QJP_.pdb" );
         AddMembraneMoverOP addmem3( new AddMembraneMover( "protocols/membrane/geometry/1QJP__tr.span" ) );
@@ -368,8 +367,8 @@ public: // test functions
 
         // 2BS2
         TS_TRACE("2BS2");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose4;
         core::import_pose::pose_from_pdb( pose4, "protocols/membrane/geometry/2BS2_CF.pdb" );
         AddMembraneMoverOP addmem4( new AddMembraneMover( "protocols/membrane/geometry/2BS2_CF_tr.span" ) );
@@ -391,8 +390,8 @@ public: // test functions
         
         // 2MPN
         TS_TRACE("2MPN");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose5;
         core::import_pose::pose_from_pdb( pose5, "protocols/membrane/geometry/2MPN_.pdb" );
         AddMembraneMoverOP addmem5( new AddMembraneMover( "protocols/membrane/geometry/2MPN__tr.span" ) );
@@ -414,8 +413,8 @@ public: // test functions
         
         // 2OAR
         TS_TRACE("2OAR");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose6;
         core::import_pose::pose_from_pdb( pose6, "protocols/membrane/geometry/2OAR_.pdb" );
         AddMembraneMoverOP addmem6( new AddMembraneMover( "protocols/membrane/geometry/2OAR__tr.span" ) );
@@ -437,8 +436,8 @@ public: // test functions
         
         // 2UUH
         TS_TRACE("2UUH");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose7;
         core::import_pose::pose_from_pdb( pose7, "protocols/membrane/geometry/2UUH__tr.pdb" );
         AddMembraneMoverOP addmem7( new AddMembraneMover( "protocols/membrane/geometry/2UUH__tr.span" ) );
@@ -461,8 +460,8 @@ public: // test functions
 
         // 3PXO
         TS_TRACE("3PXO");
-        Vector center( mem_center );
-        Vector normal( mem_normal );
+        Vector center( 0, 0, 0 );
+        Vector normal( 0, 0, 1 );
         Pose pose8;
         core::import_pose::pose_from_pdb( pose8, "protocols/membrane/geometry/3PXO_.pdb" );
         AddMembraneMoverOP addmem8( new AddMembraneMover( "protocols/membrane/geometry/3PXO__tr.span" ) );

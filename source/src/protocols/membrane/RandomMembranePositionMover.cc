@@ -32,7 +32,6 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/conformation/membrane/types.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>

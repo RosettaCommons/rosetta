@@ -34,7 +34,6 @@
 #include <numeric/xyz.functions.hh>
 
 // Package Headers
-#include <core/conformation/membrane/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>

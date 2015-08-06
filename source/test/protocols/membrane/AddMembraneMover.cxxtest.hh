@@ -33,7 +33,6 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/types.hh>
-#include <core/conformation/membrane/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

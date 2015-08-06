@@ -81,8 +81,6 @@
 #include <cstdlib> 
 
 
-#include <core/conformation/membrane/types.hh>
-
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test1" );
 
 using namespace core;

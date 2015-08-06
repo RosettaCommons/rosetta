@@ -33,7 +33,6 @@
 #include <core/types.hh>
 
 // Utility Headers
-#include <core/conformation/membrane/types.hh>
 #include <basic/Tracer.hh>
 
 #include <numeric/conversions.hh>
@@ -100,13 +99,14 @@ Embedding::Embedding( SpanningTopology const & topology, Real radius ) :
 		// For each TMspan, get center
 		core::Vector center( x, y, 0 );
 		core::Vector normal;
+		core::Vector temp_normal( 0, 0, 1 ); 
 		
 		// get normal for each span, respects protein topology
 		if ( i % 2 == 1 ){
-			normal = mem_normal; // odd spans in positive z
+			normal = temp_normal; // odd spans in positive z
 		}
 		else {
-			normal = mem_normal.negated(); // even spans in negative z
+			normal = temp_normal.negated(); // even spans in negative z
 		}
 
 		// create object and push back into vector

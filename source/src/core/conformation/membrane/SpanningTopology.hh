@@ -35,7 +35,6 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <core/conformation/membrane/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -156,7 +155,7 @@ private: // methods
 	SpanningTopology create_from_spanfile( std::string spanfile, Size nres);
 
 	/// @brief Create Transmembrane SPan OBject from structure
-	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, utility::vector1< char > secstruct, Real thickness = mem_thickness );
+	SpanningTopology create_from_structure( utility::vector1< Real > res_z_coord, utility::vector1< Size > chainID, utility::vector1< char > secstruct, Real thickness = 15 );
 
 private: // data
 

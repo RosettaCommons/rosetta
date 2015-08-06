@@ -50,7 +50,6 @@
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/MembraneParams.hh>
-#include <core/conformation/membrane/types.hh>
 #include <core/conformation/parametric/ParametersSet.hh>
 #include <core/conformation/parametric/Parameters.hh>
 

@@ -38,8 +38,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility headers
-#include <core/conformation/membrane/types.hh>
-
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
@@ -64,8 +62,8 @@ using namespace core::conformation::membrane;
 /// @brief Construct a Default Membrane Position Mover
 SetMembranePositionMover::SetMembranePositionMover() :
 	Mover(),
-	center_( mem_center ),
-	normal_( mem_normal )
+	center_( 0, 0, 0 ),
+	normal_( 0, 0, 1 )
 {}
 
 /// @brief Custom Constructor
@@ -192,7 +190,7 @@ SetMembranePositionMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneNormalMover::SetMembraneNormalMover() :
 	Mover(),
-	normal_( mem_normal )
+	normal_( 0, 0, 1 )
 {}
 
 /// @brief Custom Constructor
@@ -319,7 +317,7 @@ SetMembraneNormalMoverCreator::mover_name() {
 /// @brief Construct a Default Membrane Position Mover
 SetMembraneCenterMover::SetMembraneCenterMover() :
 	Mover(),
-	center_( mem_center )
+	center_( 0, 0, 0 )
 {}
 
 /// @brief Custom Constructor

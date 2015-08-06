@@ -40,8 +40,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh>
 
-#include <core/conformation/membrane/types.hh>
-
 #include <basic/Tracer.hh>
 
 // C++ Headers

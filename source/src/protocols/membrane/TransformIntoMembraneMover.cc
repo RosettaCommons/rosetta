@@ -45,8 +45,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <core/conformation/membrane/types.hh>
-
 #include <numeric/xyzVector.hh>
 
 #include <utility/file/FileName.hh>
@@ -122,10 +120,13 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( Vector new_mem_cntr, Vec
 	jump_( 0 ), 
 	new_mem_cntr_( new_mem_cntr ), 
 	new_mem_norm_( new_mem_norm ), 
-	current_embedding_( new EmbeddingDef( mem_center, mem_center ) ), 
+	current_embedding_( 0 ),
 	use_default_membrane_( false ), 
 	user_defined_membrane_( true )
-{}
+{
+	core::Vector zero_vec( 0, 0, 0 ); 
+	current_embedding_ = EmbeddingDefOP( new EmbeddingDef( zero_vec, zero_vec ) ); 
+}
 
 /// @brief Transform the protein into user-specified membrane coordinates
 /// @details Transform the protein into a user-defined membrane, protein

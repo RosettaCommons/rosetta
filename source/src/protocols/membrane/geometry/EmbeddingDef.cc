@@ -26,7 +26,6 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <core/conformation/membrane/types.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -45,11 +44,10 @@ using namespace protocols::membrane;
 
 /// @brief Default Constructor
 EmbeddingDef::EmbeddingDef() :
-	utility::pointer::ReferenceCount()
-{
-	center_ = mem_center;
-	normal_ = mem_normal;
-}
+	utility::pointer::ReferenceCount(),
+	center_( 0, 0, 0 ),
+	normal_( 0, 0, 1 )
+{}
 
 /// @brief Standard Constructor
 EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal ) :
@@ -60,10 +58,10 @@ EmbeddingDef::EmbeddingDef( core::Vector const center, core::Vector const normal
 
 /// @brief Constructor from pose, two residue numbers, and bool if in positive z-direction
 EmbeddingDef::EmbeddingDef( core::pose::Pose const & pose, core::Size start, core::Size end, bool pos_z ) :
-utility::pointer::ReferenceCount()
+	utility::pointer::ReferenceCount(),
+	center_( 0, 0, 0 ),
+	normal_( 0, 0, 1 )
 {
-	center_ = mem_center;
-	normal_ = mem_normal;
 	
 	if ( pos_z == false ) {
 		from_span( pose, start, end );

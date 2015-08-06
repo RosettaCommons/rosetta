@@ -66,7 +66,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
-#include <core/conformation/membrane/types.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh> 
 
@@ -111,8 +110,8 @@ AddMembraneMover::AddMembraneMover() :
 	lipsfile_(),
     anchor_rsd_( 1 ),
 	membrane_rsd_( 0 ),
-    center_( mem_center ),
-    normal_( mem_normal ),
+    center_( 0, 0, 0 ),
+    normal_( 0, 0, 1 ),
     thickness_( 15 ),
     steepness_( 10 )
 {
@@ -131,8 +130,8 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	lipsfile_(),
 	anchor_rsd_( 1 ),
 	membrane_rsd_( membrane_rsd ),
-    center_( mem_center ),
-    normal_( mem_normal ),
+    center_( 0, 0, 0 ),
+    normal_( 0, 0, 1 ),
     thickness_( 15 ),
     steepness_( 10 )
 {
@@ -155,8 +154,8 @@ AddMembraneMover::AddMembraneMover(
     lipsfile_(),
     anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd ),
-    center_( mem_center ),
-    normal_( mem_normal ),
+    center_( 0, 0, 0 ),
+    normal_( 0, 0, 1 ),
     thickness_( 15 ),
     steepness_( 10 )
 {
@@ -180,8 +179,8 @@ AddMembraneMover::AddMembraneMover(
     lipsfile_(),
     anchor_rsd_( anchor_rsd ),
     membrane_rsd_( membrane_rsd ),
-    center_( mem_center ),
-    normal_( mem_normal ),
+    center_( 0, 0, 0 ),
+    normal_( 0, 0, 1 ),
     thickness_( 15 ),
     steepness_( 10 )
 {
@@ -203,8 +202,8 @@ AddMembraneMover::AddMembraneMover(
 	lipsfile_(),
 	anchor_rsd_( anchor_rsd ),
 	membrane_rsd_( membrane_rsd ),
-	center_( mem_center ),
-	normal_( mem_normal ),
+	center_( 0, 0, 0 ),
+	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
 	steepness_( 10 )
 	{
@@ -229,8 +228,8 @@ AddMembraneMover::AddMembraneMover(
     lipsfile_( lips_acc ),
     anchor_rsd_( 1 ),
     membrane_rsd_( membrane_rsd ),
-    center_( mem_center ),
-    normal_( mem_normal ),
+    center_( 0, 0, 0 ),
+    normal_( 0, 0, 1 ),
     thickness_( 15 ),
     steepness_( 10 )
 {
@@ -468,10 +467,9 @@ AddMembraneMover::apply( Pose & pose ) {
 			utility::vector1< Real > z_coord = pose_info.first;
 			utility::vector1< Size > chainID = pose_info.second;
 			utility::vector1< char > secstruct( get_secstruct( pose ) );
-			Real thickness = mem_thickness;
 			
 			// set topology from structure
-			topology_->fill_from_structure( z_coord, chainID, secstruct, thickness );
+			topology_->fill_from_structure( z_coord, chainID, secstruct, thickness_ );
 		}
 	}
 
