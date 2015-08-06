@@ -610,7 +610,7 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     database = Options.database
 
     bin = path.join(minidir, "bin")
-    pyapps = path.join(minidir, "src", "python", "apps")
+    pyapps = path.join(minidir, "scripts", "python")
 
     if sys.platform.startswith("linux"):
         platform = "linux" # can be linux1, linux2, etc
