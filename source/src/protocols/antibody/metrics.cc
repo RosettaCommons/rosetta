@@ -228,14 +228,14 @@ kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibod
 
 
 std::pair<ParatopeMetric< core::Real >, ParatopeMetric< core::Real> >
-paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info){
+paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info, bool include_de_loop /* false */){
 	using utility::vector1;
 
 	ParatopeMetric< core::Real > sasa_results;
 	ParatopeMetric< core::Real > hsasa_results;
 
-	sasa_results.cdr.resize(6, 0.0);
-	hsasa_results.cdr.resize(6, 0.0);
+	sasa_results.cdr.resize(ab_info.get_total_num_CDRs(include_de_loop), 0.0);
+	hsasa_results.cdr.resize(ab_info.get_total_num_CDRs(include_de_loop), 0.0);
 
 	///Create a basic new sasa calc, and get needed values.
 	scoring::sasa::SasaCalcOP sasa_calc( new scoring::sasa::SasaCalc() );
@@ -258,10 +258,10 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	TR << "Total polar SASA is: " << total_polar_sasa << std::endl;
 
 	////////iterate to define antibody paratope/////////////////////////////////////////////
-	for (core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs()); ++i){
+	for (core::Size i=1; i<=core::Size(ab_info.get_total_num_CDRs(include_de_loop)); ++i){
 		CDRNameEnum loop = static_cast<CDRNameEnum>(i);
-		Size loop_start = ab_info.get_CDR_loop(loop).start();
-		Size loop_end = ab_info.get_CDR_loop(loop).stop();
+		Size loop_start = ab_info.get_CDR_start(loop, pose);
+		Size loop_end = ab_info.get_CDR_end(loop, pose);
 		TR.Debug << loop << " loop_start " << loop_start << std::endl;
 		TR.Debug << loop << " loop_end " << loop_end << std::endl;
 
@@ -319,17 +319,17 @@ pose_charge( core::pose::Pose const & pose ) {  // not really an antibody fn
 }
 
 ParatopeMetric<core::SSize>
-paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & ab_info ) {
+paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & ab_info, bool include_de_loop /* false */ ) {
 	using namespace core;
 
 	ParatopeMetric<core::SSize> charge_results;
-	charge_results.cdr.resize(6, 0);
+	charge_results.cdr.resize(ab_info.get_total_num_CDRs( include_de_loop ), 0);
 	core::SSize paratope_charge = 0;
 
-	for(core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs()); ++ia){
+	for(core::Size ia=1; ia<=core::Size(ab_info.get_total_num_CDRs( include_de_loop ) ); ++ia){
 		CDRNameEnum loop = static_cast<CDRNameEnum>(ia);
-		Size loop_start = ab_info.get_CDR_loop(loop).start();
-		Size loop_end = ab_info.get_CDR_loop(loop).stop();
+		Size loop_start = ab_info.get_CDR_start(loop, pose);
+		Size loop_end = ab_info.get_CDR_end(loop, pose);
 
 		SSize plus_charge(0);
 		SSize minus_charge(0);

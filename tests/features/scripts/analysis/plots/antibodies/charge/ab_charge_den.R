@@ -18,8 +18,6 @@ run=function(self, sample_sources, output_dir, output_formats){
   
   #First we run on all the interfaces in the database
 
-  
-
   sele = "
   SELECT
     net_charge,
@@ -145,6 +143,7 @@ run=function(self, sample_sources, output_dir, output_formats){
     #scale_y_continuous("n")
   plot_field(p, "avg_paratope_charge_hist")
   
+  if ("FALSE" %in% opt$options$include_cdr4 & "FALSE" %in% opt$options$cdr4_only){
   sele = "
   SELECT 
     charge,
@@ -152,7 +151,31 @@ run=function(self, sample_sources, output_dir, output_formats){
     length
   FROM
     cdr_metrics
-  "
+  WHERE
+  CDR NOT LIKE '%Proto%'"
+  }
+  
+  if ("TRUE" %in% opt$options$include_cdr4){
+  sele = "
+  SELECT 
+    charge,
+    CDR,
+    length
+  FROM
+    cdr_metrics"
+  }
+  
+  if ("TRUE" %in% opt$options$cdr4_only){
+  sele = "
+  SELECT 
+    charge,
+    CDR,
+    length
+  FROM
+    cdr_metrics
+  WHERE
+  CDR LIKE '%Proto%'"  
+  }
   
   #CDR Charge Density
   data = query_sample_sources(sample_sources, sele, char_as_factor=F)

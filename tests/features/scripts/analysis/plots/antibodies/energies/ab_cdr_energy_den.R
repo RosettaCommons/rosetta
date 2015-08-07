@@ -10,47 +10,27 @@
 check_setup()
 
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "ab_anchor_dis",
+id = "ab_energies-CDR_den",
 author = "Jared Adolf-Bryfogle",
-brief_description = "Graphs basic antibody composition densities",
+brief_description = "CDR Energies",
 feature_reporter_dependencies = c("AntibodyFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
   
   #First we run on all the interfaces in the database
+
   
-  if ("FALSE" %in% opt$options$include_cdr4 & "FALSE" %in% opt$options$cdr4_only){
-    sele = "
+
+  sele = "
   SELECT
-    anchor_CN_distance,
-    CDR,
-    length
+    energy,
+    CDR
   FROM
-    cdr_metrics where CDR NOT LIKE '%Proto%'"
-  }
-  
-  if ("TRUE" %in% opt$options$include_cdr4){
-    sele = "
-  SELECT
-    anchor_CN_distance,
-    CDR,
-    length
-  FROM
-    cdr_metrics"
-  } 
-  
-  if ("TRUE" %in% opt$options$cdr4_only){
-    sele = "
-  SELECT
-    anchor_CN_distance,
-    CDR,
-    length
-  FROM
-    cdr_metrics where CDR LIKE '%Proto%'"
-  }
+    cdr_metrics
+    "
   
   data = query_sample_sources(sample_sources, sele, char_as_factor=F)
  
-  plot_parts <- list(
+  parts <- list(
     geom_indicator(aes(indicator=counts, colour=sample_source, group=sample_source)),
     scale_y_continuous("Feature Density"),
     theme_bw())
@@ -58,7 +38,7 @@ run=function(self, sample_sources, output_dir, output_formats){
   plot_field = function(p, plot_id, grid = NULL){
     
     if (! is.null(grid)){
-      p <- p+ facet_grid(facets=grid)
+      p <- p+ facet_wrap(facets=grid, ncol=3)
     }
     if(nrow(sample_sources) <= 3){
       p <- p + theme(legend.position="bottom", legend.direction="horizontal")
@@ -66,28 +46,14 @@ run=function(self, sample_sources, output_dir, output_formats){
     save_plots(self, plot_id, sample_sources, output_dir, output_formats)
   }
   
-  plot_field_wrap = function(p, plot_id, grid, columns = 3) {
-    p <- p + facet_wrap(grid, ncol=columns)
-    if(nrow(sample_sources) <= 3){
-      p <- p + theme(legend.position="bottom", legend.direction="horizontal")
-    }
-    save_plots(self, plot_id, sample_sources, output_dir, output_formats)
-  }
   
-  #C-N distance by CDR and length density
-  parts = list(plot_parts, xlab("Angstrom"))
-  field = c("anchor_CN_distance")
+  #CDR SASA
   group = c("sample_source", "CDR")
-  
-  dens <- estimate_density_1d(data[data$anchor_CN_distance < 15, ],  group, field)
-  group = c("sample_source", "CDR", "length")
-
+  dens <- estimate_density_1d(data, group, c("energy"))
   p <- ggplot(data=dens, na.rm=T) + parts +
     geom_line(aes(x, y, colour=sample_source), size=1.2) +
-    ggtitle("C-N distance")
-  plot_field_wrap(p, "c_n_dis_by_cdr_den", ~ CDR)
+    xlab("REU") +
+    ggtitle("CDR Energy")
+  plot_field(p, "cdr_energy_den", ~CDR)
   
-  
-    
-    
 })) # end FeaturesAnalysis

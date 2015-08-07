@@ -88,7 +88,9 @@ public:
 	std::string
 	get_current_CDRDefinition()  const;
 	
-	/// @brief get the length of the cdr
+	/// @brief get the length of the cdr upon construction of AntibodyInfo
+	///
+	/// @details Does not work for proto CDR4 (DE loop)
 	core::Size
 	get_CDR_length(CDRNameEnum const cdr_name) const;
 	

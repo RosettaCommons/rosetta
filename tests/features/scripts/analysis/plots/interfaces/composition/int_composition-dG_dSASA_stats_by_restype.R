@@ -37,9 +37,10 @@ run=function(self, sample_sources, output_dir, output_formats){
     save_plots(self, plot_id, sample_sources, output_dir, output_formats)
   }
   
-  #Restype composition - Overall interface - this will change to side-chain only contribution.  
+  #Restype composition - Overall interface - this will change to side-chain only contribution. 
+  
   sele <-"
-  SELECT
+  SELECT DISTINCT 
     residues.name3 as restype,
     interface_residues.interface as interface,
     interface_residues.relative_dSASA_fraction as dSASA_fraction,

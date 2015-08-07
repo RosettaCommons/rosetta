@@ -230,7 +230,10 @@ AntibodyFeatures::report_features(
 	//Setup CDR residues:
 	for (core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		//TR << "Setting up CDR residues: " << ab_info_->get_CDR_name(cdr) << std::endl;
+
 		for (core::Size i = ab_info_->get_CDR_start(cdr, pose); i <= ab_info_->get_CDR_end(cdr, pose); ++i){
+			//TR << "Residues: " << i << std::endl;
 			cdr_residues[i] = true;
 		}
 	}
@@ -246,8 +249,8 @@ AntibodyFeatures::report_features(
 	//Get antigen - antibody contacts
 	calculate_residue_atomic_contacts(pose, cdr_residues, antigen_residues);
 
-	paratope_sasa_ = paratope_sasa(pose, *ab_info_);
-	paratope_charge_ = paratope_charge(pose, *ab_info_);
+	paratope_sasa_ = paratope_sasa(pose, *ab_info_, include_proto_cdr4_);
+	paratope_charge_ = paratope_charge(pose, *ab_info_, include_proto_cdr4_);
 
 	//Antibody-specific tables:
 
@@ -351,7 +354,7 @@ AntibodyFeatures::report_ab_metrics_features(
 	core::Size cdr_residues = 0;
 	for(core::SSize i = 1; i <= ab_info_->get_total_num_CDRs(include_proto_cdr4_); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		cdr_residues = cdr_residues + ab_info_->get_CDR_length(cdr_name);
+		cdr_residues = cdr_residues + ab_info_->get_CDR_length(cdr_name, pose);
 	}
 
 	//Get packing angle info
@@ -482,17 +485,17 @@ AntibodyFeatures::report_cdr_metrics_features(
 
 	stmt.bind(i+=1, struct_id);
 	stmt.bind(i+=1, cdr_name);
-	stmt.bind(i+=1, ab_info_->get_CDR_length(cdr));
+	stmt.bind(i+=1, ab_info_->get_CDR_length(cdr, pose));
 	stmt.bind(i+=1, ab_info_->get_CDR_start(cdr, pose));
 	stmt.bind(i+=1, ab_info_->get_CDR_end(cdr, pose));
 	stmt.bind(i+=1, calculate_cdr_contacts_total(pose, cdr));
 	stmt.bind(i+=1, calculate_cdr_contacts_nres(pose, cdr));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dSASA));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dSASA_sc));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dhSASA));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dhSASA_sc));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dhSASA_rel_by_charge));
-	stmt.bind(i+=1, calculate_cdr_totals(cdr, interface_data_res_.dG));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dSASA));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dSASA_sc));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dhSASA));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dhSASA_sc));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dhSASA_rel_by_charge));
+	stmt.bind(i+=1, calculate_cdr_totals(cdr, pose, interface_data_res_.dG));
 	stmt.bind(i+=1, paratope_sasa_.first.cdr[cdr]);
 	stmt.bind(i+=1, paratope_charge_.cdr[cdr]);
 	stmt.bind(i+=1, cdr_energy(pose, ab_info_, scorefxn_, cdr));
@@ -548,7 +551,7 @@ AntibodyFeatures::report_cdr_residue_features(
 	CDRNameEnum const & cdr,
 	utility::vector1<bool> const & relevant_residues)
 {
-	for(core::Size i = 1; i <= ab_info_->get_CDR_length(cdr); ++i){
+	for(core::Size i = 1; i <= ab_info_->get_CDR_length(cdr, pose); ++i){
 		core::Size resnum = ab_info_->get_CDR_start(cdr, pose) + i - 1;
 		if (relevant_residues[resnum]){
 			report_cdr_residue_features_row(pose, struct_id, db_session, cdr, resnum, i);
@@ -726,16 +729,16 @@ AntibodyFeatures::parse_my_tag(
 		TR <<"Please pass both cdr_definition and numbering_scheme.  These can also be set via cmd line options of the same name." << std::endl;
 
 	}
-	
+
 	include_proto_cdr4_ = tag->getOption("include_proto_cdr4", include_proto_cdr4_);
-	
+
 }
 
 core::Real
-AntibodyFeatures::calculate_cdr_totals(const CDRNameEnum cdr, const utility::vector1<core::Real> & data) const {
+AntibodyFeatures::calculate_cdr_totals(const CDRNameEnum cdr, const core::pose::Pose & pose, const utility::vector1<core::Real> & data) const {
 	core::Real result= 0.0;
-	core::Size cdr_start = ab_info_->get_CDR_loop(cdr).start();
-	core::Size cdr_end = ab_info_->get_CDR_loop(cdr).stop();
+	core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
+	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
 	for (core::Size i = cdr_start; i <= cdr_end; ++i){
 		result = result + data[i];
@@ -746,8 +749,8 @@ AntibodyFeatures::calculate_cdr_totals(const CDRNameEnum cdr, const utility::vec
 core::Size
 AntibodyFeatures::calculate_cdr_aromatic_nres(const core::pose::Pose & pose, const CDRNameEnum cdr) {
 	core::Size nres= 0;
-	core::Size cdr_start = ab_info_->get_CDR_loop(cdr).start();
-	core::Size cdr_end = ab_info_->get_CDR_loop(cdr).stop();
+	core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
+	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 
 	for (core::Size i = cdr_start; i <= cdr_end; ++i){
 		if (pose.residue(i).type().is_aromatic()){
@@ -871,6 +874,8 @@ AntibodyFeatures::calculate_cdr_contacts_total(const core::pose::Pose & pose, CD
 
 core::Size
 AntibodyFeatures::calculate_cdr_contacts_nres(const core::pose::Pose& pose, CDRNameEnum const cdr){
+
+
 	core::Size cdr_start = ab_info_->get_CDR_start(cdr, pose);
 	core::Size cdr_end = ab_info_->get_CDR_end(cdr, pose);
 

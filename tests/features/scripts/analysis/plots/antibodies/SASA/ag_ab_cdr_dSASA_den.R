@@ -19,7 +19,7 @@ run=function(self, sample_sources, output_dir, output_formats){
   #First we run on all the interfaces in the database
 
   
-
+  if ("FALSE" %in% opt$options$include_cdr4 & "FALSE" %in% opt$options$cdr4_only){
   sele = "
   SELECT
     ag_ab_dSASA as dSASA,
@@ -32,7 +32,48 @@ run=function(self, sample_sources, output_dir, output_formats){
     length
   FROM
     cdr_metrics
+  WHERE
+    dSASA > 0 and
+    CDR NOT LIKE '%Proto%'
     "
+  }
+  
+  if ("TRUE" %in% opt$options$include_cdr4){
+    sele = "
+  SELECT
+    ag_ab_dSASA as dSASA,
+    ag_ab_dSASA_sc as dSASA_sc,
+    ag_ab_dhSASA as dhSASA,
+    ag_ab_dhSASA_sc as dhSASA_sc,
+    ag_ab_dhSASA_rel_by_charge as dhSASA_rel_by_charge,
+    struct_id,
+    CDR,
+    length
+  FROM
+    cdr_metrics
+  WHERE
+    dSASA > 0 
+    "
+  }
+  
+  if ("TRUE" %in% opt$options$cdr4_only){
+    sele = "
+  SELECT
+    ag_ab_dSASA as dSASA,
+    ag_ab_dSASA_sc as dSASA_sc,
+    ag_ab_dhSASA as dhSASA,
+    ag_ab_dhSASA_sc as dhSASA_sc,
+    ag_ab_dhSASA_rel_by_charge as dhSASA_rel_by_charge,
+    struct_id,
+    CDR,
+    length
+  FROM
+    cdr_metrics
+  WHERE
+    dSASA > 0 and
+    CDR LIKE '%Proto%'
+    "
+  }
   
   data = query_sample_sources(sample_sources, sele, char_as_factor=F)
  

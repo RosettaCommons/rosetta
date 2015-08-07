@@ -15,39 +15,40 @@ author = "Jared Adolf-Bryfogle",
 brief_description = "CDR - Antigen Hbonds.  Must have LH_A analyzed by features reporter for this to work",
 feature_reporter_dependencies = c("AntibodyFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
-  
-  
-  sele_don = "
-SELECT
-    hb.energy as energy,
-    hb.struct_id as struct_id,
-    don.resNum as resnum,
-    hb_geom.AHdist as distance,
-    cdr_residues.CDR
+
+    if ("FALSE" %in% opt$options$include_cdr4 & "FALSE" %in% opt$options$cdr4_only){
+      sele_don = "
+  SELECT 
+      hb.energy as energy,
+      hb.struct_id as struct_id,
+      don.resNum as resnum,
+      hb_geom.AHdist as distance,
+      cdr_residues.CDR
   FROM
-    interface_residues as acc_res,
-    hbond_sites AS don,
-    hbond_sites AS acc,
-    hbonds AS hb,
-    hbond_geom_coords as hb_geom,
-    cdr_residues
+      interface_residues as acc_res,
+      hbond_sites AS don,
+      hbond_sites AS acc,
+      hbonds AS hb,
+      hbond_geom_coords as hb_geom,
+      cdr_residues
   WHERE
-    acc.struct_id == hb.struct_id AND
-    don.struct_id == hb.struct_id AND
-    hb_geom.struct_id = hb.struct_id AND
-    cdr_residues.struct_id = hb.struct_id AND
-    acc_res.struct_id = hb.struct_id AND
-    acc.struct_id == hb.struct_id AND 
-    don.site_id = hb.don_id AND
-    acc.site_id = hb.acc_id  AND
-    hb_geom.hbond_id = hb.hbond_id  AND
-    cdr_residues.resNum = don.resNum AND
-    acc_res.resNum = acc.resNum AND
-    acc_res.side == 'side2'
-  "
-  
-  sele_acc = "
-SELECT
+      acc.struct_id == hb.struct_id AND
+      don.struct_id == hb.struct_id AND
+      hb_geom.struct_id = hb.struct_id AND
+      cdr_residues.struct_id = hb.struct_id AND
+      acc_res.struct_id = hb.struct_id AND
+      acc.struct_id == hb.struct_id AND 
+      don.site_id = hb.don_id AND
+      acc.site_id = hb.acc_id  AND
+      hb_geom.hbond_id = hb.hbond_id  AND
+      cdr_residues.resNum = don.resNum AND
+      acc_res.resNum = acc.resNum AND
+      acc_res.side == 'side2' AND
+      CDR NOT LIKE '%Proto%'
+   "
+      
+      sele_acc = "
+  SELECT
     hb.energy as energy,
     hb.struct_id as struct_id,
     acc.resNum as resnum,
@@ -71,15 +72,150 @@ SELECT
     hb_geom.hbond_id = hb.hbond_id AND
     cdr_residues.resNum = acc.resNum AND
     don_res.resNum = don.resNum  AND
-    don_res.side = 'side2'
+    don_res.side = 'side2' AND
+    CDR NOT LIKE '%Proto%'
   "
-    sele_total_cdrs = "
+      
+      sele_total_cdrs = "
   SELECT 
     struct_id,
     CDR
   FROM
-    cdr_residues
-  "
+    cdr_residues where CDR NOT LIKE '%Proto%'"
+      
+    }
+    
+    if ("TRUE" %in% opt$options$include_cdr4){
+      sele_don = "
+  SELECT 
+      hb.energy as energy,
+      hb.struct_id as struct_id,
+      don.resNum as resnum,
+      hb_geom.AHdist as distance,
+      cdr_residues.CDR
+      FROM
+      interface_residues as acc_res,
+      hbond_sites AS don,
+      hbond_sites AS acc,
+      hbonds AS hb,
+      hbond_geom_coords as hb_geom,
+      cdr_residues
+      WHERE
+      acc.struct_id == hb.struct_id AND
+      don.struct_id == hb.struct_id AND
+      hb_geom.struct_id = hb.struct_id AND
+      cdr_residues.struct_id = hb.struct_id AND
+      acc_res.struct_id = hb.struct_id AND
+      acc.struct_id == hb.struct_id AND 
+      don.site_id = hb.don_id AND
+      acc.site_id = hb.acc_id  AND
+      hb_geom.hbond_id = hb.hbond_id  AND
+      cdr_residues.resNum = don.resNum AND
+      acc_res.resNum = acc.resNum AND
+      acc_res.side == 'side2'"
+      
+      sele_acc = "
+      SELECT
+      hb.energy as energy,
+      hb.struct_id as struct_id,
+      acc.resNum as resnum,
+      hb_geom.AHdist as distance,
+      cdr_residues.CDR
+      FROM
+      interface_residues as don_res,
+      hbond_sites AS don,
+      hbond_sites AS acc,
+      hbonds AS hb,
+      hbond_geom_coords as hb_geom,
+      cdr_residues
+      WHERE
+      acc.struct_id = hb.struct_id AND
+      don.struct_id = hb.struct_id AND
+      hb_geom.struct_id = hb.struct_id AND
+      cdr_residues.struct_id = hb.struct_id AND
+      don_res.struct_id = hb.struct_id AND
+      don.site_id = hb.don_id AND
+      acc.site_id = hb.acc_id AND
+      hb_geom.hbond_id = hb.hbond_id AND
+      cdr_residues.resNum = acc.resNum AND
+      don_res.resNum = don.resNum  AND
+      don_res.side = 'side2'"
+      
+      sele_total_cdrs = "
+      SELECT 
+      struct_id,
+      CDR
+      FROM
+      cdr_residues"
+      
+    }
+    
+    if ("TRUE" %in% opt$options$cdr4_only){
+      sele_don = "
+      SELECT 
+      hb.energy as energy,
+      hb.struct_id as struct_id,
+      don.resNum as resnum,
+      hb_geom.AHdist as distance,
+      cdr_residues.CDR
+      FROM
+      interface_residues as acc_res,
+      hbond_sites AS don,
+      hbond_sites AS acc,
+      hbonds AS hb,
+      hbond_geom_coords as hb_geom,
+      cdr_residues
+      WHERE
+      acc.struct_id == hb.struct_id AND
+      don.struct_id == hb.struct_id AND
+      hb_geom.struct_id = hb.struct_id AND
+      cdr_residues.struct_id = hb.struct_id AND
+      acc_res.struct_id = hb.struct_id AND
+      acc.struct_id == hb.struct_id AND 
+      don.site_id = hb.don_id AND
+      acc.site_id = hb.acc_id  AND
+      hb_geom.hbond_id = hb.hbond_id  AND
+      cdr_residues.resNum = don.resNum AND
+      acc_res.resNum = acc.resNum AND
+      acc_res.side == 'side2' AND
+      CDR LIKE '%Proto%'"
+      
+      sele_acc = "
+      SELECT
+      hb.energy as energy,
+      hb.struct_id as struct_id,
+      acc.resNum as resnum,
+      hb_geom.AHdist as distance,
+      cdr_residues.CDR
+      FROM
+      interface_residues as don_res,
+      hbond_sites AS don,
+      hbond_sites AS acc,
+      hbonds AS hb,
+      hbond_geom_coords as hb_geom,
+      cdr_residues
+      WHERE
+      acc.struct_id = hb.struct_id AND
+      don.struct_id = hb.struct_id AND
+      hb_geom.struct_id = hb.struct_id AND
+      cdr_residues.struct_id = hb.struct_id AND
+      don_res.struct_id = hb.struct_id AND
+      don.site_id = hb.don_id AND
+      acc.site_id = hb.acc_id AND
+      hb_geom.hbond_id = hb.hbond_id AND
+      cdr_residues.resNum = acc.resNum AND
+      don_res.resNum = don.resNum  AND
+      don_res.side = 'side2' AND
+      CDR LIKE '%Proto%'"
+      
+      sele_total_cdrs = "
+      SELECT 
+      struct_id,
+      CDR
+      FROM
+      cdr_residues where CDR = 'Proto_H4' or CDR = 'Proto_L4'"
+      
+    }
   
   don_data = query_sample_sources(sample_sources, sele_don, char_as_factor=F)
   acc_data = query_sample_sources(sample_sources, sele_acc, char_as_factor=F)

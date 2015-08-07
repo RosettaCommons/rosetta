@@ -16,6 +16,7 @@ brief_description = "CDR - CDR Hbonds",
 feature_reporter_dependencies = c("AntibodyFeatures", "HBondFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
   
+  if ("FALSE" %in% opt$options$include_cdr4 & "FALSE" %in% opt$options$cdr4_only){
   sele_don = "
 SELECT
     hb.energy as energy,
@@ -56,7 +57,9 @@ SELECT
     don_ss.resNum = don.resNum AND
     don_c.CDR != acc_c.CDR AND
     NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
-    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA')
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') AND
+    don_c.CDR NOT LIKE '%Proto%' AND
+    acc_c.CDR NOT LIKE '%Proto%' 
   "
 
   sele_acc = "
@@ -101,7 +104,9 @@ SELECT
     don_ss.resNum = don.resNum AND
     don_c.CDR != acc_c.CDR AND
     NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
-    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA')
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') AND
+    don_c.CDR NOT LIKE '%Proto%' AND
+    acc_c.CDR NOT LIKE '%Proto%' 
   "
   
   sele_total_cdrs = "
@@ -110,9 +115,215 @@ SELECT
     CDR
   FROM
     cdr_residues
+    WHERE
+    CDR NOT LIKE '%Proto%'
   "
-  #NOT (don.HBChemType == 'hbdon_PBA' AND acc.HBChemType == 'hbacc_PBA')
+  }
   
+  if ("TRUE" %in% opt$options$include_cdr4){
+    sele_don = "
+    SELECT
+    hb.energy as energy,
+    don.struct_id as struct_id,
+    don.resNum as resnum,
+    hb_geom.AHdist as distance,
+    don_c.CDR as CDR1,
+    acc_c.CDR as CDR2,
+    don.atmType as don_atm,
+    acc.atmType as acc_atm,
+    don.HBChemType as don_type,
+    acc.HBChemType as acc_type,
+    don_ss.dssp as don_dssp,
+    acc_ss.dssp as acc_dssp
+    FROM
+    hbond_sites AS don,
+    hbond_sites AS acc,
+    hbonds AS hb,
+    hbond_geom_coords as hb_geom,
+    cdr_residues as  don_c,
+    cdr_residues as  acc_c,
+    residue_secondary_structure as don_ss,
+    residue_secondary_structure as acc_ss
+    WHERE
+    acc.struct_id == don.struct_id AND
+    don.struct_id == hb.struct_id AND
+    hb_geom.struct_id = hb.struct_id AND
+    don_c.struct_id = hb.struct_id AND
+    acc_c.struct_id = hb.struct_id AND
+    don_ss.struct_id = hb.struct_id AND
+    acc_ss.struct_id = hb.struct_id AND
+    don.site_id =  hb.don_id AND
+    acc.site_id = hb.acc_id  AND
+    hb_geom.hbond_id = hb.hbond_id AND
+    don_c.resNum = don.resNum AND
+    acc_c.resNum = acc.resNum AND
+    acc_ss.resNum = acc.resNum AND
+    don_ss.resNum = don.resNum AND
+    don_c.CDR != acc_c.CDR AND
+    NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') 
+    "
+    
+    sele_acc = "
+    SELECT
+    hb.energy as energy,
+    don.struct_id as struct_id,
+    don.resNum as resnum,
+    hb_geom.AHdist as distance,
+    acc_c.CDR as CDR1,
+    don_c.CDR as CDR2,
+    don.atmType as don_atm,
+    acc.atmType as acc_atm,
+    don.HBChemType as don_type,
+    acc.HBChemType as acc_type,
+    don_ss.dssp as don_dssp,
+    acc_ss.dssp as acc_dssp
+    FROM
+    hbond_sites AS don,
+    hbond_sites AS acc,
+    hbonds AS hb,
+    hbond_geom_coords as hb_geom,
+    cdr_residues as  don_c,
+    cdr_residues as  acc_c,
+    residue_secondary_structure as don_ss,
+    residue_secondary_structure as acc_ss
+    WHERE
+    acc.struct_id == don.struct_id AND
+    don.struct_id == hb.struct_id AND
+    hb.struct_id == hb_geom.struct_id AND
+    don_c.struct_id = hb.struct_id AND
+    acc_c.struct_id = hb.struct_id AND
+    don_ss.struct_id = hb.struct_id AND
+    acc_ss.struct_id = hb.struct_id AND
+    hb.don_id == don.site_id AND
+    hb.acc_id == acc.site_id AND
+    hb.hbond_id == hb_geom.hbond_id AND
+    don_c.resNum = don.resNum AND
+    acc_c.resNum = acc.resNum AND
+    don.resNum = don_ss.resNum AND
+    acc.resNum = acc_ss.resNum AND
+    acc_ss.resNum = acc.resNum AND
+    don_ss.resNum = don.resNum AND
+    don_c.CDR != acc_c.CDR AND
+    NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') 
+    "
+  
+  sele_total_cdrs = "
+  SELECT 
+  struct_id,
+  CDR
+  FROM
+  cdr_residues
+  "
+  }
+  
+  if ("TRUE" %in% opt$options$cdr4_only){
+    sele_don = "
+    SELECT
+    hb.energy as energy,
+    don.struct_id as struct_id,
+    don.resNum as resnum,
+    hb_geom.AHdist as distance,
+    don_c.CDR as CDR1,
+    acc_c.CDR as CDR2,
+    don.atmType as don_atm,
+    acc.atmType as acc_atm,
+    don.HBChemType as don_type,
+    acc.HBChemType as acc_type,
+    don_ss.dssp as don_dssp,
+    acc_ss.dssp as acc_dssp
+    FROM
+    hbond_sites AS don,
+    hbond_sites AS acc,
+    hbonds AS hb,
+    hbond_geom_coords as hb_geom,
+    cdr_residues as  don_c,
+    cdr_residues as  acc_c,
+    residue_secondary_structure as don_ss,
+    residue_secondary_structure as acc_ss
+    WHERE
+    acc.struct_id == don.struct_id AND
+    don.struct_id == hb.struct_id AND
+    hb_geom.struct_id = hb.struct_id AND
+    don_c.struct_id = hb.struct_id AND
+    acc_c.struct_id = hb.struct_id AND
+    don_ss.struct_id = hb.struct_id AND
+    acc_ss.struct_id = hb.struct_id AND
+    don.site_id =  hb.don_id AND
+    acc.site_id = hb.acc_id  AND
+    hb_geom.hbond_id = hb.hbond_id AND
+    don_c.resNum = don.resNum AND
+    acc_c.resNum = acc.resNum AND
+    acc_ss.resNum = acc.resNum AND
+    don_ss.resNum = don.resNum AND
+    don_c.CDR != acc_c.CDR AND
+    NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') AND
+    don_c.CDR LIKE '%Proto%' AND
+    acc_c.CDR LIKE '%Proto%'
+    "
+    
+    sele_acc = "
+    SELECT
+    hb.energy as energy,
+    don.struct_id as struct_id,
+    don.resNum as resnum,
+    hb_geom.AHdist as distance,
+    acc_c.CDR as CDR1,
+    don_c.CDR as CDR2,
+    don.atmType as don_atm,
+    acc.atmType as acc_atm,
+    don.HBChemType as don_type,
+    acc.HBChemType as acc_type,
+    don_ss.dssp as don_dssp,
+    acc_ss.dssp as acc_dssp
+    FROM
+    hbond_sites AS don,
+    hbond_sites AS acc,
+    hbonds AS hb,
+    hbond_geom_coords as hb_geom,
+    cdr_residues as  don_c,
+    cdr_residues as  acc_c,
+    residue_secondary_structure as don_ss,
+    residue_secondary_structure as acc_ss
+    WHERE
+    acc.struct_id == don.struct_id AND
+    don.struct_id == hb.struct_id AND
+    hb.struct_id == hb_geom.struct_id AND
+    don_c.struct_id = hb.struct_id AND
+    acc_c.struct_id = hb.struct_id AND
+    don_ss.struct_id = hb.struct_id AND
+    acc_ss.struct_id = hb.struct_id AND
+    hb.don_id == don.site_id AND
+    hb.acc_id == acc.site_id AND
+    hb.hbond_id == hb_geom.hbond_id AND
+    don_c.resNum = don.resNum AND
+    acc_c.resNum = acc.resNum AND
+    don.resNum = don_ss.resNum AND
+    acc.resNum = acc_ss.resNum AND
+    acc_ss.resNum = acc.resNum AND
+    don_ss.resNum = don.resNum AND
+    don_c.CDR != acc_c.CDR AND
+    NOT (don_ss.dssp = acc_ss.dssp AND don_ss.dssp = 'E' AND acc_ss.dssp='E' AND 
+    don.HBChemType = 'hbdon_PBA' and acc.HBChemType='hbacc_PBA') AND
+    don_c.CDR LIKE '%Proto%' AND
+    acc_c.CDR LIKE '%Proto%'
+    "
+  
+  sele_total_cdrs = "
+  SELECT 
+  struct_id,
+  CDR
+  FROM
+  cdr_residues
+  WHERE
+  CDR LIKE '%Proto%'
+  "
+  }
+  
+  
+  #NOT (don.HBChemType == 'hbdon_PBA' AND acc.HBChemType == 'hbacc_PBA') 
   don_data = query_sample_sources(sample_sources, sele_don, char_as_factor=F)
   acc_data = query_sample_sources(sample_sources, sele_acc, char_as_factor=F)
   total_cdrs = query_sample_sources(sample_sources, sele_total_cdrs, char_as_factor=F)

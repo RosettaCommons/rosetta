@@ -77,11 +77,11 @@ struct ParatopeMetric {
 
 /// @brief calculate the SASA of the antibody paratope.  Returns all and hydrophobic components.
 std::pair<ParatopeMetric <core::Real>, ParatopeMetric<core::Real> >
-paratope_sasa( const core::pose::Pose & pose, const AntibodyInfo & ab_info);
+paratope_sasa( const core::pose::Pose & pose, const AntibodyInfo & ab_info, bool include_de_loop = false );
 
 /// @brief calculate the net charge of the paratope
 ParatopeMetric<core::SSize>
-paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & abinfo );
+paratope_charge( core::pose::Pose const & pose, const protocols::antibody::AntibodyInfo & abinfo,  bool include_de_loop = false);
 
  /// @brief calculate the net charge of the antibody
 core::SSize

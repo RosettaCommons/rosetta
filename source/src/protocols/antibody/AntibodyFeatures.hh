@@ -144,7 +144,7 @@ private:
 	//These can be moved to metrics, but they require IAM data already.
 	
 	core::Real
-	calculate_cdr_totals(CDRNameEnum const cdr, const utility::vector1<Real> & data) const ;
+	calculate_cdr_totals(CDRNameEnum const cdr, const core::pose::Pose & pose, const utility::vector1<Real> & data) const ;
 
 	
 	/// @brief Calculate polar dSASA using IAM results.

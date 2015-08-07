@@ -63,25 +63,25 @@ using namespace protocols::scoring;
 using namespace protocols::toolbox::pose_metric_calculators;
 
 class MPInterfaceStatistics : public Mover {
-	
+
 public:
-	
+
 	////////////////////
 	/// Constructors ///
 	////////////////////
 
 	/// @brief Construct a Default Membrane Position Mover
 	MPInterfaceStatistics( Size jump );
-	
+
 	/// @brief Copy Constructor
 	/// @details Make a deep copy of this mover object
 	MPInterfaceStatistics( MPInterfaceStatistics const & src );
-	
+
 	/// @brief Assignment Operator
 	/// @details Make a deep copy of this mover object, overriding the assignment operator
 	MPInterfaceStatistics &
 	operator=( MPInterfaceStatistics const & src );
-	
+
 	/// @brief Destructor
 	~MPInterfaceStatistics();
 
@@ -97,45 +97,45 @@ public:
 
 	/// @brief Register Options with JD2
 	void register_options();
-	
+
 	/// @brief Initialize Mover options from the comandline
 	void init_from_cmd();
-	
+
 	/// @brief Get size of the interface
 	Real get_size( Pose & pose );
-	
+
 	/// @brief Get charge in the interface
 	SSize get_charge( Pose & pose );
-	
+
 	/// @brief Get number of charged residues in the interface
 	Size get_number_charges( Pose & pose );
-	
+
 	/// @brief Get hydrophobicity of the interface (UHS, Koehler & Meiler, Proteins, 2008)
 	Real get_hydrophobicity( Pose & pose );
-	
+
 	/// @brief Get number of contacts
 	Size get_number_of_contacts();
-	
+
 	/// @brief Get surface complementarity
 	Real get_surface_complementarity( Pose & pose );
 
 	/// @brief Get size of residues in the interface
 	Real get_residue_size( Pose & pose );
-	
+
 	/// @brief Get number of Hbonds across interface
 	Size get_number_hbonds( Pose & pose );
-	
+
 	/// @brief Get number of pi-stacking across interface
 	Size get_number_pi_stacking( Pose & pose );
-	
+
 	/// @brief Compute a ruggedness factor of the interface???
 	Real get_ruggedness_factor( Pose & pose );
-	
+
 	/// @brief Compute an average deviation from a plane along the interface
 	Real get_plane_deviation( Pose & pose );
-	
+
 	/// @brief Get contact preferences for AAs: Yan & Jernigan, 2008, ProteinJ
-	
+
 	/// @brief Get in/out orientation
 	Real get_inout_orientation( Pose & pose );
 
@@ -172,18 +172,18 @@ public:
 //					  protocols::moves::Movers_map const &,
 //					  core::pose::Pose const &
 //					  );
-	
+
 private:
-	
+
 	/// @brief jump
 	Size jump_;
-	
+
 	/// @brief Interface
 	Interface interface_;
-	
+
 	/// @brief Partners;
 	std::string partners_;
-	
+
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -238,9 +238,9 @@ MPInterfaceStatistics::get_name() const {
 
 /// @brief Get Membrane protein interface statistics
 void MPInterfaceStatistics::apply( Pose & pose ) {
-	
+
 	using namespace protocols::membrane;
-	
+
 	TR << "Calling MPInterfaceStatistics" << std::endl;
 
 	register_options();
@@ -266,58 +266,58 @@ void MPInterfaceStatistics::apply( Pose & pose ) {
 	// get size of the interface
 	Real size = get_size( pose );
 	TR << "sasa " << size << std::endl;
-	
+
 	// Get charge in the interface
 	SSize charge = get_charge( pose );
 	TR << "charge " << charge << std::endl;
-	
+
 	// Get number of charged residues in the interface
 	Size ncharges = get_number_charges( pose );
 	TR << "ncharges " << ncharges << std::endl;
-	
+
 	// Get hydrophobicity of the interface
 	Real hydro = get_hydrophobicity( pose );
 	TR << "hydro " << hydro << std::endl;
-	
+
 	// Get number of contacts
 	Size ncontacts = get_number_of_contacts();
 	TR << "ncontacts " << ncontacts << std::endl;
-	
+
 	// Get surface complementarity
 	Real shape = get_surface_complementarity( pose );
 	TR << "shape_compl " << shape << std::endl;
-	
+
 	// Get size of residues in the interface
 	Real res_size = get_residue_size( pose );
 	TR << "avg_res_size " << res_size << std::endl;
-	
+
 	// Get number of Hbonds across interface
 	Size nhbonds = get_number_hbonds( pose );
 	TR << "nhbonds " << nhbonds << std::endl;
-	
+
 	// Get number of pi-stacking across interface
 //	Size npi = get_number_pi_stacking( pose );
 //	TR << "pi stacking " << npi << std::endl;
-	
+
 //	// Compute a ruggedness factor of the interface???
 //	Real rugged = get_ruggedness_factor( pose );
 //	TR << "rugged " << rugged << std::endl;
-//	
+//
 //	// Compute an average deviation from a plane along the interface
 //	Real plane = get_plane_deviation( pose );
 //	TR << "plane dev " << plane << std::endl;
-	
+
 	// Get contact preferences for AAs: Yan & Jernigan, 2008, ProteinJ
-	
+
 	// Get in/out orientation
 	Real inout = get_inout_orientation( pose );
 	TR << "inout " << inout << std::endl;
-	
+
 } // apply
 
 /// @brief Register Options with JD2
 void MPInterfaceStatistics::register_options() {
-	
+
 	using namespace basic::options;
 	option.add_relevant( OptionKeys::docking::partners );
 
@@ -325,9 +325,9 @@ void MPInterfaceStatistics::register_options() {
 
 /// @brief Initialize Mover options from the comandline
 void MPInterfaceStatistics::init_from_cmd() {
-	
+
 	using namespace basic::options;
-	
+
 	// docking partners
 	if( option[ OptionKeys::docking::partners ].user() ) {
 		partners_ = option[ OptionKeys::docking::partners ]();
@@ -394,7 +394,7 @@ Real MPInterfaceStatistics::get_size( Pose & pose ) {
 	using namespace core::pose;
 	using namespace core::scoring::sasa;
 	using namespace protocols::scoring;
-	
+
 	// get per-residue SASA
 	SasaCalc calc = SasaCalc();
 	core::Real total_sasa( calc.calculate( pose ) );
@@ -423,9 +423,9 @@ SSize MPInterfaceStatistics::get_charge( Pose & pose ) {
 
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-	
+
 		std::string res = pose.residue( i ).name3();
-		
+
 		if ( interface_.is_interface( i ) && ( res == "ARG" || res == "LYS" ) &&
 			 ( pose.residue( i ).atom( "CA" ).xyz().z() >= -15.0 &&
 			   pose.residue( i ).atom( "CA" ).xyz().z() <= 15.0 ) ) {
@@ -447,12 +447,12 @@ SSize MPInterfaceStatistics::get_charge( Pose & pose ) {
 Size MPInterfaceStatistics::get_number_charges( Pose & pose ) {
 
 	Size charge( 0 );
-	
+
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		std::string res = pose.residue( i ).name3();
-		
+
 		if ( interface_.is_interface( i ) &&
 			( res == "ARG" || res == "LYS" || res == "ASP" || res == "GLU" ) &&
 			( pose.residue( i ).atom( "CA" ).xyz().z() >= -15.0 &&
@@ -472,20 +472,20 @@ Real MPInterfaceStatistics::get_hydrophobicity( Pose & pose ) {
 
 	// hydrophobicity scale
 	std::map< char, Real > hydro;
-	
+
 	// polar
 	hydro[ 'C' ] = 0.01;
 	hydro[ 'N' ] = 0.50;
 	hydro[ 'Q' ] = 0.46;
 	hydro[ 'S' ] = 0.06;
 	hydro[ 'T' ] = -0.01;
-	
+
 	// charged
 	hydro[ 'D' ] = 0.73;
 	hydro[ 'E' ] = 0.70;
 	hydro[ 'K' ] = 0.90;
 	hydro[ 'R' ] = 0.55;
-	
+
 	// hydrophobic
 	hydro[ 'A' ] = -0.16;
 	hydro[ 'G' ] = -0.20;
@@ -494,7 +494,7 @@ Real MPInterfaceStatistics::get_hydrophobicity( Pose & pose ) {
 	hydro[ 'M' ] = -0.20;
 	hydro[ 'P' ] = 0.50;
 	hydro[ 'V' ] = -0.25;
-	
+
 	// aromatic
 	hydro[ 'F' ] = -0.46;
 	hydro[ 'H' ] = 0.38;
@@ -502,10 +502,10 @@ Real MPInterfaceStatistics::get_hydrophobicity( Pose & pose ) {
 	hydro[ 'Y' ] = -0.12;
 
 	Real total_hydro( 0 );
-	
+
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		if ( interface_.is_interface( i ) ) {
 			total_hydro += hydro[ pose.residue( i ).name1() ];
 		}
@@ -520,7 +520,7 @@ Real MPInterfaceStatistics::get_hydrophobicity( Pose & pose ) {
 Size MPInterfaceStatistics::get_number_of_contacts() {
 
 	return interface_.interface_nres();
-	
+
 } // get number of contacts in interface
 
 	//////////////////////////////////////////////////////////////////////
@@ -531,7 +531,7 @@ Real MPInterfaceStatistics::get_surface_complementarity( Pose & pose ) {
 	using namespace core::scoring::sc;
 	ShapeComplementarityCalculator shape;
 	shape.Init();
-	
+
 	return shape.CalcSc( pose, jump_, 1 );
 
 } // get surface complementarity of interface
@@ -545,15 +545,15 @@ Real MPInterfaceStatistics::get_residue_size( Pose & pose ) {
 
 	// go through residues
 	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
-		
+
 		if ( interface_.is_interface( i ) ) {
 			avg_size += static_cast< Real >( pose.residue( i ).natoms() );
 		}
 	}
 	avg_size /= interface_.interface_nres();
-	
+
 	return avg_size;
-	
+
 } // get residue size
 
 	//////////////////////////////////////////////////////////////////////
@@ -564,7 +564,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace core::scoring::hbonds;
-	
+
 	// get the partners
 	utility::vector1< std::string > partners( utility::string_split( partners_, '_' ) );
 	utility::vector1< std::string > partner1( utility::split( partners[1] ) );
@@ -576,9 +576,9 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 	pose.update_residue_neighbors();
 	hbonds::fill_hbond_set( pose, false, hb_set, false );
 //	hb_set.show(pose, true, std::cout);
-	
+
 	Size nhbonds( 0 );
-	
+
 	// go through Hbonds
 	for ( Size i = 1; i <= hb_set.nhbonds(); ++i ) {
 
@@ -588,10 +588,10 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 
 		// check whether donor/acc is in partner1
 		// doesn't check whether the residues are defined as interface (they should anyway)
-		
+
 		bool don_in_1( false );
 		bool acc_in_1( false );
-		
+
 		// donor in partner1?
 		for ( Size j = 1; j <= partner1.size(); ++j ) {
 			don_in_1 = res_in_chain( pose, don, partner1[ j ] );
@@ -601,7 +601,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 		for ( Size j = 1; j <= partner1.size(); ++j ) {
 			acc_in_1 = res_in_chain( pose, acc, partner1[ j ] );
 		}
-		
+
 //		TR << "hbond: don " << don << ", acc " << acc;
 //		TR << ", don: " << don_in_1 << ", acc: " << acc_in_1 << std::endl;
 
@@ -614,7 +614,7 @@ Size MPInterfaceStatistics::get_number_hbonds( Pose & pose ) {
 			++nhbonds;
 		}
 	} // go through Hbonds
-	
+
 
 	return nhbonds;
 } // number hbonds across interface
@@ -657,7 +657,7 @@ Real MPInterfaceStatistics::get_plane_deviation( Pose & pose ) {
 
 /// @brief Get in/out orientation
 Real MPInterfaceStatistics::get_inout_orientation( Pose & pose ) {
-	
+
 	if ( pose.residue( nres_protein( pose ) ).atom("CA").xyz().z() > 0.0 ){
 		return 0.0;
 	}
@@ -673,10 +673,10 @@ main( int argc, char * argv [] )
 {
 	try {
 		using namespace protocols::jd2;
-		
+
 		// initialize options, RNG, and factory-registrators
 		devel::init(argc, argv);
-		
+
 		MPInterfaceStatisticsOP mpis( new MPInterfaceStatistics( 1 ) );
 		JobDistributor::get_instance()->go(mpis);
 	}

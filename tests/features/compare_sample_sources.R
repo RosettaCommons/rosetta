@@ -93,7 +93,7 @@ initialize_command_line_options <- function() {
 			help="Add footer to plots saying the analysis script and run date. [Default \"%default\"]"),
 		make_option(c("--config"), action="store", type="character", default=NULL, dest="config_filename",
 			help=". [Default \"%default\"]"),
-		make_option(c("--ncores"), action="store_trye", type="integer", default=1, dest="ncores",
+		make_option(c("--ncores"), action="store_true", type="integer", default=1, dest="ncores",
 			help="Run in parallel with specified number of cores.")))
 
 	# Density estimation options
@@ -116,6 +116,13 @@ initialize_command_line_options <- function() {
   option_list <- c(option_list, list(
     make_option(c("--out_disable_ss_names"), action="store_true", default=FALSE, dest="out_disable_ss_names",
       help="Disable concatonating the ss names for output.  Be sure to combine this with out_dir or all plots will go to build. [Default \"%default\"]")))
+  
+  # Antibody Analysis Options
+  option_list <- c(option_list, list(
+  	make_option(c("--include_cdr4"), action="store_true", default=FALSE, dest="include_cdr4",
+		  help="Include Proto CDR4 data in the analysis framework for specific antibody analysis scripts"),
+		make_option(c("--cdr4_only"), action="store_true", default=FALSE, dest="cdr4_only",
+		  help="make plots based only on Proto CDR4 data for specific antibody analysis scripts")))
   
 	option_list <- c(option_list, make_output_formats_options_list(all_output_formats))
 
@@ -559,7 +566,6 @@ configuration <- add_command_line_options_to_configuration(
 	base_dir)
 
 opt <- add_configuration_options_to_options(configuration, opt)
-
 
 l_ply(
 	.data=configuration$sample_source_comparisons,
