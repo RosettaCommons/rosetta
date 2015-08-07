@@ -164,17 +164,20 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified? Sequence profile constraints not added to pose by other movers/filters?");
 
 	core::Size asymmetric_unit_res( pose.total_residue() );
-	tr<<"  Pose is NOT--SYMETRIC!!!"<<std::endl;
+	core::Size last_res( 0 );
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		tr<<" Pose is SYMETRIC!!!"<<std::endl;
+		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size();
+		tr<<" Pose is SYMMETRIC!!!"<<std::endl;
     core::conformation::symmetry::SymmetricConformation const & SymmConf (
       dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
-		task.request_symmetrize_by_intersection();
+//		task.request_symmetrize_by_intersection();
   }
-	tr<< "the size of sequence profile is: "<<seqprof->profile().size() - 1 <<std::endl;
-	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
-	tr.Debug<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
+	else{
+		tr<<"Pose is NOT--SYMMETRIC!!!"<<std::endl;
+		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/;
+	}
+	tr<< "the size of sequence profile is: "<<last_res<<std::endl;
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
 /// These are used in the following loop to restrict conservation profiles differently
 	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
