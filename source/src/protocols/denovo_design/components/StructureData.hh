@@ -80,6 +80,7 @@ public:
 public:
 	static int const REMARK_NUM;
 	static std::string const DATA_NAME;
+	static char const DATA_DELIMETER;
 
 	// non-const methods
 public:
@@ -177,6 +178,9 @@ public:
 			std::string const & ss,
 			utility::vector1< std::string > const & abego );
 
+	/// @brief merge all data and segments from "other" into this StructureData
+	void merge( StructureData const & other );
+
 	/// @brief adds a sub permutation and updates information
 	void add_subperm( StructureDataCOP perm );
 
@@ -184,13 +188,13 @@ public:
 	inline void clear_subperms() { sub_perms_.clear(); }
 
 	/// @brief sets real number data
-	void set_data_int( std::string const & data_name, int const val );
+	void set_data_int( std::string const & segment_id, std::string const & data_name, int const val );
 
 	/// @brief sets real number data
-	void set_data_real( std::string const & data_name, core::Real const val );
+	void set_data_real( std::string const & segment_id, std::string const & data_name, core::Real const val );
 
 	/// @brief sets real number data
-	void set_data_str( std::string const & data_name, std::string const & val );
+	void set_data_str( std::string const & segment_id, std::string const & data_name, std::string const & val );
 
 	/// @brief sets an "alias" for a particular residue inside a segment which allows for it to be easily accessed
 	void set_resnum_alias(
@@ -363,22 +367,22 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 public:
 	/// @brief check for integer data
-	bool has_data_int( std::string const & data_name ) const { return data_int_.find(data_name) != data_int_.end(); }
+	bool has_data_int( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief check for real number data
-	bool has_data_real( std::string const & data_name ) const { return data_real_.find(data_name) != data_real_.end(); }
+	bool has_data_real( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief gets real number data
-	bool has_data_str( std::string const & data_name ) const { return data_str_.find(data_name) != data_str_.end(); }
+	bool has_data_str( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief gets integer data
-	int get_data_int( std::string const & data_name ) const;
+	int get_data_int( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief gets real number data
-	core::Real get_data_real( std::string const & data_name ) const;
+	core::Real get_data_real( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief gets real number data
-	std::string const & get_data_str( std::string const & data_name ) const;
+	std::string const & get_data_str( std::string const & segment_id, std::string const & data_name ) const;
 
 	/// @brief given a residue alias, returns a pose residue number
 	bool inline has_alias( std::string const & alias ) const { return ( aliases_.find(alias) != aliases_.end() ); }
@@ -552,6 +556,18 @@ public:
 
 	/// @brief updates numbering based on the saved order of Segment objects
 	void update_numbering();
+
+protected:
+	/// helper functions for data access
+	int get_data_int( std::string const & data_name ) const;
+	core::Real get_data_real( std::string const & data_name ) const;
+	std::string const & get_data_str( std::string const & data_name ) const;
+	bool has_data_int( std::string const & data_name ) const { return data_int_.find(data_name) != data_int_.end(); }
+	bool has_data_real( std::string const & data_name ) const { return data_real_.find(data_name) != data_real_.end(); }
+	bool has_data_str( std::string const & data_name ) const { return data_str_.find(data_name) != data_str_.end(); }
+	void set_data_int( std::string const & data_name, int const val );
+	void set_data_real( std::string const & data_name, core::Real const val );
+	void set_data_str( std::string const & data_name, std::string const & val );
 
 protected:
 	/// @brief returns constant list of residue ranges

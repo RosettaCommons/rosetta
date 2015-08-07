@@ -672,7 +672,7 @@ FoldGraph::create_loops(
 		// find cutpoint
 		int cut = 0;
 		for ( core::Size cuti=1, endcut=cut_loops.size(); cuti<=endcut; ++cuti ) {
-			int const intra_loop_cut = perm.get_data_int( cut_loops[cuti] + DATA_DELIMETER + "cut_resi" );
+			int const intra_loop_cut = perm.get_data_int( cut_loops[cuti], "cut_resi" );
 			int const cut_to_check = perm.segment(cut_loops[cuti]).start() + intra_loop_cut - 1;
 			TR.Debug << "Checking whether " << cut_to_check << " is within " << min_res << " and " << max_res << std::endl;
 			if ( ( min_res <= cut_to_check ) && ( cut_to_check <= max_res ) ) {

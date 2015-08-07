@@ -21,11 +21,9 @@
 #include <protocols/denovo_design/util.hh>
 
 //Protocol Headers
-#include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/moves/DsspMover.hh>
 
 //Core Headers
 #include <core/chemical/VariantType.hh>
@@ -39,6 +37,7 @@
 #include <core/pose/Remarks.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -68,6 +67,7 @@ namespace components {
 
 int const StructureData::REMARK_NUM = 994;
 std::string const StructureData::DATA_NAME = "PERMUTATION";
+char const StructureData::DATA_DELIMETER = '#';
 
 StructureData::StructureData( std::string const & id_val ) :
 	pose_(),
@@ -179,15 +179,20 @@ StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const
 	} else {
 		chainz.push_back( pose.clone() );
 	}
-	for ( core::Size i=1; i<=chainz.size(); ++i ) {
+	for ( core::Size i = 1; i <= chainz.size(); ++i ) {
 		chainz[i]->center();
 		TR << "id " << id_val << " chain " << i << " size " << chainz[i]->total_residue() << std::endl;
-		std::string pname( id_val );
+		std::string pname = id_val;
 		if ( chainz.size() > 1 ) {
-			pname = boost::lexical_cast< std::string >( i );
+			if ( pname.empty() ) {
+				pname = boost::lexical_cast< std::string >( i );
+			} else {
+				pname += PARENT_DELIMETER + boost::lexical_cast< std::string >( i );
+			}
 		}
-		protocols::moves::DsspMover dssp;
-		dssp.apply( *chainz[i] );
+		core::scoring::dssp::Dssp dssp( *chainz[i] );
+		dssp.insert_ss_into_pose( *chainz[i], false );
+
 		int len = static_cast< int >(chainz[i]->total_residue()) - 2;
 		if ( len < 1 ) {
 			len = 1;
@@ -233,7 +238,7 @@ StructureData::create_from_pose( core::pose::Pose const & pose, std::string cons
 	if ( has_cached_string(pose) ) {
 		std::stringstream ss;
 		ss << cached_string( pose );
-		TR.Info << "Found permutation information in datacache. Creating from that." << std::endl;
+		TR.Debug << "Found StructureData information in datacache. Creating from that." << std::endl;
 		newperm = create_from_xml( ss, id );
 		newperm->set_pose( pose );
 	} else {
@@ -350,25 +355,25 @@ StructureData::create_from_xml( std::stringstream & xmltag, std::string const & 
 			} else if ( subtag->getName() == "Int" ) {
 				assert( subtag->hasOption( "name" ) );
 				assert( subtag->hasOption( "value" ) );
-				newperm->set_data_int( subtag->getOption< std::string >("name"), subtag->getOption< int >("value") );
+				newperm->set_data_int( subtag->getOption< std::string >( "name" ), subtag->getOption< int >( "value" ) );
 			} else if ( subtag->getName() == "Real" ) {
 				assert( subtag->hasOption( "name" ) );
 				assert( subtag->hasOption( "value" ) );
-				newperm->set_data_real( subtag->getOption< std::string >("name"), subtag->getOption< core::Real >("value") );
+				newperm->set_data_real( subtag->getOption< std::string >( "name" ), subtag->getOption< core::Real >( "value" ) );
 			} else if ( subtag->getName() == "Str" ) {
 				assert( subtag->hasOption( "name" ) );
 				if ( subtag->hasOption( "value" ) ) {
-					newperm->set_data_str( subtag->getOption< std::string >("name"), subtag->getOption< std::string >("value") );
+					newperm->set_data_str( subtag->getOption< std::string >( "name" ), subtag->getOption< std::string >( "value" ) );
 				} else {
-					newperm->set_data_str( subtag->getOption< std::string >("name"), "" );
+					newperm->set_data_str( subtag->getOption< std::string >( "name" ), "" );
 				}
 			} else if ( subtag->getName() == "Alias" ) {
 				assert( subtag->hasOption( "name" ) );
 				assert( subtag->hasOption( "segment" ) );
 				assert( subtag->hasOption( "res" ) );
-				newperm->set_resnum_alias( subtag->getOption< std::string >("name"),
-						subtag->getOption< std::string >("segment"),
-						subtag->getOption< core::Size >("res") );
+				newperm->set_resnum_alias( subtag->getOption< std::string >( "name" ),
+						subtag->getOption< std::string >( "segment" ),
+						subtag->getOption< core::Size >( "res" ) );
 			} else {
 				subtag->write( TR.Error );
 				throw utility::excn::EXCN_RosettaScriptsOption( "Unknown tag in permutation: " + subtag->getName() );
@@ -557,12 +562,6 @@ StructureData::save_into_pose( core::pose::Pose & pose ) const
 	ss << *this;
 	set_cached_string( pose, ss.str() );
 
-	/*
-	core::pose::PDBInfoOP pdb_info = pose.pdb_info();
-	if ( !pdb_info ) {
-		pdb_info = core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) );
-		pose.pdb_info( pdb_info );
-	} */
 	// wipe out pdb info except for remarks
 	pose.pdb_info( core::pose::PDBInfoOP( new core::pose::PDBInfo( pose, true ) ) );
 
@@ -1073,99 +1072,12 @@ StructureData::append_extended_loop(
 }
 
 
-/// @brief creates a new jump and cutpoint to build the given loop object
-int
-StructureData::new_jump_and_cutpoint( protocols::loops::Loop const & loop, core::Size const loop_overlap )
-{
-	core::Size const startres = loop_start_without_overlap( *pose_, loop.start(), loop_overlap );
-	core::Size const stopres = loop_stop_without_overlap( *pose_, loop.stop(), loop_overlap );
-	core::Size const cutres = loop.cut();
-	core::Size saferes1_dist = 0;
-	core::Size saferes1 = 0;
-	// find the segment containing the cutpoint and set it
-	for ( SegmentMap::iterator res = segments_.begin(); res != segments_.end(); ++res ) {
-		if ( res->second.contains( cutres ) ) {
-			res->second.set_cutpoint( cutres - res->second.nterm_resi() + 1 );
-			break;
-		}
-	}
-	// find the closest two safe residues to the loop and add a jump between them.
-	for ( SegmentMap::const_iterator res = segments_.begin(); res != segments_.end(); ++res ) {
-		Segment const & resis = res->second;
-		if ( resis.safe() >= startres ) {
-			continue;
-		}
-		if ( !saferes1 || ( startres-resis.safe() < saferes1_dist ) ) {
-			saferes1 = resis.safe();
-			saferes1_dist = startres-saferes1;
-		}
-	}
-	core::Size saferes2_dist = 0;
-	core::Size saferes2 = 0;
-	for ( SegmentMap::const_iterator res = segments_.begin(); res != segments_.end(); ++res ) {
-		Segment const & resis = res->second;
-		if ( resis.safe() <= stopres ) {
-			continue;
-		}
-		if ( !saferes2 || ( resis.safe()-stopres < saferes2_dist ) ) {
-			saferes2 = resis.safe();
-			saferes2_dist = saferes2-stopres;
-		}
-	}
-
-	assert( saferes1 < cutres );
-	assert( saferes2 > cutres );
-	TR << "Inserting jump " << saferes1 << "__" << saferes2 << " with cut at " << cutres << std::endl;
-
-	// modify fold tree
-	core::kinematics::FoldTree ft = pose()->fold_tree();
-	int const newjump = ft.new_jump( saferes1, saferes2, cutres );
-	if ( !ft.check_fold_tree() ) {
-		TR.Error << "FOLDTREE=" << ft << std::endl;
-		TR.Error << "StructureData=" << *this << std::endl;
-	}
-	assert( ft.check_fold_tree() );
-	pose_->fold_tree( ft );
-
-	// remove terminal variants (if applicable)
-	if ( pose_->residue(cutres).is_upper_terminus() ) {
-		remove_upper_terminus_variant_type( cutres );
-	}
-	if ( pose_->residue(cutres+1).is_lower_terminus() ) {
-		remove_lower_terminus_variant_type( cutres+1 );
-	}
-	// add cutpoint variant types
-	add_cutpoint_variants( cutres );
-	rebuild_missing_atoms( *pose_, cutres );
-	rebuild_missing_atoms( *pose_, cutres+1 );
-
-	chains_from_termini();
-
-	// they should ALWAYS be on the same chain at this point
-	TR.Debug << pose_->fold_tree() << std::endl;
-	TR.Debug << "chain of " << saferes1 << " = " << pose_->chain( saferes1 ) << " chain of " << saferes2 << " = " << pose_->chain( saferes2 ) << std::endl;
-	for ( core::Size i=1, endi=pose_->total_residue(); i<=endi; ++i ) {
-		TR.Debug << i << " " << pose_->residue(i).name() << std::endl;
-	}
-	assert( pose_->chain( saferes1 ) == pose_->chain( saferes2 ) );
-
-	return newjump;
-}
-
 /// @brief determine pose chains based on termini
 void
 StructureData::chains_from_termini()
 {
 	assert( pose_ );
 	pose_->conformation().chains_from_termini();
-}
-
-/// @brief add lower cutpoint to residue cut and upper cutpoint to residue cut+1
-void
-StructureData::add_cutpoint_variants( core::Size const cut_res )
-{
-	assert( pose_ );
-	protocols::forge::methods::add_cutpoint_variants( *pose_, cut_res );
 }
 
 /// @brief adds upper terminal variant to a residue
@@ -1267,32 +1179,6 @@ StructureData::switch_residue_type_set( std::string const & typeset )
 {
 	assert( pose_ );
 	core::util::switch_to_residue_type_set( *pose_, typeset );
-}
-
-/// @brief applies an arbitrary mover to the contained pose
-void
-StructureData::apply_mover( protocols::moves::Mover & mover )
-{
-	core::Size const orig_len = pose_->total_residue();
-	mover.apply( *pose_ );
-	assert( orig_len == pose_->total_residue() );
-}
-
-/// @brief applies an arbitrary mover to the contained pose
-void
-StructureData::apply_mover( protocols::moves::MoverOP mover )
-{
-	assert( mover );
-	apply_mover( *mover );
-}
-
-/// @brief removes constraints added by the given RCG
-void
-StructureData::remove_constraints_from_pose( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
-{
-	assert( pose_ );
-	assert( rcg );
-	rcg->remove_remodel_constraints_from_pose( *pose_ );
 }
 
 /// @brief aligns the upper-terminal residue of segment1 to the start "anchor" residue of segment2
@@ -1942,9 +1828,9 @@ StructureData::add_segment(
 		bool const is_loop,
 		bool const nterm_included,
 		bool const cterm_included,
-	 	std::string const & lower_conn,
+		std::string const & lower_conn,
 		std::string const & upper_conn,
-	 	std::string const & ss,
+		std::string const & ss,
 		utility::vector1< std::string > const & abego	)
 {
 	Segment res( segment_length, local_safe_residue, local_cutpoint, movable_group, is_loop, nterm_included, cterm_included, lower_conn, upper_conn, ss, abego );
@@ -2160,6 +2046,27 @@ StructureData::has_segment( std::string const & seg ) const
 			( segments_.find( id() + PARENT_DELIMETER + seg ) != segments_.end() ) );
 }
 
+/// @brief merge all data and segments from "other" into this StructureData
+void
+StructureData::merge( StructureData const & other )
+{
+	// this should only be called on multi-chain permutations
+	runtime_assert( is_multi() );
+
+	// TODO: get rid of this
+	sub_perms_.push_back( other.clone() );
+
+	core::Size const movable_group_new = count_movable_groups() + 1;
+	for ( StringList::const_iterator c = other.segments_begin(); c != other.segments_end(); ++c ) {
+		Segment newseg = other.segment( *c );
+		newseg.movable_group = movable_group_new;
+		add_segment( *c, newseg, segment_order_.end() );
+		TR.Debug << "Added " << std::make_pair( *c, newseg ) << std::endl;
+	}
+
+	copy_data( other, false );
+}
+
 /// @brief adds a subpermutation to a permutation and updates required info
 void
 StructureData::add_subperm( StructureDataCOP perm )
@@ -2323,7 +2230,7 @@ StructureData::connect_segments(
 		std::string const & segment2_n )
 {
 	// connected segments
-	if ( has_free_upper_terminus(segment1_c) && has_free_lower_terminus(segment2_n) ) {
+	if ( has_free_upper_terminus( segment1_c ) && has_free_lower_terminus( segment2_n ) ) {
 		mark_connected( segment1_c, segment2_n );
 	}
 	assert( segment(segment1_c).upper_segment() == segment2_n );
@@ -2468,6 +2375,7 @@ StructureData::set_pose( core::pose::PoseOP new_pose )
 		new_pose->conformation().chains_from_termini();
 	}
 	pose_ = new_pose;
+	save_into_pose();
 }
 
 /// @brief based on the pose, determines the jump number for the jump pointing to the segment specified
@@ -2533,6 +2441,33 @@ StructureData::count_movable_groups() const
 	return movable_groups().size();
 }
 
+bool
+StructureData::has_data_int( std::string const & segment_id, std::string const & data_name ) const
+{
+	return has_data_int( segment_id + DATA_DELIMETER + data_name );
+}
+
+/// @brief check for real number data
+bool
+StructureData::has_data_real( std::string const & segment_id, std::string const & data_name ) const
+{
+	return has_data_real( segment_id + DATA_DELIMETER + data_name );
+}
+
+/// @brief gets real number data
+bool
+StructureData::has_data_str( std::string const & segment_id, std::string const & data_name ) const
+{
+	return has_data_str( segment_id + DATA_DELIMETER + data_name );
+}
+
+/// @brief sets integer number data
+void
+StructureData::set_data_int( std::string const & segment_id, std::string const & data_name, int const val )
+{
+	set_data_int( segment_id + DATA_DELIMETER + data_name, val );
+}
+
 /// @brief sets integer number data
 void
 StructureData::set_data_int( std::string const & data_name, int const val )
@@ -2543,6 +2478,13 @@ StructureData::set_data_int( std::string const & data_name, int const val )
 	} else {
 		it->second = val;
 	}
+}
+
+/// @brief sets real number data
+void
+StructureData::set_data_real( std::string const & segment_id, std::string const & data_name, core::Real const val )
+{
+	set_data_real( segment_id + DATA_DELIMETER + data_name, val );
 }
 
 /// @brief sets real number data
@@ -2559,6 +2501,13 @@ StructureData::set_data_real( std::string const & data_name, core::Real const va
 
 /// @brief sets string data
 void
+StructureData::set_data_str( std::string const & segment_id, std::string const & data_name, std::string const & val )
+{
+	return set_data_str( segment_id + DATA_DELIMETER + data_name, val );
+}
+
+/// @brief sets string data
+void
 StructureData::set_data_str( std::string const & data_name, std::string const & val )
 {
 	std::map< std::string, std::string >::iterator it = data_str_.find(data_name);
@@ -2569,6 +2518,13 @@ StructureData::set_data_str( std::string const & data_name, std::string const & 
 	}
 }
 
+/// @brief gets int number data
+int
+StructureData::get_data_int( std::string const & segment_id, std::string const & data_name ) const
+{
+	return get_data_int( segment_id + DATA_DELIMETER + data_name );
+}
+
 /// @brief gets real number data
 int
 StructureData::get_data_int( std::string const & data_name ) const
@@ -2577,12 +2533,19 @@ StructureData::get_data_int( std::string const & data_name ) const
 	if ( it == data_int_.end() ) {
 		std::stringstream err( "In StructureData: " );
 		err << id() << ": " << data_name << " not found in data map." << std::endl;
-		for ( it=data_int_.begin(); it != data_int_.end(); ++it ) {
+		for ( it = data_int_.begin(); it != data_int_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
+}
+
+/// @brief gets real number data
+core::Real
+StructureData::get_data_real( std::string const & segment_id, std::string const & data_name ) const
+{
+	return get_data_real( segment_id + DATA_DELIMETER + data_name );
 }
 
 /// @brief gets real number data
@@ -2593,12 +2556,19 @@ StructureData::get_data_real( std::string const & data_name ) const
 	if ( it == data_real_.end() ) {
 		std::stringstream err( "In StructureData: " );
 		err << id() << ": " << data_name << " not found in data map." << std::endl;
-		for ( it=data_real_.begin(); it != data_real_.end(); ++it ) {
+		for ( it = data_real_.begin(); it != data_real_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
 	}
 	return it->second;
+}
+
+/// @brief gets string data
+std::string const &
+StructureData::get_data_str( std::string const & segment_id, std::string const & data_name ) const
+{
+	return get_data_str( segment_id + DATA_DELIMETER + data_name );
 }
 
 /// @brief gets string data
@@ -2609,7 +2579,7 @@ StructureData::get_data_str( std::string const & data_name ) const
 	if ( it == data_str_.end() ) {
 		std::stringstream err( "In StructureData: " );
 		err << id() << ": " << data_name << " not found in data map." << std::endl;
-		for ( it=data_str_.begin(); it != data_str_.end(); ++it ) {
+		for ( it = data_str_.begin(); it != data_str_.end(); ++it ) {
 			err << it->first << " : " << it->second << std::endl;
 		}
 		throw utility::excn::EXCN_Msg_Exception( err.str() );
@@ -2684,9 +2654,9 @@ StructureData::segment_name( core::Size const res ) const
 			return it->first;
 		}
 	}
-	TR.Error << " Residue " << res << " was not found in the residues map!" << std::endl;
-	assert( false );
-	utility_exit();
+	std::stringstream err;
+	err << " Residue " << res << " was not found in the residues map!" << std::endl;
+	throw utility::excn::EXCN_Msg_Exception( err.str() );
 }
 
 /// @brief finds and returns the loop residues
@@ -2895,21 +2865,140 @@ StructureData::check_consistency() const
 core::Size
 StructureData::movable_group( std::string const & id ) const
 {
-	return segment(id).movable_group;
+	return segment( id ).movable_group;
 }
 
 /// @brief tells if the segment given has an available lower terminus
 bool
 StructureData::has_free_lower_terminus( std::string const & id_val ) const
 {
-	return segment(id_val).has_free_lower_terminus();
+	if ( segments_.find( id_val ) == segments_.end() ) {
+		return false;
+	}
+	return segment( id_val ).has_free_lower_terminus();
 }
 
 /// @brief tells if the segment given has an available lower terminus
 bool
 StructureData::has_free_upper_terminus( std::string const & id_val ) const
 {
-	return segment(id_val).has_free_upper_terminus();
+	if ( segments_.find( id_val ) == segments_.end() ) {
+		return false;
+	}
+	return segment( id_val ).has_free_upper_terminus();
+}
+
+/// @brief add lower cutpoint to residue cut and upper cutpoint to residue cut+1
+void
+StructureData::add_cutpoint_variants( core::Size const cut_res )
+{
+	assert( pose_ );
+	protocols::forge::methods::add_cutpoint_variants( *pose_, cut_res );
+}
+
+/// @brief applies an arbitrary mover to the contained pose
+void
+StructureData::apply_mover( protocols::moves::Mover & mover )
+{
+	core::Size const orig_len = pose_->total_residue();
+	mover.apply( *pose_ );
+	assert( orig_len == pose_->total_residue() );
+}
+
+/// @brief applies an arbitrary mover to the contained pose
+void
+StructureData::apply_mover( protocols::moves::MoverOP mover )
+{
+	assert( mover );
+	apply_mover( *mover );
+}
+
+/// @brief removes constraints added by the given RCG
+void
+StructureData::remove_constraints_from_pose( protocols::forge::remodel::RemodelConstraintGeneratorOP rcg )
+{
+	assert( pose_ );
+	assert( rcg );
+	rcg->remove_remodel_constraints_from_pose( *pose_ );
+}
+
+/// @brief creates a new jump and cutpoint to build the given loop object
+int
+StructureData::new_jump_and_cutpoint( protocols::loops::Loop const & loop, core::Size const loop_overlap )
+{
+	core::Size const startres = loop_start_without_overlap( *pose_, loop.start(), loop_overlap );
+	core::Size const stopres = loop_stop_without_overlap( *pose_, loop.stop(), loop_overlap );
+	core::Size const cutres = loop.cut();
+	core::Size saferes1_dist = 0;
+	core::Size saferes1 = 0;
+	// find the segment containing the cutpoint and set it
+	for ( SegmentMap::iterator res = segments_.begin(); res != segments_.end(); ++res ) {
+		if ( res->second.contains( cutres ) ) {
+			res->second.set_cutpoint( cutres - res->second.nterm_resi() + 1 );
+			break;
+		}
+	}
+	// find the closest two safe residues to the loop and add a jump between them.
+	for ( SegmentMap::const_iterator res = segments_.begin(); res != segments_.end(); ++res ) {
+		Segment const & resis = res->second;
+		if ( resis.safe() >= startres ) {
+			continue;
+		}
+		if ( !saferes1 || ( startres-resis.safe() < saferes1_dist ) ) {
+			saferes1 = resis.safe();
+			saferes1_dist = startres-saferes1;
+		}
+	}
+	core::Size saferes2_dist = 0;
+	core::Size saferes2 = 0;
+	for ( SegmentMap::const_iterator res = segments_.begin(); res != segments_.end(); ++res ) {
+		Segment const & resis = res->second;
+		if ( resis.safe() <= stopres ) {
+			continue;
+		}
+		if ( !saferes2 || ( resis.safe()-stopres < saferes2_dist ) ) {
+			saferes2 = resis.safe();
+			saferes2_dist = saferes2-stopres;
+		}
+	}
+
+	assert( saferes1 < cutres );
+	assert( saferes2 > cutres );
+	TR << "Inserting jump " << saferes1 << "__" << saferes2 << " with cut at " << cutres << std::endl;
+
+	// modify fold tree
+	core::kinematics::FoldTree ft = pose()->fold_tree();
+	int const newjump = ft.new_jump( saferes1, saferes2, cutres );
+	if ( !ft.check_fold_tree() ) {
+		TR.Error << "FOLDTREE=" << ft << std::endl;
+		TR.Error << "StructureData=" << *this << std::endl;
+	}
+	assert( ft.check_fold_tree() );
+	pose_->fold_tree( ft );
+
+	// remove terminal variants (if applicable)
+	if ( pose_->residue(cutres).is_upper_terminus() ) {
+		remove_upper_terminus_variant_type( cutres );
+	}
+	if ( pose_->residue(cutres+1).is_lower_terminus() ) {
+		remove_lower_terminus_variant_type( cutres+1 );
+	}
+	// add cutpoint variant types
+	add_cutpoint_variants( cutres );
+	rebuild_missing_atoms( *pose_, cutres );
+	rebuild_missing_atoms( *pose_, cutres+1 );
+
+	chains_from_termini();
+
+	// they should ALWAYS be on the same chain at this point
+	TR.Debug << pose_->fold_tree() << std::endl;
+	TR.Debug << "chain of " << saferes1 << " = " << pose_->chain( saferes1 ) << " chain of " << saferes2 << " = " << pose_->chain( saferes2 ) << std::endl;
+	for ( core::Size i=1, endi=pose_->total_residue(); i<=endi; ++i ) {
+		TR.Debug << i << " " << pose_->residue(i).name() << std::endl;
+	}
+	assert( pose_->chain( saferes1 ) == pose_->chain( saferes2 ) );
+
+	return newjump;
 }
 
 /// output

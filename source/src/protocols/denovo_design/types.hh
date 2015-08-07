@@ -36,7 +36,6 @@ namespace protocols {
 namespace denovo_design {
 
 	static char const PARENT_DELIMETER = '.';
-	static char const DATA_DELIMETER = '#';
 
 	typedef std::list< std::string > StringList;
 	typedef utility::vector1< std::string > StringVec;

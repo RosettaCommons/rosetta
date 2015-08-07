@@ -92,7 +92,7 @@ Picker::get_framelist(
 
 	// find ss key
 	std::string const key = ss_key( complete_aa, complete_ss, complete_abego, start_res, end_res, frag_length );
-	TR << "Fragment SS Key=" << key << std::endl;
+	TR.Debug << "Fragment SS Key=" << key << std::endl;
 
 	// look for fragments in cache
 	std::map< std::string, core::fragment::FrameList >::iterator it = fragcache_.find(key);

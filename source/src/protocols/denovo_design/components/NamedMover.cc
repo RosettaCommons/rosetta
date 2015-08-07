@@ -16,6 +16,7 @@
 #include <protocols/denovo_design/components/NamedMover.hh>
 
 //Project Headers
+#include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/util.hh>
 
 //Protocols Headers
@@ -77,7 +78,7 @@ NamedMover::data_name( std::string const & name_of_data ) const
 {
 	debug_assert( id() != "" );
 	debug_assert( name_of_data != "" );
-	return id() + DATA_DELIMETER + name_of_data;
+	return id() + StructureData::DATA_DELIMETER + name_of_data;
 }
 
 /// @brief adds prefix if necessary, returns result

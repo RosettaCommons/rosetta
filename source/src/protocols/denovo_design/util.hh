@@ -107,6 +107,12 @@ extract_int( core::Real & num, core::Size const m, core::Size const n );
 void
 copy_rotamers( components::StructureData & dest, core::pose::Pose const & src );
 
+/// @brief gets all strand pairings from a perm
+/// @details if use_register_shift=0, the returned register shift is 99
+std::string get_strandpairings(
+		components::StructureData const & perm,
+		bool const use_register_shift );
+
 } // denovo_design
 } // protocols
 

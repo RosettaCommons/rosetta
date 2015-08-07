@@ -18,6 +18,7 @@
 
 //Project Headers
 #include <protocols/denovo_design/components/StructureData.hh>
+#include <protocols/denovo_design/components/Segment.hh>
 
 //Protocol Headers
 #include <protocols/simple_moves/MutateResidue.hh>
@@ -195,8 +196,11 @@ void add_remark( core::pose::Remarks & remarks, core::Size const num, std::strin
 core::Size
 loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, core::Size const overlap )
 {
+	TR << "Loop stop " << stopres << " overlap " << overlap << std::endl;
+
 	// calculate start component without overlap
-	for ( core::Size i=1; i<=overlap; ++i ) {
+	for ( core::Size i = 1; i <= overlap; ++i ) {
+		TR << "i=" << i << " Loop stop " << stopres << " overlap " << overlap << std::endl;
 		// see if this loop is lower-terminal
 		if ( ( stopres == 1 ) || //loop starts at first residue
 				( ! pose.residue( stopres-1 ).is_protein() ) || //residue before start is not protein
@@ -213,8 +217,10 @@ loop_stop_without_overlap( core::pose::Pose const & pose, core::Size stopres, co
 core::Size
 loop_start_without_overlap( core::pose::Pose const & pose, core::Size startres, core::Size const overlap )
 {
+	TR << "Loop start " << startres << " overlap " << overlap << std::endl;
 	// calculate start component without overlap
-	for ( core::Size i=1; i<=overlap; ++i ) {
+	for ( core::Size i = 1; i <= overlap; ++i ) {
+		TR << "i=" << i << " Loop start " << startres << " overlap " << overlap << std::endl;
 		// see if this loop is upper-terminal
 		if ( ( startres == pose.total_residue() ) || // loop end at last residue
 				( !pose.residue( startres+1 ).is_protein() ) || // residue after end is not protein
@@ -404,6 +410,143 @@ copy_rotamers( components::StructureData & dest, core::pose::Pose const & src )
 	// re-detect disulfides
 	core::scoring::ScoreFunctionOP sfx = core::scoring::get_score_function();
 	dest.detect_disulfides( sfx );
+}
+
+std::pair< std::string, std::string >
+parse_strand_pair( std::string const & strand_pair_str )
+{
+	StringVec const strandvec = utility::string_split( strand_pair_str, ',' );
+	if ( strandvec.size() != 2 ) {
+		std::stringstream err;
+		err << "The given strand pair (" << strand_pair_str << ") has more or less than 2 values. It must have exactly two.  Edge strands can be represented by blanks (e.g. \"\",sheet.s2 )." << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
+	return std::make_pair( strandvec[ 1 ], strandvec[ 2 ] );
+}
+
+std::string
+strand_pair_str(
+		components::StructureData const & perm,
+		std::string const & strand1,
+		std::string const & strand2,
+		std::map< std::string, core::Size > const & name_to_strandnum,
+		bool use_register_shift )
+{
+	if ( strand1.empty() || strand2.empty() )
+		return "";
+
+	std::stringstream out;
+	bool in_order = true;
+	core::Size const snum1 = name_to_strandnum.find( strand1 )->second;
+	core::Size const snum2 = name_to_strandnum.find( strand2 )->second;
+	if ( snum1 < snum2 ) {
+		out << snum1 << '-' << snum2;
+	} else if ( snum1 > snum2 ) {
+		out << snum2 << '-' << snum1;
+		in_order = false;
+	} else if ( snum1 == snum2 ) {
+			std::stringstream ss;
+			ss << "Two strands have the same number " << snum1 << " -- check your input! name_to_strandnum=" << name_to_strandnum << " strandnames=" << strand1 << "," << strand2 << std::endl;
+			throw utility::excn::EXCN_BadInput( ss.str() );
+	}
+
+	int const orientation = perm.get_data_int( strand2, "orientation" );
+	int const prevorientation = perm.get_data_int( strand1, "orientation" );
+
+	bool parallel = true;
+	out << '.';
+	if ( orientation == prevorientation ) {
+		out << 'P';
+	} else {
+		parallel = false;
+		out << 'A';
+	}
+	out << '.';
+
+	int const shift = perm.get_data_int( strand2, "shift" );
+
+	if ( use_register_shift ) {
+		// determine "Nobu-style" register shift
+		if ( parallel && in_order ) {
+			// i + 1's shift is the register shift
+			out << shift;
+		} else if ( parallel && ! in_order ) {
+			// i + 1's shift is simply made negative
+			out << -shift;
+		} else if ( ! parallel && in_order ) {
+			// I'm pretty sure we just use i+1's shift here
+			out << shift;
+		} else {
+			// most complicated
+			int const len1 = static_cast< int >( perm.segment( strand2 ).length() );
+			int const len2 = static_cast< int >( perm.segment( strand1 ).length() );
+			out << len2 - len1 - shift;
+		}
+	} else {
+		out << 99;
+	}
+	return out.str();
+}
+
+std::string
+get_strandpairings(
+		components::StructureData const & perm,
+		bool const use_register_shift )
+{
+	// initiate strand pairing check
+	std::stringstream sheet_str;
+	std::map< std::string, core::Size > name_to_strandnum;
+	StringVec strandnames;
+	core::Size strandcount = 0;
+	for ( StringList::const_iterator s = perm.segments_begin(); s != perm.segments_end(); ++s ) {
+		// scan to see if this is a strand
+		bool strand = false;
+		for ( std::string::const_iterator ch = perm.segment( *s ).ss().begin(); ch != perm.segment( *s ).ss().end(); ++ch ) {
+			if ( *ch == 'E' ) {
+				strand = true;
+				break;
+			}
+		}
+		if ( !strand ) {
+			continue;
+		}
+
+		++strandcount;
+		name_to_strandnum[ *s ] = strandcount;
+		strandnames.push_back( *s );
+	}
+	TR << "name_to_strandnum=" << name_to_strandnum << " name_to_compidx=" << strandnames << std::endl;
+
+	// now build sheet topology string
+	std::set< std::pair< std::string, std::string > > visited;
+	for ( StringVec::const_iterator s = strandnames.begin(); s != strandnames.end(); ++s ) {
+		std::pair< std::string, std::string > const spair =
+			parse_strand_pair( perm.get_data_str( *s, "paired_strands" ) );
+		TR << "Found strand pair " << spair.first << " : " << spair.second << std::endl;
+
+		if ( visited.find( std::make_pair( spair.first, *s ) ) == visited.end() ) {
+			visited.insert( std::make_pair( spair.first, *s ) );
+			visited.insert( std::make_pair( *s, spair.first ) );
+			std::string const pair_str = strand_pair_str( perm, spair.first, *s, name_to_strandnum, use_register_shift );
+			if ( !pair_str.empty() ) {
+				if ( sheet_str.str().size() )
+					sheet_str << ';';
+				sheet_str << pair_str;
+			}
+		}
+
+		if ( visited.find( std::make_pair( *s, spair.second ) ) == visited.end() ) {
+			visited.insert( std::make_pair( spair.second, *s ) );
+			visited.insert( std::make_pair( *s, spair.second ) );
+			std::string const pair_str = strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
+			if ( !pair_str.empty() ) {
+				if ( sheet_str.str().size() )
+					sheet_str << ';';
+				sheet_str << strand_pair_str( perm, *s, spair.second, name_to_strandnum, use_register_shift );
+			}
+		}
+	}
+	return sheet_str.str();
 }
 
 } // protocols

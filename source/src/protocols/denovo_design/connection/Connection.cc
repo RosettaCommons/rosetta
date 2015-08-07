@@ -75,10 +75,6 @@ std::ostream & operator<<( std::ostream & os, Connection::Motif const & motif ) 
 }
 
 ///  ---------------------------------------------------------------------------------
-///  NamedMover main code:
-///  ---------------------------------------------------------------------------------
-
-///  ---------------------------------------------------------------------------------
 ///  Connection main code:
 ///  ---------------------------------------------------------------------------------
 
@@ -446,140 +442,146 @@ Connection::parse_motif( std::string const & motif_str ) const
 core::Size
 Connection::build_len( components::StructureData const & perm ) const
 {
-	return perm.get_data_int( data_name("length") );
+	return perm.get_data_int( id(), "length" );
 }
 
 /// @brief SS of the connection to be built
 std::string
 Connection::build_ss( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("ss") );
+	return perm.get_data_str( id(), "ss" );
 }
 
 /// @brief abego of the connection to be built
 std::string
 Connection::build_abego( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("abego") );
+	return perm.get_data_str( id(), "abego" );
 }
 
 /// @brief location of the cut to be placed (within the loop)
 core::Size
 Connection::cut_resi( components::StructureData const & perm ) const
 {
-	return perm.get_data_int( data_name("cut_resi") );
+	return perm.get_data_int( id(), "cut_resi" );
 }
 
 /// @brief stores cut point within the loop into the permutation
 void
 Connection::set_cut_resi( components::StructureData & perm, core::Size const cut_val ) const
 {
-	perm.set_data_int( data_name("cut_resi"), cut_val );
+	perm.set_data_int( id(), "cut_resi", cut_val );
 }
 
 /// @brief stores build length in the permutation
 void
 Connection::set_build_len( components::StructureData & perm, core::Size const len_val ) const
 {
-	perm.set_data_int( data_name("length"), len_val );
+	perm.set_data_int( id(), "length", len_val );
 }
 
 /// @brief stores build secondary structure in the permutation
 void
 Connection::set_build_ss( components::StructureData & perm, std::string const & ss_val ) const
 {
-	perm.set_data_str( data_name("ss"), ss_val );
+	perm.set_data_str( id(), "ss" , ss_val );
 }
 
 /// @brief stores build abego in the permutation
 void
 Connection::set_build_abego( components::StructureData & perm, std::string const & abego_val ) const
 {
-	perm.set_data_str( data_name("abego"), abego_val );
+	perm.set_data_str( id(), "abego", abego_val );
 }
 
 /// @brief get id of the component 1 to be built
 std::string const &
 Connection::lower_segment_id( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("segment1") );
+	return perm.get_data_str( id(), "segment1" );
 }
 
 /// @brief get id of the component 2 to be built
 std::string const &
 Connection::upper_segment_id( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("segment2") );
+	return perm.get_data_str( id(), "segment2" );
 }
 
 /// @brief get id of the component 2 to be built
 std::string const &
 Connection::comp1_lower( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("segment1_lower") );
+	return perm.get_data_str( id(), "segment1_lower" );
 }
 
 /// @brief get id of the component 2 to be built
 std::string const &
 Connection::comp2_upper( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("segment2_upper") );
+	return perm.get_data_str( id(), "segment2_upper" );
 }
 
 /// @brief get id of the lower component actually being connected
 std::string const &
 Connection::loop_lower( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("loop_lower") );
+	return perm.get_data_str( id(), "loop_lower" );
 }
 
 /// @brief get id of the upper component actually being connected
 std::string const &
 Connection::loop_upper( components::StructureData const & perm ) const
 {
-	return perm.get_data_str( data_name("loop_upper") );
+	return perm.get_data_str( id(), "loop_upper" );
 }
 
 /// @brief set id of the component 1 to be built
 void
 Connection::set_lower_segment_id( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("segment1"), add_parent_prefix(comp) );
+	//perm.set_data_str( data_name( "segment1" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "segment1", comp );
 }
 
 /// @brief set id of the component 2 to be built
 void
 Connection::set_upper_segment_id( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("segment2"), add_parent_prefix(comp) );
+	//perm.set_data_str( data_name( "segment2" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "segment2", comp );
 }
 
 /// @brief set id of the component 1 to be built
 void
 Connection::set_comp1_lower( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("segment1_lower"), add_parent_prefix(comp) );
+	//perm.set_data_str( data_name( "segment1_lower" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "segment1_lower", comp );
 }
 
 /// @brief set id of the component 2 to be built
 void
 Connection::set_comp2_upper( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("segment2_upper"), add_parent_prefix(comp) );
+	//perm.set_data_str( id(), "segment2_upper" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "segment2_upper", comp );
 }
 
 /// @brief set id of the lower component actually being connected
 void
 Connection::set_loop_lower( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("loop_lower"), add_parent_prefix(comp) );
+	//perm.set_data_str( data_name( "loop_lower" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "loop_lower", comp );
 }
 
 /// @brief set id of the upper component actually being connected
 void
 Connection::set_loop_upper( components::StructureData & perm, std::string const & comp ) const
 {
-	perm.set_data_str( data_name("loop_upper"), add_parent_prefix(comp) );
+	//perm.set_data_str( data_name( "loop_upper" ), add_parent_prefix(comp) );
+	perm.set_data_str( id(), "loop_upper", comp );
 }
 
 /// @brief performs setup and applies the connection
@@ -591,12 +593,12 @@ Connection::apply( core::pose::Pose & pose )
 		throw utility::excn::EXCN_Msg_Exception( "No name is specified to connection -- connections must be named!" );
 	}
 	bool success = false;
-	components::StructureDataOP orig = components::StructureData::create_from_pose( pose, "Connection_" + this->id() );
+	components::StructureDataOP orig = components::StructureData::create_from_pose( pose, "" );
 	components::StructureDataOP perm;
-	for ( core::Size i=1; i<=trials_; ++i ) {
+	for ( core::Size i = 1; i <= trials_; ++i ) {
 		TR.Debug << "Starting trial " << i << " for connection " << id() << std::endl;
 		perm = orig->clone();
-		assert( perm );
+		debug_assert( perm );
 		set_last_move_status( setup_permutation( *perm ) );
 		if ( get_last_move_status() != protocols::moves::MS_SUCCESS ) {
 			continue;
@@ -639,7 +641,7 @@ Connection::apply_permutation( components::StructureData & perm )
 	components::StructureDataOP orig = perm.clone();
 
 	//perform setup and add necessary residues
-	setup(perm);
+	setup( perm );
 
 	// do the work
 	apply_connection( perm );
@@ -732,13 +734,18 @@ Connection::find_available_upper_termini( components::StructureData const & perm
 	if ( local_ids.empty() ) {
 		local_ids = perm.available_upper_termini();
 	}
+
 	utility::vector1< std::string > mod;
-	for ( core::Size i=1; i<=local_ids.size(); ++i ) {
-		std::string const segname = add_parent_prefix( local_ids[i] );
-		if ( perm.has_free_upper_terminus( segname ) ) {
-			mod.push_back( segname );
+	for ( StringVec::const_iterator i = local_ids.begin(); i != local_ids.end(); ++i ) {
+		if ( perm.has_free_upper_terminus( *i ) ) {
+			mod.push_back( *i );
+		} else {
+			std::string const segname = add_parent_prefix( *i );
+			if ( perm.has_free_upper_terminus( segname ) )
+				mod.push_back( segname );
 		}
 	}
+	TR.Debug << "Available upper termini: " << mod << std::endl;
 	return mod;
 }
 
@@ -750,13 +757,18 @@ Connection::find_available_lower_termini( components::StructureData const & perm
 	if ( local_ids.empty() ) {
 		local_ids = perm.available_lower_termini();
 	}
+
 	utility::vector1< std::string > mod;
-	for ( core::Size i=1; i<=local_ids.size(); ++i ) {
-		std::string const segname = add_parent_prefix( local_ids[i] );
-		if ( perm.has_free_lower_terminus( segname ) ) {
-			mod.push_back( segname );
+	for ( StringVec::const_iterator i = local_ids.begin(); i != local_ids.end(); ++i ) {
+		if ( perm.has_free_lower_terminus( *i ) ) {
+			mod.push_back( *i );
+		} else {
+			std::string const segname = add_parent_prefix( *i );
+			if ( perm.has_free_lower_terminus( segname ) )
+				mod.push_back( segname );
 		}
 	}
+	TR.Debug << "Available lower termini: " << mod << std::endl;
 	return mod;
 }
 
@@ -791,7 +803,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	// determine alternate id -- strip off all parent names
 	std::string alt_id = id();
-	for ( StringList::const_iterator c=perm.segments_begin(), endc=perm.segments_end(); c!=endc; ++c ) {
+	for ( StringList::const_iterator c = perm.segments_begin(); c != perm.segments_end(); ++c ) {
 		if ( boost::ends_with( *c, id() ) ) {
 			alt_id = *c;
 		}
@@ -823,12 +835,10 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	assert( local_comp1_ids.size() > 0 );
 	assert( local_comp2_ids.size() > 0 );
-	TR.Debug << "Comp1_ids = " << local_comp1_ids << std::endl;
-	TR.Debug << "Comp2_ids = " << local_comp2_ids << std::endl;
 
 	std::set< core::Size > lenset;
 	if ( idealized_abego_ ) {
-		for ( MotifList::const_iterator m=motifs_.begin(), endm=motifs_.end(); m != endm; ++m ) {
+		for ( MotifList::const_iterator m = motifs_.begin(); m != motifs_.end(); ++m ) {
 			lenset.insert( m->len );
 		}
 	}
@@ -846,8 +856,8 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 			MotifList motifs;
 			if ( idealized_abego_ ) {
 				motifs = calc_idealized_motifs(
-						perm.abego()[ perm.segment(local_comp1_ids[i]).stop() ],
-						perm.abego()[ perm.segment(local_comp2_ids[j]).start() ],
+						perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ],
+						perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ],
 						lenset );
 			} else {
 				motifs = motifs_;
@@ -859,10 +869,10 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 				core::Real avg_dist = 0.0;
 				if ( use_distance ) {
 					avg_dist = calc_approx_loop_length(
-							perm.abego()[perm.segment(local_comp1_ids[i]).stop()] +
+							perm.abego()[ perm.segment( local_comp1_ids[i] ).stop() ] +
 							motifs[k].abego +
-							perm.abego()[perm.segment(local_comp2_ids[j]).start()] );
-					avg_dist /= static_cast< core::Real >(motifs[k].len);
+							perm.abego()[ perm.segment( local_comp2_ids[j] ).start() ] );
+					avg_dist /= static_cast< core::Real >( motifs[k].len );
 				}
 				if ( perm.are_connectable(
 							local_comp1_ids[i],
@@ -887,12 +897,13 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 	}
 
 	// now we just choose a valid combo from the list
-	core::Size const combo_idx(extract_int( random, 1, valid_idxs.size() ) );
+	core::Size const combo_idx = extract_int( random, 1, valid_idxs.size() );
 	assert( valid_idxs[combo_idx].size() == 3 );
 
 	// remove anchors
-	std::string const & c1 = local_comp1_ids[valid_idxs[combo_idx][1]];
-	std::string const & c2 = local_comp2_ids[valid_idxs[combo_idx][2]];
+	std::string const & c1 = local_comp1_ids[ valid_idxs[combo_idx][1] ];
+	std::string const & c2 = local_comp2_ids[ valid_idxs[combo_idx][2] ];
+	TR << "C1=" << c1 << " C2=" << c2 << std::endl;
 
 	core::Size motifidx = valid_idxs[combo_idx][3];
 	MotifList motifs;
@@ -907,7 +918,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 
 	assert( motifs.size() );
 	assert( motifs.size() >= motifidx );
-	Motif const & motif = motifs[motifidx];
+	Motif const & motif = motifs[ motifidx ];
 
 	std::pair< std::string, std::string > comp1_segment( perm.termini(c1) );
 	std::pair< std::string, std::string > comp2_segment( perm.termini(c2) );
@@ -928,7 +939,7 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		if ( cut_resis_.size() == 1 ) {
 			set_cut_resi( perm, cut_resis_[1] );
 		} else {
-			set_cut_resi( perm, cut_resis_[extract_int( random, 1, cut_resis_.size() )] );
+			set_cut_resi( perm, cut_resis_[ extract_int( random, 1, cut_resis_.size() ) ] );
 		}
 	} else if ( motif.len == 0 ) {
 		set_cut_resi( perm, 0 );
@@ -938,16 +949,17 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		if ( motif.len == 1 ) {
 			set_cut_resi( perm, 0 );
 		} else {
-			set_cut_resi( perm, extract_int( random, 1, motif.len-1 ) );
+			set_cut_resi( perm, extract_int( random, 1, motif.len - 1 ) );
 		}
 	}
-	assert( ( motif.len == 0 ) || ( cut_resi(perm) < motif.len ) );
+	assert( ( motif.len == 0 ) || ( cut_resi( perm ) < motif.len ) );
 
-	assert( perm.has_free_upper_terminus( loop_lower(perm) ) );
-	assert( perm.has_free_lower_terminus( loop_upper(perm) ) );
-	perm.mark_connected( loop_lower(perm), loop_upper(perm) );
+	assert( perm.has_free_upper_terminus( loop_lower( perm ) ) );
+	assert( perm.has_free_lower_terminus( loop_upper( perm ) ) );
+	perm.mark_connected( loop_lower( perm ), loop_upper( perm ) );
 
-	TR << "Going to connect " << loop_lower(perm) << "-> " << loop_upper(perm) << " len=" << build_len(perm) << " cut=" << cut_resi(perm) << std::endl;
+	TR << "Going to connect " << loop_lower( perm ) << "-> " << loop_upper( perm )
+		<< " len=" << build_len( perm ) << " cut=" << cut_resi( perm ) << std::endl;
 	return protocols::moves::MS_SUCCESS;
 }
 
@@ -1229,7 +1241,7 @@ StapleTomponents::setup_permutation( components::StructureData & perm ) const
 	protocols::moves::MoverStatus retval = setup_from_random( perm, numeric::random::rg().uniform() );
 	// no cutpoint ever for staple connections
 	set_cut_resi( perm, 0 );
-	if ( perm.segment(lower_segment_id(perm)).movable_group == perm.segment(upper_segment_id(perm)).movable_group ) {
+	if ( perm.segment( lower_segment_id( perm ) ).movable_group == perm.segment( upper_segment_id( perm ) ).movable_group ) {
 		TR.Error << "Neither of the chains specified to the connection " << id() << " are movable with respect to one another. If you are using TomponentAssembly, this may be because both components specified are subcomponents of components of the assembly. Group for " << lower_segment_id(perm) << " = " << perm.segment(lower_segment_id(perm)).movable_group << " and " << upper_segment_id(perm) << " = " << perm.segment(upper_segment_id(perm)).movable_group << std::endl;
 		runtime_assert( false	);
 	}
@@ -1240,7 +1252,6 @@ StapleTomponents::setup_permutation( components::StructureData & perm ) const
 void
 StapleTomponents::apply_connection( components::StructureData & perm )
 {
-	TR << perm << std::endl;
 	if ( !perm.pose() ) {
 		perm.delete_trailing_residues( loop_lower(perm) );
 		perm.delete_leading_residues( loop_upper(perm) );
