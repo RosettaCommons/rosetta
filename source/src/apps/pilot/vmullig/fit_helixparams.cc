@@ -19,12 +19,14 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/AtomID.hh>
 #include <devel/init.hh>
 #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
+#include <numeric/conversions.hh>
 
 //Application-specific includes
 #include <numeric/crick_equations/HelixParams.hh>
@@ -57,6 +59,9 @@ OPT_KEY (RealVector, r1_guesses)
 OPT_KEY (RealVector, delta_omega1_guesses)
 OPT_KEY (RealVector, delta_z1_guesses)
 
+OPT_KEY (StringVector, nonideal_angles)
+OPT_KEY (StringVector, nonideal_bondlengths)
+
 /// @brief Set up the options for this pilot app.
 void register_options()
 {
@@ -71,6 +76,9 @@ void register_options()
 	
 	//An empty real vector.
 	utility::vector1 <core::Real> emptyreal;
+
+	//An empty string vector.
+	utility::vector1 <std::string> emptystring;
 
 	//The default vector of residue types
 	utility::vector1<std::string> alavect;
@@ -90,6 +98,9 @@ void register_options()
 	NEW_OPT( r1_guesses, "Initial guesses for the value of r1 of all atoms (the helix radius, in Angstroms).  The guess for the reference atom will be disregarded (r1_guess is used instead).  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
 	NEW_OPT( delta_omega1_guesses, "Initial guesses for the value of delta_omega1 of all atoms (the rotational offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_omega1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
 	NEW_OPT( delta_z1_guesses, "Initial guesses for the value of delta_z1 of all atoms (the axial offset, in Angstroms).  The guess for the reference atom will be disregarded, since delta_z1 is always zero for the reference atom.  Unused if not specified, but if specified, one guess must be provided for each atom.", emptyreal);
+	NEW_OPT( nonideal_angles, "Mainchain bond angles that are nonideal.  These must be specified as a list of the form \"<resnum1> <first_atomname> <resnum2> <second_atomname> <resnum3> <third_atomname> <angle>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the N-CA-C bond angle for the second residue in the repeating unit was 110 degrees, we would use \"-nonideal_angles 2 N 2 CA 2 C 110.0\".  Not used if not specified.", emptystring);
+	NEW_OPT( nonideal_bondlengths, "Mainchain bond lengths that are nonideal.  These must be specified as a list of the form \"<resnum1> <preceding_atomname> <resnum2> <following_atomname> <length>\".  For example, if we were working with alpha-amino acids and we wanted to specify that the CA-C bond length for the second residue in the repeating unit was 1.3 Angstroms, we would use \"-nonideal_bondlengths 2 CA 2 C 1.3\".  Not used if not specified.",  emptystring);
+	
 	return;
 }
 
@@ -136,7 +147,9 @@ void set_pose_conformation(
 	core::pose::Pose &pose,
 	core::Size const total_repeats,
 	core::Size const residues_per_repeat,
-	utility::vector1 <core::Real> const &mainchain_torsions
+	utility::vector1 <core::Real> const &mainchain_torsions,
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > const &nonstandard_bondangle_list,
+	utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > const &nonstandard_bondlength_list
 )
 {
 	using namespace core;
@@ -158,6 +171,25 @@ void set_pose_conformation(
 
 	for(core::Size irepeat=1; irepeat<=total_repeats; ++irepeat) {
 		++ir;
+
+		//Set nonstandard bond angles and bond lengths:
+		for(core::Size j=1, jmax=nonstandard_bondangle_list.size(); j<=jmax; ++j) {
+			runtime_assert_string_msg( nonstandard_bondangle_list[j].first.size() == 3, "Internal program error: nonstandard_bondangle_list vectors are the wrong size." );
+			core::id::AtomID at1( nonstandard_bondangle_list[j].first[1].atomno(), nonstandard_bondangle_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			core::id::AtomID at2( nonstandard_bondangle_list[j].first[2].atomno(), nonstandard_bondangle_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			core::id::AtomID at3( nonstandard_bondangle_list[j].first[3].atomno(), nonstandard_bondangle_list[j].first[3].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			pose.conformation().set_bond_angle( at1, at2, at3, nonstandard_bondangle_list[j].second );
+		}
+		pose.update_residue_neighbors();
+		for(core::Size j=1, jmax=nonstandard_bondlength_list.size(); j<=jmax; ++j) {
+			runtime_assert_string_msg( nonstandard_bondlength_list[j].first.size() == 2, "Internal program error: nonstandard_bondlength_list vectors are the wrong size." );
+			core::id::AtomID at1( nonstandard_bondlength_list[j].first[1].atomno(), nonstandard_bondlength_list[j].first[1].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			core::id::AtomID at2( nonstandard_bondlength_list[j].first[2].atomno(), nonstandard_bondlength_list[j].first[2].rsd() + (irepeat - 1) * residues_per_repeat + 1 );
+			pose.conformation().set_bond_length( at1, at2, nonstandard_bondlength_list[j].second );
+		}
+		pose.update_residue_neighbors();
+
+		//Set torsions:
 		core::Size itors_list(0); //Index of the current torsion in the torsion list.
 		core::Size itors_pose(0); //Index of the current torsion in the pose.
 		while(itors_list < itorsmax) {
@@ -238,6 +270,126 @@ void add_Cu_chains(
 	return;
 }
 
+/// @brief Parse the user flags for nonstandard bond angles, and convert this into a data object
+/// that can be passed to the pose conformation setup function.
+void parse_nonstandard_angles(
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_angle_list,
+		core::pose::Pose const &pose,
+		core::Size const residues_per_repeat
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	nonstandard_angle_list.clear();
+
+	std::stringstream ss("");
+	core::Size const noptions(option[nonideal_angles]().size());
+
+	for(core::Size i=1; i<=noptions; ++i) {
+		ss << option[nonideal_angles]()[i] << " ";
+	}	
+	
+	for(core::Size i=1; i<=noptions; i+=7) {
+		core::Size res1;
+		ss >> res1;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		runtime_assert_string_msg( res1 > 0 && res1 <= residues_per_repeat, "Error in parsing angle list: residue indices must lie in the repeating unit." );
+
+		std::string at1str("");
+		ss >> at1str;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		
+		core::Size res2;
+		ss >> res2;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		runtime_assert_string_msg( res2 > 0 && res2 <= residues_per_repeat, "Error in parsing angle list: residue indices must lie in the repeating unit." );
+
+		std::string at2str("");
+		ss >> at2str;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+
+		core::Size res3;
+		ss >> res3;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		runtime_assert_string_msg( res3 > 0 && res3 <= residues_per_repeat, "Error in parsing angle list: residue indices must lie in the repeating unit." );
+
+		std::string at3str("");
+		ss >> at3str;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		
+		core::Real angleval(0.0);
+		ss >> angleval;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		
+		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
+		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
+		core::id::AtomID id3( pose.residue(res3+1).type().atom_index( at3str ), res3 );
+		utility::vector1< core::id::AtomID > idvect;
+		idvect.push_back(id1);
+		idvect.push_back(id2);
+		idvect.push_back(id3);
+		core::Real const angleval_radians( numeric::conversions::radians(angleval) );
+		
+		nonstandard_angle_list.push_back( std::pair< utility::vector1<core::id::AtomID>, core::Real >(idvect, angleval_radians) );
+	}
+	
+	return;
+}
+
+/// @brief Parse the user flags for nonstandard bond lengths, and convert this into a data object
+/// that can be passed to the pose conformation setup function.
+void parse_nonstandard_bondlengths(
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > &nonstandard_bondlength_list,
+		core::pose::Pose const &pose,
+		core::Size const residues_per_repeat
+) {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	
+	nonstandard_bondlength_list.clear();
+
+	std::stringstream ss("");
+	core::Size const noptions(option[nonideal_bondlengths]().size());
+
+	for(core::Size i=1; i<=noptions; ++i) {
+		ss << option[nonideal_bondlengths]()[i] << " ";
+	}	
+	
+	for(core::Size i=1; i<=noptions; i+=5) {
+		core::Size res1;
+		ss >> res1;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
+		runtime_assert_string_msg( res1 > 0 && res1 <= residues_per_repeat, "Error in parsing bondlength list: residue indices must lie in the repeating unit." );
+
+		std::string at1str("");
+		ss >> at1str;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
+		
+		core::Size res2;
+		ss >> res2;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing bondlength list!" );
+		runtime_assert_string_msg( res2 > 0 && res2 <= residues_per_repeat, "Error in parsing bondlength list: residue indices must lie in the repeating unit." );
+
+		std::string at2str("");
+		ss >> at2str;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+
+		core::Real lengthval(0.0);
+		ss >> lengthval;
+		runtime_assert_string_msg( !ss.fail(), "Error in parsing angle list!" );
+		
+		core::id::AtomID id1( pose.residue(res1+1).type().atom_index( at1str ), res1 );
+		core::id::AtomID id2( pose.residue(res2+1).type().atom_index( at2str ), res2 );
+		utility::vector1< core::id::AtomID > idvect;
+		idvect.push_back(id1);
+		idvect.push_back(id2);
+		
+		nonstandard_bondlength_list.push_back( std::pair< utility::vector1<core::id::AtomID>, core::Real >(idvect, lengthval) );
+	}
+	
+	return;
+}
+
 int
 main( int argc, char * argv [] )
 {
@@ -265,11 +417,19 @@ main( int argc, char * argv [] )
 		utility::vector1<core::Real> const r1guesses( option[r1_guesses]() );
 		utility::vector1<core::Real> const deltaomega1_guesses( option[delta_omega1_guesses]() );
 		utility::vector1<core::Real> const deltaz1_guesses( option[delta_z1_guesses]() );
-
+		
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_angle_list;
+		utility::vector1< std::pair< utility::vector1< core::id::AtomID >, core::Real > > nonstandard_bondlength_list;
+			
 		core::pose::Pose pose; //Make the empty pose
 		
 		build_polymer(pose, restypes, residues_per_repeat, nrepeats); //Build the repeating secondary structure element
-		set_pose_conformation(pose, nrepeats, residues_per_repeat, mainchaintorsions); //Set the pose conformation.
+		
+		//Set up the AtomIDs for the nonstandard bond angles and bond lengths:
+		parse_nonstandard_angles( nonstandard_angle_list, pose, residues_per_repeat );
+		parse_nonstandard_bondlengths( nonstandard_bondlength_list, pose, residues_per_repeat );
+
+		set_pose_conformation(pose, nrepeats, residues_per_repeat, mainchaintorsions, nonstandard_angle_list, nonstandard_bondlength_list); //Set the pose conformation.
 
 		//Count atoms:
 		core::Size atomcount(0);

@@ -356,17 +356,24 @@ namespace helical_bundle {
 				residue_in_repeating_unit=repeating_unit_offset+1;
 				curatom_in_repeating_unit=0;
 			}
-			if(residue_in_repeating_unit > residues_per_repeat || ir2 == helix_start ) {
+			if(ir2==helix_end+1) { //Repeat the last residue if we're at the end.
+				--residue_in_repeating_unit;
+				curatom_in_repeating_unit -= helixpose.residue(helix_end).n_mainchain_atoms();
+			}
+			if(residue_in_repeating_unit > residues_per_repeat || residue_in_repeating_unit==0 || ir2 == helix_start ) {
 				residue_in_repeating_unit=1; //Reset if we're on to the next repeating unit.
 				curatom_in_repeating_unit=0;
 			}
 
 			utility::vector1 < numeric::xyzVector <core::Real> > innervector;
 			for(core::Size ia=1, iamax=helixpose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) { //Loop through all mainchain atoms in the current helix residue
-				runtime_assert_string_msg(
-					iamax == atoms_per_residue[ residue_in_repeating_unit ],
-					"Error in protocols::helical_bundle::generate_atom_positions():  The number of atoms per residue for one or more residues does not match the expected number given the Crick parameters file."
-				);
+
+				if(ia==1) {
+					runtime_assert_string_msg(
+						iamax == atoms_per_residue[ residue_in_repeating_unit ],
+						"Error in protocols::helical_bundle::generate_atom_positions():  The number of atoms per residue for one or more residues does not match the expected number given the Crick parameters file."
+					);
+				}
 
 				//Increment the current atom in the repeating unit:
 				++curatom_in_repeating_unit;
@@ -433,7 +440,7 @@ namespace helical_bundle {
 			for(core::Size ia=1, iamax=ref_pose.residue(ir).n_mainchain_atoms(); ia<=iamax; ++ia) {
 				if(ia==1 && ir==helix_start) continue; //Skip the first atom.
 				core::id::AtomID const thisatom( ia, ir );
-				core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
+				core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue(ir-1).n_mainchain_atoms() : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom, in which case the previous atom is iamax in the previous residue.
 				pose.conformation().set_bond_length( thisatom, prevatom, ref_pose.xyz(thisatom).distance( ref_pose.xyz(prevatom) ) );
 			}
 		}
@@ -458,7 +465,7 @@ namespace helical_bundle {
 				if(ia==1 && ir==helix_start) continue; //Skip the first atom.
 				if(ia==iamax && ir==helix_end) continue; //Skip the last atom.
 				core::id::AtomID const thisatom( ia, ir );
-				core::id::AtomID const prevatom( (ia==1 ? iamax : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
+				core::id::AtomID const prevatom( (ia==1 ? ref_pose.residue(ir-1).n_mainchain_atoms() : ia - 1), (ia==1 ? ir-1 : ir) ); //The previous atom is ia-1 in this residue, unless this atom is the first atom in this residue, in which case the previous atom is iamax in the previous residue.
 				core::id::AtomID const nextatom( (ia==iamax ? 1 : ia + 1), (ia==iamax ? ir+1 : ir) ); //The next atom is ia+1 in this residue, unless this atom is the last atom in this residue, in which case the next atom is the first atom in the next residue.
 				pose.conformation().set_bond_angle( prevatom, thisatom, nextatom, numeric::angle_radians<core::Real>( ref_pose.xyz(prevatom), ref_pose.xyz(thisatom), ref_pose.xyz(nextatom) ) );
 			}
