@@ -927,8 +927,25 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
     #print 'lib_path', lib_path
     #print len(objs); sys.exit(1)
 
-    if Options.monolith: objs = ' '.join( [ f if f.startswith('/') else os.path.relpath(mini_path+'/'+lib_path+f, mini_path+'/'+lib_path+'../') for f in objs] )
-    else: objs = ' '.join(objs)
+    if Options.monolith:
+        objs = [ f if f.startswith('/') else os.path.relpath(mini_path+'/'+lib_path+f, mini_path+'/'+lib_path+'../') for f in objs]
+
+        for i, o in enumerate(objs):
+            if not o.startswith('/'):
+                name = 'd/{:x}.o'.format(i)
+
+                source_path = mini_path+'/'+lib_path+ o[len('default/'):]
+                link_path = mini_path+'/'+lib_path+name[len('d/'):]
+
+                if os.path.islink(link_path): os.unlink(link_path)
+
+                #print source_path, ' <-- ', link_path
+                os.symlink(source_path, link_path)
+                objs[i] = name
+
+
+    objs = ' '.join(objs)
+
     all_objs_file = bindings_build_path + '/all_objs_files_for_mini_lib'
     with file(all_objs_file, 'w') as f: f.write(objs)
 
@@ -964,8 +981,8 @@ def prepareMiniLibs(mini_path, bindings_build_path, binding_source_path):
     #                 )
 
     if Options.monolith:
-        if os.path.islink(bindings_build_path+'/default'): os.remove(bindings_build_path+'/default')
-        os.symlink(mini_path+'/'+lib_path, bindings_build_path+'/default')
+        if os.path.islink(bindings_build_path+'/d'): os.unlink(bindings_build_path+'/d')
+        os.symlink(mini_path+'/'+lib_path, bindings_build_path+'/d')
 
         # if rebuild: execute("Linking static mini lib...",
         #                     "cd {mini_path} && cd {lib_path} && rm {mini} ; ar rcs {mini} {objs_string}" \
