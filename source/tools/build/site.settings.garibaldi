@@ -1,0 +1,109 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into site.settings:
+#
+#   cp site.settings.template site.settings
+#
+# and customize to fit your site's environment
+# DO NOT make changes to this template
+# DO NOT try and check in site.settings
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+#
+# NOTE: At some point this file will allow you to have multiple site settings
+# to select between.  For now there is only the "site" settings.
+import os
+openmpiversion="1.4.2"
+root="/cm/shared/apps/openmpi/open64/64/"+openmpiversion
+root2="/cm/shared/apps/openmpi/gcc/64/"+openmpiversion
+root3="/cm/shared/apps/gcc/4.3.4/"
+
+settings = {
+        "gcc, mpi" : {
+"appends" : {
+            "defines"       : [ "USEMPI" ],
+        },
+        "overrides" : {
+           "cxx" : "mpicxx"
+        },
+    },
+ 
+    "gcc, 4.3, mpi" : {
+        "appends" : {
+            "defines"       : [ "USEMPI" ],
+        }, 
+        "overrides" : {
+	   "cxx" : "mpicxx"
+        },
+    },	 	
+	   
+    "site" : {
+        "prepends" : {
+            "program_path" : [
+                "/home/lange/bin/"
+            ],
+
+         },
+        "appends" : {
+
+            # Location of standard and system binaries
+#            "program_path" : [
+         #       root+"/bin",
+         #       root2+"/bin",
+                # Path to GCC compiler if not in the os rule
+                # Path to Intel C++ compiler if not in the os rule
+ #           ],
+            # Location of standard and system header files if not in the os rule
+            "include_path" : [
+                #
+            ],
+            # Location of standard and system libraries if not in the os rule.
+            "library_path" : [
+ #                root+"/lib64",
+ ##               root2+"/lib",
+ #               root2+"/lib64",
+ #               root3+"/lib",
+ #               root3+"/lib64",
+#$/cm/shared/apps/gcc/4.3.4/lib:
+ #               /cm/shared/apps/gcc/4.3.4/lib64:/
+                #
+            ],
+        },
+        "removes" : {
+		"library_path" : [ "/usr/lib", "/usr/local/lib" ],
+        },
+        "overrides" : {
+ #               "MPI_HOME":root2,
+ #               "MPI_RUN":root+"/bin/mpirun",
+ #               "LD_LIBRARY_PATH":os.environ["LD_LIBRARY_PATH"],
+ #               "Path":os.environ["PATH"],
+                "ENV":{
+#"PATH":"/home/lange/bin/:/usr/local/bin:/usr/bin:/bin:/cm/shared/apps/openmpi/gcc/64/1.4.2/bin",
+"PATH":os.environ["PATH"],
+"LD_LIBRARY_PATH":os.environ["LD_LIBRARY_PATH"],
+#"LIBRARY_PATH":os.environ["LIBRARY_PATH"],
+#"NLSPATH":os.environ["NLSPATH"],
+#"MKLPATH":os.environ["MKLPATH"],
+#"FPATH":os.environ["FPATH"],
+#"CPATH":os.environ["CPATH"],
+        },
+}
+},
+    "mpi" : { 
+        "overrides" : {
+            "cxx"           : "mpicxx"
+        },
+    },
+}
+

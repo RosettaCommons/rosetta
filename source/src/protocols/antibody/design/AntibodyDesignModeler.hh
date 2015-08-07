@@ -193,7 +193,7 @@ public:
 	///@brief Applies a docking foldtree..  Forked from AbInfo - Its version uses hardcoded order of the PDB.  However, this calls docking FT, which is hard coded as well for now.
 	/// Fix Me.
 	void
-	apply_LH_A_foldtree(core::pose::Pose & pose) const;
+	apply_A_LH_foldtree(core::pose::Pose & pose) const;
 	
 	
 	///@brief Get CDR loops with cutpoint in the middle.

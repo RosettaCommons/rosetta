@@ -269,11 +269,11 @@ AntibodyDesignModeler::get_cdr_loop_with_overhang(Pose const & pose, CDRNameEnum
 }
 
 void
-AntibodyDesignModeler::apply_LH_A_foldtree(core::pose::Pose & pose) const {
+AntibodyDesignModeler::apply_A_LH_foldtree(core::pose::Pose & pose) const {
 	vector1< char > antigen_chains = ab_info_->get_antigen_chains();
 
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = "LH_"+antigen;
+	std::string dock_chains = antigen + "_LH";
 
 	vector1< int > movable_jumps(1, 1);
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
@@ -544,12 +544,12 @@ AntibodyDesignModeler::relax_interface(Pose & pose, bool min_interface_sc /* tru
 void
 AntibodyDesignModeler::minimize_interface(Pose& pose, bool min_interface_sc /* true */) const {
 
-	//TR << "Minimizing Interface: " << dock_chains << std::endl;
+
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_), movable_jumps);
-
-
+	std::string dock_chains = get_dock_chains_from_ab_dock_chains(ab_info_, ab_dock_chains_);
+	TR << "Minimizing Interface: " << dock_chains << std::endl;
+	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	core::pack::task::PackerTaskOP task = interface_tf_->create_task_and_apply_taskoperations(pose);
 	MoveMapOP mm;
 	if (min_interface_sc){
@@ -647,7 +647,7 @@ AntibodyDesignModeler::repack_antigen_ab_interface(Pose& pose) const {
 	}
 
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	apply_LH_A_foldtree(pose);
+	apply_A_LH_foldtree(pose);
 
 	core::Real start_e = (*scorefxn_)(pose);
 	core::pack::task::PackerTaskOP task;
@@ -674,7 +674,7 @@ AntibodyDesignModeler::repack_antigen_interface(Pose & pose) const {
 	}
 
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	apply_LH_A_foldtree(pose);
+	apply_A_LH_foldtree(pose);
 
 	core::Real start_e = (*scorefxn_)(pose);
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();
@@ -702,7 +702,7 @@ AntibodyDesignModeler::repack_antibody_interface(Pose & pose) const {
 
 	TR << "Repacking antibody part of interface" << std::endl;
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	apply_LH_A_foldtree(pose);
+	apply_A_LH_foldtree(pose);
 
 	core::Real start_e = (*scorefxn_)(pose) ;
 	core::pack::task::TaskFactoryOP tf = interface_tf_->clone();

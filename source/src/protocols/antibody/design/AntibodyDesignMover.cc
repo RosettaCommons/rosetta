@@ -510,7 +510,7 @@ AntibodyDesignMover::setup_modeler(){
 	modeler_->interface_detection_dis(interface_dis_);
 	modeler_->neighbor_detection_dis(neighbor_dis_);
 
-	std::string ab_dock_chains = ab_info_->get_antibody_chain_string() +"_A";
+	std::string ab_dock_chains = "A_" +ab_info_->get_antibody_chain_string();
 	modeler_->ab_dock_chains(ab_dock_chains);
 }
 
@@ -1088,6 +1088,8 @@ AntibodyDesignMover::setup_random_start_pose(core::pose::Pose& pose, vector1<CDR
 void
 AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& cdrs_to_design){
 
+	using namespace utility;
+
 	TR << "Running basic monte carlo algorithm " << std::endl;
 
 	top_scores_.push_back((*scorefxn_)(pose));
@@ -1121,13 +1123,22 @@ AntibodyDesignMover::run_basic_mc_algorithm(Pose & pose, vector1<CDRNameEnum>& c
 		bool successful = apply_to_cdr(pose, cdr_type, cdr_index);
 		if ( successful ){
 			check_for_top_designs(pose);
-			mc_->boltzmann(pose);
+
+			core::Real energy = scorefxn_->score(pose);
+			bool accepted = mc_->boltzmann(pose);
+			std::string out = to_string(i)+" "+to_string(energy)+" "+to_string(accepted);
+			accept_log_.push_back(out);
+
+			out = "FINAL "+to_string(i)+" "+to_string(scorefxn_->score(pose));
+			accept_log_.push_back(out);
 		}
 		else{
 			pose = mc_->last_accepted_pose();
 		}
 	}
 	mc_->recover_low(pose);
+	std::string out = "FINAL END "+to_string(scorefxn_->score(pose));
+	accept_log_.push_back(out);
 	mc_->show_counters();
 }
 
@@ -1263,9 +1274,9 @@ AntibodyDesignMover::print_str_vec(std::string const name, utility::vector1<std:
 void
 AntibodyDesignMover::apply(core::pose::Pose & pose){
 
-	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
-	}
+	//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
+	//	utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
+	//}
 
 	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
 	ab_info_->show(std::cout);
@@ -1290,8 +1301,13 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	scorefxn_->show(pose);
 	core::Real native_score = (*scorefxn_)(pose);
 
+	///Energy Log:
+	std::string out = "-1 "+utility::to_string(native_score)+" NA";
+	accept_log_.push_back(out);
 	if (benchmark_){
 		this->setup_random_start_pose(pose, cdrs_to_design_);
+		out = "0 "+utility::to_string(scorefxn_->score(pose))+" NA";
+		accept_log_.push_back(out);
 	}
 
 	//////////// Setup Monte carlo ////////////////////////////////////////////
@@ -1332,6 +1348,12 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 
 			for (core::Size x = 1; x <= top_designs_.size(); ++x){
 				core::pose::add_comment(*top_designs_[x], "GRAFT LOG "+utility::to_string(i), graft_log_[i]);
+			}
+		}
+		for (core::Size i = 1; i <= accept_log_.size(); ++i){
+			core::pose::add_comment(pose, "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
+			for (core::Size x = 1; x <= top_designs_.size(); ++x){
+				core::pose::add_comment(*top_designs_[x], "ACCEPT LOG "+utility::to_string(i), accept_log_[i]);
 			}
 		}
 	}

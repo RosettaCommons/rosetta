@@ -36,7 +36,7 @@ namespace task_operations {
 ///@brief Task Operation to restrict packing/design to specific CDRs and neighbors. 
 /// See DisableAntibodyRegionOperation and DisableCDRsOperation further restrict TaskFactory.
 ///
-///@detals See options for control of the design of CDRs, antigen, and framework.
+///@details See options for control of the design of CDRs, antigen, and framework.
 /// By default, restricts to all packing of all CDRs and neighbors.
 ///  See options for control of which CDRs, including whether to only restrict design and control of whether we design 
 ///  neighbor antigen and/or framework residues.

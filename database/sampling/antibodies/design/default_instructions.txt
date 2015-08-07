@@ -14,8 +14,9 @@ ALL MinProtocol MINTYPE relax
 
 
 #Length
-ALL CDRSet LENGTH MAX 30
+ALL CDRSet LENGTH MAX 25
 ALL CDRSet LENGTH MIN 1
+
 
 #Profile Design
 ALL SeqDesign STRATEGY PROFILES

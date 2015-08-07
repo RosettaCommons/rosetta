@@ -331,7 +331,7 @@ MutateFrameworkForCluster::apply(core::pose::Pose& pose) {
 
 	bool framework_dependant_clusters = false;
 
-	for (core::Size i = 1; i <= static_cast<core::Size>(ab_info_->get_total_num_CDRs()); ++i){
+	for (core::Size i = 1; i <= core::Size( ab_info_->get_total_num_CDRs() ); ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>( i );
 		if (! cdrs_[ cdr ]) continue;
 

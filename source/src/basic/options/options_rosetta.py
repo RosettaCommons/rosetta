@@ -1925,16 +1925,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 						default='false'),
 		Option( 'correct', 'Boolean',
 			desc="turn on default corrections:"
-			"-corrections::chemical:icoor_05_2009"
-			"-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009"
-			"-corrections::score:p_aa_pp_nogridshift"
-			#"-corrections::score:no_his_his_pairE"
-			"-corrections::score:p_aa_pp_nogridshift"
-			"-corrections::score:rama_not_squared"
-			"-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat"
-			"-scoring::hbond_params helix_hb_06_2009"
-			"-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05"
-			"-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat",
+            "See src/core/init/score_function_corrections.cc",
 			default="false"),
 		Option( 'hbond_sp2_correction', 'Boolean',
 			desc="turn on the hbond Sp2 correction with a single flag"
@@ -2001,7 +1992,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
 			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
-			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shanon entropy correction to rotamer energy: E = -logP + S", default="false" ),
+			Option( 'dun_entropy_correction', 'Boolean', desc="Add Shannon entropy correction to rotamer energy: E = -logP + S", default="false" ),
 		), #-corrections:score
 		Option_Group( 'chemical',
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
@@ -3417,7 +3408,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
             ###### Constraint Control
             Option('dihedral_cst_weight', 'Real',
-                default = '1.0',
+                default = '.3',
                 desc = 'Weight to use for CDR CircularHarmonic cluster-based or general constraints that are automatically added to each structure and updated after each graft. Set to zero if you dont want to use these constraints. Note that they are not used for the backrub mintype. Overrides weight/patch settings.'
                 ),
             Option('atom_pair_cst_weight', 'Real',
@@ -3425,7 +3416,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 desc = 'Weight to use for Epitope/Paratope SiteConstraints.  Paratope Side contraints are always used.  Set to zero to completely abbrogate these constraints. Overrides weight/patch settings.'
                 ),
             Option('global_dihedral_cst_scoring', 'Boolean',
-                default = 'true',
+                default = 'false',
                 desc = 'Use the dihedral cst score throughout the protocol, including final scoring of the poses instead of just during minimization step'
                 ),
             Option('global_atom_pair_cst_scoring', 'Boolean',
@@ -3549,7 +3540,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				),
 			Option('enable_adapt_graft_cartesian', 'Boolean',
 				desc = 'Cartesian minimization seems to be causing numerous bugs since the Lukis AST pointer rewrite.  These only happen on the cluster and it is very difficult to reproduce them. Until this is fixed, we can skip the cartesian adaptation where cartesian minimization would run when the graft could not close properly.  Exceptions are wrapped so that when it does fail we skip the graft. Set this to false to disable its use',
-				default = 'true'
+				default = 'false'
 				),
        Option('remove_antigen', 'Boolean',
         desc = 'Remove the antigen from the pose before doing any design on it',

@@ -378,6 +378,7 @@ private:
 	
 	bool add_log_to_pose_;
 	utility::vector1<std::string> graft_log_;
+	utility::vector1<std::string> accept_log_;
 	
 	//Monte Carlo KT
 	core::Real outer_kt_;

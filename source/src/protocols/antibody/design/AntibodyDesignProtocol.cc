@@ -330,9 +330,9 @@ AntibodyDesignProtocol::apply(core::pose::Pose& pose){
 	///Setup Objects///
 
 
-	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
-		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
-	}
+	//if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
+	//	utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
+	//}
 
 
 	ab_info_ = AntibodyInfoOP( new AntibodyInfo(pose, AHO_Scheme, North) );
