@@ -238,6 +238,12 @@ RestrictToCDRsAndNeighbors::apply(const core::pose::Pose& pose, core::pack::task
 	turn_off_packing.apply(pose, task);
 }
 
+core::pack::task::operation::TaskOperationOP
+RestrictToCDRsAndNeighborsCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new RestrictToCDRsAndNeighbors );
+}
+
 } //task_operations
 } //antibody
 } //protocols

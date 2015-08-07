@@ -21,6 +21,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperationCreator.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -100,6 +101,13 @@ private:
 	AntibodyNumberingSchemeEnum numbering_scheme_;
 	CDRDefinitionEnum cdr_definition_;
 	
+};
+
+class DisableCDRsOperationCreator : public core::pack::task::operation::TaskOperationCreator {
+public:
+	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const { return "DisableCDRsOperation"; }
+	//core::pack::task::operation::TaskOperationOP clone() const;
 };
 
 } //task_operations

@@ -17,6 +17,12 @@
 namespace protocols {
 using core::pack::task::operation::TaskOperationRegistrator;
 
+static TaskOperationRegistrator< protocols::antibody::task_operations::AddCDRProfilesOperationCreator > AddCDRProfilesOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::antibody::task_operations::AddCDRProfileSetsOperationCreator > AddCDRProfileSetsOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::antibody::task_operations::DisableAntibodyRegionOperationCreator > DisableAntibodyRegionOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::antibody::task_operations::DisableCDRsOperationCreator > DisableCDRsOperationCreator;
+static TaskOperationRegistrator< protocols::antibody::task_operations::RestrictToCDRsAndNeighborsCreator > RestrictToCDRsAndNeighborsCreator_registrator;
+
 static TaskOperationRegistrator< protocols::denovo_design::task_operations::ConsensusLoopDesignOperationCreator > ConsensusLoopDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::dna::RestrictDesignToProteinDNAInterfaceCreator > RestrictDesignToProteinDNAInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::dna::WatsonCrickRotamerCouplingsCreator > WatsonCrickRotamerCouplingsCreator_registrator;

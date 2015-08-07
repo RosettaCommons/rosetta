@@ -473,6 +473,11 @@ AddCDRProfilesOperation::apply(const core::pose::Pose& pose, core::pack::task::P
 	}
 }
 
+core::pack::task::operation::TaskOperationOP
+AddCDRProfilesOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new AddCDRProfilesOperation );
+}
 
 } //task_operations
 } //antibody

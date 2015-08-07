@@ -52,7 +52,11 @@ public:
 	virtual std::string 
 	get_name() const;
 	
-	//virtual protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP
+	clone() const;
+	
+	protocols::moves::MoverOP
+	fresh_instance() const;
 
 	///@brief Parse my tag for RosettaScripts.  Main RS interface is in AntibodyDesignMover.
 	/// This is just a small implementation, controlled mainly through cmd-line flags.
@@ -98,9 +102,6 @@ public:
 	///@brief Run Dualspace Relax after main design runs
 	void
 	set_run_relax(bool setting);
-	
-	protocols::moves::MoverOP
-	fresh_instance() const;
 
 	////////////////////////////////////////////////////////////////////////////
 	// Main Method.  All options read from cmd-line or set through individual classes.

@@ -165,6 +165,11 @@ DisableAntibodyRegionOperation::apply(const core::pose::Pose& pose, core::pack::
 
 }
 
+core::pack::task::operation::TaskOperationOP
+DisableAntibodyRegionOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new DisableAntibodyRegionOperation );
+}
 
 } //task_operations
 } //antibody

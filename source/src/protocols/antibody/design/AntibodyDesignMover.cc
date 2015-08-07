@@ -206,6 +206,16 @@ AntibodyDesignMover::read_command_line_options(){
 	}
 }
 
+protocols::moves::MoverOP
+AntibodyDesignMover::clone() const {
+	return protocols::moves::MoverOP( new AntibodyDesignMover(*this) );
+}
+
+protocols::moves::MoverOP
+AntibodyDesignMover::fresh_instance() const {
+	return protocols::moves::MoverOP( new AntibodyDesignMover );
+}
+
 void
 AntibodyDesignMover::parse_my_tag(
 		TagCOP tag,
@@ -228,10 +238,18 @@ AntibodyDesignMover::parse_my_tag(
 		}
 	}
 
+	//A little redundancy
 	if (tag->hasOption("instruction_file")){
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
 	}
-
+	else if (tag->hasOption("instructions_file")) {
+		instruction_file_ = tag->getOption< std::string >("instructions_file");
+	}
+	else if (tag->hasOption("cdr_instructions_file")) {
+		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
+	}
+	
+	
 	design_protocol_ = design_protocol_to_enum(tag->getOption< std::string >("design_protocol", "generalized_monte_carlo"));
 
 	interface_dis_ = tag->getOption< core::Real >("interface_dis", interface_dis_);

@@ -280,11 +280,14 @@ AddCDRProfileSetsOperation::apply(const core::pose::Pose& pose, core::pack::task
 		mut_set_op.set_picking_rounds(picking_rounds_);
 		mut_set_op.apply( pose, task );
 	}
-
-
-	
-
 }
+
+core::pack::task::operation::TaskOperationOP
+AddCDRProfileSetsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new AddCDRProfileSetsOperation );
+}
+
 
 } //task_operations
 } //antibody

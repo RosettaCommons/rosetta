@@ -117,10 +117,6 @@ AntibodyDesignProtocol::get_name() const {
 //}
 
 
-protocols::moves::MoverOP
-AntibodyDesignProtocol::fresh_instance() const {
-	return protocols::moves::MoverOP( new AntibodyDesignProtocol() );
-}
 void
 AntibodyDesignProtocol::read_cmd_line_options(){
 
@@ -135,6 +131,16 @@ AntibodyDesignProtocol::read_cmd_line_options(){
 		TR << "Instructions file: " << instruction_file_ << std::endl;
 	}
 
+}
+
+protocols::moves::MoverOP
+AntibodyDesignProtocol::clone() const {
+	return protocols::moves::MoverOP( new AntibodyDesignProtocol(*this) );
+}
+
+protocols::moves::MoverOP
+AntibodyDesignProtocol::fresh_instance() const {
+	return protocols::moves::MoverOP( new AntibodyDesignProtocol );
 }
 
 void
@@ -159,8 +165,15 @@ AntibodyDesignProtocol::parse_my_tag(
 		}
 	}
 
+	//A little redundancy
 	if (tag->hasOption("instruction_file")){
 		instruction_file_ = tag->getOption< std::string >("instruction_file");
+	}
+	else if (tag->hasOption("instructions_file")) {
+		instruction_file_ = tag->getOption< std::string >("instructions_file");
+	}
+	else if (tag->hasOption("cdr_instructions_file")) {
+		instruction_file_ = tag->getOption< std::string >("cdr_instructions_file");
 	}
 
 	run_snugdock_ = tag->getOption<bool>("run_snugdock", run_snugdock_);

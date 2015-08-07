@@ -191,6 +191,12 @@ DisableCDRsOperation::apply(const core::pose::Pose& pose, core::pack::task::Pack
 	}
 }
 
+core::pack::task::operation::TaskOperationOP
+DisableCDRsOperationCreator::create_task_operation() const
+{
+	return core::pack::task::operation::TaskOperationOP( new DisableCDRsOperation );
+}
+
 } //task_operations
 } //antibody
 } //protocols

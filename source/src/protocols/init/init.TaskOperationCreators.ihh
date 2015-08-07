@@ -17,6 +17,11 @@
 #include <core/pack/task/operation/ResFilterCreators.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <protocols/antibody/task_operations/AddCDRProfilesOperation.hh>
+#include <protocols/antibody/task_operations/AddCDRProfileSetsOperation.hh>
+#include <protocols/antibody/task_operations/DisableAntibodyRegionOperation.hh>
+#include <protocols/antibody/task_operations/DisableCDRsOperation.hh>
+#include <protocols/antibody/task_operations/RestrictToCDRsAndNeighbors.hh>
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
 

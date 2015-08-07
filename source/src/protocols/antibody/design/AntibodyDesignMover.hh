@@ -98,6 +98,12 @@ public:
 	virtual void
 	apply(core::pose::Pose & pose);
 	
+	protocols::moves::MoverOP
+	clone() const;
+	
+	protocols::moves::MoverOP
+	fresh_instance() const;
+	
 	
 public:
 	
