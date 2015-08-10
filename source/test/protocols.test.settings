@@ -262,10 +262,6 @@ sources = {
 	"membrane/symmetry" : [
 		"SymmetricAddMembraneMover",
 	],
-    "membrane/io" : [
-#        "SpanFileLoader",
-#		"LipsFileLoader",
-	],
 	"motif_grafting" : [
 		"MotifGraftMover"
 	],

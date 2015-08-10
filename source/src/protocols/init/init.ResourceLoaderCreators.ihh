@@ -18,5 +18,3 @@
 #include <protocols/loophash/LoopHashLibraryLoaderCreator.hh>
 #include <protocols/loops/LoopsFileLoaderCreator.hh>
 #include <protocols/surface_docking/SurfaceVectorLoaderCreator.hh>
-#include <protocols/membrane/io/LipoFileLoaderCreator.hh>
-#include <protocols/membrane/io/SpanFileLoaderCreator.hh>

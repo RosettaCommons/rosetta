@@ -311,12 +311,6 @@ sources = {
 		"TranslationRotationMover",
 		"util",
     ],
-    "protocols/membrane/io": [
-         "SpanFileOptions",
-         "SpanFileLoader",
-         "LipoFileOptions",
-         "LipoFileLoader",
-     ],
     "protocols/membrane/geometry" :[
 		"EmbeddingDef",
 		"Embedding",
