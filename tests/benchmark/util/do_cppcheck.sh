@@ -3,7 +3,7 @@
 # Assumes you're running it from within the Rosetta/main/source/src directory
 # Need to set JOBS, and COMPILETYPE
 
-JOBS=16
+JOBS=1
 COMPILETYPE=default
 
 while getopts "j:e:" opt; do
@@ -44,8 +44,7 @@ CPPCHECK_DIR=../../tests/benchmark/util/
 CACHEDIR=../build/cppcheck/src/${COMPILETYPE}/
 mkdir -p ${CACHEDIR}
 
-#find ./ -name '*.cc' 
-find ./ -name '*.cc' | sed s'/^/\$\{CPPCHECK_DIR\}\/cppcheck_single.py \$\{COMPILETYPE\}/'g > ${CACHEDIR}/commands.txt
+find ./ -name '*.cc' | sed "s|^|${CPPCHECK_DIR}/cppcheck_single.py ${COMPILETYPE} |g" > ${CACHEDIR}/commands.txt
 
 ../../tests/benchmark/util/parallel.py -q -j ${JOBS} ${CACHEDIR}/commands.txt 
 
@@ -56,25 +55,55 @@ grep -L '^\[' ${CACHEDIR}/all_lines.txt | uniq > ${CACHEDIR}/error_output.txt
 #The problem list
 grep '^\[' ${CACHEDIR}/all_lines.txt | sort | uniq > ${CACHEDIR}/output.txt
 
-echo "Run walltime:" $(( $(date '+%s') - $starttime )) "s."
-echo
+../../tests/benchmark/util/extract_lines.py ${CACHEDIR}/output.txt ../../tests/benchmark/util/cppcheck_known_lines.txt ${CACHEDIR}/oldissues.txt ${CACHEDIR}/newissues.txt
 
-if ! [ -s ${CACHEDIR}/error_output.txt ]; then
+if [ -s ${CACHEDIR}/error_output.txt ]; then
     #error file size is zero, i.e. we have errors
+    echo "ERRORS RUNNING CPPCHECK:"
+    echo
     cat ${CACHEDIR}/error_output.txt
     echo
-    cat ${CACHEDIR}/output.txt
+    echo "New Issues found:"
     echo
-    echo "Issues found:" `cat ${CACHEDIR}/output.txt | wc -l`
+    cat ${CACHEDIR}/newissues.txt
+    echo
+    echo "Remaining historical issues:"
+    cat ${CACHEDIR}/oldissues.txt
+    echo
+    echo "New issues found:" `cat ${CACHEDIR}/newissues.txt | wc -l`
+    echo "Total issues found:" `cat ${CACHEDIR}/output.txt | wc -l`
+    echo
+    echo "Run walltime:" $(( $(date '+%s') - $starttime )) "s."
     exit 127
-elif ! [ -s ${CACHEDIR}/output.txt ]; then
+elif [ -s ${CACHEDIR}/newissues.txt ]; then
     #file size is non-zero, i.e. we have issues
-    cat ${CACHEDIR}/output.txt
+    echo "New Issues found:"
     echo
-    echo "Issues found:" `cat ${CACHEDIR}/output.txt | wc -l`
+    cat ${CACHEDIR}/newissues.txt
+    echo
+    echo "Remaining historical issues:"
+    cat ${CACHEDIR}/oldissues.txt
+    echo
+    echo "New issues found:" `cat ${CACHEDIR}/newissues.txt | wc -l`
+    echo "Total issues found:" `cat ${CACHEDIR}/output.txt | wc -l`
+    echo
+    echo "Run walltime:" $(( $(date '+%s') - $starttime )) "s."
     exit 1
+elif [ -s ${CACHEDIR}/oldissues.txt ]; then
+    #We don't have any new issues, but we do have old issues
+    echo "Remaining historical issues:"
+    cat ${CACHEDIR}/oldissues.txt
+    echo
+    echo "New issues found: None"
+    echo "Total issues found:" `cat ${CACHEDIR}/output.txt | wc -l`
+    echo
+    echo "Run walltime:" $(( $(date '+%s') - $starttime )) "s."
+    exit 0
 else
     # No errors, success!
-    echo "Issues found: None"
+    echo "New issues found: None"
+    echo "Total issues found: None"
+    echo
+    echo "Run walltime:" $(( $(date '+%s') - $starttime )) "s."
     exit 0
 fi

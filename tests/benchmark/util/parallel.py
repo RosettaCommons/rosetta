@@ -6,8 +6,8 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 #
-## @file   test/run.py
-## @brief  Script to run unit tests in mini
+## @file   parallel.py
+## @brief  Script to parallelize test runs.
 ## @author Sergey Lyskov
 
 
@@ -31,15 +31,19 @@ class Runner:
         self.output += message
         if not Options.quiet: print message
 
+    def log_error(self, message):
+        self.output += message
+        if not Options.quiet_errors: print message
+
     def mfork(self):
-        ''' Check if number of child process is below Options.jobs. And if it is - fork the new pocees and return its pid.
+        ''' Check if number of child process is below Options.jobs. And if it is - fork the new process and return its pid.
         '''
         while len(self.jobs) >= Options.jobs :
             for p in self.jobs[:] :
                 r = os.waitpid(p, os.WNOHANG)
-                if r == (p, 0):  # process have ended without error
+                if r == (p, 0):  # process has ended without error
                     self.jobs.remove(p)
-                elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
+                elif r[0] == p :  # process ended, but with error. Special case: we will have to wait for all process to terminate and call system exit.
                     for p in jobs: os.waitpid(p, 0)
                     print 'Some of the unit test suite terminate abnormally!'
                     sys.exit(1)
@@ -61,7 +65,7 @@ class Runner:
 
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         for line in f:
-            self.log(line)
+            self.log_error(line.rstrip())
             sys.stdout.flush()
         f.close()
 
@@ -107,8 +111,14 @@ def main(args):
       help="Suppress (mute) output to std::out."
     )
 
+    parser.add_option('-Q', "--quiet_errors", action="store_true", dest="quiet_errors", default=False,
+      help="Suppress (mute) even error output (also implies -q)"
+    )
 
     (options, args) = parser.parse_args(args=args[1:])
+
+    if options.quiet_errors:
+        options.quiet = True
 
     global Options;  Options = options
 

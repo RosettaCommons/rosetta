@@ -85,7 +85,9 @@ def check_cache_file( filename, compile_type ):
 def process_file( filename, compile_type ):
     cache_filename = get_cache_filename(filename,compile_type)
     if os.path.exists( cache_filename ):
+        print "UP TO DATE:", filename
         return
+    print "UPDATING:", filename
     tests_to_run = TESTS_TO_RUN
 
     define_options = parse_defines( compile_type )
