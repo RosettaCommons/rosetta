@@ -103,7 +103,7 @@ public:
 	/// @brief Flip the downstream partner in the membrane
 	virtual void apply( Pose & pose );
 	
-	/// @brief Run AddMembraneMover again?
+	/// @brief Run AddMembraneMover before?
 	/// @details If you want to keep your anchor point for MEM, then pick no
 	void add_membrane_again( bool yesno );
 

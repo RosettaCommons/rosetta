@@ -176,12 +176,14 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	using namespace protocols::membrane::geometry;
 	
-	TR << "Optimizing membrane position using scorefunction " << sfxn_ << std::endl;
+	TR << "Optimizing membrane position using scorefunction " << *sfxn_ << std::endl;
 	
 	// remember original foldtree
 	ft_ = pose.fold_tree();
 	
 	// reorder foldtree with residue 1 as root of the foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
 	foldtree.reorder( 1 );
 	pose.fold_tree( foldtree );
@@ -207,7 +209,8 @@ void OptimizeMembranePositionMover::apply( Pose & pose ) {
 	// reset foldtree to original one
 	pose.fold_tree( ft_ );
 	TR << "foldtree reset to original one" << std::endl;
-	pose.fold_tree().show(std::cout);
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 	
 }// apply
 

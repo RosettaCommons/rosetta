@@ -889,9 +889,13 @@ write_additional_pdb_data(
     	norm.normalize( thkn ); 
 
     	// Get rsdid, current chain, 
-    	out << "HETATM XXXX THKN MEM X " << resid << "      " << std::fixed << std::setprecision(3) << thkn << " 0.000  0.000 \n";
-		out << "HETATM XXXX CNTR MEM X " << resid << "      " << std::fixed << std::setprecision(3) << cntr.x() << " " << cntr.y() << " " << cntr.z() << "\n";
-		out << "HETATM XXXX NORM MEM X " << resid << "      " << std::fixed << std::setprecision(3) << norm.x() << " " << norm.y() << " " << norm.z() << "\n";
+    	out << "HETATM XXXX THKN MEM X" << I(4,resid) << "    " << F(8, 3, thkn) << "   0.000   0.000 \n";
+		out << "HETATM XXXX CNTR MEM X" << I(4,resid) << "    " << F(8, 3, cntr.x()) << F(8, 3, cntr.y()) << F(8, 3, cntr.z()) << "\n";
+		out << "HETATM XXXX NORM MEM X" << I(4,resid) << "    " << F(8, 3, norm.x()) << F(8, 3, norm.y()) << F(8, 3, norm.z()) << "\n";
+
+//              HETATM XXXX THKN MEM X  81      15.000   0.000   0.000
+//				HETATM XXXX CNTR MEM X  81       0.000   0.000   0.000
+//              HETATM XXXX NORM MEM X  81       0.000   0.000  15.000
     }
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that

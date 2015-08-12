@@ -44,6 +44,7 @@
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
 #include <protocols/membrane/SetMembranePositionMover.hh>
+#include <protocols/membrane/util.hh>
 
 #include <protocols/moves/DsspMover.hh>
 
@@ -494,11 +495,20 @@ AddMembraneMover::apply( Pose & pose ) {
         center_ = pose.conformation().membrane_info()->membrane_center();
         normal_ = pose.conformation().membrane_info()->membrane_normal();
 		
+		// TODO: THIS SHOULD ULTIMATELY BE REPLACED WITH THE NEW
+		// create_membrane_foldtree_anchor_tmcom( Pose & pose ) FUNCTION IN
+		// PROTOCOLS/MEMBRANE/UTIL TO SET THE FOLDTREE DIRECTLY		
+		
 		// slide the membrane jump to match the desired anchor point
 		core::kinematics::FoldTree ft = pose.fold_tree();
 		Size memjump = pose.conformation().membrane_info()->membrane_jump();
+
+		pose.fold_tree().show( TR );
+		// jump number, new res1, new res2
 		ft.slide_jump( memjump, anchor_rsd_, mem_rsd_in_pdb[1] );
+
 		pose.fold_tree( ft );
+		pose.fold_tree().show( TR );
     }
 
     // Use set membrane positon mover to set the center/normal pair
@@ -508,6 +518,10 @@ AddMembraneMover::apply( Pose & pose ) {
     // Set membrane thickness & steepness (Added 3/9/15)
     pose.conformation().membrane_info()->set_membrane_thickness( thickness_ );
     pose.conformation().membrane_info()->set_membrane_steepness( steepness_ );
+	
+	// final foldtree
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 	
 }
 

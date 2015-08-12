@@ -26,6 +26,7 @@
 
 // Project Headers
 #include <protocols/membrane/TranslationRotationMover.hh>
+#include <protocols/membrane/OptimizeMembranePositionMover.hh>
 #include <protocols/membrane/SetMembranePositionMover.hh>
 #include <protocols/membrane/util.hh>
 
@@ -82,8 +83,9 @@ TransformIntoMembraneMover::TransformIntoMembraneMover() :
 	jump_( 0 ), 
 	new_mem_cntr_( 0, 0, 0 ), 
 	new_mem_norm_( 0, 0, 1 ), 
-	current_embedding_( new EmbeddingDef( new_mem_norm_, new_mem_cntr_ ) ), 
-	use_default_membrane_( false ), 
+	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
+	use_default_membrane_( false ),
+	optimize_embedding_( false ),
 	user_defined_membrane_( false )
 {}
 
@@ -95,8 +97,9 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( core::Size jump ) :
 	jump_( jump ), 
 	new_mem_cntr_( 0, 0, 0 ), 
 	new_mem_norm_( 0, 0, 1 ), 
-	current_embedding_( new EmbeddingDef( new_mem_norm_, new_mem_cntr_ ) ),  
+	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
 	use_default_membrane_( false ), 
+	optimize_embedding_( false ),
 	user_defined_membrane_( false )
 {}
 
@@ -110,6 +113,7 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_e
 	new_mem_norm_( 0, 0, 1 ), 
 	current_embedding_( current_embedding ), 
 	use_default_membrane_( false ), 
+	optimize_embedding_( false ),
 	user_defined_membrane_( false )
 {}
 
@@ -120,13 +124,11 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( Vector new_mem_cntr, Vec
 	jump_( 0 ), 
 	new_mem_cntr_( new_mem_cntr ), 
 	new_mem_norm_( new_mem_norm ), 
-	current_embedding_( 0 ),
-	use_default_membrane_( false ), 
+	current_embedding_( new EmbeddingDef( core::Vector (0, 0, 0), core::Vector (0, 0, 99999) ) ),
+	use_default_membrane_( false ),
+	optimize_embedding_( false ),
 	user_defined_membrane_( true )
-{
-	core::Vector zero_vec( 0, 0, 0 ); 
-	current_embedding_ = EmbeddingDefOP( new EmbeddingDef( zero_vec, zero_vec ) ); 
-}
+{}
 
 /// @brief Transform the protein into user-specified membrane coordinates
 /// @details Transform the protein into a user-defined membrane, protein
@@ -137,6 +139,7 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( EmbeddingDefOP current_e
 	new_mem_norm_( new_mem_norm ), 
 	current_embedding_( current_embedding ), 
 	use_default_membrane_( false ), 
+	optimize_embedding_( false ),
 	user_defined_membrane_( true )
 {}
 
@@ -148,7 +151,9 @@ TransformIntoMembraneMover::TransformIntoMembraneMover( TransformIntoMembraneMov
 	new_mem_cntr_( src.new_mem_cntr_ ),
 	new_mem_norm_( src.new_mem_norm_ ),
 	current_embedding_( src.current_embedding_ ),
-	use_default_membrane_( src.use_default_membrane_ )
+	use_default_membrane_( src.use_default_membrane_ ),
+	optimize_embedding_ ( src.optimize_embedding_ ),
+	user_defined_membrane_ ( src.user_defined_membrane_ )
 {}
 
 /// @brief Destructor
@@ -190,6 +195,11 @@ TransformIntoMembraneMover::parse_my_tag(
 		use_default_membrane_ = tag->getOption< bool >( "use_default_membrane" ); 
 	}
 
+	// Read in option to optimize embedding
+	if ( tag->hasOption( "optimize_embedding" ) ) {
+		optimize_embedding_ = tag->getOption< bool >( "optimize_embedding" );
+	}
+
 	// User defined membrane
 	if ( tag->hasOption( "user_defined_membrane" ) ) {
 		user_defined_membrane_ = tag->getOption< bool >( "user_defined_membrane" ); 
@@ -227,6 +237,12 @@ TransformIntoMembraneMoverCreator::mover_name() {
 void TransformIntoMembraneMover::use_default_membrane( bool truefalse ) {
 	use_default_membrane_ = truefalse;
 }
+
+/// @brief Optimize the embedding with the highres scorefunction
+void TransformIntoMembraneMover::optimize_embedding( bool truefalse ) {
+	optimize_embedding_ = truefalse;
+}
+
 
 /// @brief Get the name of this Mover (TransformIntoMembraneMover)
 std::string
@@ -270,6 +286,11 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 		setmem->apply( pose );
 	}
 	
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// Initialize jump for transformation
 	// initial jump should be zero so we now it's bogus; the user can use any
 	// other jump
@@ -277,9 +298,6 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
          jump_ = pose.conformation().membrane_info()->membrane_jump();
      }
          
-	// Making a copy of the foldtree to reset it to after the mover
-	FoldTreeOP orig_ft = FoldTreeOP( new FoldTree( pose.fold_tree() ) );
-	
 	// Check that the membrane is at the root of the foldtree
 	if ( !is_membrane_fixed( pose ) ) {
 		if ( is_membrane_moveable_by_itself( pose ) ) {
@@ -299,11 +317,26 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 			utility_exit_with_message( "Membrane residue is not fixed and also not an independent branch of the foldtree, therefore a direct reorder is unsafe to be used by this mover. Please make your foldtree smarter - see RosettaMP framework documentation" );
 		}
 	}
-	
+
 	// recompute embedding from pose and topology if it hasn't been set
-	if ( current_embedding_->normal().length() == 0 ){
+	if ( current_embedding_->normal().length() == 99999 ){
 		current_embedding_ = compute_structure_based_embedding( pose );
 	}
+
+	// if you want to optimize embedding with scorefunction
+	if ( optimize_embedding_ == true ) {
+		OptimizeMembranePositionMoverOP opt( new OptimizeMembranePositionMover() );
+		opt->apply( pose );
+		
+		EmbeddingDefOP opt_emb ( new EmbeddingDef( pose.conformation().membrane_info()->membrane_center(), pose.conformation().membrane_info()->membrane_normal() ) );
+		current_embedding_ = opt_emb;
+		
+	}
+	
+	TR << "current embedding center: " << current_embedding_->center().to_string() << std::endl;
+	TR << "current embedding normal: " << current_embedding_->normal().to_string() << std::endl;
+	TR << "new membrane center: " << new_mem_cntr_.to_string() << std::endl;
+	TR << "new membrane normal: " << new_mem_norm_.to_string() << std::endl;
 	
 	TR.Debug << "...transforming..." << std::endl;
 		  
@@ -311,16 +344,16 @@ TransformIntoMembraneMover::apply( Pose & pose ) {
 	TranslationRotationMoverOP rt( new TranslationRotationMover( current_embedding_->center(), current_embedding_->normal(), new_mem_cntr_, new_mem_norm_, jump_ ) );
 	rt->apply( pose );
 	
-	// reset foldtree
-	TR << "Restoring the original foldtree" << std::endl;
-	pose.fold_tree( *orig_ft );
-	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 } // apply
 
 /////////////////////
 /// Setup Methods ///
 /////////////////////
-
 
 /// @brief Register Options from Command Line
 /// @details Register mover-relevant options with JD2 - includes
@@ -331,6 +364,7 @@ void TransformIntoMembraneMover::register_options() {
 
 	option.add_relevant( OptionKeys::mp::setup::center );
 	option.add_relevant( OptionKeys::mp::setup::normal );
+	option.add_relevant( OptionKeys::mp::transform::optimize_embedding );
 	
 }
 
@@ -344,6 +378,11 @@ void TransformIntoMembraneMover::init_from_cmd() {
 	
 	// Read center & normal options from the commnadline
 	read_center_normal_from_cmd( new_mem_cntr_, new_mem_norm_ ); 
+
+	// optimize the embedding after transforming?
+	if ( option[ OptionKeys::mp::transform::optimize_embedding ].user() ) {
+		optimize_embedding_ = option[ OptionKeys::mp::transform::optimize_embedding ]();
+	}
 
 }// init from cmd
 

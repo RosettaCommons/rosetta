@@ -38,6 +38,7 @@
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <protocols/membrane/geometry/EmbeddingDef.fwd.hh>
+#include <protocols/membrane/geometry/Embedding.fwd.hh>
 
 // Project Headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -161,6 +162,39 @@ is_membrane_moveable_by_itself( Pose & pose );
 /// residue. Should perform checks before doing this!
 void reorder_membrane_foldtree( pose::Pose & pose );
 
+/// @brief Create membrane foldtree from scratch
+/// @details The foldtree is setup such that the membrane is at the root and
+///			anchored at the first chain COM residue with jumps from the
+///			first chain COM to each chain COM; requires the membrane to be present
+///
+///     ________________________________
+///    |__________________________      |
+///    |_________________         |     |
+///    |________         |        |     |
+///    |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+void create_membrane_foldtree_anchor_com( Pose & pose );
+
+/// @brief Create membrane foldtree from scratch
+/// @details The foldtree is setup such that the membrane is at the root and
+///			anchored at the first chain TRANSMEMBRANE COM residue with jumps from the
+///			first chain COM to each chain TRANSMEMBRANE COM;
+///			requires the membrane to be present
+///
+///     ________________________________
+///    |__________________________      |
+///    |_________________         |     |
+///    |________         |        |     |
+///    |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+	
+void create_membrane_foldtree_anchor_tmcom( Pose & pose );
+
+/// @brief Helper function to create membrane foldtrees
+void create_membrane_foldtree_from_anchors( Pose & pose, utility::vector1< core::Size > anchors );
+
 ///////////////////////////////////////////////////////////
 // Utilities for accessing dssp, z coords and chain info //
 ///////////////////////////////////////////////////////////
@@ -209,8 +243,13 @@ compute_structure_based_embedding( pose::Pose const & pose, SpanningTopology con
 protocols::membrane::geometry::EmbeddingDefOP
 compute_structure_based_embedding( pose::Pose const & pose );
 
-/// @brief Check reasonable range of vector
-void check_vector( core::Vector const vector );
+/// @brief Compute embeddings by chain
+/// @details The embeddings can be computed either from pose and topology or they
+///			can be optimized differently; the function correlates each EmbeddingDef
+///			object in embeddings with a span object in the pose's topology;
+///			The bool means whether embeddings in Embedding object are
+///			antiparallel or not
+protocols::membrane::geometry::EmbeddingOP compute_embeddings_by_chain( pose::Pose const & pose);
 
 /// @brief Average EmbeddingDefs as they are (without vector inversion accounting for topology)
 /// @details Get average center and normal from a vector of EmbeddingDefs
@@ -219,6 +258,35 @@ EmbeddingDefOP average_embeddings( utility::vector1< EmbeddingDefOP > const part
 /// @brief Average EmbeddingDefs after first inverting some vectors accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
 EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP > const parts );
+
+/// @brief Update embedding of the partners after a move
+/// @details Requires the jump number between the partners, the topology will
+///				be taken from MembraneInfo and will be split accordingly; up and
+///				down means upstream and downstream
+void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down );
+
+/// @brief Chain center-of-mass
+/// @details Gets the coordinates of the chain center-of-mass
+core::Vector chain_com( pose::Pose const & pose, int chain );
+
+/// @brief Chain center-of-mass of TM regions
+/// @details Gets the coordinates of the chain center-of-mass but only the TM regions
+core::Vector chain_tm_com( pose::Pose const & pose, int chain );
+
+/// @brief Residue closest to chain center-of-mass
+/// @details Gets the residue number closest to the chain center-of-mass
+core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chain );
+
+/// @brief Residue closest to chain TM center-of-mass
+/// @details Gets the residue number closest to the chain TM center-of-mass
+core::Size rsd_closest_to_chain_tm_com( pose::Pose const & pose, int chainid );
+
+//////////////////////
+// Membrane vectors //
+//////////////////////
+
+/// @brief Check reasonable range of vector
+void check_vector( core::Vector const vector );
 
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose );
@@ -263,11 +331,10 @@ void split_topology_by_jump_noshift(
     SpanningTopologyOP topo_down	// topology of downstream pose
 );
 
-/// @brief Update embedding of the partners after a move
-/// @details Requires the jump number between the partners, the topology will
-///				be taken from MembraneInfo and will be split accordingly; up and
-///				down means upstream and downstream
-void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down );
+/// @brief Split topology by chain
+/// @details Split topology by chain and give vector of topology objects
+utility::vector1< SpanningTopologyOP > split_topology_by_chain_noshift( pose::Pose const & pose, SpanningTopologyOP const topo );
+
 
 /////////////////////////////////////////////
 // Methods for reading center/normal in IO //

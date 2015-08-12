@@ -154,6 +154,9 @@ private: // data
 	/// @details Kind of like flexible backbone and sidechain docking
 	bool flexible_bb_;
 	
+	/// @brief Sidechain repacking
+	bool flexible_sc_;
+	
 };
 
 } // membrane

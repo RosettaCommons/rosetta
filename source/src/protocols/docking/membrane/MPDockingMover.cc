@@ -25,6 +25,7 @@
 #include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <protocols/membrane/AddMembraneMover.hh>
+#include <protocols/membrane/util.hh>
 
 #include <protocols/docking/DockingProtocol.hh>
 
@@ -224,7 +225,7 @@ void MPDockingMover::set_cycles_outer( Size cycles_outer ) {
 void MPDockingMover::set_defaults( const Pose & pose ){
 
 	// set AddMembraneMover in protocol
-	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
+//	add_membrane_mover_ = AddMembraneMoverOP( new AddMembraneMover() );
 	
 	// create scorefunctions for lowres and highres
 	// the ones I took were:
@@ -317,6 +318,8 @@ void MPDockingMover::finalize_setup(){
 ///			the flexible jump
 void MPDockingMover::apply( Pose & pose ) {
 	
+	TR << "Docking two membrane proteins inside the bilayer" << std::endl;
+
 	// setup
 	set_defaults( pose );
 	
@@ -337,6 +340,11 @@ void MPDockingMover::apply( Pose & pose ) {
 	TR << "docking pose nres: " << pose.total_residue() << std::endl;
 	TR << "native pose nres: " << docking_protocol_->get_native_pose()->total_residue() << std::endl;
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// creating foldtree from pose
 	pose.fold_tree().show(std::cout);
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
@@ -352,6 +360,11 @@ void MPDockingMover::apply( Pose & pose ) {
 	// run docking protocol
 	TR << "calling docking protocol" << std::endl;
 	docking_protocol_->apply( pose );
+
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
 } // apply
 

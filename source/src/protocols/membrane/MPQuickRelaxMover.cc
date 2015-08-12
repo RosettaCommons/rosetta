@@ -29,7 +29,9 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -48,6 +50,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers
+#include <protocols/membrane/util.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -220,19 +223,24 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	
 	TR << "Running MPQuickRelax protocol..." << std::endl;
 	
-	// get number of residues and number of moes
+	// add membrane to pose
+	if ( addmem_ == true ) {
+		AddMembraneMoverOP addmem( new AddMembraneMover() );
+		addmem->apply( pose );
+	}
+
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
+	// get number of residues and number of moves
 	Size nres( nres_protein( pose ) );
 	if ( moves_ == "nres" ) {
 		nmoves_ = nres;
 	}
 	else {
 		nmoves_ = utility::string2Size( moves_ );
-	}
-	
-	// add membrane to pose
-	if ( addmem_ == true ) {
-		AddMembraneMoverOP addmem( new AddMembraneMover() );
-		addmem->apply( pose );
 	}
 	
 	// find membrane position around the protein
@@ -280,21 +288,65 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	core::optimization::AtomTreeMinimizer atm;
 
 //				fa_rep min_tol cst_wts
+//	repeat 5
 //	ramp_repack_min 0.02  0.01     1.0
 //	ramp_repack_min 0.250 0.01     0.5
 //	ramp_repack_min 0.550 0.01     0.0
 //	ramp_repack_min 1     0.00001  0.0
 
+//	sfxn_->set_weight( fa_rep, 0.5 );
+
+	// run small and shearmover again
+	TR << "SmallMover and ShearMover - Waka waka ..." << std::endl;
+	small->apply( pose );
+	shear->apply( pose );
 	
 	// do this for a certain number of iterations
-	// since both the packer and especially minimization takes a while, just do one
-	for ( Size i = 1; i <= 1; ++i ){
+	// since both the packer and especially minimization takes a while, just do one for now
+	Size breakpoint( 0 );
+
+	// score the pose
+	Real tot_score = ( *sfxn_ )( pose );
+	Real fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
+	Real fa_atr = pose.energies().total_energies()[ scoring::fa_atr ];
+	
+	// if fa_rep exceeds threshold (number of residues of the protein, as empirically determined)
+	// or score is greater than 0, keep continuing
+	while ( tot_score > 0 || fa_rep > nres_protein( pose ) + 100 ) {
 		
-		// run small and shearmover again
-		TR << "SmallMover and ShearMover - Waka waka ..." << std::endl;
-		small->apply( pose );
-		shear->apply( pose );
+		pose.energies().show_total_headers( TR );
+		TR << std::endl;
+		pose.energies().show_totals( TR );
+		TR << std::endl;
+		TR << "tot: " << tot_score << " fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
 		
+		++breakpoint;
+		
+		// ramp repulsive up and down
+		if ( breakpoint % 2 == 1 ) {
+			sfxn_->set_weight( core::scoring::fa_rep, 1.0);
+		}
+		else {
+			sfxn_->set_weight( core::scoring::fa_rep, 0.1);
+		}
+
+		// if breakpoint, fail_retry
+//		if ( breakpoint >= 10 && breakpoint <= 20 ) {
+//			TR << "Counter > 10, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_RETRY..." << std::endl;
+//			set_last_move_status(protocols::moves::FAIL_RETRY);
+//		}
+//		else if ( breakpoint > 20 ){
+//			TR << "Counter > 20, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_DO_NOT_RETRY..." << std::endl;
+//			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+//			return;
+//		}
+
+		if ( breakpoint == 5 ) {
+			TR << "Counter == 6, score: " << tot_score << ", fa_rep: " << fa_rep << ", FAIL_DO_NOT_RETRY..." << std::endl;
+			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+			return;
+		}
+
 		// packing
 		TR << "Packing rotamers..." << std::endl;
 		PackerTaskOP repack = TaskFactory::create_packer_task( pose );
@@ -308,9 +360,28 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 		// evaluate Boltzmann
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
+
+		// set pose to lowest scoring pose from MC simulation
+		pose = mc->lowest_score_pose();
+		
+		// score the pose
+		tot_score = ( *sfxn_ )( pose );
+		fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
+		pose.energies().show_total_headers( TR );
+		TR << std::endl;
+		pose.energies().show_totals( TR );
+		TR << std::endl;
+		TR << "tot: " << tot_score << "fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
+		TR << "Iteration: " << breakpoint << " score: " << tot_score << " fa_rep: " << fa_rep << " fa_atr: " << fa_atr << std::endl;
 		
 	} // number of iterations for search
-	
+
+	// reset the weight in the scorefunction to what it was before (for mpsmooth)
+	sfxn_->set_weight( core::scoring::fa_rep, 0.44);
+	tot_score = ( *sfxn_ )( pose );
+	fa_rep = pose.energies().total_energies()[ scoring::fa_rep ];
+	TR << "Final score: " << tot_score << " final fa_rep: " << fa_rep << std::endl;
+
 	// superimpose poses with native
 	SuperimposeMoverOP super( new SuperimposeMover( *native_, 1, nres, 1, nres, true ) );
 	super->apply( pose );
@@ -320,6 +391,11 @@ void MPQuickRelaxMover::apply( Pose & pose ) {
 	
 	// calculate and store the rmsd in the score file
 	job->add_string_real_pair("rms", core::scoring::bb_rmsd( pose, *native_ ));
+
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
 }// apply
 
@@ -382,7 +458,7 @@ void MPQuickRelaxMover::set_defaults() {
 	cst_weight_ = 1.0;
 	
 	// run AddMembraneMover again?
-	addmem_ = false;
+	addmem_ = true;
 	
 	// starting MembranePositionFromTopology?
 	mem_from_topo_ = false;

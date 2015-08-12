@@ -249,6 +249,20 @@ MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
 	return result;
 }
 
+/// @brief Is residue in the membrane? Takes CA coordinate
+/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
+bool MembraneInfo::in_membrane( core::Size resnum ) const {
+	
+	bool in_mem( false );
+	
+	if ( residue_z_position( resnum ) >= -membrane_thickness() &&
+			residue_z_position( resnum ) <= membrane_thickness() ) {
+		in_mem = true;
+	}
+	
+	return in_mem;
+} // in membrane?
+
 ////////////////////////////
 /// Membrane Data Access ///
 ////////////////////////////

@@ -586,6 +586,8 @@ testinputfiles = [
 	"membrane/1mp6_transformed.pdb",
 	"membrane/1mp6.pdb",
 	"membrane/1mp6.span",
+	"membrane/3EFF_TR.pdb", 
+	"membrane/3EFF_TR.span",
 	"membrane/3PXO_A_tr.pdb", 
 	"membrane/3PXO_A_tr.span",
 	"membrane/RET.params", 

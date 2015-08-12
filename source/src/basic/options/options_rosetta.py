@@ -2622,7 +2622,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 		# Visualization Options (Visualize Membrane Mover)
 		Option_Group( 'visualize',
-			Option( 'embedding', 'Boolean', desc='Visualize embedding centers and normals for each TMspan' ),
+			Option( 'embedding', 'Boolean', desc='Visualize embedding centers and normals for each pose element', default='true' ),
 			Option( 'spacing', 'Real', desc="Spacing of virtual membrane residues representing the membrane planes", default='5' ),
 			Option( 'width', 'Real', desc='Width of membrane planes for n by n plane', default='100' ),
 			Option( 'thickness', 'Real', desc="Thickness of membrane to visualize", default='15' ),
@@ -2646,11 +2646,14 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 			Option( 'transform_into_membrane', 'Boolean', desc="score_jd2: transform protein into fixed membrane before scoring; spanfile required" ),
 			Option( 'position_from_topo', 'Boolean', desc="determine a membrane position from the transmembrane spans of the protein" ),
+
+			Option( 'optimize1', 'Boolean', desc="Optimize position in membrane for partner 1 using membrane scorefunction.", default='false' ),
+			Option( 'optimize2', 'Boolean', desc="Optimize position in membrane for partner 2 using membrane scorefunction.", default='false' ),
 		),
 
-		# For transforming proteins between different membranes
-		Option_Group( "transform",
-			Option( "keep_current_protein_embedding", 'Boolean', desc="Use the current membrane position as the starting embedding for transformation" ),
+		# For transforming protein into the membrane
+		Option_Group( "transform", 
+			Option( "optimize_embedding", 'Boolean', desc="Use the scorefunction to optimize the embedding after an initial coarse grained setting" ), 
 		),
 
 		#MP_Docking Option group - JKLeman (julia.koehler1982@gmail.com)
@@ -2663,6 +2666,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'highres', 'Boolean', desc='Use full-atom score function for finding interface.'),
 			Option( 'allow_flips', 'Boolean', desc='Allow partner 2 to flip in the membrane during global search. Default: yes.' ),
 			Option( 'flexible_bb', 'Boolean', desc='Do a flexible backbone docking: runs relax before and after docking.' ),
+			Option( 'flexible_sc', 'Boolean', desc='Do a flexible sidechain docking: repacks before and after docking.' ),
 
 		),
 

@@ -211,6 +211,11 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	
 	TR << "Spinning downstream partner around upstream partner in the membrane..." << std::endl;
+
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 	
 	// compute downstream empedding
 	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
@@ -241,6 +246,11 @@ void SpinAroundPartnerMover::apply( Pose & pose ) {
 	TranslationMoverOP trans( new TranslationMover( trans_vector, jump_ ) );
 	trans->apply( pose );
 	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 }// apply
 
 /////////////////////

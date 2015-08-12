@@ -72,6 +72,13 @@ VisualizeEmbeddingMover::VisualizeEmbeddingMover() : embeddings_() {
 	register_options();
 }
 
+/// @brief	  Constructor from embedding
+/// @details  Visualizes defined embedding
+VisualizeEmbeddingMover::VisualizeEmbeddingMover( EmbeddingOP embedding ) :
+	embeddings_( embedding ) {
+	register_options();
+}
+
 /// @brief Copy Constructor
 /// @details Creates a deep copy of the visualize membrane mover class
 VisualizeEmbeddingMover::VisualizeEmbeddingMover( VisualizeEmbeddingMover const & src ) :
@@ -157,19 +164,25 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 		// get topology
 		SpanningTopology topo = *pose.conformation().membrane_info()->spanning_topology();
 		
-		// get embedding object from pose and topology
-		embeddings_ = Embedding( topo, pose );
-		embeddings_.show();
+		// get embedding object from pose and topology if not set previously
+		if ( embeddings_->nspans() == 0 ) {
+			EmbeddingOP emb( new Embedding( topo, pose ) );
+			embeddings_ = emb;
+		}
+		embeddings_->show();
 		
 		// create empty object to push embedding residues back into
 		utility::vector1< ResidueOP > embedding_residues;
 
+		// get thickness from MembraneInfo
+		Size thickness = pose.conformation().membrane_info()->membrane_thickness();
+
 		// grab residues out of embedding object
-		for ( Size i = 1; i <= embeddings_.nspans(); ++i ) {
+		for ( Size i = 1; i <= embeddings_->nspans(); ++i ) {
 			
 			// get center and normal POINTS
-			Vector center = embeddings_.embedding( i )->center();
-			Vector normal = center + embeddings_.embedding( i )->normal();
+			Vector center = embeddings_->embedding( i )->center();
+			Vector normal = center + embeddings_->embedding( i )->normal().normalize( thickness );
 
 			// Create a new residue, append to list
 			ResidueOP emb = create_embedding_virtual( center, normal, fullatom );
@@ -179,8 +192,9 @@ VisualizeEmbeddingMover::apply( Pose & pose ) {
 		}
 
 		// add total embedding
-		Vector center_tot = embeddings_.total_embed()->center();
-		Vector normal_tot = center_tot + embeddings_.total_embed()->normal();
+		Vector center_tot = embeddings_->total_embed()->center();
+		Vector normal = embeddings_->total_embed()->normal().normalize( thickness );
+		Vector normal_tot = center_tot + normal;
 
 		// Create a new residue, append to list
 		ResidueOP emb_tot = create_embedding_virtual( center_tot, normal_tot, fullatom );

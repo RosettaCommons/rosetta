@@ -191,6 +191,11 @@ void TiltMover::apply( Pose & pose ) {
 	using namespace protocols::membrane;
 	
 	TR << "Tilting along a jump in the membrane..." << std::endl;
+
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 	
 	// if random angle, set it to random
 	if ( random_angle_ == true ) {
@@ -222,6 +227,11 @@ void TiltMover::apply( Pose & pose ) {
 			jump_num_, tangent_axis, emb_down->center(), angle_ ) );
 	tilt->apply( pose );
 	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 }// apply
 
 /// @brief Set Random tilt angle between -20 and 20 degrees

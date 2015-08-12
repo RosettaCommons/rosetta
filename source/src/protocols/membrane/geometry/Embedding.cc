@@ -63,11 +63,13 @@ using namespace core::conformation::membrane;
 
 /// @brief	Constructs empty object
 Embedding::Embedding() :
-embeddings_(),
-total_embed_(){}
+	embeddings_(),
+	total_embed_()
+{}
 
 /// @brief	Construction from single EmbeddingDef object
 Embedding::Embedding( EmbeddingDef const & embedding ) {
+
 	EmbeddingDefOP copy( new EmbeddingDef( embedding ) );
 	embeddings_.push_back( copy );
 	total_embed_ = copy;
@@ -222,6 +224,32 @@ EmbeddingDefOP Embedding::embedding( Size span_number ) const {
 
 //////////////////////////////////////////////////////////////////////////////
 
+// add span embedding
+void Embedding::add_span_embedding( EmbeddingDefOP span_embed ) {
+
+	embeddings_.push_back( span_embed );
+
+	// calculate chain embedding, push back
+	total_embed_ = average_embeddings( embeddings_ );
+	
+	// make sure the normal of the total embedding shows into positive z direction
+	if ( total_embed_->normal().z() < 0 ) {
+		this->invert();
+	}
+} // add span embedding
+
+//////////////////////////////////////////////////////////////////////////////
+
+// add span embedding
+void Embedding::add_span_embedding( core::Vector center, core::Vector normal ) {
+
+	EmbeddingDefOP embedding( new EmbeddingDef( center, normal ) );
+	this->add_span_embedding( embedding );
+
+} // add span embedding
+
+//////////////////////////////////////////////////////////////////////////////
+
 // get all span embeddings
 utility::vector1< EmbeddingDefOP > Embedding::embeddings() const {
     return embeddings_;
@@ -253,7 +281,9 @@ utility::vector1< EmbeddingDefOP > Embedding::from_spans( SpanningTopology const
 	Vector const normal1 = embedding1.normal();
 //	TR << "first span center and normal: " << center1.to_string() << ", " << normal1.to_string() << std::endl;
 	
-    // go through rest of TMspans
+    // go through TMspans, compute dihedral angle and add to Embedding object
+	// this needs to start from 1 because otherwise the first EmbeddingDef isn't
+	// added to the overall Embedding
     for ( Size i = 1; i <= topology.nspans(); ++i ){
 
         // residues

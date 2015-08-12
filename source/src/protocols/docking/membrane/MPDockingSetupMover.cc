@@ -30,6 +30,7 @@
 #include <protocols/membrane/util.hh>
 #include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/FlipMover.hh>
+#include <protocols/membrane/OptimizeMembranePositionMover.hh>
 #include <protocols/membrane/TransformIntoMembraneMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/simple_moves/AddChainMover.hh>
@@ -85,7 +86,9 @@ MPDockingSetupMover::MPDockingSetupMover() :
 MPDockingSetupMover::MPDockingSetupMover( MPDockingSetupMover const & src ) :
 	protocols::moves::Mover( src ), 
 	poses_( src.poses_ ),
-	spanfiles_( src.spanfiles_ )
+	spanfiles_( src.spanfiles_ ),
+	optimize1_( src.optimize1_ ),
+	optimize2_( src.optimize2_ )
 {}
 
 /// @brief Destructor
@@ -160,6 +163,7 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	// read in poses and spanfiles
 	MPDockingSetupMover::read_poses();
 	MPDockingSetupMover::read_spanfiles();
+	MPDockingSetupMover::init_from_cmd();
 
 	// get poses and topologies from vectors
 	PoseOP pose1( poses_[1] );
@@ -188,9 +192,9 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	Vector center1 (-10, 0, 0); // for pose 1
 	Vector center2 ( 10, 0, 0); // for pose 2
 
-	// add MEM and transform both poses into the membrane
-	MPDockingSetupMover::transform_pose_into_membrane( *pose1, center1, normal, spanfile1 );
-	MPDockingSetupMover::transform_pose_into_membrane( *pose2, center2, normal, spanfile2 );
+	// add MEM and transform both poses into the membrane, optionally optimize membrane position
+	MPDockingSetupMover::transform_pose_into_membrane( *pose1, center1, normal, spanfile1, 1 );
+	MPDockingSetupMover::transform_pose_into_membrane( *pose2, center2, normal, spanfile2, 2 );
 
 	// superimpose pose1_copy with pose1
 	protocols::toolbox::CA_superimpose( *pose1, pose1_cp );
@@ -214,7 +218,7 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	// pose1_cp is new master pose!!!
 	// this NEEDS to happen before the MEM virtual residue is attached!
 	core::pose::append_pose_to_pose( pose1_cp, pose2_cp, true );
-	bool renumber = renumber_pdbinfo_based_on_conf_chains( pose1_cp, true, true, false, true );
+	bool renumber = renumber_pdbinfo_based_on_conf_chains( pose1_cp, true, false, false, true );
 	TR << "renumber successful? " << renumber << std::endl;
 
 	// add membrane, setup membrane object using known topology
@@ -237,6 +241,11 @@ void MPDockingSetupMover::apply( Pose & pose ) {
 	
 	// copy pose1_cp into the pose we are working with
 	pose = pose1_cp;
+	
+	// reset foldtree and show final one
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 
 }// apply
 
@@ -272,9 +281,29 @@ void MPDockingSetupMover::read_spanfiles() {
 }// read spanfiles
 
 ////////////////////////////////////////////////////////////////////////////////
+
+// initialize from commandline
+void MPDockingSetupMover::init_from_cmd() {
+
+	using namespace basic::options;
+	
+	optimize1_ = false;
+	optimize2_ = false;
+	
+	// flags for optimizing partner 1 or 2 (depending on order given)
+	if ( option[ OptionKeys::mp::setup::optimize1 ].user() ){
+		optimize1_ = option[ OptionKeys::mp::setup::optimize1 ]();
+	}
+	if ( option[ OptionKeys::mp::setup::optimize2 ].user() ){
+		optimize2_ = option[ OptionKeys::mp::setup::optimize2 ]();
+	}
+
+}// read spanfiles
+
+////////////////////////////////////////////////////////////////////////////////
 	
 // transform pose into membrane
-void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile ) {
+void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner ) {
 
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
@@ -286,15 +315,38 @@ void MPDockingSetupMover::transform_pose_into_membrane( Pose & pose, Vector cent
 	// reorder foldtree such that MEM is at root
 	reorder_membrane_foldtree( pose );
 
-	// transform pose into membrane, false for viewing
-	TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
-	transform->apply( pose );
-	
-	// tilt pose slightly with random flip angle, default jump is membrane jump
-	FlipMoverOP flip( new FlipMover() );
-	flip->set_random_membrane_flip_angle();
-	flip->set_range( 30 );
-	flip->apply( pose );
+	// optimize membrane position if desired and then transform into membrane
+	if ( ( ( optimize1_ == true ) && ( partner == 1 ) ) || ( ( optimize2_ == true ) && ( partner == 2 ) ) ) {
+
+		TR << "Optimizing membrane position for partner " << partner << std::endl;
+//		OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
+//		optmem->apply( pose );
+
+		// transform pose into membrane and optimize embedding beforehand
+		TR << "Transforming partner " << partner << " into the membrane, keeping the relation between optimized embedding and membrane." << std::endl;
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
+		transform->optimize_embedding( true );
+		transform->apply( pose );
+
+	}
+	else if ( ( ( optimize1_ == false ) && ( partner == 1 ) ) || ( ( optimize2_ == false ) && ( partner == 2 ) ) ) {
+
+		TR << "Transforming partner " << partner << " into the membrane, adding small random tilt angle below 30 degrees." << std::endl;
+
+		// transform pose into membrane, true for keep current embedding-membrane relation
+		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( center, normal ) );
+		transform->optimize_embedding( false );
+		transform->apply( pose );
+		
+		// tilt pose slightly with random flip angle, default jump is membrane jump
+		FlipMoverOP flip( new FlipMover() );
+		flip->set_random_membrane_flip_angle();
+		flip->set_range( 30 );
+		flip->apply( pose );
+	}
+	else {
+		TR << "No transformation took place, check your inputs for mp:setup:optimize1 or 2" << std::endl;
+	}
 	
 }// transform pose into membrane
 	

@@ -124,6 +124,11 @@ SetMembranePositionMover::apply( Pose & pose ) {
 	
 	TR << "Calling SetMembranePositionMover" << std::endl;
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// Check the pose is ==a membrane protein
 	if (! pose.conformation().is_membrane() ) {
 		utility_exit_with_message( "Cannot apply membrane move to a non-membrane pose!" );
@@ -132,7 +137,12 @@ SetMembranePositionMover::apply( Pose & pose ) {
 	// Update coordinates
 	pose.conformation().update_membrane_position( center_, normal_ );
 	
-}
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
+} // apply
 
 ///////////////////////////////
 /// Rosetta Scripts Methods ///

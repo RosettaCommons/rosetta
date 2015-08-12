@@ -2,7 +2,7 @@
 -in:file:native inputs/mpdocking_setup_out.pdb 
 -mp:setup:spanfiles inputs/mpdocking_setup_out.span 
 -mp:scoring:hbond 1 
--mp:dock:lowres 1 
+-mp:dock:highres 1 
 -docking:partners A_B 
 -score::docking_interface_score 1 
 -packing:pack_missing_sidechains false 

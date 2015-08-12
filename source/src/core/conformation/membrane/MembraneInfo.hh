@@ -142,6 +142,10 @@ public:
 	/// layers in the membrane. Maintians the relative coordinate frame
 	Real
 	atom_z_position( core::Size resnum, core::Size atomnum ) const;
+	
+	/// @brief Is residue in the membrane? Takes CA coordinate
+	/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
+	bool in_membrane( core::Size resnum ) const;
 
 	////////////////////////////////////////////
 	/// Non-Coordinate Derived Membrane Data ///

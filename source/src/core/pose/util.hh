@@ -266,6 +266,8 @@ std::map< std::string, std::string > get_all_score_line_strings(
 ///  otherwise returns an empty mapping
 std::map< int, char > conf2pdb_chain( core::pose::Pose const & pose );
 
+/// @brief Get all the chains from conformation
+utility::vector1< int > get_chains( core::pose::Pose const & pose );
 
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.

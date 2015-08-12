@@ -89,6 +89,12 @@ public: // methods
 
 	// get span embedding by number
 	EmbeddingDefOP embedding( Size span_number ) const;
+	
+	// add span embedding
+	void add_span_embedding( EmbeddingDefOP span_embed );
+
+	// add span embedding
+	void add_span_embedding( core::Vector center, core::Vector normal );
 
 	// get all span embeddings
 	utility::vector1< EmbeddingDefOP > embeddings() const;

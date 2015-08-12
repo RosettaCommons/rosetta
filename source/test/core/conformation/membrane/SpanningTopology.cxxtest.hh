@@ -303,8 +303,35 @@ public: // test functions
 			TS_ASSERT( expected_error_message == e.msg() );
 		}
 		TS_TRACE("...topo4 done.");
+	}
 		
-}
+	////////////////////////////////////////////////////////////////////////////////
+
+	// concatenate topology
+	void test_concatenate_topology(){
+		TS_TRACE("Testing concatenate topology");
+		using namespace core::conformation::membrane;
+		
+		// create topology objects
+		SpanningTopology topo1( SpanningTopology( "core/conformation/membrane/pmp22_withSS_PPM_opt.span" ) );
+		SpanningTopology topo2( SpanningTopology( "core/conformation/membrane/caln_tm_finalB.span" ) );
+
+		// concatenate them
+		topo1.concatenate_topology( topo2 );
+
+		// test topology
+		TS_ASSERT_EQUALS( topo1.span(1)->start(), 4 );
+		TS_ASSERT_EQUALS( topo1.span(1)->end(),   24 );
+		TS_ASSERT_EQUALS( topo1.span(2)->start(), 64 );
+		TS_ASSERT_EQUALS( topo1.span(2)->end(),   84 );
+		TS_ASSERT_EQUALS( topo1.span(3)->start(), 98 );
+		TS_ASSERT_EQUALS( topo1.span(3)->end(),   116 );
+		TS_ASSERT_EQUALS( topo1.span(4)->start(), 135 );
+		TS_ASSERT_EQUALS( topo1.span(4)->end(),   154 );
+		TS_ASSERT_EQUALS( topo1.span(5)->start(), 167 );
+		TS_ASSERT_EQUALS( topo1.span(5)->end(),   186 );
+		
+	}
 
 ////////////////////////////////////////////////////////////////////////////////
 

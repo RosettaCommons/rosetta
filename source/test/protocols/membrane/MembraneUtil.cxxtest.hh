@@ -32,6 +32,7 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh> 
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/types.hh> 
 
@@ -48,6 +49,7 @@
 #include <cmath>
 
 using namespace core;
+using namespace core::import_pose;
 using namespace core::conformation;
 using namespace core::conformation::membrane;
 using namespace core::pose;
@@ -66,36 +68,36 @@ public: // test functions
     /// @brief Setup the unit test
     void setUp() {
         
-        using namespace core::import_pose;
-    
+//        using namespace core::import_pose;
+		
         // Initialize core & options system
         core_init();
         
         // Test Cases for calc angles & moveable membranes:
         // 1. TM domain of the M2 proton channel (single helix)
-        m2_pose_ = PoseOP( new Pose() );
-        pose_from_pdb( *m2_pose_, "protocols/membrane/1mp6_transformed.pdb" );
-        AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
-        add_memb1->apply( *m2_pose_ );
-
-        // 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
-        glpA_pose_ = PoseOP( new Pose() );
-        pose_from_pdb( *glpA_pose_, "protocols/membrane/1AFO_AB.pdb" );
-        AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
-        add_memb2->apply( *glpA_pose_ );
-		
-		// Test Cases for membrane rmsd calculations
-		// 3. Native Glycophprin A
-		native_pose_ = core::pose::PoseOP( new Pose() );
-        pose_from_pdb( *native_pose_, "protocols/membrane/1afo_in.pdb" );
-		
-		// 4. Transformed glycophorin A
-        test_pose_ = core::pose::PoseOP( new Pose() );
-        pose_from_pdb( *test_pose_, "protocols/membrane/1afo_decoy.pdb" );
-		
-        AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
-        add_memb3->apply( *native_pose_ );
-        add_memb3->apply( *test_pose_ );
+//        PoseOP m2_pose ( new Pose() );
+//        pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+//        AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+//        add_memb1->apply( *m2_pose );
+//
+//        // 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+//        PoseOP glpA_pose( new Pose() );
+//        pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+//        AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+//        add_memb2->apply( *glpA_pose );
+//		
+//		// Test Cases for membrane rmsd calculations
+//		// 3. Native Glycophprin A
+//		core::pose::PoseOP native_pose( new Pose() );
+//        pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+//		
+//		// 4. Transformed glycophorin A
+//        core::pose::PoseOP test_pose( new Pose() );
+//        pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+//		
+//        AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
+//        add_memb3->apply( *native_pose );
+//        add_memb3->apply( *test_pose );
 		
     }
 
@@ -105,12 +107,24 @@ public: // test functions
     // Test calc helix axis method
     void test_calc_helix_axis() {
         
-        TS_TRACE( "Testing the helix axes are correctly calculated for each span in the test set" );
+        TS_TRACE( "=========Testing the helix axes are correctly calculated for each span in the test set" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
+		
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
 		
 		// Calculate helix axis for each transembrane span
-		Vector m2_first_span( calc_helix_axis( *m2_pose_, 1 ) );
-		Vector glpA_first_span( calc_helix_axis( *glpA_pose_, 1 ) );
-		Vector glpA_second_span( calc_helix_axis( *glpA_pose_, 2 ) );
+		Vector m2_first_span( calc_helix_axis( *m2_pose, 1 ) );
+		Vector glpA_first_span( calc_helix_axis( *glpA_pose, 1 ) );
+		Vector glpA_second_span( calc_helix_axis( *glpA_pose, 2 ) );
 		
 		Vector m2_first_expected( -3.208, 1.1903, 30.47033 );
         Vector glpA_first_expected( 1.409, -3.2603, 23.7866 );
@@ -128,12 +142,24 @@ public: // test functions
     /// @brief Calculate angles from single helix pose and two helix pose
     void test_calc_helix_angles() {
         
-        TS_TRACE( "Testing method for calculating the angle between a single helix and the membrane normal in a single helix pose" );
+        TS_TRACE( "=========Testing method for calculating the angle between a single helix and the membrane normal in a single helix pose" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
+		
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
 		
 		// Calculate helix tilt angles & compare
-        Real m2_first_angle( calc_helix_tilt_angle( *m2_pose_, 1 ) );
-		Real glpA_first_angle( calc_helix_tilt_angle( *glpA_pose_, 1 ) );
-		Real glpA_second_angle( calc_helix_tilt_angle( *glpA_pose_, 2 ) );
+        Real m2_first_angle( calc_helix_tilt_angle( *m2_pose, 1 ) );
+		Real glpA_first_angle( calc_helix_tilt_angle( *glpA_pose, 1 ) );
+		Real glpA_second_angle( calc_helix_tilt_angle( *glpA_pose, 2 ) );
 		
 		TS_ASSERT_DELTA( m2_first_angle, 6.41, 0.005 );
 		TS_ASSERT_DELTA( glpA_first_angle, 8.49, 0.005 );
@@ -147,7 +173,7 @@ public: // test functions
     /// @brief Calculate RMSD between reference and new angle
     void test_angle_rmsd_method() {
         
-        TS_TRACE( "Testing method for calcuating the rms between a measured and reference angle value" );
+        TS_TRACE( "=========Testing method for calcuating the rms between a measured and reference angle value" );
         
         // Test ref = 0, measured = 0
         Real rms1( calc_angle_rmsd(0, 0) );
@@ -168,123 +194,227 @@ public: // test functions
         // Test normal - both negative
         Real rms5( calc_angle_rmsd( -3, -5 ) );
         TS_ASSERT_DELTA( rms5, 1.414, 0.005 );
-        
+		
     }
     
     ///// These tests are separate and should be moved down into membrane info after debugging ////
     // There are more test cases here, but I'm only including the ones in use for now. Will extend later
     void test_is_fixed_on_moveable_memb() {
         
-        TS_TRACE( "Test is_membrane_fixed method on a moveable membrane" );
-        
+        TS_TRACE( "=========Test is_membrane_fixed method on a moveable membrane" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
+		
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
+		
 		// Set up new foldtree for m2 rooted at the previous downstream residue
 		// of the membrane jump
-        Size m2_jump( m2_pose_->conformation().membrane_info()->membrane_jump() );
-        Size m2_downstream( m2_pose_->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
-        FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose_->conformation().fold_tree() ) );
+        Size m2_jump( m2_pose->conformation().membrane_info()->membrane_jump() );
+        Size m2_downstream( m2_pose->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
+        FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
         m2_foldtree->reorder( m2_downstream );
-		m2_pose_->fold_tree( *m2_foldtree );
+		m2_pose->fold_tree( *m2_foldtree );
         m2_foldtree->show( std::cout );
-		TS_ASSERT( !is_membrane_fixed( *m2_pose_ ) );
+		TS_ASSERT( !is_membrane_fixed( *m2_pose ) );
 		
 		// Set up new foldtree for glpA rooted at the previous downstream residue
 		// of the membrane jump
-		Size glpA_jump( glpA_pose_->conformation().membrane_info()->membrane_jump() );
-        Size glpA_downstream( glpA_pose_->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
-		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose_->conformation().fold_tree() ) );
+		Size glpA_jump( glpA_pose->conformation().membrane_info()->membrane_jump() );
+        Size glpA_downstream( glpA_pose->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
+		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
 		glpA_foldtree->reorder( glpA_downstream );
-		glpA_pose_->fold_tree( *glpA_foldtree );
+		glpA_pose->fold_tree( *glpA_foldtree );
 		glpA_foldtree->show( std::cout );
-		TS_ASSERT( !is_membrane_fixed( *glpA_pose_ ) );
-        
+		TS_ASSERT( !is_membrane_fixed( *glpA_pose ) );
+		
     }
     
     void test_is_fixed_on_fixed_memb() {
         
-        TS_TRACE( "Test is_fixed method on a fixed membrane" );
+        TS_TRACE( "=========Test is_fixed method on a fixed membrane" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
+		
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
 
         // When the pose is loaded in via AddMembraneMover, by default the foldtree
 		// enforces a fixed membrane position
-        TS_ASSERT( is_membrane_fixed( *m2_pose_ ) );
-        TS_ASSERT( is_membrane_fixed( *glpA_pose_ ) );
-        
+        TS_ASSERT( is_membrane_fixed( *m2_pose ) );
+        TS_ASSERT( is_membrane_fixed( *glpA_pose ) );
+		
     }
     
     void test_is_independently_moveable_on_fixed_memb() {
         
-        TS_TRACE( "Test is_independently_moveable on a fixed membrane" );
+        TS_TRACE( "=========Test is_independently_moveable on a fixed membrane" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
 		
-		TS_ASSERT( !is_membrane_moveable_by_itself( *m2_pose_ ) );
-		TS_ASSERT( !is_membrane_moveable_by_itself( *glpA_pose_ ) );
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
+		
+		TS_ASSERT( !is_membrane_moveable_by_itself( *m2_pose ) );
+		TS_ASSERT( !is_membrane_moveable_by_itself( *glpA_pose ) );
 
     }
     
     void test_is_independently_moveable_on_independently_moveable_memb() {
         
-        TS_TRACE( "Test is_independently_moveable on a moveable membrane" );
+        TS_TRACE( "=========Test is_independently_moveable on a moveable membrane" );
+
+		// 1. TM domain of the M2 proton channel (single helix)
+		PoseOP m2_pose ( new Pose() );
+		pose_from_pdb( *m2_pose, "protocols/membrane/1mp6_transformed.pdb" );
+		AddMembraneMoverOP add_memb1 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1mp6.span" ) );
+		add_memb1->apply( *m2_pose );
+		
+		// 2. Glycophorin A (two helices, oriented 'somewhat' opposite one another)
+		PoseOP glpA_pose( new Pose() );
+		pose_from_pdb( *glpA_pose, "protocols/membrane/1AFO_AB.pdb" );
+		AddMembraneMoverOP add_memb2 = AddMembraneMoverOP( new AddMembraneMover( "protocols/membrane/1AFO_AB.span" ) );
+		add_memb2->apply( *glpA_pose );
 
 		// Set up new foldtree for m2 rooted at the previous downstream residue
 		// of the membrane jump
-        Size m2_jump( m2_pose_->conformation().membrane_info()->membrane_jump() );
-        Size m2_downstream( m2_pose_->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
-        FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose_->conformation().fold_tree() ) );
+        Size m2_jump( m2_pose->conformation().membrane_info()->membrane_jump() );
+        Size m2_downstream( m2_pose->conformation().fold_tree().downstream_jump_residue( m2_jump ) );
+        FoldTreeOP m2_foldtree = FoldTreeOP( new FoldTree( m2_pose->conformation().fold_tree() ) );
         m2_foldtree->reorder( m2_downstream );
-		m2_pose_->fold_tree( *m2_foldtree );
+		m2_pose->fold_tree( *m2_foldtree );
         m2_foldtree->show( std::cout );
-		TS_ASSERT( is_membrane_moveable_by_itself( *m2_pose_ ) );
+		TS_ASSERT( is_membrane_moveable_by_itself( *m2_pose ) );
 		
 		// Set up new foldtree for glpA rooted at the previous downstream residue
 		// of the membrane jump
-		Size glpA_jump( glpA_pose_->conformation().membrane_info()->membrane_jump() );
-        Size glpA_downstream( glpA_pose_->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
-		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose_->conformation().fold_tree() ) );
+		Size glpA_jump( glpA_pose->conformation().membrane_info()->membrane_jump() );
+        Size glpA_downstream( glpA_pose->conformation().fold_tree().downstream_jump_residue( glpA_jump ) );
+		FoldTreeOP glpA_foldtree = FoldTreeOP( new FoldTree( glpA_pose->conformation().fold_tree() ) );
 		glpA_foldtree->reorder( glpA_downstream );
-		glpA_pose_->fold_tree( *glpA_foldtree );
+		glpA_pose->fold_tree( *glpA_foldtree );
 		glpA_foldtree->show( std::cout );
-		TS_ASSERT( is_membrane_moveable_by_itself( *glpA_pose_ ) ); 
-        
+		TS_ASSERT( is_membrane_moveable_by_itself( *glpA_pose ) ); 
+		
     }
 	
 	/// @brief Calculate membrane backbone rmsd with superposition
     void test_membrane_bb_rmsd_with_super() {
 		
-        TS_TRACE( "Calculating membrane backbone rmsd with superposition" );
-        core::Real rms = mem_bb_rmsd_with_super( *native_pose_, *test_pose_ );
+        TS_TRACE( "=========Calculating membrane backbone rmsd with superposition" );
+
+		// Test Cases for membrane rmsd calculations
+		// 3. Native Glycophprin A
+		core::pose::PoseOP native_pose( new Pose() );
+		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		
+		// 4. Transformed glycophorin A
+		core::pose::PoseOP test_pose( new Pose() );
+		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		
+		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
+		add_memb3->apply( *native_pose );
+		add_memb3->apply( *test_pose );
+
+        core::Real rms = mem_bb_rmsd_with_super( *native_pose, *test_pose );
         TS_ASSERT_DELTA( rms, 0.0005, 0.0003 );
-    
+		
     }
     
     /// @brief Calculate membrane backbone rmsd with superposition
     void test_membrane_bb_rmsd_no_super() {
 		
-        TS_TRACE( "Calculating membrane backbone rmsd without superposition" );
-        core::Real rms = mem_bb_rmsd_no_super( *native_pose_, *test_pose_ );
+        TS_TRACE( "=========Calculating membrane backbone rmsd without superposition" );
+
+		// Test Cases for membrane rmsd calculations
+		// 3. Native Glycophprin A
+		core::pose::PoseOP native_pose( new Pose() );
+		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		
+		// 4. Transformed glycophorin A
+		core::pose::PoseOP test_pose( new Pose() );
+		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		
+		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
+		add_memb3->apply( *native_pose );
+		add_memb3->apply( *test_pose );
+
+        core::Real rms = mem_bb_rmsd_no_super( *native_pose, *test_pose );
         TS_ASSERT_DELTA( rms, 3.8042, 0.0003 );
-        
+		
     }
 
     /// @brief Calculate membrane all atom rmsd with superposition
     void test_membrane_bb_rmsd_with_super_allatom() {
 		
-        TS_TRACE( "Calculating membrane allatom rmsd with superposition" );
-        core::Real rms = mem_all_atom_rmsd_with_super( *native_pose_, *test_pose_ );
+        TS_TRACE( "=========Calculating membrane allatom rmsd with superposition" );
+
+		// Test Cases for membrane rmsd calculations
+		// 3. Native Glycophprin A
+		core::pose::PoseOP native_pose( new Pose() );
+		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		
+		// 4. Transformed glycophorin A
+		core::pose::PoseOP test_pose( new Pose() );
+		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		
+		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
+		add_memb3->apply( *native_pose );
+		add_memb3->apply( *test_pose );
+
+        core::Real rms = mem_all_atom_rmsd_with_super( *native_pose, *test_pose );
         TS_ASSERT_DELTA( rms, 0.5052, 0.0003 );
-        
+		
     }
     
     /// @brief Calculate membrane all atom rmsd without superposition
     void test_membrane_bb_rmsd_no_super_allatom() {
 		
-        TS_TRACE( "Calculating membrane backbone rmsd without superposition" );
-        core::Real rms = mem_all_atom_rmsd_no_super( *native_pose_, *test_pose_ );
+        TS_TRACE( "=========Calculating membrane backbone rmsd without superposition" );
+
+		// Test Cases for membrane rmsd calculations
+		// 3. Native Glycophprin A
+		core::pose::PoseOP native_pose( new Pose() );
+		pose_from_pdb( *native_pose, "protocols/membrane/1afo_in.pdb" );
+		
+		// 4. Transformed glycophorin A
+		core::pose::PoseOP test_pose( new Pose() );
+		pose_from_pdb( *test_pose, "protocols/membrane/1afo_decoy.pdb" );
+		
+		AddMembraneMoverOP add_memb3( new AddMembraneMover( "protocols/membrane/1afo_tr.span", 1 ) );
+		add_memb3->apply( *native_pose );
+		add_memb3->apply( *test_pose );
+
+        core::Real rms = mem_all_atom_rmsd_no_super( *native_pose, *test_pose );
         TS_ASSERT_DELTA( rms, 3.9376, 0.0003 );
-        
+		
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding1() {
         
-        TS_TRACE("Test compute_structure_based_embedding 1");
+        TS_TRACE("=========Test compute_structure_based_embedding 1");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
         
@@ -308,14 +438,13 @@ public: // test functions
         // compare
         TS_ASSERT( position_equal_within_delta( embed1->center(), center1, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed1->normal(), normal1, 0.001 ) );
-        
 
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding2() {
 
-        TS_TRACE("Test compute_structure_based_embedding 2");
+        TS_TRACE("=========Test compute_structure_based_embedding 2");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
         
@@ -338,7 +467,7 @@ public: // test functions
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding3() {
         
-        TS_TRACE("Test compute_structure_based_embedding 3");
+        TS_TRACE("=========Test compute_structure_based_embedding 3");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
 
@@ -355,13 +484,13 @@ public: // test functions
         EmbeddingDefOP embed3( compute_structure_based_embedding( pose3 ) );
         TS_ASSERT( position_equal_within_delta( embed3->center(), center3, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed3->normal(), normal3, 0.001 ) );
-        
+		
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding4() {
         
-        TS_TRACE("Test compute_structure_based_embedding 4");
+        TS_TRACE("=========Test compute_structure_based_embedding 4");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
 
@@ -378,13 +507,13 @@ public: // test functions
         EmbeddingDefOP embed4( compute_structure_based_embedding( pose4 ) );
         TS_ASSERT( position_equal_within_delta( embed4->center(), center4, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed4->normal(), normal4, 0.001 ) );
-        
+		
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding5() {
         
-        TS_TRACE("Test compute_structure_based_embedding 5");
+        TS_TRACE("=========Test compute_structure_based_embedding 5");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
         
@@ -401,13 +530,13 @@ public: // test functions
         EmbeddingDefOP embed5( compute_structure_based_embedding( pose5 ) );
         TS_ASSERT( position_equal_within_delta( embed5->center(), center5, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed5->normal(), normal5, 0.001 ) );
-        
+		
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding6() {
         
-        TS_TRACE("Test compute_structure_based_embedding 6");
+        TS_TRACE("=========Test compute_structure_based_embedding 6");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
         
@@ -424,13 +553,13 @@ public: // test functions
         EmbeddingDefOP embed6( compute_structure_based_embedding( pose6 ) );
         TS_ASSERT( position_equal_within_delta( embed6->center(), center6, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed6->normal(), normal6, 0.001 ) );
-        
+		
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding7() {
         
-        TS_TRACE("Test compute_structure_based_embedding 7");
+        TS_TRACE("=========Test compute_structure_based_embedding 7");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
         
@@ -447,14 +576,14 @@ public: // test functions
         EmbeddingDefOP embed7( compute_structure_based_embedding( pose7 ) );
         TS_ASSERT( position_equal_within_delta( embed7->center(), center7, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed7->normal(), normal7, 0.001 ) );
-        
+		
         
     }
 
     // compute_structure_based_embedding
     void test_compute_structure_based_embedding8() {
         
-        TS_TRACE("Test compute_structure_based_embedding 8");
+        TS_TRACE("=========Test compute_structure_based_embedding 8");
         using namespace protocols::membrane;
         using namespace protocols::membrane::geometry;
 
@@ -471,13 +600,13 @@ public: // test functions
         EmbeddingDefOP embed8( compute_structure_based_embedding( pose8 ) );
         TS_ASSERT( position_equal_within_delta( embed8->center(), center8, 0.001 ) );
         TS_ASSERT( position_equal_within_delta( embed8->normal(), normal8, 0.001 ) );
-        
+		
     }
 
     // check vector for reasonable size
     void test_check_vector() {
         
-        TS_TRACE("Test check vector");
+        TS_TRACE("=========Test check vector");
                 
         // define vectors and object
         Vector v1(1, 2, 1000);
@@ -495,7 +624,7 @@ public: // test functions
     // average  embeddings
     void test_average_embeddings() {
         
-        TS_TRACE("Test average embeddings");
+        TS_TRACE("=========Test average embeddings");
         
         // define vectors
         Vector v1(1, 2, 3);
@@ -527,7 +656,7 @@ public: // test functions
     // average antiparallel embeddings
     void test_average_antiparallel_embeddings() {
         
-        TS_TRACE("Test average antiparallel embeddings");
+        TS_TRACE("=========Test average antiparallel embeddings");
         
         // define vectors
         Vector v1(1, 2, 3);
@@ -557,10 +686,7 @@ public: // test functions
     // split topology by jump
     void test_split_topology_by_jump() {
 
-        TS_TRACE("Test split topology by jump");
-        using namespace core::conformation::membrane;
-        using namespace protocols::membrane;
-        using namespace protocols::membrane::geometry;
+        TS_TRACE("=========Test split topology by jump");
 
         // read in pose and create topology object
         Pose pose, pose_up, pose_down;
@@ -584,11 +710,8 @@ public: // test functions
     // split topology by jump
     void test_split_topology_by_jump_noshift() {
         
-        TS_TRACE("Test split topology by jump, no shift");
-        using namespace core::conformation::membrane;
-        using namespace protocols::membrane;
-        using namespace protocols::membrane::geometry;
-        
+        TS_TRACE("=========Test split topology by jump, no shift");
+		
         // read in pose and create topology object
         Pose pose;
         core::import_pose::pose_from_pdb( pose, "protocols/membrane/geometry/1AFO_.pdb" );
@@ -609,9 +732,370 @@ public: // test functions
         TS_ASSERT_EQUALS( topo_down->span(1)->end(), 73 );
     }
 
+	// split topology by chain
+	void test_split_topology_by_chain_noshift() {
+		
+		TS_TRACE("=========Test split topology by chain");
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1C17_tr.pdb" );
+		SpanningTopologyOP topo( new SpanningTopology( "protocols/membrane/1C17_tr.span" ) );
 
+		// call function
+		utility::vector1< SpanningTopologyOP > topos( split_topology_by_chain_noshift( pose, topo ) );
+		
+		// test
+		TS_ASSERT_EQUALS( topos[1]->span(1)->start(), 12 );
+		TS_ASSERT_EQUALS( topos[1]->span(1)->end(), 32 );
+		TS_ASSERT_EQUALS( topos[1]->span(2)->start(), 52 );
+		TS_ASSERT_EQUALS( topos[1]->span(2)->end(), 71 );
 
-private: 
+		TS_ASSERT_EQUALS( topos[2]->span(1)->start(), 91 );
+		TS_ASSERT_EQUALS( topos[2]->span(1)->end(), 111 );
+		TS_ASSERT_EQUALS( topos[2]->span(2)->start(), 131 );
+		TS_ASSERT_EQUALS( topos[2]->span(2)->end(), 150 );
+		
+		TS_ASSERT_EQUALS( topos[3]->span(1)->start(), 170 );
+		TS_ASSERT_EQUALS( topos[3]->span(1)->end(), 190 );
+		TS_ASSERT_EQUALS( topos[3]->span(2)->start(), 210 );
+		TS_ASSERT_EQUALS( topos[3]->span(2)->end(), 229 );
+		
+		TS_ASSERT_EQUALS( topos[4]->span(1)->start(), 249 );
+		TS_ASSERT_EQUALS( topos[4]->span(1)->end(), 269 );
+		TS_ASSERT_EQUALS( topos[4]->span(2)->start(), 289 );
+		TS_ASSERT_EQUALS( topos[4]->span(2)->end(), 308 );
+		
+		TS_ASSERT_EQUALS( topos[5]->span(1)->start(), 328 );
+		TS_ASSERT_EQUALS( topos[5]->span(1)->end(), 348 );
+		TS_ASSERT_EQUALS( topos[5]->span(2)->start(), 368 );
+		TS_ASSERT_EQUALS( topos[5]->span(2)->end(), 387 );
+		
+		TS_ASSERT_EQUALS( topos[6]->span(1)->start(), 407 );
+		TS_ASSERT_EQUALS( topos[6]->span(1)->end(), 427 );
+		TS_ASSERT_EQUALS( topos[6]->span(2)->start(), 447 );
+		TS_ASSERT_EQUALS( topos[6]->span(2)->end(), 466 );
+		
+		TS_ASSERT_EQUALS( topos[7]->span(1)->start(), 486 );
+		TS_ASSERT_EQUALS( topos[7]->span(1)->end(), 506 );
+		TS_ASSERT_EQUALS( topos[7]->span(2)->start(), 526 );
+		TS_ASSERT_EQUALS( topos[7]->span(2)->end(), 545 );
+		
+		TS_ASSERT_EQUALS( topos[8]->span(1)->start(), 565 );
+		TS_ASSERT_EQUALS( topos[8]->span(1)->end(), 585 );
+		TS_ASSERT_EQUALS( topos[8]->span(2)->start(), 605 );
+		TS_ASSERT_EQUALS( topos[8]->span(2)->end(), 624 );
+		
+		TS_ASSERT_EQUALS( topos[9]->span(1)->start(), 644 );
+		TS_ASSERT_EQUALS( topos[9]->span(1)->end(), 664 );
+		TS_ASSERT_EQUALS( topos[9]->span(2)->start(), 684 );
+		TS_ASSERT_EQUALS( topos[9]->span(2)->end(), 703 );
+		
+		TS_ASSERT_EQUALS( topos[10]->span(1)->start(), 723 );
+		TS_ASSERT_EQUALS( topos[10]->span(1)->end(), 744 );
+		TS_ASSERT_EQUALS( topos[10]->span(2)->start(), 763 );
+		TS_ASSERT_EQUALS( topos[10]->span(2)->end(), 782 );
+		
+		TS_ASSERT_EQUALS( topos[11]->span(1)->start(), 802 );
+		TS_ASSERT_EQUALS( topos[11]->span(1)->end(), 823 );
+		TS_ASSERT_EQUALS( topos[11]->span(2)->start(), 842 );
+		TS_ASSERT_EQUALS( topos[11]->span(2)->end(), 861 );
+		
+		TS_ASSERT_EQUALS( topos[12]->span(1)->start(), 881 );
+		TS_ASSERT_EQUALS( topos[12]->span(1)->end(), 901 );
+		TS_ASSERT_EQUALS( topos[12]->span(2)->start(), 920 );
+		TS_ASSERT_EQUALS( topos[12]->span(2)->end(), 940 );
+		
+		TS_ASSERT_EQUALS( topos[13]->span(1)->start(), 956 );
+		TS_ASSERT_EQUALS( topos[13]->span(1)->end(), 975 );
+		TS_ASSERT_EQUALS( topos[13]->span(2)->start(), 999 );
+		TS_ASSERT_EQUALS( topos[13]->span(2)->end(), 1017 );
+		TS_ASSERT_EQUALS( topos[13]->span(3)->start(), 1027 );
+		TS_ASSERT_EQUALS( topos[13]->span(3)->end(), 1044 );
+		TS_ASSERT_EQUALS( topos[13]->span(4)->start(), 1068 );
+		TS_ASSERT_EQUALS( topos[13]->span(4)->end(), 1087 );
+
+	}
+
+	// compute embeddings by chain
+	void test_compute_embeddings_by_chain() {
+		
+		TS_TRACE("=========Test compute embeddings by chain");
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/1C17_tr.pdb" );
+
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/1C17_tr.span" ) );
+		addmem->apply(pose);
+
+		// compute embeddings by chain
+		EmbeddingOP embeddings( compute_embeddings_by_chain( pose ) );
+		
+		// initialize vectors
+		core::Vector center1( 18.882, -0.12625, -0.28525 );
+		core::Vector normal1( 0.064413, 0.0799618, 0.994715 );
+		core::Vector center2( 18.6088, 11.9908, -0.248 );
+		core::Vector normal2( 0.00767857, 0.0858815, 0.996276 );
+		core::Vector center3( 12.5838, 22.4555, -0.05 );
+		core::Vector normal3( -0.0432722, 0.0666127, 0.99684 );
+		core::Vector center4( 2.26575, 28.673, 0.13175 );
+		core::Vector normal4( -0.0763435, 0.0286892, 0.996669 );
+		core::Vector center5( -9.813, 28.848, 0.24375 );
+		core::Vector normal5( -0.0821136, -0.0251727, 0.996305 );
+		core::Vector center6( -20.1778, 22.7, 0.26525 );
+		core::Vector normal6( -0.0632901, -0.0720583, 0.99539 );
+		core::Vector center7( -25.7978, 11.8975, 0.219 );
+		core::Vector normal7( -0.0292156, -0.0935649, 0.995184 );
+		core::Vector center8( -25.2455, -0.2675, 0.196 );
+		core::Vector normal8( 0.0121257, -0.0949157, 0.995411 );
+		core::Vector center9( -18.77, -10.611, 0.31275 );
+		core::Vector normal9( 0.0382791, -0.0768116, 0.996311 );
+		core::Vector center10( -8.5835, -16.2085, 0.07625 );
+		core::Vector normal10( 0.0677452, -0.09455, 0.993212 );
+		core::Vector center11( 3.07125, -17.2972, 0.29 );
+		core::Vector normal11( 0.105914, -0.0375546, 0.993666 );
+		core::Vector center12( 16.2923, -13.9145, 0.3135 );
+		core::Vector normal12( -0.0246791, 0.175757, 0.984124 );
+		core::Vector center13( 17.5571, -34.6114, 0.1045 );
+		core::Vector normal13( 0.0546472, 0.0975181, 0.993732 );
+
+		// test
+		position_equal_within_delta( embeddings->embedding(1)->center(), center1 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(1)->normal(), normal1 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(2)->center(), center2 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(2)->normal(), normal2 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(3)->center(), center3 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(3)->normal(), normal3 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(4)->center(), center4 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(4)->normal(), normal4 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(5)->center(), center5 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(5)->normal(), normal5 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(6)->center(), center6 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(6)->normal(), normal6 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(7)->center(), center7 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(7)->normal(), normal7 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(8)->center(), center8 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(8)->normal(), normal8 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(9)->center(), center9 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(9)->normal(), normal9 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(10)->center(), center10 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(10)->normal(), normal10 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(11)->center(), center11 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(11)->normal(), normal11 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(12)->center(), center12 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(12)->normal(), normal12 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(13)->center(), center13 , 0.001 );
+		position_equal_within_delta( embeddings->embedding(13)->normal(), normal13 , 0.001 );
+	}
+
+	// chain center-of-mass
+	void test_chain_com() {
+		
+		TS_TRACE("=========Test chain center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// get chains
+		utility::vector1< int > chains = get_chains( pose );
+		
+		// initializations
+		core::Vector com1( -8.6948, 3.75347, 19.414 );
+		core::Vector com2( -4.70189, -9.09737, 19.3467 );
+		core::Vector com3( 8.92337, -3.8912, 18.6833 );
+		core::Vector com4( 4.46868, 9.22617, 19.3293 );
+		
+		// compute chain COM for all chains and pushback into vector
+		core::Vector com_1 = protocols::membrane::chain_com( pose, chains[ 1 ] );
+		core::Vector com_2 = protocols::membrane::chain_com( pose, chains[ 2 ] );
+		core::Vector com_3 = protocols::membrane::chain_com( pose, chains[ 3 ] );
+		core::Vector com_4 = protocols::membrane::chain_com( pose, chains[ 4 ] );
+
+		// test
+		position_equal_within_delta( com1, com_1 , 0.001 );
+		position_equal_within_delta( com2, com_2 , 0.001 );
+		position_equal_within_delta( com3, com_3 , 0.001 );
+		position_equal_within_delta( com4, com_4 , 0.001 );
+	}
+
+	// residue closest to chain center-of-mass
+	void test_rsd_closest_chain_com() {
+		
+		TS_TRACE("=========Test residue closest to chain center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// get chains
+		utility::vector1< int > chains = get_chains( pose );
+		
+		// get residue closest to COM
+		core::Size closest1 = rsd_closest_to_chain_com( pose, chains[ 1 ] );
+		core::Size closest2 = rsd_closest_to_chain_com( pose, chains[ 2 ] );
+		core::Size closest3 = rsd_closest_to_chain_com( pose, chains[ 3 ] );
+		core::Size closest4 = rsd_closest_to_chain_com( pose, chains[ 4 ] );
+		
+		// test
+		TS_ASSERT_EQUALS( closest1, 88 );
+		TS_ASSERT_EQUALS( closest2, 227 );
+		TS_ASSERT_EQUALS( closest3, 366 );
+		TS_ASSERT_EQUALS( closest4, 505 );
+		
+	}
+
+	// per chain TM center-of-mass
+	void test_tm_com() {
+		
+		TS_TRACE("=========Test per chain transmembrane center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// initializations
+		core::Vector tm1center( -10.4263, 9.96149, -2.58642 );
+		core::Vector tm2center( -11.0477, -9.70225, -2.83403 );
+		core::Vector tm3center( 9.87054, -9.53731, -2.45051 );
+		core::Vector tm4center( 10.2604, 10.7574, -2.62829 );
+		
+		// get chains
+		utility::vector1< int > chains = get_chains( pose );
+		
+		// compute COMs for TMspans for each chain
+		core::Vector tmcom1 = chain_tm_com( pose, chains[ 1 ] );
+		core::Vector tmcom2 = chain_tm_com( pose, chains[ 2 ] );
+		core::Vector tmcom3 = chain_tm_com( pose, chains[ 3 ] );
+		core::Vector tmcom4 = chain_tm_com( pose, chains[ 4 ] );
+
+		// test
+		position_equal_within_delta( tmcom1, tm1center , 0.001 );
+		position_equal_within_delta( tmcom2, tm2center , 0.001 );
+		position_equal_within_delta( tmcom3, tm3center , 0.001 );
+		position_equal_within_delta( tmcom4, tm4center , 0.001 );
+
+	}
+
+	// residue closest to chain tm center-of-mass
+	void test_rsd_closest_chain_tm_com() {
+		
+		TS_TRACE("=========Test residue closest to chain TM center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+
+		// get chains
+		utility::vector1< int > chains = get_chains( pose );
+
+		// get residue closest to COM
+		core::Size closest1 = rsd_closest_to_chain_tm_com( pose, chains[ 1 ] );
+		core::Size closest2 = rsd_closest_to_chain_tm_com( pose, chains[ 2 ] );
+		core::Size closest3 = rsd_closest_to_chain_tm_com( pose, chains[ 3 ] );
+		core::Size closest4 = rsd_closest_to_chain_tm_com( pose, chains[ 4 ] );
+
+		// test
+		TS_ASSERT_EQUALS( closest1, 19 );
+		TS_ASSERT_EQUALS( closest2, 158 );
+		TS_ASSERT_EQUALS( closest3, 352 );
+		TS_ASSERT_EQUALS( closest4, 491 );
+
+	} // rsd closest to chain TM COM
+
+	// create membrane foldtree anchor COM
+	void test_create_membrane_foldtree_anchor_com() {
+		
+		TS_TRACE("=========Test create membrane foldtree anchor at center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+		
+		// create foldtree
+		create_membrane_foldtree_anchor_com( pose );
+		
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 557 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 88 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 88 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 227 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 88 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 366 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 88 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 505 );
+		
+	} // create membrane foldtree anchor COM
+
+		// create membrane foldtree anchor TM COM
+	void test_create_membrane_foldtree_anchor_tmcom() {
+		
+		TS_TRACE("=========Test create membrane foldtree anchor at TM center-of-mass");
+		using namespace core::conformation::membrane;
+		using namespace protocols::membrane;
+		using namespace protocols::membrane::geometry;
+		
+		// read in pose and create topology object
+		Pose pose;
+		core::import_pose::pose_from_pdb( pose, "protocols/membrane/3EFF_TR.pdb" );
+		
+		// call AddMembraneMover for spanfile
+		AddMembraneMoverOP addmem( new AddMembraneMover( "protocols/membrane/3EFF_TR.span" ) );
+		addmem->apply(pose);
+		
+		// create foldtree
+		create_membrane_foldtree_anchor_tmcom( pose );
+		
+		// test
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 1 ), 557 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 1 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 2 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 2 ), 158 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 3 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 3 ), 352 );
+		TS_ASSERT_EQUALS( pose.fold_tree().upstream_jump_residue( 4 ), 19 );
+		TS_ASSERT_EQUALS( pose.fold_tree().downstream_jump_residue( 4 ), 491 );
+		
+	} // create membrane foldtree anchor TM COM
+
+private:
 	
 	/// @brief Position equal within delta (helper method)
 	bool position_equal_within_delta( Vector a, Vector b, Real delta ) {
@@ -623,14 +1107,4 @@ private:
 		return true;
 	}
 
-private:
-	
-	// Helix axes and foltrees
-    PoseOP m2_pose_;
-    PoseOP glpA_pose_;
-
-	// RMSD calcs
-    core::pose::PoseOP native_pose_;
-    core::pose::PoseOP test_pose_;
-    
 }; // Protocols-level membrane utilities class

@@ -172,7 +172,7 @@ SpanningTopology & SpanningTopology::concatenate_topology( SpanningTopology cons
 	// add spans
 	for ( Size i = 1; i <= topo.nspans(); ++i ){
 		SpanOP span( topo.span( i ) );
-		span->shift( topo.nres_topo() );
+		span->shift( nres_topo_ );
 		topology_.push_back( span );
 	}
 	

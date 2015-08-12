@@ -113,6 +113,9 @@ public:
 	///			of the membrane from the MEM coordinates stored in MembraneInfo
 	void use_default_membrane( bool truefalse );
 
+	/// @brief Optimize the embedding with the highres scorefunction
+	void optimize_embedding( bool truefalse );
+
 	/// @brief Get the name of this Mover (TransformIntoMembraneMover)
 	virtual std::string get_name() const;
 
@@ -152,6 +155,9 @@ private: // data
 	// use default membrane of (center 0,0,0 and normal 0,0,1)
 	bool use_default_membrane_;
 	
+	// optimize embedding with the scorefunction
+	bool optimize_embedding_;
+
 	// user-defined membrane
 	bool user_defined_membrane_;
 	

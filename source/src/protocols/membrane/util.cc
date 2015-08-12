@@ -36,7 +36,6 @@
 // Project Headers
 #include <protocols/membrane/geometry/EmbeddingDef.hh>
 #include <protocols/membrane/geometry/Embedding.hh>
-#include <protocols/membrane/geometry/EmbeddingDef.hh>
 
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/Span.hh>
@@ -248,12 +247,12 @@ calc_helix_axis( Pose & pose, core::Size span_no ) {
     // Get the span from the pose
     SpanOP helix_span( pose.conformation().membrane_info()->spanning_topology()->span( span_no ) );
 	
-	// Check the size of the span is sufficient for the this calculation
+	// Check the core::Size of the span is sufficient for the this calculation
 	if ( helix_span->end() - helix_span->start() < 6 ) {
 		utility_exit_with_message( "Transmembrane span is too small to calculate a helix axis using the center of masses - less than six residues" );
 	}
 	
-	// Check the size of the span relative to the size of the protein is appropriate for
+	// Check the core::Size of the span relative to the core::Size of the protein is appropriate for
 	// a COM centered at the span start and end
 	bool use_centered( true );
 	if ( ( helix_span->start() < 2 ) ||
@@ -328,6 +327,10 @@ calc_angle_rmsd( core::Real measured_angle, core::Real ref_angle ) {
 bool
 is_membrane_fixed( Pose & pose ) {
 
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message("Pose is not a membrane pose. Quitting.");
+	}
+
     // Get membrane res, jump & upstream residue
     core::Size membrane_rsd( pose.conformation().membrane_info()->membrane_rsd_num() );
     core::Size membrane_jump( pose.conformation().membrane_info()->membrane_jump() );
@@ -350,6 +353,10 @@ bool
 is_membrane_moveable_by_itself( Pose & pose ) {
     
     using namespace core::kinematics;
+
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message("Pose is not a membrane pose. Quitting.");
+	}
 	
 	// If fixed, return false
 	if ( is_membrane_fixed( pose ) ) return false;
@@ -397,6 +404,141 @@ void reorder_membrane_foldtree( pose::Pose & pose ) {
     // set foldtree in pose
     pose.fold_tree( foldtree );
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Create membrane foldtree from scratch
+/// @details The foldtree is setup such that the membrane is at the root and
+///			anchored at the first chain COM residue with jumps from the
+///			first chain COM to each chain COM; requires the membrane to be present
+///
+///     ________________________________
+///    |__________________________      |
+///    |_________________         |     |
+///    |________         |        |     |
+///    |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+void create_membrane_foldtree_anchor_com( Pose & pose ) {
+	
+	using namespace core::kinematics;
+	
+	// if pose not membrane pose, cry
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "Can't create a membrane foldtree on a non-membrane pose. Quitting..." );
+	}
+	
+	// get anchor points for jumps: get all chainids
+	utility::vector1< int > chains = get_chains( pose );
+	
+	// initialize empty vector for anchor points (i.e. jump rsd positions)
+	utility::vector1< core::Size > anchors;
+	
+	// get residues closest to COMs for all chains which will be new jump anchor residues
+	for ( core::Size i = 1; i < chains.size(); ++i ) {
+		core::Size anchor = rsd_closest_to_chain_com( pose, chains[ i ] );
+		anchors.push_back( anchor );
+	}
+	
+	// create foldtree
+	create_membrane_foldtree_from_anchors( pose, anchors );
+	
+} // create membrane foldtree anchor center-of-mass
+
+	/////////////////////////////////////////
+
+/// @brief Create membrane foldtree from scratch
+/// @details The foldtree is setup such that the membrane is at the root and
+///			anchored at the first chain TRANSMEMBRANE COM residue with jumps from the
+///			first chain COM to each chain TRANSMEMBRANE COM;
+///			requires the membrane to be present
+///
+///     ________________________________
+///    |__________________________      |
+///    |_________________         |     |
+///    |________         |        |     |
+///    |        |        |        |     |
+/// -------  -------  -------  -------  M=root
+///  chain1   chain2   chain3   chain4 ...
+
+void create_membrane_foldtree_anchor_tmcom( Pose & pose ) {
+	
+	using namespace core::kinematics;
+	
+	// if pose not membrane pose, cry
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "Can't create a membrane foldtree on a non-membrane pose. Quitting..." );
+	}
+	
+	// get anchor points for jumps: get all chainids
+	utility::vector1< int > chains = get_chains( pose );
+	
+	// initialize empty vector for anchor points (i.e. jump rsd positions)
+	utility::vector1< core::Size > anchors;
+	
+	// get residues closest to COMs for all chains which will be new jump anchor residues
+	for ( core::Size i = 1; i < chains.size(); ++i ) {
+		core::Size anchor = protocols::membrane::rsd_closest_to_chain_tm_com( pose, chains[ i ] );
+		anchors.push_back( anchor );
+	}
+	
+	// create foldtree
+	create_membrane_foldtree_from_anchors( pose, anchors );
+	
+} // create membrane foldtree anchor tm center-of-mass
+
+	/////////////////////////////////////////
+
+void create_membrane_foldtree_from_anchors( Pose & pose, utility::vector1< core::Size > anchors ) {
+	
+	using namespace core::kinematics;
+	
+	// if pose not membrane pose, cry
+	if ( ! pose.conformation().is_membrane() ) {
+		utility_exit_with_message( "Can't create a membrane foldtree on a non-membrane pose. Quitting..." );
+	}
+	
+	// [1]
+	// get all chain poses to get number of residues in each chain
+	// this is to define the cutpoints later on
+	utility::vector1< PoseOP > chain_poses = pose.split_by_chain();
+	
+	// go through chains to get number or residues in each chain
+	// counter needs to be smaller than the number of chains because the
+	// membrane residue has its own chain at the end
+	utility::vector1< core::Size > chain_nres;
+	core::Size rsd_counter( 0 );
+	for ( core::Size i = 1; i < chain_poses.size(); ++i ) {
+		rsd_counter += chain_poses[ i ]->total_residue();
+		chain_nres.push_back( rsd_counter );
+	}
+	
+	// [2]
+	// get membrane residue
+	core::Size memrsd = pose.conformation().membrane_info()->membrane_rsd_num();
+	
+	// [3]
+	// start with simple tree
+	FoldTree ft = FoldTree();
+	ft.simple_tree( pose.total_residue() );
+	
+	// add jumps with cutpoints, returns jump number of new jump:
+	// add first jump from membrane residue to first chain
+	ft.new_jump( memrsd, anchors[ 1 ], memrsd - 1 );
+	
+	// [4]
+	// for each chain starting with the second one, add another jump with
+	// the cutpoint after the chain
+	for ( core::Size i = 2; i <= chain_poses.size()-1; ++i ) {
+		ft.new_jump( anchors[ 1 ], anchors[ i ], chain_nres[ i-1 ] );
+	}
+	
+	// set the foldtree in the pose to the newly created one
+	ft.reorder( memrsd );
+	ft.show( TR );
+	pose.fold_tree( ft );
+	
+} // create membrane foldtree from anchors
 
 ///////////////////////////////////////////////////////////
 // Utilities for accessing dssp, z coords and chain info //
@@ -529,25 +671,35 @@ EmbeddingDefOP compute_structure_based_embedding( pose::Pose const & pose ){
     
 }// compute structure based membrane position
 
+/// @brief Compute embedding by chain
+/// @details The embeddings can be computed either from pose and topology or they
+///			can be optimized differently; the function correlates each EmbeddingDef
+///			object in embeddings with a span object in the pose's topology
+EmbeddingOP compute_embeddings_by_chain( pose::Pose const & pose ) {
+	
+	// get topology from pose
+	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
 
-/// @brief Check reasonable range of vector
-void check_vector( core::Vector const vector ) {
-    
-    TR << "Checking vector " << std::endl;
-    
-    // warn if vector is origin
-    if ( vector.to_string() == "(0, 0, 0)"){
-        TR << "WARNING: your vector is (0, 0, 0)!" << std::endl;
-    }
-    
-    // Fail if vector is out of range
-    if ( vector.x() < -1000 || vector.x() > 1000 ||
-        vector.y() < -1000 || vector.y() > 1000 ||
-        vector.z() < -1000 || vector.z() > 1000 ) {
-        
-        throw new conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
-    }
-}// check_vector
+	// split topology by chain
+	utility::vector1< SpanningTopologyOP > chain_topos( split_topology_by_chain_noshift( pose, topo ) );
+
+	// initialize vector of EmbeddingDefs
+	EmbeddingOP embeddings( new Embedding() );
+
+	// go through each chain
+	for ( core::Size i = 1; i <= chain_topos.size(); ++i ) {
+
+		// compute structure-based embedding for this spanning topology
+		EmbeddingDefOP chain_emb = compute_structure_based_embedding( pose, *chain_topos[ i ] );
+
+		// push back in vector
+		embeddings->add_span_embedding( chain_emb );
+	}
+
+	return embeddings;
+	
+} // compute embeddings by chain
+
 
 /// @brief Average EmbeddingDefs as they are without vector inversion accounting for topology
 /// @details Get average center and normal from a vector of EmbeddingDefs
@@ -618,6 +770,188 @@ EmbeddingDefOP average_antiparallel_embeddings( utility::vector1< EmbeddingDefOP
     return embedding;
     
 }// average antiparallel embeddings
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Update embedding of the partners after a move
+/// @details Requires the jump number between the partners, the topology will
+///				be taken from MembraneInfo and will be split accordingly; up and
+///				down means upstream and downstream
+void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down ) {
+
+	// SpanningTopology objects
+	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	SpanningTopologyOP topo_up( new SpanningTopology() );	// upstream partner
+	SpanningTopologyOP topo_down( new SpanningTopology() ); // downstream partner
+
+	// splitting topology by jump into upstream and downstream topology
+	split_topology_by_jump_noshift( pose, jumpnum, topo, topo_up, topo_down );
+
+	// compute embedding for partners (compute structure-based embedding with split topologies)
+	EmbeddingDefOP emb1( compute_structure_based_embedding( pose, *topo_up ) );
+	EmbeddingDefOP emb2( compute_structure_based_embedding( pose, *topo_down ) );
+
+	// create new embedding objects to be able to dereference the pointer
+	emb_up = EmbeddingDef( emb1->center(), emb1->normal() );
+	emb_down = EmbeddingDef( emb2->center(), emb2->normal() );
+
+} // update partner embeddings
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Chain center-of-mass
+/// @details Gets the coordinates of the chain center-of-mass
+core::Vector chain_com( pose::Pose const & pose, int chainid ) {
+
+	// split pose by chain
+	PoseOP pose_chain( pose.split_by_chain( chainid ) );
+	
+	// compute COM of the chain
+	numeric::xyzVector< core::Real > com( get_center_of_mass( *pose_chain ) );
+
+	return com;
+	
+} // chain COM
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Chain center-of-mass of TM regions
+/// @details Gets the coordinates of the chain center-of-mass but only the TM regions
+///			BE AWARE THAT THE LAST CHAIN FOR MEMBRANE PROTEINS IS THE MEMBRANE RESIDUE!!!
+core::Vector chain_tm_com( pose::Pose const & pose, int chain ) {
+
+	// check that the chain isn't the membrane residue
+	if ( chain == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
+		utility_exit_with_message("You are trying to compute the center-of-mass for the membrane residue as a chain. Choose a different one...");
+	}
+
+	// get topology and split it by chain without shifting the numbering in topology
+	SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
+	utility::vector1< SpanningTopologyOP > split_topo = split_topology_by_chain_noshift( pose, topo );
+	
+	// initializations
+	utility::vector1< core::Size > splice_rsd;
+	core::Size rsd_counter( 0 );
+	
+	// get vector of residues to take into account for COM calculation
+	// go through all topologies
+	for ( core::Size i = 1; i <= split_topo.size(); ++ i ) {
+
+		// if we are looking at the topology of the chain of interest
+		if ( i == static_cast< core::Size >( chain ) ) {
+
+			// go through topology of the chain
+			for ( core::Size j = 1; j <= split_topo[ i ]->nspans(); ++j ) {
+
+				// set residue counter to first residue in the span
+				rsd_counter = split_topo[ i ]->span( j )->start();
+				
+				// add to splice residues and increase until end of span
+				while ( rsd_counter <= split_topo[ i ]->span( j )->end() ) {
+
+					splice_rsd.push_back( rsd_counter );
+					rsd_counter++;
+				}
+			}
+		}
+	}
+	
+	// create subpose of chain TM regions from the PDB into a new pose
+	Pose subpose = Pose();
+	pdbslice( subpose, pose, splice_rsd );
+	
+	// compute COM of the newly created pose
+	core::Vector com( get_center_of_mass( subpose ) );
+
+	return com;
+
+} // chain TM COM
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Residue closest to chain center-of-mass
+/// @details Gets the residue number closest to the chain center-of-mass
+core::Size rsd_closest_to_chain_com( pose::Pose const & pose, int chainid ) {
+
+	// check that the chain isn't the membrane residue
+	if ( chainid == pose.chain( pose.conformation().membrane_info()->membrane_rsd_num() ) ) {
+		utility_exit_with_message("You are trying to compute the center-of-mass for the membrane residue as a chain. Choose a different one...");
+	}
+
+	// find start and end residue number for chain in question
+	int start( 1 );
+	int end( nres_protein( pose ) );
+	
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ){
+
+		// find starting position
+		if ( i > 1 && pose.chain( i ) == chainid && pose.chain( i-1 ) != chainid ) {
+			start = i;
+		}
+		
+		// find end position
+		if ( i < nres_protein( pose ) && pose.chain( i ) == chainid && pose.chain( i+1 ) != chainid ) {
+			end = i;
+		}
+	}
+
+	TR << "start: " << start << " end: " << end << std::endl;
+
+	// compute chain COM
+	core::Size rsd_id = static_cast< core::Size >( residue_center_of_mass( pose, start, end ) );
+
+	return rsd_id;
+	
+} // residue closest to chain COM
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Residue closest to chain TM center-of-mass
+/// @details Gets the residue number closest to the chain TM center-of-mass
+core::Size rsd_closest_to_chain_tm_com( pose::Pose const & pose, int chainid ) {
+	
+	// compute chain TM com
+	core::Vector com = chain_tm_com( pose, chainid );
+	
+	// go through each residue in the pose and find CA atom that is closest
+	core::Real min_dist = 999999.0;
+	core::Size min_rsd = 0;
+	for ( core::Size i = 1; i <= nres_protein( pose ); ++i ){
+		
+		// get CA position of this residue and compute distance to COM
+		core::Vector ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
+		core::Real distance = ( ca_pos - com ).length();
+		
+		if ( distance < min_dist ) {
+			min_dist = distance;
+			min_rsd = i;
+		}
+	}
+	
+	return min_rsd;
+	
+} // rsd_closest_to_chain_tm_com
+
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Check reasonable range of vector
+void check_vector( core::Vector const vector ) {
+
+	TR << "Checking vector " << std::endl;
+
+	// warn if vector is origin
+	if ( vector.to_string() == "(0, 0, 0)"){
+		TR << "WARNING: your vector is (0, 0, 0)!" << std::endl;
+	}
+
+	// Fail if vector is out of range
+	if ( vector.x() < -1000 || vector.x() > 1000 ||
+		vector.y() < -1000 || vector.y() > 1000 ||
+		vector.z() < -1000 || vector.z() > 1000 ) {
+
+		throw new conformation::membrane::EXCN_Illegal_Arguments("Unreasonable range for center or normal! Check your input vectors!");
+	}
+}// check_vector
 
 /// @brief Normalize normal vector to length 15 for visualization
 void membrane_normal_to_length_15( pose::Pose & pose ){
@@ -772,30 +1106,46 @@ void split_topology_by_jump_noshift(
     
 }// split topology by jump, no shift in topology objects
 
-/// @brief Update embedding of the partners after a move
-/// @details Requires the jump number between the partners, the topology will
-///				be taken from MembraneInfo and will be split accordingly; up and
-///				down means upstream and downstream
-void update_partner_embeddings( pose::Pose const & pose, core::Size const jumpnum, EmbeddingDef & emb_up, EmbeddingDef & emb_down ) {
-    
-    // SpanningTopology objects
-    SpanningTopologyOP topo = pose.conformation().membrane_info()->spanning_topology();
-    SpanningTopologyOP topo_up( new SpanningTopology() );	// upstream partner
-    SpanningTopologyOP topo_down( new SpanningTopology() ); // downstream partner
-    
-    // splitting topology by jump into upstream and downstream topology
-    split_topology_by_jump_noshift( pose, jumpnum, topo, topo_up, topo_down );
-    
-    // compute embedding for partners (compute structure-based embedding with split topologies)
-    EmbeddingDefOP emb1( compute_structure_based_embedding( pose, *topo_up ) );
-    EmbeddingDefOP emb2( compute_structure_based_embedding( pose, *topo_down ) );
-    
-    // create new embedding objects to be able to dereference the pointer
-    emb_up = EmbeddingDef( emb1->center(), emb1->normal() );
-    emb_down = EmbeddingDef( emb2->center(), emb2->normal() );
-    
-} // update partner embeddings
-    
+/// @brief Split topology by chain
+/// @details Split topology by chain and give vector of topology objects
+utility::vector1< SpanningTopologyOP > split_topology_by_chain_noshift( pose::Pose const & pose, SpanningTopologyOP const topo ) {
+
+	// initialize variables
+	utility::vector1< SpanningTopologyOP > topos;
+
+	// go through each chain
+	for ( int c = 1; c <= pose.chain( nres_protein( pose ) ); ++c ) {
+
+		// create new topology object
+		SpanningTopologyOP chain_topo( new SpanningTopology() );
+
+		// go through total spanning topology
+		for ( core::Size s = 1; s <= topo->nspans(); ++s ) {
+
+			// get start and end
+			core::Size start = topo->span( s )->start();
+			core::Size end = topo->span( s )->end();
+
+			// get chain
+			int chain = pose.chain( start );
+
+			// if span is part of the chain, add it to chain topology
+			if ( chain == c ) {
+				chain_topo->add_span( start, end );
+			}
+
+		} // spans
+
+		// add chain topologies to total topology
+		topos.push_back( chain_topo );
+
+	} // chains
+
+	return topos;
+
+} // split topology by chain
+
+
 /////////////////////////////////////////////
 // Methods for reading center/normal in IO //
 /////////////////////////////////////////////

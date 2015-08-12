@@ -32,7 +32,7 @@ cd %(workdir)s
 # After that, do whatever you want.
 # It's nice to test that the executable exists first, to ensure the test actually runs:
 #
-[ -x %(bin)s/vip.%(binext)s ] || exit 1
+#[ -x %(bin)s/vip.%(binext)s ] || exit 1
 #
 # Files will be diffed verbatim, so if you want to log output and compare it,
 # you'll need to filter out lines that change randomly (e.g. timings).

@@ -149,9 +149,6 @@ private: // methods
 	
 private: // data
 
-	// Pose residue typeset, and visualization
-	bool fullatom_;
-
 	// translation vector
 	Vector translation_vector_;
 	
@@ -256,9 +253,6 @@ private: // methods
 	
 private: // data
 	
-	// Pose residue typeset, and visualization
-	bool fullatom_;
-	
 	// vectors and point defining the rotation
 	Vector old_normal_;
 	Vector new_normal_;
@@ -362,9 +356,6 @@ private: // methods
 	
 	
 private: // data
-	
-	// Pose residue typeset, and visualization
-	bool fullatom_;
 	
 	// TranslationRotation vector
 	Vector old_center_;

@@ -21,6 +21,8 @@
 
 // Project Headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <protocols/membrane/AddMembraneMover.hh>
 #include <protocols/membrane/MPQuickRelaxMover.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -41,6 +43,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <protocols/membrane/util.hh>
 #include <utility/io/util.hh>
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
@@ -173,6 +176,15 @@ void MPMutateRelaxMover::apply( Pose & pose ) {
 	// error checking
 	check_mutant_file( pose );
 
+	// call AddMembraneMover
+	AddMembraneMoverOP addmem( new AddMembraneMover() );
+	addmem->apply( pose );
+
+	// final foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// WHAT IS HAPPENING HERE:
 	// I am dumping the poses outside of JD2
 	// Why would I do that?
@@ -226,7 +238,7 @@ void MPMutateRelaxMover::apply( Pose & pose ) {
 			// do quick relax
 			TR << "Running MP quick relax..." << std::endl;
 			MPQuickRelaxMoverOP relax( new MPQuickRelaxMover() );
-			relax->add_membrane_again( true );
+			relax->add_membrane_again( false );
 			relax->apply( working_pose );
 	
 			// create output filename
@@ -254,6 +266,12 @@ void MPMutateRelaxMover::apply( Pose & pose ) {
 			
 		}// nstruct
 	}// iterate over construct
+	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 }// apply
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -93,7 +93,7 @@ public:
 	/// @brief test transform into default membrane
 	void test_transform_into_default_membrane() {
 
-		TS_TRACE( "Testing transform into membrane mover on default membrane coordinates" );
+		TS_TRACE( "=======Testing transform into membrane mover on default membrane coordinates" );
 
 		using namespace protocols::membrane;
 
@@ -134,7 +134,7 @@ public:
 	// test constructor from embedding
 	void test_constructor_from_embedding() {
 		
-		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
+		TS_TRACE( "=======Testing transform into membrane mover from defined embedding" );
 		
 		using namespace protocols::membrane;
 		
@@ -175,7 +175,7 @@ public:
 	/// @brief test transform into user-defined membrane
 	void test_transform_into_userdefined_membrane() {
 
-		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
+		TS_TRACE( "=======Testing transform into membrane mover on user provided membrane coordinates" );
 
 		using namespace protocols::membrane;
 
@@ -211,7 +211,7 @@ public:
 	// test constructor form embedding and user-defined membrane
 	void test_constructor_from_embedding_and_membrane() {
 		
-		TS_TRACE( "Testing transform into membrane mover on user provided membrane coordinates" );
+		TS_TRACE( "=======Testing transform into membrane mover from embedding and defined membrane" );
 		
 		using namespace protocols::membrane;
 
@@ -252,6 +252,8 @@ public:
 	/// @brief Check that when a protein is transformed, the angle between the protein "axis" and
 	/// membrane normal axis is 0 (the "definition" of correct transformation)
 	void test_helix_to_normal_angle() {
+
+		TS_TRACE( "=======Testing helix to normal angle" );
 	
 		// Apply transformation to the protein
 		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );

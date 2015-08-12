@@ -19,6 +19,7 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/scoring/sasa/SasaCalc.hh>
 #include <core/scoring/sasa/util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -35,6 +36,7 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
+#include <core/pose/util.hh>
 
 // C++ Headers
 #include <cmath>
@@ -67,6 +69,88 @@ namespace sasa {
 ///  Convenience Functions
 ///	
 ///
+
+/// @brief Relative per residue sidechain SASA
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			GXG tripeptide values for sidechain SASA are taken from
+///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+utility::vector1< Real > per_res_sc_sasa( const pose::Pose & pose ) {
+
+	// get per-residue SASA
+	SasaCalc calc = SasaCalc();
+	calc.calculate( pose );
+	
+	// get residue SASA
+	return calc.get_residue_sasa_sc();
+
+} // per residue sasa
+
+/// @brief Relative per residue sidechain SASA
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			GXG tripeptide values for sidechain SASA are taken from
+///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose ) {
+	
+	using namespace core::pose;
+	
+	// get residue SASA
+	utility::vector1< Real > res_sasa = per_res_sc_sasa( pose );
+	
+	// create map of sidechain SASAs
+	// http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+	std::map< char, Real > sc_sasa;
+	
+	sc_sasa[ 'A' ] = 67;
+	sc_sasa[ 'R' ] = 196;
+	sc_sasa[ 'N' ] = 113;
+	sc_sasa[ 'D' ] = 106;
+	sc_sasa[ 'C' ] = 104;
+	sc_sasa[ 'Q' ] = 144;
+	sc_sasa[ 'E' ] = 138;
+	sc_sasa[ 'G' ] = 0;
+	sc_sasa[ 'H' ] = 151;
+	sc_sasa[ 'I' ] = 140;
+	sc_sasa[ 'L' ] = 137;
+	sc_sasa[ 'K' ] = 167;
+	sc_sasa[ 'M' ] = 160;
+	sc_sasa[ 'F' ] = 175;
+	sc_sasa[ 'P' ] = 105;
+	sc_sasa[ 'S' ] = 80;
+	sc_sasa[ 'T' ] = 102;
+	sc_sasa[ 'W' ] = 217;
+	sc_sasa[ 'Y' ] = 187;
+	sc_sasa[ 'V' ] = 117;
+	
+	// create vector with relative sasa
+	utility::vector1< Real > rel_sasa;
+	for ( Size i = 1; i <= nres_protein( pose ); ++i ) {
+		rel_sasa.push_back( res_sasa[ i ] / sc_sasa[ pose.residue( i ).name1() ] );
+	}
+	
+	return rel_sasa;
+	
+} // relative per residue sidechain sasa
+
+/// @brief Is residue exposed?
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			Uses the function rel_per_res_sc_sasa above
+///			THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
+///			PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
+bool is_res_exposed( const pose::Pose & pose, core::Size resnum ) {
+	
+	// get relative sidechain SASA
+	utility::vector1< Real > rel_sasa = rel_per_res_sc_sasa( pose );
+	
+	// if relative sc SASA > 0.5, residue is exposed
+	if ( rel_sasa[ resnum ] >= 0.5 ) {
+		return true;
+	}
+	
+	// otherwise residue is buried
+	return false;
+	
+} // is residue exposed?
+
 
 /// @brief Calculate the sidechain and backbone sasa from atom sasa
 std::pair<Real, Real>

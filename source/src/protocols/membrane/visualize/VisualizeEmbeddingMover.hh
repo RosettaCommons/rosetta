@@ -55,6 +55,10 @@ public:
 	/// @brief	  Default constructor
 	/// @details  Gets the embeddings from the pose and topology 
 	VisualizeEmbeddingMover();
+
+	/// @brief	  Constructor from embedding
+	/// @details  Visualizes defined embedding
+	VisualizeEmbeddingMover( EmbeddingOP embedding );
 	
 	/// @brief Copy Constructor for deep copying
 	VisualizeEmbeddingMover( VisualizeEmbeddingMover const & src );
@@ -95,10 +99,6 @@ private:
 	/// @brief Register Options with JD2
 	void register_options();
 	
-	/// @brief Initialize Options from the Command Line
-	/// @details Allowed options are on (1) or off (0)
-	void init_from_cmd();
-	
 	/// @brief Create a Membrane Residue
 	/// @details Given a centered position and residue typeset, return
 	/// a ResidueOP with the xyz coordinate pos, type EMB, from typeset given
@@ -108,7 +108,7 @@ private:
 private:
 
 	// Embedding object containing (multiple) EmbeddingDefinition(s)
-	Embedding embeddings_;
+	EmbeddingOP embeddings_;
 };
 	
 } // visualize

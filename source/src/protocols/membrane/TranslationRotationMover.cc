@@ -81,7 +81,6 @@ using namespace protocols::moves;
 ///			specify your own
 TranslationMover::TranslationMover() :
 	protocols::moves::Mover(),
-	fullatom_( true ), 
 	translation_vector_(0, 0, 0),
 	jumpnum_( 0 )
 {
@@ -95,7 +94,6 @@ TranslationMover::TranslationMover(
 	Vector translation_vector
 	) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	translation_vector_( translation_vector ),
 	jumpnum_(0)
 {
@@ -110,7 +108,6 @@ TranslationMover::TranslationMover(
 	Size jumpnum
 	) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	translation_vector_( translation_vector ),
 	jumpnum_( jumpnum )
 {
@@ -122,7 +119,6 @@ TranslationMover::TranslationMover(
 /// @details Create a deep copy of this mover
 TranslationMover::TranslationMover( TranslationMover const & src ) :
 	protocols::moves::Mover( src ), 
-	fullatom_( src.fullatom_ ), 
 	translation_vector_( src.translation_vector_ ),
 	jumpnum_( src.jumpnum_ )
 {}
@@ -155,11 +151,6 @@ TranslationMover::parse_my_tag(
 	 protocols::moves::Movers_map const &,
 	 core::pose::Pose const &
 	 ) {
-	
-	// Read in boolean fulltom
-	if ( tag->hasOption( "fullatom" ) ) {
-		fullatom_ = tag->getOption< bool >( "fullatom" );
-	}
 	
 	// Read in membrane center
 	if ( tag->hasOption( "center" ) ) {
@@ -214,6 +205,11 @@ TranslationMover::apply( Pose & pose ) {
 	
 	TR << "Translating the pose" << std::endl;
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// if pose is membrane pose and jump is undefined, use membrane jump as default
 	if ( jumpnum_ == 0 && pose.conformation().is_membrane() ){
 		jumpnum_ = pose.conformation().membrane_info()->membrane_jump();
@@ -232,6 +228,11 @@ TranslationMover::apply( Pose & pose ) {
 	core::kinematics::Jump flexible_jump = pose.jump( jumpnum_ );
 	flexible_jump.translation_along_axis( up_stub, translation_vector_, length );
 	pose.set_jump( jumpnum_, flexible_jump );
+
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
 }// apply
 
@@ -259,13 +260,8 @@ TranslationMover::init_from_cmd() {
 	
 	using namespace basic::options;
 	
-	// Set user-defined fullatom param
-	if ( option[ OptionKeys::in::file::fullatom ].user() ) {
-		fullatom_ = option[ OptionKeys::in::file::fullatom ]();
-	}
-	
 	// Read in Center Parameter
-	// TODO: Add better error checking
+	// TODO: Is this correct??? Shouldn't the translation vector be new_center minus current_center???
 	if ( option[ OptionKeys::mp::setup::center ].user() ) {
 		translation_vector_.x() = option[ OptionKeys::mp::setup::center ]()[1];
 		translation_vector_.y() = option[ OptionKeys::mp::setup::center ]()[2];
@@ -284,7 +280,6 @@ TranslationMover::init_from_cmd() {
 ///		enclosed by both vectors.
 RotationMover::RotationMover() :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_normal_( 0, 0, 1 ),
 	new_normal_( 0, 1, 0 ),
 	rot_center_( 0, 0, 0 ),
@@ -303,7 +298,6 @@ RotationMover::RotationMover(
 	 Vector rot_center
 	 ) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_normal_( old_normal ),
 	new_normal_( new_normal ),
 	rot_center_( rot_center ),
@@ -324,7 +318,6 @@ RotationMover::RotationMover(
 	 Size jumpnum
 	 ) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_normal_( old_normal ),
 	new_normal_( new_normal ),
 	rot_center_( rot_center ),
@@ -338,7 +331,6 @@ RotationMover::RotationMover(
 /// @details Create a deep copy of this mover
 RotationMover::RotationMover( RotationMover const & src ) :
 	protocols::moves::Mover( src ),
-	fullatom_( src.fullatom_ ),
 	old_normal_( src.old_normal_ ),
 	new_normal_( src.new_normal_ ),
 	rot_center_( src.rot_center_ ),
@@ -373,39 +365,10 @@ RotationMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 	) {
+
+	// read center and normal tag
+	read_center_normal_from_tag( rot_center_, new_normal_, tag );
 	
-	// Read in boolean fulltom
-	if ( tag->hasOption( "fullatom" ) ) {
-		fullatom_ = tag->getOption< bool >( "fullatom" );
-	}
-	
-	// Read in membrane center
-	if ( tag->hasOption( "center" ) ) {
-		std::string center = tag->getOption< std::string >( "center" );
-		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-		
-		if ( str_cen.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			rot_center_.x() = std::atof( str_cen[1].c_str() );
-			rot_center_.y() = std::atof( str_cen[2].c_str() );
-			rot_center_.z() = std::atof( str_cen[3].c_str() );
-		}
-	}
-	
-	// Read in membrane normal
-	if ( tag->hasOption( "normal" ) ) {
-		std::string normal = tag->getOption< std::string >( "normal" );
-		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-		
-		if ( str_norm.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			new_normal_.x() = std::atof( str_norm[1].c_str() );
-			new_normal_.y() = std::atof( str_norm[2].c_str() );
-			new_normal_.z() = std::atof( str_norm[3].c_str() );
-		}
-	}
 }
 
 /// @brief Create a new copy of this mover
@@ -446,6 +409,11 @@ RotationMover::apply( Pose & pose ) {
 	
 	TR << "Rotating the pose..." << std::endl;
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// normalize the new normal
 	new_normal_.normalize();
 
@@ -470,6 +438,11 @@ RotationMover::apply( Pose & pose ) {
 	// do the actual rotation
 	rigid::RigidBodyDeterministicSpinMover spinmover = rigid::RigidBodyDeterministicSpinMover( jumpnum_, rot_axis, rot_center_, angle );
 	spinmover.apply( pose );
+	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
 }// apply
 
@@ -495,29 +468,10 @@ RotationMover::register_options() {
 /// using the mp:setup center flag
 void
 RotationMover::init_from_cmd() {
-	
-	using namespace basic::options;
-	
-	// Set user-defined fullatom param
-	if ( option[ OptionKeys::in::file::fullatom ].user() ) {
-		fullatom_ = option[ OptionKeys::in::file::fullatom ]();
-	}
-	
-	// Read in Center Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::center ].user() ) {
-		rot_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
-		rot_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
-		rot_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
-	}
 
-	// Read in Normal Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
-		new_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
-		new_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
-		new_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
-	}
+	// read center and normal from cmd
+	read_center_normal_from_cmd( rot_center_, new_normal_ );
+	
 }// init from cmd
 
 /// @brief	TranslationRotation vector can be defined in -mp:setup center
@@ -527,7 +481,6 @@ RotationMover::init_from_cmd() {
 ///			specify your own
 TranslationRotationMover::TranslationRotationMover() :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_center_( 0, 0, 0 ),
 	old_normal_( 0, 0, 1 ),
 	new_center_( 1,  0, 0 ),
@@ -547,7 +500,6 @@ TranslationRotationMover::TranslationRotationMover(
 	Vector new_normal
 	) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_center_( old_center ),
 	old_normal_( old_normal ),
 	new_center_( new_center ),
@@ -568,7 +520,6 @@ TranslationRotationMover::TranslationRotationMover(
 	Size jumpnum
 	) :
 	protocols::moves::Mover(),
-	fullatom_( true ),
 	old_center_( old_center ),
 	old_normal_( old_normal ),
 	new_center_( new_center ),
@@ -583,7 +534,6 @@ TranslationRotationMover::TranslationRotationMover(
 /// @details Create a deep copy of this mover
 TranslationRotationMover::TranslationRotationMover( TranslationRotationMover const & src ) :
 	protocols::moves::Mover(),
-	fullatom_( src.fullatom_ ),
 	old_center_( src.old_center_ ),
 	old_normal_( src.old_normal_ ),
 	new_center_( src.new_center_ ),
@@ -620,37 +570,9 @@ TranslationRotationMover::parse_my_tag(
 	   core::pose::Pose const &
 	   ) {
 	
-	// Read in boolean fulltom
-	if ( tag->hasOption( "fullatom" ) ) {
-		fullatom_ = tag->getOption< bool >( "fullatom" );
-	}
-	
-	// Read in membrane center
-	if ( tag->hasOption( "center" ) ) {
-		std::string center = tag->getOption< std::string >( "center" );
-		utility::vector1< std::string > str_cen = utility::string_split_multi_delim( center, ":,'`~+*&|;." );
-		
-		if ( str_cen.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			new_center_.x() = std::atof( str_cen[1].c_str() );
-			new_center_.y() = std::atof( str_cen[2].c_str() );
-			new_center_.z() = std::atof( str_cen[3].c_str() );
-		}
-	}
-	// Read in membrane normal
-	if ( tag->hasOption( "normal" ) ) {
-		std::string normal = tag->getOption< std::string >( "normal" );
-		utility::vector1< std::string > str_norm = utility::string_split_multi_delim( normal, ":,'`~+*&|;." );
-		
-		if ( str_norm.size() != 3 ) {
-			utility_exit_with_message( "Cannot read in xyz center vector from string - incorrect length!" );
-		} else {
-			new_normal_.x() = std::atof( str_norm[1].c_str() );
-			new_normal_.y() = std::atof( str_norm[2].c_str() );
-			new_normal_.z() = std::atof( str_norm[3].c_str() );
-		}
-	}
+	// read center and normal tag
+	read_center_normal_from_tag( new_center_, new_normal_, tag );
+
 }
 
 /// @brief Create a new copy of this mover
@@ -691,6 +613,11 @@ TranslationRotationMover::apply( Pose & pose ) {
 	
 	TR << "Translating and rotating the pose" << std::endl;
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// normalize new normal
 	new_normal_.normalize();
 
@@ -704,13 +631,20 @@ TranslationRotationMover::apply( Pose & pose ) {
 
 	// translate pose
 	Vector translation_vector = new_center_ - old_center_;
-	TranslationMoverOP translate( new TranslationMover( translation_vector, jumpnum_ ) );
-	translate->apply( pose );
+	if ( translation_vector.length() != 0 ) {
+		TranslationMoverOP translate( new TranslationMover( translation_vector, jumpnum_ ) );
+		translate->apply( pose );
+	}
 	
 	// rotate pose
 	RotationMoverOP rotate( new RotationMover( old_normal_, new_normal_, new_center_, jumpnum_ ) );
 	rotate->apply( pose );
 	
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 }// apply
 
 /////////////////////
@@ -736,29 +670,9 @@ TranslationRotationMover::register_options() {
 void
 TranslationRotationMover::init_from_cmd() {
 	
-	using namespace basic::options;
-	
-	// Set user-defined fullatom param
-	if ( option[ OptionKeys::in::file::fullatom ].user() ) {
-		fullatom_ = option[ OptionKeys::in::file::fullatom ]();
-	}
-	
-	// Read in Center Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::center ].user() ) {
-		new_center_.x() = option[ OptionKeys::mp::setup::center ]()[1];
-		new_center_.y() = option[ OptionKeys::mp::setup::center ]()[2];
-		new_center_.z() = option[ OptionKeys::mp::setup::center ]()[3];
-	}
+	// read center and normal from cmd
+	read_center_normal_from_cmd( new_center_, new_normal_ );
 
-	// Read in Normal Parameter
-	// TODO: Add better error checking
-	if ( option[ OptionKeys::mp::setup::normal ].user() ) {
-		new_normal_.x() = option[ OptionKeys::mp::setup::normal ]()[1];
-		new_normal_.y() = option[ OptionKeys::mp::setup::normal ]()[2];
-		new_normal_.z() = option[ OptionKeys::mp::setup::normal ]()[3];
-	}
-	
 }// init from cmd
 
 

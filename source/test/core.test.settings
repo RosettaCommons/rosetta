@@ -515,6 +515,8 @@ testinputfiles = [
 	"conformation/membrane/3MP7__tr.pdb",
 	"conformation/membrane/3UKM__tr.pdb",
 	"conformation/membrane/4WFE__tr.pdb",
+	"conformation/membrane/caln_tm_finalB.span",
+	"conformation/membrane/pmp22_withSS_PPM_opt.span",
 	"conformation/symmetry/symm_def1.dat",
 	"conformation/symmetry/symm_def2.dat",
 	"conformation/symmetry/symm_test2.pdb",

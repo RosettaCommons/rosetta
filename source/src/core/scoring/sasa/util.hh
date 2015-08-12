@@ -34,6 +34,25 @@ namespace sasa {
 ///	
 ///
 
+/// @brief Relative per residue sidechain SASA
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			GXG tripeptide values for sidechain SASA are taken from
+///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+utility::vector1< Real > per_res_sc_sasa( const pose::Pose & pose );
+
+/// @brief Relative per residue sidechain SASA
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			GXG tripeptide values for sidechain SASA are taken from
+///			http://www.proteinsandproteomics.org/content/free/tables_1/table08.pdf
+utility::vector1< Real > rel_per_res_sc_sasa( const pose::Pose & pose );
+
+/// @brief Is residue exposed?
+/// @details Added by JKLeman (julia.koehler1982@gmail.com)
+///			Uses the function rel_per_res_sc_sasa above
+///			THIS IS EXPENSIVE, BE AWARE!!! IF YOU NEED TO RUN IT OVER THE ENTIRE
+///			PROTEIN, USE THE rel_per_res_sc_sasa FUNCTION INSTEAD!
+bool is_res_exposed( const pose::Pose & pose, core::Size resnum );
+
 /// @brief Calculate the sidechain and backbone sasa from atom sasa
 std::pair<Real, Real>
 get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa);

@@ -227,6 +227,11 @@ void FlipMover::apply( Pose & pose ) {
 		}
 	}
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	// reorder foldtree
 	Size mem_rsd = pose.conformation().membrane_info()->membrane_rsd_num();
 	core::kinematics::FoldTree foldtree = pose.fold_tree();
@@ -300,6 +305,11 @@ void FlipMover::apply( Pose & pose ) {
 		RigidBodyDeterministicSpinMoverOP rb_flip ( new RigidBodyDeterministicSpinMover( jump_num_, axis_, rot_center, angle_ ) );
 		rb_flip->apply( pose );
 	}
+
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 	
 }// apply
 

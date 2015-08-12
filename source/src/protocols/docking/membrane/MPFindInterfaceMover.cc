@@ -38,16 +38,21 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/membrane/MembraneInfo.hh> 
 #include <core/conformation/membrane/SpanningTopology.hh> 
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/pack_rotamers.hh>
 #include <core/scoring/sasa/SasaCalc.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -121,7 +126,8 @@ MPFindInterfaceMover::MPFindInterfaceMover( MPFindInterfaceMover const & src ) :
 	topo_down_( src.topo_down_ ),
 	sfxn_( src.sfxn_ ),
 	flips_( src.flips_ ),
-	flexible_bb_( src.flexible_bb_ )
+	flexible_bb_( src.flexible_bb_ ),
+	flexible_sc_( src.flexible_sc_ )
 {}
 	
 /// @brief Destructor
@@ -197,6 +203,7 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	using namespace numeric;
 	using namespace basic::options;
 	using namespace core::conformation::membrane;
+	using namespace core::pack::task;
 	using namespace protocols::membrane::geometry;
 	using namespace protocols::membrane;
 	using namespace protocols::rigid;
@@ -211,28 +218,17 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	init_from_cmd();
 	finalize_setup( pose );
 
-	// compute embedding for partners (compute structure-based embedding with split topologies)
-	EmbeddingDef emb_up, emb_down;
-	update_partner_embeddings( pose, jump_, emb_up, emb_down );
-	
-	core::Vector center = pose.conformation().membrane_info()->membrane_center();
-	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 1: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
 
-//	// get initial membrane position
-//	MembranePositionFromTopologyMoverOP mempos( new MembranePositionFromTopologyMover() );
-//	mempos->apply( pose );
-//	
-//	// optimize membrane position using smooth scorefunction
-//	OptimizeMembranePositionMoverOP optmem( new OptimizeMembranePositionMover() );
-//	optmem->apply( pose );
-	
+//	core::Vector center = pose.conformation().membrane_info()->membrane_center();
+//	core::Vector normal = pose.conformation().membrane_info()->membrane_normal();
+//	TR << "membrane center 1: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+
 	// superimpose upstream partner with the native
 	superimpose_upstream_partner( pose );
-
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 3a: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
 
 	////////////////////// MOVE PARTNERS APART //////////////////////////
 	
@@ -240,8 +236,11 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	
 	// get membrane axis from docking metrics function
 	core::Vector slide_axis = membrane_axis( pose, jump_ );
-//	slide_axis.z( 0 );
 	bool vary_stepsize = false;
+
+	// compute embedding for partners (compute structure-based embedding with split topologies)
+	EmbeddingDef emb_up, emb_down;
+	update_partner_embeddings( pose, jump_, emb_up, emb_down );
 	
 	// get distance between points
 	core::Real dist1 = ( emb_down.center() - emb_up.center() ).length();
@@ -256,45 +255,59 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	RigidBodyTransMoverOP mover( new rigid::RigidBodyTransMover( slide_axis, jump_, vary_stepsize ) );
 	mover->step_size( 100 );
 	mover->apply( pose );
+	pose.dump_scored_pdb( "after_moving_apart.pdb", *sfxn_ );
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 2: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-	
-	///////////////////////// RUN RELAX ////////////////////////////
-	
+	///////////////////////// RUN RELAX OR REPACK ////////////////////////////
+
+	core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
+
 	// run quick relax
 	MPQuickRelaxMoverOP relax( new MPQuickRelaxMover() );
+	ShakeStructureMoverOP shake( new ShakeStructureMover( highres_sfxn ) );
+	PackerTaskOP repack = TaskFactory::create_packer_task( pose );
+	repack->restrict_to_repacking();
+
+	// score pose
+//	core::Real tot_score = ( *sfxn_ )( pose );
+//	core::Real fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+
 	if ( flexible_bb_ == true ) {
+		TR << "++++++++++++++++ relaxing... " << std::endl;
 		relax->add_membrane_again( false );
 		relax->membrane_from_topology( false );
 		relax->optimize_membrane( false );
-		relax->apply( pose );
+
+//		while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
+//			TR << "need an fa_rep of " << ((nres_protein( pose ) + 200 ) * 3) << std::endl;
+			relax->apply( pose );
+////			core::pack::pack_rotamers( pose, *sfxn_, repack );
+//			tot_score = ( *sfxn_ )( pose );
+//			fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+//		}
+		
+		core::pack::pack_rotamers( pose, *sfxn_, repack );
+//		shake->apply( pose );
 	}
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 3: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-	pose.dump_pdb( "after_relax.pdb" );
+	// repack
+	else if ( flexible_sc_ == true ){
+		TR << "++++++++++++++++ packing... " << std::endl;
+		core::pack::pack_rotamers( pose, *sfxn_, repack );
+	}
+	else {
+		TR << "++++++++++++++++ no relaxing or packing before... " << std::endl;
+	}
+
+	// score and dump the pose
+	( *highres_sfxn )( pose );
+	pose.dump_scored_pdb( "after_relax1.pdb", *highres_sfxn );
 
 	// superimpose upstream partner with the native
 	superimpose_upstream_partner( pose );
 
-	// set membrane to fixed one again
+	// set membrane to fixed one again (it was moved during superposition)
 	SetMembranePositionMoverOP setmem( new SetMembranePositionMover() );
 	setmem->apply( pose );
-
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 3a: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-
-//	//////////////// MOVE INTO FIXED MEMBRANE /////////////////////
-//
-//	// translate and rotate pose into membrane
-//	EmbeddingDefOP embed( compute_structure_based_embedding( pose ) );
-//	core::Size memjump = pose.conformation().membrane_info()->membrane_jump();
-//	TranslationRotationMoverOP rt1( new TranslationRotationMover( embed->center(), embed->normal(), mem_center, mem_normal, memjump ) );
-//	rt1->apply( pose );
 
 	//////////////// CENTROID OR FULL-ATOM /////////////////////
 	
@@ -303,14 +316,13 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		centroid->apply( pose );
 	}
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 4: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-
-	TR << "foltree before protocol: " << std::endl;
-	pose.fold_tree().show( TR );
-
+	TR << "Is pose centroid? " << pose.is_centroid() << std::endl;
+	TR << "Flexible backbone? " << flexible_bb_ << " flexible sidechain? " << flexible_sc_ << std::endl;
+	
 	//////////////// RUN REST OF PROTOCOL ////////////////////////
+
+	TR << "foldtree before protocol: " << std::endl;
+	pose.fold_tree().show( TR );
 	
 	// create MC object
 	protocols::moves::MonteCarloOP mc( new protocols::moves::MonteCarlo( pose, *sfxn_, 1.0 ) );
@@ -318,10 +330,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	// do this for a certain number of iterations
 	for ( Size i = 1; i <= 10; ++i ){
 		
-		center = pose.conformation().membrane_info()->membrane_center();
-		normal = pose.conformation().membrane_info()->membrane_normal();
-		TR << "membrane center 5: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-
 		// SPIN MOVER
 		// get a random spin angle between 0 and 360 degrees
 		int spin_angle( numeric::random::random_range( 0, 360 ) );
@@ -335,7 +343,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		spin->apply( pose );
 		
 		// slide into contact
-		TR << "=========================SLIDE-INTO-CONTACT======================" << std::endl;
 		DockingSlideIntoContactOP slide( new DockingSlideIntoContact( jump_ ) );
 		slide->apply( pose );
 		mc->boltzmann( pose );
@@ -345,9 +352,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		TR << "=========================SPIN-AROUND-PARTNER MOVER===============" << std::endl;
 		SpinAroundPartnerMoverOP around( new SpinAroundPartnerMover( jump_, 100 ) );
 		around->apply( pose );
-		
-		// slide into contact
-		TR << "=========================SLIDE-INTO-CONTACT======================" << std::endl;
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
@@ -358,9 +362,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		TR << "=========================TILT MOVER==============================" << std::endl;
 		TiltMoverOP tilt( new TiltMover( jump_ ) );
 		tilt->apply( pose );
-		
-		// slide into contact
-		TR << "=========================SLIDE-INTO-CONTACT======================" << std::endl;
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
@@ -393,7 +394,6 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		}
 		
 		// slide into contact
-		TR << "=========================SLIDE-INTO-CONTACT======================" << std::endl;
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
@@ -402,18 +402,17 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		TR << "=========================SPIN-AROUND-PARTNER MOVER===============" << std::endl;
 		SpinAroundPartnerMoverOP around1( new SpinAroundPartnerMover( jump_, 100 ) );
 		around1->apply( pose );
-		
-		// slide into contact
-		TR << "=========================SLIDE-INTO-CONTACT======================" << std::endl;
 		slide->apply( pose );
 		mc->boltzmann( pose );
 		TR << "accepted? " << mc->mc_accepted() << " pose energy: " << pose.energies().total_energy() << std::endl;
 		
 	} // number of iterations for search
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 6: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+	// score and dump the pose
+	( *highres_sfxn )( pose );
+	pose.dump_scored_pdb( "after_docking.pdb", *highres_sfxn );
+
+	//////////////// SWITCH TO FULL-ATOM /////////////////////
 
 	// switch back to full-atom
 	if ( pose.is_centroid() ) {
@@ -421,58 +420,54 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 		fa->apply( pose );
 	}
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 7: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-
-	//////////////////////// RELAX //////////////////////
+	//////////////////////// RELAX / REPACK //////////////////////
 
 	// do another round of relax
 	if ( flexible_bb_ == true ) {
+		TR << "++++++++++++++++ relaxing again... " << std::endl;
 		relax->add_membrane_again( false );
 		relax->membrane_from_topology( false );
 		relax->optimize_membrane( false );
-		relax->apply( pose );
+//		relax->apply( pose );
+
+		// score pose
+//		tot_score = ( *sfxn_ )( pose );
+//		fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+
+//		while ( tot_score > 0 || fa_rep > ( nres_protein( pose ) + 200 ) * 3 ) {
+			relax->apply( pose );
+//			core::pack::pack_rotamers( pose, *sfxn_, repack );
+//			tot_score = ( *sfxn_ )( pose );
+//			fa_rep = pose.energies().total_energies()[ core::scoring::fa_rep ];
+//		}
+		core::pack::pack_rotamers( pose, *sfxn_, repack );
+//		shake->apply( pose );
 	}
-
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 8: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-
-//	// optimize membrane position using smooth scorefunction
-//	optmem->apply( pose );
-//	
-//	center = pose.conformation().membrane_info()->membrane_center();
-//	normal = pose.conformation().membrane_info()->membrane_normal();
-//	TR << "membrane center 8a: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
-//	
-//	//////////////// MOVE INTO FIXED MEMBRANE /////////////////////
-//	
-//	// translate and rotate pose into membrane
-//	embed = compute_structure_based_embedding( pose );
-//	memjump = pose.conformation().membrane_info()->membrane_jump();
-//	TranslationRotationMoverOP rt2( new TranslationRotationMover( embed->center(), embed->normal(), mem_center, mem_normal, memjump ) );
-//	rt2->apply( pose );
-//
-//	center = pose.conformation().membrane_info()->membrane_center();
-//	normal = pose.conformation().membrane_info()->membrane_normal();
-//	TR << "membrane center 8b " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+	// repack
+	else if ( flexible_sc_ == true ){
+		TR << "++++++++++++++++ packing again... " << std::endl;
+		core::pack::pack_rotamers( pose, *sfxn_, repack );
+	}
+	else {
+		TR << "++++++++++++++++ no relaxing or packing after... " << std::endl;
+	}
 
 	// superimpose upstream partner with the native
 	superimpose_upstream_partner( pose );
 
-	// set membrane to fixed one again
+	// set membrane to fixed one again (was moved during superposition)
 	SetMembranePositionMoverOP setmem2( new SetMembranePositionMover() );
 	setmem2->apply( pose );
 
-	center = pose.conformation().membrane_info()->membrane_center();
-	normal = pose.conformation().membrane_info()->membrane_normal();
-	TR << "membrane center 9: " << center.to_string() << ", normal: " << normal.to_string() << std::endl;
+	// pack one more time
+	core::pack::pack_rotamers( pose, *sfxn_, repack );
+	pose.dump_scored_pdb( "after_relax2.pdb", *highres_sfxn );
 
 	/////////////////////// WRITE QUALITY MEASURES TO SCORE FILE ///////////////
+	// TODO: THIS SHOULD ULTIMATELY BE REPLACED WITH THE MP-INTERFACE-STATISTICS-MOVER
 
 	// score the pose - this hopefully writes this into the scorefile
-	core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
+//	core::scoring::ScoreFunctionOP highres_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "mpframework_docking_fa_2015.wts" );
 	( *highres_sfxn )( pose );
 
 	// get job
@@ -511,6 +506,11 @@ MPFindInterfaceMover::apply( Pose & pose ) {
 	core::Real small_frct_diff = fractions_small_residues( pose, interface).first - fractions_small_residues( pose, interface).second;
 	job->add_string_real_pair( "small_res", small_frct_diff );
 
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+
 }// apply
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -531,6 +531,7 @@ MPFindInterfaceMover::register_options() {
 	option.add_relevant( OptionKeys::mp::dock::highres );
 	option.add_relevant( OptionKeys::mp::dock::allow_flips );
 	option.add_relevant( OptionKeys::mp::dock::flexible_bb );
+	option.add_relevant( OptionKeys::mp::dock::flexible_sc );
 	
 }
 
@@ -569,10 +570,16 @@ MPFindInterfaceMover::init_from_cmd() {
 		flips_ = option[ OptionKeys::mp::dock::allow_flips ]();
 	}
 
-	// allow flips in the membrane?
+	// run quickrelax before and after?
 	flexible_bb_ = false;
 	if ( option[ OptionKeys::mp::dock::flexible_bb ].user() ) {
 		flexible_bb_ = option[ OptionKeys::mp::dock::flexible_bb ]();
+	}
+	
+	// repack before and after?
+	flexible_sc_ = false;
+	if ( option[ OptionKeys::mp::dock::flexible_sc ].user() ) {
+		flexible_sc_ = option[ OptionKeys::mp::dock::flexible_sc ]();
 	}
 
 }// init from cmd
@@ -587,20 +594,13 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	using namespace protocols::simple_moves;
 	TR << "Finalizing setup... " << std::endl;
 
-	////// SUPERIMPOSE THE FIRST PARTNER OF THE POSE WITH THE NATIVE ///////
+	///////////////////// ADD MEMBRANE TO NATIVE ///////////////
 
 	// call AddMembraneMover on native for RMSD calculation
 	AddMembraneMoverOP addmem( new AddMembraneMover() );
 	addmem->apply( native_ );
 	
-	// superimpose upstream partner with the native
-	superimpose_upstream_partner( pose );
-	
-	// for debugging
-	pose.dump_pdb("pose_superimposed_to_native.pdb");
-	TR << "dumped superimposed pose" << std::endl;
-
-	///////////////////// FOLDTREE STUFF ///////////////////////
+	///////////////////// SET MEMBRANE TO ROOT ///////////////////////
 
 	// get foldtree from partners (setup_foldtree) and movable jump
 	// we are using this function to add the membrane add the anchor point
@@ -615,11 +615,13 @@ void MPFindInterfaceMover::finalize_setup( Pose & pose ) {
 	TR << "anchor point: " << anchor << std::endl;
 
 	// Add Membrane, appends MEM as jump1
+	core::kinematics::FoldTree ft = pose.fold_tree();
+	pose.fold_tree().show( TR );
 	AddMembraneMoverOP add_memb( new AddMembraneMover( anchor, 0 ) );
 	add_memb->apply( pose );
+	pose.fold_tree().show( TR );
 	
 	// reorder foldtree to have membrane at root
-	core::kinematics::FoldTree ft = pose.fold_tree();
 	ft.reorder( pose.conformation().membrane_info()->membrane_rsd_num() );
 	pose.fold_tree( ft );
 	TR << "reordered foltree: " << std::endl;

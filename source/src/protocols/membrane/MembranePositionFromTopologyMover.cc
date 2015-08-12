@@ -154,6 +154,11 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 		utility_exit_with_message("The SpanningTopology object in MembraneInfo is empty!" );
 	}
 
+	// starting foldtree
+	TR << "Starting foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
+	core::kinematics::FoldTree orig_ft = pose.fold_tree();
+
 	TR << "Computing initial membrane position from structure..." << std::endl;
 
 	using namespace core;
@@ -170,9 +175,12 @@ MembranePositionFromTopologyMover::apply( Pose & pose ) {
 	// Update membrane position - shift normal along center
 	pose.conformation().update_membrane_position( center, normal );
 
-	TR << "Done" << std::endl;
+	// reset foldtree and show final one
+	pose.fold_tree( orig_ft );
+	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
+	pose.fold_tree().show( TR );
 
-}
+} // apply
 
 /// @brief Get the name of this mover
 std::string

@@ -1063,6 +1063,22 @@ debug_assert( conf2pdb.size() == pose.conformation().num_chains() );
 	return conf2pdb;
 }
 
+/// @brief Get all the chains from conformation
+utility::vector1< int > get_chains( core::pose::Pose const & pose ) {
+	
+	// get map between conformation chain and PDB chainids
+	std::map< int, char > chain_map = conf2pdb_chain( pose );
+	
+	// create empty vector
+	utility::vector1< int > keys;
+	
+	// go through map and push back into vector
+	for ( std::map< int, char >::iterator it = chain_map.begin(); it != chain_map.end(); ++it) {
+		keys.push_back( it->first );
+	}
+	return keys;
+}
+
 
 /// @brief renumber PDBInfo based on Conformation chains; each chain starts from 1
 /// @param[in,out] pose The Pose to modify.

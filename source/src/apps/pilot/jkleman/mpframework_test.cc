@@ -62,7 +62,6 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <protocols/scoring/Interface.hh>
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 
@@ -99,6 +98,7 @@
 static thread_local basic::Tracer TR( "apps.pilot.jkleman.mpframework_test" );
 
 using namespace core;
+using namespace core::pose;
 using namespace core::scoring;
 using namespace numeric;
 using namespace protocols::moves;
@@ -107,8 +107,8 @@ using namespace protocols::docking::membrane;
 using namespace core::kinematics;
 using namespace core::conformation::membrane;
 using namespace protocols::rigid;
-using namespace protocols::membrane;
 using namespace protocols::simple_moves;
+using namespace protocols::membrane;
 using namespace protocols::membrane::geometry;
 using namespace protocols::membrane::visualize;
 using namespace basic::options;
@@ -125,6 +125,11 @@ public:
 	/// @brief Get Mover Name
 	std::string get_name() const { return "MPframeworkTestMover"; }
 
+	/////////////////////////////////////////
+	
+
+	/////////////////////////////////////////
+
 	/// @brief Apply Membrane Relax
 	void apply( Pose & pose ) {
 
@@ -133,54 +138,31 @@ public:
 		TR << "thickness: " << pose.conformation().membrane_info()->membrane_thickness()  << std::endl;
 		TR << "anchor: " << 1 << std::endl;
 
-		// show foldtree
-		pose.fold_tree().show(std::cout);
-
-		// AddMembraneMover
-		AddMembraneMoverOP addmem( new AddMembraneMover() );
+		core::import_pose::pose_from_pdb( pose, "/Users/julialeman/Documents/julia/git_final/Rosetta/main/source/test/protocols/membrane/3EFF_tr.pdb" );
+		AddMembraneMoverOP addmem( new AddMembraneMover( "/Users/julialeman/Documents/julia/git_final/Rosetta/main/source/test/protocols/membrane/3EFF_tr.span" ) );
 		addmem->apply( pose );
-
-		// embedding
-		// set the current embedding of the protein
-//		Vector cur_emb_center (20, 20, 20);
-//		Vector cur_emb_normal (15, 0, 0);
-		Vector cur_emb_center (20.9885, -0.04375, 56.6125);
-		Vector cur_emb_normal (-8.6212, 0.83567, 17.05025);
-//		Embedding: center: (23.9885, -2.04375, 51.6125), normal: (-11.6212, 2.83567, 9.05025)
-
-//		Vector cur_emb_center (-0.017, -0.1035, -5);
-//		Vector cur_emb_normal (5.912964, 8.15385, 10.6362);
-//		 Embedding: center: (-0.017, -0.1035, -0.37975), normal: (-0.912964, 3.15385, 14.6362)
-		EmbeddingDefOP current_emb( new EmbeddingDef( cur_emb_center, cur_emb_normal ) );
-
-//		SpanningTopology topo = *pose.conformation().membrane_info()->spanning_topology();
-//		EmbeddingOP emb( new Embedding( topo, pose ) );
-//		current_emb = emb->total_embed();
-//		current_emb->show();
-
-		// membrane coords
-//		Vector m_center ( mem_center );
-//		Vector m_normal ( mem_normal );
-		Vector m_center (20, 20, 20);
-		Vector m_normal (15, 0, 0);
-		Vector m_thickness( 15, 0, 0 );
 		
-		// Apply Rotation and translation move
-//		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover() );
-//		transform->apply( pose );
-//		pose.dump_pdb("transformed1.pdb");
-		
-//		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb ) );
-//		transform->apply( pose );
-//		pose.dump_pdb("transformed2.pdb");
 
-//		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( m_center, m_normal ) );
-//		transform->apply( pose );
-//		pose.dump_pdb("transformed3.pdb");
 
-		TransformIntoMembraneMoverOP transform( new TransformIntoMembraneMover( current_emb, m_center, m_normal ) );
-		transform->apply( pose );
-		pose.dump_pdb("transformed4.pdb");
+
+
+		////// FOR VISUALIZATION //////
+
+//		// initializations
+//		EmbeddingOP embedding( new Embedding() );
+//		core::Vector normal( 0, 0, 1 );
+//
+//		// add to embedding for visualization
+//		embedding->add_span_embedding( tmcom1, normal );
+//		embedding->add_span_embedding( tmcom2, normal );
+//		embedding->add_span_embedding( tmcom3, normal );
+//		embedding->add_span_embedding( tmcom4, normal );
+//
+//		embedding->show();
+//		
+//		// visualize embeddings
+//		VisualizeEmbeddingMoverOP visemb( new VisualizeEmbeddingMover( embedding ) );
+//		visemb->apply( pose );
 
 
 ////////////////////////////////////////////////////////////////////////////////

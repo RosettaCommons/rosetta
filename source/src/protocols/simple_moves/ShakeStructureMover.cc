@@ -26,6 +26,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -430,7 +431,7 @@ ShakeStructureMover::setup_ca_constraints(
 	//create constraints for all residues
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
-	int nres = pose.total_residue();
+	int nres = core::pose::nres_protein( pose );  // only looks at protein residues, no virts
 	for(int i = 1; i <= nres; i++){
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
 		Vector const CA_i( pose.residue(i).xyz(" CA "));

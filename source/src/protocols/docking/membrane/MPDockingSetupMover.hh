@@ -79,7 +79,7 @@ public: // methods
 	/// @brief Create a Fresh Instance of this Mover
 	virtual MoverOP fresh_instance() const;
     
-    /// @brief Pase Rosetta Scripts Options for this Mover
+    /// @brief Parse Rosetta Scripts Options for this Mover
     void parse_my_tag(
       utility::tag::TagCOP tag,
       basic::datacache::DataMap &,
@@ -106,15 +106,22 @@ private: // methods
 
 	// read spanfiles
 	void read_spanfiles();
+
+	// initialize from commandline
+	void init_from_cmd();
 	
 	// transform pose into membrane
-	void transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile );
+	void transform_pose_into_membrane( Pose & pose, Vector center, Vector normal, std::string spanfile, Size partner );
 
 private: // data
 
 	// vector of poses and spanfiles that are used as input to create final pose and spanfile
 	utility::vector1< PoseOP > poses_;
 	utility::vector1< std::string > spanfiles_;
+	
+	// should the position of partner 1 or 2 be optimized in the membrane?
+	bool optimize1_;
+	bool optimize2_;
 	
 };
 
