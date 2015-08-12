@@ -33,6 +33,7 @@
 	--Modified 11 Aug 2014:
 		--Added an option to ignore entire chains in the RMSD calculation.
 		--Added an option to skip PCA analysis.
+	-- TODO: fix memory issue with large structure list.
 ****************************************************************************************************/
 
 #include <protocols/simple_moves/ScoreMover.hh>
