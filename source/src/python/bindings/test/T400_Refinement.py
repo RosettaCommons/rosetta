@@ -7,6 +7,10 @@
 
 ## @author Sergey Lyskov
 
+import sys
+if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (mover: ClassicAbinitio ERROR)
+
+
 from rosetta import *
 
 rosetta.init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!

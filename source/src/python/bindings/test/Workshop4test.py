@@ -2,6 +2,11 @@
 # :noTabs=true:
 # List of commands used in PyRosetts Workshop #4
 
+
+import sys
+if sys.platform == "darwin": sys.exit(0)  # skipping this test on Mac OS due to memory error (*** error: can't allocate region)
+
+
 # A simple de Novo Folding Algorithm
 # import modules
 import random, math
