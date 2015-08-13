@@ -24,6 +24,7 @@
 #include <core/kinematics/util.hh>  //for test_utility_function_remodel_fold_tree_to_account_for_insertion
 
 //Utility Headers
+#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
@@ -31,6 +32,8 @@
 
 using core::kinematics::FoldTree;
 using core::kinematics::Edge;
+
+static thread_local basic::Tracer TR( "core.kinematics.FoldTree.cxxtest.hh" );
 
 class FoldTreeTest : public CxxTest::TestSuite {
 public:
@@ -73,27 +76,27 @@ public:
 		TS_ASSERT( reverse_ft_.check_fold_tree() );
 		TS_ASSERT( branching_ft_.check_fold_tree() );
 		TS_ASSERT( branching_ligand_ft_.check_fold_tree() );
-		
+
 		std::ostringstream output;
 		output << empty_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE " );
-		
+
 		output.str( "" );
 		output << single_residue_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 1 -1 " );
-		
+
 		output.str( "" );
 		output << simple_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 40 -1 " );
-		
+
 		output.str( "" );
 		output << two_chain_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 20 -1  EDGE 1 21 1  EDGE 21 40 -1 " );
-		
+
 		output.str( "" );
 		output << ligand_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 40 -1  EDGE 1 41 1 " );
-		
+
 		output.str( "" );
 		output << single_loop_ft_;
 		TS_ASSERT_EQUALS( output.str(),
@@ -102,27 +105,27 @@ public:
 		output.str( "" );
 		output << reverse_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 40 1 -1 " );
-		
+
 		output.str( "" );
 		output << branching_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 20 -1  EDGE 10 21 -2 X Z  EDGE 21 40 -1 " );
-		
+
 		output.str( "" );
 		output << branching_ligand_ft_;
 		TS_ASSERT_EQUALS( output.str(), "FOLD_TREE  EDGE 1 40 -1  EDGE 1 41 1  EDGE 41 42 -1  EDGE 41 43 -2 X Z " );
 	}
-	
+
 	void test_boundary_right()
 	{
 		//TS_ASSERT_EQUALS( single_residue_ft_.boundary_right( 1 ), 1 );  // Why should this fail?
 
 		// The latter function is a shortcut to the former.
 		TS_ASSERT_EQUALS( simple_ft_.get_residue_edge( 21 ).stop(), simple_ft_.boundary_right( 21 ) );
-		
+
 		//TS_ASSERT_EQUALS( simple_ft_.boundary_right( 1 ), 40 );  // Why should this fail?
 		TS_ASSERT_EQUALS( simple_ft_.boundary_right( 20 ), 40 );
 		TS_ASSERT_EQUALS( simple_ft_.boundary_right( 40 ), 40 );
-		
+
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 1 ), 1 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 10 ), 1 );
 		//TS_ASSERT_EQUALS( single_loop_ft_.boundary_right( 15 ), 1 );  // Why should this fail?
@@ -138,11 +141,11 @@ public:
 
 		// The latter function is a shortcut to the former.
 		TS_ASSERT_EQUALS( simple_ft_.get_residue_edge( 21 ).start(), simple_ft_.boundary_left( 21 ) );
-		
+
 		//TS_ASSERT_EQUALS( simple_ft_.boundary_left( 1 ), 1 );  // Why should this fail?
 		TS_ASSERT_EQUALS( simple_ft_.boundary_left( 20 ), 1 );
 		TS_ASSERT_EQUALS( simple_ft_.boundary_left( 40 ), 1 );
-		
+
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 1 ), 15 );
 		TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 10 ), 15 );
 		//TS_ASSERT_EQUALS( single_loop_ft_.boundary_left( 15 ), 15 );  // Why should this fail?
@@ -193,7 +196,19 @@ public:
 
 	void test_slide_jump()
 	{
-		TS_ASSERT( true );
+		// create a simple fold tree with a jump
+		std::stringstream ft_stream( "FOLD_TREE EDGE 1 2 1 EDGE 2 93 -1 " );
+		core::kinematics::FoldTree ft;
+		ft_stream >> ft;
+
+		ft.slide_jump( 1, 1, 47 );
+		TS_ASSERT( ft.check_fold_tree() );
+		TS_ASSERT_EQUALS( ft.root(), 1 );
+
+		core::kinematics::Edge e = ft.jump_edge( 1 );
+		TS_ASSERT_EQUALS( (core::Size)e.start(), 1 );
+		TS_ASSERT_EQUALS( (core::Size)e.stop(), 47 );
+		TS_ASSERT_EQUALS( (core::Size)e.label(), 1 );
 	}
 
 	void test_delete_jump_seqpos()

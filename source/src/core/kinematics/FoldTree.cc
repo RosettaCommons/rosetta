@@ -221,7 +221,7 @@ FoldTree::slide_cutpoint( Size const current_cut, Size const target_cut )
 void
 FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const new_res2 )
 {
-	TR.Debug << "slide_jump: starting tree= " << *this;
+	TR.Debug << "slide_jump: starting tree= " << *this << std::endl;
 	Edge const old_jump_edge( jump_edge( jump_number ) );
 	Size const pos1( std::min( new_res1, new_res2 ) );
 	Size const pos2( std::max( new_res1, new_res2 ) );
@@ -258,11 +258,15 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );
-	add_edge( new_jump_edge );
+	if ( (core::Size)new_jump_edge.start() == original_root ) {
+		prepend_edge( new_jump_edge ); // preserve root!
+	} else {
+		add_edge( new_jump_edge );
+	}
 	delete_extra_vertices();
 	delete_self_edges();
 	runtime_assert( (core::Size)root() == original_root );
-	TR.Debug << "slide_jump: final tree= " << *this;
+	TR.Debug << "slide_jump: final tree= " << *this << std::endl;
 }
 
 /// @details  Delete a position from the foldtree that is either a jump_point or the root. Will require some
@@ -1053,7 +1057,7 @@ FoldTree::delete_extra_vertices()
 			if ( kill_vertex ) break;
 		}
 		if ( !kill_vertex ) break;
-		//	  TR.Trace << "delete vertex: " << kill_vertex << std::endl;
+		//  TR.Trace << "delete vertex: " << kill_vertex << std::endl;
 		int nbounds(0);
 		FArray1D_int bounds(2,0);
 		for ( iterator it=edge_list_.begin(),it_end = edge_list_.end();
