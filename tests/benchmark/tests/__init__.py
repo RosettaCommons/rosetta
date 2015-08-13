@@ -94,6 +94,36 @@ def execute(message, commandline, return_=False, until_successes=False, terminat
     else: return False
 
 
+def parallel_execute(name, jobs, rosetta_dir, working_dir, cpu_count, time=16):
+    ''' Execute command line in parallel on local host
+        time is specify upper time limit in minutes after which jobs will be automatically terminated
+
+        jobs should be dict with following structure:
+        {
+            ‘job-string-id-1’: command_line-1,
+            ‘job-string-id-2’: command_line-2,
+            ...
+        }
+
+        return: dict with jobs-id's as keys and value as dict with 'output' and 'result' keys:
+        {
+            "job-string-id-1": {
+                "output": "stdout + stdderr output of command_line-1",
+                "result": <integer exit code for command_line-1>
+            },
+            "c2": {
+                "output": "stdout + stdderr output of command_line-2",
+                "result": <integer exit code for command_line-2>
+            },
+            ...
+        }
+    '''
+    allowed_time = int(time*60)
+    job_file_name = working_dir + '/' + name
+    with file(job_file_name + '.json', 'w') as f: json.dump(jobs, f, sort_keys=True, indent=2)
+    execute("Running {} in parallel with {} CPU's...".format(name, cpu_count), 'cd {working_dir} && ulimit -t {allowed_time} && {rosetta_dir}/tests/benchmark/util/parallel.py -j{cpu_count} {job_file_name}.json'.format(**vars()))
+
+    return json.load( file(job_file_name+'.results.json') )
 
 
 def calculate_extension(platform, mode='release'):

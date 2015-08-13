@@ -34,9 +34,19 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     else:
         extension = calculate_extension(platform)
 
-        # runing test executable on benchmark machine itself
+        # running Rosetta executable on benchmark machine itself
         res, output = execute('Scoring PDB...',
                               'cd  {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb'.format(**vars()), return_='tuple')
+
+
+        # running Rosetta executable on benchmark machine in parallel and using multiple CPU's (=jobs)
+        scoring_jobs = dict(scoring1='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.1.sc'.format(**vars()),
+                            scoring2='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.2.sc'.format(**vars()),
+                            scoring3='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.3.sc'.format(**vars()),
+                            scoring4='cd {working_dir} && {rosetta_dir}/source/bin/score.{extension} -s {rosetta_dir}/source/test/core/io/test_in.pdb -out:file:scorefile parallel.score.4.sc'.format(**vars()), )
+
+        parallel_execute('parallel_scoring', scoring_jobs, rosetta_dir, working_dir, cpu_count=jobs, time=1)
+
 
         # running executable on HPC cluster
         hpc_driver.execute(executable='{rosetta_dir}/source/bin/score.{extension}'.format(**vars()),
