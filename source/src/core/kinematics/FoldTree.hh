@@ -231,6 +231,9 @@ public:
 	/// @brief Returns the edge label of the edge from  <start>  to  <stop>
 	int edge_label( int const start, int const stop );
 
+	/// @brief Splits an edge into two at a specified position.
+	void split_existing_edge_at_residue( int const resNo );
+
 	/// @brief Deletes all edge in the FoldTree
 	///
 	/// example(s):

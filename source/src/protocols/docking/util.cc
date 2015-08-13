@@ -19,32 +19,22 @@
 
 // Unit Headers
 #include <protocols/docking/util.hh>
-#include <protocols/scoring/InterfaceInfo.hh>
 
-// Platform headers
-#include <protocols/rigid/RB_geometry.hh>
-#include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/database/sql_utils.hh>
+// Project headers
 #include <core/kinematics/FoldTree.hh>
+#include <core/pack/task/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/types.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/util.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/vector1.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
-
-// External Headers
-#include <cppdb/frontend.h>
+#include <utility/vector1.hh>
 
 // C++ Headers
-#include <map>
 #include <sstream>
 
 static thread_local basic::Tracer TR( "protocols.docking.util" );
@@ -52,400 +42,231 @@ static thread_local basic::Tracer TR( "protocols.docking.util" );
 namespace protocols {
 namespace docking {
 
-using std::endl;
-using std::map;
-using std::min_element;
-using std::pair;
-using std::string;
-using std::stringstream;
-using cppdb::statement;
-using cppdb::result;
-using utility::vector1;
-using utility::sql_database::sessionOP;
-using basic::database::safely_prepare_statement;
-using basic::database::safely_read_from_database;
-using core::Size;
-using core::conformation::Conformation;
-using core::kinematics::FoldTree;
-using core::pose::Pose;
-using core::pose::PDBInfoCOP;
-using protocols::scoring::InterfaceInfoOP;
-
-/// @brief Setup foldtree for across an interface specified by a
-/// string for the partner chains (using pdb_chain
-/// identification). The foldtree is set up such that the jump points
-/// are at the center of masses of the two partners
-///
-/// @details
-///  if partner_chainID == '_' -> use the first movable jump as the cutpoint
-///  if partner_chainID is of the form (pdb_chain_id)+_(pdb_chain_id)+
-///      then use the jump between the last chain of the first partner
-///      and the first chain of the second partner as the cutpoint.
-///      For example 'ABC_DEF' has chains 'ABC' as the first partner and 'DEF' as
-///      the second partner.
-///
-/// With the current implementation, all of the chains of the first
-/// partner must be upstream of the chains of the second partner.  If
-/// this behavior is too limiting, then the behavior can be extended.
-///
-///
-/// @return The foldtree in the pose will have a jump from the center
-/// of mass of the first partner to the center of mass of the second
-/// partner and no other jumps between residues in different partners
-///
-/// @return the movable_jumps vector contains as it's only entry the
-/// number of the jump across the interface.
-void
-setup_foldtree(
-	Pose & pose,
-	string const & partner_chainID,
-	DockJumps & movable_jumps) 
+/// @details Converts a string representation of the partner from the dock_partners flag to a comma-separated list of
+/// chains that can be passed into a ChainSeletor.
+/// For example, the dock_partners flags "ABC_D" will split into two partners: "ABC" and "D".
+/// This function will convert "ABC" to "A,B,C".
+/// @return A comma-separated list of chains (e.g. "A,B,C")
+std::string comma_separated_partner_chains( std::string const & chains )
 {
-	core::kinematics::FoldTree f;
-	setup_foldtree(pose, partner_chainID, movable_jumps, f);
-	pose.fold_tree(f);
-
-}
-
-void
-setup_foldtree(
-	core::pose::Pose const & pose,
-	std::string const & partner_chainID,
-	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft)
-{
-	PDBInfoCOP pdb_info = pose.pdb_info();
-	movable_jumps.clear(); //Why is this required and then cleared?
-
-	if(!pdb_info){
-		utility_exit_with_message("Attempting to setup foldtree between interface partners, however, the pdb_info object associated with the pose does not exits.");
-	}
-
-	// identify cutpoint for first movable jump
-	Size cutpoint = 0;
-	FoldTree const & f( pose.fold_tree() );
-	if ( partner_chainID == "_") {
-		// By default, set the first jump as the cutpoint
-
-		if(f.num_jump() == 0){
-			utility_exit_with_message("Attempting to auto-detect interface partner chains, however the pose contains no jumps.");
-		}
-		cutpoint = f.cutpoint_by_jump(1);
-		movable_jumps.push_back(1);
-	} else {
-		char first_chain_second_partner = char();
-		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) {
-			
-			if (partner_chainID[i-1] == '_') {
-				first_chain_second_partner = partner_chainID[i];
-			}
-		}
-		
-		cutpoint = pose.conformation().chain_begin(core::pose::get_chain_id_from_chain(first_chain_second_partner, pose)) - 1;
-		
-		if (cutpoint == 0){
-			utility_exit_with_message(
-				"Attempting to setup foldtree between interface partners, "
-				"however, the cutpoint could not be identified because "
-				"the first chain second partner cannot currently be the first chain in the PDB: " +utility::to_string(first_chain_second_partner));
-		}
-		
-		/*
-		for ( Size i=2; i<= pose.total_residue(); ++i ) {
-			if ( pdb_info->chain( i ) == first_chain_second_partner ) {
-				cutpoint = i-1;
-				break;
-			}
-		}
-		if(!cutpoint){
-			utility_exit_with_message(
-				"Attempting to setup foldtree between interface partners, "
-				"however, the cutpoint could not be identified because "
-				"the pdb chain identifier could not be found for "
-				"the first chain of the second partner");
-		}
-		*/
-
-		// Specifying chains overrides movable_jumps
-		for (Size i=1; i<=f.num_jump(); ++i) {
-			Size const current_cutpoint = f.cutpoint_by_jump(i);
-			if( current_cutpoint  == cutpoint ) {
-				movable_jumps.push_back( i );
-			}
-		}
-
-
-	}
-
-	setup_foldtree(pose, cutpoint, movable_jumps, ft);
-}
-
-/// Here is the protocol that the database should have:
-///
-///
-///CREATE TABLE IF NOT EXISTS interfaces (
-///	struct_id BLOB,
-///	interface_id INTEGER,
-///	FOREIGN KEY (struct_id) REFERENCES structures (struct_id)	DEFERRABLE INITIALLY DEFERRED,
-///	PRIMARY KEY(struct_id, interface_id));
-///
-///CREATE TABLE IF NOT EXISTS interface_partners (
-///	interface_id INTEGER,
-///	partner_id INTEGER,
-///	FOREIGN KEY (interface_id) REFERENCES interfaces (interface_id)	DEFERRABLE INITIALLY DEFERRED,
-///	PRIMARY KEY(interface_id, partner_id));
-///
-///CREATE TABLE IF NOT EXISTS interface_partner_chains (
-///	partner_id INTEGER,
-///	chain_id INTEGER,
-///	FOREIGN KEY (interface_interface_id) REFERENCES interface_partners (interface_partner_id)	DEFERRABLE INITIALLY DEFERRED,
-///	PRIMARY KEY(partner_id, chain_id));
-void
-setup_foldtree(
-	Pose & pose,
-	Size const interface_id,
-	sessionOP db_session,
-	DockJumps & movable_jumps) 
-{
-	core::kinematics::FoldTree f;
-	setup_foldtree(pose, interface_id, db_session, movable_jumps, f);
-	pose.fold_tree(f);
-}
-
-void
-setup_foldtree(
-	core::pose::Pose const & pose,
-	core::Size interface_id,
-	utility::sql_database::sessionOP db_session,
-	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft)
-{
-	string const sele(
-		"SELECT\n"
-		"	partner.partner_id AS partner,\n"
-		"	chain.chain_id AS chain\n"
-		"FROM\n"
-		"	interface_partners AS partner,\n"
-		"	interface_partner_chains AS chain\n"
-		"WHERE\n"
-		"	partner.interface_id = ? AND\n"
-		"	chain.partner_id = partner.partner_id;");
-	statement stmt(safely_prepare_statement(sele, db_session));
-	stmt.bind(1, interface_id);
-	result res(safely_read_from_database(stmt));
-
-	map<Size, vector1< Size > > partner_to_chains;
-
-	while(res.next()){
-		Size partner, chain;
-		res >> partner >> chain;
-		partner_to_chains[partner].push_back(chain);
-	}
-
-	setup_foldtree(pose, partner_to_chains, movable_jumps, ft);
-}
-
-
-void
-setup_foldtree(
-	Pose & pose,
-	map< Size, vector1< Size > > const & partner_to_chains,
-	DockJumps & movable_jumps) 
-{
-	core::kinematics::FoldTree f;
-	setup_foldtree(pose, partner_to_chains, movable_jumps, f);
-	pose.fold_tree(f);
-}
-
-void
-setup_foldtree(
-	core::pose::Pose const & pose,
-	std::map< core::Size, utility::vector1< core::Size > > const & partner_to_chains,
-	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft)
-{
-	if(partner_to_chains.size() != 2){
-		stringstream error_msg;
-		error_msg
-			<< "The current implementation of setup_foldtree requires "
-			<< "that there be exactly two chains at an interface, however, "
-			<< "'" << partner_to_chains.size()  << "' partners were given.";
-		utility_exit_with_message(error_msg.str());
-	}
-
-	// The current implementation of the setup_foltree assumes all the
-	// chains of one partner come before all the chains of the second
-	// partner.
-	vector1< pair< Size, Size > > first_and_last_chains;
-	for(map< Size, vector1 < Size > >::const_iterator
-				p_cs = partner_to_chains.begin(),
-				p_cs_end = partner_to_chains.end();
-				p_cs != p_cs_end; ++p_cs){
-
-		first_and_last_chains.push_back(
-			pair< Size, Size>(
-				*min_element(p_cs->second.begin(), p_cs->second.end()),
-				*max_element(p_cs->second.begin(), p_cs->second.end())));
-	}
-
-	Size first_chain_second_partner;
-	if(first_and_last_chains[1].second < first_and_last_chains[2].first){
-		first_chain_second_partner = first_and_last_chains[2].first;
-	} else if(first_and_last_chains[2].second < first_and_last_chains[1].first){
-		first_chain_second_partner = first_and_last_chains[1].first;
-	} else {
-		utility_exit_with_message(
-			"The current implementation of setup_foldtree requires "
-			"that the chains of one partner come before all "
-			"the chains of the second partner.");
-	}
-	Size cutpoint = 0;
-	for ( Size i=2; i<= pose.total_residue(); ++i ) {
-		if ( (Size)pose.chain(i) == first_chain_second_partner ) {
-			cutpoint = i-1;
-			break;
-		}
-	}
-	if(!cutpoint){
-		utility_exit_with_message(
-			"Attempting to setup foldtree between interface partners, "
-			"however, the cutpoint could not be identified because "
-			"the pdb chain identifier could not be found for "
-			"the first chain of the second partner");
-	}
-
-	movable_jumps.clear();
-	FoldTree const & f(pose.fold_tree());
-
-	// Specifying chains overrides movable_jumps
-	for (Size i=1; i<=f.num_jump(); ++i) {
-		Size const current_cutpoint = f.cutpoint_by_jump(i);
-		if( current_cutpoint  == cutpoint ) {
-			movable_jumps.push_back( i );
-		}
-	}
-
-	setup_foldtree(pose, cutpoint, movable_jumps, ft);
-}
-
-void
-setup_foldtree(
-	Pose & pose,
-	Size const cutpoint,
-	DockJumps & movable_jumps
-){
-	core::kinematics::FoldTree f;
-	setup_foldtree(pose, cutpoint, movable_jumps);
-	pose.fold_tree(f);
-}
-
-void
-setup_foldtree(
-	core::pose::Pose const & pose,
-	core::Size cutpoint,
-	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft)
-{
-	runtime_assert_string_msg(
-		movable_jumps.size() > 0,
-		"Unable to set up interface foldtree because there are no movable jumps");
-
-	Conformation const & conformation(pose.conformation());
-
-	// first case: two-body docking, one jump movable
-
-	// SJF The default foldtree (when the pose is read from disk) sets
-	// all the jumps from the first residue to the first residue of each
-	// chain.  We want a rigid body jump to be between centres of mass
-	// of the two partners (jump_pos1, 2) and all of the rest of the
-	// jumps to be sequential so that all of the chains are traversed
-	// from the jump position onwards default tree. pas simple...
-	if( movable_jumps.size() == 1 ) {
-
-		//identify center of masses for jump points
-		Size jump_pos1 ( core::pose::residue_center_of_mass( pose, 1, cutpoint ) );
-		Size jump_pos2 ( core::pose::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
-		TR.Debug << "cutpoint: " << cutpoint << std::endl;
-		TR.Debug << "jump1: " << jump_pos1 << std::endl;
-		TR.Debug << "jump2: " << jump_pos2 << std::endl;
-
-		//setup fold tree based on cutpoints and jump points
-		ft.clear();
-		ft.simple_tree( pose.total_residue() );
-		ft.new_jump( jump_pos1, jump_pos2, cutpoint);
-		movable_jumps.clear();
-		movable_jumps.push_back( 1 );
-
-		Size chain_begin(0), chain_end(0);
-
-		//rebuild jumps between chains N-terminal to the docking cutpoint
-		chain_end = cutpoint;
-		chain_begin = conformation.chain_begin( pose.chain(chain_end) );
-		while (chain_begin != 1){
-			chain_end = chain_begin-1;
-			ft.new_jump( chain_end, chain_begin, chain_end);
-			chain_begin = conformation.chain_begin( pose.chain(chain_end) );
-		}
-
-		//rebuild jumps between chains C-terminal to the docking cutpoint
-		chain_begin = cutpoint+1;
-		chain_end = conformation.chain_end( pose.chain(chain_begin) );
-		while (chain_end != pose.total_residue()){
-			chain_begin = chain_end+1;
-			ft.new_jump( chain_end, chain_begin, chain_end);
-			chain_end = conformation.chain_end( pose.chain(chain_begin) );
-		}
-	}
-
-	// second case: multibody docking, more than one jump movable
-
-	// anchor all jumps relative to the CoM of the "downstream" chains,
-	// which are defined as first sequential chains that are not movable
-	// this will always be at least chain 1, but could be chains 1+2+...
-	// the jumps for all nonmoving chains are left alone -- they anchor
-	// to N terminal residue
-	else {
-		std::sort( movable_jumps.begin(), movable_jumps.end() );
-
-		Size const base_cutpoint = cutpoint;
-		Size const base_jump_pos( core::pose::residue_center_of_mass( pose, 1, base_cutpoint ) );
-		for(DockJumps::const_iterator
-					curr_jump = movable_jumps.begin(),
-					last_movable_jump = movable_jumps.end();
-				curr_jump != last_movable_jump; ++curr_jump ) {
-			Size const curr_cutpoint = ft.cutpoint_by_jump( *curr_jump ); // used to get the index of a residue in the moving chain (curr_cutpoint+1)
-			Size const chain_begin = conformation.chain_begin( pose.chain(curr_cutpoint+1) );
-			Size const chain_end = conformation.chain_end( pose.chain(curr_cutpoint+1) );
-			Size const moving_jump_pos( core::pose::residue_center_of_mass( pose, chain_begin, chain_end ) );
-			TR.Debug
-				<< "Adjusting Jump (cut) for #" << *curr_jump
-				<< "(" << curr_cutpoint << "): "
-				<< "begin " << chain_begin
-				<< "    end " << chain_end
-				<< "      base_cutpoint " << base_cutpoint
-				<< "         base_jump_pos " << base_jump_pos
-				<< "      moving_jump_pos " << moving_jump_pos << endl;
-			ft.slide_jump( *curr_jump, base_jump_pos, moving_jump_pos );
-		}
-	}
-
-	// set docking fold tree to the pose
-	ft.reorder( 1 );
-	runtime_assert( ft.check_fold_tree() );
+	using std::endl;
+	using std::string;
 	
-	/* Moved to DockLowRes!!! If it is 2015+, delete me!!
+	// abort if chains is an empty string
+	if ( ! chains.size() ) { return chains; }
+	if ( TR.Debug.visible() ) { TR.Debug << "Chain group: " << chains << endl; }
 
-	//set up InterfaceInfo object in pose to specify which interface(s)
-	//to calculate docking centroid mode scoring components from
-	using namespace core::scoring;
-	using namespace protocols::scoring;
-	//using core::pose::datacache::CacheableDataType::INTERFACE_INFO;
+	string r;
+	r.reserve( ( chains.size() * 2 ) );
+	for( string::const_iterator o = chains.begin(); o != chains.end(); ++o ) {
+		r.push_back( * o );
+		r.push_back( ',' );
+	}
 
-	InterfaceInfoOP docking_interface( new InterfaceInfo( movable_jumps ) );
-	pose.data().set(
-		core::pose::datacache::CacheableDataType::INTERFACE_INFO,
-		docking_interface);
-	 */
+	// remove the last comma
+	r.resize( r.size() - 1 );
+	if ( TR.Debug.visible() ) { TR.Debug << "Chains to pass to ChainResidueSelector ctor: " << r << endl; }
+	return r;
+}
+
+/// @details Creates Edges for each of the continuous stretches of residues belonging to a particular partner.
+/// If one partner spans multiple chains, the chains will be connected by a Jump.
+/// No Edge will span the center_of_mass_residue of the partner.
+/// Instead, two Edges will be created: the first will span the beginning of the chain and end at the CoM residue,
+/// and the second will begin at the CoM residue and stop at the end of the chain.
+/// @return The appropriate FoldTree is configured and accessible by the caller of this function.
+void setup_edges_for_partner(
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & partner,
+	core::Size const center_of_mass_residue,
+	core::kinematics::FoldTree & ft
+)
+{
+	using utility::vector1;
+	using core::Size;
+	using core::kinematics::Edge;
+
+	// a separate list of edges is stored to keep track of which edges belong with this partner
+	vector1< Edge > edge_list;
+
+	// create an `Edge` for each contiguous stretch of residues in the partner
+	bool prev_residue_is_in_partner( false );
+	Size edge_start( 0 );
+	
+	for ( Size i = partner.l(); i <= partner.u(); ++i ) {
+		bool const residue_is_in_partner( partner[ i ] );
+		
+		if ( ! residue_is_in_partner && prev_residue_is_in_partner ) {
+			// 'false' after seeing a 'true' - create an `Edge`
+			Edge const edge( edge_start, i - 1, Edge::PEPTIDE );
+			edge_list.push_back( edge );
+			ft.add_edge( edge );
+			
+			edge_start = 0;
+		}
+		else if ( residue_is_in_partner && prev_residue_is_in_partner && pose.chain( i - 1 ) != pose.chain( i ) ) {
+			// new chain - create an `Edge` that ends where the chain ends
+			Edge const edge( edge_start, i - 1, Edge::PEPTIDE );
+			edge_list.push_back( edge );
+			ft.add_edge( edge );
+			
+			edge_start = i;
+		}
+		else if ( residue_is_in_partner && ! edge_start ) {
+			// first occurence of 'true' - set `edge_start` to this position
+			edge_start = i;
+		}
+		
+		prev_residue_is_in_partner = residue_is_in_partner;
+	}
+	
+	// account for edges that end with the last residue
+	if ( prev_residue_is_in_partner && edge_start ) {
+		Edge const edge( edge_start, partner.size(), Edge::PEPTIDE );
+		edge_list.push_back( edge );
+		ft.add_edge( edge );
+	}
+	
+	// connect the edges associated with the partner with a jump
+	for ( Size i = edge_list.l() + 1; i <= edge_list.u(); ++i ) {
+		ft.add_edge( edge_list[ i - 1 ].stop(), edge_list[ i ].start(), ft.num_jump() + 1 );
+	}
+	
+	// adjust the FoldTree to have no edges that span the CoM residue.
+	ft.split_existing_edge_at_residue( center_of_mass_residue );
+}
+
+/// @details Creates a Jump connecting the center of mass residues in the FoldTree that is passed through.
+/// By default, the dock Jump will be `ft.num_jump() + 1`.
+/// This function can optionally ensure that the dock jump has the label "1".
+/// @return The label of the dock Jump as a core::Size.
+/// @return The appropriate FoldTree is configured and accessible by the caller of this function.
+core::Size setup_dock_jump(
+	core::Size const partner1_CoM,
+	core::Size const partner2_CoM,
+	core::kinematics::FoldTree & ft,
+	bool const make_dock_jump_label_1 = false )
+{
+	using core::kinematics::Edge;
+	using core::Size;
+	
+	Size const last_jump_number( ft.num_jump() + 1 );
+	Size const dock_jump_number( make_dock_jump_label_1 ?  1 : last_jump_number );
+	
+	if ( make_dock_jump_label_1 && ft.num_jump() ) {
+		// change the label of Jump 1 to be the last Jump so the rigid body docking jump can be "1"
+		Edge const & jump_to_update( ft.jump_edge( dock_jump_number ) );
+		ft.update_edge_label( jump_to_update.start(), jump_to_update.stop(), jump_to_update.label(), last_jump_number );
+	}
+	
+	// make the dock jump with the correct label
+	ft.add_edge( partner1_CoM, partner2_CoM, dock_jump_number );
+	return dock_jump_number;
+}
+
+/// @details If partner_chainID is "_", the first chain will be docked to the rest of the complex.
+/// If partner_chainID is of the form (pdb_chain_id)+_(pdb_chain_id)+, a jump will be created between the residue
+/// nearest to the center of mass of the first partner and the residue nearest to the center of mass of the second
+/// partner.
+/// For example, "ABC_DEF" has chains "ABC" as the first partner and "DEF" as the second partner.
+/// Chains can be listed in any order.
+/// @return The constructed FoldTree is set to the pose.
+/// @return The movable_jumps vector contains the number of the jump across the interface.
+void
+setup_foldtree(
+	core::pose::Pose & pose,
+	std::string const & partner_chainID,
+	DockJumps & movable_jumps )
+{
+	using std::string;
+	using std::stringstream;
+	using utility::string_split;
+	using utility::vector1;
+	using core::Size;
+	using core::kinematics::FoldTree;
+	using core::pack::task::residue_selector::ChainSelector;
+	
+	FoldTree f;
+	vector1< bool > partner1( pose.total_residue(), false );
+	if ( partner_chainID == "_" ) {
+		assert( pose.chain( pose.total_residue() ) > 1 );
+		
+		Size const last_res_of_first_chain( pose.conformation().chain_end( 1 ) );
+		for ( Size i = partner1.l(); i <= last_res_of_first_chain; ++i ) { partner1[ i ] = true; }
+	}
+	else {
+		vector1< string > const partners = string_split( partner_chainID, '_' );
+		
+		if ( partners.size() != 2 ) {
+			stringstream error_msg;
+			error_msg << "Automatic FoldTree setup only works for two-body docking. The value of the partners flag \"";
+			error_msg << partner_chainID << "\" implies there are " << partners.size() << " independently movable chains.";
+			utility_exit_with_message( error_msg.str() );
+		}
+		
+		for ( vector1< string >::const_iterator it = partners.begin(); it != partners.end(); ++it ) {
+			if ( *it == "" ) {
+				stringstream error_msg;
+				error_msg << "Cannot create FoldTree using the provided partners flag \"" << partner_chainID;
+				error_msg << "\". At least one of the partner chains is empty.";
+				utility_exit_with_message( error_msg.str() );
+			}
+		}
+		
+		ChainSelector const partner1_selector( comma_separated_partner_chains( partners[ 1 ] ) );
+		partner1 = partner1_selector.apply( pose );
+	}
+	
+	setup_foldtree( pose, partner1, movable_jumps, f );
+	pose.fold_tree( f );
+}
+
+/// @details This function only supports two-body docking.
+/// The vector of boolean values is used to differentiate residues that belong to one partner (a true value) or the
+/// other (a false value).
+/// Edges are constructed for continuous stretches of residues belonging to a particular partner.
+/// If one partner spans multiple chains, the chains will be connected by a Jump.
+/// The docking Jump is always set to be Jump number 1.
+/// WARNING: This function clears the incoming FoldTree.
+/// @return The appropriate FoldTree is configured and accessible by the caller of this function.
+/// @return The movable_jumps vector contains the number of the jump across the interface.
+void
+setup_foldtree(
+	core::pose::Pose const & pose,
+	utility::vector1< bool > const & partner1,
+	DockJumps & movable_jumps,
+	core::kinematics::FoldTree & ft)
+{
+	using std::endl;
+	using utility::vector1;
+	using core::Size;
+	using core::pose::residue_center_of_mass;
+	
+	assert( pose.total_residue() );
+	assert( partner1.size() == pose.total_residue() );
+
+	// compute which residues belong in partner 2
+	vector1< bool > const partner2( partner1.invert() );
+
+	// identify the residue closest to the center of masses of each partner
+	Size const jump_pos1( residue_center_of_mass( pose, partner1 ) );
+	Size const jump_pos2( residue_center_of_mass( pose, partner2 ) );
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "jump1: " << jump_pos1 << endl;
+		TR.Debug << "jump2: " << jump_pos2 << endl;
+	}
+
+	ft.clear();
+	movable_jumps.clear();
+	
+
+	setup_edges_for_partner( pose, partner1, jump_pos1, ft );
+	setup_edges_for_partner( pose, partner2, jump_pos2, ft );
+	movable_jumps.push_back( setup_dock_jump( jump_pos1, jump_pos2, ft, true ) );
+
+	ft.reorder( 1 );
+	assert( ft.check_fold_tree() );
 }
 
 } //docking

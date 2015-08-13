@@ -39,6 +39,9 @@ class ChainSelector : public ResidueSelector {
 public:
 	// derived from base class
 	ChainSelector();
+	
+	// takes a comma-separated list of chains (e.g. "A,B")
+	ChainSelector( std::string chains );
 	virtual ~ChainSelector();
 
 	virtual ResidueSubset apply( core::pose::Pose const & pose ) const;

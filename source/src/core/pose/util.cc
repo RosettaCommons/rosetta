@@ -2379,6 +2379,47 @@ Size nres_protein( pose::Pose const & pose ) {
 	return cnt;
 }// nres_protein
 
+
+numeric::xyzVector< Real >
+center_of_mass(
+	pose::Pose const & pose,
+	utility::vector1< bool > const & residues
+)
+{
+	using namespace numeric;
+	using core::conformation::Residue;
+	assert( pose.total_residue() == residues.size() );
+	
+	utility::vector1< xyzVector< Real > > coords;
+
+	for( Size i = residues.l(); i <= residues.u(); ++i ){
+		if( residues[ i ] ){
+			Residue const & rsd( pose.residue( i ) );
+			coords.push_back( rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz() );
+		}
+	}
+
+  if ( ! coords.size() ) { utility_exit_with_message( "Cannot compute center of mass of zero residues!" ); }
+	
+  return center_of_mass( coords );
+}
+
+
+// anonymous function to assist in converting from start, stop to a vector1< bool >
+utility::vector1< bool >
+generate_vector_from_bounds(
+	pose::Pose const & pose,
+	int const start,
+	int const stop
+)
+{
+	utility::vector1< bool > residues( pose.total_residue(), false );
+	assert( (Size) stop <= residues.size() );
+	assert( stop > start && start > 0 );
+	
+	for ( int i = start; i <= stop; ++i ) { residues[ i ] = true; }
+	return residues;
+}
 ////////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief calculates the center of mass of a pose
@@ -2396,19 +2437,23 @@ center_of_mass(
 	int const stop
 )
 {
-	Vector center( 0.0 );
-	for ( int i=start; i<=stop; ++i ) {
-		if( !pose.residue( i ).is_protein()) {
-			Vector ca_pos( pose.residue( i ).nbr_atom_xyz() );
-			center += ca_pos;
-	 	} else {
-			Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-			center += ca_pos;
-			}
-	}
-	center /= (stop-start+1);
+	return center_of_mass( pose, generate_vector_from_bounds( pose, start, stop ) );
+}
 
-	return center;
+int
+residue_center_of_mass(
+	pose::Pose const & pose,
+	utility::vector1< bool > residues
+)
+{
+	assert( pose.total_residue() == residues.size() );
+	
+	if ( ! ( residues.has( true ) && pose.total_residue() )  ) {
+		utility_exit_with_message( "Cannot compute center of mass of zero residues!" );
+	}
+	
+	Vector center = center_of_mass(pose, residues );
+	return core::pose::return_nearest_residue( pose, residues, center );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -2432,6 +2477,38 @@ residue_center_of_mass(
 	return core::pose::return_nearest_residue( pose, start, stop, center );
 }
 
+int
+return_nearest_residue(
+	pose::Pose const & pose,
+	utility::vector1< bool > const & residues,
+	Vector center
+)
+{
+	using core::conformation::Residue;
+	
+	assert( pose.total_residue() == residues.size() );
+	
+	if ( ! ( residues.has( true ) && pose.total_residue() )  ) {
+		utility_exit_with_message( "Cannot find nearest residue in empty selection!" );
+	}
+	
+	Real min_dist = std::numeric_limits< Real >::infinity();
+	int res = 0;
+	for ( Size i = residues.l(); i <= residues.u(); ++i ) {
+		if ( ! residues[ i ] ) { continue; }
+
+		Residue const & rsd( pose.residue( i ) );
+		Vector const ca_pos = rsd.is_protein() ? rsd.atom( "CA" ).xyz() : rsd.nbr_atom_xyz();
+
+		Real const dist( ca_pos.distance_squared( center ) );
+		if ( dist < min_dist ) {
+			res = i;
+			min_dist = dist;
+		}
+	}
+	return res;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 ///
 /// @brief finds the residue nearest some position passed in (normally a
@@ -2451,25 +2528,7 @@ return_nearest_residue(
 	Vector center
 )
 {
-	Real min_dist = std::numeric_limits<Real>::infinity();
-	int res = 0;
-	for ( int i=begin; i<=end; ++i )
-	{
-		Vector ca_pos;
-		if( !pose.residue( i ).is_protein() ){
-			ca_pos = pose.residue( i ).nbr_atom_xyz();
-			} else {
-		//Vector ca_pos( pose.residue( i ).atom( "CA" ).xyz() );
-			ca_pos = pose.residue( i ).atom( "CA" ).xyz() ;
-			}
-
-		Real dist( ca_pos.distance_squared(center) );
-		if ( dist < min_dist ) {
-			res = i;
-			min_dist = dist;
-		}
-	}
-	return res;
+	return return_nearest_residue( pose, generate_vector_from_bounds( pose, begin, end ), center );
 }
 
 #ifdef USELUA

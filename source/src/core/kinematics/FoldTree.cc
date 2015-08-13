@@ -1018,6 +1018,12 @@ FoldTree::edge_label(
 	return label;
 }
 
+void FoldTree::split_existing_edge_at_residue( int const resNo )
+{
+	get_residue_edge( resNo ); // ensures that an edge containing `resNo` exists
+	add_vertex( resNo );
+}
+
 ///////////////////////////////////////////////////////
 /// @details
 /// after deleting a jump, there may be vertices of the

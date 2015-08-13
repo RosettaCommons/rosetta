@@ -89,63 +89,47 @@ public:
 
 		TS_ASSERT_EQUALS(default_foldtree.str(), specified_foldtree.str());
 	}
-
-	void test_more_complex_foldtree_setup(){
-
+	
+	void test_residue_selector_based_setup(){
 		core::pose::Pose pose;
 		tr << "Test setup for multichain pose..."<< std::endl;
-
-		//  DockingMultiChain.pdb
-		//   A <- pdb numbering residues 1 through 214
-		//   B <- pdb numbering residues 1 through 218
-		//   E <- pdb numbering residues 1 through 129
 		core::import_pose::pose_from_pdb(pose, "protocols/docking/DockingMultiChain.pdb" );
-		core::kinematics::FoldTree fold_tree(pose.fold_tree());
 		protocols::docking::DockJumps movable_jumps;
+		movable_jumps.push_back( 1 );
+		
+		std::stringstream target_foldtree;
+		target_foldtree << "FOLD_TREE  ";
+		target_foldtree << "EDGE 1 214 -1  ";
+		target_foldtree << "EDGE 214 215 2  ";
+		target_foldtree << "EDGE 215 384 -1  ";
+		target_foldtree << "EDGE 384 432 -1  ";
+		target_foldtree << "EDGE 384 488 1  ";
+		target_foldtree << "EDGE 488 433 -1  ";
+		target_foldtree << "EDGE 488 561 -1 ";
+		
+		protocols::docking::setup_foldtree( pose, "AB_E", movable_jumps );
+		
+		std::stringstream computed_foldtree;
+		computed_foldtree << pose.fold_tree();
+		
+		TS_ASSERT_EQUALS( computed_foldtree.str(), target_foldtree.str() );
+		
+		std::stringstream out_of_order_foldtree;
+		out_of_order_foldtree << "FOLD_TREE  ";
+		out_of_order_foldtree << "EDGE 1 98 -1  ";
+		out_of_order_foldtree << "EDGE 98 214 -1  ";
+		out_of_order_foldtree << "EDGE 98 325 1  ";
+		out_of_order_foldtree << "EDGE 214 433 2  ";
+		out_of_order_foldtree << "EDGE 325 215 -1  ";
+		out_of_order_foldtree << "EDGE 325 432 -1  ";
+		out_of_order_foldtree << "EDGE 433 561 -1 ";
+		
+		protocols::docking::setup_foldtree( pose, "AE_B", movable_jumps );
 
-		//Specify partners via string:
-		protocols::docking::setup_foldtree(pose, "AB_E", movable_jumps);
-		std::stringstream partner_chainID_foldtree;
-		partner_chainID_foldtree << pose.fold_tree();
-
-
-		std::string database_filename("setup_docking_foldtree.db3");
-		utility::file::file_delete(database_filename);
-		utility::sql_database::sessionOP db_session(
-			basic::database::get_db_session(database_filename));
-
-		std::string const schema(
-			"CREATE TABLE IF NOT EXISTS interfaces (\n"
-			"	struct_id INTEGER,\n"
-			"	interface_id INTEGER,\n"
-			"	PRIMARY KEY(struct_id, interface_id));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS interface_partners (\n"
-			"	interface_id INTEGER,\n"
-			"	partner_id INTEGER,\n"
-			"	PRIMARY KEY(interface_id, partner_id));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS interface_partner_chains (\n"
-			"	partner_id INTEGER,\n"
-			"	chain_id INTEGER,\n"
-			"	PRIMARY KEY(partner_id, chain_id));\n"
-			"\n"
-			"INSERT INTO interfaces VALUES (1, 1);\n"
-			"INSERT INTO interface_partners VALUES (1, 1);\n"
-			"INSERT INTO interface_partners VALUES (1, 2);\n"
-			"INSERT INTO interface_partner_chains VALUES (1, 1);\n"
-			"INSERT INTO interface_partner_chains VALUES (1, 2);\n"
-			"INSERT INTO interface_partner_chains VALUES (2, 3);\n");
-
-		basic::database::write_schema_to_database(schema, db_session);
-		protocols::docking::setup_foldtree(pose, 1, db_session, movable_jumps);
-
-		std::stringstream database_specified_foldtree;
-		database_specified_foldtree << pose.fold_tree();
-
-		TS_ASSERT_EQUALS(
-			partner_chainID_foldtree.str(), database_specified_foldtree.str());
-
+		std::stringstream computed_out_of_order_foldtree;
+		computed_out_of_order_foldtree << pose.fold_tree();
+		
+		TS_ASSERT_EQUALS( computed_out_of_order_foldtree.str(), out_of_order_foldtree.str() );
 	}
 
 };

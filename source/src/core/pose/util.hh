@@ -672,8 +672,27 @@ core::Size nres_protein( core::pose::Pose const & pose );
 numeric::xyzVector< core::Real>
 center_of_mass(
 	core::pose::Pose const & pose,
+	utility::vector1< bool > const & residues
+);
+
+numeric::xyzVector< core::Real>
+center_of_mass(
+	core::pose::Pose const & pose,
 	int const start,
 	int const stop
+);
+
+int
+residue_center_of_mass(
+	pose::Pose const & pose,
+	utility::vector1< bool > residues
+);
+
+int
+return_nearest_residue(
+	pose::Pose const & pose,
+	utility::vector1< bool > const & residues,
+	Vector center
 );
 
 int

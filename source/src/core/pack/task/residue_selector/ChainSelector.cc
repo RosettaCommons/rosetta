@@ -37,6 +37,7 @@ namespace task {
 namespace residue_selector {
 
 ChainSelector::ChainSelector() {}
+ChainSelector::ChainSelector( std::string chains ) : chain_strings_( utility::string_split( chains, ',' ) ) {}
 ChainSelector::~ChainSelector() {}
 
 ResidueSubset
