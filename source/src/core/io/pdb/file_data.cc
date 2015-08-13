@@ -117,8 +117,6 @@ using std::iostream;
 // Tracer instance for this file
 static thread_local basic::Tracer TR( "core.io.pdb.file_data" );
 
-// random number generator for randomizing missing density coordinates
-
 
 ResidueInformation::ResidueInformation() :
 //	resid( "" ),

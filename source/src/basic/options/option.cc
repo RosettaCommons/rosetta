@@ -25,6 +25,8 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
+#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <basic/options/option.cc.gen.hh>
@@ -215,43 +217,12 @@ initialize()
 }
 
 
-/// @brief Process the specified options
-/// note Do more complex value setup and checks here than the option system provides
+/// @brief Process the specified options.
+/// @note  Do more complex value setup and checks here than the option system provides.
 OptionCollection &
 process()
 {
 	using namespace utility::options;
-
-// Removing - This translation isn't used in the current code base
-// (Where -in::file::residue_type_set is checked, -in:file:fullatom is also checked,
-// or is not listed as a valid option.)
-//	{ // Stupid binary fullatom options that really suck.
-//		using namespace basic::options;
-//		using namespace basic::options::OptionKeys;
-//		if ( option[ in::file::fullatom ].user() ) {
-//			TR.Warning << "option[ in::file::fullatom ]() re-interpreted as setting "
-//				<< "option[ in::file::residue_type_set ]() to ";
-//			std::string type_set_name("fa_standard");
-//			if ( !option[ in::file::fullatom ]() ) {
-//				type_set_name = "centroid";
-//			}
-//
-//			TR.Warning << type_set_name << std::endl;
-//			option[ in::file::residue_type_set ].value( type_set_name );
-//		}
-//
-//		if ( option[ out::file::fullatom ].user() ) {
-//			TR.Warning << "option[ out::file::fullatom ]() re-interpreted as setting "
-//				<< "option[ out::file::residue_type_set ]() to ";
-//			std::string type_set_name("fa_standard");
-//			if ( !option[ out::file::fullatom ]() ) {
-//				type_set_name = "centroid";
-//			}
-//
-//			TR.Warning << type_set_name << std::endl;
-//			option[ out::file::residue_type_set ].value( type_set_name );
-//		}
-//	}
 
 	{ // Input paths
 		using namespace basic::options::OptionKeys::in::path;
@@ -266,14 +237,23 @@ process()
 
 		option[ pdb ].default_to( option[ path ] );
 		option[ score ].default_to( option[ path ] );
-		//option[ movie ].default_to( option[ path ] );
 	}
 
-//	{ // Packing options
-//		using namespace basic::options::OptionKeys::packing;
-//
-//		//if ( option[ solvate ] ) option[ explicit_h2o ].value( true ); // -solvate => -explicit_h2o
-//	}
+	{  // Carbohydrate-related umbrella options to make life easier for users
+		using namespace basic::options::OptionKeys;
+
+		if ( option[ in::include_sugars ] ) {
+			option[ chemical::override_rsd_type_limit ].value( true );
+		}
+		if ( option[ carbohydrates::glycam_pdb_format ] ) {
+			utility::vector1< std::string > alt_codes_list;
+			if ( option[ in::alternate_3_letter_codes ].active() ) {
+				alt_codes_list.append( option[ in::alternate_3_letter_codes ]() );
+			}
+			alt_codes_list.push_back( "glycam.codes" );
+			option[ in::alternate_3_letter_codes ].value( alt_codes_list );
+		}
+	}
 
 	TR.flush();
 	return option;

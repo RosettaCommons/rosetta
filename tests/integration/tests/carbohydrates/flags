@@ -4,5 +4,4 @@
 -write_pdb_link_records
 -mute all
 -unmute core.chemical.carbohydrates
--override_rsd_type_limit
--alternate_3_letter_codes glycam
+-glycam_pdb_format

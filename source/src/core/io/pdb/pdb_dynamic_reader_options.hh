@@ -45,12 +45,14 @@ public:
 	bool obey_ENDMDL() const;
 	bool read_pdb_header() const;
 	bool read_link_records() const;
+	bool glycam_pdb_format() const;
 	
 	// mutators
 	void set_new_chain_order( bool setting );
 	void set_obey_ENDMDL( bool setting );
 	void set_read_pdb_header( bool setting );
 	void set_read_link_records( bool setting );
+	void set_glycam_pdb_format( bool setting );
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -61,6 +63,7 @@ private:
 	bool obey_ENDMDL_;
 	bool read_pdb_header_;
 	bool read_link_records_;
+	bool glycam_pdb_format_;
 };
 
 } // namespace pdb

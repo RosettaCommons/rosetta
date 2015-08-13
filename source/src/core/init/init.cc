@@ -787,7 +787,8 @@ void check_deprecated_flags(){
 
 	utility::vector1<std::string> error_messages;
 
-	//Add deprecated flags and corresponding helpful error messages here.  This is the only thing you need to do to deprecate a flag
+	// Add deprecated flags and corresponding helpful error messages here.
+	// This is the only thing you need to do to deprecate a flag.
 	if(option[LoopModel::input_pdb].user())
 		error_messages.push_back("-LoopModel:input_pdb is no longer used.  Please use -s to input pdb files.");
 
@@ -801,9 +802,7 @@ void check_deprecated_flags(){
 			TR.Fatal << *error_it <<std::endl;
 		}
 		std::exit(1);
-
 	}
-
 }
 
 void
@@ -1130,13 +1129,13 @@ void init(int argc, char * argv [])
     //Tracers control output to std::cout and std::cerr
     init_tracers();
 
-		// Invoke basic::options::process() which holds a set of complex logic
-		// for option system modifications; this function requires that the
-		// tracers first be initialized.
-		init_complex_options();
+	// Invoke basic::options::process() which holds a set of complex logic
+	// for option system modifications; this function requires that the
+	// tracers first be initialized.
+	init_complex_options();
 
     //Initialize the latest and greatest score function parameters
-		init_score_function_corrections();
+	init_score_function_corrections();
 
     //Choose to output source version control information?
     init_source_revision();
