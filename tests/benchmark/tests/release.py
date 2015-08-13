@@ -20,7 +20,7 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 _api_version_ = '1.0'  # api version
 
 _number_of_rosetta_binary_revisions_to_keep_in_git_ = 1
-_number_of_py_rosetta_revisions_to_keep_in_git_ = 4
+_number_of_py_rosetta_revisions_to_keep_in_git_ = 1
 
 
 def rosetta_source_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
