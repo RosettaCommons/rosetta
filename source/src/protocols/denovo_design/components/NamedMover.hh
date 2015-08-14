@@ -65,9 +65,6 @@ class NamedMover : public protocols::moves::Mover {
 		/// @brief sets an identifier for the parent of this mover, for nested moves
 		void set_parent_id( std::string const & parent );
 
-		/// @brief function that creates a name for mover data to be stored in SegmentData
-		std::string data_name( std::string const & name_of_data ) const;
-
 	protected:
 		/// @brief adds prefix if necessary, returns result
 		std::string add_parent_prefix( std::string const & s ) const;

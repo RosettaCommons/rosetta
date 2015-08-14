@@ -172,60 +172,102 @@ MultiChainStructureData::~MultiChainStructureData()
 StructureDataOP
 StructureData::infer_from_pose( core::pose::Pose const & pose, std::string const & id_val )
 {
-	utility::vector1< StructureDataOP > perms;
-	utility::vector1< core::pose::PoseOP > chainz;
-	if ( pose.num_jump() ) {
-		chainz = pose.split_by_chain();
-	} else {
-		chainz.push_back( pose.clone() );
-	}
-	for ( core::Size i = 1; i <= chainz.size(); ++i ) {
-		chainz[i]->center();
-		TR << "id " << id_val << " chain " << i << " size " << chainz[i]->total_residue() << std::endl;
-		std::string pname = id_val;
-		if ( chainz.size() > 1 ) {
-			if ( pname.empty() ) {
-				pname = boost::lexical_cast< std::string >( i );
+	// the object we will add to
+	StructureDataOP sd( new MultiChainStructureData( id_val ) );
+	debug_assert( sd );
+
+	// collect secondary structure
+	core::scoring::dssp::Dssp dssp( pose );
+	std::string const pose_ss = dssp.get_dssp_secstruct();
+	debug_assert( pose_ss.size() == pose.total_residue() );
+
+	// collect ABEGOS
+	StringVec const pose_abego = core::sequence::ABEGOManager().get_symbols( pose, 1 );
+	debug_assert( pose_abego.size() == pose.total_residue() );
+
+	TR << "Pose ss = " << pose_ss << std::endl;
+	TR << "Pose abego= " << abego_str( pose_abego ) << std::endl;
+
+	// find chains
+	utility::vector1< core::Size > chain_endings = pose.conformation().chain_endings();
+	// we will count the end of the pose as a chain ending too
+	chain_endings.push_back( pose.total_residue() );
+
+	Size chain_start = 1;
+	Size const movable_group = 1;
+	Size chain_num = 1;
+	for ( utility::vector1< core::Size >::const_iterator r = chain_endings.begin();
+			r != chain_endings.end();
+			++r, ++chain_num ) {
+		Size const chain_end = *r;
+
+		// collect information about the residues from [ chain_start, chain_end ]
+		Size const chain_length = chain_end - chain_start + 1;
+		Size const local_saferes = ( (chain_end - chain_start) / 2 ) + 1;
+
+		// determine whether the termini need to be included
+		// they are only included if the segment isn't long enough
+		bool nterm_included = false;
+		if ( chain_length < 3 ) {
+			nterm_included = true;
+		}
+		bool cterm_included = false;
+		if ( chain_length < 2 ) {
+			cterm_included = true;
+		}
+
+		std::string const chain_ss = pose_ss.substr( chain_start - 1, chain_length );
+		debug_assert( chain_ss.size() == chain_length );
+
+		StringVec chain_abego;
+		for ( Size res = chain_start; res <= chain_end; ++res ) {
+			chain_abego.push_back( pose_abego[ res ] );
+		}
+		debug_assert( chain_abego.size() == chain_length );
+		// often, last residue is "O" -- change this to X
+		if ( chain_abego[ chain_length ] == "O" ) {
+			chain_abego[ chain_length ] = "X";
+		}
+
+		// name of new segment
+		std::stringstream segname;
+		if ( id_val.empty() ) {
+			segname << chain_num;
+		} else {
+			// one chain, don't include chain number in name
+			// multiple chains: name = ID.chain
+			if ( pose.conformation().num_chains() == 1 ) {
+				segname << id_val;
 			} else {
-				pname += PARENT_DELIMETER + boost::lexical_cast< std::string >( i );
+				segname << id_val << PARENT_DELIMETER << chain_num;
 			}
 		}
-		core::scoring::dssp::Dssp dssp( *chainz[i] );
-		dssp.insert_ss_into_pose( *chainz[i], false );
 
-		int len = static_cast< int >(chainz[i]->total_residue()) - 2;
-		if ( len < 1 ) {
-			len = 1;
-		}
-		std::string const ss = chainz[i]->secstruct();
-		utility::vector1< std::string > abego = core::sequence::ABEGOManager().get_symbols( *chainz[i], 1 );
-		assert( abego.size() == chainz[i]->total_residue() );
-		// often, last residue is "O" -- change this to X
-		if ( abego[chainz[i]->total_residue()] == "O" ) {
-			abego[chainz[i]->total_residue()] = "X";
-		}
+		TR << "Creating new segment " << segname.str()
+			<< ", length=" << chain_length << " safe=" << local_saferes
+			<< " cutpoint=" << 0 << " mg=" << movable_group << " nterm_inc=" << nterm_included
+			<< " cterm_inc=" << cterm_included << " ss=" << chain_ss << " abego=" << chain_abego
+			<< std::endl;
 
-		StructureDataOP newperm =
-			StructureDataOP( new SingleChainStructureData( pname, len, chainz[i]->total_residue(), ss, abego ) );
-		newperm->set_pose( chainz[i] );
-		assert( newperm->ss().size() == chainz[i]->total_residue() );
-		perms.push_back( newperm );
+		Segment new_segment(
+				chain_length,                         // length
+				local_saferes,                        // safe residue
+				0,                                    // cutpoint
+				movable_group,                        // movable group
+				false,                                // is_loop
+				nterm_included,                       // n terminus included in segment
+				cterm_included,                       // c terminus included in segment
+				"",                                   // lower connected segment
+				"",                                   // upper connected segment
+				chain_ss,                             // secondary structure
+				chain_abego );                        // abego
+		sd->add_segment( segname.str(), new_segment );
+		chain_start = *r + 1;
 	}
-	StructureDataOP read_perm;
-	if ( perms.size() > 1 ) {
-		read_perm = StructureDataOP( new MultiChainStructureData( id_val ) );
-		for ( core::Size i=1; i<=perms.size(); ++i ) {
-			TR.Debug << "ADDING SUBPERM length=" << read_perm->pose_length() << std::endl;
-			read_perm->add_subperm( perms[i] );
-		}
-		read_perm->set_pose( pose );
-	} else {
-		assert( perms.size() > 0 );
-		read_perm = perms[1];
-	}
-	assert( read_perm->pose() );
-	assert( read_perm->ss().size() == pose.total_residue() );
-	return read_perm;
+	sd->set_pose( pose );
+	debug_assert( sd->pose() );
+	debug_assert( sd->ss().size() == pose.total_residue() );
+	return sd;
 }
 
 /// @brief sets data from a given pose's pdb remark records. Only looks at remarks which are subcomponents of the given id
@@ -527,7 +569,7 @@ StructureData::load_pdb_info_old(
 			Segment resis( len_val, safe_resi - startval + 1, 0, movable_group, is_loop, nterm_included, cterm_included, lower_segment, upper_segment, ss, abegovec );
 			// identify segment before this one
 			StringList::iterator c, end;
-			for ( c = segment_order_.begin(), end = segment_order_.end(); c != end; ++c ) {
+			for ( c = segment_order_.begin(); c != segment_order_.end(); ++c ) {
 				if ( segment( *c ).nterm_resi() >= startval ) {
 					break;
 				}
@@ -1859,8 +1901,15 @@ void
 StructureData::add_segment( std::string const & id_val, Segment const & resis, StringList::iterator insert_pos )
 {
 	assert( segment_order_.size() == segments_.size() );
-	segments_[id_val] = resis;
-	segment_order_.insert( insert_pos, id_val );
+	SegmentMap::iterator s = segments_.find( id_val );
+	if ( s == segments_.end() ) {
+		segments_[ id_val ] = resis;
+		segment_order_.insert( insert_pos, id_val );
+	} else {
+		s->second = resis;
+		debug_assert( std::count( segment_order_.begin(), segment_order_.end(), id_val ) == 1 );
+	}
+
 	update_numbering();
 }
 
@@ -2053,6 +2102,8 @@ StructureData::merge( StructureData const & other )
 	// this should only be called on multi-chain permutations
 	runtime_assert( is_multi() );
 
+	debug_assert( ! pose_ );
+
 	// TODO: get rid of this
 	sub_perms_.push_back( other.clone() );
 
@@ -2067,6 +2118,7 @@ StructureData::merge( StructureData const & other )
 	copy_data( other, false );
 }
 
+/*
 /// @brief adds a subpermutation to a permutation and updates required info
 void
 StructureData::add_subperm( StructureDataCOP perm )
@@ -2089,6 +2141,7 @@ StructureData::add_subperm( StructureDataCOP perm )
 
 	TR.Debug << "successfully added subperm " << perm->id() << ", pose_length=" << pose_length() << " length=" << length() << " ss=" << ss() << std::endl;
 }
+*/
 
 /// @brief computes and returns a set of segments which are in the given movable group
 utility::vector1< std::string >
@@ -2124,12 +2177,14 @@ StructureData::move_jumps_to_safety()
 
 	core::kinematics::FoldTree ft = pose()->fold_tree();
 
-	for ( core::Size i=1; i<=ft.num_jump(); ++i ) {
+	for ( core::Size i = 1; i <= ft.num_jump(); ++i ) {
 		core::kinematics::Edge e = ft.jump_edge(i);
 		std::string const upname = segment_name( e.start() );
-		e.start() = segment(upname).safe();
+		e.start() = segment( upname ).safe();
 		std::string const downname = segment_name( e.stop() );
-		e.stop() = segment(downname).safe();
+		e.stop() = segment( downname ).safe();
+		TR << "FT: " << ft << std::endl;
+		TR << "Sliding jump " << e << std::endl;
 		ft.slide_jump( e.label(), e.start(), e.stop() );
 	}
 	assert( ft.check_fold_tree() );
@@ -2375,7 +2430,9 @@ StructureData::set_pose( core::pose::PoseOP new_pose )
 		new_pose->conformation().chains_from_termini();
 	}
 	pose_ = new_pose;
-	save_into_pose();
+
+	if ( pose_ )
+		save_into_pose();
 }
 
 /// @brief based on the pose, determines the jump number for the jump pointing to the segment specified
@@ -2677,28 +2734,6 @@ StructureData::loop_residues() const
 	}
 
 	return is_loop;
-}
-
-/// @brief output a report of all data contained within
-void
-StructureData::show( std::ostream & os ) const
-{
-	// reals
-	std::map< std::string, core::Real >::const_iterator it_real;
-	for ( it_real=data_real_.begin(); it_real != data_real_.end(); ++it_real ) {
-		os << id() << ":" << it_real->first << ":" << it_real->second << " ";
-	}
-	// ints
-	std::map< std::string, int >::const_iterator it_int;
-	for ( it_int=data_int_.begin(); it_int != data_int_.end(); ++it_int ) {
-		os << id() << ":" << it_int->first << ":" << it_int->second << " ";
-	}
-	// subperms
-	if ( is_multi() ) {
-		for ( core::Size i=1; i<=num_subperms(); ++i ) {
-			subperm(i)->show(os);
-		}
-	}
 }
 
 /// @brief updates numbering based on the saved order of Segment objects

@@ -182,10 +182,14 @@ public:
 	void merge( StructureData const & other );
 
 	/// @brief adds a sub permutation and updates information
+	/*
 	void add_subperm( StructureDataCOP perm );
+	*/
 
 	/// @brief adds a sub permutation and updates information
+	/*
 	inline void clear_subperms() { sub_perms_.clear(); }
+	*/
 
 	/// @brief sets real number data
 	void set_data_int( std::string const & segment_id, std::string const & data_name, int const val );
@@ -282,6 +286,7 @@ public:
 	/// @brief returns n and c terminal segments of the chain which includes seg
 	std::pair< std::string, std::string > termini( std::string const & seg ) const;
 
+	/*
 	/// @brief returns number of subcomponents
 	inline core::Size num_subperms() const { return sub_perms_.size(); }
 
@@ -290,6 +295,7 @@ public:
 
 	/// @brief returns non-constant subcomponents
 	inline StructureDataOP subperm_nonconst( core::Size const i ) const { return sub_perms_[i]; }
+	*/
 
 	/// @brief tells if the segment given has an available lower terminus
 	bool has_free_lower_terminus( std::string const & id_val ) const;
@@ -413,9 +419,6 @@ public:
 
 	/// @brief return secondary structure string
 	inline utility::vector1< std::string > const & abego() const { return abego_; }
-
-	/// @brief output a report of all data contained within
-	void show( std::ostream & os ) const;
 
 	/// @brief given an input stream, substitute all variables
 	/// @details variables are of the form: %%SEGMENTNAME#residue%%

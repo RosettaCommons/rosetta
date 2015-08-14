@@ -29,6 +29,7 @@
 
 //Boost
 #include <boost/algorithm/string.hpp>
+
 //C++ Headers
 
 static basic::Tracer TR("protocols.denovo_design.components.NamedMover");
@@ -70,15 +71,6 @@ NamedMover::parse_my_tag(
 	if ( tag->hasOption( "parent" ) ) {
 		set_parent_id( tag->getOption< std::string >( "parent" ) );
 	}
-}
-
-/// @brief function that creates a name for mover data to be stored in SegmentData
-std::string
-NamedMover::data_name( std::string const & name_of_data ) const
-{
-	debug_assert( id() != "" );
-	debug_assert( name_of_data != "" );
-	return id() + StructureData::DATA_DELIMETER + name_of_data;
 }
 
 /// @brief adds prefix if necessary, returns result

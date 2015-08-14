@@ -41,7 +41,7 @@
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
-static thread_local basic::Tracer TR("protocols.denovo_design.DisulfidizeMover.cxxtest");
+static thread_local basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );
 
 // --------------- Test Class --------------- //
 class DisulfidizeMoverTests : public CxxTest::TestSuite {
@@ -195,7 +195,7 @@ public:
 		TS_ASSERT( residueset1[1] );
 		TR << residueset2[1] << std::endl;
 		DisulfidizeMover::DisulfideList disulfs =
-			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 ); 
+			disulf.find_possible_disulfides( input_pose, residueset1, residueset2 );
 
 		TS_ASSERT_EQUALS( disulfs.size(), 2 );
 		TS_ASSERT_EQUALS( disulfs[1].first, 5 );

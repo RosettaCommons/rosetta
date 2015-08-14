@@ -50,9 +50,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <numeric/random/random.hh>
 
-/// Project headers
-
-// C++ headers
+// Boost headers
 #include <boost/algorithm/string.hpp>
 
 // unit test utility functions
@@ -60,26 +58,25 @@
 
 static thread_local basic::Tracer TR( "protocols.denovo_design.connection.BridgeChains.cxxtest" );
 
-typedef utility::pointer::shared_ptr< protocols::moves::DsspMover > DsspMoverOP;
-
 // --------------- Test Class --------------- //
 class BridgeChainsTests : public CxxTest::TestSuite {
-
-	// scorefunction
-	core::scoring::ScoreFunctionOP scorefxn;
-
 public:
 
 	// Shared initialization goes here.
 	void setUp() {
-// load params for ligand
 		protocols_init();
 
 		// set preserve header always
 		basic::options::option[basic::options::OptionKeys::run::preserve_header].value(true);
+	}
 
-		// initialize common filters/movers/scorefxns
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::ScoreFunction() );
+	// Shared finalization goes here.
+	void tearDown() {
+	}
+
+	core::scoring::ScoreFunctionOP create_scorefxn() const
+	{
+		core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction() );
 		scorefxn->set_weight( core::scoring::vdw, 1.0 );
 		scorefxn->set_weight( core::scoring::rg, 1.0 );
 		scorefxn->set_weight( core::scoring::rama, 0.1 );
@@ -87,10 +84,7 @@ public:
 		scorefxn->set_weight( core::scoring::ss_pair, 1.0 );
 		scorefxn->set_weight( core::scoring::rsigma, 1.0 );
 		scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
-	}
-
-	// Shared finalization goes here.
-	void tearDown() {
+		return scorefxn;
 	}
 
 	// test connectchains - interaction with components
@@ -129,6 +123,8 @@ public:
 		conn.set_comp2_ids( "rot_comp.rot_comp2.catalytic.2" );
 		conn.set_overlap( 1 );
 		conn.set_check_abego( false );
+
+		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 		TS_ASSERT( scorefxn );
 		conn.set_scorefxn( scorefxn );
 		conn.set_lengths( "1" );
@@ -234,6 +230,9 @@ public:
 	{
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::connection;
+		core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
+		TS_ASSERT( scorefxn );
+
 		core::pose::Pose input_pose;
 		core::io::pdb::build_pose_from_pdb_as_is( input_pose, "protocols/denovo_design/connection/twohelix_structuredata.pdb" );
 
@@ -271,7 +270,7 @@ public:
 		TS_ASSERT( conn.lower_segment_id(*perm) != conn.comp2_upper(*perm) );
 
 		// DSSP the shit out of this pose
-		DsspMoverOP dssp = DsspMoverOP( new protocols::moves::DsspMover() );
+		protocols::moves::DsspMover dssp;
 		perm->apply_mover( dssp );
 
 		// setup starting, ending residues

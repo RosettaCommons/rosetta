@@ -833,6 +833,20 @@ Connection::setup_from_random( components::StructureData & perm, core::Real rand
 		}
 	}
 
+	if ( local_comp1_ids.empty() ) {
+		std::stringstream err;
+		err << "Connection " << id() << ": " << " no available segment1 upper termini were found matching the user's input.";
+		err << "Input ids: " << comp1_ids_ << " Perm: " << std::endl;
+		err << perm << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
+	if ( local_comp2_ids.empty() ) {
+		std::stringstream err;
+		err << "Connection " << id() << ": " << " no available segment2 lower termini were found matching the user's input.";
+		err << "Input ids: " << comp2_ids_ << " Perm: " << std::endl;
+		err << perm << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( err.str() );
+	}
 	assert( local_comp1_ids.size() > 0 );
 	assert( local_comp2_ids.size() > 0 );
 
