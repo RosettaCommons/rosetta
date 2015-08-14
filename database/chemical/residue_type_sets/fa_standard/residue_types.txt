@@ -577,19 +577,24 @@ residue_types/peptoids/601.params
 #residue_types/beta-peptide/cisACPC.params
 #residue_types/beta-peptide/transACPC.params
 
-## Polysaccharide Types (require -include_sugars flag to be loaded in)
+## Saccharide Types (require -include_sugars flag to be loaded in)
 ### Aldohexoses
 #### Glucoses
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
+residue_types/carbohydrates/to3-beta-D-Glcp.params
 residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
+residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
 #### Galactoses
 residue_types/carbohydrates/to2-beta-D-Galp.params
+residue_types/carbohydrates/to3-alpha-D-Galp.params
 residue_types/carbohydrates/to3-beta-D-Galp.params
+residue_types/carbohydrates/to4-alpha-D-Galp.params
 residue_types/carbohydrates/to4-beta-D-Galp.params
 residue_types/carbohydrates/to6-beta-D-Galp.params
 residue_types/carbohydrates/to4-alpha-L-Fucp.params
+residue_types/carbohydrates/to4-alpha-D-Abep.params
 #### Mannoses
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params

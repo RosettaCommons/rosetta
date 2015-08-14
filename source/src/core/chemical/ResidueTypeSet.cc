@@ -392,9 +392,13 @@ ResidueTypeSet::apply_patches(
 		for ( Size i=1; i<= current_n_residue_types; ++i ) {
 			ResidueType const & rsd_type( *residue_types_[ i ] );
 			if ( p->applies_to( rsd_type ) ) {
-				if ( p->replaces( rsd_type ) ) continue; // Now replace_residue patches are applied in a 'first pass' above.
+				if ( p->replaces( rsd_type ) ) {
+					continue; // Now replace_residue patches are applied in a 'first pass' above.
+				}
 				bool const instantiate = (!on_the_fly_) || rsd_type.is_carbohydrate() /*hack for now -- carbohydrate info is complicated.*/;
-				if ( instantiate ) runtime_assert( rsd_type.finalized() );
+				if ( instantiate ) {
+					runtime_assert( rsd_type.finalized() );
+				}
 				ResidueTypeCOP new_rsd_type( p->apply( rsd_type, instantiate ) );
 				if ( new_rsd_type != 0 ) {
 					residue_types_.push_back( new_rsd_type );

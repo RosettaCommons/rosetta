@@ -1,5 +1,5 @@
-## full-atom N-linked conjugation patches for serine/threonine
-## This patch is used for O-linked glycosylation and ubiquitination.
+## full-atom N-linked conjugation patches for lysine/ornithine
+## This patch is used for N-linked glycosylation and ubiquitination.
 
 NAME N-conjugated
 TYPES SC_BRANCH_POINT

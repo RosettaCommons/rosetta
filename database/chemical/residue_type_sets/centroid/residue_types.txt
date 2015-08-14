@@ -51,16 +51,19 @@ residue_types/rosetta_specific/VRT.params
 residue_types/staple/08A.params
 residue_types/staple/08B.params
 
-## Polysaccharide Types (require -include_sugars flag to be loaded in)
+## Saccharide Types (require -include_sugars flag to be loaded in)
 ## **These are currently exact copies of the fa .params.**
 ### Aldohexoses
 #### Glucoses
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
+residue_types/carbohydrates/to3-beta-D-Glcp.params
 residue_types/carbohydrates/to4-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-beta-D-Glcp.params
+residue_types/carbohydrates/to4-beta-D-Quip.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
 #### Galactoses
 residue_types/carbohydrates/to2-beta-D-Galp.params
+residue_types/carbohydrates/to3-alpha-D-Galp.params
 residue_types/carbohydrates/to3-beta-D-Galp.params
 residue_types/carbohydrates/to4-alpha-D-Galp.params
 residue_types/carbohydrates/to4-beta-D-Galp.params

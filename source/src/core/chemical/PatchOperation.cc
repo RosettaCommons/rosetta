@@ -53,10 +53,13 @@ DeleteAtom::apply( ResidueType & rsd ) const
 {
 
 	if ( !rsd.has( atom_name_ )  ) {
-		TR_PatchOperations.Debug << "DeleteAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ << std::endl;
+		TR_PatchOperations.Debug << "DeleteAtom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ << std::endl;
 		return true; // failure
 	} else {
-		//std::cout << "DeleteAtom::apply: deleting: " << atom_name_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "DeleteAtom::apply: deleting: " << atom_name_ << std::endl;
+		}
 		rsd.delete_atom( atom_name_ );
 	}
 	return false;
@@ -70,11 +73,14 @@ bool
 SetBackboneHeavyatom::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "SetBackboneHeavyatom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<
+		TR_PatchOperations.Debug << "SetBackboneHeavyatom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ <<
 			std::endl;
 		return true; // failure
 	} else {
-		//std::cout << "SetBackboneHeavyatom::apply: " << atom_name_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetBackboneHeavyatom::apply: " << atom_name_ << std::endl;
+		}
 		rsd.set_backbone_heavyatom( atom_name_ );
 	}
 	return false;
@@ -97,7 +103,10 @@ bool
 SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 {
 	if ( atom_name_ == "NONE" || rsd.has( atom_name_ ) ) {
-		//std::cout << "SetPolymerConnectAtom::apply: " << atom_name_ << ' ' << upper_lower_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetPolymerConnectAtom::apply: " <<
+					atom_name_ << ' ' << upper_lower_ << std::endl;
+		}
 		if ( upper_lower_ == -1 ) {
 			rsd.set_lower_connect_atom( atom_name_ );
 		} else {
@@ -105,8 +114,8 @@ SetPolymerConnectAtom::apply( ResidueType & rsd ) const
 			rsd.set_upper_connect_atom( atom_name_ );
 		}
 	} else {
-		TR_PatchOperations.Debug << "SetPolymerConnectAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<
-			std::endl;
+		TR_PatchOperations.Debug << "SetPolymerConnectAtom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ << std::endl;
 		return true; // failure
 	}
 	return false;
@@ -147,7 +156,9 @@ bool
 AddProperty::apply( ResidueType & rsd ) const
 {
 	rsd.add_property( property_ );
-	//TR_PatchOperations.Debug << "AddProperty::apply: " << property_ << std::endl;
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "AddProperty::apply: " << property_ << std::endl;
+	}
 	return false;
 }
 
@@ -160,7 +171,9 @@ bool
 DeleteProperty::apply( ResidueType & rsd ) const
 {
 	rsd.delete_property( property_ );
-	//std::cout << "DeleteProperty::apply: " << property_ << std::endl;
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "DeleteProperty::apply: " << property_ << std::endl;
+	}
 	return false;
 }
 
@@ -209,8 +222,10 @@ AddChi::apply( ResidueType & rsd ) const
 		} else {
 			rsd.add_chi(chino_, atom1_ , atom2_, atom3_, atom4_);
 		}
-		//TR_PatchOperations.Debug << "AddChi::apply: " <<
-		//		atom1_ << ' ' << atom2_ << ' ' << atom3_ << ' ' << atom4_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "AddChi::apply: " <<
+					atom1_ << ' ' << atom2_ << ' ' << atom3_ << ' ' << atom4_ << std::endl;
+		}
 		return false;  // success
 	}
 }
@@ -253,8 +268,10 @@ RedefineChi::apply( ResidueType & rsd ) const
 	else
 	{
 		rsd.redefine_chi( chino_, atom1_ , atom2_, atom3_, atom4_ );
-		//TR_PatchOperations.Debug << "RedefineChi::apply: " << atom1_ << ' ' << atom2_
-		//	<< ' ' << atom3_ << ' ' << atom4_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "RedefineChi::apply: " <<
+					atom1_ << ' ' << atom2_ << ' ' << atom3_ << ' ' << atom4_ << std::endl;
+		}
 		return false;
 	}
 	return false;
@@ -265,7 +282,7 @@ DeleteTerminalChi::apply( ResidueType & rsd ) const
 {
 	if ( rsd.nchi() < 1 ) {
 		TR_PatchOperations.Debug << "DeleteTerminalChi::apply failed: " <<
-		rsd.name() << " has only " << rsd.nchi() << " chis!" << std::endl;
+				rsd.name() << " has only " << rsd.nchi() << " chis!" << std::endl;
 		return true; // failure
 	} else {
 		rsd.delete_terminal_chi();
@@ -327,8 +344,10 @@ AddChiRotamer::apply( ResidueType & rsd ) const
 	} else {
 		rsd.add_chi_rotamer(chino_, mean_ , sdev_);
 	}
-	//TR_PatchOperations.Debug << "AddChiRotamer::apply: " << chino_ << ' ' << mean_
-	//	<< ' ' << sdev_ << std::endl;
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "AddChiRotamer::apply: " <<
+				chino_ << ' ' << mean_ << ' ' << sdev_ << std::endl;
+	}
 	return false;  // success
 }
 
@@ -358,12 +377,15 @@ AddAtom::apply( ResidueType & rsd ) const
 #endif
 {
 	if( rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "AddAtom::apply failed: " << rsd.name() << " already has an atom named  '" << atom_name_ << "'." << std::endl;
+		TR_PatchOperations.Debug << "AddAtom::apply failed: " <<
+				rsd.name() << " already has an atom named  '" << atom_name_ << "'." << std::endl;
 		return true; // Can't add an atom if this residue already has one of the same name.
 	}
 	rsd.add_atom( atom_name_, atom_type_name_, mm_atom_type_name_, charge_ );
-	//std::cout << "AddAtom::apply: " << atom_name_ << ' ' << atom_type_name_ << ' ' << mm_atom_type_name_ << ' ' <<
-	//	charge_ << std::endl;
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "AddAtom::apply: " <<
+				atom_name_ << ' ' << atom_type_name_ << ' ' << mm_atom_type_name_ << ' ' << charge_ << std::endl;
+	}
 	return false;
 }
 
@@ -400,11 +422,14 @@ bool
 AddBond::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) ) {
-		TR_PatchOperations.Debug << "AddBond::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' ' <<
-			rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << std::endl;
+		TR_PatchOperations.Debug << "AddBond::apply failed: " <<
+				rsd.name() << " is missing atom(s) " <<
+				atom1_ << ' ' << rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << std::endl;
 		return true; // failure
 	} else {
-		//TR_PatchOperations.Debug << "AddBond::apply: " << atom1_ << ' ' << atom2_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "AddBond::apply: " << atom1_ << ' ' << atom2_ << std::endl;
+		}
 		rsd.add_bond( atom1_, atom2_ );
 	}
 	return false;
@@ -447,10 +472,13 @@ bool
 SetAtomicCharge::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "SetAtomicCharge::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
+		TR_PatchOperations.Debug << "SetAtomicCharge::apply failed: " <<
+				rsd.name() << " is missing atom: " << atom_name_ << std::endl;
 		return true; // failure
 	} else {
-		//std::cout << "SetAtomicCharge::apply: " << atom_name_ << ' ' << charge_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetAtomicCharge::apply: " << atom_name_ << ' ' << charge_ << std::endl;
+		}
 		rsd.atom( atom_name_ ).charge( charge_ );
 	}
 	return false;
@@ -492,10 +520,13 @@ bool
 SetAtomType::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "SetAtomType::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
+		TR_PatchOperations.Debug << "SetAtomType::apply failed: " <<
+				rsd.name() << " is missing atom: " << atom_name_ << std::endl;
 		return true; // failure
 	} else {
-		//std::cout << "SetAtomType::apply: " << atom_name_ << ' ' << atom_type_name_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetAtomType::apply: " << atom_name_ << ' ' << atom_type_name_ << std::endl;
+		}
 		rsd.set_atom_type( atom_name_, atom_type_name_ );
 		if ( atom_type_name_ == "VIRT" ) {
 			rsd.atom( atom_name_ ).charge( 0.0 );
@@ -572,7 +603,10 @@ SetMMAtomType::apply( ResidueType & rsd ) const
 		}
 		return true;  // failure
 	} else {
-		//TR_PatchOperations.Trace << "SetMMAtomType::apply: " << atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
+		if ( TR_PatchOperations.Trace.visible() ) {
+			TR_PatchOperations.Trace << "SetMMAtomType::apply: " <<
+					atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
+		}
 		rsd.set_mm_atom_type( atom_name_, mm_atom_type_name_ );
 	}
 	return false;
@@ -616,8 +650,10 @@ SetICoor::SetICoor(
 bool
 SetICoor::apply( ResidueType & rsd ) const
 {
-	//std::cout << "SetICoor::apply: " << atom_ << ' ' << stub1_ << ' ' << stub2_ << ' ' << stub3_ <<
-	//	std::endl;
+	if ( TR_PatchOperations.Trace.visible() ) {
+		TR_PatchOperations.Trace << "SetICoor::apply: " <<
+				atom_ << ' ' << stub1_ << ' ' << stub2_ << ' ' << stub3_ << std::endl;
+	}
 	std::string const atom ( expand_icoor_atom_name( atom_ , rsd ) );
 	std::string const stub1( expand_icoor_atom_name( stub1_, rsd ) );
 	std::string const stub2( expand_icoor_atom_name( stub2_, rsd ) );
@@ -639,7 +675,8 @@ bool
 PrependMainchainAtom::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "PrependMainchainAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
+		TR_PatchOperations.Debug << "PrependMainchainAtom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
 		return true; // failure
 	} else {
 		AtomIndices const & old_mainchain_atoms( rsd.mainchain_atoms() );
@@ -661,7 +698,8 @@ bool
 AppendMainchainAtom::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "AppendMainchainAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
+		TR_PatchOperations.Debug << "AppendMainchainAtom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
 		return true; // failure
 	} else {
 		AtomIndices new_mainchain_atoms( rsd.mainchain_atoms() );
@@ -680,7 +718,8 @@ bool
 SetNbrAtom::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom_name_ ) ) {
-		TR_PatchOperations.Debug << "SetNbrAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
+		TR_PatchOperations.Debug << "SetNbrAtom::apply failed: " <<
+				rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
 		return true; // failure
 	} else {
 		rsd.nbr_atom( atom_name_ );
@@ -723,14 +762,18 @@ NCAARotLibPath::apply( ResidueType & rsd ) const
 
 	NCAARotamerLibrarySpecificationOP ncaa_libspec;
 	if( rsd.rotamer_library_specification() ) {
-		NCAARotamerLibrarySpecificationCOP old_libspec( utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >( rsd.rotamer_library_specification() ) );
+		NCAARotamerLibrarySpecificationCOP old_libspec(
+				utility::pointer::dynamic_pointer_cast< NCAARotamerLibrarySpecification const >(
+						rsd.rotamer_library_specification() ) );
 		if( ! old_libspec ) {
-			tr.Error << "Found existing rotamer specification " << rsd.rotamer_library_specification()->keyname() << " when attempting to patch NCAA rotlib path." << std::endl;
-			utility_exit_with_message("Cannot have multiple rotamer specifications.");
+			tr.Error << "Found existing rotamer specification " << rsd.rotamer_library_specification()->keyname() <<
+					" when attempting to patch NCAA rotlib path." << std::endl;
+			utility_exit_with_message( "Cannot have multiple rotamer specifications." );
 		}
 		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new NCAARotamerLibrarySpecification( *old_libspec ) );
 	} else {
-		ncaa_libspec = NCAARotamerLibrarySpecificationOP( new core::chemical::rotamers::NCAARotamerLibrarySpecification );
+		ncaa_libspec = NCAARotamerLibrarySpecificationOP(
+				new core::chemical::rotamers::NCAARotamerLibrarySpecification );
 	}
 	ncaa_libspec->ncaa_rotlib_path( path_ );
 	rsd.rotamer_library_specification( ncaa_libspec );
@@ -927,7 +970,8 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		if ( l.fail() ) return 0;
 		l >> tag;
 		if ( l.fail() ) {
-			return PatchOperationOP( new AddConnect( connect_atom, 0.0, 0.0, 0.0, connect_atom, connect_atom, connect_atom ) );
+			return PatchOperationOP( new AddConnect(
+					connect_atom, 0.0, 0.0, 0.0, connect_atom, connect_atom, connect_atom ) );
 		} else {
 			Real phi, theta, d;
 			std::string parent_atom, angle_atom, torsion_atom;
@@ -935,7 +979,8 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			if ( l.fail() || tag != "ICOOR" ) {
 				utility_exit_with_message( "bad line in patchfile: "+line );
 			}
-			return PatchOperationOP( new AddConnect( connect_atom, radians(phi), radians(theta), d, parent_atom, angle_atom, torsion_atom ) );
+			return PatchOperationOP( new AddConnect(
+					connect_atom, radians(phi), radians(theta), d, parent_atom, angle_atom, torsion_atom ) );
 		}
 
 	} else if ( tag == "SET_ATOM_TYPE" ) {

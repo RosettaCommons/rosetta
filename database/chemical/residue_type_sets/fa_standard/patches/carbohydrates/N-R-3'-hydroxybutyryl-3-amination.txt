@@ -1,0 +1,112 @@
+## full-atom 3-((R)-3'-hydroxylbutyryl)amino-3-deoxy sugar patch
+
+NAME 3-R3HbNH
+TYPES C3_R3PRIMEHYDROXYBUTYRYLAMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_POSITION 3
+NOT VARIANT_TYPE C3_BRANCH_POINT
+NOT PROPERTY C3_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO3 VIRT
+SET_MM_ATOM_TYPE HO3 VIRT
+SET_ATOMIC_CHARGE HO3 0.00
+
+SET_ATOM_TYPE O3 VIRT
+SET_MM_ATOM_TYPE O3 VIRT
+SET_ATOMIC_CHARGE O3 0.00
+
+# Next, add the new atoms
+ADD_ATOM  N3  NH2O NH1 -0.47  # shouldn't really be an NH
+ADD_ATOM  CN3 CObb C    0.51
+ADD_ATOM OCN3 OCbb O   -0.51
+ADD_ATOM CAN3 CH2  CT2 -0.18
+ADD_ATOM CBN3 CH1  CT1  0.14
+ADD_ATOM CGN3 CH3  CT3 -0.27
+ADD_ATOM OHB3 OH   OH1 -0.66
+ADD_ATOM  HN3 Hpol H    0.31
+ADD_ATOM 1HA3 Hapo HA   0.09  # 1st H on CA of the butyryl on N3
+ADD_ATOM 2HA3 Hapo HA   0.09
+ADD_ATOM  HB3 Hapo HA   0.09  # 1st H on CB of the butyryl on N3
+ADD_ATOM 1HG3 Hapo HA   0.09  # 1st H on CC of the butyryl on N3
+ADD_ATOM 2HG3 Hapo HA   0.09
+ADD_ATOM 3HG3 Hapo HA   0.09
+ADD_ATOM HOB3 Hpol H    0.43
+
+# These atoms usually are named differently in the PDB, so add aliases.
+# These aliases assume a 6-membered sugar.  This will need to be fixed in the
+# future somehow. ~Labonte
+#ADD_ATOM_ALIAS  CN3  C7
+#ADD_ATOM_ALIAS OCN3  O7
+#ADD_ATOM_ALIAS CAN3  C8
+#ADD_ATOM_ALIAS CBN3  C9
+#ADD_ATOM_ALIAS CGN3  C10
+#ADD_ATOM_ALIAS OHB3  O8
+
+SET_MM_ATOM_TYPE H3 HB
+
+ADD_BOND  C3   N3
+ADD_BOND  N3   CN3
+ADD_BOND_TYPE  CN3 OCN3 DOUBLE
+ADD_BOND  CN3 CAN3
+ADD_BOND CAN3 CBN3
+ADD_BOND CBN3 CGN3
+ADD_BOND CBN3 OHB3
+ADD_BOND  N3   HN3
+ADD_BOND CAN3 1HA3
+ADD_BOND CAN3 2HA3
+ADD_BOND CBN3  HB3
+ADD_BOND CGN3 1HG3
+ADD_BOND CGN3 2HG3
+ADD_BOND CGN3 3HG3
+ADD_BOND OHB3 HOB3
+
+REDEFINE_CHI 3  C2   C3   N3   CN3
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C3   N3   CN3 CAN3
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
+
+ADD_CHI N+1  N3   CN3 CAN3 CBN3
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  120 0
+ADD_CHI_ROTAMER N  240 0
+
+ADD_CHI N+1  CN3 CAN3 CBN3 CGN3
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  120 0
+ADD_CHI_ROTAMER N  240 0
+
+# Using H3 to define 0 degree torsion angle, to place N3 at same position as
+# (now virtual) O3 allows us to have a single patch file for either (S) or (R)
+# stereochemistry.
+SET_ICOOR  N3     0.00    69.235  1.334  C3    H3    O3
+SET_ICOOR  CN3  -28.295   62.736  1.312  N3    C3    H3
+SET_ICOOR OCN3    0.654   61.455  1.234  CN3   N3    C3
+SET_ICOOR CAN3  178.865   60.279  1.518  CN3   N3    C3
+SET_ICOOR CBN3  173.58    68.976  1.561 CAN3   CN3   N3
+SET_ICOOR CGN3 -179.568   70.845  1.538 CBN3  CAN3   CN3
+SET_ICOOR OHB3  -57.983   70.94   1.439 CBN3  CAN3   CN3
+SET_ICOOR  HN3  152.671   58.88   0.99   N3    C3    H3
+SET_ICOOR 1HA3  -66.198   70.925  1.09  CAN3   CN3   N3
+SET_ICOOR 1HA3   53.973   70.925  1.09  CAN3   CN3   N3
+SET_ICOOR  HB3   59.744   70.21   1.09  CBN3  CAN3   CN3
+SET_ICOOR 1HG3  180.0     70.5    1.090 CGN3  CBN3  CAN3
+SET_ICOOR 2HG3   60.0     70.5    1.090 CGN3  CBN3  CAN3
+SET_ICOOR 3HG3  -60.0     70.5    1.090 CGN3  CBN3  CAN3
+SET_ICOOR HOB3  -59.698   70.501  1.050 OHB3  CBN3  CAN3
+
+ADD_PROPERTY C3_MODIFIED
+ADD_PROPERTY R3PRIMEHYDROXYBUTYRYLAMINO_SUGAR
+
+END_CASE

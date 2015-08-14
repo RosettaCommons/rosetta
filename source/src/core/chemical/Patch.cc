@@ -258,7 +258,7 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 
 	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
 					iter_end = operations_.end(); iter != iter_end; ++iter ) {
-		if ( !instantiate && !( *iter )->applies_to_placeholder() ) continue;
+		if ( !instantiate && !( *iter )->applies_to_placeholder() ) { continue; }
 		bool const fail( ( *iter )->apply( *rsd ) );
 		if ( fail ) { return 0; }
 	}
@@ -363,19 +363,18 @@ Patch::read_file( std::string const & filename )
 ResidueTypeOP
 Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ ) const
 {
-	if ( !applies_to( rsd_type ) ) return 0;  // I don't know how to patch this residue.
+	if ( !applies_to( rsd_type ) ) { return 0; }  // I don't know how to patch this residue.
 
 	using namespace basic;
 
 	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
 			iter_end = cases_.end(); iter != iter_end; ++iter ) {
 
-		if ( (*iter)->applies_to( rsd_type ) ) {
+		if ( ( *iter )->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
-			ResidueTypeOP patched_rsd_type( (*iter)->apply( rsd_type, instantiate ) );
+			ResidueTypeOP patched_rsd_type( ( *iter )->apply( rsd_type, instantiate ) );
 			if ( patched_rsd_type ) {
 				// patch succeeded!
-				//	tr.Debug << "name of patched residue " << patched_rsd_type->name() << std::endl;
 				if ( !replaces_residue_type_ ) { // This is bananas. Shouldn't just forget that patch was applied. -- rhiju.
 					for ( utility::vector1< std::string >::const_iterator iter=types_.begin(),
 							iter_end = types_.end(); iter != iter_end; ++iter ) {
