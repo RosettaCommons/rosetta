@@ -127,13 +127,7 @@ CHI_ROTAMERS 4 300 0
 CHI 5  C4   C5   N5  1HN5  # trigonal symmetry -- only need to sample 2 rotamers
 CHI_ROTAMERS 5   0 0
 CHI_ROTAMERS 5 180 0
-CHI 6  C5   C6   C7   C8
-CHI_ROTAMERS 6   0 0
-CHI_ROTAMERS 6  60 0
-CHI_ROTAMERS 6 120 0
-CHI_ROTAMERS 6 180 0
-CHI_ROTAMERS 6 240 0
-CHI_ROTAMERS 6 300 0
+CHI 6  C5   C6   C7   C8   # duplicates BB 5
 CHI 7  C6   C7   O7   HO7  # chi(C6-C7-O7-H) -- chi(7) is ambiguous
 CHI_ROTAMERS 7   0 0
 CHI_ROTAMERS 7  60 0
@@ -149,17 +143,14 @@ CHI_ROTAMERS 9 120 0
 CHI_ROTAMERS 9 180 0
 CHI_ROTAMERS 9 240 0
 CHI_ROTAMERS 9 300 0
-CHI 10  VO6   C2   C1  1O1   # chi(O6-C2-C1-O) -- chi(2) is ambiguous; duplicates BB 5
+CHI 10  VO6   C2   C1  1O1 # chi(O6-C2-C1-O) -- chi(2) is ambiguous
 CHI_ROTAMERS 10   0 0
 CHI_ROTAMERS 10  60 0
 CHI_ROTAMERS 10 120 0
 CHI_ROTAMERS 10 180 0
 CHI_ROTAMERS 10 240 0
 CHI_ROTAMERS 10 300 0
-CHI 11  C6   C7   C8   C9   # chi(C6-C7-C8-C9) -- chi(7) is ambiguous; duplicates BB 6
-CHI_ROTAMERS 11  60 0
-CHI_ROTAMERS 11 180 0
-CHI_ROTAMERS 11 300 0
+CHI 11  C6   C7   C8   C9  # chi(C6-C7-C8-C9) -- chi(7) is ambiguous; duplicates BB 6
 CHI 12  C7   C8   C9   O9  # chi(C7-C8-C9-O9) -- chi(8) is ambiguous
 CHI_ROTAMERS 12  60 0
 CHI_ROTAMERS 12 180 0

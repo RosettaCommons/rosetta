@@ -166,7 +166,6 @@ DeleteProperty::DeleteProperty( std::string const & property_in ):
 	property_( property_in )
 {}
 
-/// add a property
 bool
 DeleteProperty::apply( ResidueType & rsd ) const
 {
@@ -177,6 +176,21 @@ DeleteProperty::apply( ResidueType & rsd ) const
 	return false;
 }
 
+
+// DeleteVariantType //////////////////////////////////////////////////////////
+DeleteVariantType::DeleteVariantType( std::string const & variant_in ) :
+		variant_( variant_in )
+{}
+
+/// @return  false on success
+/// @remarks Because ResidueType is not throwing exceptions, this will never return true.  Failure will lead to exits
+/// from ResidueType. ~Labonte
+bool
+DeleteVariantType::apply( ResidueType & rsd ) const
+{
+	rsd.remove_variant_type( variant_ );
+	return false;  // success
+}
 
 // AddChi ////////////////////////////////////////////////////////////////////
 // Constructor for when the chi index is specified.
@@ -810,7 +824,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );
 	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_alias, atom_type_name, mm_atom_type_name, bond_type,
-			property, dummy;
+			property, variant, dummy;
 	Real charge, mean, sdev, radius;
 	Size chino;
 	SSize formal_charge;
@@ -880,6 +894,11 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> property;
 		if ( l.fail() ) return 0;
 		return PatchOperationOP( new DeleteProperty( property ) );
+
+	} else if ( tag == "DELETE_VARIANT_TYPE" ) {
+		l >> variant;
+		if ( l.fail() ) { return 0; }
+		return PatchOperationOP( new DeleteVariantType( variant ) );
 
 		// Added by Andy M. Chen in June 2009
 		// This is needed for adding new side-chain torsions, which occurs in certain PTMs.

@@ -103,7 +103,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
-				neuraminate, Lex, GalCer, Me_glycoside, maltobiose;
+				neuraminate, Lex, SLex, GalCer, Me_glycoside, maltobiose;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -246,6 +246,14 @@ main( int argc, char *argv[] )
 		pose_from_pdb( Lex, PATH + "Lex_alternate_names.pdb" );
 
 		test_sugar( Lex );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing Sialyl-Lewisx:" << endl;
+
+		pose_from_pdb( SLex, PATH + "SLex.pdb" );
+
+		test_sugar( SLex );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

@@ -166,6 +166,22 @@ private:
 };
 
 
+///////////////////////////////////////////////////////////////////////////////
+/// @brief   A patch operation for deleting a VariantType from a ResidueType.
+/// @author  Labonte <JWLabonte@jhu.edu>
+class DeleteVariantType : public PatchOperation {
+public:
+	// Constructor
+	DeleteVariantType( std::string const & variant_in );
+
+	/// @brief  Apply this patch to the given ResidueType.
+	virtual bool apply( ResidueType & rsd ) const;
+
+private:
+	std::string variant_;
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief   Add a chi angle to ResidueType.
 /// @author  Added by Andy M. Chen in June 2009
