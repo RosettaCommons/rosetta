@@ -236,7 +236,7 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 		rs = core::chemical::ChemicalManager::get_instance()->residue_type_set(rss);
 		for(
 			core::chemical::ResidueTypeSet::const_residue_iterator
-				t=rs->all_residues_begin(), te=rs->all_residues_end();
+				t=rs->all_residues_begin_DO_NOT_USE(), te=rs->all_residues_end_DO_NOT_USE();
 			t != te; ++t
 		) {
 			TR << t->second->name() << std::endl;

@@ -16,7 +16,7 @@
 #include <core/types.hh>
 
 // Package headers
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -71,7 +71,7 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 
 	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
 
-	ResidueSelector residue_selector;
+	ResidueTypeSelector residue_selector;
 	residue_selector.set_name1( new_seq );
 	residue_selector.match_variants( pose.residue(i).type() );
 	if ( pose.residue( i ).is_RNA() ) residue_selector.set_property( "RNA" );
@@ -551,7 +551,7 @@ debug_assert( pucker_state <= 2 );
 		static const ResidueTypeSetCOP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::FA_RNA );
 
 		chemical::AA res_aa = aa_from_name( "RAD" );
-		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ) ) ;
+		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ) );
 
 		Size three_prime_chainbreak = five_prime_chainbreak + 1;
 		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );

@@ -18,10 +18,10 @@
 
 // Package Headers
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AA.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -35,6 +35,8 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
 // ObjexxFCL Headers
@@ -162,80 +164,31 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 		if ( index ) { // fullname defined and get it directly from name_map
 			// The next call requires reference -> COP because ResidueTypeSet's
 			// methods are not yet consistent in handing out ref vs COP.
-			
-			// CYD hack: CYS:disulfide won't necessarily place the :disulfide in the right place
-			// we can only reconcile this for SURE in the type level (no ordering)
-			// so we turn it back into cys, then we add a variant type!
-			// THIS work around sucks, but it is better than killing backwards compatibility, I guess.
-			// BTW: I am assuming that if you are ambitious enough to make noncanonical
-			// disulfide silent files with the C26 nomenclature in the last 6 months
-			// you are brilliant enough to add the :disulfide yourself?
-			
+			ResidueTypeCOP rsd_type;
 			if ( fullname_list[ index ].substr( 0, 13 ) == "CYS:disulfide" ) {
-				//tr <<fullname_list[ index ] << std::endl;
-				std::string nm = "CYS"+fullname_list[ index ].substr( 13, std::string::npos );
-				//tr <<nm << std::endl;
-				
-				chemical::ResidueType temp_type = residue_set.name_map( nm );
-				
-				utility::vector1< std::string > variant_types = temp_type.properties().get_list_of_variants();
-				variant_types.push_back( "DISULFIDE" );
-				
-				chemical::ResidueTypeCOPs possible_types = residue_set.name3_map( "CYS" );
-				// Run through all possible new residue types.
-				for ( chemical::ResidueTypeCOPs::const_iterator
-					 type_iter = possible_types.begin(), type_end = possible_types.end();
-					 type_iter != type_end; ++type_iter )
-				{
-					bool perfect_match( true );
-
-					for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-						//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
-						if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-							perfect_match = false;
-							break;
-						}
-					}
-					
-					if ( perfect_match ) { // Do replacement.
-						requested_types.push_back( (**type_iter).get_self_ptr() );
-						break;
-					}
-				}
-
+				rsd_type = handle_disulfide_variant_name_for_backwards_compatibility( residue_set, fullname_list[ index ] );
 			} else {
-				requested_types.push_back( residue_set.name_map( fullname_list[ index ] ).get_self_ptr() );
+				rsd_type = residue_set.name_map( fullname_list[ index ] ).get_self_ptr();
 			}
+			requested_types.push_back( rsd_type );
 
-			is_lower_terminus = ( *requested_types.back() ).is_lower_terminus();
-			is_upper_terminus = ( *requested_types.back() ).is_upper_terminus();
 		} else {
-			// use aa_map to find list of possible ResidueTypes
-			chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 			// for non-annotated sequence, assume single chain for now
 			is_lower_terminus = auto_termini && ( seqpos == 1 || one_letter_sequence[ seqpos-2 ]=='/');
 			is_upper_terminus = auto_termini && ( seqpos == one_letter_sequence.length() || one_letter_sequence[ seqpos ]=='/' );
-			bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
 
-			Size best_index = 0;
-			// iterate over rsd_types, pick one.
-			for ( Size j = 1; j <= rsd_type_list.size(); ++j ) {
-				chemical::ResidueType const & rsd_type( *(rsd_type_list[ j ]) );
+			ResidueTypeCOP rsd_type = get_rsd_type_from_aa( residue_set, my_aa, is_lower_terminus, is_upper_terminus );
 
-				bool const is_polymer( rsd_type.is_polymer() );
-				// pick a ResidueType
-				Size nvariants = rsd_type.properties().get_list_of_variants().size();
-				if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
-				if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
-						is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
+			if ( rsd_type == 0 ) utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
+																											" in sequence "+ sequence_in);
 
-				best_index = j;
-				break;
+			// REMOVE AFTER 2015.
+			if ( basic::options::option[ basic::options::OptionKeys::chemical::check_rsd_type_finder ]() ) {
+				debug_assert( rsd_type == get_rsd_type_from_aa_legacy( residue_set,  my_aa, is_lower_terminus, is_upper_terminus ) );
 			}
-			if ( !best_index ) utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
-				" in sequence "+ sequence_in);
+
 			// add the ResidueTypeCOP
-			requested_types.push_back( rsd_type_list[ best_index ] );
+			requested_types.push_back( rsd_type );
 		}
 
 		tr.Trace << "residue_types_from_sequence():  seqpos: " << seqpos << " aa " << aa << " " << my_aa << std::endl;
@@ -683,6 +636,105 @@ std::string annotated_to_oneletter_sequence(
 
 	return oneletter_seq;
 }
+
+/// @details ResidueTypeFinder finds simplest residue type with this AA & requested termini. Compare to
+///          get_rsd_type_from_aa_legacy, which was the old style. -- rhiju.
+chemical::ResidueTypeCOP
+get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
+											chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
+{
+	using namespace core::chemical;
+	ResidueTypeCOP rsd_type = ResidueTypeFinder( residue_set ).aa( my_aa ).get_representative_type();
+	utility::vector1< VariantType > variants;
+	if ( rsd_type->is_polymer() ) {
+		if ( is_lower_terminus ) variants.push_back( LOWER_TERMINUS_VARIANT );
+		if ( is_upper_terminus ) variants.push_back( UPPER_TERMINUS_VARIANT );
+	}
+	return ResidueTypeFinder( residue_set ).aa( my_aa ).variants( variants ).get_representative_type();
+}
+
+
+// REMOVE THIS FUNCTION AFTER 2015 IF NOT IN USE -- in here for comparisons -- rhiju
+// use aa_map to find list of possible ResidueTypes
+// for non-annotated sequence, assume single chain for now
+chemical::ResidueTypeCOP
+get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
+														 chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus )
+{
+
+	bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
+	// use aa_map to find list of possible chemical::ResidueTypes
+	chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map_DO_NOT_USE( my_aa ) );
+
+	Size best_index = 0;
+	// iterate over rsd_types, pick one.
+	for ( Size j = 1; j <= rsd_type_list.size(); ++j ) {
+		chemical::ResidueType const & rsd_type( *(rsd_type_list[ j ]) );
+
+		bool const is_polymer( rsd_type.is_polymer() );
+		// pick a chemical::ResidueType
+		Size nvariants = rsd_type.properties().get_list_of_variants().size();
+		if ( is_polymer && ( is_terminus && ( nvariants == 0 ) ) ) continue;
+		if ( is_polymer && ( is_lower_terminus != rsd_type.has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ||
+												 is_upper_terminus != rsd_type.has_variant_type( chemical::UPPER_TERMINUS_VARIANT ) ) ) continue;
+
+		best_index = j;
+		break;
+	}
+	return rsd_type_list[ best_index ];
+}
+
+
+// Can we deprecate this now? If we need it, could easily refactor with chemical::ResidueTypeFinder. -- rhiju
+// Following comments are from original code block:
+//
+// CYD hack: CYS:disulfide won't necessarily place the :disulfide in the right place
+// we can only reconcile this for SURE in the type level (no ordering)
+// so we turn it back into cys, then we add a variant type!
+// THIS work around sucks, but it is better than killing backwards compatibility, I guess.
+// BTW: I am assuming that if you are ambitious enough to make noncanonical
+// disulfide silent files with the C26 nomenclature in the last 6 months
+// you are brilliant enough to add the :disulfide yourself?
+chemical::ResidueTypeCOP
+handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueTypeSet const & residue_set,
+																													 std::string const fullname )
+{
+
+	print_backtrace();
+	tr << tr.Red << "If you really need to use this code and want to speed it up, please contact rhiju [at] stanford.edu about quickly rewriting using chemical::ResidueTypeFinder." << tr.Reset << std::endl;
+
+	//tr <<fullname_list[ index ] << std::endl;
+	std::string nm = "CYS"+fullname.substr( 13, std::string::npos );
+	//tr <<nm << std::endl;
+
+	chemical::ResidueType temp_type = residue_set.name_map( nm );
+
+	utility::vector1< std::string > variant_types = temp_type.properties().get_list_of_variants();
+	variant_types.push_back( "DISULFIDE" );
+
+	chemical::ResidueTypeCOPs possible_types = residue_set.name3_map_DO_NOT_USE( "CYS" );
+	// Run through all possible new residue types.
+	for ( chemical::ResidueTypeCOPs::const_iterator	type_iter = possible_types.begin(), type_end = possible_types.end();
+				type_iter != type_end; ++type_iter ) {
+		bool perfect_match( true );
+
+		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
+			//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
+			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
+				perfect_match = false;
+				break;
+			}
+		}
+
+		if ( perfect_match ) { // Do replacement.
+			return (**type_iter).get_self_ptr();
+		}
+	}
+
+	// should trigger an error:
+	return 0;
+}
+
 
 
 } // namespace core

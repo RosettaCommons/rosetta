@@ -15,7 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -809,9 +809,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const & res_n
 	std::cout << "before_mutation: " << std::endl; print_torsion_info( pose, seq_num, 1, "side_chain" );
 
 	core::chemical::AA res_aa = aa_from_name( res_name );
-//	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *(rsd_set->aa_map( res_aa )[1]) ) ;
-
-	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ), start_pose.residue( seq_num ), start_pose.conformation(), true );
+	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( res_aa ) ), start_pose.residue( seq_num ), start_pose.conformation(), true );
 	// choose true to preserve the angle connecting bb and sidechain*/
 
 	pose.replace_residue( seq_num, *new_rsd, true /*orient_backbone*/ ); //false doesn't work when input residue is not identical to replace residue???

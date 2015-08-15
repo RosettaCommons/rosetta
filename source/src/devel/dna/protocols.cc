@@ -22,7 +22,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueConnection.hh>
 
 #include <core/conformation/Residue.hh>
@@ -498,8 +498,8 @@ packing_specificity_test(
 			AA const & aa( combo[i] );
 			int const seqpos( pos_list[i] );
 
-
-			ResidueTypeCOP rsd_type( ResidueSelector().set_aa( aa ).exclude_variants().select( residue_set )[1] );
+			// Representative type should have no/minimal variants
+			ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa ) );
 
 			Residue const & existing_residue( pose.residue( seqpos ) );
 			assert( existing_residue.is_DNA() );

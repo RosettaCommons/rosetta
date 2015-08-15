@@ -70,8 +70,8 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 		if ( !pose.residue(1).residue_type_set().has_name( *n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << *n << " is not a valid residue type name. Valid types:";
-			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin(),
-					endt=pose.residue(1).residue_type_set().all_residues_end(); t!=endt; ++t ) {
+			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin_DO_NOT_USE(),
+					endt=pose.residue(1).residue_type_set().all_residues_end_DO_NOT_USE(); t!=endt; ++t ) {
 				err << " " << t->second->name();
 			}
 			throw utility::excn::EXCN_BadInput( err.str() );
@@ -89,8 +89,8 @@ ResidueNameSelector::apply( core::pose::Pose const & pose ) const
 		if ( !pose.residue(1).residue_type_set().has_name3( *n ) ) {
 			std::stringstream err;
 			err << "ResidueNameSelector: " << *n << " is not a valid residue type name. Valid types:";
-			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin(),
-					endt=pose.residue(1).residue_type_set().all_residues_end(); t!=endt; ++t ) {
+			for ( core::chemical::ResidueTypeSet::const_residue_iterator t=pose.residue(1).residue_type_set().all_residues_begin_DO_NOT_USE(),
+					endt=pose.residue(1).residue_type_set().all_residues_end_DO_NOT_USE(); t!=endt; ++t ) {
 				err << " " << t->second->name3();
 			}
 			throw utility::excn::EXCN_BadInput( err.str() );
@@ -120,7 +120,7 @@ ResidueNameSelector::parse_my_tag(
 	 set_residue_name3( tag->getOption< std::string >( "residue_name3" ) );
 	}
 	if ( tag->hasOption( "residue_names" ) ) {
-		set_residue_names( tag->getOption< std::string >( "residue_names" ) );	
+		set_residue_names( tag->getOption< std::string >( "residue_names" ) );
 	}
 	if ( res_name_str_.empty() && res_name3_str_.empty() ) {
 		std::stringstream err_msg;

@@ -88,7 +88,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 	void test_safety() {
 		// The Gasteiger typing should not crash when presented with any of the standard residue types.
 		core::chemical::ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set("fa_standard") );
-		utility::vector1< ResidueTypeCOP > const & residues( residue_set->residue_types() );
+		utility::vector1< ResidueTypeCOP > const & residues( residue_set->residue_types_DO_NOT_USE() );
 		for( core::Size ii(1); ii <= residues.size(); ++ii ) {
 			core::chemical::ResidueTypeOP restype( new core::chemical::ResidueType( *(residues[ii]) ) );
 			if( restype->name() != core::chemical::residue_type_base_name( *restype ) ) {

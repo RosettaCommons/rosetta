@@ -72,8 +72,8 @@ public:
 	}
 
 	virtual void run(core::Real scaleFactor) {
-		chemical::ResidueTypeCOPs::const_iterator const begin = residue_types_->residue_types().begin();
-		chemical::ResidueTypeCOPs::const_iterator const end = residue_types_->residue_types().end();
+		chemical::ResidueTypeCOPs::const_iterator const begin = residue_types_->residue_types_DO_NOT_USE().begin();
+		chemical::ResidueTypeCOPs::const_iterator const end = residue_types_->residue_types_DO_NOT_USE().end();
 		core::Size local_scale_factor = 2 * scaleFactor;
 		if( local_scale_factor == 0 ) { local_scale_factor = 1; } // Do at least one repetition, regardless of scaling factor
 		for(core::Size i=0; i < local_scale_factor; i++){

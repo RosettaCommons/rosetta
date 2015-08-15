@@ -11,7 +11,7 @@
 /// @author Phil Bradley
 /// @details
 ///
-///     The ResidueSelector is an object the picks out a subset of ResidueTypes, via a
+///     The ResidueTypeSelector is an object the picks out a subset of ResidueTypes, via a
 ///     bool operator[](ResidueType const &) method.  It is implemented as a logical AND of individual constraints,
 ///     each of which typically has an OR structure.  The system allows NOT at the beginning.
 ///
@@ -29,15 +29,16 @@
 ///     would define a selector that matched residues with property PROTEIN, with aa types
 ///     pro or gly, with a three-letter code of HPR and not of variant type PHOSPHO or TERMINUS
 ///
-///     The individual constraints that make up the ResidueSelector object are subclasses of
-///     ResidueSelectorSingle; ResidueSelector has a vector1 of ResidueSelectorSingleOP's
+///     The individual constraints that make up the ResidueTypeSelector object are subclasses of
+///     ResidueTypeSelectorSingle; ResidueTypeSelector has a vector1 of ResidueTypeSelectorSingleOP's
 
 
-#ifndef INCLUDED_core_chemical_ResidueSelector_hh
-#define INCLUDED_core_chemical_ResidueSelector_hh
+#ifndef INCLUDED_core_chemical_ResidueTypeSelector_hh
+#define INCLUDED_core_chemical_ResidueTypeSelector_hh
 
 // Unit headers
-#include <core/chemical/ResidueSelector.fwd.hh>
+#include <core/chemical/ResidueTypeSelector.fwd.hh>
+#include <core/chemical/ResidueTypeFinder.hh> // This is a shortcut -- will later unify ResidueTypeSelector & ResidueTypeFinder -- rhiju
 
 // Package headers
 #include <core/chemical/ResidueType.hh>
@@ -51,14 +52,14 @@ namespace core {
 namespace chemical {
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// @brief  A base class for defining a ResidueSelector by a single criterion
-class ResidueSelectorSingle : public utility::pointer::ReferenceCount {
+/// @brief  A base class for defining a ResidueTypeSelector by a single criterion
+class ResidueTypeSelectorSingle : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueSelectorSingle();
+	virtual ~ResidueTypeSelectorSingle();
 
 	// constructor
-	ResidueSelectorSingle( bool const result ):
+	ResidueTypeSelectorSingle( bool const result ):
 		desired_result_( result )
 	{}
 
@@ -80,13 +81,13 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue belong to ANY of these AAs?
-class Selector_AA : public ResidueSelectorSingle {
+class Selector_AA : public ResidueTypeSelectorSingle {
 public:
 	Selector_AA(
 		utility::vector1< AA > const & aas_in,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		aas_( aas_in )
 	{}
 
@@ -107,7 +108,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Is a certain string in the command-line option -chemical:allow_patch present ?
 /// this selector does actually not depend on the residuetype it is queried for
-class Selector_CMDFLAG : public ResidueSelectorSingle {
+class Selector_CMDFLAG : public ResidueTypeSelectorSingle {
 public:
 	Selector_CMDFLAG(
   	std::string const& flags_in,
@@ -128,14 +129,14 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have to ANY of these three-letter codes?
-class Selector_NAME3 : public ResidueSelectorSingle {
+class Selector_NAME3 : public ResidueTypeSelectorSingle {
 public:
 
 	Selector_NAME3(
 		utility::vector1< std::string > const & name3s_in,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		name3s_( name3s_in )
 	{}
 
@@ -152,13 +153,13 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ANY of these properties?
-class Selector_PROPERTY : public ResidueSelectorSingle {
+class Selector_PROPERTY : public ResidueTypeSelectorSingle {
 public:
 	Selector_PROPERTY(
 		utility::vector1< std::string > const & properties_in,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		properties_( properties_in )
 	{}
 
@@ -179,13 +180,13 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ANY of variant types?
-class Selector_VARIANT_TYPE : public ResidueSelectorSingle {
+class Selector_VARIANT_TYPE : public ResidueTypeSelectorSingle {
 public:
 	Selector_VARIANT_TYPE(
 		utility::vector1< std::string > const & variants_in,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		variants_( variants_in )
 	{}
 
@@ -215,10 +216,10 @@ private:
 /// that contains variability in the main chain, provided the nomenclature is consistent and numerical.
 /// See patches/carbohydrates/upper_terminus.txt for an example of use.
 /// @author  Labonte
-class Selector_UPPER_POSITION : public ResidueSelectorSingle {
+class Selector_UPPER_POSITION : public ResidueTypeSelectorSingle {
 public:
 	Selector_UPPER_POSITION(uint const position, bool const result) :
-		ResidueSelectorSingle(result),
+		ResidueTypeSelectorSingle(result),
 		position_(position)
 	{}
 
@@ -243,13 +244,13 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have ALL of the variant types and no more
-class Selector_MATCH_VARIANTS : public ResidueSelectorSingle {
+class Selector_MATCH_VARIANTS : public ResidueTypeSelectorSingle {
 public:
 	Selector_MATCH_VARIANTS(
 		utility::vector1< std::string > const & variants_in,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		variants_( variants_in )
 	{}
 
@@ -272,12 +273,12 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue have NO variant types?
-class Selector_NO_VARIANTS : public ResidueSelectorSingle {
+class Selector_NO_VARIANTS : public ResidueTypeSelectorSingle {
 public:
 	Selector_NO_VARIANTS(
 		bool const result
 	):
-		ResidueSelectorSingle( result )
+		ResidueTypeSelectorSingle( result )
 	{}
 
 	// select by VARIANT_TYPE
@@ -290,13 +291,13 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief  Does the residue belong to ANY of these one-letter codes?
-class Selector_NAME1 : public ResidueSelectorSingle {
+class Selector_NAME1 : public ResidueTypeSelectorSingle {
 public:
 	Selector_NAME1(
 		char const n,
 		bool const result
 	):
-		ResidueSelectorSingle( result ),
+		ResidueTypeSelectorSingle( result ),
 		name1_( n )
 	{}
 
@@ -313,23 +314,23 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
-/// @brief create a singe ResidueSelector from an input line.
-ResidueSelectorSingleOP
+/// @brief create a singe ResidueTypeSelector from an input line.
+ResidueTypeSelectorSingleOP
 residue_selector_single_from_line( std::string const & line );
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 /// @brief A class picking out a subset of ResidueType by multiple criteria
-class ResidueSelector : public utility::pointer::ReferenceCount {
+class ResidueTypeSelector : public utility::pointer::ReferenceCount {
 public:
 	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
-	virtual ~ResidueSelector();
+	virtual ~ResidueTypeSelector();
 
 	// [] operator: selector[ResidueType] => yes or no
 	bool
 	operator[]( ResidueType const & rsd ) const
 	{
-		//std::cout << "ResidueSelector::operator[] " << rsd.name() << ' ' << selectors_.size() << std::endl;
+		//std::cout << "ResidueTypeSelector::operator[] " << rsd.name() << ' ' << selectors_.size() << std::endl;
 		for ( uint i=1, i_end = selectors_.size(); i<= i_end; ++i ) {
 			if ( !( ( *selectors_[i] )[ rsd ] ) ) return false;
 		}
@@ -337,21 +338,21 @@ public:
 	}
 
 	// add a new selector single
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	add_line( std::string const & line )
 	{
-		ResidueSelectorSingleOP new_selector( residue_selector_single_from_line( line ) );
+		ResidueTypeSelectorSingleOP new_selector( residue_selector_single_from_line( line ) );
 		if ( new_selector ) {
 			//std::cout << "add_line: success: " << line << std::endl;
 			selectors_.push_back( new_selector );
 		} else {
-			std::cout << "ResidueSelector::add_line: bad line:" << line << std::endl;
+			std::cout << "ResidueTypeSelector::add_line: bad line:" << line << std::endl;
 		}
 		return *this;
 	}
 
 	// reset
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	clear()
 	{
 		selectors_.clear();
@@ -359,44 +360,44 @@ public:
 	}
 
 
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	set_name1( char const n )
 	{
-		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_NAME1( n, true ) ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_NAME1( n, true ) ) );
 		return *this;
 	}
 
 
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	set_aa( AA const aa )
 	{
 		utility::vector1< AA > aas( 1, aa );
-		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_AA( aas, true ) ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_AA( aas, true ) ) );
 		return *this;
 	}
 
 
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	set_property( std::string const property )
 	{
 		utility::vector1< std::string > properties( 1, property );
-		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_PROPERTY( properties, true ) ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_PROPERTY( properties, true ) ) );
 		return *this;
 	}
 
 
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	exclude_variants()
 	{
-		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_NO_VARIANTS( true ) ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_NO_VARIANTS( true ) ) );
 		return *this;
 	}
 
 
-	ResidueSelector & // allow chaining
+	ResidueTypeSelector & // allow chaining
 	match_variants( ResidueType const & rsd_type_to_match )
 	{
-		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueSelectorSingle>( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) ) );
+		selectors_.push_back( utility::pointer::shared_ptr<class core::chemical::ResidueTypeSelectorSingle>( new Selector_MATCH_VARIANTS( rsd_type_to_match.properties().get_list_of_variants(), true ) ) );
 		return *this;
 	}
 
@@ -406,8 +407,8 @@ public:
 
 	// data
 private:
-	// a vector of single ResidueSelector
-	utility::vector1< ResidueSelectorSingleOP > selectors_;
+	// a vector of single ResidueTypeSelector
+	utility::vector1< ResidueTypeSelectorSingleOP > selectors_;
 };
 
 } // chemical

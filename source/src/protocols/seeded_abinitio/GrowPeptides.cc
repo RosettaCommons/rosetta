@@ -49,7 +49,7 @@
 #include  <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
@@ -130,7 +130,8 @@ GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Siz
 		Size resi = stop - k + res_pos - 1 ; /* so that stop doesnt get incorporated anymore*/
 		const char aa = nat_seq[ stop - k - 1 + seq_register - 1];//in case this is called within the sequence, -1 because strings start counting at 0
 		TR.Debug << "RES AA N-terminal extension:  " << resi << aa <<std::endl;
-		core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+		// Representative type should have no/minimal variants
+		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( aa ) );
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
 		target_seeds.conformation().safely_prepend_polymer_residue_before_seqpos(*new_rsd, res_pos, true);
 		target_seeds.set_omega( res_pos, 180.0 );
@@ -149,7 +150,8 @@ GrowPeptides::append_residues_cterminally ( Size seq_register, Size res_pos, Siz
 		const char aa = nat_seq[ j - res_pos + seq_register /*-1*/]; // -1 for string adjustment
 		Size resi =  j ;
 		TR.Debug << "RES AA C-terminal extension  " << resi << aa <<std::endl;
-		core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+		// Representative type should have no/minimal variants
+		core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( aa ) );
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
 		target_seeds.conformation().safely_append_polymer_residue_after_seqpos( *new_rsd, resi /*- 1*/ , true );// stop
 		target_seeds.set_omega( resi , 180.0 );

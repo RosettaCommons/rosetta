@@ -29,7 +29,7 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/ResidueFactory.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 
 #include <core/io/pdb/pose_io.hh>
 

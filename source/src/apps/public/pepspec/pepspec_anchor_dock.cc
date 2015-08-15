@@ -56,7 +56,7 @@
  #include <core/pack/rotamer_set/RotamerCouplings.hh>
  #include <core/chemical/ResidueType.hh>
  #include <core/chemical/ResidueTypeSet.hh>
- #include <core/chemical/ResidueSelector.hh>
+ #include <core/chemical/ResidueTypeSelector.hh>
  #include <core/chemical/VariantType.hh>
  #include <core/chemical/util.hh>
  #include <core/chemical/ChemicalManager.hh>
@@ -229,26 +229,16 @@ make_sequence_change(
 		pose::Pose & pose
 		)
 {
-	Size const which_his_variant = 1;
 	conformation::Residue const & current_rsd( pose.residue( seqpos ) );
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
-	chemical::ResidueTypeCOPs rsd_types
-		( chemical::ResidueSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
+	chemical::ResidueTypeCOP rsd_type( current_rsd.residue_type_set().get_representative_type_aa( new_aa, current_rsd.type().variant_types() ) );
 
-	Size rsd_types_index( 1 );
-	std::string const errmsg
-		( "make_sequence_change failed: new_aa= "+chemical::name_from_aa(new_aa)+" rsd_types.size()= "+string_of( rsd_types.size() ) );
-
-	if ( new_aa == chemical::aa_his ) {
-		if ( rsd_types.size() != 2 || which_his_variant > 2 ) utility_exit_with_message( errmsg );
-		rsd_types_index = which_his_variant;
-	} else if ( rsd_types.size() != 1 ) {
-		utility_exit_with_message( errmsg );
+	if( ! rsd_type ) {
+		utility_exit_with_message( "make_sequence_change failed: new_aa= "+chemical::name_from_aa(new_aa)+" -- no residue types found. " );
 	}
 
-	conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *(rsd_types[ rsd_types_index ] ),
-				current_rsd, pose.conformation() ) );
+	conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *rsd_type, current_rsd, pose.conformation() ) );
 	pose.replace_residue( seqpos, *new_rsd, false );
 }
 

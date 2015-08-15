@@ -54,9 +54,10 @@ make_pose_from_sequence_(
 	for ( Size seqpos = 1; seqpos <= sequence.length(); ++seqpos ) {
 		char aa = sequence[seqpos-1]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
-		Size best_index = 1;
-		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		//ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
+		//Size best_index = 1;
+		//ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		ResidueType const & rsd_type( * residue_set.get_representative_type_aa( my_aa ) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 	} // for seqpos
 		// pose.conformation().insert_chain_ending( pose.total_residue() - 1 );		 probably not necessary

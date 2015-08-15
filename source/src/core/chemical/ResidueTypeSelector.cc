@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   ResidueSelector.cc
+/// @file   ResidueTypeSelector.cc
 /// @author Phil Bradley
 
 
 // Unit headers
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 
 // Package headers
 #include <core/chemical/ResidueTypeSet.hh>
@@ -29,15 +29,15 @@ namespace core {
 namespace chemical {
 
 /// @details Auto-generated virtual destructor
-ResidueSelector::~ResidueSelector() {}
+ResidueTypeSelector::~ResidueTypeSelector() {}
 
 /// @details Auto-generated virtual destructor
-ResidueSelectorSingle::~ResidueSelectorSingle() {}
+ResidueTypeSelectorSingle::~ResidueTypeSelectorSingle() {}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-ResidueSelectorSingleOP
+ResidueTypeSelectorSingleOP
 residue_selector_single_from_line( std::string const & line )
 {
 	std::istringstream l( line );
@@ -60,7 +60,7 @@ residue_selector_single_from_line( std::string const & line )
 			l >> aa;
 		}
 		//std::cout << "AAline: " << aas.size() << ' ' << line << std::endl;
-		if ( !aas.empty() ) return ResidueSelectorSingleOP( new Selector_AA( aas, desired_result ) );
+		if ( !aas.empty() ) return ResidueTypeSelectorSingleOP( new Selector_AA( aas, desired_result ) );
 
 	} else if ( tag == "NAME3" ) {
 		std::string name3;
@@ -70,7 +70,7 @@ residue_selector_single_from_line( std::string const & line )
 			name3s.push_back( name3 );
 			l >> name3;
 		}
-		if( !name3s.empty() )  return ResidueSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
+		if( !name3s.empty() )  return ResidueTypeSelectorSingleOP( new Selector_NAME3( name3s, desired_result ) );
 
 	} else if ( tag == "PROPERTY" ) {
 		std::string property;
@@ -80,7 +80,7 @@ residue_selector_single_from_line( std::string const & line )
 			properties.push_back( property );
 			l >> property;
 		}
-		if ( !properties.empty() ) return ResidueSelectorSingleOP( new Selector_PROPERTY( properties, desired_result ) );
+		if ( !properties.empty() ) return ResidueTypeSelectorSingleOP( new Selector_PROPERTY( properties, desired_result ) );
 
 	} else if ( tag == "VARIANT_TYPE" ) {
 		std::string variant_type;
@@ -90,19 +90,19 @@ residue_selector_single_from_line( std::string const & line )
 			variant_types.push_back( variant_type );
 			l >> variant_type;
 		}
-		if ( !variant_types.empty() ) return ResidueSelectorSingleOP( new Selector_VARIANT_TYPE( variant_types, desired_result ) );
+		if ( !variant_types.empty() ) return ResidueTypeSelectorSingleOP( new Selector_VARIANT_TYPE( variant_types, desired_result ) );
 
 	} else if (tag == "UPPER_POSITION") {  // This is the position label at which the upper connection is attached.
 		uint position;
 		l >> position;
 		if (position) {
-			return ResidueSelectorSingleOP( new Selector_UPPER_POSITION(position, desired_result) );
+			return ResidueTypeSelectorSingleOP( new Selector_UPPER_POSITION(position, desired_result) );
 		}
 
 	} else if ( tag == "CMDLINE_SELECTOR" ) {
 		std::string selector_string;
 		l >> selector_string; // if one wants AND logical operation make this a vector of selector_strings...
-		if ( !selector_string.empty() ) return ResidueSelectorSingleOP( new Selector_CMDFLAG( selector_string, desired_result ) );
+		if ( !selector_string.empty() ) return ResidueTypeSelectorSingleOP( new Selector_CMDFLAG( selector_string, desired_result ) );
 	}
 	std::cout << "residue_selector_single: unrecognized line: " << line << std::endl;
 	return 0;
@@ -110,17 +110,17 @@ residue_selector_single_from_line( std::string const & line )
 
 
 ResidueTypeCOPs
-ResidueSelector::select( ResidueTypeSet const & rsd_set )
+ResidueTypeSelector::select( ResidueTypeSet const & rsd_set )
 {
 	ResidueTypeCOPs rsd_list;
-	for ( ResidueTypeCOPs::const_iterator it= rsd_set.residue_types().begin(), ite= rsd_set.residue_types().end();
+	for ( ResidueTypeCOPs::const_iterator it= rsd_set.residue_types_DO_NOT_USE().begin(), ite= rsd_set.residue_types_DO_NOT_USE().end();
 				it != ite; ++it ) {
 		if ( operator[]( **it ) ) rsd_list.push_back( *it );
 	}
 	return rsd_list;
 }
 
-Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const result) : ResidueSelectorSingle( result )
+Selector_CMDFLAG::Selector_CMDFLAG(std::string  const & flag_in, bool const result) : ResidueTypeSelectorSingle( result )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

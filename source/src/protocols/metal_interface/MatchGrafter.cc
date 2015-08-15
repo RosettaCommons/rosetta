@@ -21,7 +21,7 @@
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh> //for CYZ residue
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh> //create HIS of proper tautomer

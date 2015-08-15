@@ -965,7 +965,7 @@ struct HubDenovo {
 			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
 			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
-				*cfg.frs->aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
+				*cfg.frs->get_representative_type_aa(core::chemical::aa_from_oneletter_code(myaa)) );
 			tmp->seqpos(ir);
 			tmp->chain(1);
 			p.prepend_polymer_residue_before_seqpos(*tmp,1,true);
@@ -976,7 +976,7 @@ struct HubDenovo {
 			if     (cfg.template_seq_sc[ir-1]!='_') myaa = cfg.template_seq_sc[ir-1];
 			else if(cfg.template_seq_bb[ir-1]!='_') myaa = cfg.template_seq_bb[ir-1];
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
-				*cfg.frs->aa_map(core::chemical::aa_from_oneletter_code(myaa))[1] );
+				*cfg.frs->get_representative_type_aa(core::chemical::aa_from_oneletter_code(myaa)) );
 			tmp->seqpos(ir);
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );

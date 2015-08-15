@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/chemical/PatchOperation.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -66,17 +66,32 @@ public:
 	}
 
 	/// @brief to which ResidueTypes this PatchCase applies to?
-	ResidueSelector &
+	ResidueTypeSelector &
 	selector()
 	{
 		return selector_;
 	}
 
+	/// @brief returns list of added atom names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	adds_atoms() const;
+
+	/// @brief returns list of deleted atom names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_atoms() const;
+
+	/// @brief returns list of added property names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	adds_properties() const;
+
+	/// @brief returns list of deleted property names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_properties() const;
 
 	// data:
 private:
 	/// @brief to which ResidueTypes this PatchCase applies to?
-	ResidueSelector selector_;
+	ResidueTypeSelector selector_;
 	/// @brief operations to done in this PatchCase
 	utility::vector1< PatchOperationOP > operations_;
 };
@@ -130,6 +145,22 @@ public:
 		return types_;
 	}
 
+	/// @brief returns list of added atom names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	adds_atoms( ResidueType const & rsd_in ) const;
+
+	/// @brief returns list of deleted atom names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_atoms( ResidueType const & rsd_in ) const;
+
+	/// @brief returns list of added property names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	adds_properties( ResidueType const & rsd_in ) const;
+
+	/// @brief returns list of deleted property names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_properties( ResidueType const & rsd_in ) const;
+
 	/// private data
 private:
 	/// name of the patch
@@ -139,7 +170,7 @@ private:
 	utility::vector1< std::string > types_;
 
 	/// @brief criteria to select ResidueTypes to which the patch is applied
-	ResidueSelector selector_;
+	ResidueTypeSelector selector_;
 
 	/// @brief different cases to which the patch is applied slightly differently, e.g., N-terminus patch to PRO and GLY
 	utility::vector1< PatchCaseOP > cases_;

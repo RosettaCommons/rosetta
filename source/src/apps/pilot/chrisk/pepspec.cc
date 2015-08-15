@@ -56,7 +56,7 @@
  #include <core/conformation/ResidueMatcher.hh>
  #include <core/pack/rotamer_set/RotamerCouplings.hh>
  #include <core/chemical/ResidueTypeSet.hh>
- #include <core/chemical/ResidueSelector.hh>
+ #include <core/chemical/ResidueTypeSelector.hh>
  #include <core/conformation/ResidueFactory.hh>
  #include <core/chemical/VariantType.hh>
  #include <core/chemical/util.hh>
@@ -485,7 +485,7 @@ make_sequence_change(
 	if ( current_rsd.aa() == new_aa ) return; // already done
 
 	ResidueTypeCOPs rsd_types
-		( ResidueSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
+		( ResidueTypeSelector().set_aa( new_aa ).match_variants( current_rsd.type() ).select( current_rsd.residue_type_set() ) );
 
 	Size rsd_types_index( 1 );
 	std::string const errmsg

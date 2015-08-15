@@ -112,7 +112,7 @@ void FragmentConstantLengthTest::generate_random_pose () {
 	//create extended pose from sequence
 	for ( Size pos = 1; pos <= sequence.size(); pos++ ) {
 		chemical::AA aa = aa_from_oneletter_code( sequence[ pos-1 ] );
-		ResidueTypeCOPs res_list = residue_set_->name3_map ( name_from_aa ( aa ) );
+		ResidueTypeCOPs res_list = residue_set_->name3_map_DO_NOT_USE ( name_from_aa ( aa ) );
 		ResidueOP new_rsd( ResidueFactory::create_residue( * ( res_list[ 1 ] ) ) );
 		pose_random_.append_residue_by_bond( *new_rsd );
 	}

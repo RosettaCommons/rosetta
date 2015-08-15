@@ -621,7 +621,7 @@ EnzConstraintParameters::make_constraint_covalent_helper(
 		ResidueTypeSetOP mod_restype_set( ChemicalManager::get_instance()->nonconst_residue_type_set( restype_set->name() ).get_self_ptr() );
 
 		//first get all residue types that correspond to the type in question
-		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
+		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map_DO_NOT_USE( pose.residue_type(res_pos).name3() );
 
 		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
 			std::string const base_name( residue_type_base_name( *(*res_it) ) );

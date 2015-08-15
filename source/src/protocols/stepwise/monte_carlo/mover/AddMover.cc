@@ -270,10 +270,7 @@ namespace mover {
 		choose_random_if_unspecified_nucleotide( newrestype );
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
-		chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
-
-		// iterate over rsd_types, pick one.
-		chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+		chemical::ResidueType const & rsd_type = *( rsd_set.get_representative_type_aa( my_aa ) );
 		core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 		Size actual_offset = offset;
 		if ( swa_move_.attachment_type() == BOND_TO_PREVIOUS ){
@@ -336,12 +333,8 @@ namespace mover {
 		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
 		choose_random_if_unspecified_nucleotide( newrestype );
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
-		chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
-
-		// iterate over rsd_types, pick one.
-		chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+		chemical::ResidueType const & rsd_type = *( rsd_set.get_representative_type_aa( my_aa ) );
 		core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 		Size actual_offset = offset;
 		if ( swa_move_.attachment_type() == BOND_TO_NEXT ){

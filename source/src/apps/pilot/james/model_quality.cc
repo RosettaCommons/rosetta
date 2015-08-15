@@ -60,7 +60,7 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueConnection.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResidueSelector.fwd.hh>
+#include <core/chemical/ResidueTypeSelector.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>

@@ -20,7 +20,7 @@
 //#include <core/options/option.hh>
 //#include <core/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 	try{
 	devel::init(argc, argv);
 
-	core::chemical::ResidueSelector rs;
+	core::chemical::ResidueTypeSelector rs;
 	rs.set_property("PHOSPHONATE");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
 	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );

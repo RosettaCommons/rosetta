@@ -260,16 +260,72 @@ PatchCase::apply( ResidueType const & rsd_in, bool const instantiate /* = true *
 					iter_end = operations_.end(); iter != iter_end; ++iter ) {
 		if ( !instantiate && !( *iter )->applies_to_placeholder() ) { continue; }
 		bool const fail( ( *iter )->apply( *rsd ) );
-		if ( fail ) { return 0; }
+		if ( fail ) {
+			utility_exit_with_message( "Failed to apply a PatchOperation to " + rsd->name() );
+			return 0;
+		}
 	}
 
 	return rsd;
 }
 
 
+/// @details Go through patch operations in this PatchCase, and compile list of any atom names that are added.
+utility::vector1< std::string >
+PatchCase::adds_atoms() const
+{
+	utility::vector1< std::string > atom_names;
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
+		std::string const atom_name = ( *iter )->adds_atom();
+		if ( atom_name.size() > 0 ) atom_names.push_back( atom_name );
+	}
+	return atom_names;
+}
+
+/// @details Go through patch operations in this PatchCase, and compile list of any atom names that are deleted.
+utility::vector1< std::string >
+PatchCase::deletes_atoms() const
+{
+	utility::vector1< std::string > atom_names;
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
+		std::string const atom_name = ( *iter )->deletes_atom();
+		if ( atom_name.size() > 0 ) atom_names.push_back( atom_name );
+	}
+	return atom_names;
+}
+
+/// @details Go through patch operations in this PatchCase, and compile list of any property names that are added.
+utility::vector1< std::string >
+PatchCase::adds_properties() const
+{
+	utility::vector1< std::string > property_names;
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
+		std::string const property_name = ( *iter )->adds_property();
+		if ( property_name.size() > 0 ) property_names.push_back( property_name );
+	}
+	return property_names;
+}
+
+/// @details Go through patch operations in this PatchCase, and compile list of any property names that are deleted.
+utility::vector1< std::string >
+PatchCase::deletes_properties() const
+{
+	utility::vector1< std::string > property_names;
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
+		std::string const property_name = ( *iter )->deletes_property();
+		if ( property_name.size() > 0 ) property_names.push_back( property_name );
+	}
+	return property_names;
+}
+
+
 /// @details	- first read in all lines from the file, discarding # comment lines
 /// - parse input lines for Patch name and variant types (NAME, TYPES)
-///	- parse input lines for general ResidueSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
+///	- parse input lines for general ResidueTypeSelector defined for this Patch (BEGIN_SELECTOR, END_SELECTOR)
 ///	- parse input lines to create each case accordingly (BEGIN_CASE, END_CASE)
 /// @note keep the order to avoid triggering parsing errors
 void
@@ -392,7 +448,101 @@ Patch::apply( ResidueType const & rsd_type, bool const instantiate /* = true */ 
 			}
 		}
 	}
+
+	utility_exit_with_message( "no patch applied? " + name_ + " to " + rsd_type.name() );
 	return 0;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any atom_names that are added.
+utility::vector1< std::string >
+Patch::adds_atoms( ResidueType const & rsd_type ) const
+{
+	utility::vector1< std::string > atom_names;
+	if ( !applies_to( rsd_type ) ) return atom_names;  // I don't know how to patch this residue.
+
+	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
+			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+
+		if ( (*iter)->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< std::string > atom_names_for_patch_case = ( *iter )->adds_atoms();
+			for ( Size n = 1; n <= atom_names_for_patch_case.size(); n++ ) {
+				atom_names.push_back(  atom_names_for_patch_case[ n ] );
+			}
+		}
+	}
+
+	return atom_names;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any atom_names that are deleted.
+utility::vector1< std::string >
+Patch::deletes_atoms( ResidueType const & rsd_type ) const
+{
+	utility::vector1< std::string > atom_names;
+	if ( !applies_to( rsd_type ) ) return atom_names;  // I don't know how to patch this residue.
+
+	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
+			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+
+		if ( (*iter)->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< std::string > atom_names_for_patch_case = ( *iter )->deletes_atoms();
+			for ( Size n = 1; n <= atom_names_for_patch_case.size(); n++ ) {
+				atom_names.push_back(  atom_names_for_patch_case[ n ] );
+			}
+		}
+	}
+
+	return atom_names;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any properties that are added.
+utility::vector1< std::string >
+Patch::adds_properties( ResidueType const & rsd_type ) const
+{
+	utility::vector1< std::string > properties;
+	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
+
+	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
+			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+
+		if ( (*iter)->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< std::string > properties_for_patch_case = ( *iter )->adds_properties();
+			for ( Size n = 1; n <= properties_for_patch_case.size(); n++ ) {
+				properties.push_back(  properties_for_patch_case[ n ] );
+			}
+		}
+	}
+
+	return properties;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any properties that are deleted.
+utility::vector1< std::string >
+Patch::deletes_properties( ResidueType const & rsd_type ) const
+{
+	utility::vector1< std::string > properties;
+	if ( !applies_to( rsd_type ) ) return properties;  // I don't know how to patch this residue.
+
+	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
+			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+
+		if ( (*iter)->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< std::string > properties_for_patch_case = ( *iter )->deletes_properties();
+			for ( Size n = 1; n <= properties_for_patch_case.size(); n++ ) {
+				properties.push_back(  properties_for_patch_case[ n ] );
+			}
+		}
+	}
+
+	return properties;
 }
 
 

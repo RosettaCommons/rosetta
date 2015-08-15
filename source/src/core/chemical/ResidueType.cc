@@ -3014,6 +3014,13 @@ ResidueType::finalize()
 
 }
 
+////////////////////////////////////////////////////////////////////
+utility::vector1< std::string >
+ResidueType::variant_types() const
+{
+	return properties_->get_list_of_variants();
+}
+
 Size
 ResidueType::atom_index( std::string const & name ) const
 {

@@ -72,8 +72,8 @@ core::pose::PoseOP build_toy_pose() {
     ResidueTypeSetCAP const & residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ));
 
     // Set up options for adding alanines
-    core::chemical::ResidueTypeCOPs const & rsd_type_list1( residue_set->name3_map("ALA") );
-    core::chemical::ResidueType alanine = *rsd_type_list1[1];
+    core::chemical::ResidueTypeCOPs const & rsd_type( residue_set->name3_map("ALA") );
+    core::chemical::ResidueType alanine = *rsd_type[1];
 
     // Make a bunch of alanines
     core::conformation::ResidueOP rsd1( core::conformation::ResidueFactory::create_residue(alanine) );
@@ -88,8 +88,8 @@ core::pose::PoseOP build_toy_pose() {
     pose->append_residue_by_bond( *rsd4 );
 
     // Set up options for adding a string of virtual residues afterwards
-    core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-    core::chemical::ResidueType virtuals = *rsd_type_list[1];
+    core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
+    core::chemical::ResidueType virtuals = *rsd_type;
 
     // Make a few virtual residues
     core::conformation::ResidueOP rsd5( core::conformation::ResidueFactory::create_residue(virtuals) );

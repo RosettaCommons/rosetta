@@ -275,12 +275,11 @@ FragmentLoopInserter::build_fragment_loop(
 
 		char aa_char = fragment->sequence(i+num_flanking_residues_to_match_+1);
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
-		chemical::ResidueTypeCOPs const & rsd_type_list( restype_set->aa_map( aa ) );
-		if(rsd_type_list.empty()){
+		chemical::ResidueTypeCOP rsd_type( restype_set->get_representative_type_aa( aa ) );
+		if(! rsd_type){
 			utility_exit_with_message("Could not find residue type for AA: " + std::string(1, aa_char));
 		}
-		chemical::ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
-		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
+		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 		TR.Debug << "Attaching residue " << aa_char << " after seqpos " << append_seqpos << std::endl;
 		pose.append_polymer_residue_after_seqpos(*new_rsd, append_seqpos, true);
@@ -296,12 +295,11 @@ FragmentLoopInserter::build_fragment_loop(
 
 		char aa_char = fragment->sequence(i+num_flanking_residues_to_match_+1);
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
-		chemical::ResidueTypeCOPs const & rsd_type_list( restype_set->aa_map( aa ) );
-		if(rsd_type_list.empty()){
+		chemical::ResidueTypeCOP rsd_type( restype_set->get_representative_type_aa( aa ) );
+		if( ! rsd_type ){
 			utility_exit_with_message("Could not find residue type for AA: " + std::string(1, aa_char));
 		}
-		chemical::ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
-		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
+		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 		TR.Debug << "Attaching residue " << aa_char << " before seqpos " << prepend_seqpos << std::endl;
 		pose.prepend_polymer_residue_before_seqpos(*new_rsd, prepend_seqpos, true);

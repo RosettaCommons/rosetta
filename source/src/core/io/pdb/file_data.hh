@@ -287,14 +287,14 @@ public:
 
 	/// @brief Fill FileData object using information from given Pose object.
 	void init_from_pose(core::pose::Pose const & pose);
-	
+
 	/// @brief Fill FileData object  using information from given Pose object and a set of options.
 	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 
 	/// @brief Fill FileData object using information from given Pose object,
 	/// for a specified subset of residues
 	void init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
-	
+
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
 	///
 	void get_parametric_info(pose::RemarksOP remarks, core::pose::Pose const & pose);
@@ -422,6 +422,20 @@ bool is_residue_type_recognized(
 	utility::vector1<core::Real> & UA_temps,
 	FileDataOptions const & options);
 
+bool
+is_residue_type_recognized(
+	Size const pdb_residue_index,
+	std::string const & pdb_name,
+	core::chemical::ResidueTypeSet const & residue_set,
+	std::map< std::string, Vector > const & xyz,
+	std::map< std::string, double > const & rtemp,
+	utility::vector1<Size> & UA_res_nums,
+	utility::vector1<std::string> & UA_res_names,
+	utility::vector1<std::string> & UA_atom_names,
+	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
+	utility::vector1<core::Real> & UA_temps,
+	FileDataOptions const & options);
+
 
 void pose_from_pose(
 	pose::Pose & new_pose,
@@ -460,6 +474,35 @@ void fill_name_map( core::io::pdb::NameBimap & name_map,
 			ResidueInformation const & rinfo,
 			chemical::ResidueType const & rsd_type,
 			FileDataOptions const & options);
+
+chemical::ResidueTypeCOP
+get_rsd_type(
+	std::string const & name3,
+	std::map< std::string, Vector > const & xyz,
+	chemical::ResidueTypeSet const & residue_set,
+	FileData & fd,
+	FileDataOptions const & options,
+	utility::vector1< std::string > const &  branch_points_on_this_residue,
+	std::string const & resid,
+	bool const is_lower_terminus,
+	bool const is_upper_terminus,
+	bool const is_branch_point,
+	bool const is_branch_lower_terminus );
+
+chemical::ResidueTypeCOP
+get_rsd_type_legacy(
+	std::string const & name3,
+	std::map< std::string, Vector > const & xyz,
+	chemical::ResidueTypeSet const & residue_set,
+	FileData & fd,
+	FileDataOptions const & options,
+	utility::vector1< std::string > const &  branch_points_on_this_residue,
+	std::string const & resid,
+	bool const is_lower_terminus,
+	bool const is_upper_terminus,
+	bool const is_branch_point,
+	bool const is_branch_lower_terminus );
+
 
 } // namespace pdb
 } // namespace io

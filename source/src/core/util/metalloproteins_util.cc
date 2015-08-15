@@ -99,7 +99,6 @@ namespace util {
 
 static thread_local basic::Tracer TR( "core.util.metalloproteins_util" );
 
-
 // removed from the header file so that it cannot be called directly, only from this file ~Labonte
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief: This is a helper function for the add_covalent_linkage function.
@@ -199,7 +198,7 @@ add_covalent_linkage_helper(
 		ResidueTypeSetOP mod_restype_set = ChemicalManager::get_instance()->nonconst_residue_type_set_op( pose.residue(res_pos).residue_type_set().name() );
 
 		//first get all residue types that correspond to the type in question
-		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
+		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map_DO_NOT_USE( pose.residue_type(res_pos).name3() );
 
 		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
 			std::string const base_name( residue_type_base_name( *(*res_it) ) );

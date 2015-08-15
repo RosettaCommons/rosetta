@@ -300,7 +300,7 @@ namespace data {
 		working_pose_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
 		working_pose_with_probe_->set_new_energies_object( scoring::EnergiesOP( new scoring::Energies ) );
 
-		// I think this needs to be initialized ... 
+		// I think this needs to be initialized ...
 		if ( DMS_potential_.size() == 0 ) initialize_DMS_potential();
 
 	}
@@ -554,8 +554,8 @@ void
 RNA_DMS_Potential::add_probe_to_pose( pose::Pose & pose ){
 	Size const i = pose.total_residue();
 	core::chemical::ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
-	core::chemical::ResidueTypeCOPs const & rsd_type_list ( rsd_set.name3_map ( " CZ" ) ); // just a carbon atom.
-	core::conformation::ResidueOP	probe_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
+	core::chemical::ResidueTypeCOP rsd_type ( rsd_set.get_representative_type_name3 ( " CZ" ) ); // just a carbon atom.
+	core::conformation::ResidueOP	probe_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
 	pose.append_residue_by_jump( *probe_res, i );
 }
 
@@ -622,7 +622,7 @@ RNA_DMS_Potential::get_logL_values( pose::Pose const & pose, Size const i /*, ut
 			logL_values.push_back( log( p_DMS_[k] ) );
 		}
 	}
-	
+
 	return logL_values;
 }
 

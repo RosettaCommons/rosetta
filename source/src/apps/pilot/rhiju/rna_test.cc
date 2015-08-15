@@ -25,7 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
@@ -3701,7 +3701,7 @@ build_next_nucleotide_test()
 
 			Size nres( pose_reference.total_residue() );
 			chemical::AA res_aa =  pose_reference.residue( nres ).aa();
-			ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *(rsd_set->aa_map( res_aa )[1]) ) ;
+			ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *(rsd_set->get_representative_type_aa( res_aa )) ) ;
 			pose_start.append_residue_by_bond( *new_rsd, true );
 
 			add_upper_terminus_type_to_pose_residue(pose_start,

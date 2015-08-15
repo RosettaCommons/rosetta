@@ -193,6 +193,11 @@ def generate_enum_header_file(enum_info, enum_defs, comments):
     lines.append('enum ' + enum_info.name + ' {\n')
 
     # Define the enumeration values.
+    first_def = '\tNO_'
+    first_def += enum_info.short_name.upper()
+    first_def += ' = 0,\n'
+    lines.append(first_def)
+
     first_def = '\tFIRST_'
     first_def += enum_info.short_name.upper()
     first_def += ' = 1,\n'
@@ -299,6 +304,11 @@ def generate_mappings_source_file(enum_info, enum_defs):
                                                                         ' >;\n')
     lines.append("\n")
 
+
+    if ( enum_info.short_name == "variant" ):
+         # quick hack -- could probably do this for PROPERTY also -- rhiju
+        lines.append( '\t\tVARIANT_MAP->insert( make_pair( "NO_VARIANT", NO_VARIANT ) );\n' )
+
     for enum_def in enum_defs:
         line = '\t\t' + map_name + '->insert( make_pair( "'
         line += enum_def + '", ' + enum_def + ' ) );\n'
@@ -308,10 +318,14 @@ def generate_mappings_source_file(enum_info, enum_defs):
     lines.append("\n")
     lines.append('\tif ( ! ( *' + map_name + ' ).count( ' +
                                               enum_info.short_name + ' ) ) {\n')
-    lines.append('\t\tthrow EXCN_Msg_Exception( "Rosetta does not recognize '
-                 'the ' + enum_info.short_name + ': " + ' +
-                 enum_info.short_name + ' +\n')
-    lines.append('\t\t\t\t"; has it been added to ' + enum_info.input_file +
+    if ( enum_info.short_name == "variant" ):
+         # quick hack -- could probably do this for PROPERTY also -- rhiju
+        lines.append('\t\treturn ( *VARIANT_MAP )[ "NO_VARIANT" ];\n')
+    else:
+        lines.append('\t\tthrow EXCN_Msg_Exception( "Rosetta does not recognize '
+                     'the ' + enum_info.short_name + ': " + ' +
+                     enum_info.short_name + ' +\n')
+        lines.append('\t\t\t\t"; has it been added to ' + enum_info.input_file +
                                                                       '?" );\n')
     lines.append('\t}\n')
     lines.append("\n")

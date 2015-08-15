@@ -302,8 +302,8 @@ SymmetricAddMembraneMover::setup_membrane_virtual( Pose & pose ) {
           );
     
     // Create a new Residue from rsd typeset of type MEM
-    ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("MEM") );
-    ResidueType const & membrane( *rsd_type_list[1] );
+    ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("MEM") );
+    ResidueType const & membrane( *rsd_type );
     ResidueOP new_rsd( ResidueFactory::create_residue( membrane ) );
     
     // Obtain information about the symmetric setup of virtual residues

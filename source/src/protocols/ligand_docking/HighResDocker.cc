@@ -371,7 +371,7 @@ HighResDocker::enable_ligand_rotamer_packing(
 ) const{
 	core::conformation::Residue const & this_residue= pose.residue(ligand_residue_id);
 	core::chemical::ResidueTypeSet const & rsd_type_set = this_residue.residue_type_set();
-	core::chemical::ResidueTypeCOPs allowed_types = rsd_type_set.name3_map( this_residue.name3() ); // a vector1
+	core::chemical::ResidueTypeCOPs allowed_types = rsd_type_set.name3_map_DO_NOT_USE( this_residue.name3() ); // a vector1
 
 	assert(allowed_types.size() > 0);
 	/// TODO consider removing this so resfiles can specify ligand mutations to allow

@@ -547,17 +547,17 @@ copy_residue_coordinates_and_rebuild_missing_atoms(
 				if(TR.Debug.visible()) TR.Debug << "copy_residue_coordinates_and_rebuild_missing_atoms: missing atom " << target_rsd.name() << ' ' << atom_name << std::endl;
 				any_missing=true;
 				missing[ia]=true;
-			}	
+			}
 		}
 		if ( any_missing ) {
 			target_rsd.fill_missing_atoms( missing, conformation );
 		}
-		
+
 		//Set side-chain dihedrals
 		for(core::Size i=1, imax=std::min( target_rsd.nchi(), source_rsd.nchi() ); i<=imax; ++i) { //Loop through all shared chi angles
 			target_rsd.set_chi(i, source_rsd.chi(i)); //Set side-chain dihedral.
 		}
-		
+
 	} else { //If we're trying to keep the sidechain atom position information
 		copy_residue_coordinates_and_rebuild_missing_atoms( source_rsd, target_rsd, conformation );
 	}
@@ -1307,7 +1307,7 @@ setup_links(
 
 	// natoms
 	Size const natoms( rsd.natoms() );
-	
+
 	////////////////
 	// chi atoms
 	BVec is_chi( natoms, false ); // vector bool
@@ -1834,34 +1834,14 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 		//TR << "We just added the DISULFIDE variant type as desired, since we are going from rn " << rn << " to disulfide type " << std::endl;
 		variant_types.push_back( "DISULFIDE" ); //chemical::DISULFIDE );	// creating a disulfide
 	}
-	
-	chemical::ResidueTypeCOPs possible_types = residue_type_set.name3_map( res.type().name3() );
 
-	// Run through all possible new residue types.
-	for ( chemical::ResidueTypeCOPs::const_iterator
-		type_iter = possible_types.begin(), type_end = possible_types.end();
-		type_iter != type_end; ++type_iter )
-	{
-		bool perfect_match( true ); // indicates this type has all the same variant types as the old residue
-		
-		//TR << "contemplating " << (*type_iter)->name() << std::endl;
-		for ( Size kk = 1; kk <= variant_types.size(); ++kk ) {
-			//TR << "checking for variant type " << variant_types[ kk ]<< std::endl;
-			if ( ! (*type_iter)->has_variant_type( variant_types[ kk ] ) ) {
-				perfect_match = false;
-				break;
-			}
-		}
-
-		if ( perfect_match ) { // Do replacement.
-			//TR << (*type_iter)->name() << " success!" << std::endl;
-			ResidueOP new_res = ResidueFactory::create_residue( **type_iter, res, conf );
-			copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
-			conf.replace_residue( index, *new_res, false );
-			//TR << "still in change cys state post residue replace, we observe that residues_[ ii_resid ]->has_variant_type( chemical::DISULFIDE ) is " << ( conf.residue( index ).has_variant_type( chemical::DISULFIDE ) ? " true " : " false " ) << std::endl;
-
-			return true;
-		}
+	// Get the residue type of the desired new residue type.
+	chemical::ResidueTypeCOP replacement_type( residue_type_set.get_representative_type_name3( res.type().name3(), variant_types ) );
+	if( replacement_type ) {
+		ResidueOP new_res = ResidueFactory::create_residue( *replacement_type, res, conf );
+		copy_residue_coordinates_and_rebuild_missing_atoms( res, *new_res, conf );
+		conf.replace_residue( index, *new_res, false );
+		return true;
 	}
 
 
@@ -1955,13 +1935,13 @@ form_disulfide(
 ) {
 	// Verify we're dealing with a FA conformation
 	runtime_assert( conformation.is_fullatom() );
-	
+
 	chemical::ResidueTypeSetCOP restype_set =
 	chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 
 	//std::string lcname = conformation.residue_type(lower_res).name3();
 	//std::string ucname = conformation.residue_type(upper_res).name3();
-	
+
 	// Break existing disulfide bonds to lower
 	if ( /*conformation.residue(lower_res).type().is_disulfide_bonded()
         &&*/ conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) // full atom residue
@@ -2019,10 +1999,10 @@ form_disulfide(
 	} else {
 		form_disulfide_helper(conformation, upper_res, restype_set); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
 	}
-	
+
 	//form_disulfide_helper(conformation, lower_res, restype_set); //This mutates the lower_res residue to a disulfide-forming variant, preserving other variant types in the process.
 	//form_disulfide_helper(conformation, upper_res, restype_set); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
-	
+
 	// Both residues are now CYD
 	runtime_assert( conformation.residue(lower_res).has_variant_type(chemical::DISULFIDE) );
 	runtime_assert( conformation.residue(upper_res).has_variant_type(chemical::DISULFIDE) );
@@ -2047,7 +2027,7 @@ void form_disulfide_helper(
 	core::chemical::ResidueTypeSetCOP restype_set
 ) {
 	std::string query_name = conformation.residue(res_index).name3(); //Name of the current residue
-	
+
 	// amw: This was not explicit enough to me and I briefly altered this function's semantics!
 	// If the residues aren't already a disulfide-forming type, we must make them one. Functions like
 	// disulfide insertion mover assume we do this.
@@ -2055,7 +2035,7 @@ void form_disulfide_helper(
 		 ! conformation.residue_type(res_index).is_sidechain_thiol() ) {
 		query_name = "CYS";
 	}
-	
+
 	//Get the list of variant types for this residue, so that the replacement has the same variant types.
 	utility::vector1< std::string > variant_types = conformation.residue(res_index).type().properties().get_list_of_variants();
 	//Add a disulfide variant type to the list, since we're turning CYS into CYD and so forth.
@@ -2069,8 +2049,8 @@ void form_disulfide_helper(
 	if ( !has_disulfide ) variant_types.push_back( "DISULFIDE" );
 
 	//Get the list of all possible residue types with the appropriate 3-letter code:
-	chemical::ResidueTypeCOPs possible_types = restype_set->name3_map( query_name );
-	
+	chemical::ResidueTypeCOPs possible_types = restype_set->name3_map_DO_NOT_USE( query_name );
+
 	//Loop through this list and find a residue type with all of the desired variant types.
 	//NOTE: There is no check here or in change_cys_state for whether ALL of the variant types that the
 	//new residue type has are in the variant_types list -- only the reverse.
@@ -2085,13 +2065,13 @@ void form_disulfide_helper(
 				break;
 			}
 		}
-		
+
 		if ( perfect_match1 ) {
 			lower_cyd = ResidueFactory::create_residue( *possible_types[ i ], conformation.residue( res_index ), conformation );
-			break;			
+			break;
 		}
 	}
-	
+
 	if ( !perfect_match1 ) {
 		utility_exit_with_message( "In core::conformation::form_disulfide() (in util.cc): Could not find a suitable residue type with variant types matching the residue that was there before." );
 	}
@@ -2122,7 +2102,7 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 		return false;
 
 	//std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
-	
+
 	//bonded
 	runtime_assert( A.type().has( A.type().get_disulfide_atom_name() ) ); //should be fa or centroid
 	Size a_connect_atom = A.atom_index( A.type().get_disulfide_atom_name() );

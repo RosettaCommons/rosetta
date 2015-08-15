@@ -138,13 +138,9 @@ switch_to_residue_type_set(
 			//	}
 			//}
 			else if ( rsd.name().substr(0,5)=="HIS_D" ) {
-				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
-				for (core::Size j=1; j<=rsd_types.size(); ++j ) {
-					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-					if ( new_rsd_type.name3()=="HIS" ) {
-						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-						break;
-					}
+				core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name3( rsd.name3() ) );
+				if( new_rsd_type && new_rsd_type->name3() == "HIS" ) { // Is it ever the case that it wouldn't be "HIS"?
+					new_rsd = core::conformation::ResidueFactory::create_residue( *new_rsd_type, rsd, pose.conformation() );
 				}
 			}
 			else  if (rsd.is_terminus()) {
@@ -164,20 +160,16 @@ switch_to_residue_type_set(
 				TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
 				<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
 
-				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
-				for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
-					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-					if ( rsd.type().name3()  == new_rsd_type.name3()  ) {
-						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-						break;
-					}
+				core::chemical::ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name3( rsd.name3() ) );
+				if( new_rsd_type && new_rsd_type->name3() == rsd.name3() ) { // Is it ever the case the name3's wouldn't match?
+					new_rsd = core::conformation::ResidueFactory::create_residue( *new_rsd_type, rsd, pose.conformation() );
 				}
-				if (  new_rsd ) {
+				if ( new_rsd ) {
 					TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd->name() << std::endl;
 				}
 				else {
 					//bug here?
-					utility_exit_with_message( "switch_to_cenrot_residue_type_set fails\n" );
+					utility_exit_with_message( "switch to "+type_set_name+" type set fails\n" );
 				}
 			}
 
@@ -280,35 +272,23 @@ switch_to_residue_type_set(
 		if( ( rsd.aa() == aa_unk ) || ( rsd.name().substr(0,5) == "HIS_D" ) ){
 			// ligand or metal ions are all defined as "UNK" AA, so check a rsdtype with same name
 			// for HIS_D tautomer, we want to keep its tautomer state
-			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name3() ) );
-			for (core::Size j=1; j<=rsd_types.size(); ++j ) {
-				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-				if ( rsd.type().name() == new_rsd_type.name() ) {
-					new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-					break;
-				}
+			if( target_residue_type_set->has_name( rsd.name() ) ) {
+				core::chemical::ResidueType const & new_rsd_type( target_residue_type_set->name_map( rsd.name() ) );
+				new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
 			}
 		} else  {
 			// for a normal AA/DNA/RNA residue, now look for a rsdtype with same variants
-			//TR << "amw investigating the name3 map of " << rsd.name().substr(0,3) << std::endl;
-			core::chemical::ResidueTypeCOPs const & rsd_types( target_residue_type_set->name3_map( rsd.name().substr(0,3) ) );
-			for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
-				core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-				if ( variants_match( rsd.type(), new_rsd_type ) ) {
-					new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-					break;
-				}
+			core::chemical::ResidueTypeCOP new_rsd_type( target_residue_type_set->get_representative_type_name3( rsd.name().substr(0,3), rsd.type().variant_types() ) );
+			if( new_rsd_type ) {
+				new_rsd = core::conformation::ResidueFactory::create_residue( *new_rsd_type, rsd, pose.conformation() );
 			}
 			if ( allow_sloppy_match ){
 				if ( ! new_rsd ) {
 					TR.Warning << "Did not find perfect match for residue: "  << rsd.name()
-					<< " at position " << i << ". Trying to find acceptable match. " << std::endl;
-					for ( core::Size j=1; j<= rsd_types.size(); ++j ) {
-						core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-						if ( rsd.type().name3()  == new_rsd_type.name3()  ) {
-							new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-							break;
-						}
+					<< "at position " << i << ". Trying to find acceptable match. " << std::endl;
+					core::chemical::ResidueTypeCOP new_rsd_type2( target_residue_type_set->get_representative_type_name3( rsd.name().substr(0,3) ) );
+					if( new_rsd_type2 && rsd.type().name3()  == new_rsd_type2->name3() ) { // Would the name3's ever not match?
+						new_rsd = core::conformation::ResidueFactory::create_residue( *new_rsd_type2, rsd, pose.conformation() );
 					}
 					if (  new_rsd ) {
 						TR.Warning << "Found an acceptable match: " << rsd.type().name() << " --> " << new_rsd->name() << std::endl;

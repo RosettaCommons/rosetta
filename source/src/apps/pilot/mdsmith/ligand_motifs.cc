@@ -28,7 +28,7 @@
 ////////////////////////////
 ////////////////////////////
 ////////////////////////////
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>

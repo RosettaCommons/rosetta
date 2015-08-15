@@ -174,15 +174,13 @@ nucleobase_probe_score_test()
 	if ( sample_another_adenosine_ || sample_phosphate_ ) add_another_virtual_res(pose); // this is the coordinate system for the next base.
 
 	if ( sample_water_ ) {
-		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "HOH" ) );
-		new_res = ( core::conformation::ResidueFactory::create_residue ( *(rsd_type_list[1]) ) );
+		new_res = ( core::conformation::ResidueFactory::create_residue ( *(residue_set.get_representative_type_name3( "HOH" )) ) );
 	} else if ( sample_another_adenosine_ ){
 		new_res = pose.residue(1).clone();
 	} else if ( sample_phosphate_ ) {
 		new_res = pose.residue(1).clone(); // tricky -- will add a packable phosphate and some other shenanigans later.
 	} else {
-		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( " CZ" ) ); // just a carbon atom.
-		new_res = ( core::conformation::ResidueFactory::create_residue ( *(rsd_type_list[1]) ) );
+		new_res = ( core::conformation::ResidueFactory::create_residue ( *(residue_set.get_representative_type_name3( " CZ" )) ) );
 	}
 
 	// doing some checks for hbonds & geom_sol are being calculated -- or not calculated.

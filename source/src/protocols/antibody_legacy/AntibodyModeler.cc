@@ -10,7 +10,7 @@
 /// @author Aroop Sircar ( aroopsircar@yahoo.com )
 
 
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragData.hh>

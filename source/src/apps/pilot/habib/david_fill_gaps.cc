@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <basic/MetricValue.hh>
@@ -132,7 +132,8 @@ std::set <std::string> interface;
     if (last > pose.pdb_info()->number(i)+1){
       for (int j = last-1; j > pose.pdb_info()->number(i); j--){
         std::cout<<seq[j-1]<<"\n";
-        core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
+				// The representative type should have no/minimal variants
+        core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
         pose.append_polymer_residue_after_seqpos(*new_rsd, i, false );
         pose.pdb_info()->number(i+2, pose.pdb_info()->number(i)-1);
@@ -142,7 +143,8 @@ std::set <std::string> interface;
     }else if (last < pose.pdb_info()->number(i)-1){
       for (int j = last+1; j < pose.pdb_info()->number(i); j++){
         std::cout<<seq[j-1]<<"\n";
-        core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
+				// The representative type should have no/minimal variants
+        core::chemical::ResidueTypeCOP new_rsd_type( rsd_set.get_representative_type_name1( seq[j-1] ) );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
         pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, false );
         pose.pdb_info()->number(i, pose.pdb_info()->number(i-1)+1);

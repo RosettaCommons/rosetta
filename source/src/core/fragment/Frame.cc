@@ -64,14 +64,16 @@ make_pose_from_sequence_(
 		char aa = sequence[seqpos-1]; // string indexing is zero-based!
 		//		std::cerr<<  aa << " aminoacid requested" << std::endl;
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
-		if ( rsd_type_list.size() == 0 ) {
-			std::cerr << " cannot find aminoacid " << my_aa << " from sequence " << sequence << " in Frame::fragment_from_pose() " << std::endl;
+		//ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
+		ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( my_aa ) );
+		if ( ! rsd_type ) {
+			tr.Error << " cannot find aminoacid " << my_aa << " from sequence " << sequence << " in Frame::fragment_from_pose() " << std::endl;
+			utility_exit_with_message( "Cannot get residue type" );
 		}
-		runtime_assert( rsd_type_list.size() );
-		Size best_index = 1;
-		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
-		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
+		//runtime_assert( rsd_type_list.size() );
+		//Size best_index = 1;
+		//ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( *rsd_type ) );
 		if ( seqpos == 1 ) {
 			pose.append_residue_by_jump( *new_rsd, 1 );
 		} else {

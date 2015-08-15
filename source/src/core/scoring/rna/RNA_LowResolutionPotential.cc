@@ -925,7 +925,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
 	RNA_CentroidInfo rna_centroid_info;
 
-	ResidueOP rsd = ResidueFactory::create_residue( *( rsd_set->aa_map( na_rad ) )[1] );
+	ResidueOP rsd = ResidueFactory::create_residue( *( rsd_set->get_representative_type_aa( na_rad ) ) );
 	Vector const & centroid_i = rna_centroid_info.get_base_centroid( *rsd );
 	kinematics::Stub const & stub_i = rna_centroid_info.get_base_coordinate_system( *rsd, centroid_i );
 	Matrix const & M_i( stub_i.M );
@@ -2172,8 +2172,7 @@ RNA_LowResolutionPotential::fill_atom_numbers_for_backbone_oxygens( chemical::Re
 {
 	using namespace core::chemical;
 
-	ResidueTypeCOPs const & rsd_types( rsd_set.lock()->aa_map( aa ) );
-	ResidueTypeCOP const & rsd_type = rsd_types[ 1 ]; //This better work.
+	ResidueTypeCOP const & rsd_type( rsd_set.lock()->get_representative_type_aa( aa ) );
 
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		atom_numbers_for_backbone_score_calculations_.push_back( rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) );
@@ -2187,8 +2186,7 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 {
 	using namespace core::chemical;
 
-	ResidueTypeCOPs const & rsd_types( rsd_set.lock()->aa_map( aa ) );
-	ResidueTypeCOP const &  rsd_type = rsd_types[ 1 ]; //This better work.
+	ResidueTypeCOP const & rsd_type( rsd_set.lock()->get_representative_type_aa( aa ) );
 
 	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		if ( atom_numbers_for_backbone_score_calculations_[m] != rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) ) return false;

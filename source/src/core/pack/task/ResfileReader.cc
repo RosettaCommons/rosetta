@@ -1111,7 +1111,7 @@ NC::residue_action(
 ) const
 {
 	core::chemical::ResidueTypeSet const & residue_set = task.residue_task( resid ).get_original_residue_set();
-	if ( residue_set.interchangeability_group_map( nc_to_include_ ).size() != 0 ){
+	if ( residue_set.has_interchangeability_group( nc_to_include_ ) ){
 		task.nonconst_residue_task(resid).allow_noncanonical_aa( nc_to_include_ );
 	}	else {
 		std::stringstream err_msg;

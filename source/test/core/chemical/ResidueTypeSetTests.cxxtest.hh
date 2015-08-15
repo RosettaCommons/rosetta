@@ -64,11 +64,11 @@ public:
 		ResidueTypeSetOP rs;
 		rss = FA_STANDARD;
 		rs = ChemicalManager::get_instance()->nonconst_residue_type_set(rss ).get_self_ptr();
-		TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
+		TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
 		//rss = CENTROID;
 		//rs = ChemicalManager::get_instance()->residue_type_set(rss );
-		//TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
+		//TR << A(width, rss) << I(width,rs->residue_types_DO_NOT_USE().size()) << endl;
 
 		ResidueType const & serine = rs->name_map( "SER" );
 		TS_ASSERT_DELTA(serine.mass(), 87.0900, delta_percent);
@@ -78,23 +78,23 @@ public:
 		modser->name( "bigser" );
 
 		//get some stuff from the residue type set
-		core::Size n_res_types = rs->residue_types().size();
-		core::Size n_ser_types = rs->name3_map( "SER" ).size();
-		core::Size n_gln_types = rs->name3_map( "GLN" ).size();
-		core::Size n_ser_aa = rs->aa_map( aa_ser ).size();
-		//ResidueTypeCOP pointer10 = rs->residue_types()[10];
+		core::Size n_res_types = rs->residue_types_DO_NOT_USE().size();
+		core::Size n_ser_types = rs->name3_map_DO_NOT_USE( "SER" ).size();
+		core::Size n_gln_types = rs->name3_map_DO_NOT_USE( "GLN" ).size();
+		core::Size n_ser_aa = rs->aa_map_DO_NOT_USE( aa_ser ).size();
+		//ResidueTypeCOP pointer10 = rs->residue_types_DO_NOT_USE()[10];
 
 		//now change the residue type set
 		rs->add_residue_type( modser );
 
 		//now make sure everything is as should be
-		TS_ASSERT( n_res_types + 1 == rs->residue_types().size());
-		TS_ASSERT( n_ser_types + 1 == rs->name3_map( "SER" ).size()  );
-		TS_ASSERT( n_gln_types == rs->name3_map( "GLN" ).size() );
-		TS_ASSERT( n_ser_aa + 1 == rs->aa_map( aa_ser ).size() );
+		TS_ASSERT( n_res_types + 1 == rs->residue_types_DO_NOT_USE().size());
+		TS_ASSERT( n_ser_types + 1 == rs->name3_map_DO_NOT_USE( "SER" ).size()  );
+		TS_ASSERT( n_gln_types == rs->name3_map_DO_NOT_USE( "GLN" ).size() );
+		TS_ASSERT( n_ser_aa + 1 == rs->aa_map_DO_NOT_USE( aa_ser ).size() );
 		TS_ASSERT( rs->has_name("bigser") );
 
-		//ResidueTypeCOP * newpointer10 = &(rs->residue_types()[10]);
+		//ResidueTypeCOP * newpointer10 = &(rs->residue_types_DO_NOT_USE()[10]);
 		//TR << "old pointer addr is " << pointer10 << ", new pointer addr is " << newpointer10 << std::endl;
 		//TS_ASSERT( pointer10 == newpointer10 );
 	}
@@ -143,10 +143,10 @@ public:
 
 		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
 		std::vector< std::string > extra_patch_files;
-		
+
 		ResidueTypeSetOP rtset( new ResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
 		rtset->init( extra_params_files, extra_patch_files );
-		
+
 		TS_ASSERT(rtset->has_name("QC1"));
 		TS_ASSERT(rtset->has_name3("QC1"));
 

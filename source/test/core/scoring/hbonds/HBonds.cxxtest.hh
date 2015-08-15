@@ -351,7 +351,7 @@ public:
 //
 //
 //			// iterate through all donor possible donor and acceptor pairs
-//			for( ResidueTypeSet::const_residue_iterator don_rsdtype_it=rset->all_residues_begin(), edon_rsdtype_it=rset->all_residues_end();
+//			for( ResidueTypeSet::const_residue_iterator don_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), edon_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
 //					 don_rsdtype_it!=edon_rsdtype_it; ++don_rsdtype_it ) {
 //
 //				conformation::Residue don_rsd( *(don_rsdtype_it->second), false /*dummy arg*/);
@@ -360,7 +360,7 @@ public:
 //					Size const datm(don_rsd.atom_base(*hnum));
 //					HBDonChemType don_chem_type( get_hb_don_chem_type(datm, don_rsd));
 //
-//					for( ResidueTypeSet::const_residue_iterator acc_rsdtype_it=rset->all_residues_begin(), eacc_rsdtype_it=rset->all_residues_end();
+//					for( ResidueTypeSet::const_residue_iterator acc_rsdtype_it=rset->all_residues_begin_DO_NOT_USE(), eacc_rsdtype_it=rset->all_residues_end_DO_NOT_USE();
 //							 acc_rsdtype_it!=eacc_rsdtype_it; ++acc_rsdtype_it ) {
 //						conformation::Residue acc_rsd( *(acc_rsdtype_it->second), false /*dummy arg*/);
 //						for ( AtomIndices::const_iterator	anum  = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();

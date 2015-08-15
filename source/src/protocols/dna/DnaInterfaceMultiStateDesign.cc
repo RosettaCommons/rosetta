@@ -27,7 +27,8 @@
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
@@ -421,9 +422,8 @@ DnaInterfaceMultiStateDesign::add_dna_states(
 	// temporary copy of Pose used to build DNA target and competitor states
 	Pose mutpose( pose );
 	ResidueTypeSet const & rts( mutpose.residue(1).residue_type_set() );
-	ResidueTypeCOPs dna_types(
-		ResidueSelector().set_property("DNA").exclude_variants().select( rts )
-	);
+
+	ResidueTypeCOPs dna_types = ResidueTypeFinder( rts ).base_property( DNA ).get_possible_base_residue_types();
 
 	TR(t_info) << "\nBuilding dna target state:\n";
 

@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>

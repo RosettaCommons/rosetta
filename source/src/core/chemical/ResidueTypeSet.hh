@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueSelector.fwd.hh>
+#include <core/chemical/ResidueTypeSelector.fwd.hh>
 
 // STL headers
 #include <list>
@@ -36,6 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
+#include <set>
 
 //Auto Headers
 #include <core/chemical/Adduct.fwd.hh>
@@ -156,11 +157,15 @@ public:
 
 	/// @brief query ResidueTypes by their interchangeability-group name
 	ResidueTypeCOPs const &
-	interchangeability_group_map( std::string const & name ) const;
+	interchangeability_group_map_DO_NOT_USE( std::string const & name ) const;
+
+	/// @brief Does this ResidueTypeSet have ResidueTypes with the given interchangability group?
+	bool
+	has_interchangeability_group( std::string const & name ) const;
 
 	/// @brief query ResidueTypes by their 3-letter name
 	ResidueTypeCOPs const &
-	name3_map( std::string const & name ) const;
+	name3_map_DO_NOT_USE( std::string const & name ) const;
 
 	/// @brief query ResidueType by its unique residue id.
 	///
@@ -169,6 +174,76 @@ public:
 	virtual
 	ResidueType const &
 	name_map( std::string const & name ) const;
+
+	/// @brief Get the base ResidueType with the given aa type
+	/// @details Returns 0 if one does not exist.
+	ResidueTypeCOP
+	get_representative_type_aa( AA aa ) const;
+
+	/// @brief Get the base ResidueType with the given name1
+	/// @details Returns 0 if one does not exist.
+	ResidueTypeCOP
+	get_representative_type_name1( char name1 ) const;
+
+	/// @brief Get the base ResidueType with the given name3
+	/// @details Returns 0 if one does not exist.
+	ResidueTypeCOP
+	get_representative_type_name3( std::string const &  name3 ) const;
+
+	/// @brief Get the base ResidueType with the given aa type and variants
+	/// @details Returns 0 if one does not exist.
+	/// The returned type will have at least all the variants given, but may have more
+	/// if a minimal variant type isn't availible.
+	ResidueTypeCOP
+	get_representative_type_aa( AA aa, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Get the base ResidueType with the given name1 and variants
+	/// @details Returns 0 if one does not exist.
+	/// The returned type will have at least all the variants given, but may have more
+	/// if a minimal variant type isn't availible.
+	ResidueTypeCOP
+	get_representative_type_name1( char name1, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Get the base ResidueType with the given name3 and variants
+	/// @details Returns 0 if one does not exist.
+	/// The returned type will have at least all the variants given, but may have more
+	/// if a minimal variant type isn't availible.
+	ResidueTypeCOP
+	get_representative_type_name3( std::string const &  name3, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Gets all non-patched types with the given aa type
+	ResidueTypeCOPs
+	get_base_types_aa( AA aa ) const;
+
+	/// @brief Get all non-patched ResidueTypes with the given name1
+	ResidueTypeCOPs
+	get_base_types_name1( char name1 ) const;
+
+	/// @brief Get all non-patched ResidueTypes with the given name3
+	ResidueTypeCOPs
+	get_base_types_name3( std::string const &  name3 ) const;
+
+	/// @brief Check if a base type (like "SER") generates any types with another name3 (like "SEP")
+	bool
+	generates_patched_residue_type_with_name3( std::string const base_residue_name, std::string const name3 ) const;
+
+	/// @brief Gets all types with the given aa type and variants
+	/// @details The number of variants must match exactly.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	ResidueTypeCOPs
+	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Get all non-patched ResidueTypes with the given name1
+	/// @details The number of variants must match exactly.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	ResidueTypeCOPs
+	get_all_types_with_variants_name1( char name1, utility::vector1< std::string > const & variants ) const;
+
+	/// @brief Get all non-patched ResidueTypes with the given name3
+	/// @details The number of variants must match exactly.
+	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
+	ResidueTypeCOPs
+	get_all_types_with_variants_name3( std::string const &  name3, utility::vector1< std::string > const & variants ) const;
 
 	// IF YOU COMMENT THIS BACK IN, TELL ME WHY BY EMAIL: aleaverfay@gmail.com
 	///// @brief query ResidueType by its unique residue id returning a non-const reference to that ResidueType
@@ -189,24 +264,22 @@ public:
 			ResidueType const & init_rsd,
 			VariantType const new_type ) const;
 
-
 	/// @brief return the residuetype we get from variant rsd type after removing the desired variant type
 	ResidueType const & get_residue_type_with_variant_removed(
 			ResidueType const & init_rsd,
 			VariantType const old_type ) const;
-
 
 	/// @brief query ResidueTypes by their AA enum type
 	///
 	/// @details similar to name3_map, return all matched residue types
 	/// or an empty list.
 	ResidueTypeCOPs const &
-	aa_map( AA const & aa ) const;
+	aa_map_DO_NOT_USE( AA const & aa ) const;
 
 	/// @brief select a set of ResidueTypes give certain criteria
 	void
-	select_residues(
-		ResidueSelector const & selector,
+	select_residues_DO_NOT_USE(
+		ResidueTypeSelector const & selector,
 		ResidueTypeCOPs & matches
 	) const;
 
@@ -219,20 +292,20 @@ public:
 	aas_defined_end() const;
 
 	const_residue_iterator
-	all_residues_begin() const
+	all_residues_begin_DO_NOT_USE() const
 	{
 		return name_map_.begin();
 	}
 
 	const_residue_iterator
-	all_residues_end() const
+	all_residues_end_DO_NOT_USE() const
 	{
 		return name_map_.end();
 	}
 
 	/// alternate access to all residuetypes as vector
 	ResidueTypeCOPs const &
-	residue_types() const
+	residue_types_DO_NOT_USE() const
 	{
 		return residue_types_;
 	}
@@ -243,6 +316,19 @@ public:
 	{
 		return database_directory_;
 	}
+
+	/// @brief the residues with no patches applied
+	ResidueTypeCOPs base_residue_types() const { return base_residue_types_; }
+
+	/// @brief the patches
+	utility::vector1< PatchCOP > const & patches() const { return patches_; }
+
+	/// @brief the patches, index by name.
+	std::map< std::string, utility::vector1< PatchCOP > > const & patch_map() const { return patch_map_; }
+
+	/// @brief apply patch -- look in ResidueTypeSet if it exists already.
+	ResidueTypeCOP
+	get_residue_type_with_patch( PatchCOP patch, ResidueTypeCOP rsd_type ) const;
 
 	//////////////////
 	// private methods
@@ -262,11 +348,24 @@ private:
 	void
 	remove_residue_type_from_maps(ResidueTypeCOP rsd);
 
-	void
+	bool
 	make_sure_instantiated( ResidueTypeCOP const & rsd_type ) const;
 
-	void
+	bool
 	make_sure_instantiated( ResidueTypeCOPs const & rsd_types ) const;
+
+	void
+	figure_out_last_patch_from_name( std::string const rsd_name,
+																	 std::string & rsd_name_base,
+																	 std::string & patch_name ) const;
+
+	/// @brief helper function used during replacing residue types after, e.g., orbitals.
+	void
+	update_base_residue_types_if_replaced( ResidueTypeCOP rsd_type, ResidueTypeCOP rsd_type_new );
+
+	/// @brief replace residue type -- pointer will stay the same, but the residue type information will change; useful for instantiating placeholders.
+	void
+	replace_residue_type_in_set_defying_constness( ResidueTypeCOP rsd_type, ResidueType const & rsd_new ) const;
 
 	//////////////////
 	// data
@@ -302,6 +401,9 @@ private:
 	/// @brief map to ResidueType pointers by unique residue id
 	std::map< std::string, ResidueTypeCOP > name_map_;
 
+	/// @brief caching queries based on aa & variants to avoid recomputation with ResidueTypeFinder
+	mutable std::map< std::pair< AA, utility::vector1< std::string > >, ResidueTypeCOPs > cached_aa_variants_map_;
+
 	/// @brief map to ResidueType pointers that were replaced during application
 	//  Do not delete yet -- may revive later to 'properly' handle replace_residue_types -- rhiju.
 	//	std::map< std::string, ResidueTypeCOP > replaced_name_map_;
@@ -311,6 +413,10 @@ private:
 
 	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
 	const std::string database_directory_;
+
+	/// @brief the residues with no patches applied
+	ResidueTypeCOPs base_residue_types_;
+	std::map< std::string, std::set< std::string > > name3_generated_by_base_residue_name_;
 
 	/// @brief the patches
 	utility::vector1< PatchCOP > patches_;

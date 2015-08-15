@@ -74,7 +74,8 @@
 // C++ headers
 #include <map>
 #include <functional>
-#include <string>
+#include <core/chemical/VariantType.hh>
+#include <utility/vector1.hh>
 
 // External headers
 #include <boost/graph/adjacency_list.hpp>
@@ -1621,7 +1622,7 @@ public:
 		return properties_->is_variant_type( variant_type );
 	}
 
-	// TODO: Find a way to remove this; it only exists because of how ResidueSelectors are currently written. ~Labonte
+	// TODO: Find a way to remove this; it only exists because of how ResidueTypeSelectors are currently written. ~Labonte
 	/// @brief  Generic variant access by string.
 	bool
 	has_variant_type( std::string const & variant_type ) const
@@ -1629,13 +1630,13 @@ public:
 		return properties_->is_variant_type( variant_type );
 	}
 
-
 	/// @brief  Turn on the ability to create VariantTypes "on-the-fly".
 	void enable_custom_variant_types();
 
-
-	///////////////////////////////////////////////////////////////////////////
-
+	/// @brief get all the variant types for this ResidueType
+	///         -- rhiju (merging roccomoretti/restypeset_fiddle)
+ 	utility::vector1< std::string >
+ 	variant_types() const;
 
 	/// @brief set our aa-type (could be "UNK")
 	void

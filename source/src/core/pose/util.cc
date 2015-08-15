@@ -485,11 +485,11 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 								          core::chemical::ChemicalManager::get_instance()->residue_type_set
 	                            ( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 	                                                    );
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	if (rsd_type_list.size() == 0) {
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
+	if ( ! rsd_type ) {
 		utility_exit_with_message("Cannot find residue type VRT" );
 	}
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 	// move to <xyz>
 	for ( Size j=1; j<= new_res->natoms(); ++j ) {

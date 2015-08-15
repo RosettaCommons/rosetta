@@ -37,6 +37,8 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/string_util.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 
 namespace core {
 namespace chemical {
@@ -273,17 +275,7 @@ variants_match_with_exceptions(
 	using namespace utility;
 
 	for ( VariantType variant = FIRST_VARIANT; variant <= N_VARIANTS; ++variant ) {
-		Size const n_variants_to_ignore( list_of_variants_to_ignore.size() );
-		bool ignore_this_variant( false );
-		for ( core::uint i = 1; i <= n_variants_to_ignore; ++i ) {
-			if ( variant == list_of_variants_to_ignore[ i ] ) {
-				ignore_this_variant = true;
-				break;
-			}
-		}
-		if ( ignore_this_variant ) {
-			continue;
-		}
+		if ( list_of_variants_to_ignore.has_value( variant ) ) continue;
 		if ( res1.properties().is_variant_type( variant ) != res2.properties().is_variant_type( variant ) ) {
 			return false;
 		}
@@ -309,6 +301,13 @@ variants_match_with_exceptions(
 	return true;
 }
 
+/// @brief   check if user has set -pH_mode.
+/// @details used to determine exceptions to PROTONATION/DEPROTONAT in variants_match.
+bool
+make_pH_mode_exceptions() {
+	using namespace basic::options;
+	return option[ OptionKeys::pH::pH_mode ].user();
+}
 
 // Are these two residues patched in exactly the same way?
 /// @details If pH mode is being used, this function returns true, even if the two residues compared have different
@@ -316,11 +315,10 @@ variants_match_with_exceptions(
 bool
 variants_match( ResidueType const & res1, ResidueType const & res2 )
 {
-	using namespace basic::options;
 	using namespace utility;
 
 	vector1< VariantType > exceptions;
-	if ( option[ OptionKeys::pH::pH_mode ].user() ) {
+	if ( make_pH_mode_exceptions() ) {
 		exceptions.push_back( PROTONATED );
 		exceptions.push_back( DEPROTONATED );
 	}
@@ -335,6 +333,56 @@ nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 )
 	return variants_match_with_exceptions( res1, res2, utility::vector1< VariantType >( 1, ADDUCT_VARIANT ) );
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+///
+/// @brief look for best match to atom_names
+/// @details taken out of build_pose_as_is1
+///  rsd_type should have all the atoms present in xyz
+///  try to minimize atoms missing from xyz
+ResidueTypeCOP
+find_best_match( ResidueTypeCOPs const & rsd_type_list,
+								 utility::vector1< std::string > const & atom_names,
+								 bool const ignore_atom_named_H /* = false */ )
+{
+
+	using namespace core::chemical;
+	Size best_index(0), best_rsd_missing( 99999 ), best_xyz_missing( 99999 );
+	for ( Size j=1; j <= rsd_type_list.size(); j++ ) {
+
+		ResidueType const & rsd_type( *(rsd_type_list[j]) );
+
+		Size rsd_missing( 0 ), xyz_missing( 0 );
+
+		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
+			bool found_match( false );
+			for ( Size m = 1; m <= atom_names.size(); ++m ) {
+				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
+					found_match = true;	break;
+				}
+			}
+			if ( !found_match ) ++xyz_missing;
+		}
+
+		for ( Size n = 1; n <= atom_names.size(); n++ ) {
+			std::string const & atom_name = atom_names[ n ];
+			if ( !rsd_type.has( ObjexxFCL::stripped_whitespace( atom_name ) ) &&
+					 !( atom_name == " H  " && ignore_atom_named_H ) ) { // don't worry about missing BB H if Nterm
+				++rsd_missing;
+				}
+			}
+
+		if ( ( rsd_missing < best_rsd_missing ) ||
+				 ( rsd_missing == best_rsd_missing && xyz_missing < best_xyz_missing ) ) {
+			best_rsd_missing = rsd_missing;
+			best_xyz_missing = xyz_missing;
+			best_index = j;
+		}
+	} // j=1,rsd_type_list.size()
+
+	return  rsd_type_list[ best_index ];
+}
 
 //////////////////////////////////////
 // rhiju/fang -- Use larger LJ_WDEPTH for protons to avoid clashes in RNA

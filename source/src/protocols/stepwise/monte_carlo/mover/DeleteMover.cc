@@ -173,8 +173,8 @@ namespace mover {
 				// Creating a single virtual residue, with res_list cleared, acts as a very
 				// special case, and rest of the SWA_MonteCarlo code checks for res_list.size().
 				core::chemical::ResidueTypeSet const & residue_set = pose.residue_type( 1 ).residue_type_set();
-				core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map( "VRT" ) );
-				core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+				core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3( "VRT" ) );
+				core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 				pose.clear();
 				pose.append_residue_by_bond( *new_res );
 

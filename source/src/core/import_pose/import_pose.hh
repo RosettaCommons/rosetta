@@ -27,6 +27,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
 #include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -278,6 +279,14 @@ void build_pose_as_is(
 	io::pdb::FileData & fd, // const?  naaaaah
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
+	ImportPoseOptions const & options
+);
+
+void build_pose_as_is2(
+	io::pdb::FileData & fd,
+	pose::Pose & pose,
+	chemical::ResidueTypeSet const & residue_set,
+	id::AtomID_Mask & missing,
 	ImportPoseOptions const & options
 );
 

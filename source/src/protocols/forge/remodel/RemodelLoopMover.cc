@@ -1144,7 +1144,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				stage3_cycles = 10;
 				stage4_cycles = 10;
 		}
-		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked. 
+		//NOTE: Absolutely no optimization went into picking the number of fragments per cycle. The value was arbritraily picked.
 		abinitio_stage( pose, 9, movemap,sfxStage0_OP,1,stage1_cycles,sampleSubsetResidues ,true,"9mers_loops",false,fragScoreThreshold);
 		abinitio_stage( pose, 3, movemap,sfxStage0_OP,1,stage2_cycles,sampleSubsetResidues ,true,"3mers_loops",false,fragScoreThreshold);
 		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,stage3_cycles,sampleAllResidues,true,"9mers_allPos",false,fragScoreThreshold);
@@ -3353,9 +3353,8 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 		for(Size ii=1; ii<=swap_sequence.size(); ++ii){
 		  char aa = swap_sequence[ii-1];
 		  AA my_aa = aa_from_oneletter_code( aa );
-			ResidueTypeSetCOP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
-		  ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
-		  ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
+			ResidueTypeSetCAP const &residue_set(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID ));
+		  ResidueType const & rsd_type( *( residue_set.lock()->get_representative_type_aa( my_aa ) ) );
 		  if(option[OptionKeys::remodel::repeat_structure].user()){
 				replace_pose_residue_copying_existing_coordinates(pose,ii,rsd_type);//pose has two coppies. This is the first
 				replace_pose_residue_copying_existing_coordinates(pose,ii+swap_sequence.size(),rsd_type);

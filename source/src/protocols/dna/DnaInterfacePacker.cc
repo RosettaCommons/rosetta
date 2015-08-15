@@ -553,7 +553,7 @@ DnaInterfacePacker::add_complementary_sequence( ResTypeSequence & sequence )
 		// find the complement type in the current typeset
 		ResidueTypeCOP type( postype->second );
 		ResidueTypeSet const & typeset( type->residue_type_set() );
-		ResidueTypeCOP comptype( typeset.aa_map( dna_base_partner( type->aa() ) ).front() );
+		ResidueTypeCOP comptype( typeset.get_representative_type_aa( dna_base_partner( type->aa() ) ) );
 		complement[ comppos ] = comptype;
 	}
 	// append this temporary bottom-stranded sequence to the original top-stranded sequence
@@ -1046,12 +1046,12 @@ DnaInterfacePacker::protein_scan( Pose & pose )
 	ResidueTypeSet const & rts( pose.residue(1).residue_type_set() );
 	for ( std::string::const_iterator typechar( typestring.begin() );
 		typechar != typestring.end(); ++typechar ) {
-		ResidueTypeCOPs aas( rts.aa_map( aa_from_oneletter_code( *typechar ) ) );
-		if ( aas.empty() ) {
+		ResidueTypeCOP aa_type( rts.get_representative_type_aa( aa_from_oneletter_code( *typechar ) ) );
+		if ( ! aa_type ) {
 			TR(t_warning) << "no ResidueType found in ResidueTypeSet for " << *typechar << std::endl;
 			runtime_assert(false);
 		}
-		allowed_type_caps.push_back( aas.front() );
+		allowed_type_caps.push_back( aa_type );
 	}
 	runtime_assert( !allowed_type_caps.empty() );
 

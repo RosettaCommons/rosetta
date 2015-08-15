@@ -112,8 +112,8 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root /*= true */ ) {
 	// attach virt res there
 	//	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
-	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3( "VRT" ) );
+	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
 	pose.append_residue_by_jump ( *new_res , 1 );
 
 	// make the virt atom the root
@@ -130,8 +130,8 @@ add_another_virtual_res ( core::pose::Pose & pose ) {
 	// attach virt res there
 	//	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
-	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
-	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3( "VRT" ) );
+	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type ) );
 	pose.append_residue_by_jump ( *new_res , pose.total_residue() );
 }
 

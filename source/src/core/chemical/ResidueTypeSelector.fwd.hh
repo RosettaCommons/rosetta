@@ -10,8 +10,8 @@
 /// @file
 /// @author Phil Bradley
 
-#ifndef INCLUDED_core_chemical_ResidueSelector_fwd_hh
-#define INCLUDED_core_chemical_ResidueSelector_fwd_hh
+#ifndef INCLUDED_core_chemical_ResidueTypeSelector_fwd_hh
+#define INCLUDED_core_chemical_ResidueTypeSelector_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -19,11 +19,11 @@
 namespace core {
 namespace chemical {
 
-class ResidueSelectorSingle;
-typedef utility::pointer::shared_ptr< ResidueSelectorSingle > ResidueSelectorSingleOP;
+class ResidueTypeSelectorSingle;
+typedef utility::pointer::shared_ptr< ResidueTypeSelectorSingle > ResidueTypeSelectorSingleOP;
 
-class ResidueSelector;
-typedef utility::pointer::shared_ptr< ResidueSelector > ResidueSelectorOP;
+class ResidueTypeSelector;
+typedef utility::pointer::shared_ptr< ResidueTypeSelector > ResidueTypeSelectorOP;
 
 } // chemical
 } // core

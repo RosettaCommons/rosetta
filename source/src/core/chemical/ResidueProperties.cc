@@ -91,6 +91,7 @@ ResidueProperties::has_property( std::string const & property ) const
 	using namespace std;
 	using namespace utility::excn;
 
+	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See has_variant_type. -- rhiju
 	try {
 		return general_property_status_[ get_property_from_string( property ) ];
 	} catch ( EXCN_Msg_Exception const & e ) {
@@ -105,6 +106,7 @@ ResidueProperties::set_property( std::string const & property, bool const settin
 	using namespace std;
 	using namespace utility::excn;
 
+	// should we use NO_PROPERTY return value instead of exception catching? Would aid in gdb/lldb debugging to not use exceptions for this. See set_variant_type. -- rhiju
 	try {
 		general_property_status_[ get_property_from_string( property ) ] = setting;
 	} catch ( EXCN_Msg_Exception const & e ) {
@@ -119,11 +121,12 @@ ResidueProperties::is_variant_type( std::string const & variant_type ) const
 	using namespace std;
 	using namespace utility::excn;
 
-	try {
-		return variant_type_status_[ get_variant_from_string( variant_type ) ];
-	} catch ( EXCN_Msg_Exception const & e ) {
+	VariantType vtype = get_variant_from_string( variant_type );
+	if ( vtype != NO_VARIANT ) {
+		return variant_type_status_[ vtype ];
+	} else {
 		if ( ! has_custom_variant_types_ ) {
-			TR.Warning << e.msg() << endl;
+			TR.Debug << "Rosetta does not recognize the variant: " << variant_type << "; has it been added to variant_types.list?" << std::endl;
 		} else {
 			return custom_variant_types_.has_value( variant_type );
 		}
@@ -138,11 +141,13 @@ ResidueProperties::set_variant_type( std::string const & variant_type, bool cons
 	using namespace utility;
 	using namespace utility::excn;
 
-	try {
-		variant_type_status_[ get_variant_from_string( variant_type ) ] = setting;
-	} catch ( EXCN_Msg_Exception const & e ) {
+
+	VariantType vtype = get_variant_from_string( variant_type );
+	if ( vtype != NO_VARIANT ) {
+		variant_type_status_[ vtype ] = setting;
+	} else {
 		if ( ! has_custom_variant_types_ ) {
-			utility_exit_with_message( e.msg() );
+			utility_exit_with_message( "Rosetta does not recognize the variant: " + variant_type + "; has it been added to variant_types.list?" );
 		} else {
 			if ( setting /* == true */ ) {
 				if ( custom_variant_types_.has_value( variant_type ) ) {

@@ -463,8 +463,8 @@ FullatomCustomPairDistanceEnergy::set_pair_and_func_map()
 
 			// get all possible residue types for each residue pair
 			for (Size i = 1; i <= resA.size(); ++i) {
-				ResidueTypeCOPs const & possible_res_types_a = restype_set->name3_map( resA[i] );
-				ResidueTypeCOPs const & possible_res_types_b = restype_set->name3_map( resB[i] );
+				ResidueTypeCOPs const & possible_res_types_a = restype_set->name3_map_DO_NOT_USE( resA[i] );
+				ResidueTypeCOPs const & possible_res_types_b = restype_set->name3_map_DO_NOT_USE( resB[i] );
 				for ( Size j = 1; j <= possible_res_types_a.size(); ++j ) {
 					ResidueTypeCOP const & rsd_type_a = possible_res_types_a[ j ];
 					Size atom_index_a = rsd_type_a->atom_index( atomA[i] );

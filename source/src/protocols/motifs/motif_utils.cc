@@ -27,7 +27,7 @@
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -1071,13 +1071,12 @@ for ( int r=1; r<= 2; ++r ) {
 	assert( existing_residue.is_DNA() );
 
 	// search for the matching residue type
-	ResidueTypeCOPs rsd_types
-		( ResidueSelector().set_aa( aa ).match_variants( existing_residue.type() ).select( residue_set ) );
-	if ( rsd_types.size() != 1 ) {
+	ResidueTypeCOP rsd_type( residue_set.get_representative_type_aa( aa, existing_residue.type().variant_types() ) );
+	if ( rsd_type == 0 ) {
 		utility_exit_with_message("couldnt find residuetype for basepair mutation!");
 	}
 
-	ResidueOP rsd = ResidueFactory::create_residue( *(rsd_types[1]), existing_residue, pose.conformation() );
+	ResidueOP rsd = ResidueFactory::create_residue( *rsd_type, existing_residue, pose.conformation() );
 	rsd->set_chi( 1, existing_residue.chi(1) );
 
 	pose.replace_residue( pos, *rsd, false );

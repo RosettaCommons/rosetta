@@ -21,6 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/AA.hh>
 
 #include <string>
 
@@ -40,6 +41,7 @@ void parse_sequence(
 
 /// @brief Get the real length of a annotated sequence
 Size get_sequence_len( std::string const & sequence_in );
+
 
 /// @brief return a list of ResidueTypes corresponding to an annotated protein sequence
 /// @param[in] sequence_in an annotated sequence
@@ -122,6 +124,19 @@ pose::PoseOP pose_from_saccharide_sequence( std::string const & sequence,
 std::string annotated_to_oneletter_sequence(
 	std::string const & annotated_seq
 );
+
+/// @brief use efficient residue type finder to find simplest residue type with this AA & requested termini.
+core::chemical::ResidueTypeCOP
+get_rsd_type_from_aa( chemical::ResidueTypeSet const & residue_set,
+											core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
+
+core::chemical::ResidueTypeCOP
+get_rsd_type_from_aa_legacy( chemical::ResidueTypeSet const & residue_set,
+														 core::chemical::AA const & my_aa, bool const & is_lower_terminus, bool const & is_upper_terminus );
+
+core::chemical::ResidueTypeCOP
+handle_disulfide_variant_name_for_backwards_compatibility( core::chemical::ResidueTypeSet const & residue_set,
+																													 std::string const fullname );
 
 
 } // namespace core

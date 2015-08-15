@@ -28,7 +28,7 @@ using namespace protocols::dna;
 
 #include <devel/init.hh>
 #include <core/types.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -98,7 +98,7 @@ add_dna_states(
 	pose::Pose mutpose( pose );
 	ResidueTypeSet const & rts( mutpose.residue(1).residue_type_set() );
 	ResidueTypeCOPs dna_types(
-		ResidueSelector().set_property("DNA").exclude_variants().select( rts )
+		ResidueTypeSelector().set_property("DNA").exclude_variants().select( rts )
 	);
 
 	// get DNA chains info

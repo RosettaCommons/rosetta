@@ -52,7 +52,7 @@
 
 // #include <core/types.hh>
 
-// #include <core/chemical/ResidueSelector.hh>
+// #include <core/chemical/ResidueTypeSelector.hh>
 // #include <core/chemical/AtomTypeSet.hh>
 // #include <core/chemical/MMAtomTypeSet.hh>
 // #include <core/chemical/AA.hh>

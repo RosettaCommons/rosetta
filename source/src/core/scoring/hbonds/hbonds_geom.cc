@@ -112,6 +112,7 @@ get_hb_don_chem_type(
 		}
 	} else {
 		switch(don_rsd.aa()){
+		case aa_none: return hbdon_NONE;
 		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbdon_CXA; break;
 		case aa_his: case aa_dhi: case aa_b3h:
 			if (aname == " ND1"){
@@ -307,6 +308,7 @@ get_hb_acc_chem_type(
 		}
 	} else {
 		switch(acc_rsd.aa()){
+		case aa_none: return hbacc_NONE; break;
 		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbacc_CXA; break;
 		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e: return hbacc_CXL; break;
 		case aa_his: case aa_dhi: case aa_b3h:

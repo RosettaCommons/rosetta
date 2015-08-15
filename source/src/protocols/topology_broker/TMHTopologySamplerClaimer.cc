@@ -584,9 +584,9 @@ TMHTopologySamplerClaimer::output_membrane_vector(core::pose::Pose& pose)
 	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSetCOP const &residue_set( core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID ));
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	core::conformation::ResidueOP membrane_center_res = core::conformation::ResidueFactory::create_residue( *(rsd_type_list[1]) ) ;
-	core::conformation::ResidueOP membrane_normal_res = core::conformation::ResidueFactory::create_residue( *(rsd_type_list[1]) ) ;
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
+	core::conformation::ResidueOP membrane_center_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
+	core::conformation::ResidueOP membrane_normal_res = core::conformation::ResidueFactory::create_residue( *(rsd_type) ) ;
 
 	if(option[basic::options::OptionKeys::out::file::output_virtual].user())
 	{

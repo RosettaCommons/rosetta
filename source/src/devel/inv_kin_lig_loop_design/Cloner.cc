@@ -344,9 +344,9 @@ namespace devel {
 
       utility::vector1< core::chemical::ResidueTypeCOP > rval;
       for( Size i = 0; i < aas.size(); ++i ) {
-				core::chemical::ResidueTypeCOPs const& res_types = residue_set->aa_map( aas[i] );
-				assert( res_types.size() != 0 );
-				rval.push_back( res_types[1] );
+				core::chemical::ResidueTypeCOP res_type = residue_set->get_representative_type_aa( aas[i] );
+				assert( res_type != 0 );
+				rval.push_back( res_type );
       }
       return rval;
     }

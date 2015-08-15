@@ -71,24 +71,32 @@ namespace match_enzdes_util{
 /// i.e. this function gets rid of the variant redundancy
 void
 add_relevant_restypes_to_subset(
-	utility::vector1< core::chemical::ResidueTypeCOP > & restype_subset,
-	utility::vector1< core::chemical::ResidueTypeCOP > const & restypes,
+	std::set< core::chemical::ResidueTypeCOP > & restype_subset,
+	std::string const & name3,
 	core::chemical::ResidueTypeSetCAP restype_set )
 {
-
 	using namespace core::chemical;
-
-	std::set< std::string > basename_set;
-	for ( core::Size i = 1; i <= restypes.size(); ++i ) {
-		std::string basename = residue_type_base_name( *(restypes[i]) );
-		if ( basename_set.find( basename ) == basename_set.end() ) {
-			basename_set.insert( basename );
-			core::chemical::ResidueTypeCOP base_restype = restype_set.lock()->name_map( basename ).get_self_ptr();
-			if ( std::find( restype_subset.begin(), restype_subset.end(), base_restype ) == restype_subset.end() ) {
-				restype_subset.push_back( base_restype );
-			}
-		}
+	core::chemical::ResidueTypeCOPs restypes( restype_set.lock()->get_base_types_name3( name3 ) );
+	for( core::Size i = 1; i <= restypes.size(); ++i ){
+			restype_subset.insert( restypes[i] );
 	}
+
+//	utility::vector1< core::chemical::ResidueTypeCOP > const & restypes = restype_set->name3_map_DO_NOT_USE( name3 );
+//
+//	std::set< std::string > basename_set;
+//
+//	for( core::Size i = 1; i <= restypes.size(); ++i ){
+//
+//		std::string basename = residue_type_base_name( *(restypes[i]) );
+//
+//		if( basename_set.find( basename ) == basename_set.end() ){
+//
+//			basename_set.insert( basename );
+//
+//			restype_subset.insert( &restype_set->name_map( basename ) );
+//
+//		}
+//	}
 }
 
 
@@ -437,14 +445,12 @@ MatchConstraintFileInfo::process_data()
 
 		utility::vector1< std::string > const & res_name3s =
 			map_it->second->allowed_res_types();
-		utility::vector1< core::chemical::ResidueTypeCOP > restypes_this_res;
-		for ( core::Size j = 1; j <= res_name3s.size(); ++j ) {
-			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
-				restype_set->name3_map( res_name3s[j] );
-			add_relevant_restypes_to_subset( restypes_this_res, all_restypes_this_name3, restype_set_ );
+		std::set< core::chemical::ResidueTypeCOP > restypes_this_res;
+		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
+			add_relevant_restypes_to_subset( restypes_this_res, res_name3s[j], restype_set_ );
 		}
 
-		for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator
+		for ( std::set< core::chemical::ResidueTypeCOP >::iterator
 				set_it  = restypes_this_res.begin();
 				set_it != restypes_this_res.end(); ++set_it ) {
 			if ( map_it->second->compatible_restype( *set_it ) ) {
@@ -805,16 +811,16 @@ MatchConstraintFileInfoList::determine_upstream_restypes()
 		//in case the mcfi is a backbone interaction, only allow glycine as the restype
 		//for this mcfi
 		utility::vector1< std::string > const & res_name3s( is_backbone ? gly_vec : mcfis_[i]->allowed_res_name3s( mcfis_[i]->upstream_res() ) );
-		utility::vector1< core::chemical::ResidueTypeCOP > restypes_this_mcfi;
-		for ( core::Size j = 1; j <= res_name3s.size(); ++j ) {
-			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
-				restype_set->name3_map( res_name3s[j] );
-			add_relevant_restypes_to_subset( restypes_this_mcfi, all_restypes_this_name3, restype_set_ );
+
+		std::set< core::chemical::ResidueTypeCOP > restypes_this_mcfi;
+
+		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
+			add_relevant_restypes_to_subset( restypes_this_mcfi, res_name3s[j], restype_set_ );
 		}
 
 		//add the restypes_this_mcfi to the total set of upstream residue
 		//(if they haven't already been added)
-		for ( utility::vector1< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_mcfi.begin();
+		for ( std::set< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_mcfi.begin();
 				 set_it != restypes_this_mcfi.end(); ++set_it ) {
 			//build the restype_to_mcfi mapping
 			std::map< core::chemical::ResidueTypeCOP, utility::vector1< MatchConstraintFileInfoCOP > >::iterator

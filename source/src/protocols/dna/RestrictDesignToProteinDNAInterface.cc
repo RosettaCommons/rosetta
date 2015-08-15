@@ -223,7 +223,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				// specifying the appropriate ResidueType here is tricky, because there are multiple possible 'name3's for the nucleotides, AND because we must make sure to indicate a ResidueType that is already represented in the ResidueLevelTask
 				ResidueTypeSet const & rts( pose.residue(1).residue_type_set() );
 				// a list of all existing residue types that match the input name3
-				ResidueTypeCOPs const & name3map( rts.name3_map( (*def)->name3 ) );
+				ResidueTypeCOPs const & name3map( rts.name3_map_DO_NOT_USE( (*def)->name3 ) );
 				// use the first ResidueType represented in the ResidueLevelTask that corresponds to one in the name3 map
 				for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 					    allowed_type( toptask.allowed_residue_types_begin() ),
@@ -242,7 +242,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				}
 				if ( pos.paired() ) {
 					std::string const comp_name3( dna_comp_name_str( (*def)->name3 ) );
-					ResidueTypeCOPs const & name3map_comp( rts.name3_map( comp_name3 ) );
+					ResidueTypeCOPs const & name3map_comp( rts.name3_map_DO_NOT_USE( comp_name3 ) );
 					ResidueLevelTask & bottask( ptask.nonconst_residue_task( pos.bottom() ) );
 					for ( ResidueLevelTask::ResidueTypeCOPListConstIter
 						    allowed_type( bottask.allowed_residue_types_begin() ),

@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
@@ -125,7 +125,8 @@ dna_test(){
 	for ( Size n = 1; n <= sequence.size(); n++ ){
 
 		char const new_seq = sequence[ n-1 ];
-		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( *rsd_set )[1] );
+		// The representative type should have no/minimal variants
+		ResidueTypeCOP new_rsd_type( rsd_set->get_representative_type_name1( new_seq ) );
 		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
 		if ( n == 1) {
 			pose.append_residue_by_bond( *new_rsd );

@@ -37,6 +37,7 @@ namespace chemical {
 ///////////////////////////////////////////////////////////////////////////
 // BUT DONT CODE TO THESE AS INTS!!!!!!
 enum AA {
+	aa_none = 0,
 	// protein 1-20
 	aa_ala = 1,
 	aa_cys,

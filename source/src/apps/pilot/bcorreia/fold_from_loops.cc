@@ -18,7 +18,7 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/conformation/ResidueFactory.hh>
@@ -656,7 +656,7 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 			TR << "RES AA   " << residue << aa <<std::endl;
 
 
-			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueTypeSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
@@ -677,7 +677,7 @@ void new_pose_generator(core::pose::Pose & target_loops, core::pose::Pose & nat_
 			Size residue = loops[1].stop() + j;
 
 
-			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
+			core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueTypeSelector().set_name1( aa ).exclude_variants().select( rsd_set )[1] );
 
 
 			core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );

@@ -42,6 +42,26 @@ public:
 	bool
 	apply( ResidueType & rsd ) const = 0;
 
+	/// @brief Which atom, if any, is added. Used for fast matching of ResidueType/Patches to PDB residues.
+	virtual
+	std::string
+	adds_atom(){ return ""; }
+
+	/// @brief Which atom, if any, is deleted. Used for fast matching of ResidueType/Patches to PDB residues.
+	virtual
+	std::string
+	deletes_atom(){ return ""; }
+
+	/// @brief Which property, if any, is added.
+	virtual
+	std::string
+	adds_property(){ return ""; }
+
+	/// @brief Which property, if any, is deleted.
+	virtual
+	std::string
+	deletes_property(){ return ""; }
+
 	/// @brief Special -- does this apply to 'minimal', placeholder types? Generally true, unless updating aa or name3.
 	virtual
 	bool
@@ -60,6 +80,10 @@ public:
 	/// @brief delete an atom from ResidueType rsd
 	bool
 	apply( ResidueType & rsd ) const;
+
+	virtual
+	std::string
+	deletes_atom(){ return atom_name_; }
 
 private:
 	/// name of the atom to be deleted
@@ -141,6 +165,11 @@ public:
 	bool
 	apply( ResidueType & rsd ) const;
 
+	/// @brief Which property, if any, is added.
+	virtual
+	std::string
+	adds_property(){ return property_; }
+
 private:
 	/// property to be added
 	std::string property_;
@@ -159,6 +188,11 @@ public:
 	/// @brief delete a property
 	bool
 	apply( ResidueType & rsd ) const;
+
+	/// @brief Which property, if any, is added.
+	virtual
+	std::string
+	deletes_property(){ return property_; }
 
 private:
 	// property to be added
@@ -357,6 +391,10 @@ public:
 	/// add an atom
 	bool
 	apply( ResidueType & rsd ) const;
+
+	virtual
+	std::string
+	adds_atom(){ return atom_name_; }
 
 private:
 	std::string atom_name_;

@@ -78,7 +78,7 @@ public:
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
 		orbitals::OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
 
-		ResidueTypeCOPs const & glycines( cm->residue_type_set(tag)->aa_map( aa_gly ) );
+		ResidueTypeCOPs const & glycines( cm->residue_type_set(tag)->aa_map_DO_NOT_USE( aa_gly ) );
 		assert( glycines.size() > 1 );
 		gly_ = glycines[1];
 

@@ -486,8 +486,8 @@ correct_dunbrack() {
 	/////
 	// 3 compute corrected probabilities
 	for (int aa = 1; aa<=20; aa++) {
-		core::chemical::ResidueTypeCOPs restype =
-			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->aa_map((core::chemical::AA)aa);
+		core::chemical::ResidueTypeCOP restype =
+			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->get_representative_type_aa((core::chemical::AA)aa);
 
 		core::pack::dunbrack::SingleResidueDunbrackLibraryCOP rotlib =
 			utility::pointer::dynamic_pointer_cast<core::pack::dunbrack::SingleResidueDunbrackLibrary const> (
@@ -559,7 +559,7 @@ if (aa == aa_ser && x==13 && y==14) {
 		if ( !is_semi_rot( (core::chemical::AA)aa ) ) continue;
 
 		// make the residue we need
-		core::conformation::ResidueOP working_res ( core::conformation::ResidueFactory::create_residue ( *(restype[1]) ) );
+		core::conformation::ResidueOP working_res ( core::conformation::ResidueFactory::create_residue ( *(restype) ) );
 
 		// semirotameric sampling
 		core::Real start=-180.0,step=10.0;
@@ -747,7 +747,7 @@ if (aa == aa_ser && x==13 && y==14) {
 			utility::fixedsizearray1<core::Real, 5 > bbs;
 			bbs[1] = core::Real( (x-19)*10);
 			bbs[2] = core::Real((y-19)*10);
-			
+
 			int phi = (x-19)*10;
 			int psi = (y-19)*10;
 

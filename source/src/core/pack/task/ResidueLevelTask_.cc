@@ -29,7 +29,8 @@
 //Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
@@ -50,6 +51,7 @@
 // option key includes
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
@@ -113,17 +115,21 @@ ResidueLevelTask_::ResidueLevelTask_(
 
 	// Note: we defer getting the residue set until we need it, as some types may not have a ResidueTypeSet
 	if ( original_residue.is_protein() || original_residue.is_peptoid() ) {
+
 		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
+
 		//default: all amino acids at all positions -- additional "and" operations will remove
 		// amino acids from the list of allowed ones
 		//no rule yet to treat chemically modified aa's differently
 		ResidueType const & match_residue_type( residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_SIDE_CHAIN ) );
-		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			ResidueTypeCOPs const & aas( residue_set.aa_map( chemical::AA( ii )));
-			for ( ResidueTypeCOPs::const_iterator
-					aas_iter = aas.begin(),
-					aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-				if ( variants_match( match_residue_type, **aas_iter ) ) {
+		if ( match_residue_type.properties().has_custom_variant_types() || make_pH_mode_exceptions() ) {
+			setup_allowed_protein_residue_types_LEGACY( match_residue_type );
+		} else {
+			for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+				ResidueTypeCOPs const & aas( residue_set.get_all_types_with_variants_aa( AA( ii ), match_residue_type.variant_types() ) );
+				for ( ResidueTypeCOPs::const_iterator
+								aas_iter = aas.begin(),
+								aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 					allowed_residue_types_.push_back( *aas_iter );
 				}
 			}
@@ -131,21 +137,23 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// allow noncanonical AAs and D-amino acids to be repacked
 		if (original_residue.aa() == aa_unk || core::chemical::is_canonical_D_aa( original_residue.aa() ) )
 			allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
+
 	} else if ( original_residue.is_DNA() ) {
+
 		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
-		// default: all canonical DNA types w/ adducts
-	  ResidueTypeCOPs dna_types( ResidueSelector().set_property("DNA").select( residue_set ) );
-		for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
-		      type != end; ++type ) {
-			if ( nonadduct_variants_match( original_residue.type(), **type ) ) {
-				allowed_residue_types_.push_back( *type );
-			}
+		if ( basic::options::option[ basic::options::OptionKeys::packing::adducts ].user() ) {
+			setup_allowed_DNA_residue_types_LEGACY( original_residue );
+		} else {
+			ResidueTypeCOPs dna_types = ResidueTypeFinder( residue_set ).variants( original_residue.type().variant_types() ).base_property( DNA ).match_adducts( false ).get_all_possible_residue_types();
+			for ( Size n = 1; n <= dna_types.size(); n++ ) allowed_residue_types_.push_back( dna_types[ n ] );
 		}
 	} else if ( original_residue.is_RNA() ) {
+
 		ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
 		ResidueType const & match_residue_type(
 				residue_set.get_residue_type_with_variant_removed( original_residue.type(), chemical::VIRTUAL_O2PRIME_HYDROGEN ) );
 		allowed_residue_types_.push_back( match_residue_type.get_self_ptr() );
+
 	} else {
 		// for non-amino acids, default is to include only the existing residuetype
 		allowed_residue_types_.push_back( original_residue.type().get_self_ptr() );
@@ -164,6 +172,77 @@ ResidueLevelTask_::ResidueLevelTask_(
 ResidueLevelTask_::ResidueLevelTask_() {}
 
 ResidueLevelTask_::~ResidueLevelTask_() {}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/// @details
+// Just to maintain backwards compatibility with:
+//
+//  * custom variants
+//  * pH_mode
+//
+// This instantiates a ton of residue_types (in aa_map_DO_NOT_USE) which can take a lot of time.
+// Would be fairly straightforward to update to use 'on_the_fly' residue types, and
+// thereby avoid the slow down and memory footprint, just isn't done yet.
+//
+// E-mail rhiju [at] stanford.edu if you want to do it.
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+void
+ResidueLevelTask_::setup_allowed_protein_residue_types_LEGACY( chemical::ResidueType const & match_residue_type )
+{
+	using namespace core::chemical;
+	ResidueTypeSet const & residue_set( match_residue_type.residue_type_set() );
+	// use legacy code -- move this to its own shameful code block
+	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
+		ResidueTypeCOPs const & aas( residue_set.aa_map_DO_NOT_USE( chemical::AA( ii )));
+		for ( ResidueTypeCOPs::const_iterator
+						aas_iter = aas.begin(),
+						aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
+			if ( variants_match( match_residue_type, **aas_iter ) ) {
+				allowed_residue_types_.push_back( *aas_iter );
+			}
+		}
+	}
+	if ( allowed_residue_types_.size() > 10000 /* totally arbitrary limit to flag to future devs to look into this */ &&
+			 !basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
+		std::string const error_message = "Number of residue types is greater than 10000. Rerun with -override_rsd_type_limit. Or this might be a good time to fix how custom variants or pH_mode are handled (see notes in ResidueLevelTask_.cc). ";
+		utility_exit_with_message( error_message );
+	}
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+/// @details
+// Just to maintain backwards compatibility with:
+//
+//  * adducts in dna_interface_design.
+//
+// This instantiates a ton of residue_types (in ResidueTypeSelector())  which can take a lot of time,
+//  but basically happens anyway in ResidueTypeSet adduct creation.
+//
+// Note: Adducts could be brought into the Patch framework, and this would save a lot of memory, time,
+//       and code, and we could get rid of this silly legacy function.
+//
+// E-mail rhiju [at] stanford.edu if you want to do it.
+//
+/////////////////////////////////////////////////////////////////////////////////////////
+void
+ResidueLevelTask_::setup_allowed_DNA_residue_types_LEGACY( conformation::Residue const & original_residue ) {
+	using namespace core::chemical;
+	ResidueTypeSet const & residue_set( original_residue.residue_type_set() );
+	ResidueTypeCOPs dna_types( ResidueTypeSelector().set_property("DNA").select( residue_set ) );
+	for ( ResidueTypeCOPs::const_iterator type( dna_types.begin() ), end( dna_types.end() );
+				type != end; ++type ) {
+		if ( nonadduct_variants_match( original_residue.type(), **type ) ) {
+			allowed_residue_types_.push_back( *type );
+		}
+	}
+	if ( allowed_residue_types_.size() > 5000 /* totally arbitrary limit to flag to future devs to look into this */ &&
+			 !basic::options::option[ basic::options::OptionKeys::chemical::override_rsd_type_limit ]() ) {
+		std::string const error_message = "Number of residue types is greater than 5000. Rerun with -override_rsd_type_limit. Or this might be agood time to fix how adducts get set up in ResidueTypeSet  (see notes in ResidueLevelTask_.cc and ResidueTypeSet.cc). ";
+		utility_exit_with_message( error_message );
+	}
+}
 
 ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(
@@ -331,7 +410,7 @@ void ResidueLevelTask_::target_type( chemical::ResidueTypeCOP type ) {
 	target_residue_type_ = type; /// non-commutative if multiple target residue types are set.
 }
 void ResidueLevelTask_::target_type( chemical::AA aa ) {
-	target_type( original_residue_type_->residue_type_set().aa_map( aa ).front() );
+	target_type( original_residue_type_->residue_type_set().get_representative_type_aa( aa ) );
 }
 void ResidueLevelTask_::target_type( std::string name ) {
 	target_type( original_residue_type_->residue_type_set().name_map( name ).get_self_ptr() );
@@ -880,7 +959,7 @@ void ResidueLevelTask_::allow_noncanonical_aa(
 	if ( disabled_ || design_disabled_ ) return;
 
 	// get ResidueTypeCOPs vector
-	chemical::ResidueTypeCOPs const & aas( residue_set.interchangeability_group_map( interchangeability_group ) );
+	chemical::ResidueTypeCOPs const & aas( residue_set.interchangeability_group_map_DO_NOT_USE( interchangeability_group ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
 		if ( variants_match( *original_residue_type_, **aas_iter ) &&
@@ -947,13 +1026,12 @@ ResidueLevelTask_::allow_aa(
 	design_disabled_ = false;
 
 	chemical::ResidueTypeSet const & residue_set( original_residue_type_->residue_type_set() );
-	chemical::ResidueTypeCOPs const & aas( residue_set.aa_map( aa ) );
+	chemical::ResidueTypeCOPs const aas( residue_set.get_all_types_with_variants_aa( aa, original_residue_type_->variant_types() ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator
 					aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-		if ( variants_match( *original_residue_type_, **aas_iter ) &&
-				 ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
-					 allowed_residue_types_.end() ) /* haven't already added it */ ) {
+		if ( std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==
+					 allowed_residue_types_.end() /* haven't already added it */ ) {
 			allowed_residue_types_.push_back( *aas_iter );
 		}
 	}

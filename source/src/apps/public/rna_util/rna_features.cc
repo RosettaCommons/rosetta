@@ -231,8 +231,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 			// need an instance of this nucleotide to play around with.
 			// This better have RNA residue types in it.
 			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
-			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( core::chemical::aa_from_oneletter_code( nt_names[m] ) );
-			ResidueType const & rsd_type = *rsd_types[1];
+			ResidueType const & rsd_type = *( rsd_set.get_representative_type_aa(  core::chemical::aa_from_oneletter_code( nt_names[m] ) ) );
 
 			// what is hydrogen bonded? Acceptors.
 			AtomIndices accpt_pos = rsd_type.accpt_pos();
@@ -275,8 +274,7 @@ rna_features_from_pose( core::io::rna::RDAT & rdat, pose::Pose & pose )
 			// need an instance of this nucleotide to play around with.
 			// This better have RNA residue types in it.
 			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
-			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( core::chemical::aa_from_oneletter_code( nt_names[m] ) );
-			ResidueType const & rsd_type = *rsd_types[1];
+			ResidueType const & rsd_type = *( rsd_set.get_representative_type_aa( core::chemical::aa_from_oneletter_code( nt_names[m] ) ) );
 			for ( Size k = 1; k <= rsd_type.nheavyatoms(); k++ ){
 				std::string atom_name = rsd_type.atom_name( k );
 				core::Real sasa_value = 0.0;

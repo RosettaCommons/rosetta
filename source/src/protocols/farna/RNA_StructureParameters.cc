@@ -196,8 +196,8 @@ RNA_StructureParameters::append_virtual_anchor( pose::Pose & pose )
 	//	std::cout << " CHECK YYY " << residue_set.name3_map("YYY").size() << std::endl;
 	//	std::cout << " CHECK VRT " << residue_set.name3_map("VRT").size() << std::endl;
 
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map("XXX") );
-	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+	core::chemical::ResidueTypeCOP rsd_type( residue_set.get_representative_type_name3("XXX") );
+	core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 	pose.append_residue_by_jump( *new_res, virtual_anchor_attachment_points_[1] );
 
 	Size const virt_res = pose.total_residue();

@@ -199,7 +199,7 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		TR.Warning << "addVirtualResAsRootMembrane() called with empty pose!" << std::endl;
 		return;
 	}
-	
+
 	//only add the virtual residue as the root once
 	if(pose.residue(pose.fold_tree().root()).name3() == "XXX")
 	{
@@ -217,9 +217,8 @@ void MembraneTopologyClaimer::addVirtualResAsRootMembrane( core::pose::Pose & po
 		core::chemical::ChemicalManager::get_instance()->residue_type_set
 		( fullatom ? core::chemical::FA_STANDARD : core::chemical::CENTROID )
 		);
-	core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("VRT") );
-	//core::conformation::ResidueOP new_virt_res_ = core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) ;
-	core::conformation::ResidueOP new_virt_res = core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) ;
+	core::chemical::ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("VRT") );
+	core::conformation::ResidueOP new_virt_res( core::conformation::ResidueFactory::create_residue( *rsd_type ) );
 
 	// move to membrane_center if it's defined
 	if ( basic::options::option[basic::options::OptionKeys::membrane::membrane_center].user() ) {

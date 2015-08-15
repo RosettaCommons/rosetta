@@ -246,8 +246,8 @@ VisualizeEmbeddingMover::create_embedding_virtual( Vector center, Vector normal,
 		);
 	
 	// Create a new Residue from rsd typeset of type MEM
-	ResidueTypeCOPs const & rsd_type_list( residue_set->name3_map("EMB") );
-	ResidueType const & membrane( *rsd_type_list[1] );
+	ResidueTypeCOP rsd_type( residue_set->get_representative_type_name3("EMB") );
+	ResidueType const & membrane( *rsd_type );
 	ResidueOP rsd( ResidueFactory::create_residue( membrane ) );
 	
 	// set something close to center for thickness, so it doesn't confuse the viewer

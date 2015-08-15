@@ -101,9 +101,7 @@ DomainInfo::process_domain( )
 	for ( Size pos = linker_sequence_n.length(); pos > 0; --pos ) {
 		char aa = linker_sequence_n[pos-1]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
-		Size best_index = 1;
-		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa ) ) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 		temp_pose.prepend_polymer_residue_before_seqpos( *new_rsd, 1, true );
 		//if the residue to be added is RNA, give it the average torsion angles for A-RNA
@@ -134,9 +132,7 @@ DomainInfo::process_domain( )
 	for ( Size pos = 0; pos < linker_sequence.length(); ++pos ) {
 		char aa = linker_sequence[pos]; // string indexing is zero-based!
 		AA my_aa = aa_from_oneletter_code( aa );
-		ResidueTypeCOPs const & rsd_type_list( residue_set->aa_map( my_aa ) );
-		Size best_index = 1;
-		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
+		ResidueType const & rsd_type( *( residue_set->get_representative_type_aa( my_aa )) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
 		temp_pose.append_residue_by_bond( *new_rsd, true );
 		Size seqpos = temp_pose.total_residue( );

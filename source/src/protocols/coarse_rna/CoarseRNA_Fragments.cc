@@ -96,8 +96,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 		} else {
 
 			// Figure out correspondence: P,S,CEN,X,Y --> 1,2,3,4,5. Hopefully!
-			ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( na_rad ) );
-			ResidueTypeCOP const & rsd_type = rsd_types[ 1 ]; //This better work.
+			ResidueTypeCOP const & rsd_type = rsd_set->get_representative_type_aa( na_rad );
 			for( Size i = 1; i <= rsd_type->natoms(); i++ ){
 				coarse_rna_name_to_num_[ rsd_type->atom_name( i ) ] = i;
 			}

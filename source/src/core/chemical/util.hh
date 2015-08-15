@@ -60,11 +60,20 @@ bool variants_match_with_exceptions(
 		ResidueType const & res2,
 		utility::vector1< VariantType > list_of_variants_to_ignore );
 
+bool
+make_pH_mode_exceptions();
+
 /// @brief  Are these two residues patched in exactly the same way?
 bool variants_match( ResidueType const & res1, ResidueType const & res2 );
 
 /// @brief  Similar to variants_match(), but allows different adduct-modified states.
 bool nonadduct_variants_match( ResidueType const & res1, ResidueType const & res2 );
+
+/// @brief look for best match to atom_names
+ResidueTypeCOP
+find_best_match( ResidueTypeCOPs const & rsd_type_list,
+								 utility::vector1< std::string > const & atom_names,
+								 bool const ignore_atom_named_H = false );
 
 // @brief Fang-Chieh Chou 8/10/2012. Use larger LJ_WDEPTH for protons to avoid clashes in RNA
 void enlarge_h_lj_wdepth( utility::vector1< Real > & lj_wdepth, AtomTypeSet const & atom_type_set );

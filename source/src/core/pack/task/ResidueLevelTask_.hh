@@ -46,7 +46,7 @@ namespace pack {
 namespace task {
 
 
-/// @brief Residue-level task class; contained within PackerTask
+/// @brief Residue-level task class
 class ResidueLevelTask_ : public ResidueLevelTask
 {
 public:
@@ -299,6 +299,7 @@ public:
 
 
 private: // private methods
+
 	/// @brief private: bookkeeping for ex1
 	void refresh_ex1_sample_levels();
 	/// @brief private: bookkeeping for ex2
@@ -331,6 +332,14 @@ private: // private methods
 
 	void
 	do_restrict_absent_canonical_aas( utility::vector1<bool> const & allowed_aas );
+
+	/// @brief legacy code block to handle packing at residues with custom variants.
+	void
+	setup_allowed_protein_residue_types_LEGACY( chemical::ResidueType const & match_residue_type );
+
+	/// @brief legacy code block to handle packing at DNA residues with adducts.
+	void
+	setup_allowed_DNA_residue_types_LEGACY( conformation::Residue const & original_residue );
 
 private:
 	/// @details is the pre-existing rotamer included for the packer to choose?

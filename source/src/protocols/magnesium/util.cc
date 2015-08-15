@@ -315,8 +315,7 @@ namespace magnesium {
 		using namespace core::chemical;
 		// stick following in a get_single_mg_pose function.
 		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_RNA );
-		ResidueTypeCOPs const & rsd_type_list ( rsd_set->name3_map ( " MG" ) );
-		return core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] );
+		return core::conformation::ResidueFactory::create_residue ( *( rsd_set->get_representative_type_name3( " MG" ) ) );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

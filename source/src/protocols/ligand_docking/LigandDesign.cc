@@ -31,7 +31,7 @@
 // option key includes
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/ResidueTypeSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/tag/Tag.hh>
 
@@ -83,11 +83,12 @@ LigandDesign::~LigandDesign() {}
 
 void
 LigandDesign::set_fragments(){
-	core::chemical::ResidueSelector rs;
+	core::chemical::ResidueTypeSelector rs;
 	rs.set_property("FRAGMENT");
 	core::chemical::ChemicalManager *cm= core::chemical::ChemicalManager::get_instance();
-	core::chemical::ResidueTypeSetCOP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
-	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
+	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
+	core::chemical::ResidueTypeCOPs fragment_types;
+	rsd_set.lock()->select_residues_DO_NOT_USE( rs, fragment_types );
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
 	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){

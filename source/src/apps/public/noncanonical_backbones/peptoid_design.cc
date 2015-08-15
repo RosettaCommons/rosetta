@@ -250,7 +250,7 @@ PeptoidDesignMover::apply(
 	/*********************************************************
 	Design Setup
 	**********************************************************/
-	
+
 	using core::pack::task::operation::TaskOperationCOP;
 	TaskFactoryOP desn_tf( new TaskFactory() );
 	desn_tf->push_back( TaskOperationCOP( new core::pack::task::operation::InitializeFromCommandline ) );
@@ -277,7 +277,7 @@ PeptoidDesignMover::apply(
 	TaskAwareMinMoverOP desn_ta_min( new TaskAwareMinMover( desn_min, desn_tf ) );
 
 	// create a list of peptoid sidechains (this is inefficient)
-	chemical::ResidueTypeCOPs const & rt_caps( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->residue_types() );
+	chemical::ResidueTypeCOPs const & rt_caps( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )->residue_types_DO_NOT_USE() );
 	std::set< std::string > peptoid_name_set;
 	for ( Size i(1); i <= rt_caps.size(); ++i ) {
 		if ( rt_caps[i]->is_peptoid() ) {
@@ -330,11 +330,11 @@ PeptoidDesignMover::apply(
 						  );
 
 	mc->recover_low( pose );
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	
+
 	curr_job->add_string_real_pair( "ENERGY_FINAL ", (*score_fxn)(pose) );
-	
+
 	TR << "Ending main loop..." << std::endl;
 	TR << "Checking pose energy..." << std::endl;
 	calculate_statistics( curr_job, pose, score_fxn );
