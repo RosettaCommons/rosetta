@@ -135,7 +135,7 @@ public:
     /// Not equivalent to an append_by_jump!
     virtual
     core::Size
-    setup_membrane_virtual( Pose & pose );
+    add_membrane_virtual( Pose & pose );
     
     /// @brief Helper Method - Check for Membrane residue already in the PDB
     /// @details If there is an MEM residue in the PDB at the end of the pose

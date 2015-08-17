@@ -281,7 +281,7 @@ SymmetricAddMembraneMover::init_from_cmd() {
 /// as the anchoring residue and nres_complex+1 as tne new sequence position
 /// Not equivalent to an append_by_jump!
 core::Size
-SymmetricAddMembraneMover::setup_membrane_virtual( Pose & pose ) {
+SymmetricAddMembraneMover::add_membrane_virtual( Pose & pose ) {
     
     using namespace core::conformation;
     using namespace core::conformation::symmetry;

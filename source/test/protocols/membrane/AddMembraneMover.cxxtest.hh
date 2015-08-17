@@ -95,26 +95,31 @@ public: // test functions
         //   (5) Fourth custom setup - find the membrane residue in Pose
 		
         // (1) Setup pose with default setup
+        TS_TRACE( "Setting up membrane pose with default configuration" ); 
 		AddMembraneMoverOP add_memb( new AddMembraneMover( spanfile ) );
 		add_memb->apply( *pose_ );
         
         // (2) Setup pose with custom anchor point & topology object
+        TS_TRACE( "Setting up membrane with custom anchor point and topology object" ); 
         SpanningTopologyOP custom_topo( new SpanningTopology() );
         custom_topo->fill_from_spanfile( spanfile );
         AddMembraneMoverOP add_memb2( new AddMembraneMover( custom_topo, 50 ) );
         add_memb2->apply( *anchored_pose_ );
 
         // (3) Setup pose with custom membrane position
+        TS_TRACE( "Setting up a pose with a custom membrane position" ); 
         Vector test_center( 10, 10, 10 ); 
         Vector test_normal( 0, 1, 0 ); // Normal along y axis
         AddMembraneMoverOP add_memb3( new AddMembraneMover( test_center, test_normal, spanfile, 0 ) ); 
 		add_memb3->apply( *positioned_pose_ );
         
         // (4) Setup the pose, directly pointing to the new membrane residue
+        TS_TRACE( "Setting up a pose, directly pointed to a new membrane residue already in the pose" ); 
         AddMembraneMoverOP add_memb4( new AddMembraneMover( spanfile_2zup, 334 ) );
         add_memb4->apply( *specially_positioned_pose1_ );
         
         // (5) Ask add membrane mover to go on a scavenger hunt for the membrane residue
+        TS_TRACE( "Setting up a membrane pose where you need to search for the membrane residue in the pose already" ); 
         AddMembraneMoverOP add_memb5( new AddMembraneMover( spanfile_2zup, 334 ) );
         add_memb5->apply( *specially_positioned_pose2_ );
 	}

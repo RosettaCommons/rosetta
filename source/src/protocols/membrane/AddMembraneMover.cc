@@ -7,18 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file       protocols/membrane/AddMembraneMover.cc
+/// @file       protocols/membrane/AddMembraneMover.hh
 ///
-/// @brief      Add Membrane Representation to the Pose
-/// @details	Given a pose, setup membrane topology, lips info,
-///				and a membrane virtual residue in the pose. All of this information
-///				is coordinated via the MembraneInfo object maintained in
-///				the Pose's conformation. After applying AddMembraneMover
-///				to the pose, pose.conformation().is_membrane() should always
-///				return true.
+/// @brief      Initialize the RosettaMP Framework by adding membrane representations to the pose
+/// @details	Given a pose, initialize and configure with the RosettaMP framework by taking the 
+///				following steps: 
+///					(1) Add a membrane residue to the pose (type MEM)
+///						(a) Append residue to the pose or accept a new one
+///						(b) Update PDB info to acknowledge the membrane residue
+///						(c) Set the MEM residue at the root of the foldtree
+///					(2) Initialize transmembrane spanning topology (Object: SpanningTopology)
+///					(3) Initialize the MembraneInfo object either with or without the LipidAccInfo object. 
+///					(4) Set the membrane starting position (either default or based on user input)
 ///
-/// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (3/29/14)
+///				This object does a massive amount of reading from CMD, RosettaScripts or Constructor. If you add
+///				a new piece of data - you must modify MembraneInfo, all of these channels for input AND the apply function!
+///				If and only if AddMembraneMover is applied to the pose, pose.conformation().is_membrane() MUST return true. 
+///
+///				Last Updated: 7/23/15
+///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_protocols_membrane_AddMembraneMover_cc
 #define INCLUDED_protocols_membrane_AddMembraneMover_cc
@@ -44,7 +51,6 @@
 #include <core/conformation/membrane/LipidAccInfo.hh>
 
 #include <protocols/membrane/SetMembranePositionMover.hh>
-#include <protocols/membrane/util.hh>
 
 #include <protocols/moves/DsspMover.hh>
 
@@ -54,6 +60,7 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueProperty.hh> 
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -92,17 +99,14 @@ namespace membrane {
 
 using namespace core;
 using namespace core::pose;
-using namespace core::conformation::membrane;
+using namespace core::conformation::membrane; 
 using namespace protocols::moves;
-		
-/////////////////////
-/// Constructors  ///
-/////////////////////
 
-/// @brief Default Constructor
-/// @details Create a membrane pose setting the membrane center
-/// at center=(0, 0, 0), normal=(0, 0, 1) and loads in spans
-/// and lips from the command line interface.
+// Constructors & Setup methods
+
+/// @brief Create a default RosettaMP membrane setup
+/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+/// the z axis. Use a defualt lipid type DOPC. 
 AddMembraneMover::AddMembraneMover() :
 	protocols::moves::Mover(),
 	include_lips_( false ),
@@ -114,15 +118,16 @@ AddMembraneMover::AddMembraneMover() :
     center_( 0, 0, 0 ),
     normal_( 0, 0, 1 ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {
 	register_options();
 	init_from_cmd();
 }
 
-/// @brief Custom Constructor - Create membrane pose from existing membrane resnum
-/// @details Loads in membrane information from the commandline. Just needs a
-/// membrane residue number (application is symmetry)
+/// @brief Create a RosettaMP setup from an existing membrane residue
+/// @brief Create a membrane using the position from the existing membrane residue. 
+/// Use a defualt lipid type DOPC. 
 AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
@@ -134,16 +139,17 @@ AddMembraneMover::AddMembraneMover( core::Size membrane_rsd ) :
     center_( 0, 0, 0 ),
     normal_( 0, 0, 1 ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {
 	register_options();
 	init_from_cmd();
 }
 	
-/// @brief Custom Constructor - for PyRosetta
-/// @details Creates a membrane pose setting the membrane
-/// center at emb_center and normal at emb_normal and will load
-/// in spanning regions from list of spanfile provided
+/// @brief Create a RosettaMP setup from a user specified spanfile
+/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
+/// specified spanfile
 AddMembraneMover::AddMembraneMover(
     std::string spanfile,
     core::Size membrane_rsd
@@ -158,16 +164,17 @@ AddMembraneMover::AddMembraneMover(
     center_( 0, 0, 0 ),
     normal_( 0, 0, 1 ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {
 	register_options();
 	init_from_cmd();
 }
     
-/// @brief Custom Constructor - mainly for PyRosetta
-/// @details Creates a membrane pose setting the membrane
-/// center at emb_center and normal at emb_normal and will load
-/// in spanning regions from list of spanfiles provided
+/// @brief Create a RosettaMP setup from a user specified SpanningTopology
+/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
+/// specified spanning topology
 AddMembraneMover::AddMembraneMover(
     SpanningTopologyOP topology,
     core::Size anchor_rsd,
@@ -183,19 +190,20 @@ AddMembraneMover::AddMembraneMover(
     center_( 0, 0, 0 ),
     normal_( 0, 0, 1 ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {
     register_options();
     init_from_cmd();
 }
 
-	/// @brief Custom Constructor using both anchor rsd and membrane rsd
-	/// @details Creates a membrane pose setting the anchor residue and
-	///			membrane residue; topology is read from cmd line
-	AddMembraneMover::AddMembraneMover(
-		   core::Size anchor_rsd,
-		   core::Size membrane_rsd
-		   ) :
+/// @brief Create a RosettaMP setup from an existing residue at a specific anchor point
+/// @brief Create a membrane using the position from the existing membrane residue. Anchor 
+/// this residue at the user-specified anchor residue. Use a defualt lipid type DOPC. 
+AddMembraneMover::AddMembraneMover(
+	core::Size anchor_rsd,
+	core::Size membrane_rsd
+	) :
 	protocols::moves::Mover(),
 	include_lips_( false ),
 	spanfile_( "" ),
@@ -206,17 +214,17 @@ AddMembraneMover::AddMembraneMover(
 	center_( 0, 0, 0 ),
 	normal_( 0, 0, 1 ),
 	thickness_( 15 ),
-	steepness_( 10 )
-	{
-		register_options();
-		init_from_cmd();
-	}
+	steepness_( 10 ), 
+    user_defined_( false )
+{
+	register_options();
+	init_from_cmd();
+}
 
-/// @brief Custorm Constructur with lips info - for PyRosetta
-/// @details Creates a membrane pose setting the membrane
-/// center at emb_center and normal at emb_normal and will load
-/// in spanning regions from list of spanfile provided. Will also
-/// load in lips info from lips_acc info provided
+/// @brief Create a RosettaMP setup from a user specified spanfile and lipsfile
+/// @brief Create a membrane positioned at the origin (0, 0, 0) and aligned with 
+/// the z axis. Use a defualt lipid type DOPC. Load spanning topology from the user
+/// specified spanfile and lipsfile
 AddMembraneMover::AddMembraneMover(
 	std::string spanfile,
 	std::string lips_acc,
@@ -232,17 +240,16 @@ AddMembraneMover::AddMembraneMover(
     center_( 0, 0, 0 ),
     normal_( 0, 0, 1 ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {
 	register_options();
 	init_from_cmd();
 }
 
-/// @brief Custorm Constructur - Center/Normal init
-/// @details Creates a membrane protein, setting the initial
-/// membrane center and normal to the specified values, loads
-/// a spanfile and lipsfile from given path, and indicates a membrane
-/// residue if provided.
+/// @brief Create a RosettaMP setup from a user specified spanfile and lipsfile
+/// @brief Create a membrane positioned at "init_center" and aligned with 
+/// "init_normal". Use a defualt lipid type DOPC.
 AddMembraneMover::AddMembraneMover(
     Vector init_center,
     Vector init_normal,
@@ -259,11 +266,11 @@ AddMembraneMover::AddMembraneMover(
     center_( init_center ),
     normal_( init_normal ),
     thickness_( 15 ),
-    steepness_( 10 )
+    steepness_( 10 ), 
+    user_defined_( false )
 {}
 
-/// @brief Copy Constructor
-/// @details Create a deep copy of this mover
+/// @brief Create a deep copy of the data in this mover
 AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
     protocols::moves::Mover( src ),
     include_lips_( src.include_lips_ ),
@@ -275,7 +282,8 @@ AddMembraneMover::AddMembraneMover( AddMembraneMover const & src ) :
     center_( src.center_ ),
     normal_( src.normal_ ),
     thickness_( src.thickness_ ),
-    steepness_( src.steepness_ )
+    steepness_( src.steepness_ ),
+    user_defined_( src.user_defined_ )
 {}
 
 /// @brief Destructor
@@ -306,7 +314,7 @@ AddMembraneMover::parse_my_tag(
 	 protocols::moves::Movers_map const &,
 	 core::pose::Pose const &
 	 ) {
-	
+
 	// Read in include lips option (boolean)
 	if ( tag->hasOption( "include_lips" ) ) {
 		include_lips_ = tag->getOption< bool >( "include_lips" );
@@ -416,48 +424,10 @@ AddMembraneMover::apply( Pose & pose ) {
 	TR << "||           WELCOME TO THE WORLD OF MEMBRANE PROTEINS...          ||" << std::endl;
 	TR << "=====================================================================" << std::endl;
 	
-	// If there is a membrane residue in the PDB, take total resnum as the membrane_pos
-	// Otherwise, setup a new membrane virtual
-	core::SSize membrane_pos(0);
-    bool user_defined( false );
-	
-	// search for MEM in PDB
-	utility::vector1< core::SSize > mem_rsd_in_pdb = check_pdb_for_mem( pose );
-    
-    // If multiple membrane residues are found - exit. Not allowed in the framework
-    if ( mem_rsd_in_pdb.size() > 1 ) {
-        utility_exit_with_message( "Multiple membrane residues found in the pose, but only one allowed. Exiting..." );
-    }
-    
-    // If exactly 1 residue was found and no flag provided, designate that residue
-    if ( membrane_rsd_ == 0 && mem_rsd_in_pdb[1] != -1 ) {
-        TR << "No flag given: Adding membrane residue from PDB at residue number " << mem_rsd_in_pdb[1] << std::endl;
-        membrane_pos = mem_rsd_in_pdb[1];
-        user_defined = true;
-    }
-    
-    // if found and agrees with user-specified one, use that
-    if ( static_cast< SSize >( membrane_rsd_ ) == mem_rsd_in_pdb[1] ) {
-        TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
-        membrane_pos = membrane_rsd_;
-        user_defined = true;
-    }
-    
-    // If no membrane residue was found, add one to the pose
-    if ( mem_rsd_in_pdb[1] == -1 ) {
-        TR << "Adding a new membrane residue to the pose" << std::endl;
-        membrane_pos = setup_membrane_virtual( pose );
-    }
-    
-    /**
-    this isn't accomplishing what it should be... if we want that strict of checking, check the types directly
-     // If the found residue doesn't agree with user specified one, exit
-    if ( membrane_pos == 0 && mem_rsd_in_pdb[1] != -1 ) {
-        utility_exit_with_message("User provided membrane residue doesn't agree with found one!");
-    }
-     **/
+	// Step 1: Initialize the Membrane residue
+	Size membrane_pos = initialize_membrane_residue( pose, membrane_rsd_ );
 
- 	// Load spanning topology objects
+	// Step 2: Initialize the spanning topology
 	if ( topology_->nres_topo() == 0 ){
 		if ( spanfile_ != "from_structure" ) {
 			topology_->fill_from_spanfile( spanfile_, pose.total_residue() );
@@ -474,65 +444,45 @@ AddMembraneMover::apply( Pose & pose ) {
 		}
 	}
 
-	// get number of jumps in foldtree
+	// Step 3: Initialize the membrane Info Object
+	// Options: Will initialize with or without a lipid acc object
 	Size numjumps = pose.fold_tree().num_jump();
-	
-	// Setup Membrane Info Object
 	MembraneInfoOP mem_info;
 	if ( !include_lips_ ) {
-		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), static_cast< Size >( membrane_pos ), topology_, numjumps ) );
+		mem_info = MembraneInfoOP( 
+			new MembraneInfo( pose.conformation(),  static_cast< Size >( membrane_pos ), numjumps, topology_ ) );
 	} else {
 		LipidAccInfoOP lips( new LipidAccInfo( lipsfile_ ) );
-		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), static_cast< Size >( membrane_pos ), topology_, lips, numjumps ) );
+		mem_info = MembraneInfoOP( new MembraneInfo( pose.conformation(), static_cast< Size >( membrane_pos ), numjumps, lips, topology_ ) );
 	}
 	
-	// Add Membrane Info Object to conformation
+	// Step 4: Add membrane info object to the pose conformation
 	pose.conformation().set_membrane_info( mem_info );
-    
-    // Set initial membrane position
-    if ( user_defined ) {
+
+	// Step 5: Accommodate for user defined positions 
+    if ( user_defined_ ) {
         TR << "Setting initial membrane center and normal to position used by the user-provided membrane residue" << std::endl;
         center_ = pose.conformation().membrane_info()->membrane_center();
         normal_ = pose.conformation().membrane_info()->membrane_normal();
 		
-		// TODO: THIS SHOULD ULTIMATELY BE REPLACED WITH THE NEW
-		// create_membrane_foldtree_anchor_tmcom( Pose & pose ) FUNCTION IN
-		// PROTOCOLS/MEMBRANE/UTIL TO SET THE FOLDTREE DIRECTLY		
-		
 		// slide the membrane jump to match the desired anchor point
 		core::kinematics::FoldTree ft = pose.fold_tree();
 		Size memjump = pose.conformation().membrane_info()->membrane_jump();
-
-		pose.fold_tree().show( TR );
-		// jump number, new res1, new res2
-		ft.slide_jump( memjump, anchor_rsd_, mem_rsd_in_pdb[1] );
-
+		ft.slide_jump( memjump, anchor_rsd_, membrane_pos );
 		pose.fold_tree( ft );
-		pose.fold_tree().show( TR );
     }
-
-    // Use set membrane positon mover to set the center/normal pair
+	
+	// Step 5: Update the membrane position and orientation based on user settings
     SetMembranePositionMoverOP set_position = SetMembranePositionMoverOP( new SetMembranePositionMover( center_, normal_ ) );
     set_position->apply( pose );
 
-    // Set membrane thickness & steepness (Added 3/9/15)
-    pose.conformation().membrane_info()->set_membrane_thickness( thickness_ );
-    pose.conformation().membrane_info()->set_membrane_steepness( steepness_ );
-	
-	// final foldtree
+ 	// Print Out Final FoldTree
 	TR << "Final foldtree: Is membrane fixed? " << protocols::membrane::is_membrane_fixed( pose ) << std::endl;
 	pose.fold_tree().show( TR );
 	
 }
 
-/////////////////////
-/// Setup Methods ///
-/////////////////////
-
-/// @brief Register Options from Command Line
-/// @details Register mover-relevant options with JD2 - includes
-/// mp, seutp options: center, normal, spanfile and
-/// lipsfiles
+/// @brief Register options from JD2
 void
 AddMembraneMover::register_options() {
 	
@@ -550,9 +500,6 @@ AddMembraneMover::register_options() {
 }
 
 /// @brief Initialize Mover options from the comandline
-/// @details Initialize mover settings from the commandline
-/// mainly in the mp, setup group: center, normal,
-/// spanfile and lipsfiles paths
 void
 AddMembraneMover::init_from_cmd() {
 	
@@ -599,14 +546,64 @@ AddMembraneMover::init_from_cmd() {
     
 }
 
-/// @brief Helper Method - Setup Membrane Virtual
-/// @details Create a new virtual residue of type MEM from
-/// the pose typeset (fullatom or centroid). Add this virtual
-/// residue by appending to the last residue of the pose. Then set
-/// this position as the root of the fold tree.
-core::Size
-AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
+/// @brief Initialize Membrane Residue given pose
+Size
+AddMembraneMover::initialize_membrane_residue( Pose & pose, core::Size membrane_pos ) {
+
+	// Start by assuming no membrane residue is provided. Check several possibilities 
+	// before setting up a new virtual residue
 	
+    // Case 1: If user points directly to a membrane residue, use that residue
+    if ( membrane_pos != 0 && 
+    	 membrane_pos < pose.total_residue() &&
+    	 pose.conformation().residue( membrane_pos ).has_property( "MEMBRANE" ) ) {
+    	user_defined_ = true; 
+    
+    } else { 
+    
+		// Search for a membrane residue in the PDB
+    	utility::vector1< core::SSize > found_mem_rsds = check_pdb_for_mem( pose );
+
+		// Case 2: There are multiple membrane residues in this PDB file
+		if ( found_mem_rsds.size() > 1 ) {
+			TR << "Multiple membrane residues found in the pose, but only one allowed. Exiting..." << std::endl; 
+			utility_exit(); 
+		
+		// Case 3: If one residue found in PDB and user didn't designate this residue, still accept found residue
+		} else if ( membrane_rsd_ == 0 && found_mem_rsds[1] != -1 ) {
+	        TR << "No flag given: Adding membrane residue from PDB at residue number " << found_mem_rsds[1] << std::endl;
+	        membrane_pos = found_mem_rsds[1];
+	        user_defined_ = true;
+	    
+	    // Case 4: If membrane found and agrees with user specified value, accept
+    	} else if ( static_cast< SSize >( membrane_rsd_ ) == found_mem_rsds[1] ) {
+
+    		TR << "Adding membrane residue from PDB at residue number " << membrane_rsd_ << std::endl;
+        	membrane_pos = membrane_rsd_;
+        	user_defined_ = true;
+    	
+    	// Case 5: If no membrane residue found, add a new one to the pose
+    	} else if ( found_mem_rsds[1] == -1 ) {
+			TR << "Adding a new membrane residue to the pose" << std::endl;
+        	membrane_pos = add_membrane_virtual( pose );
+    	
+        // Case 6: Doesn't exist ;)
+    	} else { 
+    		TR << "Congratulations - you have reached an edge case for adding the memrbane residue that we haven't thought of yet!" << std::endl; 
+    		TR << "Contact the developers - exiting for now..." << std::endl; 
+    		utility_exit(); 
+    	}
+
+    }
+
+    // DONE :D
+	return membrane_pos;
+}
+
+/// @brief Helper Method - Add a membrane virtual residue
+Size
+AddMembraneMover::add_membrane_virtual( Pose & pose ) {
+
 	TR << "Adding a membrane residue representing the position of the membrane after residue " << pose.total_residue() << std::endl;
 	
 	using namespace protocols::membrane;
@@ -625,9 +622,9 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	
 	// Append residue by jump, creating a new chain
 	pose.append_residue_by_jump( *rsd, anchor_rsd_, "", "", true );
-	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
-
+	
 	// Reorder to be the membrane root
+	FoldTreeOP ft( new FoldTree( pose.fold_tree() ) );
 	ft->reorder( pose.total_residue() );
 	pose.fold_tree( *ft );	
 	pose.fold_tree().show( std::cout );
@@ -640,11 +637,10 @@ AddMembraneMover::setup_membrane_virtual( Pose & pose ) {
 	pose.pdb_info()->obsolete(false);
 	
 	return pose.total_residue();
+
 }
 
 /// @brief Helper Method - Check for Membrane residue already in the PDB
-/// @details If there is an MEM residue in the PDB at the end of the pose
-/// with property MEMBRANE, return a vector of all of those residues.
 utility::vector1< core::SSize >
 AddMembraneMover::check_pdb_for_mem( Pose & pose ) {
 

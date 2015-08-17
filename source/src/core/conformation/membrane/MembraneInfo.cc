@@ -9,21 +9,22 @@
 
 /// @file		core/conformation/membrane/MembraneInfo.cc
 ///
-/// @brief		MembraneInfo - Membrane Pose Definition Object
-/// @details	The membrane info object is responsible for storing non-coordinate
-///				derived information, extending the traditional definiton of a pose
-///				to describe a membrane protein in Rosetta. This information includes:
-///				 - the resiue number of the membrane virtual residue containing
-///					the posiiton of the membrane
-///				 - membrane spanning topology
-///				 - membrane lipophilicity info (user-specified)
+/// @brief		Information about the membrane bilayer and its relationship with the protein(s)
+/// @details	MembraneInfo is responsible for describing attributes of the 
+/// 			membrane bilayer *and* the position & orientation of the bilayer
+///				in 3D space. All of the data members work together to accomplish 
+///				this representation. And the players are: 
+///					= A pointer to the Pose Conformation, which includes an MEM residue
+///					= Topology of transmembrane spans
+///					= Per-residue lipophilicity
+///					= Membrane thickness & steepness - derived from chemical profiles
 ///
-///				This object belongs to the conformation and should be accessed
-///				via pose.conformation().membrane_info().
+///				This object is a member of Conformation and should be accessed by
+///				pose.conofrmation().membrane_info(). DO NOT access the MEM residue
+///				outside of the framework!!! 
 ///
-///	     		Last Modified: 6/21/14
-///
-/// @author		Rebecca Alford (rfalford12@gmail.com)
+///				Last Updated: 7/23/15
+/// @author		Rebecca Faye Alford (rfalford12@gmail.com)
 
 // Unit Headers
 #include <core/conformation/membrane/MembraneInfo.hh>
@@ -32,8 +33,7 @@
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>
 #include <core/conformation/membrane/LipidAccInfo.hh>
-
-#include <core/conformation/membrane/MembraneParams.hh> 
+#include <core/conformation/membrane/MembraneParams.hh>
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
@@ -57,64 +57,58 @@
 #include <string>
 #include <cmath>
 
-static thread_local basic::Tracer TR( "core.membrane.MembraneInfo" );
+static thread_local basic::Tracer TR( "core.conformation.membrane.MembraneInfo" );
 
 namespace core {
 namespace conformation {
 namespace membrane {
 
 using namespace core::conformation;
-using namespace core::conformation::membrane;
 using namespace core::kinematics;
 	
-////////////////////
-/// Constructors ///
-////////////////////
-
-/// @brief Default Constructor
-/// @details Creates a default copy of the membrane info object
-/// with the membrane virtual at nres = 1, thicnkess = 15A, steepenss
-/// of fullatom membrane transition = 10A and no spanning topology or
-/// lips info defined
+/// @brief Create a default version of MembraneInfo (DONT USE)
+/// @details Initializes all data members to dummy or empty values
+/// Use the fully specified constructors instead. MembraneInfo is a
+/// data container but is NOT responsible for initialization. 
 MembraneInfo::MembraneInfo() :
 	conformation_( *(new Conformation()) ),
-	thickness_( 15 ),
-	steepness_( 10 ),
-	membrane_rsd_num_( 1 ),
-	membrane_jump_( 2 )
+	thickness_( 0 ),
+	steepness_( 0 ),
+	membrane_rsd_num_( 0 ),
+	membrane_jump_( 0 )
 {}
 
-/// @brief Custom Constructor - Membrane pos & topology
-/// @details Creates a default copy of the membrane info object
-/// with the membrane virtual at nres = membrane_pos, thicnkess = 15A, steepenss
-/// of fullatom membrane transition = 10A and spanning topology defined
-/// by API provided vector1 of spanning topology obejcts (by chain)
+/// @brief Create MembraneInfo from initialized data
+/// @details Creates a MembraneInfo object by linking the conformation
+/// to the pose, specify the  membrane residue number, membrane jump number, 
+/// spanning topology object and optional lipophilicity data. Thickness and 
+/// steepness are currently constants
 MembraneInfo::MembraneInfo(
 	Conformation & conformation,
 	core::Size membrane_pos,
-	SpanningTopologyOP topology,
-	core::SSize membrane_jump
+	core::SSize membrane_jump,
+	SpanningTopologyOP topology
 	) :
 	conformation_( conformation ),
 	thickness_( 15 ),
 	steepness_( 10 ),
 	membrane_rsd_num_( membrane_pos ),
 	membrane_jump_( membrane_jump ),
+	lipid_acc_data_( 0 ),
 	spanning_topology_( topology )
 {}
 
-/// @brief Custom Constructor - Membrane pos, topology & lips
-/// @details Creates a default copy of the membrane info object
-/// with the membrane virtual at nres = membrane_pos, thicnkess = 15A, steepenss
-/// of fullatom membrane transition = 10A, spanning topology defined
-/// by API provided vector1 of spanning topology obejcts (by chain), and
-/// lipid accessibility defined by a vector1 of lipid acc objects.
+/// @brief Create MembraneInfo from initialized data with lipophilicity
+/// @details Creates a MembraneInfo object by linking the conformation
+/// to the pose, specify the  membrane residue number, membrane jump number, 
+/// spanning topology object and optional lipophilicity data. Thickness and 
+/// steepness are currently constants
 MembraneInfo::MembraneInfo(
 	Conformation & conformation,
 	core::Size membrane_pos,
-	SpanningTopologyOP topology,
+	core::SSize membrane_jump,
 	LipidAccInfoOP lips,
-	core::SSize membrane_jump
+	SpanningTopologyOP topology
 	) :
 	conformation_( conformation ),
 	thickness_( 15 ),
@@ -125,8 +119,7 @@ MembraneInfo::MembraneInfo(
 	spanning_topology_( topology )
 {}
 
-/// @brief Copy Constructor
-/// @details Create a deep copy of this object
+/// @brief Create a deep copy of all data in this object.
 MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	utility::pointer::ReferenceCount(),
 	conformation_( src.conformation_ ),
@@ -138,9 +131,7 @@ MembraneInfo::MembraneInfo( MembraneInfo const & src ) :
 	spanning_topology_( src.spanning_topology_ )
 {}
 
-/// @brief Assignment Operator
-/// @details Create a deep copy of this object while overloading the assignemnt
-/// operator "="
+/// @brief create a deep copy of all data in thsi object upon assignment 
 MembraneInfo &
 MembraneInfo::operator=( MembraneInfo const & src ) {
 	
@@ -164,7 +155,7 @@ MembraneInfo::operator=( MembraneInfo const & src ) {
 /// @brief Destructor
 MembraneInfo::~MembraneInfo() {}
 
-/// @brief  Generate string representation of MembraneInfo for debugging purposes.
+/// @brief Generate a string representation of information represented by ths MembraneInfo
 void
 MembraneInfo::show(std::ostream & output ) const {
 	
@@ -192,22 +183,39 @@ MembraneInfo::show(std::ostream & output ) const {
 	
 }
 
-////////////////////////////////////////
-/// Coordinate Derived Membrane Info ///
-////////////////////////////////////////
+// Chemical Information about this Membrane
 
-/// @brief Return the center coordinate of the membrane
-/// @details Return the center xyz coordinate of the membrane described in the
-/// MPct atom of the membrane virtual residue
+/// @brief Effective thickness of the membrane
+/// @details For IMM = default is 15. Otherwise, defined as the distance between the g3p 
+/// linkers in the phospholipid
+core::Real 
+MembraneInfo::membrane_thickness() const {
+	return thickness_; 
+}
+
+/// @brief Steepness of hydrophobic -> hydrophillic transition
+/// @details For IMM - default is 10. Otherwise, caluclated as the slope in the polarity
+/// gradient from low to high charge density from the chemical profile.
+core::Real
+MembraneInfo::membrane_steepness() const {
+	return steepness_;
+}
+
+// membrane position & orientation
+
+/// @brief Membrane center
+/// @details Returns the xyzVector describing the center of the membrane
+/// This is the same as the MPct atom of the membrane (MEM) residue. 
 Vector
 MembraneInfo::membrane_center() const  {
 	
 	return conformation_.residue( membrane_rsd_num() ).xyz( membrane::center );
 }
 
-/// @brief Returns the normal of the membrane
-/// @details Returns the normal (direction) of the membrane described in the MPnm
-/// atom of the membrane virtual residue.
+/// @brief Membrane normal
+/// @details Returns the membrane normal, which describes the membrane 
+/// orientation. This is the same as the xyzVector in the MPnm atom 
+/// in the membrane residue.
 Vector
 MembraneInfo::membrane_normal() const {
 	
@@ -217,9 +225,25 @@ MembraneInfo::membrane_normal() const {
 	return normal.normalize();
 }
 
-/// @brief Compute Residue Z Position relative to mem
-/// @details Compute the z position of a residue relative to the pre-defined
-/// layers in the membrane. Maintians the relative coordinate frame
+/// @brief Is residue in the membrane? Takes CA coordinate
+/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
+bool
+MembraneInfo::in_membrane( core::Size resnum ) const {
+	
+	bool in_mem( false );
+	
+	if ( residue_z_position( resnum ) >= -membrane_thickness() &&
+			residue_z_position( resnum ) <= membrane_thickness() ) {
+		in_mem = true;
+	}
+	
+	return in_mem;
+} // in membrane?
+
+/// @brief Compute residue position relative to membrane normal
+/// @details Calculate the z coordinate of the residue, projected onto
+/// the membrane normal axis. Objective is to maintain correct coordinates
+/// in relative coordinate frame. 
 Real
 MembraneInfo::residue_z_position( core::Size resnum ) const {
 	
@@ -233,9 +257,10 @@ MembraneInfo::residue_z_position( core::Size resnum ) const {
 	return result;
 }
 
-/// @brief Compute atom Z Position relative to mem
-/// @details Compute the z position of an atom relative to the pre-defined
-/// layers in the membrane. Maintians the relative coordinate frame
+/// @brief Compute atom position relative to membrane normal
+/// @details Calculate the z coordinate of the atom, projected onto
+/// the membrane normal axis. Objective is to maintain correct coordinates
+/// in relative coordinate frame. 
 Real
 MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
 	
@@ -249,100 +274,16 @@ MembraneInfo::atom_z_position( core::Size resnum, core::Size atomnum ) const {
 	return result;
 }
 
-/// @brief Is residue in the membrane? Takes CA coordinate
-/// @details Uses the thickness stored in MembraneInfon and the residue_z_position
-bool MembraneInfo::in_membrane( core::Size resnum ) const {
-	
-	bool in_mem( false );
-	
-	if ( residue_z_position( resnum ) >= -membrane_thickness() &&
-			residue_z_position( resnum ) <= membrane_thickness() ) {
-		in_mem = true;
-	}
-	
-	return in_mem;
-} // in membrane?
-
-////////////////////////////
-/// Membrane Data Access ///
-////////////////////////////
-
-/// @brief Return position of membrane residue
-/// @details Return the residue number of the membrane virtual
-/// residue in the pose
+/// @brief Sequence position of the membrane residue
+/// @details Return the residue number of MEM (rsd.seqpos()) in the pose
 core::Size
-MembraneInfo::membrane_rsd_num() const { return membrane_rsd_num_; }
-	
-/// @brief Return membrane thickness
-/// @details Return the membrane thicnkess used by the
-/// fullatom energy method (centroid is hard coded for now
-core::Real
-MembraneInfo::membrane_thickness() const {
-	return thickness_;
-}
-    
-/// @brief Set Membrane Thickness in memInfo
-/// @details Set the thickness of the membrane to be used by the high resolution
-/// scoring function
-void
-MembraneInfo::set_membrane_thickness( core::Real thk ) {
-    thickness_ = thk;
+MembraneInfo::membrane_rsd_num() const { 
+	return membrane_rsd_num_; 
 }
 
-/// @brief Return the membrane transition steepness
-/// @details Return the steepness betwen isotropic and ansitropic
-/// layers of the membrane used by the fullatom energy methods
-core::Real
-MembraneInfo::membrane_steepness() const {
-	return steepness_;
-}
-    
-/// @brief Set Membrane Steepness in membrane info
-/// @details Set the steepness of transition between polar and nonpolar phases where
-/// n = 10 gives a transition region of 6A between nonpolar and polar phases.
-void
-MembraneInfo::set_membrane_steepness( core::Real steepness ) {
-    steepness_ = steepness;
-}
-
-/// @brief Return a list of membrane spanning topology objects
-/// @details Return a vector1 of spanning topology objects defining
-/// the starting and ending position of membrane spans per chain.
-SpanningTopologyOP
-MembraneInfo::spanning_topology() const {
-	return spanning_topology_;
-}
-
-/// @brief Check that lipid accessibility data was or was not included
-/// @details Checks that the lips info object was initialized
-bool
-MembraneInfo::include_lips() const {
-    
-    // If lips initialized, return true
-    if ( lipid_acc_data_ != 0 ) {
-        return true;
-    }
-    
-    return false;
-}
-    
-/// @brief Return a list of lipid accessibility objects
-/// @details Return a vector1 of lipid accessibility info objects
-/// describing lipid exposre of individual residues in the pose
-LipidAccInfoOP
-MembraneInfo::lipid_acc_data() const {
-	return lipid_acc_data_;
-}
-    
-
-
-////////////////////////////////////
-/// Membrane Base Fold Tree Info ///
-////////////////////////////////////
-
-/// @brief Get the number of the membrane jump
-/// @details Get a core::SSize (int) denoting the number of the fold tree jump
-/// relating the membrane residue to the rest of the pose
+/// @brief Indeitifier for the membrane jump
+/// @details Returns an integer (core::Size) denoting the jump number in the foldtree
+/// representing the jump relating the membrane residue to the rest of the molecule
 core::SSize
 MembraneInfo::membrane_jump() const { return membrane_jump_; }
     
@@ -356,9 +297,8 @@ MembraneInfo::set_membrane_jump( core::SSize jumpnum ) {
     membrane_jump_ = jumpnum;
 }
 
-/// @brief	 Check membrane fold tree
-/// @details Check that the membrane jump num is a jump point and checking
-///			 for a reasonable fold tree
+/// @brief Somewhat weak check that a membrane foldtree is valid. Use checks in
+/// protocols/membrane/util.hh instead!
 bool
 MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 
@@ -375,8 +315,41 @@ MembraneInfo::check_membrane_fold_tree( FoldTree const & ft_in ) const {
 	// Otherwise, looks reasonable!
 	return true;
 }
+
+// topology of TM spans and lipophilicity
+
+/// @brief Transmembrane spaning topology
+/// @details Return a SpanningTopology object, which includes a
+/// list of Span objects, describing the start and end sequence 
+/// positions of each transmembrane span
+SpanningTopologyOP
+MembraneInfo::spanning_topology() const {
+	return spanning_topology_;
+}
+
+/// @brief Does this MembraneInfo includes lipophilicity information?
+bool
+MembraneInfo::include_lips() const {
     
-/// @brief Show Membrane Protein
+    // If lips initialized, return true
+    if ( lipid_acc_data_ != 0 ) {
+        return true;
+    }
+    
+    return false;
+}
+    
+/// @brief Per-residue lipophilicity (probability of exposure to lipid)
+/// @details Returns a LipidAccInfo describing per residue probability
+/// of exposure to lipid. Data calcualted via the run_lips.pl script
+/// and provided by the user on the commandline if applicable
+LipidAccInfoOP
+MembraneInfo::lipid_acc_data() const {
+	return lipid_acc_data_;
+}
+    
+    
+/// @brief Show MembraneInfo method for pyrosetta
 std::ostream & operator << ( std::ostream & os, MembraneInfo const & mem_info )
 {
     
