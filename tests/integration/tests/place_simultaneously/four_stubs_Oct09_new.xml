@@ -13,9 +13,9 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
   </SCOREFXNS>
   <FILTERS>
 		<Ddg name=ddg threshold=-10 scorefxn=ddg_scorefxn confidence=1.0/> recommended to use at least -15, but slower ###
-		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 pdb_num=15A energy_cutoff=-0.001/>
-		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 pdb_num=17A energy_cutoff=-0.001/>
-		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 pdb_num=198A energy_cutoff=-0.001/>
+		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 residue=15A energy_cutoff=-0.001/>
+		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 residue=17A energy_cutoff=-0.001/>
+		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 residue=198A energy_cutoff=-0.001/>
 		<CompoundStatement name=either_hbond>
 			<OR filter_name=hbonds_15/>
 			<OR filter_name=hbonds_17/>

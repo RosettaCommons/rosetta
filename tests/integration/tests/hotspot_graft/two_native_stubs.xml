@@ -10,9 +10,9 @@
 				<AverageDegree name=degree threshold=8.5 task_operations=pido/>
 		 <Ddg name=ddg threshold=-18 scorefxn=ddg_scorefxn/>
 		 <ResInInterface name=riif residues=15/>
-		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 pdb_num=15A energy_cutoff=-0.05/>
-		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 pdb_num=17A energy_cutoff=-0.05/>
-		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 pdb_num=198A energy_cutoff=-0.05/>
+		<HbondsToResidue name=hbonds_15 partners=1 backbone=1 sidechain=1 residue=15A energy_cutoff=-0.05/>
+		<HbondsToResidue name=hbonds_17 partners=1 backbone=1 sidechain=1 residue=17A energy_cutoff=-0.05/>
+		<HbondsToResidue name=hbonds_198 partners=1 backbone=1 sidechain=1 residue=198A energy_cutoff=-0.05/>
 		<CompoundStatement name=either_hbond>
 			<OR filter_name=hbonds_15/>
 			<OR filter_name=hbonds_17/>
