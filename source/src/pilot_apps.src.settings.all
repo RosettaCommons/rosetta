@@ -73,6 +73,7 @@ sources = {
 		"oop_scan",
 		"orn_macrocycle",
 		"sec_struct_finder",
+		"test_nu_angles",
 		"trivial_alascan",
 		"vancomycin",
 	],
