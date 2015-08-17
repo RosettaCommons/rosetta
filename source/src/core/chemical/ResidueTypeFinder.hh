@@ -219,6 +219,10 @@ namespace chemical {
 													ResidueTypeCOP rsd_type ) const;
 
 		bool
+		deletes_any_variant( PatchCOP patch,
+													ResidueTypeCOP rsd_type ) const;
+
+		bool
 		matches_any_patch_name( PatchCOP patch ) const;
 
 		bool

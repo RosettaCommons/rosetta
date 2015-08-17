@@ -88,6 +88,10 @@ public:
 	utility::vector1< std::string >
 	deletes_properties() const;
 
+	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_variants() const;
+
 	// data:
 private:
 	/// @brief to which ResidueTypes this PatchCase applies to?
@@ -160,6 +164,10 @@ public:
 	/// @brief returns list of deleted property names, useful for identifying patches that go with PDB residues
 	utility::vector1< std::string >
 	deletes_properties( ResidueType const & rsd_in ) const;
+
+	/// @brief returns list of deleted variant names, useful for identifying patches that go with PDB residues
+	utility::vector1< std::string >
+	deletes_variants( ResidueType const & rsd_in ) const;
 
 	/// private data
 private:

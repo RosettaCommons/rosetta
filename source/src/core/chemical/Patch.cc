@@ -322,6 +322,19 @@ PatchCase::deletes_properties() const
 	return property_names;
 }
 
+/// @details Go through patch operations in this PatchCase, and compile list of any property names that are deleted.
+utility::vector1< std::string >
+PatchCase::deletes_variants() const
+{
+	utility::vector1< std::string > variant_names;
+	for ( utility::vector1< PatchOperationOP >::const_iterator iter = operations_.begin(),
+			iter_end = operations_.end(); iter != iter_end; ++iter ) {
+		std::string const variant_name = ( *iter )->deletes_variant();
+		if ( variant_name.size() > 0 ) variant_names.push_back( variant_name );
+	}
+	return variant_names;
+}
+
 
 /// @details	- first read in all lines from the file, discarding # comment lines
 /// - parse input lines for Patch name and variant types (NAME, TYPES)
@@ -543,6 +556,29 @@ Patch::deletes_properties( ResidueType const & rsd_type ) const
 	}
 
 	return properties;
+}
+
+/// @details loop through the cases in this patch and if it is applicable to this ResidueType, compile
+/// a list of any variants that are deleted.
+utility::vector1< std::string >
+Patch::deletes_variants( ResidueType const & rsd_type ) const
+{
+	utility::vector1< std::string > variants;
+	if ( !applies_to( rsd_type ) ) return variants;  // I don't know how to patch this residue.
+
+	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
+			iter_end = cases_.end(); iter != iter_end; ++iter ) {
+
+		if ( (*iter)->applies_to( rsd_type ) ) {
+			// this patch case applies to this rsd_type
+			utility::vector1< std::string > variants_for_patch_case = ( *iter )->deletes_variants();
+			for ( Size n = 1; n <= variants_for_patch_case.size(); n++ ) {
+				variants.push_back(  variants_for_patch_case[ n ] );
+			}
+		}
+	}
+
+	return variants;
 }
 
 

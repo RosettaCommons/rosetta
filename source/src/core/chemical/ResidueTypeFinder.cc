@@ -207,6 +207,7 @@ namespace chemical {
 			if ( !patch->applies_to( *rsd_type ) )             continue;
 			if ( has_disallowed_variant( patch ) )             continue;
 			if ( deletes_any_property(   patch, rsd_type ) )   continue;
+			if ( deletes_any_variant(    patch, rsd_type ) )   continue;
 			// could also add as a no-no: if patch *deletes* an atom in atom_names_.
 
 			// note -- make sure to apply patch if it has a chance of satisfying any of
@@ -391,6 +392,25 @@ namespace chemical {
 			// convert string to ResidueProperty
 			ResidueProperty const deleted_property( rsd_type->properties().get_property_from_string( deleted_properties[ n ] ) );
 			if ( properties_.has_value( deleted_property ) ) return true;
+		}
+		return false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	ResidueTypeFinder::deletes_any_variant( PatchCOP patch,
+																					ResidueTypeCOP rsd_type ) const
+	{
+		vector1< std::string > const & deleted_variants( patch->deletes_variants( *rsd_type ) );
+		for ( Size n = 1; n <= deleted_variants.size(); n++ ) {
+			// convert string to ResidueProperty
+			VariantType const deleted_variant( ResidueProperties::get_variant_from_string( deleted_variants[ n ] ) );
+			for ( Size k = 1; k <= variants_in_sets_.size(); k++ ) {
+				vector1< VariantType > const & variant_set = variants_in_sets_[ k ];
+				for ( Size m = 1; m <= variant_set.size(); m++ ) {
+					if ( variant_set.has_value( deleted_variant ) ) return true;
+				} // loop inside one variant set
+			}
 		}
 		return false;
 	}

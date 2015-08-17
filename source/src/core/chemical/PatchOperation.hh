@@ -62,6 +62,11 @@ public:
 	std::string
 	deletes_property(){ return ""; }
 
+	/// @brief Which variant, if any, is deleted.
+	virtual
+	std::string
+	deletes_variant(){ return ""; }
+
 	/// @brief Special -- does this apply to 'minimal', placeholder types? Generally true, unless updating aa or name3.
 	virtual
 	bool
@@ -189,7 +194,7 @@ public:
 	bool
 	apply( ResidueType & rsd ) const;
 
-	/// @brief Which property, if any, is added.
+	/// @brief Which property, if any, is deleted.
 	virtual
 	std::string
 	deletes_property(){ return property_; }
@@ -210,6 +215,11 @@ public:
 
 	/// @brief  Apply this patch to the given ResidueType.
 	virtual bool apply( ResidueType & rsd ) const;
+
+	/// @brief Which variant, if any, is deleted.
+	virtual
+	std::string
+	deletes_variant(){ return variant_; }
 
 private:
 	std::string variant_;
@@ -416,6 +426,10 @@ public:
 
 	/// @brief  Apply this patch to the given ResidueType.
 	virtual bool apply( ResidueType & rsd ) const;
+
+	virtual
+	std::string
+	adds_atom(){ return alias_; }
 
 private:
 	std::string rosetta_atom_name_;
