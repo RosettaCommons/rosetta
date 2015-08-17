@@ -19,6 +19,7 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -855,6 +856,7 @@ parse_database_connection(
 	using std::endl;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys::inout;
+	using namespace basic::options::OptionKeys;
 	using utility::sql_database::DatabaseSessionManager;
 	using namespace basic::resource_manager;
 
@@ -940,7 +942,18 @@ parse_database_connection(
 		database_name = option[dbms::database_name];
 	}
 
-
+	std::string database_dir;
+	if ( option[ out::path::db ].user() ) {
+		database_dir = option[ out::path::db ]().path();
+	} else if (option[ inout::dbms::path ].user() ) {
+		database_dir = option[ inout::dbms::path ]().path();
+	}else if (option[ out::path::all ].user() ) {
+		database_dir = option[ out::path::all ]().path();
+	} else {
+		database_dir = "";
+	}
+	std::string database_path = database_dir + database_name;
+	
 	// Parse pq_schema
 	if(tag->hasOption("database_pq_schema") && (database_mode != utility::sql_database::DatabaseMode::postgres))
 	{
@@ -1007,10 +1020,11 @@ parse_database_connection(
 	}
 
 	switch(database_mode){
+		
 		case utility::sql_database::DatabaseMode::sqlite3:
 			return DatabaseSessionManager::get_instance()->get_db_session(
 				database_mode, transaction_mode, chunk_size,
-				database_name, "", "", "", "", 0,
+				database_path, "", "", "", "", 0,
 				tag->getOption("database_read_only", false),
 				resolve_db_partition(
 					tag->getOption("database_separate_db_per_mpi_process", false),
@@ -1078,10 +1092,12 @@ parse_database_connection(
 			else{
 				database_port=tag->getOption<Size>("database_port");
 			}
-
+			
+			
 			return DatabaseSessionManager::get_instance()->get_db_session(
 				database_mode, transaction_mode, chunk_size,
-				database_name, database_pq_schema,
+				database_path,
+				database_pq_schema,
 				database_host,
 				database_user,
 				database_password,

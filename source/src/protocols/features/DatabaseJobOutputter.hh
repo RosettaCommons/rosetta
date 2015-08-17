@@ -111,6 +111,7 @@ private: // members
 	protocols::features::ProteinSilentReportOP protein_silent_report_;
 	std::string database_name_;
 	std::string database_pq_schema_;
+	std::string path_;
 
 }; // DatabaseJobOutputter
 

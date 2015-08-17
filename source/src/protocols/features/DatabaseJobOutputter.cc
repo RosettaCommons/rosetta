@@ -67,7 +67,7 @@ DatabaseJobOutputter::DatabaseJobOutputter() :
 {
 	load_options_from_option_system();
 	sessionOP db_session(
-		get_db_session(database_name_, database_pq_schema_));
+		get_db_session(path_ + database_name_, database_pq_schema_));
 	protein_silent_report_->initialize(db_session);
 
 }
@@ -90,7 +90,17 @@ DatabaseJobOutputter::load_options_from_option_system(){
 		option[inout::dbms::pq_schema].user()){
 		set_database_pq_schema(option[inout::dbms::pq_schema]);
 	}
-
+	
+	if ( option[ out::path::db ].user() ) {
+		path_ = option[ out::path::db ]().path();
+	} else if (option[ inout::dbms::path ].user() ) {
+		path_ = option[ inout::dbms::path ]().path();
+	}else if (option[ out::path::all ].user() ) {
+		path_ = option[ out::path::all ]().path();
+	} else {
+		path_ = "";
+	}
+	
 }
 
 void
@@ -105,6 +115,9 @@ DatabaseJobOutputter::register_options(){
 	option.add_relevant( inout::dbms::port );
 	option.add_relevant( inout::dbms::separate_db_per_mpi_process );
 	option.add_relevant( out::resume_batch);
+	option.add_relevant( out::path::db);
+	option.add_relevant( out::path::all);
+	option.add_relevant( inout::dbms::path);
 
 }
 
@@ -153,7 +166,7 @@ void DatabaseJobOutputter::final_pose(
 	// If this is bottle neck, consider hanging on to the db_session
 	// rather than recreating it each time.
 
-	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
+	sessionOP db_session(get_db_session(path_ + database_name_, database_pq_schema_));
 	protein_silent_report_->apply(pose, db_session, output_name(job));
 }
 
@@ -169,7 +182,7 @@ void DatabaseJobOutputter::other_pose(
 
 	call_output_observers( pose, job );
 
-	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
+	sessionOP db_session(get_db_session(path_ + database_name_, database_pq_schema_));
 	protein_silent_report_->apply(pose, db_session, tag);
 
 }
@@ -185,7 +198,7 @@ bool DatabaseJobOutputter::job_has_completed(
 	if ( job->completed() ) {
 		return true;
 	}
-	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
+	sessionOP db_session(get_db_session(path_ + database_name_, database_pq_schema_));
 
 	//It is possible for the mpi distributor to call this function
 	//before the database has even been initialized

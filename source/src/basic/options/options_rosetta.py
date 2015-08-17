@@ -504,7 +504,8 @@ Options = Option_Group( '',
 					desc="Store all the atoms for a residue in a binary silent file style blob.  Sacrifices "
 							"analyzability for scalability.  If you don't know if you want this you probably don't.",
 					default='false'),
-			Option( 'retry_failed_reads','Boolean',desc="If a database read fails for an unknown reason, try again several times before giving up",default='false')
+			Option( 'retry_failed_reads','Boolean',desc="If a database read fails for an unknown reason, try again several times before giving up",default='false'),
+            Option( 'path', 'Path', desc = "Directory the database should be read from or exported to.", default="."),
 
 		),  # inout:dbms
 	),  # inout
@@ -692,6 +693,7 @@ Options = Option_Group( '',
 			Option( 'all', 'Path', desc="Default file output path", default="." ),
 			Option( 'path', 'Path', desc="Default file output path", default="." ),
 			Option( 'pdb', 'Path', desc="PDB file output path" ),
+            Option( 'db', 'Path', desc="Database file output path if using FeatureReporters or database output", default="."),
 			Option( 'score', 'Path', desc="Score file output path" ),
 #			Option( 'movie', 'Path', desc="Movie file output path" ),
 			Option( 'scratch', 'Path', desc="use this path as scratch drive", default=['/scratch/USERS/'] ),
