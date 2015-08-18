@@ -85,6 +85,8 @@ class Runner:
             output, errors = p.communicate()
             with file(output_file, 'w') as f: f.write(output);  f.write(errors)
             print errors
+        else:
+            p.wait()
 
         #exit_code = os.waitpid(p.pid, 0)[1]
         exit_code = p.returncode
