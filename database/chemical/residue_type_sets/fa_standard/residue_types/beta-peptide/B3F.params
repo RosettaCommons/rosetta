@@ -54,6 +54,7 @@ BOND  CZ   HZ
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   CD1
 PROPERTIES PROTEIN BETA_AA AROMATIC METALBINDING
+MAINCHAIN_ATOMS N CA CM C
 METAL_BINDING_ATOMS O
 NBR_ATOM CB
 # APL CB to side chain heavyatom distance -- max as observed on residue 74 of ubiquitin

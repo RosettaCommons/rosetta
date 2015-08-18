@@ -53,6 +53,7 @@ sources = {
 		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
 	],
 	"pilot/awatkins" : [
+		"a3b_hbs_creator",
 		"a3b_hbs_dock_design",
 		"a3b_test",
 		"b3a_distro_kinemage",
@@ -68,6 +69,7 @@ sources = {
 		"lactamize",
 		"macrocycles",
 		"macrocycle_sampling",
+		"make_a3b_bundle",
 		"multistate_idea",
 		"oop_conformations",
 		"oop_scan",

@@ -99,43 +99,46 @@ construct_poly_uniq_restype_pose(
 	conformation::Residue const replace_res( restype, true );
 
 	for( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			 pos_it != positions.end(); ++pos_it )
-		{
+			 pos_it != positions.end(); ++pos_it ) {
 
-			chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
+		chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
 
 
-			if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
+		if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
 				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) )
-				{
-					continue;
-				}
+		{
+			continue;
+		}
 
-			utility::vector1< std::string > current_variants;
+		utility::vector1< std::string > current_variants;
 
-			if ( TR.Debug.visible() ) {
-				TR.Debug << "replacing: " << *pos_it << std::endl;
-			}
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "replacing: " << *pos_it << std::endl;
+		}
 
-			if ( ! variants_match( *cur_restype, replace_res.type() ) ) {
+		// either we don't want to keep disulfide cys or the current restype is not cys
+		// so ignore disulfide variant type
+		if ( ! variants_match_with_exceptions( *cur_restype, replace_res.type(), utility::vector1< core::chemical::VariantType >( 1, core::chemical::DISULFIDE ) ) ) {
 				current_variants = cur_restype->properties().get_list_of_variants();
 				chemical::ResidueTypeCOP var_replace_type = replace_res.type().get_self_ptr();
 
-				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+			for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+				if ( current_variants[ var ] != "DISULFIDE" ) {
 					var_replace_type = restype_set->get_residue_type_with_variant_added( * var_replace_type,
 							core::chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
 				}
-
-				//runtime_assert( var_replace_type->name3() == "ALA" );
-				conformation::Residue const var_replace_res( *var_replace_type, true );
-
-				pose.replace_residue( *pos_it, var_replace_res, true );
-			} else {
-				pose.replace_residue( *pos_it, replace_res, true);
 			}
 
-		} //iterator over positions to replace
+			//runtime_assert( var_replace_type->name3() == "ALA" );
+			conformation::Residue const var_replace_res( *var_replace_type, true );
+
+			pose.replace_residue( *pos_it, var_replace_res, true );
+		} else {
+			pose.replace_residue( *pos_it, replace_res, true);
+		}
+
+	} //iterator over positions to replace
 
 } // construct_poly_ala_pose function
 
@@ -171,39 +174,38 @@ construct_poly_XXX_pose(
 	
 	conformation::Residue const replace_res( restype_set->name_map( aa ), true );
 
-	for( utility::vector1< Size >::const_iterator pos_it = positions.begin();
-			 pos_it != positions.end(); ++pos_it )
-		{
+	for ( utility::vector1< Size >::const_iterator pos_it = positions.begin();
+			 pos_it != positions.end(); ++pos_it ) {
 
-			chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
+		chemical::ResidueType const * cur_restype = & pose.residue_type( *pos_it );
 
-			if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
+		if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
 				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) )
-				{
-					continue;
+		{
+			continue;
+		}
+		utility::vector1< std::string > current_variants;
+
+		if ( ! variants_match( *cur_restype, replace_res.type() ) ) {
+			current_variants = cur_restype->properties().get_list_of_variants();
+			chemical::ResidueTypeCOP var_replace_type = replace_res.type().get_self_ptr();
+
+			for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
+				if ( ( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys) ||
+					( ! cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
+					var_replace_type = restype_set->get_residue_type_with_variant_added( * var_replace_type,
+							chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
 				}
-			utility::vector1< std::string > current_variants;
-
-			if ( ! variants_match( *cur_restype, replace_res.type() ) ) {
-				current_variants = cur_restype->properties().get_list_of_variants();
-				chemical::ResidueTypeCOP var_replace_type = replace_res.type().get_self_ptr();
-
-				for ( core::Size var = 1; var <= current_variants.size(); ++var ) {
-					if ( ( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys) ||
-							( ! cur_restype->has_variant_type( chemical::DISULFIDE ) ) ) {
-						var_replace_type = restype_set->get_residue_type_with_variant_added( * var_replace_type,
-								chemical::ResidueProperties::get_variant_from_string( current_variants[ var ] ) ).get_self_ptr();
-					}
-				}
-
-				runtime_assert( var_replace_type->name3() == aa );
-				conformation::Residue const var_replace_res( *var_replace_type, true );
-				pose.replace_residue( *pos_it, var_replace_res, true );
-			} else {
-				pose.replace_residue( *pos_it, replace_res, true);
 			}
-		} //iterator over positions to replace
+
+			runtime_assert( var_replace_type->name3() == aa );
+			conformation::Residue const var_replace_res( *var_replace_type, true );
+			pose.replace_residue( *pos_it, var_replace_res, true );
+		} else {
+			pose.replace_residue( *pos_it, replace_res, true);
+		}
+	} //iterator over positions to replace
 } // construct_poly_XXX_pose function
 
 

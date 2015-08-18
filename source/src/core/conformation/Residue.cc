@@ -394,6 +394,8 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 	//
 	// THIS REALLY NEEDS TO BE FIXED AT SOME POINT
 
+	// AMW: coming back here, planning to add logic like second case to the first case.
+	// let's assume at least pseudobonds have to be the same.
 
 	if ( type().n_residue_connections() == src_rsd.type().n_residue_connections() ) {
 

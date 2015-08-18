@@ -1807,10 +1807,6 @@ debug_assert( mainchain1.size() == mainchain2.size() );
 bool change_cys_state( Size const index, std::string cys_type_name3, Conformation & conf ) {
 	// Cache information on old residue.
 	Residue const & res( conf.residue( index ) );
-	// amw: can't use name3 here because of overlaps between e.g. CYS/CYD name3
-	// but conveniently the first three characters of name are always correct
-	//std::string rn = res.type().name();
-	//TR << "residue current name is |" << rn << "|" << std::endl;
 	chemical::ResidueTypeSet const & residue_type_set = res.type().residue_type_set();
 
 	// make sure we're working on a cys
@@ -1828,10 +1824,7 @@ bool change_cys_state( Size const index, std::string cys_type_name3, Conformatio
 		// if the old residue has DISULFIDE variant type then we are removing a
 		// disulfide, so remove the variant type from the list
 		variant_types.erase( std::find( variant_types.begin(), variant_types.end(), "DISULFIDE" ) );
-		//TR << "We just erased the DISULFIDE variant type as desired, since we are going from rn " << rn << " to thiol type " << std::endl;
-
 	} else if (! res.has_variant_type( chemical::DISULFIDE ) && cys_type_name3 == "CYD" ){
-		//TR << "We just added the DISULFIDE variant type as desired, since we are going from rn " << rn << " to disulfide type " << std::endl;
 		variant_types.push_back( "DISULFIDE" ); //chemical::DISULFIDE );	// creating a disulfide
 	}
 
@@ -1943,8 +1936,7 @@ form_disulfide(
 	//std::string ucname = conformation.residue_type(upper_res).name3();
 
 	// Break existing disulfide bonds to lower
-	if ( /*conformation.residue(lower_res).type().is_disulfide_bonded()
-        &&*/ conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) // full atom residue
+	if ( conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) ) // full atom residue
 	{
 		std::string lcatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
 		Size const connect_atom( conformation.residue( lower_res ).atom_index( lcatom ) );
@@ -1975,8 +1967,7 @@ form_disulfide(
 		form_disulfide_helper(conformation, lower_res, restype_set); //This mutates the lower_res residue to a disulfide-forming variant, preserving other variant types in the process.
 	}
 	// Break existing disulfide bonds to upper
-	if ( /*conformation.residue( upper_res ).type().is_disulfide_bonded()
-      && */conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) )
+	if ( conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) )
 	{
 		std::string ucatom = conformation.residue_type(lower_res).get_disulfide_atom_name();
 		Size const connect_atom( conformation.residue( upper_res ).atom_index( ucatom ) );
@@ -1999,10 +1990,7 @@ form_disulfide(
 	} else {
 		form_disulfide_helper(conformation, upper_res, restype_set); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
 	}
-
-	//form_disulfide_helper(conformation, lower_res, restype_set); //This mutates the lower_res residue to a disulfide-forming variant, preserving other variant types in the process.
-	//form_disulfide_helper(conformation, upper_res, restype_set); //This mutates the upper_res residue to a disulfide-forming variant, preserving other variant types in the process.
-
+	
 	// Both residues are now CYD
 	runtime_assert( conformation.residue(lower_res).has_variant_type(chemical::DISULFIDE) );
 	runtime_assert( conformation.residue(upper_res).has_variant_type(chemical::DISULFIDE) );
@@ -2098,7 +2086,8 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 
 	//both Cys or CysD
 	//if( A.type().name1() != 'C' || B.type().name1() != 'C' )
-	if(! A.type().is_sidechain_thiol() && ! A.type().is_disulfide_bonded() )
+	if ( ( ! A.type().is_sidechain_thiol() && ! A.type().is_disulfide_bonded() )
+	   || ( ! B.type().is_sidechain_thiol() && ! B.type().is_disulfide_bonded() ) )
 		return false;
 
 	//std::string n1 = A.type().name3(); std::string n2 = B.type().name3();
@@ -2131,18 +2120,14 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 		if( !(res.type().is_disulfide_bonded() && res.has_variant_type(chemical::DISULFIDE) ))
 			continue;
 		Size connect_atom( 0);
-		if( res.type().has( "SG" ))
-			connect_atom = res.atom_index( "SG" );
-		else if( res.type().has( "SD" ))
-			connect_atom = res.atom_index( "SD" );
-		else if( res.type().has( "CEN" ))
-			connect_atom = res.atom_index( "CEN" );
-		else {
+		if ( res.type().get_disulfide_atom_name() == "NONE" ) {
 			TR.Warning << "Warning: unable to establish which atom to use for the disulfide to residue "
-				<< i << std::endl;
+			<< i << std::endl;
 			continue;
+		} else {
+			connect_atom = res.atom_index( res.type().get_disulfide_atom_name() ) ;
 		}
-
+		
 		Size other_res(0);
 		Size conn;
 		for( conn = conformation.residue( i ).type().n_residue_connections(); conn >= 1; --conn ) {

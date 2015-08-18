@@ -15,6 +15,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/Patch.hh>
@@ -157,7 +158,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 
 	//create mover instance
-	HbsCreatorMoverOP HC_mover;
+	HbsCreatorMoverOP HC_mover( new HbsCreatorMover );
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( HC_mover );
@@ -174,78 +175,83 @@ HbsCreatorMover::apply(
 	core::pose::Pose & pose
 )
 {
-
 	// create score function
-	//kdrew: old standard scoring function, using MM scoring function now because of NCAAs
-	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) );
-	scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
+	scoring::ScoreFunctionOP score_fxn( scoring::get_score_function() );
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-	 score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-	/*
+	if( score_fxn->has_zero_weight( atom_pair_constraint ) )
+		score_fxn->set_weight( atom_pair_constraint, 0.1 );
+	
+	if( score_fxn->has_zero_weight( dihedral_constraint ) )
+		score_fxn->set_weight( dihedral_constraint, 0.1 );
+	
+	if( score_fxn->has_zero_weight( angle_constraint ) )
+		score_fxn->set_weight( angle_constraint, 0.1 );
+	
+	chemical::ResidueTypeSetCOP restype_set = chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 
-	 TODO:
-
-	 We probably aren't going to need this. We are probably going to:
-	 1) Delete all residues in the chain hbs_creator::hbs_chain that are outside of hbs_creator::hbs_final_res to that plus hbs_creator::hbs_length
-	 2) There aren't two puckers. So we'll probably just push back the three residues we care about to all_positions.
-	*/
-	utility::vector1< core::Size > all_positions;
 	char hbs_chain = option[hbs_creator::hbs_chain].value()[0];
 	core::Size final_res = option[hbs_creator::hbs_final_res].value();
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
 
+	// shift the jump
+	core::kinematics::FoldTree f = pose.fold_tree();
+	f.slide_jump( 1, 1, pose.pdb_info()->pdb2pose( hbs_chain, final_res+1 ) );
+	pose.fold_tree( f );
+	
 	for ( Size i = 1; i <= pose.total_residue(); ++i) {
 		char chn = pdb_info->chain(i);
-		if (chn == hbs_chain) { // correct chain to be truncated and prepped
+		TR << "evaluating residue " << chn  << " " << pdb_info->number(i) << std::endl;
 
-			core::Size pdb_res_num = pdb_info->number(i);
+		if ( chn != hbs_chain) {
+			continue;
+		}
+		// correct chain to be truncated and prepped
 
-			// hbs pre is the smallest number of what we want to preserve
-			if (pdb_res_num < final_res) {
-				TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
-				while (pdb_res_num < final_res) {
-					pose.delete_polymer_residue(i);
-					pdb_res_num = pdb_info->number(i);
-				}
-				setup_pert_foldtree(pose);
+		core::Size pdb_res_num = pdb_info->number(i);
+
+		// hbs pre is the smallest number of what we want to preserve
+		if ( pdb_res_num < final_res ) {
+			//TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
+			while ( pdb_res_num < final_res ) {
+				pose.delete_polymer_residue(i);
+				pdb_res_num = pdb_info->number(i);
 			}
-			else if (pdb_res_num == final_res) { // also applies the post patch
-				hbs::HbsPatcherOP hbs_patcher (new hbs::HbsPatcher( i ) );
-				//pose.dump_pdb( "prepatch.pdb");
-				hbs_patcher->apply( pose );
-				//pose.dump_pdb( "postpatch.pdb");
-			}
-			else if (pdb_res_num > final_res + option[hbs_creator::hbs_length].value()) {
-				TR << "deleting residue " << pdb_res_num << std::endl;
-				while (pdb_res_num > final_res) {
-					pose.delete_polymer_residue(i);
-					pdb_res_num = pdb_info->number(i);
-				}
-				setup_pert_foldtree(pose);
-			}
-
-			if (pdb_res_num >= final_res && pdb_res_num <= final_res+2) {
-				all_positions.push_back(i);
-
-				if (pdb_res_num == final_res) {
-					pose.set_phi(i, -78);
-					pose.set_psi(i, -48);
-				}
-				else if (pdb_res_num == final_res + 1) {
-					pose.set_phi(i+1, -72);
-					pose.set_psi(i+1, -47);
-				}
-				//else if (pdb_res_num == final_res + 2) {
-				//	pose.set_phi(i+2, -55);
-				//	pose.set_psi(i+2, -45);
-				//}
+			hbs::HbsPatcherOP hbs_patcher( new hbs::HbsPatcher( i ) );
+			hbs_patcher->apply( pose );
+			
+		} else if ( pdb_res_num > final_res + option[hbs_creator::hbs_length].value() ) {
+			//TR << "deleting residue " << pdb_res_num << std::endl;
+			while ( chn == hbs_chain && i <= pose.total_residue() ) {
+				chn = pdb_info->chain(i);
+				pose.delete_polymer_residue(i);
 			}
 		}
+		
+		/*if (pdb_res_num == final_res) {
+			pose.set_phi(i, -78);
+			pose.set_psi(i, -48);
+		}
+		else if (pdb_res_num == final_res + 1) {
+			pose.set_phi(i+1, -72);
+			pose.set_psi(i+1, -47);
+		}*/
 	}
+	
+	setup_pert_foldtree(pose);
 
+	// presently the final residue in the pose is the terminal residue of the hbs
+	// replace with terminal variant
+	conformation::Residue term( restype_set->get_residue_type_with_variant_added(pose.residue(pose.total_residue()).type(), chemical::METHYLATED_CTERMINUS_VARIANT), true );
+	term.set_all_chi(pose.residue(pose.total_residue()).chi());
+	//replace_res_post.mainchain_torsions(pose.residue(oop_post_pos_).mainchain_torsions());
+	
+	pose.replace_residue( pose.total_residue(), term, true );
+	conformation::idealize_position( pose.total_residue(), pose.conformation() );
+	
+	
 	//pose.set_phi(i+3, -40);
 	//pose.set_psi(i+3, -58);
 
@@ -257,29 +263,42 @@ HbsCreatorMover::apply(
 		pose.conformation().update_polymeric_connection(i);
 	}
 
-	//pose.dump_pdb( "postpseudobonds.pdb");
+	pose.dump_pdb( "postpseudobonds.pdb");
 
+	// TINYMIN
+	// create move map for minimization
+	kinematics::MoveMapOP littlemm( new kinematics::MoveMap() );
+	littlemm->set_bb( false );
+	littlemm->set_chi( true );
+	//mm->set_jump( 1, true );
+	
+	// create minimization mover
+	simple_moves::MinMoverOP littlemin( new protocols::simple_moves::MinMover( littlemm, score_fxn, option[ OptionKeys::run::min_type ].value(), 1, true ) );
+	
+	littlemin->apply( pose );
+	
 	if( option[ hbs_creator::final_mc ].value() ) {
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
 
 		kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
+		
+		// core::Size hbs_position = 1;
+		
+		for( Size i = 1; i <= pose.total_residue(); ++i ) {
+			if ( pdb_info->chain(i) == hbs_chain ) { //i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
+				//if ( pose.residue_type( i ).is_l_aa() ) {
+				TR << "setting small movable resid: "<< i<<std::endl;
+				//kdrew: commenting out because small mover fails randomly
+				pert_pep_mm->set_bb( i );
+				//}
+			}
+		}
+		
 		simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, 0.2, 1 ) );
 		pert_pep_small->angle_max( 'H', 2.0 );
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
-
-		// core::Size hbs_position = 1;
-
-		for( Size i = 1; i <= pose.total_residue(); ++i ) {
-			if ( i != ( ( unsigned ) ( option[ hbs_creator::hbs_final_res ].value() ) ) ) {
-				if ( pose.residue_type( i ).is_l_aa() ) {
-					TR << "setting small movable resid: "<< i<<std::endl;
-					//kdrew: commenting out because small mover fails randomly
-					//pert_pep_mm->set_bb( i );
-				}
-			}
-		}
 
 		pert_sequence->add_mover( pert_pep_small );
 
@@ -295,6 +314,7 @@ HbsCreatorMover::apply(
 		pert_mc->recover_low( pose );
 
 	}
+	pose.dump_pdb( "postmc.pdb");
 
 	if( option[ hbs_creator::final_repack ].value() ) {
 
@@ -322,47 +342,33 @@ HbsCreatorMover::apply(
 
 		packer->apply(pose);
 	}
-
+	pose.dump_pdb( "postrepack.pdb");
 
 	if ( option[ hbs_creator::final_minimize ].value() ) {
 		using namespace core::id;
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
-		//kdrew: add constraints to omega angle, (this problem might have been fixed and these constraints are unnecessary)
-		//iwatkins: this is general stuff, not hbs or oop specific
-		for( Size i = 1; i < pose.conformation().chain_end( 1 ); ++i ) {
-			id::AtomID id1,id2,id3,id4;
-			core::id::TorsionID torsion_id = TorsionID( i, id::BB, 3 ); //kdrew: 3 is omega angle
-
-			//kdrew: put constraint on omega angle
-			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-
-			Real torsion_value( pose.torsion( torsion_id ) );
-
-			core::scoring::func::CircularHarmonicFuncOP circularharm_func  (new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
-
-			ConstraintCOP dihedral1( ConstraintOP( new DihedralConstraint( id1, id2, id3, id4, circularharm_func ) ) );
-
-			pose.add_constraint( dihedral1 );
-		}
-		//kdrew: if constraint weight is not set on commandline or elsewhere, set to 1.0
-		if( score_fxn->has_zero_weight( dihedral_constraint ) )
-			score_fxn->set_weight( dihedral_constraint, 1.0 );
-
-		if( score_fxn->has_zero_weight( atom_pair_constraint ) )
-			score_fxn->set_weight( atom_pair_constraint, 1.0 );
-
 		// create move map for minimization
 		kinematics::MoveMapOP mm( new kinematics::MoveMap() );
 		mm->set_bb( true );
 		mm->set_chi( true );
-		mm->set_jump( 1, true );
-
+		//mm->set_jump( 1, true );
+		
+		score_fxn->set_weight( atom_pair_constraint, 0.5 );
+		score_fxn->set_weight( dihedral_constraint, 0.5 );
+		score_fxn->set_weight( angle_constraint, 0.5 );
+		
 		// create minimization mover
-		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
-
+		simple_moves::MinMoverOP minM( new protocols::simple_moves::MinMover( mm, score_fxn, "lbfgs_armijo_nonmonotone", 0.01,	true ) );
+		minM->cartesian( true );
 		minM->apply( pose );
+		
+		score_fxn->set_weight( atom_pair_constraint, 1 );
+		score_fxn->set_weight( dihedral_constraint, 1 );
+		score_fxn->set_weight( angle_constraint, 1 );
+		minM->apply( pose );
+
 	}
 }
 

@@ -1005,17 +1005,11 @@ SymmetricConformation::detect_disulfides()
 
 			//Determine which atom makes the disulfide bond
 			Size ii_sg_atomno(0);
-			if ( ii_res.type().has( "SG" ) ) {
-				ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG" );
-			} else if ( ii_res.type().has( "SD" ) ) {
-				ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SD" );
-			} else if ( ii_res.type().has( "SG1" ) ) {
-				ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG1" );
-			} else if ( ii_res.type().has( "CEN" ) ) {
-				ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "CEN" );
-			} else {
+			if ( ii_res.type().get_disulfide_atom_name() == "NONE" ) {
 				TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
 				utility_exit();
+			} else {
+				ii_sg_atomno = ii_res.type().atom_index( ii_res.type().get_disulfide_atom_name() );
 			}
 			Size ii_distance_atom_id = fullatom ? ii_sg_atomno : ii_res.atom_index( "CB" );
 			
@@ -1040,24 +1034,17 @@ SymmetricConformation::detect_disulfides()
 				if ( processed_cys.find( jj_resid) != processed_cys.end() ) continue;
 				
 				Size jj_sg_atomno(0);
-				if(jj_res.type().has("SG")) {
-					jj_sg_atomno = jj_res.atom_index( "SG" );
-				} else if(jj_res.type().has("SD")) {
-					jj_sg_atomno = jj_res.atom_index( "SD" );
-				} else if(jj_res.type().has("SG1")) {
-					jj_sg_atomno = jj_res.atom_index( "SG1" );
-				} else if(jj_res.type().has("CEN")) {
-					jj_sg_atomno = jj_res.atom_index( "CEN" );
-				} else {
+				if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
 					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 					utility_exit();
+				} else {
+					jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 				}
 				
 				Size jj_distance_atom_id = fullatom ? jj_sg_atomno : jj_res.atom_index( "CB" );
 				
 				//TR << "distance between " << ii_distance_atom << " and " << jj_distance_atom << std::endl;
-				Distance dist = ii_res.atom( ii_distance_atom_id ).xyz().distance(
-																				  jj_res.atom( jj_distance_atom_id ).xyz() );
+				Distance dist = ii_res.atom( ii_distance_atom_id ).xyz().distance( jj_res.atom( jj_distance_atom_id ).xyz() );
 				if ( best_neighbor == 0 || dist < best_match ) {
 					best_neighbor = jj_resid;
 					best_match = dist;
@@ -1129,17 +1116,11 @@ SymmetricConformation::detect_disulfides()
 					Size jj_resid  = best_neighbor;
 					Residue const & jj_res = residue( jj_resid );
 					Size jj_sg_atomno(0);
-					if(jj_res.type().has("SG")) {
-						jj_sg_atomno = jj_res.atom_index( "SG" );
-					} else if(jj_res.type().has("SD")) {
-						jj_sg_atomno = jj_res.atom_index( "SD" );
-					} else if(jj_res.type().has("SG1")) {
-						jj_sg_atomno = jj_res.atom_index( "SG1" );
-					} else if(jj_res.type().has("CEN")) {
-						jj_sg_atomno = jj_res.atom_index( "CEN" );
-					} else {
+					if ( jj_res.type().get_disulfide_atom_name() == "NONE" ) {
 						TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;
 						utility_exit();
+					} else {
+						jj_sg_atomno = jj_res.type().atom_index( jj_res.type().get_disulfide_atom_name() );
 					}
 
 					Size jj_connid = jj_res.type().residue_connection_id_for_atom( jj_sg_atomno );

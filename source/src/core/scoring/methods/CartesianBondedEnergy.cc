@@ -2191,7 +2191,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+	// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
@@ -2306,7 +2307,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
@@ -2425,7 +2427,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		/////////////
@@ -2934,7 +2937,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
@@ -3054,7 +3058,8 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-	debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 	debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
@@ -3170,7 +3175,8 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
-		debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
+		// amw: can we simply remove this bad assumption (e.g. for ncbb/ ncccs?
+		//debug_assert( rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos() );
 		debug_assert( rsd1.connections_to_residue( rsd2 ).size() == 1 );
 
 		// lookup Kd and d0

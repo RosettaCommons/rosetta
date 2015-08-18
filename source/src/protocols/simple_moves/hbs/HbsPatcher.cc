@@ -25,6 +25,7 @@
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/Patch.hh>
@@ -72,10 +73,10 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	//kdrew: add constraint
 	HarmonicFuncOP harm_func( new HarmonicFunc( distance, std ) );
 	HarmonicFuncOP harm_func_0( new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP ang_func2( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
-	CircularHarmonicFuncOP dih_func_2( new CircularHarmonicFunc( 0, 0.02 ) );
+	CircularHarmonicFuncOP ang_func_120( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	//CircularHarmonicFuncOP ang_func_60( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func_180( new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func_0( new CircularHarmonicFunc( 0, 0.02 ) );
 																			 
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidHYH( pose.residue( hbs_pre_position ).atom_index("HYH"), hbs_pre_position );
@@ -90,10 +91,13 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	ConstraintCOP atompair2( ConstraintOP( new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 ) ) );
 	ConstraintCOP atompair3( ConstraintOP( new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 ) ) );
 	//ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
-	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func ) ) );
+	ConstraintCOP angle( ConstraintOP( new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func_120 ) ) );
+	//ConstraintCOP angle2( ConstraintOP( new AngleConstraint( aidHYH, aidCYH, aidCY2, ang_func_120 ) ) );
 	//ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
-	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func ) ) );
-	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 ) ) );
+	ConstraintCOP dihedral( ConstraintOP( new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func_180 ) ) );
+	//ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_0 ) ) );
+	ConstraintCOP dihedral2( ConstraintOP( new DihedralConstraint( aidHYH, aidCZH, aidCY2, aidCYH, dih_func_0 ) ) );
+	
 
 	pose.add_constraint( atompair );
 	pose.add_constraint( atompair2 );
@@ -128,22 +132,18 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 
 	//awatkins: check for proline
 	if ( pre_base_name == "PRO" || pre_base_name == "DPRO" ||
-		 post_base_name == "PRO" || post_base_name == "DPRO" )
-	{
+		 post_base_name == "PRO" || post_base_name == "DPRO" ) {
     	utility_exit_with_message("Cannot patch proline");
 	}
-	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1)
-	{
+	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1) {
     	utility_exit_with_message("Cannot patch HBS_PRE on an HBS_POST");
 	}
-	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1)
-	{
+	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1) {
     	utility_exit_with_message("Cannot patch HBS_POST on an HBS_PRE");
 	}
 
 	//awatkins: check if already patched
-	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_PRE) != 1)
-	{
+	if ( !pose.residue( hbs_pre_pos_ ).has_variant_type( chemical::HBS_PRE ) ) {
 		TR<< "patching pre" <<std::endl;
 
 		//awatkins: get base residue type
@@ -151,43 +151,65 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 		TR<< pre_base_type.name() << std::endl;
 
 		//awatkins: add variant
-		conformation::Residue replace_res_pre( restype_set->get_residue_type_with_variant_added(pre_base_type, chemical::HBS_PRE), true );
-		TR<< replace_res_pre.name() << std::endl;
+		
+		std::string const base_name( core::chemical::residue_type_base_name( pre_base_type ) );
+		
+		// the desired set of variant types:
+		utility::vector1< std::string > target_variants( pre_base_type.properties().get_list_of_variants() );
+		if ( !pre_base_type.has_variant_type( chemical::HBS_PRE ) ) {
+			target_variants.push_back( "HBS_PRE" );
+			target_variants.push_back( "LOWER_TERMINUS_VARIANT" );
+		}
 
+		ResidueTypeCOP rsd = ResidueTypeFinder( *restype_set ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
+		conformation::Residue replace_res_pre( *rsd, true );
 		replace_res_pre.set_all_chi(pose.residue(hbs_pre_pos_).chi());
 		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
-
+		//replace_res_pre.update_residue_connection_mapping();
 		pose.replace_residue( hbs_pre_pos_, replace_res_pre, true );
 		conformation::idealize_position( hbs_pre_pos_, pose.conformation() );
+		TR<< replace_res_pre.name() << std::endl;
+
+		//conformation::Residue replace_res_pre( *new_type, true );
 		//pose.dump_pdb( "rosetta_out_hbs_post_patch.pdb" );
 
 	}// if pre
-	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_POST) != 1 ) {
+	if ( !pose.residue(hbs_post_pos_).has_variant_type( chemical::HBS_POST ) ) {
 		TR<< "patching post" <<std::endl;
 		//awatkins: get base residue type
 		chemical::ResidueType const & post_base_type = pose.residue(hbs_post_pos_).type();
 		TR<< post_base_type.name() << std::endl;
 
-		//awatkins: add variant
-		conformation::Residue replace_res_post( restype_set->get_residue_type_with_variant_added(post_base_type, chemical::HBS_POST), true );
+		std::string const base_name( core::chemical::residue_type_base_name( post_base_type ) );
+		
+		// the desired set of variant types:
+		utility::vector1< std::string > target_variants( post_base_type.properties().get_list_of_variants() );
+		if ( !post_base_type.has_variant_type( chemical::HBS_POST ) ) {
+			target_variants.push_back( "HBS_POST" );
+		}
 
+		ResidueTypeCOP rsd = ResidueTypeFinder( *restype_set ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
+		//restype_set->make_sure_instantiated( rsd.get_self_ptr() );
+		//*new_type = rsd;
+		conformation::Residue replace_res_post( *rsd, true );
 		replace_res_post.set_all_chi(pose.residue(hbs_post_pos_).chi());
-		//replace_res_post.mainchain_torsions(pose.residue(hbs_post_pos_).mainchain_torsions());
-
+		//replace_res_pre.update_residue_connection_mapping();
+		//replace_res_pre.mainchain_torsions(pose.residue(hbs_pre_pos_).mainchain_torsions());
+					
 		pose.replace_residue( hbs_post_pos_, replace_res_post, true );
 		conformation::idealize_position( hbs_post_pos_, pose.conformation() );
-		//pose.dump_pdb( "rosetta_out_hbs_pre_pos_t_patch.pdb" );
-
+		TR<< replace_res_post.name() << std::endl;
+					
 	}// if post
 
 	add_hbs_constraint( pose, hbs_pre_pos_ );
-
+	
 	//awatkins: need to do all at once at the end because occasionally will get error:
 	//awatkins: Unable to handle change in the number of residue connections in the presence of pseudobonds!
 	//pose.conformation().detect_bonds();
 	//pose.conformation().detect_pseudobonds();
-	//pose.conformation().update_polymeric_connection( hbs_pre_pos_ );
-	//pose.conformation().update_polymeric_connection( hbs_post_pos_ );
+	pose.conformation().update_polymeric_connection( hbs_pre_pos_ );
+	pose.conformation().update_polymeric_connection( hbs_post_pos_ );
 
 }
 
