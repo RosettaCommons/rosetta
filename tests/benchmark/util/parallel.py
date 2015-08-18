@@ -81,12 +81,13 @@ class Runner:
         #         sys.stdout.flush()
         #     f.close()
 
+        output, errors = p.communicate()
+
         if output_file:
-            output, errors = p.communicate()
             with file(output_file, 'w') as f: f.write(output);  f.write(errors)
             print errors
         else:
-            p.wait()
+            print output; print errors
 
         #exit_code = os.waitpid(p.pid, 0)[1]
         exit_code = p.returncode
