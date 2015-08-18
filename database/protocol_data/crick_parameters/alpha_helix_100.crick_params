@@ -1,11 +1,12 @@
 #Parameters for an L-amino acid alpha-helix, with omega1 = 100 degrees (for backward-compatibility).
+#150818 changed z1 from 1.570660756980 to 1.51 (for backward-compatibility).
 #This was generated using the following commandline flags for the fit_helixparams app:
 #-mainchain_torsions -62.648 -41.0 180 -omega1_guess 1.7 -r1_guess 1.0 -dz1_guess 1.5 -residue_repeats 21
 r1	1.504154703983
 r1	2.260121344404
 r1	1.687038979876
 omega1	1.745316477220
-z1	1.570660756980
+z1	1.51
 delta_omega1	-0.461129465753
 delta_omega1	0.000000000000
 delta_omega1	0.478351634986
