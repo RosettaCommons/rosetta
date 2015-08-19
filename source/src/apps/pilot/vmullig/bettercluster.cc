@@ -1071,10 +1071,10 @@ void slidearound(
 
 	for(core::Size ir=1, index=1; ir<=rescount; ir++) {
 		for(core::Size itors=1, ntors=alignment_torsions_in_res(pose, ir); itors<ntors; itors++) {
+			if(itors==1 && ir==(rescount-offset+1)) offset_index = 1; //Reset at the wrap-around point.
 			result[offset_index]=dihedrals[index];
 			offset_index++;
 			index++;
-			if(itors==1 && ir==(rescount-offset+1)) offset_index = 1; //Reset at the wrap-around point.
 		}
 	}
 	dihedrals=result;

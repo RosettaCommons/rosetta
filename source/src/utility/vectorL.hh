@@ -419,7 +419,7 @@ public: // Indexers
 	u() const
 	{
 		debug_assert( ! super::empty() ); // Upper index only meaningful for non-empty vectors
-		debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
+	//	debug_assert( static_cast< index_type >( super::size() ) >= 0 ); // Catch size range error
 		return l_ + static_cast< index_type >( super::size() ) - 1;
 	}
 
