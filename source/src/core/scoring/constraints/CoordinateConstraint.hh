@@ -61,6 +61,8 @@ public:
 
 	virtual ConstraintOP clone() const;
 
+	virtual ConstraintOP clone( core::scoring::func::FuncOP ) const;
+
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 	/// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping

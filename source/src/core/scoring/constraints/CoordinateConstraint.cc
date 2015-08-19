@@ -82,6 +82,13 @@ CoordinateConstraint::clone() const {
 	return ConstraintOP( new CoordinateConstraint( *this ) );
 }
 
+ConstraintOP
+CoordinateConstraint::clone( core::scoring::func::FuncOP newfunc ) const
+{
+	return ConstraintOP( new CoordinateConstraint( atom_, fixed_atom_, xyz_target_, newfunc, score_type() ));
+}
+
+
 
 void CoordinateConstraint::show( std::ostream& out ) const
 {
