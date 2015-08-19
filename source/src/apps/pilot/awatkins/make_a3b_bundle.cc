@@ -252,7 +252,7 @@ core::Real get_distance_measure(
 }
 
 int main( int argc, char * argv [] ) {
-
+try {
 	using namespace protocols;
 	using namespace protocols::moves;
 	using namespace core::scoring;
@@ -430,6 +430,10 @@ int main( int argc, char * argv [] ) {
 	}
 	
 	printf("JOB COMPLETED.\n"); fflush(stdout);
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
+	return -1;
+}
 	return 0;
 }
 
