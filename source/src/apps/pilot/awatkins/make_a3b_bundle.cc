@@ -303,7 +303,7 @@ try {
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence, *( chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )), true );
 	mypose.clear();
 
-	for ( Size i = 1; i <= requested_types.size(); ++i )
+	for ( core::Size i = 1; i <= requested_types.size(); ++i )
 	{
 		// grab the new residue
 		chemical::ResidueType const & rsd_type = *requested_types[ i ];
@@ -430,6 +430,7 @@ try {
 	}
 	
 	printf("JOB COMPLETED.\n"); fflush(stdout);
+}
 catch ( utility::excn::EXCN_Base const & e ) {
 	std::cerr << "caught exception " << e.msg() << std::endl;
 	return -1;
