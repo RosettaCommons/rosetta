@@ -468,7 +468,6 @@ CCDLoopClosureMover::get_anchors( conformation::Residue const & residue ) const
 	vector1< PointPosition > anchors;
 
 	// TODO: Edit Residue and ResidueType to avoid string look-ups.
-	// This will need to be fixed after the VariantType refactor is merged. ~Labonte
 	if ( residue.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 		core::uint const last_lower_mainchain_atom( residue.mainchain_atom( residue.mainchain_atoms().size() ) );
 
@@ -578,8 +577,7 @@ CCDLoopClosureMover::calculate_ccd_angle(
 			fixed_atoms = get_anchors( pose.residue( loop_.cut() ) );
 			break;
 	}
-	assert( fixed_atoms.size() == moving_atoms.size() );
-	Size number_of_atoms( fixed_atoms.size() );
+	Size number_of_atoms( numeric::min( fixed_atoms.size(), moving_atoms.size() ) );
 
 	// Calculate the axis vector of the torsion angle.
 	PointPosition axis_atom;

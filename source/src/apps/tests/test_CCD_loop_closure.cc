@@ -10,7 +10,7 @@
 /// @file    test_CCD_loop_closure.cc
 /// @brief   Integration test application for testing CCD loop closure.
 /// @details This application...
-/// ...creates polyalanine chains of varying lengths,
+/// ...creates polyalanine and polyglucose (maltose) chains of varying lengths,
 /// ...randomly opens the chains, and
 /// ...uses CCD to close the broken loops.
 /// @author  Labonte <JWLabonte@jhu.edu>
@@ -72,7 +72,28 @@ get_n_mer_polyalanine( Size n )
 	make_pose_from_sequence( *pose, sequence, "fa_standard" );
 
 	for ( core::uint i = 1; i < n; ++i ) {
-		pose->set_omega( i, 180.0 );  // Make linear.
+		pose->set_omega( i, 180.0 );  // Make extended.
+	}
+
+	return pose;
+}
+
+// Get a linear, n-mer maltose.
+PoseOP
+get_n_mer_maltose( Size n )
+{
+	string sequence;
+	for ( core::uint i = 1; i <= n; ++i ) {
+		sequence += "Glcp-";
+	}
+
+	PoseOP pose( new Pose );
+	make_pose_from_saccharide_sequence( *pose, sequence, "fa_standard" );
+
+	for ( core::uint i = 1; i < n; ++i ) {
+		// Make extended.
+		pose->set_phi( i, 100.0 );
+		pose->set_psi( i, 220.0 );
 	}
 
 	return pose;
@@ -126,32 +147,60 @@ main( int argc, char *argv[] )
 
 		// Test closure of polyalanines of varying lengths.
 		for ( Size n = 6; n <= 14; n += 2 ) {
-			PoseOP pose( get_n_mer_polyalanine( n ) );
 			MoveMapOP mm( get_phi_psi_mm( n ) );
 			Loop const loop( get_loop_for_n_mer( n ) );
 
-			set_single_loop_fold_tree( *pose, loop );
-			add_single_cutpoint_variant( *pose, loop );
-			cout << "------------------------------------------------------------------------------" << endl;
-			cout << n << "-mer polyalanine: " << *pose << endl;
+			{
+				PoseOP pose( get_n_mer_polyalanine( n ) );
+				set_single_loop_fold_tree( *pose, loop );
+				add_single_cutpoint_variant( *pose, loop );
+				cout << "------------------------------------------------------------------------------" << endl;
+				cout << n << "-mer polyalanine: " << *pose << endl;
 
-			cout << " Randomly opening loop..." << endl;
-			randomly_open_pose_loop( *pose, loop );
+				cout << " Randomly opening loop..." << endl;
+				randomly_open_pose_loop( *pose, loop );
 
-			string const filename_start( PATH + "CCD_test_" + to_string( n ) + "mer_start.pdb" );
-			cout << " Outputting starting structure to " << filename_start << "..." << endl;
-			pose->dump_pdb( filename_start );
+				string const filename_start( PATH + "CCD_test_peptide_" + to_string( n ) + "mer_start.pdb" );
+				cout << " Outputting starting structure to " << filename_start << "..." << endl;
+				pose->dump_pdb( filename_start );
 
-			cout << " Closing the loop with CCD..." << endl;
-			mover.movemap( mm );
-			mover.loop( loop );
-			mover.apply( *pose );
+				cout << " Closing the loop with CCD..." << endl;
+				mover.movemap( mm );
+				mover.loop( loop );
+				mover.apply( *pose );
 
-			string const filename_end( PATH + "CCD_test_" + to_string( n ) + "mer_end.pdb" );
-			cout << " Outputting ending structure to " << filename_end << "..." << endl;
-			pose->dump_pdb( filename_end );
+				string const filename_end( PATH + "CCD_test_peptide_" + to_string( n ) + "mer_end.pdb" );
+				cout << " Outputting ending structure to " << filename_end << "..." << endl;
+				pose->dump_pdb( filename_end );
 
-			cout << " Finished testing " << n << "-mer polyalanine." << endl << endl;
+				cout << " Finished testing " << n << "-mer polyalanine." << endl << endl;
+			}
+
+			{
+				PoseOP pose( get_n_mer_maltose( n ) );
+				set_single_loop_fold_tree( *pose, loop );
+				add_single_cutpoint_variant( *pose, loop );
+				cout << "------------------------------------------------------------------------------" << endl;
+				cout << n << "-mer maltose: " << *pose << endl;
+
+				cout << " Randomly opening loop..." << endl;
+				randomly_open_pose_loop( *pose, loop );
+
+				string const filename_start( PATH + "CCD_test_saccharide_" + to_string( n ) + "mer_start.pdb" );
+				cout << " Outputting starting structure to " << filename_start << "..." << endl;
+				pose->dump_pdb( filename_start );
+
+				cout << " Closing the loop with CCD..." << endl;
+				mover.movemap( mm );
+				mover.loop( loop );
+				mover.apply( *pose );
+
+				string const filename_end( PATH + "CCD_test_saccharide_" + to_string( n ) + "mer_end.pdb" );
+				cout << " Outputting ending structure to " << filename_end << "..." << endl;
+				pose->dump_pdb( filename_end );
+
+				cout << " Finished testing " << n << "-mer maltose." << endl << endl;
+			}
 		}
 
 		cout << "------------------------------------------------------------------------------" << endl;

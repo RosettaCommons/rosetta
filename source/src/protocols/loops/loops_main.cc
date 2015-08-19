@@ -226,7 +226,9 @@ fold_tree_from_loops(
 	if ( nres != pose.total_residue() ) nres--;   // only true if pose is symm. ...  asymm foldtree is then rooted on VRT
 
 	// following residues (e.g. ligands) will be attached by jumps
-	while( !pose.residue(nres).is_protein() ) nres -= 1;
+	while ( ! ( pose.residue( nres ).is_protein() || pose.residue( nres ).is_carbohydrate() ) ) {
+		nres -= 1;
+	}
 
 	Loops tmp_loops = loops;
 	tmp_loops.sequential_order();

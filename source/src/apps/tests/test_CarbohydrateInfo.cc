@@ -123,7 +123,7 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing lactose:" << endl;
+		cout << "Importing lactose (with a wonky 4H5 ring):" << endl;
 
 		pose_from_pdb( lactose, PATH + "lactose.pdb" );
 
@@ -152,14 +152,6 @@ main( int argc, char *argv[] )
 		pose_from_pdb( amylopectin, PATH + "amylopectin_fragment.pdb" );
 
 		test_sugar( amylopectin );
-
-
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing N-glycosylated sample:" << endl;
-
-		pose_from_pdb( glycopeptide, PATH + "glycosylated_peptide.pdb" );
-
-		test_sugar( glycopeptide );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

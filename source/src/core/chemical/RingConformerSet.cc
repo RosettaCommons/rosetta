@@ -221,6 +221,7 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters( utility::vector1< core::
 			break;
 		case 6:
 			// Adjust input to the nearest 30th and 45th degrees, respectively.
+			// TODO: Use numeric::nearest_angle_degrees.
 			adjusted_phi = uint( ( nonnegative_principal_angle_degrees( parameters[ PHI ] ) + 30/2 ) / 30 ) * 30;
 			adjusted_theta = uint( ( nonnegative_principal_angle_degrees( parameters[ THETA ] ) + 45/2 ) / 45 ) * 45;
 
@@ -304,7 +305,7 @@ RingConformerSet::get_ideal_conformer_from_nus( utility::vector1< core::Angle > 
 		Angle match_score( 0.0 );
 		for ( uint j( 1 ); j <= n_angles; ++j ) {
 			// The match score is simply the sum of the angle deviations. 0 is a perfect match.
-			match_score += abs( conformer.nu_angles[ j ] - angles[ j ] );
+			match_score += abs( conformer.nu_angles[ j ] - principal_angle_degrees( angles[ j ] ) );
 		}
 		if ( match_score < best_match_score ) {
 			best_match_score = match_score;

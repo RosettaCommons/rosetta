@@ -137,6 +137,16 @@ public:
 		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "5E" ).specific_name,
 				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
 
+		// Test non-principal angles.
+		nus6[ 1 ] = -300.0;
+		nus6[ 2 ] = 300.0;
+		nus6[ 3 ] = 420.0;
+		nus6[ 4 ] = -420.0;
+		nus6[ 5 ] = 60.0;
+		
+		TS_ASSERT_EQUALS( set6_->get_ideal_conformer_by_name( "4C1" ).specific_name,
+				set6_->get_ideal_conformer_from_nus( nus6 ).specific_name );
+		
 		// Test that chairs are handled correctly, as they reside at the poles where phi is meaningless.
 		params6[ THETA ] = 0.0;
 

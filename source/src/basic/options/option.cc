@@ -28,6 +28,7 @@
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <basic/options/option.cc.gen.hh>
 
@@ -244,6 +245,8 @@ process()
 
 		if ( option[ in::include_sugars ] ) {
 			option[ chemical::override_rsd_type_limit ].value( true );
+			option[ score::no_pro_close_ring_closure ].value( true );
+			//option[ score::ring_close_shadow_constraint ].value( 0.1 );
 		}
 		if ( option[ carbohydrates::glycam_pdb_format ] ) {
 			utility::vector1< std::string > alt_codes_list;

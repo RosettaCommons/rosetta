@@ -1328,11 +1328,13 @@ setup_links(
 		is_mainchain[ mainchain[i] ] = true;
 	}
 	if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
-		is_mainchain[ rsd.atom_index("OVL1") ] = true;
-		is_mainchain[ rsd.atom_index("OVL2") ] = true;
+		is_mainchain[ rsd.atom_index( "OVL1" ) ] = true;
+		if ( rsd.has( "OVL2" ) ) {
+			is_mainchain[ rsd.atom_index( "OVL2" ) ] = true;
+		}
 	}
 	if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-		is_mainchain[ rsd.atom_index("OVU1") ] = true;
+		is_mainchain[ rsd.atom_index( "OVU1" ) ] = true;
 	}
 
 	////////////
