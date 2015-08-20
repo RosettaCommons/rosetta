@@ -66,6 +66,7 @@
 
 // Numeric Headers
 #include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
 
 // Mover headers
 #include <protocols/moves/MoverContainer.hh>
@@ -129,6 +130,7 @@ public:
 	//methods
 	
 	virtual void apply( core::pose::Pose & pose );
+	void update_hydrogens( core::pose::Pose & pose );
 	virtual std::string get_name() const { return "CovalentPeptidomimeticCreator"; }
 	
 };
@@ -263,6 +265,10 @@ CovalentPeptidomimeticCreator::apply(
 			pert_mm->set_bb( i, false );
 			pert_mm->set_chi( i, false );
 		}
+		
+		/*if ( pose.residue( i ).has_property( "BRANCH_POINT" ) ) {
+			
+		}*/
 	}
 	
 	Size vdp_connid = pose.residue( resi_vdp ).type().residue_connection_id_for_atom( pose.residue( resi_vdp ).atom_index( "CZ" ) );
@@ -288,9 +294,12 @@ CovalentPeptidomimeticCreator::apply(
 	*/
 	//pose.residue( resi_vdp ).residue_connection_partner( vdp_connid, resi_cys, cys_connid);
 	//pose.residue( resi_cys ).residue_connection_partner( cys_connid, resi_vdp, vdp_connid);
-	pose.conformation().declare_chemical_bond( resi_cys, "SG", resi_vdp, "CZ" );
+	//pose.conformation().declare_chemical_bond( resi_cys, "SG", resi_vdp, "CZ" );
 	
-	
+	std::cout << pose.fold_tree() << std::endl;
+	core::import_pose::set_reasonable_fold_tree( pose );
+	std::cout << pose.fold_tree() << std::endl;
+	pert_mm->set( BRANCH, true );
 	
 	using core::pack::task::operation::TaskOperationCOP;
 	// create a monte carlo object for the pertubation phase
@@ -329,6 +338,7 @@ CovalentPeptidomimeticCreator::apply(
 		//pert_rt->apply( pose );
 		std::cout << "After RT " << i << ": score " << ( *scorefxn )( pose ) << std::endl;
 		min_mover->apply( pose );
+		update_hydrogens( pose );
 		std::cout << "After min " << i << ": score " << ( *scorefxn )( pose ) << std::endl;
 	}
 	
@@ -384,3 +394,59 @@ CovalentPeptidomimeticCreator::apply(
 	
 
 }
+
+void
+CovalentPeptidomimeticCreator::update_hydrogens(
+	core::pose::Pose & pose
+) {
+	
+	using namespace core;
+	using namespace core::chemical;
+	using namespace id;
+	
+	// Look at any residues with the property ELECTROPHILE
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		if ( ! pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
+			continue;
+		}
+		
+		using numeric::conversions::radians;
+		using numeric::conversions::degrees;
+		
+		AtomID aidVSG( pose.residue( ii ).atom_index( "VSG" ), ii );
+		AtomID aidCZ(  pose.residue( ii ).atom_index( "CZ"  ), ii );
+		AtomID aid1HZ( pose.residue( ii ).atom_index( "1HZ" ), ii );
+		AtomID aid2HZ( pose.residue( ii ).atom_index( "2HZ" ), ii );
+		AtomID aidCE2( pose.residue( ii ).atom_index( "CE2" ), ii );
+		AtomID aidCD(  pose.residue( ii ).atom_index( "CD"  ), ii );
+		AtomID aidNG(  pose.residue( ii ).atom_index( "NG"  ), ii );
+		
+		// Assume conjugation is final connection for now
+		Size conn_no = pose.residue( ii ).type().n_residue_connections();
+		Size jj = pose.residue( ii ).residue_connection_partner( conn_no );
+		
+		//Vector const& VSG_xyz( pose.residue( ii ).xyz( "VSG" ) );
+		Vector const& CZ_xyz(  pose.residue( ii ).xyz( "CZ"  ) );
+		Vector const& SG_xyz(  pose.residue( jj ).xyz( "SG"  ) );
+		Vector const& CE2_xyz( pose.residue( ii ).xyz( "CE2" ) );
+		Vector const& CD_xyz(  pose.residue( ii ).xyz( "CD"  ) );
+		//Vector const& NG_xyz(  pose.residue( ii ).xyz( "NG"  ) );
+		
+		
+		Real VSG_torsion_correction = numeric::dihedral_degrees( SG_xyz, CZ_xyz, CE2_xyz, CD_xyz ) - degrees( pose.conformation().torsion_angle( aidVSG, aidCZ, aidCE2, aidCD ) );
+		if ( VSG_torsion_correction > 0.01 ) {
+			std::cout << "Initial 1HZ-CZ-CE2-CD: " << degrees(pose.conformation().torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD)) << std::endl;
+			std::cout << "Initial VSG-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aidVSG,aidCZ,aidCE2,aidCD)) <<std::endl;
+			std::cout << "Initial SG-CZ-CE2-CD: "<< numeric::dihedral_degrees(SG_xyz,CZ_xyz,CE2_xyz,CD_xyz) <<std::endl;
+			std::cout << " Out of sync by " << VSG_torsion_correction << " degrees " << std::endl;
+			Real torsion_1HZ = degrees(pose.conformation().torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD)) + VSG_torsion_correction;
+			pose.conformation().set_torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD,radians(torsion_1HZ));
+			//pose.dump_pdb( "rosetta_out_oop_pre_mvH.pdb" );
+			std::cout << "Final   VSG-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aidVSG,aidCZ,aidCE2,aidCD)) <<std::endl;
+			std::cout << "Final    SG-CZ-CE2-CD: "<< numeric::dihedral_degrees(SG_xyz,CZ_xyz,CE2_xyz,CD_xyz) <<std::endl;
+			std::cout << "Final   1HZ-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD)) <<std::endl;
+		}
+		
+	}
+}
+

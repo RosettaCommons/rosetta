@@ -501,13 +501,13 @@ AtomTree::torsion_angle_dof_id(
 		atom2 = atom3_in;
 		atom3 = atom2_in;
 		atom4 = atom1_in;
-	} else if (atom1_in_id.rsd() == atom2_in_id.rsd() &&
+	}/* else if (atom1_in_id.rsd() == atom2_in_id.rsd() &&
 			   atom1_in_id.rsd() != atom3_in_id.rsd() &&
 			   atom3_in_id.rsd() == atom4_in_id.rsd() ) {
 		// BRANCH case: torsion includes 2 atoms from each of 2 residues
 		TR << "Noncanonical connection torsion does not have a corresponding DOF_ID" << std::endl;
 		return id::BOGUS_DOF_ID;
-	} else {
+	}*/ else {
 	
 		// AMW: We should note that this is FINE. This doesn't mean that we cannot have a fine
 		// time with the data we need. If we return id:BOGUS_DOF_ID, then conformation will

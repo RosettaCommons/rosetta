@@ -127,10 +127,10 @@ ICoorAtomID::xyz(
 	//std::cout << "ICoorAtomID::xyz " << rsd.name() << ' ' << type_ << ' ' << atomno_ << std::endl;
 	if ( type_ == INTERNAL ) {
 		//std::cout << "ICoorAtomID::xyz " << rsd.name() << ' ' << atomno_ << ' ' << rsd.atom_is_backbone(atomno_) <<
-		//	' ' << rsd.atom_name( atomno_ ) << ' ' <<
-		//	rsd.atom( atomno_ ).xyz()(1) << ' ' <<
-		//	rsd.atom( atomno_ ).xyz()(2) << ' ' <<
-		//	rsd.atom( atomno_ ).xyz()(3) << std::endl;
+			//' ' << rsd.atom_name( atomno_ ) << ' ' <<
+			//rsd.atom( atomno_ ).xyz()(1) << ' ' <<
+			//rsd.atom( atomno_ ).xyz()(2) << ' ' <<
+			//rsd.atom( atomno_ ).xyz()(3) << std::endl;
 		return rsd.atom( atomno_ ).xyz();
 	} else if ( type_ == POLYMER_LOWER ) {
 		//Changed by VKM on 9 April 2014: we no longer assume that the residue connected at the POLYMER_LOWER connection is the i-1 residue in sequence; nor
@@ -322,6 +322,7 @@ AtomICoor::build(
 		conformation::Conformation const & conformation
 ) const
 {
+	
 debug_assert( kinematics::Stub( stub_atom1_.xyz( rsd, conformation ),
 			stub_atom2_.xyz( rsd, conformation ),
 			stub_atom3_.xyz( rsd, conformation ) ).is_orthogonal( 0.001 ) );

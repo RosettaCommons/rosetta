@@ -149,6 +149,10 @@ main( int argc, char* argv [] ) {
 					core::pose::add_comment( pose, "parents", it->second );
 		}
 		std::string tag( tag_from_pose( pose ) );
+		// Many applications will put .pdb on the pose tag; remove it if it's there.
+		if ( tag.find( ".pdb" ) != std::string::npos ) {
+			tag.erase( tag.find( ".pdb" ) , tag.size() );
+		}
 		std::string fn( out_prefix + tag + ".pdb" );
 
 		tr << "extracting Pose with tag " << tag << " into PDB file " << fn

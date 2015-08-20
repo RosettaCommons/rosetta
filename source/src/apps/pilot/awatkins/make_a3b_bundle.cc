@@ -428,10 +428,8 @@ try {
 		sprintf(outfile, "tors%02lu.pdb", i);
 		mypose2.dump_pdb(outfile);
 	}
-	
 	printf("JOB COMPLETED.\n"); fflush(stdout);
-}
-catch ( utility::excn::EXCN_Base const & e ) {
+} catch ( utility::excn::EXCN_Base const & e ) {
 	std::cerr << "caught exception " << e.msg() << std::endl;
 	return -1;
 }

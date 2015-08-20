@@ -447,7 +447,7 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 			VR.push_back(R);
 		}
 	}
-
+	
 	R = Field::getRecordCollection()["CRYST1"];
 	pose::CrystInfo ci = fd.crystinfo;
 	if (ci.A() > 0 && ci.B() > 0 && ci.C() > 0) {

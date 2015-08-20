@@ -1,0 +1,100 @@
+## full-atom 3-amino-3-deoxy sugar patch
+
+NAME 3-NH3+
+TYPES C3_AMINO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT PROPERTY C3_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+BEGIN_SELECTOR
+NAME3 Vnc
+# Only the ->4-Vnc not the ->2
+PROPERTY C2_MODIFIED
+PROPERTY C6_MODIFIED
+END_SELECTOR
+
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO3 VIRT
+SET_MM_ATOM_TYPE HO3 VIRT
+SET_ATOMIC_CHARGE HO3 0.00
+
+SET_ATOM_TYPE O3 VIRT
+SET_MM_ATOM_TYPE O3 VIRT
+SET_ATOMIC_CHARGE O3 0.00
+
+#Next, add the new atoms
+ADD_ATOM  N3  Nlys NH3  -0.35  ## Is there simply an NH3 anywhere?
+ADD_ATOM 1HN3 Hpol HC   0.16   ## Get correct values here and below.
+ADD_ATOM 2HN3 Hpol HC   0.16
+ADD_ATOM 3HN3 Hpol HC   0.16
+
+SET_FORMAL_CHARGE  N3  +1
+
+DELETE_ATOM H3
+
+ADD_BOND  C3   N3
+ADD_BOND  N3  1HN3
+ADD_BOND  N3  2HN3
+ADD_BOND  N3  3HN3
+
+REDEFINE_CHI 3  C2   C3   N3  1HN3
+
+# Using H3 to define 0 degree torsion angle, to place N3 at same position as (now virtual) O3 allows us to have a single patch file for either (S) or (R) stereochemistry.
+
+SET_ICOOR  N3     0.00    69.235  1.334  C3   CC3    O3
+SET_ICOOR 1HN3  152.671   58.88   0.99   N3    C3   CC3
+SET_ICOOR 2HN3   32.671   58.88   0.99   N3    C3   CC3
+SET_ICOOR 3HN3  -87.329   58.88   0.99   N3    C3   CC3
+
+ADD_PROPERTY C3_MODIFIED
+ADD_PROPERTY AMINO_SUGAR
+ADD_PROPERTY CHARGED
+
+END_CASE
+
+
+BEGIN_CASE
+
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO3 VIRT
+SET_MM_ATOM_TYPE HO3 VIRT
+SET_ATOMIC_CHARGE HO3 0.00
+
+SET_ATOM_TYPE O3 VIRT
+SET_MM_ATOM_TYPE O3 VIRT
+SET_ATOMIC_CHARGE O3 0.00
+
+#Next, add the new atoms
+ADD_ATOM  N3  Nlys NH3  -0.35  ## Is there simply an NH3 anywhere?
+ADD_ATOM 1HN3 Hpol HC   0.16   ## Get correct values here and below.
+ADD_ATOM 2HN3 Hpol HC   0.16
+ADD_ATOM 3HN3 Hpol HC   0.16
+
+SET_FORMAL_CHARGE  N3  +1
+
+SET_MM_ATOM_TYPE H3 HB
+
+ADD_BOND  C3   N3
+ADD_BOND  N3  1HN3
+ADD_BOND  N3  2HN3
+ADD_BOND  N3  3HN3
+
+REDEFINE_CHI 3  C2   C3   N3  1HN3
+
+# I can only let this apply to methylated sugars because I need the coordinate!!
+SET_ICOOR  N3     0.00    69.235  1.334  C3    H3    O3
+SET_ICOOR 1HN3  152.671   58.88   0.99   N3    C3    H3
+SET_ICOOR 2HN3   32.671   58.88   0.99   N3    C3    H3
+SET_ICOOR 3HN3  -87.329   58.88   0.99   N3    C3    H3
+
+ADD_PROPERTY C3_MODIFIED
+ADD_PROPERTY AMINO_SUGAR
+ADD_PROPERTY CHARGED
+
+END_CASE

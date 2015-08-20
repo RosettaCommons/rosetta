@@ -178,8 +178,8 @@ CovalentPeptidomimeticDockDesign::apply(
 	
 	// Also, just to help out, we will set the constraint weights in case the user hasn't.
 	if ( scorefxn->get_weight( atom_pair_constraint ) == 0.0 ) {
-		TR << "Setting atom pair constraint weight to 10 manually" << std::endl;
-		scorefxn->set_weight( atom_pair_constraint, 10.0 );
+		TR << "Setting atom pair constraint weight to 1 manually" << std::endl;
+		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 	}
 	if ( scorefxn->get_weight( angle_constraint ) == 0.0 ) {
 		scorefxn->set_weight( angle_constraint, 1.0 );
@@ -188,8 +188,8 @@ CovalentPeptidomimeticDockDesign::apply(
 		scorefxn->set_weight( dihedral_constraint, 1.0 );
 	}
 	
-	//Size vdp_resi = 0;
-	//Size cys_resi = 0;
+	Size vdp_resi = 0;
+	Size cys_resi = 0;
 	
 	//protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver( pose, true );
 
@@ -200,12 +200,12 @@ CovalentPeptidomimeticDockDesign::apply(
 	
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		
-		/*if ( pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
+		if ( pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ) {
 			vdp_resi = ii;
 		}
 		if ( pose.residue( ii ).type().has_property( "SIDECHAIN_THIOL" ) ) {
 			cys_resi = ii;
-		}*/
+		}
 		if ( pose.residue( ii ).type().has_property( "ELECTROPHILE" ) ||
 			 pose.residue( ii ).type().has_property( "SIDECHAIN_THIOL" ) ) {
 			mm->set_bb(  ii, true );
@@ -220,20 +220,17 @@ CovalentPeptidomimeticDockDesign::apply(
 			mm->set_chi( ii, false );
 		}
 	}
-	mm->set_jump( 1, true );
+	//mm->set_jump( 1, true );
 	
 	// legit gonna hard code in ids to check
-	/*kinematics::FoldTree f;
-	Size last_chain_A = pose.conformation().chain_end(1);
-	Size last = pose.total_residue();
-	f.add_edge( 1, vdp_resi, -1 );
-	f.add_edge( vdp_resi, cys_resi, -2 );
-	f.add_edge( vdp_resi, last_chain_A, -1 );
-	f.add_edge( last_chain_A+1, last, -1 );
+	kinematics::FoldTree f = pose.fold_tree();
+	f.slide_jump( 1, cys_resi, vdp_resi );
+	pose.conformation().declare_chemical_bond( cys_resi, "SG", vdp_resi, "CZ" );
 	pose.fold_tree( f );
-	*/
 	TR << pose.fold_tree() << std::endl;
 	
+	import_pose::set_reasonable_fold_tree( pose );
+	mm->set_branches( cys_resi, true );
 	
 	limited_task->restrict_to_residues( packable );
 	limited_task->restrict_to_repacking();
@@ -269,7 +266,7 @@ CovalentPeptidomimeticDockDesign::apply(
 	
 	protocols::simple_moves::sidechain_moves::SidechainMoverOP SCmover( new protocols::simple_moves::sidechain_moves::SidechainMover() );
 	SCmover->set_task( limited_task );
-	SCmover->set_prob_uniform( 0 ); //we want only Dunbrack rotamers, 0 percent chance of uniform sampling
+	SCmover->set_prob_uniform( 100 );
 	
 	
 	/*********************************************************
@@ -300,12 +297,19 @@ CovalentPeptidomimeticDockDesign::apply(
 		// Inner perturbation loop- Docking by packing the two key residues
 		for ( Size jj = 1; jj < 10; ++jj ) {
 			//pert_rt->apply( pose );
-			SCmover->apply( pose );
-			update_hydrogens( pose );
-			//min->apply( pose );
+			//SCmover->apply( pose );
+			//update_hydrogens( pose );
+			min->apply( pose );
 			//update_hydrogens( pose );
 		}
 	}
+	
+	// Before dumping...
+	Real preupdate_score = ( *scorefxn )( pose );
+	//update_hydrogens( pose );
+	Real final_score = ( *scorefxn )( pose );
+	TR << "Final scores: " << preupdate_score << " " << final_score << std::endl;
+
 }
 
 void
@@ -347,7 +351,7 @@ CovalentPeptidomimeticDockDesign::update_hydrogens(
 	
 		
 		Real VSG_torsion_correction = numeric::dihedral_degrees( SG_xyz, CZ_xyz, CE2_xyz, CD_xyz ) - degrees( pose.conformation().torsion_angle( aidVSG, aidCZ, aidCE2, aidCD ) );
-		if ( VSG_torsion_correction > 0.01 ) {
+		//if ( VSG_torsion_correction > 0.01 || VSG_torsion_correction < 0.01) {
 			TR << "Initial 1HZ-CZ-CE2-CD: " << degrees(pose.conformation().torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD)) << std::endl;
 			TR << "Initial VSG-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aidVSG,aidCZ,aidCE2,aidCD)) <<std::endl;
 			TR << "Initial SG-CZ-CE2-CD: "<< numeric::dihedral_degrees(SG_xyz,CZ_xyz,CE2_xyz,CD_xyz) <<std::endl;
@@ -358,7 +362,7 @@ CovalentPeptidomimeticDockDesign::update_hydrogens(
 			TR << "Final   VSG-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aidVSG,aidCZ,aidCE2,aidCD)) <<std::endl;
 			TR << "Final    SG-CZ-CE2-CD: "<< numeric::dihedral_degrees(SG_xyz,CZ_xyz,CE2_xyz,CD_xyz) <<std::endl;
 			TR << "Final   1HZ-CZ-CE2-CD: "<< degrees(pose.conformation().torsion_angle(aid1HZ,aidCZ,aidCE2,aidCD)) <<std::endl;
-		}
+		//}
 	
 	}
 }

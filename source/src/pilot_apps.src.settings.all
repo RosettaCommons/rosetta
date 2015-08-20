@@ -70,6 +70,7 @@ sources = {
 		"macrocycles",
 		"macrocycle_sampling",
 		"make_a3b_bundle",
+		"mike_linker_test",
 		"multistate_idea",
 		"oop_conformations",
 		"oop_scan",

@@ -42,6 +42,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -162,12 +163,38 @@ void add_constraints(
 	vancomycin.add_constraint( dih1 );
 	vancomycin.add_constraint( dih2 );
 	vancomycin.add_constraint( dih3 );
+	
+	core::scoring::func::CircularHarmonicFuncOP dharm( new core::scoring::func::CircularHarmonicFunc( -71.5*3.14159/180, 0.02 ) );
+	core::id::AtomID const OZ4( vancomycin.residue(4).type().atom_index( "OZ"  ), 4 );
+	core::id::AtomID const C18( vancomycin.residue(8).type().atom_index( "C1"  ), 8 );
+	core::id::AtomID const C28( vancomycin.residue(8).type().atom_index( "C2"  ), 8 );
+	core::id::AtomID const O28( vancomycin.residue(8).type().atom_index( "O2"  ), 8 );
+	core::id::AtomID const C19( vancomycin.residue(9).type().atom_index( "C1"  ), 9 );
+	core::id::AtomID const O58( vancomycin.residue(8).type().atom_index( "O5"  ), 8 );
+	core::id::AtomID const O59( vancomycin.residue(9).type().atom_index( "O5"  ), 9 );
+	core::scoring::constraints::AtomPairConstraintOP bond4( new core::scoring::constraints::AtomPairConstraint( OZ4, C18, harm ) );
+	core::scoring::constraints::AtomPairConstraintOP bond5( new core::scoring::constraints::AtomPairConstraint( O28, C19, harm ) );
+	core::scoring::constraints::AngleConstraintOP ang6( new core::scoring::constraints::AngleConstraint( CE, OZ4, C18, aharm2 ) );
+	core::scoring::constraints::AngleConstraintOP ang7( new core::scoring::constraints::AngleConstraint( C28, O28, C19, aharm2 ) );
+	
+	core::scoring::constraints::DihedralConstraintOP dih4( new core::scoring::constraints::DihedralConstraint( CE, OZ4, C18, O58, dharm ) );
+	core::scoring::constraints::DihedralConstraintOP dih5( new core::scoring::constraints::DihedralConstraint( C28, O28, C19, O59, dharm ) );
+
+	vancomycin.add_constraint( bond4 );
+	vancomycin.add_constraint( bond5 );
+	vancomycin.add_constraint( ang6 );
+	vancomycin.add_constraint( ang7 );
+	
+	vancomycin.add_constraint( dih4 );
+	vancomycin.add_constraint( dih5 );
+
 }
 
 int main ( int argc, char* argv[] )
 {
 try {
 	using namespace core;
+	using namespace kinematics;
 	using namespace utility;
 	using namespace scoring;
 	using namespace pose;
@@ -197,16 +224,16 @@ try {
 	// Vanc sequence: N-methyl D-leu
 	
 	core::chemical::ResidueTypeSetCOP residue_set_cap = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	//ResidueType const & dleu_type = residue_set_cap->name_map( "DLEU:NtermProteinMethylated" );
-	ResidueType const & dleu_type = residue_set_cap->name_map( "DTRP:NtermProteinMethylated" );
+	ResidueType const & dleu_type = residue_set_cap->name_map( "DLEU:NtermProteinMethylated" );
+	//ResidueType const & dleu_type = residue_set_cap->name_map( "DTRP:NtermProteinMethylated" );
 	ResidueType const & V01_type = residue_set_cap->name_map( "V01:aryl-O-conjugated" );
-	//ResidueType const & asn_type = residue_set_cap->name_map( "ASN" );
-	ResidueType const & asn_type = residue_set_cap->name_map( "LYS" );
+	ResidueType const & asn_type = residue_set_cap->name_map( "ASN" );
+	//ResidueType const & asn_type = residue_set_cap->name_map( "LYS" );
 	ResidueType const & V02_type = residue_set_cap->name_map( "V02:aryl-O-conjugated:phg_cd1_conjugation:phg_cd2_conjugation" );
 	ResidueType const & V02_type2 = residue_set_cap->name_map( "V02:phg_cd1_conjugation" );
 	ResidueType const & V04_type = residue_set_cap->name_map( "V04:aryl-O-conjugated" );
-	//ResidueType const & V03_type = residue_set_cap->name_map( "V03:CtermProteinFull:aryl-C-conjugated" );
-	ResidueType const & V03_type = residue_set_cap->name_map( "V03:aryl-C-conjugated" );
+	ResidueType const & V03_type = residue_set_cap->name_map( "V03:CtermProteinFull:aryl-C-conjugated" );
+	//ResidueType const & V03_type = residue_set_cap->name_map( "V03:aryl-C-conjugated" );
 	
 	Residue dleu( dleu_type, true );
 	Residue V01( V01_type, true );
@@ -224,9 +251,22 @@ try {
 	vancomycin.append_residue_by_bond( V022, true );
 	vancomycin.append_residue_by_bond( V04, true );
 	vancomycin.append_residue_by_bond( V03, true );
-	// extra!
-	vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLN:CtermProteinFull" ), true ), true );
+	//vancomycin.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->4)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+	TR << "Appending by jump" << std::endl;
+	vancomycin.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+	//vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-Vnc:non-reducing_end:3-NH3+" ), true ), true );
+	vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
+
+	protocols::rigid::RigidBodyTransMover translate( vancomycin, 1 );
+	translate.step_size( 4 );
+	translate.apply( vancomycin );
 	
+	// extra!
+	//vancomycin.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLN:CtermProteinFull" ), true ), true );
+	//import_pose::set_reasonable_fold_tree( vancomycin );
+	//FOLD_TREE  EDGE 1 2 -1  EDGE 2 7 -1  EDGE 2 8 1
+	//FOLD_TREE  EDGE 1 2 -1  EDGE 2 7 -1  EDGE 4 8 -2
+
 	//Size v02_connid1 = V02_type.residue_connection_id_for_atom( pose.residue( 4 ).atom_index( "CD1" ) );
 	//Size v02_connid2 = V02_type.residue_connection_id_for_atom( pose.residue( 4 ).atom_index( "CD2" ) );
 	//new_cys->residue_connection_partner( cys_connid, resi_vdp, vdp_connid );
@@ -234,10 +274,14 @@ try {
 	vancomycin.conformation().declare_chemical_bond( 2, "OT", 4, "CD1" );
 	vancomycin.conformation().declare_chemical_bond( 6, "OT", 4, "CD2" );
 	vancomycin.conformation().declare_chemical_bond( 5, "CD1", 7, "CG1" );
+	vancomycin.conformation().declare_chemical_bond( 4, "OZ", 8, "C1" );
+	vancomycin.conformation().declare_chemical_bond( 8, "O2", 9, "C1" );
+
+	TR << "Declared bond" << std::endl;
 	
 	add_constraints( vancomycin );
 	
-	for ( Size ii = 1; ii <= vancomycin.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= vancomycin.total_residue()-2; ++ii ) {
 		vancomycin.set_phi( ii, -150 );
 		vancomycin.set_psi( ii, 150 );
 		vancomycin.set_omega( ii, 180 );
@@ -250,24 +294,156 @@ try {
 		pert_mm->set_bb( i, true );
 		pert_mm->set_chi( i, true );
 	}
+	pert_mm->set_jump( 1, true );
+	//pert_mm->set_branches( 4, true );
 	protocols::simple_moves::MinMoverOP min_mover( new simple_moves::MinMover( pert_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
 	
-	for ( Real apc = 0; apc <= 2; apc += 0.1 ) {
+	for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
 		scorefxn->set_weight( atom_pair_constraint, apc );
+		scorefxn->set_weight( angle_constraint, apc );
 		scorefxn->set_weight( dihedral_constraint, apc );
 		
 		min_mover->apply( vancomycin );
 	}
 	vancomycin.dump_pdb( "vancomycin_min1.pdb" );
-	for ( Real apc = 2; apc >= 0; apc -= 0.1 ) {
+	
+	FoldTree f = vancomycin.fold_tree();
+	f.clear();
+	f.add_edge( 1, 2, -1 );
+	f.add_edge( 2, 7, -1 );
+	f.add_edge( 4, 8, -2 );
+	f.add_edge( 8, 9, -1 );
+	vancomycin.fold_tree( f );;
+	TR << "Set new fold tree " << vancomycin.fold_tree() << std::endl;
+	pert_mm->set_branches( 4, true );
+	
+	for ( Real apc = 2; apc >= 0; apc -= 0.01 ) {
 		scorefxn->set_weight( atom_pair_constraint, apc );
+		scorefxn->set_weight( angle_constraint, apc );
 		scorefxn->set_weight( dihedral_constraint, apc );
 		
 		min_mover->apply( vancomycin );
 	}
 	vancomycin.dump_pdb( "vancomycin_min2.pdb" );
+	
+	PackerTaskOP task( TaskFactory::create_packer_task( vancomycin ) );
+	for (Size i = 1; i <= vancomycin.n_residue(); i++) {
+		task->nonconst_residue_task(i).restrict_to_repacking();
+		task->nonconst_residue_task(i).initialize_from_command_line();
+	}
+	
+	PackRotamersMoverOP pack( new PackRotamersMover( scorefxn, task ) );
+	pack->apply( vancomycin );
+	vancomycin.dump_pdb( "vancomycin_pack.pdb" );
 
+	
+	
+	
+	TR << "Just those branch res "<< std::endl;
+	Pose vanc2;
+	vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "GLY:NtermProteinFull" ), true ), 1 );
+	vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "V02:aryl-O-conjugated" ), true ), true );
+	vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "GLY:CtermProteinFull" ), true ), true );
+	TR << "Appending by jump" << std::endl;
+	vanc2.append_residue_by_jump( *new Residue( residue_set_cap->name_map( "->2)-beta-D-Glcp:branch_lower_terminus" ), true ), 2 );
+	vanc2.append_residue_by_bond( *new Residue( residue_set_cap->name_map( "->4)-alpha-Daup3Me:non-reducing_end:3-Me" ), true ), true );
+	
+	vanc2.conformation().declare_chemical_bond( 2, "OZ", 4, "C1" );
+	vanc2.conformation().declare_chemical_bond( 4, "O2", 5, "C1" );
 
+	protocols::rigid::RigidBodyTransMover trans2( vanc2, 1 );
+	trans2.step_size( 4 );
+	trans2.apply( vanc2 );
+	{
+		core::scoring::func::CircularHarmonicFuncOP dharm( new core::scoring::func::CircularHarmonicFunc( -71.5*3.14159/180, 0.02 ) );
+		core::scoring::func::CircularHarmonicFuncOP dharm2( new core::scoring::func::CircularHarmonicFunc( 176.9*3.14159/180, 0.02 ) );
+		core::scoring::func::CircularHarmonicFuncOP dharm3( new core::scoring::func::CircularHarmonicFunc( 60*3.14159/180, 0.02 ) );
+
+		core::scoring::func::HarmonicFuncOP harm( new core::scoring::func::HarmonicFunc( 1.31, 0.02 ) );
+		core::scoring::func::CircularHarmonicFuncOP aharm2( new core::scoring::func::CircularHarmonicFunc( 120  *3.14159/180, 0.02 ) );
+
+		core::id::AtomID const OZ4( vanc2.residue(2).type().atom_index( "OZ"  ), 2 );
+		core::id::AtomID const C18( vanc2.residue(4).type().atom_index( "C1"  ), 4 );
+		core::id::AtomID const C28( vanc2.residue(4).type().atom_index( "C2"  ), 4 );
+		core::id::AtomID const O28( vanc2.residue(4).type().atom_index( "O2"  ), 4 );
+		core::id::AtomID const C19( vanc2.residue(5).type().atom_index( "C1"  ), 5 );
+		core::id::AtomID const O58( vanc2.residue(4).type().atom_index( "O5"  ), 4 );
+		core::id::AtomID const O59( vanc2.residue(5).type().atom_index( "O5"  ), 5 );
+		core::id::AtomID const C58( vanc2.residue(4).type().atom_index( "C5"  ), 4 );
+		core::id::AtomID const C59( vanc2.residue(5).type().atom_index( "C5"  ), 5 );
+		core::id::AtomID const CE ( vanc2.residue(2).type().atom_index( "CE"  ), 2 );
+
+		core::scoring::constraints::AtomPairConstraintOP bond4( new core::scoring::constraints::AtomPairConstraint( OZ4, C18, harm ) );
+		core::scoring::constraints::AtomPairConstraintOP bond5( new core::scoring::constraints::AtomPairConstraint( O28, C19, harm ) );
+		core::scoring::constraints::AngleConstraintOP ang6( new core::scoring::constraints::AngleConstraint( CE, OZ4, C18, aharm2 ) );
+		core::scoring::constraints::AngleConstraintOP ang7( new core::scoring::constraints::AngleConstraint( C28, O28, C19, aharm2 ) );
+		
+		core::scoring::constraints::DihedralConstraintOP dih4( new core::scoring::constraints::DihedralConstraint( CE, OZ4, C18, O58, dharm3 ) );
+		core::scoring::constraints::DihedralConstraintOP dih5( new core::scoring::constraints::DihedralConstraint( C28, O28, C19, O59, dharm ) );
+		core::scoring::constraints::DihedralConstraintOP dih6( new core::scoring::constraints::DihedralConstraint( OZ4, C18, O58, C58, dharm2 ) );
+
+		vanc2.add_constraint( bond4 );
+		vanc2.add_constraint( bond5 );
+		vanc2.add_constraint( ang6 );
+		vanc2.add_constraint( ang7 );
+		
+		vanc2.add_constraint( dih4 );
+		vanc2.add_constraint( dih5 );
+		vanc2.add_constraint( dih6 );
+	}
+	
+	kinematics::MoveMapOP pert_mm2( new kinematics::MoveMap() );
+	pert_mm2->set_bb( 1, true );
+	pert_mm2->set_chi( 1, true );
+	pert_mm2->set_bb( 3, true );
+	pert_mm2->set_chi( 3, true );
+	pert_mm2->set_jump( 1, true );
+	protocols::simple_moves::MinMoverOP min_mover2( new simple_moves::MinMover( pert_mm2, scorefxn, "lbfgs_armijo_nonmonotone", 0.0001, true ) );
+	
+	for ( Real apc = 0; apc <= 2; apc += 0.01 ) {
+		scorefxn->set_weight( atom_pair_constraint, apc );
+		scorefxn->set_weight( angle_constraint, apc );
+		scorefxn->set_weight( dihedral_constraint, apc );
+		
+		min_mover2->apply( vanc2 );
+	}
+	vanc2.dump_pdb( "vanc2_min1.pdb" );
+	
+	FoldTree f2 = vanc2.fold_tree();
+	f2.clear();
+	f2.add_edge( 1, 3, -1 );
+	f2.add_edge( 2, 4, -2 );
+	f2.add_edge( 4, 5, -1 );
+	vanc2.fold_tree( f2 );
+	TR << "Set new fold tree " << vanc2.fold_tree() << std::endl;
+	pert_mm2->set_branches( 2, true );
+	pert_mm2->set_bb( 2, true );
+	pert_mm2->set_chi( 2, true );
+	pert_mm2->set_bb( 4, true );
+	pert_mm2->set_chi( 4, true );
+	pert_mm2->set_bb( 5, true );
+	pert_mm2->set_chi( 5, true );
+	
+	for ( Real apc = 2; apc >= 0; apc -= 0.01 ) {
+		scorefxn->set_weight( atom_pair_constraint, apc );
+		scorefxn->set_weight( angle_constraint, apc );
+		scorefxn->set_weight( dihedral_constraint, apc );
+		
+		min_mover2->apply( vanc2 );
+	}
+	vanc2.dump_pdb( "vanc2_min2.pdb" );
+	
+	PackerTaskOP task2( TaskFactory::create_packer_task( vanc2 ) );
+	for (Size i = 1; i <= vanc2.n_residue(); i++) {
+		task2->nonconst_residue_task(i).restrict_to_repacking();
+		task2->nonconst_residue_task(i).initialize_from_command_line();
+	}
+	
+	PackRotamersMoverOP pack2( new PackRotamersMover( scorefxn, task2 ) );
+	pack2->apply( vanc2 );
+	vanc2.dump_pdb( "vanc2_pack.pdb" );
+
+	
 	
 } catch ( utility::excn::EXCN_Base const & e ) {
 	std::cout << "caught exception " << e.msg() << std::endl;

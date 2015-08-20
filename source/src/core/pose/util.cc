@@ -2634,6 +2634,7 @@ get_constraints_from_link_records( core::pose::Pose & pose, io::pdb::FileData fd
 			id::AtomID aidC( ELEC.atom_index( it->second[ii].name2 ), id2 );
 
 			scoring::func::HarmonicFuncOP harm_func( new scoring::func::HarmonicFunc( it->second[ii].length, 0.05 ) );
+			
 			scoring::constraints::ConstraintCOP atompair(
 					new scoring::constraints::AtomPairConstraint( aidNUC, aidC, harm_func ) );
 			pose.add_constraint( atompair );

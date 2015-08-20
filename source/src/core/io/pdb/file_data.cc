@@ -545,8 +545,8 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 				uint const stop_num = edge->stop();
 
 				// TODO: Don't assume use of PDBInfo.
-				ResidueInformation start_res = get_residue_information(pose, start_num);
-				ResidueInformation stop_res = get_residue_information(pose, stop_num);
+				ResidueInformation start_res = get_residue_information(pose, start_num, pose.pdb_info() != NULL );
+				ResidueInformation stop_res = get_residue_information(pose, stop_num, pose.pdb_info() != NULL );
 
 				// Fill LinkInformation
 				LinkInformation link;
@@ -1150,15 +1150,21 @@ build_pose_as_is1(
 		// Determine polymer information: termini, branch points, etc.
 		Strings branch_points_on_this_residue;
 		bool is_branch_point( false );
-		//TR << "Checking if resid " << resid << " is in the link map " << std::endl;
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Checking if resid " << resid << " is in the link map " << std::endl;
+		}
 		if ( fd.link_map.count( resid ) ) {  // if found in the linkage map
 			// Find and store to access later:
 			//     - associated 1st residue of all branches off this residue (determines branch lower termini)
 			//     - positions of branch points
-			//TR << "Found resid " << resid << " in link map " << std::endl;
+			if ( TR.Trace.visible() ) {
+				TR.Trace << "Found resid " << resid << " in link map " << std::endl;
+			}
 			for ( Size branch = 1, n_branches = fd.link_map[ resid ].size(); branch <= n_branches; ++branch ) {
-
-				//TR << "Examining branch " << branch << std::endl;
+				
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "Examining branch " << branch << std::endl;
+				}
 				LinkInformation const & link_info( fd.link_map[ resid ][ branch ] );
 				if ( link_info.chainID1 == link_info.chainID2 && link_info.resSeq1 == ( link_info.resSeq2 - 1 ) ) {
 					// If this occurs, the link is to the next residue on the same chain, so both residues are part of
@@ -1167,8 +1173,10 @@ build_pose_as_is1(
 					// makers did things reasonably.
 					continue;
 				}
-				//TR << "branch point is true for this residue" << std::endl;
-				//TR << "corresponding branch lower terminus is " <<  link_info.resID2 << std::endl;
+				if ( TR.Trace.visible() ) {
+					TR.Trace << "branch point is true for this residue" << std::endl;
+					TR.Trace << "corresponding branch lower terminus is " <<  link_info.resID2 << std::endl;
+				}
 				is_branch_point = true;
 				branch_lower_termini.push_back( link_info.resID2 );
 				branch_points_on_this_residue.push_back( link_info.name1 );

@@ -41,6 +41,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/FoldTree.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -151,7 +152,13 @@ try {
 				   vdp.lower_connect_id() != 3 );
 	
 	// hardcoded connection numbers
-	pose.append_residue_by_bond( res_vdp, true, 3, 1, 3 );
+	//pose.append_residue_by_bond( res_vdp, true, 3, 1, 3 );
+	pose.append_residue_by_jump( res_vdp, 2 ); //true, 3, 1, 3 );
+	
+	kinematics::FoldTree f = pose.fold_tree();
+	f.clear();
+	f.add_edge( 1, 1, -1 );
+	f.add_edge( 1, 2, -2 );
 	
 	
 	//pose.pdb_info()->set_resinfo( 1, 'A', 1, ' ' );
