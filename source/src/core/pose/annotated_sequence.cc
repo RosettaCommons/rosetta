@@ -700,7 +700,6 @@ handle_disulfide_variant_name_for_backwards_compatibility( chemical::ResidueType
 																													 std::string const fullname )
 {
 
-	print_backtrace();
 	tr << tr.Red << "If you really need to use this code and want to speed it up, please contact rhiju [at] stanford.edu about quickly rewriting using chemical::ResidueTypeFinder." << tr.Reset << std::endl;
 
 	//tr <<fullname_list[ index ] << std::endl;
