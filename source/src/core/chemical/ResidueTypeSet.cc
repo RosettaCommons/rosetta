@@ -272,9 +272,6 @@ void ResidueTypeSet::init(
 					== patch_filenames.end())
 				patch_filenames.push_back( database_directory_ + "patches/CtermTruncation.txt" );
 
-				// we'll assume user wants this
-				option[ OptionKeys::chemical::override_rsd_type_limit ].value(true);
-
 		}
 
 		apply_patches( patch_filenames );
@@ -299,17 +296,6 @@ void ResidueTypeSet::init(
 	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
 	tr << "Total time to initialize " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 
-	// Sanity check. Might be good to tighten this limit -- fa_standard appears under 1500 residue types in most use cases.
-	Size const MAX_RESIDUE_TYPES = 3000;
-	if ( residue_types_.size() > MAX_RESIDUE_TYPES && !option[ OptionKeys::chemical::override_rsd_type_limit ]() ){
-		if ( !option[ OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() )  {
-			for ( Size n = 1; n <= residue_types_.size(); n++ )	 tr << residue_types_[n]->name() << std::endl;
-			tr << "Created " << residue_types_.size() << " residue types" << std::endl;
-		}
-		std::string const error_message = "Number of residue types is greater than MAX_RESIDUE_TYPES. Rerun with -override_rsd_type_limit. Or if you have introduced a bunch of patches, consider declaring only the ones you want to use at the top of your app (with the options) with the command option[ chemical::include_patches ].push_back( ... ). ";
-		std::cerr << error_message << std::endl;
-		if ( !option[ OptionKeys::mistakes::restore_pre_talaris_2013_behavior ]() ) utility_exit_with_message( error_message );
-	}
 }
 
 
