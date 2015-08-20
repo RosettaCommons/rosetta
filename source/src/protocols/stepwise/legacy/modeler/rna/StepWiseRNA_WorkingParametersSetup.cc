@@ -1328,7 +1328,7 @@ namespace rna {
 		bool reorder_went_OK = rerooted_fold_tree.reorder( root_res );
 		if ( !reorder_went_OK ) utility_exit_with_message( "!reorder_went_OK" );
 
-		if ( force_fold_tree_ ) rerooted_fold_tree = working_parameters_->fold_tree();;
+		if ( force_fold_tree_ ) rerooted_fold_tree = working_parameters_->fold_tree();
 
 		// moving positions
 		utility::vector1< Size > working_moving_partition_res;

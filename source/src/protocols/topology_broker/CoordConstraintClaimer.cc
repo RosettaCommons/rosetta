@@ -166,8 +166,8 @@ void CoordConstraintClaimer::add_constraints( core::pose::Pose& pose ) const {
 		tr.Debug << "new sequence -- remap constraints " << std::endl;
 
 		/// we should have a cst_pose_ now
-		if ( !cst_pose_ ) throw EXCN_Input( "CoordConstraintClaimer::add_constraints(): \
-			 in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
+		if ( !cst_pose_ ) throw EXCN_Input( "CoordConstraintClaimer::add_constraints(): "
+			 "in broker setup either provide PDB_FILE or set CST_FROM_INPUT_POSE");
 
 		//constraints_ should be defined, since new_decoy()
 		runtime_assert( constraints_ != 0 );

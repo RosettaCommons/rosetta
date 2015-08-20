@@ -71,7 +71,7 @@ public:
 		TS_ASSERT_EQUALS( subset.size(), trpcage.total_residue() );
 
 		for( core::Size ii = 1; ii <= subset.size(); ++ii ) {
-			TS_ASSERT( !subset[ ii ] || ii >= 6 )
+			TS_ASSERT( !subset[ ii ] || ii >= 6 );
 		}
 	}
 

@@ -81,7 +81,7 @@ public: // constructors
 
 	// top strand resid check (looks in map keys)
 	bool is_top( core::Size index ) const
-		{ if ( positions_.count(index) != 0 ) return true; return false; }
+	{ if ( positions_.count(index) != 0 ) { return true; } return false; }
 
 	bool contains( core::Size index ) const;
 	void print( core::pose::Pose const & pose, std::ostream & os ) const;

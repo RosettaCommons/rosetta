@@ -176,8 +176,8 @@ AddEncounterConstraintMover::interface_from_pose( pose::Pose const & pose ) cons
 	      pose.data().get_const_ptr( pose::datacache::CacheableDataType::INTERFACE_INFO )
   );
   if ( !ptr ) {
-    utility_exit_with_message( "cannot find interface information !!!\nMake sure that docking::setup_foldtree()\
-      has been called, for instance by using the DockSetupMover before the AddEncounterConstraintMover" );
+    utility_exit_with_message( "cannot find interface information !!!\nMake sure that docking::setup_foldtree() "
+      "has been called, for instance by using the DockSetupMover before the AddEncounterConstraintMover" );
   }
   tr.Debug << "extracted InterfaceInfo from PoseCache with address " << ptr << std::endl;
   return *ptr;

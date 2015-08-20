@@ -162,7 +162,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
-	if ( dump_pdb_) std::cout << "Allow insert: " << std::endl;	rna_structure_parameters_->allow_insert()->show();
+	if ( dump_pdb_) { std::cout << "Allow insert: " << std::endl;	rna_structure_parameters_->allow_insert()->show(); }
 
 	protocols::farna::RNA_FragmentsOP rna_fragments( new CoarseRNA_Fragments( all_rna_fragments_file_ ) );
 	frag_mover_ = protocols::farna::RNA_FragmentMoverOP( new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() ) );

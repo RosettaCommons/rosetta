@@ -206,8 +206,8 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 		core_init();
 
 		//core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt -mute all");
-		core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt\
- -in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
+		core_init_with_additional_options("-broker:setup protocols/abinitio/pcs_broker_setup.txt "
+ "-in:file:fasta protocols/abinitio/pose_funcs_test.fasta");
 
 		//We read the setup file with the topologyclaimer framework
 		top_bro_OP_ = protocols::topology_broker::TopologyBrokerOP( new  protocols::topology_broker::TopologyBroker() );
@@ -242,23 +242,23 @@ class PseudocontactShiftTests : public CxxTest::TestSuite {
 		using namespace basic::options::OptionKeys;
 
 
-		core_init_with_additional_options("\
- -abinitio::increase_cycles 0.01\
- -nstruct 1\
- -frag9 protocols/abinitio/frag9_for_pcs_test.tab.gz\
- -frag3 protocols/abinitio/frag3_for_pcs_test.tab.gz\
- -native protocols/abinitio/pdb_idealized_for_pcs_test.pdb\
- -run:protocol broker\
- -run::constant_seed\
- -run::jran 123456\
- -abinitio::stage1_patch protocols/abinitio/score0_pcs_only.wts_patch\
- -abinitio::stage2_patch protocols/abinitio/score1_pcs_only.wts_patch\
- -abinitio::stage3a_patch protocols/abinitio/score2_pcs_only.wts_patch\
- -abinitio::stage3b_patch protocols/abinitio/score5_pcs_only.wts_patch\
- -abinitio::stage4_patch protocols/abinitio/score3_pcs_only.wts_patch\
- -overwrite\
- -out:prefix PCS_\
- ");
+		core_init_with_additional_options(
+ "-abinitio::increase_cycles 0.01 "
+ "-nstruct 1 "
+ "-frag9 protocols/abinitio/frag9_for_pcs_test.tab.gz "
+ "-frag3 protocols/abinitio/frag3_for_pcs_test.tab.gz "
+ "-native protocols/abinitio/pdb_idealized_for_pcs_test.pdb "
+ "-run:protocol broker "
+ "-run::constant_seed "
+ "-run::jran 123456 "
+ "-abinitio::stage1_patch protocols/abinitio/score0_pcs_only.wts_patch "
+ "-abinitio::stage2_patch protocols/abinitio/score1_pcs_only.wts_patch "
+ "-abinitio::stage3a_patch protocols/abinitio/score2_pcs_only.wts_patch "
+ "-abinitio::stage3b_patch protocols/abinitio/score5_pcs_only.wts_patch "
+ "-abinitio::stage4_patch protocols/abinitio/score3_pcs_only.wts_patch "
+ "-overwrite "
+ "-out:prefix PCS_"
+ );
 
 		protocols::abinitio::AbrelaxMoverOP abrelax( new protocols::abinitio::AbrelaxMover );
 		protocols::jd2::JobDistributor::get_instance()->go( abrelax);

@@ -125,7 +125,7 @@ PatchdockReader::read_patchdock_entry()
 		if( first_field == "#" ) { entries_found = true; continue; }
 		if( !entries_found ) continue;
     core::Size const wheres_pipe( line.find_first_of( "|" ) );
-		if( wheres_pipe == string::npos ) break;; // no longer reading entries
+		if( wheres_pipe == string::npos ) break; // no longer reading entries
 		core::Size const transformation_begin( line.find_last_of( "||" ) + 2 );
 		std::istringstream transData( line.substr( transformation_begin, 10000) );
 		core::Real x,y,z;

@@ -104,7 +104,7 @@ TemperingBase::TemperingBase() :
 	set_defaults();
 }
 
-TemperingBase::TemperingBase(	TemperingBase const & other ) :
+TemperingBase::TemperingBase( TemperingBase const & other ) :
 	protocols::canonical_sampling::TemperatureController(other)
 {
 	temperatures_ = other.temperatures_;
@@ -203,11 +203,11 @@ void TemperingBase::initialize_simulation(
 
 void
 TemperingBase::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover,
-		core::Size level,
-		core::Real temp_in,
-		core::Size cycle //default=0; non-zero if trajectory is restarted
+	core::pose::Pose & pose,
+	protocols::canonical_sampling::MetropolisHastingsMover const & mh_mover,
+	core::Size level,
+	core::Real temp_in,
+	core::Size cycle //default=0; non-zero if trajectory is restarted
 ) {
 	initialize_simulation( pose, mh_mover,cycle );
 	set_current_temp( level );
@@ -220,7 +220,7 @@ TemperingBase::initialize_simulation(
 }
 
 void
-TemperingBase::observe_after_metropolis(	MetropolisHastingsMover const & mhm ) {
+TemperingBase::observe_after_metropolis( MetropolisHastingsMover const & mhm ) {
 	if ( mhm.current_trial() && mhm.current_trial() % io_stride_ == 0 ) {
 #ifdef WIN32
 		core::Size output_ct( floor( (double)mhm.current_trial() / (double)io_stride_ ) );
@@ -244,12 +244,12 @@ TemperingBase::finalize_simulation(
 }
 
 bool TemperingBase::check_temp_consistency() {
-		//we can trust our current temp variable or get it from protocols::moves::MonteCarlo object
+	//we can trust our current temp variable or get it from protocols::moves::MonteCarlo object
 	if ( !trust_current_temp_ ) {
 		current_temp_=1;
 		Real const mc_temp( monte_carlo()->temperature() );
-		for (	utility::vector1< Real >::const_iterator it = temperatures_.begin();
-					it != temperatures_.end(); ++it ) {
+		for ( utility::vector1< Real >::const_iterator it = temperatures_.begin();
+				it != temperatures_.end(); ++it ) {
 			if ( *it > mc_temp ) break;
 			++current_temp_;
 		}
@@ -266,8 +266,8 @@ void TemperingBase::init_from_options() {
 	using namespace core;
 
 	if ( !options_registered_ ) {
-		utility_exit_with_message( "cannot call TemperingBase::init_from_options() unless TemperingBase::register_options() \
-                     on application level before devel::init()" );
+		utility_exit_with_message( "cannot call TemperingBase::init_from_options() unless TemperingBase::register_options() "
+			"on application level before devel::init()" );
 	}
 
 	bool success( false );
@@ -298,13 +298,13 @@ void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_l
 	temperatures_.clear();
 	runtime_assert( n_levels >= 2 );
 	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using "
-	        << interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
-	if (interpolation == linear) {
+		<< interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
+	if ( interpolation == linear ) {
 		Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
 		for ( Size ct=0; ct<n_levels; ++ct ) {
 			temperatures_.push_back( temp_low+ct*temp_step );
 		}
-	} else if (interpolation == exponential) {
+	} else if ( interpolation == exponential ) {
 		Real next_temp( temp_low );
 		Real temp_factor( pow(temp_high/temp_low, 1/Real(n_levels-1)) );
 		for ( Size ct=1; ct<n_levels; ++ct ) {

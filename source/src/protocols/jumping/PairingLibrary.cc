@@ -651,9 +651,9 @@ PairingLibrary::generate_jump_frags(
 					frame->add_fragment( frag_data );
 					frags_accumulator.add( frame );
 				} else {
-					utility_exit_with_message("need to implement this: make ss-library fragments that only contain those torsions for residues\
-						that can move according to movemap -- call this function with	\
-						bWithTorsions = false ... and it works for now");
+					utility_exit_with_message("need to implement this: make ss-library fragments that only contain those torsions for residues "
+						"that can move according to movemap -- call this function with	"
+						"bWithTorsions = false ... and it works for now");
 				}
 			} // for JumpList iteration
 		} // loop over orientations and pleatings

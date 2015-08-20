@@ -76,8 +76,9 @@ WorkUnit_Sampler::get_movemap( core::pose::Pose const &pose,
 
 	} else if ( mode.compare("full") == 0 ){
 		mm->set_jump( true ); mm->set_bb( true ); mm->set_chi( true );
-		if( nonideal )
+		if( nonideal ) {
 			mm->set( core::id::PHI, true ); mm->set( core::id::THETA, true ); mm->set( core::id::D, true );
+		}
 
 	} else if( mode.compare("looponly") == 0 ){
 		std::string loopstr( option[ lh::loop_string ]() );

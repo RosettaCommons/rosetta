@@ -204,7 +204,7 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 	if ( tag == expected_tag ) {
 		in >> batch.batch_id_;
 		if ( !in.good() ) report_value_error( batch, tag );
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "INPUT";
@@ -215,14 +215,14 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 		if ( yesno == "yes" ) batch.has_silent_in_ = true;
 		else if ( yesno == "no" ) batch.has_silent_in_ = false;
 		else report_value_error( batch, tag );
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "NSTRUCT";
 	if ( tag == expected_tag ) {
 		in >> batch.nstruct_;
 		if ( !in.good() ) report_value_error( batch, tag );
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "INTERMEDIATES";
@@ -232,14 +232,14 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 		if ( !in.good() ) report_value_error( batch, tag );
 		if ( yesno == "yes" ) batch.intermediate_structs_ = true;
 		else if ( yesno == "no" ) batch.intermediate_structs_ = false;
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "RETURNED";
 	if ( tag == expected_tag ) {
 		in >> batch.decoys_returned_to_archive_;
 		if ( !in.good() ) report_value_error( batch, tag );
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "FINISHED";
@@ -249,7 +249,7 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 		if ( !in.good() ) report_value_error( batch, tag );
 		if ( yesno == "yes" ) batch.has_finished_ = true;
 		else if ( yesno == "no" ) batch.has_finished_ = false;
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	in >> tag;
 	expected_tag = "CANCELLED";
@@ -259,7 +259,7 @@ std::istream& operator >> (std::istream& in, Batch &batch ) {
 		if ( !in.good() ) report_value_error( batch, tag );
 		if ( yesno == "yes" ) batch.is_cancelled_ = true;
 		else if ( yesno == "no" ) batch.is_cancelled_ = false;
-	} else report_tag_error( batch, expected_tag, tag );;
+	} else report_tag_error( batch, expected_tag, tag );
 
 	return in;
 }

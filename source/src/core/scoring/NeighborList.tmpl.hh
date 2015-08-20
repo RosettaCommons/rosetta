@@ -489,7 +489,7 @@ debug_assert( first_time_setup || nblist_.size() == pose.total_residue() );
 	for ( Size i=1; i<= nres; ++i ) {
 		Size const natoms( pose.residue(i).natoms() );
 		if ( first_time_setup ) { nblist_[i].resize( natoms ); upper_nblist_[i].resize( natoms ); intrares_upper_nblist_[i].resize( natoms ); }
-		if ( auto_update_ && first_time_setup ) wide_nblist_[i].resize( natoms );;
+		if ( auto_update_ && first_time_setup ) wide_nblist_[i].resize( natoms );
 		for ( Size j=1; j<= natoms; ++j ) {
 			nblist_[i][j].clear();
 			upper_nblist_[i][j].clear();

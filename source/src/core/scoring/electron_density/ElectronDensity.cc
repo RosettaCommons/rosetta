@@ -111,15 +111,15 @@ inline double square(double x) { return (x*x); }
 
 // x mod y, returns z in [-y/2,y/2]
 inline int min_mod(int x,int y) {
-	int r=x%y; if (r<-y/2) r+=y;if (r>=y/2) r-=y;
+	int r=x%y; if (r<-y/2) { r+=y; } if (r>=y/2) { r-=y; }
 	return r;
 }
 inline float min_mod(float x,float y) {
-	float r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
+	float r=std::fmod(x,y); if (r<-0.5*y) { r+=y; } if (r>=0.5*y) { r-=y; }
 	return r;
 }
 inline double min_mod(double x,double y) {
-	double r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
+	double r=std::fmod(x,y); if (r<-0.5*y) { r+=y; } if (r>=0.5*y) { r-=y; }
 	return r;
 }
 
@@ -2031,7 +2031,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	// atom count
 	core::Size natms=0,nres=0;
 	for (core::Size i=1; i<=pose.total_residue(); ++i) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; nres++;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) { continue; } nres++;
 		core::conformation::Residue const& rsd_i = pose.residue(i);
 		natms += rsd_i.nheavyatoms();
 	}

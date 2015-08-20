@@ -66,7 +66,7 @@ public:
 	Size size() { return h_.size(); }
 
 	/// @brief Clears this histogram by filling each cell with 0.0
-	void zeros() { for(Size i=1;i<=h_.size();i++) h_[i] = 0; last_nonempty_bin_ = 0; }
+	void zeros() { for(Size i=1;i<=h_.size();i++) { h_[i] = 0; } last_nonempty_bin_ = 0; }
 
 	/// @brief Returns the total number of counts in this histogram
 	Size total() const {

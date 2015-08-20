@@ -59,7 +59,7 @@
 
 
 #ifdef WIN32
-	#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
 #endif
 
 
@@ -92,7 +92,7 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 	if ( option[ OptionKeys::evaluation::extra_score ].user() ) {
 		using namespace core::scoring;
 		utility::vector1< std::string > const& extra_scores( option[ OptionKeys::evaluation::extra_score ]() );
-    utility::vector1< std::string > const& extra_score_names( option[ OptionKeys::evaluation::extra_score_column]() );
+		utility::vector1< std::string > const& extra_score_names( option[ OptionKeys::evaluation::extra_score_column]() );
 		if ( extra_scores.size() != extra_score_names.size() ) {
 			utility_exit_with_message("-extra_score: you need to provide as much extra_score_names as extra_scores! ");
 		}
@@ -101,8 +101,8 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			std::string patch( "NOPATCH" );
 			if ( option[ OptionKeys::evaluation::extra_score_patch ].user() ) {
 				if ( option[ OptionKeys::evaluation::extra_score_patch ]().size() != extra_scores.size() ) {
-					utility_exit_with_message("-extra_score: you need to provide as much extra_score_patch(es) as \
-                    extra_scores! use NOPATCH as placeholder");
+					utility_exit_with_message("-extra_score: you need to provide as much extra_score_patch(es) as "
+						"extra_scores! use NOPATCH as placeholder");
 				}
 				patch = option[ OptionKeys::evaluation::extra_score_patch ]()[ ct ];
 			}
@@ -116,9 +116,9 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 
 			std::string name( extra_scores[ ct ] );
 			if ( (name == "score0") ||
-				(name == "score2") ||
-				(name == "score3") ||
-				(name == "score5") ) {
+					(name == "score2") ||
+					(name == "score3") ||
+					(name == "score5") ) {
 				core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scfxn );
 			} else {
 				core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scfxn );
@@ -127,15 +127,15 @@ void ExtraScoreEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator &
 			std::string select_string( "SELECT_ALL" );
 			if ( option[ OptionKeys::evaluation::extra_score_select ].user() ) {
 				if ( option[ OptionKeys::evaluation::extra_score_select ]().size() != extra_scores.size() ) {
-					utility_exit_with_message("-extra_score: you need to provide as much extra_score_patch(es) as \
-                    extra_scores! use SELECT_ALL as placeholder");
+					utility_exit_with_message("-extra_score: you need to provide as much extra_score_patch(es) as "
+						"extra_scores! use SELECT_ALL as placeholder");
 				}
 				select_string = option[ OptionKeys::evaluation::extra_score_select ]()[ ct ];
 			}
 			if ( select_string != "SELECT_ALL" ) {
 				std::ifstream is( select_string.c_str() );
 
-				if (!is.good()) {
+				if ( !is.good() ) {
 					utility_exit_with_message( "[ERROR] Error opening RBSeg file '" + select_string + "'" );
 				}
 

@@ -161,7 +161,7 @@ AlaScan::ddG_for_single_residue( core::pose::Pose const & const_pose, core::Size
 	core::Real accumulate_ddg = 0;
 
 	for( core::Size r=1; r<=repeats_; ++r )
-		accumulate_ddg += (rb_jump==0 ? energy_filter.compute( pose ) : ddg_filter.compute( pose ) );;
+		accumulate_ddg += (rb_jump==0 ? energy_filter.compute( pose ) : ddg_filter.compute( pose ) );
 	core::Real const mut_ddg( accumulate_ddg / repeats_ );
 
 	TR.flush();

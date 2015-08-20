@@ -168,11 +168,11 @@ public:
 		using namespace std;
 		for( Size at = 1; at <= hp.max_atom_types(); ++at ) {
 			if( hp.sep_ss(at) ) {
-				out<<at<<" E "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) out<<" "<<hp.sa_weight(at,'E',i); out<<" "<<hp.intercept(at,'E')<<endl;
-				out<<at<<" H "<<hp.nb_weight(at,'H'); for(Size i=1;i<21;++i) out<<" "<<hp.sa_weight(at,'H',i); out<<" "<<hp.intercept(at,'H')<<endl;
-				out<<at<<" L "<<hp.nb_weight(at,'L'); for(Size i=1;i<21;++i) out<<" "<<hp.sa_weight(at,'L',i); out<<" "<<hp.intercept(at,'L')<<endl;
+				out<<at<<" E "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
+				out<<at<<" H "<<hp.nb_weight(at,'H'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'H',i); } out<<" "<<hp.intercept(at,'H')<<endl;
+				out<<at<<" L "<<hp.nb_weight(at,'L'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'L',i); } out<<" "<<hp.intercept(at,'L')<<endl;
 			} else {
-				out<<at<<" * "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) out<<" "<<hp.sa_weight(at,'E',i); out<<" "<<hp.intercept(at,'E')<<endl;
+				out<<at<<" * "<<hp.nb_weight(at,'E'); for(Size i=1;i<21;++i) { out<<" "<<hp.sa_weight(at,'E',i); } out<<" "<<hp.intercept(at,'E')<<endl;
 			}
 		}
 		out << "999 " << hp.intercept() << endl;

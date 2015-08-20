@@ -1069,7 +1069,7 @@ void
 RestrictYSDesign::apply( pose::Pose const &, PackerTask & task ) const {
 	utility::vector1<bool> restrict_to_aa( 20, false );
 	for( utility::vector1<core::Size>::const_iterator res_it=YSresids_.begin(); res_it!=YSresids_.end(); ++res_it ) {
-		if( gly_switch_ ) restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;;
+		if( gly_switch_ ) restrict_to_aa[chemical::aa_from_name( "GLY" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "TYR" )] = true;
 		restrict_to_aa[chemical::aa_from_name( "SER" )] = true;
 		task.nonconst_residue_task(*res_it).restrict_absent_canonical_aas( restrict_to_aa );

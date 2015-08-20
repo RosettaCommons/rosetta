@@ -1672,8 +1672,8 @@ void MotifGraftMover::init_parameters(
 						throw utility::excn::EXCN_RosettaScriptsOption("The number of deffined max_fragment_replacement_size_delta pairs (:) must match the number of fragments in your motif");
 					}
 				}else{
-					TR.Warning << "No max_fragment_replacement_size defined, assuming that each motif fragment can replace \
-a fragment of any size in the scaffold " << std::endl;
+					TR.Warning << "No max_fragment_replacement_size defined, assuming that each motif fragment can replace "
+"a fragment of any size in the scaffold " << std::endl;
 					for ( core::Size i = 1; i <= gp_p_motif_->conformation().num_chains() ; ++i){
 						std::pair< long int, long int > tmpPairParser;
 						//The minimum number of residues that can be replaced by the code is 2
@@ -1740,8 +1740,8 @@ a fragment of any size in the scaffold " << std::endl;
 				//OPTIONAL: b_graft_only_hotspots_by_sidechain_replacement
 				gp_b_graft_only_hotspots_by_sidechain_replacement_ = b_graft_only_hotspots_by_sidechain_replacement;
 				if ( gp_b_graft_only_hotspots_by_sidechain_replacement_ ){
-					TR.Warning << "You have enabled raft_only_hotspots_by_sidechain_replacement. Opposed to fragment grafting, this option will just copy the sidechains of the hotspots, \
- not the backbone into the target scaffold. Use this option wisely (i.e. only under the assumption of a very low rmsd)." << std::endl;
+					TR.Warning << "You have enabled raft_only_hotspots_by_sidechain_replacement. Opposed to fragment grafting, this option will just copy the sidechains of the hotspots, "
+ "not the backbone into the target scaffold. Use this option wisely (i.e. only under the assumption of a very low rmsd)." << std::endl;
 					b_full_motif_bb_alignment=true;
 				}
 				
@@ -1766,27 +1766,27 @@ a fragment of any size in the scaffold " << std::endl;
 				//ToDo: Maybe this parser should be outside
 				gp_b_allow_independent_alignment_per_fragment_ = b_allow_independent_alignment_per_fragment;
 				if ( gp_b_allow_independent_alignment_per_fragment_ ){
-					TR.Warning << "Will use independent/optimum alignment per fragment, which may lead to structures that are far from the original \
- fragment positions. This option operates after the global RMSD assesment \
- so don't be afraid, but consider that the final position of the fragments might be not what you expect." << std::endl;
+					TR.Warning << "Will use independent/optimum alignment per fragment, which may lead to structures that are far from the original "
+ "fragment positions. This option operates after the global RMSD assesment "
+ "so don't be afraid, but consider that the final position of the fragments might be not what you expect." << std::endl;
 				}
 				
 				//OPTIONAL: b_only_allow_if_N_points_match_aa_identity
 				//ToDo: Maybe this parser should be outside
 				gp_b_only_allow_if_N_point_match_aa_identity_ = b_only_allow_if_N_point_match_aa_identity;
 				if ( b_only_allow_if_N_point_match_aa_identity ){
-					TR.Warning << "Grafting will be allowed only if the original and matching residue in the scaffolds are identical. This might be usefull \
- if for example you want to replace a fragment in a CYS-CYS disulfide bridge, in such case you can match: Nterm CYS->CYS and Cterm CYS->CYS. If you are unsure \
- better turn this option OFF." << std::endl;
+					TR.Warning << "Grafting will be allowed only if the original and matching residue in the scaffolds are identical. This might be usefull "
+ "if for example you want to replace a fragment in a CYS-CYS disulfide bridge, in such case you can match: Nterm CYS->CYS and Cterm CYS->CYS. If you are unsure "
+ "better turn this option OFF." << std::endl;
 				}
 				
 				//OPTIONAL: b_only_allow_if_C_point_match_aa_identity
 				//ToDo: Maybe this parser should be outside
 				gp_b_only_allow_if_C_point_match_aa_identity_ = b_only_allow_if_C_point_match_aa_identity;
 				if ( b_only_allow_if_C_point_match_aa_identity ){
-					TR.Warning << "Grafting will be allowed only if the original and matching residue in the scaffolds are identical. This might be usefull \
- if for example you want to replace a fragment in a CYS-CYS disulfide bridge, in such case you can match: Nterm CYS->CYS and Cterm CYS->CYS. If you are unsure \
- better turn this option OFF." << std::endl;
+					TR.Warning << "Grafting will be allowed only if the original and matching residue in the scaffolds are identical. This might be usefull "
+ "if for example you want to replace a fragment in a CYS-CYS disulfide bridge, in such case you can match: Nterm CYS->CYS and Cterm CYS->CYS. If you are unsure "
+ "better turn this option OFF." << std::endl;
 				}
 				
 				//OPTIONAL: b_revert_graft_to_native_sequence

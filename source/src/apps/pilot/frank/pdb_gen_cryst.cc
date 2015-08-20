@@ -93,11 +93,11 @@ inline Real pos_mod(Real x,Real y) {
 	return r;
 }
 inline int min_mod(int x,int y) {
-	int r=x%y; if (r<-y/2) r+=y;if (r>=y/2) r-=y;
+  int r=x%y; if (r<-y/2) { r+=y; } if (r>=y/2) { r-=y; }
 	return r;
 }
 inline double min_mod(double x,double y) {
-	double r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
+  double r=std::fmod(x,y); if (r<-0.5*y) { r+=y; } if (r>=0.5*y) { r-=y; }
 	return r;
 }
 

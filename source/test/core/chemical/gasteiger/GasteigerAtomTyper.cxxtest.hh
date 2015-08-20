@@ -232,7 +232,7 @@ class GasteigerAtomTyperTests : public CxxTest::TestSuite {
 		core::chemical::gasteiger::assign_gasteiger_atom_types( *restype, atom_type_set_, /*keep_existing=*/ false );
 
 		TS_ASSERT_EQUALS( restype->atom("NV").gasteiger_atom_type()->get_name(), "FAKE" );
-		TS_ASSERT_EQUALS( restype->atom("CD").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" )
+		TS_ASSERT_EQUALS( restype->atom("CD").gasteiger_atom_type()->get_name(), "C_TeTeTeTe" );
 	}
 
 };

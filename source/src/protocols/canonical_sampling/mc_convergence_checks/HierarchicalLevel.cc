@@ -707,7 +707,7 @@ static thread_local basic::Tracer TR( "HierarchicalLevel" );
     Pool_RMSD_OP matching_pool_ptr;
     bool element_exists_in_cache = true;
 
-    if( TR.visible() ) TR.Debug << "address at time of evaluation for level " << level_ << " is: "; print_address( best_indices );
+    if( TR.visible() ) { TR.Debug << "address at time of evaluation for level " << level_ << " is: "; print_address( best_indices ); }
     if( addr_itr == pool_cache_.end() ) { //address not in cache, but exists as file
       //      if( pool_exists( best_indices ) ) { //ek elminated un-necessary file-checks 10/8/2010
 	if( TR.visible() ) TR.Debug << "address doesn't exist in cache, but exists on file... loading..." << std::endl;

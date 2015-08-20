@@ -960,8 +960,8 @@ hb_env_dep_burial_fd(int const nb1, int const nb2, core::Real low_scale, core::R
 	core::Real frac1 = (nb1-low_nb)/(high_nb-low_nb);
 	core::Real frac2 = (nb2-low_nb)/(high_nb-low_nb);
 
-	if (frac1<0.0) frac1=0.0; if (frac1>1.0) frac1=1.0;
-	if (frac2<0.0) frac2=0.0; if (frac2>1.0) frac2=1.0;
+	if (frac1<0.0) { frac1=0.0; } if (frac1>1.0) { frac1=1.0;}
+	if (frac2<0.0) { frac2=0.0; } if (frac2>1.0) { frac2=1.0;}
 
 	core::Real scale1 = (1-frac1)*low_scale + frac1;
 	core::Real scale2 = (1-frac1)*low_scale + frac1;

@@ -107,7 +107,7 @@ public:
 		v.push_back( 1 ); v.push_back( 2 ); v.push_back( 4 ); v.push_back( 5 );
 		correct_sets[ 2 ] = v; // apl -- r37173 changes the order in which edges are added to a graph
 
-		TS_ASSERT_EQUALS( sets, correct_sets )
+		TS_ASSERT_EQUALS( sets, correct_sets );
 
 	}
 

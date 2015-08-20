@@ -548,64 +548,64 @@ namespace motif {
 		}
 		if( o[f::motif_type].user() ){
 			switch(type()){
-				case SC_SC: if(o[f::motif_type]()!="SC_SC"){ if(s) ++s->F_type_SC_SC; return false; } else if(s) ++s->P_type_SC_SC; break;
-				case SC_BB: if(o[f::motif_type]()!="SC_BB"){ if(s) ++s->F_type_SC_BB; return false; } else if(s) ++s->P_type_SC_BB; break;
-				case SC_PH: if(o[f::motif_type]()!="SC_PH"){ if(s) ++s->F_type_SC_PH; return false; } else if(s) ++s->P_type_SC_PH; break;
-				case SC_PO: if(o[f::motif_type]()!="SC_PO"){ if(s) ++s->F_type_SC_PO; return false; } else if(s) ++s->P_type_SC_PO; break;
-				case BB_BB: if(o[f::motif_type]()!="BB_BB"){ if(s) ++s->F_type_BB_BB; return false; } else if(s) ++s->P_type_BB_BB; break;
-				case BB_PH: if(o[f::motif_type]()!="BB_PH"){ if(s) ++s->F_type_BB_PH; return false; } else if(s) ++s->P_type_BB_PH; break;
-				case BB_PO: if(o[f::motif_type]()!="BB_PO"){ if(s) ++s->F_type_BB_PO; return false; } else if(s) ++s->P_type_BB_PO; break;
-				case PH_PO: if(o[f::motif_type]()!="PH_PO"){ if(s) ++s->F_type_PH_PO; return false; } else if(s) ++s->P_type_PH_PO; break;
+				case SC_SC: if(o[f::motif_type]()!="SC_SC"){ if(s) { ++s->F_type_SC_SC; } return false; } else if(s) { ++s->P_type_SC_SC; } break;
+				case SC_BB: if(o[f::motif_type]()!="SC_BB"){ if(s) { ++s->F_type_SC_BB; } return false; } else if(s) { ++s->P_type_SC_BB; } break;
+				case SC_PH: if(o[f::motif_type]()!="SC_PH"){ if(s) { ++s->F_type_SC_PH; } return false; } else if(s) { ++s->P_type_SC_PH; } break;
+				case SC_PO: if(o[f::motif_type]()!="SC_PO"){ if(s) { ++s->F_type_SC_PO; } return false; } else if(s) { ++s->P_type_SC_PO; } break;
+				case BB_BB: if(o[f::motif_type]()!="BB_BB"){ if(s) { ++s->F_type_BB_BB; } return false; } else if(s) { ++s->P_type_BB_BB; } break;
+				case BB_PH: if(o[f::motif_type]()!="BB_PH"){ if(s) { ++s->F_type_BB_PH; } return false; } else if(s) { ++s->P_type_BB_PH; } break;
+				case BB_PO: if(o[f::motif_type]()!="BB_PO"){ if(s) { ++s->F_type_BB_PO; } return false; } else if(s) { ++s->P_type_BB_PO; } break;
+				case PH_PO: if(o[f::motif_type]()!="PH_PO"){ if(s) { ++s->F_type_PH_PO; } return false; } else if(s) { ++s->P_type_PH_PO; } break;
 				default: utility_exit_with_message("unknown ResPairMotiftype");
 			}
 		}
-		if( o[f::pdb       ].user() && !this->check_pdb_code(o[f::pdb]()) )                                                                  { if(s) ++s->F_pdb;            return false; } else if(s){ ++s->P_pdb;            }
-		if( o[f::lig       ].user() && !this->check_lig_code(o[f::lig]()) )                                                                  { if(s) ++s->F_lig;            return false; } else if(s){ ++s->P_lig;            }
-		if( o[f::seqsep    ].user() &&  o[f::seqsep]() >= std::abs(resi1_-resi2_) && chain1_==chain2_ )                                           { if(s) ++s->F_seqsep;         return false; } else if(s){ ++s->P_seqsep;         }
-		if( o[f::max_seqsep].user() && (o[f::seqsep]() <  std::abs(resi1_-resi2_) || chain1_!=chain2_ ))                                          { if(s) ++s->F_max_seqsep;     return false; } else if(s){ ++s->P_max_seqsep;     }
-		if( o[f::no_hb_bb  ].user() && o[f::no_hb_bb ]() && hb_bb() != 0.0)                                                                  { if(s) ++s->F_no_hb_bb;       return false; } else if(s){ ++s->P_no_hb_bb;       }
-		if( o[f::no_hb_bb  ].user() && o[f::no_hb_bb ]() && (ss1_=='P'||ss2_=='P') )                                                         { if(s) ++s->F_no_hb_bb;       return false; } else if(s){ ++s->P_no_hb_bb;       }
-		if( o[f::ss1       ].user() && o[f::ss1      ]()[0] != ss1()    )                                                                    { if(s) ++s->F_ss1;            return false; } else if(s){ ++s->P_ss1;            }
-		if( o[f::ss2       ].user() && o[f::ss2      ]()[0] != ss2()    )                                                                    { if(s) ++s->F_ss2;            return false; } else if(s){ ++s->P_ss2;            }
-		if( o[f::dssp1     ].user() && o[f::dssp1    ]()[0] != dssp1()  )                                                                    { if(s) ++s->F_dssp1;          return false; } else if(s){ ++s->P_dssp1;          }
-		if( o[f::dssp2     ].user() && o[f::dssp2    ]()[0] != dssp2()  )                                                                    { if(s) ++s->F_dssp2;          return false; } else if(s){ ++s->P_dssp2;          }
-		if( o[f::aa1       ].user() && o[f::aa1      ]()[0] != aa1_     )                                                                    { if(s) ++s->F_aa1;            return false; } else if(s){ ++s->P_aa1;            }
-		if( o[f::aa2       ].user() && o[f::aa2      ]()[0] != aa2_     )                                                                    { if(s) ++s->F_aa2;            return false; } else if(s){ ++s->P_aa2;            }
-		if( o[f::score     ].user() && o[f::score    ]() <  trust*score()     )                                                                    { if(s) ++s->F_score;          return false; } else if(s){ ++s->P_score;          }
-		if( o[f::faatr     ].user() && o[f::faatr    ]() <  trust*fa_atr()    )                                                                    { if(s) ++s->F_faatr;          return false; } else if(s){ ++s->P_faatr;          }
-		if( o[f::hb_sc     ].user() && o[f::hb_sc    ]() <  trust*hb_sc()     )                                                                    { if(s) ++s->F_hb_sc;          return false; } else if(s){ ++s->P_hb_sc;          }
-		if( o[f::hb_bb_sc  ].user() && o[f::hb_bb_sc ]() <  trust*hb_bb_sc()  )                                                                    { if(s) ++s->F_hb_bb_sc;       return false; } else if(s){ ++s->P_hb_bb_sc;       }
-		if( o[f::hb_bb     ].user() && o[f::hb_bb    ]() <  trust*hb_bb()     )                                                                    { if(s) ++s->F_hb_bb;          return false; } else if(s){ ++s->P_hb_bb;          }
-		if( o[f::coorderr  ].user() && (o[f::coorderr ]() < bfac1() || o[f::coorderr ]() < bfac2() ) )                                       { if(s) ++s->F_coorderr;       return false; } else if(s){ ++s->P_coorderr;       }
-		if( o[f::uniformfrag]() && ( ss1_!=ss2_ || nbrs2()!=1 || !this->check_lig_code("frg") ) )                                     { if(s) ++s->F_uniformfrag;    return false; } else if(s){ ++s->P_uniformfrag;    }
+		if( o[f::pdb       ].user() && !this->check_pdb_code(o[f::pdb]()) )                                                                  { if(s) { ++s->F_pdb;           } return false; } else if(s){ ++s->P_pdb;            }
+		if( o[f::lig       ].user() && !this->check_lig_code(o[f::lig]()) )                                                                  { if(s) { ++s->F_lig;           } return false; } else if(s){ ++s->P_lig;            }
+		if( o[f::seqsep    ].user() &&  o[f::seqsep]() >= std::abs(resi1_-resi2_) && chain1_==chain2_ )                                      { if(s) { ++s->F_seqsep;        } return false; } else if(s){ ++s->P_seqsep;         }
+		if( o[f::max_seqsep].user() && (o[f::seqsep]() <  std::abs(resi1_-resi2_) || chain1_!=chain2_ ))                                     { if(s) { ++s->F_max_seqsep;    } return false; } else if(s){ ++s->P_max_seqsep;     }
+		if( o[f::no_hb_bb  ].user() && o[f::no_hb_bb ]() && hb_bb() != 0.0)                                                                  { if(s) { ++s->F_no_hb_bb;      } return false; } else if(s){ ++s->P_no_hb_bb;       }
+		if( o[f::no_hb_bb  ].user() && o[f::no_hb_bb ]() && (ss1_=='P'||ss2_=='P') )                                                         { if(s) { ++s->F_no_hb_bb;      } return false; } else if(s){ ++s->P_no_hb_bb;       }
+		if( o[f::ss1       ].user() && o[f::ss1      ]()[0] != ss1()    )                                                                    { if(s) { ++s->F_ss1;           } return false; } else if(s){ ++s->P_ss1;            }
+		if( o[f::ss2       ].user() && o[f::ss2      ]()[0] != ss2()    )                                                                    { if(s) { ++s->F_ss2;           } return false; } else if(s){ ++s->P_ss2;            }
+		if( o[f::dssp1     ].user() && o[f::dssp1    ]()[0] != dssp1()  )                                                                    { if(s) { ++s->F_dssp1;         } return false; } else if(s){ ++s->P_dssp1;          }
+		if( o[f::dssp2     ].user() && o[f::dssp2    ]()[0] != dssp2()  )                                                                    { if(s) { ++s->F_dssp2;         } return false; } else if(s){ ++s->P_dssp2;          }
+		if( o[f::aa1       ].user() && o[f::aa1      ]()[0] != aa1_     )                                                                    { if(s) { ++s->F_aa1;           } return false; } else if(s){ ++s->P_aa1;            }
+		if( o[f::aa2       ].user() && o[f::aa2      ]()[0] != aa2_     )                                                                    { if(s) { ++s->F_aa2;           } return false; } else if(s){ ++s->P_aa2;            }
+		if( o[f::score     ].user() && o[f::score    ]() <  trust*score()     )                                                              { if(s) { ++s->F_score;         } return false; } else if(s){ ++s->P_score;          }
+		if( o[f::faatr     ].user() && o[f::faatr    ]() <  trust*fa_atr()    )                                                              { if(s) { ++s->F_faatr;         } return false; } else if(s){ ++s->P_faatr;          }
+		if( o[f::hb_sc     ].user() && o[f::hb_sc    ]() <  trust*hb_sc()     )                                                              { if(s) { ++s->F_hb_sc;         } return false; } else if(s){ ++s->P_hb_sc;          }
+		if( o[f::hb_bb_sc  ].user() && o[f::hb_bb_sc ]() <  trust*hb_bb_sc()  )                                                              { if(s) { ++s->F_hb_bb_sc;      } return false; } else if(s){ ++s->P_hb_bb_sc;       }
+		if( o[f::hb_bb     ].user() && o[f::hb_bb    ]() <  trust*hb_bb()     )                                                              { if(s) { ++s->F_hb_bb;         } return false; } else if(s){ ++s->P_hb_bb;          }
+		if( o[f::coorderr  ].user() && (o[f::coorderr ]() < bfac1() || o[f::coorderr ]() < bfac2() ) )                                       { if(s) { ++s->F_coorderr;      } return false; } else if(s){ ++s->P_coorderr;       }
+		if( o[f::uniformfrag]() && ( ss1_!=ss2_ || nbrs2()!=1 || !this->check_lig_code("frg") ) )                                            { if(s) { ++s->F_uniformfrag;   } return false; } else if(s){ ++s->P_uniformfrag;    }
 		Real x=uint16_to_real(rt6_[1],-CSIZE,CSIZE), y=uint16_to_real(rt6_[2],-CSIZE,CSIZE), z=uint16_to_real(rt6_[3],-CSIZE,CSIZE);
 		Real dis2 = x*x+y*y+z*z;
-		if( o[f::mindist2 ].user() && o[f::mindist2 ]() > dis2 )                                                                             { if(s) ++s->F_mindist2;       return false; } else if(s){ ++s->P_mindist2;       }
-		if( o[f::maxdist2 ].user() && o[f::maxdist2 ]() < dis2 )                                                                             { if(s) ++s->F_maxdist2;       return false; } else if(s){ ++s->P_maxdist2;       }
+		if( o[f::mindist2 ].user() && o[f::mindist2 ]() > dis2 )                                                                             { if(s) { ++s->F_mindist2;      } return false; } else if(s){ ++s->P_mindist2;       }
+		if( o[f::maxdist2 ].user() && o[f::maxdist2 ]() < dis2 )                                                                             { if(s) { ++s->F_maxdist2;      } return false; } else if(s){ ++s->P_maxdist2;       }
 
 		if( o[f::faatr_or_hbbb].user()       &&
 			o[f::faatr_or_hbbb] < trust*fa_atr()   &&
 			o[f::faatr_or_hbbb] < trust*hb_sc()    &&
 			o[f::faatr_or_hbbb] < trust*hb_bb_sc() &&
-			o[f::faatr_or_hbbb] < trust*hb_bb()     )                                                                                              { if(s) ++s->F_faatr_or_hbbb;  return false; } else if(s){ ++s->P_faatr_or_hbbb;  }
+			o[f::faatr_or_hbbb] < trust*hb_bb()     )                                                                                          { if(s) { ++s->F_faatr_or_hbbb; } return false; } else if(s){ ++s->P_faatr_or_hbbb;  }
 
 		if( o[f::faatr_or_hb].user()       &&
 			o[f::faatr_or_hb] < trust*fa_atr()   &&
-			o[f::faatr_or_hb] < trust*hb_sc()     )                                                                                                { if(s) ++s->F_faatr_or_hb;    return false; } else if(s){ ++s->P_faatr_or_hb;    }
-		// if( o[mh::lg1   ].user() && o[mh::lg1   ]() != lg1x_     )                                                                        { if(s) ++s->F_FULLME;         return false; } else if(s){ ++s->P_FULLME;         }
-		// if( o[mh::lg2   ].user() && o[mh::lg2   ]() != lg2x_     )                                                                        { if(s) ++s->F_FULLME;         return false; } else if(s){ ++s->P_FULLME;         }
+			o[f::faatr_or_hb] < trust*hb_sc()     )                                                                                            { if(s) { ++s->F_faatr_or_hb;    } return false; } else if(s){ ++s->P_faatr_or_hb;    }
+		// if( o[mh::lg1   ].user() && o[mh::lg1   ]() != lg1x_     )                                                                        { if(s) { ++s->F_FULLME;         } return false; } else if(s){ ++s->P_FULLME;         }
+		// if( o[mh::lg2   ].user() && o[mh::lg2   ]() != lg2x_     )                                                                        { if(s) { ++s->F_FULLME;         } return false; } else if(s){ ++s->P_FULLME;         }
 
-		if( o[f::noloops ]() && (ss1()=='L' || ss2() =='L')  )                                                                               { if(s) ++s->F_noloops;        return false; } else if(s){ ++s->P_noloops;        }
-		if( o[f::oneloop ]() && (ss1()=='L' && ss2() =='L')  )                                                                               { if(s) ++s->F_oneloop;        return false; } else if(s){ ++s->P_oneloop;        }
-		if( o[f::nodisulf]() && (aa1_=='C' && aa2_=='C')  )                                                                                  { if(s) ++s->F_nodisulf;       return false; } else if(s){ ++s->P_nodisulf;       }
+		if( o[f::noloops ]() && (ss1()=='L' || ss2() =='L')  )                                                                               { if(s) { ++s->F_noloops;        } return false; } else if(s){ ++s->P_noloops;        }
+		if( o[f::oneloop ]() && (ss1()=='L' && ss2() =='L')  )                                                                               { if(s) { ++s->F_oneloop;        } return false; } else if(s){ ++s->P_oneloop;        }
+		if( o[f::nodisulf]() && (aa1_=='C' && aa2_=='C')  )                                                                                  { if(s) { ++s->F_nodisulf;       } return false; } else if(s){ ++s->P_nodisulf;       }
 
 		size_t const N(string::npos);
-		if( o[f::    restype1   ].user() &&  o[f::    restype1   ]().find(aa1_)==N                                           )               { if(s) ++s->F_restype1;       return false; } else if(s){ ++s->P_restype1;       }
-		if( o[f::    restype2   ].user() &&  o[f::    restype2   ]().find(aa2_)==N                                           )               { if(s) ++s->F_restype2;       return false; } else if(s){ ++s->P_restype2;       }
-		if( o[f::    restype    ].user() && (o[f::    restype    ]().find(aa1_)==N || o[f::    restype    ]().find(aa2_)==N) )               { if(s) ++s->F_restype;        return false; } else if(s){ ++s->P_restype;        }
-		if( o[f::    restype_one].user() && (o[f::    restype_one]().find(aa1_)==N && o[f::    restype_one]().find(aa2_)==N) )               { if(s) ++s->F_restype_one;    return false; } else if(s){ ++s->P_restype_one;    }
-		if( o[f::not_restype    ].user() && (o[f::not_restype    ]().find(aa1_)!=N && o[f::not_restype    ]().find(aa2_)!=N) )               { if(s) ++s->F_not_restype;    return false; } else if(s){ ++s->P_not_restype;    }
-		if( o[f::not_restype_one].user() && (o[f::not_restype_one]().find(aa1_)!=N || o[f::not_restype_one]().find(aa2_)!=N) )               { if(s) ++s->F_not_restype_one;return false; } else if(s){ ++s->P_not_restype_one;}
+		if( o[f::    restype1   ].user() &&  o[f::    restype1   ]().find(aa1_)==N                                           )               { if(s) { ++s->F_restype1;       } return false; } else if(s){ ++s->P_restype1;       }
+		if( o[f::    restype2   ].user() &&  o[f::    restype2   ]().find(aa2_)==N                                           )               { if(s) { ++s->F_restype2;       } return false; } else if(s){ ++s->P_restype2;       }
+		if( o[f::    restype    ].user() && (o[f::    restype    ]().find(aa1_)==N || o[f::    restype    ]().find(aa2_)==N) )               { if(s) { ++s->F_restype;        } return false; } else if(s){ ++s->P_restype;        }
+		if( o[f::    restype_one].user() && (o[f::    restype_one]().find(aa1_)==N && o[f::    restype_one]().find(aa2_)==N) )               { if(s) { ++s->F_restype_one;    } return false; } else if(s){ ++s->P_restype_one;    }
+		if( o[f::not_restype    ].user() && (o[f::not_restype    ]().find(aa1_)!=N && o[f::not_restype    ]().find(aa2_)!=N) )               { if(s) { ++s->F_not_restype;    } return false; } else if(s){ ++s->P_not_restype;    }
+		if( o[f::not_restype_one].user() && (o[f::not_restype_one]().find(aa1_)!=N || o[f::not_restype_one]().find(aa2_)!=N) )               { if(s) { ++s->F_not_restype_one;} return false; } else if(s){ ++s->P_not_restype_one;}
 		return true;
 	 }
 	Real ResPairMotif::dump_aligned_motif( ostream & out, Pose const & paln1, Size const & ir, Pose const & paln2, Size const & jr, Size & atomno, int const & tag, Xforms const & xforms ) const {
@@ -1835,13 +1835,13 @@ namespace motif {
 						if(i->aa2()=='P') nst2ra = 999;*/
 						if( ccheck1bb32 && ccheck2bb32 ){
 							if(!samepose){
-								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,1)),ir)){ motif_clashes = true; } if(motif_clashes) continue;
-								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) if(ccheck2bb32->clash          (h.mpose().xyz(AtomID(ia,1))   )){ motif_clashes = true; } if(motif_clashes) continue;
-								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) if(ccheck1bb32->clash          (h.mpose().xyz(AtomID(ia,2))   )){ motif_clashes = true; } if(motif_clashes) continue;
-								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) if(ccheck2bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,2)),jr)){ motif_clashes = true; } if(motif_clashes) continue;
+								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) { if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,1)),ir)){ motif_clashes = true; }} if(motif_clashes) continue;
+								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) { if(ccheck2bb32->clash          (h.mpose().xyz(AtomID(ia,1))   )){ motif_clashes = true; }} if(motif_clashes) continue;
+								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) { if(ccheck1bb32->clash          (h.mpose().xyz(AtomID(ia,2))   )){ motif_clashes = true; }} if(motif_clashes) continue;
+								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) { if(ccheck2bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,2)),jr)){ motif_clashes = true; }} if(motif_clashes) continue;
 							} else {
-								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,1)),ir,jr)){ motif_clashes = true; } if(motif_clashes) continue;
-								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,2)),ir,jr)){ motif_clashes = true; } if(motif_clashes) continue;
+								for(Size ia = nst1er; ia <= h.mpose().residue(1).nheavyatoms(); ++ia) { if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,1)),ir,jr)){ motif_clashes = true; }} if(motif_clashes) continue;
+								for(Size ia = nst2er; ia <= h.mpose().residue(2).nheavyatoms(); ++ia) { if(ccheck1bb32->clash_not_resid(h.mpose().xyz(AtomID(ia,2)),ir,jr)){ motif_clashes = true; }} if(motif_clashes) continue;
 							}
 						}
 						// cout << "MOTIF CLASH CHECK " << is_interface << " " << i->type() << " " << opt.inter_clash2() << " " << opt.inter_clash1() << endl;

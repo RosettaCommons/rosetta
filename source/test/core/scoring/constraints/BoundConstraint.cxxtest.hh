@@ -85,7 +85,7 @@ public:
 			if(rswitch!=0.5 || func->rswitch()!=0.5)
 			{
 				TS_ASSERT(rswitch==0.5);
-				TS_ASSERT(func->rswitch()==0.5)
+				TS_ASSERT(func->rswitch()==0.5);
 			}
 
 		}

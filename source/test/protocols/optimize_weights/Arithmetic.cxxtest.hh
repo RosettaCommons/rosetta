@@ -508,15 +508,15 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		ExpressionCOP xplusy = parse_string_with_variables_to_expression( "x + y", sec );
 
 		std::list< std::string > active = xplusy->active_variables();
-		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() );
 
 
 		ExpressionCOP sqrtx = parse_string_with_variables_to_expression( "sqrt(x)", sec );
 
 		active = sqrtx->active_variables();
-		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() );
 
 
 	}
@@ -529,15 +529,15 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		sec.get_variable("y")->set_value( 2 );
 		std::list< std::string > active = max_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() );
 
 		sec.get_variable("x")->set_value( 30 );
 		sec.get_variable("y")->set_value( 32 );
 		active = max_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() );
 
 	}
 
@@ -549,15 +549,15 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		sec.get_variable("y")->set_value( 2 );
 		std::list< std::string > active = min_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() );
 
 		sec.get_variable("x")->set_value( 30 );
 		sec.get_variable("y")->set_value( 32 );
 		active = min_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() );
 
 	}
 
@@ -571,18 +571,18 @@ class ArithmeticTests : public CxxTest::TestSuite {
 		sec.get_variable("z")->set_value( -2 );
 		std::list< std::string > active = min_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "z") != active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") == active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "z") != active.end() );
 
 		sec.get_variable("x")->set_value( 30 );
 		sec.get_variable("y")->set_value( 32 );
 		sec.get_variable("z")->set_value( 4 );
 		active = min_xy->active_variables();
 
-		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() )
-		TS_ASSERT( find(active.begin(), active.end(), "z") == active.end() )
+		TS_ASSERT( find(active.begin(), active.end(), "x") == active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "y") != active.end() );
+		TS_ASSERT( find(active.begin(), active.end(), "z") == active.end() );
 
 	}
 

@@ -73,7 +73,7 @@ public:
 		acceptTrue.insert( 2 );
 		acceptTrue.insert( 7 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
-			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) )
+			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) );
 		}
 	}
 	/// @brief Test NotResidueSelector::parse_my_tag
@@ -103,7 +103,7 @@ public:
 		acceptTrue.insert( 14 );
 		acceptTrue.insert( 20 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
-			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) )
+			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) );
 		}
 	}
 
@@ -134,7 +134,7 @@ public:
 		acceptTrue.insert( 9 );
 		acceptTrue.insert( 20 );
 		for ( core::Size ii = 1; ii <= subset.size(); ++ii ) {
-			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) )
+			TS_ASSERT( !subset[ ii ] || ( acceptTrue.find( ii ) != acceptTrue.end() ) );
 		}
 	}
 

@@ -328,8 +328,8 @@ HamiltonianExchange::next_exchange_level() const {
 
 core::Real
 HamiltonianExchange::temperature_move( core::Real ) {
-	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose \
-  to evaluate alternative energy function prior to switching..." );
+	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose "
+  "to evaluate alternative energy function prior to switching..." );
 	return -1;
 }
 

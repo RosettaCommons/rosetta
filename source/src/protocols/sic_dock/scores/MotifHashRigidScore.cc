@@ -180,15 +180,15 @@ MotifHashRigidScore::score_meta( Xforms const & x1s, Xforms const & x2s, int & n
 				// sselemsc1[ssinfo1_->ss_element_id(ir)] += sqrt(raw)+raw/30.0;
 				// sselemsc2[ssinfo2_->ss_element_id(jr)] += sqrt(raw)+raw/30.0;//!!!!!!!!!!!!!!!!!!!!!!!!
 				// if( x.t.length_squared() <  64.0 ){
-					if(mres1.find(ir)==mres1.end()) mres1[ir]=0; mres1[ir] += raw;
-					if(mres2.find(jr)==mres2.end()) mres2[jr]=0; mres2[jr] += raw;
+					if(mres1.find(ir)==mres1.end()) { mres1[ir]=0; } mres1[ir] += raw;
+					if(mres2.find(jr)==mres2.end()) { mres2[jr]=0; } mres2[jr] += raw;
 				// }
 
 				if( xspp_ && pose1_.secstruct(ir)=='E' && pose2_.secstruct(jr)=='E' ){
 					Real ss = xspp_->score_of_bin(rt6);
 					if(ss>0.0){
-						if(ssp1.find(ir)==ssp1.end()) ssp1[ir]=0; ssp1[ir] += ss;
-						if(ssp2.find(jr)==ssp2.end()) ssp2[jr]=0; ssp2[jr] += ss;
+						if(ssp1.find(ir)==ssp1.end()) { ssp1[ir]=0; } ssp1[ir] += ss;
+						if(ssp2.find(jr)==ssp2.end()) { ssp2[jr]=0; } ssp2[jr] += ss;
 					}
 				}
 

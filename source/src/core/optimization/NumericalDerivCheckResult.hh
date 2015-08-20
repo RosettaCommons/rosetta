@@ -93,7 +93,7 @@ public:
 	}
 
 	Size nangles() const { return step_data_.size(); }
-	Size nsteps() const { if ( step_data_.size() > 0 ) return step_data_[ 1 ].size(); return 0; }
+	Size nsteps() const { if ( step_data_.size() > 0 ) { return step_data_[ 1 ].size(); } return 0; }
 
 	void abs_deriv_dev( Size dof_ind, Real val ) { abs_deriv_dev_[ dof_ind ] = val; }
 	void rel_deriv_dev( Size dof_ind, Real val ) { rel_deriv_dev_[ dof_ind ] = val; }

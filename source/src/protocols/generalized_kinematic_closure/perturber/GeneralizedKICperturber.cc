@@ -478,7 +478,7 @@ void GeneralizedKICperturber::apply_perturb_dihedral_bbg(
 ) const {
 	using namespace protocols::generalized_kinematic_closure;
 
-	if(TR.visible()) TR << "Applying apply_perturb_dihedral_bbg perturbation effect." << std::endl;  TR.flush(); //DELETE ME
+	if(TR.visible()) { TR << "Applying apply_perturb_dihedral_bbg perturbation effect." << std::endl;  TR.flush(); } //DELETE ME
 
 	runtime_assert_string_msg( residues.size() > 0 , "Residues must be specified for the apply_perturb_dihedral_bbg generalized kinematic closure perturber." );
 
@@ -906,7 +906,7 @@ void GeneralizedKICperturber::apply_randomize_backbone_by_bins(
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		loop_indices[ir]=loopindex;
-		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The same residue cannot be specified twice!" ) ; }
+		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
 		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
 	}
 	std::string const errmsg( "In GeneralizedKICperturber::apply_randomize_backbone_by_bins(): The selected residues are not regularly connected through mainchain polymer bonds!" );
@@ -996,7 +996,7 @@ void GeneralizedKICperturber::apply_perturb_backbone_by_bins(
 		//Get this residue's index in the loop pose:
 		core::Size const loopindex = get_loop_index(residues[ir], residue_map);
 		loop_indices[ir]=loopindex;
-		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The same residue cannot be specified twice!" ) ; }
+		if(ir>1) { for(core::Size jr=1, jrmax=ir-1; jr<=jrmax; ++jr) { runtime_assert_string_msg( loop_indices[jr]!=loopindex, "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The same residue cannot be specified twice!" ); } }
 		//TR << "Current loop index is " << loopindex << std::endl; TR.flush(); //DELETE ME
 	}
 	std::string const errmsg( "In GeneralizedKICperturber::apply_perturb_backbone_by_bins(): The selected residues are not regularly connected through mainchain polymer bonds!" );
