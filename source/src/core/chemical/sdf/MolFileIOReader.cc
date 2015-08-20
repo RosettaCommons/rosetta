@@ -18,6 +18,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ElementSet.hh>
 
+#include <core/chemical/rotamers/StoredRotamerLibrarySpecification.hh>
+
 #include <numeric/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
@@ -124,29 +126,98 @@ utility::vector1< MolFileIOMoleculeOP > MolFileIOReader::parse_file( std::istrea
 }
 
 
-utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 			std::string atom_type_tag,
 			std::string elements_tag,
 			std::string mm_atom_type_tag) {
+
 	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
 	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
 	MMAtomTypeSetCOP mm_atom_types( ChemicalManager::get_instance()->mm_atom_type_set( mm_atom_type_tag ) );
 	return convert_to_ResidueType(molfile_data, atom_types, elements, mm_atom_types);
 }
 
-utility::vector1< ResidueTypeOP > convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+ResidueTypeOP convert_to_ResidueType( utility::vector1< MolFileIOMoleculeOP > molfile_data,
 			AtomTypeSetCOP atom_types,
 			ElementSetCOP element_type_set,
 			MMAtomTypeSetCOP mm_atom_types) {
-	utility::vector1< ResidueTypeOP > restypes;
-	utility::vector1< MolFileIOMoleculeOP >::iterator iter, end;
-	for( iter = molfile_data.begin(), end = molfile_data.end(); iter != end; ++iter ) {
-		restypes.push_back( (*iter)->convert_to_ResidueType(atom_types,
-				element_type_set,
-				mm_atom_types) );
+
+	if( molfile_data.size() == 0 ) {
+		utility_exit_with_message("ERROR: Cannot convert an empty vector of molecules to a ResidueType.");
 	}
 
-	return restypes;
+	std::map< core::chemical::sdf::AtomIndex, std::string > index_name_map;
+	ResidueTypeOP restype = molfile_data[1]->convert_to_ResidueType(index_name_map, atom_types, element_type_set, mm_atom_types);
+
+	if( molfile_data.size() > 1 ) {
+		rotamers::StoredRotamerLibrarySpecificationOP rotlib( new rotamers::StoredRotamerLibrarySpecification );
+		for( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
+			std::map< std::string, core::Vector > location_map;
+			for( std::map< core::chemical::sdf::AtomIndex, std::string >::const_iterator itr( index_name_map.begin() ), itr_end( index_name_map.end() );
+					itr != itr_end; ++itr ) {
+				MolFileIOAtomOP atom = molfile_data[ ii ]->atom_index( itr->first );
+				if( atom ) {
+					location_map[ itr->second ] = atom->position();
+				}
+			}
+			rotlib->add_rotamer( location_map );
+		}
+		restype->rotamer_library_specification( rotlib );
+	}
+
+	return restype;
+}
+
+utility::vector1< ResidueTypeOP >
+convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+			bool load_rotamers,
+			std::string atom_type_tag,
+			std::string elements_tag,
+			std::string mm_atom_type_tag) {
+
+	AtomTypeSetCOP atom_types( ChemicalManager::get_instance()->atom_type_set( atom_type_tag ) );
+	ElementSetCOP elements( ChemicalManager::get_instance()->element_set( elements_tag ) );
+	MMAtomTypeSetCOP mm_atom_types( ChemicalManager::get_instance()->mm_atom_type_set( mm_atom_type_tag ) );
+	return convert_to_ResidueTypes(molfile_data, load_rotamers, atom_types, elements, mm_atom_types);
+}
+
+utility::vector1< ResidueTypeOP >
+convert_to_ResidueTypes( utility::vector1< MolFileIOMoleculeOP > molfile_data,
+			bool load_rotamers,
+			AtomTypeSetCOP atom_types,
+			ElementSetCOP element_types,
+			MMAtomTypeSetCOP mm_atom_types) {
+
+	std::map< std::string, core::Size > name_index_map;
+	utility::vector1< utility::vector1< MolFileIOMoleculeOP > > separated_molecules;
+	std::string previous_entry("");
+
+	for( core::Size ii(1); ii <= molfile_data.size(); ++ii ) {
+		if( ! load_rotamers ) {
+			separated_molecules.resize( separated_molecules.size() + 1 );
+			separated_molecules[ separated_molecules.size() ].push_back( molfile_data[ii] );
+		} else if ( previous_entry != "" && molfile_data[ii]->name() == "" ) {
+			// If we have an empty name, assume it's a rotamer of the previous item (but only if there is a previous one)
+			separated_molecules[ name_index_map[ previous_entry ] ].push_back( molfile_data[ii] );
+		} else if ( name_index_map.find( molfile_data[ii]->name() ) != name_index_map.end() ) {
+			// Existing name
+			separated_molecules[ name_index_map[ molfile_data[ii]->name() ] ].push_back( molfile_data[ii] );
+			previous_entry =  molfile_data[ii]->name();
+		} else {
+			// Brand new name
+			separated_molecules.resize( separated_molecules.size() + 1 );
+			separated_molecules[ separated_molecules.size() ].push_back( molfile_data[ii] );
+			name_index_map[ molfile_data[ii]->name() ] = separated_molecules.size();
+			previous_entry =  molfile_data[ii]->name();
+		}
+	}
+
+	utility::vector1< ResidueTypeOP > residue_types;
+	for( core::Size jj(1); jj <= separated_molecules.size(); ++jj ) {
+		residue_types.push_back( convert_to_ResidueType(separated_molecules[jj], atom_types, element_types, mm_atom_types) );
+	}
+
+	return residue_types;
 }
 
 

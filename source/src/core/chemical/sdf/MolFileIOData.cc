@@ -135,11 +135,14 @@ MolFileIOMolecule::normalize() {
 	// TODO: Does anything need to go here?
 }
 
-ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(chemical::AtomTypeSetCOP atom_types,
+ResidueTypeOP MolFileIOMolecule::convert_to_ResidueType(
+		std::map< AtomIndex, std::string > & index_name_map,
+		chemical::AtomTypeSetCOP atom_types,
 		chemical::ElementSetCOP elements,
-		chemical::MMAtomTypeSetCOP mm_atom_types
-	) {
-debug_assert( elements );
+		chemical::MMAtomTypeSetCOP mm_atom_types ) {
+
+	index_name_map.clear();
+	debug_assert( elements );
 
 	// Make sure we're up to date first.
 	normalize();
@@ -148,7 +151,6 @@ debug_assert( elements );
 
 	// Reasonable defaults for:
 	// aa_, rotamer_aa_, <properties suite>, variant_types_,
-
 
 	restype->name( name_ );
 	restype->name3( name_.substr(0,3) );
@@ -160,8 +162,8 @@ debug_assert( elements );
 	std::map< mioAD, VD > restype_from_mio; // A map of atoms in the input graph to the restype graph
 	MolFileIOGraph::vertex_iterator aiter, aiter_end;
 	for( boost::tie( aiter, aiter_end ) = boost::vertices( molgraph_ ); aiter != aiter_end; ++aiter ) {
-	debug_assert( has( molgraph_, *aiter ) );
-	debug_assert( molgraph_[*aiter] );
+		debug_assert( has( molgraph_, *aiter ) );
+		debug_assert( molgraph_[*aiter] );
 		MolFileIOAtom const & atom( *(molgraph_[*aiter]) );
 		VD vd = restype->add_atom();
 		restype_from_mio[ *aiter ] = vd;
@@ -185,7 +187,7 @@ debug_assert( elements );
 		MolFileIOBond const & bond( *(molgraph_[*eiter]) );
 		mioAD source( boost::source(*eiter, molgraph_) );
 		mioAD target( boost::target(*eiter, molgraph_) );
-	debug_assert( restype_from_mio.count(source) && restype_from_mio.count(target) );
+		debug_assert( restype_from_mio.count(source) && restype_from_mio.count(target) );
 		core::Size bond_type( bond.sdf_type() );
 		if( bond_type > 4 ) { bond_type = 0; };
 		restype->add_bond( restype_from_mio[source], restype_from_mio[target], BondName(bond_type) );
@@ -199,6 +201,12 @@ debug_assert( elements );
 
 	//Rename atoms early to assist possible debugging
 	core::chemical::rename_atoms(*restype, /*preserve=*/true);
+
+	// Now that atom names are assigned, update the return-by-reference mapping
+	for( std::map< AtomIndex, mioAD >::const_iterator itr(index_atom_map_.begin()), itr_end(index_atom_map_.end()); itr != itr_end; ++itr ) {
+		assert( restype_from_mio.find( itr->second ) != restype_from_mio.end() );
+		index_name_map[ itr->first ] = restype->atom_name( restype_from_mio[ itr->second ] );
+	}
 
 	core::chemical::rosetta_retype_fullatom(*restype, /*preserve=*/true );
 	if( uncharged ) {

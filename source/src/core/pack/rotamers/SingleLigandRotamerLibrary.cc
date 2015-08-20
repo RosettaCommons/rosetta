@@ -159,6 +159,14 @@ SingleLigandRotamerLibrary::init_from_file(
 	//unique_auto_for_frags();
 }
 
+/// @brief Reads conformers from a vector of name:coordinate maps
+void
+SingleLigandRotamerLibrary::init_from_vector(
+	utility::vector1< NamePosMap > const & coordinates
+) {
+	atom_positions_.append( coordinates );
+}
+
 /// @details Not currently implemented -- returns 0.
 Real
 SingleLigandRotamerLibrary::rotamer_energy_deriv(

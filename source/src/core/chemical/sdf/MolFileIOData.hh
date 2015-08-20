@@ -154,12 +154,26 @@ public:
 	void normalize();
 
 	/// @brief Make a ResidueType from this object
-	/// rsd_type_set is used for context - the residue is not actually added to the set.
 	/// @details Not const as it calls normalize() to fix up missing data first.
-	ResidueTypeOP convert_to_ResidueType(chemical::AtomTypeSetCOP atom_types,
+	ResidueTypeOP convert_to_ResidueType(
+			chemical::AtomTypeSetCOP atom_types,
 			chemical::ElementSetCOP elements,
 			chemical::MMAtomTypeSetCOP mm_atom_types
-		);
+	) {
+		std::map< AtomIndex, std::string > index_name_map;
+		return convert_to_ResidueType( index_name_map, atom_types, elements, mm_atom_types );
+	}
+
+	/// @brief Make a ResidueType from this object
+	/// Index_name_map will contain a mapping from this object's AtomIndexes
+	/// to the atom names in the returned ResidueType
+	/// @details Not const as it calls normalize() to fix up missing data first.
+	ResidueTypeOP convert_to_ResidueType(
+			std::map< AtomIndex, std::string > & index_name_map,
+			chemical::AtomTypeSetCOP atom_types,
+			chemical::ElementSetCOP elements,
+			chemical::MMAtomTypeSetCOP mm_atom_types
+	);
 
 private:
 

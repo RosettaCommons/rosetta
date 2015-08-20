@@ -40,6 +40,7 @@ sources = {
 	],
 	"chemical/sdf" : [
 		"MolFileIOData",
+		"MolFileIOReader",
 	],
 	"conformation/membrane" : [
 		"MembraneInfo",
@@ -503,6 +504,7 @@ testinputfiles = [
 	"chemical/uk002.params",
 	"chemical/sdf/paired_list.txt",
 	"chemical/sdf/example.sdf",
+	"chemical/sdf/multi_rotamers.sdf",
 	"conformation/4gatA.pdb",
 	"conformation/dock_in.pdb",
 	"conformation/membrane/1AFO_AB.pdb",

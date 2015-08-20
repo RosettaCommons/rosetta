@@ -352,7 +352,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 	// Look for additional residue .params files specified on the cmd line
 	std::vector< std::string > extra_params_files;
 	std::vector< std::string > extra_patch_files;
-	std::vector<core::chemical::ResidueTypeOP> extra_residues;
+	utility::vector1<core::chemical::ResidueTypeOP> extra_residues;
 
 	if(tag == FA_STANDARD) {
 
@@ -426,13 +426,9 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 		{
 			utility::file::FileName filename = molfilevec[i];
 			utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( filename ) );
-			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueType( data ) );
-			if( rtvec.size() > 1 ) {
-				TR.Warning << "molfile " << filename << " has more than one model -- behavior towards this file may change in the future." << std::endl;
-			}
-			for( core::Size ii(1); ii <= rtvec.size(); ++ii ) {
-				extra_residues.push_back( rtvec[ii] );
-			}
+			utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, /* load_rotamers= */ true, atom_types, elements, mm_atom_types ) );
+			TR << "Reading " << rtvec.size() << " residue types from the " << data.size() << " models in " << filename << std::endl;
+			extra_residues.append( rtvec );
 		}
 
 		if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user())
@@ -542,7 +538,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 	ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory ) );
 	new_set->init( extra_params_files, extra_patch_files );
 
-	for(core::Size index =0 ;index < extra_residues.size();++index)
+	for(core::Size index(1); index <= extra_residues.size(); ++index)
 	{
 		//TR << extra_residues[index]->name3() <<std::endl;
 		new_set->add_residue_type(extra_residues[index]);

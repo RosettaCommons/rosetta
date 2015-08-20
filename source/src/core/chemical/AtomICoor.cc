@@ -431,6 +431,10 @@ void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, Residue
 	}
 }
 
+void pretty_print_atomicoor(std::ostream & out, ResidueType const & rsd_type) {
+	pretty_print_atomicoor(out, rsd_type.icoor( rsd_type.root_atom() ), rsd_type, 0, 0);
+}
+
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent) {
 	pretty_print_atomicoor(out, start, rsd_type, indent, 0);
 }

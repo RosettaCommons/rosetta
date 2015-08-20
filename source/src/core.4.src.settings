@@ -132,6 +132,7 @@ sources = {
 		"SingleResidueRotamerLibrary",
 		"SingleResidueRotamerLibraryCreator",
 		"SingleResidueRotamerLibraryFactory",
+		"StoredRotamerLibraryCreator",
 	],
 	"core/pack/scmin": [
 		"AtomTreeCollection",

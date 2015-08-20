@@ -82,6 +82,7 @@ sources = {
 		"PeptoidRotamerLibrarySpecification",
 		"RotamerLibrarySpecification",
 		"RotamerLibrarySpecificationFactory",
+		"StoredRotamerLibrarySpecification",
 	],
 
 	"core/chemical/carbohydrates": [

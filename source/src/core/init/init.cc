@@ -222,6 +222,7 @@
 #include <core/pack/rotamers/SingleLigandRotamerLibraryCreator.hh>
 #include <core/pack/rotamers/SingleNCAARotamerLibraryCreator.hh>
 #include <core/pack/rotamers/SingleResiduePeptoidLibraryCreator.hh>
+#include <core/pack/rotamers/StoredRotamerLibraryCreator.hh>
 
 // Constraint registration
 #include <core/scoring/constraints/ConstraintFactory.hh>
@@ -547,6 +548,7 @@ static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleBasicRotame
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleLigandRotamerLibraryCreator > SingleLigandRotamerLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleNCAARotamerLibraryCreator > SingleNCAARotamerLibraryCreator_registrator;
 static SingleResidueRotamerLibraryRegistrator< pack::rotamers::SingleResiduePeptoidLibraryCreator > SingleResiduePeptoidLibraryCreator_registrator;
+static SingleResidueRotamerLibraryRegistrator< pack::rotamers::StoredRotamerLibraryCreator > StoredRotamerLibraryCreator_registrator;
 
 /// Constraint Registrators
 using namespace scoring::constraints;

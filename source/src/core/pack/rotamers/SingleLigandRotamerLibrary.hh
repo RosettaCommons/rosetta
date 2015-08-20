@@ -57,6 +57,12 @@ public:
 		chemical::ResidueType const & restype
 	);
 
+	/// @brief Reads conformers from a vector of name:coordinate maps
+	void
+	init_from_vector(
+		utility::vector1< NamePosMap > const & coordinates
+	);
+
 	/// @brief Adheres to the contract from SingleLigandRotamerLibrary
 	virtual
 	Real

@@ -629,7 +629,7 @@ bool match_restype( ResidueType const & rsd1, ResidueType const & rsd2 ) {
 }
 
 
-class MolFileIOData_Tests : public CxxTest::TestSuite {
+class MolFileIODataTests : public CxxTest::TestSuite {
 
 public:
 
@@ -665,7 +665,7 @@ public:
 
 				// Read molfile (reader has sensible defaults for typesets in use)
 				utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( molfile ) );
-				utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueType( data ) );
+				utility::vector1< ResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, false ) );
 				TS_ASSERT( rtvec.size() == 1 ); // These should all have a single entry.
 				if( rtvec.size() > 0 ) {
 					bool restypes_match( match_restype( *rtvec[1], *rsd_ref ) );

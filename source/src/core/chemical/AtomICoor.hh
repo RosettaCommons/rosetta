@@ -382,6 +382,7 @@ private:
 	ICoorAtomID stub_atom3_;
 };
 
+void pretty_print_atomicoor(std::ostream & out, ResidueType const & rsd_type);
 void pretty_print_atomicoor(std::ostream & out, AtomICoor const & start, ResidueType const & rsd_type, core::Size indent=0);
 
 } // chemical
